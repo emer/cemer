@@ -93,6 +93,7 @@ cssProgSpace*   cssMisc::Top = NULL;
 cssProgSpace*   cssMisc::cur_top = NULL;
 cssProgSpace*   cssMisc::code_cur_top = NULL;
 cssCmdShell*    cssMisc::TopShell = NULL;
+cssProgSpaceStack cssMisc::top_stack;
 
 cssArray*       cssMisc::s_argv;
 cssInt*         cssMisc::s_argc;
@@ -127,6 +128,20 @@ void cssMisc::CodeConstExpr() {
 
 void cssMisc::CodeTop() {
   code_cur_top = NULL;
+}
+
+void cssMisc::SetCurTop(cssProgSpace* pspc) {
+  top_stack.PushStack(pspc);
+  cur_top = pspc;
+}
+
+cssProgSpace* cssMisc::PopCurTop() {
+  cssProgSpace* rval = cur_top;
+  cur_top = top_stack.PopStack();
+  if(cur_top == NULL) {
+    cssMisc::Error(NULL, "cssMisc::PopCurTop", "reached bottom of top_stack -- should not happen");
+  }
+  return rval;
 }
 
 String cssMisc::GetSourceLoc(cssProg* prog) {
@@ -4377,7 +4392,7 @@ bool cssProgSpace::Compile(istream& fh) {
   src_fin = &fh;
 
   bool err = false;
-  cssProgSpace* old_top = cssMisc::SetCurTop(this);
+  cssMisc::SetCurTop(this);
   int old_state = state;
 
   while (CompileLn(fh, &err) != cssProg::YY_Exit);
@@ -4387,7 +4402,7 @@ bool cssProgSpace::Compile(istream& fh) {
 
   OptimizeCode();
 
-  cssMisc::PopCurTop(old_top);
+  cssMisc::PopCurTop();
   return !err;
 }
 
@@ -4650,7 +4665,7 @@ bool cssProgSpace::ReturnFun() {
 }
 
 cssEl* cssProgSpace::Cont() {
-  cssProgSpace* old_top = cssMisc::SetCurTop(this);
+  cssMisc::SetCurTop(this);
 
   state |= cssProg::State_Run;
   external_stop = false;
@@ -4720,7 +4735,7 @@ cssEl* cssProgSpace::Cont() {
   step_mode = 0;                // always temporary
 
   state &= ~cssProg::State_Run;
-  cssMisc::PopCurTop(old_top);
+  cssMisc::PopCurTop();
   return rval;
 }
 
@@ -4739,12 +4754,10 @@ cssEl* cssProgSpace::ContSrc(int srcln) {
 }
 
 cssEl* cssProgSpace::Run() {
-  cssProgSpace* old_top = cssMisc::SetCurTop(this);
   state |= cssProg::State_Run;
   Restart();
   cssEl* rval = Cont();
   state &= ~cssProg::State_Run;
-  cssMisc::PopCurTop(old_top);
   return rval;
 }
 
@@ -5325,7 +5338,53 @@ bool cssProgSpace::DelAllWatches() {
   return true;
 }
 
+///////////////////////////////////
+//   cssProgSpaceStack
+///////////////////////////////////
 
+cssProgSpaceStack::cssProgSpaceStack() {
+  stack_size = 0;
+  stack_alloc_size = 2;
+  stack = (cssProgSpace**)calloc(stack_alloc_size, sizeof(cssProgSpace*));
+}
+
+cssProgSpaceStack::~cssProgSpaceStack() {
+  PopAllStack();
+  free(stack);
+  stack = NULL;
+}
+
+void cssProgSpaceStack::AllocStack(int sz) {
+  if(stack_alloc_size >= sz)    return; // no need to increase..
+  sz = MAX(16,sz);              // once allocating, use a minimum of 16
+  stack_alloc_size += TA_ALLOC_OVERHEAD; // increment to full power of 2
+  while((stack_alloc_size-TA_ALLOC_OVERHEAD) <= sz) stack_alloc_size <<= 1;
+  stack_alloc_size -= TA_ALLOC_OVERHEAD;
+  stack = (cssProgSpace**)realloc(stack, stack_alloc_size * sizeof(cssProgSpace*));
+}
+
+void cssProgSpaceStack::PushStack(cssProgSpace* ps) {
+  if(stack_size+1 >= stack_alloc_size)
+    AllocStack(stack_size+1);
+  stack[stack_size++] = ps;
+}
+
+cssProgSpace* cssProgSpaceStack::PopStack() {
+  if(stack_size <= 0)
+    return NULL;
+  cssProgSpace* rval = stack[--stack_size];
+  return rval;
+}
+
+cssProgSpace* cssProgSpaceStack::PeekStack() {
+  if(stack_size <= 0)
+    return NULL;
+  return stack[stack_size-1];
+}
+
+void cssProgSpaceStack::PopAllStack() {
+  while(PopStack());
+}
 
 ///////////////////////////////////
 //   CmdShell
@@ -5347,10 +5406,6 @@ void cssCmdShell::Constr() {
   cmd_prog->cmd_shell = this;   // link it up
 
   prompt = "css> ";
-
-  stack_size = 0;
-  stack_alloc_size = 2;
-  src_prog_stack = (cssProgSpace**)calloc(stack_alloc_size, sizeof(cssProgSpace*));
 }
 
 cssCmdShell::cssCmdShell() {
@@ -5367,43 +5422,6 @@ cssCmdShell::~cssCmdShell() {
   src_prog = NULL;
   delete cmd_prog;
   cmd_prog = NULL;
-  free(src_prog_stack);
-  src_prog_stack = NULL;
-}
-
-void cssCmdShell::AllocSrcProg(int sz) {
-  if(stack_alloc_size >= sz)    return; // no need to increase..
-  sz = MAX(16,sz);              // once allocating, use a minimum of 16
-  stack_alloc_size += TA_ALLOC_OVERHEAD; // increment to full power of 2
-  while((stack_alloc_size-TA_ALLOC_OVERHEAD) <= sz) stack_alloc_size <<= 1;
-  stack_alloc_size -= TA_ALLOC_OVERHEAD;
-  src_prog_stack = (cssProgSpace**)realloc(src_prog_stack, stack_alloc_size * sizeof(cssProgSpace*));
-}
-
-void cssCmdShell::PushSrcProg(cssProgSpace* ps) {
-  if(src_prog == ps) return;    // don't push on if already on!
-  if(stack_size+1 >= stack_alloc_size)
-    AllocSrcProg(stack_size+1);
-  src_prog_stack[stack_size++] = ps;
-  src_prog = ps;
-  ps->cmd_shell = this;         // link to this shell
-  SetPrompt(ps->name, true);            // name is the prompt..
-}
-
-cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
-  if(stack_size <= 1)           // always keep the top guy
-    return NULL;
-  if((ps) && (src_prog != ps)) return NULL;
-  cssProgSpace* tmp = src_prog;
-  tmp->cmd_shell = NULL;        // unlink from this shell
-  stack_size--;
-  src_prog = src_prog_stack[stack_size-1];
-  SetPrompt(src_prog->name, true);      // restore previous prompt
-  return tmp;
-}
-
-void cssCmdShell::PopAllSrcProg() {
-  while(PopSrcProg());
 }
 
 void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
@@ -5437,6 +5455,29 @@ void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
     cmd_prog->Reset();
   }
   UpdatePrompt();
+}
+
+void cssCmdShell::PushSrcProg(cssProgSpace* ps) {
+  if(src_prog == ps) return;    // don't push on if already on!
+  src_prog_stack.PushStack(ps);
+  src_prog = ps;
+  ps->cmd_shell = this;         // link to this shell
+  SetPrompt(ps->name, true);            // name is the prompt..
+}
+
+cssProgSpace* cssCmdShell::PopSrcProg(cssProgSpace* ps) {
+  if(src_prog_stack.stack_size <= 1)           // always keep the top guy
+    return NULL;
+  if((ps) && (src_prog != ps)) return NULL;
+  cssProgSpace* tmp = src_prog_stack.PopStack();
+  tmp->cmd_shell = NULL;        // unlink from this shell
+  src_prog = src_prog_stack.PeekStack(); // new last one
+  SetPrompt(src_prog->name, true);      // restore previous prompt
+  return tmp;
+}
+
+void cssCmdShell::PopAllSrcProg() {
+  while(PopSrcProg());
 }
 
 void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,

@@ -4710,11 +4710,23 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
         taMisc::Warning("ta: URL",path,"not found as a path to an object!");
         return;
       }
-      Program* prg = (Program*)tab->GetOwner(&TA_Program);
+      Program* prg = (Program*)tab->GetThisOrOwner(&TA_Program);
       if(prg) {
 	prg->BrowserSelectMe();
-	prg->ViewProgEditor();
-	prg->BrowserSelectMe_ProgItem((taOBase*)tab);
+	taMisc::RunPending();
+	if(url.hasFragment()) {
+	  prg->ViewCssScript();
+	  // todo: could do something with this!
+	  // int lno = (int)url.fragment();
+	  // if(lno > 0) {
+	  //   ProgLine* pl = prg->script_list->SafeEl(lno);
+	  // }
+	}
+	else {
+	  prg->ViewProgEditor();
+	  taMisc::RunPending();
+	  prg->BrowserSelectMe_ProgItem((taOBase*)tab);
+	}
       }
       else {
 	//  iTreeViewItem* item = 

@@ -1295,16 +1295,15 @@ void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
   cssProg* prg = cssMisc::CDtorProg;
   prg->state |= cssProg::State_IsTmpProg; // flag to cssProgSpace::Cont to not run past this guy
   prg->state |= cssProg::State_NoBreak;
-  cssProgSpace* old_top = NULL;
   cssProgSpace* old_tok_top = NULL;
   cssProgSpace* old_prg_top = NULL;
   if((tok->prog != NULL) && (tok->prog->top != NULL)) {
     // todo: this should not be needed anymore
-    old_top = cssMisc::SetCurTop(tok->prog->top);    // reparent to current top
+    cssMisc::SetCurTop(tok->prog->top);    // reparent to current top
     old_prg_top = prg->SetTop(cssMisc::cur_top);
   }
   else {
-    old_top = cssMisc::SetCurTop(cssMisc::Top);
+    cssMisc::SetCurTop(cssMisc::Top);
     old_prg_top = prg->SetTop(cssMisc::cur_top);
     tok->prog = prg;
   }
@@ -1335,7 +1334,7 @@ void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
 
   if(old_prg_top != NULL)	prg->PopTop(old_prg_top);
   if(old_tok_top != NULL)	tok->prog->PopTop(old_prg_top);
-  if(old_top != NULL)		cssMisc::PopCurTop(old_top);
+  cssMisc::PopCurTop();
 }
 
 void cssClassType::ConstructToken_impl(cssClassInst* tok) {

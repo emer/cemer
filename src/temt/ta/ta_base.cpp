@@ -2797,26 +2797,54 @@ void taBase::CallObjFun(taBase* obj, const String& fun_name) {
 
 void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& str) {
   if(!obj) return;
-  MemberDef* md = obj->GetTypeDef()->members.FindName(memb_name);
+  MemberDef* md = NULL;
+  void* mbase = NULL;
+  if(memb_name.contains('.')) {
+    String parp = memb_name.before('.',-1);
+    taBase* mdown = obj->FindFromPath(parp, md);
+    if(mdown) {
+      String mn = memb_name.after('.',-1);
+      md = mdown->GetTypeDef()->members.FindName(mn);
+      if(md) mbase = md->GetOff(mdown);
+    }
+  }
+  else {
+    md = obj->GetTypeDef()->members.FindName(memb_name);
+    if(md) mbase = md->GetOff(obj);
+  }
   if(!md) {
     taMisc::Error("SetMemberStr", "member:", memb_name,
 		  "not found in object of type:",
 		  obj->GetTypeDef()->name);
     return;
   }
-  md->type->SetValStr(str, md->GetOff(obj), NULL, md);
+  md->type->SetValStr(str, mbase, NULL, md);
 }
 
 void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& val) {
   if(!obj) return;
-  MemberDef* md = obj->GetTypeDef()->members.FindName(memb_name);
+  MemberDef* md = NULL;
+  void* mbase = NULL;
+  if(memb_name.contains('.')) {
+    String parp = memb_name.before('.',-1);
+    taBase* mdown = obj->FindFromPath(parp, md);
+    if(mdown) {
+      String mn = memb_name.after('.',-1);
+      md = mdown->GetTypeDef()->members.FindName(mn);
+      if(md) mbase = md->GetOff(mdown);
+    }
+  }
+  else {
+    md = obj->GetTypeDef()->members.FindName(memb_name);
+    if(md) mbase = md->GetOff(obj);
+  }
   if(!md) {
     taMisc::Error("SetMemberVar", "member:", memb_name,
 		  "not found in object of type:",
 		  obj->GetTypeDef()->name);
     return;
   }
-  md->SetValVar(val, obj);
+  md->type->SetValVar(val, mbase, NULL, md);
 }
 
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {

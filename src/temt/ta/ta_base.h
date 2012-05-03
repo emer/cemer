@@ -1157,10 +1157,10 @@ public:
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
   static  void		SetMemberStr(taBase* obj, const String& memb_name,
 				     const String& str);
-  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on string value
+  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on string value -- memb_name can be an arbitrary full path below the obj
   static  void		SetMemberVar(taBase* obj, const String& memb_name,
 				     const Variant& val);
-  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant
+  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant -- memb_name can be an arbitrary full path below the obj
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
   // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!

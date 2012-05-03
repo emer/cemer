@@ -107,6 +107,7 @@ class cssInst;
 class cssIJump;
 class cssProg;
 class cssProgSpace;
+class cssProgSpaceStack;
 class cssCmdShell;
 
 class Program;
@@ -155,6 +156,7 @@ public:
   static cssProgSpace*	cur_top;	// current top-level (set for parsing, running)
   static cssProgSpace*	code_cur_top;	// cur_top for coding (e.g. if top switched for ConstExpr)
   static cssCmdShell* 	TopShell;	// top level command shell
+  static cssProgSpaceStack top_stack;   // stack of top-level program spaces -- managed by SetCurTop and PopCurTop
 
   static cssArray*	s_argv;		// args passed by shell to scripts
   static cssInt*	s_argc;		// number of args passed by shell to scripts
@@ -190,11 +192,10 @@ public:
   static String	    	IndentLines(const String& lines, int indent_level); 
     // indent every line by the indent amount
   static bool		IsNameValid(const String& nm); // validates a css name
-  static cssProgSpace*	SetCurTop(cssProgSpace* pspc)
-  { cssProgSpace* rval = cur_top; cur_top = pspc; return rval; }
-  // set cur_top to given value, return previous cur_top, used for PopCurTop
-  static void		PopCurTop(cssProgSpace* pspc)	{ cur_top = pspc; }
-  // reset cur_top to previous value (returned by SetCurTop)
+  static void		SetCurTop(cssProgSpace* pspc);
+  // set cur_top and push previous onto top_stack
+  static cssProgSpace*	PopCurTop();
+  // pop top_stack and set previous to cur_top
   static void		CodeConstExpr(); // use const expr for coding
   static void		CodeTop(); 	// use saved cur top for coding
 
@@ -1851,6 +1852,24 @@ protected:
   String	cc_include_this;	// filename to be included
 };
 
+class CSS_API cssProgSpaceStack  {
+  // stack of program spaces
+public:
+  cssProgSpace** stack; 	// stack of prog spaces
+  int 		stack_size;	// size of prog_stack
+
+  cssProgSpaceStack();
+  virtual ~cssProgSpaceStack();
+
+  void		AllocStack(int sz);	     	// allocate stack
+  void		PushStack(cssProgSpace* ps); 	// push onto stack
+  cssProgSpace* PopStack(); 			// pop last off current stack
+  cssProgSpace* PeekStack(); 			// peek at last on stack
+  void		PopAllStack();			// pop off all
+protected:
+  int		stack_alloc_size;	// allocated size of stack
+};
+
 class CSS_API cssCmdShell : public QObject {
   // a command shell that controls a program space
   INHERITED(QObject);
@@ -1873,8 +1892,7 @@ public:
   cssProgSpace*	src_prog;		// current program with source code for commands to operate on (I do not own this, nor is there refcounting!) DO NOT SET DIRECTLY: USE Push/Pop to manage
   cssProgSpace*	cmd_prog;		// program for commands, etc (I own this one!)
 
-  cssProgSpace** src_prog_stack; 	// stack of src_prog's
-  int 		stack_size;		// size of prog_stack
+  cssProgSpaceStack src_prog_stack; 	// stack of src_prog's
 
   void Constr();
   cssCmdShell();
@@ -1882,7 +1900,6 @@ public:
   virtual ~cssCmdShell();
 
   // manage the src_prog_stack
-  void		AllocSrcProg(int sz);
   void		PushSrcProg(cssProgSpace* ps); 	// push onto stack, set src_prog = ps
   cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
   void		PopAllSrcProg(); // pop off all of the src progs
@@ -1911,8 +1928,6 @@ public slots:
   // this should be invoked by an event or timer after event loop has started, for no-console execution
 
 protected:
-  int		stack_alloc_size;	// allocated size of src_prog stack
-
   void		AcceptNewLine(const String& ln, bool eof); 
   // impl for slot
   void		Shell_No_Console(const String& prmpt);

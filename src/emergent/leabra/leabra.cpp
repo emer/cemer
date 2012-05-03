@@ -2424,7 +2424,7 @@ void LeabraUnitSpec::BioParams(bool gelin, float norm_sec, float norm_volt, floa
 
   if(gelin) {
     dt.vm = 0.3f;
-    act.gain = 80;
+    act.gain = 100;
     act.gelin = true;
   }
 

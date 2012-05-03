@@ -4235,6 +4235,7 @@ ProgramRef Program::last_stop_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
+String Program::global_trace;
 int64_t Program::global_init_timestamp = 0;
 
 void Program::Initialize() {
@@ -4741,6 +4742,7 @@ void Program::Abort() {
 
 void Program::Stop_impl() {
   last_stop_prog = this;
+  global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   script->Stop();
 //   setRunState(STOP);
 //   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -4864,6 +4866,7 @@ void Program::UpdateCallerArgs() {
 }
 
 void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
+  global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetError();
@@ -5539,6 +5542,79 @@ void Program::RunLoadInitCode() {
 
 void Program::SaveScript(ostream& strm) {
   strm << scriptString();
+}
+
+void Program::GlobalTrace() {
+  if(taMisc::gui_active) {
+    TypeDef* td = &TA_Program;
+    MemberDef* md = td->members.FindName("global_trace");
+    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, false, true);
+    // args are: read_only, modal, parent, line_nos, rich_text
+    host_->Constr("Global Trace of Programs Called to last Stop");
+    host_->Edit(false);
+  }
+  else {
+    taMisc::ConsoleOutput(global_trace, false, true); // no err, pager = true
+  }
+}
+
+void Program::LocalTrace() {
+  if(taMisc::gui_active) {
+    local_trace = RenderLocalTrace(true);
+    TypeDef* td = GetTypeDef();
+    MemberDef* md = td->members.FindName("local_trace");
+    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true, false);
+    // args are: read_only, modal, parent, line_nos, rich_text
+    host_->Constr("Local Trace of Program: " + name);
+    host_->Edit(false);
+  }
+  else {
+    local_trace = RenderLocalTrace(false);
+    taMisc::ConsoleOutput(local_trace, false, true); // no err, pager = true
+  }
+}
+
+String Program::RenderGlobalTrace(bool html) {
+  String rval;
+  if(html) {
+    rval << "<table border=0 cellpadding=2> <tr><th>Level</th><th>Program</th><th>Code</th></tr>\n";
+  }
+  int cnt = 0;
+  for(int i = cssMisc::top_stack.stack_size-1; i >= 0; i--, cnt++) {
+    cssProgSpace* sp = cssMisc::top_stack.stack[i];
+    int ln = sp->CurRunSrcLn();
+    if(html) rval << "<tr><td>";
+    rval << cnt << "\t";
+    if(html) rval << "</td>";
+    if(sp->own_program) {
+      taProject* proj = GET_OWNER(sp->own_program, taProject);
+      if(html) {
+	rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
+	     << "#" << ln << "\">"
+	     << sp->own_program->name << "</a></td>";
+      }
+      else {
+	rval << sp->own_program->name;
+      }
+    }
+    else {
+      rval << sp->name;
+    }
+    if(html) rval << "<td>";
+    rval << "\t\t" << sp->CurFullRunSrc() << "\n";
+    if(html)
+      rval << "</td></tr>\n";
+  }
+  if(html) rval << "</table>";
+  return rval;
+}
+
+String Program::RenderLocalTrace(bool html) {
+  String rval;
+  if(script) {
+    script->BackTrace(rval); 
+  }
+  return rval;
 }
 
 #ifdef TA_GUI

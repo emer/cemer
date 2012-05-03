@@ -66,6 +66,7 @@
 #include "iflowlayout.h"
 #include "iscrollarea.h"
 #include "itextedit.h"
+#include "itextbrowser.h"
 #include "numberedtextview.h"
 
 // TODO: why is String=osString in this file, unless I do this:
@@ -2690,7 +2691,13 @@ void taiStringDataHost::Constr_Box() {
     vblDialog->addWidget(ntv, 1);
   }
   else {
-    edit = new iTextEdit(widget());
+    if(read_only) {
+      edit = new iTextBrowser(widget());
+      ((iTextBrowser*)edit)->setOpenExternalLinks(true);
+    }
+    else {
+      edit = new iTextEdit(widget());
+    }
     vblDialog->addWidget(edit, 1);
   }
   edit->installEventFilter(this); // hopefully everyone below body will get it too!
