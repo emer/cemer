@@ -4,10 +4,12 @@
 Script to build emergent using Amazon Web Services (AWS).
 
 To launch all builds simultaneously:
-  rev=5391
+  rev=5400
+  cd /c/src/emergent/package/aws
+  rm ~/.ssh/known_hosts_amazon
   for distro in lucid maverick natty oneiric; do
     for bits in 32 64; do
-      mintty /cygdrive/c/src/ec2/build.py $distro $bits $rev &
+      mintty /c/src/emergent/package/aws/build.py $distro $bits $rev &
     done
   done
 
@@ -84,6 +86,10 @@ def build(distro, bits, rev):
         scriptname = 'aws-setup.sh'
         script = os.path.join(os.getcwd(), scriptname)
         util.scp(script, remote_user, ip, '/home/ubuntu/', ssh_key)
+
+        # chmod the script.
+        command = 'chmod 755 /home/ubuntu/%s' % scriptname
+        util.ssh(command, remote_user, ip, ssh_key)
 
         # Execute the script.
         command = '/home/ubuntu/%s %s' % (scriptname, rev)
