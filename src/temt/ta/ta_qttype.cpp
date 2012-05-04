@@ -1929,6 +1929,8 @@ taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
 void taiRegexpDialogMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
   taiRegexpField* rval = (taiRegexpField*)dat;
+  // The 'base' pointer is the owner of the regexp field.
+  rval->SetFieldOwner(base);
   rval->GetImage(*((String*)new_base));
 }
 

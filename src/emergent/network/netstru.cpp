@@ -3916,6 +3916,19 @@ QString TalairachRegexpPopulator::getSeparator() const
   return ".";
 }
 
+void TalairachRegexpPopulator::adjustTitle(QString &title, const void *fieldOwner) const
+{
+  // We know the owner of the regexp field is some type of taBase, so cast it.
+  const taBase *base = reinterpret_cast<const taBase *>(fieldOwner);
+  // Then dynamic cast to verify it's a Layer.
+  if (const Layer *layer = dynamic_cast<const Layer *>(base)) {
+    title.append(" in layer \"").append(layer->name.chars()).append("\"");
+    if (const Network *network = layer->own_net) {
+      title.append(" using atlas \"").append(network->atlas_name.chars()).append("\"");
+    }
+  }
+}
+
 ////////////////////////
 //      Layer         //
 ////////////////////////
@@ -4123,7 +4136,7 @@ void Layer::UpdateAfterEdit_impl() {
     if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
       // clear activity if we're lesioned
       if(own_net)
-	Init_Acts(own_net);
+        Init_Acts(own_net);
     }
   }
   m_prv_layer_flags = flags;
@@ -6976,43 +6989,43 @@ void Network::Send_Netin() {
   if(NetinPerPrjn()) {
     if(threads.using_threads) {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
-	Unit* un = units_flat[i];
-	float nw_nt = 0.0f;
-	for(int p=0;p<un->recv.size;p++) {
-	  for(int j=0;j<nt;j++) {
-	    nw_nt += send_netin_tmp.FastEl(i, p, j);
-	  }
-	}
-	un->Compute_SentNetin(this, nw_nt);
+        Unit* un = units_flat[i];
+        float nw_nt = 0.0f;
+        for(int p=0;p<un->recv.size;p++) {
+          for(int j=0;j<nt;j++) {
+            nw_nt += send_netin_tmp.FastEl(i, p, j);
+          }
+        }
+        un->Compute_SentNetin(this, nw_nt);
       }
     }
     else {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
-	Unit* un = units_flat[i];
-	float nw_nt = 0.0f;
-	for(int p=0;p<un->recv.size;p++) {
-	  nw_nt += send_netin_tmp.FastEl(i, p, 0); // use 0 thread
-	}
-	un->Compute_SentNetin(this, nw_nt);
+        Unit* un = units_flat[i];
+        float nw_nt = 0.0f;
+        for(int p=0;p<un->recv.size;p++) {
+          nw_nt += send_netin_tmp.FastEl(i, p, 0); // use 0 thread
+        }
+        un->Compute_SentNetin(this, nw_nt);
       }
     }
   }
   else {
     if(threads.using_threads) {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
-	Unit* un = units_flat[i];
-	float nw_nt = 0.0f;
-	for(int j=0;j<nt;j++) {
-	  nw_nt += send_netin_tmp.FastEl(i, j);
-	}
-	un->Compute_SentNetin(this, nw_nt);
+        Unit* un = units_flat[i];
+        float nw_nt = 0.0f;
+        for(int j=0;j<nt;j++) {
+          nw_nt += send_netin_tmp.FastEl(i, j);
+        }
+        un->Compute_SentNetin(this, nw_nt);
       }
     }
     else {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
-	Unit* un = units_flat[i];
-	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
-	un->Compute_SentNetin(this, nw_nt);
+        Unit* un = units_flat[i];
+        float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
+        un->Compute_SentNetin(this, nw_nt);
       }
     }
   }

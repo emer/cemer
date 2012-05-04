@@ -36,9 +36,9 @@ Some preparation is needed to use these scripts.
 
 The aws-setup.sh script, which gets copied to each EC2 instance and run, is
 nearly fully automated.  The only remaining problem is that for some reason,
-a mail server gets installed, and there's a post-install configuration step
-for Postfix.  If you get prompted for configuration, chose option '1' which
-is no configuration.
+a mail server gets installed on Maverick and Natty instances and needs to be
+configured.  There's a post-install configuration step for Postfix.  If you
+get prompted for configuration, chose option '1' which is no configuration.
 
 The Python scripts were tested under Cygwin.  They will probably not work
 without modification on Python for Windows, since they rely on utilities

@@ -157,6 +157,7 @@ public:
   virtual QStringList getHeadings() const = 0;
   virtual QStringList getLabels() const = 0;
   virtual QString getSeparator() const = 0;
+  virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
   virtual ~RegexpPopulator() { }
 };
 
@@ -164,7 +165,7 @@ class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, bool read_only);
+  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, const void *fieldOwner, bool read_only);
 
   bool          isReadOnly()    { return m_read_only; }
   bool          applyClicked()  { return m_apply_clicked; }
@@ -229,6 +230,7 @@ private:
 
   taiRegexpField*       m_field;
   RegexpPopulator*      m_populator;
+  const void *          m_fieldOwner;
   bool                  m_read_only;
   bool                  m_apply_clicked;
   QSortFilterProxyModel* m_proxy_model;
@@ -333,12 +335,15 @@ class TA_API taiRegexpField : public taiText {
 public:
   taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, RegexpPopulator *re_populator);
 
+  void                  SetFieldOwner(const void *fieldOwner);
+
 protected slots:
   override void         btnEdit_clicked(bool);  // "..." button
   override void         lookupKeyPressed();     // Same as clicking the "..." button.
 
 private:
   RegexpPopulator*      m_populator;
+  const void *          m_fieldOwner;
 };
 
 // this is for integers -- includes up and down arrow buttons

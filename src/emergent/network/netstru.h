@@ -1541,6 +1541,7 @@ public:
   override QStringList getHeadings() const;
   override QStringList getLabels() const;
   override QString getSeparator() const;
+  override void adjustTitle(QString &title, const void *fieldOwner) const;
 private:
   mutable QStringList labels;
   mutable QStringList headings;
@@ -2012,7 +2013,7 @@ public:
 
 protected:
   UnitSpec*     m_prv_unit_spec; // previous unit spec set for units in layer
-  LayerFlags	m_prv_layer_flags; // previous layer flags in layer
+  LayerFlags    m_prv_layer_flags; // previous layer flags in layer
 
   override void         UpdateAfterEdit_impl();
   override void         UpdateAfterMove_impl(taBase* old_owner);
@@ -2321,7 +2322,7 @@ public:
     SAVE_UNITS          = 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE    = 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
     MANUAL_POS          = 0x0004, // disables the automatic cleanup/positioning of layers
-    NETIN_PER_PRJN	= 0x0008, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
+    NETIN_PER_PRJN      = 0x0008, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
   };
 
   enum NetTextLoc {

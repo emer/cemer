@@ -496,8 +496,8 @@ String  taMisc::svn_rev = String(SVN_REV);
 String  taMisc::version = String(VERSION);
 taVersion taMisc::version_bin(String(VERSION));
 
-int64_t	taMisc::exe_mod_time_int = 0;
-String	taMisc::exe_mod_time;
+int64_t taMisc::exe_mod_time_int = 0;
+String  taMisc::exe_mod_time;
 
 // ugh! but easiest way to just statically set the build_type and official extender string
 #ifdef DEBUG
@@ -749,11 +749,11 @@ ContextFlag     taMisc::in_shutdown;
 ContextFlag     taMisc::no_auto_expand;
 TypeDef*        taMisc::plugin_loading;
 
-bool	taMisc::err_cancel = false;
-int64_t	taMisc::err_cancel_time = 0;
-int	taMisc::err_cancel_time_thr = 2;
-int	taMisc::err_waitproc_cnt = 0;
-int	taMisc::err_waitproc_thr = 100;
+bool    taMisc::err_cancel = false;
+int64_t taMisc::err_cancel_time = 0;
+int     taMisc::err_cancel_time_thr = 2;
+int     taMisc::err_waitproc_cnt = 0;
+int     taMisc::err_waitproc_thr = 100;
 
 String  taMisc::last_err_msg;
 String  taMisc::last_warn_msg;
@@ -806,7 +806,7 @@ void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
   ++taFiler::no_save_last_fname;
   String cfgfn = prefs_dir + PATH_SEP + "options" + app_suffix;
-  if(!QFile::exists(cfgfn)) {	// try without app suffix!
+  if(!QFile::exists(cfgfn)) {   // try without app suffix!
     cfgfn = prefs_dir + PATH_SEP + "options";
   }
   fstream strm;
@@ -855,7 +855,7 @@ bool taMisc::ErrorCancelCheck() {
     st.setTime_t(err_cancel_time);
     if(st.secsTo(tm) < err_cancel_time_thr) {
       taMisc::ConsoleOutputChars("+", true, false);
-      err_waitproc_cnt = 0;	// reset counter and start counting again
+      err_waitproc_cnt = 0;     // reset counter and start counting again
     }
     else {
       taMisc::ConsoleOutputChars(".", true, false);
@@ -1194,19 +1194,19 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
     if(pageln >= taMisc::display_height) {
       int resp = 0;
       if(cssMisc::TopShell) {
-	resp = cssMisc::TopShell->QueryForKeyResponse(prompt);
+        resp = cssMisc::TopShell->QueryForKeyResponse(prompt);
       }
       else {
-	cout << prompt << endl;
-	resp = cin.get();
+        cout << prompt << endl;
+        resp = cin.get();
       }
       if(resp == 'q' || resp == 'Q') {
-	return false;
+        return false;
       }
       if(resp == 'c' || resp == 'C') {
-	pager = false;
+        pager = false;
       }
-      pageln = 0;		// start over
+      pageln = 0;               // start over
     }
   }
 #else
@@ -1236,20 +1236,25 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
       String longln = curln;
       bool was_wrap = false;
       do {
-	String curpt = longln.before(taMisc::display_width-2);
-	longln = longln.from(taMisc::display_width-2);
-	if(was_wrap)
-	  curpt = "->" + curpt;
-	if(longln.nonempty())
-	  curpt += "->";
-	if(!ConsoleOutputLine(curpt, err, pager, pageln))
-	  return false;		// user hit quit
-	was_wrap = true;
+        // Reserve two characters for the end-of-line wrap marker, plus
+        // (possibly) two characters for the beginning-of line wrap marker.
+        int wrap_point = taMisc::display_width - 2;
+        if (was_wrap) wrap_point -= 2;
+
+        String curpt = longln.before(wrap_point);
+        longln = longln.from(wrap_point);
+        if(was_wrap)
+          curpt = "->" + curpt;
+        if(longln.nonempty())
+          curpt += "->";
+        if(!ConsoleOutputLine(curpt, err, pager, pageln))
+          return false;         // user hit quit
+        was_wrap = true;
       } while(longln.nonempty());
     }
     else {
       if(!ConsoleOutputLine(curln, err, pager, pageln))
-	return false;		// user hit quit
+        return false;           // user hit quit
     }
   } while(rmdr.nonempty());
   return true;
@@ -1259,7 +1264,7 @@ bool taMisc::ConsoleOutputChars(const String& str, bool err, bool pager) {
   console_chars << str;
   if((console_chars.length() >= taMisc::display_width-2) || str.contains("\n")) {
     ConsoleOutput(console_chars, err, pager);
-    console_chars = _nilString;	// reset
+    console_chars = _nilString; // reset
     return true;
   }
   return false;
@@ -1426,7 +1431,7 @@ void taMisc::Decode_Signal(int err) {
 #endif  //!TA_OS_WIN
   default:      emsg << "unknown"; break;
   }
-  cerr << emsg;			// nothing better to do in this situation -- don't go to console..
+  cerr << emsg;                 // nothing better to do in this situation -- don't go to console..
 }
 
 
@@ -1955,8 +1960,8 @@ String taMisc::StringCVar(const String& str) {
   return rval;
 }
 
-String& taMisc::FancyPrintList(String& strm, const String_PArray& strs, 
-			       int indent, int max_col_width, int n_per_line) {
+String& taMisc::FancyPrintList(String& strm, const String_PArray& strs,
+                               int indent, int max_col_width, int n_per_line) {
   int max_wd = 0;
   for(int i=0; i<strs.size; i++) {
     max_wd = MAX(max_wd, strs[i].length());
@@ -1964,7 +1969,7 @@ String& taMisc::FancyPrintList(String& strm, const String_PArray& strs,
   max_wd = MIN(max_wd, max_col_width);
   max_wd = MAX(2, max_wd);
 
-  int max_wd_sp = max_wd + taMisc::indent_spc;	// include spacing per item
+  int max_wd_sp = max_wd + taMisc::indent_spc;  // include spacing per item
 
   int isp = taMisc::indent_spc*indent;
   if(n_per_line < 0) {
@@ -1992,19 +1997,19 @@ String& taMisc::FancyPrintList(String& strm, const String_PArray& strs,
       cur_wd += trg_wd_sp;
     }
   }
-  strm << "\n";			// always terminate list
+  strm << "\n";                 // always terminate list
   return strm;
 }
 
-String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs, 
-				  const String_PArray& col2_strs, int indent) {
+String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
+                                  const String_PArray& col2_strs, int indent) {
   int max_wd = 0;
   for(int i=0; i<col1_strs.size; i++) {
     max_wd = MAX(max_wd, col1_strs[i].length());
   }
   max_wd = MAX(2, max_wd);
 
-  int max_wd_sp = max_wd + taMisc::indent_spc;	// include spacing per item
+  int max_wd_sp = max_wd + taMisc::indent_spc;  // include spacing per item
 
   int isp = taMisc::indent_spc*indent;
   for(int i=0; i<col1_strs.size; i++) {
@@ -2676,7 +2681,7 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     int cur_pos = 0;
-    ConsoleOutputChars("<<err_skp ->>", true); 
+    ConsoleOutputChars("<<err_skp ->>", true);
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
       ConsoleOutputChars((char)c, true); cur_pos++;
       if(c == '{')      depth++;
@@ -3069,7 +3074,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
 #ifdef DEBUG // just make sure these are harmless, and don't scare users...
     else {
       taMisc::Warning("Datalink for object name:", GetName(),
-		      "unexpectedly received a DATA or STRUCT END (cnt was 0)");
+                      "unexpectedly received a DATA or STRUCT END (cnt was 0)");
     }
 #endif
 #ifdef DATA_DATA_DEBUG
@@ -3086,7 +3091,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
 #ifdef DATA_DATA_DEBUG
-	taMisc::Info((String)(int)this, "cvt to iu:", String(m_dbu_cnt));
+        taMisc::Info((String)(int)this, "cvt to iu:", String(m_dbu_cnt));
 #endif
       }
       else {// otherwise, we send both
@@ -5353,7 +5358,7 @@ TypeDef* TypeDef::GetNonConstNonRefType() const {
 
 TypeDef* TypeDef::GetClassType() const {
   if(InheritsFormal(&TA_class)) return const_cast<TypeDef*>(this);
-    
+
   TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
     if(rval->InheritsFormal(&TA_class))
@@ -5938,7 +5943,7 @@ void TypeDef::RegisterFinal(void* it) {
 #if defined(DEBUG) && !defined(NO_TA_BASE) // semi-TEMP, until 100% verified
   if (par->tokens.FindEl(it) >= 0) {
     String msg;
-    msg << "attempt to reregister token of type(addr): " << 	((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
+    msg << "attempt to reregister token of type(addr): " <<     ((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
     taMisc::Info(msg);
     return;
   }
@@ -6694,11 +6699,11 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   if(par_typ && par && par_typ->DerivesFrom(TA_taBase)) {
     if(memb_def) {
       taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
-		   "in", par_typ->name, "object:",((taBase*)par)->GetPathNames(),repl_info);
+                   "in", par_typ->name, "object:",((taBase*)par)->GetPathNames(),repl_info);
     }
     else {
       taMisc::Info("Replaced string value in type:", name, "in", par_typ->name, "object:",
-		   ((taBase*)par)->GetPathNames(), repl_info);
+                   ((taBase*)par)->GetPathNames(), repl_info);
     }
   }
   else
@@ -6706,7 +6711,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     {
     if(memb_def) {
       taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
-		   repl_info);
+                   repl_info);
     }
     else {
       taMisc::Info("Replaced string value in type:", name, repl_info);
@@ -7788,10 +7793,10 @@ String TypeDef::GetHTML(bool gendoc) const {
       rval.cat(st->GetHTMLSubType(gendoc, false));
     }
   }
-  
+
   ///////////////////////////////////////////////////////
-  //	REGULAR members and methods
-  { 
+  //    REGULAR members and methods
+  {
     rval.cat("<hr />\n");
     rval.cat("<h2>Regular (preferred) Member and Method Documentation</h2>\n");
 
@@ -7801,7 +7806,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<members.size;i++) {
       MemberDef* md = members[i];
       if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
-	continue;
+        continue;
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
@@ -7826,8 +7831,8 @@ String TypeDef::GetHTML(bool gendoc) const {
   }
 
   ///////////////////////////////////////////////////////
-  //	EXPERT members and methods
-  { 
+  //    EXPERT members and methods
+  {
     rval.cat("<hr />\n");
     rval.cat("<h2>Expert Member and Method Documentation</h2>\n");
 
@@ -7837,7 +7842,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<members.size;i++) {
       MemberDef* md = members[i];
       if(!(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT")))
-	continue;
+        continue;
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
@@ -7875,10 +7880,10 @@ String TypeDef::GetHTML(bool gendoc) const {
 
 
 String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
-	const String& label_prefix, const String& link_prefix, bool gendoc) const {
+        const String& label_prefix, const String& link_prefix, bool gendoc) const {
 
   String rval;
- 
+
   //////////////////////////////////////////
   // first pass output
 
@@ -8009,7 +8014,7 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
     // if(!md->GetCondOptTest("CONDSHOW", this, base))
     //   continue;
     if(md->name == "user_data_") {
-      continue;			// too much clutter for now..
+      continue;                 // too much clutter for now..
     }
     md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, const_cast<TypeDef*>(this), par_od);
   }
@@ -8441,10 +8446,10 @@ bool taObjDiff_List::DiffFlagParents(taObjDiffRec* rec) {
     if(par_rec != rec) {
       par_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR);
       par_rec->n_diffs++;
-      if(par_rec->diff_no_start < 0) 
-	par_rec->diff_no_start = rec->diff_no;
+      if(par_rec->diff_no_start < 0)
+        par_rec->diff_no_start = rec->diff_no;
       else
-	par_rec->diff_no_start = MIN(rec->diff_no, par_rec->diff_no_start);
+        par_rec->diff_no_start = MIN(rec->diff_no, par_rec->diff_no_start);
       par_rec->diff_no_end = MAX(rec->diff_no, par_rec->diff_no_end);
       rval = true;              // got one..
     }
@@ -8455,7 +8460,7 @@ bool taObjDiff_List::DiffFlagParents(taObjDiffRec* rec) {
 }
 
 void taObjDiff_List::CreateSrcs() {
-  Reset();			// reset me for good measure too, just to free up any remaining junk
+  Reset();                      // reset me for good measure too, just to free up any remaining junk
   if(src_a) {
     src_a->Reset();
   }
@@ -8478,7 +8483,7 @@ void taObjDiff_List::Diff() {
 
   taStringDiff diff;
 
-  Reset();			// clear out my list of diffs
+  Reset();                      // clear out my list of diffs
   src_a->HashToIntArray(diff.data_a.data);
   src_b->HashToIntArray(diff.data_b.data);
 
@@ -8496,12 +8501,12 @@ void taObjDiff_List::Diff() {
       for(int l=0; l<df.delete_a; l++) {
         taObjDiffRec* rec_a = src_a->SafeEl(df.start_a + l);
         rec_a->SetDiffFlag(taObjDiffRec::DIFF_CHG);
-	rec_a->diff_no = i;
+        rec_a->diff_no = i;
         DiffFlagParents(rec_a);
-        Link(rec_a);		// link all the actual diff items to main list
+        Link(rec_a);            // link all the actual diff items to main list
         taObjDiffRec* rec_b = src_b->SafeEl(df.start_b + l);
         rec_b->SetDiffFlag(taObjDiffRec::DIFF_CHG);
-	rec_b->diff_no = i;
+        rec_b->diff_no = i;
         DiffFlagParents(rec_b);
         rec_a->diff_odr = rec_b; // this is the paired guy
         rec_b->diff_odr = rec_a; // bidir pairing: why not..
@@ -8523,12 +8528,12 @@ void taObjDiff_List::Diff() {
         if(!rec_b) {
           rec_b = src_b->Peek();
         }
-	// find a ta_base!
+        // find a ta_base!
 #ifndef NO_TA_BASE
-	rec_b = rec_b->GetOwnTaBaseRec();
+        rec_b = rec_b->GetOwnTaBaseRec();
 #endif
         rec_b->SetDiffFlag(taObjDiffRec::DIFF_DEL);
-	rec_b->diff_no = i;
+        rec_b->diff_no = i;
         DiffFlagParents(rec_b);
 
         taObjDiffRec* rec0 = src_a->SafeEl(df.start_a);
@@ -8536,7 +8541,7 @@ void taObjDiff_List::Diff() {
         for(int l=0; l<df.delete_a; l++) {
           taObjDiffRec* rec_a = src_a->SafeEl(df.start_a + l);
           rec_a->SetDiffFlag(taObjDiffRec::DIFF_DEL);
-	  rec_a->diff_no = i;
+          rec_a->diff_no = i;
           if(DiffFlagParents(rec_a)) // reset nest level if parents needed to be added
             del_nest = rec_a->nest_level;
           Link(rec_a);
@@ -8567,18 +8572,18 @@ void taObjDiff_List::Diff() {
           rec_a = src_a->Peek();
         }
 #ifndef NO_TA_BASE
-	rec_a = rec_a->GetOwnTaBaseRec();
+        rec_a = rec_a->GetOwnTaBaseRec();
 #endif
-	rec_a->SetDiffFlag(taObjDiffRec::DIFF_ADD);
-	rec_a->diff_no = i;
-	DiffFlagParents(rec_a);
+        rec_a->SetDiffFlag(taObjDiffRec::DIFF_ADD);
+        rec_a->diff_no = i;
+        DiffFlagParents(rec_a);
 
         taObjDiffRec* rec0 = src_b->SafeEl(df.start_b);
         int add_nest = rec0->nest_level;
         for(int l=0; l<df.insert_b; l++) {
           taObjDiffRec* rec_b = src_b->SafeEl(df.start_b + l);
           rec_b->SetDiffFlag(taObjDiffRec::DIFF_ADD);
-	  rec_b->diff_no = i;
+          rec_b->diff_no = i;
           if(DiffFlagParents(rec_b))
             add_nest = rec_b->nest_level;
           Link(rec_b);
@@ -8622,7 +8627,7 @@ int taObjDiff_List::DiffPurgeNoDiffs(taObjDiff_List* src) {
   int n_purge = 0;
   for(int i=src->size-1; i>=0; i--) {
     taObjDiffRec* rec = src->FastEl(i);
-    if(rec->n_diffs == 0) {	// easy -- lets see what that does..
+    if(rec->n_diffs == 0) {     // easy -- lets see what that does..
       src->RemoveIdx(i);
       n_purge++;
       continue;

@@ -632,10 +632,11 @@ void iFieldEditDialog::repChanged() {
 
 const QString iRegexpDialog::DOT_STAR(".*");
 
-iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, bool read_only)
+iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, const void *fieldOwner, bool read_only)
   : inherited()
   , m_field(regexp_field)
   , m_populator(re_populator)
+  , m_fieldOwner(fieldOwner)
   , m_read_only(read_only)
   , m_apply_clicked(false)
   , m_proxy_model(0)
@@ -677,7 +678,10 @@ void iRegexpDialog::LayoutInstructions(QVBoxLayout *vbox, QString field_name)
   // Dialog title.
   QString title("Editing regular-expression field");
   if (!field_name.isEmpty()) {
-    title.append(": ").append(field_name);
+    title.append(" \"").append(field_name).append("\"");
+  }
+  if (m_fieldOwner) {
+    m_populator->adjustTitle(title, m_fieldOwner);
   }
   setWindowTitle(title);
 
@@ -1566,12 +1570,19 @@ taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QW
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
   , m_populator(re_populator)
+  , m_fieldOwner(0)
 {
   setMinCharWidth(40);
 }
 
-void taiRegexpField::btnEdit_clicked(bool) {
-  iRegexpDialog edit_dialog(this, mbr->name, m_populator, readOnly());
+void taiRegexpField::SetFieldOwner(const void *fieldOwner)
+{
+  m_fieldOwner = fieldOwner;
+}
+
+void taiRegexpField::btnEdit_clicked(bool)
+{
+  iRegexpDialog edit_dialog(this, mbr->name, m_populator, m_fieldOwner, readOnly());
   edit_dialog.exec();
 
   // Unless explicitly overridden, do an autoapply.
@@ -1580,7 +1591,8 @@ void taiRegexpField::btnEdit_clicked(bool) {
   }
 }
 
-void taiRegexpField::lookupKeyPressed() {
+void taiRegexpField::lookupKeyPressed()
+{
   // Open the regexp editor if lookup key pressed.
   btnEdit_clicked(true);
 }
