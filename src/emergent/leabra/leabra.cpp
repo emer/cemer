@@ -3246,6 +3246,8 @@ void LeabraLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
   lay->ext_flag = Unit::NO_EXTERNAL;
   lay->hard_clamped = false;
   lay->ResetSortBuf();
+  if(lay->units.leaves == 0) return; // may not be built yet!
+
   Compute_Active_K(lay, net);   // need kwta.pct for init
   lay->Inhib_Init_Acts(this);
   if(lay->unit_groups) {

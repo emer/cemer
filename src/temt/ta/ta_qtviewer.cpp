@@ -9381,6 +9381,7 @@ void iTreeSearch::srch_text_entered() {
 
 void iTreeSearch::srch_clear_clicked() {
   unHighlightFound();
+  srch_nfound->setText("0");
   srch_found.clear();
   srch_text->setText("");
 }
