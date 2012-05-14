@@ -326,6 +326,7 @@ public:
   TA_BASEFUNS_NOCOPY(WtInitPrompt);
 protected:
   override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize();

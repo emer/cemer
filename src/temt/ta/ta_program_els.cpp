@@ -2190,7 +2190,7 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
   if(!nogui && !taMisc::gui_active) // don't generate anything
     return;
   expr.ParseExpr();		// re-parse just to be sure!
-  String rval = String("cerr << ") + expr.GetFullExpr() + " << endl;";
+  String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
   if(my_mask && debug_level) {
     prog->AddLine(this, "if(" + my_mask->name + " & " + debug_level->name + ") {");

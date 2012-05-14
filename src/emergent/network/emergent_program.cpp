@@ -1087,3 +1087,13 @@ void WtInitPrompt::GenCssPre_impl(Program* prog) {
     prog->IncIndent();
   }
 }
+
+void WtInitPrompt::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  if(taMisc::gui_active && !taMisc::server_active) {	// extra close
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+}
+
