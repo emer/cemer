@@ -2027,7 +2027,6 @@ bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 //////////////////////////
 
 void PrintVar::Initialize() {
-  nogui = false;
 }
 
 void PrintVar::UpdateAfterEdit_impl() {
@@ -2046,8 +2045,6 @@ void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void PrintVar::GenCssBody_impl(Program* prog) {
   if(message.empty() && !print_var && !print_var2 && !print_var3 && !print_var4 && !print_var5 && !print_var6)
-    return;
-  if(!nogui && !taMisc::gui_active) // don't generate anything
     return;
 
   String rval = "cout ";
@@ -2169,7 +2166,6 @@ bool PrintVar::CvtFmCode(const String& code) {
 //////////////////////////
 
 void PrintExpr::Initialize() {
-  nogui = false;
 }
 
 void PrintExpr::UpdateAfterEdit_impl() {
@@ -2187,8 +2183,6 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void PrintExpr::GenCssBody_impl(Program* prog) {
-  if(!nogui && !taMisc::gui_active) // don't generate anything
-    return;
   expr.ParseExpr();		// re-parse just to be sure!
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
