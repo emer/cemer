@@ -1619,7 +1619,7 @@ static cssEl* cssElCFun_max_stub(int na, cssEl* arg[]) {
       cssMisc::Error(arg[0]->prog, "max: requires 2 arguments");
       return &cssMisc::Void;
     }
-    return (*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
+    return *(*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
   }
 }
 
@@ -1650,7 +1650,8 @@ static cssEl* cssElCFun_min_stub(int na, cssEl* arg[]) {
       cssMisc::Error(arg[0]->prog, "min: requires 2 arguments");
       return &cssMisc::Void;
     }
-    return (*(arg[1]) < *(arg[2])) ? arg[1] : arg[2];
+    // returns cssBool* -- need to de-ref
+    return (*(*(arg[1]) < *(arg[2]))) ? arg[1] : arg[2];
   }
 }
 
@@ -1664,7 +1665,8 @@ static cssEl* cssElCFun_abs_stub(int na, cssEl* arg[]) {
     return new cssTA_Matrix(mat1->Abs());
   }
   else {
-    return (*(arg[1]) < *cssBI::false_int) ? -(*arg[1]) : arg[1];
+    // returns cssBool* -- need to de-ref
+    return (*(*(arg[1]) < *cssBI::false_int)) ? -(*arg[1]) : arg[1];
   }
 }
 

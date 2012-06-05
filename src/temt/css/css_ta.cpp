@@ -1562,8 +1562,17 @@ String cssTA_Matrix::GetStr() const {
       return ths->GetPathNames();
     }
   }
-  String fh;
-  return ths->Print(fh);	// use natural print
+  String rval;
+  if(ths->IterCount() == 1) {
+    TA_FOREACH(vitm, *ths) {
+      rval = vitm.toString();
+      break;
+    }
+  }
+  else {
+    ths->Print(rval);	// use natural print
+  }
+  return rval;
 }
 
 cssEl* cssTA_Matrix::operator[](const Variant& i) const {
