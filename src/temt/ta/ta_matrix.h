@@ -1627,7 +1627,7 @@ public:
 public: //
   override float        El_GetFloat_(const void* it) const { return (float)(ta_uintptr_t)*((void**)it); } // #IGNORE
   override const String El_GetStr_(const void* it) const { return String(((ta_uintptr_t)*((void**)it))); } // #IGNORE
-  override void         El_SetFmStr_(void* it, const String& str) {*((void**)it) = (void*)str.toInt();}       // #IGNORE
+  override void         El_SetFmStr_(void* it, const String& str) {*((void**)it) = (void*)str.toUInt();}       // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((void**)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((void**)it) = var.toPtr(); };  // #IGNORE
 protected:
