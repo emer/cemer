@@ -400,16 +400,6 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
   lay->SetUserData("novelty", nov);
   lay->SetUserData("lrate", lrate);
 
-  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
-  if(cs) {
-    cs->lrate_sched.default_val = lrate;
-    cs->UpdateAfterEdit_NoGui();        // propagate to children
-    cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
-    FOREACH_ELEM_IN_GROUP(LeabraConSpec, lc, cs->children) {
-      cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
-    }
-  }
-
   // clamp novelty value on our layer
   UNIT_GP_ITR
     (lay,
@@ -420,10 +410,33 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
      );
 }
 
+void SubiculumLayerSpec::Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_ECNovelty(lay, net);
+  float nov = novelty.ComputeNovelty(lay->norm_err);
+  float lrate = novelty.ComputeLrate(nov);
+  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
+  if(cs) {
+    cs->lrate_sched.default_val = lrate;
+    cs->UpdateAfterEdit_NoGui();        // propagate to children
+    cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+    FOREACH_ELEM_IN_GROUP(LeabraConSpec, lc, cs->children) {
+      lc->lrate_sched.default_val = lrate;
+      lc->UpdateAfterEdit_NoGui();        // propagate to children
+      lc->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+    }
+  }
+}
 
 void SubiculumLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_ECNovelty(lay, net);
   inherited::Compute_CycleStats(lay, net);
+}
+
+void SubiculumLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle(lay, net);
+  if(net->phase == LeabraNetwork::PLUS_PHASE) {
+    Compute_SetLrate(lay, net);
+  }
 }
 
 ///////////////////////////////////////////////////////////////

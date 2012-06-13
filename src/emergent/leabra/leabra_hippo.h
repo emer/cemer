@@ -183,10 +183,6 @@ public:
   ConSpec_SPtr		lrate_mod_con_spec;
   // LeabraConSpec to modulate the learning rate of based on novelty value -- actually sets the learning rate schedule multiplier value, so diff specs can have diff lrates (but cannot have actual schedules -- this is in effect an automatic schedule)
 
-  // following is main hook into code:
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
-
   virtual float Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* lout,
 				     Layer::AccessMode acc_md, int gpidx,
 				     LeabraNetwork* net);
@@ -194,6 +190,12 @@ public:
 
   virtual void 	Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net);
   // compute novelty based on EC_in vs. out discrepancy -- sets USER_DATA values on layer to reflect norm_err, novelty value, and lrate, and activation in layer is always clamped scalar val to reflect novelty
+  virtual void 	Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net);
+  // set the learning rate for conspec according to final novelty computed value -- called in PostSettle
+
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(SubiculumLayerSpec);
 protected:
