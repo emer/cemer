@@ -403,7 +403,11 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
   LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
   if(cs) {
     cs->lrate_sched.default_val = lrate;
-    cs->UpdateAfterEdit_NoGui();        // get into cur_lrate with lrate schedule etc
+    cs->UpdateAfterEdit_NoGui();        // propagate to children
+    cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+    FOREACH_ELEM_IN_GROUP(LeabraConSpec, lc, cs->children) {
+      cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+    }
   }
 
   // clamp novelty value on our layer

@@ -1457,6 +1457,8 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
+  Network* net = nv->net();
+  taProject* proj = GET_OWNER(net, taProject);
 
   float fx = (float)lay->disp_geom.x / nv->max_size.x;
   float fy = (float)lay->disp_geom.y / nv->max_size.y;
@@ -1471,6 +1473,9 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   if(new_y < 0.0f)      new_y -= .5f;
   else                  new_y += .5f;
 
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Layer Move", net, false, NULL); // save at net
+  }
 
   lay->pos.x += (int)new_x;
 //   if(lay->pos.x < 0) lay->pos.x = 0;
@@ -1493,11 +1498,17 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
+  Network* net = nv->net();
+  taProject* proj = GET_OWNER(net, taProject);
 
   const SbVec3f& trans = dragger->translation.getValue();
   float new_z = trans[0] * nv->max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Layer Move", net, false, NULL); // save at net
+  }
 
   lay->pos.z += (int)new_z;
 //   if(lay->pos.z < 0) lay->pos.z = 0;
@@ -1921,6 +1932,8 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
+  Network* net = nv->net();
+  taProject* proj = GET_OWNER(net, taProject);
 
   float fx = ((float)lgp->max_disp_size.x + 2.0f * T3LayerNode::width) / nv->max_size.x;
   float fy = ((float)lgp->max_disp_size.y + 2.0f * T3LayerNode::width) / nv->max_size.y;
@@ -1936,6 +1949,10 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   else                  new_x += .5f;
   if(new_y < 0.0f)      new_y -= .5f;
   else                  new_y += .5f;
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Layer Group Move", net, false, NULL); // save at net
+  }
 
   lgp->pos.x += (int)new_x;
   if(lgp->pos.x < 0) lgp->pos.x = 0;
@@ -1958,6 +1975,8 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
+  Network* net = nv->net();
+  taProject* proj = GET_OWNER(net, taProject);
 
   float fz = (float)lgp->max_disp_size.z / nv->max_size.z;
   float zfrac = .5f * fz;
@@ -1966,6 +1985,10 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   float new_z = trans[0] * nv->max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Layer Group Move", net, false, NULL); // save at net
+  }
 
   lgp->pos.z += (int)new_z;
   if(lgp->pos.z < 0) lgp->pos.z = 0;
