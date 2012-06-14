@@ -138,6 +138,32 @@ private:
   void	Defaults_init();
 };
 
+class LEABRA_API DeepContextLayerSpec : public LeabraLayerSpec {
+  // deep cortical layers context layer: always copy from source layer except in final "nothing" phase
+INHERITED(LeabraLayerSpec)
+public:
+  
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+
+  TA_SIMPLE_BASEFUNS(DeepContextLayerSpec);
+  
+protected:
+  SPEC_DEFAULTS;
+  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
+  // get context source value for given context unit
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init();
+};
 
 class LEABRA_API LeabraMultCopyLayerSpec : public LeabraLayerSpec {
   // layer that copies activations from one layer and multiplies them by values from another -- i.e., multiplicative gating -- must recv from 2 prjns (any more ignored) -- first is copy activation, second is multiplication activation

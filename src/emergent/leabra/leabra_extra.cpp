@@ -151,6 +151,58 @@ void LeabraLayer::TriggerContextUpdate() {
 }
 
 //////////////////////////////////
+//     DeepContextLayerSpec        //
+//////////////////////////////////
+
+void DeepContextLayerSpec::Initialize() {
+  SetUnique("decay", true);
+  Defaults_init();
+}
+
+void DeepContextLayerSpec::Defaults_init() {
+  decay.event = 0.0f;
+  decay.phase = 0.0f;
+}
+
+bool DeepContextLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+
+//   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  return rval;
+}
+
+void DeepContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net) {
+  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+  if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
+    return;
+  }
+  LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+  if(TestError(!su, "Compute_Context", "requires one unit in recv projection!")) {
+    return;
+  }
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
+  if(net->phase_no >= 2) {
+    u->act = u->act_p;		// just use last plus phase state
+  }
+  else {
+    u->act = su->act_eq;
+  }
+  u->act_eq = u->act_nd = u->act;
+  u->da = 0.0f;            // I'm fully settled!
+  u->AddToActBuf(rus->syn_delay);
+}
+
+void DeepContextLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    Compute_Context(lay, u, net);
+  }
+  inherited::Compute_CycleStats(lay, net);
+}
+
+//////////////////////////////////
 //      MultCopyLayerSpec
 
 void LeabraMultCopyLayerSpec::Initialize() {
