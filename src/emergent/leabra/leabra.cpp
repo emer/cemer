@@ -2383,6 +2383,17 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
   return 0.0f;
 }
 
+float LeabraUnitSpec::Compute_M2SSE(LeabraUnit* u, LeabraNetwork* net, bool& has_targ) {
+  float sse = 0.0f;
+  has_targ = false;
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
+    has_targ = true;
+    float uerr = u->targ - u->act_m2;
+    if(fabsf(uerr) >= sse_tol)
+      sse = uerr * uerr;
+  }
+  return sse;
+}
 
 //////////////////////////////////////////
 //       Misc Functions                 //
@@ -4799,6 +4810,24 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   return lay->norm_err;
 }
 
+float LeabraLayerSpec::Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net,
+				     int& n_vals) {
+  n_vals = 0;
+  float sse = 0.0f;
+  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
+			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    return 0.0f;
+  }
+  bool has_targ = false;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    sse += u->Compute_M2SSE(net, has_targ);
+    if(has_targ) n_vals++;
+  }
+  return sse;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //      Parameter Adaptation over longer timesales
 
@@ -6600,6 +6629,38 @@ void LeabraNetwork::Compute_NormErr() {
   else {
     norm_err = 0.0f;
   }
+}
+
+float LeabraNetwork::Compute_M2SSE(bool unit_avg, bool sqrt) {
+  float sse = 0.0f;
+  int n_vals = 0;
+  int lay_vals = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    sse += l->Compute_M2SSE(this, lay_vals);
+    n_vals += lay_vals;
+  }
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
+  return sse;
+}
+
+float LeabraNetwork::Compute_M2SSE_Recon(bool unit_avg, bool sqrt) {
+  float sse = 0.0f;
+  int n_vals = 0;
+  int lay_vals = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned() || l->layer_type != Layer::INPUT) continue;
+    sse += l->Compute_M2SSE(this, lay_vals);
+    n_vals += lay_vals;
+  }
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
+  return sse;
 }
 
 void LeabraNetwork::Compute_MinusCycles() {
