@@ -123,6 +123,22 @@ private:
   void 	Destroy()		{ };
 };
 
+class EMERGENT_API SmallWorldPrjnSpec : public ProjectionSpec {
+  // Wolfgang Maass'-inspired Small World Connectivity
+INHERITED(ProjectionSpec)
+public:
+
+  float lambda;
+
+  override void	Connect_impl(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(SmallWorldPrjnSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
 class EMERGENT_API RandomPrjnSpec : public ProjectionSpec {
   // Connects all units with probability p_con.
 INHERITED(ProjectionSpec)
