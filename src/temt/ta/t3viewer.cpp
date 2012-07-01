@@ -2380,6 +2380,7 @@ iTabBarEx::iTabBarEx(iTabWidget* parent)
 :inherited(parent)
 {
   m_tab_widget = parent;
+  setMovable(true);
 }
 
 void iTabBarEx::contextMenuEvent(QContextMenuEvent * e) {
@@ -2442,10 +2443,16 @@ void iT3DataViewer::Init() {
   //  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   lay->addWidget(tw);
+  iTabBarBase* itb = tw->GetTabBar();
+
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
           this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
   connect(tw, SIGNAL(currentChanged(int)),
           this, SLOT(tw_currentChanged(int)) );
+
+  connect(itb, SIGNAL(tabMoved(int, int)),
+          this, SLOT(tw_tabMoved(int, int)) );
+
   // punt, and just connect a timer to focus first tab
   // if any ProcessEvents get called (should not!) may have to make non-zero time
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
@@ -2611,6 +2618,9 @@ void iT3DataViewer::focusInEvent(QFocusEvent* ev) {
   }
 }
 
+void iT3DataViewer::tw_tabMoved(int fm, int to) {
+  viewer()->frames.MoveIdx(fm, to);
+}
 
 //////////////////////////
 //      T3DataViewer    //

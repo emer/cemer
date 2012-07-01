@@ -2243,24 +2243,12 @@ LeabraProject .projects["test"] {
 		T3SavedView @["View_5"] { };
 	      };
 	    };
-	    T3DataViewFrame @["EpochOutputData"] { 
+	    T3DataViewFrame @["Images"] { 
 	      T3DataView_List @.children = [1] {
-		GraphTableView @["projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0"] { 
-		  T3DataView_List @.children = [14] {
-		    GraphColView @["batch"] { };
-		    GraphColView @["epoch"] { };
-		    GraphColView @["avg_sse"] { };
-		    GraphColView @["cnt_err"] { };
-		    GraphColView @["avg_norm_err"] { };
-		    GraphColView @["avg_ext_rew"] { };
-		    GraphColView @["avg_cycles"] { };
-		    GraphColView @["epoch_time_tot"] { };
-		    GraphColView @["epoch_time_usr"] { };
-		    GraphColView @["avg_max_avg_m"] { };
-		    GraphColView @["avg_max_l_thr"] { };
-		    GraphColView @["mean_Hid0_act_m"] { };
-		    GraphColView @["mean_Hid1_act_m"] { };
-		    GraphColView @["mean_Out_act_m"] { };
+		GridTableView @["Images_Grid"] { 
+		  T3DataView_List @.children = [2] {
+		    GridColView @["orig_img"] { };
+		    GridColView @["recon"] { };
 		  };
 		};
 	      };
@@ -2313,12 +2301,24 @@ LeabraProject .projects["test"] {
 		T3SavedView @["View_5"] { };
 	      };
 	    };
-	    T3DataViewFrame @["Images"] { 
+	    T3DataViewFrame @["EpochOutputData"] { 
 	      T3DataView_List @.children = [1] {
-		GridTableView @["Images_Grid"] { 
-		  T3DataView_List @.children = [2] {
-		    GridColView @["orig_img"] { };
-		    GridColView @["recon"] { };
+		GraphTableView @["projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0"] { 
+		  T3DataView_List @.children = [14] {
+		    GraphColView @["batch"] { };
+		    GraphColView @["epoch"] { };
+		    GraphColView @["avg_sse"] { };
+		    GraphColView @["cnt_err"] { };
+		    GraphColView @["avg_norm_err"] { };
+		    GraphColView @["avg_ext_rew"] { };
+		    GraphColView @["avg_cycles"] { };
+		    GraphColView @["epoch_time_tot"] { };
+		    GraphColView @["epoch_time_usr"] { };
+		    GraphColView @["avg_max_avg_m"] { };
+		    GraphColView @["avg_max_l_thr"] { };
+		    GraphColView @["mean_Hid0_act_m"] { };
+		    GraphColView @["mean_Hid1_act_m"] { };
+		    GraphColView @["mean_Out_act_m"] { };
 		  };
 		};
 	      };
@@ -2751,7 +2751,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=a492d30e8fe1e926ec0ea0781bf36948%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=04928ca154b83b0c6fc2d04c4ec8a0dc%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -3519,7 +3519,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 1,092 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 1,097 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -3533,9 +3533,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"0c98e6d55ccb3874de4cd7910dea6df2+\\\\\",\"watchToken\":\"7df7ae5b278211dd7b03300c95d484ce+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"b47abe35393ee3ab92345c1ea24c1291+\\\\\",\"watchToken\":\"fe17d37f9eb7cd4c813331dcf7cd1539+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:0998fd2a6a7af9adea7c0caead82e203 */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:bffdcaa20dd5d648e5f2c7ac2623d628 */
 }
 </script>
 
@@ -3565,7 +3565,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.246 secs. -->
+<!-- Served in 0.252 secs. -->
 
 
 
@@ -33219,469 +33219,85 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	};
        };
       };
-      T3DataViewFrame @["EpochOutputData"] {
-       name="EpochOutputData";
+      T3DataViewFrame @["Images"] {
+       name="Images";
        m_data=NULL;
        visible=1;
        root_view {
-	name=;
+	name="T3DataViewRoot_0";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name=;
+	 name="T3DataView_List_0";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
-	 GraphTableView @["projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0"] {
-	  name="projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0";
-	  m_data=$.projects["test"].data.gp["OutputData"]["EpochOutputData"]$;
+	 GridTableView @["Images_Grid"] {
+	  name="Images_Grid";
+	  m_data=$.projects["test"].programs["FFTest"].objs["Images"]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name=;
-	   el_typ=GraphColView;
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
 	   el_def=0;
-	   GraphColView @["batch"] {
-	    name="batch";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	   GridColView @["orig_img"] {
+	    name="orig_img";
+	    m_data=.projects["test"].programs["FFTest"].objs["Images"].data["orig_img"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
+	    text_width=298;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
 	   };
-	   GraphColView @["epoch"] {
-	    name="epoch";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	   GridColView @["recon"] {
+	    name="recon";
+	    m_data=.projects["test"].programs["FFTest"].objs["Images"].data["recon"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_sse"] {
-	    name="avg_sse";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["cnt_err"] {
-	    name="cnt_err";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_norm_err"] {
-	    name="avg_norm_err";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_ext_rew"] {
-	    name="avg_ext_rew";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_cycles"] {
-	    name="avg_cycles";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["epoch_time_tot"] {
-	    name="epoch_time_tot";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["epoch_time_usr"] {
-	    name="epoch_time_usr";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_max_avg_m"] {
-	    name="avg_max_avg_m";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_max_avg_m"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_max_l_thr"] {
-	    name="avg_max_l_thr";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_max_l_thr"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["mean_Hid0_act_m"] {
-	    name="mean_Hid0_act_m";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Hid0_act_m"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["mean_Hid1_act_m"] {
-	    name="mean_Hid1_act_m";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Hid1_act_m"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["mean_Out_act_m"] {
-	    name="mean_Out_act_m";
-	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Out_act_m"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
+	    text_width=298;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
-	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_rows=1;
+	  view_range {min=0: max=0: };
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  graph_type=XY;
-	  plot_style=LINE;
-	  negative_draw=0;
-	  negative_draw_z=1;
-	  line_width=2;
-	  point_size=MEDIUM;
-	  point_spacing=1;
-	  bar_space=0.2;
-	  label_spacing=-1;
+	  col_n=5;
+	  col_range {min=0: max=1: };
 	  width=1;
-	  depth=1;
-	  axis_font_size=0.05;
-	  label_font_size=0.04;
-	  x_axis {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=X;
-	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  z_axis {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Z;
-	   col_name="batch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  plot_1 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name="cnt_err";
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=25: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  plot_2 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name="avg_sse";
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=6.26396: };
-	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=SQUARE;
-	   alt_y=1;
-	  };
-	  plot_3 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="avg_norm_err";
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
-	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=DIAMOND;
-	   alt_y=0;
-	  };
-	  plot_4 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="mean_Hid0_act_m";
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
-	   color {name="green": r=0: g=1: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=TRIANGLE;
-	   alt_y=1;
-	  };
-	  plot_5 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="mean_Hid1_act_m";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=PLUS;
-	   alt_y=1;
-	  };
-	  plot_6 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="mean_Out_act_m";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CROSS;
-	   alt_y=1;
-	  };
-	  plot_7 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=STAR;
-	   alt_y=0;
-	  };
-	  plot_8 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=MINUS;
-	   alt_y=0;
-	  };
-	  err_1 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_2 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_3 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_4 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_5 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_6 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_7 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_8 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_spacing=1;
-	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
-	  color_axis {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
 	  colorscale {
-	   name=;
+	   name="ColorScale_0";
 	   chunks=133;
 	   min=-1;
 	   max=1;
-	   range=0;
+	   range=1;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
-	  raster_axis {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  thresh=0.5;
-	  thr_line_len=0.48;
-	  matrix_mode=SEP_GRAPHS;
-	  mat_layout=BOT_ZERO;
-	  mat_odd_vert=1;
-	  two_d_font=0;
-	  two_d_font_scale=350;
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
 	 };
 	};
        };
@@ -33690,15 +33306,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name=;
+	name="T3SavedView_List_14";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["View_0"] {
 	 name="View_0";
 	 view_saved=1;
-	 pos {x=1.5: y=0.445: z=1.714201: };
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.726701;
+	 focal_dist=1.453747;
 	};
 	T3SavedView @["View_1"] {
 	 name="View_1";
@@ -34304,85 +33920,469 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
       };
-      T3DataViewFrame @["Images"] {
-       name="Images";
+      T3DataViewFrame @["EpochOutputData"] {
+       name="EpochOutputData";
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name=;
 	 el_typ=T3DataViewMain;
 	 el_def=0;
-	 GridTableView @["Images_Grid"] {
-	  name="Images_Grid";
-	  m_data=$.projects["test"].programs["FFTest"].objs["Images"]$;
+	 GraphTableView @["projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0"] {
+	  name="projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_EpochOutputData_root_view_children_0";
+	  m_data=$.projects["test"].data.gp["OutputData"]["EpochOutputData"]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_0";
-	   el_typ=GridColView;
+	   name=;
+	   el_typ=GraphColView;
 	   el_def=0;
-	   GridColView @["orig_img"] {
-	    name="orig_img";
-	    m_data=.projects["test"].programs["FFTest"].objs["Images"].data["orig_img"]$$;
+	   GraphColView @["batch"] {
+	    name="batch";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=298;
-	    scale_on=1;
-	    mat_layout=BOT_ZERO;
-	    mat_image=1;
-	    mat_odd_vert=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
 	   };
-	   GridColView @["recon"] {
-	    name="recon";
-	    m_data=.projects["test"].programs["FFTest"].objs["Images"].data["recon"]$$;
+	   GraphColView @["epoch"] {
+	    name="epoch";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=298;
-	    scale_on=1;
-	    mat_layout=BOT_ZERO;
-	    mat_image=1;
-	    mat_odd_vert=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_sse"] {
+	    name="avg_sse";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["cnt_err"] {
+	    name="cnt_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_norm_err"] {
+	    name="avg_norm_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_ext_rew"] {
+	    name="avg_ext_rew";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_cycles"] {
+	    name="avg_cycles";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_tot"] {
+	    name="epoch_time_tot";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_usr"] {
+	    name="epoch_time_usr";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_max_avg_m"] {
+	    name="avg_max_avg_m";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_max_avg_m"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_max_l_thr"] {
+	    name="avg_max_l_thr";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_max_l_thr"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["mean_Hid0_act_m"] {
+	    name="mean_Hid0_act_m";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Hid0_act_m"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["mean_Hid1_act_m"] {
+	    name="mean_Hid1_act_m";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Hid1_act_m"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["mean_Out_act_m"] {
+	    name="mean_Out_act_m";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["mean_Out_act_m"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
-	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=5;
-	  col_range {min=0: max=1: };
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
 	  width=1;
-	  grid_on=1;
-	  header_on=1;
-	  row_num_on=0;
-	  two_d_font=0;
-	  two_d_font_scale=350;
-	  mat_val_text=0;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="batch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name="cnt_err";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=25: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name="avg_sse";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=6.26396: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=1;
+	  };
+	  plot_3 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_norm_err";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="mean_Hid0_act_m";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
+	   color {name="green": r=0: g=1: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=1;
+	  };
+	  plot_5 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="mean_Hid1_act_m";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=1;
+	  };
+	  plot_6 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="mean_Out_act_m";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=1;
+	  };
+	  plot_7 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  err_1 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
+	  color_axis {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
 	  colorscale {
-	   name="ColorScale_0";
+	   name=;
 	   chunks=133;
 	   min=-1;
 	   max=1;
-	   range=1;
+	   range=0;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=0;
 	  };
-	  grid_margin=0.01;
-	  grid_line_size=0.005;
-	  row_num_width=4;
-	  mat_block_spc=0.1;
-	  mat_block_height=0;
-	  mat_rot=0;
-	  mat_trans=0.6;
-	  mat_size_range {min=4: max=16: };
-	  text_size_range {min=0.02: max=0.05: };
-	  click_vals=0;
-	  lmb_val=1;
-	  mmb_val=0;
+	  raster_axis {
+	   name=;
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
 	 };
 	};
        };
@@ -34391,15 +34391,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_14";
+	name=;
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["View_0"] {
 	 name="View_0";
 	 view_saved=1;
-	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 pos {x=1.5: y=0.445: z=1.714201: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.453747;
+	 focal_dist=1.726701;
 	};
 	T3SavedView @["View_1"] {
 	 name="View_1";

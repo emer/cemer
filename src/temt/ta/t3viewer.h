@@ -978,6 +978,7 @@ protected: // IDataViewWidget i/f
 protected slots:
   void                  tw_customContextMenuRequested2(const QPoint& pos, int tab_idx);
   void                  tw_currentChanged(int tab_idx);
+  void                  tw_tabMoved(int fm, int to);
 
 protected:
   override void         focusInEvent(QFocusEvent* ev);

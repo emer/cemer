@@ -5192,7 +5192,6 @@ void iMainWindowViewer::windowActivationChange(bool oldActive) {
 //////////////////////////
 
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
-  setMovable(true);
 }
 
 void iTabBarBase::selectNextTab() {
