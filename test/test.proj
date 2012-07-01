@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.3.10.0 rev5427
+// ta_Dump File v3.0 -- code v5.3.10.0 rev5444
 LeabraProject .projects["test"] { 
  UserDataItem_List @*(.user_data_) {
     UserData_DocLink @["DocLink"] { };
@@ -2164,14 +2164,31 @@ LeabraProject .projects["test"] {
 
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @["DefaultProjectBrowser"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_win_lft"] { };
+	UserDataItem @["view_win_top"] { };
+	UserDataItem @["view_win_wd"] { };
+	UserDataItem @["view_win_ht"] { };
+	UserDataItem @["view_win_iconified"] { };
+	UserDataItem @["view_splitter_state"] { };
+   };
+
       ToolBar_List @.toolbars = [1] {
-	ToolBar @["Application"] { };
+	ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_win_visible"] { };
+     };
+};
       };
 
       FrameViewer_List @.frames = [3] {
 	tabBrowseViewer @["Tree"] { };
 	PanelViewer @["Panels"] { };
 	T3DataViewer @["DefaultViewer"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_frame_selected"] { };
+     };
+
 	  T3DataViewFrame_List @.frames = [5] {
 	    T3DataViewFrame @["Network"] { 
 	      T3DataView_List @.children = [1] {
@@ -2320,7 +2337,16 @@ LeabraProject .projects["test"] {
       };
 
       DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @["Tools"] { };
+	ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_win_lft"] { };
+	    UserDataItem @["view_win_top"] { };
+	    UserDataItem @["view_win_wd"] { };
+	    UserDataItem @["view_win_ht"] { };
+	    UserDataItem @["view_win_iconified"] { };
+	    UserDataItem @["view_visible"] { };
+     };
+};
       };
     };
   };
@@ -2725,7 +2751,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=ca0bd2c47be891ac9b4d2441c82af3f2%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=a492d30e8fe1e926ec0ea0781bf36948%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -3457,7 +3483,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120613064310 -->
+<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120701051740 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -3493,7 +3519,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 1,083 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 1,092 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -3507,9 +3533,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"5d6e02e4e37d233a97bbc7a2f25b9e9b+\\\\\",\"watchToken\":\"371f25b6276cabad3131bfdba6368a58+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"0c98e6d55ccb3874de4cd7910dea6df2+\\\\\",\"watchToken\":\"7df7ae5b278211dd7b03300c95d484ce+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:fed95907de51e57d4c45ddf5e16f7176 */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:0998fd2a6a7af9adea7c0caead82e203 */
 }
 </script>
 
@@ -3539,7 +3565,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.445 secs. -->
+<!-- Served in 0.246 secs. -->
 
 
 
@@ -32743,6 +32769,41 @@ presented in the minus phase -- if this is not the case (values are computed on 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @["DefaultProjectBrowser"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_19";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     name="view_win_lft";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     name="view_win_top";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     name="view_win_wd";
+     value 6 0=0.9994669556617737;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     name="view_win_ht";
+     value 6 0=0.7996604442596436;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAAAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQ==";
+     val_type_fixed=0;
+    };
+   };
    name="DefaultProjectBrowser";
    m_data=.projects["test"]$$;
    visible=1;
@@ -32755,6 +32816,16 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_20";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Application";
      m_data=NULL;
      visible=0;
@@ -32781,6 +32852,16 @@ presented in the minus phase -- if this is not the case (values are computed on 
      visible=1;
     };
     T3DataViewer @["DefaultViewer"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_21";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_frame_selected"] {
+       name="view_frame_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="DefaultViewer";
      m_data=NULL;
      visible=1;
@@ -34365,6 +34446,41 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_22";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       name="view_win_lft";
+       value 6 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       name="view_win_top";
+       value 6 0=0.007640067953616381;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       name="view_win_wd";
+       value 6 0=0.04051172733306885;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       name="view_win_ht";
+       value 6 0=0.7376909852027893;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Tools";
      m_data=NULL;
      visible=1;

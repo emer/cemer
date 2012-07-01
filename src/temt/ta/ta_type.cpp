@@ -5294,22 +5294,24 @@ TypeDef* TypeDef::GetNonPtrType() const {
   if(ptr == 0)    return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
-  while((rval = rval->GetParent()) != NULL) {
+  while(rval->GetParent() != NULL) {
+    rval = rval->GetParent();
     if(rval->ptr == 0)
       return rval;
   }
-  return NULL;
+  return rval;			// always return something
 }
 
 TypeDef* TypeDef::GetNonRefType() const {
   if(!ref)    return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
-  while((rval = rval->GetParent()) != NULL) {
+  while(rval->GetParent() != NULL) {
+    rval = rval->GetParent();
     if(!rval->ref)
       return rval;
   }
-  return NULL;
+  return rval;			// always return something
 }
 
 TypeDef* TypeDef::GetTemplType() const {
