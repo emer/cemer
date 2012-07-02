@@ -1355,7 +1355,7 @@ public:
   override float Compute_SSE(Unit* u, Network* net, bool& has_targ);
   override bool	 Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg);
   virtual float  Compute_NormErr(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off from target) according to settings on the network (returns a 1 or 0)
+  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0)
   virtual float  Compute_M2SSE(LeabraUnit* u, LeabraNetwork* net, bool& has_targ);
   // #CAT_Statistic compute sum-squared error of target compared to act_m2 instead of act_m 
 
@@ -1671,10 +1671,10 @@ public:
 
   float	Compute_NormErr(LeabraNetwork* net)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_NormErr(this, net); }
-  // #CAT_Statistic compute normalized binary trial-wise error
+  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off from target) according to settings on the network (returns a 1 or 0)
   float	Compute_M2SSE(LeabraNetwork* net, bool& has_targ)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_M2SSE(this, net, has_targ); }
-  // #CAT_Statistic compute sum-squared error based on act_m2 value
+  // #CAT_Statistic compute sum-squared error based on act_m2 value vs. target
 
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions
@@ -2304,6 +2304,16 @@ public:
   virtual float	Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire layer
 
+  virtual float  Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
+  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
+  virtual float  Compute_M2CosErr(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
+  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m2 instead of act_m -- n_vals is number of units contributing
+
+  virtual float  Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m
+  virtual float  Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2
+
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Parameter Adaptation over longer timesales
@@ -2769,9 +2779,24 @@ public:
   float Compute_NormErr(LeabraNetwork* net)
   { return spec->Compute_NormErr(this, net); }
   // #CAT_Statistic compute normalized binary error across layer (returns normalized value or -1 for not applicable, averaged at network level -- see layerspec for more info)
+
   float Compute_M2SSE(LeabraNetwork* net, int& n_vals)
   { return spec->Compute_M2SSE(this, net, n_vals); }
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+
+  float Compute_CosErr(LeabraNetwork* net, int& n_vals)
+  { return spec->Compute_CosErr(this, net, n_vals); }
+  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
+  float Compute_M2CosErr(LeabraNetwork* net, int& n_vals)
+  { return spec->Compute_M2CosErr(this, net, n_vals); }
+  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m2 instead of act_m -- n_vals is number of units contributing
+
+  float Compute_CosDiff(LeabraNetwork* net)
+  { return spec->Compute_CosDiff(this, net); }
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m
+  float Compute_CosDiff2(LeabraNetwork* net)
+  { return spec->Compute_CosDiff2(this, net); }
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Parameter Adaptation over longer timesales
@@ -3388,11 +3413,21 @@ public:
   virtual void	Compute_ExtRew();
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
   virtual void	Compute_NormErr();
-  // #CAT_Statistic compute normalized binary error: called in TrialStats
+  // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats
   virtual float  Compute_M2SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire network
   virtual float  Compute_M2SSE_Recon(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire network, only on input layers -- this is typically a reconstruction error signal
+  virtual float	Compute_CosErr();
+  // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
+  virtual float	Compute_M2CosErr();
+  // #CAT_Statistic compute cosine (normalized dot product) error between act_m2 and targ unit values
+  virtual float	Compute_M2CosErr_Recon();
+  // #CAT_Statistic compute cosine (normalized dot product) error between act_m2 and targ unit values
+  virtual float	Compute_CosDiff();
+  // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values
+  virtual float	Compute_CosDiff2();
+  // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
   override void	Compute_TrialStats();

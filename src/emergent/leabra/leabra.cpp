@@ -4828,6 +4828,90 @@ float LeabraLayerSpec::Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net,
   return sse;
 }
 
+float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
+				     int& n_vals) {
+  n_vals = 0;
+  float cosv = 0.0f;
+  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
+			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    return 0.0f;
+  }
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) continue;
+    n_vals++;
+    cosv += u->targ * u->act_m;
+    ssm += u->act_m * u->act_m;
+    sst += u->targ * u->targ;
+  }
+  if(n_vals == 0) return 0.0f;
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  return cosv;
+}
+
+float LeabraLayerSpec::Compute_M2CosErr(LeabraLayer* lay, LeabraNetwork* net,
+				     int& n_vals) {
+  n_vals = 0;
+  float cosv = 0.0f;
+  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
+			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    return 0.0f;
+  }
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) continue;
+    n_vals++;
+    cosv += u->targ * u->act_m2;
+    ssm += u->act_m2 * u->act_m2;
+    sst += u->targ * u->targ;
+  }
+  if(n_vals == 0) return 0.0f;
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  return cosv;
+}
+
+float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  float cosv = 0.0f;
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    cosv += u->act_p * u->act_m;
+    ssm += u->act_m * u->act_m;
+    sst += u->act_p * u->act_p;
+  }
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  return cosv;
+}
+
+float LeabraLayerSpec::Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net) {
+  float cosv = 0.0f;
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    cosv += u->act_p * u->act_m2;
+    ssm += u->act_m2 * u->act_m2;
+    sst += u->act_p * u->act_p;
+  }
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  return cosv;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //      Parameter Adaptation over longer timesales
 
@@ -6661,6 +6745,77 @@ float LeabraNetwork::Compute_M2SSE_Recon(bool unit_avg, bool sqrt) {
   if(sqrt)
     sse = sqrtf(sse);
   return sse;
+}
+
+float LeabraNetwork::Compute_CosErr() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  int lay_vals = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    cosv += l->Compute_CosErr(this, lay_vals);
+    if(lay_vals > 0)
+      n_lays++;
+  }
+  if(n_lays > 0)
+    cosv /= (float)n_lays;
+  return cosv;
+}
+
+float LeabraNetwork::Compute_M2CosErr() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  int lay_vals = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    cosv += l->Compute_M2CosErr(this, lay_vals);
+    if(lay_vals > 0)
+      n_lays++;
+  }
+  if(n_lays > 0)
+    cosv /= (float)n_lays;
+  return cosv;
+}
+
+float LeabraNetwork::Compute_M2CosErr_Recon() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  int lay_vals = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned() || l->layer_type != Layer::INPUT) continue;
+    cosv += l->Compute_M2CosErr(this, lay_vals);
+    if(lay_vals > 0)
+      n_lays++;
+  }
+  if(n_lays > 0)
+    cosv /= (float)n_lays;
+  return cosv;
+}
+
+float LeabraNetwork::Compute_CosDiff() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    cosv += l->Compute_CosDiff(this);
+    n_lays++;
+  }
+  if(n_lays > 0)
+    cosv /= (float)n_lays;
+  return cosv;
+}
+
+float LeabraNetwork::Compute_CosDiff2() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    cosv += l->Compute_CosDiff2(this);
+    n_lays++;
+  }
+  if(n_lays > 0)
+    cosv /= (float)n_lays;
+  return cosv;
 }
 
 void LeabraNetwork::Compute_MinusCycles() {
