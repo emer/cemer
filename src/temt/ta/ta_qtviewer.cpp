@@ -3736,6 +3736,10 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   tabMisc::DelayedFunCall_gui(data, "WindowShowHook");
   // make it delayed so window should actuall show first!
   AlignCssConsole();
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  setFocus();
+#endif
 }
 
 void iMainWindowViewer::hideEvent(QHideEvent* e) {
