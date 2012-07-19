@@ -2161,17 +2161,17 @@ bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
   Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
 
   Layer* lay;
-  if(lay = net->FindLayer("Patch")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("SNc")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("Matrix")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if(lay = net->FindLayer("Matrix_mnt")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if(lay = net->FindLayer("Matrix_out")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if(lay = net->FindLayer("SNrThal")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("SNrThal_out")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("SNrThal_mnt")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("PFC")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("PFC_mnt")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("PFC_out")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("Patch"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("SNc"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("Matrix"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if((lay = net->FindLayer("Matrix_mnt"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if((lay = net->FindLayer("Matrix_out"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if((lay = net->FindLayer("SNrThal"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("SNrThal_out"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("SNrThal_mnt"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("PFC"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("PFC_mnt"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("PFC_out"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
 
   if(new_bg_laygp || new_pfc_laygp) {
     bg_laygp->pos.z = 0;

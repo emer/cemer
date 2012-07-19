@@ -218,9 +218,9 @@ int taiMimeItem::data(const QMimeData* md, const QString& mimeType,
 taiMimeItem* taiMimeItem::ExtractByType(TypeDef* td, taiMimeSource* ms, 
     const String& mimetype)
 {
-  if (!td->DerivesFrom(&TA_taiMimeItem)) return false;
+  if (!td->DerivesFrom(&TA_taiMimeItem)) return NULL;
   taiMimeItem* inst = (taiMimeItem*)td->GetInstance();
-  if (!inst) return false;
+  if (!inst) return NULL;
   return inst->Extract(ms, mimetype);
 }
 

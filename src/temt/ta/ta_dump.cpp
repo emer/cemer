@@ -517,7 +517,7 @@ bool MemberDef::DumpMember(void* par) {
     return !(ValIsDefault(par, taMisc::SHOW_CHECK_MASK));
   }
   // embedded types (simple or objects) get saved by default
-  else if ((type->ptr == 0))
+  else if (type->ptr == 0)
     return true;
   // ok, so it is a ptr -- some types get saved by default
   else if (type->DerivesFrom(TA_taBase) ||

@@ -271,8 +271,8 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
       val = *((double*)base); break;
     case NetView::MD_INT:
       val = *((int*)base); break;
-      //  default:
-      //    val = 0.0f; break;
+    default:
+      val = 0.0f; break;
     }
   }
   return val;

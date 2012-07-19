@@ -2660,8 +2660,8 @@ void T3DataViewer::InitLinks() {
   taBase::Own(frames, this);
   // add a default frame, if none yet
   if(!taMisc::is_loading && frames.size == 0) {
-    //T3DataViewFrame* fv =
-    (T3DataViewFrame*)frames.New(1);
+    //T3DataViewFrame* fv = (T3DataViewFrame*)
+    frames.New(1);
     //nuke fv->SetName("DefaultFrame");
   }
 }

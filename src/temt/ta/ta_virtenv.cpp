@@ -458,6 +458,8 @@ void VEBody::Scale(float sx, float sy, float sz) {
     if(sy > 0.0f) box.y *= sy; else box.y *= sx;
     if(sz > 0.0f) box.z *= sz; else box.z *= sx;
     break;
+  case NO_SHAPE:
+    break;
   }
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
@@ -2052,6 +2054,10 @@ void VEStatic::Scale(float sx, float sy, float sz) {
     box.x *= sx;
     if(sy > 0.0f) box.y *= sy; else box.y *= sx;
     if(sz > 0.0f) box.z *= sz; else box.z *= sx;
+    break;
+  case PLANE:
+    break;
+  case NO_SHAPE:
     break;
   }
   DataChanged(DCR_ITEM_UPDATED); // update displays..

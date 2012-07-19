@@ -651,6 +651,7 @@ String DataCol::EncodeHeaderName(const MatrixIndex& dims) const {
   case VT_INT:          typ_info = "|"; break;
   case VT_BYTE:         typ_info = "@"; break;
   case VT_VARIANT:      typ_info = "&"; break;
+  case VT_VOIDPTR:	typ_info = "*"; break;
   }
   String mat_info;
   if(is_matrix) {               // specify which cell in matrix this is [dims:d0,d1,d2..]
@@ -690,6 +691,9 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   } else if (nm[0] == '&') {
     nm = nm.after('&');
     vt = VT_VARIANT;
+  } else if (nm[0] == '*') {
+    nm = nm.after('*');
+    vt = VT_VOIDPTR;
   } /*no: caller must set default else {
     vt = VT_FLOAT;
   }*/
@@ -2183,8 +2187,8 @@ DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& c
 }
 
 DataCol* DataTable::NewColFmMatrix(taMatrix* mat, const String& col_nm) {
-  if(!mat) { taMisc::Error("taDataProc::NewColFmMatrix: mat cannot be NULL"); return false; }
-  if(col_nm == "") { taMisc::Error("taDataProc::NewColFmMatrix: col_nm must be non-empty"); return false; }
+  if(!mat) { taMisc::Error("taDataProc::NewColFmMatrix: mat cannot be NULL"); return NULL; }
+  if(col_nm == "") { taMisc::Error("taDataProc::NewColFmMatrix: col_nm must be non-empty"); return NULL; }
 
   ValType val_type = mat->GetDataValType();
   MatrixGeom geom(mat->dims(), mat->dim(0), mat->dim(1), mat->dim(2), mat->dim(3), mat->dim(4), mat->dim(5), mat->dim(6));
@@ -2691,6 +2695,7 @@ void DataTable::RowsAdding(int n, bool begin) {
   | = int
   @ = byte
   & = variant
+  * = void*
 
   matrix: each cell has [dims:x,y..]
   first mat cell also has <dims:dx,dy..>

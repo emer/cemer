@@ -2938,6 +2938,8 @@ void LeabraInhibSpec::Defaults_init() {
   case AVG_MAX_PT_INHIB:
     kwta_pt = .2f;
     break;
+  default:
+    break;
   }
   net_gain = 0.35f;
   act_gain = 0.4f;
@@ -3646,6 +3648,8 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
       break;
     case LeabraInhibSpec::AVG_NET_ACT:
       Compute_Inhib_AvgNetAct(lay, acc_md, gpidx, thr, net, ispec);
+      break;
+    case LeabraInhibSpec::UNIT_INHIB:
       break;
     }
     thr->i_val.g_i = thr->i_val.kwta;

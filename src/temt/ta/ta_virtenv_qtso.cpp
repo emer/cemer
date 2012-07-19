@@ -340,6 +340,8 @@ void VEBodyView::FixOrientation(bool force) {
         tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
+    default:
+      break;
     }
   }
 }
@@ -799,6 +801,8 @@ void VEJointView::FixOrientation(bool force) {
       tx2->rotation.setValue(netrot);
       break;
     }
+    default:
+      break;
     }
   }
 }
@@ -1150,6 +1154,8 @@ void VEStaticView::FixOrientation(bool force) {
       }
       break;
     }
+    default:
+      break;
     }
   }
 }

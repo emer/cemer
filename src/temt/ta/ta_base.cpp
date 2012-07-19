@@ -934,6 +934,8 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
     return true;		// nothing to do here
     break;
   }
+  case IDX_UNK:
+    break;
   }
   return false;
 }
@@ -4366,6 +4368,8 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     return (Variant)nwvw;
     break;
   }
+  case IDX_UNK:
+    break;
   }
   return _nilVariant;
 }
@@ -5533,7 +5537,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     if (m_dbu_cnt == 0) {
       int pdbu = parDbuCnt();
       // we will only signal if no parent update, or if parent is data and we are structural
-      if ((pdbu == 0)) {
+      if (pdbu == 0) {
         if (stru) {
           DataStructUpdateEnd_impl();
           DataDataChanged_impl(DCR_STRUCT_UPDATE_END, NULL, NULL);
@@ -5825,6 +5829,8 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
     return (Variant)nwvw;
     break;
   }
+  case IDX_UNK:
+    break;
   }
   return _nilVariant;
 }

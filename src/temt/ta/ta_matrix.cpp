@@ -1069,6 +1069,8 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     return (Variant)nwvw;
     break;
   }
+  case IDX_UNK:
+    break;
   }
   return _nilVariant;
 }
@@ -1747,7 +1749,7 @@ bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) c
     && ((d1 >= 0) && (d1 < geom[1]))
     && ((d2 >= 0) && (d2 < geom[2]))
     && ((d3 >= 0) && (d3 < geom[3]));
-  case 5: ((d0 >= 0) && (d0 < geom[0]))
+  case 5: return ((d0 >= 0) && (d0 < geom[0]))
     && ((d1 >= 0) && (d1 < geom[1]))
     && ((d2 >= 0) && (d2 < geom[2]))
     && ((d3 >= 0) && (d3 < geom[3]))

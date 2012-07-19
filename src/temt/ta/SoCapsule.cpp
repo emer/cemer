@@ -94,11 +94,10 @@
 #include <Inventor/details/SoCylinderDetail.h>
 #include <Inventor/elements/SoComplexityTypeElement.h>
 #include <Inventor/elements/SoMaterialBindingElement.h>
-#include <Inventor/elements/SoGLTextureEnabledElement.h>
-#include <Inventor/elements/SoGLTexture3EnabledElement.h>
+#include <Inventor/elements/SoGLMultiTextureEnabledElement.h>
+#include <Inventor/elements/SoMultiTextureCoordinateElement.h>
 #include <Inventor/elements/SoGLCacheContextElement.h>
 #include <Inventor/elements/SoTextureCoordinateElement.h>
-#include <Inventor/elements/SoMultiTextureEnabledElement.h>
 #include <Inventor/SoPrimitiveVertex.h>
 
 #include <Inventor/C/glue/gl.h>
@@ -685,16 +684,23 @@ SoCapsule::GLRender(SoGLRenderAction * action)
   SoMaterialBundle mb(action);
   mb.sendFirst();
 
+  SbBool doTextures = FALSE;
+  SbBool do3DTextures = FALSE;
+  if (SoGLMultiTextureEnabledElement::get(state, 0)) {
+    doTextures = TRUE;
+    if (SoGLMultiTextureEnabledElement::getMode(state,0) ==
+        SoMultiTextureEnabledElement::TEXTURE3D) {
+      do3DTextures = TRUE;
+    }
+  }
+
   SbBool sendNormals = !mb.isColorOnly() || 
     (SoTextureCoordinateElement::getType(state) == SoTextureCoordinateElement::FUNCTION);
 
   unsigned int flags = 0;
-  if (sendNormals)
-    flags |= SOGL_NEED_NORMALS;
-  if (SoGLTextureEnabledElement::get(state))
-    flags |= SOGL_NEED_TEXCOORDS;
-  else if (SoGLTexture3EnabledElement::get(state))
-    flags |= SOGL_NEED_3DTEXCOORDS;
+  if (sendNormals)  flags |= SOGL_NEED_NORMALS;
+  if (doTextures) flags |= SOGL_NEED_TEXCOORDS;
+  else if (do3DTextures) flags |= SOGL_NEED_3DTEXCOORDS;
   
   SoMaterialBindingElement::Binding bind =
     SoMaterialBindingElement::get(state);

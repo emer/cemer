@@ -826,13 +826,13 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
 
 bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
+  if(e->modifiers() && Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
   // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  if(ctrl_pressed & e->key() == Qt::Key_V) ctrl_pressed = false;
+  if(ctrl_pressed && e->key() == Qt::Key_V) ctrl_pressed = false;
   // actual ctrl = meta on apple -- enable this
-  if(e->modifiers() & Qt::MetaModifier)
+  if(e->modifiers() && Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
   return ctrl_pressed;

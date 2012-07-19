@@ -7332,13 +7332,13 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
 static void PrintType_OptsLists(String& strm, const String_PArray& opts,
                             const String_PArray& lists)
 {
-  if((opts.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
-     (taMisc::type_info_ == taMisc::NO_LISTS)) {
+  if((opts.size > 0) && ((taMisc::type_info_ == taMisc::ALL_INFO) ||
+			 (taMisc::type_info_ == taMisc::NO_LISTS))) {
     for(int i=0; i<opts.size; i++)
       strm << " #" << opts.FastEl(i);
   }
-  if((lists.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
-     (taMisc::type_info_ == taMisc::NO_OPTIONS)) {
+  if((lists.size > 0) && ((taMisc::type_info_ == taMisc::ALL_INFO) ||
+			  (taMisc::type_info_ == taMisc::NO_OPTIONS))) {
     strm << " LISTS:";
     for(int i=0; i<lists.size; i++)
       strm << " " << lists.FastEl(i);

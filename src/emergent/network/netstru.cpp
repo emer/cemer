@@ -35,15 +35,9 @@
 //  SigmoidSpec         //
 //////////////////////////
 
-#ifdef _MSC_VER
 const float SigmoidSpec::SIGMOID_MAX_VAL = 0.999999f;
 const float SigmoidSpec::SIGMOID_MIN_VAL = 0.000001f;
 const float SigmoidSpec::SIGMOID_MAX_NET = 13.81551f;
-#else
-const float SigmoidSpec::SIGMOID_MAX_VAL;
-const float SigmoidSpec::SIGMOID_MIN_VAL;
-const float SigmoidSpec::SIGMOID_MAX_NET;
-#endif
 
 //////////////////////////
 //      Schedule        //

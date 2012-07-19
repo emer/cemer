@@ -350,7 +350,7 @@ void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void
   if (updating) return; // it is us that caused this
   // only do simple refresh if an item is updated, otherwise, the major changes
   // of Insert, Remove, etc. need full refresh
-  if ((dcr == DCR_GROUP_ITEM_UPDATE))
+  if (dcr == DCR_GROUP_ITEM_UPDATE)
   {
     Refresh_impl(false);
   } else if ((dcr > DCR_GROUP_ITEM_UPDATE) &&
@@ -379,7 +379,7 @@ void iUserDataDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
   UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(sel_item_base);
-  if ((item == NULL) ) return;
+  if (item == NULL) return;
 
   int sel_item_index = udil->FindLeafEl(item);
   if (sel_item_index < 0) return;  //huh?
@@ -424,7 +424,7 @@ void iUserDataDataHost::tw_customContextMenuRequested(const QPoint& pos)
   // we want the data item for the label, to get its goodies...
 
   UserDataItemBase* item = GetUserDataItem(row);
-  if ((item == NULL) ) return;
+  if (item == NULL) return;
 
   //na sel_item_mbr = item->mbr;
   sel_item_row = row;
@@ -443,7 +443,7 @@ void iUserDataDataHost::tw_itemChanged(QTableWidgetItem* item)
   if (item->column() > 0) return;
 
   UserDataItemBase* udi = GetUserDataItem(item->row());
-  if ((udi == NULL) ) return;
+  if (udi == NULL) return;
   udi->SetName(item->text());
   Refresh_impl(false);
 }

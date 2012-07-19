@@ -1190,15 +1190,15 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
   }
 
   Layer* lay;
-  if(lay = net->FindLayer(pvenm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(pvinm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(pvrnm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(lvenm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(lvinm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(nvnm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer(vtanm)) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("DA")) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if(lay = net->FindLayer("RewTarg")) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(pvenm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(pvinm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(pvrnm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(lvenm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(lvinm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(nvnm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer(vtanm))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("DA"))) { laygp->Transfer(lay); lay->pos.z = 0; }
+  if((lay = net->FindLayer("RewTarg"))) { laygp->Transfer(lay); lay->pos.z = 0; }
 
   net->RebuildAllViews();       // trigger update
 
