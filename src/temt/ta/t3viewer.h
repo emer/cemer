@@ -156,6 +156,22 @@ private:
 };
 
 
+class TA_API T3QuarterWidget : public QuarterWidget {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS our custom version of the quarter widget
+  Q_OBJECT
+  INHERITED(QuarterWidget)
+public:
+
+  explicit T3QuarterWidget(QWidget * parent = 0, const QGLWidget * sharewidget = 0, Qt::WindowFlags f = 0);
+  explicit T3QuarterWidget(QGLContext * context, QWidget * parent = 0, const QGLWidget * sharewidget = 0, Qt::WindowFlags f = 0);
+  explicit T3QuarterWidget(const QGLFormat & format, QWidget * parent = 0, const QGLWidget * shareWidget = 0, Qt::WindowFlags f = 0);
+  ~T3QuarterWidget();
+
+protected:
+  override void paintEvent ( QPaintEvent * event );
+};
+
+
 class TA_API T3ExaminerViewer : public QWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS provides a full examiner viewer interface built on top of the QuarterWidget viewer, replicating the GUI of the SoQtExaminerViewer
   Q_OBJECT
@@ -411,9 +427,9 @@ public:
   override bool         isMapped() const; // only true if in gui mode and gui stuff exists
   T3Node*               node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
-  virtual T3DataViewFrame* GetFrame();
+  virtual T3DataViewFrame* GetFrame() const;
   // get the T3DataViewFrame that owns us
-  virtual T3ExaminerViewer* GetViewer();
+  virtual T3ExaminerViewer* GetViewer() const;
   // #IGNORE get the Viewer that contains us
 
   void                  AddRemoveChildNode(SoNode* node, bool adding);

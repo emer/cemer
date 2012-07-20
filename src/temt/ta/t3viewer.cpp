@@ -107,6 +107,8 @@ using namespace Qt;
 #define THUMB_PAGE_STEP 10
 #define THUMB_WRAP_THR 800
 
+/////////////////////////////////////////////////////////////
+//		Saved Views
 
 void T3SavedView::Initialize() {
   view_saved = false;
@@ -182,6 +184,50 @@ void T3SavedView_List::GetCameraFocDist(int view_no, float& fd) {
   sv->GetCameraFocDist(fd);
 }
 
+/////////////////////////////////////////////////////////////
+//		Quarter Widget
+
+T3QuarterWidget::T3QuarterWidget(const QGLFormat & format, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
+  : inherited(format, parent, sharewidget, f)
+{
+}
+
+T3QuarterWidget::T3QuarterWidget(QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
+  : inherited(parent, sharewidget, f)
+{
+}
+
+T3QuarterWidget::T3QuarterWidget(QGLContext * context, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
+  : inherited(context, parent, sharewidget, f)
+{
+}
+
+T3QuarterWidget::~T3QuarterWidget() {
+}
+
+void T3QuarterWidget::paintEvent(QPaintEvent * event) {
+  T3ExaminerViewer* t3v = (T3ExaminerViewer*)parent();
+  if(!t3v) return;
+  iT3ViewspaceWidget* vsw = t3v->t3vw;
+  T3DataViewFrame* vf = t3v->GetFrame();
+  if(!vsw || !vf) return;
+
+  iT3DataViewer* idv = vf->widget()->viewerWidget();
+  if(!idv) return;
+  T3DataViewer* dv = idv->viewer();
+  if(!dv || !dv->isMapped()) return;
+
+  inherited::paintEvent(event);
+  // orig code:
+  // if (updatesEnabled()) {
+  //   glDraw();
+  //   updateOverlayGL();
+  // }
+}
+
+/////////////////////////////////////////////////////////////
+//		Examiner Viewer
+
 const int T3ExaminerViewer::n_views = 6;
 
 static void t3ev_config_wheel(QtThumbWheel* whl) {
@@ -219,7 +265,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
 
-  quarter = new QuarterWidget(this);
+  quarter = new T3QuarterWidget(this);
+  quarter->setUpdatesEnabled(false);
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);
   quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
@@ -1222,12 +1269,12 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 //     m_node_so->touch();
 }
 
-T3DataViewFrame* T3DataView::GetFrame() {
+T3DataViewFrame* T3DataView::GetFrame() const {
   T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
   return frame;
 }
 
-T3ExaminerViewer* T3DataView::GetViewer() {
+T3ExaminerViewer* T3DataView::GetViewer() const {
   T3DataViewFrame* frame = GetFrame();
   if(!frame || !frame->widget()) return NULL;
   T3ExaminerViewer* viewer = frame->widget()->t3viewer();
@@ -1249,9 +1296,13 @@ ISelectableHost* T3DataView::host() const {
 }
 
 bool T3DataView::isMapped() const {
-  return (m_node_so);
+  if(!m_node_so) return false;
+  T3ExaminerViewer* vw = GetViewer();
+  if(!vw) return false;
+  if(!vw->quarter) return false;
+  if(!vw->quarter->isValid()) return false;
+  return true;
 }
-
 
 void T3DataView::OnWindowBind(iT3DataViewFrame* vw) {
   OnWindowBind_impl(vw);
@@ -1590,6 +1641,9 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   m_t3viewer = value;
   if(!m_t3viewer) return;
 
+  taMisc::DebugInfo("iT3ViewspaceWidget::setT3viewer Start",
+		    i_data_frame()->viewer()->name);
+  
   // this is the new Multisampling method -- much better!
 
   QGLWidget* qglw = (QGLWidget*)m_t3viewer->quarter; // it is this guy
@@ -1663,6 +1717,10 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     // make sure it has the transparency set for new guy
   }
   LayoutComponents();
+  // m_t3viewer->quarter->setUpdatesEnabled(true);
+
+  taMisc::DebugInfo("iT3ViewspaceWidget::setT3viewer End",
+		    i_data_frame()->viewer()->name);
 }
 
 void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
@@ -1731,6 +1789,8 @@ void iT3ViewspaceWidget::showEvent(QShowEvent* ev) {
   if ((bool)m_top_view && (m_last_vis != 1)) {
     m_last_vis = 1;
     m_top_view->SetVisible(true);
+    if(m_t3viewer && m_t3viewer->quarter)
+      m_t3viewer->quarter->setUpdatesEnabled(true);
   }
 }
 
@@ -1738,6 +1798,8 @@ void iT3ViewspaceWidget::hideEvent(QHideEvent* ev) {
   if ((bool)m_top_view && (m_last_vis != -1)) {
     m_last_vis = -1;
     m_top_view->SetVisible(false);
+    if(m_t3viewer && m_t3viewer->quarter)
+      m_t3viewer->quarter->setUpdatesEnabled(false);
   }
   inherited::hideEvent(ev);
 }
@@ -2095,6 +2157,7 @@ const iColor T3DataViewFrame::GetTextColor() const {
 }
 
 void T3DataViewFrame::Render_pre() {
+  taMisc::DebugInfo("T3DataViewFrame::Render_pre()", name);
   inherited::Render_pre();
   widget()->Render_pre();
   root_view.Render_pre();
@@ -2109,6 +2172,7 @@ void T3DataViewFrame::Render_pre() {
 }
 
 void T3DataViewFrame::Render_impl() {
+  taMisc::DebugInfo("T3DataViewFrame::Render_impl()", name);
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     QColor bg = (QColor)GetBgColor();
@@ -2126,6 +2190,7 @@ void T3DataViewFrame::Render_impl() {
 }
 
 void T3DataViewFrame::Render_post() {
+  taMisc::DebugInfo("T3DataViewFrame::Render_post()", name);
   inherited::Render_post();
   root_view.Render_post();
   widget()->setSceneTop(root_view.node_so());
