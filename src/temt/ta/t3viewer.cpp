@@ -1641,9 +1641,6 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   m_t3viewer = value;
   if(!m_t3viewer) return;
 
-  taMisc::DebugInfo("iT3ViewspaceWidget::setT3viewer Start",
-		    i_data_frame()->viewer()->name);
-  
   // this is the new Multisampling method -- much better!
 
   QGLWidget* qglw = (QGLWidget*)m_t3viewer->quarter; // it is this guy
@@ -1718,9 +1715,6 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   }
   LayoutComponents();
   // m_t3viewer->quarter->setUpdatesEnabled(true);
-
-  taMisc::DebugInfo("iT3ViewspaceWidget::setT3viewer End",
-		    i_data_frame()->viewer()->name);
 }
 
 void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
@@ -2157,7 +2151,6 @@ const iColor T3DataViewFrame::GetTextColor() const {
 }
 
 void T3DataViewFrame::Render_pre() {
-  taMisc::DebugInfo("T3DataViewFrame::Render_pre()", name);
   inherited::Render_pre();
   widget()->Render_pre();
   root_view.Render_pre();
@@ -2172,7 +2165,6 @@ void T3DataViewFrame::Render_pre() {
 }
 
 void T3DataViewFrame::Render_impl() {
-  taMisc::DebugInfo("T3DataViewFrame::Render_impl()", name);
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     QColor bg = (QColor)GetBgColor();
@@ -2190,7 +2182,6 @@ void T3DataViewFrame::Render_impl() {
 }
 
 void T3DataViewFrame::Render_post() {
-  taMisc::DebugInfo("T3DataViewFrame::Render_post()", name);
   inherited::Render_post();
   root_view.Render_post();
   widget()->setSceneTop(root_view.node_so());
