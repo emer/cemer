@@ -5093,13 +5093,17 @@ void iMainWindowViewer::toolsTypeBrowser() {
 }
 
 void iMainWindowViewer::UpdateUi() {
+  taMisc::DebugInfo("UpdateUi");
   QString cmd_str = "Ctrl+";
 
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
-  editCutAction->setEnabled(ea & taiClipData::EA_CUT);
-  editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
-  editDupeAction->setVisible(ea & taiClipData::EA_DUPE);
+  // editCutAction->setEnabled(ea & taiClipData::EA_CUT);
+  // editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
+  // editDupeAction->setVisible(ea & taiClipData::EA_DUPE);
+  editCutAction->setEnabled(true);
+  editCopyAction->setEnabled(true);
+  editDupeAction->setVisible(true);
   // we always show the plainjane Paste (enable or disable)
   // if more than one paste guy is enabled, no shortcuts/accelerators
   int paste_cnt = 0;
