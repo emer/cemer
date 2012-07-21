@@ -5093,7 +5093,6 @@ void iMainWindowViewer::toolsTypeBrowser() {
 }
 
 void iMainWindowViewer::UpdateUi() {
-  taMisc::DebugInfo("UpdateUi");
   QString cmd_str = "Ctrl+";
 
   int ea = GetEditActions();
