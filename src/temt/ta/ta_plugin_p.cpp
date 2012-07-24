@@ -44,7 +44,6 @@ IPlugin* taPluginInst::plugin() {
 }
 
 String taPluginInst::PluginNameFmFileName(const String& fname) {
-  
   String plugin_nm = taMisc::GetFileFmPath(fname).before(".");
   if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
   if(taMisc::app_suffix.nonempty())
@@ -139,12 +138,12 @@ taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   if(rval->mod_time_int < taMisc::exe_mod_time_int) {
     String msg;
     msg << "===================================================================\n"
-	<< "A plugin is out of date vs. the executable, and must be recompiled\n"
-	<< "It will not be loaded.\n"
-	<< "plugin file: " << fileName << "\n"
-	<< "last modified:       " << rval->mod_time << "\n"
-	<< "executable last mod: " << taMisc::exe_mod_time << "\n"
-	<< "====================================================================\n";
+        << "A plugin is out of date vs. the executable, and must be recompiled\n"
+        << "It will not be loaded.\n"
+        << "plugin file: " << fileName << "\n"
+        << "last modified:       " << rval->mod_time << "\n"
+        << "executable last mod: " << taMisc::exe_mod_time << "\n"
+        << "====================================================================\n";
     cerr << msg;
     AppendLogEntry(msg);
     rval->load_state = taPluginInst::LS_OUT_OF_DATE;
@@ -161,7 +160,7 @@ taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
       rval->load_state = taPluginInst::LS_LOAD_FAIL;
 #if QT_VERSION >= 0x040200
       log_entry = "Could not probe: " + fileName
-	+ String("; Qt error msg: ").cat(rval->errorString().toLatin1().data());
+        + String("; Qt error msg: ").cat(rval->errorString().toLatin1().data());
 #else
       log_entry = "Could not probe: " + fileName;
 #endif
@@ -237,7 +236,7 @@ void taPlugins::MakeAllOutOfDatePlugins() {
     }
   }
 }
-  
+
 void taPlugins::MakeAllUserPlugins() {
   taMisc::Info("=========================================================================");
   taMisc::Info("Making All UserPlugins");
@@ -531,7 +530,7 @@ void taPlugins::CleanAllOutOfDatePlugins() {
     }
   }
 }
-  
+
 void taPlugins::CleanAllUserPlugins() {
   taMisc::Info("=========================================================================");
   taMisc::Info("Cleaning All User Plugins");
@@ -661,7 +660,11 @@ bool taPlugin::InitPlugin() {
   loaded = true; // we are officially "loaded" -- need this for state...
   // find state type, if any -- qualify before assigned to pl
   // we show to user for clarity, and if they want to add after the fact
-  state_classname = capitalize(name) + "PluginState";
+
+  // Just cap first letter -- capitalize() also downcases the rest of the string.
+  state_classname = name + "PluginState";
+  state_classname[0] = (char) toupper(state_classname[0]);
+
   TypeDef* pst = taMisc::types.FindName(state_classname);
   if (pst && pst->DerivesFrom(&TA_taFBase))
     state_type = pst;
@@ -1071,11 +1074,9 @@ void PluginWizard::UpdateAfterEdit_impl() {
   // modify it to force it to be C-valid
   plugin_name = taMisc::StringCVar(plugin_name);
   if(plugin_name.length() > 0) {
+    // Just cap first letter -- capitalize() also downcases the rest of the string.
     class_name_prefix = plugin_name;
-    if(islower(plugin_name[0])) {
-      // just cap first letter -- capitalize also downcases the rest of the thing..
-      class_name_prefix = String((char)toupper(plugin_name[0])) + plugin_name.after(0);
-    }
+    class_name_prefix[0] = (char) toupper(class_name_prefix[0]);
   }
   if(plugin_name != "myplugin") {
     if(uniqueId.contains("myplugin")) uniqueId.gsub("myplugin", plugin_name);
@@ -1100,7 +1101,7 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
   //TODO: check if a plugin already exists there!
 
   if(CheckError(plugin_name.contains("_"), quiet, ok,
-		"plugin name cannot contain an _ (underbar) character -- this is used for 	identifying different build types and cannot appear in the main plugin name -- I just removed it from the name -- please double check that it looks ok"))
+                "plugin name cannot contain an _ (underbar) character -- this is used for identifying different build types and cannot appear in the main plugin name -- I just removed it from the name -- please double check that it looks ok"))
     plugin_name.gsub("_", "");
 
   CheckError(plugin_name != "myplugin" && uniqueId.startsWith("myplugin."), quiet, ok,
