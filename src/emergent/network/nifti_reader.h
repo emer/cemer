@@ -20,12 +20,14 @@
 #define NIFTIREADER_H
 
 #include <QList>
-class QStringList;
+#include <QString>
+#include <QStringList>
+#include "nifti1_io.h"                  /*** NIFTI-1 header specification ***/
+#include "t3node_so.h"
+
 class QString;
 class FloatTDCoord;
 class TDCoord;
-class NiftiReaderPrivate;
-class TalairachAtlasPrivate;
 
 class NiftiReader {
 public:
@@ -39,20 +41,21 @@ public:
   explicit NiftiReader(const QString& file);
   virtual ~NiftiReader();
 
-  bool    isValid() const;
-  TDCoord xyzDimensions() const;
-  int     bytesPerVoxel() const;
-  void    sliceXY(int index, unsigned short* data) const;
-  void    slice(AnatomicalPlane p, int index, unsigned short* data) const;
-  void    sliceAsTexture(AnatomicalPlane p, int index, unsigned char* data) const;
-  int     numExtensions() const;
-  FloatTDCoord XyzToIjk(const FloatTDCoord &xyzCoord) const;
-  FloatTDCoord IjkToXyz(const FloatTDCoord &ijkCoord) const;
+  bool    IsValid() const;
+  TDCoord XyzDimensions() const;
+  int     BytesPerVoxel() const;
+  float   CalMax() const;
+  float   CalMin() const;
+  float   CalRange() const;
+  void    SliceXY(int index, unsigned short* data) const;
+  void    Slice(AnatomicalPlane p, int index, unsigned short* data) const;
+  int     NumExtensions() const;
+  FloatTDCoord XyzToIjk(const FloatTDCoord &xyz_coord) const;
+  FloatTDCoord IjkToXyz(const FloatTDCoord &ijk_coord) const;
+  const void *RawData() const;
 
 protected:
-  const void *rawData() const;
-
-  NiftiReaderPrivate* m_d;
+  nifti_image* m_img;
 
 private:
   NiftiReader();
@@ -61,25 +64,4 @@ private:
 
 };
 
-
-class TalairachAtlas : public NiftiReader {
-public:
-  explicit  TalairachAtlas(const QString& filename);
-  virtual   ~TalairachAtlas();
-
-  const QStringList& labels() const;
-  QString label(int index) const;
-  QList<TDCoord> GetVoxelsInArea(const QString &labelRegexp) const;
-  QList<FloatTDCoord> GetVoxelCoords(const QList<TDCoord> &voxelIdxs) const;
-  static FloatTDCoord Tal2Mni(const FloatTDCoord &talCoord);
-
-protected:
-  TalairachAtlasPrivate* m_d;
-
-private:
-  TalairachAtlas();
-  TalairachAtlas(const TalairachAtlas&);
-  TalairachAtlas operator=(const TalairachAtlas&);
-
-};
 #endif // niftireader_h

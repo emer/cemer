@@ -58,7 +58,66 @@ SmartRef_Of(Network,TA_Network); // NetworkRef
 class DataTable;
 class NetMonitor;
 class BrainView;
+class BrainAtlasInfo;
+#ifndef __MAKETA__
+class BrainAtlas;
+#endif
+class BrainAtlasUtils;
 class NetView; //
+
+////////////////////////////////////////////////////
+//   BrainAtlasProxy
+class EMERGENT_API BrainAtlasProxy : public taOBase
+{
+  // #NO_TOKENS #NO_UPDATE_AFTER A single brain atlas.
+  INHERITED(taOBase)
+public:
+  explicit BrainAtlasProxy(const BrainAtlasInfo& info);
+  String  name;
+  String  filepath;
+  String  description;
+  String  image_filepath;
+  
+  QList<QColor>       Colors();
+  QStringList         Labels(const QString& labels_regexp=".*");
+#ifndef __MAKETA__
+  QSet<int>           MatchingLabelIndices(const QString& labels_regexp);
+#endif
+  QString             Label(int index);
+  unsigned int        Index(const QString& label);
+  QList<FloatTDCoord> VoxelCoordinates(const QString& label_regexp);
+  
+  TA_BASEFUNS_SC(BrainAtlasProxy);
+
+private:
+  void  Initialize();
+  void  Destroy();
+  bool  m_have_atlas_instance;
+#ifndef __MAKETA__
+  BrainAtlas&  Atlas();
+  BrainAtlas*  m_atlas;
+#endif
+  
+  QStringList m_labels;
+  QList<QColor> m_colors;
+  
+};
+SmartRef_Of(BrainAtlasProxy, TA_BrainAtlasProxy);
+
+////////////////////////////////////////////////////
+//   BrainAtlas_List
+
+class EMERGENT_API BrainAtlas_List : public taList<BrainAtlasProxy>
+{
+  // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
+  INHERITED(taList<BrainAtlasProxy>)
+public:
+  TA_BASEFUNS_SC(BrainAtlas_List);
+private:
+  void  Initialize()            { SetBaseType(&TA_BrainAtlasProxy); }
+  void  Destroy()               { };
+};
+
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -1534,16 +1593,20 @@ private:
   void  Destroy()               { };
 };
 
-class EMERGENT_API TalairachRegexpPopulator : public RegexpPopulator {
+class EMERGENT_API BrainAtlasRegexpPopulator : public RegexpPopulator {
 public:
-  TalairachRegexpPopulator();
+  BrainAtlasRegexpPopulator();
   override QStringList getHeadings() const;
   override QStringList getLabels() const;
+  override QList<QColor> getColors() const;
   override QString getSeparator() const;
+  override void    setSource(const void *fieldOwner);
   override void adjustTitle(QString &title, const void *fieldOwner) const;
 private:
-  mutable QStringList labels;
-  mutable QStringList headings;
+  mutable QStringList m_labels;
+  mutable QStringList m_headings;
+  mutable QString m_filepath;
+  mutable QList<QColor> m_colors;
 };
 
 class EMERGENT_API Layer : public taNBase {
@@ -1614,7 +1677,7 @@ public:
   bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
-  String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_TalairachRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
+  String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_BrainAtlasRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
   float                 voxel_fill_pct; // #CAT_Structure #MIN_0 #MAX_1 Percent of brain_area voxels to be filled by units in this layer.
 
   int                   n_units;
@@ -2341,7 +2404,8 @@ public:
 
   AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
 
-  String        atlas_name;     // #CAT_Structure The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  static BrainAtlas_List  brain_atlases;  // #NO_SAVE #NO_VIEW Atlases available.
+  BrainAtlasProxyRef 	brain_atlas;  // #FROM_GROUP_brain_atlases The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
 
   TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate      wt_update;      // #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)

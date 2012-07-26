@@ -157,6 +157,7 @@ public:
   virtual QStringList getHeadings() const = 0;
   virtual QStringList getLabels() const = 0;
   virtual QString getSeparator() const = 0;
+  virtual void    setSource(const void *fieldOwner) = 0;
   virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
   virtual ~RegexpPopulator() { }
 };

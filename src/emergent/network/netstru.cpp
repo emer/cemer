@@ -21,6 +21,7 @@
 #include "emergent_project.h"
 #include "ta_data.h"
 #include "ta_filer.h"
+#include "brainstru.h"
 #include "brain_view.h"
 #include "network_voxel_mapper.h"
 
@@ -28,7 +29,86 @@
 #include "ta_qt.h"
 #include "ta_qtgroup.h"
 #include "netstru_qtso.h"
+#include <QDir>
 #endif
+
+
+////////////////////////////////////////////////////
+//   BrainAtlasProxy
+
+BrainAtlasProxy::BrainAtlasProxy(const BrainAtlasInfo& info) :
+  name(info.name),
+  filepath(info.atlas_filename),
+  description(info.description),
+  image_filepath(info.image_filename),
+  m_have_atlas_instance(false),
+  m_atlas(NULL)
+{
+}
+
+void BrainAtlasProxy::Initialize()
+{ 
+  name=""; 
+  filepath = "";
+  description="";
+  image_filepath=""; 
+  m_have_atlas_instance = false;
+  m_atlas = NULL;
+  m_labels.clear();
+  m_colors.clear();
+}
+
+BrainAtlas& BrainAtlasProxy::Atlas()
+{
+  // if we don't already have an BrainAtlas
+  // instance we're proxying, create one...
+  if (m_have_atlas_instance == false) {
+    m_atlas = BrainAtlasFactory::CreateInstance(filepath);
+    m_have_atlas_instance = true;
+  }
+  return *m_atlas;
+}
+
+void BrainAtlasProxy::Destroy()
+{
+  if (m_have_atlas_instance) { 
+    delete m_atlas; 
+    m_atlas = NULL;
+    m_have_atlas_instance = false;
+    m_labels.clear();
+    m_colors.clear();
+  }
+}
+
+QList<QColor> BrainAtlasProxy::Colors()
+{
+  return BrainAtlasUtils::Colors(Atlas());
+}
+
+QStringList BrainAtlasProxy::Labels(const QString& labels_regexp)
+{
+  return BrainAtlasUtils::Labels(Atlas(), labels_regexp);
+}
+
+QSet<int> BrainAtlasProxy::MatchingLabelIndices(const QString& labels_regexp)
+{
+  return BrainAtlasUtils::MatchingLabelIndices(Atlas(), labels_regexp);
+}
+
+QString BrainAtlasProxy::Label(int index)
+{
+  return BrainAtlasUtils::Label(Atlas(), index);
+}
+
+unsigned int BrainAtlasProxy::Index(const QString& label)
+{  
+  return BrainAtlasUtils::Index(Atlas(), label);
+}
+
+QList<FloatTDCoord> BrainAtlasProxy::VoxelCoordinates(const QString& label_regexp)
+{
+  return Atlas().VoxelCoordinates(label_regexp);
+}
 
 
 //////////////////////////
@@ -3877,40 +3957,81 @@ void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
 }
 
 ////////////////////////////////
-//  TalairachRegexpPopulator  //
+//  BrainAtlasRegexpPopulator  //
 ////////////////////////////////
 
-TalairachRegexpPopulator::TalairachRegexpPopulator()
-  : RegexpPopulator()
-  , labels()
+BrainAtlasRegexpPopulator::BrainAtlasRegexpPopulator()
+: RegexpPopulator()
+, m_labels()
+, m_headings()
+, m_filepath("")
+, m_colors()
 {
 }
-
-QStringList TalairachRegexpPopulator::getHeadings() const
+            
+QStringList BrainAtlasRegexpPopulator::getHeadings() const
 {
-  if (headings.empty()) {
-    headings << "Hemisphere" << "Lobe" << "Gyrus" << "Tissue Type"
+  if (m_headings.empty()) {
+    m_headings << "Hemisphere" << "Lobe" << "Gyrus" << "Tissue Type"
       << "Cell Type";
   }
-  return headings;
+  return m_headings;
 }
 
-QStringList TalairachRegexpPopulator::getLabels() const
-{
-  if (labels.empty()) {
-    String atlasFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
-    TalairachAtlas atlas(atlasFilename.toQString());
-    labels = atlas.labels();
+QStringList BrainAtlasRegexpPopulator::getLabels() const
+{  
+  if (m_filepath == "") {
+    m_filepath = taMisc::app_dir.toQString() + "/data/atlases/Talairach.xml";
   }
-  return labels;
+  
+  if (m_labels.empty()) {
+    BrainAtlas* atlas = BrainAtlasFactory::CreateInstance(m_filepath);
+    m_labels = BrainAtlasUtils::Labels(*atlas);
+    delete atlas;
+  }
+  return m_labels;
 }
 
-QString TalairachRegexpPopulator::getSeparator() const
+QList<QColor> BrainAtlasRegexpPopulator::getColors() const
+{
+  // Returns a list of colors associated with the brain atlas labels
+  
+  if (m_filepath == "") {
+    m_filepath = taMisc::app_dir.toQString() + "/data/atlases/Talairach.xml";
+  }
+  
+  if (m_colors.empty()) {
+    BrainAtlas* atlas = BrainAtlasFactory::CreateInstance(m_filepath);
+    m_colors = BrainAtlasUtils::Colors(*atlas);
+    delete atlas;
+  }
+  return m_colors;
+}
+
+QString BrainAtlasRegexpPopulator::getSeparator() const
 {
   return ".";
 }
 
-void TalairachRegexpPopulator::adjustTitle(QString &title, const void *fieldOwner) const
+void BrainAtlasRegexpPopulator::setSource(const void *fieldOwner)
+{
+  // Sets the source (brain atlas filepath) for the populator 
+  // to the network's currently selected atlas
+  
+  // We know the owner of the regexp field is some type of taBase, so cast it.
+  const taBase *base = reinterpret_cast<const taBase *>(fieldOwner);
+  // Then dynamic cast to verify it's a Layer.
+  if (const Layer *layer = dynamic_cast<const Layer *>(base)) {
+    if (const Network *network = layer->own_net) {
+      if (!m_labels.empty()){
+        m_labels.clear();
+      }
+      m_filepath = network->brain_atlas.ptr()->filepath.toQString();
+    }
+  }
+}
+
+void BrainAtlasRegexpPopulator::adjustTitle(QString &title, const void *fieldOwner) const
 {
   // We know the owner of the regexp field is some type of taBase, so cast it.
   const taBase *base = reinterpret_cast<const taBase *>(fieldOwner);
@@ -3918,7 +4039,7 @@ void TalairachRegexpPopulator::adjustTitle(QString &title, const void *fieldOwne
   if (const Layer *layer = dynamic_cast<const Layer *>(base)) {
     title.append(" in layer \"").append(layer->name.chars()).append("\"");
     if (const Network *network = layer->own_net) {
-      title.append(" using atlas \"").append(network->atlas_name.chars()).append("\"");
+      title.append(" using atlas \"").append(network->brain_atlas->name.chars()).append("\"");
     }
   }
 }
@@ -6199,8 +6320,6 @@ void Network::Initialize() {
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
 
-  atlas_name = "talairach.nii";
-
   train_mode = TRAIN;
   wt_update = ON_LINE;
   small_batch_n = 10;
@@ -6279,6 +6398,8 @@ void Network::Destroy() {
   CutLinks();
 }
 
+BrainAtlas_List Network::brain_atlases;
+
 void Network::InitLinks() {
   GetDataLink(); // forces creation, so we track Updates
   proj = GET_MY_OWNER(ProjectBase);
@@ -6303,6 +6424,37 @@ void Network::InitLinks() {
   taBase::Own(send_netin_tmp, this);
   taBase::Own(threads, this);
 
+  taBase::Own(brain_atlases, this);
+
+  // initialize
+  brain_atlases.Reset();
+  
+  // Populate the list of available brain atlases.
+  // Look in TWO locations:
+  //     1) Emergent install location + /data/atlases
+  //     2) User dir + /data/atlases
+  QString emerAtlasPath(taMisc::app_dir.toQString());
+   if (emerAtlasPath.size() != 0) {
+      emerAtlasPath += "/data/atlases";
+  }
+  QString userAtlasPath(taMisc::user_dir.toQString());
+  if (userAtlasPath.size() != 0) {
+    userAtlasPath += "/data/atlases";
+  }
+  QStringList atlases = BrainAtlasUtils::AtlasesAvailable(emerAtlasPath);
+  atlases += BrainAtlasUtils::AtlasesAvailable(userAtlasPath);
+  foreach(QString atlas, atlases) {
+    BrainAtlasInfo info(BrainAtlasUtils::ParseAtlasHeader(atlas));
+    BrainAtlasProxy* ba = new BrainAtlasProxy(info);    
+    brain_atlases.Add(ba);
+    
+    // Set the default to the FSL Talairach atlas
+    if (atlas.contains("Talairach.xml")) {
+      brain_atlas = ba;
+    }
+  }
+  
+  
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_net_comm, this);
   taBase::Own(dmem_trl_comm, this);
@@ -6322,6 +6474,7 @@ void Network::CutLinks() {
   dmem_net_comm.FreeComm();
   dmem_trl_comm.FreeComm();
 #endif
+  brain_atlases.Reset();
   units_flat.Reset();
   send_netin_tmp.CutLinks();
   threads.CutLinks();
@@ -6349,8 +6502,6 @@ void Network::Copy_(const Network& cp) {
   view_objs = cp.view_objs;
 
   auto_build = cp.auto_build;
-
-  atlas_name = cp.atlas_name;
 
   train_mode = cp.train_mode;
   wt_update = cp.wt_update;

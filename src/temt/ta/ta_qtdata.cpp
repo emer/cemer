@@ -872,6 +872,7 @@ void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
 int iRegexpDialog::CreateTableModel()
 {
   // Get the list of labels to filter.
+  m_populator->setSource(m_fieldOwner); 
   QStringList headings = m_populator->getHeadings();
   QStringList labels = m_populator->getLabels();
   QString separator = m_populator->getSeparator();

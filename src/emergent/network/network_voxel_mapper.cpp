@@ -68,17 +68,9 @@ NetworkVoxelMapper::LayerInfo::GetUnit(unsigned idx) const
 NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
   : m_layer_map()
   , m_network(network)
-  , m_atlas(GetAtlasFilename())
+  , m_atlas(m_network->brain_atlas)
   , m_layer_info()
 {
-}
-
-QString
-NetworkVoxelMapper::GetAtlasFilename()
-{
-  // For now, only read from the Talairach atlas.
-  String talairachFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
-  return talairachFilename.toQString();
 }
 
 NetworkVoxelMapper::~NetworkVoxelMapper()
@@ -89,7 +81,7 @@ NetworkVoxelMapper::~NetworkVoxelMapper()
 void
 NetworkVoxelMapper::AssignVoxels()
 {
-  if (m_network->atlas_name.empty()) {
+  if (m_network->brain_atlas.ptr() == NULL ){
     taMisc::Warning("No atlas_name specified in network;",
       "cannot map units to voxel coordinates.");
     return;
@@ -183,8 +175,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
   if (!brain_area.isEmpty()) {
     // Get the list of voxels, first by their i,j,k indices, then convert
     // to x,y,z coordinates.
-    QList<TDCoord> voxelIdxs = m_atlas.GetVoxelsInArea(brain_area);
-    voxels = m_atlas.GetVoxelCoords(voxelIdxs);
+    voxels = m_atlas->VoxelCoordinates(brain_area);
   }
 
   return voxels;
@@ -344,7 +335,7 @@ NetworkVoxelMapper::HandleEmptyBrainArea(
     // possible there is a typo in the regexp (or wrong atlas used, etc.).
     if (!brain_area.isEmpty()) {
       taMisc::Warning("No voxels were found for brain area",
-        brain_area.toLatin1(), "in atlas", m_network->atlas_name);
+        brain_area.toLatin1(), "in atlas", m_network->brain_atlas->name);
     }
 
     // Clear all voxel assignments for units in these layers.
@@ -493,7 +484,7 @@ NetworkVoxelMapper::GetSubvoxelIndexes(
     D += dy;
   }
 
-  assert(subvoxel_idxs.size() == needed_subvoxels);
+  assert(subvoxel_idxs.size() == (int)needed_subvoxels);
   return subvoxel_idxs;
 }
 

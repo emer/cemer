@@ -36,29 +36,27 @@ INHERITED(T3DataViewMain)
 
 public:
   enum MDFlags { // indicates type that unit.disp_base points to
-    MD_FLOAT            = 0x0000,
-    MD_DOUBLE           = 0x0001,
-    MD_INT          = 0x0002,
-    MD_UNKNOWN          = 0x000F
+    MD_FLOAT    = 0x0000,
+    MD_DOUBLE   = 0x0001,
+    MD_INT      = 0x0002,
+    MD_UNKNOWN  = 0x000F
   };
   
   enum AnatomicalPlane // the anatomical plane to display
   {
-    AXIAL     = 0x0000,
-    SAGITTAL  = 0x0001,
-    CORONAL   = 0x0002
+    AXIAL       = 0x0000,
+    SAGITTAL    = 0x0001,
+    CORONAL     = 0x0002
   };
   
   enum StateChange // the type of view state change which determines whether full render is required
   {
-    NONE      = 0x0000,
-    MINOR     = 0x0001,
-    MAJOR     = 0x0002
+    NONE        = 0x0000,
+    MINOR       = 0x0001,
+    MAJOR       = 0x0002
   };
   
-
-//  BrainViewState      bv_state;
-  void                AsyncRenderUpdate();
+  void                  AsyncRenderUpdate();
 
   static BrainView*     New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
@@ -111,46 +109,54 @@ public:
   
   ////////////////////////////////////////////////////////////////
   // view state functions etc
-  bool          IsValid() const;
-  QString       DataName() const;
-  TDCoord       Dimensions() const;
+  bool            IsValid() const;
+  QString         DataName() const;
+  TDCoord         Dimensions() const;
   AnatomicalPlane ViewPlane() const;
-  int           SliceStart() const;
-  int           SliceEnd() const;
-  bool          NumSlicesAreLocked() const;
-  int           SliceSpacing() const;
-  int           SliceTransparency() const;
-  int           UnitValuesTransparency() const;
-  int           NumSlicesValid() const;
-  int           NumSlices() const;
-  int           MaxSlices() const;
-  
-  float		SliceTransparencyXformed() const;
+  int             SliceStart() const;
+  int             SliceEnd() const;
+  bool            NumSlicesAreLocked() const;
+  int             SliceSpacing() const;
+  int             SliceTransparency() const;
+  int             UnitValuesTransparency() const;
+  int             NumSlicesValid() const;
+  int             NumSlices() const;
+  int             MaxSlices() const;
+  bool            ColorBrain() const;
+  QString         ColorBrainRegexp() const;
+  QString         NetworkBrainAreas() const;
+
+  float           SliceTransparencyXformed() const;
   // transformed slice transparency for use in actual rendering	
     
-  void          SetDataName(const QString& data_name);
-  void          SetDimensions(const TDCoord& dimensions);
-  void          SetViewPlane( AnatomicalPlane plane );
-  void          SetViewPlane( int plane );
-  void          SetSliceStart(int start);
-  void          SetSliceEnd(int end);
-  void          SetLockSlices(int state);
-  void          SetSliceSpacing(int spacing);
-  void          SetSliceTransparency(int transparency);
-  void          SetUnitValuesTransparency(int transparency);
-  
-  bool          state_valid_;
-  QString       data_name_;
-  TDCoord       dimensions_;
-  AnatomicalPlane   view_plane_;
-  int           slice_start_;
-  int           slice_end_;
-  int           num_slices_;
-  bool          lock_num_slices_;
-  int           slice_spacing_;
-  int           slice_transparency_;
-  int           unit_val_transparency_;
-  int           last_state_change_;
+  void            SetDataName(const QString& data_name);
+  void            SetDimensions(const TDCoord& dimensions);
+  void            SetViewPlane( AnatomicalPlane plane );
+  void            SetViewPlane( int plane );
+  void            SetSliceStart(int start);
+  void            SetSliceEnd(int end);
+  void            SetLockSlices(int state);
+  void            SetSliceSpacing(int spacing);
+  void            SetSliceTransparency(int transparency);
+  void            SetUnitValuesTransparency(int transparency);
+  void            SetColorBrain(int state);
+  void            SetColorBrainRegexp(const QString& regexp);
+
+  bool          state_valid;
+  String        brain_data_name;
+  TDCoord       brain_dimensions;
+  AnatomicalPlane   view_plane;
+  int           slice_start;
+  int           slice_end;
+  int           num_slices;
+  bool          lock_num_slices;
+  int           slice_spacing;
+  int           slice_transparency;
+  int           unit_val_transparency;
+  int           last_state_change;
+  bool          color_brain;
+  QColor        brain_area_color;
+  String        color_brain_regexp;
   
   bool          ValidSliceStart() const;
   bool          ValidSliceEnd() const;
@@ -211,16 +217,12 @@ protected:
   override void         Reset_impl(); // #IGNORE
   void                  UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void                  viewWin_NotifySignal(ISelectableHost* src, int op);
-//  NiftiReader*      mni_brain; // #IGNORE
-//  TalairachAtlas*   tal_brain; // #IGNORE
 
 private:
   SIMPLE_COPY(BrainView)
   void                  Initialize();
   void                  Destroy();
 };
-
-
 
 
 #endif // brain_view_h

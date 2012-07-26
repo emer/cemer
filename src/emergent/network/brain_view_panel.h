@@ -19,6 +19,10 @@
 #include "netstru_qtso.h" // overkill #include
 class QString;
 
+
+////////////////////////////////////////////////////
+//   BrainViewPanel
+////////////////////////////////////////////////////
 class EMERGENT_API BrainViewPanel: public iViewPanelFrame {
   // frame for gui interface to a BrainView -- usually posted by the netview
 INHERITED(iViewPanelFrame)
@@ -31,32 +35,19 @@ public:
   QHBoxLayout*		layDispCheck;
   QCheckBox*		chkDisplay;
   QCheckBox*		chkLayMove;
-  QCheckBox*		    chkNetText;
-  //QLabel*		    lblTextRot;
-  //taiField*		    fldTextRot;
-  //QLabel*		    lblDispMode;
-  //taiComboBox*		cmbDispMode;
+  QCheckBox*		chkNetText;
 
   QHBoxLayout*		layFontsEtc;
   QLabel*		    lblUnitTrans;
   taiField*		    fldUnitTrans;
-  //QLabel*		    lblUnitFont;
-  //taiField*		    fldUnitFont;
-  //QLabel*		    lblLayFont;
-  //taiField*		    fldLayFont;
-  //QLabel*		    lblMinLayFont;
-  //taiField*		    fldMinLayFont;
-  //QCheckBox*		chkXYSquare;
-  //QCheckBox*		chkLayGp;
 
+  QLineEdit*        fldBrainColorRegexp;
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		layColorScaleCtrls;
   QCheckBox*		chkAutoScale;       // autoscale ck_box
   QPushButton*		butScaleDefault;    // revert to default  
 
-  QHBoxLayout*          layColorBar;
-  //QLabel*           lblUnitSpacing;
-  //taiField*		    fldUnitSpacing;
+  QHBoxLayout*      layColorBar;
   ScaleBar*         cbar;	      // colorbar
   QPushButton*		butSetColor;
 
@@ -102,7 +93,10 @@ public slots:
   void          SetSliceSpacing(int spacing);
   void          SetSliceTransparency(int transparency);
   void          SetUnitValuesTransparency(int transparency);
-  
+  void          SetColorBrain(int state);
+  void          ColorBrainRegexpEdited();
+  void          SetColorBrainRegexp(const QString& regexp);
+    
   void          EmitDataNameChanged(const QString& name);
   void          EmitDimensionsChanged(const TDCoord& d);
   void          EmitViewPlaneChanged(int plane);
@@ -113,18 +107,10 @@ public slots:
   void          EmitSliceTransparencyChanged(int transparency);
   void          EmitUnitValuesTransparencyChanged(int transparency);
   void          EmitStateChanged(int state);  
+  void          EmitColorBrainAreaRegexpChanged(const QString& regexp);
 
 #ifndef __MAKETA__
 signals:
-//  void          nameChanged(const QString& name);
-//  void          dimensionsChanged(TDCoord& d);
-//  void          viewPlaneChanged(int p);
-//  void          numSlicesChanged(int nSlices);
-//  void          sliceStartChanged(int start);
-//  void          sliceEndChanged(int end);
-//  void          sliceSpacingChanged(int spacing);
-//  void          sliceTransparencyChanged(int pctTrans);
-//  void          actsTransparencyChanged(int pctTrans);
   void          DataNameChanged(const QString& name);
   void          DimensionsChanged(const TDCoord& d);
   void          ViewPlaneChanged(int plane);
@@ -135,6 +121,7 @@ signals:
   void          SliceTransparencyChanged(int transparency);
   void          UnitValuesTransparencyChanged(int transparency);
   void          StateChanged(int state); 
+  void          BrainColorRegexpChanged(const QString& regexp);
 #endif
   
 protected slots:
@@ -143,19 +130,17 @@ protected slots:
   void			lvDisplayValues_selectionChanged();
 
 private:
-  QComboBox*        view_plane_comb_;
-  QSpinBox*         slice_strt_sbox_;
-  QSlider*          slice_strt_slid_;
-  QCheckBox*        lock_slices_chbox_;
-  QSpinBox*         slice_end_sbox_;
-  QSlider*          slice_end_slid_;
-//  QSpinBox*         slice_spac_sbox_;
-//  QSlider*          slice_spac_slid_;
-  QSpinBox*         unit_val_tran_sbox_;
-  QSlider*          unit_val_tran_slid_;
-  QSpinBox*         slice_trans_sbox_;
-  QSlider*          slice_tran_slid_;
-  QString           name;
+  QComboBox*        m_view_plane_comb;
+  QSpinBox*         m_slice_strt_sbox;
+  QSlider*          m_slice_strt_slid;
+  QCheckBox*        m_lock_slices_chbox;
+  QSpinBox*         m_slice_end_sbox;
+  QSlider*          m_slice_end_slid;
+  QSpinBox*         m_unit_val_tran_sbox;
+  QSlider*          m_unit_val_tran_slid;
+  QSpinBox*         m_slice_trans_sbox;
+  QSlider*          m_slice_tran_slid;
+  QCheckBox*		m_chk_color_brain;
   void              UpdateWidgetLimits();
 
 };

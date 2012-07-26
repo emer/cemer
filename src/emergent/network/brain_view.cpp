@@ -104,17 +104,19 @@ void BrainView::Initialize() {
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
   
-  state_valid_ = false;
-  data_name_ = "NULL";
-  dimensions_.SetXYZ(182,218,182);
-  view_plane_ = AXIAL;
-  slice_start_ = 1;
-  slice_end_ = 182;
-  num_slices_ = 182;
-  lock_num_slices_ = false;
-  slice_spacing_ = 1;
-  slice_transparency_ = 90;
-  last_state_change_ = NONE;
+  state_valid = false;
+  brain_data_name = "NULL";
+  brain_dimensions.SetXYZ(182,218,182);
+  view_plane = AXIAL;
+  slice_start = 1;
+  slice_end = 182;
+  num_slices = 182;
+  lock_num_slices = false;
+  slice_spacing = 1;
+  slice_transparency = 90;
+  last_state_change = NONE;
+  color_brain = false;
+  color_brain_regexp = "Brodmann"; // default to Brodmann areas
   view_params.unit_trans = .9;	// with high-fill pct, unit trans should be much higher
   
   QString data_path(taMisc::app_dir.toQString());
@@ -181,16 +183,10 @@ void BrainView::BuildAll() { // populates all T3 guys
 
   Network* nt = net();
 
-  //we're rebuilding so something significant may have changed...rebuild.
+  // Set the name of the structural brain image data - NOT the atlas!
   QString data_path(taMisc::app_dir.toQString());
-  QString atlas(nt->atlas_name.toQString());
-  if (atlas.isEmpty()) {
-    data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
-  }
-  else {
-    //TODO: choose correct brain data based on atlas name...
-    data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
-  }
+  data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
+  
   SetDataName(data_path);
   if (false == IsValid()) {
     taMisc::Error("Invalid brain view data");
@@ -908,91 +904,132 @@ void BrainView::AsyncRenderUpdate()
 
 bool BrainView::IsValid() const
 {
-  return state_valid_;
+  return state_valid;
 }
 
 QString BrainView::DataName() const
 {
-  return data_name_;
+  return brain_data_name;
 }
 
 TDCoord BrainView::Dimensions() const
 {
-  return dimensions_;
+  return brain_dimensions;
 }
 
 BrainView::AnatomicalPlane BrainView::ViewPlane() const
 {
-  return view_plane_;
+  return view_plane;
 }
 
 int BrainView::SliceStart() const
 {
-  return slice_start_;
+  return slice_start;
 }
 
 int BrainView::SliceEnd() const
 {
-  return slice_end_;
+  return slice_end;
 }
 
 bool BrainView::NumSlicesAreLocked() const
 {
-  return lock_num_slices_;
+  return lock_num_slices;
 }
 
 int BrainView::SliceSpacing() const
 {
-  return slice_spacing_;
+  return slice_spacing;
 }
 
 int BrainView::SliceTransparency() const
 {
-  return slice_transparency_;
+  return slice_transparency;
 }
 
 float BrainView::SliceTransparencyXformed() const
 {
-  float offset = 100.0f;
-  float logtr = taMath_float::log(offset + slice_transparency_);
-  float denom = taMath_float::log(offset + 100.0f);
-  return logtr / denom;
-}
+  // if user is looking at a single slice, make fully opaque
+  if (slice_end - slice_start == 0) {
+    return 0.0f;   
+  }
+  // otherwise obey transparency setting
+  else {
+    float offset = 100.0f;
+    float logtr = taMath_float::log(offset + slice_transparency);
+    float denom = taMath_float::log(offset + 100.0f);
+    return logtr / denom;   
+  }
+ }
 
 int BrainView::UnitValuesTransparency() const
 {
-  return unit_val_transparency_;
+  return unit_val_transparency;
 }
 
 int BrainView::NumSlicesValid() const
 {
-  return (MaxSlices() - slice_start_ + 1);
+  return (MaxSlices() - slice_start + 1);
 }
 
 int BrainView::NumSlices() const
 {
-  return num_slices_;
+  return num_slices;
 }
 
 int BrainView::MaxSlices() const
 {
   int mx(0);
-  if (view_plane_ == AXIAL) {
-    mx = dimensions_.z;
+  if (view_plane == AXIAL) {
+    mx = brain_dimensions.z;
   }
-  else if (view_plane_ == SAGITTAL) {
-    mx = dimensions_.x;
+  else if (view_plane == SAGITTAL) {
+    mx = brain_dimensions.x;
   }
   else { //CORONAL
-    mx = dimensions_.y;
+    mx = brain_dimensions.y;
   }
   
   return mx;
 }
+bool BrainView::ColorBrain() const
+{
+  return color_brain;
+}
+QString BrainView::NetworkBrainAreas() const
+{
+  QString brain_areas("");
+  Network* net = this->net();
+  if (!net) return brain_areas;
+  
+  brain_areas = "(";
+  int idx(0);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
+    if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
+    if (idx == 0) {
+      brain_areas += lay->brain_area.toQString();
+    }
+    else {
+      brain_areas += "|" + lay->brain_area.toQString();
+    }
+    idx++;
+  }
+  brain_areas += ")";
+
+  if (brain_areas == "()") {
+    brain_areas = "";
+  }
+  return brain_areas;
+}
+
+QString BrainView::ColorBrainRegexp() const
+{ 
+  return color_brain_regexp;
+}
 
 void BrainView::SetDataName(const QString& data_name)
 {
-  if (data_name_ == data_name)
+  if (data_name == brain_data_name)
     return;
   
   // be sure we can read a valid data set before deleting
@@ -1002,36 +1039,36 @@ void BrainView::SetDataName(const QString& data_name)
     return;
   }
   NiftiReader tmp(data_name);
-  if (false == tmp.isValid()) {
+  if (false == tmp.IsValid()) {
     return;
   }
-  data_name_ = data_name;
-  SetDimensions(tmp.xyzDimensions());
+  brain_data_name = data_name;
+  SetDimensions(tmp.XyzDimensions());
   
-  last_state_change_ |= MAJOR;
-  if (bvp) bvp->EmitDataNameChanged(data_name);
+  last_state_change |= MAJOR;
+  if (bvp) bvp->EmitDataNameChanged(brain_data_name);
   ValidateState();
-  state_valid_ = true;
+  state_valid = true;
 }
 
 void BrainView::SetDimensions(const TDCoord& dimensions)
 {
-  if (dimensions_ == dimensions)
+  if (dimensions == brain_dimensions)
     return;
   
-  dimensions_ = dimensions;
-  last_state_change_ |= MAJOR;
-  if (bvp) bvp->EmitDimensionsChanged(dimensions);
+  brain_dimensions = dimensions;
+  last_state_change |= MAJOR;
+  if (bvp) bvp->EmitDimensionsChanged(brain_dimensions);
   ValidateState();
 }
 
 void  BrainView::SetViewPlane( AnatomicalPlane plane )
 {
-  if ( plane == view_plane_)
+  if ( plane == view_plane)
     return;
   
-  view_plane_ = plane;
-  last_state_change_ |= MAJOR;
+  view_plane = plane;
+  last_state_change |= MAJOR;
   if (bvp) bvp->EmitViewPlaneChanged(static_cast<int>(plane));
   ValidateState();
 }
@@ -1043,17 +1080,17 @@ void  BrainView::SetViewPlane( int plane )
 
 void  BrainView::SetSliceStart(int start)
 {
-  if (start == slice_start_)
+  if (start == slice_start)
     return;
   
   // if user has fixed the number of slices, we must update
   // sliceEnd if we change
-  if (lock_num_slices_) {
-    if ( (0 < start) && ((start + num_slices_) <= MaxSlices()) ) {
-      slice_start_ = start;
-      SetSliceEnd(slice_start_ + num_slices_);
-      last_state_change_ |= MINOR;
-      if (bvp) bvp->EmitSliceStartChanged(slice_start_);
+  if (lock_num_slices) {
+    if ( (0 < start) && ((start + num_slices) <= MaxSlices()) ) {
+      slice_start = start;
+      SetSliceEnd(slice_start + num_slices);
+      last_state_change |= MINOR;
+      if (bvp) bvp->EmitSliceStartChanged(slice_start);
       ValidateState();
     }
   }
@@ -1061,12 +1098,12 @@ void  BrainView::SetSliceStart(int start)
     // we only need to update the sliceEnd if we've pushed
     // past it
     if ( (0 < start) && (start <= MaxSlices()) ){
-      slice_start_ = start;
-      if ( slice_start_ > slice_end_) {
-        SetSliceEnd(slice_start_);
+      slice_start = start;
+      if ( slice_start > slice_end) {
+        SetSliceEnd(slice_start);
       }
-      last_state_change_ |= MINOR;
-      if (bvp) bvp->EmitSliceStartChanged(slice_start_);
+      last_state_change |= MINOR;
+      if (bvp) bvp->EmitSliceStartChanged(slice_start);
       ValidateState();
     }
   }
@@ -1074,17 +1111,17 @@ void  BrainView::SetSliceStart(int start)
 
 void  BrainView::SetSliceEnd(int end)
 {
-  if ( end == slice_end_ )
+  if ( end == slice_end )
     return;
   
   // if user has fixed the number of slices, we must update
   // sliceStart if we change
-  if (lock_num_slices_) {
-    if ( (0 < (end - num_slices_)) && (end <= MaxSlices()) ) {
-      slice_end_ = end;
-      SetSliceStart(slice_end_ - num_slices_);
-      last_state_change_ |= MINOR;
-      if (bvp) bvp->EmitSliceEndChanged(slice_end_);
+  if (lock_num_slices) {
+    if ( (0 < (end - num_slices)) && (end <= MaxSlices()) ) {
+      slice_end = end;
+      SetSliceStart(slice_end - num_slices);
+      last_state_change |= MINOR;
+      if (bvp) bvp->EmitSliceEndChanged(slice_end);
       ValidateState();
     }
   }
@@ -1092,12 +1129,12 @@ void  BrainView::SetSliceEnd(int end)
     // only need to update the sliceStart if we've pushed
     // past it
     if ( (0 < end) && (end <= MaxSlices()) ){
-      slice_end_ = end;
-      if ( slice_end_ < slice_start_) {
-        SetSliceStart(slice_end_);
+      slice_end = end;
+      if ( slice_end < slice_start) {
+        SetSliceStart(slice_end);
       }
-      last_state_change_ |= MINOR;
-      if (bvp) bvp->EmitSliceEndChanged(slice_end_);
+      last_state_change |= MINOR;
+      if (bvp) bvp->EmitSliceEndChanged(slice_end);
       ValidateState();
     }
   }
@@ -1111,56 +1148,81 @@ void BrainView::SetLockSlices(int state)
   else
     newState = false;
   
-  if (newState == lock_num_slices_)
+  if (newState == lock_num_slices)
     return;
   
-  lock_num_slices_ = newState;
-  num_slices_ = slice_end_ - slice_start_;
-  last_state_change_ |= MINOR;
+  lock_num_slices = newState;
+  num_slices = slice_end - slice_start;
+  last_state_change |= MINOR;
   EmitAndClearState();
 }
 
 void  BrainView::SetSliceSpacing(int spacing)
 {
-  if ( spacing == slice_spacing_ )
+  if ( spacing == slice_spacing )
     return;
   
-  slice_spacing_ = spacing;
-  last_state_change_ |= MAJOR;
-  if (bvp) bvp->EmitSliceSpacingChanged(slice_spacing_);
+  slice_spacing = spacing;
+  last_state_change |= MAJOR;
+  if (bvp) bvp->EmitSliceSpacingChanged(slice_spacing);
   EmitAndClearState();
 }
 
 void  BrainView::SetSliceTransparency(int transparency)
 {
-  if ( transparency == slice_transparency_ )
+  if ( transparency == slice_transparency )
     return;
   
-  slice_transparency_ = transparency;
-  last_state_change_ |= MINOR;
-  if (bvp) bvp->EmitSliceTransparencyChanged(slice_transparency_);
+  slice_transparency = transparency;
+  last_state_change |= MINOR;
+  if (bvp) bvp->EmitSliceTransparencyChanged(slice_transparency);
   EmitAndClearState();
 }
 
 void  BrainView::SetUnitValuesTransparency(int transparency)
 {
-  if ( transparency == unit_val_transparency_ )
+  if ( transparency == unit_val_transparency )
     return;
   
-  unit_val_transparency_ = transparency;
-  last_state_change_ |= MINOR;
-  if (bvp) bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency_);
+  unit_val_transparency = transparency;
+  last_state_change |= MINOR;
+  if (bvp) bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency);
   EmitAndClearState();
+}
+
+void BrainView::SetColorBrain(int state)
+{
+  bool newState(false);
+  if (static_cast<Qt::CheckState>(state) == Qt::Checked)
+    newState = true;
+  else
+    newState = false;
+  
+  if (newState == color_brain)
+    return;
+  
+  color_brain = newState;
+  last_state_change |= MAJOR;
+  EmitAndClearState();
+}
+
+void BrainView::SetColorBrainRegexp(const QString& regexp) 
+{
+  if (regexp != color_brain_regexp) {
+    color_brain_regexp = regexp;
+    last_state_change |= MAJOR;
+    EmitAndClearState();
+  }
 }
 
 bool BrainView::ValidSliceStart() const
 {
-  return (slice_start_ <= MaxSlices()) ? true : false;
+  return (slice_start <= MaxSlices()) ? true : false;
 }
 
 bool BrainView::ValidSliceEnd() const
 {
-  return (slice_end_ <= MaxSlices()) ? true : false;
+  return (slice_end <= MaxSlices()) ? true : false;
 }
 
 void BrainView::ValidateState()
@@ -1179,17 +1241,18 @@ void BrainView::ValidateState()
 void BrainView::EmitAndClearState()
 {
   // BrainViewPanel listens...
-  if (bvp) bvp->EmitStateChanged(last_state_change_);
-  last_state_change_ = NONE;
+  if (bvp) bvp->EmitStateChanged(last_state_change);
+  last_state_change = NONE;
 }
 void BrainView::EmitAll()
 {
   // this allows us to update BrainViewPanel with our state
   if (bvp) {
-    bvp->EmitViewPlaneChanged(view_plane_);
-    bvp->EmitSliceStartChanged(slice_start_);
-    bvp->EmitSliceEndChanged(slice_end_);
-    bvp->EmitSliceTransparencyChanged(slice_transparency_);
-    bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency_);
+    bvp->EmitViewPlaneChanged(view_plane);
+    bvp->EmitSliceStartChanged(slice_start);
+    bvp->EmitSliceEndChanged(slice_end);
+    bvp->EmitSliceTransparencyChanged(slice_transparency);
+    bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency);
+    bvp->EmitColorBrainAreaRegexpChanged(color_brain_regexp);
   }
 }

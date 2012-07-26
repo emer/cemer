@@ -433,7 +433,5 @@ protected:
   SoTransform*		net_text_drag_xform_;
 };
 
-
-
 #endif // NETSTRU_SO_H
 

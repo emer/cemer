@@ -31,7 +31,12 @@
 #include <QComboBox>
 #include <QSlider>
 #include <qwidget.h>
+#include "nifti_reader.h"
+#include "brainstru.h"
 
+////////////////////////////////////////////////////
+//  BrainViewPanel
+////////////////////////////////////////////////////
 BrainView* BrainViewPanel::bv() 
 {
   return (BrainView*) m_dv;
@@ -82,64 +87,63 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   QLabel* label = taiM->NewLabel("View\nPlane:", widg, font_spec);
   label->setToolTip("Which of the anatomical planes to view.");
   bvControls->addWidget(label);
-  //viewPlane_ = dl.Add(new taiComboBox(true, TA_BrainView.sub_types.FindName("BrainPlaneView"),this, NULL, widg, taiData::flgAutoApply));
-  view_plane_comb_ = new QComboBox(widg);
-  view_plane_comb_->addItem("AXIAL");
-  view_plane_comb_->addItem("SAGITTAL");
-  view_plane_comb_->addItem("CORONAL");
-  connect(view_plane_comb_, SIGNAL(currentIndexChanged(int)), this, SLOT(SetViewPlane(int)) );
-  connect(this, SIGNAL(ViewPlaneChanged(int)), view_plane_comb_, SLOT(setCurrentIndex(int)) );
-  bvControls->addWidget(view_plane_comb_);
+  m_view_plane_comb = new QComboBox(widg);
+  m_view_plane_comb->addItem("AXIAL");
+  m_view_plane_comb->addItem("SAGITTAL");
+  m_view_plane_comb->addItem("CORONAL");
+  connect(m_view_plane_comb, SIGNAL(currentIndexChanged(int)), this, SLOT(SetViewPlane(int)) );
+  connect(this, SIGNAL(ViewPlaneChanged(int)), m_view_plane_comb, SLOT(setCurrentIndex(int)) );
+  bvControls->addWidget(m_view_plane_comb);
   bvControls->addSpacing(taiM->hspc_c); 
   
   label = taiM->NewLabel("Starting\nSlice:", widg, font_spec);
   label->setToolTip("The starting slice number to view."); 
   bvControls->addWidget(label);
-  slice_strt_sbox_ = new QSpinBox(widg);
-  slice_strt_sbox_->setRange(1,max_slices);
-  slice_strt_sbox_->setValue(1);
-  connect(slice_strt_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
-  connect(this, SIGNAL(SliceStartChanged(int)), slice_strt_sbox_, SLOT(setValue(int)) );
-  bvControls->addWidget(slice_strt_sbox_);
+  m_slice_strt_sbox = new QSpinBox(widg);
+  m_slice_strt_sbox->setRange(1,max_slices);
+  m_slice_strt_sbox->setValue(1);
+  connect(m_slice_strt_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
+  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_sbox, SLOT(setValue(int)) );
+  bvControls->addWidget(m_slice_strt_sbox);
   bvControls->addSpacing(taiM->hsep_c);
   
-  slice_strt_slid_ =  new QSlider(Qt::Horizontal, widg);
-  slice_strt_slid_->setRange(1, max_slices);
-  slice_strt_slid_->setValue(1);
-  slice_strt_slid_->setMinimumWidth(min_slider);
-  connect(slice_strt_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
-  connect(this, SIGNAL(SliceStartChanged(int)), slice_strt_slid_, SLOT(setValue(int)) );
-  bvControls->addWidget(slice_strt_slid_);
+  m_slice_strt_slid =  new QSlider(Qt::Horizontal, widg);
+  m_slice_strt_slid->setRange(1, max_slices);
+  m_slice_strt_slid->setValue(1);
+  m_slice_strt_slid->setMinimumWidth(min_slider);
+  connect(m_slice_strt_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
+  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_slid, SLOT(setValue(int)) );
+  bvControls->addWidget(m_slice_strt_slid);
   bvControls->addSpacing(taiM->hspc_c);  
   
   label = taiM->NewLabel("Lock\n#Slices:", widg, font_spec);
   label->setToolTip("Lock slice sliders to maintain number of slices."); 
   bvControls->addWidget(label);
-  lock_slices_chbox_ = new QCheckBox(widg);
-  lock_slices_chbox_->setCheckState(Qt::Unchecked);
-  connect(lock_slices_chbox_, SIGNAL(stateChanged(int)), this, SLOT(SetLockSlices(int)) );
-  bvControls->addWidget(lock_slices_chbox_);  
+  m_lock_slices_chbox = new QCheckBox(widg);
+  m_lock_slices_chbox->setCheckState(Qt::Unchecked);
+  connect(m_lock_slices_chbox, SIGNAL(stateChanged(int)), this, SLOT(SetLockSlices(int)) );
+  bvControls->addWidget(m_lock_slices_chbox);  
   bvControls->addSpacing(taiM->hspc_c); 
   
   label = taiM->NewLabel("Ending\nSlice:", widg, font_spec);
   label->setToolTip("The ending slice number to view."); 
   bvControls->addWidget(label);
-  slice_end_sbox_ = new QSpinBox(widg);
-  slice_end_sbox_->setRange(1, max_slices);
-  slice_end_sbox_->setValue(max_slices);
-  connect(this, SIGNAL(SliceEndChanged(int)), slice_end_sbox_, SLOT(setValue(int)) );
-  connect(slice_end_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
-  bvControls->addWidget(slice_end_sbox_);  
+  m_slice_end_sbox = new QSpinBox(widg);
+  m_slice_end_sbox->setRange(1, max_slices);
+  m_slice_end_sbox->setValue(max_slices);
+  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_sbox, SLOT(setValue(int)) );
+  connect(m_slice_end_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
+  bvControls->addWidget(m_slice_end_sbox);  
   bvControls->addSpacing(taiM->hsep_c); 
   
-  slice_end_slid_ =  new QSlider(Qt::Horizontal, widg);
-  slice_end_slid_->setTickPosition(QSlider::NoTicks);
-  slice_end_slid_->setRange(1, max_slices);
-  slice_end_slid_->setValue(max_slices);
-  slice_end_slid_->setMinimumWidth(min_slider);
-  connect(this, SIGNAL(SliceEndChanged(int)), slice_end_slid_, SLOT(setValue(int)) );
-  connect(slice_end_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
-  bvControls->addWidget(slice_end_slid_);
+  m_slice_end_slid =  new QSlider(Qt::Horizontal, widg);
+  m_slice_end_slid->setTickPosition(QSlider::NoTicks);
+  m_slice_end_slid->setRange(1, max_slices);
+  m_slice_end_slid->setValue(max_slices);
+  m_slice_end_slid->setMinimumWidth(min_slider);
+  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_slid, SLOT(setValue(int)) );
+  connect(m_slice_end_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
+  bvControls->addWidget(m_slice_end_slid);
   bvControls->addStretch();	// need final stretch to prevent full stretching
   
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
@@ -148,52 +152,76 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label = taiM->NewLabel("Unit Values\nTransparency:", widg, font_spec);
   label->setToolTip("The transparency value of unit values."); 
   bvControls->addWidget(label);
-  unit_val_tran_sbox_ = new QSpinBox(widg);
-  unit_val_tran_sbox_->setRange(1, 100);
-  unit_val_tran_sbox_->setValue(unit_trans);
-  unit_val_tran_sbox_->setSuffix("%");
-  connect(unit_val_tran_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
-  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_sbox_, SLOT(setValue(int)) );
-  bvControls->addWidget(unit_val_tran_sbox_);  
+  m_unit_val_tran_sbox = new QSpinBox(widg);
+  m_unit_val_tran_sbox->setRange(1, 100);
+  m_unit_val_tran_sbox->setValue(unit_trans);
+  m_unit_val_tran_sbox->setSuffix("%");
+  connect(m_unit_val_tran_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_sbox, SLOT(setValue(int)) );
+  bvControls->addWidget(m_unit_val_tran_sbox);  
   bvControls->addSpacing(taiM->hsep_c); 
   
-  unit_val_tran_slid_ =  new QSlider(Qt::Horizontal, widg);
-  unit_val_tran_slid_->setTickPosition(QSlider::NoTicks);
-  unit_val_tran_slid_->setRange(1,100);
-  unit_val_tran_slid_->setValue(unit_trans);
-  unit_val_tran_slid_->setMinimumWidth(min_slider);
-  connect(unit_val_tran_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
-  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_slid_, SLOT(setValue(int)) );
-  bvControls->addWidget(unit_val_tran_slid_);
+  m_unit_val_tran_slid =  new QSlider(Qt::Horizontal, widg);
+  m_unit_val_tran_slid->setTickPosition(QSlider::NoTicks);
+  m_unit_val_tran_slid->setRange(1,100);
+  m_unit_val_tran_slid->setValue(unit_trans);
+  m_unit_val_tran_slid->setMinimumWidth(min_slider);
+  connect(m_unit_val_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_slid, SLOT(setValue(int)) );
+  bvControls->addWidget(m_unit_val_tran_slid);
   bvControls->addSpacing(taiM->hspc_c); 
   
   const int slice_trans(90);
   label = taiM->NewLabel("Slice\nTransparency:", widg, font_spec);
   label->setToolTip("The transparency value of brain slices."); 
   bvControls->addWidget(label);
-  slice_trans_sbox_ = new QSpinBox(widg);
-  slice_trans_sbox_->setRange(1, 100);
-  slice_trans_sbox_->setValue(slice_trans);
-  slice_trans_sbox_->setSuffix("%");
-  connect(slice_trans_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
-  connect(this, SIGNAL(SliceTransparencyChanged(int)), slice_trans_sbox_, SLOT(setValue(int)) );
-  bvControls->addWidget(slice_trans_sbox_);  
+  m_slice_trans_sbox = new QSpinBox(widg);
+  m_slice_trans_sbox->setRange(1, 100);
+  m_slice_trans_sbox->setValue(slice_trans);
+  m_slice_trans_sbox->setSuffix("%");
+  connect(m_slice_trans_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_trans_sbox, SLOT(setValue(int)) );
+  bvControls->addWidget(m_slice_trans_sbox);  
   bvControls->addSpacing(taiM->hsep_c); 
   
-  slice_tran_slid_ =  new QSlider(Qt::Horizontal, widg);
-  slice_tran_slid_->setTickPosition(QSlider::NoTicks);
-  slice_tran_slid_->setRange(1,100);
-  slice_tran_slid_->setValue(slice_trans);
-  slice_tran_slid_->setMinimumWidth(min_slider);
-  connect(slice_tran_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
-  connect(this, SIGNAL(SliceTransparencyChanged(int)), slice_tran_slid_, SLOT(setValue(int)) );
-  bvControls->addWidget(slice_tran_slid_);
-  bvControls->addStretch(); 
-   
-    // listen for BrainViewState state changed
-  connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
+  m_slice_tran_slid =  new QSlider(Qt::Horizontal, widg);
+  m_slice_tran_slid->setTickPosition(QSlider::NoTicks);
+  m_slice_tran_slid->setRange(1,100);
+  m_slice_tran_slid->setValue(slice_trans);
+  m_slice_tran_slid->setMinimumWidth(min_slider);
+  connect(m_slice_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_tran_slid, SLOT(setValue(int)) );
+  bvControls->addWidget(m_slice_tran_slid);
+  bvControls->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
+  // Brain colorization widgets
+  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
+  label = taiM->NewLabel("Color brain:", widg, font_spec);
+  label->setToolTip("Render brain areas with colors (first time can take a few moments)."); 
+  bvControls->addWidget(label);
+  m_chk_color_brain = new QCheckBox(widg);
+  m_chk_color_brain->setCheckState(Qt::Unchecked);
+  m_chk_color_brain->setEnabled(false);
+  connect(m_chk_color_brain, SIGNAL(stateChanged(int)), this, SLOT(SetColorBrain(int)) );
+  bvControls->addWidget(m_chk_color_brain);  
+  bvControls->addSpacing(taiM->hspc_c);
+  label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
+  label->setToolTip("Regexp to select brain areas to color)."); 
+  bvControls->addWidget(label);
+  fldBrainColorRegexp = new QLineEdit("Brodmann", widg);
+  bvControls->addWidget(fldBrainColorRegexp);
+  connect(fldBrainColorRegexp, SIGNAL(editingFinished()), this, SLOT(ColorBrainRegexpEdited()));
+  bvControls->addStretch();
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Brain atlas widgets
+  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
+  
+  // listen for BrainViewState state changed
+  connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
+  
+  
   layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
   chkNetText = new QCheckBox("Net\nTxt", widg);
   chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
@@ -214,7 +242,6 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layDispCheck->addSpacing(taiM->hsep_c);
   layDispCheck->addStretch();
   
-  ////////////////////////////////////////////////////////////////////////////
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
   layDisplayValues->setSpacing(2);
   layDisplayValues->setMargin(0);
@@ -254,17 +281,6 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
   
   layTopCtrls->addWidget(tw);
-  
-  ////////////////////////////////////////////////////////////////////////////
-  // Command Buttons
-//  widCmdButtons = new QWidget(widg);
-//  iFlowLayout* fl = new iFlowLayout(widCmdButtons);
-//  layOuter->addWidget(widCmdButtons);
-//  
-//  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
-//  meth_but_mgr->Constr(bv()->net());
-//  
-//  MakeButtons(layOuter);
 }
 
 BrainViewPanel::~BrainViewPanel() 
@@ -292,8 +308,20 @@ void BrainViewPanel::UpdatePanel_impl()
     bv->Render();
   }
   
-  unit_val_tran_sbox_->setValue((int)(bv->view_params.unit_trans*100));
+  m_unit_val_tran_sbox->setValue((int)(bv->view_params.unit_trans*100));
   chkLayMove->setChecked(bv->lay_mv);
+  
+  if (bv->net()->brain_atlas.ptr() == NULL) {
+    m_chk_color_brain->setEnabled(false);
+    m_chk_color_brain->setChecked(false); 
+    fldBrainColorRegexp->setEnabled(false);
+  }
+  else {
+    m_chk_color_brain->setEnabled(true);
+    m_chk_color_brain->setChecked(bv->ColorBrain());
+    fldBrainColorRegexp->setEnabled(true);
+  }
+  fldBrainColorRegexp->setText(bv->ColorBrainRegexp());
 
   // update var selection
   int i = 0;
@@ -364,6 +392,25 @@ void BrainViewPanel::SetUnitValuesTransparency(int transparency)
 {
   bv()->SetUnitValuesTransparency(transparency);
 }
+void BrainViewPanel::SetColorBrain(int state)
+{
+  bv()->SetColorBrain(state);
+}
+void BrainViewPanel::ColorBrainRegexpEdited()
+{
+  QRegExp regexp(fldBrainColorRegexp->text());
+  if (regexp.isValid()) {
+    SetColorBrainRegexp(fldBrainColorRegexp->text()); 
+    m_chk_color_brain->setCheckable(true);
+  }
+  else {
+    m_chk_color_brain->setCheckable(false);
+  }
+}
+void BrainViewPanel::SetColorBrainRegexp(const QString& regexp)
+{
+  bv()->SetColorBrainRegexp(regexp);
+}
 
 void BrainViewPanel::EmitDataNameChanged(const QString& name)
 {
@@ -405,6 +452,10 @@ void BrainViewPanel::EmitStateChanged(int state)
 {
   emit StateChanged(state);
 }
+void BrainViewPanel::EmitColorBrainAreaRegexpChanged(const QString& regexp)
+{
+  emit BrainColorRegexpChanged(regexp);
+}
 
 
 void BrainViewPanel::GetValue_impl() {
@@ -422,7 +473,7 @@ void BrainViewPanel::GetValue_impl() {
   // UpdateFromViewState set it as necessary
   // req_full_render = true; // everything requires a re-render
   
-  bv->view_params.unit_trans = ((float)(unit_val_tran_sbox_->value())/100.0f);
+  bv->view_params.unit_trans = ((float)(m_unit_val_tran_sbox->value())/100.0f);
 
   // net text requires rebuild since it is controlled in BV::Render
   if (bv->net_text != chkNetText->isChecked()) {
@@ -431,6 +482,8 @@ void BrainViewPanel::GetValue_impl() {
   bv->net_text = chkNetText->isChecked();
   bv->lay_mv = chkLayMove->isChecked();
 
+  bv->color_brain_regexp = fldBrainColorRegexp->text();
+  
   if (false == req_full_render) {
     // just need update, not full rebuild/render
     bv->AsyncRenderUpdate();
@@ -565,16 +618,16 @@ void BrainViewPanel::UpdateWidgetLimits()
   // if user wants number of slices to remain fixed
   // we need to be sure limits are adjusted appropriately
   if (bv_->NumSlicesAreLocked()) { 
-    slice_strt_sbox_->setRange(1, max_slices - num_slices);
-    slice_strt_slid_->setRange(1, max_slices - num_slices);
-    slice_end_sbox_->setRange(num_slices + 1, max_slices);
-    slice_end_slid_->setRange(num_slices + 1, max_slices);
+    m_slice_strt_sbox->setRange(1, max_slices - num_slices);
+    m_slice_strt_slid->setRange(1, max_slices - num_slices);
+    m_slice_end_sbox->setRange(num_slices + 1, max_slices);
+    m_slice_end_slid->setRange(num_slices + 1, max_slices);
   }
   else {
-    slice_strt_sbox_->setRange(1, max_slices);
-    slice_strt_slid_->setRange(1, max_slices);
-    slice_end_sbox_->setRange(1, max_slices);    
-    slice_end_slid_->setRange(1, max_slices);
+    m_slice_strt_sbox->setRange(1, max_slices);
+    m_slice_strt_slid->setRange(1, max_slices);
+    m_slice_end_sbox->setRange(1, max_slices);    
+    m_slice_end_slid->setRange(1, max_slices);
   }
 }
 

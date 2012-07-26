@@ -20,6 +20,7 @@
 #include <QMultiHash>
 #include <QString>
 
+#include "netstru.h"
 #include "nifti_reader.h" // TalairachAtlas
 #include "ta_geometry.h" // FloatTDCoord
 class Network;
@@ -36,7 +37,6 @@ public:
 private:
   class LayerInfo;
 
-  static QString GetAtlasFilename();
   void CreateLayerMap();
   QList<FloatTDCoord> GetVoxelsInArea(QString brain_area);
   void AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> voxels);
@@ -55,7 +55,7 @@ private:
 private:
   QMultiHash<QString, Layer *> m_layer_map;
   Network *m_network;
-  TalairachAtlas m_atlas;
+  BrainAtlasProxy* m_atlas;
 
   // Info on layers for the current iteration of AssignVoxelsInArea().
   QList<LayerInfo *> m_layer_info;
