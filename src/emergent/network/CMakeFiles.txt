@@ -19,6 +19,7 @@ set(network_HEADS_MAKETA_LOCAL
     emergent_qtso.h
     emergent_program_qtso.h
     v3_compat.h
+    brainstru.h
     brain_view.h
     brain_view_panel.h
     brain_volume_view.h
@@ -53,6 +54,7 @@ set(network_HEADS_MOC
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(network_SRCS_GUI
+    brainstru.cpp
     brain_view.cpp
     brain_view_panel.cpp
     brain_volume_view.cpp
