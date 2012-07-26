@@ -116,9 +116,9 @@ void SmallWorldPrjnSpec::Connect_impl(Projection* prjn) {
   int sx, sy, sz;
   int this_rx, this_ry, this_rz;
   int this_sx, this_sy, this_sz;
-  int this_recv_flat, this_send_flat;
+  int this_recv_flat;
   int n_recv_units, this_recv_unit;
-  int alloc_loop, i;
+  int alloc_loop;
 
   float distance, probability, power, ratio;
   bool project;
@@ -150,10 +150,10 @@ void SmallWorldPrjnSpec::Connect_impl(Projection* prjn) {
 
 	  coords->SetMatrixVal(this_rx, "recv_pos", 0, 0, 0);
 	  coords->SetMatrixVal(this_ry, "recv_pos", 0, 1, 0);
-	  coords->SetMatrixVal(this_rz, "recv_pos", 0, 2, 0);
+	  coords->SetMatrixVal(rz, "recv_pos", 0, 2, 0);
 	  coords->SetMatrixVal(this_sx, "send_pos", 0, 0, 0);
 	  coords->SetMatrixVal(this_sy, "send_pos", 0, 1, 0);
-	  coords->SetMatrixVal(this_sz, "send_pos", 0, 2, 0);
+	  coords->SetMatrixVal(sz, "send_pos", 0, 2, 0);
 	  recv_pos = (float_Matrix*)coords->GetColMatrix(0);
 	  send_pos = (float_Matrix*)coords->GetColMatrix(1);
 	  distance = taMath_float::vec_dist(recv_pos, send_pos, taMath::EUCLIDIAN);
