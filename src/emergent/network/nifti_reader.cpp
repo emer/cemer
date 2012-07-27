@@ -115,6 +115,17 @@ int NiftiReader::NumExtensions() const
   return m_img->num_ext;
 }
 
+int NiftiReader::NumVolumes() const
+{
+  // returns the number of volumes (fourth dimension) in image
+  if (m_img->ndim > 3){
+    return m_img->nt;
+  }
+  else {
+    return 0;
+  }
+}
+
 const void * NiftiReader::RawData() const
 {
   return m_img->data;

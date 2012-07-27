@@ -50,6 +50,7 @@ public:
   void    SliceXY(int index, unsigned short* data) const;
   void    Slice(AnatomicalPlane p, int index, unsigned short* data) const;
   int     NumExtensions() const;
+  int     NumVolumes() const;
   FloatTDCoord XyzToIjk(const FloatTDCoord &xyz_coord) const;
   FloatTDCoord IjkToXyz(const FloatTDCoord &ijk_coord) const;
   const void *RawData() const;
