@@ -298,6 +298,20 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
   NiftiReader img(m_image_filename);
   if (img.IsValid()) {
     
+    ///////////////////////////////////////////////////////////////
+    // @TODO Add support for probabilistic atlases?
+    // In 4D atlases, each label/index is associated with a volume
+    // and voxels in that volume have intensities which correspond
+    // to probabilities of matching?
+    // So, the loop below would need to offset to the correct volume
+    // based on label/index, then look within that volume for voxels
+    // with values greater than 0 (or some threshold). Those voxels
+    // would be the ones to get i,j,k coordinates for...
+    //
+    // NOTE: can use img.NumVolumes() to get number of volumes in the
+    // image...which should be <= to label/index range
+    ///////////////////////////////////////////////////////////////
+    
     // Get the dimensions of the data and a pointer to the data.
     // The data has already been byte-swapped for this platform.
     TDCoord size(img.XyzDimensions());
