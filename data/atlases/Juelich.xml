@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<atlas version="1.0">
+  <header>
+    <name>Juelich Histological Atlas</name>
+    <description>Contains Juelich Labels</description>
+    <type>Probabalistic</type>
+    <images>
+      <imagefile>/Juelich/Juelich-maxprob-thr25-1mm</imagefile>
+      <summaryimagefile>/Juelich/Juelich-maxprob-thr25-1mm</summaryimagefile>
+    </images>
+    <images>
+      <imagefile>/Juelich/Juelich-maxprob-thr25-2mm</imagefile>
+      <summaryimagefile>/Juelich/Juelich-maxprob-thr25-2mm</summaryimagefile>
+    </images>
+  </header>
+  <data>
+<label index="0" x="0" y="0" z="0" color="#ffffff">*.*.*.*.*</label>
+<label index="1" x="125" y="75" z="107" color="#fcb90c">Left.*.*.Gray Matter.Anterior intra-parietal sulcus hIP1</label>
+<label index="2" x="53" y="78" z="108" color="#facc36">Right.*.*.Gray Matter.Anterior intra-parietal sulcus hIP1</label>
+<label index="3" x="135" y="89" z="109" color="#f8cf24">Left.*.*.Gray Matter.Anterior intra-parietal sulcus hIP2</label>
+<label index="4" x="48" y="90" z="120" color="#f3d31e">Right.*.*.Gray Matter.Anterior intra-parietal sulcus hIP2</label>
+<label index="5" x="119" y="69" z="120" color="#fbe533">Left.*.*.Gray Matter.Anterior intra-parietal sulcus hIP3</label>
+<label index="6" x="54" y="80" z="122" color="#f6e81e">Right.*.*.Gray Matter.Anterior intra-parietal sulcus hIP3</label>
+<label index="7" x="113" y="118" z="62" color="#f6f220">Left.*.*.Gray Matter.Amygdala_centromedial group</label>
+<label index="8" x="64" y="119" z="63" color="#f1f52e">Right.*.*.Gray Matter.Amygdala_centromedial group</label>
+<label index="9" x="113" y="120" z="49" color="#eefc1c">Left.*.*.Gray Matter.Amygdala_laterobasal group</label>
+<label index="10" x="64" y="119" z="51" color="#e4fe0a">Right.*.*.Gray Matter.Amygdala_laterobasal group</label>
+<label index="11" x="109" y="122" z="54" color="#d9fb18">Left.*.*.Gray Matter.Amygdala_superficial group</label>
+<label index="12" x="67" y="122" z="61" color="#cef81e">Right.*.*.Gray Matter.Amygdala_superficial group</label>
+<label index="13" x="142" y="137" z="95" color="#c9f537">Left.*.*.Gray Matter.Broca's area BA44</label>
+<label index="14" x="36" y="141" z="87" color="#c1fd22">Right.*.*.Gray Matter.Broca's area BA44</label>
+<label index="15" x="142" y="151" z="85" color="#bbfd2e">Left.*.*.Gray Matter.Broca's area BA45</label>
+<label index="16" x="36" y="152" z="79" color="#adfe1e">Right.*.*.Gray Matter.Broca's area BA45</label>
+<label index="17" x="119" y="110" z="53" color="#a7f92e">Left.*.*.Gray Matter.Hippocampus cornu ammonis</label>
+<label index="18" x="56" y="111" z="53" color="#9ff536">Right.*.*.Gray Matter.Hippocampus cornu ammonis</label>
+<label index="19" x="115" y="121" z="35" color="#98f537">Left.*.*.Gray Matter.Hippocampus entorhinal cortex</label>
+<label index="20" x="64" y="125" z="34" color="#8af42c">Right.*.*.Gray Matter.Hippocampus entorhinal cortex</label>
+<label index="21" x="119" y="109" z="53" color="#84f431">Left.*.*.Gray Matter.Hippocampus dentate gyrus</label>
+<label index="22" x="58" y="110" z="54" color="#7af92a">Right.*.*.Gray Matter.Hippocampus dentate gyrus</label>
+<label index="23" x="107" y="117" z="50" color="#77f437">Left.*.*.Gray Matter.Hippocampus hippocampal-amygdaloid transition area</label>
+<label index="24" x="71" y="117" z="51" color="#61fb1f">Right.*.*.Gray Matter.Hippocampus hippocampal-amygdaloid transition area</label>
+<label index="25" x="112" y="115" z="43" color="#57f321">Left.*.*.Gray Matter.Hippocampus subiculum</label>
+<label index="26" x="64" y="107" z="54" color="#57f72b">Right.*.*.Gray Matter.Hippocampus subiculum</label>
+<label index="27" x="146" y="86" z="107" color="#4ffd2c">Left.*.*.Gray Matter.Inferior parietal lobule PF</label>
+<label index="28" x="28" y="92" z="101" color="#33f817">Right.*.*.Gray Matter.Inferior parietal lobule PF</label>
+<label index="29" x="140" y="84" z="100" color="#35f723">Left.*.*.Gray Matter.Inferior parietal lobule PFcm</label>
+<label index="30" x="40" y="93" z="96" color="#17f20e">Right.*.*.Gray Matter.Inferior parietal lobule PFcm</label>
+<label index="31" x="141" y="68" z="106" color="#0df20d">Left.*.*.Gray Matter.Inferior parietal lobule PFm</label>
+<label index="32" x="34" y="81" z="109" color="#2af533">Right.*.*.Gray Matter.Inferior parietal lobule PFm</label>
+<label index="33" x="148" y="103" z="96" color="#1ef931">Left.*.*.Gray Matter.Inferior parietal lobule PFop</label>
+<label index="34" x="37" y="108" z="100" color="#0ef42c">Right.*.*.Gray Matter.Inferior parietal lobule PFop</label>
+<label index="35" x="145" y="100" z="108" color="#2cfa4f">Left.*.*.Gray Matter.Inferior parietal lobule PFt</label>
+<label index="36" x="36" y="101" z="111" color="#09fd3d">Right.*.*.Gray Matter.Inferior parietal lobule PFt</label>
+<label index="37" x="142" y="69" z="104" color="#1df554">Left.*.*.Gray Matter.Inferior parietal lobule Pga</label>
+<label index="38" x="37" y="71" z="104" color="#2df96a">Right.*.*.Gray Matter.Inferior parietal lobule Pga</label>
+<label index="39" x="133" y="54" z="101" color="#30f674">Left.*.*.Gray Matter.Inferior parietal lobule PGp</label>
+<label index="40" x="42" y="60" z="102" color="#13fb6c">Right.*.*.Gray Matter.Inferior parietal lobule PGp</label>
+<label index="41" x="137" y="105" z="79" color="#37f588">Left.*.*.Gray Matter.Primary auditory cortex TE1.0</label>
+<label index="42" x="39" y="114" z="77" color="#24f787">Right.*.*.Gray Matter.Primary auditory cortex TE1.0</label>
+<label index="43" x="131" y="96" z="84" color="#1af389">Left.*.*.Gray Matter.Primary auditory cortex TE1.1</label>
+<label index="44" x="49" y="100" z="83" color="#14f590">Right.*.*.Gray Matter.Primary auditory cortex TE1.1</label>
+<label index="45" x="143" y="113" z="76" color="#21fda4">Left.*.*.Gray Matter.Primary auditory cortex TE1.2</label>
+<label index="46" x="34" y="120" z="76" color="#0cf7a2">Right.*.*.Gray Matter.Primary auditory cortex TE1.2</label>
+<label index="47" x="100" y="100" z="140" color="#24f6b3">Left.*.*.Gray Matter.Primary motor cortex BA4a</label>
+<label index="48" x="82" y="97" z="142" color="#0af8b6">Right.*.*.Gray Matter.Primary motor cortex BA4a</label>
+<label index="49" x="119" y="96" z="127" color="#32fbcc">Left.*.*.Gray Matter.Primary motor cortex BA4p</label>
+<label index="50" x="56" y="103" z="120" color="#33f5cf">Right.*.*.Gray Matter.Primary motor cortex BA4p</label>
+<label index="51" x="141" y="105" z="121" color="#0bf7d4">Left.*.*.Gray Matter.Primary somatosensory cortex BA1</label>
+<label index="52" x="36" y="109" z="119" color="#0cf9e0">Right.*.*.Gray Matter.Primary somatosensory cortex BA1</label>
+<label index="53" x="139" y="100" z="118" color="#26faed">Left.*.*.Gray Matter.Primary somatosensory cortex BA2</label>
+<label index="54" x="63" y="86" z="126" color="#1dfdf8">Right.*.*.Gray Matter.Primary somatosensory cortex BA2</label>
+<label index="55" x="123" y="99" z="118" color="#33f7fb">Left.*.*.Gray Matter.Primary somatosensory cortex BA3a</label>
+<label index="56" x="56" y="105" z="114" color="#0aeefe">Right.*.*.Gray Matter.Primary somatosensory cortex BA3a</label>
+<label index="57" x="128" y="99" z="125" color="#0edff8">Left.*.*.Gray Matter.Primary somatosensory cortex BA3b</label>
+<label index="58" x="37" y="115" z="109" color="#07d7fb">Right.*.*.Gray Matter.Primary somatosensory cortex BA3b</label>
+<label index="59" x="138" y="102" z="91" color="#06caf8">Left.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP1</label>
+<label index="60" x="43" y="99" z="94" color="#35caf8">Right.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP1</label>
+<label index="61" x="126" y="103" z="91" color="#31c1f8">Left.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP2</label>
+<label index="62" x="54" y="105" z="90" color="#0ba9f3">Right.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP2</label>
+<label index="63" x="132" y="115" z="89" color="#07a4fd">Left.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP3</label>
+<label index="64" x="50" y="112" z="93" color="#0899fc">Right.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP3</label>
+<label index="65" x="147" y="117" z="85" color="#0d8ff8">Left.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP4</label>
+<label index="66" x="28" y="118" z="85" color="#1687f3">Right.*.*.Gray Matter.Secondary somatosensory cortex / Parietal operculum OP4</label>
+<label index="67" x="105" y="88" z="116" color="#0878f6">Left.*.*.Gray Matter.Superior parietal lobule 5Ci</label>
+<label index="68" x="79" y="94" z="117" color="#1475f8">Right.*.*.Gray Matter.Superior parietal lobule 5Ci</label>
+<label index="69" x="108" y="82" z="139" color="#2375fa">Left.*.*.Gray Matter.Superior parietal lobule 5L</label>
+<label index="70" x="78" y="76" z="143" color="#1c68fc">Right.*.*.Gray Matter.Superior parietal lobule 5L</label>
+<label index="71" x="99" y="84" z="130" color="#326efc">Left.*.*.Gray Matter.Superior parietal lobule 5M</label>
+<label index="72" x="83" y="80" z="132" color="#0f4cfd">Right.*.*.Gray Matter.Superior parietal lobule 5M</label>
+<label index="73" x="111" y="69" z="135" color="#093cf8">Left.*.*.Gray Matter.Superior parietal lobule 7A</label>
+<label index="74" x="61" y="68" z="133" color="#2a4df5">Right.*.*.Gray Matter.Superior parietal lobule 7A</label>
+<label index="75" x="94" y="51" z="107" color="#1531f6">Left.*.*.Gray Matter.Superior parietal lobule 7M</label>
+<label index="76" x="86" y="53" z="115" color="#1528fb">Right.*.*.Gray Matter.Superior parietal lobule 7M</label>
+<label index="77" x="124" y="78" z="128" color="#2b34fb">Left.*.*.Gray Matter.Superior parietal lobule 7P</label>
+<label index="78" x="59" y="83" z="124" color="#3232f7">Right.*.*.Gray Matter.Superior parietal lobule 7P</label>
+<label index="79" x="99" y="53" z="126" color="#1e14fc">Left.*.*.Gray Matter.Superior parietal lobule 7PC</label>
+<label index="80" x="78" y="53" z="125" color="#311efe">Right.*.*.Gray Matter.Superior parietal lobule 7PC</label>
+<label index="81" x="99" y="30" z="74" color="#3b20f4">Left.*.*.Gray Matter.Visual cortex V1 BA17</label>
+<label index="82" x="75" y="34" z="76" color="#350dfa">Right.*.*.Gray Matter.Visual cortex V1 BA17</label>
+<label index="83" x="98" y="33" z="66" color="#3b07f8">Left.*.*.Gray Matter.Visual cortex V2 BA18</label>
+<label index="84" x="75" y="42" z="65" color="#6635f4">Right.*.*.Gray Matter.Visual cortex V2 BA18</label>
+<label index="85" x="105" y="43" z="66" color="#6a2cfb">Left.*.*.Gray Matter.Visual cortex V3V</label>
+<label index="86" x="68" y="47" z="64" color="#7937f7">Right.*.*.Gray Matter.Visual cortex V3V</label>
+<label index="87" x="117" y="42" z="61" color="#7f33fa">Left.*.*.Gray Matter.Visual cortex V4</label>
+<label index="88" x="59" y="50" z="62" color="#8630fa">Right.*.*.Gray Matter.Visual cortex V4</label>
+<label index="89" x="132" y="52" z="76" color="#7b0ff5">Left.*.*.Gray Matter.Visual cortex V5</label>
+<label index="90" x="41" y="60" z="78" color="#8510f5">Right.*.*.Gray Matter.Visual cortex V5</label>
+<label index="91" x="102" y="112" z="138" color="#9c2cf6">Left.*.*.Gray Matter.Premotor cortex BA6</label>
+<label index="92" x="77" y="110" z="143" color="#a934f9">Right.*.*.Gray Matter.Premotor cortex BA6</label>
+<label index="93" x="41" y="112" z="76" color="#a926f4">Right.*.*.White Matter.Acoustic radiation</label>
+<label index="94" x="131" y="100" z="72" color="#b11df6">Left.*.*.White Matter.Acoustic radiation</label>
+<label index="95" x="89" y="90" z="87" color="#b90bfc">*.*.*.White Matter.Callosal body</label>
+<label index="96" x="81" y="84" z="98" color="#c31ef5">Right.*.*.White Matter.Cingulum</label>
+<label index="97" x="97" y="109" z="105" color="#cd17f9">Left.*.*.White Matter.Cingulum</label>
+<label index="98" x="65" y="104" z="122" color="#d41ff4">Right.*.*.White Matter.Corticospinal tract</label>
+<label index="99" x="117" y="109" z="109" color="#e30bfd">Left.*.*.White Matter.Corticospinal tract</label>
+<label index="100" x="88" y="106" z="89" color="#e927f6">*.*.*.White Matter.Fornix</label>
+<label index="101" x="56" y="134" z="66" color="#f40cf9">Right.*.*.White Matter.Inferior occipito-frontal fascicle</label>
+<label index="102" x="121" y="130" z="64" color="#fb2cf7">Left.*.*.White Matter.Inferior occipito-frontal fascicle</label>
+<label index="103" x="65" y="104" z="63" color="#f822ea">Right.*.*.Gray Matter.Lateral geniculate body</label>
+<label index="104" x="112" y="103" z="61" color="#f728e1">Left.*.*.Gray Matter.Lateral geniculate body</label>
+<label index="105" x="87" y="118" z="57" color="#fc21db">*.*.*.Gray Matter.Mamillary body</label>
+<label index="106" x="73" y="100" z="65" color="#f82cd1">Right.*.*.Gray Matter.Medial geniculate body</label>
+<label index="107" x="106" y="100" z="64" color="#fd18c8">Left.*.*.Gray Matter.Medial geniculate body</label>
+<label index="108" x="64" y="45" z="75" color="#fe1ec0">Right.*.*.White Matter.Optic radiation</label>
+<label index="109" x="111" y="45" z="77" color="#fa16b1">Left.*.*.White Matter.Optic radiation</label>
+<label index="110" x="58" y="102" z="101" color="#fb0ca5">Right.*.*.White Matter.Superior longitudinal fascicle</label>
+<label index="111" x="120" y="98" z="99" color="#f9119b">Left.*.*.White Matter.Superior longitudinal fascicle</label>
+<label index="112" x="68" y="142" z="89" color="#fb1594">Right.*.*.White Matter.Superior occipito-frontal fascicle</label>
+<label index="113" x="110" y="151" z="83" color="#fd1b8e">Left.*.*.White Matter.Superior occipito-frontal fascicle</label>
+<label index="114" x="57" y="124" z="63" color="#fa2388">Right.*.*.White Matter.Uncinate fascicle</label>
+<label index="115" x="121" y="123" z="62" color="#fa1a79">Left.*.*.White Matter.Uncinate fascicle</label>
+<label index="116" x="130" y="105" z="71" color="#fb0f69">Left.*.*.Gray Matter.Insula Id1</label>
+<label index="117" x="48" y="107" z="67" color="#f61260">Right.*.*.Gray Matter.Insula Id1</label>
+<label index="118" x="125" y="100" z="85" color="#f5205f">Left.*.*.Gray Matter.Insula Ig1</label>
+<label index="119" x="54" y="100" z="81" color="#f9144e">Right.*.*.Gray Matter.Insula Ig1</label>
+<label index="120" x="128" y="105" z="85" color="#fa305b">Left.*.*.Gray Matter.Insula Ig2</label>
+<label index="121" x="52" y="105" z="82" color="#fe2e51">Right.*.*.Gray Matter.Insula Ig2</label>
+  </data>
+</atlas>
+
