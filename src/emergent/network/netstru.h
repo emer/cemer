@@ -67,13 +67,12 @@ class NetView; //
 
 ////////////////////////////////////////////////////
 //   BrainAtlasProxy
-class EMERGENT_API BrainAtlasProxy : public taOBase
+class EMERGENT_API BrainAtlasProxy : public taNBase
 {
   // #NO_TOKENS #NO_UPDATE_AFTER A single brain atlas.
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   explicit BrainAtlasProxy(const BrainAtlasInfo& info);
-  String  name;
   String  filepath;
   String  description;
   String  image_filepath;
@@ -86,6 +85,8 @@ public:
   QString             Label(int index);
   unsigned int        Index(const QString& label);
   QList<FloatTDCoord> VoxelCoordinates(const QString& label_regexp);
+  
+  void                EditAtlasColors(); // #BUTTON
   
   TA_BASEFUNS_SC(BrainAtlasProxy);
 

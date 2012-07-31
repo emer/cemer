@@ -36,19 +36,19 @@
 ////////////////////////////////////////////////////
 //   BrainAtlasProxy
 
-BrainAtlasProxy::BrainAtlasProxy(const BrainAtlasInfo& info) :
-  name(info.name),
-  filepath(info.atlas_filename),
-  description(info.description),
-  image_filepath(info.image_filename),
-  m_have_atlas_instance(false),
-  m_atlas(NULL)
+BrainAtlasProxy::BrainAtlasProxy(const BrainAtlasInfo& info) : taNBase()
+  , filepath(info.atlas_filename)
+  , description(info.description)
+  , image_filepath(info.image_filename)
+  , m_have_atlas_instance(false)
+  , m_atlas(NULL)
 {
+  name = info.name;
 }
 
 void BrainAtlasProxy::Initialize()
-{ 
-  name=""; 
+{  
+  name = ""; 
   filepath = "";
   description="";
   image_filepath=""; 
@@ -110,6 +110,13 @@ QList<FloatTDCoord> BrainAtlasProxy::VoxelCoordinates(const QString& label_regex
   return Atlas().VoxelCoordinates(label_regexp);
 }
 
+void BrainAtlasProxy::EditAtlasColors()
+{ // from here we will launch a custom version of iRegexpDialo
+  // which users can use to edit the atlas label colors...with
+  // a custom delegate for the color cell. Once we've modified
+  // the colors in our instance, we need to also save atlas 
+  // instance to file to make permanent.
+}
 
 //////////////////////////
 //  SigmoidSpec         //
