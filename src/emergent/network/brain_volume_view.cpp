@@ -256,8 +256,11 @@ void BrainVolumeView::RenderBrain()
   BrainAtlasProxy* atlas(bv->net()->brain_atlas.ptr());
   if (ColorBrain()) {
     m_atlas_data = new NiftiReader(atlas->image_filepath);
-    if (!m_atlas_data->IsValid())
+    if (!m_atlas_data->IsValid()){
+      delete m_atlas_data;
+      m_atlas_data = NULL;    
       return;
+    }
   }
   
   //Creates the nodes that render the reference brain
