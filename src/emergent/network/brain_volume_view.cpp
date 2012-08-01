@@ -554,8 +554,6 @@ void BrainVolumeView::CreateReferenceWidget( SoSeparator* widg, BrainView::Anato
   // This creates a three (3) line, 3d widget which serves as an reference for
   // brain volume view by indicating which axes correspond to which anatomical
   // directions (Left-Right, Anterior-Posterior, Superior-Inferior)
-  // @TODO - Should this be made more general to allow placement in any corner
-  // or anywhere with left,right,up,down-facing lines?
   
   float sc = scale;
   float len = max_dim*sc; //length of lines
@@ -731,6 +729,17 @@ void BrainVolumeView::Render_impl_blocks()
   BrainView* bv = this->bv(); //cache
   if(!bv) return;
    
+  // Create atlas face sets if requested
+  if (bv->show_atlas && bv->net()->brain_atlas.ptr() != NULL ) {
+    // use the first matching label's color for face sets (or white if not found)
+    QSet<int> match_idxs = bv->net()->brain_atlas->MatchingLabelIndices(bv->brain_area_regexp);
+    int color_idx(*match_idxs.constBegin());
+    QList<QColor> colors = bv->net()->brain_atlas->Colors();
+    const QColor WHITE(255,255,255);
+    T3Color color(colors.value(color_idx,WHITE));
+    CreateAtlasFaceSets(bv->brain_area_regexp, color);
+  }
+  
   // create unit/voxel face sets & set values
   CreateFaceSets();
   UpdateSlices(); // will call UpdateUnitValues_blocks ...
@@ -738,7 +747,7 @@ void BrainVolumeView::Render_impl_blocks()
 
 void BrainVolumeView::CreateFaceSets()
 {
-  // @TODO - Cleanup this code!
+  // @TODO - refactor this and CreateAtlasFaceSets remove redundant code
   
   Network* net = this->net(); //cache
   if (NULL == net) return;
@@ -934,8 +943,7 @@ void BrainVolumeView::CreateFaceSets()
 
 void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
 {
-  // @TODO - Cleanup this code?! - Is there duplication that can be factored
-  // between this and CreateFaceSets ?
+  // @TODO - refactor this and CreateFaceSets remove redundant code
   
   Network* net = this->net(); //cache
   if (NULL == net) return;

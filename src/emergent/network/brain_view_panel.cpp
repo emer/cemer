@@ -196,6 +196,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   
   ////////////////////////////////////////////////////////////////////////////
   // Brain colorization widgets
+  // @TODO: replace with taiRegexpField
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
   label = taiM->NewLabel("Color brain:", widg, font_spec);
   label->setToolTip("Render brain areas with colors (first time can take a few moments)."); 
@@ -207,7 +208,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addWidget(m_chk_color_brain);  
   bvControls->addSpacing(taiM->hspc_c);
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
-  label->setToolTip("Regexp to select brain areas to color)."); 
+  label->setToolTip("Regexp to select brain areas to color."); 
   bvControls->addWidget(label);
   fldBrainColorRegexp = new QLineEdit("Brodmann", widg);
   bvControls->addWidget(fldBrainColorRegexp);
@@ -216,8 +217,26 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
 
   ////////////////////////////////////////////////////////////////////////////
   // Brain atlas widgets
+  // @TODO: replace with taiRegexpField
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
-  
+  label = taiM->NewLabel("Enable atlas:", widg, font_spec);
+  label->setToolTip("Render label(s) from currently selected brain atlas."); 
+  bvControls->addWidget(label);
+  m_chk_atlas = new QCheckBox(widg);
+  m_chk_atlas->setCheckState(Qt::Unchecked);
+  m_chk_atlas->setEnabled(false);
+  connect(m_chk_atlas, SIGNAL(stateChanged(int)), this, SLOT(SetViewAtlas(int)) );
+  bvControls->addWidget(m_chk_atlas);  
+  bvControls->addSpacing(taiM->hspc_c);
+  label = taiM->NewLabel("Atlas label (regexp):", widg, font_spec);
+  label->setToolTip("Regexp to select brain atlas labels to render."); 
+  bvControls->addWidget(label);
+  fldBrainAtlasRegexp = new QLineEdit("Brodmann", widg);
+  bvControls->addWidget(fldBrainAtlasRegexp);
+  connect(fldBrainAtlasRegexp, SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
+  bvControls->addStretch();
+  ////////////////////////////////////////////////////////////////////////////
+
   // listen for BrainViewState state changed
   connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
   
@@ -311,6 +330,7 @@ void BrainViewPanel::UpdatePanel_impl()
   m_unit_val_tran_sbox->setValue((int)(bv->view_params.unit_trans*100));
   chkLayMove->setChecked(bv->lay_mv);
   
+  // update the brain coloring widgets
   if (bv->net()->brain_atlas.ptr() == NULL) {
     m_chk_color_brain->setEnabled(false);
     m_chk_color_brain->setChecked(false); 
@@ -323,6 +343,20 @@ void BrainViewPanel::UpdatePanel_impl()
   }
   fldBrainColorRegexp->setText(bv->ColorBrainRegexp());
 
+  // update the atlas viewing widgets
+  if (bv->net()->brain_atlas.ptr() == NULL) {
+    m_chk_atlas->setEnabled(false);
+    m_chk_atlas->setChecked(false); 
+    fldBrainAtlasRegexp->setEnabled(false);
+  }
+  else {
+    m_chk_atlas->setEnabled(true);
+    m_chk_atlas->setChecked(bv->ViewAtlas());
+    fldBrainAtlasRegexp->setEnabled(true);
+  }
+  fldBrainAtlasRegexp->setText(bv->ViewAtlasRegexp());
+  
+  
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
@@ -412,51 +446,98 @@ void BrainViewPanel::SetColorBrainRegexp(const QString& regexp)
   bv()->SetColorBrainRegexp(regexp);
 }
 
+void BrainViewPanel::SetViewAtlas(int state)
+{
+  bv()->SetViewAtlas(state);
+}
+
+void BrainViewPanel::ViewAtlasRegexpEdited()
+{  
+  QRegExp regexp(fldBrainAtlasRegexp->text());
+  if (regexp.isValid()) {
+    SetViewAtlasRegexp(fldBrainAtlasRegexp->text()); 
+    m_chk_atlas->setCheckable(true);
+  }
+  else {
+    m_chk_atlas->setCheckable(false);
+  }
+}
+void BrainViewPanel::SetViewAtlasRegexp(const QString& regexp)
+{
+  bv()->SetViewAtlasRegexp(regexp);
+}
 void BrainViewPanel::EmitDataNameChanged(const QString& name)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit DataNameChanged(name);
 }
 void BrainViewPanel::EmitDimensionsChanged(const TDCoord& d)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit DimensionsChanged(d);
 }
 void BrainViewPanel::EmitViewPlaneChanged(int plane)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit ViewPlaneChanged(plane);
 }
 void BrainViewPanel::EmitNumSlicesChanged(int nSlices)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit NumSlicesChanged(nSlices);
 }
 void BrainViewPanel::EmitSliceStartChanged(int start)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit SliceStartChanged(start);
 }
 void BrainViewPanel::EmitSliceEndChanged(int end)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit SliceEndChanged(end);
 }
 void BrainViewPanel::EmitSliceSpacingChanged(int spacing)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit SliceSpacingChanged(spacing);
 }
 void BrainViewPanel::EmitSliceTransparencyChanged(int transparency)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit SliceTransparencyChanged(transparency);
 }
 void BrainViewPanel::EmitUnitValuesTransparencyChanged(int transparency)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit UnitValuesTransparencyChanged(transparency);
 }
 void BrainViewPanel::EmitStateChanged(int state)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit StateChanged(state);
 }
 void BrainViewPanel::EmitColorBrainAreaRegexpChanged(const QString& regexp)
 {
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
   emit BrainColorRegexpChanged(regexp);
 }
-
+void BrainViewPanel::EmitViewAtlasRegexpChanged(const QString& regexp)
+{
+  // calling this method allows us to raise a signal, notifying 
+  // any widgets that may be connected to it
+  emit ViewAtlasRegexpChanged(regexp);
+}
 
 void BrainViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
@@ -483,6 +564,7 @@ void BrainViewPanel::GetValue_impl() {
   bv->lay_mv = chkLayMove->isChecked();
 
   bv->color_brain_regexp = fldBrainColorRegexp->text();
+  bv->brain_area_regexp = fldBrainAtlasRegexp->text();
   
   if (false == req_full_render) {
     // just need update, not full rebuild/render

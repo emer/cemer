@@ -124,6 +124,8 @@ public:
   int             MaxSlices() const;
   bool            ColorBrain() const;
   QString         ColorBrainRegexp() const;
+  bool            ViewAtlas() const;
+  QString         ViewAtlasRegexp() const;
   QString         NetworkBrainAreas() const;
 
   float           SliceTransparencyXformed() const;
@@ -141,6 +143,8 @@ public:
   void            SetUnitValuesTransparency(int transparency);
   void            SetColorBrain(int state);
   void            SetColorBrainRegexp(const QString& regexp);
+  void            SetViewAtlas(int state);
+  void            SetViewAtlasRegexp(const QString& regexp);
 
   bool          state_valid;
   String        brain_data_name;
@@ -157,6 +161,8 @@ public:
   bool          color_brain;
   QColor        brain_area_color;
   String        color_brain_regexp;
+  bool          show_atlas;
+  String        brain_area_regexp;
   
   bool          ValidSliceStart() const;
   bool          ValidSliceEnd() const;

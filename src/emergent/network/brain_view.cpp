@@ -118,6 +118,9 @@ void BrainView::Initialize() {
   color_brain = false;
   color_brain_regexp = "Brodmann"; // default to Brodmann areas
   view_params.unit_trans = .9;	// with high-fill pct, unit trans should be much higher
+  show_atlas = false;
+  brain_area_regexp = "Hippocampus"; // default to show Hippocampus
+
   
   QString data_path(taMisc::app_dir.toQString());
   if (data_path.size() != 0) {
@@ -992,10 +995,27 @@ int BrainView::MaxSlices() const
   
   return mx;
 }
+
 bool BrainView::ColorBrain() const
 {
   return color_brain;
 }
+
+QString BrainView::ColorBrainRegexp() const
+{ 
+  return color_brain_regexp;
+}
+
+bool BrainView::ViewAtlas() const
+{
+  return show_atlas;
+}
+
+QString BrainView::ViewAtlasRegexp() const
+{ 
+  return brain_area_regexp;
+}
+
 QString BrainView::NetworkBrainAreas() const
 {
   QString brain_areas("");
@@ -1020,11 +1040,6 @@ QString BrainView::NetworkBrainAreas() const
     brain_areas = "";
   }
   return brain_areas;
-}
-
-QString BrainView::ColorBrainRegexp() const
-{ 
-  return color_brain_regexp;
 }
 
 void BrainView::SetDataName(const QString& data_name)
@@ -1215,6 +1230,31 @@ void BrainView::SetColorBrainRegexp(const QString& regexp)
   }
 }
 
+void BrainView::SetViewAtlas(int state)
+{
+  bool newState(false);
+  if (static_cast<Qt::CheckState>(state) == Qt::Checked)
+    newState = true;
+  else
+    newState = false;
+  
+  if (newState == show_atlas)
+    return;
+  
+  show_atlas = newState;
+  last_state_change |= MAJOR;
+  EmitAndClearState();
+}
+
+void BrainView::SetViewAtlasRegexp(const QString& regexp) 
+{
+  if (regexp != brain_area_regexp) {
+    brain_area_regexp = regexp;
+    last_state_change |= MAJOR;
+    EmitAndClearState();
+  }
+}
+
 bool BrainView::ValidSliceStart() const
 {
   return (slice_start <= MaxSlices()) ? true : false;
@@ -1254,5 +1294,6 @@ void BrainView::EmitAll()
     bvp->EmitSliceTransparencyChanged(slice_transparency);
     bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency);
     bvp->EmitColorBrainAreaRegexpChanged(color_brain_regexp);
+    bvp->EmitViewAtlasRegexpChanged(brain_area_regexp);
   }
 }

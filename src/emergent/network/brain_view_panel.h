@@ -41,7 +41,9 @@ public:
   QLabel*		    lblUnitTrans;
   taiField*		    fldUnitTrans;
 
-  QLineEdit*        fldBrainColorRegexp;
+  QLineEdit*        fldBrainColorRegexp; // @TODO: replace with taiRegexpField
+  QLineEdit*        fldBrainAtlasRegexp; // @TODO: replace with taiRegexpField
+  
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		layColorScaleCtrls;
   QCheckBox*		chkAutoScale;       // autoscale ck_box
@@ -96,6 +98,9 @@ public slots:
   void          SetColorBrain(int state);
   void          ColorBrainRegexpEdited();
   void          SetColorBrainRegexp(const QString& regexp);
+  void          SetViewAtlas(int state);
+  void          ViewAtlasRegexpEdited();
+  void          SetViewAtlasRegexp(const QString& regexp);
     
   void          EmitDataNameChanged(const QString& name);
   void          EmitDimensionsChanged(const TDCoord& d);
@@ -108,6 +113,7 @@ public slots:
   void          EmitUnitValuesTransparencyChanged(int transparency);
   void          EmitStateChanged(int state);  
   void          EmitColorBrainAreaRegexpChanged(const QString& regexp);
+  void          EmitViewAtlasRegexpChanged(const QString& regexp);
 
 #ifndef __MAKETA__
 signals:
@@ -122,6 +128,8 @@ signals:
   void          UnitValuesTransparencyChanged(int transparency);
   void          StateChanged(int state); 
   void          BrainColorRegexpChanged(const QString& regexp);
+  void          ViewAtlasRegexpChanged(const QString& regexp);
+
 #endif
   
 protected slots:
@@ -141,6 +149,7 @@ private:
   QSpinBox*         m_slice_trans_sbox;
   QSlider*          m_slice_tran_slid;
   QCheckBox*		m_chk_color_brain;
+  QCheckBox*		m_chk_atlas;
   void              UpdateWidgetLimits();
 
 };
