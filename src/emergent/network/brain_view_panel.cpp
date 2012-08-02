@@ -212,10 +212,10 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
   label->setToolTip("Regexp to select brain areas to color."); 
   bvControls->addWidget(label);
-  fldBrainColorRegexp= dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
+  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
   bvControls->addWidget(fldBrainColorRegexp->GetRep());
   ((iLineEdit*)fldBrainColorRegexp->GetRep())->setCharWidth(40);
-  connect(fldBrainColorRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
+  connect(fldBrainColorRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ColorBrainRegexpEdited()));
   bvControls->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
