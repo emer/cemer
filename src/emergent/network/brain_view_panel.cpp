@@ -194,12 +194,14 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addWidget(m_slice_tran_slid);
   bvControls->addStretch();
   
+ 
+  // the populator for the brain colorization and atlas widgets
+  atlas_regexp_pop = new BrainAtlasRegexpPopulator();
+  
   ////////////////////////////////////////////////////////////////////////////
   // Brain colorization widgets
-  // @TODO: replace with taiRegexpField
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
   label = taiM->NewLabel("Color brain:", widg, font_spec);
-  label->setToolTip("Render brain areas with colors (first time can take a few moments)."); 
   bvControls->addWidget(label);
   m_chk_color_brain = new QCheckBox(widg);
   m_chk_color_brain->setCheckState(Qt::Unchecked);
@@ -210,17 +212,16 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
   label->setToolTip("Regexp to select brain areas to color."); 
   bvControls->addWidget(label);
-  fldBrainColorRegexp = new QLineEdit("Brodmann", widg);
-  bvControls->addWidget(fldBrainColorRegexp);
-  connect(fldBrainColorRegexp, SIGNAL(editingFinished()), this, SLOT(ColorBrainRegexpEdited()));
+  fldBrainColorRegexp= dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
+  bvControls->addWidget(fldBrainColorRegexp->GetRep());
+  ((iLineEdit*)fldBrainColorRegexp->GetRep())->setCharWidth(40);
+  connect(fldBrainColorRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
   bvControls->addStretch();
-
+  
   ////////////////////////////////////////////////////////////////////////////
-  // Brain atlas widgets
-  // @TODO: replace with taiRegexpField
+  // Brain atlas widgets  
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
-  label = taiM->NewLabel("Enable atlas:", widg, font_spec);
-  label->setToolTip("Render label(s) from currently selected brain atlas."); 
+  label = taiM->NewLabel("View atlas:", widg, font_spec);
   bvControls->addWidget(label);
   m_chk_atlas = new QCheckBox(widg);
   m_chk_atlas->setCheckState(Qt::Unchecked);
@@ -228,15 +229,15 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   connect(m_chk_atlas, SIGNAL(stateChanged(int)), this, SLOT(SetViewAtlas(int)) );
   bvControls->addWidget(m_chk_atlas);  
   bvControls->addSpacing(taiM->hspc_c);
-  label = taiM->NewLabel("Atlas label (regexp):", widg, font_spec);
-  label->setToolTip("Regexp to select brain atlas labels to render."); 
+  label = taiM->NewLabel("Atlas label (rexgexp)", widg, font_spec);
+  label->setToolTip("Regexp to select brain atlas labels to render.");
   bvControls->addWidget(label);
-  fldBrainAtlasRegexp = new QLineEdit("Brodmann", widg);
-  bvControls->addWidget(fldBrainAtlasRegexp);
-  connect(fldBrainAtlasRegexp, SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
+  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
+  bvControls->addWidget(fldBrainAtlasRegexp->GetRep());
+  ((iLineEdit*)fldBrainAtlasRegexp->GetRep())->setCharWidth(40);
+  connect(fldBrainAtlasRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
   bvControls->addStretch();
-  ////////////////////////////////////////////////////////////////////////////
-
+  
   // listen for BrainViewState state changed
   connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
   
@@ -308,6 +309,9 @@ BrainViewPanel::~BrainViewPanel()
   if (bv_) {
     bv_->bvp = NULL;
   }
+  if (atlas_regexp_pop != NULL){
+    delete atlas_regexp_pop;
+  }
 }
 
 void BrainViewPanel::UpdatePanel_impl() 
@@ -334,27 +338,27 @@ void BrainViewPanel::UpdatePanel_impl()
   if (bv->net()->brain_atlas.ptr() == NULL) {
     m_chk_color_brain->setEnabled(false);
     m_chk_color_brain->setChecked(false); 
-    fldBrainColorRegexp->setEnabled(false);
+    fldBrainColorRegexp->setVisible(false); // @TODO - would be nice but seems to do nothing
   }
   else {
     m_chk_color_brain->setEnabled(true);
     m_chk_color_brain->setChecked(bv->ColorBrain());
-    fldBrainColorRegexp->setEnabled(true);
+    fldBrainColorRegexp->setVisible(true); // @TODO - would be nice but seems to do nothing
   }
-  fldBrainColorRegexp->setText(bv->ColorBrainRegexp());
+  fldBrainColorRegexp->rep()->setText(bv->ColorBrainRegexp());
 
   // update the atlas viewing widgets
   if (bv->net()->brain_atlas.ptr() == NULL) {
     m_chk_atlas->setEnabled(false);
     m_chk_atlas->setChecked(false); 
-    fldBrainAtlasRegexp->setEnabled(false);
+    fldBrainAtlasRegexp->setVisible(false); // @TODO - would be nice but seems to do nothing
   }
   else {
     m_chk_atlas->setEnabled(true);
     m_chk_atlas->setChecked(bv->ViewAtlas());
-    fldBrainAtlasRegexp->setEnabled(true);
+    fldBrainAtlasRegexp->setVisible(true); // @TODO - would be nice but seems to do nothing
   }
-  fldBrainAtlasRegexp->setText(bv->ViewAtlasRegexp());
+  fldBrainAtlasRegexp->rep()->setText(bv->brain_area_regexp);
   
   
   // update var selection
@@ -432,9 +436,10 @@ void BrainViewPanel::SetColorBrain(int state)
 }
 void BrainViewPanel::ColorBrainRegexpEdited()
 {
-  QRegExp regexp(fldBrainColorRegexp->text());
-  if (regexp.isValid()) {
-    SetColorBrainRegexp(fldBrainColorRegexp->text()); 
+  QString regexp = fldBrainColorRegexp->GetValue().toQString();
+  QRegExp re(regexp);
+  if (re.isValid()) {
+    SetColorBrainRegexp(regexp); 
     m_chk_color_brain->setCheckable(true);
   }
   else {
@@ -452,10 +457,11 @@ void BrainViewPanel::SetViewAtlas(int state)
 }
 
 void BrainViewPanel::ViewAtlasRegexpEdited()
-{  
-  QRegExp regexp(fldBrainAtlasRegexp->text());
-  if (regexp.isValid()) {
-    SetViewAtlasRegexp(fldBrainAtlasRegexp->text()); 
+{   
+  QString regexp = fldBrainAtlasRegexp->GetValue().toQString();
+  QRegExp re(regexp);
+  if (re.isValid()) {
+    SetViewAtlasRegexp(regexp); 
     m_chk_atlas->setCheckable(true);
   }
   else {
@@ -563,8 +569,8 @@ void BrainViewPanel::GetValue_impl() {
   bv->net_text = chkNetText->isChecked();
   bv->lay_mv = chkLayMove->isChecked();
 
-  bv->color_brain_regexp = fldBrainColorRegexp->text();
-  bv->brain_area_regexp = fldBrainAtlasRegexp->text();
+  bv->color_brain_regexp = fldBrainColorRegexp->GetValue();
+  bv->brain_area_regexp = fldBrainAtlasRegexp->GetValue();
   
   if (false == req_full_render) {
     // just need update, not full rebuild/render

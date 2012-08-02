@@ -111,7 +111,8 @@ QList<FloatTDCoord> BrainAtlasProxy::VoxelCoordinates(const QString& label_regex
 }
 
 void BrainAtlasProxy::EditAtlasColors()
-{ // from here we will launch a custom version of iRegexpDialo
+{
+  // @TODO launch a custom version of iRegexpDialog
   // which users can use to edit the atlas label colors...with
   // a custom delegate for the color cell. Once we've modified
   // the colors in our instance, we need to also save atlas 

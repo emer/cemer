@@ -1583,7 +1583,7 @@ void taiRegexpField::SetFieldOwner(const void *fieldOwner)
 
 void taiRegexpField::btnEdit_clicked(bool)
 {
-  iRegexpDialog edit_dialog(this, mbr->name, m_populator, m_fieldOwner, readOnly());
+  iRegexpDialog edit_dialog(this, mbr == NULL ? "" : mbr->name, m_populator, m_fieldOwner, readOnly());
   edit_dialog.exec();
 
   // Unless explicitly overridden, do an autoapply.

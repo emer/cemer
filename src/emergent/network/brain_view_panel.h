@@ -41,8 +41,9 @@ public:
   QLabel*		    lblUnitTrans;
   taiField*		    fldUnitTrans;
 
-  QLineEdit*        fldBrainColorRegexp; // @TODO: replace with taiRegexpField
-  QLineEdit*        fldBrainAtlasRegexp; // @TODO: replace with taiRegexpField
+  taiRegexpField*   fldBrainColorRegexp;
+  taiRegexpField*   fldBrainAtlasRegexp;
+  BrainAtlasRegexpPopulator* atlas_regexp_pop;
   
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		layColorScaleCtrls;
