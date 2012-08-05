@@ -523,37 +523,39 @@ def inst_3rd_party():
 qt_dir = ''
 def inst_qt():
   global qt_dir
-  # Only 32-bit supported for VC++2008, so just use the pre-installed Qt.
-  # For VC++2010, need separate directories for 32-bit and 64-bit, and need to recompile it.
-  if msvs == 2008: qt_dir = 'C:/Qt/4.6.2'
-  else:            qt_dir = 'C:/Qt/4.7.3' + get_compiler_extension_args(build_64bit, False)
+  if msvs == 2008:
+    # VC++2008 only supports 32-bit compiles, so just use the pre-built Qt
+    # downloaded from Nokia's website.
+    qt_ver = '4.6.2'
+    qt_dir = 'C:/Qt/' + qt_ver
+  else:
+    # VC++2010 supports 32- and 64-bit compiles.  Use a Qt package that was
+    # custom-built for emergent (includes zlib and libjpeg) for the given arch.
+    qt_ver = '4.8.2'
+    qt_dir = 'C:/Qt/' + qt_ver + get_compiler_extension_args(build_64bit, False)
+
   while not fileExists(os.path.join(qt_dir, 'bin/moc.exe')):
     print_horizontal()
     print 'You need to install Qt.  This can be downloaded for you to install.'
     if askUser('\nReady to download and install Qt?'):
-      print '\nDownloading Qt.  When the download completes, installation will begin.'
-      print 'Accept default installation options.  Return to this script when complete.'
-      print '\nTHIS FILE IS HUGE, be patient while it downloads.....'
+      print '\nDownloading Qt.  THIS FILE IS HUGE, be patient while it downloads.....'
       if msvs == 2008:
-        file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.6.2-vs2008.exe')
+        print 'When the download completes, installation will begin.'
+        print 'Accept default installation options.  Return to this script when complete.'
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-' + qt_ver + '-vs2008.exe')
+        os.system(file)
+        response = raw_input('\nOnce Qt has been installed, press enter to continue...')
       else:
-        # TODO: need to recompile entirely for VC++2010, whether 64-bit or not, otherwise runtime error.
-        file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.7.3-vs2008.exe')
-      os.system(file)
-      response = raw_input('\nOnce Qt has been installed, press enter to continue...')
+        print 'When the download completes, Qt will be installed automatically.'
+        if build_64bit:
+          file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-' + qt_ver + '-vs2010-64.exe')
+        else:
+          file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-' + qt_ver + '-vs2010-32.exe')
 
-def compile_qt():
-  # Don't need to build Qt for VC++2008
-  if msvs == 2008: return
-  # Check for an arbitrary file, but one that happens to not exist until
-  # towards the end of the Qt build process -- goood indication that Qt
-  # has been built for this platform.
-  ## TODO: need to find a good way to tell if this has been done.  Or just remove this compile_qt() function and leave it up to the user.
-  while not fileExists(os.path.join(qt_dir, 'bin/moc.exe')):
-    print_horizontal()
-    print 'You need to compile Qt for this platform.  This will take hours.'
-    if askUser('\nReady to compile Qt in ' + qt_dir + ' ?'):
-      print '\nTODO: Compiling Qt.'
+        print '\n\nDownload complete.  Installing Qt...'
+        cmd = file + ' -y -oC:\\Qt\\'
+        os.system(cmd)
+        response = raw_input('\nQt has been installed.  Press enter to continue...')
 
 coin_dir = ''
 def inst_coin():
