@@ -21,10 +21,11 @@
 
 #ifndef __MAKETA__
 #include <QColor>
-class QDomDocument;
-class QDomNode;
-class QDomElement;
 #endif
+
+class QDomDocument; // #IGNORE
+class QDomNode;	    // #IGNORE
+class QDomElement;  // #IGNORE
 
 class BrainAtlas;
 class BrainAtlasInfo;
