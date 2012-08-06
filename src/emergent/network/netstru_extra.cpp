@@ -114,8 +114,8 @@ void SmallWorldPrjnSpec::Connect_impl(Projection* prjn) {
 
   int rx, ry, rz;
   int sx, sy, sz;
-  int this_rx, this_ry, this_rz;
-  int this_sx, this_sy, this_sz;
+  int this_rx, this_ry;
+  int this_sx, this_sy;
   int this_recv_flat;
   int n_recv_units, this_recv_unit;
   int alloc_loop;
