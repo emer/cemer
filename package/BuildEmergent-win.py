@@ -7,6 +7,9 @@
 import os, re, subprocess, sys, urllib, webbrowser, _winreg
 from zipfile import ZipFile
 
+##############################################################################
+# Misc functions
+
 def print_horizontal():
   print '\n-------------------------------------------------------------------------------'
 
@@ -14,6 +17,9 @@ def quit(exit_val):
   os.system('color 07')
   response = raw_input('\n\nPress enter to close the window...')
   sys.exit(exit_val)
+
+##############################################################################
+# Environment variable functions
 
 def setEnvVar(name, value, reg, env):
   try:
@@ -52,21 +58,14 @@ def setSysEnvVar(name, value):
   #setEnvVar(name, value, _winreg.HKEY_LOCAL_MACHINE, env)
   os.system('setx ' + name + ' "' + value + '" /M')
 
-try:
-  progfiles = set([os.environ['ProgramFiles(x86)'], os.environ['ProgramFiles'], os.environ['ProgramW6432']])
-  isWin64 = True
-except KeyError:
-  progfiles = set([os.environ['ProgramFiles']])
-  isWin64 = False
+##############################################################################
+# Filesystem functions
 
 def makeDir(dir):
   try:
     os.makedirs(dir)
   except os.error:
     pass
-
-devtool_dir = 'C:/src/devtools'
-makeDir(devtool_dir)
 
 def fixPath(path):
   return re.sub(r'/', r'\\', path)
@@ -89,12 +88,29 @@ def dirExists(dir):
     return True
   return False
 
+##############################################################################
+# Function to find a file in one of the 'Program Files' folders
+
+# Determine if this is 64-bit Windows or 32-bit Windows.
+try:
+  progfiles = set([os.environ['ProgramFiles(x86)'], os.environ['ProgramFiles'], os.environ['ProgramW6432']])
+  isWin64 = True
+except KeyError:
+  progfiles = set([os.environ['ProgramFiles']])
+  isWin64 = False
+
 def findInProgFiles(path):
   for prefix in progfiles:
     file = os.path.join(prefix, path)
     if fileExists(file) or dirExists(file):
       return file # True
   return False
+
+##############################################################################
+# Function to download a file into the 'devtools' directory
+
+devtool_dir = 'C:/src/devtools'
+makeDir(devtool_dir)
 
 def getUrl(url):
   try:
@@ -109,6 +125,9 @@ def getUrl(url):
     print '\nAborting.'
     quit(1)
   return file
+
+##############################################################################
+# User interaction functions
 
 def getOptions(default):
   if default == '':                      return ' [y/n/q/a]: '
@@ -144,6 +163,9 @@ def get_svn_rev(question):
   if response[0] == 'n' or response[0] == 'N':
     return -1
   return response
+
+##############################################################################
+# Functions to install Microsoft Visual Studio Express and associated packages
 
 def inst_msvs_2008():
   while not findInProgFiles('Microsoft Visual Studio 9.0/VC/bin/cl.exe'):
@@ -314,6 +336,9 @@ def inst_msvs():
   else:
     raise 'Bad MSVS version'
 
+##############################################################################
+# Function to install Nullsoft Install System
+
 def inst_nsis():
   while not findInProgFiles('NSIS/NSIS.exe'):
     print_horizontal()
@@ -323,6 +348,9 @@ def inst_nsis():
     if askUser('\nReady to download and install NSIS?'):
       webbrowser.open_new_tab('http://prdownloads.sourceforge.net/nsis/nsis-2.46-setup.exe?download')
       response = raw_input('\nOnce NSIS has been installed, press enter to continue...')
+
+##############################################################################
+# Function to install Subversion
 
 def inst_svn():
   while not findInProgFiles('SlikSvn/bin/svn.exe'):
@@ -339,6 +367,9 @@ def inst_svn():
       file = getUrl(url)
       os.system(file)
       response = raw_input('\nOnce Subversion has been installed, press enter to continue...')
+
+##############################################################################
+# Function to install CMake
 
 cmake_exe = ''
 def inst_cmake():
@@ -364,6 +395,9 @@ def inst_cmake():
       os.system(file)
       response = raw_input('\nOnce CMake has been installed, press enter to continue...')
 
+##############################################################################
+# Function to install JOM (an nmake clone that supports parallel compiling)
+
 use_jom = False
 jom_exe = ''
 jom_dir = os.path.join(devtool_dir, 'jom')
@@ -382,6 +416,9 @@ def inst_jom():
       zip.extractall(jom_dir)
     if fileExists(jom_exe):
       use_jom = True
+
+##############################################################################
+# Functions to determine which emergent directory to build in
 
 # Check if current directory is an emergent source directory.
 # If so, try to build there.  Otherwise, use this default:
@@ -405,7 +442,9 @@ def get_emer_src_path():
     pass
   print '\nWill build in emergent source directory: ' + emer_src
 
-# Ask user if they want to build Debug or Release.
+##############################################################################
+# Function to prompt user to build Debug or Release
+
 build_debug = False
 def ask_debug_or_release():
   global build_debug
@@ -423,7 +462,9 @@ def ask_debug_or_release():
   #if build_debug:
   # emer_src += '-dbg'
 
-# Ask user if they want 32-bit or 64-bit build.
+##############################################################################
+# Function to prompt user to build 32-bit or 64-bit
+
 build_64bit = True
 def ask_32_or_64():
   global build_64bit
@@ -440,13 +481,18 @@ def ask_32_or_64():
         if askUser('\nMake 32-bit build? (say no for 64)'): break
         else: build_64bit = True
 
-# Ask user if they want verbose compile output.
+##############################################################################
+# Function to prompt user for verbose compile output
+
 verbose_build = False
 def ask_verbose():
   global verbose_build
   print_horizontal()
   if askUser('\nVerbose compile?', default='N'):
     verbose_build = True
+
+##############################################################################
+# Functions to get directory extension string, such as '-msvs2008-32-dbg'
 
 # Get the extension to add to directories to differentiate
 # VC++2008 vs VC++2010, 32-bit vs 64-bit, and debug vs release.
@@ -458,6 +504,9 @@ def get_compiler_extension_args(is_64, is_dbg):
 
 def get_compiler_extension():
   return get_compiler_extension_args(build_64bit, build_debug)
+
+##############################################################################
+# Function to download (or update) emergent source from Subversion
 
 def inst_emer_src():
   if not dirExists(os.path.join(emer_src, '.svn')):
@@ -501,6 +550,9 @@ def inst_emer_src():
       print cmd
       os.system(cmd)
 
+##############################################################################
+# Function to download third-party libraries (GSL, ODE)
+
 tools_dir = ''
 third_party_dir = ''
 def inst_3rd_party():
@@ -519,6 +571,9 @@ def inst_3rd_party():
       file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.0.1-win32.zip')
       zip = ZipFile(file)
       zip.extractall(third_party_dir)
+
+##############################################################################
+# Function to download Qt libraries
 
 qt_dir = ''
 def inst_qt():
@@ -557,6 +612,9 @@ def inst_qt():
         os.system(cmd)
         response = raw_input('\nQt has been installed.  Press enter to continue...')
 
+##############################################################################
+# Function to download Coin3d library
+
 coin_dir = ''
 def inst_coin():
   global coin_dir
@@ -576,6 +634,9 @@ def inst_coin():
       zip = ZipFile(file)
       zip.extractall(coin_dir)
 
+##############################################################################
+# Functions to download and build the Quarter library from source
+
 quarter_sln = ''
 def inst_quarter():
   global quarter_sln
@@ -594,33 +655,6 @@ def inst_quarter():
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/Quarter-r460-with-msvc10.zip')
       zip = ZipFile(file)
       zip.extractall(tools_dir)
-
-def setEnvironmentVariable(name, value):
-  setUserEnvVar(name, value)
-  os.environ[name] = value
-  print 'Set ' + name + '=' + value
-
-def checkEnvironmentVariable(name, value):
-  oldval = ''
-  try: oldval = os.environ[name]
-  except KeyError: pass
-  regval = getUserEnvVar(name)
-  if regval == value:
-    if oldval != value:
-      print 'Updating ' + name + ' in local environment to match registry settings'
-      os.environ[name] = value
-    print 'Environment variable OK: ' + name + '=' + value
-  elif regval == '' and oldval == '':
-    print 'Need to set environment variable: ' + name + '=' + value
-    if askUser('OK to set variable?'):
-      setEnvironmentVariable(name, value)
-  else:
-    print '\nNeed to update environment variable: ' + name
-    print '  Current registry value:    ' + regval
-    print '  Current environment value: ' + oldval
-    print '  New value to be set:       ' + value
-    if askUser('OK to change variable?'):
-      setEnvironmentVariable(name, value)
 
 # Quarter build outputs get copied to COINDIR as part of the build process,
 # so test that output to see if this step has completed.
@@ -671,6 +705,36 @@ def compile_quarter():
         print_horizontal()
         print 'Compilation succeeded.\n'
 
+##############################################################################
+# Functions to ensure specific environment variables are set correctly for
+# building
+
+def setEnvironmentVariable(name, value):
+  setUserEnvVar(name, value)
+  os.environ[name] = value
+  print 'Set ' + name + '=' + value
+
+def checkEnvironmentVariable(name, value):
+  oldval = ''
+  try: oldval = os.environ[name]
+  except KeyError: pass
+  regval = getUserEnvVar(name)
+  if regval == value:
+    if oldval != value:
+      print 'Updating ' + name + ' in local environment to match registry settings'
+      os.environ[name] = value
+    print 'Environment variable OK: ' + name + '=' + value
+  elif regval == '' and oldval == '':
+    print 'Need to set environment variable: ' + name + '=' + value
+    if askUser('OK to set variable?'):
+      setEnvironmentVariable(name, value)
+  else:
+    print '\nNeed to update environment variable: ' + name
+    print '  Current registry value:    ' + regval
+    print '  Current environment value: ' + oldval
+    print '  New value to be set:       ' + value
+    if askUser('OK to change variable?'):
+      setEnvironmentVariable(name, value)
 
 def list_difference(orig, remove):
   for item in remove:
@@ -746,6 +810,9 @@ def fix_environment():
   os.environ['PATH'] = expanded_path
   print '\nPATH = ' + expanded_path
 
+##############################################################################
+# Function to build emergent
+
 emer_build = ''
 def build_emergent():
   global emer_build
@@ -810,6 +877,10 @@ def build_emergent():
   print_horizontal()
   print 'Compilation succeeded.\n'
 
+##############################################################################
+# Function to rename the emergent package based on build type and revision,
+# in preparation for upload
+
 def rename_package():
   version = ''
   revision = ''
@@ -850,6 +921,9 @@ def rename_package():
         cygpath_exe = 'c:\\cygwin\\bin\\cygpath.exe'
         cygname = subprocess.check_output([cygpath_exe, new_name]).strip()
         subprocess.call([scp_exe, cygname, 'dpfurlani@grey.colorado.edu:/home/dpfurlani/'])
+
+##############################################################################
+# Main
 
 def main():
   try:
