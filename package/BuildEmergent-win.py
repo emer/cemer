@@ -107,7 +107,7 @@ def findInProgFiles(path):
   return False
 
 ##############################################################################
-# Function to download a file into the 'devtools' directory
+# Function to download and cache a file into the 'devtools' directory
 
 devtool_dir = 'C:/src/devtools'
 makeDir(devtool_dir)
@@ -361,9 +361,9 @@ def inst_svn():
       print '\nDownloading Slik Subversion client.  When the download completes,'
       print 'installation will begin.  Accept default installation options.'
       print 'Return to this script when complete.'
-      url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.2-win32.msi'
+      url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.5-win32.msi'
       if isWin64:
-        url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.2-x64.msi'
+        url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.5-x64.msi'
       file = getUrl(url)
       os.system(file)
       response = raw_input('\nOnce Subversion has been installed, press enter to continue...')
@@ -375,23 +375,16 @@ cmake_exe = ''
 def inst_cmake():
   global cmake_exe
   while True:
-    # TODO: defaults for both 2.8.1 and 2.8 4 are to install to the same place (CMake 2.8/bin)
-    # Need to distinguish somehow.  For now, I have 2.8.4 installed into 'Cmake 2.8.4' dir.
-    if msvs == 2008:
-      cmake_exe = findInProgFiles('CMake 2.8/bin/cmake.exe')
-    else:
-      cmake_exe = findInProgFiles('CMake 2.8.4/bin/cmake.exe')
+    cmake_exe = findInProgFiles('CMake 2.8/bin/cmake.exe')
     if cmake_exe: break
     print_horizontal()
     print 'You need to install CMake.  This can be downloaded for you to install.'
     if askUser('\nReady to download and install CMake?'):
       print '\nDownloading CMake.  When the download completes, installation will begin.'
       print 'Accept default installation options.  Return to this script when complete.'
-      if msvs == 2008:
-        file = getUrl('ftp://grey.colorado.edu/pub/emergent/cmake-2.8.1-win32-x86.exe')
-      else:
-        # Need CMake 2.8.4 to fix bug calling moc when using VC++2010.
-        file = getUrl('http://www.cmake.org/files/v2.8/cmake-2.8.4-win32-x86.exe')
+
+      # Need (at least) CMake 2.8.4 to fix bug calling moc when using VC++2010.
+      file = getUrl('http://www.cmake.org/files/v2.8/cmake-2.8.8-win32-x86.exe')
       os.system(file)
       response = raw_input('\nOnce CMake has been installed, press enter to continue...')
 
@@ -521,13 +514,27 @@ def inst_emer_src():
         print "Can't continue because SVN client needs to be installed!  Quitting."
         quit(1)
 
+      # Get the tag or branch to build on (defaults to 'trunk')
+      if askUser('\nGet source from trunk? (say no for tag/branch build) '):
+        tag_or_branch = 'trunk'
+      else:
+        tob = raw_input('\nGet source from tag or branch? [branch]: ')
+        if (tob == '' or tob[0] == 'b':
+          tob = 'branch'
+          tobs = 'branches'
+        else:
+          tob = 'tag'
+          tobs = 'tags'
+        tag_or_branch = raw_input('\nEnter the emergent ' + tob + ' to use: ')
+        tag_or_branch = tobs + '/' + tag_or_branch
+
       response = raw_input('\nEnter your username (blank for anonymous) [anonymous]: ')
       cmd = quote(svnclient) + ' checkout -r ' + svn_rev
       if response == '' or response == 'anonymous':
         cmd += ' --username anonymous --password emergent'
       else:
         cmd += ' --username ' + response
-      cmd += ' http://grey.colorado.edu/svn/emergent/emergent/trunk ' + emer_src
+      cmd += ' http://grey.colorado.edu/svn/emergent/emergent/' + tag_or_branch + ' ' + emer_src
       print '\nChecking out emergent source code...'
       print cmd
       os.system(cmd)
@@ -567,8 +574,12 @@ def inst_3rd_party():
     print 'You need to get the "third party" package.  This can be done for you.'
     if askUser('\nReady to download and unzip 3rd party tools?'):
       print '\nDownloading 3rd party tools...'
-      # TODO: need to rebuild for VC++2010, both 32-bit and 64-bit.
-      file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.0.1-win32.zip')
+      if msvs == 2008:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.0.1-win32.zip')
+      else if build_64bit:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.3.10-msvs2010-64.zip')
+      else:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.3.10-msvs2010-32.zip')
       zip = ZipFile(file)
       zip.extractall(third_party_dir)
 
@@ -619,11 +630,14 @@ coin_dir = ''
 def inst_coin():
   global coin_dir
   coin_dir = os.path.join(tools_dir, 'Coin/3.1.3')
+
   if msvs == 2008:
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9.zip'
+  else if build_64bit:
+    coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvs2010-64.zip'
   else:
-    # TODO: need to recompile for VC++2010, 32-bit and 64-bit.
-    coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9-amd64.zip'
+    coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvs2010-32.zip'
+
   while not fileExists(os.path.join(coin_dir, 'bin/coin3.dll')):
     print_horizontal()
     print 'You need to get the Coin package.  This can be done for you.'
@@ -633,77 +647,6 @@ def inst_coin():
       file = getUrl(coin_ftp)
       zip = ZipFile(file)
       zip.extractall(coin_dir)
-
-##############################################################################
-# Functions to download and build the Quarter library from source
-
-quarter_sln = ''
-def inst_quarter():
-  global quarter_sln
-  if msvs == 2008:
-    quarter_sln = os.path.join(tools_dir, 'Quarter/build/msvc9/quarter1.sln')
-  elif msvs == 2010:
-    quarter_sln = os.path.join(tools_dir, 'Quarter/build/msvc10/quarter1.sln')
-  while not fileExists(quarter_sln):
-    print_horizontal()
-    print 'You need to get the Quarter package.  This can be done for you.'
-    if askUser('\nReady to download and unzip Quarter?'):
-      print '\nDownloading Quarter...'
-      if msvs == 2008:
-        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Quarter-latest.zip')
-      else:
-        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Quarter-r460-with-msvc10.zip')
-      zip = ZipFile(file)
-      zip.extractall(tools_dir)
-
-# Quarter build outputs get copied to COINDIR as part of the build process,
-# so test that output to see if this step has completed.
-def compile_quarter():
-  # Check for the quarter *debug* lib to be installed, since that is the
-  # last one to be built and installed by this script.
-  while not fileExists(os.path.join(coin_dir, 'lib/quarter1d.lib')):
-    print_horizontal()
-    print 'You need to compile the Quarter package.  This can be done for you.'
-    if askUser('\nReady to compile Quarter?'):
-      if msvs == 2008:
-        msbuild = 'C:/WINDOWS/Microsoft.NET/Framework/v3.5/MSBuild.exe'
-        if not fileExists(msbuild):
-          print '\nCould not find file: ' + msbuild
-          print 'Quitting'
-          quit(1)
-
-        # os.system() won't work here -- because of the space after DLL??
-        # Build Release and Debug libraries
-        print '\nCompiling Quarter (RELEASE)...\n'
-        subprocess.call([msbuild, '/p:Configuration=DLL (Release)', '/p:Platform=Win32', quarter_sln])
-        print '\nCompiling Quarter (DEBUG)...\n'
-        subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', '/p:Platform=Win32', quarter_sln])
-        print '\nWarnings are expected when building Quarter.  It should say "Build succeeded".\n'
-        return
-
-      # Otherwise 2010.
-      if build_64bit:
-        platform = 'x64'
-        arch = '/x64'
-      else:
-        platform = 'Win32'
-        arch = '/x86'
-
-      configs = ['Release', 'Debug']
-      for config in configs:
-        print '\nCompiling Quarter (' + config + ')...\n'
-        quarter_build_bat = os.path.join(tools_dir, 'Quarter/build/make-quarter-' + config + '-' + platform + '.bat')
-        with open(quarter_build_bat, 'w') as f:
-          # setenv sets the path so the right msbuild is in the path.
-          f.write('call ' + quoteFixPath(setenv_cmd) + ' ' + arch + ' /' + config + '\n')
-          f.write('msbuild "/p:Configuration=DLL (' + config + ')" /p:Platform=' + platform + ' ' + quarter_sln + '\n')
-        while 0 != os.system(quarter_build_bat):
-          global yes_to_all
-          yes_to_all = False
-          print_horizontal()
-          if not askUser('Compilation failed.  OK to rebuild?', default=''): quit(0)
-        print_horizontal()
-        print 'Compilation succeeded.\n'
 
 ##############################################################################
 # Functions to ensure specific environment variables are set correctly for
@@ -809,6 +752,78 @@ def fix_environment():
   expanded_path = subprocess.check_output([cmd, '/c', '@echo ' + wholepath])
   os.environ['PATH'] = expanded_path
   print '\nPATH = ' + expanded_path
+
+##############################################################################
+# Functions to download and build the Quarter library from source
+
+def inst_quarter():
+  if msvs == 2008:
+    quarter_sln = os.path.join(tools_dir, 'Quarter/build/msvc9/quarter1.sln')
+  elif msvs == 2010:
+    quarter_sln = os.path.join(tools_dir, 'Quarter/build/msvc10/quarter1.sln')
+  while not fileExists(quarter_sln):
+    print_horizontal()
+    print 'You need to get the Quarter package.  This can be done for you.'
+    if askUser('\nReady to download and unzip Quarter?'):
+      print '\nDownloading Quarter...'
+      if msvs == 2008:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Quarter-latest.zip')
+      else:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Quarter-r460-with-msvc10.zip')
+      zip = ZipFile(file)
+      zip.extractall(tools_dir)
+  return quarter_sln
+
+# Quarter build outputs get copied to COINDIR as part of the build process,
+# so test that output to see if this step has completed.
+def compile_quarter():
+  # Check for the quarter *debug* lib to be installed, since that is the
+  # last one to be built and installed by this script.
+  while not fileExists(os.path.join(coin_dir, 'lib/quarter1d.lib')):
+    quarter_sln = inst_quarter()
+
+    print_horizontal()
+    print 'You need to compile the Quarter package.  This can be done for you.'
+    if askUser('\nReady to compile Quarter?'):
+      if msvs == 2008:
+        msbuild = 'C:/WINDOWS/Microsoft.NET/Framework/v3.5/MSBuild.exe'
+        if not fileExists(msbuild):
+          print '\nCould not find file: ' + msbuild
+          print 'Quitting'
+          quit(1)
+
+        # os.system() won't work here -- because of the space after DLL??
+        # Build Release and Debug libraries
+        print '\nCompiling Quarter (RELEASE)...\n'
+        subprocess.call([msbuild, '/p:Configuration=DLL (Release)', '/p:Platform=Win32', quarter_sln])
+        print '\nCompiling Quarter (DEBUG)...\n'
+        subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', '/p:Platform=Win32', quarter_sln])
+        print '\nWarnings are expected when building Quarter.  It should say "Build succeeded".\n'
+        return
+
+      # Otherwise 2010.
+      if build_64bit:
+        platform = 'x64'
+        arch = '/x64'
+      else:
+        platform = 'Win32'
+        arch = '/x86'
+
+      configs = ['Release', 'Debug']
+      for config in configs:
+        print '\nCompiling Quarter (' + config + ')...\n'
+        quarter_build_bat = os.path.join(tools_dir, 'Quarter/build/make-quarter-' + config + '-' + platform + '.bat')
+        with open(quarter_build_bat, 'w') as f:
+          # setenv sets the path so the right msbuild is in the path.
+          f.write('call ' + quoteFixPath(setenv_cmd) + ' ' + arch + ' /' + config + '\n')
+          f.write('msbuild "/p:Configuration=DLL (' + config + ')" /p:Platform=' + platform + ' ' + quarter_sln + '\n')
+        while 0 != os.system(quarter_build_bat):
+          global yes_to_all
+          yes_to_all = False
+          print_horizontal()
+          if not askUser('Compilation failed.  OK to rebuild?', default=''): quit(0)
+        print_horizontal()
+        print 'Compilation succeeded.\n'
 
 ##############################################################################
 # Function to build emergent
@@ -940,9 +955,7 @@ def main():
     inst_emer_src()
     inst_3rd_party()
     inst_qt()
-    compile_qt()
     inst_coin()
-    inst_quarter()
     fix_environment()
     compile_quarter()
     build_emergent()
