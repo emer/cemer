@@ -519,7 +519,7 @@ def inst_emer_src():
         tag_or_branch = 'trunk'
       else:
         tob = raw_input('\nGet source from tag or branch? [branch]: ')
-        if (tob == '' or tob[0] == 'b':
+        if tob == '' or tob[0] == 'b':
           tob = 'branch'
           tobs = 'branches'
         else:
@@ -571,12 +571,13 @@ def inst_3rd_party():
   third_party_dir = os.path.join(tools_dir, '3rdparty')
   while not fileExists(os.path.join(third_party_dir, 'lib/gsl.lib')):
     print_horizontal()
-    print 'You need to get the "third party" package.  This can be done for you.'
+    print 'You need to get the "third party" package, which includes'
+    print 'the GSL and ODE libraries.  This can be done for you.'
     if askUser('\nReady to download and unzip 3rd party tools?'):
       print '\nDownloading 3rd party tools...'
       if msvs == 2008:
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.0.1-win32.zip')
-      else if build_64bit:
+      elif build_64bit:
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.3.10-msvs2010-64.zip')
       else:
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.3.10-msvs2010-32.zip')
@@ -633,7 +634,7 @@ def inst_coin():
 
   if msvs == 2008:
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9.zip'
-  else if build_64bit:
+  elif build_64bit:
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvs2010-64.zip'
   else:
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvs2010-32.zip'
