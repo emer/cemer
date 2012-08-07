@@ -7592,7 +7592,7 @@ void iTreeView::InsertEl(bool after) {
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
       sbo->Insert(nwi, idx);
-      nwi->UpdateAfterEdit();
+      // nwi->UpdateAfterEdit();
       selectionModel()->clearSelection(); // force clear!
       tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
@@ -7634,7 +7634,7 @@ void iTreeView::InsertDefaultEl(bool after) {
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
       sbo->Insert(nwi, idx);
-      nwi->UpdateAfterEdit();
+      // nwi->UpdateAfterEdit();
       selectionModel()->clearSelection(); // force clear!
       tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
