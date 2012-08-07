@@ -1551,20 +1551,35 @@ String NetMonitor::GetDisplayName() const {
   return rval;
 }
 
-void NetMonitor::AddBlank() {
-  items.New_gui(1);             // gui version
+NetMonItem* NetMonitor::AddBlank() {
+  return (NetMonItem*)items.New_gui(1);             // gui version
 }
 
-void NetMonitor::AddObject(taBase* obj, const String& variable) {
+NetMonItem* NetMonitor::AddObject(taBase* obj, const String& variable) {
   // check for exact obj/variable already there, otherwise add one
   NetMonItem* nmi;
   for (int i = 0; i < items.size; ++i) {
     nmi = items.FastEl(i);
     if ((nmi->object.ptr() == obj) && (nmi->variable == variable))
-      return;
+      return nmi;
   }
   nmi = (NetMonItem*)items.New_gui(1, &TA_NetMonItem); // use gui to update
   nmi->SetMonVals(obj, variable);
+  return nmi;
+}
+
+NetMonItem* NetMonitor::AddNetMax() {
+  NetMonItem* nmi = AddObject(network, "avg_netin.max");
+  nmi->var_label = "netmax";
+  nmi->UpdateAfterEdit();
+  return nmi;
+}
+
+NetMonItem* NetMonitor::AddNetRel() {
+  NetMonItem* nmi = AddObject(network, "prjns.avg_netin_rel");
+  nmi->var_label = "netrel";
+  nmi->UpdateAfterEdit();
+  return nmi;
 }
 
 void NetMonitor::RemoveMonitors() {

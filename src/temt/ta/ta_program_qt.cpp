@@ -1328,6 +1328,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_CodeBlock);
   ptbp_add_widget(tb, sec, &TA_UserScript);
+  ptbp_add_widget(tb, sec, &TA_StopStepPoint);
   
   ////////////////////////////////////////////////////////////////////////////
   //		Var/Fun
@@ -1361,7 +1362,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_PrintExpr);
   ptbp_add_widget(tb, sec, &TA_PrintVar);
   ptbp_add_widget(tb, sec, &TA_Comment);
-  ptbp_add_widget(tb, sec, &TA_StopStepPoint);
 
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);

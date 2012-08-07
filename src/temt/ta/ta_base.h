@@ -1161,6 +1161,8 @@ public:
   static  void		SetMemberVar(taBase* obj, const String& memb_name,
 				     const Variant& val);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant -- memb_name can be an arbitrary full path below the obj
+  virtual void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) { };
+  // #CAT_ObjectMgmt the given member was just edited to a new value -- apply any member-specific changes before the global UpdateAfterEdit function is called.  if called from a gui edit dialog interface, the edit_dialog flag is set, so that behavior can be appropriately differentiated
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
   // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!

@@ -567,6 +567,7 @@ void ForeachLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void ForeachLoop::GenCssPre_impl(Program* prog) {
   in.ParseExpr();		// re-parse just to be sure!
+  if(!el_var) return;
   String full_expr = el_var->name + " in " + in.GetFullExpr();
   prog->AddLine(this, String("foreach(") + full_expr + ") {", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
@@ -575,6 +576,7 @@ void ForeachLoop::GenCssPre_impl(Program* prog) {
 }
 
 void ForeachLoop::GenCssPost_impl(Program* prog) {
+  if(!el_var) return;
   prog->DecIndent();
   prog->AddLine(this, "}");
 }

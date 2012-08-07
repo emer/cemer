@@ -696,7 +696,7 @@ bool DynEnum::SetNameVal(const String& nm) {
 //////////////////////////
 
 void ProgVar::Initialize() {
-  var_type = T_Int;
+  var_type = T_UnDef;
   int_val = 0;
   real_val = 0.0;
   bool_val = false;
@@ -836,11 +836,19 @@ void ProgVar::Copy_(const ProgVar& cp) {
   }
 }
 
+bool ProgVar::CheckUndefType(const String& function_context) const {
+  if(TestError(var_type == T_UnDef, function_context, "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold")) {
+    return true;
+  }
+  return false;
+}
+
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
   if(Program::IsForbiddenName(name)) {
     name = "My" + name;
   }
+  CheckUndefType("UpdateAfterEdit");
   if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
   // only send stale if the schema changed, not just the value
@@ -911,6 +919,9 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   if (prg) prognm = prg->name;
   CheckError(Program::IsForbiddenName(name, false), quiet, rval,
 	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
+  CheckError(var_type == T_UnDef, quiet, rval,
+	     "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold");
+
   if(var_type == T_Object) {
     if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
@@ -1089,6 +1100,9 @@ void ProgVar::SetVar(const Variant& value) {
     else
       dyn_enum_val.SetNumVal(value.toInt());
     break;
+  case T_UnDef:
+    CheckUndefType("SetVar");
+    break;
   }
 }
 
@@ -1114,6 +1128,9 @@ Variant ProgVar::GetVar() {
     break;
   case T_DynEnum:
     return dyn_enum_val.NumVal();
+    break;
+  case T_UnDef:
+    CheckUndefType("GetVar");
     break;
   }
   return _nilVariant;// compiler food
@@ -1180,8 +1197,12 @@ String ProgVar::GetDisplayName() const {
     else
       rval = name + " = " + dyn_enum_val.NameVal() + " (no dyn enum type!)";
     break;
+  case T_UnDef:
+    rval = name + " undefined type!";
+    break;
   default:
     rval = name + " invalid type!";
+    break;
   }
   if(init_from) {
     rval += "  --  init from: " + init_from->name;
@@ -1270,6 +1291,9 @@ const String ProgVar::GenCssType() const {
       return dyn_enum_val.enum_type->name;
     }
     return "int";
+  case T_UnDef:
+    return "void";
+    break;
   }
   return "";
 }
@@ -1305,6 +1329,9 @@ const String ProgVar::GenCssInitVal() const {
       return int_val;
   case T_DynEnum:
     return dyn_enum_val.NameVal();
+  case T_UnDef:
+    return "";
+    break;
   }
   return "";
 }
@@ -1371,6 +1398,9 @@ cssEl* ProgVar::NewCssEl() {
     break;
   case T_DynEnum:
     return new cssCPtr_DynEnum(&dyn_enum_val, 0, name);
+    break;
+  case T_UnDef:
+    return new cssCPtr_int(&int_val, 0, name);
     break;
   }
   return &cssMisc::Void;
@@ -4452,6 +4482,7 @@ int Program::CallInit(Program* caller) {
 void Program::Init() {
 //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
+  if(AlreadyRunning()) return;
   ClearStopReq();
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {

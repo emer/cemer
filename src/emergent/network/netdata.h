@@ -366,26 +366,31 @@ public:
   void		SetDataNetwork(DataTable* dt, Network* net);
   // #CAT_Monitor set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table
 
-  void		AddBlank();
+  NetMonItem* 	AddBlank();
   // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
-  void		AddNetwork(Network* net, const String& variable)
-  { AddObject(net, variable);}
+  NetMonItem* 	AddNetwork(Network* net, const String& variable)
+  { return AddObject(net, variable);}
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
-  void		AddLayer(Layer* lay, const String& variable)
-  { AddObject(lay, variable);}
+  NetMonItem* 	AddLayer(Layer* lay, const String& variable)
+  { return AddObject(lay, variable);}
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Layer or its subobjects
-  void		AddProjection(Projection* prj, const String& variable)
-  { AddObject(prj, variable);}
+  NetMonItem* 	AddProjection(Projection* prj, const String& variable)
+  { return AddObject(prj, variable);}
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Projection or its subobjects
-  void		AddUnitGroup(Unit_Group* ug, const String& variable)
-  { AddObject(ug, variable);}
+  NetMonItem* 	AddUnitGroup(Unit_Group* ug, const String& variable)
+  { return AddObject(ug, variable);}
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the UnitGroup or its subobjects
-  void		AddUnit(Unit* un, const String& variable)
-  { AddObject(un, variable);}
+  NetMonItem* 	AddUnit(Unit* un, const String& variable)
+  { return AddObject(un, variable);}
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the Unit or its subobjects
   
-  void		AddObject(taBase* obj, const String& variable);
+  NetMonItem* 	AddObject(taBase* obj, const String& variable);
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the object or its subobjects
+
+  NetMonItem* 	AddNetMax();
+  // #BUTTON #CAT_Monitor For Leabra only: add a monitor item to monitor the avg_netin.max variable at the network level (for all layers in the network), which is very useful in Leabra for tuning the network parameters to ensure a proper range of max netinput values -- must also turn on compute_rel_netin flags at the Trial and Epoch programs for this data to be computed in the first place
+  NetMonItem* 	AddNetRel();
+  // #BUTTON #CAT_Monitor add a monitor item to monitor the prjns.avg_netin_rel variable at the network level (for all layers and projections in the network), which is very useful in Leabra for tuning the network parameters to achieve desired relative netinput contributions across different projections -- must also turn on compute_rel_netin flags at the Trial and Epoch programs for this data to be computed in the first place
 
   void 		UpdateDataTable(bool reset_first = false);
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first

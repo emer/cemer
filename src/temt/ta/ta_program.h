@@ -379,6 +379,7 @@ public:
     T_Object,                   // #LABEL_Object* pointer to a C++ (hard coded) object -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
     T_HardEnum,                 // #LABEL_Enum enumerated list of options (existing C++ hard-coded one)
     T_DynEnum,                  // #LABEL_DynEnum enumerated list of labeled options (from a dynamically created list)
+    T_UnDef,			// #LABEL_UnDef undefined -- automatically-created variables start with an undefined type -- must specify a valid type before using
   };
 
   enum VarFlags { // #BITS flags for modifying program variables
@@ -506,8 +507,11 @@ protected:
   String                m_this_sig; // the sig from most recent change
   String                m_prev_sig; // the sig last time it changed
 
+  virtual bool		CheckUndefType(const String& function_context) const;
+  // #IGNORE check if var_type == T_UnDef and emit a warning if so -- returns true if undefined..
   override void         UpdateAfterEdit_impl();
-  virtual String        GetSchemaSig() const; // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
+  virtual String        GetSchemaSig() const;
+  // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
   override void         CheckThisConfig_impl(bool quiet, bool& rval);
   override void         CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
   virtual const String  GenCssArg_impl();

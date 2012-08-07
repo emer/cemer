@@ -2483,14 +2483,19 @@ void taiEditDataHost::GetValue_Membs_def() {
 void taiEditDataHost::GetValue_impl(const Member_List* ms, const taiDataList& dl,
   void* base) const
 {
+  taBase* rbase = Base();
   bool first_diff = true;
   for (int i = 0; i < ms->size; ++i) {
     MemberDef* md = ms->FastEl(i);
     taiData* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
       taMisc::Error("taiEditDataHost::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
-    else
+    else {
       md->im->GetMbrValue(mb_dat, base, first_diff);
+      if(rbase) {
+	rbase->MemberUpdateAfterEdit(md, true); // in edit dialog
+      }
+    }
   }
   if (!first_diff)
     taiMember::EndScript(base);

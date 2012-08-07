@@ -836,6 +836,9 @@ bool taGuiDialog::AddProgVar(ProgVar& pvar, const String& nm, const String& pare
     rval = AddDynEnum(&(pvar.dyn_enum_val), nm, parent, layout, attributes);
     break;
   }
+  case ProgVar::T_UnDef: {
+    break;
+  }
   }
   return rval;
 }

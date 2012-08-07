@@ -2111,6 +2111,9 @@ void taiPolyData::GetValue_impl(void* base_) const {
     MemberDef* md = memb_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base_, first_diff);
+    if(m_child_base && !HasFlag(flgNoUAE)) {
+      m_child_base->MemberUpdateAfterEdit(md, true); // edit dialog context
+    }
   }
   if (m_child_base && !HasFlag(flgNoUAE)) {
      m_child_base->UpdateAfterEdit();   // hook to update the contents after an edit..

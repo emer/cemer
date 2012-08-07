@@ -58,13 +58,13 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   // we always output to console
   // if (beep_on_error) cerr << '\a'; // BEL character
 #if !defined(NO_TA_BASE) 
-  if(cssMisc::cur_top) {
+  if(cssMisc::cur_top && !taMisc::is_loading) {
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
   taMisc::ConsoleOutput(fmsg, true, false);
 #if !defined(NO_TA_BASE) 
-  if(cssMisc::cur_top) {
+  if(cssMisc::cur_top && !taMisc::is_loading) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
       cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
@@ -73,7 +73,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }
-  if (taMisc::gui_active) {
+  if (taMisc::gui_active && !taMisc::is_loading) {
     bool cancel = taiChoiceDialog::ErrorDialog(NULL, taMisc::last_err_msg);
     taMisc::ErrorCancelSet(cancel);
   }

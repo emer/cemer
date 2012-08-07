@@ -791,8 +791,7 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
 	}
       }
       else {
-	if(mat->dims() == 1 &&
-	   (mat->dim(0) >= 1 && mat->dim(0) <= cont_dims)) { // can have <= full number of dims
+	if(mat->dims() == 1 && mat->dim(0) == cont_dims) { // dims must be exact match
 	  mode = IDX_COORD;
 	}
 	else if(mat->dims() == 2 && mat->dim(0) == 3 &&
@@ -801,6 +800,12 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
 	}
 	else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
 	  mode = IDX_COORDS;
+	}
+	if(mode == IDX_UNK) {
+	  String matstr;
+	  mat->Print(matstr);
+	  TestError(true, "Index Decode",
+		    "index access failed, most likely because the number of dimensions provided did not match the dimensionality of the container:", String(cont_dims), " index provided was:", matstr);
 	}
       }
     }
@@ -2996,14 +3001,21 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       }
     }
 
+    String tab_a_path;
+    String tab_b_path;
+    if(tab_par_a) tab_a_path = tab_par_a->GetPathNames();
+    if(tab_par_b) tab_b_path = tab_par_b->GetPathNames();
+
     //////////////////////////////////
     //          Copy -- both ways -- uses value string instead of live obj
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) &&
        rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
       // this is unfortunate but possible
-      taMisc::Info("Copying A -> B:", rec->diff_odr->GetDisplayName(), "=", rec->value);
-      taMisc::Info("Copying B -> A:", rec->GetDisplayName(), "=", rec->diff_odr->value);
+      taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
+		   rec->diff_odr->GetDisplayName(), "=", rec->value);
+      taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
+		   rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_b->GetOwner();
@@ -3030,7 +3042,10 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
           rec->diff_odr->type->SetValStr(rec->value, rec->diff_odr->addr,
                                          rec->diff_odr->par_addr, rec->diff_odr->mdef);
         }
-        if(tab_par_b) tab_par_b->UpdateAfterEdit();
+        if(tab_par_b) {
+	  tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+	  tab_par_b->UpdateAfterEdit();
+	}
 
         if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
           DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
@@ -3041,8 +3056,10 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
         else {
           rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
         }
-        if(tab_par_a) tab_par_a->UpdateAfterEdit();
-
+        if(tab_par_a) {
+	  tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+	  tab_par_a->UpdateAfterEdit();
+	}
       }
       continue;
     }
@@ -3051,7 +3068,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     //          Copy -- only one way
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
-      taMisc::Info("Copying A -> B:", rec->diff_odr->GetDisplayName(), "=", rec->value);
+      taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
+		   rec->diff_odr->GetDisplayName(), "=", rec->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_b->GetOwner();
@@ -3073,13 +3091,17 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
             tab_b->SetName(tab_a->GetName()); // need to copy names too!
           }
         }
-        if(tab_par_b) tab_par_b->UpdateAfterEdit();
+        if(tab_par_b) {
+	  tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+	  tab_par_b->UpdateAfterEdit();
+	}
       }
       continue;
     }
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
-      taMisc::Info("Copying B -> A:", rec->GetDisplayName(), "=", rec->diff_odr->value);
+      taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
+		   rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_a->GetOwner();
@@ -3101,7 +3123,10 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
             tab_a->SetName(tab_b->GetName()); // need to copy names too!
           }
         }
-        if(tab_par_a) tab_par_a->UpdateAfterEdit();
+        if(tab_par_a) {
+	  tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+	  tab_par_a->UpdateAfterEdit();
+	}
       }
       continue;
     }
@@ -3113,11 +3138,11 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     bool add = false;
     bool added = false;
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_ADD_A)) { // do add before del..
-      taMisc::Info("Adding A to B:", rec->GetDisplayName());
+      taMisc::Info("Adding A to B:", tab_a_path, "\n", rec->GetDisplayName());
       add = true;
     }
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_ADD_B)) { // do add before del..
-      taMisc::Info("Adding B to A:", rec->GetDisplayName());
+      taMisc::Info("Adding B to A:", tab_b_path, "\n", rec->GetDisplayName());
       add = true;
     }
     if(add) {
@@ -3194,11 +3219,11 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     bool del = false;
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
-      taMisc::Info("Deleting A:", rec->GetDisplayName());
+      taMisc::Info("Deleting A:", tab_a_path, "\n", rec->GetDisplayName());
       del = true;
     }
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
-      taMisc::Info("Deleting B:", rec->GetDisplayName());
+      taMisc::Info("Deleting B:", tab_b_path, "\n", rec->GetDisplayName());
       del = true;
     }
 

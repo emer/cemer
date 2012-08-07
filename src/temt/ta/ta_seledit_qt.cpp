@@ -1154,7 +1154,7 @@ taiObjDiffBrowser::~taiObjDiffBrowser() {
 
 void taiObjDiffBrowser::accept() {
   inherited::accept();
-  // todo: here is where we execute actions!
+  // here is where we execute actions!
   if(odl->tab_obj_a) {
     odl->tab_obj_a->DoDiffEdits(*odl);
   }

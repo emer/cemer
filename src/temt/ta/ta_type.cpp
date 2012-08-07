@@ -897,7 +897,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #endif
   taMisc::last_warn_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #ifndef NO_TA_BASE
-  if(cssMisc::cur_top) {
+  if(cssMisc::cur_top && !taMisc::is_loading) {
     taMisc::last_warn_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
@@ -5392,6 +5392,7 @@ String TypeDef::Get_C_Name() const {
 //       taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
       return name;
     }
+    if(nrt == this) return name + "&";
     rval = nrt->Get_C_Name() + "&";
     return rval;
   }
@@ -5402,6 +5403,7 @@ String TypeDef::Get_C_Name() const {
 //       taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
       return name;
     }
+    if(npt == this) return name + GetPtrString();
     rval = npt->Get_C_Name() + GetPtrString();
     return rval;
   }
@@ -5419,7 +5421,7 @@ String TypeDef::Get_C_Name() const {
 
   // on some local list and not internal
   // (which were not actually delcared at this scope anyway)
-  if (!(internal) && (owner != NULL) && (owner->owner != NULL)) {
+  if (!(internal) && (owner != NULL) && (owner->owner != NULL) && (owner->owner != this)) {
     rval = owner->owner->Get_C_Name() + "::";
   }
 

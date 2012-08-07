@@ -201,6 +201,16 @@ void SpecMemberBase::DefaultsMembers() {
   }
 }
 
+void SpecMemberBase::MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog) {
+  if(edit_dialog) return;
+  if(!owner || !owner->InheritsFrom(&TA_BaseSpec)) return;
+  BaseSpec* spown = (BaseSpec*)owner;
+  MemberDef* mymd = spown->FindMember((void*)this);
+  if(mymd)
+    spown->MemberUpdateAfterEdit(mymd, edit_dialog);
+}
+
+
 //////////////////////////////////
 //      BaseSpec                //
 //////////////////////////////////
@@ -243,6 +253,11 @@ void BaseSpec::CutLinks() {
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateSpec();
+}
+
+void BaseSpec::MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog) {
+  if(edit_dialog) return;	// no action
+  SetUnique(md->name.chars(), true);	// always set to unique if it is being set somewhere
 }
 
 void BaseSpec::Defaults() {

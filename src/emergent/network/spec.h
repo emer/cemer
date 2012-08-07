@@ -90,6 +90,8 @@ public:
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
+  override void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false);
+
   TA_BASEFUNS_NOCOPY(SpecMemberBase);
 protected:
   virtual void	Defaults_impl() { };
@@ -156,6 +158,7 @@ public:
   // remove a child based on name or type
 
   override bool	    UAEProgramDefault() { return true; }
+  override void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false);
   override String GetDesc() const { return desc; }
 
   virtual void	Defaults();
