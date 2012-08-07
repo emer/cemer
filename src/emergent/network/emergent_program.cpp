@@ -80,14 +80,23 @@ void NetDataLoop::GetOrderVar() {
 
 void NetDataLoop::GetIndexVar() {
   inherited::GetIndexVar();
-  if(!grouped) return;
-
   Program* my_prog = program();
   if(!my_prog) return;
+
+  if(!my_prog->vars.FindName("trial")) {
+    ProgVar* trial = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    trial->name = "trial";
+    trial->var_type = ProgVar::T_Int;
+    trial->SetVarFlag(ProgVar::CTRL_READ_ONLY);
+    trial->DataChanged(DCR_ITEM_UPDATED);
+  }
+
+  if(!grouped) return;
+
   if(!group_index_var) {
     if(!(group_index_var = my_prog->vars.FindName("group_index"))) {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
-      group_index_var->name = "group_index";
+       group_index_var->name = "group_index";
       group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
       group_index_var->DataChanged(DCR_ITEM_UPDATED);
     }
@@ -311,6 +320,15 @@ void NetGroupedDataLoop::GetOrderVars() {
 void NetGroupedDataLoop::GetIndexVars() {
   Program* my_prog = program();
   if(!my_prog) return;
+
+  if(!my_prog->vars.FindName("trial")) {
+    ProgVar* trial = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    trial->name = "trial";
+    trial->var_type = ProgVar::T_Int;
+    trial->SetVarFlag(ProgVar::CTRL_READ_ONLY);
+    trial->DataChanged(DCR_ITEM_UPDATED);
+  }
+
   if(!group_index_var) {
     if(!(group_index_var = my_prog->vars.FindName("group_index"))) {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
