@@ -53,6 +53,9 @@ class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
+class BrainAtlasProxy;
+SmartRef_Of(BrainAtlasProxy, TA_BrainAtlasProxy);
+class BrainAtlas_List;
 
 // externals
 class DataTable;
@@ -64,61 +67,6 @@ class BrainAtlas;
 #endif
 class BrainAtlasUtils;
 class NetView; //
-
-////////////////////////////////////////////////////
-//   BrainAtlasProxy
-class EMERGENT_API BrainAtlasProxy : public taNBase
-{
-  // #NO_TOKENS #NO_UPDATE_AFTER A single brain atlas.
-  INHERITED(taNBase)
-public:
-  explicit BrainAtlasProxy(const BrainAtlasInfo& info);
-  String  filepath;
-  String  description;
-  String  image_filepath;
-  
-  QList<QColor>       Colors();
-  QStringList         Labels(const QString& labels_regexp=".*");
-#ifndef __MAKETA__
-  QSet<int>           MatchingLabelIndices(const QString& labels_regexp);
-#endif
-  QString             Label(int index);
-  unsigned int        Index(const QString& label);
-  QList<FloatTDCoord> VoxelCoordinates(const QString& label_regexp);
-  
-  void                EditAtlasColors(); // #BUTTON
-  
-  TA_BASEFUNS_SC(BrainAtlasProxy);
-
-private:
-  void  Initialize();
-  void  Destroy();
-  bool  m_have_atlas_instance;
-#ifndef __MAKETA__
-  BrainAtlas&  Atlas();
-  BrainAtlas*  m_atlas;
-#endif
-  
-  QStringList m_labels;
-  QList<QColor> m_colors;
-  
-};
-SmartRef_Of(BrainAtlasProxy, TA_BrainAtlasProxy);
-
-////////////////////////////////////////////////////
-//   BrainAtlas_List
-
-class EMERGENT_API BrainAtlas_List : public taList<BrainAtlasProxy>
-{
-  // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
-  INHERITED(taList<BrainAtlasProxy>)
-public:
-  TA_BASEFUNS_SC(BrainAtlas_List);
-private:
-  void  Initialize()            { SetBaseType(&TA_BrainAtlasProxy); }
-  void  Destroy()               { };
-};
-
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -1594,22 +1542,6 @@ private:
   void  Destroy()               { };
 };
 
-class EMERGENT_API BrainAtlasRegexpPopulator : public RegexpPopulator {
-public:
-  BrainAtlasRegexpPopulator();
-  override QStringList getHeadings() const;
-  override QStringList getLabels() const;
-  override QList<QColor> getColors() const;
-  override QString getSeparator() const;
-  override void    setSource(const void *fieldOwner);
-  override void adjustTitle(QString &title, const void *fieldOwner) const;
-private:
-  mutable QStringList m_labels;
-  mutable QStringList m_headings;
-  mutable QString m_filepath;
-  mutable QList<QColor> m_colors;
-};
-
 class EMERGENT_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(taNBase)
@@ -2397,6 +2329,8 @@ public:
     NT_RIGHT_MID,               // at right of network, in the middle depth-wise -- foot is raised as when no net text is visible
   };
 
+  static BrainAtlas_List* brain_atlases;  // #NO_SAVE #NO_SHOW_TREE atlases available
+
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   NetViewObj_Group view_objs;   // #CAT_Display objects to display in the network 3d view
@@ -2405,8 +2339,8 @@ public:
 
   AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
 
-  static BrainAtlas_List  brain_atlases;  // #NO_SAVE #NO_VIEW Atlases available.
-  BrainAtlasProxyRef 	brain_atlas;  // #FROM_GROUP_brain_atlases The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  BrainAtlasProxyRef 	brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  String		brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
 
   TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate      wt_update;      // #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
@@ -2855,13 +2789,94 @@ private:
   void  Destroy();
 };
 
+////////////////////////////////////////////////////
+//   BrainAtlasProxy
+class EMERGENT_API BrainAtlasProxy : public taNBase {
+  // #NO_TOKENS #NO_UPDATE_AFTER A single brain atlas.
+  INHERITED(taNBase)
+public:
+  String  filepath;		// #FILE_DIALOG_LOAD #FILETYPE_BrainAtlas #EXT_xml path to the brain atlas .xml file
+  String  description;		// #EDIT_DIALOG description of this atlas -- where did it come from, what areas does it contain?
+  String  image_filepath;	// #FILE_DIALOG_LOAD #FILETYPE_BrainAtlas #EXT_nii path to the nifti brain image that contains indexes into the .xml brain atlas file
+  
+  QList<QColor>       Colors();
+  QStringList         Labels(const QString& labels_regexp=".*");
+#ifndef __MAKETA__
+  QSet<int>           MatchingLabelIndices(const QString& labels_regexp);
+#endif
+  QString             Label(int index);
+  unsigned int        Index(const QString& label);
+  QList<FloatTDCoord> VoxelCoordinates(const QString& label_regexp);
+#ifndef __MAKETA__
+  BrainAtlas&  Atlas();
+#endif
+  
+  virtual void        EditAtlasColors();
+  // #BUTTON edit the colors associated with regions in this atlas
+  virtual void	      SaveAtlas();
+  // #BUTTON #CONFIRM save the .xml file to the same file that it was loaded from, overwriting it with current data (e.g., new colors)
+  virtual void	      SaveAtlasAs(const String& file_name);
+  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_BrainAtlas #EXT_xml save the .xml file to the given file name
+  
+  explicit BrainAtlasProxy(const BrainAtlasInfo& info);
+  TA_BASEFUNS_SC(BrainAtlasProxy);
+private:
+  void  Initialize();
+  void  Destroy();
+  bool  m_have_atlas_instance;
+  
+#ifndef __MAKETA__
+  BrainAtlas*  m_atlas;
+#endif
+  QStringList m_labels;
+  QList<QColor> m_colors;
+  
+};
+
+////////////////////////////////////////////////////
+//   BrainAtlas_List
+
+class EMERGENT_API BrainAtlas_List : public taList<BrainAtlasProxy> {
+  // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
+  INHERITED(taList<BrainAtlasProxy>)
+public:
+  bool		not_init;	// list has not been initialized yet
+
+  virtual void	LoadAtlases();	// load the list
+
+  TA_BASEFUNS_SC(BrainAtlas_List);
+private:
+  void  Initialize();
+  void  Destroy()               { };
+};
+
+class EMERGENT_API BrainAtlasRegexpPopulator : public iRegexpDialogPopulator {
+public:
+  BrainAtlasRegexpPopulator();
+  override QStringList getHeadings() const;
+  override QStringList getLabels() const;
+  override QList<QColor> getColors() const;
+  override QString getSeparator() const;
+  override void    setSource(const void *fieldOwner);
+  override void adjustTitle(QString &title, const void *fieldOwner) const;
+private:
+  mutable BrainAtlasProxy* m_atlas;
+  mutable QStringList m_labels;
+  mutable QStringList m_headings;
+  mutable QString m_filepath;
+  mutable QList<QColor> m_colors;
+};
+
 class EMERGENT_API Network_Group : public taGroup<Network> {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##EXPAND_DEF_2 a group of networks
 INHERITED(taGroup<Network>)
 public:
+  static BrainAtlas_List  brain_atlases;  // #NO_SAVE #NO_VIEW Brain atlases available to select for network voxel mapping
 
   override String       GetTypeDecoKey() const { return "Network"; }
 
+  void  InitLinks();
+  void  CutLinks();
   TA_BASEFUNS_NOCOPY(Network_Group); //
 private:
   void  Initialize()            {SetBaseType(&TA_Network);}

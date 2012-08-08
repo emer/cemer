@@ -1912,13 +1912,13 @@ int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  // Get the RegexpPopulator instance that should be used for this field.
-  RegexpPopulator *populator = 0;
+  // Get the iRegexpDialogPopulator instance that should be used for this field.
+  iRegexpDialogPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");
   if (!pop_type.empty()) {
     if (TypeDef *type = taMisc::types.FindName(pop_type)) {
       if (void *pv_inst = type->GetInstance()) {
-        populator = reinterpret_cast<RegexpPopulator *>(pv_inst);
+        populator = reinterpret_cast<iRegexpDialogPopulator *>(pv_inst);
       }
     }
   }

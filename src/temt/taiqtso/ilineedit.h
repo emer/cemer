@@ -40,6 +40,7 @@ public:
   inline int	minCharWidth() {return mmin_char_width;} 
   void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
   virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  virtual void	emitReturnPressed();	   // emit this signal
   
 #ifndef __MAKETA__
 signals:

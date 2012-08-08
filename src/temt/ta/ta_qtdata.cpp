@@ -632,7 +632,7 @@ void iFieldEditDialog::repChanged() {
 
 const QString iRegexpDialog::DOT_STAR(".*");
 
-iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, const void *fieldOwner, bool read_only)
+iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only)
   : inherited()
   , m_field(regexp_field)
   , m_populator(re_populator)
@@ -648,7 +648,7 @@ iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_n
   , btnApply(0)
   , btnReset(0)
 {
-  if (!m_field || !m_populator) {
+  if (!m_populator) {
     // Shouldn't happen.
     return;
   }
@@ -989,10 +989,15 @@ void iRegexpDialog::btnApply_clicked()
   }
   QString full_regexp = JoinRegexpAlternatives(all_items);
 
-  // Set the resulting regular expression in the field.  It will be
-  // applied later, when the dialog is closed.
-  m_field->rep()->setText(full_regexp);
-  m_apply_clicked = true;
+  if(m_field) {
+    // Set the resulting regular expression in the field.  It will be
+    // applied later, when the dialog is closed.
+    m_field->rep()->setText(full_regexp);
+    m_apply_clicked = true;
+  }
+  else {
+    field_value = full_regexp;
+  }
 }
 
 void iRegexpDialog::btnReset_clicked()
@@ -1566,7 +1571,7 @@ void taiFileDialogField::lookupKeyPressed() {
 //               taiRegexpField                //
 /////////////////////////////////////////////////
 
-taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, RegexpPopulator *re_populator)
+taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
   : taiText(typ_, host_, par, gui_parent_, flags_,
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
@@ -1588,6 +1593,7 @@ void taiRegexpField::btnEdit_clicked(bool)
 
   // Unless explicitly overridden, do an autoapply.
   if (edit_dialog.applyClicked() && !HasFlag(flgNoEditDialogAutoApply)) {
+    leText->emitReturnPressed();
     applyNow();
   }
 }

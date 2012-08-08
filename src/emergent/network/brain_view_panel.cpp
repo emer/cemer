@@ -58,9 +58,12 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
  
   // set a safe default if no BrainViewState yet...
   int max_slices(1);
+  Network* net = NULL;
   if (NULL != dv_) {
     max_slices = dv_->MaxSlices();
+    net = dv_->net();
   }
+
   
   int font_spec = taiMisc::fonMedium;
   req_full_render = true;
@@ -209,13 +212,16 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   connect(m_chk_color_brain, SIGNAL(stateChanged(int)), this, SLOT(SetColorBrain(int)) );
   bvControls->addWidget(m_chk_color_brain);  
   bvControls->addSpacing(taiM->hspc_c);
+
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
   label->setToolTip("Regexp to select brain areas to color."); 
   bvControls->addWidget(label);
-  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
+
+  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
+  fldBrainColorRegexp->SetFieldOwner(net);
   bvControls->addWidget(fldBrainColorRegexp->GetRep());
   ((iLineEdit*)fldBrainColorRegexp->GetRep())->setCharWidth(40);
-  connect(fldBrainColorRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ColorBrainRegexpEdited()));
+  connect(fldBrainColorRegexp->rep(), SIGNAL(returnPressed()), this, SLOT(ColorBrainRegexpEdited()));
   bvControls->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
@@ -229,19 +235,22 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   connect(m_chk_atlas, SIGNAL(stateChanged(int)), this, SLOT(SetViewAtlas(int)) );
   bvControls->addWidget(m_chk_atlas);  
   bvControls->addSpacing(taiM->hspc_c);
+
   label = taiM->NewLabel("Atlas label (rexgexp)", widg, font_spec);
   label->setToolTip("Regexp to select brain atlas labels to render.");
   bvControls->addWidget(label);
-  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<RegexpPopulator*>(atlas_regexp_pop)));
+
+  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
+  fldBrainAtlasRegexp->SetFieldOwner(net);
   bvControls->addWidget(fldBrainAtlasRegexp->GetRep());
   ((iLineEdit*)fldBrainAtlasRegexp->GetRep())->setCharWidth(40);
-  connect(fldBrainAtlasRegexp->rep(), SIGNAL(editingFinished()), this, SLOT(ViewAtlasRegexpEdited()));
+  connect(fldBrainAtlasRegexp->rep(), SIGNAL(returnPressed()), this, SLOT(ViewAtlasRegexpEdited()));
   bvControls->addStretch();
   
   // listen for BrainViewState state changed
   connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
-  
-  
+
+
   layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
   chkNetText = new QCheckBox("Net\nTxt", widg);
   chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
@@ -383,7 +392,9 @@ void BrainViewPanel::UpdateViewFromState(int state)
   // BrainViewState has changed...determine if full render
   // is required and make call to apply the GUI change
 
-  if (req_full_render == true) return; // already have an update to do
+  if (req_full_render == true) {
+    return; // already have an update to do
+  }
   if (state & BrainView::MAJOR) {
     req_full_render = true;
   }

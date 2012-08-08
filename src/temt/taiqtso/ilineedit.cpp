@@ -250,6 +250,10 @@ void iLineEdit::wheelEvent(QWheelEvent * event) {
   return;
 }
 
+void iLineEdit::emitReturnPressed() {
+  emit returnPressed();
+}
+
 //////////////////////////////////
 //  iTextEditDialog		//
 //////////////////////////////////

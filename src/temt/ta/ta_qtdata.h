@@ -40,7 +40,7 @@
 // externals
 class QKeySequence; // #IGNORE
 class MatrixGeom;
-class RegexpPopulator; //
+class iRegexpDialogPopulator; //
 
 // forwards
 class taiField;
@@ -152,24 +152,27 @@ private:
   void          init(bool readOnly, const String& desc);
 };
 
-class TA_API RegexpPopulator { // ##INSTANCE #NO_INSTANCE
+class TA_API iRegexpDialogPopulator {
+  // ##INSTANCE #NO_INSTANCE #VIRT_BASE helper class that populates regexp dialog information
 public:
   virtual QStringList getHeadings() const = 0;
   virtual QStringList getLabels() const = 0;
   virtual QString getSeparator() const = 0;
   virtual void    setSource(const void *fieldOwner) = 0;
   virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
-  virtual ~RegexpPopulator() { }
+  virtual ~iRegexpDialogPopulator() { }
 };
 
 class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, const void *fieldOwner, bool read_only);
+  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only);
 
   bool          isReadOnly()    { return m_read_only; }
   bool          applyClicked()  { return m_apply_clicked; }
+
+  String	field_value;	// when used as a standalone dialog, this is the field return value
 
 public slots:
   override void accept();
@@ -230,7 +233,7 @@ private:
   static const QString DOT_STAR;
 
   taiRegexpField*       m_field;
-  RegexpPopulator*      m_populator;
+  iRegexpDialogPopulator*      m_populator;
   const void *          m_fieldOwner;
   bool                  m_read_only;
   bool                  m_apply_clicked;
@@ -246,6 +249,7 @@ private:
   QPushButton*          btnApply;
   QPushButton*          btnReset;
 };
+
 
 class TA_API taiText : public taiData {
   // Base class for string edit controls that might have a "..." button to bring up an editor dialog or somesuch.
@@ -334,7 +338,7 @@ class TA_API taiRegexpField : public taiText {
   Q_OBJECT
   INHERITED(taiText)
 public:
-  taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, RegexpPopulator *re_populator);
+  taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
 
   void                  SetFieldOwner(const void *fieldOwner);
 
@@ -343,7 +347,7 @@ protected slots:
   override void         lookupKeyPressed();     // Same as clicking the "..." button.
 
 private:
-  RegexpPopulator*      m_populator;
+  iRegexpDialogPopulator* m_populator;
   const void *          m_fieldOwner;
 };
 

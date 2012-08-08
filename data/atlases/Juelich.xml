@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <atlas version="1.0">
   <header>
-    <name>Juelich Histological Atlas</name>
-    <description>Contains Juelich Labels</description>
+    <name>Juelich</name>
+    <description>The Juelich Histological Atlas from the FSL program -- A probabilistic atlas created by averaging multi-subject post-mortem cyto- and myelo-architectonic segmentations, performed by the team of Profs Zilles and Amunts at the Research Center Jülich and kindly provided by Simon Eickhoff.</description>
     <type>Probabalistic</type>
     <images>
       <imagefile>/Juelich/Juelich-maxprob-thr25-1mm</imagefile>
