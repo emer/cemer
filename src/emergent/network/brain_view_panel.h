@@ -176,6 +176,7 @@ protected:
 protected slots:
   void                  itemClicked(const QModelIndex & index);
   override void         btnApply_clicked();
+  override void         btnRandomColors_clicked();
   override void         btnColorsFromScale_clicked();
 
 };

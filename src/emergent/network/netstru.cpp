@@ -8706,6 +8706,18 @@ void taBrainAtlas::SaveAtlasAs(const String& filename) {
   Atlas().Save(filepath);
 }
 
+void taBrainAtlas::RevertAtlas() {
+  delete m_atlas;
+  m_atlas = BrainAtlasFactory::CreateInstance(filepath);
+  m_have_atlas_instance = (bool)m_atlas;
+}
+
+void taBrainAtlas::LoadAtlas(const String& filename) {
+  delete m_atlas;
+  m_atlas = BrainAtlasFactory::CreateInstance(filename);
+  m_have_atlas_instance = (bool)m_atlas;
+}
+
 void taBrainAtlas::EditAtlas() {
   BrainAtlasRegexpPopulator* atlas_regexp_pop = new BrainAtlasRegexpPopulator();
 
@@ -8828,7 +8840,7 @@ QList<QColor> BrainAtlasRegexpPopulator::getColors() const
 
 QString BrainAtlasRegexpPopulator::getSeparator() const
 {
-  return ".";
+  return "/";
 }
 
 void BrainAtlasRegexpPopulator::setSource(const void *fieldOwner)

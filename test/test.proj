@@ -1962,7 +1962,7 @@ LeabraProject .projects["test"] {
      name="atlas";
      var_type=T_Object;
      object_type=taBrainAtlas;
-     object_val=["Juelich"]$$<taBrainAtlas,Juelich>;
+     object_val=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -6932,7 +6932,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*\\..*\\..*\\..*\\.Visual cortex V1 BA17";
+     brain_area=".*/.*/.*/.*/Visual cortex V1 BA17";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
@@ -7013,7 +7013,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*\\..*\\..*\\..*\\.Superior parietal lobule 7A";
+     brain_area=".*/.*/.*/.*/Superior parietal lobule 7P";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
@@ -7076,7 +7076,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*\\..*\\..*\\..*\\.Broca's area BA44";
+     brain_area=".*/.*/.*/.*/Broca's area BA44";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };

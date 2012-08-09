@@ -695,12 +695,7 @@ void iRegexpDialog::LayoutInstructions(QVBoxLayout *vbox, QString field_name)
   QLabel *instr = new QLabel;
   instr->setWordWrap(true);
   instr->setText(
-    "Instructions: Edit the list of regular expressions to be used "
-    "for this field.  The table is automatically filtered based on "
-    "the regular expression(s) that are selected in the list.  The "
-    "drop-down choices are filtered based on what choices are valid "
-    "given the other selections.  You may also type directly into "
-    "these fields."
+    "Instructions: This dialog helps you construct a filter based on 'wildcard' or regular expressions that match a variable number of items in each field.  Each field in the filter expression is typically separated by a '/', and between those separators, there is a filter for each field.  Common regular expressions are '.*' which matches anything, '[a-z]' which matches any lowercase letter, '[a-z]*' which matches any number of lowercase letters, ^ = start of field, $ = end of field -- see http://en.wikipedia.org/wiki/Regular_expression#POSIX for details.  You can select items from fields using the drop-down menus, or type directly in the fields."
   );
   vbox->addWidget(instr);
 }
@@ -955,6 +950,24 @@ void iRegexpDialog::CreateTableModel()
     connect(m_table_model, SIGNAL(itemChanged(QStandardItem*)),
 	    this, SLOT(TableItemChanged(QStandardItem*)) );
   }
+}
+
+void iRegexpDialog::keyPressEvent(QKeyEvent *e) {
+  // don't accept on enter
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(!ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)) {
+    e->accept();		// just bail!
+    return;
+  }
+
+  iDialog::keyPressEvent(e);
 }
 
 void iRegexpDialog::accept()

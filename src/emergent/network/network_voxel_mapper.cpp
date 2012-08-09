@@ -83,8 +83,6 @@ void
 NetworkVoxelMapper::AssignVoxels()
 {
   if (m_network->brain_atlas.ptr() == NULL ){
-    taMisc::Warning("No atlas_name specified in network;",
-      "cannot map units to voxel coordinates.");
     return;
   }
 

@@ -37,6 +37,7 @@
 #include <QColorDialog>
 #include <QSortFilterProxyModel>
 #include <QDialogButtonBox>
+#include <QHeaderView>
 
 ////////////////////////////////////////////////////
 //  BrainViewPanel
@@ -762,6 +763,8 @@ void iBrainViewEditDialog::SetColors() {
     item->setEditable(false);
     m_table_model->setItem(row, col, item);
   }
+
+  m_table_view->horizontalHeader()->setToolTip("Double-click on Color to edit with a color editor dialog");
 }
 
 void iBrainViewEditDialog::itemClicked(const QModelIndex & index) {
@@ -798,10 +801,16 @@ void iBrainViewEditDialog::btnApply_clicked() {
 void iBrainViewEditDialog::AddButtons() {
   if(!m_editor_mode) return;
 
+  QPushButton* btnRandomColors = m_button_box->addButton("RandomColors",
+							 QDialogButtonBox::ActionRole);
+  btnRandomColors->setToolTip("generates random colors for the currently-selected items (according to the current filter) from a selected color scale");
+
   QPushButton* btnColorsFromScale = m_button_box->addButton("ColorsFromScale",
 							    QDialogButtonBox::ActionRole);
+  btnColorsFromScale->setToolTip("generates colors for the currently-selected items (according to the current filter) from a selected color scale");
 
   // Connect the button-box buttons to our SLOTs.
+  connect(btnRandomColors, SIGNAL(clicked()), this, SLOT(btnRandomColors_clicked()));
   connect(btnColorsFromScale, SIGNAL(clicked()), this, SLOT(btnColorsFromScale_clicked()));
 }
 
@@ -825,6 +834,7 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked() {
     extra += 2;
   } while (cls.size < rows);
 
+  m_table_model->blockSignals(true);
   for(int row = 0; row < rows; row++) {
     QModelIndex pidx = m_proxy_model->index(row, clr_col);
     QModelIndex sidx = m_proxy_model->mapToSource(pidx);
@@ -833,4 +843,44 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked() {
     itm->setText(rgb);
     itm->setBackground(QBrush(QColor(QString(rgb.chars()))));
   }
+  m_table_model->blockSignals(false);
+  m_table_view->viewport()->update();
+}
+
+void iBrainViewEditDialog::btnRandomColors_clicked() {
+  taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
+						     "select a colorscale to select random colors from -- Rainbow is generally a good choice");
+  bool rval = chs->Choose();
+  if(!rval) return;
+  ColorScaleSpec* cspec = (ColorScaleSpec*)chs->sel_obj();
+  delete chs;
+  if(!cspec) return;
+
+  int rows = m_proxy_model->rowCount();
+  if(rows == 0) return;
+
+  int clr_col = m_num_parts + NUM_EXTRA_COLS;
+  TAColor_List cls;
+  int extra = 0;
+  do {				// it doesn't always generate enough..
+    cspec->GenRanges(&cls, rows+extra);
+    extra += 2;
+  } while (cls.size < rows);
+  int_Array prmt;
+  prmt.SetSize(rows);
+  prmt.FillSeq();
+  prmt.Permute();
+
+  m_table_model->blockSignals(true);
+  for(int row = 0; row < rows; row++) {
+    QModelIndex pidx = m_proxy_model->index(row, clr_col);
+    QModelIndex sidx = m_proxy_model->mapToSource(pidx);
+    QStandardItem* itm = m_table_model->item(sidx.row(), clr_col);
+    TAColor* clr = cls[prmt[row]];
+    String rgb = String("#") + clr->color().toString();
+    itm->setText(rgb);
+    itm->setBackground(QBrush(QColor(QString(rgb.chars()))));
+  }
+  m_table_model->blockSignals(false);
+  m_table_view->viewport()->update();
 }

@@ -2830,6 +2830,10 @@ public:
   // #BUTTON #CONFIRM #CAT_BrainAtlas save the .xml file to the same file that it was loaded from, overwriting it with current data (e.g., new colors)
   virtual void	      SaveAtlasAs(const String& file_name);
   // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_BrainAtlas #EXT_xml #CAT_BrainAtlas save the .xml file to the given file name -- note it is typically a good idea to set a different name in the name field before doing this, so the atlas can be recognized as unique in a list
+  virtual void	      RevertAtlas();
+  // #BUTTON #CONFIRM #CAT_BrainAtlas revert the atlas data to the .xml file on disk -- this will overwrite any current changes to the atlas data!
+  virtual void	      LoadAtlas(const String& file_name);
+  // #BUTTON #FILE_DIALOG_LOAD #FILETYPE_BrainAtlas #EXT_xml #CAT_BrainAtlas load atlas data from the given .xml file, overwriting any current atlas data
 
 #ifndef __MAKETA__
   BrainAtlas&  Atlas();

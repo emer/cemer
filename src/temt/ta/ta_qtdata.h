@@ -234,6 +234,8 @@ protected:
   // Enable/disable the apply/reset buttons.
   virtual void          setApplyEnabled(bool enabled);
 
+  override void 	keyPressEvent(QKeyEvent *e);
+
 // Data members
 protected:
   static const QString DOT_STAR;
