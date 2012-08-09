@@ -26,6 +26,7 @@
 #include "ta_qttype_def.h"
 #include "ta_qtclipdata.h" // for clip-aware controls
 #include "ta_qtclassbrowse.h"
+#include "ta_matrix_qt.h"
 #include "css_basic_types.h"
 #include "css_qtdialog.h"
 #include "css_ta.h"
@@ -632,21 +633,26 @@ void iFieldEditDialog::repChanged() {
 
 const QString iRegexpDialog::DOT_STAR(".*");
 
-iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only)
+iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
+			     bool editor_mode)
   : inherited()
   , m_field(regexp_field)
   , m_populator(re_populator)
   , m_fieldOwner(fieldOwner)
   , m_read_only(read_only)
+  , m_editor_mode(editor_mode)
   , m_apply_clicked(false)
   , m_proxy_model(0)
   , m_regexp_list(0)
   , m_regexp_line_edit(0)
   , m_regexp_combos()
+  , m_table_model(NULL)
+  , m_table_view(NULL)
   , btnAdd(0)
   , btnDel(0)
   , btnApply(0)
   , btnReset(0)
+  , m_button_box(NULL)
 {
   if (!m_populator) {
     // Shouldn't happen.
@@ -658,14 +664,14 @@ iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_n
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
   // Create the table model (should be done before its view is created).
-  int num_parts = CreateTableModel();
+  CreateTableModel();
 
   // Create layout
   QVBoxLayout *vbox = new QVBoxLayout(this);
   LayoutInstructions(vbox, field_name.toQString());
   LayoutRegexpList(vbox);
-  QHBoxLayout *hbox_combos = LayoutEditBoxes(vbox, num_parts);
-  LayoutTableView(vbox, hbox_combos, num_parts);
+  QHBoxLayout *hbox_combos = LayoutEditBoxes(vbox);
+  LayoutTableView(vbox, hbox_combos);
   LayoutButtons(vbox);
 
   // "Reset" the form with the text from the field.  Do this at the bottom,
@@ -745,7 +751,7 @@ void iRegexpDialog::LayoutRegexpList(QVBoxLayout *vbox)
           this, SLOT(RegexpSelectionChanged()));
 }
 
-QHBoxLayout *iRegexpDialog::LayoutEditBoxes(QVBoxLayout *vbox, int num_parts)
+QHBoxLayout *iRegexpDialog::LayoutEditBoxes(QVBoxLayout *vbox)
 {
   // Line-edit for the regexp.
   m_regexp_line_edit = new QLineEdit;
@@ -763,11 +769,13 @@ QHBoxLayout *iRegexpDialog::LayoutEditBoxes(QVBoxLayout *vbox, int num_parts)
   vbox->addLayout(hbox_combos);
 
   // Create combo-boxes.
-  for (int part = 0; part < num_parts; ++part) {
+  for (int part = 0; part < m_num_parts; ++part) {
     // Create a combo-box.
     QComboBox *combo = new QComboBox;
     combo->setEditable(true);
     combo->setInsertPolicy(QComboBox::NoInsert);
+    combo->setMinimumContentsLength(8);
+    combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
     // Add the combo-box to the widget,
     hbox_combos->addWidget(combo);
@@ -789,43 +797,47 @@ QHBoxLayout *iRegexpDialog::LayoutEditBoxes(QVBoxLayout *vbox, int num_parts)
 }
 
 void iRegexpDialog::LayoutTableView(
-  QVBoxLayout *vbox, QHBoxLayout *hbox_combos, int num_parts)
+  QVBoxLayout *vbox, QHBoxLayout *hbox_combos)
 {
   // Table view.  Set the model early so columns actions are valid.
-  QTableView *tableview = new QTableView;
-  tableview->setModel(m_proxy_model);
+  m_table_view = new iTableView;
+  m_table_view->setModel(m_proxy_model);
 
   // Hide the full label column, it's only used for the m_proxy_model filter.
-  tableview->setColumnHidden(LABEL_COL, true);
+  m_table_view->setColumnHidden(LABEL_COL, true);
 
   // Allow the user to click column headers to sort the column.
-  tableview->setSortingEnabled(true);
+  m_table_view->setSortingEnabled(true);
 
   // By default, sort by the index column.
-  tableview->sortByColumn(INDEX_COL, Qt::AscendingOrder);
+  m_table_view->sortByColumn(INDEX_COL, Qt::AscendingOrder);
 
-  // Table data is read-only.
-  tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-  // Select entire rows at a time (vs. cells).
-  tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
+  if(m_editor_mode) {
+    // leave this at default setting:
+    // m_table_view->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    m_table_view->setSelectionBehavior(QAbstractItemView::SelectItems);
+  }
+  else {
+    m_table_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_table_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  }
 
   // Disallow complex selections.
-  tableview->setSelectionMode(QAbstractItemView::SingleSelection);
+  m_table_view->setSelectionMode(QAbstractItemView::SingleSelection);
 
   // Keep the scrollbar visible at all times since the combo-boxes are
   // sized assuming it is present.  Hopefully this works on all platforms.
-  tableview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  m_table_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
   // Don't need to see the vertical headers since we have an index column.
-  tableview->verticalHeader()->setVisible(false);
+  m_table_view->verticalHeader()->setVisible(false);
 
   // Add the table view with a stretch factor so it takes up any available
   // vertical space.
-  vbox->addWidget(tableview, 1);
+  vbox->addWidget(m_table_view, 1);
 
   // Customize the header row.
-  QHeaderView *header = tableview->horizontalHeader();
+  QHeaderView *header = m_table_view->horizontalHeader();
 
   // Don't highlight the header cells when a selection is made (looks dumb).
   header->setHighlightSections(false);
@@ -834,7 +846,7 @@ void iRegexpDialog::LayoutTableView(
   header->setResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
 
   // Resize other columns to take up all available space equally.
-  int num_cols = num_parts + NUM_EXTRA_COLS;
+  int num_cols = m_num_parts + NUM_EXTRA_COLS;
   for (int col = NUM_EXTRA_COLS; col < num_cols; ++col) {
     header->setResizeMode(col, QHeaderView::Stretch);
   }
@@ -842,7 +854,13 @@ void iRegexpDialog::LayoutTableView(
   // Pad the combos hbox to accomodate the index column and scrollbar.
   // This lines up the combo-boxes with their respective headers.
   hbox_combos->insertSpacing(0, header->sectionSize(INDEX_COL) + 2);
-  hbox_combos->addSpacing(tableview->verticalScrollBar()->sizeHint().width() + 2);
+  int end_extra = 0;
+  for(int part = 0; part < m_extra_cols; part++) {
+    int col = NUM_EXTRA_COLS + m_num_parts + part;
+    end_extra += header->sectionSize(col);
+  }
+
+  hbox_combos->addSpacing(end_extra + m_table_view->verticalScrollBar()->sizeHint().width() + 2);
 }
 
 void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
@@ -850,41 +868,41 @@ void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
   // Create a button box with OK, Cancel, Apply, Reset.
   // Save pointers to the Apply/Reset buttons so they can be
   // programmatically enabled/disabled.
-  QDialogButtonBox *button_box = new QDialogButtonBox;
-  vbox->addWidget(button_box);
+  m_button_box = new QDialogButtonBox;
+  vbox->addWidget(m_button_box);
 
   // Create either a cancel or close button,
   // depending on whether the dialog is read-only.
   QDialogButtonBox::StandardButton cancel =
     isReadOnly() ? QDialogButtonBox::Close : QDialogButtonBox::Cancel;
-  button_box->addButton(QDialogButtonBox::Ok);
-  button_box->addButton(cancel);
-  btnApply = button_box->addButton(QDialogButtonBox::Apply);
-  btnReset = button_box->addButton(QDialogButtonBox::Reset);
+  m_button_box->addButton(QDialogButtonBox::Ok);
+  m_button_box->addButton(cancel);
+  btnApply = m_button_box->addButton(QDialogButtonBox::Apply);
+  btnReset = m_button_box->addButton(QDialogButtonBox::Reset);
 
   // Connect the button-box buttons to our SLOTs.
-  connect(button_box, SIGNAL(accepted()), this, SLOT(accept()));
-  connect(button_box, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(m_button_box, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(m_button_box, SIGNAL(rejected()), this, SLOT(reject()));
   connect(btnApply, SIGNAL(clicked()), this, SLOT(btnApply_clicked()));
   connect(btnReset, SIGNAL(clicked()), this, SLOT(btnReset_clicked()));
 }
 
-int iRegexpDialog::CreateTableModel()
+void iRegexpDialog::CreateTableModel()
 {
   // Get the list of labels to filter.
   m_populator->setSource(m_fieldOwner); 
-  QStringList headings = m_populator->getHeadings();
+  QStringList headings = m_populator->getHeadings(m_editor_mode, m_extra_cols);
   QStringList labels = m_populator->getLabels();
   QString separator = m_populator->getSeparator();
 
   // Get the number of rows and columns.  Number of columns is based on
   // how many headings exist, plus any extra columns.
   int rows = labels.size();
-  int num_parts = headings.size();
-  int cols = num_parts + NUM_EXTRA_COLS;
+  m_num_parts = headings.size() - m_extra_cols;
+  int cols = m_num_parts + NUM_EXTRA_COLS + m_extra_cols;
 
   // Create table model
-  QStandardItemModel *table_model = new QStandardItemModel(rows, cols, this);
+  m_table_model = new QStandardItemModel(rows, cols, this);
 
   // Determine how many characters in the string representation of
   // the number of rows, so we know how much padding to add.
@@ -895,12 +913,12 @@ int iRegexpDialog::CreateTableModel()
     // (base 10, padded with leading '0's).
     QStandardItem *item = new QStandardItem(
       QString("%1").arg(row, field_width, 10, QChar('0')));
-    table_model->setItem(row, INDEX_COL, item);
+    m_table_model->setItem(row, INDEX_COL, item);
 
     // Second column is hidden and contains the full label.
     // The regexp filter is applied to this column below.
     item = new QStandardItem(labels[row]);
-    table_model->setItem(row, LABEL_COL, item);
+    m_table_model->setItem(row, LABEL_COL, item);
 
     // Remaining columns contain the label parts.
     QStringList parts = labels[row].split(separator);
@@ -908,27 +926,35 @@ int iRegexpDialog::CreateTableModel()
       int col = part + NUM_EXTRA_COLS;
       if (col >= cols) break;
       item = new QStandardItem(parts[part]);
-      table_model->setItem(row, col, item);
+      item->setEditable(m_editor_mode);
+      m_table_model->setItem(row, col, item);
     }
   }
 
   // Create a proxy model to filter the whole table.
   m_proxy_model = new QSortFilterProxyModel(this);
-  m_proxy_model->setSourceModel(table_model);
+  m_proxy_model->setSourceModel(m_table_model);
   m_proxy_model->setFilterKeyColumn(LABEL_COL);
 
   // Set the header labels.
   m_proxy_model->setHeaderData(
     INDEX_COL, Qt::Horizontal, QString("Index"), Qt::DisplayRole);
-  for (int part = 0; part < num_parts; ++part) {
+  int part;
+  for (part = 0; part < m_num_parts; ++part) {
+    int col = part + NUM_EXTRA_COLS;
+    m_proxy_model->setHeaderData(
+      col, Qt::Horizontal, headings[part], Qt::DisplayRole);
+  }
+  for(; part < m_num_parts + m_extra_cols; part++) {
     int col = part + NUM_EXTRA_COLS;
     m_proxy_model->setHeaderData(
       col, Qt::Horizontal, headings[part], Qt::DisplayRole);
   }
 
-  // Return the number of parts we detected; this determines how many
-  // combo-boxes are created.
-  return num_parts;
+  if(m_editor_mode) {
+    connect(m_table_model, SIGNAL(itemChanged(QStandardItem*)),
+	    this, SLOT(TableItemChanged(QStandardItem*)) );
+  }
 }
 
 void iRegexpDialog::accept()
@@ -938,6 +964,24 @@ void iRegexpDialog::accept()
   }
 
   inherited::accept();
+}
+
+void iRegexpDialog::TableItemChanged(QStandardItem* item) {
+  int row = item->row();
+  int col = item->column();
+  if(col < NUM_EXTRA_COLS || col >= m_num_parts) return; // only handle labels
+
+  // when anything changes, we need to re-compute the global label column for that row..
+  QString separator = m_populator->getSeparator();
+  QString nwlbl;
+  for(int part=0; part < m_num_parts; part++) {
+    QStandardItem* itm = m_table_model->item(row, part + NUM_EXTRA_COLS);
+    nwlbl.append(itm->text());
+    if(part < m_num_parts-1)
+      nwlbl.append(separator);
+  }
+  QStandardItem* lbli = m_table_model->item(row, LABEL_COL);
+  lbli->setText(nwlbl);
 }
 
 // Handle the "Add" button push.
@@ -998,6 +1042,16 @@ void iRegexpDialog::btnApply_clicked()
   else {
     field_value = full_regexp;
   }
+
+  if(m_editor_mode) {		// we now save changes back to guy..
+    QStringList labels;
+    int rows = m_table_model->rowCount();
+    for(int row=0; row < rows; ++row) {
+      QStandardItem* item = m_table_model->item(row, LABEL_COL);
+      labels.append(item->text());
+    }
+    m_populator->setLabels(labels);
+  }
 }
 
 void iRegexpDialog::btnReset_clicked()
@@ -1007,7 +1061,13 @@ void iRegexpDialog::btnReset_clicked()
 
   // Get all the "OR" alternatives of the regexp (separated by |s)
   // and put them into the list.
-  QString full_regexp = m_field->rep()->text();
+  QString full_regexp;
+  if(m_field) {
+    full_regexp = m_field->rep()->text();
+  }
+  else {
+    full_regexp = field_value.chars();
+  }
   QStringList regexp_strings = SplitRegexpAlternatives(full_regexp);
   m_regexp_list->clear();
   m_regexp_list->addItems(regexp_strings);

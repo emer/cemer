@@ -17,7 +17,12 @@
 #define BRAIN_VIEW_PANEL_H
 
 #include "netstru_qtso.h" // overkill #include
+#include "ta_qtdata.h"
 class QString;
+
+#ifndef __MAKETA__
+# include <QItemDelegate>
+#endif
 
 
 ////////////////////////////////////////////////////
@@ -152,6 +157,26 @@ private:
   QCheckBox*		m_chk_color_brain;
   QCheckBox*		m_chk_atlas;
   void              UpdateWidgetLimits();
+
+};
+
+// this is here for moc'ing
+
+class EMERGENT_API iBrainViewEditDialog : public iRegexpDialog {
+  Q_OBJECT
+  INHERITED(iRegexpDialog)
+public:
+    iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, 	iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
+			 bool editor_mode=true);
+
+protected:
+  virtual void         	AddButtons();
+  virtual  void		SetColors();
+
+protected slots:
+  void                  itemClicked(const QModelIndex & index);
+  override void         btnApply_clicked();
+  override void         btnColorsFromScale_clicked();
 
 };
 

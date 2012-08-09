@@ -17,6 +17,7 @@
 #include "brain_view.h"
 #include "t3brain_node.h"
 #include "brain_volume_view.h"
+#include "brainstru.h"
 #include "nifti_reader.h"
 #include "ta_math.h"
 
@@ -225,13 +226,13 @@ void BrainVolumeView::Render_pre()
     if (ColorBrain()) {
       // Get the atlas colors and change those which DO NOT MATCH
       // the regexp areas to white (effectively not coloring those areas)
-      BrainAtlasProxy* atlas(bv()->net()->brain_atlas.ptr());
+      BrainAtlas& atlas = bv()->net()->brain_atlas.ptr()->Atlas();
       m_atlasColors.clear();
-      m_atlasColors = atlas->Colors();
+      m_atlasColors = BrainAtlasUtils::Colors(atlas);
       const QColor WHITE("#ffffff");
-      QSet<int> indices = atlas->MatchingLabelIndices(bv()->ColorBrainRegexp());
+      QSet<int> indexes = BrainAtlasUtils::Indexes(atlas, bv()->ColorBrainRegexp());
       for (int i=0; i<m_atlasColors.size();++i) {
-        if ( indices.contains(i) ) {
+        if ( indexes.contains(i) ) {
           continue;
         }
         else {
@@ -253,7 +254,7 @@ void BrainVolumeView::RenderBrain()
   
   // If colorizing the structural brain, we need access
   // to the atlas image data...
-  BrainAtlasProxy* atlas(bv->net()->brain_atlas.ptr());
+  taBrainAtlas* atlas(bv->net()->brain_atlas.ptr());
   if (ColorBrain()) {
     m_atlas_data = new NiftiReader(atlas->image_filepath);
     if (!m_atlas_data->IsValid()){
@@ -732,9 +733,10 @@ void BrainVolumeView::Render_impl_blocks()
   // Create atlas face sets if requested
   if (bv->show_atlas && bv->net()->brain_atlas.ptr() != NULL ) {
     // use the first matching label's color for face sets (or white if not found)
-    QSet<int> match_idxs = bv->net()->brain_atlas->MatchingLabelIndices(bv->brain_area_regexp);
+    BrainAtlas& atlas = bv->net()->brain_atlas->Atlas();
+    QSet<int> match_idxs = BrainAtlasUtils::Indexes(atlas, bv->brain_area_regexp);
     int color_idx(*match_idxs.constBegin());
-    QList<QColor> colors = bv->net()->brain_atlas->Colors();
+    QList<QColor> colors = BrainAtlasUtils::Colors(atlas);
     const QColor WHITE(255,255,255);
     T3Color color(colors.value(color_idx,WHITE));
     CreateAtlasFaceSets(bv->brain_area_regexp, color);
@@ -959,9 +961,11 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   
   // return if we don't have a network atlas chosen
   if ( bv->net()->brain_atlas.ptr() == NULL ) return;
+
+  BrainAtlas& atlas = bv->net()->brain_atlas.ptr()->Atlas();
   
   // Get and assign voxel coordinates and sizes to all units.
-  QList<FloatTDCoord> voxels = bv->net()->brain_atlas->VoxelCoordinates(brain_area);
+  QList<FloatTDCoord> voxels = atlas.VoxelCoordinates(brain_area);
   
   // clear the old map
   m_atlas_depth_map.clear();

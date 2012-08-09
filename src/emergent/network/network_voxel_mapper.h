@@ -55,7 +55,7 @@ private:
 private:
   QMultiHash<QString, Layer *> m_layer_map;
   Network *m_network;
-  BrainAtlasProxy* m_atlas;
+  taBrainAtlas* m_atlas;
 
   // Info on layers for the current iteration of AssignVoxelsInArea().
   QList<LayerInfo *> m_layer_info;

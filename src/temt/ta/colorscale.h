@@ -60,10 +60,11 @@ public:
   // set from standard X11 color names, most of which are also web/html standard color names
   
   void			Set(float r_, float g_, float b_, float a_ = 1)
-     {r=r_; g=g_; b=b_; a=a_;}
+  { r=r_; g=g_; b=b_; a=a_; }
+
   TA_BASEFUNS_LITE(taColor);
 
-  			operator iColor() const {return color();}
+  operator iColor() const {return color();}
 
 private:
   void 	Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a

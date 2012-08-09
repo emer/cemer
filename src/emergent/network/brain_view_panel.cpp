@@ -33,6 +33,10 @@
 #include <qwidget.h>
 #include "nifti_reader.h"
 #include "brainstru.h"
+#include <QStandardItemModel>
+#include <QColorDialog>
+#include <QSortFilterProxyModel>
+#include <QDialogButtonBox>
 
 ////////////////////////////////////////////////////
 //  BrainViewPanel
@@ -730,3 +734,103 @@ void BrainViewPanel::UpdateWidgetLimits()
   }
 }
 
+
+//////////////////////////////////////////////
+//		iNetwork_Group
+
+iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
+  : inherited(regexp_field, field_name, re_populator, fieldOwner, read_only, editor_mode) {
+
+  AddButtons();
+  SetColors();
+
+  connect(m_table_view, SIGNAL(doubleClicked(const QModelIndex&)), this,
+          SLOT(itemClicked(const QModelIndex&)));
+}
+
+void iBrainViewEditDialog::SetColors() {
+  BrainAtlasRegexpPopulator* bepop = (BrainAtlasRegexpPopulator*)m_populator;
+
+  QList<QColor>	clrs = bepop->getColors();
+  int rows = clrs.size();
+
+  int col = m_num_parts + NUM_EXTRA_COLS;
+  for (int row = 0; row < rows; ++row) {
+    QColor clr = clrs[row];
+    QStandardItem* item = new QStandardItem(clr.name());
+    item->setBackground(QBrush(clr));
+    item->setEditable(false);
+    m_table_model->setItem(row, col, item);
+  }
+}
+
+void iBrainViewEditDialog::itemClicked(const QModelIndex & index) {
+  QModelIndex src_idx = m_proxy_model->mapToSource(index);
+  int row = src_idx.row();
+  int col = src_idx.column();
+  int clr_col = m_num_parts + NUM_EXTRA_COLS;
+  if(col != clr_col) return;
+  QStandardItem* item = m_table_model->item(row, clr_col);
+  QColor clr(item->text());
+  QColor nwclr = QColorDialog::getColor(clr, this);
+  item->setText(nwclr.name());
+  item->setBackground(QBrush(nwclr));
+}
+
+void iBrainViewEditDialog::btnApply_clicked() {
+  inherited::btnApply_clicked();
+  if(!m_editor_mode) return;
+
+  BrainAtlasRegexpPopulator* bepop = (BrainAtlasRegexpPopulator*)m_populator;
+
+  int clr_col = m_num_parts + NUM_EXTRA_COLS;
+
+  QList<QColor> colors;
+  int rows = m_table_model->rowCount();
+  for(int row=0; row < rows; ++row) {
+    QStandardItem* item = m_table_model->item(row, clr_col);
+    QColor clr(item->text());
+    colors.append(clr);
+  }
+  bepop->setColors(colors);
+}
+
+void iBrainViewEditDialog::AddButtons() {
+  if(!m_editor_mode) return;
+
+  QPushButton* btnColorsFromScale = m_button_box->addButton("ColorsFromScale",
+							    QDialogButtonBox::ActionRole);
+
+  // Connect the button-box buttons to our SLOTs.
+  connect(btnColorsFromScale, SIGNAL(clicked()), this, SLOT(btnColorsFromScale_clicked()));
+}
+
+void iBrainViewEditDialog::btnColorsFromScale_clicked() {
+  taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
+						     "select a colorscale to apply to the currently-selected labels");
+  bool rval = chs->Choose();
+  if(!rval) return;
+  ColorScaleSpec* cspec = (ColorScaleSpec*)chs->sel_obj();
+  delete chs;
+  if(!cspec) return;
+
+  int rows = m_proxy_model->rowCount();
+  if(rows == 0) return;
+
+  int clr_col = m_num_parts + NUM_EXTRA_COLS;
+  TAColor_List cls;
+  int extra = 0;
+  do {				// it doesn't always generate enough..
+    cspec->GenRanges(&cls, rows+extra);
+    extra += 2;
+  } while (cls.size < rows);
+
+  for(int row = 0; row < rows; row++) {
+    QModelIndex pidx = m_proxy_model->index(row, clr_col);
+    QModelIndex sidx = m_proxy_model->mapToSource(pidx);
+    QStandardItem* itm = m_table_model->item(sidx.row(), clr_col);
+    String rgb = String("#") + cls[row]->color().toString();
+    itm->setText(rgb);
+    itm->setBackground(QBrush(QColor(QString(rgb.chars()))));
+  }
+}

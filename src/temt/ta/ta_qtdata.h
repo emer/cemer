@@ -39,6 +39,8 @@
 
 // externals
 class QKeySequence; // #IGNORE
+class QStandardItem; // #IGNORE
+class QDialogButtonBox; // #IGNORE
 class MatrixGeom;
 class iRegexpDialogPopulator; //
 
@@ -155,8 +157,9 @@ private:
 class TA_API iRegexpDialogPopulator {
   // ##INSTANCE #NO_INSTANCE #VIRT_BASE helper class that populates regexp dialog information
 public:
-  virtual QStringList getHeadings() const = 0;
+  virtual QStringList getHeadings(bool editor_mode, int& extra_cols) const = 0;
   virtual QStringList getLabels() const = 0;
+  virtual void 	      setLabels(const QStringList& labels) = 0;
   virtual QString getSeparator() const = 0;
   virtual void    setSource(const void *fieldOwner) = 0;
   virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
@@ -167,7 +170,8 @@ class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only);
+    iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
+		  bool editor_mode = false);
 
   bool          isReadOnly()    { return m_read_only; }
   bool          applyClicked()  { return m_apply_clicked; }
@@ -178,17 +182,19 @@ public slots:
   override void accept();
 
 protected slots:
-  void          btnAdd_clicked();
-  void          btnDel_clicked();
-  void          btnApply_clicked();
-  void          btnReset_clicked();
+  virtual void          btnAdd_clicked();
+  virtual void          btnDel_clicked();
+  virtual void          btnApply_clicked();
+  virtual void          btnReset_clicked();
 
-  void          RegexpPartChosen(int index);
-  void          RegexpPartEdited();
-  void          RegexpLineEdited();
-  void          RegexpSelectionChanged();
+  virtual void          RegexpPartChosen(int index);
+  virtual void          RegexpPartEdited();
+  virtual void          RegexpLineEdited();
+  virtual void          RegexpSelectionChanged();
 
-private:
+  virtual void		TableItemChanged(QStandardItem* item);
+
+protected:
   enum ExtraColumns {
     INDEX_COL,          // One extra column for the label indices.
     LABEL_COL,          // One extra column for the full labels (hidden).
@@ -196,47 +202,52 @@ private:
   };
 
   // Helpers functions called by the ctor.
-  int           CreateTableModel();
-  void          LayoutInstructions(QVBoxLayout *vbox, QString field_name);
-  void          LayoutRegexpList(QVBoxLayout *vbox);
-  QHBoxLayout * LayoutEditBoxes(QVBoxLayout *vbox, int num_parts);
-  void          LayoutTableView(QVBoxLayout *vbox, QHBoxLayout *hbox_combos, int num_parts);
-  void          LayoutButtons(QVBoxLayout *vbox);
+  virtual void          CreateTableModel();
+  virtual void          LayoutInstructions(QVBoxLayout *vbox, QString field_name);
+  virtual void          LayoutRegexpList(QVBoxLayout *vbox);
+  virtual QHBoxLayout * LayoutEditBoxes(QVBoxLayout *vbox);
+  virtual void          LayoutTableView(QVBoxLayout *vbox, QHBoxLayout *hbox_combos);
+  virtual void          LayoutButtons(QVBoxLayout *vbox);
 
   // Keeps combo-box line-edit in sync with the selected entry.
-  void          SelectCombo(QComboBox *combo, int index);
+  virtual void          SelectCombo(QComboBox *combo, int index);
 
   // Helpers for RegexpSelectionChanged().
-  void          BuildCombos(QString regexp);
-  QStringList   GetComboChoices(QString regexp, int part);
-  void          EnableEditBoxes(QString regexp);
+  virtual void          BuildCombos(QString regexp);
+  virtual QStringList   GetComboChoices(QString regexp, int part);
+  virtual void          EnableEditBoxes(QString regexp);
 #ifndef __MAKETA__
-  void          ApplyFilters(QList<QListWidgetItem *> selected_items);
+  virtual void          ApplyFilters(QList<QListWidgetItem *> selected_items);
 #endif
 
   // Split up and join regexp alternatives.
-  QStringList   SplitRegexpAlternatives(QString regexp);
+  virtual QStringList   SplitRegexpAlternatives(QString regexp);
 #ifndef __MAKETA__
-  QString       JoinRegexpAlternatives(QList<QListWidgetItem *> items);
+  virtual QString       JoinRegexpAlternatives(QList<QListWidgetItem *> items);
 #endif
 
   // Split up and join regexp parts.
-  QStringList   SplitRegexp(const QString &regexp);
-  QString       JoinRegexp(const QStringList &regexp_parts);
-  QString       GetEscapedSeparator();
+  virtual QStringList   SplitRegexp(const QString &regexp);
+  virtual QString       JoinRegexp(const QStringList &regexp_parts);
+  virtual QString       GetEscapedSeparator();
 
   // Enable/disable the apply/reset buttons.
-  void          setApplyEnabled(bool enabled);
+  virtual void          setApplyEnabled(bool enabled);
 
 // Data members
-private:
+protected:
   static const QString DOT_STAR;
 
   taiRegexpField*       m_field;
   iRegexpDialogPopulator*      m_populator;
   const void *          m_fieldOwner;
   bool                  m_read_only;
+  bool			m_editor_mode;
   bool                  m_apply_clicked;
+  QStandardItemModel*	m_table_model;
+  QTableView*		m_table_view;
+  int			m_num_parts;
+  int			m_extra_cols;
   QSortFilterProxyModel* m_proxy_model;
   QListWidget*          m_regexp_list;
   QLineEdit*            m_regexp_line_edit;
@@ -248,6 +259,7 @@ private:
   QPushButton*          btnDel;
   QPushButton*          btnApply;
   QPushButton*          btnReset;
+  QDialogButtonBox* 	m_button_box;
 };
 
 

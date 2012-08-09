@@ -58,6 +58,7 @@ public:
   TDCoord Center() const;
   
   
+  void SetText(const QString& text);
   void SetColor(const QColor& color);
   void SetCenter(const TDCoord& center);
   
@@ -73,22 +74,25 @@ private:
 ////////////////////////////////////////////////////
 class BrainAtlasUtils
 {
-  //    contains static functions useful for manipulating
-  //    a BrainAtlas
+  //    contains static functions useful for manipulating a BrainAtlas
 public:
   
-  static QList<QColor>  Colors(const BrainAtlas& atlas);
+  static QList<QColor>  Colors(const BrainAtlas& atlas, const QString& labels_regex=".*");
   static QStringList    Labels(const BrainAtlas& atlas, const QString& labels_regex=".*");
 #ifndef __MAKETA__
-  static QSet<int>      MatchingLabelIndices(const BrainAtlas& atlas, const QString& labelsRegexp);
+  static QSet<int>      Indexes(const BrainAtlas& atlas, const QString& labelsRegexp);
+  static QList<int>     IndexList(const BrainAtlas& atlas, const QString& labelsRegexp);
 #endif 
   static QString        Label(const BrainAtlas& atlas, unsigned int index);
   static unsigned int   Index(const BrainAtlas& atlas, const QString& label);
-  
+  static QColor   	Color(const BrainAtlas& atlas, unsigned int index);
+
   static QStringList    AtlasesAvailable(const QString& atlas_dir);
   static BrainAtlasInfo ParseAtlasHeader(const QString& filename);
   
+  static void           SetLabels(BrainAtlas& atlas, const QStringList& labels);
   static void           SetColors(BrainAtlas& atlas, const QList<QColor>& colors);
+  static void   	SetColor(BrainAtlas& atlas, QColor clr, unsigned int index);
 };  
 
   

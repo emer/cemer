@@ -119,8 +119,8 @@ public:
   QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif
 
-  virtual bool          isFixedRowCount() const = 0; // true, ex. for tab mat cells with fixed rows
-  virtual bool          isFixedColCount() const = 0; // true, ex. for tab mat cells with fixed geom
+  virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
+  virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
   virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
   virtual void          selectCurCell();           // call clearExtSelection and then select current index
 

@@ -19,6 +19,7 @@
 #include <cassert>
 #include "netstru.h" // Network, Layer, Unit
 #include "ta_type.h" // taMisc::Warning()
+#include "brainstru.h"
 
 namespace { // anonymous
   // Set to 0 to turn off debug output.
@@ -175,7 +176,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
   if (!brain_area.isEmpty()) {
     // Get the list of voxels, first by their i,j,k indices, then convert
     // to x,y,z coordinates.
-    voxels = m_atlas->VoxelCoordinates(brain_area);
+    voxels = m_atlas->Atlas().VoxelCoordinates(brain_area);
   }
 
   return voxels;

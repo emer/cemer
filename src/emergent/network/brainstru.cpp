@@ -80,6 +80,11 @@ TDCoord BrainAtlasLabel::Center() const
   return m_center_coordinate;
 }
 
+void BrainAtlasLabel::SetText(const QString& text)
+{
+  m_text = text;
+}
+
 void BrainAtlasLabel::SetColor(const QColor& color)
 {
   m_color = color;
@@ -93,10 +98,11 @@ void BrainAtlasLabel::SetCenter(const TDCoord& center)
 ////////////////////////////////////////////////////
 //   BrainUtils
 ////////////////////////////////////////////////////
-QList<QColor> BrainAtlasUtils::Colors(const BrainAtlas& atlas)
+
+QList<QColor> BrainAtlasUtils::Colors(const BrainAtlas& atlas, const QString& labels_regex)
 {
   QList<QColor> colors;
-  QList<BrainAtlasLabel> labels = atlas.Labels();
+  QList<BrainAtlasLabel> labels = atlas.Labels(labels_regex);
   foreach( BrainAtlasLabel label, labels){
     colors.append(label.Color());
   }
@@ -113,15 +119,26 @@ QStringList BrainAtlasUtils::Labels(const BrainAtlas& atlas, const QString& labe
   return list;
 }
 
-QSet<int> BrainAtlasUtils::MatchingLabelIndices(const BrainAtlas& atlas, const QString& labelsRegexp) 
+QSet<int> BrainAtlasUtils::Indexes(const BrainAtlas& atlas, const QString& labelsRegexp) 
 {
-  QSet<int> indices;
+  QSet<int> indexes;
   
   QList<BrainAtlasLabel> labels = atlas.Labels(labelsRegexp);
   foreach( BrainAtlasLabel label, labels){
-    indices << label.Index();
+    indexes << label.Index();
   }
-  return indices;
+  return indexes;
+}  
+
+QList<int> BrainAtlasUtils::IndexList(const BrainAtlas& atlas, const QString& labelsRegexp) 
+{
+  QList<int> indexes;
+  
+  QList<BrainAtlasLabel> labels = atlas.Labels(labelsRegexp);
+  foreach( BrainAtlasLabel label, labels){
+    indexes.append(label.Index());
+  }
+  return indexes;
 }  
 
 QString BrainAtlasUtils::Label(const BrainAtlas& atlas, unsigned int index)
@@ -146,6 +163,18 @@ unsigned int BrainAtlasUtils::Index(const BrainAtlas& atlas, const QString& labe
     }
   }
   return index;
+}
+
+QColor BrainAtlasUtils::Color(const BrainAtlas& atlas, unsigned int index)
+{
+  QColor clr;
+  QList<BrainAtlasLabel> labels = atlas.Labels();
+  foreach( BrainAtlasLabel label, labels){
+    if (label.Index() == index){
+      clr = label.Color();
+    }
+  }
+  return clr;
 }
 
 QStringList BrainAtlasUtils::AtlasesAvailable(const QString& atlas_dir)
@@ -174,6 +203,20 @@ BrainAtlasInfo BrainAtlasUtils::ParseAtlasHeader(const QString& filename)
   return info;
 }
 
+void BrainAtlasUtils::SetLabels(BrainAtlas& atlas, const QStringList& strings)
+{
+  QList<BrainAtlasLabel> labels = atlas.Labels();
+
+  if (labels.size() != strings.size()) return;
+
+  int index(0);
+  foreach(BrainAtlasLabel label, labels){
+    label.SetText(strings.at(index));
+    labels.replace(index, label);
+    index++;
+  }
+  atlas.SetLabels(labels);
+}
 
 void BrainAtlasUtils::SetColors(BrainAtlas& atlas, const QList<QColor>& colors)
 {
@@ -187,6 +230,21 @@ void BrainAtlasUtils::SetColors(BrainAtlas& atlas, const QList<QColor>& colors)
     label.SetColor(colors.at(index));
     labels.replace(index, label);
     index++;
+  }
+  atlas.SetLabels(labels);
+}
+
+void BrainAtlasUtils::SetColor(BrainAtlas& atlas, QColor clr, unsigned int index)
+{
+  QList<BrainAtlasLabel> labels = atlas.Labels();
+  int idx(0);
+  foreach( BrainAtlasLabel label, labels){
+    if (label.Index() == index){
+      label.SetColor(clr);
+      labels.replace(idx, label);
+      break;
+    }
+    idx++;
   }
   atlas.SetLabels(labels);
 }
@@ -288,10 +346,10 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
   // get labels that match the regexp
   QList<BrainAtlasLabel> labels = Labels(labels_regexp);
 
-  // now get the indices for the matching labels
-  QSet<int> match_indices; 
+  // now get the indexes for the matching labels
+  QSet<int> match_indexes; 
   foreach( BrainAtlasLabel label, labels){
-    match_indices << label.Index();
+    match_indexes << label.Index();
   }
 
   // We need a NiftiReader to read the atlas image data
@@ -307,12 +365,12 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
     // The data has already been byte-swapped for this platform.
     TDCoord size(img.XyzDimensions());
     const short *data = reinterpret_cast<const short *>(img.RawData());
-    // i,j,k are the array indices in the x,y,z dimensions, respectively.
+    // i,j,k are the array indexes in the x,y,z dimensions, respectively.
     for (int k = 0; k < size.z; ++k) {
       for (int j = 0; j < size.y; ++j) {
         for (int i = 0; i < size.x; ++i) {
           short label_index = *data++;
-          bool match = match_indices.contains(label_index);
+          bool match = match_indexes.contains(label_index);
           if (match) {
             index_coords << TDCoord(i, j, k);
           }

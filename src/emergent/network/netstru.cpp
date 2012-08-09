@@ -23,6 +23,7 @@
 #include "ta_filer.h"
 #include "brainstru.h"
 #include "brain_view.h"
+#include "brain_view_panel.h"
 #include "network_voxel_mapper.h"
 
 #ifdef TA_GUI
@@ -8580,9 +8581,9 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
 }
 
 ////////////////////////////////////////////////////
-//   BrainAtlasProxy
+//   taBrainAtlas
 
-BrainAtlasProxy::BrainAtlasProxy(const BrainAtlasInfo& info) : taNBase()
+taBrainAtlas::taBrainAtlas(const BrainAtlasInfo& info) : taNBase()
   , filepath(info.atlas_filename)
   , description(info.description)
   , image_filepath(info.image_filename)
@@ -8592,15 +8593,13 @@ BrainAtlasProxy::BrainAtlasProxy(const BrainAtlasInfo& info) : taNBase()
   name = info.name;
 }
 
-void BrainAtlasProxy::Initialize()
+void taBrainAtlas::Initialize()
 {  
   m_have_atlas_instance = false;
   m_atlas = NULL;
-  m_labels.clear();
-  m_colors.clear();
 }
 
-BrainAtlas& BrainAtlasProxy::Atlas()
+BrainAtlas& taBrainAtlas::Atlas()
 {
   // if we don't already have an BrainAtlas
   // instance we're proxying, create one...
@@ -8611,62 +8610,111 @@ BrainAtlas& BrainAtlasProxy::Atlas()
   return *m_atlas;
 }
 
-void BrainAtlasProxy::Destroy()
+void taBrainAtlas::Destroy()
 {
   if (m_have_atlas_instance) { 
     delete m_atlas; 
     m_atlas = NULL;
     m_have_atlas_instance = false;
-    m_labels.clear();
-    m_colors.clear();
   }
 }
 
-QList<QColor> BrainAtlasProxy::Colors()
-{
-  return BrainAtlasUtils::Colors(Atlas());
-}
-
-QStringList BrainAtlasProxy::Labels(const QString& labels_regexp)
-{
-  return BrainAtlasUtils::Labels(Atlas(), labels_regexp);
-}
-
-QSet<int> BrainAtlasProxy::MatchingLabelIndices(const QString& labels_regexp)
-{
-  return BrainAtlasUtils::MatchingLabelIndices(Atlas(), labels_regexp);
-}
-
-QString BrainAtlasProxy::Label(int index)
-{
+String taBrainAtlas::Label(int index) {
   return BrainAtlasUtils::Label(Atlas(), index);
 }
 
-unsigned int BrainAtlasProxy::Index(const QString& label)
-{  
+int taBrainAtlas::Index(const String& label) {  
   return BrainAtlasUtils::Index(Atlas(), label);
 }
 
-QList<FloatTDCoord> BrainAtlasProxy::VoxelCoordinates(const QString& label_regexp)
-{
-  return Atlas().VoxelCoordinates(label_regexp);
+iColor taBrainAtlas::ColorForIndex(int index) {  
+  return BrainAtlasUtils::Color(Atlas(), index);
 }
 
-void BrainAtlasProxy::SaveAtlas() {
+iColor taBrainAtlas::ColorForLabel(const String& label) {  
+  return BrainAtlasUtils::Color(Atlas(), Index(label));
+}
+
+void taBrainAtlas::Colors(TAColor_List& colors, const String& labels_regexp) {
+  QList<QColor> qclr = BrainAtlasUtils::Colors(Atlas(), (QString)labels_regexp.chars());
+  colors.Reset();
+  for(int i=0; i< qclr.size(); i++) {
+    taColor* tac = new taColor;
+    tac->setColor((iColor)qclr[i]);
+    colors.Add(tac);
+  }
+}
+
+void taBrainAtlas::Labels(String_Matrix& labels, const String& labels_regexp) {
+  QStringList qstr = BrainAtlasUtils::Labels(Atlas(), (QString)labels_regexp.chars());
+  labels.SetGeom(1, qstr.size());
+  for(int i=0; i< qstr.size(); i++) {
+    labels.Set(qstr[i], i);
+  }
+}
+
+void taBrainAtlas::Indexes(int_Matrix& indexes, const String& labels_regexp) {
+  QList<int> qidx = BrainAtlasUtils::IndexList(Atlas(), (QString)labels_regexp.chars());
+  indexes.SetGeom(1, qidx.size());
+  for(int i=0; i< qidx.size(); i++) {
+    indexes.Set(qidx.at(i), i);
+  }
+}
+
+void taBrainAtlas::VoxelCoordinates(float_Matrix& voxels, const String& label_regexp) {
+  QList<FloatTDCoord> qcrd = Atlas().VoxelCoordinates((QString)label_regexp.chars());
+  voxels.SetGeom(2, 3, qcrd.size());
+  for(int i=0; i< qcrd.size(); i++) {
+    FloatTDCoord td = qcrd[i];
+    voxels.Set(td.x, 0, i);
+    voxels.Set(td.y, 1, i);
+    voxels.Set(td.z, 2, i);
+  }
+}
+
+void taBrainAtlas::SetColor(const String& labels_regexp, iColor color) {
+  QList<int> qidx = BrainAtlasUtils::IndexList(Atlas(), (QString)labels_regexp.chars());
+  QColor clr = (QColor)color;
+  for(int i=0; i< qidx.size(); i++) {
+    BrainAtlasUtils::SetColor(Atlas(), clr, qidx.at(i));
+  }
+}
+
+void taBrainAtlas::SetColorString(const String& labels_regexp, const String& color) {
+  QList<int> qidx = BrainAtlasUtils::IndexList(Atlas(), (QString)labels_regexp.chars());
+  QColor clr((QString)color.chars());
+  for(int i=0; i< qidx.size(); i++) {
+    BrainAtlasUtils::SetColor(Atlas(), clr, qidx.at(i));
+  }
+}
+
+void taBrainAtlas::SetColorValue(const String& labels_regexp, float val,
+				   ColorScale* color_scale) {
+  QList<int> qidx = BrainAtlasUtils::IndexList(Atlas(), (QString)labels_regexp.chars());
+  QColor clr(color_scale->GetColor(val));
+  for(int i=0; i< qidx.size(); i++) {
+    BrainAtlasUtils::SetColor(Atlas(), clr, qidx.at(i));
+  }
+}
+
+void taBrainAtlas::SaveAtlas() {
   Atlas().Save(filepath);
 }
 
-void BrainAtlasProxy::SaveAtlasAs(const String& filename) {
+void taBrainAtlas::SaveAtlasAs(const String& filename) {
   filepath = filename;
   Atlas().Save(filepath);
 }
 
-void BrainAtlasProxy::EditAtlasColors()
-{
+void taBrainAtlas::EditAtlas() {
   BrainAtlasRegexpPopulator* atlas_regexp_pop = new BrainAtlasRegexpPopulator();
-  // atlas_regexp_pop->setSource(this);
 
-  iRegexpDialog* red = new iRegexpDialog(NULL, name, atlas_regexp_pop, (void*)this, true);
+  // taiRegexpField* rfield = new taiRegexpField(&TA_taString, NULL, NULL, NULL, 0,
+  // 					      atlas_regexp_pop);
+  // atlas_regexp_pop->setSource(this);
+  // rfield->SetFieldOwner(rfield);
+  iBrainViewEditDialog* red = new iBrainViewEditDialog(NULL, name, atlas_regexp_pop,
+						       (void*)this, false, true);
   bool rval = red->exec();
   delete red;
   delete atlas_regexp_pop;
@@ -8697,7 +8745,7 @@ void BrainAtlas_List::LoadAtlases() {
   atlases += BrainAtlasUtils::AtlasesAvailable(userAtlasPath);
   foreach(QString atlas, atlases) {
     BrainAtlasInfo info(BrainAtlasUtils::ParseAtlasHeader(atlas));
-    BrainAtlasProxy* ba = new BrainAtlasProxy(info);    
+    taBrainAtlas* ba = new taBrainAtlas(info);    
     Add(ba);
   }
 }
@@ -8715,12 +8763,17 @@ BrainAtlasRegexpPopulator::BrainAtlasRegexpPopulator()
 {
   m_atlas = NULL;
 }
-            
-QStringList BrainAtlasRegexpPopulator::getHeadings() const
+
+QStringList BrainAtlasRegexpPopulator::getHeadings(bool editor_mode, int& extra_cols) const
 {
+  extra_cols = 0;
   if (m_headings.empty()) {
     m_headings << "Hemisphere" << "Lobe" << "Gyrus" << "Tissue Type"
       << "Cell Type";
+    if(editor_mode) {
+      extra_cols += 1;
+      m_headings << "Color";
+    }
   }
   return m_headings;
 }
@@ -8741,6 +8794,16 @@ QStringList BrainAtlasRegexpPopulator::getLabels() const
     }
   }
   return m_labels;
+}
+
+void BrainAtlasRegexpPopulator::setLabels(const QStringList& labels) {  
+  if(!m_atlas) return;
+  BrainAtlasUtils::SetLabels(m_atlas->Atlas(), labels);
+}
+
+void BrainAtlasRegexpPopulator::setColors(const QList<QColor>& colors) {  
+  if(!m_atlas) return;
+  BrainAtlasUtils::SetColors(m_atlas->Atlas(), colors);
 }
 
 QList<QColor> BrainAtlasRegexpPopulator::getColors() const
@@ -8777,8 +8840,8 @@ void BrainAtlasRegexpPopulator::setSource(const void *fieldOwner)
   const taBase *base = reinterpret_cast<const taBase *>(fieldOwner);
   if(!base) return;
 
-  if(base->InheritsFrom(&TA_BrainAtlasProxy)) {
-    BrainAtlasProxy* bap = (BrainAtlasProxy*)bap;
+  if(base->InheritsFrom(&TA_taBrainAtlas)) {
+    taBrainAtlas* bap = (taBrainAtlas*)base;
     if (!m_labels.empty()){
       m_labels.clear();
     }
@@ -8808,8 +8871,8 @@ void BrainAtlasRegexpPopulator::adjustTitle(QString &title, const void *fieldOwn
   const taBase *base = reinterpret_cast<const taBase *>(fieldOwner);
   if(!base) return;
   // Then dynamic cast to verify it's a Layer.
-  if(base->InheritsFrom(&TA_BrainAtlasProxy)) {
-    BrainAtlasProxy* bap = (BrainAtlasProxy*)bap;
+  if(base->InheritsFrom(&TA_taBrainAtlas)) {
+    taBrainAtlas* bap = (taBrainAtlas*)base;
     title.append(" atlas \"").append(bap->name.chars()).append("\"");
   }
   else if(base->InheritsFrom(&TA_Network)) {
@@ -8830,6 +8893,7 @@ void BrainAtlasRegexpPopulator::adjustTitle(QString &title, const void *fieldOwn
     }
   }
 }
+
 
 //////////////////////////////////////////////
 //		Network_Group

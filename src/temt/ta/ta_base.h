@@ -1330,7 +1330,7 @@ public:
   //            Select For Edit
 public:
   virtual bool          DiffCompare(taBase* cmp_obj);
-  // #MENU #MENU_ON_SelectEdit #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  // #MENU #MENU_ON_SelectEdit #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
   virtual bool          DoDiffEdits(taObjDiff_List& diffs);
   // #CAT_ObjectMgmt actually perform edit actions (copy, add, delete) selected on given list of diffs
 

@@ -53,8 +53,8 @@ class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
-class BrainAtlasProxy;
-SmartRef_Of(BrainAtlasProxy, TA_BrainAtlasProxy);
+class taBrainAtlas;
+SmartRef_Of(taBrainAtlas, TA_taBrainAtlas);
 class BrainAtlas_List;
 
 // externals
@@ -1290,7 +1290,7 @@ public:
   virtual bool  CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Structure check if projection is connected
   virtual void  FixPrjnIndexes();
-  // #MENU #CAT_Structure fix the indicies of the connection groups (recv_idx, send_idx)
+  // #MENU #CAT_Structure fix the indexes of the connection groups (recv_idx, send_idx)
 
   virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_Structure switch any connections/projections using old_sp to using new_sp
@@ -1943,7 +1943,7 @@ public:
   virtual void  SetUnitType(TypeDef* td);
   // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
   virtual void  FixPrjnIndexes();
-  // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
+  // #CAT_Structure fix the projection indexes of the connection groups (other_idx)
 
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
@@ -2339,7 +2339,7 @@ public:
 
   AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
 
-  BrainAtlasProxyRef 	brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  taBrainAtlasRef 	brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
   String		brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
 
   TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
@@ -2467,7 +2467,7 @@ public:
   virtual void  LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void  FixPrjnIndexes();
-  // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
+  // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
 
   virtual void  Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
@@ -2790,55 +2790,70 @@ private:
 };
 
 ////////////////////////////////////////////////////
-//   BrainAtlasProxy
-class EMERGENT_API BrainAtlasProxy : public taNBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER A single brain atlas.
+//   taBrainAtlas
+class EMERGENT_API taBrainAtlas : public taNBase {
+  // a single brain atlas, with methods to access and manipulate the associated labels, colors, and voxels
   INHERITED(taNBase)
 public:
   String  filepath;		// #FILE_DIALOG_LOAD #FILETYPE_BrainAtlas #EXT_xml path to the brain atlas .xml file
   String  description;		// #EDIT_DIALOG description of this atlas -- where did it come from, what areas does it contain?
   String  image_filepath;	// #FILE_DIALOG_LOAD #FILETYPE_BrainAtlas #EXT_nii path to the nifti brain image that contains indexes into the .xml brain atlas file
   
-  QList<QColor>       Colors();
-  QStringList         Labels(const QString& labels_regexp=".*");
-#ifndef __MAKETA__
-  QSet<int>           MatchingLabelIndices(const QString& labels_regexp);
-#endif
-  QString             Label(int index);
-  unsigned int        Index(const QString& label);
-  QList<FloatTDCoord> VoxelCoordinates(const QString& label_regexp);
+  virtual String	Label(int index);
+  // #CAT_BrainAtlas get the label at a given index in the atlas
+  virtual int    	Index(const String& label);
+  // #CAT_BrainAtlas get the index for a given label in the atlas
+  virtual iColor   	ColorForIndex(int index);
+  // #CAT_BrainAtlas get the color at a given index
+  virtual iColor   	ColorForLabel(const String& label);
+  // #CAT_BrainAtlas get the color at a given label
+  virtual void       	Colors(TAColor_List& colors, const String& labels_regexp=".*");
+  // #CAT_BrainAtlas fill in the colors for the labels that match the given regexp (default is all)
+  virtual void		Labels(String_Matrix& labels, const String& labels_regexp=".*");
+  // #CAT_BrainAtlas fill in the labels that match the given regexp (default is all)
+  virtual void		Indexes(int_Matrix& indexes, const String& labels_regexp=".*");
+  // #CAT_BrainAtlas fill in the indexes that match the given regexp (default is all)
+  virtual void		VoxelCoordinates(float_Matrix& voxels, const String& label_regexp);
+  // #CAT_BrainAtlas fill in the voxels for all the areas that match the given regexp (default is all) -- voxels are a 2d matrix with inner dimension = 3d coord and outer dim is number of voxels
+
+  virtual void	      SetColorValue(const String& labels_regexp, float val,
+				    ColorScale* color_scale);
+  // #CAT_BrainAtlas set color of all areas matching regexp to color given by numerical value as given by provided color scale (which must be initialized to include value range and color spec)
+  virtual void	      SetColorString(const String& labels_regexp, const String& color);
+  // #CAT_BrainAtlas set color of all areas matching regexp to given color, specified as a string (#rrggbb or a common color name)
+  virtual void	      SetColor(const String& labels_regexp, iColor color);
+  // #CAT_BrainAtlas set color of all areas matching regexp to given color, specified with an internal color object
+
+  virtual void        EditAtlas();
+  // #BUTTON #NO_BUSY #CAT_BrainAtlas edit the atlas contents, including the colors associated with regions in this atlas
+  virtual void	      SaveAtlas();
+  // #BUTTON #CONFIRM #CAT_BrainAtlas save the .xml file to the same file that it was loaded from, overwriting it with current data (e.g., new colors)
+  virtual void	      SaveAtlasAs(const String& file_name);
+  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_BrainAtlas #EXT_xml #CAT_BrainAtlas save the .xml file to the given file name -- note it is typically a good idea to set a different name in the name field before doing this, so the atlas can be recognized as unique in a list
+
 #ifndef __MAKETA__
   BrainAtlas&  Atlas();
 #endif
   
-  virtual void        EditAtlasColors();
-  // #BUTTON edit the colors associated with regions in this atlas
-  virtual void	      SaveAtlas();
-  // #BUTTON #CONFIRM save the .xml file to the same file that it was loaded from, overwriting it with current data (e.g., new colors)
-  virtual void	      SaveAtlasAs(const String& file_name);
-  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_BrainAtlas #EXT_xml save the .xml file to the given file name
-  
-  explicit BrainAtlasProxy(const BrainAtlasInfo& info);
-  TA_BASEFUNS_SC(BrainAtlasProxy);
-private:
-  void  Initialize();
-  void  Destroy();
+  explicit taBrainAtlas(const BrainAtlasInfo& info);
+  TA_BASEFUNS_SC(taBrainAtlas);
+protected:
   bool  m_have_atlas_instance;
-  
 #ifndef __MAKETA__
   BrainAtlas*  m_atlas;
 #endif
-  QStringList m_labels;
-  QList<QColor> m_colors;
-  
+
+private:
+  void  Initialize();
+  void  Destroy();
 };
 
 ////////////////////////////////////////////////////
 //   BrainAtlas_List
 
-class EMERGENT_API BrainAtlas_List : public taList<BrainAtlasProxy> {
+class EMERGENT_API BrainAtlas_List : public taList<taBrainAtlas> {
   // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
-  INHERITED(taList<BrainAtlasProxy>)
+  INHERITED(taList<taBrainAtlas>)
 public:
   bool		not_init;	// list has not been initialized yet
 
@@ -2853,14 +2868,17 @@ private:
 class EMERGENT_API BrainAtlasRegexpPopulator : public iRegexpDialogPopulator {
 public:
   BrainAtlasRegexpPopulator();
-  override QStringList getHeadings() const;
+  override QStringList getHeadings(bool editor_mode, int& extra_cols) const;
   override QStringList getLabels() const;
-  override QList<QColor> getColors() const;
+  override void setLabels(const QStringList& labels);
   override QString getSeparator() const;
   override void    setSource(const void *fieldOwner);
   override void adjustTitle(QString &title, const void *fieldOwner) const;
+
+  QList<QColor> getColors() const;
+  void setColors(const QList<QColor>& colors);
 private:
-  mutable BrainAtlasProxy* m_atlas;
+  mutable taBrainAtlas* m_atlas;
   mutable QStringList m_labels;
   mutable QStringList m_headings;
   mutable QString m_filepath;

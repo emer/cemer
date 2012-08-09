@@ -111,7 +111,59 @@ LeabraProject .projects["test"] {
 };
   };
 
-  Program_Group @.programs = [0] {
+  Program_Group @.programs = [1] {
+    Program @["BrainTest"] { 
+      ProgObjList @.objs = [2] {
+	String_Matrix @["String_Matrix_36"] { };
+	int_Matrix @["int_Matrix_30"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [5] {
+	ProgVar @["atlas"] { };
+	ProgVar @["network"] { };
+	ProgVar @["regexp"] { };
+	ProgVar @["String_Matrix_36"] { };
+	ProgVar @["int_Matrix_30"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [5] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	AssignExpr @[1] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+      };
+    };
     Program_Group @.gp["LeabraAll_Std"] = [10] { 
       Program @["LeabraBatch"] { 
 	ProgObjList @.objs = [0] {
@@ -1875,6 +1927,223 @@ LeabraProject .projects["test"] {
   el_def=0;
   tags=;
   desc=;
+  Program @["BrainTest"] {
+   name="BrainTest";
+   short_nm="BrnTst";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_11";
+    el_typ=String_Matrix;
+    el_def=0;
+    String_Matrix @["String_Matrix_36"] {
+     name="String_Matrix_36";
+	[6] "Left.*.*.Gray Matter.Amygdala_centromedial group";"Right.*.*.Gray Matter.Amygdala_centromedial group";"Left.*.*.Gray Matter.Amygdala_laterobasal group";"Right.*.*.Gray Matter.Amygdala_laterobasal group";"Left.*.*.Gray Matter.Amygdala_superficial group";"Right.*.*.Gray Matter.Amygdala_superficial group";    };
+    int_Matrix @["int_Matrix_30"] {
+     name="int_Matrix_30";
+	[6] 7;8;9;10;11;12;    };
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["atlas"] {
+     name="atlas";
+     var_type=T_Object;
+     object_type=taBrainAtlas;
+     object_val=["Juelich"]$$<taBrainAtlas,Juelich>;
+     objs_ptr=0;
+     flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["network"] {
+     name="network";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=.projects["test"].networks["Network_0"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["regexp"] {
+     name="regexp";
+     var_type=T_String;
+     string_val=".*\\..*\\..*\\..*\\.*Amy*";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["String_Matrix_36"] {
+     name="String_Matrix_36";
+     var_type=T_Object;
+     object_type=String_Matrix;
+     object_val=.projects["test"].programs["BrainTest"].objs["String_Matrix_36"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["int_Matrix_30"] {
+     name="int_Matrix_30";
+     var_type=T_Object;
+     object_type=int_Matrix;
+     object_val=.projects["test"].programs["BrainTest"].objs["int_Matrix_30"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_11";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_99";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_100";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    AssignExpr @[1] {
+     desc=;
+     flags=0;
+     result_var=.projects["test"].programs["BrainTest"].vars["atlas"]$$;
+     expr {
+      expr="network.brain_atlas";
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=OFF;
+     result_var=NULL;
+     obj=$.projects["test"].programs["BrainTest"].vars["atlas"]$;
+     method=taBrainAtlas::Labels;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=String_Matrix_ref;
+       type="String_Matrix&";
+       name="labels";
+       required=1;
+       def_val=;
+       expr {
+	expr="String_Matrix_36";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="labels_regexp";
+       required=0;
+       def_val=".*";
+       expr {
+	expr="regexp";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=OFF;
+     result_var=NULL;
+     obj=$.projects["test"].programs["BrainTest"].vars["atlas"]$;
+     method=taBrainAtlas::Indexes;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int_Matrix_ref;
+       type="int_Matrix&";
+       name="indexes";
+       required=1;
+       def_val=;
+       expr {
+	expr="int_Matrix_30";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="labels_regexp";
+       required=0;
+       def_val=".*";
+       expr {
+	expr="regexp";
+       };
+      };
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["test"].programs["BrainTest"].vars["atlas"]$;
+     method=taBrainAtlas::SetColorString;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="labels_regexp";
+       required=1;
+       def_val=;
+       expr {
+	expr="regexp";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="color";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"#0000ff\"";
+       };
+      };
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
   Program_Group @.gp["LeabraAll_Std"] {
    name="LeabraAll_Std";
    el_typ=Program;
@@ -1905,7 +2174,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=.projects["test"].networks["Network_0"]$$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
