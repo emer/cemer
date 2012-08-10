@@ -222,7 +222,7 @@ add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
 add_subdirectory(data/atlases)
-add_subdirectory(data/standard)
+#add_subdirectory(data/standard)
 
 if (false) #source to make stub includes -- must be run after making the TA files
   file(GLOB_RECURSE xxx_HEADS "${PROJECT_SOURCE_DIR}/src/*.h") 

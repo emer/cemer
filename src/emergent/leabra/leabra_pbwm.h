@@ -580,8 +580,6 @@ public:
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
   override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)

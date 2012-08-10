@@ -5,12 +5,8 @@
     <description>Standard Talairach labels originally from the Talairach Daemon package at www.talairach.org: A conversion of the original Talairach structural labellings, kindly provided by Jack Lancaster and Diana Tordesillas Gutiérrez at the Research Imaging Center, UTHSCSA, Texas.  This is a digitised version of the original (coarsely sliced) Talairach atlas (Lancaster 2000) after the application of a correcting affine transform (Lancaster 2007) to register it into MNI152 space.</description>
     <type>Label</type>
     <images>
-      <imagefile>/Talairach/Talairach-labels-2mm</imagefile>
-      <summaryimagefile>/Talairach/Talairach-labels-2mm</summaryimagefile>
-    </images>
-    <images>
-      <imagefile>/Talairach/Talairach-labels-1mm</imagefile>
-      <summaryimagefile>/Talairach/Talairach-labels-1mm</summaryimagefile>
+      <imagefile>/Talairach-labels-1mm</imagefile>
+      <summaryimagefile>/Talairach-labels-1mm</summaryimagefile>
     </images>
     </header>
   <data>

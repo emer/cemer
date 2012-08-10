@@ -63,12 +63,6 @@ public:
   override void	Compute_Act(Unit* u, Network* net, int thread_no=-1) { };
   override float Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) { return 0.0f; }
 
-  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) { };
-  override void Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-
   TA_SIMPLE_BASEFUNS(LayerActUnitSpec);
 protected:
   SPEC_DEFAULTS;
@@ -140,10 +134,12 @@ public:
   override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
 
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
   
@@ -171,10 +167,12 @@ public:
   override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
 
   TA_SIMPLE_BASEFUNS(DeepContextLayerSpec);
   
@@ -203,10 +201,12 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
 
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
@@ -2110,10 +2110,12 @@ public:
   override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  { return false; }
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
 private:

@@ -5,12 +5,8 @@
     <description>The Juelich Histological Atlas from the FSL program -- A probabilistic atlas created by averaging multi-subject post-mortem cyto- and myelo-architectonic segmentations, performed by the team of Profs Zilles and Amunts at the Research Center Jülich and kindly provided by Simon Eickhoff.</description>
     <type>Probabalistic</type>
     <images>
-      <imagefile>/Juelich/Juelich-maxprob-thr25-1mm</imagefile>
-      <summaryimagefile>/Juelich/Juelich-maxprob-thr25-1mm</summaryimagefile>
-    </images>
-    <images>
-      <imagefile>/Juelich/Juelich-maxprob-thr25-2mm</imagefile>
-      <summaryimagefile>/Juelich/Juelich-maxprob-thr25-2mm</summaryimagefile>
+      <imagefile>/Juelich-maxprob-thr25-1mm</imagefile>
+      <summaryimagefile>/Juelich-maxprob-thr25-1mm</summaryimagefile>
     </images>
   </header>
   <data>
