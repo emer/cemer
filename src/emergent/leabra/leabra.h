@@ -1501,8 +1501,6 @@ public:
   // add current activation to act buf if synaptic delay is on
 
   inline LeabraLayer*	own_lay() const {return (LeabraLayer*)inherited::own_lay();}
-  LeabraInhib*		own_thr() const;
-  // #CAT_Structure get my own inhibitory threshold data structure (layer or unitgp data)
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -2299,7 +2297,7 @@ public:
 				    LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group
   virtual float	Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute normalized binary error -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse
+  // #CAT_Statistic compute normalized binary error of unit targ vs. act_m -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse
 
   virtual float	Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire layer
@@ -3975,6 +3973,14 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
+  enum GatingTypes {		// #BITS types of gating stripes and associated pfc layers to create
+    NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
+    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
+    MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
+    OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
+    MNT_OUT = 0x06,		// #NO_BIT maint and output -- typical default
+  };
+
   override bool StdNetwork();
   override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
@@ -4002,21 +4008,18 @@ public:
   virtual bool PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
-  virtual bool PVLV_ToLayerGroup(LeabraNetwork* net);
-  // #MENU_BUTTON move all the PVLV layers to a PVLV layer group, which is the new default way of organizing these layers
 
-  virtual bool 	PBWM(LeabraNetwork* net, bool da_mod_all = false,
-		     int n_stripes=6, bool pfc_learns=true);
+  virtual bool 	PBWM(LeabraNetwork* net, GatingTypes gating_types = MNT_OUT,
+		     bool da_mod_all = false, int n_stripes=9, bool pfc_learns=true);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool pfc_learns=true);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes=6, int n_units=-1,
+  virtual bool PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types = MNT_OUT,
+				int n_stripes=9, int n_units=-1,
 				int gp_geom_x=-1, int gp_geom_y=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
-  virtual bool PBWM_ToLayerGroups(LeabraNetwork* net);
-  // #MENU_BUTTON move all the PBWM layers to PBWM_BG and PBWM_PFC layer groups, which is the new default way of organizing these layers
   virtual bool PBWM_Remove(LeabraNetwork* net);
   // #MENU_BUTTON remove all the PBWM (and PVLV) specific items from the network (specs and layers) -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups
 

@@ -749,17 +749,31 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
       return true; //no mon, but we did handle it
     if (name_obj) {
       String valname = GetChanName(name_obj, val_specs.size);
-      AddScalarChan(valname, VT_VARIANT);
-      if(agg.op != Aggregate::NONE) {
-        AddScalarChan_Agg(valname, VT_VARIANT); // add the agg guy just to keep it consistent
+      if(udi->valueAsVariant().type() == Variant::T_Int) {
+	AddScalarChan(valname, VT_INT);
+	if(agg.op != Aggregate::NONE) {
+	  AddScalarChan_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
+	}
+      }
+      else if(udi->valueAsVariant().isNumeric()) { // use float for all other numeric
+	AddScalarChan(valname, VT_FLOAT);
+	if(agg.op != Aggregate::NONE) {
+	  AddScalarChan_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
+	}
+      }
+      else {
+	AddScalarChan(valname, VT_VARIANT);
+	if(agg.op != Aggregate::NONE) {
+	  AddScalarChan_Agg(valname, VT_VARIANT); // add the agg guy just to keep it consistent
+	}
       }
     }
     // if not adding a column, it is part of a pre-allocated matrix; just add vars
     ptrs.Add(udi);
     members.Link(md);
     return true;
-
-  } else {
+  }
+  else {
     if(TestError(var.empty(),"ScanObject_InUserData",
       "UserDataItem: ", key, " expected to be non-simple; additional .xxx member resolution required after item key"))
       return true; //no mon, but we did handle it

@@ -243,7 +243,7 @@ public:
 
   inline virtual void   C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_AddRndWeights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
+  inline virtual void   C_AddRndWeights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su, float scale);
   // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
   inline virtual void   Init_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
@@ -253,7 +253,7 @@ public:
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void   C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
   { cn->dwt=0.0f; }
-  // #CAT_Learning initialize weight-change variables on a single connecdtion
+  // #CAT_Learning initialize weight-change variables on a single connection
   inline virtual void   Init_dWt(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize weight-change variables for whole set
 
@@ -1131,9 +1131,10 @@ class EMERGENT_API ProjectionSpec : public BaseSpec {
   // #STEM_BASE #VIRT_BASE ##CAT_Projection Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:
-  bool          self_con;       // #CAT_Structure whether to create self-connections or not (if applicable)
-  bool          init_wts;       // #CAT_Structure whether this projection spec does weight init (else conspec)
-  bool          add_rnd_wts;    // #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
+  bool          self_con;          // #CAT_Structure whether to create self-connections or not (if applicable)
+  bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
+  bool          add_rnd_wts;  	   // #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
+  float		add_rnd_wts_scale; // #CONDSHOW_ON_init_wts scales added random weight values by the projection spec -- don't need a custom spec!
 
   virtual void  Connect(Projection* prjn);
   // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
@@ -2925,17 +2926,17 @@ inline void ConSpec::C_Init_Weights(RecvCons*, Connection* cn, Unit* ru, Unit* s
     cn->wt = rnd.Gen();
   }
   else {
-    rnd.Gen();          // keep random seeds syncronized for dmem
+    rnd.Gen();          // keep random seeds synchronized for dmem
   }
   C_ApplyLimits(cn,ru,su);
 }
 
-inline void ConSpec::C_AddRndWeights(RecvCons*, Connection* cn, Unit* ru, Unit* su) {
+inline void ConSpec::C_AddRndWeights(RecvCons*, Connection* cn, Unit* ru, Unit* su, float scale) {
   if(rnd.type != Random::NONE)  { // don't do anything (e.g. so connect fun can do it)
-    cn->wt += rnd.Gen();
+    cn->wt += scale * rnd.Gen();
   }
   else {
-    rnd.Gen();          // keep random seeds syncronized for dmem
+    rnd.Gen();          // keep random seeds synchronized for dmem
   }
   C_ApplyLimits(cn,ru,su);
 }
@@ -2945,7 +2946,8 @@ inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru) {
   if(prjn->spec->init_wts) {
     prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
     if(prjn->spec->add_rnd_wts) {
-      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, cg->Cn(i), ru, cg->Un(i)));
+      float scl = prjn->spec->add_rnd_wts_scale;
+      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, cg->Cn(i), ru, cg->Un(i), scl));
     }
   }
   else {
@@ -3007,6 +3009,5 @@ inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
 inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_dWt(cg->OwnCn(i), ru, cg->Un(i)));
 }
-
 
 #endif /* netstru_h */

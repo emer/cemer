@@ -2829,19 +2829,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   spk_t = cp.spk_t;
 }
 
-LeabraInhib* LeabraUnit::own_thr() const {
-  LeabraLayer* lay = own_lay();
-  if(!lay) return NULL;
-  Unit_Group* own_sgp = own_subgp();
-  if(own_sgp) {
-    int gpidx = own_sgp->GetIndex();
-    LeabraInhib* thr = (LeabraInhib*)lay->ungp_data.SafeEl(gpidx);
-    if(thr) return thr;
-  }
-  return (LeabraInhib*)lay;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 //                      Projection Level Code
 
@@ -7031,8 +7018,7 @@ String LeabraWizard::RenderWizDoc_network() {
 :* [[<this>.PBWM_Defaults()|PBWM Defaults]] -- set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups).\n\
 :* [[<this>.PBWM_SetNStripes()|PBWM Set N Stripes]] -- set the number of stripes (unit groups) throughout the set of PFC and BG layers that have stripes -- easier than doing it manually for each layer.\n\
 :* [[<this>.PBWM_Remove()|PBWM Remove]] -- Remove PBWM layers and specs from a network -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups.\n\
-:* [[<this>.PBWM_ToLayerGroups()|PBWM To Layer Groups]] -- organize PFC and BG layers into layer groups, which makes them easier to manage, and is the preferred configuration (this is only for older projects that are not already so organized).\n\
-:* [[<this>.PVLV_ToLayerGroups()|PVLV To Layer Groups]] -- organize PVLV layers into layer groups, which makes them easier to manage, and is the preferred configuration (this is only for older projects that are not already so organized).\n");
+");
   return rval;
 }
 

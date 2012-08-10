@@ -689,7 +689,7 @@ void NVConSpec::Initialize() {
 }
 
 void NVSpec::Initialize() {
-  da_gain = 1.0f;
+  da_gain = 0.0f;
   val_thr = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
@@ -1173,40 +1173,6 @@ void PVLVTonicDaLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* n
 ///////////////////////////////////////////////////////////////
 
 
-bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
-  if(TestError(!net, "PVLV_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
-    return false;
-
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-
-  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
-  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-  String vtanm = "VTA";
-
-  bool new_laygp = false;
-  Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
-
-  if(new_laygp) {
-    laygp->pos.z = 0;
-    net->RebuildAllViews();     // trigger update
-  }
-
-  Layer* lay;
-  if((lay = net->FindLayer(pvenm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(pvinm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(pvrnm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(lvenm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(lvinm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(nvnm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer(vtanm))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("DA"))) { laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("RewTarg"))) { laygp->Transfer(lay); lay->pos.z = 0; }
-
-  net->RebuildAllViews();       // trigger update
-
-  return true;
-}
-
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
 bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
@@ -1257,10 +1223,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LeabraLayer* pve;  LeabraLayer* pvr; LeabraLayer* pvi; LeabraLayer* lve; LeabraLayer* lvi;
   LeabraLayer* nv;   LeabraLayer* vta;
 
-  if(new_laygp) {
-    PVLV_ToLayerGroup(net);     // doesn't hurt to just do this..
-  }
-
   bool dumbo;
   rew_targ_lay = (LeabraLayer*)laygp->FindMakeLayer("RewTarg");
   pve = (LeabraLayer*)laygp->FindMakeLayer(pvenm, NULL, dumbo);
@@ -1286,8 +1248,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
        lay != lvi && lay != nv && lay != vta
-       && !laysp->InheritsFrom(&TA_PFCBaseLayerSpec)
-       && !laysp->InheritsFrom(&TA_MatrixBaseLayerSpec)
+       && !laysp->InheritsFrom(&TA_PFCDeepLayerSpec)
+       && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
       if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
@@ -1510,23 +1472,24 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     laygp->pos.z = 0;
   }
 
-  if(lve_new) {
-    pve->pos.SetXYZ(0,0,0);
-    pvi->pos.SetXYZ(0,2,0);
-
-    lve->pos.SetXYZ(6,0,0);
-    lvi->pos.SetXYZ(6,2,0);
-
-    vta->pos.SetXYZ(12,0,0);
-    rew_targ_lay->pos.SetXYZ(12,4,0);
-  }
-
   if(pvr_new) {
-    pvr->pos.SetXYZ(0,4,0);
+    pvr->pos.SetXYZ(0,10,0);
   }
   if(nv_new) {
-    nv->pos.SetXYZ(6,4,0);
+    nv->pos.SetXYZ(8,10,0);
   }
+
+  if(lve_new) {
+    pve->pos.SetXYZ(0,0,0);
+    pvi->pos.SetXYZ(0,5,0);
+
+    lve->pos.SetXYZ(8,0,0);
+    lvi->pos.SetXYZ(8,5,0);
+
+    vta->pos.SetXYZ(15,0,0);
+    rew_targ_lay->pos.SetXYZ(15,5,0);
+  }
+
 
   if(pvi->un_geom.n != n_lv_u) { pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
   if(lve->un_geom.n != n_lv_u) { lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }

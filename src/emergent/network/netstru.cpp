@@ -2797,6 +2797,7 @@ void ProjectionSpec::Initialize() {
   self_con = false;
   init_wts = false;
   add_rnd_wts = false;
+  add_rnd_wts_scale = 1.0f;
 }
 
 void ProjectionSpec::InitLinks() {

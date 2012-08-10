@@ -21,262 +21,123 @@
 #include <limits.h>
 #include <float.h>
 
+//////////////////////////////////
+//      PBWM Unit Gp Data       //
+//////////////////////////////////
+
 void PBWMUnGpData::Initialize() {
-  mnt_count = 0;
-  gate_state = PFCGateSpec::INIT_STATE;
-  gate_sig = PFCGateSpec::GATE_NOGO;
-  rnd_go_thr = 0;
-  cur_go_act = 0.0f;
-  out_go_act = 0.0f;
-  tonic_da = 0.0f;
+  go_fired_now = false;
+  go_fired_trial = false;
+  go_fired_trial2 = false;
+  go_forced = false;
+  go_cycle = -1;
+  mnt_count = -1;		// empty
+  prv_mnt_count = -1;
 }
 
 void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
+  go_fired_now = cp.go_fired_now;
+  go_fired_trial = cp.go_fired_trial;
+  go_fired_trial2 = cp.go_fired_trial2;
+  go_forced = cp.go_forced;
+  go_cycle = cp.go_cycle;
   mnt_count = cp.mnt_count;
-  gate_state = cp.gate_state;
-  gate_sig = cp.gate_sig;
-  rnd_go_thr = cp.rnd_go_thr;
-  cur_go_act = cp.cur_go_act;
-  out_go_act = cp.out_go_act;
-  tonic_da = cp.tonic_da;
+  prv_mnt_count = cp.prv_mnt_count;
 }
 
 void PBWMUnGpData::Init_State() {
   inherited::Init_State();
-  mnt_count = 0;
-  gate_state = PFCGateSpec::INIT_STATE;
-  gate_sig = PFCGateSpec::GATE_NOGO;
-  rnd_go_thr = 0;
-  cur_go_act = 0.0f;
-  out_go_act = 0.0f;
-  tonic_da = 0.0f;
+  Initialize();
 }
 
-////////////////////////////////////////////////////////////////////
-//      Patch/Striosomes and SNc
-
-void PatchLayerSpec::Initialize() {
-  SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
+void PBWMUnGpData::CopyPBWMData(const PBWMUnGpData& cp) {
+  PBWMUnGpData::Copy_(cp);
 }
 
-void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
-  UNIT_GP_ITR
-    (lay,
-     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     const float snd_val = u->act_eq;
-     for(int g=0; g<u->send.size; g++) {
-       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-       if(tol->lesioned())      continue;
-       LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-       if(tols->InheritsFrom(&TA_MatrixBaseLayerSpec)) {
-         for(int j=0;j<send_gp->size; j++) {
-           ((LeabraUnit*)send_gp->Un(j))->misc_1 = snd_val;
-         }
-       }
-     }
-     );
-}
-
-void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  ScalarValLayerSpec::Compute_CycleStats(lay, net);
-  // do NOT report lvi value!
-  Send_LVeToMatrix(lay, net);
-}
-
-//////////////////////////////////////////////////////
-//              SNcLayerSpec
-
-void SNcMiscSpec::Initialize() {
-  stripe_lv_pct = 0.5f;
-  global_lv_pct = 0.5f;
-}
-
-void SNcMiscSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  global_lv_pct = 1.0f - stripe_lv_pct;
-}
-
-void SNcLayerSpec::Initialize() {
-}
-
-void SNcLayerSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  snc.UpdateAfterEdit_NoGui();
-}
-
-void SNcLayerSpec::HelpConfig() {
-  String help = "SNcLayerSpec (DA value) Computation:\n\
- - Computes DA value based on inputs from PVLV layers.\n\
- - No Learning\n\
- \nSNcLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
- - Recv cons marked with a MarkerConSpec from PVLV LVe, LVi, PVi, PVe, PVr, NV (all!)\n\
- - Recv cons marked with a MarkerConSpec from Patch layer, same number of units\n\
- - Send cons marked with a MarkerConSpec to Matrix layers\n\
- - This layer must be after recv layers in list of layers\n\
- - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
-     (because negative da = negative activation signal here";
-  taMisc::Confirm(help);
-}
-
-bool SNcLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-  LeabraLayer* lay = (LeabraLayer*)ly;
-  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  bool rval = true;
-  if(lay->CheckError(!lay->unit_groups, quiet, rval,
-                     "requires unit groups, one per associated stripe")) {
-    return false;
-  }
-
-  int patch_prjn_idx;
-  LeabraLayer* patch_lay = FindLayerFmSpec(lay, patch_prjn_idx, &TA_PatchLayerSpec);
-  if(lay->CheckError(!patch_lay, quiet, rval,
-                "did not find Patch layer to get Da from!")) {
-    return false;
-  }
-
-  if(lay->CheckError(lay->gp_geom.n != patch_lay->gp_geom.n, quiet, rval,
-                     "our number of unit groups should equal those in the patch layer")) {
-    return false;
-  }
-
-  return true;
-}
-
-void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
-  int lve_prjn_idx;
-  LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
-  LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
-  int lvi_prjn_idx;
-  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
-  //   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
-
-  int pvi_prjn_idx;
-  LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
-  PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
-
-  int pvr_prjn_idx = 0;
-  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
-  PVrLayerSpec* pvrls = NULL;
-  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
-
-  int nv_prjn_idx;
-  LeabraLayer* nv_lay = FindLayerFmSpec(lay, nv_prjn_idx, &TA_NVLayerSpec);
-  NVLayerSpec* nvls = NULL;
-  if(nv_lay) nvls = (NVLayerSpec*)nv_lay->spec.SPtr();
-
-  int patch_prjn_idx;
-  LeabraLayer* patch_lay = FindLayerFmSpec(lay, patch_prjn_idx, &TA_PatchLayerSpec);
-  PatchLayerSpec* patch_sp = (PatchLayerSpec*)patch_lay->GetLayerSpec();
-
-  // this is the global da from LVe, not stripe-specific
-  float lv_da = lve_sp->Compute_LVDa(lve_lay, lvi_lay, net);
-
-  // nv only contributes to lv, not pv..
-  if(nv_lay) {
-    lv_da += nvls->Compute_NVDa(nv_lay, net);
-  }
-  float pv_da = da.pv_gain * pvils->Compute_PVDa(pvi_lay, net);
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-
-  lay->dav = 0.0f;
-  for(int gi=0; gi < lay->gp_geom.n; gi++) {
-    LeabraUnit* snc_u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, 0, gi);
-
-    float str_da = patch_sp->Compute_LVDa_ugp(patch_lay, lvi_lay,
-                              Layer::ACC_GP, gi, Layer::ACC_LAY, 0, net); // per stripe
-    float lv_da_str = snc.global_lv_pct * lv_da + snc.stripe_lv_pct * str_da;
-
-    if(er_avail) {
-      snc_u->dav = pv_da;
-      if(da.add_pv_lv) {
-        snc_u->dav += lv_da_str;
-      }
-    }
-    else {
-      snc_u->dav = lv_da_str;
-    }
-    snc_u->ext = da.tonic_da + da.da_gain * snc_u->dav;
-    snc_u->act_eq = snc_u->act_nd = snc_u->act = snc_u->net = snc_u->ext;
-    lay->dav += snc_u->dav;
-
-    // now send, with target specificity
-    for(int g=0; g<snc_u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)snc_u->send.FastEl(g);
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesioned())       continue;
-      LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->spec.SPtr();
-      float send_val = snc_u->act;
-      for(int j=0;j<send_gp->size; j++) {
-        ((LeabraUnit*)send_gp->Un(j))->dav = send_val;
-      }
-    }
-  }
-  lay->dav /= (float)lay->gp_geom.n; // integrated average -- not really used
-  net->pvlv_dav = lay->dav;
-}
-
-void SNcLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
-  // do nothing -- was sent in more targeted fashion in compute_da
-}
 
 //////////////////////////////////
 //      SNrThal Layer Spec      //
 //////////////////////////////////
 
+void SNrThalDoubleGateSpec::Initialize() {
+  on = false;
+  min_late_delay = 5;
+  go_b4_mid_late = 5;
+  gate_accom = 0.5f;
+  gate_accom_delay = 0;
+}
+
 void SNrThalMiscSpec::Initialize() {
-  net_off = 0.0f;
   go_thr = 0.5f;
-  rnd_go_inc = 0.1f;
-  leak = 1.0f;
+  min_go_cycle = 25;
+  go_b4_mid = 0;
+  force = false; // true;
+  loser_gain = 0.0f;
+  nogo_gain = 0.0f;
+  leak = 0.2f;
   act_is_gate = true;
 }
 
 void SNrThalLayerSpec::Initialize() {
-  bg_type = MAINT;
-
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 4;
-  SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
+  gating_types = MNT_OUT;
 
   Defaults_init();
 }
 
 void SNrThalLayerSpec::Defaults_init() {
-  SetUnique("tie_brk", true);   // turn on tie breaking by default
+  SetUnique("inhib_group", true);
+  inhib_group = ENTIRE_LAYER;
+
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .8f;
+
+  SetUnique("kwta", true);
+  kwta.k_from = KWTASpec::USE_K;
+  kwta.k = 2;
+
+  SetUnique("decay", true);
+  decay.clamp_phase2 = false;
+
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
+
+  SetUnique("tie_brk", false);
   tie_brk.on = true;
   tie_brk.thr_gain = 0.2f;
   tie_brk.loser_gain = 1.0f;
-  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .7f;
 }
 
 void SNrThalLayerSpec::HelpConfig() {
   String help = "SNrThalLayerSpec Computation:\n\
- - act of unit(s) = act_dif of unit(s) in reward integration layer we recv from\n\
- - da is dynamically computed in plus phaes and sent all layers that recv from us\n\
- - No Learning\n\
+ - net = Go if no NoGo, else Go / (Go + nogo_gain * NoGo + leak)\n\
+ - act = raw activation from netin\n\
+ - act_m2 = winner-filtered gating activations -- drives learning in Matrix\n\
+ - No learning, wt init variance, in afferent cons\n\
  \nSNrThalLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
- - Single recv connection marked with a MarkerConSpec from reward integration layer\
-     (computes expectations and actual reward signals)\n\
- - This layer must be after corresp. reward integration layer in list of layers\n\
-     (da signal from this layer put directly into da var on units)\n\
- - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
-     (because negative da = negative activation signal here";
+ - Use the Wizard PBWM button to automatically configure.\n\
+ - Matrix_Go now projects using regular leabra cons (non-MarkerCons) to create basic standard netinput\n\
+ - optional NoGo projection with MarkerCons to provide divisive renorm of signal\n";
   taMisc::Confirm(help);
+}
+
+void SNrThalLayerSpec::GatingTypesNStripes(GatingTypes gat_typs, int n_stripes_total, int& n_types,
+					   int& n_in, int& n_mnt, int& n_out) {
+  n_types = 0;
+  n_in = 0;
+  n_mnt = 0;
+  n_out = 0;
+  if(gat_typs & INPUT) n_types++;
+  if(gat_typs & MAINT) n_types++;
+  if(gat_typs & OUTPUT) n_types++;
+
+  if(n_types == 0) return;
+  int n_per = n_stripes_total / n_types;
+  if(gat_typs & INPUT) n_in = n_per;
+  if(gat_typs & MAINT) n_mnt = n_per;
+  if(gat_typs & OUTPUT) n_out = n_per;
 }
 
 bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -291,8 +152,16 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   us->SetUnique("maxda", true);
   us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
-//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
+
+  int max_go_cycle = net->mid_minus_cycle - snrthal.go_b4_mid;
+  if(lay->CheckError(max_go_cycle <= snrthal.min_go_cycle, quiet, rval,
+                "min go cycle not before max go cycle -- adjusting min_go_cycle -- you should double check")) {
+    snrthal.min_go_cycle = max_go_cycle - 15;
+    if(snrthal.min_go_cycle < 2)
+      snrthal.min_go_cycle = 2;
+  }
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
                 "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
@@ -303,75 +172,60 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // must have the appropriate ranges for unit specs..
   //  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
-  // check recv connection
-  int mtx_prjn_idx = 0;
-  LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixBaseLayerSpec);
+  LeabraLayer* go_lay = NULL;
+  LeabraLayer* nogo_lay = NULL;
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) nogo_lay = fmlay;
+      // todo: should NOT recv any other marker cons!
+    }
+    else {
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) go_lay = fmlay;
+    }
+  }
 
-  if(lay->CheckError(matrix_lay == NULL, quiet, rval,
-                "did not find Matrix layer to recv from!")) {
+  if(lay->CheckError(go_lay == NULL, quiet, rval,
+                "did not find Matrix Go layer to recv from!")) {
     return false;
   }
 
-  if(lay->CheckError(matrix_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+  if(lay->CheckError(go_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
                 "MatrixLayer unit groups must = SNrThalLayer unit groups!")) {
     lay->unit_groups = true;
-    lay->gp_geom.n = matrix_lay->gp_geom.n;
-    return false;
-  }
-
-  // grab bg_type from matrix guy
-  MatrixBaseLayerSpec* mls = (MatrixBaseLayerSpec*)matrix_lay->spec.SPtr();
-  if(mls->InheritsFrom(&TA_MatrixLayerSpec)) {
-    SetUnique("bg_type", true);
-    bg_type = (BGType)((MatrixLayerSpec*)mls)->bg_type;
+    lay->gp_geom.n = go_lay->gp_geom.n;
   }
 
   return true;
 }
 
 void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
-  int mtx_prjn_idx = 0;
-  LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixBaseLayerSpec);
+  if(snrthal.nogo_gain == 0.0f) return;
 
-  float net_off_rescale = 1.0f / (1.0f + snrthal.net_off);
+  // not same issue; only an initialization here; I still suspect initialized idx value is not strictly binding
+  int nogo_prjn_idx = 0;
+  LeabraLayer* nogo_lay = NULL;
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) {
+	nogo_lay = fmlay;
+	nogo_prjn_idx = g;
+	break;
+      }
+    }
+  }
+  if(!nogo_lay) return;		// nothing to do if no nogo
 
-  int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-  int munits = matrix_lay->UnitAccess_NUnits(Layer::ACC_GP);
-  int gp_sz = munits / 2;
-  LeabraUnitSpec* us = (LeabraUnitSpec*)matrix_lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)matrix_lay->ungp_data.FastEl(mg);
-    float gonogo = 0.0f;
-    if(mgpd->acts.max >= us->opt_thresh.send) {
-      float sum_go = 0.0f;
-      float sum_nogo = 0.0f;
-      for(int i=0; i<munits; i++) {
-        LeabraUnit* u = (LeabraUnit*)matrix_lay->UnitAccess(Layer::ACC_GP, i, mg);
-	if(u->lesioned()) continue;
-        PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
-        if(go_no == PFCGateSpec::GATE_GO)
-          sum_go += u->act_eq;
-        else
-          sum_nogo += u->act_eq;
-      }
-      float norm_factor = sum_go + sum_nogo + snrthal.leak;
-      if(norm_factor > 0.0f) {
-        gonogo = (sum_go - sum_nogo) / norm_factor;
-      }
-      if(mgpd->gate_state >= PFCGateSpec::NOGO_RND_GO) {
-        gonogo += snrthal.rnd_go_inc;
-        if(gonogo > 1.0f) gonogo = 1.0f;
-      }
-    }
-
-    float net_eff = net_off_rescale * (gonogo + snrthal.net_off);
-
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, mg);
-      if(ru->lesioned()) continue;
-      ru->net = net_eff;
-      ru->i_thr = ru->Compute_IThresh(net);
-    }
+    PBWMUnGpData* gpd = (PBWMUnGpData*)nogo_lay->ungp_data.FastEl(mg);
+    float nogo_inhib = snrthal.nogo_gain * gpd->acts.avg;
+    LeabraUnit* snr_u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, 0, mg);
+    snr_u->net = snr_u->net / (snr_u->net + snrthal.leak + nogo_inhib);
   }
 }
 
@@ -382,113 +236,482 @@ void SNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) 
 }
 
 void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-  for(int g=0; g < lay->gp_geom.n; g++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
+  int max_go_cycle = net->mid_minus_cycle - snrthal.go_b4_mid;
 
-    bool zap_act_eq = false;
-    if((bg_type == MAINT) && (gpd->gate_sig == PFCGateSpec::GATE_OUT_GO)) {
-      zap_act_eq = true;
-    }
-    if((bg_type == OUTPUT) && (gpd->gate_sig == PFCGateSpec::GATE_MNT_GO)) {
-      zap_act_eq = true;
-    }
-    if(zap_act_eq) {
-      // this is for display purposes, to show that no gating took place in this stripe
-      // due to competition with other type of gating
+  int n_fired_trial = 0;
+  int n_fired_now = 0;
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    if(net->ct_cycle < snrthal.min_go_cycle) {
+      // reset all for current trial
+      gpd->go_fired_now = false;
+      gpd->go_fired_trial = false;
+      gpd->go_forced = false;
+      gpd->go_cycle = -1;
+
       for(int i=0;i<nunits;i++) {
-        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
 	if(u->lesioned()) continue;
-        u->act = u->act_eq = 0.0f; // now zapping act too!
+	u->act_m2 = 0.0f;	// reset gating act
       }
-    }
-    else if(snrthal.act_is_gate) {
-      if(gpd->gate_sig != PFCGateSpec::GATE_NOGO) { // some kind of gating happened
-        // this is also for display purposes, to always show actual gating signal
-        // that was active at time of gating, not what current activity is..
-        for(int i=0;i<nunits;i++) {
-          LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
+      continue;			// if all mg < min_go_cycle, basically all done!
+     }
+
+    if(gpd->go_fired_trial) {	// this stripe already fired go
+      n_fired_trial++;
+      gpd->go_fired_now = false;
+      if(snrthal.act_is_gate) {
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
 	  if(u->lesioned()) continue;
-          u->act = u->act_eq = u->act_m2; // always reflect act_m2 gating signal if gated!
-        }
+	  u->act = u->act_eq = u->act_m2;	// paste it back into act
+	}
+      }
+      continue;
+    }
+
+    if(net->ct_cycle < max_go_cycle) {
+      // check to see if above threshold for firing
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	if(u->lesioned()) continue;
+	if(u->act_eq >= snrthal.go_thr) {
+	  n_fired_trial++;
+	  n_fired_now++;
+	  gpd->go_fired_now = true;
+	  gpd->go_fired_trial = true;
+	  gpd->go_cycle = net->ct_cycle;
+	  gpd->prv_mnt_count = gpd->mnt_count;
+	  gpd->mnt_count = 0;	// reset
+	  u->act_m2 = u->act_eq;	// gating act -- will tend to be just above go_thr -- is updated until max_go_cycle
+	  break;			// out of unit loop
+	}
       }
     }
+  } // end first and outer for loop
+
+  if(net->ct_cycle == max_go_cycle) {
+    // first deal with no go cases..
+    if(snrthal.force && n_fired_trial == 0) {	// no stripe has fired yet -- force max go firing
+      int go_idx = lay->netin.max_i;
+      if(go_idx < 0) {		// this really shouldn't happen, but if it does..
+	  go_idx = Random::IntZeroN(lay->units.leaves);
+      }
+      int gp_idx = go_idx / nunits;
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx);
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx);
+      n_fired_trial++;
+      n_fired_now++;
+      gpd->go_fired_now = true;
+      gpd->go_fired_trial = true;
+      gpd->go_forced = true;	// yes this is forced
+      gpd->go_cycle = net->ct_cycle;
+      gpd->prv_mnt_count = gpd->mnt_count;
+      gpd->mnt_count = 0;	// reset
+      u->act_m2 = snrthal.go_thr; // must be at least at threshold -- otherwise won't gate for pbwm!
+    }
+    // now find all the nogos and update them..
+    for(int mg=0; mg<lay->gp_geom.n; mg++) {
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+      if(!gpd->go_fired_trial) {
+	if(gpd->mnt_count < 0)
+	  gpd->mnt_count--;	// more empty
+	else
+	  gpd->mnt_count++;	// more maint
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	  if(u->lesioned()) continue;
+	  u->act_m2 = snrthal.loser_gain * u->act_eq;
+	  if(snrthal.act_is_gate) {
+	    u->act = u->act_eq = u->act_m2;	// paste it back into act
+	  }
+	}
+      }
+    }
+    Compute_GateStats(lay, net); // update overall stats at this point
+  }
+  lay->SetUserData("n_fired_trial", n_fired_trial);
+  lay->SetUserData("n_fired_now", n_fired_now);
+}
+
+void SNrThalLayerSpec::Compute_GatedActs_DoubleGate(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
+  int max_go_cycle = net->mid_minus_cycle - snrthal.go_b4_mid;
+
+  int n_fired_trial = 0;
+  int n_fired_now = 0;
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    if(net->ct_cycle < snrthal.min_go_cycle) {
+      // reset all for current trial
+      gpd->go_fired_now = false;
+      gpd->go_fired_trial = false;
+      gpd->go_forced = false;
+      gpd->go_cycle = -1;
+      // no need to reset these now?
+      //gpd->go_fired_now2 = false;
+      //gpd->go_fired_trial2 = false;
+      //gpd->go_forced2 = false;
+      //gpd->go_cycle2 = -1;
+
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	if(u->lesioned()) continue;
+	u->act_m2 = 0.0f;	// reset gating act
+      }
+      continue;			// if all mg < min_go_cycle, basically all done!
+    }
+
+    if(gpd->go_fired_trial) {	// this stripe already fired go
+      n_fired_trial++;
+      gpd->go_fired_now = false;
+      if(snrthal.act_is_gate) {
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	  if(u->lesioned()) continue;
+	  if(net->ct_cycle < max_go_cycle && u->act_eq > u->act_m2) {
+	    u->act_m2 = u->act_eq; // grab updated act for stripes that fired, only if larger
+	  }
+	  u->act = u->act_eq = u->act_m2;	// paste it back into act
+	}
+      }
+      continue;
+    }
+
+    if(net->ct_cycle < max_go_cycle) {
+      // check to see if above threshold for firing
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	if(u->lesioned()) continue;
+	if(u->act_eq >= snrthal.go_thr) {
+	  n_fired_trial++;
+	  n_fired_now++;
+	  gpd->go_fired_now = true;
+	  gpd->go_fired_trial = true;
+	  gpd->go_cycle = net->ct_cycle;
+	  gpd->prv_mnt_count = gpd->mnt_count;
+	  gpd->mnt_count = 0;	// reset
+	  u->act_m2 = u->act_eq;	// gating act -- will tend to be just above go_thr -- is updated until max_go_cycle
+	  break;			// out of unit loop
+	}
+      }
+    }
+  } // end first and outer for loop
+
+  if(net->ct_cycle == max_go_cycle) {
+    // first deal with no go cases..
+    if(n_fired_trial == 0) {	// no stripe has fired yet -- force max go firing
+      int go_idx = lay->acts.max_i;
+      if(go_idx < 0) {		// this really shouldn't happen, but if it does..
+	go_idx = Random::IntZeroN(lay->units.leaves);
+      }
+      int gp_idx = go_idx / nunits;
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx);
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx);
+      n_fired_trial++;
+      n_fired_now++;
+      gpd->go_fired_now = true;
+      gpd->go_fired_trial = true;
+      gpd->go_forced = true;	// yes this is forced
+      gpd->go_cycle = net->ct_cycle;
+      gpd->prv_mnt_count = gpd->mnt_count;
+      gpd->mnt_count = 0;	// reset
+      u->act_m2 = u->act_eq;	// gating act
+    }
+    // now find all the nogos and update them..
+    for(int mg=0; mg<lay->gp_geom.n; mg++) {
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+      if(!gpd->go_fired_trial) {
+	if(gpd->mnt_count < 0)
+	  gpd->mnt_count--;	// more empty
+	else
+	  gpd->mnt_count++;	// more maint
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	  if(u->lesioned()) continue;
+	  u->act_m2 = snrthal.loser_gain * u->act_eq;
+	  if(snrthal.act_is_gate) {
+	    u->act = u->act_eq = u->act_m2;	// paste it back into act
+	  }
+	}
+      }
+    }
+  }
+  lay->SetUserData("n_fired_trial", n_fired_trial);
+  lay->SetUserData("n_fired_now", n_fired_now);
+
+  // now its time to deal with the late gating window!
+  if(!doublegate.on || (net->ct_cycle <= max_go_cycle)) return;	// done! not eligible for late gating
+
+  int n_fired_trial2 = 0;	// tracks firing in late gating window only
+  int min_go_cycle2 = (max_go_cycle + doublegate.min_late_delay);	// output guys may need a little extra time to catch up!
+  int max_go_cycle2 = (net->mid_minus_cycle - doublegate.go_b4_mid_late);	// final deadline to go
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    // don't double hit anybody at low ct_cycles!
+    if((net->ct_cycle > max_go_cycle) && (net->ct_cycle < min_go_cycle2)) { // in the delay period between early and late gating windows
+      // reset all for current trial
+      gpd->go_fired_now = false;
+      gpd->go_fired_trial2 = false;
+      //gpd->go_forced = false;
+      //gpd->go_cycle = -1;
+      //for(int i=0;i<nunits;i++) {
+      //LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      //if(u->lesioned()) continue;
+      //if(!gpd->go_fired_trial)		// don't mess with the early Go guys!
+      //u->act_m2 = 0.0f;			// reset gating act
+      //}
+      continue;					// if all mg < min_go_cycle2, basically all done this cycle!
+    }
+
+    if(gpd->go_fired_trial) {			// no double gating for same stripe
+      gpd->go_fired_trial2 = false;
+      gpd->go_fired_now = false;
+      continue;
+    }
+
+    if(gpd->go_fired_trial2) { 			// already fired a late go
+      n_fired_trial2++;				// just catching up to UnGpData since I'm a state-value guy
+      gpd->go_fired_now = false;
+      if(snrthal.act_is_gate) {
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	  if(u->lesioned()) continue;
+	  if(!gpd->go_fired_trial) {		// don't mess with the early Go guys!
+	    if(net->ct_cycle < max_go_cycle2 && u->act_eq > u->act_m2) {
+	      u->act_m2 = u->act_eq; 		// grab updated act for stripes that fired, only if larger
+	    }
+	  }
+	  u->act = u->act_eq = u->act_m2;	// paste it back into act
+	}
+      }
+      continue;
+    }
+
+    // don't double hit about at low ct_cycles
+    if((net->ct_cycle >= min_go_cycle2) && (net->ct_cycle < max_go_cycle2)) {
+      // check to see if above threshold for firing
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	if(u->lesioned()) continue;
+	if(u->act_eq >= snrthal.go_thr) {
+	  if(!gpd->go_fired_trial) { // no double gating same stripe!
+	    n_fired_trial2++;
+	    n_fired_now++;
+	    gpd->go_fired_now = true;
+	    gpd->go_fired_trial2 = true;
+	    gpd->go_cycle = net->ct_cycle;
+	    gpd->prv_mnt_count = gpd->mnt_count;
+	    gpd->mnt_count = 0;			// reset
+	    u->act_m2 = u->act_eq;		// gating act -- will tend to be just above go_thr -- is updated until max_go_cycle
+	  }
+	  break;				// out of unit loop; weird - only handles one snrthal unit per ugp?
+	}
+      }
+    }
+  } // end of 2nd major outer loop (late gating)
+
+  if(net->ct_cycle == max_go_cycle2) {
+    // first deal with no go cases..
+    if(n_fired_trial2 == 0) {		// no stripe has fired in late window yet -- force max go firing
+      int go_idx2 = lay->acts.max_i;
+      if(go_idx2 < 0) {			// this really shouldn't happen, but if it does..
+	go_idx2 = Random::IntZeroN(lay->units.leaves);
+      }
+      int gp_idx2 = go_idx2 / nunits;
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx2);
+
+      // this while-loop is causing the network to hang --- infinite loop????
+      //      while(gpd->go_fired_trial) {		// this stripe fired already so don't want to use
+      // 	gp_idx2 = Random::IntZeroN(lay->gp_geom.n);			// just pick randomly at this point
+      // 	PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx2);
+      // 	break; // try adding break to fix? i.e., do it only once and go on like alternative version below
+      //      }
+
+      // ...whereas this seems okay
+      if(gpd->go_fired_trial) { // this stripe fired already, find another one
+	int i = 0;
+	while(i == gp_idx2) {
+	  i = Random::IntZeroN(lay->gp_geom.n);
+	}
+	gp_idx2 = i; //
+      }
+
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx2);
+      n_fired_trial2++;
+      n_fired_now++;
+      gpd->go_fired_now = true;
+      gpd->go_fired_trial2 = true;
+      gpd->go_forced = true;	// yes this is forced
+      gpd->go_cycle = net->ct_cycle;
+      gpd->prv_mnt_count = gpd->mnt_count;
+      gpd->mnt_count = 0;	// reset
+      u->act_m2 = u->act_eq;	// gating act
+    }
+
+    // now find all the nogos that are left and update them..
+    for(int mg=0; mg<lay->gp_geom.n; mg++) {
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+      if(!gpd->go_fired_trial && !gpd->go_fired_trial2) { // doesn't matter if fired early or late
+	//if(gpd->mnt_count < 0)	// already did this once in the early gating window
+	//gpd->mnt_count--;	// more empty
+	//else
+	//gpd->mnt_count++;	// more maint
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+	  if(u->lesioned()) continue;
+	  u->act_m2 = snrthal.loser_gain * u->act_eq;	// all the no go stripes need to be update until the end (max_go_cycle2
+	  if(snrthal.act_is_gate) {
+	    u->act = u->act_eq = u->act_m2;	// paste it back into act
+	  }
+	}
+      }
+    }
+  }
+
+  if(!doublegate.on) return; // just in case
+
+  int mtxgo_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* mtxgo_lay = FindLayerFmSpec(lay, mtxgo_prjn_idx, &TA_MatrixLayerSpec);
+  MatrixLayerSpec* mls = (MatrixLayerSpec*)mtxgo_lay->GetLayerSpec();
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {	 			//loop thru SNrThal gps to find the early gaters
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    if(gpd->go_fired_trial) { // early gaters; might as well hammer they all (vs. just the early(!) go_fired_now guys) -- trickier anyway
+      mls->Compute_ClearActAfterGo(mtxgo_lay, acc_md, mg, net); // clear activity for all units of stripe - uses gate_accom voltage gated channel
+    }
+  }
+
+  lay->SetUserData("n_fired_trial2", n_fired_trial2);
+  lay->SetUserData("n_fired_now", n_fired_now);
+}
+
+void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
+
+  int n_types, n_in, n_mnt, n_out;
+  SNrThalLayerSpec::GatingTypesNStripes(gating_types, lay->gp_geom.n, n_types,
+					n_in, n_mnt, n_out);
+  int mnt_st = n_in;
+  int out_st = n_in + n_mnt;
+
+  const int n_stats = 4;	// 0 = global, 1 = in, 2 = mnt, 3 = out
+  int	n_gated[n_stats] = {0,0,0,0};
+  int	n_forced[n_stats] = {0,0,0,0};
+  int	min_go_cycle[n_stats] = {1000,1000,1000,1000};
+  int	max_go_cycle[n_stats] = {0,0,0,0};
+  int	min_mnt_count[n_stats] = {0,0,0,0};
+  int	max_mnt_count[n_stats] = {0,0,0,0};
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    if(gpd->go_fired_trial) {
+      if(mg < n_in) n_gated[1]++;
+      else if(mg >= mnt_st && mg < out_st) n_gated[2]++;
+      else if(mg >= out_st) n_gated[3]++;
+      n_gated[0]++;		// global
+
+      if(mg < n_in) min_go_cycle[1] = MIN(min_go_cycle[1], gpd->go_cycle);
+      else if(mg >= mnt_st && mg < out_st) min_go_cycle[2] = MIN(min_go_cycle[2], gpd->go_cycle);
+      else if(mg >= out_st) min_go_cycle[3] = MIN(min_go_cycle[3], gpd->go_cycle);
+      min_go_cycle[0] = MIN(min_go_cycle[0], gpd->go_cycle);
+
+      if(mg < n_in) max_go_cycle[1] = MAX(max_go_cycle[1], gpd->go_cycle);
+      else if(mg >= mnt_st && mg < out_st) max_go_cycle[2] = MAX(max_go_cycle[2], gpd->go_cycle);
+      else if(mg >= out_st) max_go_cycle[3] = MAX(max_go_cycle[3], gpd->go_cycle);
+      max_go_cycle[0] = MAX(max_go_cycle[0], gpd->go_cycle);
+    }
+    if(gpd->go_forced) {
+      if(mg < n_in) n_forced[1]++;
+      else if(mg >= mnt_st && mg < out_st) n_forced[2]++;
+      else if(mg >= out_st) n_forced[3]++;
+      n_forced[0]++;		// global
+    }
+
+    // only mnt layers contribute to this!
+    if(mg >= mnt_st && mg < out_st) {
+      min_mnt_count[2] = MIN(min_mnt_count[2], gpd->mnt_count);
+      max_mnt_count[2] = MAX(max_mnt_count[2], gpd->mnt_count);
+    }
+  }
+
+  lay->SetUserData("n_gated_all", (float)n_gated[0]);
+  if(n_in > 0) lay->SetUserData("n_gated_in", (float)n_gated[1]);
+  if(n_mnt > 0) lay->SetUserData("n_gated_mnt", (float)n_gated[2]);
+  if(n_out > 0) lay->SetUserData("n_gated_out", (float)n_gated[3]);
+
+  lay->SetUserData("n_forced_all", (float)n_forced[0]);
+  if(n_in > 0) lay->SetUserData("n_forced_in", (float)n_forced[1]);
+  if(n_mnt > 0) lay->SetUserData("n_forced_mnt", (float)n_forced[2]);
+  if(n_out > 0) lay->SetUserData("n_forced_out", (float)n_forced[3]);
+
+lay->SetUserData("min_go_cycle_all", (float)(n_gated[0] > 0 ? min_go_cycle[0] : -1));
+ if(n_in > 0) lay->SetUserData("min_go_cycle_in", (float)(n_gated[1] > 0 ? min_go_cycle[1] : -1));
+ if(n_mnt > 0) lay->SetUserData("min_go_cycle_mnt", (float)(n_gated[2] > 0 ? min_go_cycle[2] : -1));
+ if(n_out > 0) lay->SetUserData("min_go_cycle_out", (float)(n_gated[3] > 0 ? min_go_cycle[3] : -1));
+
+  lay->SetUserData("max_go_cycle_all", (float)(n_gated[0] > 0 ? max_go_cycle[0] : -1));
+  if(n_in > 0) lay->SetUserData("max_go_cycle_in", (float)(n_gated[1] > 0 ? max_go_cycle[1] : -1));
+  if(n_mnt > 0) lay->SetUserData("max_go_cycle_mnt", (float)(n_gated[2] > 0 ? max_go_cycle[2] : -1));
+  if(n_out > 0) lay->SetUserData("max_go_cycle_out", (float)(n_gated[3] > 0 ? max_go_cycle[3] : -1));
+
+  if(n_mnt > 0) {
+    lay->SetUserData("min_mnt_count", (float)min_mnt_count[2]);
+    lay->SetUserData("max_mnt_count", (float)max_mnt_count[2]);
   }
 }
 
 void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_GatedActs(lay, net);
+  if(doublegate.on)
+    Compute_GatedActs_DoubleGate(lay, net);
+  else
+    Compute_GatedActs(lay, net);
   inherited::Compute_CycleStats(lay, net);
 }
 
-
 void SNrThalLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // nop -- don't do the default thing -- already done by call to MidMinusAct
+  // nop -- don't do the default thing -- already done by GatedActs
 }
 
-void SNrThalLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
-                                               Layer::AccessMode acc_md, int gpidx,
-                                               LeabraNetwork* net) {
-  // capture at snrthal level
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    u->act_m2 = u->act_eq;
-  }
+void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights(lay, net);
+  lay->SetUserData("n_fired_trial", 0);
+  lay->SetUserData("n_fired_now", 0);
 
-  // then at matrix level
-  int dum_prjn_idx = 0;
-  LeabraLayer* matrix = FindLayerFmSpec(lay, dum_prjn_idx, &TA_MatrixLayerSpec);
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix->spec.SPtr();
-  mls->Compute_MidMinusAct_ugp(matrix, acc_md, gpidx, net); // tell matrix to do it
+  lay->SetUserData("n_gated_all", 0.0f);
+  lay->SetUserData("n_gated_in",  0.0f);
+  lay->SetUserData("n_gated_mnt", 0.0f);
+  lay->SetUserData("n_gated_out", 0.0f);
+
+  lay->SetUserData("n_forced_all", 0.0f);
+  lay->SetUserData("n_forced_in",  0.0f);
+  lay->SetUserData("n_forced_mnt", 0.0f);
+  lay->SetUserData("n_forced_out", 0.0f);
+
+  lay->SetUserData("min_go_cycle_all", 0.0f);
+  lay->SetUserData("min_go_cycle_in",  0.0f);
+  lay->SetUserData("min_go_cycle_mnt", 0.0f);
+  lay->SetUserData("min_go_cycle_out", 0.0f);
+
+  lay->SetUserData("max_go_cycle_all", 0.0f);
+  lay->SetUserData("max_go_cycle_in",  0.0f);
+  lay->SetUserData("max_go_cycle_mnt", 0.0f);
+  lay->SetUserData("max_go_cycle_out", 0.0f);
+
+  lay->SetUserData("min_mnt_count", 0.0f);
+  lay->SetUserData("max_mnt_count", 0.0f);
 }
 
-
-void SNrThalLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork* net,
-                                      LeabraLayer* pfc_lay) {
-  int dum_prjn_idx = 0;
-  LeabraLayer* matrix = FindLayerFmSpec(lay, dum_prjn_idx, &TA_MatrixLayerSpec);
-  LeabraLayer* patch = FindLayerFmSpec(matrix, dum_prjn_idx, &TA_PatchLayerSpec);
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* pfcgpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(mg);
-    PBWMUnGpData* snrgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)matrix->ungp_data.FastEl(mg);
-
-    // everybody gets gate state info from PFC!
-    snrgpd->mnt_count = mgpd->mnt_count = pfcgpd->mnt_count;
-    snrgpd->gate_state = pfcgpd->gate_state;
-    if(mgpd->gate_state < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
-      mgpd->gate_state = pfcgpd->gate_state;
-    }
-    snrgpd->gate_sig = mgpd->gate_sig = pfcgpd->gate_sig;
-    // matrix does not get cur_go_act -- uses it otherwise
-    snrgpd->cur_go_act = pfcgpd->cur_go_act;
-    snrgpd->out_go_act = pfcgpd->out_go_act;
-
-    if(patch) {
-      PBWMUnGpData* patchgpd = (PBWMUnGpData*)patch->ungp_data.FastEl(mg);
-      // everybody gets gate state info from PFC!
-      patchgpd->mnt_count = snrgpd->mnt_count;
-      patchgpd->gate_state = snrgpd->gate_state;
-      patchgpd->gate_sig = snrgpd->gate_sig;
-      patchgpd->cur_go_act = snrgpd->cur_go_act;
-      patchgpd->out_go_act = snrgpd->out_go_act;
-    }
-  }
-}
-
-
-//////////////////////////////////////////
-//      Base Specs
-//////////////////////////////////////////
-
-void MatrixBaseLayerSpec::Initialize() {
-
-}
-
-void PFCBaseLayerSpec::Initialize() {
-
+void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Trial_Init_Layer(lay, net);
+  lay->SetUserData("n_fired_trial", 0);
+  lay->SetUserData("n_fired_now", 0);
 }
 
 //////////////////////////////////
@@ -497,6 +720,7 @@ void PFCBaseLayerSpec::Initialize() {
 
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
+  err_gain = 0.0f;
 
   Defaults_init();
 }
@@ -509,12 +733,43 @@ void MatrixConSpec::Defaults_init() {
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
-  SetUnique("wt_sig", true);
-  wt_sig.gain = 1.0f;
-  wt_sig.off = 1.0f;
+  // SetUnique("wt_sig", true);
+  wt_sig.gain = 6.0f;
+  wt_sig.off = 1.25f;
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // these are enforced absolutely because the code does not use them:
+  lmix.hebb = 0.0f;
+  lmix.err = 1.0f;
+  //  lmix.err_sb = false;
+}
+
+//////////////////////////////////
+//      MatrixNoGoConSpec       //
+//////////////////////////////////
+
+void MatrixNoGoConSpec::Initialize() {
+  //  min_obj_type = &TA_MatrixCon;
+
+  Defaults_init();
+}
+
+void MatrixNoGoConSpec::Defaults_init() {
+  SetUnique("wt_limits", true);
+  wt_limits.sym = false;
+
+  SetUnique("lmix", true);
+  lmix.hebb = 0.0f;
+  lmix.err = 1.0f;
+
+  // SetUnique("wt_sig", true);
+  wt_sig.gain = 6.0f;
+  wt_sig.off = 1.25f;
+}
+
+void MatrixNoGoConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // these are enforced absolutely because the code does not use them:
   lmix.hebb = 0.0f;
@@ -547,21 +802,9 @@ void MatrixBiasSpec::Defaults_init() {
   lrate = 0.0f;                 // default is no lrate
 }
 
-void MatrixNoiseSpec::Initialize() {
-  patch_noise = true;
-}
-
 void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
   bias_spec.type = &TA_MatrixBiasSpec;
-  SetUnique("g_bar", true);
-  g_bar.a = .03f;
-  g_bar.h = .01f;
-
-  SetUnique("noise", true);
-  noise.var = 0.0002f;
-  SetUnique("noise_adapt", true);
-  noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
 
   Defaults_init();
 }
@@ -570,13 +813,20 @@ void MatrixUnitSpec::Defaults_init() {
   SetUnique("act", true);
   act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
 
+  SetUnique("g_bar", true);
+  g_bar.a = .03f;
+  g_bar.h = .01f;
+
   SetUnique("maxda", true);
   maxda.val = MaxDaSpec::NO_MAX_DA;
 
-  SetUnique("noise_type", true);
+  // SetUnique("noise_type", true);
   noise_type = NETIN_NOISE;
 
-  SetUnique("noise_adapt", true);
+  // SetUnique("noise", true);
+  noise.var = 0.0005f;
+  // SetUnique("noise_adapt", true);
+  noise_adapt.mode = NoiseAdaptSpec::FIXED_NOISE;
   noise_adapt.trial_fixed = true;
   noise_adapt.k_pos_noise = true;
 }
@@ -597,200 +847,82 @@ void MatrixUnitSpec::Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
-  float noise_amp = 1.0f;               // noise amplitude multiplier
-  if(matrix_noise.patch_noise) {
-    noise_amp = (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
-  }
-  else {
-    if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
-      noise_amp = noise_sched.GetVal(net->cycle);
-    }
-    else if(noise_adapt.mode == NoiseAdaptSpec::SCHED_EPOCHS) {
-      noise_amp = noise_sched.GetVal(net->epoch);
-    }
-    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_PVI) {
-      noise_amp = (1.0f - (noise_adapt.min_pct_c * net->pvlv_pvi));
-    }
-    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_LVE) {
-      noise_amp = (1.0f - (noise_adapt.min_pct_c * net->pvlv_lve));
-    }
-    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_MIN) {
-      float pvlv_val = MIN(net->pvlv_pvi, net->pvlv_lve);
-      noise_amp = (1.0f - (noise_adapt.min_pct_c * pvlv_val));
-    }
-  }
-
-  float rval = 0.0f;
-  if(noise_adapt.trial_fixed) {
-    rval = u->noise; // u->noise is trial-level generated value
-  }
-  else {
-    rval = noise.Gen();
-    u->noise = rval;
-  }
-
-  return noise_amp * rval;
-}
 
 //////////////////////////////////
 //      Matrix Layer Spec       //
 //////////////////////////////////
-
-void MatrixGateBiasSpec::Initialize() {
-  out_rew_go = 1.0f;
-  out_norew_nogo = 1.0f;
-  out_empty_nogo = 5.0f;
-  mnt_rew_nogo = 5.0f;
-  mnt_mnt_nogo = 0.0f;
-  mnt_empty_go = 0.0f;
-}
-
-void MatrixGateBiasFunSpec::Initialize() {
-  on = false;
-  fun = LIN;
-  off = 0;
-  interval = 2;
-  start = 0.0f;
-  end = 1.0f;
-  incr = 0.5f;
-}
-
-void MatrixGateBiasFunSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(!on) return;
-  if(TestWarning((interval < 1), "UAE",
-                 "interval cannot be < 1 -- if constant, please turn off this function and use normal constant biases -- turning off for now")) {
-    on = false;
-    return;
-  }
-  if(TestWarning((start == end), "UAE",
-                 "start cannot be equal to end -- if constant, please turn off this function and use normal constant biases -- turning off for now")) {
-    on = false;
-    return;
-  }
-  if(fun == LIN) {
-    incr = (end - start) / (float)interval;
-  }
-  else {
-    // todo: do exp
-  }
-}
-
-void MatrixMiscSpec::Initialize() {
-  da_gain = 0.1f;
-  bias_gain = .1f;
-  nv_gain = 0.0f;		// todo: add new default
-  bias_pos_gain = 0.0f;
-  mnt_only = false;
-}
-
-void MatrixRndGoSpec::Initialize() {
-  on = true;
-  nogo_thr = 20;
-  rng_eq_thr = true;
-  nogo_rng = nogo_thr;
-  nogo_da = 10.0f;
-  nogo_noise = 0.02f;
-}
-
-void MatrixRndGoSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(rng_eq_thr)
-    nogo_rng = nogo_thr;
-}
-
-void MatrixTonicDaSpec::Initialize() {
-  out_err_nogo_inc = 0.001f;
-  mnt_nogo_inc = 0.001f;
-  out_err_go_inc = 0.0f;
-  decay = 0.001f;
-  max_da = 0.5f;
-  neg_lrn_da_gain = 0.0f;
-  nogo_thr_inc = 1.0f;
-}
 
 void MatrixGoNogoGainSpec::Initialize() {
   on = false;
   go_p = go_n = nogo_p = nogo_n = 1.0f;
 }
 
+void MatrixMiscSpec::Initialize() {
+  nogo_inhib = 0.0f; // 0.2f;
+  da_gain = 0.1f;
+  go_pfc_thr = 0.0f;
+}
+
 /////////////////////////////////////////////////////
 
 void MatrixLayerSpec::Initialize() {
-//   SetUnique("tie_brk", true);        // turn on tie breaking by default
+  gating_types = SNrThalLayerSpec::MNT_OUT;
+  go_nogo = GO;
+
+  Defaults_init();
+}
+
+void MatrixLayerSpec::Defaults_init() {
+  // todo: sync with above
+  matrix.nogo_inhib = 0.0f; // 0.2f;
+  matrix.da_gain = 0.1f;
+  matrix.go_pfc_thr = 0.0f;
+
+  //  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .5f;
+
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
   decay.clamp_phase2 = false;
-
-  //  SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
-  //  SetUnique("inhib", true);
-//   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-//   inhib.kwta_pt = .5f;
-  inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .2f;
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
 
-  bg_type = MAINT;
+  //  SetUnique("inhib_group", true);
+  inhib_group = UNIT_GROUPS;
 
-  Defaults_init();
-}
-
-void MatrixLayerSpec::Defaults_init() {
   // new default..
   //  SetUnique("gp_kwta", true);
-  gp_kwta.k_from = KWTASpec::USE_K;
-  gp_kwta.k = 4;
+  gp_kwta.k_from = KWTASpec::USE_PCT;
+  gp_kwta.pct = 0.25f;
+  gp_kwta.gp_i = true;
+  gp_kwta.gp_g = 1.0f;
 
-  tie_brk.on = true;
+  //  SetUnique("tie_brk", true);        // turn on tie breaking by default
+  tie_brk.on = false;
   tie_brk.diff_thr = 0.2f;
   tie_brk.thr_gain = 0.005f;
   tie_brk.loser_gain = 1.0f;
-
-  out_rew_go_fun.start = 0.0f;
-  out_rew_go_fun.end = 1.0f;
-  out_rew_go_fun.off = 1;
-  out_rew_go_fun.interval = 2;
-  out_rew_go_fun.UpdateAfterEdit_NoGui();
-
-  mnt_mnt_nogo_fun.start = 1.0f;
-  mnt_mnt_nogo_fun.end = 0.0f;
-  mnt_mnt_nogo_fun.off = 1;     // strong no immediate-update bias
-  mnt_mnt_nogo_fun.interval = 2; // then decay quickly
-  mnt_mnt_nogo_fun.UpdateAfterEdit_NoGui();
-
-  mnt_empty_go_fun.start = 0.0f;
-  mnt_empty_go_fun.end = 1.0f;
-  mnt_empty_go_fun.off = 5;
-  mnt_empty_go_fun.interval = 10;
-  mnt_empty_go_fun.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gate_bias.UpdateAfterEdit_NoGui();
-  rnd_go.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::HelpConfig() {
   String help = "MatrixLayerSpec Computation:\n\
- There are 2 types of units arranged sequentially in the following order within each\
- stripe whose firing affects the gating status of the corresponding stripe in PFC:\n\
- - GO unit = toggle maintenance of units in PFC: this is the direct pathway\n\
- - NOGO unit = maintain existing state in PFC (i.e. do nothing): this is the indirect pathway\n\
+ Each Matrix layer is either all Go or NoGo, with stripe-wise alignment between two\n\
  \nMatrixLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
+ - Use the Wizard PBWM button to automatically configure.\n\
  - Units must have a MatrixUnitSpec and must recv from PVLVDaLayerSpec layer\
  (calld DA typically) to get da modulation for learning signal\n\
- - Recv connections need to be MatrixConSpec as learning occurs based on the da-signal\
- on the matrix units.\n\
- - This layer must be after DaLayers in list of layers\n\
+ - Must recv from SNrThalLayerSpec to get final Go signal\n\
+ - Go layer recv marker cons from NoGo, gets inhibition in proportion to avg NoGo act\n\
+ - Other Recv conns are MatrixConSpec for learning based on the da-signal.\n\
  - Units must be organized into groups (stipes) of same number as PFC";
   taMisc::Confirm(help);
 }
@@ -847,7 +979,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraLayer* da_lay = NULL;
   LeabraLayer* snr_lay = NULL;
-  LeabraLayer* patch_lay = NULL;
+  LeabraLayer* nogo_lay = NULL;
   if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
@@ -858,12 +990,13 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(fmlay->spec.SPtr()->InheritsFrom(TA_PVLVDaLayerSpec)) da_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
-      if(fmlay->spec.SPtr()->InheritsFrom(TA_PatchLayerSpec)) patch_lay = fmlay;
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) nogo_lay = fmlay;
       continue;
     }
+    if(go_nogo == NOGO) continue;
     MatrixConSpec* cs = (MatrixConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_MatrixConSpec), quiet, rval,
-                  "Receiving connections must be of type MatrixConSpec!")) {
+		       "Receiving connections must be of type MatrixConSpec!")) {
       return false;
     }
     if(lay->CheckError(cs->wt_limits.sym != false, quiet, rval,
@@ -886,17 +1019,58 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                 "Could not find SNrThal layer -- must receive MarkerConSpec projection from one!")) {
     return false;
   }
-  if(lay->CheckError(bg_type == MAINT && patch_lay == NULL, quiet, rval,
-                "Could not find Patch layer -- MAINT Matrix must receive MarkerConSpec projection from one!")) {
+
+  if(lay->CheckError(snr_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+                "SNrThal layer does not have same number of stripes as we do!")) {
     return false;
   }
+
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  gating_types = snrls->gating_types; // we copy from snrthal
+
+  if(go_nogo == GO) {
+    if(lay->CheckError(nogo_lay == NULL, quiet, rval,
+                "Could not find NoGo Matrix layer for Go Matrix -- must receive MarkerConSpec projection from one!")) {
+      return false;
+    }
+    if(lay->CheckError(nogo_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+		       "NoGo Matrix layer does not have same number of stripes as we do!")) {
+      return false;
+    }
+  }
+
   return true;
 }
 
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
   lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
-  LabelUnits(lay);
+
+  NameMatrixUnits(lay, net);
+}
+
+void MatrixLayerSpec::NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net) {
+  int n_types, n_in, n_mnt, n_out;
+  SNrThalLayerSpec::GatingTypesNStripes(gating_types, lay->gp_geom.n, n_types,
+					n_in, n_mnt, n_out);
+  int mnt_st = n_in;
+  int out_st = n_in + n_mnt;
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    String nm;
+    if(mg < n_in) nm = "i";
+    else if(mg >= mnt_st && mg < out_st) nm = "m";
+    else if(mg >= out_st) nm = "o";
+
+    for(int i=0;i<nunits;i++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      if(u->lesioned()) continue;
+      u->name = nm;
+    }
+  }
 }
 
 void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
@@ -915,110 +1089,190 @@ void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   }
 }
 
-void MatrixLayerSpec::Compute_NetinStats_ugp(LeabraLayer* lay,
-                                             Layer::AccessMode acc_md, int gpidx,
-                                             LeabraInhib* thr,  LeabraNetwork* net) {
-  float bias_dav = Compute_BiasDaMod(lay, acc_md, gpidx, net);
-  Compute_MultBias(lay, acc_md, gpidx, net, bias_dav);
-
-  inherited::Compute_NetinStats_ugp(lay, acc_md, gpidx, thr, net);
-}
-
-float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
-                                         Layer::AccessMode acc_md, int gpidx,
-                                         LeabraNetwork* net) {
-  int da_prjn_idx;
-  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
-  PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-
-  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
-  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da;
-  float nv_da = matrix.nv_gain * net->pvlv_nv; // add in nv bias at the end
-  int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
-  bool pfc_is_mnt = pfc_mnt_cnt > 0;
-  int rnd_go_thr = mgpd->rnd_go_thr; // random go threshold for this time
+void MatrixLayerSpec::Compute_ZeroMidMinusAct_ugp(LeabraLayer* lay,
+                                              Layer::AccessMode acc_md, int gpidx,
+                                              LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  int gp_sz = nunits / 2;
-  bool nogo_rnd_go = (mgpd->gate_state == PFCGateSpec::NOGO_RND_GO);
-
-  float bias_dav = 0.0f;
-
-  if(bg_type == OUTPUT) {       // output gating guy
-    if(net->pv_detected) {      // PV reward trial -- bias output gating
-      // only if pfc is maintaining..
-      if(pfc_is_mnt) {
-        if(out_rew_go_fun.on)
-          bias_dav = out_rew_go_fun.GetBias(pfc_mnt_cnt);
-        else
-          bias_dav = gate_bias.out_rew_go;
-        if(rnd_go.on && !nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
-          mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
-          Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
-        }
-	bias_dav += lay_ton_da + mgpd->tonic_da;
-      }
-      else {
-        bias_dav = -gate_bias.out_empty_nogo;
-      }
-    }
-    else {                      // not a PV trial
-      if(pfc_is_mnt) {
-        bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
-      }
-      else {
-        bias_dav = -gate_bias.out_empty_nogo;
-      }
-    }
-  }
-  else {                        // MAINT
-    if(!matrix.mnt_only && net->pv_detected) {  // PV reward trial -- no maint gating
-      bias_dav = -gate_bias.mnt_rew_nogo;
-    }
-    else {
-      if(rnd_go.on && !nogo_rnd_go && ABS(pfc_mnt_cnt) > rnd_go_thr) { // no rnd go yet, but over thresh -- threshold is either too long of maintenance or no storage
-	mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
-	Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
-      }
-      if(pfc_mnt_cnt > 0) {     // currently maintaining: bias NoGo for everything
-        if(mnt_mnt_nogo_fun.on)
-          bias_dav = -mnt_mnt_nogo_fun.GetBias(pfc_mnt_cnt);
-        else
-          bias_dav = -gate_bias.mnt_mnt_nogo;
-      }
-      else {                    // otherwise, bias to maintain/update
-        if(mnt_empty_go_fun.on)
-          bias_dav = mnt_empty_go_fun.GetBias(-pfc_mnt_cnt); // negative count for amount of time empty
-        else
-          bias_dav = gate_bias.mnt_empty_go;
-	bias_dav += lay_ton_da + mgpd->tonic_da;
-      }
-    }
-  }
-
-  float tot_dav = bias_dav + ton_da + nv_da;
-  return tot_dav;
-}
-
-void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay,
-                                       Layer::AccessMode acc_md, int gpidx,
-                                       LeabraNetwork* net, float bias_dav) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  int gp_sz = nunits / 2;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz);
-    float netin_extra = 0.0f;
-    if(go_no == PFCGateSpec::GATE_NOGO) {
-      netin_extra = -matrix.bias_gain * bias_dav;
+    u->act_m2 = 0.0f;
+  }
+}
+
+float MatrixLayerSpec::Compute_NoGoInhibGo(LeabraLayer* lay,
+                                       Layer::AccessMode acc_md, int gpidx,
+                                       LeabraNetwork* net) {
+  if(go_nogo == NOGO) return 0.0f;	// only go-side recv fm nogo
+
+  int nogo_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* nogo_lay = FindLayerFmSpec(lay, nogo_prjn_idx, &TA_MatrixLayerSpec);
+  PBWMUnGpData* gpd = (PBWMUnGpData*)nogo_lay->ungp_data.FastEl(gpidx);
+  float nogo_inhib = matrix.nogo_inhib * gpd->acts.avg;
+  return nogo_inhib;
+}
+
+void MatrixLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
+                                             Layer::AccessMode acc_md, int gpidx,
+                                             LeabraInhib* thr, LeabraNetwork* net)
+{
+  if(go_nogo == NOGO) {
+    inherited::Compute_ApplyInhib_ugp(lay, acc_md, gpidx, thr, net);
+    return;
+  }
+
+  float nogo_inhib = Compute_NoGoInhibGo(lay, acc_md, gpidx, net);
+
+  // add extra inhibition if our group is not active yet -- hack to not have to 
+  // deal with all the complicated connectivity
+  if(matrix.go_pfc_thr > 0.0f) {
+    LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+    int n_mnt_gps = 0;					  // first find # of mnt gps
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+      if(!fmlay->name.contains("PFCs")) continue;
+      if(fmlay->name.contains("_mnt")) {
+	n_mnt_gps = fmlay->gp_geom.n;
+	break;
+      }
     }
-    else {                      // must be a GO
-      netin_extra = matrix.bias_gain * bias_dav;
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+      if(!fmlay->name.contains("PFCs")) continue;
+      if(fmlay->name.contains("_out")) {
+	if(gpidx < n_mnt_gps) continue;
+	int eff_gp = gpidx - n_mnt_gps;
+	if(eff_gp >= fmlay->gp_geom.n) continue; // not good
+	LeabraUnGpData* gpd = (LeabraUnGpData*)fmlay->ungp_data.FastEl(eff_gp);
+	if(gpd->acts.avg < matrix.go_pfc_thr) {
+	  nogo_inhib += 100.0f;	// big extra inhib
+	  break;
+	}
+      }
+      else {
+	if(gpidx >= n_mnt_gps) continue;
+	if(gpidx >= fmlay->gp_geom.n) continue; // not good
+	LeabraUnGpData* gpd = (LeabraUnGpData*)fmlay->ungp_data.FastEl(gpidx);
+	if(gpd->acts.avg < matrix.go_pfc_thr) {
+	  nogo_inhib += 100.0f;	// big extra inhib
+	  break;
+	}
+      }
     }
-    if(netin_extra > 0.0f) netin_extra *= matrix.bias_pos_gain;
-    u->net *= (1.0f + netin_extra);
-    u->misc_2 = netin_extra;    // record
+  }
+
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  float inhib_val = thr->i_val.g_i + nogo_inhib;
+  if(thr->kwta.tie_brk == 1) {
+    float inhib_thr = thr->kwta.k_ithr;
+    float inhib_loser = thr->kwta.eff_loser_gain * inhib_val;
+    for(int i=0; i<nunits; i++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
+      u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_val, inhib_loser);
+      u->misc_1 = nogo_inhib;
+    }
+  }
+  else {
+    for(int i=0; i<nunits; i++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
+      u->Compute_ApplyInhib(net, inhib_val);
+      u->misc_1 = nogo_inhib;
+    }
+  }
+}
+
+void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
+                                       Layer::AccessMode acc_md, int gpidx,
+                                       LeabraNetwork* net) {
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  int max_go_cycle = net->mid_minus_cycle - snr_ls->snrthal.go_b4_mid;
+
+  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(gpidx);
+  PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
+  gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
+  if(snr_gpd->go_fired_now) {
+    Compute_MidMinusAct_ugp(lay, acc_md, gpidx, net); // grab our mid minus
+  }
+  else {
+    if(net->ct_cycle == max_go_cycle && !snr_gpd->go_fired_trial) { // nogos will be nogos for sure by now
+      Compute_ZeroMidMinusAct_ugp(lay, acc_md, gpidx, net); // zero our mid minus
+    }
+  }
+}
+
+// intended mainly for use when doublegate.on, but is generic and will clear anyone you tell it too -- clears activations of stripes, typically that fired Go early to allow others to Go in the late window, i.e., output gating guys
+void MatrixLayerSpec::Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMode acc_md,
+				  int gpidx, LeabraNetwork* net) {
+  if(gpidx < 0) { // -1 means do all
+    for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
+       Compute_ClearActAfterGo_ugp(lay, acc_md, gpidx, net);
+    }
+  }
+  else if(gpidx < lay->gp_geom.n) {
+     Compute_ClearActAfterGo_ugp(lay, acc_md, gpidx, net);
+  }
+}
+
+void MatrixLayerSpec::Compute_ClearActAfterGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+						  int gpidx, LeabraNetwork* net) {
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  int nunits = lay->UnitAccess_NUnits(acc_md); // lay = matrix_go - how many units each unit group
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  for(int j=0;j<nunits;j++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    if(u->lesioned()) continue;
+    u->vcb.g_a = 1.0f;
+    us->Compute_Conduct(u, net); // update displayed conductances!
+  }
+}
+
+void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
+    Compute_GatingActs_ugp(lay, acc_md, gpidx, net);
+  }
+  inherited::Compute_CycleStats(lay, net);
+}
+
+// this is called at end of plus phase, to establish a da value for driving learning
+
+void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
+  // float lay_ton_da = lay->GetUserDataAsFloat("tonic_da");
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+
+  int snr_prjn_idx = 0;
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+
+  for(int gi=0; gi<lay->gp_geom.n; gi++) {
+    LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0, gi);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+    float snrthal_act = 0.0f;
+    if(!snr_u->lesioned())
+      snrthal_act = matrix.da_gain * snr_u->act_m2;
+
+    for(int i=0;i<nunits;i++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
+      if(u->lesioned()) continue;
+      if(go_nogo == NOGO) {
+	if(gpd->go_fired_trial)
+	  u->dav = 0.0f;	  // we don't learn on our own gating trial!
+	else
+	  u->dav *= matrix.da_gain; // not gated by snrthal act -- always happens!
+      }
+      else {
+	u->dav *= snrthal_act;
+      }
+    }
   }
 }
 
@@ -1028,373 +1282,134 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 1) {
     // end of plus -- compute da value used for learning
     Compute_LearnDaVal(lay, net);
-    Compute_TonicDa(lay, net);
   }
 }
-
-// this is called at end of plus phase, to establish a da value for driving learning
-// NOTE: mnt_count reflects count at time of gating -- not updated at Compute_Gate_Final
-
-void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
-  int n_rnd_go = 0;             // find out if anyone has a rnd go
-  int n_go = 0;
-  float nogo_da_sub = 0.0f;
-
-  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
-
-  if(rnd_go.on) {
-    // subtract the average -- this turns out to be important for preventing global
-    // drift in weights upward when lots of rnd go is going on (e.g., loop model)
-    for(int gi=0; gi<lay->gp_geom.n; gi++) {
-      PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-      if(mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
-      else if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_go++;
-    }
-    if(n_rnd_go > 0) {
-      nogo_da_sub = rnd_go.nogo_da / (float)(lay->gp_geom.n - n_rnd_go);
-      // how much to subtract from other units if one guy gets a random go
-    }
-  }
-
-  int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-  int gp_sz = nunits / 2;
-
-  for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-    int snr_prjn_idx = 0;
-    LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-
-    PBWMUnGpData* snrgpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(gi);
-    LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0, gi);
-
-    PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mgpd->gate_sig;
-    int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
-    bool nogo_rnd_go = (mgpd->gate_state == PFCGateSpec::NOGO_RND_GO);
-
-    float snrthal_act = snr_u->act_m2;
-    if(bg_type == OUTPUT) {
-      if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_MNT_GO))
-        snrthal_act = 0.0f;     // if no OUT_GO, nothing for us..
-    }
-    else {                      // MAINT
-      if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_OUT_GO))
-        snrthal_act = 0.0f;     // if no MNT_GO, nothing for us..
-    }
-
-    float ton_da = lay_ton_da + mgpd->tonic_da;
-
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
-      if(u->lesioned()) continue;
-      PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz);
-
-      // critical gating activation value is mid-minus state
-      float act_val = u->act_m2;
-      float lrn_dav = snrthal_act * u->dav; // dav is current plus phase
-
-      if(go_nogo_gain.on) {
-        if(lrn_dav > 0.0f) {
-          if(go_no == PFCGateSpec::GATE_GO)
-            lrn_dav *= go_nogo_gain.go_p;
-          else
-            lrn_dav *= go_nogo_gain.nogo_p;
-        }
-        else if(lrn_dav < 0.0f) {
-	  if(tonic_da.neg_lrn_da_gain > 0.0f) {
-	    float neg_gain = tonic_da.neg_lrn_da_gain * 
-	      ((tonic_da.max_da - ton_da) / tonic_da.max_da);
-	    neg_gain = MAX(0.0f, neg_gain);
-	    lrn_dav *= neg_gain;
-	  }
-
-          if(go_no == PFCGateSpec::GATE_GO)
-            lrn_dav *= go_nogo_gain.go_n;
-          else
-            lrn_dav *= go_nogo_gain.nogo_n;
-        }
-      }
-
-      if(nogo_rnd_go) {
-        lrn_dav += rnd_go.nogo_da; // output gating also gets this too
-      }
-      else {
-        lrn_dav -= nogo_da_sub; // subtract from others -- keep it normalized -- val is 0 if none
-      }
-
-      lrn_dav *= matrix.da_gain;
-
-      if(go_no == PFCGateSpec::GATE_NOGO)
-        lrn_dav *= -1.0f;       // flip the sign for nogo!
-
-      u->dav = lrn_dav;         // re-store back to da value, which is used in conspec lrule
-    }
-  }
-}
-
-
-void MatrixLayerSpec::Compute_NGo(LeabraLayer* lay, LeabraNetwork* net,
-				      int& n_mnt_go, int& n_out_go) {
-  n_mnt_go = 0;
-  n_out_go = 0;
-  for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-    if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_mnt_go++;
-    if(mgpd->gate_sig == PFCGateSpec::GATE_OUT_GO) n_out_go++;
-  }
-}
-
-void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
-  // stored layer-specific
-  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
-
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  bool did_err = false;
-  if(er_avail && (net->pvlv_dav < 0.0f)) {
-    did_err = true;
-  }
-  float neg_dav = -net->pvlv_dav; // use this dopamine value for incrementing tonic
-  
-  bool all_nogo = false;
-  int n_mnt_go = 0; int n_out_go = 0;
-  Compute_NGo(lay, net, n_mnt_go, n_out_go);
-  if(n_mnt_go + n_out_go == 0) { // all nogo
-    all_nogo = true;
-  }
-
-  bool did_inc = false;
-  if(bg_type == OUTPUT) {
-    if(did_err) {		// only cares about err trials
-      if(all_nogo) {
-	if(tonic_da.out_err_nogo_inc > 0.0f) {
-	  lay_ton_da += tonic_da.out_err_nogo_inc;
-	  did_inc = true;
-	}
-      }
-      else {
-	if(tonic_da.out_err_go_inc > 0.0f) {
-	  lay_ton_da += neg_dav * tonic_da.out_err_go_inc; // go modulated by actual da
-	  did_inc = true;
-	}
-      }
-    }
-    // stripe specific nogo threshold
-    if(tonic_da.nogo_thr_inc > 0.0f) {
-      for(int gi=0; gi<lay->gp_geom.n; gi++) {
-	PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-	if(mgpd->mnt_count > rnd_go.nogo_thr) { // mnt_count pos = over maintaining, clear
-	  mgpd->tonic_da += tonic_da.nogo_thr_inc;
-	  mgpd->tonic_da = MIN(mgpd->tonic_da, tonic_da.max_da);
-	}
-	else {
-	  mgpd->tonic_da = 0.0f;
-	}
-      }
-    }
-  }
-  else {			// MAINT
-    if(!er_avail && all_nogo && tonic_da.mnt_nogo_inc > 0.0f) {
-      lay_ton_da += tonic_da.mnt_nogo_inc;
-      did_inc = true;
-    }
-
-    // stripe specific nogo threshold
-    if(tonic_da.nogo_thr_inc > 0.0f) {
-      for(int gi=0; gi<lay->gp_geom.n; gi++) {
-	PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-	if(ABS(mgpd->mnt_count) > rnd_go.nogo_thr) { // mnt_count neg = not maintaining
-	  mgpd->tonic_da += tonic_da.nogo_thr_inc;
-	  mgpd->tonic_da = MIN(mgpd->tonic_da, tonic_da.max_da);
-	}
-	else {
-	  mgpd->tonic_da = 0.0f;
-	}
-      }
-    }
-  }
-
-  if(did_inc) {
-    lay_ton_da = MIN(tonic_da.max_da, lay_ton_da);
-  }
-  else {			// always decay if not increasing -- rapid dynamics..
-    lay_ton_da -= tonic_da.decay * lay_ton_da;
-    lay_ton_da = MAX(lay_ton_da, 0.0f);
-  }
-
-  lay->SetUserData("tonic_da", lay_ton_da); // store tonic da per layer
-}
-
-
-void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
-  for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-    if((mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) || mgpd->rnd_go_thr == 0) {
-      mgpd->gate_state = PFCGateSpec::INIT_STATE;
-      // new treshold for when to fire rnd go next!
-      mgpd->rnd_go_thr = rnd_go.nogo_thr + Random::IntZeroN(rnd_go.nogo_rng);
-    }
-  }
-}
-
-void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
-                                             Layer::AccessMode acc_md, int gpidx,
-                                             LeabraNetwork* net) {
-  if(rnd_go.nogo_noise == 0.0f) return;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-
-  int n_go_units = nunits / 2;
-  lay->unit_idxs.SetSize(n_go_units); // just do go guys
-  lay->unit_idxs.FillSeq();
-  lay->unit_idxs.Permute();
-
-  // Set k of the permuted "go" units to the noise value
-  int i;
-  for(i=0; i<mgpd->kwta.k; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
-    if(u->lesioned()) continue;
-    u->noise = rnd_go.nogo_noise;
-  }
-
-  // Set the remainder of the "go" units to have no noise.
-  for(; i<n_go_units; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
-    if(u->lesioned()) continue;
-    u->noise = 0.0f;
-  }
-
-  // now fill in all the nogo guys with no noise just to be sure..
-  for(; i<nunits; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx); // note: not unit_idxs[i] here!
-    if(u->lesioned()) continue;
-    u->noise = 0.0f;
-  }
-}
-
-void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(rnd_go.on && (net->phase_no == 0)) {
-    Compute_ClearRndGo(lay, net);
-  }
-
-  inherited::Compute_HardClamp(lay, net);
-}
-
-void MatrixLayerSpec::LabelUnits_impl(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  int gp_sz = nunits / 2;
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
-    if(go_no == PFCGateSpec::GATE_GO)
-      u->name = "Go";
-    else
-      u->name = "No";
-  }
-}
-
-void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
-  UNIT_GP_ITR(lay, LabelUnits_impl(lay, acc_md, gpidx); );
-}
-
 
 //////////////////////////////////
 //      PFC Layer Spec          //
 //////////////////////////////////
 
+void PFCsUnitSpec::Initialize() {
+  Defaults_init();
+}
+
+void PFCsUnitSpec::Defaults_init() {
+}
+
+void PFCsUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  Compute_LearnMod(u, net);	// don't call dwt norm itself -- done for units that actually learn
+}
+
+void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+
+  if(rlay->GetLayerSpec()->InheritsFrom(&TA_PFCDeepLayerSpec)) return;
+  // if we're the deep layer, then just bail
+
+  // first, find the deep pfc layer that we send to
+  PFCDeepLayerSpec* dls = NULL;
+  LeabraLayer* dl = NULL;
+  for(int i=0; i< rlay->send_prjns.size; i++) {
+    Projection* prj = rlay->send_prjns[i];
+    LeabraLayer* play = (LeabraLayer*)prj->layer;
+    if(!play->GetLayerSpec()->InheritsFrom(&TA_PFCDeepLayerSpec)) continue;
+    dls = (PFCDeepLayerSpec*)play->GetLayerSpec();
+    dl = play;
+    break;
+  }
+  if(TestWarning(!dls, "Compute_LearnMod", "PFC Deep layer spec not found, exiting"))
+    return;
+
+  // get my unit group index for accessing ungp data structures
+  int rgpidx;
+  int rui;
+  rlay->UnGpIdxFmUnitIdx(u->idx, rui, rgpidx);
+
+  PBWMUnGpData* dlgpd = (PBWMUnGpData*)dl->ungp_data.SafeEl(rgpidx);
+  if(TestWarning(!dlgpd, "Compute_LearnMod", "PFC Deep layer unit group out of range", 
+		 String(rgpidx)))
+    return;
+
+  bool learn_now = dlgpd->go_fired_trial || dlgpd->mnt_count > 0;
+
+  if(learn_now || !dls->gate.learn_deep_act) {
+    // just do norm and go on your way
+    inherited::Compute_dWt_Norm(u, net, thread_no);
+    return;
+  }
+
+  // no learning now: zero out the weight changes
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(!recv_gp->size) continue;
+
+    for(int i=0; i<recv_gp->size; i++) {
+      LeabraCon* cn = (LeabraCon*)recv_gp->PtrCn(i);
+      cn->dwt = 0.0f;
+    }
+  }
+}
+
 void PFCGateSpec::Initialize() {
-  graded_out_go = true;
-  clear_decay = 0.9f;
-  go_learn_base = 0.05f;
-  go_learn_mod = 1.0f - go_learn_base;
-  mid_minus_min = 10;
-  max_maint = 100;
-  off_accom = 0.0f;
-  out_go_clear = true;
-  mnt_toggle = true;
-  mnt_wins = false;
-  updt_gch = false;
+  learn_deep_act = true;
+  cycle_updt = true;
+  maint_decay = 0.1f;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  go_learn_mod = 1.0f - go_learn_base;
 }
 
-void PFCLayerSpec::Initialize() {
-  SetUnique("gp_kwta", true);
-  gp_kwta.k_from = KWTASpec::USE_PCT;
-  gp_kwta.pct = .15f;
-  SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
-  SetUnique("inhib", true);
+void PFCDeepLayerSpec::Initialize() {
+  pfc_type = MAINT;
+  gating_types = SNrThalLayerSpec::MNT_OUT;
+
+  Defaults_init();
+}
+
+void PFCDeepLayerSpec::Defaults_init() {
+  //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = .5f;
-  SetUnique("decay", true);
+
+  // SetUnique("inhib_group", true);
+  inhib_group = UNIT_GROUPS;
+  gp_kwta.pct = 0.15f;
+  gp_kwta.gp_i = true;
+  gp_kwta.gp_g = 1.0f;
+  gp_kwta.diff_act_pct = true;
+  gp_kwta.act_pct = 0.02f;
+
+  // SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
-  decay.phase2 = 0.1f;
+  decay.phase2 = 0.0f;
   decay.clamp_phase2 = false;   // this is the one exception!
 }
 
-void PFCLayerSpec::UpdateAfterEdit_impl() {
+void PFCDeepLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gate.UpdateAfterEdit_NoGui();
 }
 
-void PFCLayerSpec::HelpConfig() {
-  String help = "PFCLayerSpec Computation:\n\
- The PFC maintains activation over time (activation-based working memory) via\
- excitatory intracelluar ionic mechanisms (implemented via the hysteresis channels, gc.h),\
- and excitatory self-connections. These ion channels are toggled on and off via units in the\
- SNrThalLayerSpec layer, which are themsepves driven by MatrixLayerSpec units,\
- which are in turn trained up by dynamic dopamine changes computed by the PVLV system.\
- Updating occurs at the end of the 1st plus phase --- if a gating signal was activated, any previous ion\
- current is turned off, and the units are allowed to settle into a new state in the 2nd plus (update) --\
- then the ion channels are activated in proportion to activations at the end of this 2nd phase.\n\
- \nPFCLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
- - Units must recv MarkerConSpec from SNrThalLayerSpec layer for gating\n\
- - This layer must be after SNrThalLayerSpec layer in list of layers\n\
- - Units must be organized into groups corresponding to the matrix groups (stripes).";
+void PFCDeepLayerSpec::HelpConfig() {
+  String help = "PFCDeepLayerSpec Computation:\n\
+ The PFC deep layers are gated by thalamocortical prjns from SNrThal.\n\
+ They maintain activation over time (activation-based working memory) via \
+ excitatory intracelluar ionic mechanisms (implemented in hysteresis channels, gc.h),\
+ and excitatory connections with superficial pfc layers, which is toggled by SNrThal.\n\
+ Updating occurs by mid_minus_cycle, based on SNrThal act_m2 activations.\n\
+ \nPFCDeepLayerSpec Configuration:\n\
+ - Use the Wizard PBWM button to automatically configure layers.\n\
+ - First prjn must be from PFC superficial layer (can be any spec type)\n\
+ - Units must be organized into groups so that the sum of the number of all\
+   groups across all PFC deep layers must correspond to the number of matrix.\
+   groups (stripes).";
   taMisc::Confirm(help);
 }
 
-void PFCLayerSpec::GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt,
-                                      LeabraLayer*& snrthal_out) {
-  snrthal_mnt = NULL;
-  snrthal_out = NULL;
-  FOREACH_ELEM_IN_GROUP(Projection, p, lay->projections) {
-    if(p->con_spec.type->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
-      LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
-      if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
-        if(((SNrThalLayerSpec*)ls)->bg_type == SNrThalLayerSpec::OUTPUT)
-          snrthal_out = fmlay;
-        else
-          snrthal_mnt = fmlay;
-      }
-    }
-  }
-  if(snrthal_out) return;
-  // look for snrthal_out in pfc_out layer
-  FOREACH_ELEM_IN_GROUP(Projection, p, lay->send_prjns) {
-    if(p->con_spec.type->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* tolay = (LeabraLayer*)p->layer;
-      LeabraLayerSpec* ls = (LeabraLayerSpec*)tolay->spec.SPtr();
-      if(ls->InheritsFrom(&TA_PFCOutLayerSpec)) {
-        FOREACH_ELEM_IN_GROUP(Projection, p2, tolay->projections) {
-          LeabraLayer* fmlay = (LeabraLayer*)p2->from.ptr();
-          LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
-          if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
-            snrthal_out = fmlay;        // must be
-          }
-        }
-      }
-    }
-  }
-}
-
-bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
+bool PFCDeepLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
@@ -1402,12 +1417,14 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     SetUnique("decay", true);
     decay.event = 0.0f;
     decay.phase = 0.0f;
-    decay.phase2 = 0.1f;
+    decay.phase2 = 0.0f;
     decay.clamp_phase2 = false;
   }
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
+
+  net->dwt_norm_enabled = true; // required for learning modulation
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
                 "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
@@ -1426,18 +1443,8 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   }
 
   if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
-                "requires LeabraNetwork min_minus_cycle > 0, I just set it to 20 for you")) {
+                "requires LeabraNetwork min_minus_cycle > 5, I just set it to 25 for you")) {
     net->mid_minus_cycle = 25;
-  }
-
-  if(lay->CheckError(net->min_cycles < net->mid_minus_cycle + 10, quiet, rval,
-                "requires LeabraNetwork min_cycles >= mid_minus_cycle + 10, I just set it for you")) {
-    net->min_cycles = net->mid_minus_cycle + 10;
-  }
-
-  if(lay->CheckError(gate.mid_minus_min >= net->mid_minus_cycle -1, quiet, rval,
-                     "requires gate.mid_minus_min << mid_minus_cycle, I just set it to -10 for you")) {
-    gate.mid_minus_min = net->mid_minus_cycle - 10;
   }
 
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
@@ -1461,55 +1468,65 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     us->acc.init = false;
   }
 
-  LeabraLayer* snrthal_mnt = NULL;
-  LeabraLayer* snrthal_out = NULL;
-  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
 
-  if(lay->CheckError(!snrthal_mnt, quiet, rval,
-                "no projection from SNrThal MAINT Layer found: must exist with MarkerConSpec connection")) {
+  if(lay->CheckError(!snr_lay, quiet, rval,
+                "no projection from SNrThal Layer found: must exist with MarkerConSpec connection")) {
     return false;
   }
-  if(lay->CheckError(snrthal_mnt->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                "Gating Layer unit groups must = PFCLayer unit groups!")) {
-    snrthal_mnt->unit_groups = true;
-    snrthal_mnt->gp_geom.n = lay->gp_geom.n;
+
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  gating_types = snrls->gating_types; // we copy from snrthal
+
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  Compute_SNrThalStartIdx(lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
+  int n_tot = n_in + n_mnt + n_out;
+  if(lay->CheckError(n_tot != snr_lay->gp_geom.n, quiet, rval,
+		     "SNrThal layer unit groups must = total number of PFCLayer unit groups -- not fixing because matrix must also be adjusted!  total_n:", String(n_tot))) {
   }
-  if(snrthal_out) {
-    if(lay->CheckError(snrthal_out->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                       "Gating Layer unit groups must = PFCLayer unit groups!")) {
-      snrthal_out->unit_groups = true;
-      snrthal_out->gp_geom.n = lay->gp_geom.n;
-    }
+
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  if(lay->CheckError(u->recv.size < 2, quiet, rval,
+                "Must receive at least 2 projections (0 = from superficial pfc, other from SNrThal")) {
+    return false;
+  }
+  if(lay->CheckError(u->recv.size < 2, quiet, rval,
+                "Must receive at least 2 projections (0 = from superficial pfc, other from SNrThal")) {
+    return false;
+  }
+  LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+  if(lay->CheckError(recv_gp->size == 0, quiet, rval,
+                "first projection from superficial pfc does not have a connection")) {
+    return false;
+  }
+  if(lay->CheckError(recv_gp->size > 1, quiet, rval,
+                "warning: first projection from superficial pfc has more than 1 connection -- should just be a single one-to-one projection from superficial to deep!")) {
   }
 
   return true;
 }
 
-void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCDeepLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  LeabraLayer* snr_lay = Compute_SNrThalStartIdx(lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
   for(int g=0; g < lay->gp_geom.n; g++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
-    gpd->gate_state = PFCGateSpec::INIT_STATE;
-    gpd->gate_sig = PFCGateSpec::GATE_NOGO;
-    gpd->cur_go_act = gate.go_learn_base;
-    gpd->out_go_act = 0.0f;
+    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
+    gpd->CopyPBWMData(*snr_gpd);
   }
-  // this makes sure that mnt_count is sent to all layers at the start of trial
-  // so that biases are based on maintenance status at end of last trial!
-  SendGateStates(lay, net);
 }
 
-void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCDeepLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Trial_Init_Layer(lay, net);
   Compute_TrialInitGates(lay, net);
 }
 
-void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // do NOT do this -- doing this per stripe anyway
-//   inherited::Compute_MidMinus(lay, net);
-  Compute_Gating_MidMinus(lay, net);
+void PFCDeepLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // do NOT do this -- triggered by the snrthal gating signal
 }
 
-void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
+void PFCDeepLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -1520,11 +1537,11 @@ void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   }
 }
 
-void PFCLayerSpec::Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no) {
+void PFCDeepLayerSpec::Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no) {
   Compute_MaintUpdt(lay, net, CLEAR, stripe_no);
 }
 
-void PFCLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
+void PFCDeepLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
 				     MaintUpdtAct updt_act, int stripe_no) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   if(stripe_no < 0) {
@@ -1537,421 +1554,203 @@ void PFCLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
   }
 }
 
+LeabraLayer* PFCDeepLayerSpec::Compute_SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
+						       int& n_types, int& n_in, int& n_mnt, int& n_out) {
+  snr_st_idx = 0;
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  if(!snr_lay) return NULL;
+  SNrThalLayerSpec::GatingTypesNStripes(gating_types, snr_lay->gp_geom.n, n_types, n_in, n_mnt, n_out);
+  switch(pfc_type) {
+  case INPUT:
+    snr_st_idx = 0;
+    break;
+  case MAINT:
+    snr_st_idx = n_in;
+    break;
+  case OUTPUT:
+    snr_st_idx = n_in + n_mnt;
+    break;
+  }
+  return snr_lay;
+}
 
-void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+void PFCDeepLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
                                          MaintUpdtAct updt_act, LeabraNetwork* net) {
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  LeabraLayer* snr_lay = Compute_SNrThalStartIdx(lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
+  PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
+  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   int nunits = lay->UnitAccess_NUnits(acc_md);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int j=0;j<nunits;j++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
     if(u->lesioned()) continue;
     if(updt_act == STORE) {
-      u->vcb.g_h = u->maint_h = u->act_eq; // note: store current act value
-      if(gate.off_accom > 0.0f)
-        u->vcb.g_a = 0.0f;
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+      LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
+      u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
+      gpd->mnt_count = 0;
+      snr_gpd->mnt_count = 0;	// should already be but just in case
     }
     else if(updt_act == CLEAR) {
-      if(gate.off_accom > 0.0f)
-        u->vcb.g_a = gate.off_accom * u->vcb.g_h;
       u->vcb.g_h = u->maint_h = 0.0f;
-      if(gate.clear_decay > 0.0f) {
-        float decay = gate.clear_decay;
-        // don't use DecayState -- only for between phases
-        // just focus on key vars that will affect hystersis and upcoming act computation
-        u->v_m -= decay * (u->v_m - us->v_m_init.mean);
-        u->net -= decay * u->net;
-      }
+      gpd->mnt_count = -1;	// indication of empty
+      snr_gpd->mnt_count = -1;
     }
-    else if(updt_act == UPDT) {
-      if(u->maint_h >= us->opt_thresh.send) { // still above threshold -- update
-        u->vcb.g_h = u->maint_h = u->act_eq;
-      }
-      else {
-        u->vcb.g_h = u->maint_h = 0.0f; // clear!
-      }
+    else if(updt_act == DECAY) {
+      u->maint_h -= u->maint_h * gate.maint_decay;
+      if(u->maint_h < 0.0f) u->maint_h = 0.0f;
+      u->vcb.g_h = u->maint_h;
     }
     us->Compute_Conduct(u, net); // update displayed conductances!
   }
 }
 
-void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayer* snrthal_mnt = NULL;
-  LeabraLayer* snrthal_out = NULL;
-  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
-  SNrThalLayerSpec* snrthalsp_mnt = (SNrThalLayerSpec*)snrthal_mnt->spec.SPtr();
-  float go_thr_mnt = snrthalsp_mnt->snrthal.go_thr;
-  float go_thr_out = go_thr_mnt;
-  SNrThalLayerSpec* snrthalsp_out = NULL;
-  if(snrthal_out) {
-    snrthalsp_out = (SNrThalLayerSpec*)snrthal_out->spec.SPtr();
-    go_thr_out = snrthalsp_out->snrthal.go_thr;
+void PFCDeepLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					    int gpidx, LeabraNetwork* net) {
+  // activity is always just a literal copy of the maint_h
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int j=0;j<nunits;j++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    if(u->lesioned()) continue;
+    u->act = u->act_eq = u->act_nd = u->maint_h;
+    u->da = 0.0f;
   }
+}
+
+void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
 
-  // this is the continuous mid minus version -- when gating actually happens
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  LeabraLayer* snr_lay = Compute_SNrThalStartIdx(lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+
+  int max_go_cycle = net->mid_minus_cycle - snrls->snrthal.go_b4_mid;
 
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)snrthal_mnt->ungp_data.FastEl(mg);
-    LeabraUnit* snr_mnt_u = (LeabraUnit*)snrthal_mnt->UnitAccess(acc_md, 0, mg);
-    LeabraUnit* snr_out_u = NULL;
-    if(snrthal_out) {
-      snr_out_u = (LeabraUnit*)snrthal_out->UnitAccess(acc_md, 0, mg);
+    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + mg);
+    gpd->CopyPBWMData(*snr_gpd);		// always grab from snr, which is the source
+
+    if(gate.cycle_updt) {
+      if(gpd->go_fired_trial) {
+	if(net->phase_no <= 1) { // only for first 2 phases
+	  Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
+	}
+      }
+      else {
+	if(net->ct_cycle == max_go_cycle+1) { // end of the line -- add 1 just to be safe
+	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+	  // always decay if not getting go
+	  Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+	}
+      }
+    }
+    else {
+      if(gpd->go_fired_now) {
+	Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
+      }
+      else {
+	if(net->ct_cycle == max_go_cycle+1) { // end of the line -- add 1 just to be safe
+	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+	  // always decay if not getting go
+	  Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+	}
+      }
     }
 
-    int pfc_mnt_cnt = gpd->mnt_count; // is pfc maintaining or not?
-    bool out_gate_fired = (gpd->gate_sig == PFCGateSpec::GATE_OUT_GO);
-    bool mnt_gate_fired = (gpd->gate_sig == PFCGateSpec::GATE_MNT_GO);
-    bool gate_fired = mnt_gate_fired || out_gate_fired;
-
-    // maintenance gating signal -- can only happen if hasn't happened yet and mutex with out
-    bool allow_mnt_gate = !gate_fired;
-    if(gate.mnt_wins)
-      allow_mnt_gate = !mnt_gate_fired; // only depends on maint, not out!
-
-    if(allow_mnt_gate && (snr_mnt_u->act_eq > go_thr_mnt)) {
-      // compute out_gate multiplier in out_go_act -- maint gating causes output gating too!
-      gpd->out_go_act = 1.0f; // out gate multiplier
-      if(gate.graded_out_go)
-        gpd->out_go_act = snr_mnt_u->act_eq; // out gate multiplier
-
-      Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
-      snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, acc_md, mg, net);
-      // snrthal and associated matrix layer grab act_m2 vals based on current state!
-
-      if(pfc_mnt_cnt > 0 && gate.mnt_toggle) // full stripe
-        Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);      // clear maint currents if full -- toggle off
-
-      // update state info
-      gpd->gate_sig = PFCGateSpec::GATE_MNT_GO;
-      if(pfc_mnt_cnt > 0) // full stripe
-        gpd->gate_state = PFCGateSpec::MAINT_MNT_GO;
-      else
-        gpd->gate_state = PFCGateSpec::EMPTY_MNT_GO;
-
-      // cur_go_act has the go_learn_base factor incorporated
-      float lrn_go_act = snr_mnt_u->act_eq;
-      gpd->cur_go_act = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
-      SendGateStates(lay, net); // update snrthal for turning act_eq guys off
-    }
-
-    // output gating signal -- can only happen if hasn't happened yet, and mutex with mnt gating
-    if(!gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out)) {
-      // compute out_gate multiplier in out_go_act
-      gpd->out_go_act = 1.0f; // out gate multiplier
-      if(gate.graded_out_go)
-        gpd->out_go_act = snr_out_u->act_eq; // out gate multiplier
-
-      Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
-      snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, acc_md, mg, net);
-      // snrthal and associated matrix layer grab act_m2 vals based on current state!
-
-      // update state info
-      gpd->gate_sig = PFCGateSpec::GATE_OUT_GO;
-      if(pfc_mnt_cnt > 0) // full stripe
-        gpd->gate_state = PFCGateSpec::MAINT_OUT_GO;
-      else
-        gpd->gate_state = PFCGateSpec::EMPTY_OUT_GO;
-
-      // cur_go_act has the go_learn_base factor incorporated
-      float lrn_go_act = snr_out_u->act_eq;
-      gpd->cur_go_act = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
-      SendGateStates(lay, net); // update snrthal for turning act_eq guys off
-    }
+    Compute_MaintAct_ugp(lay, acc_md, mg, net);
   }
 }
 
-
-void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayer* snrthal_mnt = NULL;
-  LeabraLayer* snrthal_out = NULL;
-  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
-  SNrThalLayerSpec* snrthalsp_mnt = (SNrThalLayerSpec*)snrthal_mnt->spec.SPtr();
-  SNrThalLayerSpec* snrthalsp_out = NULL;
-  if(snrthal_out) {
-    snrthalsp_out = (SNrThalLayerSpec*)snrthal_out->spec.SPtr();
-  }
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-
-  // cleanup gating signals at end of mid minus -- just nogo!
-
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    LeabraUnit* snr_mnt_u = (LeabraUnit*)snrthal_mnt->UnitAccess(acc_md, 0, mg);
-    LeabraUnit* snr_out_u = NULL;
-    if(snrthal_out) {
-      snr_out_u = (LeabraUnit*)snrthal_out->UnitAccess(acc_md, 0, mg);
-    }
-
-    int pfc_mnt_cnt = gpd->mnt_count; // is pfc maintaining or not?
-
-    if(gpd->gate_sig == PFCGateSpec::GATE_NOGO) {
-      // default NOGO results
-      if(pfc_mnt_cnt > 0) // full stripe
-        gpd->gate_state = PFCGateSpec::MAINT_NOGO;
-      else
-        gpd->gate_state = PFCGateSpec::EMPTY_NOGO;
-      Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
-      if(snrthal_out)
-        snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, acc_md, mg, net);
-      snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, acc_md, mg, net);
-
-      // cur_go_act has the go_learn_base factor incorporated
-      gpd->cur_go_act = gate.go_learn_base;
-    }
-  }
-
-  // now have full set of info -- send it along -- provides an update
-  SendGateStates(lay, net);
+void PFCDeepLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_Gating(lay, net);   // continuously during mid minus phase
+  inherited::Compute_CycleStats(lay, net);
 }
 
-void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCDeepLayerSpec::Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net) {
+  if(pfc_type == MAINT) return;	// no clear
+
   Layer::AccessMode acc_md = Layer::ACC_GP;
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-
-    // mnt_count == maintenance/empty counter (maintenance = + numbers, empty = - numbers)
-    // basically just update the mnt_count counter and implement any
-    // delayed STORE or CLEAR actions
-
-    // for NOGO, just update the mnt_count counter
-    if(gpd->gate_state == PFCGateSpec::EMPTY_NOGO) {
-      gpd->mnt_count--; // stay empty
-    }
-    else if(gpd->gate_state == PFCGateSpec::MAINT_NOGO) {
-      if(gate.max_maint > 0) {                       // if max_maint = 0 then never store
-        gpd->mnt_count++;       // continue maintaining
-        if(gpd->mnt_count > gate.max_maint) {
-          Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);     // clear it!
-          gpd->mnt_count = 0;                        // empty
-        }
-        else if(gate.updt_gch) {
-          Compute_MaintUpdt_ugp(lay, acc_md, mg, UPDT, net);     // update it!
-        }
-      }
-      else {
-        gpd->mnt_count--;                            // nogo longer
-      }
-    }
-    // look for store condition
-    else if(gpd->gate_state == PFCGateSpec::MAINT_MNT_GO ||
-            gpd->gate_state == PFCGateSpec::EMPTY_MNT_GO) {
-      if(gate.max_maint > 0) {                       // if max_maint = 0 then never store
-        Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);     // store it (never stored before)
-        gpd->mnt_count = 1;     // always reset on new store
-      }
-      else {
-        gpd->mnt_count = 0;     // this go resets counter
-      }
-    }
-    // or basic output gate with no veto from maint
-    else if(gpd->gate_state == PFCGateSpec::MAINT_OUT_GO) {
-      if(gate.out_go_clear) { // only clear on true output trials
-        Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);     // clear it!
-        gpd->mnt_count = 0;                          // empty
-      }
-      else {
-        gpd->mnt_count++;       // continue maintaining
-      }
-    }
-    else if(gpd->gate_state == PFCGateSpec::EMPTY_OUT_GO) {
-      gpd->mnt_count--; // no real issue here..
-    }
-  }
-  // NOTE: Do NOT send final gate states -- this would corrupt the LearnDaVal
-  // need to reflect status at time of gating computation (mid minus)
-  // SendGateStates(lay, net);
-}
-
-void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayer* snrthal_mnt = NULL;
-  LeabraLayer* snrthal_out = NULL;
-  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
-  ((SNrThalLayerSpec*)snrthal_mnt->spec.SPtr())->SendGateStates(snrthal_mnt, net, lay);
-  if(snrthal_out) {
-    ((SNrThalLayerSpec*)snrthal_out->spec.SPtr())->SendGateStates(snrthal_out, net, lay);
+    Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
   }
 }
 
-void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCDeepLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
-
   if(net->phase_no == 1) {
-    Compute_Gating_Final(lay, net);     // final gating
+    Compute_ClearNonMnt(lay, net);     // final gating
   }
 }
-
-void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->ct_cycle >= gate.mid_minus_min && net->ct_cycle <= net->mid_minus_cycle) {
-    Compute_Gating(lay, net);   // continuously during mid minus phase
-  }
-  if(net->phase == LeabraNetwork::PLUS_PHASE)
-    Compute_PfcMntAct(lay, net);
-  inherited::Compute_CycleStats(lay, net);
-}
-
-void PFCLayerSpec::Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net) {
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int mg=0; mg < lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-
-    float lrn_mod_val = gpd->cur_go_act; // learning modulation value as function of gating
-
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-      if(ru->lesioned()) continue;
-      // only stray so far away from act_m  -- depending on gating strength
-      ru->act_nd = ru->act_m + lrn_mod_val * (ru->act_nd - ru->act_m);
-    }
-  }
-}
-
-
-
-//////////////////////////////////
-//      PFCOut Layer Spec       //
-//////////////////////////////////
-
-void PFCOutLayerSpec::Initialize() {
-  // this guy should always inherit from PFCLayerSpec
-//   SetUnique("gp_kwta", true);
-  gp_kwta.k_from = KWTASpec::USE_PCT;
-  gp_kwta.pct = .15f;
-//   SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
-//   SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .5f;
-//   SetUnique("decay", true);
-  decay.event = 0.0f;
-  decay.phase = 0.0f;
-  decay.phase2 = 0.1f;
-  decay.clamp_phase2 = false;   // this is the one exception!
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
-}
-
-void PFCOutLayerSpec::HelpConfig() {
-  String help = "PFCOutLayerSpec Computation:\n\
- The PFCOut layer gets activations from corresponding PFC layer (via MarkerCon)\
- and sets unit activations as a function of the Go gating signals received from\
- associated SNrThal layer\n\
- \nPFCOutLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure PFC and BG layers.\n\
- - Units must recv MarkerConSpec from SNrThalLayerSpec layer for gating\n\
- - Units must recv MarkerConSpec from PFCLayerSpec layer for activations\n\
- - This layer must be after SNrThalLayerSpec layer in list of layers\n\
- - This layer must be after PFCLayerSpec layer in list of layers\n\
- - Units must be organized into groups corresponding to the matrix groups (stripes).";
-  taMisc::Confirm(help);
-}
-
-bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-  LeabraLayer* lay = (LeabraLayer*)ly;
-  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  if(decay.clamp_phase2) {
-    SetUnique("decay", true);
-    decay.event = 0.0f;
-    decay.phase = 0.0f;
-    decay.phase2 = 0.1f;
-    decay.clamp_phase2 = false;
-  }
-
-  bool rval = true;
-
-  if(lay->CheckError(!lay->unit_groups, quiet, rval,
-                "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
-    lay->unit_groups = true;
-    return false;
-  }
-
-  int pfc_prjn_idx;
-  LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
-  if(lay->CheckError(!pfc_lay, quiet, rval,
-                "no projection from PFC Layer found: must have MarkerConSpec!")) {
-    return false;
-  }
-  if(lay->CheckError(pfc_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                "PFC Layer unit groups must = PFCOutLayer unit groups, copiped from PFC Layer; Please do a Build of network")) {
-    lay->unit_groups = true;
-    lay->gp_geom.n = pfc_lay->gp_geom.n;
-  }
-  if(lay->CheckError(pfc_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                "PFC Layer units must = PFCOutLayer units, copied from PFC Layer; Please do a Build of network")) {
-    lay->un_geom = pfc_lay->un_geom;
-  }
-
-  return true;
-}
-
-void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
-  int pfc_prjn_idx;
-  LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
-  PFCLayerSpec* pfcspec = (PFCLayerSpec*)pfc_lay->spec.SPtr();
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
-
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    PBWMUnGpData* pfcgpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(mg);
-
-    gpd->mnt_count = pfcgpd->mnt_count;
-    gpd->gate_state = pfcgpd->gate_state;
-    gpd->gate_sig =   pfcgpd->gate_sig;
-    gpd->cur_go_act = pfcgpd->cur_go_act;
-    gpd->out_go_act = pfcgpd->out_go_act;
-
-    float gate_val = gpd->out_go_act; // goes live whenver it goes live..
-
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-      if(ru->lesioned()) continue;
-      LeabraUnit* pfcu = (LeabraUnit*)pfc_lay->UnitAccess(acc_md, i, mg);
-      if(pfcu->lesioned()) continue;
-
-      // with mutex of mnt and out gating, can always just use current value!
-      ru->act = gate_val * pfcu->act_eq;
-      ru->act_eq = ru->act_nd = ru->act;
-      ru->da = 0.0f;            // I'm fully settled!
-      ru->AddToActBuf(rus->syn_delay);
-    }
-  }
-}
-
-void PFCOutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_PfcOutAct(lay, net);
-  inherited::Compute_CycleStats(lay, net);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////
-//              PFCLVPrjnSpec           //
+//          GpCustomPrjnSpecBase        //
 //////////////////////////////////////////
 
-void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
-                                Layer::AccessMode sacc_md, int sgpidx) {
+void GpCustomPrjnSpecBase::AllocGp_Recv(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
+			       Layer::AccessMode sacc_md, int n_send) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
   int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md);
-  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md) * n_send;
 
   // pre-allocate connections!
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
     ru->RecvConsPreAlloc(su_nunits, prjn);
   }
+}
+
+void GpCustomPrjnSpecBase::AllocGp_Send(Projection* prjn, Layer::AccessMode sacc_md, int sgpidx,
+			       Layer::AccessMode racc_md, int n_recv) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md) * n_recv;
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
+
+  // pre-allocate connections!
   for(int sui=0; sui < su_nunits; sui++) {
     Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
     su->SendConsPreAlloc(ru_nunits, prjn);
+  }
+}
+
+void GpCustomPrjnSpecBase::Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
+			     Layer::AccessMode sacc_md, int sgpidx,
+			     int extra_rgp_alloc, int extra_sgp_alloc) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md);
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
+  int alloc_ru = ru_nunits;
+  if(extra_rgp_alloc > 0) {
+    alloc_ru *= extra_rgp_alloc;
+  }
+  int alloc_su = su_nunits;
+  if(extra_sgp_alloc > 0) {
+    alloc_su *= extra_sgp_alloc;
+  }
+
+  // pre-allocate connections!
+  if(extra_sgp_alloc >= 0) {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+      ru->RecvConsPreAlloc(alloc_su, prjn);
+    }
+  }
+  if(extra_rgp_alloc >= 0) {
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+      su->SendConsPreAlloc(alloc_ru, prjn);
+    }
   }
 
   for(int rui=0; rui < ru_nunits; rui++) {
@@ -1963,6 +1762,10 @@ void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int 
     }
   }
 }
+
+//////////////////////////////////////////
+//              PFCLVPrjnSpec           //
+//////////////////////////////////////////
 
 void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
@@ -2026,119 +1829,1337 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 
-/////////////////////////////
-//        MatrixRnd        //
-/////////////////////////////
+//////////////////////////////////////////
+//           SNrToPFCPrjnSpec           //
+//////////////////////////////////////////
 
-void MatrixRndPrjnSpec::Initialize() {
-  p_con = .5f;
-  same_seed = true;
-  rndm_seed.GetCurrent();
-  send_idx_ars.SetBaseType(&TA_int_Array);
-}
-
-void MatrixRndPrjnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(p_con > 1.0f) p_con = 1.0f;
-  if(p_con < 0.0f) p_con = 0.0f;
-}
-
-void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
+void SNrToPFCPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
-  if(same_seed)
-    rndm_seed.OldSeed();
 
-  Layer* recv_lay = (Layer*)prjn->layer;
-  Layer* send_lay = (Layer*)prjn->from.ptr();
+  LeabraLayer* pfc_lay = (LeabraLayer*)prjn->layer;
+  LeabraLayer* snr_lay = (LeabraLayer*)prjn->from.ptr();
 
-  if(TestWarning(!recv_lay->unit_groups, "Connect_impl",
-                 "requires recv layer to have unit groups!")) {
+  PFCDeepLayerSpec* pfc_dls = (PFCDeepLayerSpec*)pfc_lay->GetLayerSpec();
+  if(TestError(!pfc_dls || !pfc_dls->InheritsFrom(&TA_PFCDeepLayerSpec),
+	       "Connect_impl", "snr sending projection using SNrToPFCPrjnSpec is not connecting to a PFCDeepLayerSpec.  recv layer:", pfc_lay->name))
     return;
-  }
 
-  int n_rgps = recv_lay->gp_geom.n;
-  int ru_nunits = recv_lay->un_geom.n;
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  pfc_dls->Compute_SNrThalStartIdx(pfc_lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
 
-  int n_sends = send_lay->units.leaves;
-  bool init_idxs = false;
-  if(send_idx_ars.size != n_rgps) {
-    init_idxs = true;
-    send_idx_ars.SetSize(n_rgps);
+  for(int i=0; i<pfc_lay->gp_geom.n; i++) {
+    Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, snr_st_idx + i);
   }
-  int_Array* ari = (int_Array*)send_idx_ars[0];
-  if(ari->size != n_sends)
-    init_idxs = true;
-  if(init_idxs) {
-    for(int i=0;i<n_rgps;i++) {
-      int_Array* ari = (int_Array*)send_idx_ars[i];
-      ari->SetSize(n_sends);
-      ari->FillSeq();
-      ari->Permute();
+}
+
+
+//////////////////////////////////////////
+//           PFCdToNoGoPrjnSpec         //
+//////////////////////////////////////////
+
+void PFCdToNoGoPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from) return;
+
+  LeabraLayer* nogo_lay = (LeabraLayer*)prjn->layer;
+  LeabraLayer* pfc_lay = (LeabraLayer*)prjn->from.ptr();
+
+  PFCDeepLayerSpec* pfc_dls = (PFCDeepLayerSpec*)pfc_lay->GetLayerSpec();
+  if(TestError(!pfc_dls || !pfc_dls->InheritsFrom(&TA_PFCDeepLayerSpec),
+	       "Connect_impl", "Matrix NoGo projection from PFC deep using PFCdToNoGoPrjnSpec is not connecting from a PFCDeepLayerSpec.  recv layer:", pfc_lay->name))
+    return;
+
+  int snr_st_idx, n_types, n_in, n_mnt, n_out;
+  pfc_dls->Compute_SNrThalStartIdx(pfc_lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
+
+  for(int i=0; i<pfc_lay->gp_geom.n; i++) {
+    Connect_Gp(prjn, Layer::ACC_GP, snr_st_idx + i, Layer::ACC_GP, i);
+  }
+}
+
+
+//////////////////////////////////////////
+//           PVrToMatrixGoPrjnSpec      //
+//////////////////////////////////////////
+
+void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from) return;
+
+  LeabraLayer* mtx_lay = (LeabraLayer*)prjn->layer;
+  LeabraLayer* pvr_lay = (LeabraLayer*)prjn->from.ptr();
+
+  MatrixLayerSpec* mtx_ls = (MatrixLayerSpec*)mtx_lay->GetLayerSpec();
+  if(TestError(!mtx_ls || !mtx_ls->InheritsFrom(&TA_MatrixLayerSpec),
+	       "Connect_impl", "recv layer is not a MatrixLayerSpec.  recv layer:", mtx_lay->name))
+    return;
+  if(TestError(pvr_lay->units.size < 4,
+	       "Connect_impl", "PVr layer doesn't have at least 4 units:", pvr_lay->name))
+    return;
+
+  int n_types, n_in, n_mnt, n_out;
+  SNrThalLayerSpec::GatingTypesNStripes(mtx_ls->gating_types, mtx_lay->gp_geom.n, n_types, n_in, n_mnt, n_out);
+
+  int n_per_gp = mtx_lay->un_geom.n;
+  Layer::AccessMode racc_md = Layer::ACC_GP;
+
+  if(mtx_ls->gating_types & SNrThalLayerSpec::INPUT) {
+    Unit* pvr_su = pvr_lay->units.SafeEl(2); // .5 middle value unit
+    pvr_su->SendConsPreAlloc(n_per_gp * n_in, prjn);
+
+    for(int rgi=0; rgi < n_in; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->RecvConsPreAlloc(1, prjn);
+      }
+    }
+
+    for(int rgi=0; rgi < n_in; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->ConnectFrom(pvr_su, prjn);
+      }
     }
   }
 
-  int recv_no = (int)((p_con * ((float)n_sends)) + .5f);
-  if(recv_no <= 0) recv_no = 1;
+  if(mtx_ls->gating_types & SNrThalLayerSpec::MAINT) {
+    Unit* pvr_su = pvr_lay->units.SafeEl(2); // .5 middle value unit
+    pvr_su->SendConsPreAlloc(n_per_gp * n_mnt, prjn);
 
-  // sending number is even distribution across senders plus some imbalance factor
-  float send_no_flt = (float)(recv_lay->units.leaves * recv_no) / (float)n_sends;
-  // add SEM as corrective factor
-  float send_sem = send_no_flt / sqrtf(n_rgps); // n is n_rgps -- much noisier
-  int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-  if(send_no > recv_lay->units.leaves) send_no = recv_lay->units.leaves;
+    for(int rgi=n_in; rgi < n_in + n_mnt; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->RecvConsPreAlloc(1, prjn);
+      }
+    }
 
-  // pre-allocate connections!
-  recv_lay->RecvConsPreAlloc(recv_no, prjn);
-  send_lay->SendConsPreAlloc(send_no, prjn);
+    for(int rgi=n_in; rgi < n_in + n_mnt; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->ConnectFrom(pvr_su, prjn);
+      }
+    }
+  }
 
-  for(int gpi=0; gpi<n_rgps; gpi++) {
-    int_Array* ari = (int_Array*)send_idx_ars[gpi];
-    for(int rui=0; rui < ru_nunits; rui++) {
-      Unit* ru = recv_lay->UnitAtUnGpIdx(rui, gpi);
-      for(int sui=0; sui<recv_no; sui++) {
-        Unit* su = send_lay->units.Leaf(ari->FastEl(sui));
-        ru->ConnectFrom(su, prjn, false, false);
-        // final false change to true = ignore errs -- to be expected
+  if(mtx_ls->gating_types & SNrThalLayerSpec::OUTPUT) {
+    Unit* pvr_su = pvr_lay->units.SafeEl(3); // 1 right value unit
+    pvr_su->SendConsPreAlloc(n_per_gp * n_out, prjn);
+
+    for(int rgi=n_in + n_out; rgi < n_in + n_mnt + n_out; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->RecvConsPreAlloc(1, prjn);
+      }
+    }
+
+    for(int rgi=n_in + n_out; rgi < n_in + n_mnt + n_out; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+	Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+	ru->ConnectFrom(pvr_su, prjn);
       }
     }
   }
 }
 
-void MatrixGradRFPrjnSpec::Initialize() {
-  invert_nogo = false;
-  nogo_offset = 0.0f;
-  wt_range.min = 0.0f;
-  wt_range.max = 0.1f;
+
+
+/////////////////////////////////////
+//        TopoWtsPrjnSpec      //
+/////////////////////////////////////
+
+void TopoWtsPrjnSpec::Initialize() {
+  wt_range.min = 0.1f;
+  wt_range.max = 0.5f;
   wt_range.UpdateAfterEdit_NoGui();
+  invert = false;
+  grad_x = true;
+  grad_x_grad_y = false;
+  grad_y = true;
+  grad_y_grad_x = false;
+  wrap = true;
+  grad_type = LINEAR;
+  use_send_gps = false;
+  use_recv_gps = false;
+  custom_send_range = false;
+  custom_recv_range = false;
+  send_range_start = 0;
+  send_range_end = -1;
+  recv_range_start = 0;
+  recv_range_end = -1;
+  gauss_sig = 0.3f;
   Defaults_init();
 }
 
-void MatrixGradRFPrjnSpec::Defaults_init() {
-  use_gps = true;
+void TopoWtsPrjnSpec::Defaults_init() {
+  init_wts = true;
+  add_rnd_wts = true;
+  add_rnd_wts_scale = 1.0f;
 }
 
-void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
-                                       int cg_idx) {
-  int ru_idx = ru->GetIndex();
+void TopoWtsPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from) return;
+
+  int recv_no = prjn->from->units.leaves;
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
+    recv_no--;
+
+  int send_no = prjn->layer->units.leaves;
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
+    send_no--;
+
+  // pre-allocate connections!
+  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+  prjn->from->SendConsPreAlloc(send_no, prjn);
+
+  if(!use_recv_gps) { // recv NO -- not using recv_gps
+    for(int y = 0; y < prjn->layer->flat_geom.y; y++) {
+      for(int x = 0; x < prjn->layer->flat_geom.x; x++) {
+	Unit* ru = prjn->layer->UnitAtCoord(x,y);
+	//ru->ConnectFrom(su, prjn);
+	if(!use_send_gps) { // send NO -- not using send_gps
+	  for(int y = 0; y < prjn->from->flat_geom.y; y++) {
+	    for(int x = 0; x < prjn->from->flat_geom.x; x++) {
+	      Unit* su = prjn->from->UnitAtCoord(x,y);
+	      ru->ConnectFrom(su, prjn);
+	    }
+	  }
+	}
+	else { // send YES -- using send_gps
+	  FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+	    if(self_con || (ru != su))
+	      ru->ConnectFrom(su, prjn);
+	  }
+	}
+      }
+    }
+  }
+  else { // recv YES -- using recv_gps
+    FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
+      //bool ignore_unit_gps = false;
+      //prjn->from.ptr()->unit_groups
+      //if(!use_send_gps && prjn->from.ptr()->unit_groups)
+      //ignore_unit_gps = true;
+      //if(ignore_unit_gps) {
+      if(!use_send_gps) { // send NO -- not using send_gps
+	for(int y = 0; y < prjn->from->flat_geom.y; y++) {
+	  for(int x = 0; x < prjn->from->flat_geom.x; x++) {
+	    Unit* su = prjn->from->UnitAtCoord(x,y);
+	    ru->ConnectFrom(su, prjn);
+	  }
+	}
+      }
+      else { // send YES -- using send gps
+	FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+	  if(self_con || (ru != su))
+	    ru->ConnectFrom(su, prjn);
+	}
+      }
+    }
+  }
+}
+
+void TopoWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  if(TestError((grad_x_grad_y && grad_y && !grad_y_grad_x), "TopoWtsPrjnSpec::C_InitWeights ", " both send_x and send_y are mapping to recv_y; you must set either: grad_y = false or grad_y_grad_x = true -- aborting!"))
+    return;
+  if(TestError((grad_y_grad_x && grad_x && !grad_x_grad_y), "TopoWtsPrjnSpec::C_InitWeights ", " both send_y and send_x are mapping to recv_x; you must set either: grad_x = false or grad_x_grad_y = true -- aborting!"))
+    return;
+  if(TestError(((send_range_end.x != -1 && send_range_end.x < send_range_start.x) || (send_range_end.y != -1 && send_range_end.y < send_range_start.y)), "TopoWtsPrjnSpec::C_InitWeights ", " either send_range_end.x or send_range_end.y is less than start_idx. Please correct -- aborting!"))
+    return;
+  if(TestError(((recv_range_end.x != -1 && recv_range_end.x < recv_range_start.x) || (recv_range_end.y != -1 && recv_range_end.y < recv_range_start.y)), "TopoWtsPrjnSpec::C_InitWeights ", " either recv_range_end.x or recv_range_end.y is less than start_idx. Please correct -- aborting!"))
+    return;
+
+  if(TestError((use_send_gps && !(prjn->from.ptr()->unit_groups)), "TopoWtsPrjnSpec::C_InitWeights ", " use_send_gps TRUE, but send_lay does not have unit groups. Please fix -- aborting!"))
+    return;
+  if(TestError((use_recv_gps && !(prjn->layer->unit_groups)), "TopoWtsPrjnSpec::C_InitWeights ", " use_recv_gps TRUE, but recv_lay does not have unit groups. Please fix -- aborting!"))
+    return;
+
+  if(use_send_gps && prjn->from.ptr()->unit_groups) {
+    if (use_recv_gps && prjn->layer->unit_groups)
+      InitWeights_SendGpsRecvGps(prjn, cg, ru);
+    else
+      InitWeights_SendGpsRecvFlat(prjn, cg, ru);
+  }
+  else
+    if (use_recv_gps && prjn->layer->unit_groups)
+      InitWeights_SendFlatRecvGps(prjn, cg, ru);
+    else
+      InitWeights_SendFlatRecvFlat(prjn, cg, ru);
+}
+
+void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
+				  int cg_idx) {
+  float wt_val;
+  if(grad_type == LINEAR) {
+    if(invert)
+      wt_val = wt_range.min + dist * wt_range.Range();
+    else
+      wt_val = wt_range.max - dist * wt_range.Range();
+  }
+  else if(grad_type == GAUSSIAN) {
+    float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+    if(invert)
+      wt_val = wt_range.max - gaus * wt_range.Range();
+    else
+      wt_val = wt_range.min + gaus * wt_range.Range();
+  }
+  cg->Cn(cg_idx)->wt = wt_val;
+}
+
+// wrap calculations ///////////////////////////////
+////////////////////////////////////////////////////
+//      0       1       2       3    recv
+//      0       .33     .66     1    rgp_x
+//
+//      0       1       2       3    send
+//      0       .33     .66     1    sgp_x
+//      4       5       6       7    wrp_x > .5  int
+//      1.33    1.66    2       2.33 wrp_x > .5  flt
+//      -4      -3      -2      -1   wrp_x < .5  int
+//      -1.33   -1      -.66    -.33 wrp_x < .5  flt
+
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
-  bool save_invert = invert;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
 
-  if(recv_lay->virt_groups)     // get index within unit group..
-    ru_idx %= recv_lay->un_geom.n;
+  TwoDCoord srs = send_range_start; // actual send range start
+  TwoDCoord sre = send_range_end;   // actual send range end
+  TwoDCoord rrs = recv_range_start; // actual recv range start
+  TwoDCoord rre = recv_range_end;   // actual recv range end
 
-  int gp_sz = recv_lay->un_geom.n / 2;
-  PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(ru_idx / gp_sz);
-  if(go_no == PFCGateSpec::GATE_NOGO) {
-    invert = true;
+  if(!custom_send_range) {
+    srs = 0;
+    sre = -1;		// sets both in one call
   }
-  else {
-    invert = false;
+  if(!custom_recv_range) {
+    rrs = 0;
+    rre = -1;
   }
-  inherited::SetWtFmDist(prjn, cg, ru, dist, cg_idx);
-  if(go_no == PFCGateSpec::GATE_NOGO) {
-    cg->Cn(cg_idx)->wt += nogo_offset;
+  //  end_idx = -1 means set to last unit
+  if(sre.x == -1) sre.x = send_lay->gp_geom.x-1;
+  if(sre.y == -1) sre.y = send_lay->gp_geom.y-1;
+  if(rre.x == -1) rre.x = recv_lay->gp_geom.x-1;
+  if(rre.y == -1) rre.y = recv_lay->gp_geom.y-1;
+
+  if(TestWarning((sre.x > send_lay->gp_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps ",
+	       "send_range_end.x is > gp_geom.x -- using gp_geom.x-1")) {
+    sre.x = send_lay->gp_geom.x-1;
   }
-  invert = save_invert;
+  if(TestWarning((sre.y > send_lay->gp_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps ",
+	       "send_range_end.y is > gp_geom.y -- using gp_geom.y-1")) {
+    sre.y = send_lay->gp_geom.y-1;
+  }
+  if(TestWarning((rre.x > recv_lay->gp_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps ",
+	       "recv_range_end.x is > gp_geom.x -- using gp_geom.x-1")) {
+    rre.x = recv_lay->gp_geom.x-1;
+  }
+  if(TestWarning((rre.y > recv_lay->gp_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps ",
+	       "recv_range_end.y is > gp_geom.y -- using gp_geom.y-1")) {
+    rre.y = recv_lay->gp_geom.y-1;
+  }
+  // else should be the values set by user
+
+  int rgpidx = ru->UnitGpIdx();
+  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
+
+  float max_dist = 1.0f;
+  if(grad_x && grad_y) // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+    max_dist = sqrtf(2.0f);
+  float dist = 0.0f;
+
+  // is recv un_gp (and ru) in range?  -- if not, init wts and get next cg/ru
+  if(rgp_pos.x < rrs.x || rgp_pos.x > rre.x || rgp_pos.y < rrs.y || rgp_pos.y > rre.y) {
+    for(int i=0; i<cg->size; i++) {
+      SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+    }
+    return; // done -- get a new cg/ru
+  }
+
+  // if in-range, normalize recv range (for topological congruence to send range)
+  rgp_pos.x -= rrs.x;
+  rgp_pos.y -= rrs.y;
+
+  //float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
+  //float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
+  float rgp_x = (float)rgp_pos.x / (float)MAX((rre.x - rrs.x), 1);
+  float rgp_y = (float)rgp_pos.y / (float)MAX((rre.y - rrs.y), 1);
+
+  //  float max_dist = 1.0f;
+  //  if(grad_x && grad_y) // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+  //    max_dist = sqrtf(2.0f);
+
+  // now adjust the send groups..
+  float mxs_x = (float)MAX((sre.x - srs.x), 1);
+  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+
+  for(int i=0; i<cg->size; i++) {
+    Unit* su = cg->Un(i);
+    int sgpidx = su->UnitGpIdx();
+    TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
+    // send un_gp in range?  -- get next un_gp if not
+    if(sgp_pos.x < srs.x || sgp_pos.x > sre.x || sgp_pos.y < srs.y || sgp_pos.y > sre.y) {
+      SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+      continue;
+    }
+    // if in-range, normalize send range (for topological congruence to recv range)
+    sgp_pos.x -= srs.x;
+    sgp_pos.y -= srs.y;
+
+    float sgp_x = (float)sgp_pos.x / mxs_x;
+    float sgp_y = (float)sgp_pos.y / mxs_y;
+
+    float wrp_x, wrp_y; // I guess this wrap stuff is still good with recv gps and send gps?
+    if(wrap) {
+      if(rgp_x > .5f)   wrp_x = (float)(sgp_pos.x + send_lay->gp_geom.x) / mxs_x;
+      else              wrp_x = (float)(sgp_pos.x - send_lay->gp_geom.x) / mxs_x;
+      if(rgp_y > .5f)   wrp_y = (float)(sgp_pos.y + send_lay->gp_geom.y) / mxs_y;
+      else              wrp_y = (float)(sgp_pos.y - send_lay->gp_geom.y) / mxs_y;
+    }
+
+    float dist = 0.0f;
+    if(grad_x && grad_y) {
+      if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	dist = taMath_float::euc_dist(sgp_x, sgp_y, rgp_x, rgp_y);
+	if(wrap) {
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, sgp_y, rgp_x, rgp_y);
+	  if(wrp_dist < dist) {
+	    dist = wrp_dist;
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	  else {
+	    float wrp_dist = taMath_float::euc_dist(sgp_x, wrp_y, rgp_x, rgp_y);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	}
+      }
+      else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	dist = taMath_float::euc_dist(sgp_x, sgp_y, rgp_y, rgp_x);
+	if(wrap) {
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, sgp_y, rgp_y, rgp_x);
+	  if(wrp_dist < dist) {
+	    dist = wrp_dist;
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_y, rgp_x);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	  else {
+	    float wrp_dist = taMath_float::euc_dist(sgp_x, wrp_y, rgp_y, rgp_x);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	}
+      }
+    }
+    else if(grad_x) { // two cases: x to x and send_x to recv_y
+      if(!grad_x_grad_y) { // i.e., the usual x to x case
+	dist = fabsf(sgp_x - rgp_x);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_x - rgp_x);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+      else { // the send_x to recv_y case
+	dist = fabsf(sgp_x - rgp_y);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_x - rgp_y);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+    }
+    else if(grad_y) { // again two cases: y to y and send_y to recv_x
+      if(!grad_y_grad_x) { // i.e. the usual y to y case
+	dist = fabsf(sgp_y - rgp_y);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_y - rgp_y);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+      else { // the send_y to recv_x case
+	dist = fabsf(sgp_y - rgp_x);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_y - rgp_x);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+    }
+
+    dist /= max_dist;           // keep it normalized
+
+    SetWtFmDist(prjn, cg, ru, dist, i); // i corresponds to simple su (not sgp) -- one of entries in the cg (congroup) list
+  }
+}
+
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn,
+						  RecvCons* cg, Unit* ru) {
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+
+  TwoDCoord srs = send_range_start; // actual send range start
+  TwoDCoord sre = send_range_end;   // actual send range end
+  TwoDCoord rrs = recv_range_start; // actual recv range start
+  TwoDCoord rre = recv_range_end;   // actual recv range end
+
+  if(!custom_send_range) {
+    srs = 0;
+    sre = -1;		// sets both in one call
+  }
+  if(!custom_recv_range) {
+    rrs = 0;
+    rre = -1;
+  }
+  //  end_idx = -1 means set to last unit
+  if(sre.x == -1) sre.x = send_lay->gp_geom.x-1;
+  if(sre.y == -1) sre.y = send_lay->gp_geom.y-1;
+  if(rre.x == -1) rre.x = recv_lay->flat_geom.x-1;
+  if(rre.y == -1) rre.y = recv_lay->flat_geom.y-1;
+
+  if(TestWarning((sre.x > send_lay->gp_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat ",
+	       "send_range_end.x is > gp_geom.x -- using gp_geom.x-1")) {
+    sre.x = send_lay->gp_geom.x-1;
+  }
+  if(TestWarning((sre.y > send_lay->gp_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat ",
+	       "send_range_end.y is > gp_geom.y -- using gp_geom.y-1")) {
+    sre.y = send_lay->gp_geom.y-1;
+  }
+  if(TestWarning((rre.x > recv_lay->flat_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat ",
+	       "recv_range_end.x is > flat_geom.x -- using flat_geom.x-1")) {
+    rre.x = recv_lay->flat_geom.x-1;
+  }
+  if(TestWarning((rre.y > recv_lay->flat_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat ",
+	       "recv_range_end.y is > flat_geom.y -- using flat_geom.y-1")) {
+    rre.y = recv_lay->flat_geom.y-1;
+  }
+  // else should be the values set by user
+
+  float ru_x = 0.0f;
+  float ru_y = 0.0f;
+  float max_dist = 1.0f;
+  float dist = 0.0f;
+  if (!recv_lay->unit_groups) { // no unit groups to worry about!
+    TwoDCoord ru_pos;
+    recv_lay->UnitLogPos(ru, ru_pos);
+    if(grad_x && grad_y) {// applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+      max_dist = sqrtf(2.0f);
+    }
+    float dist = 0.0f;
+    // is recv unit in range?  -- if not, init wts and get next cg/ru
+    if(ru_pos.x < rrs.x || ru_pos.x > rre.x || ru_pos.y < rrs.y || ru_pos.y > rre.y) {
+      for(int i=0; i<cg->size; i++) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      }
+      return; // done -- get a new cg/ru
+    }
+    // if in-range, normalize recv range (for topological congruence to send range)
+    //ru_pos.x = ru_pos.x - rrs.x;
+    ru_pos.x -= rrs.x; 	// start at start-indexed units!
+    //ru_pos.y = ru_pos.y - rrs.y;
+    ru_pos.y -= rrs.y;
+
+    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
+    //float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
+    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  }
+  else { // recv_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+    TwoDCoord ru_pos; // hold planar Cartesian coordinates within unit group
+    int runidx = 0;
+    int rgpidx = 0;
+    recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
+    ru_pos.x = runidx % recv_lay->un_geom.x;
+    ru_pos.y = runidx / recv_lay->un_geom.x;
+    TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
+    // convert to planar x, y across whole layer
+    //ru_pos.x = ru_pos.x + (recv_lay->un_geom.x * rgp_pos.x);
+    ru_pos.x += recv_lay->un_geom.x * rgp_pos.x;
+    ru_pos.y += recv_lay->un_geom.y * rgp_pos.y;
+
+    if(grad_x && grad_y) { // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+      max_dist = sqrtf(2.0f);
+    }
+    // is recv unit out-of-range?  -- if so, init wts and get next cg/ru
+    if(ru_pos.x < rrs.x || ru_pos.x > rre.x || ru_pos.y < rrs.y || ru_pos.y > rre.y) {
+      for(int i=0; i<cg->size; i++) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      }
+      return; // done -- get a new cg/ru
+    }
+    // if in-range, normalize recv range (for topological congruence to send range)
+    //ru_pos.x = ru_pos.x - rrs.x;
+    ru_pos.x -= rrs.x;		  // start at start-indexed units!
+    ru_pos.y -= rrs.y;
+
+    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
+    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  }
+
+  // now normalize send groups and correct for any offsets!
+  //float mxs_x = (float)MAX(send_lay->flat_geom.x-1, 1); // original guys..
+  //float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
+  float mxs_x = (float)MAX((sre.x - srs.x), 1);
+  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+
+  for(int i=0; i<cg->size; i++) {
+    Unit* su = cg->Un(i);
+    int sgpidx = su->UnitGpIdx();
+    TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
+    // send un_gp in range?  -- get next un_gp if not
+    if(sgp_pos.x < srs.x || sgp_pos.x > sre.x) {
+      SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+      continue;
+    }
+    if(sgp_pos.y < srs.y || sgp_pos.y > sre.y) {
+      SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+      continue;
+    }
+    // if in-range, normalize send range (for topological congruence to recv range)
+    sgp_pos.x -= srs.x; // start at start indexed units!
+    sgp_pos.y -= srs.y;
+
+    float sgp_x = (float)sgp_pos.x / mxs_x;
+    float sgp_y = (float)sgp_pos.y / mxs_y;
+
+    float wrp_x, wrp_y; // TODO: confirm sometime that this wrap stuff is still good with recv gps and/or send gps?
+    if(wrap) {
+      if(ru_x > .5f)    wrp_x = (float)(sgp_pos.x + send_lay->gp_geom.x) / mxs_x;
+      else              wrp_x = (float)(sgp_pos.x - send_lay->gp_geom.x) / mxs_x;
+      if(ru_y > .5f)    wrp_y = (float)(sgp_pos.y + send_lay->gp_geom.y) / mxs_y;
+      else              wrp_y = (float)(sgp_pos.y - send_lay->gp_geom.y) / mxs_y;
+    }
+    float dist = 0.0f;
+    if(grad_x && grad_y) {
+      if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	dist = taMath_float::euc_dist(sgp_x, sgp_y, ru_x, ru_y);
+	if(wrap) {
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, sgp_y, ru_x, ru_y);
+	  if(wrp_dist < dist) {
+	    dist = wrp_dist;
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	  else {
+	    float wrp_dist = taMath_float::euc_dist(sgp_x, wrp_y, ru_x, ru_y);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	}
+      }
+      else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	dist = taMath_float::euc_dist(sgp_x, sgp_y, ru_y, ru_x);
+	if(wrap) {
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, sgp_y, ru_y, ru_x);
+	  if(wrp_dist < dist) {
+	    dist = wrp_dist;
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_y, ru_x);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	  else {
+	    float wrp_dist = taMath_float::euc_dist(sgp_x, wrp_y, ru_y, ru_x);
+	    if(wrp_dist < dist)
+	      dist = wrp_dist;
+	  }
+	}
+      }
+    }
+    else if(grad_x) { // two cases: x to x and send_x to recv_y
+      if(!grad_x_grad_y) { // i.e., the usual x to x case
+	dist = fabsf(sgp_x - ru_x);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_x - ru_x);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+      else { // the send_x to recv_y case
+	dist = fabsf(sgp_x - ru_y);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_x - ru_y);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+    }
+    else if(grad_y) { // again two cases: y to y and send_y to recv_x
+      if(!grad_y_grad_x) { // i.e. the usual y to y case
+	dist = fabsf(sgp_y - ru_y);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_y - ru_y);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+      else { // the send_y to recv_x case
+	dist = fabsf(sgp_y - ru_x);
+	if(wrap) {
+	  float wrp_dist = fabsf(wrp_y - ru_x);
+	  if(wrp_dist < dist) dist = wrp_dist;
+	}
+      }
+    }
+
+    dist /= max_dist;           // keep it normalized
+
+    SetWtFmDist(prjn, cg, ru, dist, i); // i is still the simple su -- one of entries in the cg (congroup) list
+  }
+}
+
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+
+  TwoDCoord srs = send_range_start; // actual send range start
+  TwoDCoord sre = send_range_end;   // actual send range end
+  TwoDCoord rrs = recv_range_start; // actual recv range start
+  TwoDCoord rre = recv_range_end;   // actual recv range end
+
+  if(!custom_send_range) {
+    srs = 0;
+    sre = -1;		// sets both in one call
+  }
+  if(!custom_recv_range) {
+    rrs = 0;
+    rre = -1;
+  }
+  //  end_idx = -1 means set to last unit
+  if(sre.x == -1) sre.x = send_lay->flat_geom.x-1;
+  if(sre.y == -1) sre.y = send_lay->flat_geom.y-1;
+  if(rre.x == -1) rre.x = recv_lay->gp_geom.x-1;
+  if(rre.y == -1) rre.y = recv_lay->gp_geom.y-1;
+
+  if(TestWarning((sre.x > send_lay->flat_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
+	       "send_range_end.x is > flat_geom.x -- using flat_geom.x-1")) {
+    sre.x = send_lay->flat_geom.x-1;
+  }
+  if(TestWarning((sre.y > send_lay->flat_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
+	       "send_range_end.y is > flat_geom.y -- using flat_geom.y-1")) {
+    sre.y = send_lay->flat_geom.y-1;
+  }
+  if(TestWarning((rre.x > recv_lay->gp_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
+	       "recv_range_end.x is > gp_geom.x -- using gp_geom.x-1")) {
+    rre.x = recv_lay->gp_geom.x-1;
+  }
+  if(TestWarning((rre.y > recv_lay->gp_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
+	       "recv_range_end.y is > gp_geom.y -- using gp_geom.y-1")) {
+    rre.y = recv_lay->gp_geom.y-1;
+  }
+
+  // TODO: should have tests for start > end at this point, but not very likely
+
+  int rgpidx = ru->UnitGpIdx();
+  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
+
+  //  // recv un_gp in range?  -- get next un_gp if not
+  //  if(rgp_pos.x < rrs.x || rgp_pos.x > rre.x)
+  //    return;
+  //  if(rgp_pos.y < rrs.y || rgp_pos.y > rre.y)
+  //    return;
+
+  float max_dist = 1.0f;
+  if(grad_x && grad_y) // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+    max_dist = sqrtf(2.0f);
+  float dist = 0.0f;
+
+  // is recv un_gp in range?  -- if not, init wts and get next cg/ru
+  if(rgp_pos.x < rrs.x || rgp_pos.x > rre.x || rgp_pos.y < rrs.y || rgp_pos.y > rre.y) {
+    for(int i=0; i<cg->size; i++) {
+      SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!) -- 1.0 = max dist
+    }
+    return; // done -- get a new cg/ru
+  }
+
+  // if in-range, normalize recv range (for topological congruence to send range)
+  rgp_pos.x -= rrs.x;
+  rgp_pos.y -= rrs.y;
+
+  //float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
+  //float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
+  float rgp_x = (float)rgp_pos.x / (float)MAX((rre.x - rrs.x), 1);
+  float rgp_y = (float)rgp_pos.y / (float)MAX((rre.y - rrs.y), 1);
+
+  //  float max_dist = 1.0f;
+  //  if(grad_x && grad_y) // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+  //    max_dist = sqrtf(2.0f);
+
+  float mxs_x = (float)MAX((sre.x - srs.x), 1);
+  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+
+  if(!send_lay->unit_groups) { // sending layer does NOT have unit groups anyway -- nothing to worry about!
+    for(int i=0; i<cg->size; i++) {
+      Unit* su = cg->Un(i);
+      TwoDCoord su_pos;
+      send_lay->UnitLogPos(su, su_pos);
+      // sending unit in range?  -- get next unit if not
+      if(su_pos.x < srs.x || su_pos.x > sre.x) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      if(su_pos.y < srs.y || su_pos.y > sre.y) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      // SPECIAL CASE: only one send unit in range so everyone gets max wt!
+      if(sre.x - srs.x == 0 && sre.y - srs.y == 0) { // only one sending unit!
+    SetWtFmDist(prjn, cg, ru, 0.0f, i); // 0.0 = min dist -> max wts
+    continue;
+      }
+      // if in-range, normalize the send range (for topological congruence to recv range)
+      su_pos.x -= srs.x;
+      su_pos.y -= srs.y;
+      float su_x = (float)su_pos.x / mxs_x;
+      float su_y = (float)su_pos.y / mxs_y;
+
+      float wrp_x, wrp_y; // I guess this wrap stuff is still good with recv gps but send flat?
+      if(wrap) {
+	if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+	else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+	if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+	else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      }
+
+      float dist = 0.0f;
+      if(grad_x && grad_y) {
+	if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	  dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+	else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	  dist = taMath_float::euc_dist(su_x, su_y, rgp_y, rgp_x);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_y, rgp_x);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_y, rgp_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_y, rgp_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+      }
+      else if(grad_x) { // two cases: x to x and send_x to recv_y
+	if(!grad_x_grad_y) { // i.e., the usual x to x case
+	  dist = fabsf(su_x - rgp_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - rgp_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_x to recv_y case
+	  dist = fabsf(su_x - rgp_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - rgp_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+      else if(grad_y) { // again two cases: y to y and send_y to recv_x
+	if(!grad_y_grad_x) { // i.e. the usual y to y case
+	  dist = fabsf(su_y - rgp_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - rgp_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_y to recv_x case
+	  dist = fabsf(su_y - rgp_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - rgp_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+
+      dist /= max_dist;           // keep it normalized
+
+      SetWtFmDist(prjn, cg, ru, dist, i);
+    }
+  }
+  else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+    for(int i=0; i<cg->size; i++) {
+      Unit* su = cg->Un(i);
+      int sunidx = 0;
+      int sgpidx = 0;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+
+      TwoDCoord su_pos;
+      su_pos.x = sunidx % send_lay->un_geom.x;
+      su_pos.y = sunidx / send_lay->un_geom.x;
+      TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+
+      // convert to planar x, y across whole layer
+      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
+      su_pos.x += send_lay->un_geom.x * sgp_pos.x;
+      su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+
+      // sending unit in range?  -- get next unit if not
+      if(su_pos.x < srs.x || su_pos.x > sre.x) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      if(su_pos.y < srs.y || su_pos.y > sre.y) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      // SPECIAL CASE: only one send unit in range so everyone gets max wt!
+      if(sre.x - srs.x == 0 && sre.y - srs.y == 0) { // only one sending unit!
+    SetWtFmDist(prjn, cg, ru, 0.0f, i); // 0.0 = min dist -> max wts
+    continue;
+      }
+      // if in-range, normalize the send range (for topological congruence to recv range)
+      su_pos.x -= srs.x;
+      su_pos.y -= srs.y;
+      float su_x = (float)su_pos.x / mxs_x;
+      float su_y = (float)su_pos.y / mxs_y;
+
+      float wrp_x, wrp_y; // I guess this wrap stuff is still good with recv gps but send flat?
+      if(wrap) {
+	if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+	else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+	if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+	else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      }
+
+      float dist = 0.0f;
+      if(grad_x && grad_y) {
+	if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	  dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+	else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	  dist = taMath_float::euc_dist(su_x, su_y, rgp_y, rgp_x);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_y, rgp_x);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_y, rgp_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_y, rgp_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+      }
+      else if(grad_x) { // two cases: x to x and send_x to recv_y
+	if(!grad_x_grad_y) { // i.e., the usual x to x case
+	  dist = fabsf(su_x - rgp_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - rgp_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_x to recv_y case
+	  dist = fabsf(su_x - rgp_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - rgp_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+      else if(grad_y) { // again two cases: y to y and send_y to recv_x
+	if(!grad_y_grad_x) { // i.e. the usual y to y case
+	  dist = fabsf(su_y - rgp_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - rgp_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_y to recv_x case
+	  dist = fabsf(su_y - rgp_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - rgp_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+
+      dist /= max_dist;           // keep it normalized
+
+      SetWtFmDist(prjn, cg, ru, dist, i);
+    }
+  }
+}
+
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
+
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+
+  TwoDCoord srs = send_range_start; // actual send range start
+  TwoDCoord sre = send_range_end;   // actual send range end
+  TwoDCoord rrs = recv_range_start; // actual recv range start
+  TwoDCoord rre = recv_range_end;   // actual recv range end
+
+  if(!custom_send_range) {
+    srs = 0;
+    sre = -1;		// sets both in one call
+  }
+  if(!custom_recv_range) {
+    rrs = 0;
+    rre = -1;
+  }
+  //  end_idx = -1 means set to last unit
+  if(sre.x == -1) sre.x = send_lay->flat_geom.x-1;
+  if(sre.y == -1) sre.y = send_lay->flat_geom.y-1;
+  if(rre.x == -1) rre.x = recv_lay->flat_geom.x-1;
+  if(rre.y == -1) rre.y = recv_lay->flat_geom.y-1;
+
+  if(TestWarning((sre.x > send_lay->flat_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat ",
+	       "send_range_end.x is > flat_geom.x -- using flat_geom.x-1")) {
+    sre.x = send_lay->flat_geom.x-1;
+  }
+  if(TestWarning((sre.y > send_lay->flat_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat ",
+	       "send_range_end.y is > flat_geom.y -- using flat_geom.y-1")) {
+    sre.y = send_lay->flat_geom.y-1;
+  }
+  if(TestWarning((rre.x > recv_lay->flat_geom.x -1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat ",
+	       "recv_range_end.x is > flat_geom.x -- using flat_geom.x-1")) {
+    rre.x = recv_lay->flat_geom.x-1;
+  }
+  if(TestWarning((rre.y > recv_lay->flat_geom.y-1),
+	       "TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat ",
+	       "recv_range_end.y is > flat_geom.y -- using flat_geom.y-1")) {
+    rre.y = recv_lay->flat_geom.y-1;
+  }
+  // else should be the values set by user
+
+  float ru_x = 0.0f;
+  float ru_y = 0.0f;
+  float max_dist = 1.0f;
+  float dist = 0.0f;
+  if (!recv_lay->unit_groups) { // no unit groups to worry about!
+    TwoDCoord ru_pos;
+    recv_lay->UnitLogPos(ru, ru_pos);
+    if(grad_x && grad_y) {// applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+      max_dist = sqrtf(2.0f);
+    }
+    float dist = 0.0f;
+    // is recv unit in range?  -- if not, init wts and get next cg/ru
+    if(ru_pos.x < rrs.x || ru_pos.x > rre.x ||
+       ru_pos.y < rrs.y || ru_pos.y > rre.y) {
+      for(int i=0; i<cg->size; i++) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      }
+      return; // done -- get a new cg/ru
+    }
+    // if in-range, normalize recv range (for topological congruence to send range)
+    //ru_pos.x = ru_pos.x - rrs.x;
+    ru_pos.x -= rrs.x; 	// start at start-indexed units!
+    //ru_pos.y = ru_pos.y - rrs.y;
+    ru_pos.y -= rrs.y;
+
+    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
+    //float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
+    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  }
+  else { // recv_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+    TwoDCoord ru_pos; // hold planar Cartesian coordinates within unit group
+    int runidx = 0;
+    int rgpidx = 0;
+    recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
+    ru_pos.x = runidx % recv_lay->un_geom.x;
+    ru_pos.y = runidx / recv_lay->un_geom.x;
+    TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
+    // convert to planar x, y across whole layer
+    //ru_pos.x = ru_pos.x + (recv_lay->un_geom.x * rgp_pos.x);
+    ru_pos.x += recv_lay->un_geom.x * rgp_pos.x;
+    ru_pos.y += recv_lay->un_geom.y * rgp_pos.y;
+
+    if(grad_x && grad_y) { // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
+      max_dist = sqrtf(2.0f);
+    }
+    // is recv unit out-of-range?  -- if so, init wts and get next cg/ru
+    if(ru_pos.x < rrs.x || ru_pos.x > rre.x ||
+       ru_pos.y < rrs.y || ru_pos.y > rre.y) {
+      for(int i=0; i<cg->size; i++) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      }
+      return; // done -- get a new cg/ru
+    }
+    // if in-range, normalize recv range (for topological congruence to send range)
+    //ru_pos.x = ru_pos.x - rrs.x;
+    ru_pos.x -= rrs.x;		  // start at start-indexed units!
+    ru_pos.y -= rrs.y;
+
+    //float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1); // original guys..
+    ru_x = (float)ru_pos.x / (float)MAX((rre.x - rrs.x), 1);
+    ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
+  }
+
+  float mxs_x = (float)MAX((sre.x - srs.x), 1);
+  float mxs_y = (float)MAX((sre.y - srs.y), 1);
+
+  if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
+    for(int i=0; i<cg->size; i++) {
+      Unit* su = cg->Un(i);
+      TwoDCoord su_pos;
+      send_lay->UnitLogPos(su, su_pos);
+      // sending unit in range?  -- get next unit if not
+      if(su_pos.x < srs.x || su_pos.x > sre.x) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      if(su_pos.y < srs.y || su_pos.y > sre.y) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      // SPECIAL CASE: only one send unit in range so everyone gets max wt!
+      if(sre.x - srs.x == 0 && sre.y - srs.y == 0) { // only one sending unit!
+    SetWtFmDist(prjn, cg, ru, 0.0f, i); // 0.0 = min dist -> max wts
+    continue;
+      }
+      // if in-range, normalize the send range (for topological congruence to recv range)
+      su_pos.x -= srs.x;
+      su_pos.y -= srs.y;
+      float su_x = (float)su_pos.x / mxs_x;
+      float su_y = (float)su_pos.y / mxs_y;
+
+      float wrp_x, wrp_y; // I guess this wrap stuff is still good with recv gps but send flat?
+      if(wrap) {
+	if(ru_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+	else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+	if(ru_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+	else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      }
+
+      float dist = 0.0f;
+      if(grad_x && grad_y) {
+	if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	  dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_x, ru_y);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+	else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	  dist = taMath_float::euc_dist(su_x, su_y, ru_y, ru_x);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_y, ru_x);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_y, ru_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_y, ru_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+      }
+      else if(grad_x) { // two cases: x to x and send_x to recv_y
+	if(!grad_x_grad_y) { // i.e., the usual x to x case
+	  dist = fabsf(su_x - ru_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - ru_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_x to recv_y case
+	  dist = fabsf(su_x - ru_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - ru_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+      else if(grad_y) { // again two cases: y to y and send_y to recv_x
+	if(!grad_y_grad_x) { // i.e. the usual y to y case
+	  dist = fabsf(su_y - ru_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - ru_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_y to recv_x case
+	  dist = fabsf(su_y - ru_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - ru_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+
+      dist /= max_dist;           // keep it normalized
+
+      SetWtFmDist(prjn, cg, ru, dist, i);
+    }
+  }
+  else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+    for(int i=0; i<cg->size; i++) {
+      Unit* su = cg->Un(i);
+      int sunidx = 0;
+      int sgpidx = 0;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+
+      TwoDCoord su_pos;
+      su_pos.x = sunidx % send_lay->un_geom.x;
+      su_pos.y = sunidx / send_lay->un_geom.x;
+      TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+
+      // convert to planar x, y across whole layer
+      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
+      su_pos.x += send_lay->un_geom.x * sgp_pos.x;
+      su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+
+      // sending unit in range?  -- get next unit if not
+      if(su_pos.x < srs.x || su_pos.x > sre.x) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      if(su_pos.y < srs.y || su_pos.y > sre.y) {
+	SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
+	continue;
+      }
+      // if in-range, normalize the send range (for topological congruence to recv range)
+      su_pos.x -= srs.x;
+      su_pos.y -= srs.y;
+      float su_x = (float)su_pos.x / mxs_x;
+      float su_y = (float)su_pos.y / mxs_y;
+
+      float wrp_x, wrp_y; // I guess this wrap stuff is still good with recv gps but send flat?
+      if(wrap) {
+	if(ru_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+	else              wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+	if(ru_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+	else              wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
+      }
+
+      float dist = 0.0f;
+      if(grad_x && grad_y) {
+	if(!grad_x_grad_y && !grad_y_grad_x) { // i.e., x maps to x and y maps to y
+	  dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_x, ru_y);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+	else { // i.e., send_x maps to recv_y and send_y maps to recv_x
+	  dist = taMath_float::euc_dist(su_x, su_y, ru_y, ru_x);
+	  if(wrap) {
+	    float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_y, ru_x);
+	    if(wrp_dist < dist) {
+	      dist = wrp_dist;
+	      float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_y, ru_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	    else {
+	      float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_y, ru_x);
+	      if(wrp_dist < dist)
+		dist = wrp_dist;
+	    }
+	  }
+	}
+      }
+      else if(grad_x) { // two cases: x to x and send_x to recv_y
+	if(!grad_x_grad_y) { // i.e., the usual x to x case
+	  dist = fabsf(su_x - ru_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - ru_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_x to recv_y case
+	  dist = fabsf(su_x - ru_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_x - ru_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+      else if(grad_y) { // again two cases: y to y and send_y to recv_x
+	if(!grad_y_grad_x) { // i.e. the usual y to y case
+	  dist = fabsf(su_y - ru_y);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - ru_y);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+	else { // the send_y to recv_x case
+	  dist = fabsf(su_y - ru_x);
+	  if(wrap) {
+	    float wrp_dist = fabsf(wrp_y - ru_x);
+	    if(wrp_dist < dist) dist = wrp_dist;
+	  }
+	}
+      }
+
+      dist /= max_dist;           // keep it normalized
+
+      SetWtFmDist(prjn, cg, ru, dist, i);
+    }
+  }
 }
 
 //////////////////////////////////
@@ -2149,39 +3170,6 @@ void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
 //                      PBWM
 ///////////////////////////////////////////////////////////////
 
-bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
-  if(TestError(!net, "PBWM_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
-    return false;
-
-  PVLV_ToLayerGroup(net);       // do the pvlv version
-
-  bool new_bg_laygp = false;
-  Layer_Group* bg_laygp = net->FindMakeLayerGroup("PBWM_BG", NULL, new_bg_laygp);
-  bool new_pfc_laygp = false;
-  Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
-
-  Layer* lay;
-  if((lay = net->FindLayer("Patch"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("SNc"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("Matrix"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if((lay = net->FindLayer("Matrix_mnt"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if((lay = net->FindLayer("Matrix_out"))) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
-  if((lay = net->FindLayer("SNrThal"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("SNrThal_out"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("SNrThal_mnt"))) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("PFC"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("PFC_mnt"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-  if((lay = net->FindLayer("PFC_out"))) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-
-  if(new_bg_laygp || new_pfc_laygp) {
-    bg_laygp->pos.z = 0;
-    pfc_laygp->pos.z = 2;
-    net->RebuildAllViews();     // trigger update
-  }
-
-  return true;
-}
-
 static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool sp = true,
                          int gp_geom_x=-1, int gp_geom_y=-1) {
   lay->unit_groups = true;
@@ -2191,11 +3179,23 @@ static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool
     lay->gp_geom.y = gp_geom_y;
   }
   else {
-    if(n_stripes <= 5) {
+    if(n_stripes <= 5 || n_stripes == 7 || n_stripes == 11 || n_stripes >= 13) {
       lay->gp_geom.x = n_stripes;
       lay->gp_geom.y = 1;
     }
-  }
+    else{
+      if(n_stripes == 6 || n_stripes == 8 || n_stripes == 10) {
+        lay->gp_geom.x = n_stripes / 2;
+        lay->gp_geom.y = 2;
+      }
+      else {
+        if(n_stripes == 9 || n_stripes == 12) {
+          lay->gp_geom.x = n_stripes / 3;
+          lay->gp_geom.y = 3;
+        }
+      }
+    }
+  } // default whatever SetNUnitGroups() set..
   if(n_units > 0) {
     lay->SetNUnits(n_units);
   }
@@ -2214,7 +3214,10 @@ static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
   lay_set_geom(lay, n_stripes, n_units, sp, gp_geom_x, gp_geom_y);
 }
 
-bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units,
+// NOTE: Perhaps ideally, would have multiple n_stripes vars for as many PFC layer roles as used
+//       For now, simply use same number for each role, then user can customize, if desired
+bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types,
+				    int n_stripes, int n_units,
                                     int gp_geom_x, int gp_geom_y) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
@@ -2226,25 +3229,56 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_uni
 //     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
 //   }
 
-  set_n_stripes(net, "PFC", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFC_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "Matrix", n_stripes, -1, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "Matrix_mnt", n_stripes, -1, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "Matrix_out", n_stripes, -1, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "SNrThal", n_stripes, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "SNrThal_mnt", n_stripes, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "SNrThal_out", n_stripes, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "LVe", 1, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "LVi", 1, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "Patch", n_stripes, -1, false, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "SNc", n_stripes, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCs_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCd_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCs_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCd_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCs_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFCd_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+
+  // matrix layers need to preserve x dimension of pfc stripe geometry
+  TwoDCoord pfc_geom;
+
+  if(gp_geom_x > 0 && gp_geom_y > 0) {
+      pfc_geom.x = gp_geom_x;
+      pfc_geom.y = gp_geom_y;
+  }
+  else {
+    if(n_stripes <= 5 || n_stripes == 7 || n_stripes == 11 || n_stripes >= 13) {
+      pfc_geom.x = n_stripes;
+      pfc_geom.y = 1;
+    }
+    else{
+      if(n_stripes == 6 || n_stripes == 8 || n_stripes == 10) {
+        pfc_geom.x = n_stripes / 2;
+        pfc_geom.y = 2;
+      }
+      else {
+        if(n_stripes == 9 || n_stripes == 12) {
+          pfc_geom.x = n_stripes / 3;
+          pfc_geom.y = 3;
+        }
+      }
+    }
+  }
+
+  int n_types, n_in, n_mnt, n_out;
+  SNrThalLayerSpec::GatingTypesNStripes((SNrThalLayerSpec::GatingTypes)gating_types, 24, // just care about n_types
+					n_types, n_in, n_mnt, n_out);
+  // Matrix_Go, _NoGo, SNrThal have as many stripes as TOTAL for all PFCd layers
+  int tot_stripes = n_types * n_stripes;
+  set_n_stripes(net, "Matrix_Go",   tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
+  set_n_stripes(net, "Matrix_NoGo", tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
+  set_n_stripes(net, "SNrThal", tot_stripes, -1, false, pfc_geom.x, n_types * pfc_geom.y);
+
+  set_n_stripes(net, "LVe", 1, -1, false, 1, 1);
+  set_n_stripes(net, "LVi", 1, -1, false, 1, 1);
   net->Build();
   return true;
 }
 
-bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
-                        int n_stripes, bool pfc_learns) {
+bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
+			bool da_mod_all, int n_stripes, bool pfc_learns) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -2256,15 +3290,14 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // first configure PVLV system..
   if(TestError(!PVLV(net, da_mod_all), "PBWM", "could not make PVLV")) return false;
 
-  bool out_gate = true;
 
   String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
  messages in the interim):\n\n";
 
-  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate hidden layers\
- The con specs INTO the PFC should be ToPFC conspecs; the ones out should be regular learning conspecs.";
+  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate layers.\
+ Except for special intra-PFC connections, the conspecs INTO ALL superficial PFC layers should be ToPFC conspecs; those out from PFC layers should be regular learning conspecs.";
 
   msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
  will be set.  If there are any actual errors which must be corrected before\
@@ -2297,58 +3330,48 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     vta = (LeabraLayer*)pvlv_laygp->FindName("DA");
   if(!rew_targ_lay || !lve || !pve || !pvi || !vta) return false;
 
-  bool new_bg_laygp = false;
-  Layer_Group* bg_laygp = net->FindMakeLayerGroup("PBWM_BG", NULL, new_bg_laygp);
-  bool new_pfc_laygp = false;
-  Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
-
-  if(new_bg_laygp || new_pfc_laygp) {
-    PBWM_ToLayerGroups(net);    // doesn't hurt to just do this..
-  }
+  bool new_pbwm_laygp = false;
+  Layer_Group* pbwm_laygp = net->FindMakeLayerGroup("PBWM", NULL, new_pbwm_laygp);
 
   // if not new layers, don't make prjns into them!
-  bool patch_new = false;     bool snc_new = false;
-  bool matrix_m_new = false;  bool snrthal_m_new = false; bool pfc_m_new = false;
-  bool matrix_o_new = false;  bool snrthal_o_new = false; bool pfc_o_new = false;
+  bool matrix_go_new =   false; bool pfc_s_mnt_new = false; bool pfc_d_mnt_new = false;
+  bool matrix_nogo_new = false; bool pfc_s_out_new = false; bool pfc_d_out_new = false;
+  bool snrthal_new =     false; bool pfc_s_in_new =  false; bool pfc_d_in_new =  false;
 
-  LeabraLayer* patch = NULL;
-  LeabraLayer* snc = NULL;
+  LeabraLayer* pfc_s_mnt = NULL;
+  LeabraLayer* pfc_d_mnt = NULL;
+  LeabraLayer* pfc_s_out = NULL;
+  LeabraLayer* pfc_d_out = NULL;
+  LeabraLayer* pfc_s_in = NULL;
+  LeabraLayer* pfc_d_in = NULL;
 
-  LeabraLayer* matrix_m = NULL;
-  LeabraLayer* snrthal_m = NULL;
-  LeabraLayer* pfc_m = NULL;
+  LeabraLayer* matrix_go = NULL;
+  LeabraLayer* matrix_nogo = NULL;
+  LeabraLayer* snrthal = NULL;
 
-  LeabraLayer* matrix_o = NULL; // output gate versions
-  LeabraLayer* snrthal_o = NULL;
-  LeabraLayer* pfc_o = NULL;
+  matrix_go = (LeabraLayer*)pbwm_laygp->FindMakeLayer("Matrix_Go", NULL, matrix_go_new, "Matrix");
+  matrix_nogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("Matrix_NoGo", NULL, matrix_nogo_new);
+  snrthal = (LeabraLayer*)pbwm_laygp->FindMakeLayer("SNrThal", NULL, snrthal_new, "SNrThal");
 
-  patch = (LeabraLayer*)bg_laygp->FindMakeLayer("Patch", NULL, patch_new, "Patch");
-  snc = (LeabraLayer*)bg_laygp->FindMakeLayer("SNc", NULL, snc_new, "SNc");
-
-  if(out_gate) {
-    matrix_m = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix_mnt", NULL, matrix_m_new, "Matrix");
-    matrix_o = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix_out", NULL, matrix_o_new);
-
-    snrthal_m = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal_mnt", NULL, snrthal_m_new, "SNrThal");
-    snrthal_o = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal_out", NULL, snrthal_o_new);
-
-    pfc_m = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC_mnt", NULL, pfc_m_new, "PFC");
-    pfc_o = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC_out", NULL, pfc_o_new);
+  if(gating_types & INPUT) {
+    pfc_s_in =  (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_in",  NULL, pfc_s_in_new);
+    pfc_d_in =  (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_in",  NULL, pfc_d_in_new);
   }
-  else {
-    matrix_m = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix", NULL, matrix_m_new, "Matrix");
-    snrthal_m = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal", NULL, snrthal_m_new, "SNrThal");
-    pfc_m = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC", NULL, pfc_m_new);
+  if(gating_types & MAINT) {
+    pfc_s_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_mnt", NULL, pfc_s_mnt_new, "PFC");
+    pfc_d_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_mnt", NULL, pfc_d_mnt_new);
   }
-
-  if(!patch || !snc || !matrix_m || !snrthal_m || !pfc_m) return false;
+  if(gating_types & OUTPUT) {
+    pfc_s_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_out", NULL, pfc_s_out_new);
+    pfc_d_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_out", NULL, pfc_d_out_new);
+  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
 
-  int mx_z1 = 0;                // max x coordinate on layer z=1
-  int mx_z2 = 0;                // z=2
-  Layer_Group other_lays;  Layer_Group hidden_lays;
+  int mx_z1 = 0;         // max x coordinate on layer z=1
+  int mx_z2 = 0;         // z=2
+  Layer_Group other_lays;   Layer_Group hidden_lays;
   Layer_Group output_lays;  Layer_Group input_lays;
   TDCoord lpos;
   int i;
@@ -2356,9 +3379,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
        && lay != lve && lay != lvi && lay != nv && lay != vta
-       && lay != patch && lay != snc
-       && lay != snrthal_m && lay != matrix_m && lay != pfc_m
-       && lay != snrthal_o && lay != matrix_o && lay != pfc_o) {
+       && lay != snrthal && lay != matrix_go && lay != matrix_nogo
+       && lay != pfc_s_mnt && lay != pfc_d_mnt
+       && lay != pfc_s_out && lay != pfc_d_out
+       && lay != pfc_s_in  && lay != pfc_d_in) {
       other_lays.Link(lay);
       lay->GetAbsPos(lpos);
       if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
@@ -2376,6 +3400,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
   //////////////////////////////////////////////////////////////////////////////////
   // make specs
+  // NOTE: make specs for all the pfc stripe roles: no harm if not used and could be helpful to user!
 
   BaseSpec_Group* units = net->FindMakeSpecGp("PFC_BG_Units");
   BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
@@ -2383,17 +3408,18 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
+  ////////////	UnitSpecs
+
   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_LeabraUnitSpec);
   LeabraUnitSpec* lv_units = (LeabraUnitSpec*)pv_units->FindMakeChild("LVUnits", &TA_LeabraUnitSpec);
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
-  LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_LeabraUnitSpec);
+  LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCsUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
+  LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
-  MatrixUnitSpec* matrixo_units = NULL;
-  if(out_gate) {
-    matrixo_units = (MatrixUnitSpec*)matrix_units->FindMakeChild("MatrixOut", &TA_MatrixUnitSpec);
-  }
+
+  ////////////	ConSpecs
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
   LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
@@ -2402,194 +3428,433 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
   LeabraConSpec* nv_cons =  (LeabraConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
 
-  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
-  LeabraConSpec* intra_pfc = (LeabraConSpec*)topfc_cons->FindMakeChild("IntraPFC", &TA_LeabraConSpec);
-  LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* fmpfcmnt_cons = NULL;
-  LeabraConSpec* fmpfcout_cons = NULL;
-  if(out_gate) {
-    fmpfcmnt_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_mnt", &TA_LeabraConSpec);
-    fmpfcout_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_out", &TA_LeabraConSpec);
-  }
-  MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
-  MatrixConSpec* mfmpfc_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPFC", &TA_MatrixConSpec);
+  LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
 
-  MatrixConSpec* matrixo_cons = NULL;
-  MatrixConSpec* mofmpfc_cons = NULL;
-  if(out_gate) {
-    matrixo_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("Matrix_out", &TA_MatrixConSpec);
-    mofmpfc_cons = (MatrixConSpec*)matrixo_cons->FindMakeChild("Matrix_out_FmPFC", &TA_MatrixConSpec);
-  }
+  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
+  LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
+  LeabraConSpec* topfcstrong_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCStrong", &TA_LeabraConSpec);
+  LeabraConSpec* topfctopo_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCTopo", &TA_LeabraConSpec);
+  LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
+  LeabraConSpec* topfcself_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCSelf", &TA_LeabraConSpec);
+
+  MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
+  MatrixConSpec* matrix_cons_topo = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixConsTopo", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_topo_weak = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoWeak", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_topo_strong = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoStrong", &TA_MatrixConSpec);
+  MatrixNoGoConSpec* matrix_cons_nogo = (MatrixNoGoConSpec*)matrix_cons->FindMakeChild("MatrixConsNoGo", &TA_MatrixNoGoConSpec);
+  MatrixConSpec* matrix_cons_fmpvr = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPvr", &TA_MatrixConSpec);
+
+  LeabraConSpec* fmpfcd_out = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFCd_out", &TA_LeabraConSpec);
 
   LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
-  LeabraConSpec* pfc_self = (LeabraConSpec*)cons->FindMakeSpec("PFCSelfCon", &TA_LeabraConSpec);
+  LeabraConSpec* matrix_to_snrthal = (LeabraConSpec*)cons->FindMakeSpec("MatrixToSNrThal", &TA_LeabraConSpec);
+  // matrix nogo to snrthal just a marker con
 
-  LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* old_matrix_bias = (LeabraConSpec*)bg_bias->children.FindSpecName("MatrixCons");
-  if(old_matrix_bias) {
-    bg_bias->children.RemoveEl(old_matrix_bias);
-  }
+  ////////////	LayerSpecs
+
   LeabraLayerSpec* rewtargsp = (LeabraLayerSpec*)layers->FindMakeSpec("RewTargLayer", &TA_LeabraLayerSpec);
+  ExtRewLayerSpec* pvesp = (ExtRewLayerSpec*)layers->FindMakeSpec(pvenm + "Layer", &TA_ExtRewLayerSpec);
+  PVrLayerSpec* pvrsp = (PVrLayerSpec*)layers->FindMakeSpec(pvrnm + "Layer", &TA_PVrLayerSpec);
+  PViLayerSpec* pvisp = (PViLayerSpec*)layers->FindMakeSpec(pvinm + "Layer", &TA_PViLayerSpec);
   LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
   LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
   NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec);
-  PatchLayerSpec* patchsp = (PatchLayerSpec*)lvesp->FindMakeChild("PatchLayer", &TA_PatchLayerSpec);
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
-  SNcLayerSpec* sncsp = (SNcLayerSpec*)dasp->FindMakeChild("SNcLayer", &TA_SNcLayerSpec);
 
-  PFCLayerSpec* pfcmsp = (PFCLayerSpec*)layers->FindMakeSpec("PFCLayer", &TA_PFCLayerSpec);
-  PFCOutLayerSpec* pfcosp = NULL;
-  if(out_gate)
-    pfcosp = (PFCOutLayerSpec*)pfcmsp->FindMakeChild("PFCOutLayer", &TA_PFCOutLayerSpec);
-  MatrixLayerSpec* matrixsp = (MatrixLayerSpec*)layers->FindMakeSpec("MatrixLayer", &TA_MatrixLayerSpec);
+  PFCDeepLayerSpec* pfc_d_mnt_sp = (PFCDeepLayerSpec*)layers->FindMakeSpec("PFCDeep_mnt", &TA_PFCDeepLayerSpec);
+  PFCDeepLayerSpec* pfc_d_out_sp = (PFCDeepLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCDeepLayerSpec);
+  PFCDeepLayerSpec* pfc_d_in_sp = (PFCDeepLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCDeepLayerSpec);
 
-  MatrixLayerSpec* matrixosp = NULL;
-  if(out_gate)
-    matrixosp = (MatrixLayerSpec*)matrixsp->FindMakeChild("Matrix_out", &TA_MatrixLayerSpec);
+  LeabraLayerSpec* pfc_s_mnt_sp = (LeabraLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_LeabraLayerSpec);
+  LeabraLayerSpec* pfc_s_out_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_LeabraLayerSpec);
+  LeabraLayerSpec* pfc_s_in_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_LeabraLayerSpec);
+
+  MatrixLayerSpec* matrix_go_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go", &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_sp = (MatrixLayerSpec*)matrix_go_sp->FindMakeChild("Matrix_NoGo", &TA_MatrixLayerSpec);
 
   SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)layers->FindMakeSpec("SNrThalLayer", &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalosp = NULL;
-  if(out_gate)
-    snrthalosp = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalOut", &TA_SNrThalLayerSpec);
+
+  ////////////	PrjnSpecs
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
-  ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
-  UniformRndPrjnSpec* topfc = (UniformRndPrjnSpec*)prjns->FindMakeSpec("ToPFC", &TA_UniformRndPrjnSpec);
-  ProjectionSpec* pfc_selfps = (ProjectionSpec*)prjns->FindMakeSpec("PFCSelf", &TA_OneToOnePrjnSpec);
-  GpRndTesselPrjnSpec* intra_pfcps = (GpRndTesselPrjnSpec*)prjns->FindMakeSpec("IntraPFC", &TA_GpRndTesselPrjnSpec);
-  TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
-  PFCLVPrjnSpec* pfc_lv_prjn = (PFCLVPrjnSpec*)prjns->FindMakeSpec("PFC_LV_Prjn", &TA_PFCLVPrjnSpec);
+  ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
 
-  input_pfc->send_offs.New(1); // this is all it takes!
+  SNrToPFCPrjnSpec* snr_to_pfc_prjn = (SNrToPFCPrjnSpec*)prjns->FindMakeSpec("SNrToPFCPrjn", &TA_SNrToPFCPrjnSpec);
+  PFCdToNoGoPrjnSpec* pfc_to_nogo_prjn = (PFCdToNoGoPrjnSpec*)prjns->FindMakeSpec("PFCdToNoGoPrjn", &TA_PFCdToNoGoPrjnSpec);
+  PVrToMatrixGoPrjnSpec* pvr_to_mtx_prjn = (PVrToMatrixGoPrjnSpec*)prjns->FindMakeSpec("PVrToMatrixGoPrjn", &TA_PVrToMatrixGoPrjnSpec);
+
+  TopoWtsPrjnSpec* topomaster = (TopoWtsPrjnSpec*)prjns->FindMakeSpec("TopoMaster", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topofminput = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoFmInput", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* intrapfctopo = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoIntraPFC", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmmnt = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmMnt", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmout = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmOut", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmin = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmIn", &TA_TopoWtsPrjnSpec);
+
+  TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
+  input_pfc->send_offs.SetSize(1); // this is all it takes!
+
+  /////////////		Config Topo PrjnSpecs
+
+  topomaster->wt_range.min = 0.1f;
+  topomaster->wt_range.max = 0.5f;
+  topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
+  topomaster->gauss_sig = 0.1f;
+  topomaster->use_recv_gps = true;
+  topomaster->use_send_gps = true;
+
+  topofminput->SetUnique("grad_x", true);
+  topofminput->grad_x = false;
+  topofminput->SetUnique("grad_y", true);
+  topofminput->grad_y = true;
+  topofminput->SetUnique("grad_y_grad_x", true);
+  topofminput->grad_y_grad_x = true;
+  topofminput->SetUnique("wrap", true);
+  topofminput->wrap = false;
+  topofminput->SetUnique("use_recv_gps", true);
+  topofminput->use_recv_gps = true;
+  topofminput->SetUnique("use_send_gps", true);
+  topofminput->use_send_gps = false;
+  topofminput->SetUnique("custom_send_range", true);
+  topofminput->custom_send_range = true;
+  topofminput->SetUnique("send_range_start", true);
+  topofminput->send_range_start.x = 0;
+  topofminput->send_range_start.y = 0;
+  topofminput->SetUnique("send_range_end", true);
+  topofminput->send_range_end.x = -1;
+  topofminput->send_range_end.y = (n_stripes / 2)-1; // unlikely to be generally useful..
+  topofminput->SetUnique("custom_recv_range", true);
+  topofminput->custom_recv_range = false;
+
+  intrapfctopo->SetUnique("grad_x", true);
+  intrapfctopo->grad_x = true;
+  intrapfctopo->SetUnique("grad_x_grad_y", true);
+  intrapfctopo->grad_x_grad_y = false;
+  intrapfctopo->SetUnique("grad_y", true);
+  intrapfctopo->grad_y = false;
+  intrapfctopo->SetUnique("grad_y_grad_x", true);
+  intrapfctopo->grad_y_grad_x = false;
+  intrapfctopo->SetUnique("wrap", true);
+  intrapfctopo->wrap = true;
+  intrapfctopo->SetUnique("use_recv_gps", true);
+  intrapfctopo->use_recv_gps = true;
+  intrapfctopo->SetUnique("use_send_gps", true);
+  intrapfctopo->use_send_gps = true;
+  intrapfctopo->SetUnique("custom_send_range", true);
+  intrapfctopo->custom_send_range = false;
+  intrapfctopo->SetUnique("custom_recv_range", true);
+  intrapfctopo->custom_recv_range = false;
+
+  topomatrixfmmnt->SetUnique("grad_x", true);
+  topomatrixfmmnt->grad_x = true;
+  topomatrixfmmnt->SetUnique("grad_x_grad_y", true);
+  topomatrixfmmnt->grad_x_grad_y = false;
+  topomatrixfmmnt->SetUnique("grad_y", true);
+  topomatrixfmmnt->grad_y = true;
+  topomatrixfmmnt->SetUnique("grad_y_grad_x", true);
+  topomatrixfmmnt->grad_y_grad_x = false;
+  topomatrixfmmnt->SetUnique("wrap", true);
+  topomatrixfmmnt->wrap = true;
+  topomatrixfmmnt->SetUnique("use_recv_gps", true);
+  topomatrixfmmnt->use_recv_gps = true;
+  topomatrixfmmnt->SetUnique("use_send_gps", true);
+  topomatrixfmmnt->use_send_gps = true;
+  topomatrixfmmnt->SetUnique("custom_send_range", true);
+  topomatrixfmmnt->custom_send_range = false;
+  topomatrixfmmnt->SetUnique("custom_recv_range", true);
+  topomatrixfmmnt->custom_recv_range = true;
+  topomatrixfmmnt->SetUnique("recv_range_start", true);
+  topomatrixfmmnt->recv_range_start.x = 0;
+  topomatrixfmmnt->recv_range_start.y = 0;
+  topomatrixfmmnt->SetUnique("recv_range_end", true);
+  topomatrixfmmnt->recv_range_end.x = -1;
+  topomatrixfmmnt->recv_range_end.y = 1; // todo: only for n_stripes with 2 rows..
+
+  topomatrixfmout->SetUnique("grad_x", true);
+  topomatrixfmout->grad_x = true;
+  topomatrixfmout->SetUnique("grad_x_grad_y", true);
+  topomatrixfmout->grad_x_grad_y = false;
+  topomatrixfmout->SetUnique("grad_y", true);
+  topomatrixfmout->grad_y = true;
+  topomatrixfmout->SetUnique("grad_y_grad_x", true);
+  topomatrixfmout->grad_y_grad_x = false;
+  topomatrixfmout->SetUnique("wrap", true);
+  topomatrixfmout->wrap = true;
+  topomatrixfmout->SetUnique("use_recv_gps", true);
+  topomatrixfmout->use_recv_gps = true;
+  topomatrixfmout->SetUnique("use_send_gps", true);
+  topomatrixfmout->use_send_gps = true;
+  topomatrixfmout->SetUnique("custom_send_range", true);
+  topomatrixfmout->custom_send_range = false;
+  topomatrixfmout->SetUnique("custom_recv_range", true);
+  topomatrixfmout->custom_recv_range = true;
+  topomatrixfmout->SetUnique("recv_range_start", true);
+  topomatrixfmout->recv_range_start.x = 0;
+  topomatrixfmout->recv_range_start.y = 2; // todo: only for n_stripes with 2 rows..
+  topomatrixfmout->SetUnique("recv_range_end", true);
+  topomatrixfmout->recv_range_end.x = -1;
+  topomatrixfmout->recv_range_end.y = -1; // todo: only for n_stripes with 2 rows..
+
+  topomatrixfmin->SetUnique("grad_x", true);
+  topomatrixfmin->grad_x = true;
+  topomatrixfmin->SetUnique("grad_x_grad_y", true);
+  topomatrixfmin->grad_x_grad_y = false;
+  topomatrixfmin->SetUnique("grad_y", true);
+  topomatrixfmin->grad_y = true;
+  topomatrixfmin->SetUnique("grad_y_grad_x", true);
+  topomatrixfmin->grad_y_grad_x = false;
+  topomatrixfmin->SetUnique("wrap", true);
+  topomatrixfmin->wrap = false;
+  topomatrixfmin->SetUnique("use_recv_gps", true);
+  topomatrixfmin->use_recv_gps = true;
+  topomatrixfmin->SetUnique("use_send_gps", true);
+  topomatrixfmin->use_send_gps = true;
+  topomatrixfmin->SetUnique("custom_send_range", true);
+  topomatrixfmin->custom_send_range = false;
+  topomatrixfmin->SetUnique("custom_recv_range", true);
+  topomatrixfmin->custom_recv_range = true;
+  topomatrixfmin->SetUnique("recv_range_start", true);
+  topomatrixfmin->recv_range_start.x = 0;
+  topomatrixfmin->recv_range_start.y = 0; // todo: only for n_stripes with 2 rows..
+  topomatrixfmin->SetUnique("recv_range_end", true);
+  topomatrixfmin->recv_range_end.x = -1;
+  topomatrixfmin->recv_range_end.y = 1; // todo: only for n_stripes with 2 rows..
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
 
+  snrthalsp->gating_types = (SNrThalLayerSpec::GatingTypes)gating_types;
+  matrix_go_sp->gating_types = (SNrThalLayerSpec::GatingTypes)gating_types;
+  pfc_d_mnt_sp->gating_types = (SNrThalLayerSpec::GatingTypes)gating_types;
+
   // set bias specs for unit specs
   pfc_units->bias_spec.SetSpec(pfc_bias);
   matrix_units->bias_spec.SetSpec(matrix_bias);
+  matrix_nogo_units->bias_spec.SetSpec(matrix_bias);
   snrthal_units->bias_spec.SetSpec(bg_bias);
 
-  patch->SetLayerSpec(patchsp); patch->SetUnitSpec(lv_units);
-  snc->SetLayerSpec(sncsp); snc->SetUnitSpec(da_units);
+  snrthal->SetLayerSpec(snrthalsp); snrthal->SetUnitSpec(snrthal_units);
+  matrix_go->SetLayerSpec(matrix_go_sp);   matrix_go->SetUnitSpec(matrix_units);
+  matrix_nogo->SetLayerSpec(matrix_nogo_sp);   matrix_nogo->SetUnitSpec(matrix_nogo_units);
 
-  snrthal_m->SetLayerSpec(snrthalsp); snrthal_m->SetUnitSpec(snrthal_units);
-  matrix_m->SetLayerSpec(matrixsp);   matrix_m->SetUnitSpec(matrix_units);
-  pfc_m->SetLayerSpec(pfcmsp);  pfc_m->SetUnitSpec(pfc_units);
-  if(out_gate) {
-    snrthal_o->SetLayerSpec(snrthalosp); snrthal_o->SetUnitSpec(snrthal_units);
-    matrix_o->SetLayerSpec(matrixosp);   matrix_o->SetUnitSpec(matrixo_units);
-    pfc_o->SetLayerSpec(pfcosp);        pfc_o->SetUnitSpec(pfc_units);
-    matrixo_units->bias_spec.SetSpec(matrix_bias);
+  if(gating_types & INPUT) {
+    pfc_s_in->SetLayerSpec(pfc_s_in_sp);  pfc_s_in->SetUnitSpec(pfc_units);
+    pfc_d_in->SetLayerSpec(pfc_d_in_sp);  pfc_d_in->SetUnitSpec(pfc_units);
+  }
+  if(gating_types & MAINT) {
+    pfc_s_mnt->SetLayerSpec(pfc_s_mnt_sp);  pfc_s_mnt->SetUnitSpec(pfc_units);
+    pfc_d_mnt->SetLayerSpec(pfc_d_mnt_sp);  pfc_d_mnt->SetUnitSpec(pfc_units);
+  }
+  if(gating_types & OUTPUT) {
+    pfc_s_out->SetLayerSpec(pfc_s_out_sp);  pfc_s_out->SetUnitSpec(pfc_units);
+    pfc_d_out->SetLayerSpec(pfc_d_out_sp);  pfc_d_out->SetUnitSpec(pfc_units);
   }
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
-  // FindMakePrjn(Layer* recv, Layer* send,
 
-  net->FindMakePrjn(snc, pvi, onetoone, marker_cons);
-  net->FindMakePrjn(snc, lve, onetoone, marker_cons);
-  net->FindMakePrjn(snc, lvi, onetoone, marker_cons);
-  net->FindMakePrjn(snc, pvr, onetoone, marker_cons);
-  net->FindMakePrjn(snc, nv,  onetoone, marker_cons);
-  net->FindMakePrjn(snc, patch,  onetoone, marker_cons);
+  //	  	      to	from		prjn_spec	con_spec
+  net->FindMakePrjn(snrthal, matrix_go, gponetoone, matrix_to_snrthal);
+  net->FindMakePrjn(snrthal, matrix_nogo, gponetoone, marker_cons);
 
-  // patch has same basic connectivity as lve
-  net->FindMakePrjn(patch, pvr, onetoone, marker_cons);
+  net->FindMakePrjn(matrix_go, matrix_nogo, gponetoone, marker_cons);
+  net->FindMakePrjn(matrix_go, snrthal, gponetoone, marker_cons);
+  net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
+  net->FindMakePrjn(matrix_go, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
+  // input -> matrix_go, pfc -> matrix come below
 
-  if(patch_new) {
-    for(i=0;i<input_lays.size;i++) {
-      Layer* il = (Layer*)input_lays[i];
-      net->FindMakePrjn(patch, il, fullprjn, lve_cons);
+  net->FindMakePrjn(matrix_nogo, snrthal, gponetoone, marker_cons);
+  net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
+
+  if(gating_types & MAINT) {
+    net->FindMakePrjn(matrix_go, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo_weak);
+    net->FindMakePrjn(matrix_nogo, pfc_d_mnt, pfc_to_nogo_prjn, matrix_cons_nogo);
+
+    net->FindMakePrjn(pfc_s_mnt, pfc_d_mnt, intrapfctopo, topfcself_cons);
+    if(gating_types & INPUT) {
+      net->FindMakePrjn(pfc_s_mnt, pfc_d_in, intrapfctopo, topfctopo_cons);
     }
+    if(gating_types & OUTPUT) {
+      // could be an extra feedback training signal, but not that useful (diluted)
+      // net->FindMakePrjn(pfc_s_mnt, pfc_s_out, fullprjn, topfc_cons); signal!
+    }
+    net->FindMakePrjn(pfc_d_mnt, pfc_s_mnt, onetoone, marker_cons);
+    net->FindMakePrjn(pfc_d_mnt, snrthal, snr_to_pfc_prjn, marker_cons);
   }
 
-  net->RemovePrjn(matrix_m, vta); // no more vta prjn!
-  net->FindMakePrjn(matrix_m, snc, gponetoone, marker_cons);
+  if(gating_types & OUTPUT) {
+    net->FindMakePrjn(matrix_go, pfc_s_out, topomatrixfmout, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo, pfc_d_out, pfc_to_nogo_prjn, matrix_cons_nogo);
 
-  net->FindMakePrjn(snrthal_m, matrix_m, gponetoone, marker_cons);
-  net->FindMakePrjn(pfc_m, snrthal_m, gponetoone, marker_cons);
-  net->FindMakePrjn(matrix_m, snrthal_m, gponetoone, marker_cons);
-  net->FindMakePrjn(matrix_m, patch, gponetoone, marker_cons); // for noise
-
-  if(out_gate) {
-    net->RemovePrjn(matrix_o, snc); // transiently made that so nuke it if there
-    net->FindMakePrjn(matrix_o, vta, fullprjn, marker_cons);
-    // output gets from vta, not snc
-
-    net->FindMakePrjn(snrthal_o, matrix_o, gponetoone, marker_cons);
-    net->FindMakePrjn(pfc_o, snrthal_o, gponetoone, marker_cons);
-    net->FindMakePrjn(matrix_o, snrthal_o, gponetoone, marker_cons);
-
-    net->FindMakePrjn(pfc_o, pfc_m, onetoone, marker_cons);
-
-//     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
-//     net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
-
-    net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
-    //  net->FindMakeSelfPrjn(pfc_m, intra_pfcps, intra_pfc);
-
-    // this part in particular doesn't make sense for pfc_o only..
-    // critics need up reflect updating!
-    net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
-    net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-    net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
-    net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
-
-    net->FindMakePrjn(patch, pfc_m, gponetoone, lve_cons);
+    net->FindMakePrjn(pfc_s_out, pfc_d_out, intrapfctopo, topfcself_cons);
+    if(gating_types & MAINT) {
+      net->FindMakePrjn(pfc_s_out, pfc_d_mnt, intrapfctopo, topfctopo_cons);
+    }
+    net->FindMakePrjn(pfc_d_out, pfc_s_out, onetoone, marker_cons);
+    net->FindMakePrjn(pfc_d_out, snrthal, snr_to_pfc_prjn, marker_cons);
   }
-  else {                        // !out_gate
-//     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
 
-    net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
-    //  net->FindMakeSelfPrjn(pfc, intra_pfcps, intra_pfc);
+  if(gating_types & INPUT) {
+    net->FindMakePrjn(matrix_go, pfc_s_in, topomatrixfmin, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo, pfc_d_in, pfc_to_nogo_prjn, matrix_cons_nogo);
 
-    net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
-    net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-    net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
-    net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
+    net->FindMakePrjn(pfc_s_in, pfc_d_in, intrapfctopo, topfcself_cons);
+    if(gating_types & MAINT) {
+      // could be an extra feedback training signal, but not that useful (diluted)
+      // net->FindMakePrjn(pfc_s_in, pfc_s_mnt, fullprjn, topfc_cons);
+    }
+    if(gating_types & OUTPUT) {
+      // could be an extra feedback training signal, but not that useful (diluted)
+      // net->FindMakePrjn(pfc_s_in, pfc_s_out, fullprjn, topfc_cons);
+    }
+    net->FindMakePrjn(pfc_d_in, pfc_s_in, onetoone, marker_cons);
+    net->FindMakePrjn(pfc_d_in, snrthal, snr_to_pfc_prjn, marker_cons);
+  }
 
-    net->FindMakePrjn(patch, pfc_m, gponetoone, lve_cons);
+  // pvlv recv from deep only, maint only needed..
+  if(gating_types & MAINT) {
+    // net->FindMakePrjn(pvr, pfc_d_mnt, fullprjn, pvr_cons);
+    net->FindMakePrjn(pvi, pfc_d_mnt, fullprjn, pvi_cons);
+    net->FindMakePrjn(lve, pfc_d_mnt, fullprjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_d_mnt, fullprjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_d_mnt, fullprjn, nv_cons);
   }
 
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
-    if(pfc_m_new) {
-      if(pfc_learns)
-        net->FindMakePrjn(pfc_m, il, fullprjn, topfc_cons);
-      else
-        net->FindMakePrjn(pfc_m, il, input_pfc, topfc_cons);
+
+    if(matrix_go_new)  // posterior cortex presumably also projects from superficial..
+      net->FindMakePrjn(matrix_go, il, topofminput, matrix_cons_topo);
+    // if(matrix_nogo_new) // not to nogos!
+    //   net->FindMakePrjn(matrix_nogo, il, topofminput, matrix_cons_topo);
+
+    if(gating_types & INPUT) {
+      if(pfc_s_in_new) {
+        if(pfc_learns)
+          net->FindMakePrjn(pfc_s_in, il, topofminput, topfctopo_cons);
+        else
+          net->FindMakePrjn(pfc_s_in, il, input_pfc, topfc_cons);
+      }
     }
-    if(matrix_m_new)
-      net->FindMakePrjn(matrix_m, il, fullprjn, matrix_cons);
-    if(matrix_o_new)
-      net->FindMakePrjn(matrix_o, il, fullprjn, matrixo_cons);
+
+    if(gating_types & MAINT) {
+      if(pfc_s_mnt_new) {
+        if(pfc_learns)
+          net->FindMakePrjn(pfc_s_mnt, il, topofminput, topfctopo_cons);
+        else
+          net->FindMakePrjn(pfc_s_mnt, il, input_pfc, topfc_cons);
+      }
+    }
   }
-  for(i=0;i<hidden_lays.size;i++) {
-    Layer* hl = (Layer*)hidden_lays[i];
-    if(out_gate) {
-      net->FindMakePrjn(hl, pfc_o, fullprjn, fmpfcout_cons);
-      net->FindMakePrjn(hl, pfc_m, fullprjn, fmpfcmnt_cons);
+
+  for(i=0;i<output_lays.size;i++) {
+    Layer* ol = (Layer*)output_lays[i];
+    if(gating_types & OUTPUT) {
+      net->FindMakePrjn(ol, pfc_d_out, fullprjn, fmpfcd_out);
+      if(pfc_d_out_new && pfc_learns) { // error feedback goes to superficial guys!
+        net->FindMakePrjn(pfc_s_out, ol, fullprjn, topfcfmout_cons);
+      }
     }
-    else {
-      net->FindMakePrjn(hl, pfc_m, fullprjn, learn_cons);
-    }
-  }
-  if(pfc_m_new && pfc_learns) {
-    for(i=0;i<output_lays.size;i++) {
-      Layer* ol = (Layer*)output_lays[i];
-      net->FindMakePrjn(pfc_m, ol, fullprjn, topfc_cons);
+    if(gating_types & MAINT) {
+      if(!(gating_types & OUTPUT)) {
+	net->FindMakePrjn(ol, pfc_d_mnt, fullprjn, fmpfcd_out);
+      }
+      if(pfc_d_mnt_new && pfc_learns) { // error feedback goes to superficial guys!
+        net->FindMakePrjn(pfc_s_mnt, ol, fullprjn, topfcfmout_cons);
+      }
     }
   }
 
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
+
+  int lay_spc = 2;
+
+  if(new_pbwm_laygp) {
+    pbwm_laygp->pos.z = 0;
+    pbwm_laygp->pos.x = 20;
+  }
+
+  ///////////////	PFC Layout first -- get into z = 1
+
+  int pfc_st_x = 0;
+  int pfc_st_y = 0;
+  int pfc_deep_y = 18;
+  int pfc_z = 1;
+  if(gating_types & INPUT) {
+    if(pfc_s_in_new) {
+      pfc_s_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+      if(!pfc_learns && (input_lays.size > 0)) {
+	Layer* il = (Layer*)input_lays[0];
+	pfc_s_in->un_geom = il->un_geom;
+      }
+      else {
+	pfc_s_in->un_geom.n = 30; pfc_s_in->un_geom.x = 5; pfc_s_in->un_geom.y = 6;
+      }
+    }
+    lay_set_geom(pfc_s_in, n_stripes);
+    pfc_deep_y = pfc_s_in->disp_geom.y + 3 * lay_spc;
+
+    // repeat for deep guys..
+    if(pfc_d_in_new) {
+      pfc_d_in->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
+      pfc_d_in->un_geom = pfc_s_in->un_geom;
+    }
+
+    lay_set_geom(pfc_d_mnt, n_stripes);
+    pfc_st_x += pfc_s_in->disp_geom.x + lay_spc;
+  }
+
+  if(gating_types & MAINT) {
+    if(pfc_s_mnt_new) {
+      pfc_s_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+      if(!pfc_learns && (input_lays.size > 0)) {
+	Layer* il = (Layer*)input_lays[0];
+	pfc_s_mnt->un_geom = il->un_geom;
+      }
+      else {
+	pfc_s_mnt->un_geom.n = 30; pfc_s_mnt->un_geom.x = 5; pfc_s_mnt->un_geom.y = 6;
+      }
+    }
+    lay_set_geom(pfc_s_mnt, n_stripes);
+    pfc_deep_y = pfc_s_mnt->disp_geom.y + 3 * lay_spc;
+
+    // repeat for deep guys..
+    if(pfc_d_mnt_new) {
+      pfc_d_mnt->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
+      pfc_d_mnt->un_geom = pfc_s_mnt->un_geom;
+    }
+
+    lay_set_geom(pfc_d_mnt, n_stripes);
+    pfc_st_x += pfc_s_mnt->disp_geom.x + lay_spc;
+  }
+
+  if(gating_types & OUTPUT) {
+    if(pfc_s_out_new) {
+      pfc_s_out->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+      if(!pfc_learns && (input_lays.size > 0)) {
+	Layer* il = (Layer*)input_lays[0];
+	pfc_s_out->un_geom = il->un_geom;
+      }
+      else {
+	pfc_s_out->un_geom.n = 30; pfc_s_out->un_geom.x = 5; pfc_s_out->un_geom.y = 6;
+      }
+    }
+    lay_set_geom(pfc_s_out, n_stripes);
+    pfc_deep_y = pfc_s_out->disp_geom.y + 3 * lay_spc;
+
+    // now repeat for out-deep guys;
+    if(pfc_d_out_new) {
+      pfc_d_out->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
+      pfc_d_out->un_geom = pfc_s_out->un_geom;
+    }
+    lay_set_geom(pfc_d_out, n_stripes);
+  }
+
+  ///////////////	Now Matrix, SNrThal
 
   int n_lv_u;           // number of pvlv-type units
   if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
@@ -2599,115 +3864,76 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   else
     n_lv_u = 21;
 
-  lay_set_geom(lve, 1); // patch has the per-stripe lve guys basically
-  lay_set_geom(lvi, 1);
-  lvesp->SetUnique("inhib_group", true);
-  lvesp->SetUnique("gp_kwta", true);
-  lvisp->SetUnique("inhib_group", false);
-  lvisp->SetUnique("gp_kwta", false);
-  lvesp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-  lvesp->gp_kwta.k_from = KWTASpec::USE_K;
-  lvesp->gp_kwta.k = 1;
-
-  if(patch_new) {
-    patch->pos.SetXYZ(vta->pos.x+3, 0, 0);
+  int n_types, n_in, n_mnt, n_out;
+  SNrThalLayerSpec::GatingTypesNStripes((SNrThalLayerSpec::GatingTypes)gating_types, 24, // just care about n_types
+					n_types, n_in, n_mnt, n_out);
+  int tot_stripes = n_types * n_stripes;
+  if(matrix_go_new) {
+    matrix_go->un_geom.n = 28; matrix_go->un_geom.x = 4; matrix_go->un_geom.y = 7;
   }
-  if(snc_new) {
-    snc->pos.SetXYZ(vta->pos.x+3 + n_lv_u, 4, 0);
+  if(matrix_nogo_new) {
+    matrix_nogo->un_geom.n = 28; matrix_nogo->un_geom.x = 4; matrix_nogo->un_geom.y = 7;
   }
-
-  if(patch->un_geom.n != n_lv_u) { patch->un_geom.n = n_lv_u; patch->un_geom.x = n_lv_u; patch->un_geom.y = 1; }
-
-  lay_set_geom(patch, n_stripes);
-  lay_set_geom(snc, n_stripes, 1); // one unit
-
-  if(pfc_m_new) {
-    pfc_m->pos.SetXYZ(mx_z2 + 1, 0, 2);
-    if(!pfc_learns && (input_lays.size > 0)) {
-      Layer* il = (Layer*)input_lays[0];
-      pfc_m->un_geom = il->un_geom;
-    }
-    else {
-      pfc_m->un_geom.n = 30; pfc_m->un_geom.x = 5; pfc_m->un_geom.y = 6;
-    }
-  }
-  lay_set_geom(pfc_m, n_stripes);
-
-  if(matrix_m_new) {
-    matrix_m->pos.SetXYZ(mx_z1+1, 0, 1);
-    matrix_m->un_geom.n = 28; matrix_m->un_geom.x = 4; matrix_m->un_geom.y = 7;
-  }
-  lay_set_geom(matrix_m, n_stripes);
-
-  if(snrthal_m_new) {
-    snrthal_m->pos.SetXYZ(patch->pos.x + (patch->un_geom.x +1) * patch->gp_geom.x +1, 0, 0);
-  }
-  lay_set_geom(snrthal_m, n_stripes, 1);
+  lay_set_geom(matrix_go, tot_stripes);
+  lay_set_geom(snrthal, tot_stripes, 1);
+  lay_set_geom(matrix_nogo, tot_stripes);
 
   // this is here, to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, n_stripes);
+  PBWM_SetNStripes(net, gating_types, n_stripes);
 
-  if(out_gate) {
-    if(pfc_o_new) {
-      pfc_o->pos.z = pfc_m->pos.z; pfc_o->pos.y = pfc_m->pos.y;
-      pfc_o->pos.x = pfc_m->pos.x + pfc_m->disp_geom.x + 2;
-      if(!pfc_learns && (input_lays.size > 0)) {
-        Layer* il = (Layer*)input_lays[0];
-        pfc_o->un_geom = il->un_geom;
-      }
-      else {
-        pfc_o->un_geom = pfc_m->un_geom;
-      }
-    }
-    lay_set_geom(pfc_o, n_stripes);
+  int mtx_x = 0;
+  if(matrix_go_new) {
+    matrix_go->pos.SetXYZ(mtx_x, 0, 0);
+  }
+  mtx_x += matrix_go->disp_geom.x + lay_spc; 
 
-    if(matrix_o_new) {
-      matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
-      matrix_o->pos.x = matrix_m->pos.x + matrix_m->disp_geom.x + 2;
-      matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
-    }
-    lay_set_geom(matrix_o, n_stripes);
-
-    snrthal_o->un_geom.n = 1;
-    if(snrthal_o_new) {
-      snrthal_o->pos.SetXYZ(snrthal_m->pos.x + (snrthal_m->gp_geom.x*2)+1, 0, 0);
-    }
-    lay_set_geom(snrthal_o, n_stripes);
+  // repeat for nogo guys; offset x by maybe 10
+  if(matrix_nogo_new) {
+    matrix_nogo->pos.SetXYZ(mtx_x + snrthal->disp_geom.x + lay_spc, 0, 0);
+  }
+  if(snrthal_new) { // put between go and nogo
+    snrthal->pos.SetXYZ(mtx_x, 0, 0);
   }
 
-  if(new_bg_laygp) {
-    bg_laygp->pos.z = 0;
-  }
-  if(new_pfc_laygp) {
-    pfc_laygp->pos.z = 2;
+  // this is here, to allow it to get disp_geom for laying out the pfc and matrix guys!
+  PBWM_SetNStripes(net, gating_types, n_stripes);
+
+  if(new_pbwm_laygp) {
+    pbwm_laygp->pos.z = 0;
+    pbwm_laygp->pos.x = 20;
   }
 
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
-  PBWM_SetNStripes(net, n_stripes);
+  PBWM_SetNStripes(net, gating_types, n_stripes);
   PBWM_Defaults(net, pfc_learns); // sets all default params and gets selectedits
 
   net->LayerPos_Cleanup();
 
   // move back!
-  if(new_bg_laygp || new_pfc_laygp) {
-    bg_laygp->pos.z = 0;
-    pfc_laygp->pos.z = 2;
+  if(new_pbwm_laygp) {
+    pbwm_laygp->pos.z = 0;
     net->RebuildAllViews();     // trigger update
   }
 
   taMisc::CheckConfigStart(false, false);
 
-  bool ok = patchsp->CheckConfig_Layer(patch, false);
-  ok &= sncsp->CheckConfig_Layer(snc, false);
-  ok &= pfcmsp->CheckConfig_Layer(pfc_m, false);
-  ok &= matrixsp->CheckConfig_Layer(matrix_m, false);
-  ok &= snrthalsp->CheckConfig_Layer(snrthal_m, false);
-  if(out_gate) {
-    ok &= pfcosp->CheckConfig_Layer(pfc_o, false);
-    ok &= matrixosp->CheckConfig_Layer(matrix_o, false);
-    ok &= snrthalosp->CheckConfig_Layer(snrthal_o, false);
+  bool ok = false;
+  ok = matrix_go_sp->CheckConfig_Layer(matrix_go, false);
+  ok &= matrix_nogo_sp->CheckConfig_Layer(matrix_nogo, false);
+  ok &= snrthalsp->CheckConfig_Layer(snrthal, false);
+  if(gating_types & INPUT) {
+    ok &= pfc_s_in_sp->CheckConfig_Layer(pfc_s_in, false);
+    ok &= pfc_d_in_sp->CheckConfig_Layer(pfc_d_in, false);
+  }
+  if(gating_types & MAINT) {
+    ok  = pfc_s_mnt_sp->CheckConfig_Layer(pfc_s_mnt, false);
+    ok &= pfc_d_mnt_sp->CheckConfig_Layer(pfc_d_mnt, false);
+  }
+  if(gating_types & OUTPUT) {
+    ok &= pfc_s_out_sp->CheckConfig_Layer(pfc_s_out, false);
+    ok &= pfc_d_out_sp->CheckConfig_Layer(pfc_d_out, false);
   }
 
   taMisc::CheckConfigEnd(ok);
@@ -2738,7 +3964,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   return true;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //              PBWM Defaults
 /////////////////////////////////////////////////////////////////////////////
@@ -2749,8 +3974,6 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
       return false;
   }
 
-  bool out_gate = true;
-
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
   String vtanm = "VTA";
@@ -2758,23 +3981,26 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   //////////////////////////////////////////////////////////////////////////////////
   // make specs
 
+  // IMPORTANT: this MUST be a literal copy from the main PBWM config -- must remain fully in-sync
+
   BaseSpec_Group* units = net->FindMakeSpecGp("PFC_BG_Units");
   BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
   BaseSpec_Group* layers = net->FindMakeSpecGp("PFC_BG_Layers");
   BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
+  ////////////	UnitSpecs
+
   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_LeabraUnitSpec);
   LeabraUnitSpec* lv_units = (LeabraUnitSpec*)pv_units->FindMakeChild("LVUnits", &TA_LeabraUnitSpec);
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
-  LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_LeabraUnitSpec);
+  LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCsUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
+  LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
-  MatrixUnitSpec* matrixo_units = NULL;
-  if(out_gate) {
-    matrixo_units = (MatrixUnitSpec*)matrix_units->FindMakeChild("MatrixOut", &TA_MatrixUnitSpec);
-  }
+
+  ////////////	ConSpecs
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
   LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
@@ -2783,36 +4009,31 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
   LeabraConSpec* nv_cons =  (LeabraConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
 
-  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
-  LeabraConSpec* intra_pfc = (LeabraConSpec*)topfc_cons->FindMakeChild("IntraPFC", &TA_LeabraConSpec);
-  LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* fmpfcmnt_cons = NULL;
-  LeabraConSpec* fmpfcout_cons = NULL;
-  if(out_gate) {
-    fmpfcmnt_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_mnt", &TA_LeabraConSpec);
-    fmpfcout_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_out", &TA_LeabraConSpec);
-  }
-  MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
-  MatrixConSpec* mfmpfc_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPFC", &TA_MatrixConSpec);
+  LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
 
-  MatrixConSpec* matrixo_cons = NULL;
-  MatrixConSpec* mofmpfc_cons = NULL;
-  if(out_gate) {
-    matrixo_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("Matrix_out", &TA_MatrixConSpec);
-    mofmpfc_cons = (MatrixConSpec*)matrixo_cons->FindMakeChild("Matrix_out_FmPFC", &TA_MatrixConSpec);
-  }
+  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
+  LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
+  LeabraConSpec* topfcstrong_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCStrong", &TA_LeabraConSpec);
+  LeabraConSpec* topfctopo_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCTopo", &TA_LeabraConSpec);
+  LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
+  LeabraConSpec* topfcself_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCSelf", &TA_LeabraConSpec);
+
+  MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
+  MatrixConSpec* matrix_cons_topo = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixConsTopo", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_topo_weak = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoWeak", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_topo_strong = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoStrong", &TA_MatrixConSpec);
+  MatrixNoGoConSpec* matrix_cons_nogo = (MatrixNoGoConSpec*)matrix_cons->FindMakeChild("MatrixConsNoGo", &TA_MatrixNoGoConSpec);
+  MatrixConSpec* matrix_cons_fmpvr = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPvr", &TA_MatrixConSpec);
+
+  LeabraConSpec* fmpfcd_out = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFCd_out", &TA_LeabraConSpec);
 
   LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
-  LeabraConSpec* pfc_self = (LeabraConSpec*)cons->FindMakeSpec("PFCSelfCon", &TA_LeabraConSpec);
+  LeabraConSpec* matrix_to_snrthal = (LeabraConSpec*)cons->FindMakeSpec("MatrixToSNrThal", &TA_LeabraConSpec);
+  // matrix nogo to snrthal just a marker con
 
-  LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
+  ////////////	LayerSpecs
 
-  LeabraConSpec* old_matrix_bias = (LeabraConSpec*)bg_bias->children.FindSpecName("MatrixCons");
-  if(old_matrix_bias) {
-    bg_bias->children.RemoveEl(old_matrix_bias);
-  }
   LeabraLayerSpec* rewtargsp = (LeabraLayerSpec*)layers->FindMakeSpec("RewTargLayer", &TA_LeabraLayerSpec);
   ExtRewLayerSpec* pvesp = (ExtRewLayerSpec*)layers->FindMakeSpec(pvenm + "Layer", &TA_ExtRewLayerSpec);
   PVrLayerSpec* pvrsp = (PVrLayerSpec*)layers->FindMakeSpec(pvrnm + "Layer", &TA_PVrLayerSpec);
@@ -2820,34 +4041,41 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
   LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
   NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec);
-  PatchLayerSpec* patchsp = (PatchLayerSpec*)lvesp->FindMakeChild("PatchLayer", &TA_PatchLayerSpec);
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
-  SNcLayerSpec* sncsp = (SNcLayerSpec*)dasp->FindMakeChild("SNcLayer", &TA_SNcLayerSpec);
 
-  PFCLayerSpec* pfcmsp = (PFCLayerSpec*)layers->FindMakeSpec("PFCLayer", &TA_PFCLayerSpec);
-  PFCOutLayerSpec* pfcosp = NULL;
-  if(out_gate)
-    pfcosp = (PFCOutLayerSpec*)pfcmsp->FindMakeChild("PFCOutLayer", &TA_PFCOutLayerSpec);
-  MatrixLayerSpec* matrixsp = (MatrixLayerSpec*)layers->FindMakeSpec("MatrixLayer", &TA_MatrixLayerSpec);
+  PFCDeepLayerSpec* pfc_d_mnt_sp = (PFCDeepLayerSpec*)layers->FindMakeSpec("PFCDeep_mnt", &TA_PFCDeepLayerSpec);
+  PFCDeepLayerSpec* pfc_d_out_sp = (PFCDeepLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCDeepLayerSpec);
+  PFCDeepLayerSpec* pfc_d_in_sp = (PFCDeepLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCDeepLayerSpec);
 
-  MatrixLayerSpec* matrixosp = NULL;
-  if(out_gate)
-    matrixosp = (MatrixLayerSpec*)matrixsp->FindMakeChild("Matrix_out", &TA_MatrixLayerSpec);
+  LeabraLayerSpec* pfc_s_mnt_sp = (LeabraLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_LeabraLayerSpec);
+  LeabraLayerSpec* pfc_s_out_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_LeabraLayerSpec);
+  LeabraLayerSpec* pfc_s_in_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_LeabraLayerSpec);
+
+  MatrixLayerSpec* matrix_go_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go", &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_sp = (MatrixLayerSpec*)matrix_go_sp->FindMakeChild("Matrix_NoGo", &TA_MatrixLayerSpec);
 
   SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)layers->FindMakeSpec("SNrThalLayer", &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalosp = NULL;
-  if(out_gate)
-    snrthalosp = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalOut", &TA_SNrThalLayerSpec);
+
+  ////////////	PrjnSpecs
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
-  ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
-  UniformRndPrjnSpec* topfc = (UniformRndPrjnSpec*)prjns->FindMakeSpec("ToPFC", &TA_UniformRndPrjnSpec);
-  ProjectionSpec* pfc_selfps = (ProjectionSpec*)prjns->FindMakeSpec("PFCSelf", &TA_OneToOnePrjnSpec);
-  GpRndTesselPrjnSpec* intra_pfcps = (GpRndTesselPrjnSpec*)prjns->FindMakeSpec("IntraPFC", &TA_GpRndTesselPrjnSpec);
+  ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
+
+  SNrToPFCPrjnSpec* snr_to_pfc_prjn = (SNrToPFCPrjnSpec*)prjns->FindMakeSpec("SNrToPFCPrjn", &TA_SNrToPFCPrjnSpec);
+  PFCdToNoGoPrjnSpec* pfc_to_nogo_prjn = (PFCdToNoGoPrjnSpec*)prjns->FindMakeSpec("PFCdToNoGoPrjn", &TA_PFCdToNoGoPrjnSpec);
+  PVrToMatrixGoPrjnSpec* pvr_to_mtx_prjn = (PVrToMatrixGoPrjnSpec*)prjns->FindMakeSpec("PVrToMatrixGoPrjn", &TA_PVrToMatrixGoPrjnSpec);
+
+  TopoWtsPrjnSpec* topomaster = (TopoWtsPrjnSpec*)prjns->FindMakeSpec("TopoMaster", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topofminput = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoFmInput", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* intrapfctopo = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoIntraPFC", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmmnt = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmMnt", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmout = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmOut", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixfmin = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmIn", &TA_TopoWtsPrjnSpec);
+
   TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
-  PFCLVPrjnSpec* pfc_lv_prjn = (PFCLVPrjnSpec*)prjns->FindMakeSpec("PFC_LV_Prjn", &TA_PFCLVPrjnSpec);
+  input_pfc->send_offs.SetSize(1); // this is all it takes!
 
   //////////////////////////////////////////////////////////////////////////////////
   // first: all the basic defaults from specs
@@ -2859,75 +4087,109 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
+  // IMPORTANT: where there are custom specs with appropriate unique parameters, these should
+  // all be put into the Defaults_init which gets called in Defaults() above
+  // code below should only be for cases where above defaults are not applicable
 
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
-//   lvesp->bias_val.un = ScalarValBias::NO_UN;
-//   pvisp->bias_val.un = ScalarValBias::NO_UN;
-//   pvrsp->bias_val.un = ScalarValBias::NO_UN;
 
-  nvsp->nv.da_gain = 0.1f;
+  nvsp->nv.da_gain = 0.0f;
   dasp->da.da_gain = 1.0f;
   dasp->da.pv_gain = 0.1f;
 
-  // do NOT reset this -- unnec override of existing params!
-//   matrixsp->matrix.da_gain = 0.1f;
-
-  // NOT unique: inherit from lve
-  patchsp->SetUnique("decay", false);
-  patchsp->SetUnique("kwta", false);
-  patchsp->SetUnique("inhib_group", true);
-  patchsp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-  patchsp->SetUnique("inhib", false);
-
   // lr sched:
-  learn_cons->lrs_value = LeabraConSpec::EXT_REW_STAT;
-  learn_cons->lrate_sched.SetSize(2);
-  SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
-  si->start_val = 1.0f;
-  si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);
-  si->start_ctr = 90;
-  si->start_val = .1f;
+  learn_cons->lrs_value = LeabraConSpec::NO_LRS;
+  //learn_cons->lrate_sched.SetSize(2);
+  //SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
+  //si->start_val = 1.0f;
+  //si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);
+  //si->start_ctr = 90;
+  //si->start_val = .1f;
 
   // slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
   if(pfc_learns) {
+    topfc_cons->learn = true;
     topfc_cons->lrate = .005f;
     topfc_cons->SetUnique("rnd", false);
     topfc_cons->rnd.var = 0.25f;
   }
   else {
     topfc_cons->lrate = 0.0f;
+    topfc_cons->learn = false;
     topfc_cons->SetUnique("rnd", true);
     topfc_cons->rnd.var = 0.0f;
   }
+
   topfc_cons->SetUnique("lmix", true);
   topfc_cons->lmix.hebb = .001f;
-  intra_pfc->SetUnique("wt_scale", true);
-  intra_pfc->wt_scale.rel = .1f;
 
-  pfc_self->SetUnique("lrate", true);
-  pfc_self->lrate = 0.0f;
-  pfc_self->SetUnique("rnd", true);
-  pfc_self->rnd.mean = 0.9f;
-  pfc_self->rnd.var = 0.0f;
-  pfc_self->SetUnique("wt_scale", true);
-  pfc_self->wt_scale.rel = 0.2f;
-  pfc_self->SetUnique("savg_cor", true);
-  pfc_self->savg_cor.norm_con_n = true;
+  topfcstrong_cons->SetUnique("wt_scale", true);
+  topfcstrong_cons->wt_scale.rel = 2.0f;
+
+  topfctopo_cons->SetUnique("rnd", true);
+  topfctopo_cons->rnd.mean = 0.0f;
+  topfctopo_cons->rnd.var = 0.25f;
+
+  topfcfmout_cons->SetUnique("wt_scale", true);
+  topfcfmout_cons->wt_scale.rel = 0.5f;
+
+  topfcself_cons->SetUnique("rnd", true);
+  topfcself_cons->rnd.mean = 0.0f;
+  topfcself_cons->rnd.var = 0.25f;
+  topfcself_cons->SetUnique("wt_scale", true);
+  topfcself_cons->wt_scale.rel = 0.5f;
 
   matrix_cons->SetUnique("rnd", true);
-  matrix_cons->rnd.var = .02f;
+  matrix_cons->rnd.mean = 0.5f; 
+  matrix_cons->rnd.var = .25f; 
   matrix_cons->SetUnique("lrate", true);
   matrix_cons->lrate = .05f;
   matrix_cons->SetUnique("wt_sig", true);
-  matrix_cons->wt_sig.gain = 1.0f;
-  matrix_cons->wt_sig.off = 1.0f;
+  matrix_cons->wt_sig.gain = 6.0f;
+  matrix_cons->wt_sig.off = 1.25f;
 
-  mfmpfc_cons->SetUnique("wt_scale", true);
-  mfmpfc_cons->wt_scale.rel = .02f;
-  mfmpfc_cons->SetUnique("lmix", false);
+  matrix_cons_topo->SetUnique("rnd", true);
+  matrix_cons_topo->rnd.mean = 0.0f;
+  matrix_cons_topo->rnd.var = .25f;
+  matrix_cons_topo->SetUnique("wt_sig", false);
+  matrix_cons_topo->SetUnique("lmix", false);
+
+  matrix_cons_nogo->SetUnique("wt_scale", true);
+  matrix_cons_nogo->wt_scale.abs = .5f;
+  matrix_cons_nogo->SetUnique("lrate", true);
+  matrix_cons_nogo->lrate = 0.01f;
+  matrix_cons_nogo->SetUnique("rnd", false);
+  matrix_cons_nogo->SetUnique("wt_sig", false);
+  matrix_cons_nogo->SetUnique("lmix", false);
+
+  matrix_cons_topo_weak->SetUnique("wt_scale", true);
+  matrix_cons_topo_weak->wt_scale.rel = .2f;
+
+  matrix_cons_topo_strong->SetUnique("wt_scale", true);
+  matrix_cons_topo_strong->wt_scale.rel = 2.0f;
+
+  matrix_cons_fmpvr->SetUnique("wt_scale", true);
+  matrix_cons_fmpvr->wt_scale.rel = 1.0f; // just in case you want to manip..
+  matrix_cons_fmpvr->SetUnique("rnd", true);
+  matrix_cons_fmpvr->rnd.mean = 0.9f;
+  matrix_cons_fmpvr->rnd.var = 0.0f;
+  matrix_cons_fmpvr->SetUnique("learn", true);
+  matrix_cons_fmpvr->learn = false;
+
+  fmpfcd_out->SetUnique("wt_scale", true);
+  fmpfcd_out->SetUnique("wt_sig", true);
+  fmpfcd_out->wt_sig.dwt_norm = false; // not sure if this is necc but whatever..
+
+  matrix_to_snrthal->SetUnique("rnd", true);
+  matrix_to_snrthal->rnd.mean = 0.7f;
+  matrix_to_snrthal->rnd.var = 0.0f;
+  matrix_to_snrthal->SetUnique("learn", true);
+  matrix_to_snrthal->learn = false;
+  matrix_to_snrthal->SetUnique("lrate", true);
+  matrix_to_snrthal->lrate = 0.0f;
 
   matrix_bias->SetUnique("lrate", true);
   matrix_bias->lrate = 0.0f;            // default is no bias learning
@@ -2935,97 +4197,45 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   bg_bias->SetUnique("lrate", true);
   bg_bias->lrate = 0.0f;                // default is no bias learning
 
-  fixed_bias->SetUnique("lrate", true);
-  fixed_bias->lrate = 0.0f;             // default is no bias learning
+  matrix_go_sp->go_nogo = MatrixLayerSpec::GO;
+  matrix_nogo_sp->SetUnique("go_nogo", true);
+  matrix_nogo_sp->go_nogo = MatrixLayerSpec::NOGO;
 
-  matrix_units->BioParams(true);
-  matrix_units->g_bar.h = .01f; // old syn dep
-  matrix_units->g_bar.a = .03f;
-  matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  matrix_units->noise.var = 0.0001f;
-  matrix_units->noise_adapt.trial_fixed = true;
-  matrix_units->noise_adapt.k_pos_noise = true;
-  matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
-  matrix_units->SetUnique("maxda", true);
-  matrix_units->maxda.val = MaxDaSpec::NO_MAX_DA;
+  pfc_s_mnt_sp->SetUnique("inhib",true);
+  pfc_s_mnt_sp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  pfc_s_mnt_sp->inhib.kwta_pt = 0.5f;
+  pfc_s_mnt_sp->SetUnique("decay",true);
+  pfc_s_mnt_sp->decay.event = 0.0f;
+  pfc_s_mnt_sp->decay.phase = 0.0f;
+  pfc_s_mnt_sp->decay.phase2 = 0.0f;
+  pfc_s_mnt_sp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
+  pfc_s_mnt_sp->SetUnique("gp_kwta",true);
+  pfc_s_mnt_sp->gp_kwta.pct = 0.15f;
+  pfc_s_mnt_sp->gp_kwta.gp_i = true;
+  pfc_s_mnt_sp->gp_kwta.gp_g = 1.0f;
+  pfc_s_mnt_sp->gp_kwta.diff_act_pct = true;
+  pfc_s_mnt_sp->gp_kwta.act_pct = 0.05f;
+  // all other specs should inherit this!
 
-  matrixsp->bg_type = MatrixLayerSpec::MAINT;
-//   matrixsp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-//   matrixsp->inhib.kwta_pt = 0.5f;
-  matrixsp->inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  matrixsp->inhib.kwta_pt = 0.2f;
+  // todo -- sync: w above EXCEPT gp_g!
+  pfc_s_out_sp->SetUnique("gp_kwta",true);
+  pfc_s_out_sp->gp_kwta.pct = 0.15f;
+  pfc_s_out_sp->gp_kwta.gp_i = true;
+  pfc_s_out_sp->gp_kwta.gp_g = 0.8f;
+  pfc_s_out_sp->gp_kwta.diff_act_pct = true;
+  pfc_s_out_sp->gp_kwta.act_pct = 0.05f;
 
-  pfcmsp->inhib.kwta_pt = 0.5f;
+  pfc_d_mnt_sp->SetUnique("pfc_type",true);
+  pfc_d_mnt_sp->pfc_type = PFCDeepLayerSpec::MAINT;
 
-  snrthalsp->SetUnique("kwta", true);
-  snrthalsp->kwta.k_from = KWTASpec::USE_K;
-  snrthalsp->kwta.k = 2;
-  snrthalsp->inhib.kwta_pt = 0.7f;
+  pfc_d_out_sp->SetUnique("pfc_type",true);
+  pfc_d_out_sp->pfc_type = PFCDeepLayerSpec::OUTPUT;
 
-  snrthalsp->bg_type = SNrThalLayerSpec::MAINT;
+  pfc_d_in_sp->SetUnique("pfc_type",true);
+  pfc_d_in_sp->pfc_type = PFCDeepLayerSpec::INPUT;
 
-  snrthal_units->BioParams(true);
   snrthal_units->SetUnique("maxda", true);
   snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;
-
-  if(out_gate) {
-    matrixo_units->SetUnique("g_bar", true);
-    matrixo_units->g_bar.h = .02f; matrixo_units->g_bar.a = .06f; // note: 2x..
-    matrixo_units->SetUnique("noise_type", false);
-    matrixo_units->SetUnique("noise", true);
-    matrixo_units->noise.var = 0.0005f;
-    matrixo_units->SetUnique("noise_adapt", true);
-    matrixo_units->noise_adapt.trial_fixed = true;
-    matrixo_units->noise_adapt.k_pos_noise = true;
-    matrixo_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_PVI;
-    matrixo_units->SetUnique("matrix_noise", true);
-    matrixo_units->matrix_noise.patch_noise = false;
-    matrixo_units->SetUnique("maxda", false);
-
-    matrixo_cons->SetUnique("lmix", false);
-    matrixo_cons->SetUnique("lrate", true);
-    matrixo_cons->lrate = .1f;
-    matrixo_cons->SetUnique("rnd", false);
-    matrixo_cons->SetUnique("wt_sig", true);
-    matrixo_cons->wt_sig.gain = 1.0f;
-    matrixo_cons->wt_sig.off = 1.0f;
-
-    matrixosp->SetUnique("bg_type", true);
-    matrixosp->bg_type = MatrixLayerSpec::OUTPUT;
-
-    mofmpfc_cons->SetUnique("wt_scale", true);
-    mofmpfc_cons->wt_scale.rel = 0.02f; // works better with gp-one-to-one
-    mofmpfc_cons->SetUnique("lmix", false);
-
-    snrthalosp->SetUnique("kwta", true);
-    snrthalosp->kwta.k = 2;
-    // inherit the rest from parent guy!
-    snrthalosp->SetUnique("inhib", false);
-    snrthalosp->SetUnique("inhib_group", false);
-    snrthalosp->SetUnique("decay", false);
-    snrthalosp->SetUnique("tie_brk", false);
-    snrthalosp->SetUnique("ct_inhib_mod", false);
-
-    snrthalosp->bg_type = SNrThalLayerSpec::OUTPUT;
-
-    fmpfcmnt_cons->SetUnique("wt_scale", true);
-    fmpfcmnt_cons->wt_scale.rel = 1.0f; // .2 might be better in some cases
-    fmpfcout_cons->SetUnique("wt_scale", true);
-    fmpfcout_cons->wt_scale.rel = 1.0f; // 2 might be better in some cases
-  }
-
-  pfc_units->BioParams(true);
-  pfc_units->SetUnique("g_bar", true);
-  if(pfc_learns)
-    pfc_units->g_bar.h = .5f;   // weaker act maint for learning pfc..
-  else
-    pfc_units->g_bar.h = 1.0f;
-  pfc_units->g_bar.a = 2.0f;
-  pfc_units->SetUnique("dt", true);
-  pfc_units->dt.vm = .1f;       // slower is better..  .1 is even better!
-
-  snrthal_units->dt.vm = 0.3f;  // was 0.1f -- not good!
-  snrthal_units->g_bar.l = .8f;
 
   /////////////////////////
   // some key stuff from PVLV:
@@ -3071,7 +4281,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pvi_cons->rnd.var = 0.0f;
 
   pvi_cons->lrate = .01f;
-  pvr_cons->lrate = .02f;
+  pvr_cons->lrate = .1f;
   nv_cons->lrate = .0005f;
   lve_cons->lrate = .05f;
   lvi_cons->lrate = .001f;
@@ -3089,6 +4299,13 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   da_units->SetUnique("act", true);
   da_units->act.avg_dt = 0.0f;
 
+  //////////	Prjns -- mostly config in main function, to not overwrite key params
+
+  topomaster->wt_range.min = 0.1f;
+  topomaster->wt_range.max = 0.5f;
+  topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
+  topomaster->gauss_sig = 0.1f;
+
   for(int j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
@@ -3103,63 +4320,30 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     edit->auto_edit = true;
     String subgp;
     subgp = "PFC";
-    pfc_units->SelectForEditNm("g_bar", edit, "pfc", subgp,
-      "set g_bar.h to 1 for non-learning (localist) PFC, and to .5 for learning PFC");
-    pfcmsp->SelectForEditNm("gate", edit, "pfc_m", subgp);
-    pfcmsp->SelectForEditNm("learn", edit, "pfc_m", subgp);
+    pfc_d_mnt_sp->SelectForEditNm("gate", edit, "pfc_d", subgp);
+    pfc_s_mnt_sp->SelectForEditNm("gp_kwta", edit, "pfc_s", subgp,
+      "pfc kwta parameters -- pct, gp_g are main for pfc dynamics, and act_pct for balancing excitation to other layers");
     topfc_cons->SelectForEditNm("lrate", edit, "to_pfc", subgp,
         "PFC requires a slower learning rate in general, around .005 if go_learn_base is set to default of .06, otherwise .001 for go_learn_base of 1");
-    if(out_gate) {
-      fmpfcmnt_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_mnt", subgp,
-     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set wt_scale.rel to a lower value to compensate in balance between mnt and out projections");
-      fmpfcout_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_out", subgp,
-     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set wt_scale.rel to a lower value to compensate in balance between mnt and out projections");
-      pfcosp->SelectForEditNm("gp_kwta", edit, "pfc_o", subgp,
-     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set dif_act_pct and act_pct to a lower value to compensate in balance between mnt and out projections");
-      pfc_self->SelectForEditNm("wt_scale", edit, "pfc_self", subgp);
-    }
-    ////////////////////////////////
+
     subgp = "Matrix";
-    matrixsp->SelectForEditNm("matrix", edit, "matrix", subgp);
-    matrixsp->SelectForEditNm("gate_bias", edit, "matrix", subgp);
-    matrixsp->SelectForEditNm("rnd_go", edit, "matrix", subgp);
+    matrix_go_sp->SelectForEditNm("matrix", edit, "matrix", subgp);
+    matrix_go_sp->SelectForEditNm("gp_kwta", edit, "matrix", subgp,
+      "matrix kwta parameters -- pct, gp_g are main for matrix dynamics (gp_g = 1 almost always best)");
+
     matrix_units->SelectForEditNm("noise", edit, "matrix", subgp,
-  "For MAINT Matrix, default noise level is 5.0e-5 (.00005)");
+      "matrix noise -- variance around .001 seems best overall");
     matrix_units->SelectForEditNm("noise_adapt", edit, "matrix", subgp);
-    matrix_units->SelectForEditNm("patch_noise", edit, "matrix", subgp);
-    if(out_gate) {
-      matrixo_units->SelectForEditNm("noise", edit, "matrix_out", subgp,
-  "For OUTPUT Matrix, default noise level is (.005)");
-      matrixo_units->SelectForEditNm("noise_adapt", edit, "matrix_out", subgp);
-      matrixo_units->SelectForEditNm("patch_noise", edit, "matrix_out", subgp);
-    }
     matrix_cons->SelectForEditNm("lrate", edit, "matrix", subgp,
-   "Default MAINT Matrix lrate is .05");
-    if(out_gate) {
-      matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out", subgp,
-   "Default OUTPUT Matrix lrate is .1");
-      matrixo_cons->SelectForEditNm("rnd", edit, "matrix_out", subgp);
-//       matrixo_cons->SelectForEditNm("wt_sig", edit, "mtx_out", subgp);
-    }
-    //    matrix_cons->SelectForEditNm("lmix", edit, "matrix", subgp);
-    mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc", subgp,
-        "Generally have lower influence of PFC on MAINT Matrix, which is driven more by inputs -- .2 is default");
-    ////////////////////////////////
+     "Default Matrix lrate is .05");
+    matrix_cons->SelectForEditNm("err_gain", edit, "matrix", subgp);
+
     subgp = "SNrThal";
     snrthalsp->SelectForEditNm("kwta", edit, "snrthal", subgp,
-"Set MAINT kwta to a higher percent than OUTPUT kwta -- typically around 75% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
-    if(out_gate) {
-      snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out", subgp,
-"Set OUTPUT kwta to a lower percent than MAINT kwta -- typically around 25% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
-    }
+      "snrthal kwta parameters -- k = 2 is default");
     snrthalsp->SelectForEditNm("inhib", edit, "snrthal", subgp,
-"Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
-
-//       snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal", subgp);
-//       snrthal_units->SelectForEditNm("dt", edit, "snr_thal", subgp);
+      "Default is KWTA_AVG_INHIB with kwta_pt = .8 -- more competition but with some flexibility from avg-based computation");
     snrthalsp->SelectForEditNm("snrthal", edit, "snrthal", subgp);
-//     snrthal_units->SelectForEditNm("act", edit, "snrthal", subgp);
-    sncsp->SelectForEditNm("snc", edit, "snc", subgp);
   }
   return true;
 }
@@ -3179,11 +4363,12 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
   net->StructUpdate(true);
 
   net->RemoveUnits();
+  net->layers.gp.RemoveName("PBWM");
   net->layers.gp.RemoveName("PBWM_PFC");
   net->layers.gp.RemoveName("PBWM_BG");
   net->layers.gp.RemoveName("PVLV");
 
-  net->specs.gp.RemoveName("PFC_BG_Prjns");
+  net->specs.gp.RemoveName("PFC_BG_Prjns"); // TODO: make sure right names
   net->specs.gp.RemoveName("PFC_BG_Layers");
   net->specs.gp.RemoveName("PFC_BG_Cons");
   net->specs.gp.RemoveName("PFC_BG_Units");
