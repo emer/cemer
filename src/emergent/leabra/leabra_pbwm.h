@@ -19,32 +19,6 @@
 #ifndef leabra_pbwm_h
 #define leabra_pbwm_h
 
-// todo: move this into leabra_extra after merge
-class LEABRA_API LayerActUnitSpec : public LeabraUnitSpec {
-  // Layer-driven activation unit spec -- use this for any layer that computes activation values at the layer-level, instead of using the usual net input, currents etc -- saves on computational costs by negating most functions
-INHERITED(LeabraUnitSpec)
-public:
-  override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val) { };
-  override void	Compute_Act(Unit* u, Network* net, int thread_no=-1) { };
-  override float Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) { return 0.0f; }
-
-  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) { };
-  override void Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-  override void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) { };
-
-  TA_SIMPLE_BASEFUNS(LayerActUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize() 		{ };
-  void	Destroy()		{ };
-  void	Defaults_init()		{ };
-};
-
-
 // prefrontal-cortex basal ganglia working memory (PBWM) extensions to leabra
 
 // based on the pvlv reinforcement learning mechanism

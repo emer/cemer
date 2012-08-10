@@ -3671,7 +3671,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   if(gating_types & MAINT) {
     net->FindMakePrjn(matrix_go, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo_weak);
-    net->FindMakePrjn(matrix_nogo, pfc_d_mnt, pfc_to_nogo_prjn, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_nogo, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
 
     net->FindMakePrjn(pfc_s_mnt, pfc_d_mnt, intrapfctopo, topfcself_cons);
     if(gating_types & INPUT) {
@@ -3687,7 +3687,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   if(gating_types & OUTPUT) {
     net->FindMakePrjn(matrix_go, pfc_s_out, topomatrixfmout, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo, pfc_d_out, pfc_to_nogo_prjn, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_nogo, pfc_d_out, topomatrixfmout, matrix_cons_nogo);
 
     net->FindMakePrjn(pfc_s_out, pfc_d_out, intrapfctopo, topfcself_cons);
     if(gating_types & MAINT) {
@@ -3699,7 +3699,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   if(gating_types & INPUT) {
     net->FindMakePrjn(matrix_go, pfc_s_in, topomatrixfmin, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo, pfc_d_in, pfc_to_nogo_prjn, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_nogo, pfc_d_in, topomatrixfmin, matrix_cons_nogo);
 
     net->FindMakePrjn(pfc_s_in, pfc_d_in, intrapfctopo, topfcself_cons);
     if(gating_types & MAINT) {
@@ -4159,9 +4159,9 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   matrix_cons_nogo->SetUnique("wt_scale", true);
   matrix_cons_nogo->wt_scale.abs = .5f;
-  matrix_cons_nogo->SetUnique("lrate", true);
-  matrix_cons_nogo->lrate = 0.01f;
-  matrix_cons_nogo->SetUnique("rnd", false);
+  matrix_cons_nogo->SetUnique("rnd", true);
+  matrix_cons_nogo->rnd.mean = 0.0f;
+  matrix_cons_nogo->rnd.var = .25f;
   matrix_cons_nogo->SetUnique("wt_sig", false);
   matrix_cons_nogo->SetUnique("lmix", false);
 
