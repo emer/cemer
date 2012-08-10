@@ -33,7 +33,7 @@ EMERGENT_SRC_DIR=~/emergent
 mkdir -p ${EMERGENT_SRC_DIR}
 cd ${EMERGENT_SRC_DIR}
 svn checkout -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} .
-./configure --emer-mac-arch-bits=$ARCH
+./configure --emer-mac-arch-bits=${ARCH}
 cd build
 NCPU=`sysctl -n hw.ncpu`
 make -j ${NCPU} package
@@ -49,14 +49,52 @@ UPGRADE_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-upgrade-mac${ARCH}.dmg
 echo "Moving upgrader package to home directory ..."
 mv -f emergent-${EMERGENT_VERSION}-mac.dmg ${UPGRADE_DMG}
 
+function mountDMG {
+  # Argument should be the name of the DMG.
+  # Outputs the mount directory.
+
+  # Note: there are tabs in the line below!  For some dumb reason the
+  # output of hdiutil is a mix of tabs and spaces to separate columns --
+  # not very friendly to scripts!
+  hdiutil attach "$1" | sed -n 's/^\/dev.*[ 	]Apple_HFS[ 	]*//p'
+}
+
+function unmountDMG {
+  # Argument should be the directory the DMG was mounted to.
+  hdiutil detach "$1"
+}
+
 # Find the previous full-dmg directory and rename it for the current metapackage.
 # This is bootstrapping from the previous full-installer (see TODO below).
 # Note: these directories contain spaces, so always put them in quotes.
 cd ~
-OLD_DMG_DIR="`ls -1rtd Emergent\ 5.*.* | tail -1`"
+OLD_DMG_DIR="`ls -1rtd Emergent\ *.*.* | tail -1`"
+# If no old DMG dir found, make it.
+if [ -z "${OLD_DMG_DIR}" ]; then
+  echo "Could not find existing package directory matching 'Emergent\ *.*.*'"
+  echo "Will attempt to create from emergent*.dmg file..."
+  OLD_DMG="`ls -1rtd emergent-*.*.*-*[0-9]-mac${ARCH}.dmg | tail -1`"
+  if [ -z "${OLD_DMG}" ]; then
+    echo "Could not find existing package matching 'emergent-*.*.*-*[0-9]-mac${ARCH}.dmg'."
+    echo "Please download the latest full Mac package to your home directory,"
+    echo "then re-run this script."
+    exit
+  fi
+
+  echo "Mounting package ${OLD_DMG}..."
+  OLD_DMG_MNT="`mountDMG ${OLD_DMG}`"
+  OLD_DMG_DIR=~/`basename "${OLD_DMG_MNT}"`
+  echo "Copying files from '${OLD_DMG_MNT}' to '${OLD_DMG_DIR}'"
+  mkdir "${OLD_DMG_DIR}"
+  cp -a "${OLD_DMG_MNT}/Emergent.mpkg" "${OLD_DMG_DIR}/Emergent.mpkg"
+
+  echo "Unmounting ${OLD_DMG_MNT}"
+  unmountDMG "${OLD_DMG_MNT}"
+fi
+
 DMG_DIR=~/"Emergent ${EMERGENT_VERSION}"
-if [ -d "$DMG_DIR" ]; then
-  echo "Directory already exists: $DMG_DIR"
+if [ -d "${DMG_DIR}" ]; then
+  echo "Directory already exists: ${DMG_DIR}"
   # exit
 else
   echo "Renaming ${OLD_DMG_DIR} --> ${DMG_DIR} ..."
@@ -70,14 +108,14 @@ rm -rf Packages/emergent-5.*.*-mac.pkg
 
 # Mount the upgrader and extract its subpackage.
 echo "Mounting package ${UPGRADE_DMG} ..."
-UPGRADE_DIR=`hdiutil attach "${UPGRADE_DMG}" | awk '/^\/dev.*[ \t]Apple_HFS/{print $3}'`
+UPGRADE_MNT=`mountDMG ${UPGRADE_DMG}`
 UPGRADE_PKG=emergent-${EMERGENT_VERSION}-mac.pkg
 # No slash after src dir -- want to copy the whole directory, not just its contents.
-echo "Copying from: ${UPGRADE_DIR}/${UPGRADE_PKG} to: Packages/"
-cp -a ${UPGRADE_DIR}/${UPGRADE_PKG} Packages/
+echo "Copying from: ${UPGRADE_MNT}/${UPGRADE_PKG} to: Packages/"
+cp -a ${UPGRADE_MNT}/${UPGRADE_PKG} Packages/
 # Don't need the upgrader anymore.
-echo "Unmounting ${UPGRADE_DIR} ..."
-hdiutil detach ${UPGRADE_DIR}
+echo "Unmounting ${UPGRADE_MNT} ..."
+unmountDMG ${UPGRADE_MNT}
 
 # Get the size of the new emergent package.
 PKG_SIZE=`sed -n '/IFPkgFlagInstalledSize/{n;s/.*>\([0-9]*\)<.*/\1/p;}' < Packages/${UPGRADE_PKG}/Contents/Info.plist`
@@ -122,7 +160,7 @@ Done!
 INSTRUCTIONS
 
 # Only want to do this once per release.
-if [ $ARCH == "64" ]; then
+if [ ${ARCH} == "64" ]; then
   svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
 fi
 
@@ -131,7 +169,11 @@ scp ${DMGS} dpfurlani@grey.colorado.edu:/home/dpfurlani/
 exit
 
 
-# # upgrade the Qt libraries
+# # Instructions to upgrade the Qt libraries (or any other prereq package).
+#
+# # Mount the new Qt installer and copy its contents into the emergent
+# # full installation package directory.
+# cd ~/Emergent\ 5.1.2/..../?
 # rm -rf Qt_*
 # cp -a /Volumes/Qt\ 4.7.1/packages/Qt_*.pkg .
 # 
@@ -152,30 +194,3 @@ exit
 #   also manually edit in the new Qt_imports.pkg
 #   also change 4.6.2 to 4.7.1
 
-# TODO: If OLD_DMG_DIR not found, create it by downloading, mounting,
-# and copying from an old .dmg.
-# Stuff below is half-baked.
-#
-# # Check if a previous release is present
-# PREV_DMG_URL="ftp://grey.colorado.edu/pub/emergent/emergent-5.1.4-4782-mac64.dmg"
-# PREV_DMG="~/Downloads/`basename $PREV_DMG_URL`"
-# 
-# cd ~
-# DMG_DIR=`ls -1rtd Emergent\ 5.*.* | tail -1`
-# if [ -z "$DMG_DIR" -o ! -d "$DMG_DIR" ]; then
-#   echo "Couldn't find previous release directory, checking for previous release .dmg..."
-#   if [ -f "$PREV_DMG" ]; then
-#     echo "Found $PREV_DMG"
-#   else
-#     echo "Couldn't find that either, so get it."
-#     curl $PREV_DMG_URL > $PREV_DMG
-#   fi
-# 
-#   # Now that we (should) have the previous .dmg...
-#   if [ -f "$PREV_DMG" ]; then
-#     # Found a previously downloaded .dmg, so extract from it.
-#     CPY_DIR=`hdiutil attach "$PREV_DMG" | awk '/Apple_HFS/{print $3}'`
-#     DMG_DIR=~/Emergent\ 5.x.x
-#     cp -a $CPY_DIR $DMG_DIR
-#   fi
-# fi
