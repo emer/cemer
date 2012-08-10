@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
 Program .projects[0].programs.gp[0][2] { 
   ProgObjList @.objs = [0] {
   };
@@ -11,7 +11,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [7] {
+  ProgVar_List @.vars = [8] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -19,12 +19,10 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[4] { };
     ProgVar @[5] { };
     ProgVar @[6] { };
+    ProgVar @[7] { };
   };
 
   Function_List @.functions = [0] {
-  };
-
-  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [2] {
@@ -45,11 +43,19 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     NetDataLoop @[4] { 
-      ProgEl_List @.loop_code = [1] {
+      ProgEl_List @.loop_code = [2] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
+	  };
+	};
+	IfElse @[1] { 
+	  ProgEl_List @.true_code = [1] {
+	    StopStepPoint @[0] { };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
 	  };
 	};
       };
@@ -69,13 +75,13 @@ Program .projects[0].programs.gp[0][2] {
       ProgArg_List @.meth_args = [0] {
       };
     };
-    If @[7] { 
+    IfElse @[7] { 
       ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
-	If @[1] { 
+	IfElse @[1] { 
 	  ProgEl_List @.true_code = [2] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [0] {
@@ -86,7 +92,13 @@ Program .projects[0].programs.gp[0][2] {
 	      };
 	    };
 	  };
+
+	  ProgEl_List @.false_code = [0] {
+	  };
 	};
+      };
+
+      ProgEl_List @.false_code = [0] {
       };
     };
     MethodCall @[8] { 
@@ -105,10 +117,10 @@ Program .projects[0].programs.gp[0][2] {
  short_nm="Epoch";
  tags="Leabra, Std";
  desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
- flags=;
+ flags=2;
  objs {
   name=;
-  el_typ=taOBase;
+  el_typ=taNBase;
   el_def=0;
  };
  types {
@@ -126,7 +138,7 @@ Program .projects[0].programs.gp[0][2] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="network to operate on";
    init_from=NULL;
@@ -135,9 +147,9 @@ Program .projects[0].programs.gp[0][2] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="table of patterns to present to the network, one row at a time";
    init_from=NULL;
@@ -153,7 +165,7 @@ Program .projects[0].programs.gp[0][2] {
    int_val=1;
    hard_enum_type=DataLoop::Order;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
@@ -164,7 +176,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
    init_from=NULL;
@@ -175,48 +187,58 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
    init_from=NULL;
   };
   ProgVar @[3] {
+   name="step_on_err";
+   var_type=T_Bool;
+   bool_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="when you step at the Epoch level, this will automatically step through to the next point at which an error was made -- you can use the netview history to replay what happend";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,TimeUsed_1>;
+   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
    init_from=NULL;
   };
-  ProgVar @[4] {
+  ProgVar @[5] {
    name="data_loop_index";
    var_type=T_Int;
-   int_val=0;
+   int_val=6;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
    init_from=NULL;
   };
-  ProgVar @[5] {
+  ProgVar @[6] {
    name="compute_rel_netin";
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="call Compute_AvgAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
    init_from=NULL;
   };
-  ProgVar @[6] {
+  ProgVar @[7] {
    name="adapt_rel_abs_netin";
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
    init_from=NULL;
@@ -227,18 +249,13 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
   name=;
-  el_typ=NetCounterInit;
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
-   flags=;
+   flags=0;
    network_var=.projects[0].programs.gp[0][2].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
    counter=Network::trial;
@@ -246,8 +263,8 @@ Program .projects[0].programs.gp[0][2] {
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
-   flags=;
-   result_var=.projects[0].programs.gp[0][2].vars[3]$$;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][2].vars[4]$$;
    expr {
     expr="network.epoch_time";
    };
@@ -255,11 +272,11 @@ Program .projects[0].programs.gp[0][2] {
  };
  prog_code {
   name=;
-  el_typ=NetCounterInit;
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
-   flags=;
+   flags=0;
    network_var=$.projects[0].programs.gp[0][2].args[0]$;
    local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
    counter=Network::trial;
@@ -267,17 +284,17 @@ Program .projects[0].programs.gp[0][2] {
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
-   flags=;
-   result_var=$.projects[0].programs.gp[0][2].vars[3]$;
+   flags=0;
+   result_var=$.projects[0].programs.gp[0][2].vars[4]$;
    expr {
     expr="network.epoch_time";
    };
   };
   MethodCall @[2] {
    desc="start the epoch timer to record computation time per epoch";
-   flags=;
+   flags=0;
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].vars[3]$;
+   obj=$.projects[0].programs.gp[0][2].vars[4]$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -297,7 +314,7 @@ Program .projects[0].programs.gp[0][2] {
   };
   MethodCall @[3] {
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][2].vars[2]$$;
    method=DataTable::ResetData;
@@ -309,14 +326,14 @@ Program .projects[0].programs.gp[0][2] {
   };
   NetDataLoop @[4] {
    desc="iterates over the events/rows of input_data, according to data_loop_order variable";
-   flags=;
+   flags=0;
    loop_code {
     name=;
-    el_typ=ProgramCall;
+    el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the trial program, passing network and input_data";
-     flags=;
+     flags=0;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -345,29 +362,57 @@ Program .projects[0].programs.gp[0][2] {
      target=.projects[0].programs.gp[0][3]$$<Program,LeabraTrial>;
      targ_ld_init="*LeabraTrial*";
     };
+    IfElse @[1] {
+     desc=;
+     flags=0;
+     cond {
+      expr="step_on_err && network.sse > 0.0";
+     };
+     show_false_code=1;
+     true_code {
+      name="ProgEl_List_100";
+      el_typ=ProgCode;
+      el_def=0;
+      StopStepPoint @[0] {
+       desc=;
+       flags=0;
+      };
+     };
+     false_code {
+      name="ProgEl_List_101";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+    };
    };
    data_var=.projects[0].programs.gp[0][2].args[1]$$;
-   index_var=.projects[0].programs.gp[0][2].vars[4]$$;
+   index_var=.projects[0].programs.gp[0][2].vars[5]$$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$$;
    order=PERMUTED;
-   item_idx_list{ 0;3;5;4;1;2;   };
    update_after=0;
    dmem_nprocs=1;
    dmem_this_proc=0;
+   grouped=0;
+   group_col 9 0="Group";
+   group_index_var=NULL;
+   group_order_var=NULL;
+   group_order=PERMUTED;
+   group_idx_list{    };
   };
   IfElse @[5] {
    desc="if full batch mode, update only at end of epoch";
-   flags=;
+   flags=0;
    cond {
     expr="network.wt_update == Network::BATCH";
    };
+   show_false_code=0;
    true_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
      desc="final update of weights based on accumulated changes";
-     flags=;
+     flags=0;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][2].args[0]$;
      method=Network::Compute_Weights;
@@ -380,13 +425,13 @@ Program .projects[0].programs.gp[0][2] {
    };
    false_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
    };
   };
   MethodCall @[6] {
    desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][2].args[0]$;
    method=LeabraNetwork::Compute_EpochStats;
@@ -396,19 +441,20 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  If @[7] {
+  IfElse @[7] {
    desc=;
    flags=NEW_EL;
    cond {
     expr="compute_rel_netin";
    };
+   show_false_code=0;
    true_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
      desc=;
-     flags=;
+     flags=0;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][2].args[0]$;
      method=LeabraNetwork::Compute_AvgAbsRelNetin;
@@ -418,19 +464,20 @@ Program .projects[0].programs.gp[0][2] {
       el_def=0;
      };
     };
-    If @[1] {
+    IfElse @[1] {
      desc=;
-     flags=;
+     flags=0;
      cond {
       expr="adapt_rel_abs_netin";
      };
+     show_false_code=0;
      true_code {
       name=;
-      el_typ=ProgEl;
+      el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
        desc=;
-       flags=;
+       flags=0;
        result_var=NULL;
        obj=$.projects[0].programs.gp[0][2].args[0]$;
        method=LeabraNetwork::Compute_AdaptRelNetin;
@@ -442,7 +489,7 @@ Program .projects[0].programs.gp[0][2] {
       };
       MethodCall @[1] {
        desc=;
-       flags=;
+       flags=0;
        result_var=NULL;
        obj=$.projects[0].programs.gp[0][2].args[0]$;
        method=LeabraNetwork::Compute_AdaptAbsNetin;
@@ -453,14 +500,24 @@ Program .projects[0].programs.gp[0][2] {
        };
       };
      };
+     false_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+     };
     };
+   };
+   false_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
    };
   };
   MethodCall @[8] {
    desc="done with the computation in the epoch -- record time it took";
-   flags=;
+   flags=0;
    result_var=NULL;
-   obj=$.projects[0].programs.gp[0][2].vars[3]$;
+   obj=$.projects[0].programs.gp[0][2].vars[4]$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;
@@ -470,7 +527,7 @@ Program .projects[0].programs.gp[0][2] {
   };
   ProgramCall @[9] {
    desc="run program that records data from network and possibly other sources about the epoch";
-   flags=;
+   flags=0;
    prog_args {
     name=;
     el_typ=ProgArg;

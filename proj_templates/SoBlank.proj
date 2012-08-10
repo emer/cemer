@@ -1,5 +1,5 @@
-// ta_Dump File v3.0 -- code v5.2.3.0 rev5081
-SoProject .projects["Project_0"] { 
+// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+SoProject .projects["SoBlank"] { 
   taBase_Group @.templates = [0] {
   };
 
@@ -68,12 +68,12 @@ SoProject .projects["Project_0"] {
 	      };
 
 	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @["View 0"] { };
-		T3SavedView @["View 1"] { };
-		T3SavedView @["View 2"] { };
-		T3SavedView @["View 3"] { };
-		T3SavedView @["View 4"] { };
-		T3SavedView @["View 5"] { };
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
 	      };
 	    };
 	  };
@@ -89,8 +89,8 @@ SoProject .projects["Project_0"] {
   Network_Group @.networks = [0] {
   };
 };
-SoProject .projects["Project_0"] {
- name="Project_0";
+SoProject .projects["SoBlank"] {
+ name="SoBlank";
  desc=;
  tags=;
  version {
@@ -234,7 +234,7 @@ SoProject .projects["Project_0"] {
   el_def=0;
   MainWindowViewer @["Browser2"] {
    name="Browser2";
-   m_data=.projects["Project_0"]$$;
+   m_data=.projects["SoBlank"]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -263,7 +263,7 @@ SoProject .projects["Project_0"] {
      visible=1;
      root_typ=SoProject;
      root_md=NULL;
-     m_root=$.projects["Project_0"]$;
+     m_root=$.projects["SoBlank"]$;
     };
     PanelViewer @["Panels"] {
      name="Panels";
@@ -300,43 +300,43 @@ SoProject .projects["Project_0"] {
 	name="T3SavedView_List_0";
 	el_typ=T3SavedView;
 	el_def=0;
-	T3SavedView @["View 0"] {
-	 name="View 0";
+	T3SavedView @["View_0"] {
+	 name="View_0";
 	 view_saved=1;
 	 pos {x=0: y=0: z=-0.4765596: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=3.52344;
 	};
-	T3SavedView @["View 1"] {
-	 name="View 1";
+	T3SavedView @["View_1"] {
+	 name="View_1";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 2"] {
-	 name="View 2";
+	T3SavedView @["View_2"] {
+	 name="View_2";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 3"] {
-	 name="View 3";
+	T3SavedView @["View_3"] {
+	 name="View_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 4"] {
-	 name="View 4";
+	T3SavedView @["View_4"] {
+	 name="View_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 5"] {
-	 name="View 5";
+	T3SavedView @["View_5"] {
+	 name="View_5";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -361,6 +361,7 @@ SoProject .projects["Project_0"] {
    };
   };
  };
+ auto_name=1;
  last_change_desc=;
  networks {
   name="Network_Group_0";

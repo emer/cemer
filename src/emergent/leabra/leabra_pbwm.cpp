@@ -3415,6 +3415,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
   LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCsUnitSpec);
+  LayerActUnitSpec* pfcd_units = (LayerActUnitSpec*)pfc_units->FindMakeChild("PFCdUnits", &TA_LayerActUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
@@ -3631,6 +3632,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   // set bias specs for unit specs
   pfc_units->bias_spec.SetSpec(pfc_bias);
+  pfcd_units->bias_spec.SetSpec(pfc_bias);
   matrix_units->bias_spec.SetSpec(matrix_bias);
   matrix_nogo_units->bias_spec.SetSpec(matrix_bias);
   snrthal_units->bias_spec.SetSpec(bg_bias);
@@ -3641,15 +3643,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   if(gating_types & INPUT) {
     pfc_s_in->SetLayerSpec(pfc_s_in_sp);  pfc_s_in->SetUnitSpec(pfc_units);
-    pfc_d_in->SetLayerSpec(pfc_d_in_sp);  pfc_d_in->SetUnitSpec(pfc_units);
+    pfc_d_in->SetLayerSpec(pfc_d_in_sp);  pfc_d_in->SetUnitSpec(pfcd_units);
   }
   if(gating_types & MAINT) {
     pfc_s_mnt->SetLayerSpec(pfc_s_mnt_sp);  pfc_s_mnt->SetUnitSpec(pfc_units);
-    pfc_d_mnt->SetLayerSpec(pfc_d_mnt_sp);  pfc_d_mnt->SetUnitSpec(pfc_units);
+    pfc_d_mnt->SetLayerSpec(pfc_d_mnt_sp);  pfc_d_mnt->SetUnitSpec(pfcd_units);
   }
   if(gating_types & OUTPUT) {
     pfc_s_out->SetLayerSpec(pfc_s_out_sp);  pfc_s_out->SetUnitSpec(pfc_units);
-    pfc_d_out->SetLayerSpec(pfc_d_out_sp);  pfc_d_out->SetUnitSpec(pfc_units);
+    pfc_d_out->SetLayerSpec(pfc_d_out_sp);  pfc_d_out->SetUnitSpec(pfcd_units);
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -3996,6 +3998,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
   LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCsUnitSpec);
+  LayerActUnitSpec* pfcd_units = (LayerActUnitSpec*)pfc_units->FindMakeChild("PFCdUnits", &TA_LayerActUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
