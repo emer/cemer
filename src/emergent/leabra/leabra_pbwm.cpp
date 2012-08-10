@@ -1354,7 +1354,7 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 void PFCGateSpec::Initialize() {
   learn_deep_act = true;
   cycle_updt = true;
-  maint_decay = 0.1f;
+  maint_decay = 0.05f;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
@@ -1369,6 +1369,10 @@ void PFCDeepLayerSpec::Initialize() {
 }
 
 void PFCDeepLayerSpec::Defaults_init() {
+  gate.learn_deep_act = true;
+  gate.cycle_updt = true;
+  gate.maint_decay = 0.05f;
+
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = .5f;

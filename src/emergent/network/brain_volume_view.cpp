@@ -429,9 +429,9 @@ void BrainVolumeView::SliceAsTexture( BrainView::AnatomicalPlane p, int index, u
   
   // scale the data by the monitor calibrations
   // and set paired transpaency/alpha bytes
-  int pmax(brain_data->CalMax());
-  int pmin(brain_data->CalMin());
-  int prange(brain_data->CalRange());
+  int pmax((int)brain_data->CalMax());
+  int pmin((int)brain_data->CalMin());
+  int prange((int)brain_data->CalRange());
   int j(0);
   unsigned int pixel(0); 
   unsigned char pixel8(0);
@@ -498,9 +498,9 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
 
   // scale the data by the monitor calibrations
   // and set paired transpaency/alpha bytes
-  int pmax(brain_data->CalMax());
-  int pmin(brain_data->CalMin());
-  int prange(brain_data->CalRange());
+  int pmax((int)brain_data->CalMax());
+  int pmin((int)brain_data->CalMin());
+  int prange((int)brain_data->CalRange());
   int j(0);
   unsigned int pixel(0); 
   unsigned char pixel8(0);
@@ -539,9 +539,9 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
       color.g = col.greenF();
       color.b = col.blueF();
       
-      data[j] = pixel8 * color.r;
-      data[j+1] = pixel8 * color.g;
-      data[j+2] = pixel8 * color.b;    
+      data[j] = (unsigned char)(pixel8 * color.r);
+      data[j+1] = (unsigned char)(pixel8 * color.g);
+      data[j+2] = (unsigned char)(pixel8 * color.b);    
       data[j+3] = 255; // non-zero pixels are fully opaque
     }
   }

@@ -8692,7 +8692,8 @@ void taBrainAtlas::SetColorString(const String& labels_regexp, const String& col
 void taBrainAtlas::SetColorValue(const String& labels_regexp, float val,
 				   ColorScale* color_scale) {
   QList<int> qidx = BrainAtlasUtils::IndexList(Atlas(), (QString)labels_regexp.chars());
-  QColor clr(color_scale->GetColor(val));
+  float sc_val;
+  QColor clr(color_scale->GetColor(val, sc_val));
   for(int i=0; i< qidx.size(); i++) {
     BrainAtlasUtils::SetColor(Atlas(), clr, qidx.at(i));
   }
