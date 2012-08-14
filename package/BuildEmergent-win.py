@@ -352,8 +352,12 @@ def inst_nsis():
 ##############################################################################
 # Function to install Subversion
 
+svnclient = ''
 def inst_svn():
-  while not findInProgFiles('SlikSvn/bin/svn.exe'):
+  global svnclient
+  while True:
+    svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
+    if svnclient: break
     print_horizontal()
     print 'You need to install a Subversion client (svn).  This can be downloaded'
     print 'for you to install.'
@@ -499,59 +503,69 @@ def get_compiler_extension():
   return get_compiler_extension_args(build_64bit, build_debug)
 
 ##############################################################################
-# Function to download (or update) emergent source from Subversion
+# Functions to download (or update) emergent source from Subversion
+
+def get_tag_or_branch():
+  # Get the tag or branch to build on (defaults to 'trunk')
+  if askUser('\nGet source from trunk? (say no for tag/branch build)'):
+    tag_or_branch = 'trunk'
+  else:
+    tob = raw_input('\nGet source from tag or branch? [branch]: ')
+    if tob == '' or tob[0] == 'b':
+      tob = 'branch'
+      tobs = 'branches'
+    else:
+      tob = 'tag'
+      tobs = 'tags'
+    tag_or_branch = raw_input('\nEnter the emergent ' + tob + ' to use: ')
+    tag_or_branch = tobs + '/' + tag_or_branch
+  return tag_or_branch
 
 def inst_emer_src():
+  root_emer_url = 'http://grey.colorado.edu/svn/emergent/emergent/'
+  print_horizontal()
   if not dirExists(os.path.join(emer_src, '.svn')):
-    print_horizontal()
     print 'You need to checkout the emergent source code from subversion.'
     print 'This can be done for you.'
-    svn_rev = get_svn_rev('\nOK to get the latest emergent source from Subversion? (or enter svn rev)')
-    if (svn_rev > 0):
-      makeDir(emer_src)
-      svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
-      if not svnclient:
-        print "Can't continue because SVN client needs to be installed!  Quitting."
-        quit(1)
-
-      # Get the tag or branch to build on (defaults to 'trunk')
-      if askUser('\nGet source from trunk? (say no for tag/branch build) '):
-        tag_or_branch = 'trunk'
-      else:
-        tob = raw_input('\nGet source from tag or branch? [branch]: ')
-        if tob == '' or tob[0] == 'b':
-          tob = 'branch'
-          tobs = 'branches'
-        else:
-          tob = 'tag'
-          tobs = 'tags'
-        tag_or_branch = raw_input('\nEnter the emergent ' + tob + ' to use: ')
-        tag_or_branch = tobs + '/' + tag_or_branch
-
-      response = raw_input('\nEnter your username (blank for anonymous) [anonymous]: ')
-      cmd = quote(svnclient) + ' checkout -r ' + svn_rev
-      if response == '' or response == 'anonymous':
-        cmd += ' --username anonymous --password emergent'
-      else:
-        cmd += ' --username ' + response
-      cmd += ' http://grey.colorado.edu/svn/emergent/emergent/' + tag_or_branch + ' ' + emer_src
-      print '\nChecking out emergent source code...'
-      print cmd
-      os.system(cmd)
-    else:
+    tag_or_branch = get_tag_or_branch()
+    svn_rev = get_svn_rev('\nGet the latest emergent source from Subversion? (or enter svn rev)')
+    if (svn_rev <= 0):
       print "Can't continue because no source available!  Quitting."
       quit(1)
+    username = raw_input('\nEnter your username (blank for anonymous) [anonymous]: ')
+
+    cmd = quote(svnclient) + ' checkout -r ' + svn_rev
+    if username == '' or username == 'anonymous':
+      cmd += ' --username anonymous --password emergent'
+    else:
+      cmd += ' --username ' + username
+    cmd += ' ' + root_emer_url + tag_or_branch + ' ' + emer_src
+
+    print '\nChecking out emergent source code...'
+    print cmd
+    makeDir(emer_src)
+    os.system(cmd)
+
   else:
-    # Found .svn folder, make sure it's up to date
-    print_horizontal()
-    print 'Found emergent source directory.  You can build using the existing source,'
-    print 'but you may want to update to the latest version first.'
-    svn_rev = get_svn_rev('\nOK to get the latest emergent source from Subversion?\n(or enter svn rev)')
+    # Found .svn folder, check which branch/tag/trunk and make sure it's up to date.
+    svn_info = subprocess.check_output([svnclient, 'info', emer_src])
+    lines = [line for line in svn_info.splitlines()
+                    if line[:3] == "URL" or line[:3] == "Rev"]
+    if len(lines) > 0:
+      print '\nFound emergent source directory: '
+      for line in lines:
+        print '  ' + line
+
+    print '\nYou can change to a different branch and/or update to another revision.'
+    if not askUser('Build on current branch?'):
+      tag_or_branch = get_tag_or_branch()
+      cmd = quote(svnclient) + ' switch ' + root_emer_url + tag_or_branch + ' ' + emer_src
+      print '\nSwitching branches...'
+      print cmd
+      os.system(cmd)
+
+    svn_rev = get_svn_rev('\nGet the latest emergent source from Subversion? (or enter svn rev)')
     if (svn_rev > 0):
-      svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
-      if not svnclient:
-        print "Can't continue because SVN client needs to be installed!  Quitting."
-        quit(1)
       cmd = quote(svnclient) + ' update -r ' + svn_rev + ' ' + emer_src
       print '\nUpdating emergent source code...'
       print cmd
