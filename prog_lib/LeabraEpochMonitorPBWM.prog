@@ -1,8 +1,8 @@
-// ta_Dump File v3.0 -- code v5.1.0.0
+// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
 Program .projects[1].programs.gp[0][8] { 
   ProgObjList @.objs = [3] {
     NetMonitor @[0] { 
-      NetMonItem_List @.items = [45] {
+      NetMonItem_List @.items = [37] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
@@ -40,14 +40,6 @@ Program .projects[1].programs.gp[0][8] {
 	NetMonItem @[34] { };
 	NetMonItem @[35] { };
 	NetMonItem @[36] { };
-	NetMonItem @[37] { };
-	NetMonItem @[38] { };
-	NetMonItem @[39] { };
-	NetMonItem @[40] { };
-	NetMonItem @[41] { };
-	NetMonItem @[42] { };
-	NetMonItem @[43] { };
-	NetMonItem @[44] { };
       };
     };
     DataTable @[1] { 
@@ -97,9 +89,6 @@ Program .projects[1].programs.gp[0][8] {
   };
 
   Function_List @.functions = [0] {
-  };
-
-  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [4] {
@@ -168,7 +157,7 @@ Program .projects[1].programs.gp[0][8] {
  name="LeabraEpochMonitorPBWM";
  short_nm="M";
  tags="Leabra, Epoch, Monitor, PBWM";
- desc="monitor epoch-level data from the network -- PBWM version (V2 only)";
+ desc="monitor epoch-level data from the network -- PBWM version (V3 only)";
  flags=NO_STOP_STEP;
  objs {
   name=;
@@ -184,7 +173,7 @@ Program .projects[1].programs.gp[0][8] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[1].networks[0]$$<LeabraNetwork,Net_Patch>;
+     object=.projects[1].networks[0]$$<LeabraNetwork,SIR_v3>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -376,7 +365,7 @@ Program .projects[1].programs.gp[0][8] {
      name="Leabra_cur_lrate";
      computed=0;
      object_type=LeabraConSpec;
-     object=.projects[1].networks[0].specs[3]$$<LeabraConSpec,LeabraConSpec_0>;
+     object=.projects[1].networks[0].specs[4]$$<LeabraConSpec,LeabraConSpec_0>;
      variable="cur_lrate";
      var_label=;
      name_style=AUTO_NAME;
@@ -469,7 +458,39 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[9] {
-     name="S_da";
+     name="pvlv_tonic_da";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$.projects[1].networks[0]$;
+     variable="pvlv_tonic_da";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="AggregateSpec_97": op=NONE: rel={name="Relation_97": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 2 0=0;
+      var=NULL;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="SimpleMathSpec_241": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="SimpleMathSpec_242": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="SimpleMathSpec_243": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[10] {
+     name="sum_no_out_gate";
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -481,12 +502,12 @@ Program .projects[1].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=.projects[1].programs.gp[0][8].objs[1]$$;
+     data_src=.projects[1].data.gp[1][0]$$<DataTable,TrialOutputData>;
      agg_col {
-      col_name="DA";
+      col_name="no_out_gate";
      };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
+     agg {name="": op=SUM: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
      select_spec {
       col_name="group_name";
       on=1;
@@ -500,7 +521,135 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[10] {
+    NetMonItem @[11] {
+     name="S_sse";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=1;
+     data_src=.projects[1].programs.gp[0][8].objs[1]$$;
+     agg_col {
+      col_name="sse";
+     };
+     agg {name="": op=FIRST: rel={name="Relation_101": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=1;
+     select_spec {
+      col_name="group_name";
+      on=1;
+      rel=CONTAINS;
+      use_var=1;
+      cmp 9 0="S";
+      var=$.projects[1].programs.gp[0][8].vars[6]$;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="SimpleMathSpec_247": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="SimpleMathSpec_248": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="SimpleMathSpec_249": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[12] {
+     name="I_sse";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=1;
+     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
+     agg_col {
+      col_name="sse";
+     };
+     agg {name="": op=FIRST: rel={name="Relation_102": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=1;
+     select_spec {
+      col_name="group_name";
+      on=1;
+      rel=EQUAL;
+      use_var=1;
+      cmp 9 0="I";
+      var=.projects[1].programs.gp[0][8].vars[7]$$;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="SimpleMathSpec_250": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="SimpleMathSpec_251": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="SimpleMathSpec_252": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[13] {
+     name="R_sse";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=1;
+     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
+     agg_col {
+      col_name="sse";
+     };
+     agg {name="": op=FIRST: rel={name="Relation_103": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=1;
+     select_spec {
+      col_name="group_name";
+      on=1;
+      rel=CONTAINS;
+      use_var=1;
+      cmp 9 0="R";
+      var=.projects[1].programs.gp[0][8].vars[8]$$;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="SimpleMathSpec_253": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="SimpleMathSpec_254": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="SimpleMathSpec_255": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[14] {
+     name="S_da";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=1;
+     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
+     agg_col {
+      col_name="DA";
+     };
+     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=1;
+     select_spec {
+      col_name="group_name";
+      on=1;
+      rel=CONTAINS;
+      use_var=1;
+      cmp 9 0="S";
+      var=$.projects[1].programs.gp[0][8].vars[6]$;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[15] {
      name="I_da";
      computed=1;
      object_type=NULL;
@@ -525,14 +674,14 @@ Program .projects[1].programs.gp[0][8] {
       rel=EQUAL;
       use_var=1;
       cmp 9 0="I";
-      var=.projects[1].programs.gp[0][8].vars[7]$$;
+      var=$.projects[1].programs.gp[0][8].vars[7]$;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[11] {
+    NetMonItem @[16] {
      name="R_da";
      computed=1;
      object_type=NULL;
@@ -557,14 +706,14 @@ Program .projects[1].programs.gp[0][8] {
       rel=CONTAINS;
       use_var=1;
       cmp 9 0="R";
-      var=.projects[1].programs.gp[0][8].vars[8]$$;
+      var=$.projects[1].programs.gp[0][8].vars[8]$;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[12] {
+    NetMonItem @[17] {
      name="S_mgo";
      computed=1;
      object_type=NULL;
@@ -579,7 +728,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_mgo";
+      col_name="n_gated_mnt";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -596,7 +745,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[13] {
+    NetMonItem @[18] {
      name="I_mgo";
      computed=1;
      object_type=NULL;
@@ -611,7 +760,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_mgo";
+      col_name="n_gated_mnt";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -628,7 +777,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[14] {
+    NetMonItem @[19] {
      name="R_mgo";
      computed=1;
      object_type=NULL;
@@ -643,7 +792,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_mgo";
+      col_name="n_gated_mnt";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -660,7 +809,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[15] {
+    NetMonItem @[20] {
      name="S_ogo";
      computed=1;
      object_type=NULL;
@@ -675,7 +824,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_ogo";
+      col_name="n_gated_out";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -692,7 +841,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[16] {
+    NetMonItem @[21] {
      name="I_ogo";
      computed=1;
      object_type=NULL;
@@ -707,7 +856,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_ogo";
+      col_name="n_gated_out";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -724,7 +873,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[17] {
+    NetMonItem @[22] {
      name="R_ogo";
      computed=1;
      object_type=NULL;
@@ -739,7 +888,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].programs.gp[0][8].objs[1]$;
      agg_col {
-      col_name="n_ogo";
+      col_name="n_gated_out";
      };
      agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=1;
@@ -756,7 +905,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[18] {
+    NetMonItem @[23] {
      name="da_mean";
      computed=1;
      object_type=NULL;
@@ -788,7 +937,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[19] {
+    NetMonItem @[24] {
      name="da_max";
      computed=1;
      object_type=NULL;
@@ -820,7 +969,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[20] {
+    NetMonItem @[25] {
      name="S_pvr";
      computed=1;
      object_type=NULL;
@@ -852,7 +1001,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[21] {
+    NetMonItem @[26] {
      name="I_pvr";
      computed=1;
      object_type=NULL;
@@ -884,7 +1033,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[22] {
+    NetMonItem @[27] {
      name="R_pvr";
      computed=1;
      object_type=NULL;
@@ -916,168 +1065,8 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[23] {
-     name="S_emty_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
-     agg_col {
-      col_name="n_emty_mnt";
-     };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=1;
-      cmp 9 0="S";
-      var=$.projects[1].programs.gp[0][8].vars[6]$;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[24] {
-     name="S_mnt_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
-     agg_col {
-      col_name="n_mnt_mnt";
-     };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=1;
-      cmp 9 0="S";
-      var=$.projects[1].programs.gp[0][8].vars[6]$;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[25] {
-     name="I_mnt_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
-     agg_col {
-      col_name="n_mnt_mnt";
-     };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=1;
-      cmp 9 0="I";
-      var=$.projects[1].programs.gp[0][8].vars[7]$;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[26] {
-     name="I_emty_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
-     agg_col {
-      col_name="n_emty_mnt";
-     };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=1;
-      cmp 9 0="I";
-      var=$.projects[1].programs.gp[0][8].vars[7]$;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[27] {
-     name="I_mnt_nogo";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
-     agg_col {
-      col_name="n_mnt_nogo";
-     };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=1;
-      cmp 9 0="I";
-      var=$.projects[1].programs.gp[0][8].vars[7]$;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
     NetMonItem @[28] {
-     name="R_mnt_out";
+     name="n_forced_all";
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -1089,19 +1078,19 @@ Program .projects[1].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
+     data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="n_mnt_out";
+      col_name="n_forced_all";
      };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
+     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
      select_spec {
       col_name="group_name";
       on=1;
       rel=CONTAINS;
-      use_var=1;
+      use_var=0;
       cmp 9 0="R";
-      var=$.projects[1].programs.gp[0][8].vars[8]$;
+      var=NULL;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1109,7 +1098,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[29] {
-     name="R_mnt_nogo";
+     name="n_forced_mnt";
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -1121,19 +1110,19 @@ Program .projects[1].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=$.projects[1].programs.gp[0][8].objs[1]$;
+     data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="n_mnt_nogo";
+      col_name="n_forced_mnt";
      };
-     agg {name="": op=FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=1;
+     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
      select_spec {
       col_name="group_name";
       on=1;
       rel=CONTAINS;
-      use_var=1;
+      use_var=0;
       cmp 9 0="R";
-      var=$.projects[1].programs.gp[0][8].vars[8]$;
+      var=NULL;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1141,7 +1130,7 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[30] {
-     name="max_mnt_avg";
+     name="n_forced_out";
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -1153,9 +1142,9 @@ Program .projects[1].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=.projects[1].data.gp[1][0]$$<DataTable,TrialOutputData>;
+     data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="max_mnt";
+      col_name="n_forced_out";
      };
      agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
@@ -1187,7 +1176,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="max_mnt";
+      col_name="max_mnt_count";
      };
      agg {name="": op=MAX: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
@@ -1205,38 +1194,6 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[32] {
-     name="min_mnt_avg";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="min_mnt";
-     };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[33] {
      name="min_mnt_min";
      computed=1;
      object_type=NULL;
@@ -1251,7 +1208,7 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="min_mnt";
+      col_name="min_mnt_count";
      };
      agg {name="": op=MIN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
@@ -1268,8 +1225,8 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[34] {
-     name="n_rnd_go";
+    NetMonItem @[33] {
+     name="min_go_cycle_all";
      computed=1;
      object_type=NULL;
      object=NULL;
@@ -1283,7 +1240,39 @@ Program .projects[1].programs.gp[0][8] {
      data_agg=1;
      data_src=$.projects[1].data.gp[1][0]$;
      agg_col {
-      col_name="n_rnd_go";
+      col_name="min_go_cycle_all";
+     };
+     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name="group_name";
+      on=1;
+      rel=CONTAINS;
+      use_var=0;
+      cmp 9 0="R";
+      var=NULL;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[34] {
+     name="max_go_cycle_all";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=1;
+     data_src=$.projects[1].data.gp[1][0]$;
+     agg_col {
+      col_name="max_go_cycle_all";
      };
      agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
@@ -1301,30 +1290,30 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[35] {
-     name="n_emty_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
+     name="netmax";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$.projects[1].networks[0]$;
+     variable="avg_netin.max";
+     var_label="netmax";
+     name_style=AUTO_NAME;
+     max_name_len=9;
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
+     data_agg=0;
+     data_src=NULL;
      agg_col {
-      col_name="n_emty_mnt";
+      col_name=;
      };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="AggregateSpec_168": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
-      col_name="group_name";
+      col_name=;
       on=1;
-      rel=CONTAINS;
+      rel=EQUAL;
       use_var=0;
-      cmp 9 0="R";
+      cmp 0 1;
       var=NULL;
       enable_var=NULL;
      };
@@ -1333,292 +1322,36 @@ Program .projects[1].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[36] {
-     name="n_mnt_mnt";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
+     name="netrel";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$.projects[1].networks[0]$;
+     variable="prjns.avg_netin_rel";
+     var_label="netrel";
+     name_style=AUTO_NAME;
+     max_name_len=9;
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
+     data_agg=0;
+     data_src=NULL;
      agg_col {
-      col_name="n_mnt_mnt";
+      col_name=;
      };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     agg {name="AggregateSpec_168": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      select_rows=0;
      select_spec {
-      col_name="group_name";
+      col_name=;
       on=1;
-      rel=CONTAINS;
+      rel=EQUAL;
       use_var=0;
-      cmp 9 0="R";
+      cmp 0 1;
       var=NULL;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[37] {
-     name="n_empty_out";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="n_emty_out";
-     };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[38] {
-     name="n_mnt_out";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="n_mnt_out";
-     };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[39] {
-     name="n_emty_nogo";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="n_emty_nogo";
-     };
-     agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[40] {
-     name="n_mnt_nogo";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="n_mnt_nogo";
-     };
-     agg {name="": op=MEAN: rel={name="Relation_201": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="SimpleMathSpec_503": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_504": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_505": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[41] {
-     name="mnt_all_nogo";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="mnt_all_nogo";
-     };
-     agg {name="": op=SUM: rel={name="Relation_336": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="SimpleMathSpec_765": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_766": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_767": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[42] {
-     name="mnt_all_nogo_noi";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="mnt_all_nogo_noi";
-     };
-     agg {name="": op=SUM: rel={name="Relation_337": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="SimpleMathSpec_768": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_769": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_770": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[43] {
-     name="out_all_nogo";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="out_all_nogo";
-     };
-     agg {name="": op=SUM: rel={name="Relation_338": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="SimpleMathSpec_771": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_772": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_773": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[44] {
-     name="s_mnt_netin";
-     computed=1;
-     object_type=NULL;
-     object=NULL;
-     variable="act";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=1;
-     matrix_geom{ 6;     };
-     data_agg=1;
-     data_src=$.projects[1].data.gp[1][0]$;
-     agg_col {
-      col_name="s_mnt_netin";
-     };
-     agg {name="": op=MEAN: rel={name="Relation_203": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="group_name";
-      on=1;
-      rel=CONTAINS;
-      use_var=0;
-      cmp 9 0="R";
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="SimpleMathSpec_509": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_510": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_511": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
    network=$.projects[1].networks[0]$;
@@ -1645,7 +1378,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] "I";"R1";"R2";"S1";"S2";     };
+	  [6] "I";"IR";"R1";"R2";"S1";"S2";     };
     };
     float_Data @[1] {
      name="DA";
@@ -1660,7 +1393,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.11125921;0.0026974382;0.0035460081;0.20101824;0.19014306;     };
+	  [6] 0.28298181;0.046567895;0.04720233;0.048858535;0.27131385;0.25344187;     };
     };
     float_Data @[2] {
      name="LVe";
@@ -1675,7 +1408,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.87952828;0.99208182;0.98014081;0.93922168;0.87439066;     };
+	  [6] 0.18753456;0.17598075;0.12332383;0.20448564;0.17747517;0.20625201;     };
     };
     float_Data @[3] {
      name="LVi";
@@ -1690,7 +1423,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.57064426;0.94273508;0.92024028;0.60799652;0.58163118;     };
+	  [6] 0.4430775;0.43659306;0.44160879;0.44059792;0.44877452;0.44494247;     };
     };
     float_Data @[4] {
      name="PVe";
@@ -1705,7 +1438,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.5;1;1;0.5;0.5;     };
+	  [6] 0.5;0.125;0.064516127;0.27586207;0.5;0.5;     };
     };
     float_Data @[5] {
      name="PVi";
@@ -1720,7 +1453,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.50199687;0.97664547;0.96651804;0.50418395;0.50283676;     };
+	  [6] 0.44807968;0.33190891;0.31393895;0.3670941;0.44373474;0.44682187;     };
     };
     float_Data @[6] {
      name="PVr";
@@ -1735,10 +1468,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.52812332;0.93415844;0.95498878;0.53751969;0.52976352;     };
+	  [6] 0.51479232;0.8996383;0.87935096;0.87283933;0.5159632;0.51737911;     };
     };
     float_Data @[7] {
-     name="n_mgo";
+     name="n_gated_all";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1750,10 +1483,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.13793103;0;0;2.6666667;2.2857144;     };
+	  [6] 2.0999999;2.075;2.1612904;2.1724138;1.8709677;2.2413793;     };
     };
     float_Data @[8] {
-     name="n_ogo";
+     name="n_gated_mnt";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1765,10 +1498,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0;3;2.2;0;0;     };
+	  [6] 2.075;0.025;0.096774191;0.068965517;1.8709677;2.2413793;     };
     };
     float_Data @[9] {
-     name="n_emty_mnt";
+     name="n_gated_out";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1780,10 +1513,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0.13793103;0;0;2.6666667;2.2857144;     };
+	  [6] 0.025;2.05;2.0645161;2.1034484;0;0;     };
     };
     float_Data @[10] {
-     name="n_mnt_mnt";
+     name="n_forced_all";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1795,10 +1528,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0;0;0;0;0;     };
+	  [6] 0;0;0;0;0;0;     };
     };
     float_Data @[11] {
-     name="n_emty_out";
+     name="n_forced_mnt";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1810,10 +1543,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0;0;0;0;0;     };
+	  [6] 0;0;0;0;0;0;     };
     };
     float_Data @[12] {
-     name="n_mnt_out";
+     name="n_forced_out";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1825,10 +1558,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 0;3;2.2;0;0;     };
+	  [6] 0;0;0;0;0;0;     };
     };
     float_Data @[13] {
-     name="n_emty_nogo";
+     name="sse";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1840,10 +1573,10 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 2.6206896;1.2;2.4000001;1.4;2.1428571;     };
+	  [6] 0;1.0094789;1.1523746;0.87003773;0;0;     };
     };
     float_Data @[14] {
-     name="n_mnt_nogo";
+     name="ext_rew";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1855,7 +1588,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [5] 3.2413793;1.8;1.4;1.9333333;1.5714285;     };
+	  [6] -1.0999998;0.125;0.064516127;0.27586207;-1.1000001;-1.1000003;     };
     };
    };
    data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1883,7 +1616,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [1] 0.10346175;     };
+	  [1] 0.15911357;     };
     };
     float_Data @[1] {
      name="absDA_max";
@@ -1898,7 +1631,7 @@ Program .projects[1].programs.gp[0][8] {
 	  [0]      };
      ar {
       name=;
-	  [1] 0.38293928;     };
+	  [1] 0.41447413;     };
     };
    };
    data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1919,10 +1652,10 @@ Program .projects[1].programs.gp[0][8] {
   ProgVar @[0] {
    name="network";
    var_type=T_Object;
-   object_type=Network;
+   object_type=LeabraNetwork;
    object_val=$.projects[1].networks[0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1938,7 +1671,7 @@ Program .projects[1].programs.gp[0][8] {
    object_type=DataTable;
    object_val=$.projects[1].data.gp[1][1]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1949,7 +1682,7 @@ Program .projects[1].programs.gp[0][8] {
    object_type=NetMonitor;
    object_val=.projects[1].programs.gp[0][8].objs[0]$$;
    objs_ptr=1;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1958,9 +1691,9 @@ Program .projects[1].programs.gp[0][8] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[1].networks[0].epoch_time$$<TimeUsed,epoch_time>;
+   object_val=.projects[1].networks[0].epoch_time$$<TimeUsed,>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1971,7 +1704,7 @@ Program .projects[1].programs.gp[0][8] {
    object_type=DataTable;
    object_val=$.projects[1].programs.gp[0][8].objs[1]$;
    objs_ptr=1;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1982,7 +1715,7 @@ Program .projects[1].programs.gp[0][8] {
    object_type=DataTable;
    object_val=$.projects[1].programs.gp[0][8].objs[2]$;
    objs_ptr=1;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -1993,7 +1726,7 @@ Program .projects[1].programs.gp[0][8] {
    object_type=DataTable;
    object_val=$.projects[1].data.gp[1][0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -2003,7 +1736,7 @@ Program .projects[1].programs.gp[0][8] {
    var_type=T_String;
    string_val="S";
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="string that the \"store\" trials (encoding into WM) group_name field contain, to uniquely identify them";
    init_from=NULL;
@@ -2013,7 +1746,7 @@ Program .projects[1].programs.gp[0][8] {
    var_type=T_String;
    string_val="I";
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="string that the ignore trials (neither store nore recall) group_name field contain, to uniquely identify them";
    init_from=NULL;
@@ -2023,7 +1756,7 @@ Program .projects[1].programs.gp[0][8] {
    var_type=T_String;
    string_val="R";
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="string that the recall trials group_name field contain, to uniquely identify them";
    init_from=NULL;
@@ -2034,18 +1767,13 @@ Program .projects[1].programs.gp[0][8] {
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=AssignExpr;
-  el_def=0;
- };
  init_code {
   name=;
-  el_typ=MethodCall;
+  el_typ=ProgCode;
   el_def=0;
   AssignExpr @[0] {
    desc=;
-   flags=;
+   flags=0;
    result_var=.projects[1].programs.gp[0][8].vars[2]$$;
    expr {
     expr="network.epoch_time";
@@ -2053,7 +1781,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   MethodCall @[1] {
    desc=;
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=.projects[1].programs.gp[0][8].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
@@ -2085,7 +1813,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   MethodCall @[2] {
    desc=;
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=$.projects[1].programs.gp[0][8].vars[1]$;
    method=taBase::CheckConfig;
@@ -2107,7 +1835,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   MethodCall @[3] {
    desc="update the monitor items and data schema";
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=$.projects[1].programs.gp[0][8].vars[1]$;
    method=NetMonitor::UpdateMonitors;
@@ -2130,11 +1858,11 @@ Program .projects[1].programs.gp[0][8] {
  };
  prog_code {
   name=;
-  el_typ=MethodCall;
+  el_typ=ProgCode;
   el_def=0;
   DataGroupProg @[0] {
    desc=;
-   flags=;
+   flags=0;
    src_data_var=.projects[1].programs.gp[0][8].vars[5]$$;
    dest_data_var=.projects[1].programs.gp[0][8].vars[3]$$;
    group_spec {
@@ -2172,35 +1900,35 @@ Program .projects[1].programs.gp[0][8] {
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[7] {
-      col_name="n_mgo";
+      col_name="n_gated_all";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[8] {
-      col_name="n_ogo";
+      col_name="n_gated_mnt";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[9] {
-      col_name="n_emty_mnt";
+      col_name="n_gated_out";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[10] {
-      col_name="n_mnt_mnt";
+      col_name="n_forced_all";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[11] {
-      col_name="n_emty_out";
+      col_name="n_forced_mnt";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[12] {
-      col_name="n_mnt_out";
+      col_name="n_forced_out";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[13] {
-      col_name="n_emty_nogo";
+      col_name="sse";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
      DataGroupEl @[14] {
-      col_name="n_mnt_nogo";
+      col_name="ext_rew";
       agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
     };
@@ -2209,7 +1937,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   DataGroupProg @[1] {
    desc=;
-   flags=;
+   flags=0;
    src_data_var=$.projects[1].programs.gp[0][8].vars[5]$;
    dest_data_var=.projects[1].programs.gp[0][8].vars[4]$$;
    group_spec {
@@ -2232,7 +1960,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   MethodCall @[2] {
    desc="add a new blank row to the data";
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=.projects[1].programs.gp[0][8].vars[0]$$;
    method=DataTable::AddBlankRow;
@@ -2244,7 +1972,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   MethodCall @[3] {
    desc="get the new monitor data.";
-   flags=;
+   flags=NON_STD;
    result_var=NULL;
    obj=$.projects[1].programs.gp[0][8].vars[1]$;
    method=NetMonitor::GetMonVals;
@@ -2256,7 +1984,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   AssignExpr @[4] {
    desc=;
-   flags=;
+   flags=0;
    result_var=$.projects[1].programs.gp[0][8].vars[2]$;
    expr {
     expr="network.epoch_time";
@@ -2264,7 +1992,7 @@ Program .projects[1].programs.gp[0][8] {
   };
   UserScript @[5] {
    desc="set the timing information from the epoch timer";
-   flags=;
+   flags=0;
    script {
     expr="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
 epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
@@ -2274,7 +2002,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
   };
   MethodCall @[6] {
    desc="update after writing new data to monitor data table";
-   flags=;
+   flags=0;
    result_var=NULL;
    obj=$.projects[1].programs.gp[0][8].vars[0]$;
    method=DataBlock::WriteClose;

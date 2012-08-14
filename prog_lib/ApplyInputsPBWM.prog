@@ -1,0 +1,413 @@
+// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+Program .projects[1].programs.gp[0][6] { 
+  ProgObjList @.objs = [1] {
+    LayerWriter @[0] { 
+      LayerDataEl_List @.layer_data = [4] {
+	LayerWriterEl @[0] { };
+	LayerWriterEl @[1] { };
+	LayerWriterEl @[2] { };
+	LayerWriterEl @[3] { };
+      };
+    };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [2] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+  };
+
+  ProgEl_List @.prog_code = [5] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    IfElse @[2] { 
+      ProgEl_List @.true_code = [1] {
+	IfElse @[0] { 
+	  ProgEl_List @.true_code = [1] {
+	    MemberAssign @[0] { };
+	  };
+
+	  ProgEl_List @.false_code = [1] {
+	    MemberAssign @[0] { };
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+    };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    UserScript @[4] { };
+  };
+};
+Program .projects[1].programs.gp[0][6] {
+ name="ApplyInputsPBWM";
+ short_nm="Inputs";
+ tags=;
+ desc="apply the current input data to the network as external input and target values";
+ flags=NO_STOP_STEP;
+ objs {
+  name=;
+  el_typ=LayerWriter;
+  el_def=0;
+  LayerWriter @[0] {
+   name="LayerWriter_0";
+   data=.projects[1].data.gp[0][0]$$<DataTable,Train>;
+   network=.projects[1].networks[0]$$<LeabraNetwork,SIR_v3>;
+   layer_data {
+    name=;
+    el_typ=LayerWriterEl;
+    el_def=0;
+    LayerWriterEl @[0] {
+     chan_name="Input";
+     net_target=LAYER;
+     layer_name="Input";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     quiet=0;
+     na_by_range=0;
+     ext_flags=EXT;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[1] {
+     chan_name="Output";
+     net_target=LAYER;
+     layer_name="Output";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     quiet=0;
+     na_by_range=0;
+     ext_flags=TARG;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[2] {
+     chan_name="RewTarg";
+     net_target=LAYER;
+     layer_name="RewTarg";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     quiet=0;
+     na_by_range=0;
+     ext_flags=EXT;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[3] {
+     chan_name="Name";
+     net_target=TRIAL_NAME;
+     layer_name="Name";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     quiet=0;
+     na_by_range=0;
+     ext_flags=0;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+   };
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=$.projects[1].networks[0]$;
+   objs_ptr=0;
+   flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$.projects[1].data.gp[0][0]$;
+   objs_ptr=0;
+   flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="LayerWriter_0";
+   var_type=T_Object;
+   object_type=LayerWriter;
+   object_val=.projects[1].programs.gp[0][6].objs[0]$$;
+   objs_ptr=1;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="rew_targ";
+   var_type=T_Bool;
+   bool_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name=;
+  el_typ=Function;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=.projects[1].programs.gp[0][6].vars[0]$$;
+   method=LayerWriter::SetDataNetwork;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+     };
+    };
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[1].programs.gp[0][6].vars[0]$;
+   method=taList_impl::CheckConfig;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+     };
+    };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=ProgCode;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[1].programs.gp[0][6].vars[0]$;
+   method=LayerWriter::SetDataNetwork;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+     };
+    };
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=0;
+   result_var=.projects[1].programs.gp[0][6].vars[1]$$;
+   obj=.projects[1].programs.gp[0][6].args[1]$$;
+   method=DataTable::GetVal;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="col";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"RewTarg\"";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data.ReadIndex()";
+     };
+    };
+   };
+  };
+  IfElse @[2] {
+   desc=;
+   flags=NEW_EL;
+   cond {
+    expr="network->phase_no == 0";
+   };
+   show_false_code=0;
+   true_code {
+    name="ProgEl_List_315";
+    el_typ=ProgCode;
+    el_def=0;
+    IfElse @[0] {
+     desc=;
+     flags=0;
+     cond {
+      expr="rew_targ";
+     };
+     show_false_code=1;
+     true_code {
+      name="ProgEl_List_313";
+      el_typ=ProgCode;
+      el_def=0;
+      MemberAssign @[0] {
+       desc=;
+       flags=0;
+       obj=.projects[1].programs.gp[0][6].args[0]$$;
+       path="layers.Output.layer_type";
+       expr {
+	expr="Layer::TARGET";
+       };
+       update_after=0;
+      };
+     };
+     false_code {
+      name="ProgEl_List_314";
+      el_typ=ProgCode;
+      el_def=0;
+      MemberAssign @[0] {
+       desc=;
+       flags=0;
+       obj=$.projects[1].programs.gp[0][6].args[0]$;
+       path="layers.Output.layer_type";
+       expr {
+	expr="Layer::OUTPUT";
+       };
+       update_after=0;
+      };
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_316";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+  };
+  MethodCall @[3] {
+   desc="apply inputs to the network!  layer writer has all the key specs";
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[1].programs.gp[0][6].vars[0]$;
+   method=LayerWriter::ApplyInputData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  UserScript @[4] {
+   desc="group_name = action ";
+   flags=NON_STD;
+   script {
+    expr="network.group_name = network.trial_name.before(\"_\");";
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};
