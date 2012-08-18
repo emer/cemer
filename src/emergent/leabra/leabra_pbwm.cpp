@@ -1353,8 +1353,7 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 
 void PFCGateSpec::Initialize() {
   learn_deep_act = true;
-  cycle_updt = true;
-  maint_decay = 0.05f;
+  maint_decay = 0.02f;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
@@ -1370,8 +1369,7 @@ void PFCDeepLayerSpec::Initialize() {
 
 void PFCDeepLayerSpec::Defaults_init() {
   gate.learn_deep_act = true;
-  gate.cycle_updt = true;
-  gate.maint_decay = 0.05f;
+  gate.maint_decay = 0.02f;
 
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
@@ -1447,8 +1445,8 @@ bool PFCDeepLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   }
 
   if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
-                "requires LeabraNetwork min_minus_cycle > 5, I just set it to 25 for you")) {
-    net->mid_minus_cycle = 25;
+                "requires LeabraNetwork min_minus_cycle > 5, I just set it to 40 for you")) {
+    net->mid_minus_cycle = 40;
   }
 
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
@@ -1594,8 +1592,6 @@ void PFCDeepLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
       LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
       u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
-      gpd->mnt_count = 0;
-      snr_gpd->mnt_count = 0;	// should already be but just in case
     }
     else if(updt_act == CLEAR) {
       u->vcb.g_h = u->maint_h = 0.0f;
@@ -1637,30 +1633,16 @@ void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + mg);
     gpd->CopyPBWMData(*snr_gpd);		// always grab from snr, which is the source
 
-    if(gate.cycle_updt) {
-      if(gpd->go_fired_trial) {
-	if(net->phase_no <= 1) { // only for first 2 phases
-	  Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
-	}
-      }
-      else {
-	if(net->ct_cycle == max_go_cycle+1) { // end of the line -- add 1 just to be safe
-	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
-	  // always decay if not getting go
-	  Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
-	}
-      }
+    if(gpd->go_fired_now) {
+      Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
+      Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
     }
     else {
-      if(gpd->go_fired_now) {
-	Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
-      }
-      else {
-	if(net->ct_cycle == max_go_cycle+1) { // end of the line -- add 1 just to be safe
-	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
-	  // always decay if not getting go
-	  Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
-	}
+      if(!gpd->go_fired_trial && net->ct_cycle == max_go_cycle+1) {
+	// end of the gating period -- add 1 just to be safe
+	Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+	// always decay if not getting go
+	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
       }
     }
 
@@ -4090,6 +4072,11 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   //////////////////////////////////////////////////////////////////////////////////
   // first: all the basic defaults from specs
+
+  if(net->mid_minus_cycle < 5) {
+    net->mid_minus_cycle = 40;
+    net->min_cycles = net->mid_minus_cycle + 15;
+  }
 
   units->Defaults();
   cons->Defaults();

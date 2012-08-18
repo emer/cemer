@@ -512,7 +512,6 @@ class LEABRA_API PFCGateSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
-  bool		cycle_updt;	// #DEF_true update deep layer activations each cycle on a gating trial, so they track the dynamics of the superficial layer -- this enables better learning signals that match those of superficial layer, but violates the credit assignment associated with the precise activity pattern present at the time of gating
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much does maintenance activation decay every trial?
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }

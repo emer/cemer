@@ -2448,6 +2448,21 @@ void ProgEl::Destroy() {
 void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
   flags = cp.flags;
+  orig_prog_code = cp.orig_prog_code;
+}
+
+void ProgEl::UpdateProgFlags() {
+  if(orig_prog_code.nonempty() && ProgElChildrenCount() == 0) {
+    SetProgFlag(CAN_REVERT_TO_CODE);
+  }
+  else {
+    ClearProgFlag(CAN_REVERT_TO_CODE);
+  }
+}
+
+void ProgEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgFlags();
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
@@ -2690,6 +2705,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
 }
 
 bool ProgEl::CheckConfig_impl(bool quiet) {
+  UpdateProgFlags();
   if(HasProgFlag(OFF)) {
     ClearCheckConfig();
     return true;
@@ -2698,6 +2714,7 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 }
 
 void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  UpdateProgFlags();
   inherited::CheckThisConfig_impl(quiet, rval);
   // automatically perform all necessary housekeeping functions!
   TypeDef* td = GetTypeDef();
@@ -2966,6 +2983,27 @@ bool ProgEl::CvtFmCode(const String& code) {
   return true;
 }
 
+bool ProgEl::RevertToCode() {
+  UpdateProgFlags();		// make sure
+  if(!HasProgFlag(CAN_REVERT_TO_CODE)) {
+    DataChanged(DCR_ITEM_UPDATED); // trigger update of our gui -- obviously out of whack
+    return false;
+  }
+  ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
+  if(!own) return false;
+  ProgCode* cvt = new ProgCode;
+  cvt->desc = desc;
+  cvt->code.expr = orig_prog_code;
+  tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
+  int myidx = own->FindEl(this);
+  own->Insert(cvt, myidx); // insert at my position
+  SetBaseFlag(BF_MISC4); // indicates that we're done..
+  this->CloseLater();      // kill me later..
+  tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
+  tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+  return true;
+}
+
 
 //////////////////////////
 //   ProgEl_List        //
@@ -3067,6 +3105,7 @@ void ProgCode::Initialize() {
 
 void ProgCode::SetProgExprFlags() {
   code.SetExprFlag(ProgExpr::NO_PARSE); // do not parse at all -- often nonsense..
+  ClearProgFlag(CAN_REVERT_TO_CODE); // we are code!
 }
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
@@ -3140,6 +3179,8 @@ void ProgCode::UpdateAfterEdit_impl() {
     ProgEl* cvt = CvtCodeToProgEl(code_str, this);
     if(cvt) {
       cvt->desc = desc;         // transfer description
+      cvt->orig_prog_code = code_str;
+      cvt->SetProgFlag(CAN_REVERT_TO_CODE);
       ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
       if(own) {
         tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..

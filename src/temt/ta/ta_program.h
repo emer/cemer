@@ -836,14 +836,18 @@ public:
     BREAKPOINT          = 0x0100, // #NO_SHOW breakpoint set at this prog el
     PROG_ERROR          = 0x0200, // #NO_SHOW css error was triggered at this prog el
     WARNING             = 0x0400, // #NO_SHOW css warning was triggered at this prog el
+    CAN_REVERT_TO_CODE  = 0x0800, // #NO_SHOW can revert to program code string -- computes whether this prog el can revert back to a ProgCode -- used for enabling button
   };
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
+  String		orig_prog_code; // #HIDDEN original program code in a ProgCode used to create this element -- used e.g. for reverting
 
   virtual ProgEl*       parent() const
-    {return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl);}
-  Program*              program() {return GET_MY_OWNER(Program);}
+  { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
+  Program*              program() { return GET_MY_OWNER(Program); }
+  virtual int 		ProgElChildrenCount() const { return 0; }
+  // number of program element children under this object -- overload for containers (loops, conditionals, etc)
 
   void                  PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual void          GenCss(Program* prog); // generate the Css code for this object (usually override _impl's)
@@ -885,6 +889,9 @@ public:
   void                  ToggleBreakpoint();
   // #MENU #MENU_ON_Object #DYN1 toggle breakpoint flag to opposite of current state: will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
 
+  virtual bool		RevertToCode();
+  // #BUTTON #GHOST_OFF_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
+
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
   virtual LocalVars*     FindLocalVarList() const;
@@ -923,6 +930,7 @@ public:
   TA_BASEFUNS(ProgEl);
 
 protected:
+  override void		UpdateAfterEdit_impl();
   override void         UpdateAfterMove_impl(taBase* old_owner);
   virtual void          UpdateAfterCopy(const ProgEl& cp);
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
@@ -937,6 +945,9 @@ protected:
   // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found -- auto called by UpdateAfterMove and UpdateAfterCopy
     virtual ProgVar*    FindVarNameInScope_impl(const String& var_nm) const;
     // #IGNORE impl
+
+  virtual void		UpdateProgFlags();
+  // #IGNORE update program element flags
 
   override bool         CheckConfig_impl(bool quiet);
   override void         CheckThisConfig_impl(bool quiet, bool& rval);
@@ -1025,6 +1036,8 @@ INHERITED(ProgEl)
 public:
   ProgEl_List           loop_code; // #SHOW_TREE the items to execute in the loop
 
+  override int 		ProgElChildrenCount() const { return loop_code.size; }
+
   virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
@@ -1090,6 +1103,8 @@ public:
   // The arguments to the function
   ProgEl_List           fun_code;
   // the function code (list of program elements)
+
+  override int 		ProgElChildrenCount() const { return fun_code.size; }
 
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call

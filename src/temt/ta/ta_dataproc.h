@@ -748,7 +748,7 @@ public:
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
   ProgVar		src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
 
-//no  override taList_impl*	children_() {return &loop_code;}	
+  override int 		ProgElChildrenCount() const { return loop_code.size; }
 
   virtual DataOpEl* AddSrcColumn(const String& col_name);
   // #CAT_DataOp #BUTTON add a new source column to operate on

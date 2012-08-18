@@ -72,7 +72,7 @@ void iLineEdit::editInEditor() {
 
 void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
-  activateWindow();		// make sure we're active when we click in a box!
+  // activateWindow();		// make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
   // emit focusChanged(true);
 }

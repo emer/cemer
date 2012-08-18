@@ -1535,6 +1535,11 @@ void taiField::lookupKeyPressed() {
   int new_pos = -1;
   String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
                                           lookupfun_md->name, new_pos);
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  rep()->window()->setFocus();
+  rep()->setFocus();
+#endif
   if(rval.nonempty()) {
     rep()->setText(rval);
     if(new_pos >= 0)
@@ -1555,6 +1560,11 @@ void taiField::lookupKeyPressed_dialog() {
   int new_pos = -1;
   String rval = tab->StringFieldLookupFun(edit_dialog->txtText->toPlainText(), cur_pos,
                                           lookupfun_md->name, new_pos);
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  rep()->window()->setFocus();
+  rep()->setFocus();
+#endif
   if(rval.nonempty()) {
     edit_dialog->txtText->setPlainText(rval);
     QTextCursor cur2(edit_dialog->txtText->textCursor());
@@ -1638,6 +1648,11 @@ void taiFileDialogField::lookupKeyPressed() {
     flr->Close();
     taRefN::unRefDone(flr);
   }
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  rep()->window()->setFocus();
+  rep()->setFocus();
+#endif
 }
 
 /////////////////////////////////////////////////

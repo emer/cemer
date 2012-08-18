@@ -26,6 +26,8 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
 
+  override int 		ProgElChildrenCount() const { return prog_code.size; }
+
  virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
@@ -316,6 +318,9 @@ public:
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
+  override int 		ProgElChildrenCount() const
+  { return true_code.size + false_code.size; }
+
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
   override bool		IsCtrlProgEl() 	{ return true; }
@@ -350,6 +355,8 @@ public:
   String	no_label;	// label to display for the No/Cancel answer
 
   ProgEl_List	yes_code; 	// #SHOW_TREE items to execute if user says Yes/Ok to prompt in gui mode, or to always execute in nogui mode
+
+  override int 		ProgElChildrenCount() const { return yes_code.size; }
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
@@ -404,6 +411,8 @@ public:
   ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
+
+  override int 		ProgElChildrenCount() const { return cases.size; }
 
   virtual void	    NewCase() 	{ cases.New(1); }
   // #BUTTON make a new case item
