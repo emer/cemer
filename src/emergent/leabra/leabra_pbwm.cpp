@@ -1524,8 +1524,8 @@ void PFCDeepLayerSpec::Compute_FinalGating_LV(LeabraLayer* lay, LeabraNetwork* n
   LeabraUnitSpec* lvi_us = (LeabraUnitSpec*)lvi_lay->GetUnitSpec();
 
   int orig_lve_vm_eq_cyc = lve_us->dt.vm_eq_cyc;
-  lve_us->dt.vm_eq_cyc = 10000;
   int orig_lvi_vm_eq_cyc = lvi_us->dt.vm_eq_cyc;
+  lve_us->dt.vm_eq_cyc = 10000;
   lvi_us->dt.vm_eq_cyc = 10000;
   
   LeabraUnit* u;
