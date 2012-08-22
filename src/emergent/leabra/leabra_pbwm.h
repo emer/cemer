@@ -582,7 +582,7 @@ public:
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)

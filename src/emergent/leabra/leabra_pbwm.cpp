@@ -1477,8 +1477,8 @@ void PFCDeepLayerSpec::Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
-void PFCDeepLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
+void PFCDeepLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle_Pre(lay, net);
   if(net->phase_no == 1) {
     Compute_FinalGating(lay, net);     // final gating
   }

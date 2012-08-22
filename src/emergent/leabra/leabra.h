@@ -2235,6 +2235,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	SettleFinal
 
+  virtual void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final PostSettle -- use this for anything that needs to happen prior to the standard PostSettle across layers (called by Settle_Final)
   virtual void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation after settling, keep track of phase variables, etc.
     virtual void PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net);
@@ -2730,6 +2732,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	SettleFinal
 
+  void	PostSettle_Pre(LeabraNetwork* net)	{ spec->PostSettle_Pre(this, net); }
+  // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final PostSettle -- use this for anything that needs to happen prior to the standard PostSettle across layers (called by Settle_Final)
+  // #CAT_Activation after settling, keep track of phase variables, etc.
   void	PostSettle(LeabraNetwork* net)	{ spec->PostSettle(this, net); }
   // #CAT_Activation after settling, keep track of phase variables, etc.
 
@@ -3358,6 +3363,8 @@ public:
 
   virtual void	Settle_Final();
   // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed)
+    virtual void PostSettle_Pre();
+    // #CAT_SettleFinal perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final PostSettle -- use this for anything that needs to happen prior to the standard PostSettle across layers (called by Settle_Final)
     virtual void PostSettle();
     // #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
     virtual void Settle_Compute_dWt();

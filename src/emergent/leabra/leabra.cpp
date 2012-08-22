@@ -6310,8 +6310,16 @@ void LeabraNetwork::Compute_MidMinus() {
 
 void LeabraNetwork::Settle_Final() {
   // all weight changes take place here for consistency!
+  PostSettle_Pre();
   PostSettle();
   Settle_Compute_dWt();
+}
+
+void LeabraNetwork::PostSettle_Pre() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->PostSettle_Pre(this);
+  }
 }
 
 void LeabraNetwork::PostSettle() {
