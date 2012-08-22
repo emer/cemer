@@ -59,14 +59,6 @@ void PBWMUnGpData::CopyPBWMData(const PBWMUnGpData& cp) {
 //      SNrThal Layer Spec      //
 //////////////////////////////////
 
-void SNrThalDoubleGateSpec::Initialize() {
-  on = false;
-  min_late_delay = 5;
-  go_b4_mid_late = 5;
-  gate_accom = 0.5f;
-  gate_accom_delay = 0;
-}
-
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   min_go_cycle = 25;
@@ -201,11 +193,23 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
-void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
-  if(snrthal.nogo_gain == 0.0f) return;
+LeabraLayer* SNrThalLayerSpec::MatrixGoLayer(LeabraLayer* lay) {
+  LeabraLayer* go_lay = NULL;
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) {
+      if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+	go_lay = fmlay;
+	break;
+      }
+    }
+  }
+  return go_lay;
+}
 
-  // not same issue; only an initialization here; I still suspect initialized idx value is not strictly binding
-  int nogo_prjn_idx = 0;
+LeabraLayer* SNrThalLayerSpec::MatrixNoGoLayer(LeabraLayer* lay) {
   LeabraLayer* nogo_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
@@ -214,11 +218,17 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) {
 	nogo_lay = fmlay;
-	nogo_prjn_idx = g;
 	break;
       }
     }
   }
+  return nogo_lay;
+}
+
+void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
+  if(snrthal.nogo_gain == 0.0f) return;
+
+  LeabraLayer* nogo_lay = MatrixNoGoLayer(lay);
   if(!nogo_lay) return;		// nothing to do if no nogo
 
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
@@ -337,259 +347,6 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetUserData("n_fired_now", n_fired_now);
 }
 
-void SNrThalLayerSpec::Compute_GatedActs_DoubleGate(LeabraLayer* lay, LeabraNetwork* net) {
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
-  int max_go_cycle = net->mid_minus_cycle - snrthal.go_b4_mid;
-
-  int n_fired_trial = 0;
-  int n_fired_now = 0;
-
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(net->ct_cycle < snrthal.min_go_cycle) {
-      // reset all for current trial
-      gpd->go_fired_now = false;
-      gpd->go_fired_trial = false;
-      gpd->go_forced = false;
-      gpd->go_cycle = -1;
-      // no need to reset these now?
-      //gpd->go_fired_now2 = false;
-      //gpd->go_fired_trial2 = false;
-      //gpd->go_forced2 = false;
-      //gpd->go_cycle2 = -1;
-
-      for(int i=0;i<nunits;i++) {
-	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	if(u->lesioned()) continue;
-	u->act_m2 = 0.0f;	// reset gating act
-      }
-      continue;			// if all mg < min_go_cycle, basically all done!
-    }
-
-    if(gpd->go_fired_trial) {	// this stripe already fired go
-      n_fired_trial++;
-      gpd->go_fired_now = false;
-      if(snrthal.act_is_gate) {
-	for(int i=0;i<nunits;i++) {
-	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	  if(u->lesioned()) continue;
-	  if(net->ct_cycle < max_go_cycle && u->act_eq > u->act_m2) {
-	    u->act_m2 = u->act_eq; // grab updated act for stripes that fired, only if larger
-	  }
-	  u->act = u->act_eq = u->act_m2;	// paste it back into act
-	}
-      }
-      continue;
-    }
-
-    if(net->ct_cycle < max_go_cycle) {
-      // check to see if above threshold for firing
-      for(int i=0;i<nunits;i++) {
-	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	if(u->lesioned()) continue;
-	if(u->act_eq >= snrthal.go_thr) {
-	  n_fired_trial++;
-	  n_fired_now++;
-	  gpd->go_fired_now = true;
-	  gpd->go_fired_trial = true;
-	  gpd->go_cycle = net->ct_cycle;
-	  gpd->prv_mnt_count = gpd->mnt_count;
-	  gpd->mnt_count = 0;	// reset
-	  u->act_m2 = u->act_eq;	// gating act -- will tend to be just above go_thr -- is updated until max_go_cycle
-	  break;			// out of unit loop
-	}
-      }
-    }
-  } // end first and outer for loop
-
-  if(net->ct_cycle == max_go_cycle) {
-    // first deal with no go cases..
-    if(n_fired_trial == 0) {	// no stripe has fired yet -- force max go firing
-      int go_idx = lay->acts.max_i;
-      if(go_idx < 0) {		// this really shouldn't happen, but if it does..
-	go_idx = Random::IntZeroN(lay->units.leaves);
-      }
-      int gp_idx = go_idx / nunits;
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx);
-      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx);
-      n_fired_trial++;
-      n_fired_now++;
-      gpd->go_fired_now = true;
-      gpd->go_fired_trial = true;
-      gpd->go_forced = true;	// yes this is forced
-      gpd->go_cycle = net->ct_cycle;
-      gpd->prv_mnt_count = gpd->mnt_count;
-      gpd->mnt_count = 0;	// reset
-      u->act_m2 = u->act_eq;	// gating act
-    }
-    // now find all the nogos and update them..
-    for(int mg=0; mg<lay->gp_geom.n; mg++) {
-      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-      if(!gpd->go_fired_trial) {
-	if(gpd->mnt_count < 0)
-	  gpd->mnt_count--;	// more empty
-	else
-	  gpd->mnt_count++;	// more maint
-	for(int i=0;i<nunits;i++) {
-	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	  if(u->lesioned()) continue;
-	  u->act_m2 = snrthal.loser_gain * u->act_eq;
-	  if(snrthal.act_is_gate) {
-	    u->act = u->act_eq = u->act_m2;	// paste it back into act
-	  }
-	}
-      }
-    }
-  }
-  lay->SetUserData("n_fired_trial", n_fired_trial);
-  lay->SetUserData("n_fired_now", n_fired_now);
-
-  // now its time to deal with the late gating window!
-  if(!doublegate.on || (net->ct_cycle <= max_go_cycle)) return;	// done! not eligible for late gating
-
-  int n_fired_trial2 = 0;	// tracks firing in late gating window only
-  int min_go_cycle2 = (max_go_cycle + doublegate.min_late_delay);	// output guys may need a little extra time to catch up!
-  int max_go_cycle2 = (net->mid_minus_cycle - doublegate.go_b4_mid_late);	// final deadline to go
-
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    // don't double hit anybody at low ct_cycles!
-    if((net->ct_cycle > max_go_cycle) && (net->ct_cycle < min_go_cycle2)) { // in the delay period between early and late gating windows
-      // reset all for current trial
-      gpd->go_fired_now = false;
-      gpd->go_fired_trial2 = false;
-      //gpd->go_forced = false;
-      //gpd->go_cycle = -1;
-      //for(int i=0;i<nunits;i++) {
-      //LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-      //if(u->lesioned()) continue;
-      //if(!gpd->go_fired_trial)		// don't mess with the early Go guys!
-      //u->act_m2 = 0.0f;			// reset gating act
-      //}
-      continue;					// if all mg < min_go_cycle2, basically all done this cycle!
-    }
-
-    if(gpd->go_fired_trial) {			// no double gating for same stripe
-      gpd->go_fired_trial2 = false;
-      gpd->go_fired_now = false;
-      continue;
-    }
-
-    if(gpd->go_fired_trial2) { 			// already fired a late go
-      n_fired_trial2++;				// just catching up to UnGpData since I'm a state-value guy
-      gpd->go_fired_now = false;
-      if(snrthal.act_is_gate) {
-	for(int i=0;i<nunits;i++) {
-	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	  if(u->lesioned()) continue;
-	  if(!gpd->go_fired_trial) {		// don't mess with the early Go guys!
-	    if(net->ct_cycle < max_go_cycle2 && u->act_eq > u->act_m2) {
-	      u->act_m2 = u->act_eq; 		// grab updated act for stripes that fired, only if larger
-	    }
-	  }
-	  u->act = u->act_eq = u->act_m2;	// paste it back into act
-	}
-      }
-      continue;
-    }
-
-    // don't double hit about at low ct_cycles
-    if((net->ct_cycle >= min_go_cycle2) && (net->ct_cycle < max_go_cycle2)) {
-      // check to see if above threshold for firing
-      for(int i=0;i<nunits;i++) {
-	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	if(u->lesioned()) continue;
-	if(u->act_eq >= snrthal.go_thr) {
-	  if(!gpd->go_fired_trial) { // no double gating same stripe!
-	    n_fired_trial2++;
-	    n_fired_now++;
-	    gpd->go_fired_now = true;
-	    gpd->go_fired_trial2 = true;
-	    gpd->go_cycle = net->ct_cycle;
-	    gpd->prv_mnt_count = gpd->mnt_count;
-	    gpd->mnt_count = 0;			// reset
-	    u->act_m2 = u->act_eq;		// gating act -- will tend to be just above go_thr -- is updated until max_go_cycle
-	  }
-	  break;				// out of unit loop; weird - only handles one snrthal unit per ugp?
-	}
-      }
-    }
-  } // end of 2nd major outer loop (late gating)
-
-  if(net->ct_cycle == max_go_cycle2) {
-    // first deal with no go cases..
-    if(n_fired_trial2 == 0) {		// no stripe has fired in late window yet -- force max go firing
-      int go_idx2 = lay->acts.max_i;
-      if(go_idx2 < 0) {			// this really shouldn't happen, but if it does..
-	go_idx2 = Random::IntZeroN(lay->units.leaves);
-      }
-      int gp_idx2 = go_idx2 / nunits;
-      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx2);
-
-      // this while-loop is causing the network to hang --- infinite loop????
-      //      while(gpd->go_fired_trial) {		// this stripe fired already so don't want to use
-      // 	gp_idx2 = Random::IntZeroN(lay->gp_geom.n);			// just pick randomly at this point
-      // 	PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx2);
-      // 	break; // try adding break to fix? i.e., do it only once and go on like alternative version below
-      //      }
-
-      // ...whereas this seems okay
-      if(gpd->go_fired_trial) { // this stripe fired already, find another one
-	int i = 0;
-	while(i == gp_idx2) {
-	  i = Random::IntZeroN(lay->gp_geom.n);
-	}
-	gp_idx2 = i; //
-      }
-
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx2);
-      n_fired_trial2++;
-      n_fired_now++;
-      gpd->go_fired_now = true;
-      gpd->go_fired_trial2 = true;
-      gpd->go_forced = true;	// yes this is forced
-      gpd->go_cycle = net->ct_cycle;
-      gpd->prv_mnt_count = gpd->mnt_count;
-      gpd->mnt_count = 0;	// reset
-      u->act_m2 = u->act_eq;	// gating act
-    }
-
-    // now find all the nogos that are left and update them..
-    for(int mg=0; mg<lay->gp_geom.n; mg++) {
-      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-      if(!gpd->go_fired_trial && !gpd->go_fired_trial2) { // doesn't matter if fired early or late
-	//if(gpd->mnt_count < 0)	// already did this once in the early gating window
-	//gpd->mnt_count--;	// more empty
-	//else
-	//gpd->mnt_count++;	// more maint
-	for(int i=0;i<nunits;i++) {
-	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-	  if(u->lesioned()) continue;
-	  u->act_m2 = snrthal.loser_gain * u->act_eq;	// all the no go stripes need to be update until the end (max_go_cycle2
-	  if(snrthal.act_is_gate) {
-	    u->act = u->act_eq = u->act_m2;	// paste it back into act
-	  }
-	}
-      }
-    }
-  }
-
-  if(!doublegate.on) return; // just in case
-
-  int mtxgo_prjn_idx = 0; // actual arg value doesn't matter
-  LeabraLayer* mtxgo_lay = FindLayerFmSpec(lay, mtxgo_prjn_idx, &TA_MatrixLayerSpec);
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)mtxgo_lay->GetLayerSpec();
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {	 			//loop thru SNrThal gps to find the early gaters
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(gpd->go_fired_trial) { // early gaters; might as well hammer they all (vs. just the early(!) go_fired_now guys) -- trickier anyway
-      mls->Compute_ClearActAfterGo(mtxgo_lay, acc_md, mg, net); // clear activity for all units of stripe - uses gate_accom voltage gated channel
-    }
-  }
-
-  lay->SetUserData("n_fired_trial2", n_fired_trial2);
-  lay->SetUserData("n_fired_now", n_fired_now);
-}
 
 void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
@@ -668,10 +425,7 @@ lay->SetUserData("min_go_cycle_all", (float)(n_gated[0] > 0 ? min_go_cycle[0] : 
 }
 
 void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  if(doublegate.on)
-    Compute_GatedActs_DoubleGate(lay, net);
-  else
-    Compute_GatedActs(lay, net);
+  Compute_GatedActs(lay, net);
   inherited::Compute_CycleStats(lay, net);
 }
 
@@ -1042,6 +796,15 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
+LeabraLayer* MatrixLayerSpec::SNrThalLayer(LeabraLayer* lay) {
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  return FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+}
+LeabraLayer* MatrixLayerSpec::PVLVDaLayer(LeabraLayer* lay) {
+  int pvlvda_prjn_idx = 0; // actual arg value doesn't matter
+  return FindLayerFmSpec(lay, pvlvda_prjn_idx, &TA_PVLVDaLayerSpec);
+}
+
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
   lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
@@ -1206,7 +969,7 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   }
 }
 
-// intended mainly for use when doublegate.on, but is generic and will clear anyone you tell it too -- clears activations of stripes, typically that fired Go early to allow others to Go in the late window, i.e., output gating guys
+// will clear anyone you tell it too -- clears activations of stripes, typically that fired Go early to allow others to Go in the late window, i.e., output gating guys
 void MatrixLayerSpec::Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMode acc_md,
 				  int gpidx, LeabraNetwork* net) {
   if(gpidx < 0) { // -1 means do all
@@ -1352,7 +1115,6 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 }
 
 void PFCGateSpec::Initialize() {
-  tmp_hack = false;
   learn_deep_act = true;
   maint_decay = 0.02f;
 }
@@ -1510,6 +1272,52 @@ bool PFCDeepLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   return true;
 }
 
+LeabraLayer* PFCDeepLayerSpec::SNrThalLayer(LeabraLayer* lay) {
+  int snr_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  return snr_lay;
+}
+
+LeabraLayer* PFCDeepLayerSpec::LVeLayer(LeabraLayer* lay) {
+  // find the LVe layer that we drive
+  LeabraLayer* lve = NULL;
+  for(int i=0; i< lay->send_prjns.size; i++) {
+    Projection* prj = lay->send_prjns[i];
+    LeabraLayer* play = (LeabraLayer*)prj->layer;
+    if(play->GetLayerSpec()->GetTypeDef() != &TA_LVeLayerSpec) continue;
+    lve = play;
+    break;
+  }
+  return lve;
+}
+
+LeabraLayer* PFCDeepLayerSpec::LViLayer(LeabraLayer* lay) {
+  // find the Lvi layer that we drive
+  LeabraLayer* lvi = NULL;
+  for(int i=0; i< lay->send_prjns.size; i++) {
+    Projection* prj = lay->send_prjns[i];
+    LeabraLayer* play = (LeabraLayer*)prj->layer;
+    if(play->GetLayerSpec()->GetTypeDef() != &TA_LViLayerSpec) continue;
+    lvi = play;
+    break;
+  }
+  return lvi;
+}
+
+LeabraLayer* PFCDeepLayerSpec::MatrixGoLayer(LeabraLayer* lay) {
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  if(!snr_lay) return NULL;
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  return snrls->MatrixGoLayer(snr_lay);
+}
+
+LeabraLayer* PFCDeepLayerSpec::MatrixNoGoLayer(LeabraLayer* lay) {
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  if(!snr_lay) return NULL;
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  return snrls->MatrixNoGoLayer(snr_lay);
+}
+
 void PFCDeepLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
   int snr_st_idx, n_types, n_in, n_mnt, n_out;
   LeabraLayer* snr_lay = Compute_SNrThalStartIdx(lay, snr_st_idx, n_types, n_in, n_mnt, n_out);
@@ -1560,9 +1368,7 @@ void PFCDeepLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
 LeabraLayer* PFCDeepLayerSpec::Compute_SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
 						       int& n_types, int& n_in, int& n_mnt, int& n_out) {
   snr_st_idx = 0;
-  int snr_prjn_idx = 0; // actual arg value doesn't matter
-  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  if(!snr_lay) return NULL;
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
   SNrThalLayerSpec::GatingTypesNStripes(gating_types, snr_lay->gp_geom.n, n_types, n_in, n_mnt, n_out);
   switch(pfc_type) {
   case INPUT:
@@ -1592,12 +1398,7 @@ void PFCDeepLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode
     if(updt_act == STORE) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
       LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
-      if(gate.tmp_hack) {
-	u->vcb.g_h = u->maint_h = super_u->act_p; // prior plus-phase value!
-      }
-      else {
-	u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
-      }
+      u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
     }
     else if(updt_act == CLEAR) {
       u->vcb.g_h = u->maint_h = 0.0f;
@@ -1639,16 +1440,22 @@ void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + mg);
     gpd->CopyPBWMData(*snr_gpd);		// always grab from snr, which is the source
 
-    if(gpd->go_fired_now) {
-      Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
-      Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
-    }
-    else {
-      if(!gpd->go_fired_trial && net->ct_cycle == max_go_cycle+1) {
+    if(pfc_type == MAINT) {	// maint gates at end of trial only..
+      if(net->ct_cycle == max_go_cycle+1) {
 	// end of the gating period -- add 1 just to be safe
 	Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
-	// always decay if not getting go
-	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+      }
+    }
+    else {
+      if(gpd->go_fired_now) {
+	Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
+	Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+      }
+      else {
+	if(!gpd->go_fired_trial && net->ct_cycle == max_go_cycle+1) {
+	  // end of the gating period -- add 1 just to be safe
+	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+	}
       }
     }
     Compute_MaintAct_ugp(lay, acc_md, mg, net);
@@ -1673,9 +1480,102 @@ void PFCDeepLayerSpec::Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net)
 void PFCDeepLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
   if(net->phase_no == 1) {
-    Compute_ClearNonMnt(lay, net);     // final gating
+    Compute_FinalGating(lay, net);     // final gating
   }
 }
+
+void PFCDeepLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
+  if(pfc_type != MAINT) {
+    Compute_ClearNonMnt(lay, net);     // done!
+    return; 
+  }
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+
+  int n_mnt_gated = 0;
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+
+    if(!gpd->go_fired_trial) {
+      Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+      continue;
+    }
+
+    Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
+    Compute_MaintAct_ugp(lay, acc_md, mg, net);
+    n_mnt_gated++;
+  }
+  if(!n_mnt_gated) return;	// no maint gating -- 
+
+  Compute_FinalGating_LV(lay, net);
+  Compute_FinalGating_DA(lay, net);
+}
+
+void PFCDeepLayerSpec::Compute_FinalGating_LV(LeabraLayer* lay, LeabraNetwork* net) {
+  // update LV layers based on final gating
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+
+  LeabraLayer* lve_lay = LVeLayer(lay);
+  LeabraLayer* lvi_lay = LViLayer(lay);
+  LVeLayerSpec* lve_ls = (LVeLayerSpec*)lve_lay->GetLayerSpec();
+  LViLayerSpec* lvi_ls = (LViLayerSpec*)lvi_lay->GetLayerSpec();
+  LeabraUnitSpec* lve_us = (LeabraUnitSpec*)lve_lay->GetUnitSpec();
+  LeabraUnitSpec* lvi_us = (LeabraUnitSpec*)lvi_lay->GetUnitSpec();
+
+  int orig_lve_vm_eq_cyc = lve_us->dt.vm_eq_cyc;
+  lve_us->dt.vm_eq_cyc = 10000;
+  int orig_lvi_vm_eq_cyc = lvi_us->dt.vm_eq_cyc;
+  lvi_us->dt.vm_eq_cyc = 10000;
+  
+  LeabraUnit* u;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lve_lay->units) {
+    if(u->lesioned()) continue;
+    lve_us->Compute_Netin(u, net, -1); // u->net = new netin directly
+    u->i_thr = lve_us->Compute_IThresh(u, net);
+  }
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lvi_lay->units) {
+    if(u->lesioned()) continue;
+    lvi_us->Compute_Netin(u, net, -1); // u->net = new netin directly
+    u->i_thr = lvi_us->Compute_IThresh(u, net);
+  }
+
+  lve_lay->Compute_Inhib(net);
+  lvi_lay->Compute_Inhib(net);
+
+  lve_lay->Compute_ApplyInhib(net);
+  lvi_lay->Compute_ApplyInhib(net);
+
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lve_lay->units) {
+    if(u->lesioned()) continue;
+    lve_us->Compute_Act(u, net, -1);
+  }
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lvi_lay->units) {
+    if(u->lesioned()) continue;
+    lvi_us->Compute_Act(u, net, -1);
+  }
+
+  lve_lay->Compute_CycleStats(net);
+  lvi_lay->Compute_CycleStats(net);
+  
+  lve_us->dt.vm_eq_cyc = orig_lve_vm_eq_cyc;
+  lvi_us->dt.vm_eq_cyc = orig_lvi_vm_eq_cyc;
+}
+
+void PFCDeepLayerSpec::Compute_FinalGating_DA(LeabraLayer* lay, LeabraNetwork* net) {
+  // update dopamine based on updated lv activations
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+
+  LeabraLayer* mtxgo_lay = MatrixGoLayer(lay);
+  MatrixLayerSpec* mtxgo_ls = (MatrixLayerSpec*)mtxgo_lay->GetLayerSpec();
+  LeabraLayer* da_lay = mtxgo_ls->PVLVDaLayer(mtxgo_lay);
+  PVLVDaLayerSpec* da_ls = (PVLVDaLayerSpec*)da_lay->GetLayerSpec();
+  
+  da_ls->Compute_Da(da_lay, net);
+  da_ls->Send_Da(da_lay, net);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -3522,7 +3522,7 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
 }
 
 inline float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su) {
-  return cn->wt * su->act_eq;
+  return cn->wt * su->act;	// NOTE: doesn't work with spiking -- need a separate function to use act_eq for that case -- using act_eq does NOT work with scalarval etc
 }
 
 inline float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {

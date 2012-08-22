@@ -52,27 +52,6 @@ private:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
-class LEABRA_API SNrThalDoubleGateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// #DEF_false if true, forces a second, later gating cohort
-  int 		min_late_delay;	// #CONDSHOW_ON_on #DEF_5 cycles to wait after max_go_cycle for early cohort before late gating allowed
-  int		go_b4_mid_late;	// #CONDSHOW_ON_on #DEF_5 only if double_gate==true; sets deadline for second, later cohort of gating; must be less than go_b4_mid; uses (mid_minus_cycle - go_b4_mid + min_late_delay) as min_go_cycle for late gating window
-  float		gate_accom;	// #CONDSHOW_ON_on #DEF_0.5 extra accommodation current to apply to matrix units that have fired Go, preventing them from firing again
-  int		gate_accom_delay;	// #CONDSHOW_ON_on #DEF_0 delay in cycles between firing Go and the onset of accommodation
-
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(SNrThalDoubleGateSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
 class LEABRA_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
@@ -113,7 +92,12 @@ public:
 
   GatingTypes		gating_types;	// types of gating units present within this SNrThal layer -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
   SNrThalMiscSpec	snrthal;    	// misc specs for snrthal layer
-  SNrThalDoubleGateSpec	doublegate; // misc specs for double gating 
+
+
+  virtual LeabraLayer* 	MatrixNoGoLayer(LeabraLayer* lay);
+  // find the matrix nogo layer that projects into this snrthal layer
+  virtual LeabraLayer* 	MatrixGoLayer(LeabraLayer* lay);
+  // find the matrix go layer that projects into this snrthal layer
 
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
   // compute netinput as GO - NOGO on matrix layer
@@ -122,8 +106,6 @@ public:
 
   virtual void	Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net);
   // compute act_eq reflecting the mutex on maint vs. output gating -- if the other has gated, then we turn our act_eq off to reflect that
-  virtual void	Compute_GatedActs_DoubleGate(LeabraLayer* lay, LeabraNetwork* net);
-  // compute act_eq reflecting the mutex on maint vs. output gating -- if the other has gated, then we turn our act_eq off to reflect that -- double-gate case
   // hook for gated acts goes here:
   virtual void	Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // update layer user data gating statistics which are useful to monitor for overall performance -- happens at max_go_cycle
@@ -425,6 +407,11 @@ public:
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
+  virtual LeabraLayer* 	SNrThalLayer(LeabraLayer* lay);
+  // find the SNrThal layer that this matrix layer interacts with
+  virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
+  // find the PVLVDaLayerSpec layer that this matrix layer interacts with
+
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   virtual void Compute_MidMinusAct_ugp(LeabraLayer* lay,
 				       Layer::AccessMode acc_md, int gpidx,
@@ -511,7 +498,6 @@ class LEABRA_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(SpecMemberBase)
 public:
-  bool		tmp_hack;	// #DEF_false temporary hack
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much does maintenance activation decay every trial?
 
@@ -547,6 +533,18 @@ public:
   SNrThalLayerSpec::GatingTypes	gating_types;	// full set of types of gating units present in associated Matrix and SNrThal layers -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
 
+
+  virtual LeabraLayer* 	SNrThalLayer(LeabraLayer* lay);
+  // find the SNrThal layer that this pfc deep layer receives from
+  virtual LeabraLayer* 	LVeLayer(LeabraLayer* lay);
+  // find the LVe layer that this pfc deep layer projects to
+  virtual LeabraLayer* 	LViLayer(LeabraLayer* lay);
+  // find the LVi layer that this pfc deep layer projects to
+  virtual LeabraLayer* 	MatrixGoLayer(LeabraLayer* lay);
+  // find the matrix Go layer that drives updating in this layer
+  virtual LeabraLayer* 	MatrixNoGoLayer(LeabraLayer* lay);
+  // find the matrix NoGo layer that drives updating in this layer
+
   virtual LeabraLayer*  Compute_SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
 						int& n_types, int& n_in, int& n_mnt, int& n_out);
   // get the starting index for this set of pfc stripes within the snrthal gating layer -- returns the snrthal layer and starting index
@@ -571,8 +569,15 @@ public:
   // computes mid minus (gating activation) state prior to gating
   virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
   // compute the gating signal based on SNrThal layer activations -- each cycle during first minus phase
-  virtual void 	Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
-  // clear the non-maintaining stripes at end of trial
+
+  virtual void 	Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net);
+  // final gating at end of trial (phase_no == 1, PostSettle)
+    virtual void Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
+    // clear the non-maintaining stripes at end of trial
+    virtual void Compute_FinalGating_LV(LeabraLayer* lay, LeabraNetwork* net);
+    // final gating at end of trial (phase_no == 1, PostSettle) -- lv layer updates
+    virtual void Compute_FinalGating_DA(LeabraLayer* lay, LeabraNetwork* net);
+    // final gating at end of trial (phase_no == 1, PostSettle) -- da updates
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);

@@ -1864,7 +1864,12 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
 	float g_e_thr = Compute_EThresh(u);
 	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
       }
-      new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm -- use nd to avoid synd problems
+      if(net->cycle < dt.vm_eq_cyc) {
+	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
+      }
+      else {
+	new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
+      }
     }
   }
   else {
