@@ -1352,6 +1352,7 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 }
 
 void PFCGateSpec::Initialize() {
+  tmp_hack = false;
   learn_deep_act = true;
   maint_decay = 0.02f;
 }
@@ -1591,7 +1592,12 @@ void PFCDeepLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode
     if(updt_act == STORE) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
       LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
-      u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
+      if(gate.tmp_hack) {
+	u->vcb.g_h = u->maint_h = super_u->act_p; // prior plus-phase value!
+      }
+      else {
+	u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act value
+      }
     }
     else if(updt_act == CLEAR) {
       u->vcb.g_h = u->maint_h = 0.0f;
@@ -1645,7 +1651,6 @@ void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
       }
     }
-
     Compute_MaintAct_ugp(lay, acc_md, mg, net);
   }
 }

@@ -2991,6 +2991,10 @@ bool ProgEl::RevertToCode() {
   }
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return false;
+  taProject* proj = GET_OWNER(own, taProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(own, "RevertToCode", own, false, own); 
+  }
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;
   cvt->code.expr = orig_prog_code;
@@ -3174,31 +3178,32 @@ void ProgCode::UpdateAfterEdit_impl() {
   SetProgExprFlags();
   inherited::UpdateAfterEdit_impl();
   if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
+  ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
+  if(!own) return;
   String code_str = trim(code.expr);
-  if(code_str.nonempty()) {
-    ProgEl* cvt = CvtCodeToProgEl(code_str, this);
-    if(cvt) {
-      cvt->desc = desc;         // transfer description
-      cvt->orig_prog_code = code_str;
-      cvt->SetProgFlag(CAN_REVERT_TO_CODE);
-      ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
-      if(own) {
-        tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
-        int myidx = own->FindEl(this);
-        own->Insert(cvt, myidx); // insert at my position
-        bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
-        if(ok) {
-          SetBaseFlag(BF_MISC4); // indicates that we're done..
-          this->CloseLater();      // kill me later..
-          tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
-          tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
-        }
-        else {
-          own->RemoveIdx(myidx); // remove it!
-          tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
-        }
-      }
-    }
+  if(code_str.empty()) return;
+  ProgEl* cvt = CvtCodeToProgEl(code_str, this);
+  if(!cvt) return;
+  taProject* proj = GET_OWNER(own, taProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(own, "ProgCodeCvt", own, false, own); 
+  }
+  cvt->desc = desc;         // transfer description
+  cvt->orig_prog_code = code_str;
+  cvt->SetProgFlag(CAN_REVERT_TO_CODE);
+  tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
+  int myidx = own->FindEl(this);
+  own->Insert(cvt, myidx); // insert at my position
+  bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
+  if(ok) {
+    SetBaseFlag(BF_MISC4); // indicates that we're done..
+    this->CloseLater();      // kill me later..
+    tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+  }
+  else {
+    own->RemoveIdx(myidx); // remove it!
+    tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
   }
 }
 

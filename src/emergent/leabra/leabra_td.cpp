@@ -145,6 +145,10 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   decay.phase2 = 0.0f;
   decay.clamp_phase2 = true;
 
+  // sometimes this is used as a target layer for ext rew and it should NEVER drive sse
+  lay->SetLayerFlag(Layer::NO_ADD_SSE);
+  lay->SetLayerFlag(Layer::NO_ADD_COMP_SSE);
+
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
                 "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {

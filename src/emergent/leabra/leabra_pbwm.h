@@ -511,6 +511,7 @@ class LEABRA_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(SpecMemberBase)
 public:
+  bool		tmp_hack;	// #DEF_false temporary hack
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much does maintenance activation decay every trial?
 
