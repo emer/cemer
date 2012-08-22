@@ -718,12 +718,18 @@ class LEABRA_API CaiSynDepSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
 INHERITED(SpecMemberBase)
 public:
-  float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
-  float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
+  float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base 
+  // value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
+  float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into 
+  // the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value 
+  // (default = 20)
 
-  float		sd_ca_thr;	// #DEF_0.2 synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
-  float		sd_ca_gain;	// #DEF_0.3 multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
-  float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
+  float		sd_ca_thr;	// #DEF_0.2 synaptic depression ca threshold: only when ca_i has increased by this 
+  // amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
+  float		sd_ca_gain;	// #DEF_0.3 multiplier on cai value for computing synaptic depression -- modulates 
+  // overall level of depression independent of rate parameters
+  float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr 
+  // (= sd_ca_gain/(1 - sd_ca_thr))
 
   inline void	CaUpdt(float& cai, float ru_act, float su_act) {
     float drive = ru_act * su_act;

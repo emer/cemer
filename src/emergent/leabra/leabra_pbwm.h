@@ -77,7 +77,7 @@ private:
 };
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantial nigra pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex: computes activation based on netinput = Go / (Go + nogo_gain * NoGo + leak) from MatrixLayerSpec(s) -- gating val reflected in act_m2, gating status in unit group data per stripe
+  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex: computes activation based on netinput = Go / (Go + nogo_gain * NoGo + leak) from MatrixLayerSpec(s) -- gating val reflected in act_m2, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
@@ -684,7 +684,7 @@ private:
 };
 
 class LEABRA_API PVrToMatrixGoPrjnSpec : public ProjectionSpec {
-  // Projection from PVLV PVr layer to Matrix_Go layer -- PVr=1 value unit (right-most) connects to Output Go units, while PVr=.5 value unit (middle) connects to Maint Go units, providing a bias for output gating when rewards are expected
+  // Projection from PVLV PVr layer to Matrix_Go layer -- PVr=1 value unit (right-most) connects to Output Go units, while PVr=.5 value unit (middle) connects to Input and Maint Go units, providing a bias for output gating when rewards are expected
 INHERITED(ProjectionSpec)
 public:
   void	Connect_impl(Projection* prjn);
