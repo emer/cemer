@@ -563,6 +563,9 @@ public:
     virtual void Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				      int gpidx,LeabraNetwork* net);
     // compute activation = maint_h for all units always
+    virtual void Compute_MaintActOnly_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+				      int gpidx,LeabraNetwork* net);
+    // compute activation = maint_h for all units always -- only act, not act_eq, act_nd -- for maint guys at postsettle_pre so it doesn't affect act_p state..
   virtual void 	Compute_MidMinusAct_ugp(LeabraLayer* lay,
 					Layer::AccessMode acc_md, int gpidx,
 					LeabraNetwork* net);

@@ -1426,6 +1426,18 @@ void PFCDeepLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode 
   }
 }
 
+void PFCDeepLayerSpec::Compute_MaintActOnly_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+						int gpidx, LeabraNetwork* net) {
+  // activity is always just a literal copy of the maint_h
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int j=0;j<nunits;j++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    if(u->lesioned()) continue;
+    u->act = u->maint_h;	// only update act, not act_eq -- for maint guys at end
+    u->da = 0.0f;
+  }
+}
+
 void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
 
@@ -1441,9 +1453,14 @@ void PFCDeepLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     gpd->CopyPBWMData(*snr_gpd);		// always grab from snr, which is the source
 
     if(pfc_type == MAINT) {	// maint gates at end of trial only..
-      if(net->ct_cycle == max_go_cycle+1) {
-	// end of the gating period -- add 1 just to be safe
-	Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+      if(gpd->go_fired_now) {
+	Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // mid minus reflects gating time activations
+      }
+      else {
+	if(!gpd->go_fired_trial && net->ct_cycle == max_go_cycle+1) {
+	  // end of the gating period -- add 1 just to be safe
+	  Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // store mid minus now..
+	}
       }
     }
     else {
@@ -1502,7 +1519,7 @@ void PFCDeepLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net)
     }
 
     Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
-    Compute_MaintAct_ugp(lay, acc_md, mg, net);
+    Compute_MaintActOnly_ugp(lay, acc_md, mg, net); // just u->act to drive LV, not act_eq which gets copied to act_p to be learning state!
     n_mnt_gated++;
   }
   if(!n_mnt_gated) return;	// no maint gating -- 
