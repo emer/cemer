@@ -634,7 +634,7 @@ void iFieldEditDialog::repChanged() {
 const QString iRegexpDialog::DOT_STAR(".*");
 
 iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
-			     bool editor_mode)
+                             bool editor_mode)
   : inherited()
   , m_field(regexp_field)
   , m_populator(re_populator)
@@ -885,7 +885,7 @@ void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
 void iRegexpDialog::CreateTableModel()
 {
   // Get the list of labels to filter.
-  m_populator->setSource(m_fieldOwner); 
+  m_populator->setSource(m_fieldOwner);
   QStringList headings = m_populator->getHeadings(m_editor_mode, m_extra_cols);
   QStringList labels = m_populator->getLabels();
   QString separator = m_populator->getSeparator();
@@ -948,7 +948,7 @@ void iRegexpDialog::CreateTableModel()
 
   if(m_editor_mode) {
     connect(m_table_model, SIGNAL(itemChanged(QStandardItem*)),
-	    this, SLOT(TableItemChanged(QStandardItem*)) );
+            this, SLOT(TableItemChanged(QStandardItem*)) );
   }
 }
 
@@ -963,7 +963,7 @@ void iRegexpDialog::keyPressEvent(QKeyEvent *e) {
     ctrl_pressed = true;
 #endif
   if(!ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)) {
-    e->accept();		// just bail!
+    e->accept();                // just bail!
     return;
   }
 
@@ -1056,7 +1056,7 @@ void iRegexpDialog::btnApply_clicked()
     field_value = full_regexp;
   }
 
-  if(m_editor_mode) {		// we now save changes back to guy..
+  if(m_editor_mode) {           // we now save changes back to guy..
     QStringList labels;
     int rows = m_table_model->rowCount();
     for(int row=0; row < rows; ++row) {
@@ -2585,10 +2585,6 @@ void taiAction::init(int sel_type_)
 //note: we don't want the toggled signal, because this causes us to signal twice in most cases
 // the only thing 'triggered' doesn't signal is programmatic changes, which is ok
 //  QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
-}
-
-void taiAction::AddTo(taiActions* targ) {
-  targ->AddAction(this);
 }
 
 bool taiAction::canSelect() {

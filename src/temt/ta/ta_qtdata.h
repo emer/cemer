@@ -159,7 +159,7 @@ class TA_API iRegexpDialogPopulator {
 public:
   virtual QStringList getHeadings(bool editor_mode, int& extra_cols) const = 0;
   virtual QStringList getLabels() const = 0;
-  virtual void 	      setLabels(const QStringList& labels) = 0;
+  virtual void        setLabels(const QStringList& labels) = 0;
   virtual QString getSeparator() const = 0;
   virtual void    setSource(const void *fieldOwner) = 0;
   virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
@@ -171,12 +171,12 @@ class TA_API iRegexpDialog : public iDialog {
   INHERITED(iDialog)
 public:
     iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
-		  bool editor_mode = false);
+                  bool editor_mode = false);
 
   bool          isReadOnly()    { return m_read_only; }
   bool          applyClicked()  { return m_apply_clicked; }
 
-  String	field_value;	// when used as a standalone dialog, this is the field return value
+  String        field_value;    // when used as a standalone dialog, this is the field return value
 
 public slots:
   override void accept();
@@ -192,7 +192,7 @@ protected slots:
   virtual void          RegexpLineEdited();
   virtual void          RegexpSelectionChanged();
 
-  virtual void		TableItemChanged(QStandardItem* item);
+  virtual void          TableItemChanged(QStandardItem* item);
 
 protected:
   enum ExtraColumns {
@@ -234,7 +234,7 @@ protected:
   // Enable/disable the apply/reset buttons.
   virtual void          setApplyEnabled(bool enabled);
 
-  override void 	keyPressEvent(QKeyEvent *e);
+  override void         keyPressEvent(QKeyEvent *e);
 
 // Data members
 protected:
@@ -244,12 +244,12 @@ protected:
   iRegexpDialogPopulator*      m_populator;
   const void *          m_fieldOwner;
   bool                  m_read_only;
-  bool			m_editor_mode;
+  bool                  m_editor_mode;
   bool                  m_apply_clicked;
-  QStandardItemModel*	m_table_model;
-  QTableView*		m_table_view;
-  int			m_num_parts;
-  int			m_extra_cols;
+  QStandardItemModel*   m_table_model;
+  QTableView*           m_table_view;
+  int                   m_num_parts;
+  int                   m_extra_cols;
   QSortFilterProxyModel* m_proxy_model;
   QListWidget*          m_regexp_list;
   QLineEdit*            m_regexp_line_edit;
@@ -261,7 +261,7 @@ protected:
   QPushButton*          btnDel;
   QPushButton*          btnApply;
   QPushButton*          btnReset;
-  QDialogButtonBox* 	m_button_box;
+  QDialogButtonBox*     m_button_box;
 };
 
 
@@ -718,11 +718,6 @@ public:
   bool                  canSelect(); // true if item can be taiMenu::curSel value
   virtual bool          isSubMenu()     { return false; }
   bool                  isGrouped(); // indicates if item in a group, ie is a radio group action
-#ifndef QT3_SUPPORT
-  bool                  addTo(QWidget* w)
-    {if (w) w->addAction(this); else return false; return true;}
-#endif
-  void                  AddTo(taiActions* targ); // convenience function
 
   taiAction(int sel_type_, const String& label_); // used by taiMenu etc.
   taiAction(const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser

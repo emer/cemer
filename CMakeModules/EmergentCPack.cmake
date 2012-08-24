@@ -96,6 +96,12 @@ else (WIN32)
   SET(CPACK_PACKAGE_EXECUTABLES "emergent" "Emergent")
 endif (WIN32)
 
+# Don't do this.  Including system libraries isn't allowed by GPL v3.
+# Currently, emergent is "GPL v2 or later".  There's no reason to make
+# it difficult to upgrade later on if we want to.
+# # Include the MSVC redistributable package in the installer.
+# INCLUDE(InstallRequiredSystemLibraries)
+
 INCLUDE(CPack)
 
 # following are currently unused

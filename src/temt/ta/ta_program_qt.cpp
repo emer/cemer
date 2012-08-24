@@ -57,7 +57,7 @@ int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
 taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   flags_ |= taiData::flgAutoApply; // always auto-apply
-  isBit = false;		// oops -- we don't have base and can't find out!
+  isBit = false;                // oops -- we don't have base and can't find out!
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
@@ -161,9 +161,9 @@ taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
-  taiIncrField*	int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
+  taiIncrField* int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
   int_rep->setMinimum(INT_MIN);
-  taiComboBox*	enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
+  taiComboBox*  enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
   taiBitBox* bit_rep = new taiBitBox(typ, host_, rval, gui_parent_, flags_);
   rval->data_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());
@@ -230,7 +230,7 @@ void taiProgVarIntValMember::GetMbrValue_impl(taiData* dat, void* base) {
 }
 
 //////////////////////////
-// tabProgramViewType	//
+// tabProgramViewType   //
 //////////////////////////
 
 int tabProgramViewType::BidForView(TypeDef* td) {
@@ -260,7 +260,7 @@ void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 //////////////////////////
-// tabProgramGroupViewType	//
+// tabProgramGroupViewType      //
 //////////////////////////
 
 int tabProgramGroupViewType::BidForView(TypeDef* td) {
@@ -282,7 +282,7 @@ void tabProgramGroupViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 //////////////////////////
-//    iProgramEditor 	//
+//    iProgramEditor    //
 //////////////////////////
 
 iProgramEditor::iProgramEditor(QWidget* parent)
@@ -298,8 +298,8 @@ iProgramEditor::~iProgramEditor() {
 
 void iProgramEditor::Init() {
   // layout constants
-  ln_sz = taiM->max_control_height(taiM->ctrl_size); 
-  ln_vmargin = 1; 
+  ln_sz = taiM->max_control_height(taiM->ctrl_size);
+  ln_vmargin = 1;
   m_editLines = taMisc::program_editor_lines;
 
   m_changing = 0;
@@ -313,19 +313,19 @@ void iProgramEditor::Init() {
   m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
   sel_item_mbr = NULL;
   sel_item_base = NULL;
-  
+
   brow_hist = new iBrowseHistory(this);
-  
+
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layOuter->setSpacing(taiM->vsep_c);
-  
+
   scrBody = new QScrollArea(this);
-  scrBody->setWidgetResizable(true); 
+  scrBody->setWidgetResizable(true);
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 //  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 //  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  body = new iStripeWidget; 
+  body = new iStripeWidget;
   scrBody->setWidget(body);
 //  body = new iStripeWidget(this);
   body->installEventFilter(this);
@@ -334,13 +334,13 @@ void iProgramEditor::Init() {
   body->setStripeHeight(line_ht);
   int body_ht = line_ht * editLines();
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
-  layOuter->addWidget(scrBody); 
-//  layOuter->addWidget(body); 
+  layOuter->addWidget(scrBody);
+//  layOuter->addWidget(body);
 
-  meth_but_mgr = new iMethodButtonMgr(this); 
-  
-  defEditBgColor(); 
-  
+  meth_but_mgr = new iMethodButtonMgr(this);
+
+  defEditBgColor();
+
   layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
@@ -358,12 +358,12 @@ void iProgramEditor::Init() {
   btnApply = new HiLightButton("&Apply", this);
   layButtons->addWidget(btnApply);
   layButtons->addSpacing(4);
-  
+
   btnRevert = new HiLightButton("&Revert", this);
   layButtons->addWidget(btnRevert);
   layButtons->addSpacing(4);
   layOuter->addLayout(layButtons);
-  
+
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
 
@@ -381,9 +381,9 @@ void iProgramEditor::Init() {
   items->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
   items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
   // adjunct data, tooltips, etc.
-  items->AddColDataKey(0, taBase::key_disp_name, Qt::ToolTipRole); 
+  items->AddColDataKey(0, taBase::key_disp_name, Qt::ToolTipRole);
   items->AddColDataKey(1, taBase::key_desc, Qt::ToolTipRole);
-  
+
   //enable dnd support
   items->setDragEnabled(true);
   items->setAcceptDrops(true);
@@ -401,12 +401,12 @@ void iProgramEditor::Init() {
   historyBackAction = new taiAction("Back", QKeySequence(), "historyBackAction" );
   historyBackAction->setParent(this); // for shortcut functionality, and to delete
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
-  connect(brow_hist, SIGNAL(back_enabled(bool)), 
+  connect(brow_hist, SIGNAL(back_enabled(bool)),
     historyBackAction, SLOT(setEnabled(bool)) );
   historyForwardAction = new taiAction("Forward", QKeySequence(), "historyForwardAction" );
   historyForwardAction->setParent(this); // for shortcut functionality, and to delete
   connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
-  connect(brow_hist, SIGNAL(forward_enabled(bool)), 
+  connect(brow_hist, SIGNAL(forward_enabled(bool)),
     historyForwardAction, SLOT(setEnabled(bool)) );
   items->Connect_SelectableHostNotifySignal(brow_hist,
     SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
@@ -416,15 +416,17 @@ void iProgramEditor::Init() {
   historyBackAction->setEnabled(false);
   historyForwardAction->setEnabled(false);
   // toolbar
-  historyBackAction->addTo(tb);
-  historyForwardAction->addTo(tb);
+  tb->addAction(historyBackAction);
+  tb->addAction(historyForwardAction);
 
-  //TEMP 
-  QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction));
-  if (but) but->setArrowType(Qt::LeftArrow);
-  but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction));
-  if (but) but->setArrowType(Qt::RightArrow);
-  
+  //TEMP
+  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction))) {
+    but->setArrowType(Qt::LeftArrow);
+  }
+  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction))) {
+    but->setArrowType(Qt::RightArrow);
+  }
+
   InternalSetModified(false);
 }
 
@@ -440,13 +442,13 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
   }
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-    Apply();			// do it!
-    items->setFocus();	// return to items!
+    Apply();                    // do it!
+    items->setFocus();  // return to items!
     return true;
   }
   if(e->key() == Qt::Key_Escape) {
-    Revert();			// do it!
-    items->setFocus();	// return to items!
+    Revert();                   // do it!
+    items->setFocus();  // return to items!
     return true;
   }
   return QWidget::eventFilter(obj, event);
@@ -464,7 +466,7 @@ void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   // get colors for type
   bool ok;
-  const iColor bgc = base->GetEditColorInherit(ok); 
+  const iColor bgc = base->GetEditColorInherit(ok);
   if (ok) setEditBgColor(bgc);
   else defEditBgColor();
   Controls_Add();
@@ -474,7 +476,7 @@ void iProgramEditor::Controls_Add() {
   // metrics for laying out
   int lines = editLines(); // amount of space, in lines, available
   row = 0;
-  
+
   // do methods first, so we know whether to show, and thus how many memb lines we have
   // this is just a dry run..
   QWidget* tmp_body = new QWidget();
@@ -488,17 +490,17 @@ void iProgramEditor::Controls_Add() {
   layMeths = NULL;
   delete tmp_body;
   tmp_body = NULL;
-  
+
   TypeDef* typ = GetRootTypeDef();
   // check for a desc guy, it will consume another line
   MemberDef* md_desc = typ->members.FindName("desc");
   if (md_desc) --lines;
-  
+
   // make main layout
   QVBoxLayout* lay = new QVBoxLayout(body);
   lay->setMargin(0);
   lay->setSpacing(0);
-  
+
   // ok, we know how much room we have, so allocate and divide
   membs.SetMinSize(lines);
   // first, enumerate all non-desc members, to get a count
@@ -508,10 +510,10 @@ void iProgramEditor::Controls_Add() {
     if (ShowMember(md)) ++mbr_cnt;
   }
   if (md_desc) --mbr_cnt; // don't double count
-  
+
   // apportion the members amongst the available lines
   // round up slightly so first N lines get the extra odd ones
-  { 
+  {
   int cur_ln = 0; // current line binning into
 //  int n_per_ln = (mbr_cnt + (lines - 1)) / lines; // number per line, rounded up
   int n_per_ln = mbr_cnt / lines; // probably under by 1, at least for first lines
@@ -527,7 +529,7 @@ void iProgramEditor::Controls_Add() {
     --tmbr_cnt;
     // if we somehow used up all lines, tough!
     if (cur_ln >= (lines - 1)) continue;
-    
+
     if (i_ln >= n_per_ln || md->HasOption("PROGEDIT_NEWLN")) {
       i_ln = 0;
       ++cur_ln;
@@ -543,7 +545,7 @@ void iProgramEditor::Controls_Add() {
      membs.SetMinSize(lines + 1);
      membs.FastEl(lines)->memb_el.Add(md_desc);
   }
-  
+
   // add main inline controls
   int flags = taiData::flgInline ;
   if (read_only) flags |= taiData::flgReadOnly;
@@ -564,34 +566,34 @@ void iProgramEditor::Controls_Add() {
       MemberDef* md = ms->memb_el.FastEl(i);
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
       ms->data_el.Add(mb_dat);
-      
+
 //obs      QLabel* lbl = taiM->NewLabel(, body);
       String name;
       String desc;
       taiDataHost::GetName(md, name, desc);
       iLabel* lbl = taiDataHost::MakeInitEditLabel(name, body,
-        ctrl_size,  desc, mb_dat,   
+        ctrl_size,  desc, mb_dat,
         this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
-      
+
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
       hbl->addSpacing(taiM->hsep_c);
       lbl->show(); //n???
-      
+
       QWidget* rep = mb_dat->GetRep();
-      hbl->addWidget(rep, stretch, (Qt::AlignVCenter)); 
+      hbl->addWidget(rep, stretch, (Qt::AlignVCenter));
       rep->show();
     }
     //if (stretch == 0)
       hbl->addStretch(); // so guys flush left
-    lay->addLayout(hbl); 
+    lay->addLayout(hbl);
     ++row;
   }
 
   layMeths = new QHBoxLayout; // def margins ok
-  layMeths->setMargin(0); 
+  layMeths->setMargin(0);
   layMeths->addSpacing(2); //no stretch: we left-justify
-  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin), 
-				    QSizePolicy::Fixed, QSizePolicy::Fixed));
+  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin),
+                                    QSizePolicy::Fixed, QSizePolicy::Fixed));
   meth_but_mgr->Constr(body, layMeths, base);
   if (meth_but_mgr->show_meth_buttons) {
     layMeths->addStretch();
@@ -599,7 +601,7 @@ void iProgramEditor::Controls_Add() {
     delete layMeths;
     layMeths = NULL;
   }
-  
+
   if (meth_but_mgr->show_meth_buttons) {
     lay->addLayout(meth_but_mgr->lay());
     row++;
@@ -635,7 +637,7 @@ void iProgramEditor::customEvent(QEvent* ev_) {
       apply_req = false;
     }
   } break;
-  default: inherited::customEvent(ev_); 
+  default: inherited::customEvent(ev_);
     return; // don't accept
   }
   ev_->accept();
@@ -644,7 +646,7 @@ void iProgramEditor::customEvent(QEvent* ev_) {
 void iProgramEditor::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
-			     "Apply", "Revert", "Cancel");
+                             "Apply", "Revert", "Cancel");
     if(chs == 1) {
       Revert();
       return;
@@ -696,7 +698,7 @@ const iColor iProgramEditor::colorOfCurRow() const {
 void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
   setEditNode(NULL, false);
 }
- 
+
 void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   if (m_changing > 0) return; // gets triggered when we do the GetValue on ctrl0
   if (dcr <= DCR_ITEM_UPDATED_ND) {
@@ -756,7 +758,7 @@ void iProgramEditor::GetValue() {
     }
   }
   if (typ->InheritsFrom(TA_taBase)) {
-    base->UpdateAfterEdit();	// hook to update the contents after an edit..
+    base->UpdateAfterEdit();    // hook to update the contents after an edit..
 //shouldn't be necessary    taiMisc::Update(base);
   }
   --m_changing;
@@ -787,8 +789,8 @@ void iProgramEditor::GetImage() {
     if(rep->isVisible() && rep->isEnabled() && (rep->focusPolicy() & Qt::TabFocus) &&
        !rep->inherits("QCheckBox")) {
       if(rep->inherits("QLineEdit")) {
-	QLineEdit* qle = (QLineEdit*)rep;
-	if(qle->isReadOnly()) continue;
+        QLineEdit* qle = (QLineEdit*)rep;
+        if(qle->isReadOnly()) continue;
       }
       first_tab_foc = rep;
       break;
@@ -803,7 +805,7 @@ void iProgramEditor::GetImage() {
 void iProgramEditor::ExpandAll() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::HasChildren);
   QTreeWidgetItem* item;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     items->setItemExpanded(item, true);
     ++it;
   }
@@ -846,7 +848,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   if (sel_item_dat) {
     sel_item_mbr = sel_item_dat->mbr;
     sel_item_base = sel_item_dat->Base();
-    taiDataHost::DoFillLabelContextMenu_SelEdit(menu, last_id, 
+    taiDataHost::DoFillLabelContextMenu_SelEdit(menu, last_id,
       sel_item_base, sel_item_mbr, body,
     this, SLOT(DoSelectForEdit(QAction*)));
   }
@@ -858,17 +860,17 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
 
 void iProgramEditor::DoSelectForEdit(QAction* act) {
 //note: this routine is duplicated in the taiEditDataHost
-  
+
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
-  
+
   int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
- 
+
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
-  
+
   //NOTE: this handler adds if not on, or removes if already on
   int idx;
   if ((idx = se->FindMbrBase(rbase, md)) >= 0)
@@ -944,7 +946,7 @@ iMainWindowViewer* iProgramEditor::window() const {
 
 
 //////////////////////////
-//    iProgramViewScriptPanel	//
+//    iProgramViewScriptPanel   //
 //////////////////////////
 
 iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
@@ -961,11 +963,11 @@ iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
 
     NumberBar* nb = vs->numberBar();
     connect(nb, SIGNAL(lineFlagsUpdated(int, int)), this,
-	    SLOT(lineFlagsUpdated(int, int)));
+            SLOT(lineFlagsUpdated(int, int)));
     connect(nb, SIGNAL(viewSource(int)), this,
-	    SLOT(viewSource(int)));
+            SLOT(viewSource(int)));
     connect(vs, SIGNAL(mouseHover(const QPoint&, int, const QString&)), this,
-	    SLOT(mouseHover(const QPoint&, int, const QString&)));
+            SLOT(mouseHover(const QPoint&, int, const QString&)));
   }
 }
 
@@ -1018,7 +1020,7 @@ void iProgramViewScriptPanel::UpdatePanel_impl() {
       pflg |= NumberBar::LF_WARNING;
     nb->setLineFlags(i, pflg);
   }
-  
+
   if(prg_->script) {
     nb->setCurrentLine(prg_->script->CurRunSrcLn());
   }
@@ -1073,7 +1075,7 @@ void iProgramViewScriptPanel::showEvent(QShowEvent* ev) {
 }
 
 //////////////////////////
-//   iProgramPanelBase 	//
+//   iProgramPanelBase  //
 //////////////////////////
 
 iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
@@ -1081,7 +1083,7 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 {
   pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
-  
+
   // add view button(s)
   QLabel* lab = new QLabel;
   lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
@@ -1097,7 +1099,7 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
   sp->setToolTip(lab->toolTip());
   AddMinibarWidget(sp);
   connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
-  
+
   // add view button(s)
   QCheckBox* but = new QCheckBox;
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
@@ -1176,7 +1178,7 @@ void iProgramPanelBase::showEvent(QShowEvent* ev) {
 }
 
 //////////////////////////
-//   iProgramPanel 	//
+//   iProgramPanel      //
 //////////////////////////
 
 iProgramPanel::iProgramPanel(taiDataLink* dl_)
@@ -1196,28 +1198,28 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
 }
 
 void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand) 
+  int level, bool& expand)
 {
   if (level < 1) return; // always expand root level
   // by default, expand code guys throughout, plus top-level args, vars and objs
   taiDataLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
   if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
-		      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
-  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList) 
+                      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
+  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList)
      || typ->DerivesFrom(&TA_Function_List))
-    return;			// expand
+    return;                     // expand
   if(typ->InheritsFrom(&TA_ProgEl)) {
     String mbr = typ->OptionAfter("DEF_CHILD_");
     if(!mbr.empty()) {
       MemberDef* md = typ->members.FindName(mbr);
       if(md) {
-	if(md->type->InheritsFrom(&TA_ProgEl_List)) return; // expand
+        if(md->type->InheritsFrom(&TA_ProgEl_List)) return; // expand
       }
-      expand = false;		// don't expand any non-progel def childs
+      expand = false;           // don't expand any non-progel def childs
     }
     else {
-      return;			// ok to expand
+      return;                   // ok to expand
     }
   }
   // otherwise, nada
@@ -1228,7 +1230,7 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
   inherited::OnWindowBind_impl(itv);
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
-  ProgramToolBar* ptb = 
+  ProgramToolBar* ptb =
   (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
     "Program");
 /*TODO: re-enable once the program toolbar is defined
@@ -1253,13 +1255,13 @@ iProgramGroupPanel::iProgramGroupPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-  pe->items->setDefaultExpandLevels(2); 
+  pe->items->setDefaultExpandLevels(2);
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
 }
 
 void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand) 
+  int level, bool& expand)
 {
   if (level < 1) return; // always expand root level
   // by default, we don't expand code and objs,  but do expand
@@ -1276,7 +1278,7 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
 
 
 //////////////////////////
-//   ProgramToolBoxProc	//
+//   ProgramToolBoxProc //
 //////////////////////////
 
 static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
@@ -1287,9 +1289,9 @@ static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
     iColor colr;
     if(vc) {
       if(vc->use_fg)
-	colr = vc->fg_color.color();
+        colr = vc->fg_color.color();
       else if(vc->use_bg)
-	colr = vc->bg_color.color();
+        colr = vc->bg_color.color();
       QPalette pal;
 //       pal.setColor(QPalette::Button, Qt::white);
       pal.setColor(QPalette::ButtonText, colr);
@@ -1316,7 +1318,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_ForeachLoop);
   ptbp_add_widget(tb, sec, &TA_DoLoop);
   ptbp_add_widget(tb, sec, &TA_WhileLoop);
-  
+
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_IfElse);
   ptbp_add_widget(tb, sec, &TA_IfContinue);
@@ -1329,12 +1331,12 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_CodeBlock);
   ptbp_add_widget(tb, sec, &TA_UserScript);
   ptbp_add_widget(tb, sec, &TA_StopStepPoint);
-  
+
   ////////////////////////////////////////////////////////////////////////////
-  //		Var/Fun
+  //            Var/Fun
   sec = tb->AssertSection("Var/Fun");
   QWidget* widg = tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
-		       tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
+                       tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
   ptbp_deco_widget(widg, tabMisc::root->GetTemplateInstance(&TA_ProgVar));
   ptbp_add_widget(tb, sec, &TA_LocalVars);
 
@@ -1357,7 +1359,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Print/Misc
+  //            Print/Misc
   sec = tb->AssertSection("Print/Args..");
   ptbp_add_widget(tb, sec, &TA_PrintExpr);
   ptbp_add_widget(tb, sec, &TA_PrintVar);
@@ -1371,7 +1373,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_RegisterArgs);
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Misc Fun
+  //            Misc Fun
   sec = tb->AssertSection("Misc Fun");
   ptbp_add_widget(tb, sec, &TA_StaticMethodCall);
   ptbp_add_widget(tb, sec, &TA_MathCall);
@@ -1386,7 +1388,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_ImageProcCall);
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Data processing
+  //            Data processing
   sec = tb->AssertSection("Data"); //note: need to keep it short
   ptbp_add_widget(tb, sec, &TA_DataLoop);
   ptbp_add_widget(tb, sec, &TA_ResetDataRows);
@@ -1396,7 +1398,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_DataVarProgMatrix);
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Data processing
+  //            Data processing
   sec = tb->AssertSection("Data Proc"); //note: need to keep it short
   ptbp_add_widget(tb, sec, &TA_DataSortProg);
   ptbp_add_widget(tb, sec, &TA_DataGroupProg);
@@ -1415,7 +1417,7 @@ ToolBoxRegistrar ptb(ProgramToolBoxProc);
 
 
 //////////////////////////
-//    iProgramToolBar 	//
+//    iProgramToolBar   //
 //////////////////////////
 
 IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
@@ -1431,11 +1433,11 @@ void iProgramToolBar::Constr_post() {
 
 
 //////////////////////////////////
-//	iProgramCtrl		//
+//      iProgramCtrl            //
 //////////////////////////////////
 
 iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
-					   bool modal_, QObject* parent)
+                                           bool modal_, QObject* parent)
 : taiEditDataHost(prog, prog->GetTypeDef(), read_only_, modal_, parent)
 {
   membs.SetMinSize(MS_CNT); // note: our own MS_CNT
@@ -1454,7 +1456,7 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
   if (pg) { // better exist!
     refs_struct.Add(pg);
   }
-  sel_edit_mbrs = true; 
+  sel_edit_mbrs = true;
 }
 
 iProgramCtrlDataHost::~iProgramCtrlDataHost() {
@@ -1481,14 +1483,14 @@ void iProgramCtrlDataHost::Enum_Members() {
 
 
 void iProgramCtrlDataHost::Constr_Data_Labels() {
-  dat_cnt = 0; 
+  dat_cnt = 0;
   Program* prog = this->prog();
   refs.Reset();
   membs.ResetItems(); // all Meths and data
   if (!prog) return; // defensive
   String nm;
   String help_text;
-  
+
   // Program guys (just a few key guys), no label
   {
     MemberSpace& ms = prog->GetTypeDef()->members;
@@ -1497,16 +1499,16 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
       // just have a fixed list of guys we show
       if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")
-	  || (md->name == "flags")) {
+          || (md->name == "flags")) {
         memb_el(MS_PROG).Add(md);
-      } 
-    } 
+      }
+    }
     int idx = 0;
     // we can just use the default worker bee routine
     Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
   }
-  
-//   MembSet* ms = membs.SafeEl(MS_GP); 
+
+//   MembSet* ms = membs.SafeEl(MS_GP);
 //   ms->text = "Items from Program_Group";
 //   ms->desc = "useful items from the Program_Group to which this Program belongs";
 //   iLabel* lbl = new iLabel(ms->text.chars(), body);
@@ -1522,7 +1524,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     case MS_ARGS: {
       ms->text = "Program args";
       ms->desc = "the arguments to the program";
-      pvl = &prog->args; 
+      pvl = &prog->args;
       lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl,ms->desc.chars());
       break;
@@ -1530,14 +1532,14 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     case MS_VARS: {
       ms->text = "Program vars";
       ms->desc = "the variables used inside the program";
-      pvl = &prog->vars; 
+      pvl = &prog->vars;
       lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl, ms->desc.chars());
       } break;
     default: continue; // shouldn't happen!
     }
-    
-    
+
+
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
@@ -1546,19 +1548,19 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       taiData* mb_dat;
       int flags_ = 0;
       if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
-	flags_ |= taiData::flgReadOnly;
+        flags_ |= taiData::flgReadOnly;
       if((pv->var_type == ProgVar::T_HardEnum) || (pv->var_type == ProgVar::T_DynEnum)) {
-	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-	  mb_dat = new taiField(NULL, this, NULL, body, flags_);
-	}
-	else if((pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type &&
-		 pv->hard_enum_type->HasOption("BITS")) ||
-		(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits)) {
-	  mb_dat = new taiBitBox(NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
-	}
-	else {
-	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
-	}
+        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
+          mb_dat = new taiField(NULL, this, NULL, body, flags_);
+        }
+        else if((pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type &&
+                 pv->hard_enum_type->HasOption("BITS")) ||
+                (pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits)) {
+          mb_dat = new taiBitBox(NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
+        }
+        else {
+          mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
+        }
       }
       else if (pv->var_type == ProgVar::T_Int) {
         taiIncrField* int_rep = new taiIncrField(NULL, this, NULL, body, flags_);
@@ -1570,22 +1572,22 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       }
       // we need to manually set the md into the dat...
       // need to check for enums, because md is the type, not the val
-      if (pv->var_type == ProgVar::T_HardEnum) 
+      if (pv->var_type == ProgVar::T_HardEnum)
         md = pv->FindMember("int_val");
       else if (pv->var_type == ProgVar::T_DynEnum) {
         // special case -- we will be setting the base to the DynEnum, not pv
-        // and herein need to set the md for the nested dyn_val, which 
+        // and herein need to set the md for the nested dyn_val, which
         // conceivably may not even exist, so we do this via the instance
         md = TAI_DynEnum->FindMember("value");
       }
       mb_dat->SetMemberDef(md); // usually done by im, but we are manual here...
-      
+
       data_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       //int row = AddData(-1, data);
       nm = pv->name;
       help_text = pv->desc;
-      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/); 
+      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/);
       refs.Add(pv);
       ++dat_cnt;
     }
@@ -1600,7 +1602,7 @@ void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList* ref, taBase* base)
 }
 
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
-    int dcr, void* op1, void* op2) 
+    int dcr, void* op1, void* op2)
 {
   if (ignoreDataChanged()) return; // not visible, so ignore!
   Program* prog = this->prog(); //cache
@@ -1618,11 +1620,11 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
       if ((dcr > DCR_ITEM_UPDATED_ND))
         return;
     }
-  } 
-  
+  }
+
   //note: don't need to check for is_loading because we defer until after
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
-  if(!apply_req)		// already doing delayed apply
+  if(!apply_req)                // already doing delayed apply
     ReShow_Async();
 }
 
@@ -1644,18 +1646,18 @@ MemberDef* iProgramCtrlDataHost::GetMemberPropsForSelect(int sel_idx, taBase** b
 void iProgramCtrlDataHost::GetValue_Membs_def() {
   Program* prog = this->prog(); //cache
   if (!prog) return;
-  
+
   // prog stuff
   if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
     GetValue_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
   }
-  
+
   // group stuff
 //   if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
 //     Program_Group* pg = GET_OWNER(prog, Program_Group);
 //     GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
 //   }
-  
+
   bool first_diff = true;
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     if (!show_set(j)) continue;
@@ -1665,12 +1667,12 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
     case MS_VARS: pvl = &prog->vars; break;
     default: continue; // shouldn't happen!
     }
-    
+
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL))
-	continue;
+        continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       //note: code below is "risky" ex if visiblity update ctrl changes etc.
@@ -1681,37 +1683,37 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
-	if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
-	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetValue(pv->int_val);
-	}
-	else {
-	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-	  //note: use of pv for tests is just a hook, pv not really germane
-	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
-	}
+        if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
+          taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetValue(pv->int_val);
+        }
+        else {
+          taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+          //note: use of pv for tests is just a hook, pv not really germane
+          if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
+        }
       }
       else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-	if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
-	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetValue(pv->dyn_enum_val.value);
-	}
-	else {
-	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetValue(pv->dyn_enum_val.value);
-	}
+        if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
+          taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetValue(pv->dyn_enum_val.value);
+        }
+        else {
+          taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetValue(pv->dyn_enum_val.value);
+        }
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
         taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ", 
+        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ",
           mb_dat->metaObject()->className())) continue;
         pv->int_val = tmb_dat->GetValue();
       }
@@ -1719,7 +1721,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
       }
       pv->UpdateAfterEdit();
-      if(!first_diff) {		// always reset!
+      if(!first_diff) {         // always reset!
         taiMember::EndScript((void*)pv);
         first_diff = true;
       }
@@ -1731,12 +1733,12 @@ void iProgramCtrlDataHost::GetImage_Membs()
 {
   Program* prog = this->prog(); //cache
   if (!prog) return;
-  
+
   // prog stuff
   if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
     GetImage_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
   }
-  
+
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     if (!show_set(j)) continue;
     ProgVar_List* pvl = NULL;
@@ -1745,7 +1747,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
     case MS_VARS: pvl = &prog->vars; break;
     default: continue; // shouldn't happen!
     }
-    
+
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
@@ -1759,51 +1761,51 @@ void iProgramCtrlDataHost::GetImage_Membs()
       // set base, for ctxt menu, so it won't try to use the Program (which is not the base)
       mb_dat->SetBase(pv); // for all, except HardEnum which is nested again
       if(pv->var_type == ProgVar::T_HardEnum) {
-	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiField, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetImage(pv->GenCssInitVal());
-	}
-	else if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
-	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->SetEnumType(pv->hard_enum_type);
-	  tmb_dat->GetImage(pv->int_val);
-	}
-	else {
-	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->SetEnumType(pv->hard_enum_type);
-	  tmb_dat->GetEnumImage(pv->int_val);
-	}
+        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
+          taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiField, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetImage(pv->GenCssInitVal());
+        }
+        else if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
+          taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->SetEnumType(pv->hard_enum_type);
+          tmb_dat->GetImage(pv->int_val);
+        }
+        else {
+          taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->SetEnumType(pv->hard_enum_type);
+          tmb_dat->GetEnumImage(pv->int_val);
+        }
       }
       else if(pv->var_type == ProgVar::T_DynEnum) {
-	mb_dat->SetBase(&pv->dyn_enum_val);
-	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
-	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiField, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  tmb_dat->GetImage(pv->GenCssInitVal());
-	}
-	else if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
-	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  taiDynEnumMember::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
-	}
-	else {
-	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-			    mb_dat->metaObject()->className())) continue;
-	  taiDynEnumMember::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
-	}
+        mb_dat->SetBase(&pv->dyn_enum_val);
+        if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
+          taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiField, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          tmb_dat->GetImage(pv->GenCssInitVal());
+        }
+        else if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
+          taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          taiDynEnumMember::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
+        }
+        else {
+          taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+          if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ",
+                            mb_dat->metaObject()->className())) continue;
+          taiDynEnumMember::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
+        }
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
         taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ", 
+        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ",
           mb_dat->metaObject()->className())) continue;
         tmb_dat->GetImage(pv->int_val);
       }
@@ -1815,7 +1817,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
 }
 
 //////////////////////////
-//   iProgramCtrlPanel 	//
+//   iProgramCtrlPanel  //
 //////////////////////////
 
 iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
@@ -1875,7 +1877,7 @@ void iProgramCtrlPanel::showEvent(QShowEvent* ev) {
 }
 
 ///////////////////////////////////////////////////////////////////////
-// 	Program specific browser guys!
+//      Program specific browser guys!
 
 iProgramPanel* Program::FindMyProgramPanel() {
   if(!taMisc::gui_active) return NULL;
@@ -1888,10 +1890,10 @@ iProgramPanel* Program::FindMyProgramPanel() {
       // bad: this is what causes all the movement -- can't select program b/c that will do that
       // in the program tree browser -- need to direct this to the other guy somehow and
       // prevent program itself from selecting in prog editor!
-      BrowserSelectMe();	// select my program
+      BrowserSelectMe();        // select my program
       iDataPanelSet* dps = el->data_panel_set();
       if(dps) {
-	dps->setCurrentPanelId(1); // this is the editor
+        dps->setCurrentPanelId(1); // this is the editor
       }
       return el;
     }
@@ -2010,8 +2012,8 @@ bool Program::ViewScriptEl(taBase* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return false;
-  
-  pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1); 
+
+  pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1);
   return true;
 }
 
@@ -2020,7 +2022,7 @@ bool Program::ViewScriptEl(taBase* pel) {
 
 
 taiProgLibElsButton::taiProgLibElsButton(TypeDef* typ_, IDataHost* host, taiData* par,
-					 QWidget* gui_parent_, int flags_)
+                                         QWidget* gui_parent_, int flags_)
  :inherited(typ_, host, par, gui_parent_, flags_)
 {
   // nop
@@ -2036,13 +2038,13 @@ int taiProgLibElsButton::columnCount(int view) const {
 const String taiProgLibElsButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Name"; 
-    case 1: return "Type"; 
-    case 2: return "Tags"; 
-    case 3: return "Description"; 
-    case 4: return "Date Modified"; 
-    case 5: return "URL/filename"; 
-    } break; 
+    case 0: return "Name";
+    case 1: return "Type";
+    case 2: return "Tags";
+    case 3: return "Description";
+    case 4: return "Date Modified";
+    case 5: return "URL/filename";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -2056,7 +2058,7 @@ void taiProgLibElsButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
 
-  if(!list) return;		// shouldn't happen
+  if(!list) return;             // shouldn't happen
 
   ProgLib* plib = (ProgLib*)list;
   for(int i=0;i<plib->size;i++) {
@@ -2068,18 +2070,18 @@ void taiProgLibElsButton::BuildCategories_impl() {
   cats->Sort(); // empty, if any, should sort to top
 }
 
-int taiProgLibElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
-					QTreeWidgetItem* top_item) 
+int taiProgLibElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
+                                        QTreeWidgetItem* top_item)
 {
   int rval = 0;
 
-  ic->multi_cats = true;	// multiple categories
-  
+  ic->multi_cats = true;        // multiple categories
+
   ProgLib* plib = (ProgLib*)top_lst;
   for (int i = 0; i < plib->size; ++i) {
     ProgLibEl* pel = plib->FastEl(i);
     QTreeWidgetItem* item = ic->AddItem(pel->tags, pel->GetDisplayName(),
-					top_item, pel); 
+                                        top_item, pel);
     item->setText(1, pel->lib_name); // GetColText(taBase::key_type));
     item->setText(2, pel->tags);
     item->setText(3, pel->desc); // GetColText(taBase::key_desc));
@@ -2107,7 +2109,7 @@ taiData* taiProgLibElArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
   MemberDef* from_md = GetFromMd();
-  if(from_md == NULL)	return NULL;
+  if(from_md == NULL)   return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
@@ -2129,7 +2131,7 @@ void taiProgLibElArgType::GetImage_impl(taiData* dat, const void* base) {
     }
   }
   MemberDef* from_md = GetFromMd();
-  if (from_md == NULL)	return;
+  if (from_md == NULL)  return;
   taList_impl* lst = GetList(from_md, base);
   taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
   els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
@@ -2157,7 +2159,7 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
   if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
-  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  if(!varfun) return true;      // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
   if(!expr_lookup_cur_base) return true; // no filter possible
   Function* basefun = GET_OWNER(expr_lookup_cur_base, Function);
   if(basefun != varfun) return false; // different function scope
@@ -2166,10 +2168,10 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
 
 
 String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
-				   taBase*& path_own_obj, TypeDef*& path_own_typ,
-				   MemberDef*& path_md, ProgExprBase* expr_base,
-				   Program* own_prg, Function* own_fun,
-				   taBase* path_base, TypeDef* path_base_typ) {
+                                   taBase*& path_own_obj, TypeDef*& path_own_typ,
+                                   MemberDef*& path_md, ProgExprBase* expr_base,
+                                   Program* own_prg, Function* own_fun,
+                                   taBase* path_base, TypeDef* path_base_typ) {
   path_own_obj = NULL;
   path_own_typ = NULL;
   path_md = NULL;
@@ -2179,13 +2181,13 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   String append_at_end;
   String prepend_before;
 
-  String base_path;		// path to base element(s) if present
-  String lookup_seed;		// start of text to seed lookup process
+  String base_path;             // path to base element(s) if present
+  String lookup_seed;           // start of text to seed lookup process
   String rval = _nilString;
 
   int lookup_type = -1; // 1 = var name (no path, delim), 2 = obj memb/meth,
   // 3 = type scoped, 4 = array index
-  
+
   int_Array delim_pos;
   int delims_used = 0;
   int expr_start = 0;
@@ -2197,7 +2199,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delim_pos.Add(i);
       continue;
     }
-    expr_start = i+1;		// anything else is a bust
+    expr_start = i+1;           // anything else is a bust
     break;
   }
 
@@ -2221,7 +2223,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delims_used = 1;
     }
     else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
-	    && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
+            && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
@@ -2229,7 +2231,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       delims_used = 2;
     }
     else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
-	    && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
+            && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
@@ -2249,7 +2251,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     prepend_before = txt.before(expr_start);
   }
 
-  String path_prepend_before;	// for path operations
+  String path_prepend_before;   // for path operations
   if(delim_pos.size > 0) {
     path_prepend_before = txt.through(delim_pos[0]);
   }
@@ -2257,15 +2259,15 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   switch(lookup_type) {
   case 1: {// lookup variables
     taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
-      (&TA_ProgVar, NULL, NULL,	NULL, 0, lookup_seed);
+      (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
     varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
     if(expr_base) {
       ProgEl* pel = GET_OWNER(expr_base, ProgEl);
       if(pel) {
-	LocalVars* pvs = pel->FindLocalVarList();
-	if(pvs) {
-	  varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
-	}
+        LocalVars* pvs = pel->FindLocalVarList();
+        if(pvs) {
+          varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
+        }
       }
     }
     varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
@@ -2283,7 +2285,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     expr_lookup_cur_base = NULL;
     break;
   }
-  case 2: {			// members/methods
+  case 2: {                     // members/methods
     String path_var, path_rest;
     TypeDef* lookup_td = NULL;
     taList_impl* tal = NULL;
@@ -2300,132 +2302,132 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     }
     else {
       if(delim_pos.size > delims_used) {
-	// note: any ref to base path needs to subtract expr_start relative to delim_pos!
-	path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
-	if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
-	  path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
-	else
-	  path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+        // note: any ref to base path needs to subtract expr_start relative to delim_pos!
+        path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+        if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+          path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+        else
+          path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
       }
       else {
-	path_var = base_path;
+        path_var = base_path;
       }
       ProgVar* st_var = NULL;
       if(own_fun)
-	st_var = own_fun->FindVarName(path_var);
+        st_var = own_fun->FindVarName(path_var);
       if(!st_var)
-	st_var = own_prg->FindVarName(path_var);
+        st_var = own_prg->FindVarName(path_var);
       if(st_var) {
-	if(st_var->var_type == ProgVar::T_Object) {
-	  if(!st_var->object_type) {
-	    taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
-			 "because it is an Object* but has no type set yet!");
-	  }
-	  else {
-	    own_td = st_var->object_type;
-	    if(path_rest.empty()) {
-	      lookup_td = st_var->object_type;
-	    }
-	    else {
-	      base_base = st_var->object_val;
-	    }
-	  }
-	}
-	else if(st_var->var_type == ProgVar::T_String) {
-	  lookup_td = &TA_taString;
-	}
+        if(st_var->var_type == ProgVar::T_Object) {
+          if(!st_var->object_type) {
+            taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+                         "because it is an Object* but has no type set yet!");
+          }
+          else {
+            own_td = st_var->object_type;
+            if(path_rest.empty()) {
+              lookup_td = st_var->object_type;
+            }
+            else {
+              base_base = st_var->object_val;
+            }
+          }
+        }
+        else if(st_var->var_type == ProgVar::T_String) {
+          lookup_td = &TA_taString;
+        }
       }
       else {
-	taMisc::Info("Var lookup: cannot find variable:", path_var,
-		     "as start of lookup path:", base_path);
+        taMisc::Info("Var lookup: cannot find variable:", path_var,
+                     "as start of lookup path:", base_path);
       }
     }
     if(base_base && !lookup_td) {
       MemberDef* md = NULL;
       taBase* mb_tab = base_base->FindFromPath(path_rest, md);
       if(mb_tab) {
-	lookup_td = mb_tab->GetTypeDef();
-	if(lookup_td->InheritsFrom(&TA_taList_impl))
-	  tal = (taList_impl*)mb_tab;
+        lookup_td = mb_tab->GetTypeDef();
+        if(lookup_td->InheritsFrom(&TA_taList_impl))
+          tal = (taList_impl*)mb_tab;
       }
       else {
-	if(md) lookup_td = md->type;
+        if(md) lookup_td = md->type;
       }
     }
     if(!lookup_td && own_td) {
       int net_base_off=0;
       ta_memb_ptr net_mbr_off=0;
-      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, 
-						    net_mbr_off, path_rest, false);
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
+                                                    net_mbr_off, path_rest, false);
       // no warn
       if(md) lookup_td = md->type;
     }
     if(!lookup_td) {
       taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
-		   path_var);
+                   path_var);
     }
     if(tal) {
       if(tal->InheritsFrom(&TA_taGroup_impl)) {
-	taiGroupElsButton* lilkup = new taiGroupElsButton(lookup_td, NULL, NULL, NULL,
-							  0, lookup_seed);
-	lilkup->GetImage((taGroup_impl*)tal, NULL);
-	bool okc = lilkup->OpenChooser();
-	if(okc && lilkup->item()) {
-	  path_own_obj = lilkup->item();
-	  path_own_typ = path_own_obj->GetTypeDef();
-	  rval = path_prepend_before + path_own_obj->GetName();
-	  new_pos = rval.length();
-	  rval += append_at_end;
-	}
-	delete lilkup;
+        taiGroupElsButton* lilkup = new taiGroupElsButton(lookup_td, NULL, NULL, NULL,
+                                                          0, lookup_seed);
+        lilkup->GetImage((taGroup_impl*)tal, NULL);
+        bool okc = lilkup->OpenChooser();
+        if(okc && lilkup->item()) {
+          path_own_obj = lilkup->item();
+          path_own_typ = path_own_obj->GetTypeDef();
+          rval = path_prepend_before + path_own_obj->GetName();
+          new_pos = rval.length();
+          rval += append_at_end;
+        }
+        delete lilkup;
       }
       else {
-	taiListElsButton* lilkup = new taiListElsButton(lookup_td, NULL, NULL, NULL,
-							0, lookup_seed);
-	lilkup->GetImage(tal, NULL);
-	bool okc = lilkup->OpenChooser();
-	if(okc && lilkup->item()) {
-	  path_own_obj = lilkup->item();
-	  path_own_typ = path_own_obj->GetTypeDef();
-	  rval = path_prepend_before + path_own_obj->GetName();
-	  new_pos = rval.length();
-	  rval += append_at_end;
-	}
-	delete lilkup;
+        taiListElsButton* lilkup = new taiListElsButton(lookup_td, NULL, NULL, NULL,
+                                                        0, lookup_seed);
+        lilkup->GetImage(tal, NULL);
+        bool okc = lilkup->OpenChooser();
+        if(okc && lilkup->item()) {
+          path_own_obj = lilkup->item();
+          path_own_typ = path_own_obj->GetTypeDef();
+          rval = path_prepend_before + path_own_obj->GetName();
+          new_pos = rval.length();
+          rval += append_at_end;
+        }
+        delete lilkup;
       }
     }
     else if(lookup_td) {
       TypeItem* lookup_md = NULL;
-      if(path_base || path_base_typ) {		// can only lookup members, not methods
-	taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
-							    NULL, 0, lookup_seed);
-	mdlkup->GetImage((MemberDef*)NULL, lookup_td);
-	bool okc = mdlkup->OpenChooser();
-	if(okc && mdlkup->md()) {
-	  lookup_md = mdlkup->md();
-	}
-	delete mdlkup;
+      if(path_base || path_base_typ) {          // can only lookup members, not methods
+        taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
+                                                            NULL, 0, lookup_seed);
+        mdlkup->GetImage((MemberDef*)NULL, lookup_td);
+        bool okc = mdlkup->OpenChooser();
+        if(okc && mdlkup->md()) {
+          lookup_md = mdlkup->md();
+        }
+        delete mdlkup;
       }
       else {
-	taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
-									 NULL, 0, lookup_seed);
-	mdlkup->GetImage((MemberDef*)NULL, lookup_td);
-	bool okc = mdlkup->OpenChooser();
-	if(okc && mdlkup->md()) {
-	  lookup_md = mdlkup->md();
-	}
-	delete mdlkup;
+        taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
+                                                                         NULL, 0, lookup_seed);
+        mdlkup->GetImage((MemberDef*)NULL, lookup_td);
+        bool okc = mdlkup->OpenChooser();
+        if(okc && mdlkup->md()) {
+          lookup_md = mdlkup->md();
+        }
+        delete mdlkup;
       }
       if(lookup_md) {
-	rval = path_prepend_before + lookup_md->name;
-	if(lookup_md->typeInfoKind() == taMisc::TIK_METHOD)
-	  rval += "()";
-	new_pos = rval.length();
-	rval += append_at_end;
-	path_own_typ = lookup_td;
-	if(lookup_md->typeInfoKind() == taMisc::TIK_MEMBER) {
-	  path_md = (MemberDef*)lookup_md;
-	}
+        rval = path_prepend_before + lookup_md->name;
+        if(lookup_md->typeInfoKind() == taMisc::TIK_METHOD)
+          rval += "()";
+        new_pos = rval.length();
+        rval += append_at_end;
+        path_own_typ = lookup_td;
+        if(lookup_md->typeInfoKind() == taMisc::TIK_MEMBER) {
+          path_md = (MemberDef*)lookup_md;
+        }
       }
     }
     break;
@@ -2434,31 +2436,31 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     TypeDef* lookup_td = taMisc::types.FindName(base_path);
     if(lookup_td) {
       taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
-							     NULL, 0, lookup_seed);
+                                                             NULL, 0, lookup_seed);
       eslkup->GetImage((MemberDef*)NULL, lookup_td);
       bool okc = eslkup->OpenChooser();
       if(okc && eslkup->md()) {
-	rval = path_prepend_before + eslkup->md()->name;
-	if(eslkup->md()->typeInfoKind() == taMisc::TIK_METHOD)
-	  rval += "()";
-	new_pos = rval.length();
-	rval += append_at_end;
+        rval = path_prepend_before + eslkup->md()->name;
+        if(eslkup->md()->typeInfoKind() == taMisc::TIK_METHOD)
+          rval += "()";
+        new_pos = rval.length();
+        rval += append_at_end;
       }
       delete eslkup;
     }
-    else {			// now try for local enums
+    else {                      // now try for local enums
       ProgType* pt = own_prg->types.FindName(base_path);
       if(pt && pt->InheritsFrom(&TA_DynEnumType)) {
-	taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
-							    NULL, 0, lookup_seed);
-	varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
-	bool okc = varlkup->OpenChooser();
-	if(okc && varlkup->token()) {
-	  rval = prepend_before + varlkup->token()->GetName();
-	  new_pos = rval.length();
-	  rval += append_at_end;
-	}
-	delete varlkup;
+        taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
+                                                            NULL, 0, lookup_seed);
+        varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
+        bool okc = varlkup->OpenChooser();
+        if(okc && varlkup->token()) {
+          rval = prepend_before + varlkup->token()->GetName();
+          new_pos = rval.length();
+          rval += append_at_end;
+        }
+        delete varlkup;
       }
     }
     break;
@@ -2473,7 +2475,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 }
 
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					  const String& mbr_name, int& new_pos) {
+                                          const String& mbr_name, int& new_pos) {
 
   Program* own_prg = GET_MY_OWNER(Program);
   if(!own_prg) return _nilString;
@@ -2482,12 +2484,12 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
-				     path_own_obj, path_own_typ, path_md,
-				     this, own_prg, own_fun);
+                                     path_own_obj, path_own_typ, path_md,
+                                     this, own_prg, own_fun);
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					  const String& mbr_name, int& new_pos) {
+                                          const String& mbr_name, int& new_pos) {
 
   String rval = _nilString;
   if(!obj) {
@@ -2507,8 +2509,8 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   rval = ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
-				     path_own_obj, path_own_typ, path_md,
-				     NULL, own_prg, own_fun, path_base, path_base_typ);
+                                     path_own_obj, path_own_typ, path_md,
+                                     NULL, own_prg, own_fun, path_base, path_base_typ);
 
   if(path_own_typ) {
     obj_type = path_own_typ;
@@ -2539,7 +2541,7 @@ taiMethodData* taiStepButtonMethod::GetMenuMethodRep_impl(void* base, IDataHost*
 
 
 /////////////////////////////
-// 	taiProgStepButton  //
+//      taiProgStepButton  //
 /////////////////////////////
 
 taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -2552,7 +2554,7 @@ taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDa
   last_step_n = 1;
   step10_val = 10;
   n_step_progs = 0;
-  last_step = NULL;		// reset when switching
+  last_step = NULL;             // reset when switching
 }
 
 void taiProgStepButton::CallFunList(void* itm) {
@@ -2564,7 +2566,7 @@ void taiProgStepButton::CallFunList(void* itm) {
   QPointer<taiProgStepButton> ths = this; // to detect us being deleted
   ApplyBefore();
   // note: this is not a great situation, whereby applying deletes us, but
-  // we warn user (and should probably do something, ie a directive that you 
+  // we warn user (and should probably do something, ie a directive that you
   // have to save before)
   if (!ths) {
     taMisc::Error("This menu item or button action apparently cannot be invoked when you have not applied changes. Please try the operation again. (The developers would appreciate hearing about this situation.");
@@ -2582,8 +2584,8 @@ void taiProgStepButton::CallFunList(void* itm) {
       trg->step_n = new_step_n;
     last_step_n = trg->step_n;
   }
-  
-  prg->Step_Gui(trg);	// that was simple!
+
+  prg->Step_Gui(trg);   // that was simple!
 
   last_step = trg;
   new_step_n = -1;
@@ -2591,7 +2593,7 @@ void taiProgStepButton::CallFunList(void* itm) {
 
 void taiProgStepButton::Step1(bool on) {
   if(!on) {
-    stp1->setChecked(true);	// can't click off!
+    stp1->setChecked(true);     // can't click off!
     return;
   }
   Program* prg = (Program*)base; // definitively this
@@ -2603,7 +2605,7 @@ void taiProgStepButton::Step1(bool on) {
 
 void taiProgStepButton::Step5(bool on) {
   if(!on) {
-    stp5->setChecked(true);	// can't click off!
+    stp5->setChecked(true);     // can't click off!
     return;
   }
   Program* prg = (Program*)base; // definitively this
@@ -2616,7 +2618,7 @@ void taiProgStepButton::Step5(bool on) {
 
 void taiProgStepButton::Step10(bool on) {
   if(!on) {
-    stp10->setChecked(true);	// can't click off!
+    stp10->setChecked(true);    // can't click off!
     return;
   }
   Program* prg = (Program*)base; // definitively this
@@ -2725,7 +2727,7 @@ QWidget* taiProgStepButton::GetButtonRep() {
   }
   newbar->addWidget(stpwidg);
  n_step_progs = prg->sub_progs_step.size;
-  
+
   if(tool_bar) {
     ((QStackedWidget*)buttonRep.data())->removeWidget(tool_bar);
   }
