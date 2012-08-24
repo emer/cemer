@@ -19,10 +19,13 @@
 //              Special Hippocampal Quadphase Layerspecs
 
 void HippoQuadLayerSpec::Initialize() {
-  auto_m_cycles = 20;
+  auto_m_cycles = 30;
+  Defaults_init();
 }
 
 void HippoQuadLayerSpec::Defaults_init() {
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = 0.7f;
 }
 
 void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
@@ -94,6 +97,17 @@ void ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 
 
 void ECoutLayerSpec::Initialize() {
+  Defaults_init();
+}
+
+void ECoutLayerSpec::Defaults_init() {
+  SetUnique("inhib_group", true);
+  inhib_group = UNIT_GROUPS;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  inhib.kwta_pt = 0.25f;
+  SetUnique("clamp", true);
+  clamp.max_plus = true;
 }
 
 bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -444,15 +458,15 @@ void SubiculumLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 
 void HippoEncoderConSpec::Initialize() {
   SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
+  lmix.hebb = 0.005f;		// works better with tiny bit of hebb apparently..
   lmix.err = 1.0f;
 //   lmix.err_sb = false;
 
-  SetUnique("wt_limits", true);
-  wt_limits.sym = false;
+  // SetUnique("wt_limits", true);
+  // wt_limits.sym = false;
 
   SetUnique("wt_sig", true);
-  wt_sig.gain = 6.0f;  wt_sig.off = 1.25f;
+  wt_sig.gain = 6.0f;  wt_sig.off = 1.0f; // 1.0f seems to work better actually
 
   SetUnique("savg_cor", true);
   savg_cor.cor = 1.0f;
@@ -650,6 +664,11 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ecin_ecout_cons->rnd.mean = 0.9f;
   ecin_ecout_cons->rnd.var = 0.01f;
 
+  ecout_ecin_cons->SetUnique("lrate", true);
+  ecout_ecin_cons->lrate = 0.0f;
+  ecout_ecin_cons->SetUnique("wt_scale", true);
+  ecout_ecin_cons->wt_scale.rel = 0.5f;
+
   // HippoConSpecs, lrate = .2, hebb = 0.05
   hip_cons->SetUnique("lrate", true);
   hip_cons->lrate = 0.2f;
@@ -664,15 +683,34 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   mossy_cons->wt_scale.rel = 8.0f;
   mossy_cons->SetUnique("lrate", true);
   mossy_cons->lrate = 0.0f;
+  mossy_cons->SetUnique("savg_cor", true);
+  mossy_cons->savg_cor.cor = 1.0f;
   
   // ca3_ca3 rel = 2, 
   ca3ca3_cons->SetUnique("wt_scale", true);
   ca3ca3_cons->wt_scale.rel = 2.0f;
+  ca3ca3_cons->SetUnique("savg_cor", true);
+  ca3ca3_cons->savg_cor.cor = 1.0f;
 
   // ca3_ca1 lrate = 0.05
   ca3ca1_cons->SetUnique("lrate", true);
   ca3ca1_cons->lrate = 0.05f;
+  ca3ca1_cons->SetUnique("lmix", true);
+  ca3ca1_cons->lmix.hebb = 0.005f;
 
+  // sparse hippocampal layers!
+
+  dg_laysp->SetUnique("kwta", true);
+  dg_laysp->kwta.pct = 0.01f;
+
+  ca3_laysp->SetUnique("kwta", true);
+  ca3_laysp->kwta.pct = 0.02f;
+
+  ca1_laysp->SetUnique("inhib_group", true);
+  ca1_laysp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
+  ca1_laysp->SetUnique("gp_kwta", true);
+  ca1_laysp->gp_kwta.pct = 0.1f;
+ 
   // todo; lrate schedule!
   
   //////////////////////////////////////////////////////////////////////////////////

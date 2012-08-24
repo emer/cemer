@@ -108,7 +108,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init()		{ };
+  void	Defaults_init();
 };
 
 class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
