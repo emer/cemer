@@ -308,6 +308,7 @@ void SubiculumLayerSpec::Defaults_init() {
   unit_range.min = -0.5f;
   unit_range.max = 1.5f;
   inhib.kwta_pt = 0.5f;
+  kwta.k = 3;
 }
 
 bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
