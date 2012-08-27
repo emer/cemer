@@ -5,8 +5,8 @@
     <description>The Juelich Histological Atlas from the FSL program -- A probabilistic atlas created by averaging multi-subject post-mortem cyto- and myelo-architectonic segmentations, performed by the team of Profs Zilles and Amunts at the Research Center Jülich and kindly provided by Simon Eickhoff.</description>
     <type>Probabalistic</type>
     <images>
-      <imagefile>/Juelich-maxprob-thr25-1mm</imagefile>
-      <summaryimagefile>/Juelich-maxprob-thr25-1mm</summaryimagefile>
+      <imagefile>/Juelich-maxprob-thr25-1mm-merge</imagefile>
+      <summaryimagefile>/Juelich-maxprob-thr25-1mm-merge</summaryimagefile>
     </images>
   </header>
   <data>
@@ -132,6 +132,11 @@
 <label index="119" x="54" y="100" z="81" color="#f9144e">Right/*/*/Gray Matter/Insula Ig1</label>
 <label index="120" x="128" y="105" z="85" color="#fa305b">Left/*/*/Gray Matter/Insula Ig2</label>
 <label index="121" x="52" y="105" z="82" color="#fe2e51">Right/*/*/Gray Matter/Insula Ig2</label>
+<label index="122" x="0" y="0" z="0" color="#ff00ff">*/*/*/Gray Matter/Nucleus Accumbens (NAcc)</label>
+<label index="123" x="0" y="0" z="0" color="#00ff00">*/*/*/Gray Matter/Central Nucleus Amygdala (CNA)</label>
+<label index="124" x="0" y="0" z="0" color="#ffff00">*/*/*/Gray Matter/Ventral Tegmental Area (VTA)</label>
+<label index="125" x="0" y="0" z="0" color="#00ffff">*/*/*/Gray Matter/Lateral Hypothalamic area (LHA)</label>
+<label index="126" x="0" y="0" z="0" color="#0000ff">*/*/*/Gray Matter/Lateral Habenula (LHB)</label>
   </data>
 </atlas>
 
