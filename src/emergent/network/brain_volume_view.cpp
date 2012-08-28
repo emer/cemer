@@ -966,9 +966,11 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   
   // Get and assign voxel coordinates and sizes to all units.
   QList<FloatTDCoord> voxels = atlas.VoxelCoordinates(brain_area);
-  
+
   // clear the old map
   m_atlas_depth_map.clear();
+  
+  if(voxels.size() == 0) return;
   
   // create the depth map
   foreach (FloatTDCoord v, voxels) {
@@ -1000,10 +1002,13 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
       m_atlas_depth_map.insert((unsigned int)ijkCoord.y, ijkCoord);
     }
   }
-  
+
+  if(m_atlas_depth_map.empty()) return;
+  int maxslice = bv->MaxSlices();
+
   // iterate over all slices
   // for each voxel at a slice depth, create face in the face set
-  for (int s=0; s<bv->MaxSlices(); s++) {
+  for (int s=0; s<maxslice; s++) {
     QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
     
     SoIndexedFaceSet* ifs = node.atlas_face_set_array[s];
@@ -1151,6 +1156,9 @@ void BrainVolumeView::UpdateSlices()
   // now update slices
   float transparency(bv->SliceTransparencyXformed());
   for (int i=0; i<bv->MaxSlices(); i++) {
+    QList<Voxel*> voxels = m_units_depth_map.values(i);
+    if (0 == voxels.size()) continue;
+
     if ( ((bv->SliceStart() - 1) <= i) && (i <= (bv->SliceEnd() - 1)) ) {
       node.brain_tex_mat_array[i]->transparency = transparency;
     }
@@ -1240,6 +1248,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
   // determine the face color/transparency from unit value
   for (int s=0; s<bv->MaxSlices(); s++) {    
     QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
+    if (0 == voxels.size()) continue;
     
     SoVertexProperty* vp  = node.atlas_vrtx_prop_array[s];
     SoMFUInt32& color = vp->orderedRGBA;

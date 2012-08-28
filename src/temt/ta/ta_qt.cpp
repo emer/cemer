@@ -826,14 +826,16 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
 
 bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   bool ctrl_pressed = false;
-  if(e->modifiers() && Qt::ControlModifier)
+  if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
-  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  if(ctrl_pressed && e->key() == Qt::Key_V) ctrl_pressed = false;
   // actual ctrl = meta on apple -- enable this
-  if(e->modifiers() && Qt::MetaModifier)
+  if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
+  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
+  if((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+    ctrl_pressed = false;
+  }
 #endif
   return ctrl_pressed;
 }
@@ -896,7 +898,7 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
     case Qt::Key_K:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
       return true;              // we absorb this event
-    case Qt::Key_Y:
+    case Qt::Key_Y:		// this doesn't seem to work to generate paste event
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
       return true;              // we absorb this event
     case Qt::Key_W:

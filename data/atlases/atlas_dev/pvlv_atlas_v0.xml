@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><atlas version="1.0">
+  <header>
+	  <name>PBWMV3_Demo</name>
+      <description>Contains pbwmv3_demo labels</description>
+      <type>Label</type>
+      <images>
+	      <imagefile>/pvlv_atlas-v0-1mm</imagefile>
+	      <summaryimagefile>/pvlv_atlas-v0-1mm</summaryimagefile>
+      </images>
+ </header>
+<data>
+<label index="0" x="0" y="0" z="0" color="#ffffff">*/*/*/*/*</label>
+<label index="1" x="0" y="0" z="0" color="#ff00ff">*/*/*/*/accumbens</label>
+<label index="2" x="0" y="0" z="0" color="#00ff00">*/*/*/*/amygdala</label>
+<label index="3" x="0" y="0" z="0" color="#ffff00">*/*/*/*/vta</label>
+<label index="4" x="0" y="0" z="0" color="#00ffff">*/*/*/*/lha</label>
+<label index="5" x="0" y="0" z="0" color="#0000ff">*/*/*/*/habenula</label>
+</data>
+</atlas>

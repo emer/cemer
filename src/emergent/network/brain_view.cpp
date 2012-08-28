@@ -116,10 +116,10 @@ void BrainView::Initialize() {
   slice_transparency = 90;
   last_state_change = NONE;
   color_brain = false;
-  color_brain_regexp = "Brodmann"; // default to Brodmann areas
+  color_brain_regexp = ".*/.*/.*/.*/.*";
   view_params.unit_trans = .9;	// with high-fill pct, unit trans should be much higher
   show_atlas = false;
-  brain_area_regexp = "Hippocampus"; // default to show Hippocampus
+  brain_area_regexp = ".*/.*/.*/.*/Hippocampus"; // default to show Hippocampus
 
   
   QString data_path(taMisc::app_dir.toQString());

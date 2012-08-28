@@ -21,4 +21,4 @@ Na=`fslstats $ata -R | awk '{print $2}'`
 echo "Atlas A has $Na indexes"
 fslmaths $atb -add $Na -mas B_nonzerovox.nii.gz -add A_whenBiszero.nii.gz $atc
 
-/bin/rm B_nonzerovox* B_zerovox A_whenBiszero
+/bin/rm B_nonzerovox* B_zerovox* A_whenBiszero*

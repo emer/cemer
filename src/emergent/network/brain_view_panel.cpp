@@ -219,7 +219,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
-  label->setToolTip("Regexp to select brain areas to color."); 
+  label->setToolTip("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas."); 
   bvControls->addWidget(label);
 
   fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
@@ -227,6 +227,14 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addWidget(fldBrainColorRegexp->GetRep());
   ((iLineEdit*)fldBrainColorRegexp->GetRep())->setCharWidth(40);
   connect(fldBrainColorRegexp->rep(), SIGNAL(returnPressed()), this, SLOT(ColorBrainRegexpEdited()));
+  bvControls->addSpacing(taiM->hsep_c); 
+  bvControls->addSpacing(taiM->hsep_c); 
+
+  butEditAtlas = new QPushButton("Edit Atlas", widg);
+  butEditAtlas->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butEditAtlas->setMaximumWidth(taiM->maxButtonWidth() / 2);
+  bvControls->addWidget(butEditAtlas);
+  connect(butEditAtlas, SIGNAL(pressed()), this, SLOT(butEditAtlas_pressed()) );
   bvControls->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
@@ -242,7 +250,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Atlas label (rexgexp)", widg, font_spec);
-  label->setToolTip("Regexp to select brain atlas labels to render.");
+  label->setToolTip("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow");
   bvControls->addWidget(label);
 
   fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
@@ -477,6 +485,10 @@ void BrainViewPanel::ViewAtlasRegexpEdited()
   QString regexp = fldBrainAtlasRegexp->GetValue().toQString();
   QRegExp re(regexp);
   if (re.isValid()) {
+    if(regexp == ".*/.*/.*/.*/.*") {
+      taMisc::Warning("You cannot set the match-all regular expression .*/.*/.*/.*/.* -- fills in the whole brain with squares and takes forever.");
+      m_chk_atlas->setCheckable(false);
+    }
     SetViewAtlasRegexp(regexp); 
     m_chk_atlas->setCheckable(true);
   }
@@ -608,6 +620,18 @@ void BrainViewPanel::butScaleDefault_pressed()
   if (!(bv_ = bv())) return;
   
   bv_->SetScaleDefault();
+  bv_->UpdateDisplay(true);
+}
+
+void BrainViewPanel::butEditAtlas_pressed() 
+{
+  if (updating) return;
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+
+  Network* net = bv_->net();
+  if(!net || !net->brain_atlas) return;
+  net->brain_atlas->EditAtlas();
   bv_->UpdateDisplay(true);
 }
 

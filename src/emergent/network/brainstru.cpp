@@ -398,7 +398,8 @@ bool FSLBrainAtlas::Save(const QString& filename)
 {
   // attempt to compose the file header
   FSLBrainAtlasFileComposer composer(filename);
-  BrainAtlasInfo info = {m_name, m_description, m_filename, m_image_filename};
+  String fnm = "/" + taMisc::GetFileFmPath(m_image_filename);
+  BrainAtlasInfo info = {m_name, m_description, m_filename, fnm};
   composer.ComposeHeader(info);
    
   // compose labels
