@@ -351,8 +351,8 @@
   <label x="27" y="48" z="30" index="338" color="#0037c7">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Hippocampus</label>
   <label x="59" y="49" z="30" index="339" color="#0037c7">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Hippocampus</label>
   <label x="29" y="47" z="32" index="340" color="#0038c6">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Hippocampus</label>
-  <label x="48" y="55" z="29" index="341" color="#0039c5">Left Brainstem/Midbrain/*/Gray Matter/Substania Nigra</label>
-  <label x="39" y="54" z="30" index="342" color="#003ac4">Right Brainstem/Midbrain/*/Gray Matter/Substania Nigra</label>
+  <label x="48" y="55" z="29" index="341" color="#0039c5">Left Brainstem/Midbrain/*/Gray Matter/Substantia Nigra</label>
+  <label x="39" y="54" z="30" index="342" color="#003ac4">Right Brainstem/Midbrain/*/Gray Matter/Substantia Nigra</label>
   <label x="47" y="53" z="32" index="343" color="#003bc3">Left Brainstem/Midbrain/*/Gray Matter/Red Nucleus</label>
   <label x="42" y="52" z="32" index="344" color="#003cc2">Right Brainstem/Midbrain/*/Gray Matter/Red Nucleus</label>
   <label x="0" y="0" z="0" index="345" color="#003dc1">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 28</label>
