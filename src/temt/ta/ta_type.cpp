@@ -596,6 +596,7 @@ bool    taMisc::emacs_mode = false;
 int     taMisc::undo_depth = 100;
 int     taMisc::undo_data_max_cells = 10000;
 float   taMisc::undo_new_src_thr = 0.3f;
+bool	taMisc::undo_debug = false;
 int     taMisc::auto_save_interval = 120;
 int     taMisc::wait_proc_delay = 20;
 int     taMisc::css_gui_event_interval = 200;

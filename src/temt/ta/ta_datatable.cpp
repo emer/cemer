@@ -415,50 +415,77 @@ int DataCol::displayWidth() const {
 }
 
 taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
-//   static DataTable* last_dt = NULL;
-  if (md->name == "ar") {
-    DataTable* dt = dataTable();
-    // if no save, don't need to check DataTable global
-    if (saveToDumpFile()) {
-      if(dt && taMisc::is_undo_saving) {
-        // always save for obj itself
-        if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
-          if((dt->Cells() > taMisc::undo_data_max_cells) ||
-             !dt->HasDataFlag(DataTable::SAVE_ROWS)) {
-// 	    if(last_dt != dt) {
-// 	      taMisc::LogInfo("not undo saving directly affected datatable -- no save or too big:",
-// 				dt->GetPathNames());
-// 	    }
-// 	    last_dt = dt;
-            return DQR_NO_SAVE; // too big or no save!
-          }
-          return DQR_SAVE;
-        }
-        if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
-          // no need to save b/c unaffected by changes elsewhere..
-// 	  if(last_dt != dt) {
-// 	    if(tabMisc::cur_undo_save_owner) {
-// 	      taMisc::LogInfo("not undo saving datatable -- should be unaffected:",
-// 				dt->GetPathNames(), "undo save owner:", 
-// 				tabMisc::cur_undo_save_owner->GetPathNames());
-// 	    }
-// 	  }
-// 	  last_dt = dt;
-          return DQR_NO_SAVE;
-        }
-        if(dt->Cells() > taMisc::undo_data_max_cells) {
-// 	  if(last_dt != dt) {
-// 	    taMisc::LogInfo("not undo saving datatable -- too big:",
-// 			    dt->GetPathNames());
-// 	  }
-// 	  last_dt = dt;
-          return DQR_NO_SAVE;   // too big!
-        }
+  static DataTable* last_dt = NULL;
+  if(md->name != "ar")
+    return inherited::Dump_QuerySaveMember(md);
+  if(!saveToDumpFile())
+    return DQR_NO_SAVE;
+
+  DataTable* dt = dataTable();
+  if(!dt) return DQR_NO_SAVE;	// should not happen
+
+  if(!taMisc::is_undo_saving) {	// if not undo, logic is simple..
+    if(dt->HasDataFlag(DataTable::SAVE_ROWS))
+      return DQR_SAVE;
+    else
+      return DQR_NO_SAVE;
+  }
+
+  // always save for obj itself
+  if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
+    if(dt->Cells() > taMisc::undo_data_max_cells) {
+      if(taMisc::undo_debug && last_dt != dt) {
+	taMisc::Info("not undo saving directly affected datatable -- too big:",
+		     dt->GetPathNames(), "cells:", String(dt->Cells()));
+	last_dt = dt;
       }
-      if(dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
+      return DQR_NO_SAVE; // too big or no save!
+    }
+    if(taMisc::undo_debug && last_dt != dt) {
+      taMisc::Info("YES undo saving directly affected datatable:",
+		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+      last_dt = dt;
+    }
+    return DQR_SAVE;
+  }
+
+  if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
+    // no need to save b/c unaffected by changes elsewhere..
+    if(taMisc::undo_debug && last_dt != dt) {
+      taMisc::Info("not undo saving datatable -- should be unaffected:",
+		   dt->GetPathNames());
+      if(tabMisc::cur_undo_save_owner) {
+	taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
+      }
+      last_dt = dt;
     }
     return DQR_NO_SAVE;
-  } else return inherited::Dump_QuerySaveMember(md);
+  }
+
+  if(dt->Cells() > taMisc::undo_data_max_cells) {
+    if(taMisc::undo_debug && last_dt != dt) {
+      taMisc::Info("not undo saving datatable -- too big:",
+		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+      last_dt = dt;
+    }
+    return DQR_NO_SAVE;   // too big!
+  }
+
+  if(dt->HasDataFlag(DataTable::SAVE_ROWS)) {
+    if(taMisc::undo_debug && last_dt != dt) {
+      taMisc::Info("YES undo saving datatable -- affected and small enough:",
+		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+      last_dt = dt;
+    }
+    return DQR_SAVE;
+  }
+
+  if(taMisc::undo_debug && last_dt != dt) {
+    taMisc::Info("not undo saving datatable -- affected but no save at data table level:",
+		 dt->GetPathNames(), "cells:", String(dt->Cells()));
+    last_dt = dt;
+  }
+  return DQR_NO_SAVE;
 }
 
 void DataCol::Get2DCellGeom(int& x, int& y) const {
