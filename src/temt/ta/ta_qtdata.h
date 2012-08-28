@@ -705,7 +705,7 @@ public:
   enum CallbackType {
     none,               // callback parameters ignored
     action,             // corresponds to IV "action" type of callback -- slot for signal is parameterless
-    men_act,            // corresponds to IV "men_act" type of callback -- slot for signal takes taiAction* as a sender
+    men_act,            // corresponds to IV "men_act" (menu action) type of callback -- slot for signal takes taiAction* as a sender
     int_act,            // corresponds to Qt menu/action signals -- slot for signal takes an int parameter
     ptr_act,            // slot for signal takes a void* parameter
     var_act             // slot for signal takes a "const Variant&" parameter
@@ -834,15 +834,39 @@ public:
   QWidget*              actionsRep(); // where actions are stored, in menu if a menu, else in Rep
   virtual void          AddSep(bool new_radio_grp = false); // add menu separator -- can also be used to create new radio groups --  won't add initial sep, or 2 separators in a row; seps don't count as taiActions
   virtual void          AddAction(taiAction* act); // add the already created action
-  taiAction*            AddItem(const String& val, SelType st = use_default,
-    taiAction::CallbackType ct = taiAction::none, const QObject *receiver = NULL, const char* member = NULL,
-    const Variant& usr = _nilVariant);
-  taiAction*            AddItem(const String& val, taiAction::CallbackType ct,
-    const QObject *receiver, const char* member,
-    const Variant& usr = _nilVariant, const QKeySequence& shortcut = 0);
-  taiAction*            AddItem(const String& val, SelType st, const taiMenuAction* men_act,
-    const Variant& usr = _nilVariant);
-  taiAction*            AddItem(const String& val, const Variant& usr);
+  taiAction*            AddItem(
+                          const String& val,
+                          SelType st = use_default,
+                          taiAction::CallbackType ct = taiAction::none,
+                          const QObject *receiver = NULL,
+                          const char* member = NULL,
+                          const Variant& usr = _nilVariant
+                        );
+  taiAction*            AddItem(
+                          const String& val,
+                          taiAction::CallbackType ct,
+                          const QObject *receiver,
+                          const char* member,
+                          const Variant& usr = _nilVariant,
+                          const QKeySequence& shortcut = 0
+                        ); // Note: The shortcut key sequence is global, like Ctrl-S for Save.
+  taiAction*            AddItemWithNumericAccel(
+                          const String& val,
+                          taiAction::CallbackType ct,
+                          const QObject *receiver,
+                          const char* member,
+                          const Variant& usr = _nilVariant
+                        ); // Prepends &1, &2, ..., &9, &0 to the 'val' argument as a keyboard accelerator.
+  taiAction*            AddItem(
+                          const String& val,
+                          SelType st,
+                          const taiMenuAction* men_act,
+                          const Variant& usr = _nilVariant
+                        );
+  taiAction*            AddItem(
+                          const String& val,
+                          const Variant& usr
+                        );
 
   virtual taiMenu*      AddSubMenu(const String& val, TypeDef* typ_ = NULL); // add a submenu -- this also works for toolbars, and will create a toolbar menu button
 

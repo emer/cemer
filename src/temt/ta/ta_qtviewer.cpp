@@ -3352,8 +3352,8 @@ void iMainWindowViewer::Init() {
   fileSaveNotesAction = NULL;
   fileUpdateChangeLogAction = NULL;
   fileSaveAllAction = NULL;
-  fileOpenFromWebAction = NULL;
-  filePublishDocsOnWebAction = NULL;
+  fileOpenFromWebMenu = NULL;
+  filePublishDocsOnWebMenu = NULL;
   filePublishProjectOnWebAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
@@ -3613,8 +3613,8 @@ void iMainWindowViewer::Constr_FileMenu()
   fileUpdateChangeLogAction = AddAction(new taiAction("&Updt Change Log", QKeySequence(), "fileUpdateChangeLogAction"));
   fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
-  // fileOpenFromWebAction and filePublishDocsOnWebAction created below as submenus.
-  filePublishProjectOnWebAction = AddAction(new taiAction("Publish Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
+  // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
+  filePublishProjectOnWebAction = AddAction(new taiAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
 
   fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction"));
   fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction"));
@@ -3635,9 +3635,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->AddAction(fileSaveAllAction);
 
   fileMenu->insertSeparator();
-  fileOpenFromWebAction = fileMenu->AddSubMenu("Open Project from Web");
+  fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
   if (!isRoot()) {
-    filePublishDocsOnWebAction = fileMenu->AddSubMenu("Publish Project Docs on Web");
+    filePublishDocsOnWebMenu = fileMenu->AddSubMenu("Publish Project &Docs on Web");
     fileMenu->AddAction(filePublishProjectOnWebAction);
   }
 
@@ -3656,6 +3656,9 @@ void iMainWindowViewer::Constr_FileMenu()
   connect(fileOpenRecentMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileOpenRecent_aboutToShow()));
   connect(fileSaveAllAction, SIGNAL(Action()), this, SLOT(fileSaveAll()));
 
+  // Connect "open from web" for all windows (even root).
+  connect(fileOpenFromWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileOpenFromWeb_aboutToShow()));
+
   // TBD: is this the same as checking if (!isRoot()) ??
   // Logic for isProjShower() is unclear.
   if (isProjShower()) {
@@ -3664,7 +3667,13 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(fileSaveNotesAction, SIGNAL(Action()), this, SLOT(fileSaveNotes()));
     connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
     connect(fileUpdateChangeLogAction, SIGNAL(Action()), this, SLOT(fileUpdateChangeLog()));
+
+    // Connect "publish" options only for project windows.
+    if (filePublishDocsOnWebMenu) {
+      connect(filePublishDocsOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishDocsOnWeb_aboutToShow()));
+    }
     connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb()));
+
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
     // disable the CloseWindow to help emphasize that Closing will close proj
     //no, not needed    fileCloseWindowAction->setEnabled(false);
@@ -3675,11 +3684,11 @@ void iMainWindowViewer::Constr_FileMenu()
     fileSaveNotesAction->setEnabled(false);
     fileSaveAsTemplateAction->setEnabled(false);
     fileUpdateChangeLogAction->setEnabled(false);
-    if (filePublishProjectOnWebAction) {
-      filePublishProjectOnWebAction->setEnabled(false);
-    }
     fileCloseAction->setEnabled(false);
   }
+
+  // Disable "Publish Project" -- won't be enabled until docs are first published.
+  filePublishProjectOnWebAction->setEnabled(false);
 
   // connect(filePrintAction, SIGNAL(activated()), this, SLOT(filePrint()));
   connect(fileOptionsAction, SIGNAL(Action()), this, SLOT(fileOptions()));
@@ -4069,14 +4078,19 @@ void iMainWindowViewer::fileOpen() {
 }
 
 void iMainWindowViewer::fileOpenRecent_aboutToShow() {
-  // delete previous
+  // Clear and rebuild submenu.
   fileOpenRecentMenu->Reset();
-  // populate with current recent
+
+  // Populate with recent files.
   for (int i = 0; i < tabMisc::root->recent_files.size; ++i) {
-    String file = tabMisc::root->recent_files[i];
+    String filename = tabMisc::root->recent_files[i];
+
     //taiAction* item =
-    fileOpenRecentMenu->AddItem(file, taiAction::var_act, this, SLOT(fileOpenFile(const Variant&)),
-      file);
+    fileOpenRecentMenu->AddItemWithNumericAccel(
+      filename,
+      taiAction::var_act,
+      this, SLOT(fileOpenFile(const Variant&)),
+      filename);
   }
 }
 
@@ -4158,18 +4172,49 @@ void iMainWindowViewer::fileSaveAll() {
   tabMisc::root->SaveAll();
 }
 
-void iMainWindowViewer::fileOpenFromWeb()
+void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
 {
-  if (taProject *proj = curProject()) {
-//    proj->OpenFromWeb();
-  }
+  // Clear and rebuild submenu.
+  fileOpenFromWebMenu->Reset();
+
+  // For now, just one hard-coded value on menu.
+  String repository_name = "Emergent repository...";
+
+  fileOpenFromWebMenu->AddItemWithNumericAccel(
+    repository_name,
+    taiAction::var_act,
+    this, SLOT(fileOpenFromWeb(const Variant &)),
+    repository_name);
 }
 
-void iMainWindowViewer::filePublishDocsOnWeb()
+void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
 {
-  if (taProject *proj = curProject()) {
+  String repository_name = repo.toString();
+  std::cout << "open from repo: " << repository_name.chars() << std::endl;
+}
+
+void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
+{
+  // Clear and rebuild submenu.
+  filePublishDocsOnWebMenu->Reset();
+
+  // For now, just one hard-coded value on menu.
+  String repository_name = "Emergent repository...";
+
+  filePublishDocsOnWebMenu->AddItemWithNumericAccel(
+    repository_name,
+    taiAction::var_act,
+    this, SLOT(filePublishDocsOnWeb(const Variant &)),
+    repository_name);
+}
+
+void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
+{
+  String repository_name = repo.toString();
+  std::cout << "publish docs to repo: " << repository_name.chars() << std::endl;
+//  if (taProject *proj = curProject()) {
 //    proj->PublishDocsOnWeb();
-  }
+//  }
 }
 
 void iMainWindowViewer::filePublishProjectOnWeb()
@@ -4687,29 +4732,28 @@ void iMainWindowViewer::viewSaveView() {
 }
 
 void iMainWindowViewer::windowMenu_aboutToShow() {
-  // delete previous
+  // Clear and rebuild submenu.
   windowMenu->Reset();
-  // populate with current windows
+
+  // Populate with current windows.
   Widget_List wl;
   taiMisc::GetWindowList(wl);
   for (int i = 0; i < wl.size; ++i) {
     QWidget* wid = wl.FastEl(i);
-    String title;
-    // for up to first 9, put numeric accelerator
-    if (i < 9) {
-      title = "&" + String(i + 1) + " ";
-    }
     if (wid->isWindow()) {
-      title.cat((String)wid->windowTitle());
+      String title = wid->windowTitle();
+
       // Indicate whether the file has unsaved changes
       // (see MainWindowViewer::MakeWinName_impl())
       title.gsub("[*]", wid->isWindowModified() ? "*" : "");
+
+      //taiAction* item =
+      windowMenu->AddItemWithNumericAccel(
+        title,
+        taiAction::int_act,
+        this, SLOT(windowActivate(int)),
+        i);
     }
-/*??    else
-      title.cat((String)wid->text());*/
-    //taiAction* item =
-    windowMenu->AddItem(title, taiAction::int_act,
-     this, SLOT(windowActivate(int)), i);
   }
 }
 

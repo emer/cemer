@@ -1018,8 +1018,8 @@ public:
   taiAction*            fileSaveAsTemplateAction;
   taiAction*            fileUpdateChangeLogAction;
   taiAction*            fileSaveAllAction;
-  taiMenu*              fileOpenFromWebAction;
-  taiMenu*              filePublishDocsOnWebAction;
+  taiMenu*              fileOpenFromWebMenu;
+  taiMenu*              filePublishDocsOnWebMenu;
   taiAction*            filePublishProjectOnWebAction;
   taiAction*            fileCloseAction;
   taiAction*            fileOptionsAction;
@@ -1168,8 +1168,10 @@ public slots:
   virtual void  fileSaveAsTemplate();   // SaveAsTemplate Project (only enabled if viewer)
   virtual void  fileUpdateChangeLog();  // UpdateChangeLog Project (only enabled if viewer)
   virtual void  fileSaveAll();          // Save All Projects (always enabled)
-  virtual void  fileOpenFromWeb();      // Open Project from Web (in new viewer)
-  virtual void  filePublishDocsOnWeb(); // Publish Project Documentation on Web
+  virtual void  fileOpenFromWeb_aboutToShow();
+  virtual void  fileOpenFromWeb(const Variant &repo);      // Open Project from Web (in new viewer)
+  virtual void  filePublishDocsOnWeb_aboutToShow();
+  virtual void  filePublishDocsOnWeb(const Variant &repo); // Publish Project Documentation on Web
   virtual void  filePublishProjectOnWeb(); // Publish Project on Web
   virtual void  fileClose();    // Close Project (only enabled if viewer)
   virtual void  fileOptions();  // edits taMisc

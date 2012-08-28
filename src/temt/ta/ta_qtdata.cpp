@@ -2596,20 +2596,6 @@ bool taiAction::isGrouped() {
   return (actionGroup() != NULL);
 }
 
-/*nn bool taiAction::isChecked() {
-   // returns 'true' if a radio or toggle item, and checked, false otherwise
-  if (isSubMenu())
-    return false;
-  else return rep->isChecked();
-}
-
-void taiAction::setChecked(bool value) {
-   // ignored if not a radio or toggle item
-  if (isSubMenu() || !(sel_type & (taiMenu::radio | taiMenu::toggle)))
-    return;
-  else owner->menu()->setItemChecked(id(), value);
-} */
-
 void taiAction::connect(CallbackType ct_, const QObject *receiver, const char* member) {
   // connect callback to given
   if ((ct_ == none) || (receiver == NULL) || (member == NULL)) return;
@@ -2782,12 +2768,19 @@ void taiActions::AddAction(taiAction* act) {
   connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );
 }
 
-taiAction* taiActions::AddItem(const String& val, SelType st,
-  taiAction::CallbackType ct_, const QObject *receiver, const char* member,
-  const Variant& usr)
-{ // 'member' is the result of the SLOT() macro
-  if (st == use_default)
+// Add an item to the list and connect its action.
+taiAction* taiActions::AddItem(
+  const String& val,
+  SelType st,
+  taiAction::CallbackType ct_,
+  const QObject *receiver,
+  const char* member, // 'member' is the result of the SLOT() macro
+  const Variant& usr
+)
+{
+  if (st == use_default) {
     st = sel_type;
+  }
 
   taiAction* rval;
 //TODO: this "no duplicates" was causing token items to not appear
@@ -2814,8 +2807,50 @@ taiAction* taiActions::AddItem(const String& val, SelType st,
   return rval;
 }
 
-taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuAction* mact,
-  const Variant& usr)
+// Add item with (global) keyboard shortcut.
+taiAction* taiActions::AddItem(
+  const String& val,
+  taiAction::CallbackType ct,
+  const QObject *receiver,
+  const char* member,
+  const Variant& usr,
+  const QKeySequence& shortcut
+)
+{
+  taiAction* rval = AddItem(val, use_default, ct, receiver, member, usr);
+  if (shortcut) rval->setShortcut(shortcut);
+  return rval;
+}
+
+// Add submenu item with numeric accelerator.
+taiAction* taiActions::AddItemWithNumericAccel(
+  const String& val,
+  taiAction::CallbackType ct,
+  const QObject *receiver,
+  const char* member,
+  const Variant& usr
+)
+{
+  // Set accelerator keys of 1,2,3...9,0 for the first 10 items.
+  String label;
+  int idx = count();
+  if (idx < 10) {
+    label = "&" + String((idx + 1) % 10) + " " + val;
+  }
+  else {
+    label = "  " + val;
+  }
+
+  return AddItem(label, ct, receiver, member, usr);
+}
+
+// Convenience function that takes a taiMenuAction.
+taiAction* taiActions::AddItem(
+  const String& val,
+  SelType st,
+  const taiMenuAction* mact,
+  const Variant& usr
+)
 {
   if (mact != NULL)
     return AddItem(val, st, taiAction::men_act, mact->receiver, mact->member, usr);
@@ -2823,16 +2858,12 @@ taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuActio
     return AddItem(val, st, taiAction::none, NULL, NULL, usr);
 }
 
-taiAction* taiActions::AddItem(const String& val, taiAction::CallbackType ct,
-    const QObject *receiver, const char* member,
-    const Variant& usr, const QKeySequence& shortcut)
+// Minimal convenience function.
+taiAction* taiActions::AddItem(
+  const String& val,
+  const Variant& usr
+)
 {
-  taiAction* rval = AddItem(val, use_default, ct, receiver, member, usr);
-  if (shortcut) rval->setShortcut(shortcut);
-  return rval;
-}
-
-taiAction* taiActions::AddItem(const String& val, const Variant& usr) {
   return AddItem(val, sel_type, taiAction::none, NULL, NULL, usr);
 }
 
