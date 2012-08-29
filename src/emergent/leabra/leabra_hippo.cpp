@@ -627,8 +627,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ecin->brain_area = ".*/.*/.*/.*/Hippocampus entorhinal cortex";
   ecout->brain_area = ".*/.*/.*/.*/Hippocampus entorhinal cortex";
   dg->brain_area = ".*/.*/.*/.*/Hippocampus dentate gyrus";
-  ca3->brain_area = ".*/.*/.*/.*/Hippocampus cornu amonis";
-  ca1->brain_area = ".*/.*/.*/.*/Hippocampus cornu amonis";
+  ca3->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
+  ca1->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
   subic->brain_area = ".*/.*/.*/.*/Hippocampus subiculum";
 
   ecin->unit_groups = true;

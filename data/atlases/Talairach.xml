@@ -18,59 +18,59 @@
   <label x="46" y="39" z="14" index="5" color="#7eff00">Left Brainstem/Medulla/*/*/*</label>
   <label x="41" y="39" z="14" index="6" color="#a6ff00">Right Brainstem/Medulla/*/*/*</label>
   <label x="67" y="62" z="14" index="7" color="#ff6200">*/*/Inferior Temporal Gyrus/*/*</label>
-  <label x="68" y="56" z="18" index="8" color="#5e00ae">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="68" y="56" z="18" index="8" color="#5e00ae">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA20</label>
   <label x="62" y="60" z="12" index="9" color="#ff1500">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/*/*</label>
   <label x="63" y="64" z="11" index="10" color="#006797">Left Cerebrum/Temporal Lobe/*/*/*</label>
   <label x="26" y="66" z="11" index="11" color="#59ff00">Right Cerebrum/Temporal Lobe/*/*/*</label>
   <label x="27" y="60" z="12" index="12" color="#00639b">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/*/*</label>
-  <label x="23" y="53" z="19" index="13" color="#008e70">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="23" y="53" z="19" index="13" color="#008e70">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA20</label>
   <label x="74" y="52" z="25" index="14" color="#007589">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/White Matter/*</label>
-  <label x="60" y="61" z="12" index="15" color="#37ff00">Left Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 20</label>
-  <label x="60" y="55" z="19" index="16" color="#0000c8">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 20</label>
+  <label x="60" y="61" z="12" index="15" color="#37ff00">Left Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/Gray Matter/BA20</label>
+  <label x="60" y="55" z="19" index="16" color="#0000c8">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA20</label>
   <label x="57" y="63" z="11" index="17" color="#ff4500">Left Cerebrum/Limbic Lobe/Uncus/*/*</label>
-  <label x="26" y="54" z="19" index="18" color="#0036c8">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 20</label>
-  <label x="28" y="58" z="14" index="19" color="#6800b3">Right Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="26" y="54" z="19" index="18" color="#0036c8">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA20</label>
+  <label x="28" y="58" z="14" index="19" color="#6800b3">Right Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/Gray Matter/BA20</label>
   <label x="14" y="52" z="24" index="20" color="#ff8700">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/White Matter/*</label>
   <label x="57" y="62" z="12" index="21" color="#ffe600">Left Cerebrum/Limbic Lobe/*/*/*</label>
   <label x="32" y="61" z="13" index="22" color="#1fff00">Right Cerebrum/Limbic Lobe/*/*/*</label>
-  <label x="73" y="41" z="29" index="23" color="#13ff00">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="73" y="41" z="29" index="23" color="#13ff00">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA20</label>
   <label x="74" y="45" z="33" index="24" color="#00a15d">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/White Matter/*</label>
   <label x="61" y="59" z="18" index="25" color="#4a00a4">Left Cerebrum/Limbic Lobe/Uncus/White Matter/*</label>
-  <label x="31" y="62" z="11" index="26" color="#f900fc">Right Cerebrum/Limbic Lobe/*/Gray Matter/Brodmann area 20</label>
+  <label x="31" y="62" z="11" index="26" color="#f900fc">Right Cerebrum/Limbic Lobe/*/Gray Matter/BA20</label>
   <label x="30" y="63" z="14" index="27" color="#ff9200">Right Cerebrum/Limbic Lobe/Uncus/White Matter/*</label>
   <label x="16" y="36" z="38" index="28" color="#91ff00">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/White Matter/*</label>
-  <label x="25" y="62" z="11" index="29" color="#4800a3">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="25" y="62" z="11" index="29" color="#4800a3">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA20</label>
   <label x="25" y="63" z="11" index="30" color="#67ff00">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/*/*</label>
   <label x="34" y="64" z="15" index="31" color="#0035c9">Right Cerebrum/Limbic Lobe/Uncus/*/*</label>
   <label x="63" y="63" z="12" index="32" color="#0000c6">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/*/*</label>
-  <label x="66" y="65" z="14" index="33" color="#6300b1">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 38</label>
-  <label x="58" y="63" z="11" index="34" color="#f5ff00">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 38</label>
-  <label x="30" y="63" z="11" index="35" color="#00f40a">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 38</label>
-  <label x="27" y="63" z="11" index="36" color="#ffd500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 38</label>
+  <label x="66" y="65" z="14" index="33" color="#6300b1">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA38</label>
+  <label x="58" y="63" z="11" index="34" color="#f5ff00">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA38</label>
+  <label x="30" y="63" z="11" index="35" color="#00f40a">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA38</label>
+  <label x="27" y="63" z="11" index="36" color="#ffd500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA38</label>
   <label x="0" y="0" z="0" index="37" color="#00c638">Left Cerebrum/Limbic Lobe/Middle Temporal Gyrus/White Matter/*</label>
-  <label x="57" y="69" z="14" index="38" color="#ff7100">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 38</label>
+  <label x="57" y="69" z="14" index="38" color="#ff7100">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA38</label>
   <label x="74" y="44" z="43" index="39" color="#3bff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/White Matter/*</label>
   <label x="76" y="70" z="29" index="40" color="#0000f8">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/*/*</label>
-  <label x="29" y="70" z="14" index="41" color="#c000df">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 38</label>
+  <label x="29" y="70" z="14" index="41" color="#c000df">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA38</label>
   <label x="20" y="41" z="43" index="42" color="#5dff00">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/White Matter/*</label>
   <label x="13" y="71" z="27" index="43" color="#b1ff00">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/*/*</label>
-  <label x="31" y="66" z="11" index="44" color="#fff300">Right Cerebrum/Temporal Lobe/*/Gray Matter/Brodmann area 38</label>
-  <label x="59" y="66" z="11" index="45" color="#0003fb">Left Cerebrum/Temporal Lobe/*/Gray Matter/Brodmann area 38</label>
-  <label x="0" y="0" z="0" index="46" color="#ffd700">Right Cerebrum/Frontal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="31" y="66" z="11" index="44" color="#fff300">Right Cerebrum/Temporal Lobe/*/Gray Matter/BA38</label>
+  <label x="59" y="66" z="11" index="45" color="#0003fb">Left Cerebrum/Temporal Lobe/*/Gray Matter/BA38</label>
+  <label x="0" y="0" z="0" index="46" color="#ffd700">Right Cerebrum/Frontal Lobe/Inferior Temporal Gyrus/Gray Matter/BA20</label>
   <label x="13" y="27" z="37" index="47" color="#9b00cd">Right Cerebrum/*/Inferior Temporal Gyrus/*/*</label>
   <label x="19" y="76" z="24" index="48" color="#000085">Right Cerebrum/*/*/*/*</label>
   <label x="61" y="60" z="14" index="49" color="#a9ff00">Left Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/White Matter/*</label>
   <label x="28" y="60" z="13" index="50" color="#0015e9">Right Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/White Matter/*</label>
   <label x="67" y="44" z="33" index="51" color="#ff4e00">Left Cerebrum/Temporal Lobe/Sub-Gyral/White Matter/*</label>
   <label x="22" y="43" z="34" index="52" color="#0000d0">Right Cerebrum/Temporal Lobe/Sub-Gyral/White Matter/*</label>
-  <label x="0" y="0" z="0" index="53" color="#0000bf">Left Cerebrum/Limbic Lobe/*/Gray Matter/Brodmann area 20</label>
+  <label x="0" y="0" z="0" index="53" color="#0000bf">Left Cerebrum/Limbic Lobe/*/Gray Matter/BA20</label>
   <label x="68" y="64" z="13" index="54" color="#d800eb">*/*/Middle Temporal Gyrus/*/*</label>
   <label x="25" y="58" z="18" index="55" color="#0001fd">Right Cerebrum/Limbic Lobe/Sub-Gyral/White Matter/*</label>
   <label x="62" y="64" z="22" index="56" color="#00d727">Left Cerebrum/Limbic Lobe/Superior Temporal Gyrus/White Matter/*</label>
   <label x="32" y="66" z="13" index="57" color="#00e11d">Right Cerebrum/Limbic Lobe/Superior Temporal Gyrus/White Matter/*</label>
   <label x="34" y="66" z="13" index="58" color="#1dff00">Right Cerebrum/*/Uncus/*/*</label>
-  <label x="56" y="66" z="13" index="59" color="#0000e8">Left Cerebrum/Limbic Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 38</label>
-  <label x="33" y="67" z="13" index="60" color="#ffdf00">Right Cerebrum/Limbic Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 38</label>
+  <label x="56" y="66" z="13" index="59" color="#0000e8">Left Cerebrum/Limbic Lobe/Superior Temporal Gyrus/Gray Matter/BA38</label>
+  <label x="33" y="67" z="13" index="60" color="#ffdf00">Right Cerebrum/Limbic Lobe/Superior Temporal Gyrus/Gray Matter/BA38</label>
   <label x="55" y="22" z="20" index="61" color="#ff7a00">Left Cerebellum/Posterior Lobe/Pyramis/Gray Matter/*</label>
   <label x="33" y="22" z="20" index="62" color="#0000d9">Right Cerebellum/Posterior Lobe/Pyramis/Gray Matter/*</label>
   <label x="47" y="27" z="20" index="63" color="#beff00">Left Cerebellum/Posterior Lobe/Uvula/Gray Matter/*</label>
@@ -85,11 +85,11 @@
   <label x="41" y="47" z="20" index="72" color="#004eb0">Right Brainstem/Pons/*/*/*</label>
   <label x="32" y="55" z="18" index="73" color="#0000d7">*/Limbic Lobe/Uncus/*/*</label>
   <label x="67" y="81" z="24" index="74" color="#0000f5">Left Cerebrum/*/*/*/*</label>
-  <label x="58" y="58" z="16" index="75" color="#0027d7">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 36</label>
-  <label x="30" y="58" z="16" index="76" color="#000093">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 36</label>
-  <label x="12" y="60" z="24" index="77" color="#ff5d00">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 21</label>
-  <label x="73" y="66" z="20" index="78" color="#f400f9">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 21</label>
-  <label x="22" y="62" z="17" index="79" color="#0000c0">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 21</label>
+  <label x="58" y="58" z="16" index="75" color="#0027d7">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA36</label>
+  <label x="30" y="58" z="16" index="76" color="#000093">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA36</label>
+  <label x="12" y="60" z="24" index="77" color="#ff5d00">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA21</label>
+  <label x="73" y="66" z="20" index="78" color="#f400f9">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA21</label>
+  <label x="22" y="62" z="17" index="79" color="#0000c0">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA21</label>
   <label x="67" y="28" z="22" index="80" color="#ff7900">Left Cerebellum/Posterior Lobe/Tuber/Gray Matter/*</label>
   <label x="16" y="24" z="22" index="81" color="#16008a">Right Cerebellum/Posterior Lobe/Tuber/Gray Matter/*</label>
   <label x="45" y="24" z="20" index="82" color="#cc00e5">Left Cerebellum/Posterior Lobe/Pyramis of Vermis/Gray Matter/*</label>
@@ -104,22 +104,22 @@
   <label x="0" y="0" z="0" index="91" color="#ffc600">*/Temporal Lobe/Inferior Temporal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="92" color="#330099">Right Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="93" color="#7dff00">Left Cerebrum/Limbic Lobe/Inferior Temporal Gyrus/*/*</label>
-  <label x="58" y="56" z="19" index="94" color="#ad00d6">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 28</label>
-  <label x="33" y="65" z="20" index="95" color="#000085">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 28</label>
+  <label x="58" y="56" z="19" index="94" color="#ad00d6">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA28</label>
+  <label x="33" y="65" z="20" index="95" color="#000085">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA28</label>
   <label x="64" y="58" z="18" index="96" color="#d000e7">Left Cerebrum/Limbic Lobe/Sub-Gyral/White Matter/*</label>
-  <label x="67" y="60" z="18" index="97" color="#0000d6">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 21</label>
+  <label x="67" y="60" z="18" index="97" color="#0000d6">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA21</label>
   <label x="0" y="0" z="0" index="98" color="#ff9f00">Left Cerebrum/*/Inferior Temporal Gyrus/*/*</label>
   <label x="74" y="65" z="18" index="99" color="#0000b3">Left Cerebrum/*/Middle Temporal Gyrus/*/*</label>
   <label x="57" y="70" z="17" index="100" color="#d6ff00">Left Cerebrum/*/Superior Temporal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="101" color="#b2ff00">Left Cerebrum/*/Superior Temporal Gyrus/Gray Matter/Brodmann area 38</label>
-  <label x="48" y="83" z="17" index="102" color="#0000c0">Left Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="41" y="78" z="17" index="103" color="#9aff00">Right Cerebrum/*/Orbital Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="0" y="0" z="0" index="101" color="#b2ff00">Left Cerebrum/*/Superior Temporal Gyrus/Gray Matter/BA38</label>
+  <label x="48" y="83" z="17" index="102" color="#0000c0">Left Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/BA11</label>
+  <label x="41" y="78" z="17" index="103" color="#9aff00">Right Cerebrum/*/Orbital Gyrus/Gray Matter/BA11</label>
   <label x="0" y="0" z="0" index="104" color="#ff8600">*/Frontal Lobe/Orbital Gyrus/*/*</label>
   <label x="52" y="84" z="16" index="105" color="#c5ff00">Left Cerebrum/Frontal Lobe/Orbital Gyrus/*/*</label>
   <label x="47" y="79" z="18" index="106" color="#96ff00">Left Cerebrum/Frontal Lobe/*/*/*</label>
   <label x="44" y="84" z="17" index="107" color="#00ff00">Inter-Hemispheric/*/*/*/*</label>
   <label x="35" y="75" z="19" index="108" color="#ffdd00">Right Cerebrum/Frontal Lobe/*/*/*</label>
-  <label x="41" y="83" z="17" index="109" color="#0000fd">Right Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="41" y="83" z="17" index="109" color="#0000fd">Right Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/BA11</label>
   <label x="37" y="84" z="16" index="110" color="#ff8000">Right Cerebrum/Frontal Lobe/Orbital Gyrus/*/*</label>
   <label x="52" y="81" z="17" index="111" color="#ffba00">*/*/Orbital Gyrus/*/*</label>
   <label x="48" y="85" z="18" index="112" color="#000083">Left Cerebrum/Frontal Lobe/Orbital Gyrus/White Matter/*</label>
@@ -133,37 +133,37 @@
   <label x="0" y="0" z="0" index="120" color="#090084">Left Cerebellum/Posterior Lobe/Culmen/Gray Matter/*</label>
   <label x="74" y="60" z="20" index="121" color="#ff6c00">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/*/*</label>
   <label x="12" y="54" z="20" index="122" color="#0000ea">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/*/*</label>
-  <label x="72" y="60" z="21" index="123" color="#00f707">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 20</label>
-  <label x="13" y="54" z="20" index="124" color="#00708e">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="72" y="60" z="21" index="123" color="#00f707">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA20</label>
+  <label x="13" y="54" z="20" index="124" color="#00708e">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA20</label>
   <label x="63" y="49" z="21" index="125" color="#0000dd">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/*/*</label>
   <label x="26" y="49" z="21" index="126" color="#0049b5">*/Limbic Lobe/Parahippocampal Gyrus/*/*</label>
   <label x="25" y="49" z="21" index="127" color="#001de1">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/*/*</label>
   <label x="68" y="37" z="27" index="128" color="#e600f2">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/White Matter/*</label>
-  <label x="61" y="50" z="21" index="129" color="#000099">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 36</label>
-  <label x="29" y="55" z="20" index="130" color="#0000fb">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 36</label>
+  <label x="61" y="50" z="21" index="129" color="#000099">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA36</label>
+  <label x="29" y="55" z="20" index="130" color="#0000fb">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA36</label>
   <label x="16" y="55" z="21" index="131" color="#008678">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/White Matter/*</label>
   <label x="0" y="0" z="0" index="132" color="#4b00a5">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/*/*</label>
   <label x="62" y="51" z="25" index="133" color="#ffc700">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/White Matter/*</label>
   <label x="27" y="52" z="24" index="134" color="#ff3300">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/White Matter/*</label>
-  <label x="0" y="0" z="0" index="135" color="#0000ef">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 20</label>
-  <label x="64" y="52" z="21" index="136" color="#010080">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 36</label>
+  <label x="0" y="0" z="0" index="135" color="#0000ef">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/Gray Matter/BA20</label>
+  <label x="64" y="52" z="21" index="136" color="#010080">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA36</label>
   <label x="0" y="0" z="0" index="137" color="#fff500">Left Cerebrum/Limbic Lobe/Fusiform Gyrus/White Matter/*</label>
   <label x="25" y="53" z="21" index="138" color="#00e519">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/White Matter/*</label>
   <label x="0" y="0" z="0" index="139" color="#8600c2">*/*/Fusiform Gyrus/*/*</label>
-  <label x="54" y="57" z="20" index="140" color="#9d00ce">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 35</label>
-  <label x="31" y="55" z="21" index="141" color="#00fa04">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 35</label>
-  <label x="49" y="73" z="20" index="142" color="#ffbb00">Left Cerebrum/Frontal Lobe/Rectal Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="54" y="57" z="20" index="140" color="#9d00ce">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA35</label>
+  <label x="31" y="55" z="21" index="141" color="#00fa04">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA35</label>
+  <label x="49" y="73" z="20" index="142" color="#ffbb00">Left Cerebrum/Frontal Lobe/Rectal Gyrus/Gray Matter/BA11</label>
   <label x="46" y="89" z="18" index="143" color="#00bd41">Left Cerebrum/Frontal Lobe/Rectal Gyrus/*/*</label>
   <label x="43" y="88" z="18" index="144" color="#1d008e">Right Cerebrum/Frontal Lobe/Rectal Gyrus/*/*</label>
-  <label x="40" y="73" z="20" index="145" color="#8bff00">Right Cerebrum/Frontal Lobe/Rectal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="52" y="73" z="19" index="146" color="#0000a6">Left Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="36" y="73" z="19" index="147" color="#ff2a00">Right Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/Brodmann area 47</label>
+  <label x="40" y="73" z="20" index="145" color="#8bff00">Right Cerebrum/Frontal Lobe/Rectal Gyrus/Gray Matter/BA11</label>
+  <label x="52" y="73" z="19" index="146" color="#0000a6">Left Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/BA47</label>
+  <label x="36" y="73" z="19" index="147" color="#ff2a00">Right Cerebrum/Frontal Lobe/Orbital Gyrus/Gray Matter/BA47</label>
   <label x="48" y="76" z="22" index="148" color="#ff1f00">Left Cerebrum/Frontal Lobe/Rectal Gyrus/White Matter/*</label>
   <label x="41" y="85" z="19" index="149" color="#000084">Right Cerebrum/Frontal Lobe/Rectal Gyrus/White Matter/*</label>
   <label x="45" y="75" z="19" index="150" color="#7a00bc">Inter-Hemispheric/*/Rectal Gyrus/*/*</label>
   <label x="58" y="95" z="25" index="151" color="#ff3200">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/*/*</label>
-  <label x="54" y="95" z="25" index="152" color="#120088">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="35" y="95" z="25" index="153" color="#0000cd">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="54" y="95" z="25" index="152" color="#120088">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA11</label>
+  <label x="35" y="95" z="25" index="153" color="#0000cd">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA11</label>
   <label x="34" y="87" z="18" index="154" color="#0000a5">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/*/*</label>
   <label x="54" y="90" z="46" index="155" color="#6aff00">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/White Matter/*</label>
   <label x="36" y="88" z="51" index="156" color="#ff5600">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/White Matter/*</label>
@@ -176,148 +176,148 @@
   <label x="39" y="31" z="24" index="163" color="#5000a7">Right Cerebellum/Anterior Lobe/Fastigium/Gray Matter/*</label>
   <label x="36" y="31" z="25" index="164" color="#ff3000">Right Cerebellum/Posterior Lobe/*/Gray Matter/Dentate</label>
   <label x="48" y="32" z="25" index="165" color="#00a45a">Left Cerebellum/Anterior Lobe/Fastigium/Gray Matter/*</label>
-  <label x="20" y="43" z="23" index="166" color="#9c00cd">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 36</label>
-  <label x="0" y="0" z="0" index="167" color="#f000f7">Right Cerebrum/*/Fusiform Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="20" y="43" z="23" index="166" color="#9c00cd">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA36</label>
+  <label x="0" y="0" z="0" index="167" color="#f000f7">Right Cerebrum/*/Fusiform Gyrus/Gray Matter/BA20</label>
   <label x="73" y="42" z="24" index="168" color="#5bff00">*/Temporal Lobe/Fusiform Gyrus/*/*</label>
-  <label x="56" y="52" z="23" index="169" color="#009866">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 28</label>
-  <label x="32" y="53" z="23" index="170" color="#002ad4">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 28</label>
-  <label x="64" y="53" z="23" index="171" color="#ff7f00">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 20</label>
-  <label x="24" y="53" z="23" index="172" color="#ddff00">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 20</label>
+  <label x="56" y="52" z="23" index="169" color="#009866">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA28</label>
+  <label x="32" y="53" z="23" index="170" color="#002ad4">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA28</label>
+  <label x="64" y="53" z="23" index="171" color="#ff7f00">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA20</label>
+  <label x="24" y="53" z="23" index="172" color="#ddff00">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA20</label>
   <label x="52" y="46" z="45" index="173" color="#009668">Left Cerebrum/Sub-lobar/Lateral Ventricle/Cerebro-Spinal Fluid/*</label>
   <label x="35" y="45" z="44" index="174" color="#00ad51">Right Cerebrum/Sub-lobar/Lateral Ventricle/Cerebro-Spinal Fluid/*</label>
   <label x="60" y="54" z="28" index="175" color="#2e0096">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Hippocampus</label>
   <label x="28" y="55" z="26" index="176" color="#d400e9">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Hippocampus</label>
-  <label x="53" y="58" z="25" index="177" color="#000086">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="36" y="58" z="23" index="178" color="#e000ef">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="52" y="60" z="22" index="179" color="#c4ff00">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 34</label>
-  <label x="36" y="59" z="22" index="180" color="#24ff00">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Brodmann area 34</label>
+  <label x="53" y="58" z="25" index="177" color="#000086">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA34</label>
+  <label x="36" y="58" z="23" index="178" color="#e000ef">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA34</label>
+  <label x="52" y="60" z="22" index="179" color="#c4ff00">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA34</label>
+  <label x="36" y="59" z="22" index="180" color="#24ff00">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/BA34</label>
   <label x="56" y="61" z="23" index="181" color="#320098">Left Cerebrum/Limbic Lobe/Uncus/Gray Matter/Amygdala</label>
   <label x="31" y="61" z="23" index="182" color="#000096">Right Cerebrum/Limbic Lobe/Uncus/Gray Matter/Amygdala</label>
   <label x="31" y="60" z="26" index="183" color="#ff5200">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Amygdala</label>
   <label x="78" y="69" z="46" index="184" color="#ff4c00">*/*/Inferior Frontal Gyrus/*/*</label>
-  <label x="56" y="69" z="24" index="185" color="#002cd2">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 47</label>
+  <label x="56" y="69" z="24" index="185" color="#002cd2">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA47</label>
   <label x="59" y="76" z="22" index="186" color="#dcff00">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/*/*</label>
   <label x="14" y="77" z="30" index="187" color="#0010ee">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/*/*</label>
-  <label x="36" y="71" z="23" index="188" color="#6d00b6">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 47</label>
+  <label x="36" y="71" z="23" index="188" color="#6d00b6">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA47</label>
   <label x="67" y="79" z="35" index="189" color="#0000ad">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/White Matter/*</label>
   <label x="22" y="80" z="35" index="190" color="#5800ab">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/White Matter/*</label>
-  <label x="56" y="76" z="22" index="191" color="#004bb3">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="34" y="75" z="21" index="192" color="#0000e3">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="56" y="76" z="22" index="191" color="#004bb3">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA11</label>
+  <label x="34" y="75" z="21" index="192" color="#0000e3">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA11</label>
   <label x="58" y="62" z="53" index="193" color="#00009a">Left Cerebrum/Frontal Lobe/Sub-Gyral/White Matter/*</label>
   <label x="29" y="56" z="53" index="194" color="#00ab53">Right Cerebrum/Frontal Lobe/Sub-Gyral/White Matter/*</label>
   <label x="64" y="86" z="28" index="195" color="#da00ec">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/White Matter/*</label>
   <label x="25" y="86" z="28" index="196" color="#a5ff00">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/White Matter/*</label>
-  <label x="59" y="83" z="25" index="197" color="#240091">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="28" y="83" z="24" index="198" color="#ff3a00">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 11</label>
+  <label x="59" y="83" z="25" index="197" color="#240091">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA11</label>
+  <label x="28" y="83" z="24" index="198" color="#ff3a00">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA11</label>
   <label x="25" y="65" z="67" index="199" color="#6200b0">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="200" color="#5600aa">Right Cerebrum/*/Orbital Gyrus/*/*</label>
   <label x="43" y="92" z="20" index="201" color="#2aff00">Right Cerebrum/*/Superior Frontal Gyrus/*/*</label>
   <label x="56" y="14" z="28" index="202" color="#00d628">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/*/*</label>
-  <label x="57" y="14" z="28" index="203" color="#92ff00">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="57" y="14" z="28" index="203" color="#92ff00">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA18</label>
   <label x="30" y="14" z="28" index="204" color="#0000e1">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/*/*</label>
-  <label x="29" y="18" z="27" index="205" color="#00009d">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="29" y="18" z="27" index="205" color="#00009d">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA18</label>
   <label x="64" y="24" z="30" index="206" color="#290094">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/White Matter/*</label>
   <label x="29" y="22" z="30" index="207" color="#0000de">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/White Matter/*</label>
-  <label x="71" y="36" z="27" index="208" color="#9fff00">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="18" y="33" z="27" index="209" color="#4cff00">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="71" y="36" z="27" index="208" color="#9fff00">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA37</label>
+  <label x="18" y="33" z="27" index="209" color="#4cff00">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA37</label>
   <label x="0" y="0" z="0" index="210" color="#e2ff00">Right Cerebrum/*/Fusiform Gyrus/*/*</label>
   <label x="46" y="40" z="29" index="211" color="#fdff00">Left Cerebellum/Anterior Lobe/Cerebellar Lingual/Gray Matter/*</label>
   <label x="42" y="40" z="29" index="212" color="#07ff00">Right Cerebellum/Anterior Lobe/Cerebellar Lingual/Gray Matter/*</label>
-  <label x="74" y="32" z="32" index="213" color="#b500da">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="15" y="39" z="26" index="214" color="#ff9700">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="74" y="32" z="32" index="213" color="#b500da">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA37</label>
+  <label x="15" y="39" z="26" index="214" color="#ff9700">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA37</label>
   <label x="47" y="51" z="27" index="215" color="#7fff00">Left Brainstem/Midbrain/*/*/*</label>
   <label x="41" y="49" z="28" index="216" color="#5500aa">Right Brainstem/Midbrain/*/*/*</label>
-  <label x="0" y="0" z="0" index="217" color="#ff9100">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 20</label>
-  <label x="24" y="48" z="25" index="218" color="#000084">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 20</label>
+  <label x="0" y="0" z="0" index="217" color="#ff9100">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA20</label>
+  <label x="24" y="48" z="25" index="218" color="#000084">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA20</label>
   <label x="55" y="60" z="26" index="219" color="#76ff00">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Amygdala</label>
   <label x="43" y="63" z="24" index="220" color="#0000bc">*/*/*/White Matter/*</label>
-  <label x="28" y="65" z="24" index="221" color="#0000da">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 38</label>
-  <label x="0" y="0" z="0" index="222" color="#ffc300">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 38</label>
+  <label x="28" y="65" z="24" index="221" color="#0000da">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA38</label>
+  <label x="0" y="0" z="0" index="222" color="#ffc300">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA38</label>
   <label x="45" y="92" z="22" index="223" color="#ff1e00">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/*/*</label>
   <label x="38" y="96" z="22" index="224" color="#eeff00">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/*/*</label>
   <label x="67" y="74" z="25" index="225" color="#fff700">Left Cerebrum/Frontal Lobe/Superior Temporal Gyrus/*/*</label>
-  <label x="46" y="78" z="23" index="226" color="#00a05e">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 25</label>
-  <label x="38" y="77" z="23" index="227" color="#8e00c6">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 25</label>
+  <label x="46" y="78" z="23" index="226" color="#00a05e">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA25</label>
+  <label x="38" y="77" z="23" index="227" color="#8e00c6">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA25</label>
   <label x="22" y="73" z="24" index="228" color="#7c00bd">Right Cerebrum/Frontal Lobe/Superior Temporal Gyrus/*/*</label>
   <label x="26" y="66" z="26" index="229" color="#006a94">Right Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/*/*</label>
   <label x="49" y="64" z="65" index="230" color="#0000ac">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/White Matter/*</label>
   <label x="39" y="89" z="42" index="231" color="#00be40">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/White Matter/*</label>
   <label x="65" y="69" z="26" index="232" color="#6e00b6">Left Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/*/*</label>
   <label x="60" y="79" z="23" index="233" color="#0000d3">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="234" color="#0013eb">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 25</label>
-  <label x="47" y="93" z="23" index="235" color="#ff7c00">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="42" y="93" z="23" index="236" color="#0039c5">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="37" y="79" z="23" index="237" color="#0000de">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 25</label>
+  <label x="0" y="0" z="0" index="234" color="#0013eb">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA25</label>
+  <label x="47" y="93" z="23" index="235" color="#ff7c00">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA11</label>
+  <label x="42" y="93" z="23" index="236" color="#0039c5">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA11</label>
+  <label x="37" y="79" z="23" index="237" color="#0000de">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA25</label>
   <label x="51" y="24" z="33" index="238" color="#b5ff00">Left Cerebrum/Occipital Lobe/Lingual Gyrus/*/*</label>
   <label x="45" y="24" z="34" index="239" color="#ff7800">*/*/Lingual Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="240" color="#0022dc">*/Occipital Lobe/*/*/*</label>
   <label x="0" y="0" z="0" index="241" color="#6400b1">*/Occipital Lobe/Lingual Gyrus/*/*</label>
-  <label x="54" y="12" z="33" index="242" color="#00718d">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 17</label>
+  <label x="54" y="12" z="33" index="242" color="#00718d">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA17 V1</label>
   <label x="42" y="12" z="30" index="243" color="#ffe900">Inter-Hemispheric/Occipital Lobe/Lingual Gyrus/*/*</label>
   <label x="43" y="22" z="35" index="244" color="#0043bb">Right Cerebrum/Occipital Lobe/Lingual Gyrus/*/*</label>
-  <label x="34" y="12" z="33" index="245" color="#dd00ee">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 17</label>
+  <label x="34" y="12" z="33" index="245" color="#dd00ee">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA17 V1</label>
   <label x="59" y="25" z="29" index="246" color="#0000dc">Left Cerebrum/Occipital Lobe/*/*/*</label>
-  <label x="52" y="22" z="33" index="247" color="#0000b6">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="52" y="22" z="33" index="247" color="#0000b6">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA18</label>
   <label x="29" y="26" z="29" index="248" color="#00c737">Right Cerebrum/Occipital Lobe/*/*/*</label>
-  <label x="32" y="26" z="32" index="249" color="#01ff00">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 18</label>
-  <label x="62" y="19" z="31" index="250" color="#ff5b00">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="32" y="26" z="32" index="249" color="#01ff00">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA18</label>
+  <label x="62" y="19" z="31" index="250" color="#ff5b00">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA18</label>
   <label x="59" y="18" z="30" index="251" color="#00bb43">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/*/*</label>
   <label x="51" y="19" z="36" index="252" color="#ff2400">Left Cerebrum/Occipital Lobe/Lingual Gyrus/White Matter/*</label>
   <label x="37" y="19" z="36" index="253" color="#000082">Right Cerebrum/Occipital Lobe/Lingual Gyrus/White Matter/*</label>
-  <label x="21" y="20" z="29" index="254" color="#ffa000">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="21" y="20" z="29" index="254" color="#ffa000">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA18</label>
   <label x="60" y="17" z="35" index="255" color="#ff1b00">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/White Matter/*</label>
   <label x="26" y="16" z="35" index="256" color="#3e009e">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/White Matter/*</label>
   <label x="20" y="20" z="29" index="257" color="#ff6300">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/*/*</label>
-  <label x="57" y="23" z="29" index="258" color="#4eff00">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="26" y="21" z="29" index="259" color="#c3ff00">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="57" y="23" z="29" index="258" color="#4eff00">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA19</label>
+  <label x="26" y="21" z="29" index="259" color="#c3ff00">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA19</label>
   <label x="68" y="19" z="30" index="260" color="#0000c5">*/*/Inferior Occipital Gyrus/*/*</label>
   <label x="68" y="20" z="30" index="261" color="#008b73">Left Cerebrum/*/Inferior Occipital Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="262" color="#bbff00">Right Cerebrum/*/Inferior Occipital Gyrus/*/*</label>
-  <label x="33" y="22" z="29" index="263" color="#0000ae">Right Cerebrum/Occipital Lobe/*/Gray Matter/Brodmann area 19</label>
-  <label x="56" y="23" z="29" index="264" color="#c7ff00">Left Cerebrum/Occipital Lobe/*/Gray Matter/Brodmann area 19</label>
-  <label x="70" y="26" z="30" index="265" color="#0000e7">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="19" y="25" z="29" index="266" color="#4aff00">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="60" y="38" z="28" index="267" color="#b300d9">Left Cerebrum/Temporal Lobe/*/Gray Matter/Brodmann area 37</label>
-  <label x="30" y="41" z="28" index="268" color="#33ff00">Right Cerebrum/Temporal Lobe/*/Gray Matter/Brodmann area 37</label>
-  <label x="75" y="30" z="39" index="269" color="#00ae50">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="59" y="41" z="30" index="270" color="#ffef00">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="29" y="44" z="28" index="271" color="#0000b1">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="35" y="54" z="27" index="272" color="#00008a">Right Cerebrum/Limbic Lobe/*/Gray Matter/Brodmann area 35</label>
+  <label x="33" y="22" z="29" index="263" color="#0000ae">Right Cerebrum/Occipital Lobe/*/Gray Matter/BA19</label>
+  <label x="56" y="23" z="29" index="264" color="#c7ff00">Left Cerebrum/Occipital Lobe/*/Gray Matter/BA19</label>
+  <label x="70" y="26" z="30" index="265" color="#0000e7">Left Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA19</label>
+  <label x="19" y="25" z="29" index="266" color="#4aff00">Right Cerebrum/Temporal Lobe/Fusiform Gyrus/Gray Matter/BA19</label>
+  <label x="60" y="38" z="28" index="267" color="#b300d9">Left Cerebrum/Temporal Lobe/*/Gray Matter/BA37</label>
+  <label x="30" y="41" z="28" index="268" color="#33ff00">Right Cerebrum/Temporal Lobe/*/Gray Matter/BA37</label>
+  <label x="75" y="30" z="39" index="269" color="#00ae50">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA37</label>
+  <label x="59" y="41" z="30" index="270" color="#ffef00">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA37</label>
+  <label x="29" y="44" z="28" index="271" color="#0000b1">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA37</label>
+  <label x="35" y="54" z="27" index="272" color="#00008a">Right Cerebrum/Limbic Lobe/*/Gray Matter/BA35</label>
   <label x="41" y="62" z="27" index="273" color="#c8ff00">*/*/*/White Matter/Optic Tract</label>
   <label x="46" y="62" z="27" index="274" color="#a4ff00">*/*/*/Gray Matter/Hypothalamus</label>
-  <label x="19" y="63" z="28" index="275" color="#c300e1">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 21</label>
-  <label x="18" y="64" z="26" index="276" color="#0000d8">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 21</label>
+  <label x="19" y="63" z="28" index="275" color="#c300e1">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA21</label>
+  <label x="18" y="64" z="26" index="276" color="#0000d8">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA21</label>
   <label x="45" y="68" z="26" index="277" color="#b4ff00">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/*/*</label>
   <label x="44" y="66" z="26" index="278" color="#64ff00">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="279" color="#060082">Left Cerebrum/Limbic Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="48" y="65" z="27" index="280" color="#0000b6">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="46" y="66" z="27" index="281" color="#66ff00">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 25</label>
-  <label x="42" y="66" z="26" index="282" color="#d600ea">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 25</label>
-  <label x="30" y="65" z="26" index="283" color="#9f00cf">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 34</label>
+  <label x="0" y="0" z="0" index="279" color="#060082">Left Cerebrum/Limbic Lobe/Subcallosal Gyrus/Gray Matter/BA34</label>
+  <label x="48" y="65" z="27" index="280" color="#0000b6">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA34</label>
+  <label x="46" y="66" z="27" index="281" color="#66ff00">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA25</label>
+  <label x="42" y="66" z="26" index="282" color="#d600ea">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA25</label>
+  <label x="30" y="65" z="26" index="283" color="#9f00cf">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA34</label>
   <label x="32" y="65" z="28" index="284" color="#ba00dc">Right Cerebrum/Limbic Lobe/Subcallosal Gyrus/*/*</label>
-  <label x="31" y="65" z="28" index="285" color="#ffe100">Right Cerebrum/Limbic Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="71" y="60" z="29" index="286" color="#04ff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 21</label>
-  <label x="0" y="0" z="0" index="287" color="#ff2c00">Left Cerebrum/Temporal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 34</label>
-  <label x="64" y="68" z="26" index="288" color="#0000b2">Left Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 13</label>
+  <label x="31" y="65" z="28" index="285" color="#ffe100">Right Cerebrum/Limbic Lobe/Subcallosal Gyrus/Gray Matter/BA34</label>
+  <label x="71" y="60" z="29" index="286" color="#04ff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA21</label>
+  <label x="0" y="0" z="0" index="287" color="#ff2c00">Left Cerebrum/Temporal Lobe/Subcallosal Gyrus/Gray Matter/BA34</label>
+  <label x="64" y="68" z="26" index="288" color="#0000b2">Left Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/Gray Matter/BA13</label>
   <label x="61" y="66" z="27" index="289" color="#03ff00">Left Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/White Matter/*</label>
   <label x="49" y="68" z="27" index="290" color="#0000ec">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/White Matter/*</label>
   <label x="40" y="67" z="27" index="291" color="#efff00">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/White Matter/*</label>
-  <label x="27" y="66" z="26" index="292" color="#00e915">Right Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 13</label>
+  <label x="27" y="66" z="26" index="292" color="#00e915">Right Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/Gray Matter/BA13</label>
   <label x="28" y="66" z="26" index="293" color="#0041bd">Right Cerebrum/Temporal Lobe/Inferior Frontal Gyrus/White Matter/*</label>
-  <label x="63" y="68" z="26" index="294" color="#ac00d5">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="25" y="69" z="26" index="295" color="#00008d">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="53" y="70" z="26" index="296" color="#4400a1">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="35" y="70" z="26" index="297" color="#ff2900">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="53" y="71" z="26" index="298" color="#007a84">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="34" y="71" z="26" index="299" color="#ffb600">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="49" y="75" z="26" index="300" color="#05ff00">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="39" y="75" z="26" index="301" color="#aeff00">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/Brodmann area 11</label>
-  <label x="16" y="86" z="29" index="302" color="#ffd400">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="56" y="12" z="32" index="303" color="#00df1f">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 17</label>
-  <label x="0" y="0" z="0" index="304" color="#00c43a">Right Cerebrum/*/*/Gray Matter/Brodmann area 18</label>
-  <label x="30" y="12" z="32" index="305" color="#0000c9">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 17</label>
-  <label x="61" y="14" z="39" index="306" color="#0000fa">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 18</label>
-  <label x="26" y="18" z="38" index="307" color="#0000c4">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="63" y="68" z="26" index="294" color="#ac00d5">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA13</label>
+  <label x="25" y="69" z="26" index="295" color="#00008d">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA13</label>
+  <label x="53" y="70" z="26" index="296" color="#4400a1">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA13</label>
+  <label x="35" y="70" z="26" index="297" color="#ff2900">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA13</label>
+  <label x="53" y="71" z="26" index="298" color="#007a84">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA47</label>
+  <label x="34" y="71" z="26" index="299" color="#ffb600">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA47</label>
+  <label x="49" y="75" z="26" index="300" color="#05ff00">Left Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA11</label>
+  <label x="39" y="75" z="26" index="301" color="#aeff00">Right Cerebrum/Frontal Lobe/Subcallosal Gyrus/Gray Matter/BA11</label>
+  <label x="16" y="86" z="29" index="302" color="#ffd400">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA47</label>
+  <label x="56" y="12" z="32" index="303" color="#00df1f">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA17 V1</label>
+  <label x="0" y="0" z="0" index="304" color="#00c43a">Right Cerebrum/*/*/Gray Matter/BA18</label>
+  <label x="30" y="12" z="32" index="305" color="#0000c9">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA17 V1</label>
+  <label x="61" y="14" z="39" index="306" color="#0000fa">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA18</label>
+  <label x="26" y="18" z="38" index="307" color="#0000c4">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA18</label>
   <label x="61" y="23" z="41" index="308" color="#0000f1">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/White Matter/*</label>
   <label x="19" y="27" z="33" index="309" color="#99ff00">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/White Matter/*</label>
   <label x="75" y="29" z="31" index="310" color="#ff1700">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/*/*</label>
@@ -325,26 +325,26 @@
   <label x="53" y="26" z="31" index="312" color="#ff7400">Left Cerebrum/Occipital Lobe/Sub-Gyral/*/*</label>
   <label x="37" y="25" z="31" index="313" color="#7800bb">Right Cerebrum/*/Sub-Gyral/*/*</label>
   <label x="34" y="28" z="31" index="314" color="#dc00ed">Right Cerebrum/Occipital Lobe/Sub-Gyral/*/*</label>
-  <label x="70" y="20" z="39" index="315" color="#00c03e">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="16" y="23" z="38" index="316" color="#0c0085">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="70" y="20" z="39" index="315" color="#00c03e">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA19</label>
+  <label x="16" y="23" z="38" index="316" color="#0c0085">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA19</label>
   <label x="75" y="28" z="31" index="317" color="#00009b">*/*/Middle Occipital Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="318" color="#0000a1">Right Cerebrum/*/Lingual Gyrus/*/*</label>
   <label x="65" y="32" z="33" index="319" color="#ff6700">Left Cerebrum/Occipital Lobe/Sub-Gyral/White Matter/*</label>
   <label x="24" y="30" z="32" index="320" color="#00b04e">Right Cerebrum/Occipital Lobe/Sub-Gyral/White Matter/*</label>
   <label x="45" y="28" z="31" index="321" color="#008a74">Left Cerebellum/Anterior Lobe/Culmen of Vermis/Gray Matter/*</label>
   <label x="44" y="28" z="31" index="322" color="#00b549">Right Cerebellum/Anterior Lobe/Culmen of Vermis/Gray Matter/*</label>
-  <label x="71" y="29" z="32" index="323" color="#ff0600">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="13" y="29" z="31" index="324" color="#c9ff00">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="71" y="29" z="32" index="323" color="#ff0600">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA37</label>
+  <label x="13" y="29" z="31" index="324" color="#c9ff00">Right Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/BA37</label>
   <label x="13" y="30" z="33" index="325" color="#ffb200">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/*/*</label>
   <label x="71" y="31" z="31" index="326" color="#31ff00">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/White Matter/*</label>
   <label x="19" y="26" z="37" index="327" color="#ff4200">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/White Matter/*</label>
-  <label x="13" y="30" z="39" index="328" color="#27ff00">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="63" y="42" z="30" index="329" color="#c400e1">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="27" y="39" z="30" index="330" color="#0000e1">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="0" y="0" z="0" index="331" color="#15ff00">Right Cerebrum/Occipital Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="69" y="38" z="31" index="332" color="#00009c">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 37</label>
-  <label x="19" y="38" z="30" index="333" color="#2d0096">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 37</label>
-  <label x="0" y="0" z="0" index="334" color="#0037c7">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="13" y="30" z="39" index="328" color="#27ff00">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA37</label>
+  <label x="63" y="42" z="30" index="329" color="#c400e1">Left Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA37</label>
+  <label x="27" y="39" z="30" index="330" color="#0000e1">Right Cerebrum/Occipital Lobe/Fusiform Gyrus/Gray Matter/BA37</label>
+  <label x="0" y="0" z="0" index="331" color="#15ff00">Right Cerebrum/Occipital Lobe/Parahippocampal Gyrus/Gray Matter/BA37</label>
+  <label x="69" y="38" z="31" index="332" color="#00009c">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA37</label>
+  <label x="19" y="38" z="30" index="333" color="#2d0096">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA37</label>
+  <label x="0" y="0" z="0" index="334" color="#0037c7">Right Cerebrum/Limbic Lobe/Fusiform Gyrus/Gray Matter/BA37</label>
   <label x="37" y="44" z="32" index="335" color="#ff2500">Right Cerebrum/Limbic Lobe/Sub-Gyral/*/*</label>
   <label x="51" y="44" z="32" index="336" color="#18ff00">Left Cerebrum/Limbic Lobe/Sub-Gyral/*/*</label>
   <label x="61" y="47" z="30" index="337" color="#ffb000">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Hippocampus</label>
@@ -355,14 +355,14 @@
   <label x="39" y="54" z="30" index="342" color="#000df1">Right Brainstem/Midbrain/*/Gray Matter/Substantia Nigra</label>
   <label x="47" y="53" z="32" index="343" color="#0eff00">Left Brainstem/Midbrain/*/Gray Matter/Red Nucleus</label>
   <label x="42" y="52" z="32" index="344" color="#00a856">Right Brainstem/Midbrain/*/Gray Matter/Red Nucleus</label>
-  <label x="0" y="0" z="0" index="345" color="#00e21c">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 28</label>
+  <label x="0" y="0" z="0" index="345" color="#00e21c">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA28</label>
   <label x="32" y="53" z="31" index="346" color="#0000e5">Right Cerebrum/Limbic Lobe/*/White Matter/*</label>
   <label x="56" y="59" z="45" index="347" color="#29ff00">Left Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/*</label>
   <label x="32" y="59" z="45" index="348" color="#00bf3f">Right Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/*</label>
   <label x="0" y="0" z="0" index="349" color="#fa00fc">Left Cerebrum/Temporal Lobe/*/Gray Matter/Caudate Tail</label>
   <label x="25" y="55" z="29" index="350" color="#ff8100">Right Cerebrum/Temporal Lobe/Caudate/Gray Matter/Caudate Tail</label>
   <label x="63" y="49" z="32" index="351" color="#1f008f">Left Cerebrum/Temporal Lobe/Caudate/Gray Matter/Caudate Tail</label>
-  <label x="65" y="57" z="29" index="352" color="#ffa800">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 21</label>
+  <label x="65" y="57" z="29" index="352" color="#ffa800">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA21</label>
   <label x="60" y="57" z="31" index="353" color="#0031cd">Left Cerebrum/Temporal Lobe/Extra-Nuclear/White Matter/*</label>
   <label x="46" y="57" z="29" index="354" color="#7f00bf">Left Brainstem/Midbrain/*/Gray Matter/Mammillary Body</label>
   <label x="43" y="57" z="29" index="355" color="#220090">Right Brainstem/Midbrain/*/Gray Matter/Mammillary Body</label>
@@ -375,23 +375,23 @@
   <label x="45" y="60" z="29" index="362" color="#002fcf">Left Cerebrum/Sub-lobar/Third Ventricle/Cerebro-Spinal Fluid/*</label>
   <label x="46" y="60" z="29" index="363" color="#004db1">Left Cerebrum/Sub-lobar/*/Gray Matter/Hypothalamus</label>
   <label x="42" y="61" z="29" index="364" color="#ea00f4">Right Cerebrum/Sub-lobar/*/Gray Matter/Hypothalamus</label>
-  <label x="67" y="64" z="29" index="365" color="#cbff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="67" y="63" z="29" index="366" color="#9600ca">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 13</label>
-  <label x="23" y="51" z="38" index="367" color="#6500b2">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="21" y="64" z="29" index="368" color="#0000c6">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 13</label>
-  <label x="60" y="71" z="28" index="369" color="#0000dc">Left Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/Brodmann area 13</label>
+  <label x="67" y="64" z="29" index="365" color="#cbff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA13</label>
+  <label x="67" y="63" z="29" index="366" color="#9600ca">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA13</label>
+  <label x="23" y="51" z="38" index="367" color="#6500b2">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA13</label>
+  <label x="21" y="64" z="29" index="368" color="#0000c6">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA13</label>
+  <label x="60" y="71" z="28" index="369" color="#0000dc">Left Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/BA13</label>
   <label x="52" y="38" z="42" index="370" color="#0038c6">Left Cerebrum/Limbic Lobe/Extra-Nuclear/White Matter/*</label>
   <label x="49" y="83" z="36" index="371" color="#0000f2">Left Cerebrum/Limbic Lobe/Anterior Cingulate/White Matter/*</label>
   <label x="45" y="84" z="27" index="372" color="#fbff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/*/*</label>
   <label x="42" y="84" z="27" index="373" color="#ffc800">Right Cerebrum/Limbic Lobe/Anterior Cingulate/*/*</label>
   <label x="39" y="83" z="36" index="374" color="#0058a6">Right Cerebrum/Limbic Lobe/Anterior Cingulate/White Matter/*</label>
   <label x="41" y="68" z="29" index="375" color="#5f00af">Right Cerebrum/Limbic Lobe/Extra-Nuclear/White Matter/*</label>
-  <label x="23" y="68" z="28" index="376" color="#0032cc">Right Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/Brodmann area 13</label>
+  <label x="23" y="68" z="28" index="376" color="#0032cc">Right Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/BA13</label>
   <label x="66" y="68" z="29" index="377" color="#0000cb">Left Cerebrum/Temporal Lobe/Sub-Gyral/*/*</label>
   <label x="62" y="71" z="28" index="378" color="#0047b7">Left Cerebrum/Sub-lobar/Extra-Nuclear/*/*</label>
   <label x="56" y="67" z="35" index="379" color="#280093">Left Cerebrum/Sub-lobar/Lentiform Nucleus/Gray Matter/Putamen</label>
-  <label x="46" y="69" z="28" index="380" color="#b0ff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 25</label>
-  <label x="42" y="69" z="28" index="381" color="#cd00e6">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 25</label>
+  <label x="46" y="69" z="28" index="380" color="#b0ff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA25</label>
+  <label x="42" y="69" z="28" index="381" color="#cd00e6">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA25</label>
   <label x="32" y="65" z="37" index="382" color="#e6ff00">Right Cerebrum/Sub-lobar/Lentiform Nucleus/Gray Matter/Putamen</label>
   <label x="22" y="67" z="28" index="383" color="#44ff00">Right Cerebrum/Sub-lobar/Extra-Nuclear/*/*</label>
   <label x="21" y="67" z="28" index="384" color="#0000bd">Right Cerebrum/Temporal Lobe/Sub-Gyral/*/*</label>
@@ -402,48 +402,48 @@
   <label x="0" y="0" z="0" index="389" color="#20ff00">Right Cerebrum/Frontal Lobe/Sub-Gyral/*/*</label>
   <label x="65" y="70" z="29" index="390" color="#ffd000">Left Cerebrum/Frontal Lobe/Extra-Nuclear/*/*</label>
   <label x="0" y="0" z="0" index="391" color="#0000e5">Right Cerebrum/Frontal Lobe/Extra-Nuclear/*/*</label>
-  <label x="61" y="72" z="28" index="392" color="#0000f7">Left Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/Brodmann area 47</label>
-  <label x="27" y="72" z="28" index="393" color="#7000b7">Right Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/Brodmann area 47</label>
+  <label x="61" y="72" z="28" index="392" color="#0000f7">Left Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/BA47</label>
+  <label x="27" y="72" z="28" index="393" color="#7000b7">Right Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/BA47</label>
   <label x="72" y="70" z="34" index="394" color="#00bc42">Left Cerebrum/Frontal-Temporal Space/*/*/*</label>
-  <label x="46" y="87" z="36" index="395" color="#000097">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 32</label>
-  <label x="42" y="83" z="41" index="396" color="#040081">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 32</label>
+  <label x="46" y="87" z="36" index="395" color="#000097">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA32</label>
+  <label x="42" y="83" z="41" index="396" color="#040081">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA32</label>
   <label x="13" y="71" z="34" index="397" color="#0000f3">Right Cerebrum/Frontal-Temporal Space/*/*/*</label>
   <label x="0" y="0" z="0" index="398" color="#0053ab">Left Cerebrum/Frontal-Temporal Space/Inferior Frontal Gyrus/*/*</label>
-  <label x="60" y="73" z="28" index="399" color="#0000b5">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 47</label>
-  <label x="0" y="0" z="0" index="400" color="#00a559">Left Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/Brodmann area 13</label>
-  <label x="29" y="74" z="30" index="401" color="#ffbd00">Right Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/Brodmann area 47</label>
-  <label x="29" y="74" z="28" index="402" color="#0000c7">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 47</label>
+  <label x="60" y="73" z="28" index="399" color="#0000b5">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA47</label>
+  <label x="0" y="0" z="0" index="400" color="#00a559">Left Cerebrum/Frontal Lobe/Extra-Nuclear/Gray Matter/BA13</label>
+  <label x="29" y="74" z="30" index="401" color="#ffbd00">Right Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/BA47</label>
+  <label x="29" y="74" z="28" index="402" color="#0000c7">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA47</label>
   <label x="58" y="74" z="28" index="403" color="#0000cb">Left Cerebrum/Frontal Lobe/Extra-Nuclear/White Matter/*</label>
   <label x="33" y="74" z="28" index="404" color="#47ff00">Right Cerebrum/Frontal Lobe/Extra-Nuclear/White Matter/*</label>
-  <label x="51" y="80" z="28" index="405" color="#fffd00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 10</label>
-  <label x="47" y="90" z="38" index="406" color="#ff1300">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="38" y="81" z="28" index="407" color="#ff5f00">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 10</label>
-  <label x="42" y="90" z="38" index="408" color="#0000cd">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="72" y="86" z="27" index="409" color="#00906e">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="67" y="92" z="28" index="410" color="#0000e6">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="22" y="92" z="29" index="411" color="#003ec0">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="29" y="97" z="30" index="412" color="#eaff00">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="56" y="96" z="30" index="413" color="#bb00dd">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="68" y="18" z="34" index="414" color="#ffa900">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="19" y="19" z="34" index="415" color="#0007f7">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="51" y="80" z="28" index="405" color="#fffd00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA10</label>
+  <label x="47" y="90" z="38" index="406" color="#ff1300">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="38" y="81" z="28" index="407" color="#ff5f00">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA10</label>
+  <label x="42" y="90" z="38" index="408" color="#0000cd">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="72" y="86" z="27" index="409" color="#00906e">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA47</label>
+  <label x="67" y="92" z="28" index="410" color="#0000e6">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="22" y="92" z="29" index="411" color="#003ec0">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="29" y="97" z="30" index="412" color="#eaff00">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="56" y="96" z="30" index="413" color="#bb00dd">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="68" y="18" z="34" index="414" color="#ffa900">Left Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA19</label>
+  <label x="19" y="19" z="34" index="415" color="#0007f7">Right Cerebrum/Occipital Lobe/Inferior Occipital Gyrus/Gray Matter/BA19</label>
   <label x="42" y="26" z="35" index="416" color="#00b945">*/*/Sub-Gyral/*/*</label>
-  <label x="53" y="29" z="34" index="417" color="#ffb700">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="35" y="28" z="33" index="418" color="#2c0095">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="53" y="29" z="34" index="417" color="#ffb700">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA19</label>
+  <label x="35" y="28" z="33" index="418" color="#2c0095">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA19</label>
   <label x="73" y="32" z="33" index="419" color="#bfff00">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/*/*</label>
-  <label x="75" y="30" z="34" index="420" color="#b3ff00">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="72" y="33" z="33" index="421" color="#00d42a">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="16" y="33" z="33" index="422" color="#ffe200">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="15" y="31" z="33" index="423" color="#0018e6">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="75" y="30" z="34" index="420" color="#b3ff00">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA37</label>
+  <label x="72" y="33" z="33" index="421" color="#00d42a">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="16" y="33" z="33" index="422" color="#ffe200">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA37</label>
+  <label x="15" y="31" z="33" index="423" color="#0018e6">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA19</label>
   <label x="33" y="33" z="33" index="424" color="#ff6d00">Right Cerebrum/Limbic Lobe/Lingual Gyrus/White Matter/*</label>
-  <label x="56" y="33" z="33" index="425" color="#000089">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="27" y="42" z="32" index="426" color="#bf00df">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="0" y="0" z="0" index="427" color="#b7ff00">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 19</label>
-  <label x="0" y="0" z="0" index="428" color="#0000d9">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 19</label>
-  <label x="52" y="44" z="32" index="429" color="#fff200">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 30</label>
-  <label x="36" y="42" z="33" index="430" color="#005f9f">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 30</label>
-  <label x="35" y="43" z="32" index="431" color="#000094">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 30</label>
-  <label x="54" y="47" z="32" index="432" color="#e700f3">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 27</label>
-  <label x="32" y="47" z="32" index="433" color="#ffb100">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 27</label>
+  <label x="56" y="33" z="33" index="425" color="#000089">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA19</label>
+  <label x="27" y="42" z="32" index="426" color="#bf00df">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA19</label>
+  <label x="0" y="0" z="0" index="427" color="#b7ff00">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA19</label>
+  <label x="0" y="0" z="0" index="428" color="#0000d9">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA19</label>
+  <label x="52" y="44" z="32" index="429" color="#fff200">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA30</label>
+  <label x="36" y="42" z="33" index="430" color="#005f9f">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA30</label>
+  <label x="35" y="43" z="32" index="431" color="#000094">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA30</label>
+  <label x="54" y="47" z="32" index="432" color="#e700f3">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA27</label>
+  <label x="32" y="47" z="32" index="433" color="#ffb100">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA27</label>
   <label x="0" y="0" z="0" index="434" color="#009965">Right Cerebrum/Temporal Lobe/*/White Matter/*</label>
   <label x="62" y="50" z="32" index="435" color="#4c00a5">Left Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Tail</label>
   <label x="26" y="49" z="32" index="436" color="#ff3b00">Right Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Tail</label>
@@ -452,12 +452,12 @@
   <label x="64" y="64" z="32" index="439" color="#00009e">Left Cerebrum/Sub-lobar/Insula/White Matter/*</label>
   <label x="35" y="54" z="32" index="440" color="#cdff00">Right Cerebrum/Midbrain/*/*/*</label>
   <label x="25" y="67" z="32" index="441" color="#ff3700">Right Cerebrum/Sub-lobar/Insula/White Matter/*</label>
-  <label x="76" y="66" z="33" index="442" color="#00c539">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="67" y="51" z="34" index="443" color="#ffd200">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 22</label>
-  <label x="22" y="57" z="32" index="444" color="#003cc2">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 13</label>
-  <label x="22" y="52" z="32" index="445" color="#000fef">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 22</label>
-  <label x="12" y="66" z="32" index="446" color="#000087">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="66" y="62" z="40" index="447" color="#25ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 13</label>
+  <label x="76" y="66" z="33" index="442" color="#00c539">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="67" y="51" z="34" index="443" color="#ffd200">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA22</label>
+  <label x="22" y="57" z="32" index="444" color="#003cc2">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA13</label>
+  <label x="22" y="52" z="32" index="445" color="#000fef">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA22</label>
+  <label x="12" y="66" z="32" index="446" color="#000087">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="66" y="62" z="40" index="447" color="#25ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA13</label>
   <label x="67" y="63" z="31" index="448" color="#39009c">Left Cerebrum/Sub-lobar/Insula/*/*</label>
   <label x="62" y="63" z="31" index="449" color="#ffff00">Left Cerebrum/Sub-lobar/Claustrum/Gray Matter/*</label>
   <label x="30" y="71" z="30" index="450" color="#ff6b00">Right Cerebrum/Sub-lobar/Claustrum/Gray Matter/*</label>
@@ -468,37 +468,37 @@
   <label x="32" y="58" z="34" index="455" color="#000090">Right Cerebrum/Sub-lobar/Lentiform Nucleus/Gray Matter/Lateral Globus Pallidus</label>
   <label x="53" y="60" z="32" index="456" color="#ff1d00">Left Cerebrum/Sub-lobar/Lentiform Nucleus/Gray Matter/Medial Globus Pallidus</label>
   <label x="36" y="61" z="32" index="457" color="#ff9000">Right Cerebrum/Sub-lobar/Lentiform Nucleus/Gray Matter/Medial Globus Pallidus</label>
-  <label x="73" y="57" z="32" index="458" color="#0025d9">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 22</label>
+  <label x="73" y="57" z="32" index="458" color="#0025d9">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA22</label>
   <label x="43" y="62" z="33" index="459" color="#a2ff00">Right Brainstem/Midbrain/Extra-Nuclear/White Matter/*</label>
-  <label x="19" y="48" z="35" index="460" color="#ff0500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 22</label>
+  <label x="19" y="48" z="35" index="460" color="#ff0500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA22</label>
   <label x="46" y="60" z="31" index="461" color="#75ff00">Left Cerebrum/Sub-lobar/*/White Matter/*</label>
   <label x="43" y="60" z="31" index="462" color="#00f00e">Right Cerebrum/Sub-lobar/*/White Matter/*</label>
   <label x="20" y="61" z="34" index="463" color="#00b34b">Right Cerebrum/Temporal Lobe/Insula/*/*</label>
   <label x="49" y="71" z="34" index="464" color="#0000df">Left Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Head</label>
   <label x="40" y="71" z="34" index="465" color="#3fff00">Right Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Head</label>
-  <label x="28" y="73" z="30" index="466" color="#0000f2">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 47</label>
-  <label x="26" y="71" z="30" index="467" color="#ff8f00">Right Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/Brodmann area 47</label>
-  <label x="60" y="73" z="31" index="468" color="#6600b2">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 47</label>
-  <label x="46" y="80" z="41" index="469" color="#ffea00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 24</label>
-  <label x="42" y="81" z="40" index="470" color="#ae00d6">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 24</label>
-  <label x="43" y="95" z="32" index="471" color="#0000d4">Right Cerebrum/Frontal Lobe/*/Gray Matter/Brodmann area 10</label>
+  <label x="28" y="73" z="30" index="466" color="#0000f2">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA47</label>
+  <label x="26" y="71" z="30" index="467" color="#ff8f00">Right Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/BA47</label>
+  <label x="60" y="73" z="31" index="468" color="#6600b2">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA47</label>
+  <label x="46" y="80" z="41" index="469" color="#ffea00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA24</label>
+  <label x="42" y="81" z="40" index="470" color="#ae00d6">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA24</label>
+  <label x="43" y="95" z="32" index="471" color="#0000d4">Right Cerebrum/Frontal Lobe/*/Gray Matter/BA10</label>
   <label x="0" y="0" z="0" index="472" color="#00827c">Right Cerebrum/*/Medial Frontal Gyrus/*/*</label>
   <label x="55" y="10" z="36" index="473" color="#14ff00">Left Cerebrum/Occipital Lobe/Cuneus/*/*</label>
-  <label x="46" y="20" z="46" index="474" color="#6700b3">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 18</label>
-  <label x="47" y="21" z="43" index="475" color="#8fff00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 17</label>
+  <label x="46" y="20" z="46" index="474" color="#6700b3">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA18</label>
+  <label x="47" y="21" z="43" index="475" color="#8fff00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA17 V1</label>
   <label x="34" y="10" z="36" index="476" color="#9300c9">Right Cerebrum/Occipital Lobe/Cuneus/*/*</label>
-  <label x="42" y="21" z="43" index="477" color="#00cd31">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 17</label>
-  <label x="42" y="19" z="45" index="478" color="#0000c9">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 18</label>
-  <label x="70" y="24" z="36" index="479" color="#2fff00">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="13" y="27" z="35" index="480" color="#0000bb">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="52" y="41" z="34" index="481" color="#09ff00">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 30</label>
-  <label x="35" y="42" z="35" index="482" color="#0000ec">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/Brodmann area 30</label>
-  <label x="72" y="83" z="32" index="483" color="#0d0086">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="18" y="90" z="32" index="484" color="#f200f8">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 10</label>
+  <label x="42" y="21" z="43" index="477" color="#00cd31">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA17 V1</label>
+  <label x="42" y="19" z="45" index="478" color="#0000c9">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA18</label>
+  <label x="70" y="24" z="36" index="479" color="#2fff00">Left Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="13" y="27" z="35" index="480" color="#0000bb">Right Cerebrum/Temporal Lobe/Inferior Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="52" y="41" z="34" index="481" color="#09ff00">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA30</label>
+  <label x="35" y="42" z="35" index="482" color="#0000ec">Right Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/BA30</label>
+  <label x="72" y="83" z="32" index="483" color="#0d0086">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="18" y="90" z="32" index="484" color="#f200f8">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA10</label>
   <label x="49" y="13" z="42" index="485" color="#e9ff00">Left Cerebrum/Occipital Lobe/Cuneus/White Matter/*</label>
   <label x="39" y="14" z="42" index="486" color="#0009f5">Right Cerebrum/Occipital Lobe/Cuneus/White Matter/*</label>
-  <label x="69" y="23" z="36" index="487" color="#00009b">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 18</label>
-  <label x="0" y="0" z="0" index="488" color="#d7ff00">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="69" y="23" z="36" index="487" color="#00009b">Left Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA18</label>
+  <label x="0" y="0" z="0" index="488" color="#d7ff00">Right Cerebrum/Occipital Lobe/Inferior Temporal Gyrus/Gray Matter/BA18</label>
   <label x="55" y="42" z="35" index="489" color="#000092">Left Cerebrum/Limbic Lobe/Lingual Gyrus/White Matter/*</label>
   <label x="0" y="0" z="0" index="490" color="#0a0084">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/*</label>
   <label x="25" y="46" z="34" index="491" color="#4bff00">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/*</label>
@@ -521,13 +521,13 @@
   <label x="47" y="46" z="45" index="508" color="#00ba44">Left Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Corpus Callosum</label>
   <label x="44" y="73" z="37" index="509" color="#0000d8">Inter-Hemispheric/*/*/White Matter/Corpus Callosum</label>
   <label x="41" y="44" z="43" index="510" color="#0000d5">Right Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Corpus Callosum</label>
-  <label x="62" y="73" z="33" index="511" color="#2eff00">Left Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/Brodmann area 47</label>
+  <label x="62" y="73" z="33" index="511" color="#2eff00">Left Cerebrum/Sub-lobar/Extra-Nuclear/Gray Matter/BA47</label>
   <label x="0" y="0" z="0" index="512" color="#3a009c">Left Cerebrum/Sub-lobar/Extra-Nuclear/Cerebro-Spinal Fluid/*</label>
   <label x="0" y="0" z="0" index="513" color="#ff7d00">Right Cerebrum/Sub-lobar/Claustrum/White Matter/*</label>
   <label x="52" y="69" z="47" index="514" color="#6a00b4">Left Cerebrum/Frontal Lobe/Sub-Gyral/White Matter/Corpus Callosum</label>
   <label x="38" y="78" z="32" index="515" color="#0055a9">Right Cerebrum/Frontal Lobe/Sub-Gyral/White Matter/Corpus Callosum</label>
-  <label x="0" y="0" z="0" index="516" color="#f500fa">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 10</label>
-  <label x="22" y="86" z="32" index="517" color="#0000e8">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 10</label>
+  <label x="0" y="0" z="0" index="516" color="#f500fa">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA10</label>
+  <label x="22" y="86" z="32" index="517" color="#0000e8">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA10</label>
   <label x="78" y="33" z="36" index="518" color="#f9ff00">*/*/*/Gray Matter/*</label>
   <label x="63" y="13" z="37" index="519" color="#310098">Left Cerebrum/Occipital Lobe/*/Gray Matter/*</label>
   <label x="60" y="12" z="37" index="520" color="#007688">Left Cerebrum/Occipital Lobe/Middle Occipital Gyrus/Gray Matter/*</label>
@@ -547,10 +547,10 @@
   <label x="0" y="0" z="0" index="534" color="#ff0c00">Inter-Hemispheric/Occipital Lobe/*/Gray Matter/*</label>
   <label x="34" y="10" z="38" index="535" color="#97ff00">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/*</label>
   <label x="0" y="0" z="0" index="536" color="#00817d">Right Cerebrum/*/Cuneus/Gray Matter/*</label>
-  <label x="0" y="0" z="0" index="537" color="#ffac00">Inter-Hemispheric/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 18</label>
+  <label x="0" y="0" z="0" index="537" color="#ffac00">Inter-Hemispheric/Occipital Lobe/Cuneus/Gray Matter/BA18</label>
   <label x="44" y="12" z="38" index="538" color="#ff3f00">Inter-Hemispheric/*/Cuneus/*/*</label>
   <label x="29" y="12" z="38" index="539" color="#0029d5">Right Cerebrum/Occipital Lobe/*/Gray Matter/*</label>
-  <label x="0" y="0" z="0" index="540" color="#00a955">Inter-Hemispheric/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 17</label>
+  <label x="0" y="0" z="0" index="540" color="#00a955">Inter-Hemispheric/Occipital Lobe/Cuneus/Gray Matter/BA17 V1</label>
   <label x="51" y="35" z="36" index="541" color="#d100e8">Left Cerebrum/Occipital Lobe/Lingual Gyrus/Gray Matter/*</label>
   <label x="0" y="0" z="0" index="542" color="#ff7300">Right Cerebrum/*/Middle Occipital Gyrus/Gray Matter/*</label>
   <label x="45" y="14" z="43" index="543" color="#56ff00">Inter-Hemispheric/Occipital Lobe/Cuneus/*/*</label>
@@ -568,17 +568,17 @@
   <label x="10" y="47" z="35" index="555" color="#4900a4">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/*</label>
   <label x="69" y="30" z="37" index="556" color="#5d00ae">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="557" color="#81ff00">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/*</label>
-  <label x="68" y="30" z="37" index="558" color="#00649a">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="68" y="30" z="37" index="558" color="#00649a">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA37</label>
   <label x="0" y="0" z="0" index="559" color="#d2ff00">*/*/Culmen of Vermis/*/*</label>
-  <label x="21" y="31" z="37" index="560" color="#000094">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="21" y="31" z="37" index="560" color="#000094">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA37</label>
   <label x="12" y="28" z="38" index="561" color="#0000aa">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/*/*</label>
   <label x="63" y="32" z="45" index="562" color="#e0ff00">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/White Matter/*</label>
   <label x="10" y="37" z="36" index="563" color="#140089">Right Cerebrum/*/Middle Temporal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="564" color="#00b44a">Right Cerebellum/Anterior Lobe/Culmen/Gray Matter/Brodmann area 19</label>
+  <label x="0" y="0" z="0" index="564" color="#00b44a">Right Cerebellum/Anterior Lobe/Culmen/Gray Matter/BA19</label>
   <label x="0" y="0" z="0" index="565" color="#0000a3">Left Cerebrum/Temporal Lobe/Lingual Gyrus/White Matter/*</label>
-  <label x="0" y="0" z="0" index="566" color="#a200d0">Left Cerebrum/Temporal Lobe/Lingual Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="0" y="0" z="0" index="566" color="#a200d0">Left Cerebrum/Temporal Lobe/Lingual Gyrus/Gray Matter/BA19</label>
   <label x="38" y="39" z="36" index="567" color="#ff3500">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/*</label>
-  <label x="35" y="39" z="36" index="568" color="#b200d8">Right Cerebrum/Temporal Lobe/Lingual Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="35" y="39" z="36" index="568" color="#b200d8">Right Cerebrum/Temporal Lobe/Lingual Gyrus/Gray Matter/BA19</label>
   <label x="33" y="39" z="36" index="569" color="#ff9400">Right Cerebrum/Temporal Lobe/Lingual Gyrus/White Matter/*</label>
   <label x="50" y="39" z="36" index="570" color="#15008a">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/*</label>
   <label x="0" y="0" z="0" index="571" color="#070083">Left Cerebrum/Temporal Lobe/*/Cerebro-Spinal Fluid/Caudate Tail</label>
@@ -597,10 +597,10 @@
   <label x="34" y="53" z="38" index="584" color="#8f00c7">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Ventral Posterior Lateral Nucleus</label>
   <label x="22" y="65" z="34" index="585" color="#ffcf00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/*</label>
   <label x="20" y="59" z="35" index="586" color="#0000c3">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/*</label>
-  <label x="67" y="52" z="36" index="587" color="#005ea0">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 22</label>
-  <label x="21" y="52" z="35" index="588" color="#ff9a00">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 22</label>
-  <label x="67" y="52" z="35" index="589" color="#008d71">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 13</label>
-  <label x="0" y="0" z="0" index="590" color="#9cff00">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 13</label>
+  <label x="67" y="52" z="36" index="587" color="#005ea0">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/BA22</label>
+  <label x="21" y="52" z="35" index="588" color="#ff9a00">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/BA22</label>
+  <label x="67" y="52" z="35" index="589" color="#008d71">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/BA13</label>
+  <label x="0" y="0" z="0" index="590" color="#9cff00">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/BA13</label>
   <label x="68" y="56" z="35" index="591" color="#ff6800">Left Cerebrum/Temporal Lobe/Insula/*/*</label>
   <label x="63" y="65" z="34" index="592" color="#ffb300">Left Cerebrum/Sub-lobar/Insula/Gray Matter/*</label>
   <label x="0" y="0" z="0" index="593" color="#80ff00">Right Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Medial Globus Pallidus</label>
@@ -612,17 +612,17 @@
   <label x="72" y="81" z="33" index="599" color="#001fdf">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/*</label>
   <label x="20" y="91" z="32" index="600" color="#36009a">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/*</label>
   <label x="0" y="0" z="0" index="601" color="#006e90">Right Cerebrum/Sub-lobar/Caudate/Cerebro-Spinal Fluid/Caudate Head</label>
-  <label x="74" y="80" z="33" index="602" color="#ff3100">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 45</label>
-  <label x="13" y="76" z="36" index="603" color="#0000b3">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 45</label>
-  <label x="62" y="76" z="34" index="604" color="#a000cf">Left Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/Brodmann area 47</label>
+  <label x="74" y="80" z="33" index="602" color="#ff3100">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA45</label>
+  <label x="13" y="76" z="36" index="603" color="#0000b3">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA45</label>
+  <label x="62" y="76" z="34" index="604" color="#a000cf">Left Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/BA47</label>
   <label x="46" y="79" z="33" index="605" color="#65ff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/*</label>
   <label x="42" y="79" z="33" index="606" color="#260092">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/*</label>
-  <label x="73" y="84" z="39" index="607" color="#ff8800">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 46</label>
-  <label x="18" y="86" z="38" index="608" color="#00e618">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 46</label>
+  <label x="73" y="84" z="39" index="607" color="#ff8800">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA46</label>
+  <label x="18" y="86" z="38" index="608" color="#00e618">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA46</label>
   <label x="57" y="88" z="33" index="609" color="#6cff00">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/*</label>
-  <label x="46" y="69" z="59" index="610" color="#ffcc00">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 32</label>
+  <label x="46" y="69" z="59" index="610" color="#ffcc00">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA32</label>
   <label x="53" y="94" z="32" index="611" color="#00d826">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/*</label>
-  <label x="42" y="69" z="59" index="612" color="#ff4700">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 32</label>
+  <label x="42" y="69" z="59" index="612" color="#ff4700">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA32</label>
   <label x="30" y="96" z="32" index="613" color="#1cff00">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/*</label>
   <label x="25" y="89" z="33" index="614" color="#009b63">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/*</label>
   <label x="51" y="97" z="32" index="615" color="#a1ff00">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/*</label>
@@ -637,14 +637,14 @@
   <label x="43" y="51" z="37" index="624" color="#b6ff00">Inter-Hemispheric/*/*/Cerebro-Spinal Fluid/Optic Tract</label>
   <label x="70" y="28" z="39" index="625" color="#c600e2">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/*/*</label>
   <label x="19" y="28" z="40" index="626" color="#9700cb">Right Cerebrum/Temporal Lobe/Middle Occipital Gyrus/*/*</label>
-  <label x="21" y="27" z="40" index="627" color="#98ff00">Right Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 37</label>
-  <label x="0" y="0" z="0" index="628" color="#a100d0">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 37</label>
+  <label x="21" y="27" z="40" index="627" color="#98ff00">Right Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/BA37</label>
+  <label x="0" y="0" z="0" index="628" color="#a100d0">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/BA37</label>
   <label x="60" y="33" z="38" index="629" color="#d500ea">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/White Matter/*</label>
   <label x="28" y="33" z="38" index="630" color="#9900cc">Right Cerebrum/Temporal Lobe/Middle Occipital Gyrus/White Matter/*</label>
-  <label x="57" y="34" z="38" index="631" color="#00dd21">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 18</label>
-  <label x="31" y="34" z="38" index="632" color="#00dc22">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/Brodmann area 18</label>
+  <label x="57" y="34" z="38" index="631" color="#00dd21">Left Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA18</label>
+  <label x="31" y="34" z="38" index="632" color="#00dc22">Right Cerebrum/Limbic Lobe/Parahippocampal Gyrus/Gray Matter/BA18</label>
   <label x="45" y="53" z="37" index="633" color="#12ff00">Inter-Hemispheric/Sub-lobar/Extra-Nuclear/Cerebro-Spinal Fluid/Optic Tract</label>
-  <label x="20" y="54" z="37" index="634" color="#0000b5">Right Cerebrum/Sub-lobar/Superior Temporal Gyrus/Gray Matter/Brodmann area 22</label>
+  <label x="20" y="54" z="37" index="634" color="#0000b5">Right Cerebrum/Sub-lobar/Superior Temporal Gyrus/Gray Matter/BA22</label>
   <label x="66" y="49" z="43" index="635" color="#00cc32">Left Cerebrum/Temporal Lobe/Insula/White Matter/*</label>
   <label x="48" y="55" z="40" index="636" color="#250092">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Medial Dorsal Nucleus</label>
   <label x="41" y="54" z="39" index="637" color="#210090">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Medial Dorsal Nucleus</label>
@@ -663,63 +663,63 @@
   <label x="26" y="76" z="35" index="650" color="#0045b9">Right Cerebrum/Sub-lobar/Inferior Frontal Gyrus/*/*</label>
   <label x="45" y="73" z="39" index="651" color="#ff6500">Inter-Hemispheric/Sub-lobar/Extra-Nuclear/White Matter/Corpus Callosum</label>
   <label x="44" y="73" z="35" index="652" color="#0005f9">Right Cerebrum/*/*/White Matter/Corpus Callosum</label>
-  <label x="22" y="73" z="35" index="653" color="#cfff00">Right Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/Brodmann area 45</label>
+  <label x="22" y="73" z="35" index="653" color="#cfff00">Right Cerebrum/Sub-lobar/Inferior Frontal Gyrus/Gray Matter/BA45</label>
   <label x="0" y="0" z="0" index="654" color="#0f0087">Left Cerebrum/Sub-lobar/Inferior Frontal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="655" color="#d4ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 45</label>
-  <label x="0" y="0" z="0" index="656" color="#bc00dd">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 45</label>
+  <label x="0" y="0" z="0" index="655" color="#d4ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA45</label>
+  <label x="0" y="0" z="0" index="656" color="#bc00dd">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA45</label>
   <label x="0" y="0" z="0" index="657" color="#0044ba">Right Cerebrum/Sub-lobar/*/White Matter/Corpus Callosum</label>
-  <label x="17" y="87" z="41" index="658" color="#0033cb">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 46</label>
+  <label x="17" y="87" z="41" index="658" color="#0033cb">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA46</label>
   <label x="45" y="94" z="34" index="659" color="#53ff00">Inter-Hemispheric/Frontal Lobe/Medial Frontal Gyrus/*/*</label>
-  <label x="46" y="26" z="40" index="660" color="#ff7000">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 30</label>
-  <label x="42" y="26" z="40" index="661" color="#2a0094">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 30</label>
+  <label x="46" y="26" z="40" index="660" color="#ff7000">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA30</label>
+  <label x="42" y="26" z="40" index="661" color="#2a0094">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA30</label>
   <label x="49" y="33" z="44" index="662" color="#00619d">Left Cerebrum/Limbic Lobe/Posterior Cingulate/White Matter/*</label>
-  <label x="53" y="34" z="41" index="663" color="#0000a0">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 30</label>
+  <label x="53" y="34" z="41" index="663" color="#0000a0">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA30</label>
   <label x="38" y="35" z="43" index="664" color="#000090">Right Cerebrum/Limbic Lobe/Posterior Cingulate/White Matter/*</label>
-  <label x="42" y="38" z="45" index="665" color="#ff1c00">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 30</label>
+  <label x="42" y="38" z="45" index="665" color="#ff1c00">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA30</label>
   <label x="0" y="0" z="0" index="666" color="#41ff00">Left Cerebrum/Occipital Lobe/Posterior Cingulate/White Matter/*</label>
   <label x="45" y="38" z="39" index="667" color="#a3ff00">Left Cerebrum/Limbic Lobe/Posterior Cingulate/*/*</label>
   <label x="42" y="38" z="39" index="668" color="#0000c7">Right Cerebrum/Limbic Lobe/Posterior Cingulate/*/*</label>
-  <label x="0" y="0" z="0" index="669" color="#ffe000">Right Cerebrum/Occipital Lobe/Posterior Cingulate/Gray Matter/Brodmann area 30</label>
-  <label x="47" y="39" z="39" index="670" color="#ff8200">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 29</label>
-  <label x="38" y="38" z="39" index="671" color="#6c00b5">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 29</label>
-  <label x="64" y="47" z="44" index="672" color="#fffb00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 41</label>
-  <label x="20" y="47" z="42" index="673" color="#009a64">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 41</label>
-  <label x="80" y="49" z="40" index="674" color="#daff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 42</label>
-  <label x="8" y="50" z="38" index="675" color="#0052ac">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 42</label>
+  <label x="0" y="0" z="0" index="669" color="#ffe000">Right Cerebrum/Occipital Lobe/Posterior Cingulate/Gray Matter/BA30</label>
+  <label x="47" y="39" z="39" index="670" color="#ff8200">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA29</label>
+  <label x="38" y="38" z="39" index="671" color="#6c00b5">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA29</label>
+  <label x="64" y="47" z="44" index="672" color="#fffb00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA41</label>
+  <label x="20" y="47" z="42" index="673" color="#009a64">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA41</label>
+  <label x="80" y="49" z="40" index="674" color="#daff00">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA42</label>
+  <label x="8" y="50" z="38" index="675" color="#0052ac">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA42</label>
   <label x="41" y="50" z="39" index="676" color="#00a658">Right Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Pulvinar</label>
   <label x="56" y="53" z="39" index="677" color="#0000a9">Left Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Ventral Posterior Lateral Nucleus</label>
   <label x="78" y="64" z="38" index="678" color="#ffee00">Left Cerebrum/Temporal Lobe/Precentral Gyrus/*/*</label>
   <label x="76" y="70" z="38" index="679" color="#d900ec">Left Cerebrum/Frontal Lobe/Precentral Gyrus/*/*</label>
   <label x="11" y="70" z="38" index="680" color="#2f0097">Right Cerebrum/Frontal Lobe/Precentral Gyrus/*/*</label>
   <label x="16" y="60" z="38" index="681" color="#ff5300">Right Cerebrum/Temporal Lobe/Precentral Gyrus/*/*</label>
-  <label x="70" y="64" z="62" index="682" color="#0000c1">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="12" y="66" z="41" index="683" color="#8900c4">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 6</label>
+  <label x="70" y="64" z="62" index="682" color="#0000c1">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA6</label>
+  <label x="12" y="66" z="41" index="683" color="#8900c4">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA6</label>
   <label x="41" y="60" z="38" index="684" color="#68ff00">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Anterior Nucleus</label>
   <label x="66" y="59" z="57" index="685" color="#ffe500">Left Cerebrum/Frontal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="47" y="61" z="38" index="686" color="#9800cb">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Anterior Nucleus</label>
   <label x="29" y="55" z="64" index="687" color="#2cff00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="44" y="62" z="38" index="688" color="#0000a6">Inter-Hemispheric/*/*/White Matter/*</label>
-  <label x="13" y="69" z="38" index="689" color="#ffad00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44 Broca's</label>
-  <label x="72" y="71" z="38" index="690" color="#001ee0">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44 Broca's</label>
-  <label x="0" y="0" z="0" index="691" color="#4d00a6">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 44</label>
+  <label x="13" y="69" z="38" index="689" color="#ffad00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA44 Broca's</label>
+  <label x="72" y="71" z="38" index="690" color="#001ee0">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA44 Broca's</label>
+  <label x="0" y="0" z="0" index="691" color="#4d00a6">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA44</label>
   <label x="49" y="69" z="39" index="692" color="#0050ae">Left Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Body</label>
   <label x="39" y="70" z="39" index="693" color="#000092">Right Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Body</label>
   <label x="45" y="80" z="37" index="694" color="#00748a">Left Cerebrum/Limbic Lobe/Anterior Cingulate/White Matter/Corpus Callosum</label>
   <label x="42" y="80" z="37" index="695" color="#0000b1">Right Cerebrum/Limbic Lobe/Anterior Cingulate/White Matter/Corpus Callosum</label>
-  <label x="23" y="86" z="36" index="696" color="#00008b">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 46</label>
-  <label x="71" y="90" z="37" index="697" color="#00da24">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 46</label>
+  <label x="23" y="86" z="36" index="696" color="#00008b">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA46</label>
+  <label x="71" y="90" z="37" index="697" color="#00da24">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA46</label>
   <label x="0" y="0" z="0" index="698" color="#005aa4">Left Cerebrum/*/Middle Occipital Gyrus/*/*</label>
-  <label x="70" y="22" z="43" index="699" color="#00cf2f">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="13" y="30" z="45" index="700" color="#4700a3">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="70" y="22" z="43" index="699" color="#00cf2f">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="13" y="30" z="45" index="700" color="#4700a3">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA19</label>
   <label x="16" y="29" z="45" index="701" color="#0000ac">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/White Matter/*</label>
-  <label x="71" y="24" z="43" index="702" color="#0000cf">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="72" y="30" z="48" index="703" color="#ffd800">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="17" y="27" z="43" index="704" color="#000089">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="17" y="25" z="42" index="705" color="#00009f">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="46" y="25" z="43" index="706" color="#100087">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 23</label>
-  <label x="36" y="26" z="42" index="707" color="#8aff00">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 23</label>
-  <label x="68" y="35" z="42" index="708" color="#7900bc">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="16" y="35" z="42" index="709" color="#000080">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 39</label>
+  <label x="71" y="24" z="43" index="702" color="#0000cf">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA39</label>
+  <label x="72" y="30" z="48" index="703" color="#ffd800">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA39</label>
+  <label x="17" y="27" z="43" index="704" color="#000089">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA39</label>
+  <label x="17" y="25" z="42" index="705" color="#00009f">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA39</label>
+  <label x="46" y="25" z="43" index="706" color="#100087">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA23</label>
+  <label x="36" y="26" z="42" index="707" color="#8aff00">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA23</label>
+  <label x="68" y="35" z="42" index="708" color="#7900bc">Left Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA39</label>
+  <label x="16" y="35" z="42" index="709" color="#000080">Right Cerebrum/Temporal Lobe/Superior Temporal Gyrus/Gray Matter/BA39</label>
   <label x="45" y="38" z="42" index="710" color="#00946a">Inter-Hemispheric/Limbic Lobe/Posterior Cingulate/*/*</label>
   <label x="0" y="0" z="0" index="711" color="#ffa300">Left Cerebrum/Limbic Lobe/Extra-Nuclear/White Matter/Corpus Callosum</label>
   <label x="0" y="0" z="0" index="712" color="#cb00e5">Right Cerebrum/Limbic Lobe/Extra-Nuclear/White Matter/Corpus Callosum</label>
@@ -729,247 +729,247 @@
   <label x="81" y="43" z="42" index="716" color="#006b93">*/*/Superior Temporal Gyrus/*/*</label>
   <label x="63" y="44" z="41" index="717" color="#ff0f00">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/White Matter/*</label>
   <label x="16" y="54" z="40" index="718" color="#0012ec">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/White Matter/*</label>
-  <label x="14" y="54" z="40" index="719" color="#00926c">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/Brodmann area 41</label>
-  <label x="63" y="45" z="41" index="720" color="#f800fb">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/Brodmann area 41</label>
-  <label x="67" y="50" z="43" index="721" color="#78ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 41</label>
-  <label x="20" y="51" z="43" index="722" color="#62ff00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 41</label>
-  <label x="62" y="50" z="41" index="723" color="#0000df">Left Cerebrum/Sub-lobar/Transverse Temporal Gyrus/Gray Matter/Brodmann area 41</label>
+  <label x="14" y="54" z="40" index="719" color="#00926c">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/BA41</label>
+  <label x="63" y="45" z="41" index="720" color="#f800fb">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/BA41</label>
+  <label x="67" y="50" z="43" index="721" color="#78ff00">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA41</label>
+  <label x="20" y="51" z="43" index="722" color="#62ff00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA41</label>
+  <label x="62" y="50" z="41" index="723" color="#0000df">Left Cerebrum/Sub-lobar/Transverse Temporal Gyrus/Gray Matter/BA41</label>
   <label x="0" y="0" z="0" index="724" color="#0000f0">Left Cerebrum/Sub-lobar/Transverse Temporal Gyrus/White Matter/*</label>
   <label x="53" y="53" z="42" index="725" color="#007985">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Lateral Posterior Nucleus</label>
   <label x="34" y="53" z="41" index="726" color="#ff00ff">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Lateral Posterior Nucleus</label>
-  <label x="14" y="56" z="41" index="727" color="#ff7700">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/Brodmann area 42</label>
+  <label x="14" y="56" z="41" index="727" color="#ff7700">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/BA42</label>
   <label x="79" y="59" z="40" index="728" color="#007f7f">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/*/*</label>
-  <label x="76" y="59" z="40" index="729" color="#000096">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/Brodmann area 42</label>
+  <label x="76" y="59" z="40" index="729" color="#000096">Left Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/Gray Matter/BA42</label>
   <label x="9" y="54" z="40" index="730" color="#e500f2">Right Cerebrum/Temporal Lobe/Transverse Temporal Gyrus/*/*</label>
   <label x="19" y="55" z="40" index="731" color="#ff9b00">Right Cerebrum/Temporal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="71" y="56" z="42" index="732" color="#ff2d00">Left Cerebrum/Frontal Lobe/Transverse Temporal Gyrus/White Matter/*</label>
-  <label x="70" y="58" z="40" index="733" color="#bdff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="69" y="56" z="41" index="734" color="#4200a0">Left Cerebrum/Sub-lobar/Precentral Gyrus/Gray Matter/Brodmann area 13</label>
-  <label x="19" y="57" z="40" index="735" color="#ff5900">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 13</label>
+  <label x="70" y="58" z="40" index="733" color="#bdff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA13</label>
+  <label x="69" y="56" z="41" index="734" color="#4200a0">Left Cerebrum/Sub-lobar/Precentral Gyrus/Gray Matter/BA13</label>
+  <label x="19" y="57" z="40" index="735" color="#ff5900">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA13</label>
   <label x="80" y="57" z="42" index="736" color="#00008f">Left Cerebrum/*/Transverse Temporal Gyrus/*/*</label>
   <label x="74" y="58" z="41" index="737" color="#4100a0">Left Cerebrum/Temporal Lobe/Precentral Gyrus/White Matter/*</label>
-  <label x="0" y="0" z="0" index="738" color="#e900f4">Left Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 43</label>
-  <label x="75" y="60" z="41" index="739" color="#0000a1">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 43</label>
-  <label x="16" y="58" z="40" index="740" color="#0000ed">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 43</label>
-  <label x="14" y="59" z="40" index="741" color="#4500a2">Right Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 42</label>
-  <label x="0" y="0" z="0" index="742" color="#000081">Left Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 42</label>
+  <label x="0" y="0" z="0" index="738" color="#e900f4">Left Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/BA43</label>
+  <label x="75" y="60" z="41" index="739" color="#0000a1">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA43</label>
+  <label x="16" y="58" z="40" index="740" color="#0000ed">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA43</label>
+  <label x="14" y="59" z="40" index="741" color="#4500a2">Right Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/BA42</label>
+  <label x="0" y="0" z="0" index="742" color="#000081">Left Cerebrum/Temporal Lobe/Precentral Gyrus/Gray Matter/BA42</label>
   <label x="79" y="62" z="40" index="743" color="#ffa400">Left Cerebrum/*/Precentral Gyrus/*/*</label>
   <label x="45" y="71" z="39" index="744" color="#9200c8">Inter-Hemispheric/Sub-lobar/Lateral Ventricle/Cerebro-Spinal Fluid/*</label>
   <label x="0" y="0" z="0" index="745" color="#a0ff00">Right Cerebrum/*/Precentral Gyrus/*/*</label>
   <label x="69" y="69" z="40" index="746" color="#0000a5">Left Cerebrum/Frontal Lobe/Insula/White Matter/*</label>
   <label x="0" y="0" z="0" index="747" color="#eb00f5">Right Cerebrum/Frontal Lobe/Insula/White Matter/*</label>
-  <label x="75" y="72" z="42" index="748" color="#9000c7">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 44</label>
-  <label x="16" y="72" z="40" index="749" color="#000093">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 44</label>
+  <label x="75" y="72" z="42" index="748" color="#9000c7">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA44</label>
+  <label x="16" y="72" z="40" index="749" color="#000093">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA44</label>
   <label x="0" y="0" z="0" index="750" color="#38ff00">Left Cerebrum/Limbic Lobe/Extra-Nuclear/*/*</label>
   <label x="0" y="0" z="0" index="751" color="#ff4100">Right Cerebrum/Limbic Lobe/Extra-Nuclear/*/*</label>
   <label x="45" y="86" z="38" index="752" color="#004cb2">Inter-Hemispheric/Limbic Lobe/Anterior Cingulate/*/*</label>
   <label x="70" y="91" z="38" index="753" color="#ffb500">Left Cerebrum/*/Middle Frontal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="754" color="#00e816">Right Cerebrum/*/*/Gray Matter/Brodmann area 10</label>
-  <label x="0" y="0" z="0" index="755" color="#ff0200">Inter-Hemispheric/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 10</label>
-  <label x="45" y="30" z="44" index="756" color="#02ff00">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 31</label>
-  <label x="31" y="30" z="44" index="757" color="#6fff00">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 31</label>
-  <label x="56" y="29" z="45" index="758" color="#21ff00">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 18</label>
+  <label x="0" y="0" z="0" index="754" color="#00e816">Right Cerebrum/*/*/Gray Matter/BA10</label>
+  <label x="0" y="0" z="0" index="755" color="#ff0200">Inter-Hemispheric/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA10</label>
+  <label x="45" y="30" z="44" index="756" color="#02ff00">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA31</label>
+  <label x="31" y="30" z="44" index="757" color="#6fff00">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA31</label>
+  <label x="56" y="29" z="45" index="758" color="#21ff00">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA18</label>
   <label x="0" y="0" z="0" index="759" color="#c500e2">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/*</label>
-  <label x="0" y="0" z="0" index="760" color="#005ba3">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 18</label>
+  <label x="0" y="0" z="0" index="760" color="#005ba3">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA18</label>
   <label x="0" y="0" z="0" index="761" color="#fb00fd">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/*</label>
-  <label x="46" y="35" z="45" index="762" color="#ff2200">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 23</label>
-  <label x="42" y="35" z="45" index="763" color="#40009f">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/Brodmann area 23</label>
-  <label x="65" y="34" z="44" index="764" color="#0000db">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="0" y="0" z="0" index="765" color="#006896">Left Cerebrum/*/Superior Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="23" y="34" z="44" index="766" color="#00f806">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="0" y="0" z="0" index="767" color="#00e31b">Left Cerebrum/Occipital Lobe/Superior Temporal Gyrus/Gray Matter/Brodmann area 22</label>
-  <label x="26" y="48" z="43" index="768" color="#ffbc00">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 41</label>
+  <label x="46" y="35" z="45" index="762" color="#ff2200">Left Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA23</label>
+  <label x="42" y="35" z="45" index="763" color="#40009f">Right Cerebrum/Limbic Lobe/Posterior Cingulate/Gray Matter/BA23</label>
+  <label x="65" y="34" z="44" index="764" color="#0000db">Left Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="0" y="0" z="0" index="765" color="#006896">Left Cerebrum/*/Superior Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="23" y="34" z="44" index="766" color="#00f806">Right Cerebrum/Occipital Lobe/Middle Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="0" y="0" z="0" index="767" color="#00e31b">Left Cerebrum/Occipital Lobe/Superior Temporal Gyrus/Gray Matter/BA22</label>
+  <label x="26" y="48" z="43" index="768" color="#ffbc00">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA41</label>
   <label x="23" y="49" z="43" index="769" color="#002dd1">Right Cerebrum/Temporal Lobe/Insula/White Matter/*</label>
-  <label x="0" y="0" z="0" index="770" color="#51ff00">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 41</label>
-  <label x="0" y="0" z="0" index="771" color="#001be3">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/Brodmann area 41</label>
+  <label x="0" y="0" z="0" index="770" color="#51ff00">Left Cerebrum/Temporal Lobe/Insula/Gray Matter/BA41</label>
+  <label x="0" y="0" z="0" index="771" color="#001be3">Right Cerebrum/Temporal Lobe/Insula/Gray Matter/BA41</label>
   <label x="73" y="50" z="43" index="772" color="#0000a8">Left Cerebrum/Temporal Lobe/Postcentral Gyrus/*/*</label>
   <label x="71" y="50" z="43" index="773" color="#0000d2">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/*/*</label>
-  <label x="78" y="52" z="45" index="774" color="#00738b">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 40</label>
+  <label x="78" y="52" z="45" index="774" color="#00738b">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA40</label>
   <label x="70" y="50" z="43" index="775" color="#bcff00">Left Cerebrum/Parietal Lobe/Insula/White Matter/*</label>
   <label x="55" y="50" z="43" index="776" color="#0000d0">Left Cerebrum/Sub-lobar/Extra-Nuclear/White Matter/Pulvinar</label>
   <label x="19" y="57" z="42" index="777" color="#00007f">Right Cerebrum/Parietal Lobe/Insula/White Matter/*</label>
-  <label x="11" y="53" z="44" index="778" color="#0000bc">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 40</label>
+  <label x="11" y="53" z="44" index="778" color="#0000bc">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA40</label>
   <label x="11" y="49" z="45" index="779" color="#d0ff00">Right Cerebrum/Temporal Lobe/Postcentral Gyrus/*/*</label>
   <label x="13" y="48" z="45" index="780" color="#77ff00">Right Cerebrum/Parietal Lobe/Superior Temporal Gyrus/*/*</label>
-  <label x="18" y="52" z="43" index="781" color="#ff4a00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 40</label>
+  <label x="18" y="52" z="43" index="781" color="#ff4a00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/BA40</label>
   <label x="9" y="59" z="42" index="782" color="#ff5c00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/*/*</label>
   <label x="79" y="51" z="43" index="783" color="#0000e7">Left Cerebrum/Parietal Lobe/Superior Temporal Gyrus/*/*</label>
   <label x="73" y="54" z="46" index="784" color="#8100c0">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/White Matter/*</label>
-  <label x="69" y="52" z="43" index="785" color="#8500c2">Left Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 40</label>
+  <label x="69" y="52" z="43" index="785" color="#8500c2">Left Cerebrum/Sub-lobar/Insula/Gray Matter/BA40</label>
   <label x="14" y="55" z="46" index="786" color="#b100d8">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/White Matter/*</label>
   <label x="50" y="53" z="43" index="787" color="#0030ce">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Lateral Dorsal Nucleus</label>
   <label x="38" y="53" z="43" index="788" color="#35ff00">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Lateral Dorsal Nucleus</label>
   <label x="0" y="0" z="0" index="789" color="#ff0700">Left Cerebrum/*/Postcentral Gyrus/*/*</label>
   <label x="48" y="54" z="43" index="790" color="#0000a4">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Midline Nucleus</label>
   <label x="40" y="54" z="43" index="791" color="#006698">Right Cerebrum/Sub-lobar/Thalamus/Gray Matter/Midline Nucleus</label>
-  <label x="79" y="55" z="45" index="792" color="#6dff00">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 43</label>
-  <label x="9" y="56" z="42" index="793" color="#ffae00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 43</label>
+  <label x="79" y="55" z="45" index="792" color="#6dff00">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA43</label>
+  <label x="9" y="56" z="42" index="793" color="#ffae00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA43</label>
   <label x="71" y="56" z="43" index="794" color="#0000bf">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/*</label>
   <label x="16" y="57" z="42" index="795" color="#0006f8">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/*</label>
   <label x="59" y="39" z="55" index="796" color="#ff0b00">Left Cerebrum/Parietal Lobe/Sub-Gyral/White Matter/*</label>
-  <label x="0" y="0" z="0" index="797" color="#fff100">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 43</label>
+  <label x="0" y="0" z="0" index="797" color="#fff100">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA43</label>
   <label x="29" y="44" z="60" index="798" color="#42ff00">Right Cerebrum/Parietal Lobe/Sub-Gyral/White Matter/*</label>
   <label x="47" y="21" z="58" index="799" color="#ffa500">Left Cerebrum/Parietal Lobe/*/*/*</label>
   <label x="59" y="49" z="62" index="800" color="#00936b">Left Cerebrum/Parietal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="69" y="56" z="47" index="801" color="#aaff00">Left Cerebrum/Parietal Lobe/Extra-Nuclear/White Matter/*</label>
   <label x="17" y="61" z="42" index="802" color="#0000ee">Right Cerebrum/Parietal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="78" y="61" z="45" index="803" color="#ffc200">Left Cerebrum/Parietal Lobe/Precentral Gyrus/*/*</label>
-  <label x="72" y="61" z="43" index="804" color="#00e01e">Left Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="12" y="62" z="42" index="805" color="#006d91">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="31" y="51" z="62" index="806" color="#00eb13">Right Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 4</label>
+  <label x="72" y="61" z="43" index="804" color="#00e01e">Left Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/BA4</label>
+  <label x="12" y="62" z="42" index="805" color="#006d91">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA4</label>
+  <label x="31" y="51" z="62" index="806" color="#00eb13">Right Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/BA4</label>
   <label x="10" y="62" z="42" index="807" color="#0042bc">Right Cerebrum/Parietal Lobe/Precentral Gyrus/*/*</label>
-  <label x="71" y="61" z="60" index="808" color="#5eff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="72" y="65" z="42" index="809" color="#90ff00">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="16" y="66" z="42" index="810" color="#7d00be">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 6</label>
+  <label x="71" y="61" z="60" index="808" color="#5eff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA4</label>
+  <label x="72" y="65" z="42" index="809" color="#90ff00">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="16" y="66" z="42" index="810" color="#7d00be">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA6</label>
   <label x="77" y="71" z="42" index="811" color="#e200f0">Left Cerebrum/*/Inferior Frontal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="812" color="#00c23c">*/*/Middle Frontal Gyrus/*/*</label>
-  <label x="53" y="83" z="45" index="813" color="#003fbf">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 9</label>
-  <label x="47" y="87" z="42" index="814" color="#00807e">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="41" y="86" z="43" index="815" color="#f3ff00">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="35" y="83" z="45" index="816" color="#deff00">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 9</label>
+  <label x="53" y="83" z="45" index="813" color="#003fbf">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA9</label>
+  <label x="47" y="87" z="42" index="814" color="#00807e">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="41" y="86" z="43" index="815" color="#f3ff00">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="35" y="83" z="45" index="816" color="#deff00">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA9</label>
   <label x="63" y="96" z="40" index="817" color="#d9ff00">Left Cerebrum/*/Superior Frontal Gyrus/*/*</label>
-  <label x="65" y="21" z="47" index="818" color="#79ff00">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="20" y="21" z="47" index="819" color="#ff7500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="64" y="21" z="47" index="820" color="#e100f0">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="65" y="21" z="47" index="818" color="#79ff00">Left Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="20" y="21" z="47" index="819" color="#ff7500">Right Cerebrum/Temporal Lobe/Middle Temporal Gyrus/Gray Matter/BA19</label>
+  <label x="64" y="21" z="47" index="820" color="#e100f0">Left Cerebrum/Temporal Lobe/Middle Occipital Gyrus/Gray Matter/BA19</label>
   <label x="55" y="26" z="52" index="821" color="#000ef0">Left Cerebrum/Occipital Lobe/Precuneus/White Matter/*</label>
   <label x="33" y="26" z="52" index="822" color="#00ea14">Right Cerebrum/Occipital Lobe/Precuneus/White Matter/*</label>
-  <label x="57" y="25" z="47" index="823" color="#0000be">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
-  <label x="30" y="25" z="47" index="824" color="#0aff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
+  <label x="57" y="25" z="47" index="823" color="#0000be">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA31</label>
+  <label x="30" y="25" z="47" index="824" color="#0aff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA31</label>
   <label x="56" y="25" z="47" index="825" color="#c6ff00">Left Cerebrum/Occipital Lobe/Precuneus/*/*</label>
-  <label x="0" y="0" z="0" index="826" color="#4dff00">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 18</label>
-  <label x="0" y="0" z="0" index="827" color="#ff9300">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 18</label>
+  <label x="0" y="0" z="0" index="826" color="#4dff00">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA18</label>
+  <label x="0" y="0" z="0" index="827" color="#ff9300">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA18</label>
   <label x="43" y="33" z="46" index="828" color="#0b0085">Right Cerebrum/Occipital Lobe/Precuneus/*/*</label>
-  <label x="45" y="33" z="46" index="829" color="#1e008e">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 23</label>
-  <label x="42" y="33" z="46" index="830" color="#10ff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 23</label>
+  <label x="45" y="33" z="46" index="829" color="#1e008e">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA23</label>
+  <label x="42" y="33" z="46" index="830" color="#10ff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA23</label>
   <label x="51" y="36" z="46" index="831" color="#df00ef">Left Cerebrum/Sub-lobar/Posterior Cingulate/White Matter/*</label>
   <label x="36" y="39" z="46" index="832" color="#ffeb00">Right Cerebrum/Sub-lobar/Posterior Cingulate/White Matter/*</label>
   <label x="65" y="54" z="51" index="833" color="#87ff00">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/White Matter/*</label>
   <label x="20" y="55" z="50" index="834" color="#5fff00">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/White Matter/*</label>
-  <label x="73" y="57" z="52" index="835" color="#008876">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="14" y="61" z="44" index="836" color="#73ff00">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 4</label>
+  <label x="73" y="57" z="52" index="835" color="#008876">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/BA4</label>
+  <label x="14" y="61" z="44" index="836" color="#73ff00">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/BA4</label>
   <label x="79" y="63" z="45" index="837" color="#40ff00">*/*/Precentral Gyrus/*/*</label>
-  <label x="45" y="75" z="44" index="838" color="#c0ff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 33</label>
-  <label x="42" y="74" z="44" index="839" color="#0026d8">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/Brodmann area 33</label>
+  <label x="45" y="75" z="44" index="838" color="#c0ff00">Left Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA33</label>
+  <label x="42" y="74" z="44" index="839" color="#0026d8">Right Cerebrum/Limbic Lobe/Anterior Cingulate/Gray Matter/BA33</label>
   <label x="0" y="0" z="0" index="840" color="#0000da">Inter-Hemispheric/*/Anterior Cingulate/*/*</label>
-  <label x="0" y="0" z="0" index="841" color="#ff2f00">Left Cerebrum/Frontal Lobe/Anterior Cingulate/Gray Matter/Brodmann area 9</label>
+  <label x="0" y="0" z="0" index="841" color="#ff2f00">Left Cerebrum/Frontal Lobe/Anterior Cingulate/Gray Matter/BA9</label>
   <label x="58" y="15" z="50" index="842" color="#d1ff00">*/*/Cuneus/*/*</label>
-  <label x="46" y="19" z="53" index="843" color="#e3ff00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 19</label>
-  <label x="40" y="16" z="51" index="844" color="#ff3600">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 19</label>
+  <label x="46" y="19" z="53" index="843" color="#e3ff00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA19</label>
+  <label x="40" y="16" z="51" index="844" color="#ff3600">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA19</label>
   <label x="68" y="23" z="54" index="845" color="#0000ab">*/*/Superior Occipital Gyrus/*/*</label>
   <label x="67" y="20" z="50" index="846" color="#00847a">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/*/*</label>
   <label x="28" y="17" z="50" index="847" color="#ffe800">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/*/*</label>
-  <label x="60" y="17" z="50" index="848" color="#52ff00">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 19</label>
-  <label x="23" y="22" z="55" index="849" color="#00b14d">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 19</label>
+  <label x="60" y="17" z="50" index="848" color="#52ff00">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/BA19</label>
+  <label x="23" y="22" z="55" index="849" color="#00b14d">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/BA19</label>
   <label x="62" y="22" z="53" index="850" color="#f700fb">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/White Matter/*</label>
   <label x="24" y="23" z="52" index="851" color="#ff8a00">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/White Matter/*</label>
   <label x="67" y="21" z="50" index="852" color="#0000f0">Left Cerebrum/Temporal Lobe/Superior Occipital Gyrus/*/*</label>
   <label x="21" y="25" z="51" index="853" color="#c800e3">Right Cerebrum/Temporal Lobe/Superior Occipital Gyrus/*/*</label>
   <label x="56" y="24" z="49" index="854" color="#6bff00">Left Cerebrum/Temporal Lobe/Cuneus/White Matter/*</label>
   <label x="0" y="0" z="0" index="855" color="#ecff00">Right Cerebrum/Temporal Lobe/Cuneus/White Matter/*</label>
-  <label x="46" y="39" z="54" index="856" color="#84ff00">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
-  <label x="55" y="25" z="50" index="857" color="#f300f9">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 18</label>
-  <label x="0" y="0" z="0" index="858" color="#ce00e6">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 18</label>
-  <label x="32" y="25" z="49" index="859" color="#00a35b">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
+  <label x="46" y="39" z="54" index="856" color="#84ff00">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA31</label>
+  <label x="55" y="25" z="50" index="857" color="#f300f9">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA18</label>
+  <label x="0" y="0" z="0" index="858" color="#ce00e6">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA18</label>
+  <label x="32" y="25" z="49" index="859" color="#00a35b">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA31</label>
   <label x="53" y="36" z="57" index="860" color="#0000eb">Left Cerebrum/Parietal Lobe/Precuneus/White Matter/*</label>
   <label x="45" y="26" z="49" index="861" color="#ffa100">Left Cerebrum/Parietal Lobe/Precuneus/*/*</label>
   <label x="39" y="26" z="49" index="862" color="#00fd01">Right Cerebrum/Parietal Lobe/Precuneus/*/*</label>
-  <label x="34" y="27" z="49" index="863" color="#00008b">Right Cerebrum/Temporal Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
+  <label x="34" y="27" z="49" index="863" color="#00008b">Right Cerebrum/Temporal Lobe/Precuneus/Gray Matter/BA31</label>
   <label x="34" y="35" z="56" index="864" color="#d200e8">Right Cerebrum/Parietal Lobe/Precuneus/White Matter/*</label>
-  <label x="0" y="0" z="0" index="865" color="#a300d1">*/Frontal Lobe/Middle Temporal Gyrus/Gray Matter/Brodmann area 39</label>
+  <label x="0" y="0" z="0" index="865" color="#a300d1">*/Frontal Lobe/Middle Temporal Gyrus/Gray Matter/BA39</label>
   <label x="36" y="30" z="49" index="866" color="#000098">Right Cerebrum/Temporal Lobe/Precuneus/White Matter/*</label>
   <label x="0" y="0" z="0" index="867" color="#ff6a00">Left Cerebrum/Temporal Lobe/Precuneus/White Matter/*</label>
   <label x="77" y="36" z="49" index="868" color="#7300b9">Left Cerebrum/Temporal Lobe/Supramarginal Gyrus/*/*</label>
-  <label x="71" y="39" z="48" index="869" color="#003bc3">Left Cerebrum/Temporal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 40</label>
+  <label x="71" y="39" z="48" index="869" color="#003bc3">Left Cerebrum/Temporal Lobe/Supramarginal Gyrus/Gray Matter/BA40</label>
   <label x="70" y="37" z="50" index="870" color="#74ff00">Left Cerebrum/Temporal Lobe/Supramarginal Gyrus/White Matter/*</label>
   <label x="15" y="36" z="48" index="871" color="#0000d5">Right Cerebrum/Temporal Lobe/Supramarginal Gyrus/White Matter/*</label>
-  <label x="13" y="36" z="48" index="872" color="#22ff00">Right Cerebrum/Temporal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 40</label>
+  <label x="13" y="36" z="48" index="872" color="#22ff00">Right Cerebrum/Temporal Lobe/Supramarginal Gyrus/Gray Matter/BA40</label>
   <label x="10" y="36" z="48" index="873" color="#0019e5">Right Cerebrum/Temporal Lobe/Supramarginal Gyrus/*/*</label>
   <label x="67" y="39" z="48" index="874" color="#89ff00">Left Cerebrum/Temporal Lobe/Inferior Parietal Lobule/White Matter/*</label>
   <label x="25" y="50" z="47" index="875" color="#a8ff00">Right Cerebrum/Parietal Lobe/Extra-Nuclear/White Matter/*</label>
   <label x="19" y="39" z="48" index="876" color="#00c935">Right Cerebrum/Temporal Lobe/Inferior Parietal Lobule/White Matter/*</label>
-  <label x="70" y="39" z="48" index="877" color="#0000ba">Left Cerebrum/Temporal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 40</label>
-  <label x="65" y="40" z="58" index="878" color="#c200e0">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 40</label>
+  <label x="70" y="39" z="48" index="877" color="#0000ba">Left Cerebrum/Temporal Lobe/Inferior Parietal Lobule/Gray Matter/BA40</label>
+  <label x="65" y="40" z="58" index="878" color="#c200e0">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA40</label>
   <label x="69" y="43" z="50" index="879" color="#ff4300">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/White Matter/*</label>
   <label x="19" y="47" z="50" index="880" color="#0000f5">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/White Matter/*</label>
-  <label x="15" y="48" z="60" index="881" color="#ff7e00">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 40</label>
+  <label x="15" y="48" z="60" index="881" color="#ff7e00">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA40</label>
   <label x="77" y="36" z="52" index="882" color="#ffbf00">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/*/*</label>
   <label x="15" y="41" z="49" index="883" color="#06ff00">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/*/*</label>
   <label x="78" y="41" z="48" index="884" color="#ff9600">Left Cerebrum/Temporal Lobe/Inferior Parietal Lobule/*/*</label>
-  <label x="0" y="0" z="0" index="885" color="#39ff00">Right Cerebrum/Temporal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 40</label>
+  <label x="0" y="0" z="0" index="885" color="#39ff00">Right Cerebrum/Temporal Lobe/Inferior Parietal Lobule/Gray Matter/BA40</label>
   <label x="0" y="0" z="0" index="886" color="#0000e2">Right Cerebrum/Temporal Lobe/Inferior Parietal Lobule/*/*</label>
   <label x="78" y="46" z="48" index="887" color="#3c009d">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/*/*</label>
   <label x="0" y="0" z="0" index="888" color="#007886">Inter-Hemispheric/Limbic Lobe/*/*/*</label>
   <label x="9" y="42" z="48" index="889" color="#5aff00">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/*/*</label>
   <label x="0" y="0" z="0" index="890" color="#0000ad">Left Cerebrum/Limbic Lobe/*/White Matter/*</label>
-  <label x="69" y="52" z="60" index="891" color="#00c836">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 2</label>
-  <label x="18" y="53" z="60" index="892" color="#be00de">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 2</label>
-  <label x="78" y="55" z="47" index="893" color="#00008e">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 1</label>
-  <label x="9" y="55" z="47" index="894" color="#0000f8">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 1</label>
-  <label x="61" y="53" z="60" index="895" color="#000080">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="15" y="59" z="59" index="896" color="#8eff00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="74" y="59" z="48" index="897" color="#7500ba">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="14" y="59" z="47" index="898" color="#ff5800">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="75" y="70" z="51" index="899" color="#ff5a00">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="13" y="70" z="51" index="900" color="#55ff00">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="21" y="73" z="52" index="901" color="#ffd600">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="54" y="94" z="48" index="902" color="#adff00">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="34" y="94" z="48" index="903" color="#f7ff00">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 9</label>
+  <label x="69" y="52" z="60" index="891" color="#00c836">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA2</label>
+  <label x="18" y="53" z="60" index="892" color="#be00de">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA2</label>
+  <label x="78" y="55" z="47" index="893" color="#00008e">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA1</label>
+  <label x="9" y="55" z="47" index="894" color="#0000f8">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA1</label>
+  <label x="61" y="53" z="60" index="895" color="#000080">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA3</label>
+  <label x="15" y="59" z="59" index="896" color="#8eff00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA3</label>
+  <label x="74" y="59" z="48" index="897" color="#7500ba">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/BA3</label>
+  <label x="14" y="59" z="47" index="898" color="#ff5800">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/Gray Matter/BA3</label>
+  <label x="75" y="70" z="51" index="899" color="#ff5a00">Left Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="13" y="70" z="51" index="900" color="#55ff00">Right Cerebrum/Frontal Lobe/Inferior Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="21" y="73" z="52" index="901" color="#ffd600">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA9</label>
+  <label x="54" y="94" z="48" index="902" color="#adff00">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="34" y="94" z="48" index="903" color="#f7ff00">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA9</label>
   <label x="44" y="81" z="60" index="904" color="#30ff00">Inter-Hemispheric/*/Superior Frontal Gyrus/*/*</label>
-  <label x="37" y="26" z="51" index="905" color="#000bf3">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 31</label>
-  <label x="67" y="25" z="52" index="906" color="#19ff00">Left Cerebrum/Temporal Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="26" y="25" z="55" index="907" color="#ffe300">Right Cerebrum/Temporal Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="63" y="26" z="52" index="908" color="#6b00b5">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="51" y="26" z="51" index="909" color="#fffc00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 31</label>
-  <label x="24" y="26" z="51" index="910" color="#5a00ac">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/Brodmann area 39</label>
+  <label x="37" y="26" z="51" index="905" color="#000bf3">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA31</label>
+  <label x="67" y="25" z="52" index="906" color="#19ff00">Left Cerebrum/Temporal Lobe/Superior Occipital Gyrus/Gray Matter/BA39</label>
+  <label x="26" y="25" z="55" index="907" color="#ffe300">Right Cerebrum/Temporal Lobe/Superior Occipital Gyrus/Gray Matter/BA39</label>
+  <label x="63" y="26" z="52" index="908" color="#6b00b5">Left Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/BA39</label>
+  <label x="51" y="26" z="51" index="909" color="#fffc00">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA31</label>
+  <label x="24" y="26" z="51" index="910" color="#5a00ac">Right Cerebrum/Occipital Lobe/Superior Occipital Gyrus/Gray Matter/BA39</label>
   <label x="49" y="35" z="51" index="911" color="#0000f6">Left Cerebrum/Limbic Lobe/Precuneus/*/*</label>
   <label x="46" y="54" z="57" index="912" color="#fc00fd">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/*/*</label>
   <label x="43" y="53" z="57" index="913" color="#58ff00">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/*/*</label>
   <label x="41" y="33" z="51" index="914" color="#19008c">Right Cerebrum/Limbic Lobe/Precuneus/*/*</label>
-  <label x="46" y="42" z="53" index="915" color="#0000b0">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 31</label>
-  <label x="35" y="50" z="57" index="916" color="#d8ff00">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 31</label>
-  <label x="0" y="0" z="0" index="917" color="#0000e0">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 39</label>
-  <label x="27" y="34" z="51" index="918" color="#0000d4">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/Brodmann area 39</label>
+  <label x="46" y="42" z="53" index="915" color="#0000b0">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA31</label>
+  <label x="35" y="50" z="57" index="916" color="#d8ff00">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA31</label>
+  <label x="0" y="0" z="0" index="917" color="#0000e0">Left Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA39</label>
+  <label x="27" y="34" z="51" index="918" color="#0000d4">Right Cerebrum/Temporal Lobe/Sub-Gyral/Gray Matter/BA39</label>
   <label x="52" y="35" z="51" index="919" color="#2dff00">Left Cerebrum/Limbic Lobe/Precuneus/White Matter/*</label>
-  <label x="50" y="42" z="55" index="920" color="#008f6f">Left Cerebrum/Limbic Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
+  <label x="50" y="42" z="55" index="920" color="#008f6f">Left Cerebrum/Limbic Lobe/Precuneus/Gray Matter/BA31</label>
   <label x="50" y="48" z="53" index="921" color="#43ff00">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/White Matter/*</label>
   <label x="38" y="48" z="53" index="922" color="#0000fc">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/White Matter/*</label>
-  <label x="36" y="35" z="51" index="923" color="#26ff00">Right Cerebrum/Limbic Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
+  <label x="36" y="35" z="51" index="923" color="#26ff00">Right Cerebrum/Limbic Lobe/Precuneus/Gray Matter/BA31</label>
   <label x="36" y="42" z="55" index="924" color="#000cf2">Right Cerebrum/Limbic Lobe/Precuneus/White Matter/*</label>
   <label x="77" y="35" z="51" index="925" color="#0051ad">Left Cerebrum/Occipital Lobe/Superior Temporal Gyrus/*/*</label>
   <label x="0" y="0" z="0" index="926" color="#5400a9">Right Cerebrum/Occipital Lobe/Superior Temporal Gyrus/*/*</label>
-  <label x="74" y="36" z="53" index="927" color="#009f5f">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 40</label>
-  <label x="12" y="38" z="54" index="928" color="#fff900">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 40</label>
+  <label x="74" y="36" z="53" index="927" color="#009f5f">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/BA40</label>
+  <label x="12" y="38" z="54" index="928" color="#fff900">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/BA40</label>
   <label x="69" y="39" z="54" index="929" color="#00f10d">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/White Matter/*</label>
   <label x="18" y="42" z="54" index="930" color="#c2ff00">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/White Matter/*</label>
   <label x="78" y="39" z="51" index="931" color="#acff00">*/*/Supramarginal Gyrus/*/*</label>
-  <label x="0" y="0" z="0" index="932" color="#0040be">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 31</label>
+  <label x="0" y="0" z="0" index="932" color="#0040be">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA31</label>
   <label x="78" y="44" z="55" index="933" color="#16ff00">*/*/Inferior Parietal Lobule/*/*</label>
-  <label x="45" y="54" z="49" index="934" color="#008579">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 23</label>
-  <label x="42" y="50" z="51" index="935" color="#4300a1">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 23</label>
+  <label x="45" y="54" z="49" index="934" color="#008579">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA23</label>
+  <label x="42" y="50" z="51" index="935" color="#4300a1">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA23</label>
   <label x="63" y="48" z="50" index="936" color="#0000c2">Left Cerebrum/Frontal Lobe/Inferior Parietal Lobule/White Matter/*</label>
   <label x="22" y="52" z="49" index="937" color="#ff8d00">Right Cerebrum/Frontal Lobe/Inferior Parietal Lobule/White Matter/*</label>
-  <label x="74" y="57" z="50" index="938" color="#93ff00">Left Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="74" y="57" z="49" index="939" color="#007787">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="14" y="57" z="49" index="940" color="#000097">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="46" y="70" z="51" index="941" color="#00ec12">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 24</label>
-  <label x="42" y="60" z="51" index="942" color="#000082">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 24</label>
-  <label x="72" y="79" z="51" index="943" color="#5b00ad">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="14" y="75" z="50" index="944" color="#ee00f6">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="46" y="77" z="50" index="945" color="#ff0d00">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 32</label>
-  <label x="41" y="69" z="56" index="946" color="#0020de">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 32</label>
-  <label x="0" y="0" z="0" index="947" color="#0000f9">Left Cerebrum/Limbic Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 32</label>
-  <label x="36" y="81" z="49" index="948" color="#ffce00">Right Cerebrum/Limbic Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 32</label>
+  <label x="74" y="57" z="50" index="938" color="#93ff00">Left Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/BA3</label>
+  <label x="74" y="57" z="49" index="939" color="#007787">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA3</label>
+  <label x="14" y="57" z="49" index="940" color="#000097">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA3</label>
+  <label x="46" y="70" z="51" index="941" color="#00ec12">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA24</label>
+  <label x="42" y="60" z="51" index="942" color="#000082">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA24</label>
+  <label x="72" y="79" z="51" index="943" color="#5b00ad">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="14" y="75" z="50" index="944" color="#ee00f6">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA9</label>
+  <label x="46" y="77" z="50" index="945" color="#ff0d00">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA32</label>
+  <label x="41" y="69" z="56" index="946" color="#0020de">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA32</label>
+  <label x="0" y="0" z="0" index="947" color="#0000f9">Left Cerebrum/Limbic Lobe/Medial Frontal Gyrus/Gray Matter/BA32</label>
+  <label x="36" y="81" z="49" index="948" color="#ffce00">Right Cerebrum/Limbic Lobe/Medial Frontal Gyrus/Gray Matter/BA32</label>
   <label x="50" y="82" z="48" index="949" color="#ffe700">Left Cerebrum/Limbic Lobe/Medial Frontal Gyrus/*/*</label>
   <label x="40" y="83" z="47" index="950" color="#36ff00">Right Cerebrum/Limbic Lobe/Medial Frontal Gyrus/*/*</label>
   <label x="43" y="29" z="53" index="951" color="#ff3900">Right Cerebrum/*/Cuneus/*/*</label>
-  <label x="46" y="30" z="54" index="952" color="#18008b">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 7</label>
-  <label x="37" y="28" z="53" index="953" color="#ff2000">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/Brodmann area 7</label>
+  <label x="46" y="30" z="54" index="952" color="#18008b">Left Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA7</label>
+  <label x="37" y="28" z="53" index="953" color="#ff2000">Right Cerebrum/Occipital Lobe/Cuneus/Gray Matter/BA7</label>
   <label x="68" y="24" z="54" index="954" color="#ab00d5">*/*/Angular Gyrus/*/*</label>
   <label x="67" y="24" z="54" index="955" color="#a600d2">Left Cerebrum/Occipital Lobe/Angular Gyrus/*/*</label>
   <label x="20" y="24" z="54" index="956" color="#0000aa">Right Cerebrum/Occipital Lobe/Angular Gyrus/*/*</label>
   <label x="68" y="25" z="54" index="957" color="#bd00de">Left Cerebrum/Temporal Lobe/Angular Gyrus/*/*</label>
-  <label x="62" y="25" z="54" index="958" color="#00de20">Left Cerebrum/Temporal Lobe/Angular Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="20" y="26" z="53" index="959" color="#dfff00">Right Cerebrum/Temporal Lobe/Angular Gyrus/Gray Matter/Brodmann area 39</label>
+  <label x="62" y="25" z="54" index="958" color="#00de20">Left Cerebrum/Temporal Lobe/Angular Gyrus/Gray Matter/BA39</label>
+  <label x="20" y="26" z="53" index="959" color="#dfff00">Right Cerebrum/Temporal Lobe/Angular Gyrus/Gray Matter/BA39</label>
   <label x="18" y="26" z="53" index="960" color="#ff4900">Right Cerebrum/Temporal Lobe/Angular Gyrus/*/*</label>
   <label x="62" y="26" z="54" index="961" color="#f100f8">Left Cerebrum/Temporal Lobe/Angular Gyrus/White Matter/*</label>
   <label x="21" y="27" z="53" index="962" color="#70ff00">Right Cerebrum/Temporal Lobe/Angular Gyrus/White Matter/*</label>
@@ -977,93 +977,93 @@
   <label x="31" y="27" z="53" index="964" color="#ff2e00">Right Cerebrum/Parietal Lobe/Cuneus/White Matter/*</label>
   <label x="68" y="33" z="55" index="965" color="#ffda00">Left Cerebrum/Parietal Lobe/Angular Gyrus/White Matter/*</label>
   <label x="19" y="32" z="55" index="966" color="#b700db">Right Cerebrum/Parietal Lobe/Angular Gyrus/White Matter/*</label>
-  <label x="71" y="30" z="55" index="967" color="#0000fb">Left Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="56" y="27" z="59" index="968" color="#ff1200">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 7</label>
-  <label x="36" y="29" z="53" index="969" color="#b9ff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 7</label>
-  <label x="16" y="30" z="55" index="970" color="#0000e9">Right Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="51" y="29" z="53" index="971" color="#00b747">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/Brodmann area 7</label>
-  <label x="32" y="27" z="59" index="972" color="#00e717">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 7</label>
+  <label x="71" y="30" z="55" index="967" color="#0000fb">Left Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/BA39</label>
+  <label x="56" y="27" z="59" index="968" color="#ff1200">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA7</label>
+  <label x="36" y="29" z="53" index="969" color="#b9ff00">Right Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA7</label>
+  <label x="16" y="30" z="55" index="970" color="#0000e9">Right Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/BA39</label>
+  <label x="51" y="29" z="53" index="971" color="#00b747">Left Cerebrum/Occipital Lobe/Precuneus/Gray Matter/BA7</label>
+  <label x="32" y="27" z="59" index="972" color="#00e717">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA7</label>
   <label x="0" y="0" z="0" index="973" color="#baff00">*/Parietal Lobe/*/*/*</label>
-  <label x="74" y="31" z="53" index="974" color="#0000a3">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 39</label>
-  <label x="13" y="31" z="53" index="975" color="#8200c0">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/Brodmann area 39</label>
+  <label x="74" y="31" z="53" index="974" color="#0000a3">Left Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/BA39</label>
+  <label x="13" y="31" z="53" index="975" color="#8200c0">Right Cerebrum/Parietal Lobe/Supramarginal Gyrus/Gray Matter/BA39</label>
   <label x="43" y="32" z="53" index="976" color="#0000ce">Right Cerebrum/*/Precuneus/*/*</label>
   <label x="13" y="58" z="58" index="977" color="#0000b4">Right Cerebrum/Parietal Lobe/*/*/*</label>
-  <label x="64" y="50" z="57" index="978" color="#faff00">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 2</label>
+  <label x="64" y="50" z="57" index="978" color="#faff00">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA2</label>
   <label x="75" y="57" z="52" index="979" color="#ff6e00">Left Cerebrum/Frontal Lobe/Postcentral Gyrus/*/*</label>
   <label x="18" y="59" z="58" index="980" color="#ff1400">Right Cerebrum/Frontal Lobe/Postcentral Gyrus/*/*</label>
-  <label x="50" y="78" z="50" index="981" color="#0000c4">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="40" y="79" z="50" index="982" color="#fff400">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 9</label>
-  <label x="0" y="0" z="0" index="983" color="#b900dc">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 9</label>
-  <label x="30" y="81" z="50" index="984" color="#0000f4">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 9</label>
+  <label x="50" y="78" z="50" index="981" color="#0000c4">Left Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA9</label>
+  <label x="40" y="79" z="50" index="982" color="#fff400">Right Cerebrum/Limbic Lobe/Cingulate Gyrus/Gray Matter/BA9</label>
+  <label x="0" y="0" z="0" index="983" color="#b900dc">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA9</label>
+  <label x="30" y="81" z="50" index="984" color="#0000f4">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA9</label>
   <label x="0" y="0" z="0" index="985" color="#abff00">Left Cerebrum/Parietal Lobe/Cuneus/*/*</label>
-  <label x="60" y="24" z="59" index="986" color="#c900e4">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 19</label>
-  <label x="27" y="23" z="57" index="987" color="#ff3c00">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 19</label>
+  <label x="60" y="24" z="59" index="986" color="#c900e4">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA19</label>
+  <label x="27" y="23" z="57" index="987" color="#ff3c00">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA19</label>
   <label x="44" y="25" z="56" index="988" color="#e800f3">Inter-Hemispheric/*/Precuneus/*/*</label>
-  <label x="22" y="30" z="55" index="989" color="#0000fd">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 39</label>
-  <label x="67" y="27" z="56" index="990" color="#0000ee">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/Brodmann area 39</label>
-  <label x="27" y="33" z="57" index="991" color="#b400d9">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 39</label>
-  <label x="0" y="0" z="0" index="992" color="#00009a">Left Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/Brodmann area 40</label>
-  <label x="14" y="35" z="55" index="993" color="#0000e3">Right Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/Brodmann area 40</label>
-  <label x="0" y="0" z="0" index="994" color="#d700eb">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 31</label>
-  <label x="0" y="0" z="0" index="995" color="#ff4400">Left Cerebrum/Parietal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 31</label>
+  <label x="22" y="30" z="55" index="989" color="#0000fd">Right Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA39</label>
+  <label x="67" y="27" z="56" index="990" color="#0000ee">Left Cerebrum/Parietal Lobe/Precuneus/Gray Matter/BA39</label>
+  <label x="27" y="33" z="57" index="991" color="#b400d9">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA39</label>
+  <label x="0" y="0" z="0" index="992" color="#00009a">Left Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/BA40</label>
+  <label x="14" y="35" z="55" index="993" color="#0000e3">Right Cerebrum/Parietal Lobe/Angular Gyrus/Gray Matter/BA40</label>
+  <label x="0" y="0" z="0" index="994" color="#d700eb">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA31</label>
+  <label x="0" y="0" z="0" index="995" color="#ff4400">Left Cerebrum/Parietal Lobe/Cingulate Gyrus/Gray Matter/BA31</label>
   <label x="47" y="41" z="55" index="996" color="#ec00f5">Left Cerebrum/Parietal Lobe/Cingulate Gyrus/*/*</label>
   <label x="40" y="41" z="55" index="997" color="#0048b6">Right Cerebrum/Parietal Lobe/Cingulate Gyrus/*/*</label>
-  <label x="39" y="41" z="55" index="998" color="#a900d4">Right Cerebrum/Parietal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 31</label>
-  <label x="57" y="44" z="66" index="999" color="#00916d">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 40</label>
-  <label x="31" y="44" z="66" index="1000" color="#0000be">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 40</label>
+  <label x="39" y="41" z="55" index="998" color="#a900d4">Right Cerebrum/Parietal Lobe/Cingulate Gyrus/Gray Matter/BA31</label>
+  <label x="57" y="44" z="66" index="999" color="#00916d">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA40</label>
+  <label x="31" y="44" z="66" index="1000" color="#0000be">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA40</label>
   <label x="47" y="76" z="52" index="1001" color="#0000fe">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/White Matter/*</label>
   <label x="36" y="75" z="53" index="1002" color="#008777">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/White Matter/*</label>
-  <label x="47" y="45" z="71" index="1003" color="#ff5100">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="63" y="77" z="52" index="1004" color="#a800d3">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 9</label>
+  <label x="47" y="45" z="71" index="1003" color="#ff5100">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA4</label>
+  <label x="63" y="77" z="52" index="1004" color="#a800d3">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/BA9</label>
   <label x="45" y="75" z="52" index="1005" color="#00ee10">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/*/*</label>
-  <label x="46" y="76" z="52" index="1006" color="#0dff00">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 32</label>
+  <label x="46" y="76" z="52" index="1006" color="#0dff00">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/BA32</label>
   <label x="37" y="78" z="52" index="1007" color="#0000a9">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/*/*</label>
-  <label x="42" y="77" z="53" index="1008" color="#fff800">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 32</label>
-  <label x="51" y="60" z="62" index="1009" color="#0000d2">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="51" y="78" z="52" index="1010" color="#ff8900">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="42" y="58" z="62" index="1011" color="#004ab4">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="0" y="0" z="0" index="1012" color="#0000ca">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/Brodmann area 6</label>
+  <label x="42" y="77" z="53" index="1008" color="#fff800">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/BA32</label>
+  <label x="51" y="60" z="62" index="1009" color="#0000d2">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="51" y="78" z="52" index="1010" color="#ff8900">Left Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/BA6</label>
+  <label x="42" y="58" z="62" index="1011" color="#004ab4">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="0" y="0" z="0" index="1012" color="#0000ca">Right Cerebrum/Frontal Lobe/Cingulate Gyrus/Gray Matter/BA6</label>
   <label x="38" y="20" z="58" index="1013" color="#000081">*/*/Precuneus/*/*</label>
-  <label x="65" y="30" z="58" index="1014" color="#45ff00">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 39</label>
-  <label x="17" y="32" z="57" index="1015" color="#63ff00">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 39</label>
-  <label x="52" y="42" z="57" index="1016" color="#0000e2">Left Cerebrum/Frontal Lobe/Precuneus/Gray Matter/Brodmann area 31</label>
-  <label x="36" y="42" z="57" index="1017" color="#0024da">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 31</label>
-  <label x="0" y="0" z="0" index="1018" color="#8000bf">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 2</label>
-  <label x="0" y="0" z="0" index="1019" color="#ffde00">Right Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 3</label>
-  <label x="55" y="57" z="56" index="1020" color="#009767">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 24</label>
-  <label x="33" y="57" z="56" index="1021" color="#ff4b00">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 24</label>
-  <label x="55" y="63" z="65" index="1022" color="#020080">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 6</label>
-  <label x="58" y="66" z="59" index="1023" color="#001ce2">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="17" y="69" z="58" index="1024" color="#00009f">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="70" y="71" z="56" index="1025" color="#3eff00">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 8</label>
-  <label x="30" y="76" z="58" index="1026" color="#0016e8">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/Brodmann area 8</label>
-  <label x="52" y="79" z="54" index="1027" color="#0000dd">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 8</label>
-  <label x="34" y="78" z="54" index="1028" color="#9dff00">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 8</label>
-  <label x="50" y="77" z="55" index="1029" color="#5cff00">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 32</label>
-  <label x="0" y="0" z="0" index="1030" color="#0000e4">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/Brodmann area 32</label>
-  <label x="0" y="0" z="0" index="1031" color="#ebff00">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 32</label>
-  <label x="0" y="0" z="0" index="1032" color="#28ff00">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 32</label>
-  <label x="46" y="80" z="55" index="1033" color="#00cb33">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 8</label>
-  <label x="42" y="80" z="55" index="1034" color="#00f30b">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 8</label>
-  <label x="57" y="81" z="61" index="1035" color="#7600ba">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 8</label>
-  <label x="30" y="87" z="55" index="1036" color="#5c00ad">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 8</label>
+  <label x="65" y="30" z="58" index="1014" color="#45ff00">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA39</label>
+  <label x="17" y="32" z="57" index="1015" color="#63ff00">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA39</label>
+  <label x="52" y="42" z="57" index="1016" color="#0000e2">Left Cerebrum/Frontal Lobe/Precuneus/Gray Matter/BA31</label>
+  <label x="36" y="42" z="57" index="1017" color="#0024da">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA31</label>
+  <label x="0" y="0" z="0" index="1018" color="#8000bf">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA2</label>
+  <label x="0" y="0" z="0" index="1019" color="#ffde00">Right Cerebrum/Parietal Lobe/Precentral Gyrus/Gray Matter/BA3</label>
+  <label x="55" y="57" z="56" index="1020" color="#009767">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA24</label>
+  <label x="33" y="57" z="56" index="1021" color="#ff4b00">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA24</label>
+  <label x="55" y="63" z="65" index="1022" color="#020080">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA6</label>
+  <label x="58" y="66" z="59" index="1023" color="#001ce2">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="17" y="69" z="58" index="1024" color="#00009f">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="70" y="71" z="56" index="1025" color="#3eff00">Left Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA8</label>
+  <label x="30" y="76" z="58" index="1026" color="#0016e8">Right Cerebrum/Frontal Lobe/Middle Frontal Gyrus/Gray Matter/BA8</label>
+  <label x="52" y="79" z="54" index="1027" color="#0000dd">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA8</label>
+  <label x="34" y="78" z="54" index="1028" color="#9dff00">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA8</label>
+  <label x="50" y="77" z="55" index="1029" color="#5cff00">Left Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA32</label>
+  <label x="0" y="0" z="0" index="1030" color="#0000e4">Right Cerebrum/Limbic Lobe/Sub-Gyral/Gray Matter/BA32</label>
+  <label x="0" y="0" z="0" index="1031" color="#ebff00">Left Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA32</label>
+  <label x="0" y="0" z="0" index="1032" color="#28ff00">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA32</label>
+  <label x="46" y="80" z="55" index="1033" color="#00cb33">Left Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA8</label>
+  <label x="42" y="80" z="55" index="1034" color="#00f30b">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA8</label>
+  <label x="57" y="81" z="61" index="1035" color="#7600ba">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA8</label>
+  <label x="30" y="87" z="55" index="1036" color="#5c00ad">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA8</label>
   <label x="58" y="25" z="61" index="1037" color="#ff4000">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/*/*</label>
   <label x="32" y="34" z="60" index="1038" color="#35009a">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/*/*</label>
-  <label x="55" y="38" z="69" index="1039" color="#0000d1">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="34" y="38" z="69" index="1040" color="#008975">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 7</label>
+  <label x="55" y="38" z="69" index="1039" color="#0000d1">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA7</label>
+  <label x="34" y="38" z="69" index="1040" color="#008975">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA7</label>
   <label x="61" y="33" z="64" index="1041" color="#007e80">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/White Matter/*</label>
   <label x="28" y="31" z="61" index="1042" color="#ff0300">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/White Matter/*</label>
-  <label x="63" y="33" z="60" index="1043" color="#0000bb">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="22" y="31" z="61" index="1044" color="#ff2100">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="45" y="49" z="59" index="1045" color="#7cff00">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 31</label>
+  <label x="63" y="33" z="60" index="1043" color="#0000bb">Left Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA7</label>
+  <label x="22" y="31" z="61" index="1044" color="#ff2100">Right Cerebrum/Parietal Lobe/Inferior Parietal Lobule/Gray Matter/BA7</label>
+  <label x="45" y="49" z="59" index="1045" color="#7cff00">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA31</label>
   <label x="45" y="54" z="59" index="1046" color="#7700bb">Left Cerebrum/Frontal Lobe/Paracentral Lobule/*/*</label>
   <label x="44" y="49" z="59" index="1047" color="#fffa00">Inter-Hemispheric/*/Paracentral Lobule/*/*</label>
   <label x="43" y="49" z="59" index="1048" color="#ccff00">Right Cerebrum/Frontal Lobe/Paracentral Lobule/*/*</label>
-  <label x="42" y="50" z="60" index="1049" color="#7e00be">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 31</label>
-  <label x="40" y="49" z="61" index="1050" color="#ffd900">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 31</label>
+  <label x="42" y="50" z="60" index="1049" color="#7e00be">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA31</label>
+  <label x="40" y="49" z="61" index="1050" color="#ffd900">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA31</label>
   <label x="49" y="49" z="63" index="1051" color="#17ff00">Left Cerebrum/Frontal Lobe/Paracentral Lobule/White Matter/*</label>
   <label x="39" y="49" z="63" index="1052" color="#ef00f7">Right Cerebrum/Frontal Lobe/Paracentral Lobule/White Matter/*</label>
-  <label x="0" y="0" z="0" index="1053" color="#030081">Left Cerebrum/Limbic Lobe/Paracentral Lobule/Gray Matter/Brodmann area 31</label>
+  <label x="0" y="0" z="0" index="1053" color="#030081">Left Cerebrum/Limbic Lobe/Paracentral Lobule/Gray Matter/BA31</label>
   <label x="49" y="59" z="59" index="1054" color="#ffc000">Left Cerebrum/Limbic Lobe/Paracentral Lobule/White Matter/*</label>
   <label x="39" y="60" z="60" index="1055" color="#0000f9">Right Cerebrum/Limbic Lobe/Paracentral Lobule/White Matter/*</label>
   <label x="45" y="60" z="59" index="1056" color="#f1ff00">Left Cerebrum/Limbic Lobe/Paracentral Lobule/*/*</label>
@@ -1071,53 +1071,53 @@
   <label x="44" y="61" z="58" index="1058" color="#00d925">Inter-Hemispheric/*/Cingulate Gyrus/*/*</label>
   <label x="44" y="68" z="58" index="1059" color="#61ff00">Inter-Hemispheric/*/Medial Frontal Gyrus/*/*</label>
   <label x="57" y="30" z="66" index="1060" color="#0000d6">*/*/Superior Parietal Lobule/*/*</label>
-  <label x="64" y="37" z="63" index="1061" color="#5100a8">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 40</label>
-  <label x="25" y="38" z="63" index="1062" color="#ff2600">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 40</label>
+  <label x="64" y="37" z="63" index="1061" color="#5100a8">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA40</label>
+  <label x="25" y="38" z="63" index="1062" color="#ff2600">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA40</label>
   <label x="53" y="44" z="62" index="1063" color="#0000ea">Left Cerebrum/Parietal Lobe/Paracentral Lobule/White Matter/*</label>
-  <label x="0" y="0" z="0" index="1064" color="#ffec00">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 5</label>
-  <label x="54" y="42" z="63" index="1065" color="#00fb03">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="34" y="42" z="62" index="1066" color="#0000ae">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="34" y="43" z="62" index="1067" color="#85ff00">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 5</label>
-  <label x="46" y="45" z="63" index="1068" color="#0000cf">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 5</label>
+  <label x="0" y="0" z="0" index="1064" color="#ffec00">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA5</label>
+  <label x="54" y="42" z="63" index="1065" color="#00fb03">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA7</label>
+  <label x="34" y="42" z="62" index="1066" color="#0000ae">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA7</label>
+  <label x="34" y="43" z="62" index="1067" color="#85ff00">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA5</label>
+  <label x="46" y="45" z="63" index="1068" color="#0000cf">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA5</label>
   <label x="42" y="43" z="62" index="1069" color="#00f509">Right Cerebrum/Frontal Lobe/Precuneus/*/*</label>
-  <label x="35" y="45" z="63" index="1070" color="#7100b8">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 5</label>
+  <label x="35" y="45" z="63" index="1070" color="#7100b8">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA5</label>
   <label x="49" y="44" z="62" index="1071" color="#ff7600">Left Cerebrum/Parietal Lobe/Paracentral Lobule/*/*</label>
   <label x="0" y="0" z="0" index="1072" color="#49ff00">Right Cerebrum/Parietal Lobe/Paracentral Lobule/*/*</label>
   <label x="36" y="45" z="64" index="1073" color="#0000b7">Right Cerebrum/Parietal Lobe/Paracentral Lobule/White Matter/*</label>
   <label x="0" y="0" z="0" index="1074" color="#003ac4">Right Cerebrum/Frontal Lobe/Precuneus/White Matter/*</label>
-  <label x="46" y="51" z="62" index="1075" color="#00008a">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 6</label>
-  <label x="42" y="51" z="62" index="1076" color="#1b008d">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 6</label>
-  <label x="51" y="79" z="64" index="1077" color="#fd00fe">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 6</label>
-  <label x="40" y="64" z="70" index="1078" color="#00c33b">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/Brodmann area 6</label>
+  <label x="46" y="51" z="62" index="1075" color="#00008a">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA6</label>
+  <label x="42" y="51" z="62" index="1076" color="#1b008d">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA6</label>
+  <label x="51" y="79" z="64" index="1077" color="#fd00fe">Left Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA6</label>
+  <label x="40" y="64" z="70" index="1078" color="#00c33b">Right Cerebrum/Frontal Lobe/Superior Frontal Gyrus/Gray Matter/BA6</label>
   <label x="0" y="0" z="0" index="1079" color="#aa00d4">Right Cerebrum/*/Superior Parietal Lobule/*/*</label>
-  <label x="55" y="40" z="65" index="1080" color="#0000f7">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 7</label>
-  <label x="33" y="39" z="65" index="1081" color="#ff0a00">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/Brodmann area 7</label>
-  <label x="67" y="39" z="66" index="1082" color="#0000a0">Right Cerebrum/Frontal Lobe/Inferior Parietal Lobule/Gray Matter/Brodmann area 40</label>
-  <label x="0" y="0" z="0" index="1083" color="#ffc400">Left Cerebrum/Frontal Lobe/Precuneus/Gray Matter/Brodmann area 5</label>
+  <label x="55" y="40" z="65" index="1080" color="#0000f7">Left Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA7</label>
+  <label x="33" y="39" z="65" index="1081" color="#ff0a00">Right Cerebrum/Parietal Lobe/Sub-Gyral/Gray Matter/BA7</label>
+  <label x="67" y="39" z="66" index="1082" color="#0000a0">Right Cerebrum/Frontal Lobe/Inferior Parietal Lobule/Gray Matter/BA40</label>
+  <label x="0" y="0" z="0" index="1083" color="#ffc400">Left Cerebrum/Frontal Lobe/Precuneus/Gray Matter/BA5</label>
   <label x="0" y="0" z="0" index="1084" color="#5200a8">Left Cerebrum/Frontal Lobe/Precuneus/White Matter/*</label>
   <label x="0" y="0" z="0" index="1085" color="#0000c2">Left Cerebrum/Frontal Lobe/Precuneus/*/*</label>
-  <label x="35" y="43" z="66" index="1086" color="#0000c3">Right Cerebrum/Frontal Lobe/Precuneus/Gray Matter/Brodmann area 5</label>
-  <label x="38" y="43" z="65" index="1087" color="#0e0086">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 7</label>
-  <label x="52" y="45" z="65" index="1088" color="#ff8b00">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 3</label>
-  <label x="46" y="46" z="68" index="1089" color="#ff0400">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 4</label>
-  <label x="41" y="46" z="68" index="1090" color="#00008e">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 4</label>
-  <label x="36" y="46" z="65" index="1091" color="#9bff00">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 3</label>
-  <label x="34" y="49" z="66" index="1092" color="#00008d">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 3</label>
-  <label x="35" y="50" z="65" index="1093" color="#ff1800">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 4</label>
-  <label x="31" y="68" z="63" index="1094" color="#5300a9">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/Brodmann area 6</label>
-  <label x="61" y="42" z="68" index="1095" color="#00009d">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 5</label>
-  <label x="24" y="43" z="69" index="1096" color="#00629c">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 5</label>
-  <label x="56" y="42" z="68" index="1097" color="#00fc02">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 5</label>
-  <label x="31" y="43" z="68" index="1098" color="#000088">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/Brodmann area 5</label>
-  <label x="34" y="48" z="68" index="1099" color="#0bff00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="35" y="49" z="68" index="1100" color="#ff5500">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/Brodmann area 4</label>
-  <label x="51" y="39" z="72" index="1101" color="#7aff00">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 7</label>
-  <label x="39" y="37" z="71" index="1102" color="#ff6600">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/Brodmann area 7</label>
+  <label x="35" y="43" z="66" index="1086" color="#0000c3">Right Cerebrum/Frontal Lobe/Precuneus/Gray Matter/BA5</label>
+  <label x="38" y="43" z="65" index="1087" color="#0e0086">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA7</label>
+  <label x="52" y="45" z="65" index="1088" color="#ff8b00">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA3</label>
+  <label x="46" y="46" z="68" index="1089" color="#ff0400">Left Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA4</label>
+  <label x="41" y="46" z="68" index="1090" color="#00008e">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA4</label>
+  <label x="36" y="46" z="65" index="1091" color="#9bff00">Right Cerebrum/Frontal Lobe/Paracentral Lobule/Gray Matter/BA3</label>
+  <label x="34" y="49" z="66" index="1092" color="#00008d">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA3</label>
+  <label x="35" y="50" z="65" index="1093" color="#ff1800">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA4</label>
+  <label x="31" y="68" z="63" index="1094" color="#5300a9">Right Cerebrum/Frontal Lobe/Sub-Gyral/Gray Matter/BA6</label>
+  <label x="61" y="42" z="68" index="1095" color="#00009d">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA5</label>
+  <label x="24" y="43" z="69" index="1096" color="#00629c">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA5</label>
+  <label x="56" y="42" z="68" index="1097" color="#00fc02">Left Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA5</label>
+  <label x="31" y="43" z="68" index="1098" color="#000088">Right Cerebrum/Parietal Lobe/Superior Parietal Lobule/Gray Matter/BA5</label>
+  <label x="34" y="48" z="68" index="1099" color="#0bff00">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA4</label>
+  <label x="35" y="49" z="68" index="1100" color="#ff5500">Right Cerebrum/Frontal Lobe/Medial Frontal Gyrus/Gray Matter/BA4</label>
+  <label x="51" y="39" z="72" index="1101" color="#7aff00">Left Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA7</label>
+  <label x="39" y="37" z="71" index="1102" color="#ff6600">Right Cerebrum/Parietal Lobe/Postcentral Gyrus/Gray Matter/BA7</label>
   <label x="42" y="41" z="71" index="1103" color="#1c008d">Inter-Hemispheric/*/Postcentral Gyrus/*/*</label>
-  <label x="48" y="45" z="71" index="1104" color="#ff6100">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 4</label>
-  <label x="42" y="45" z="71" index="1105" color="#8700c3">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/Brodmann area 4</label>
+  <label x="48" y="45" z="71" index="1104" color="#ff6100">Left Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA4</label>
+  <label x="42" y="45" z="71" index="1105" color="#8700c3">Right Cerebrum/Parietal Lobe/Paracentral Lobule/Gray Matter/BA4</label>
   <label x="0" y="0" z="0" index="1106" color="#32ff00">*/Striatum/Ventral striatum/Gray Matter/Nucleus Accumbens NAc</label>
-  <label x="0" y="0" z="0" index="1107" color="#0000f3">*/Limbic Lobe/Central Amygdala/Gray Matter/Central Nucleus Amygdala CNA</label>
+  <label x="0" y="0" z="0" index="1107" color="#0000f3">*/Limbic Lobe/Central Amygdala/Gray Matter/Amygdala Central Nucleus CNA</label>
   <label x="47" y="51" z="27" index="1108" color="#71ff00">*/Midbrain/Midbrain/Gray Matter/Ventral Tegmental Area VTA</label>
   <label x="47" y="51" z="27" index="1109" color="#0000b2">*/Midbrain/Midbrain/Gray Matter/Lateral Hypothalamic area LHA</label>
   <label x="47" y="51" z="27" index="1110" color="#0056a8">*/Midbrain/Midbrain/Gray Matter/Lateral Habenula LHB</label>
@@ -1131,13 +1131,13 @@
   <label x="71" y="117" z="51" index="1118" color="#000af4">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus hippocampal-amygdaloid transition area</label>
   <label x="112" y="115" z="43" index="1119" color="#50ff00">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus subiculum</label>
   <label x="64" y="107" z="54" index="1120" color="#0000a4">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus subiculum</label>
-  <label x="98" y="33" z="66" index="1121" color="#ffaa00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
-  <label x="75" y="42" z="65" index="1122" color="#0000b9">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
-  <label x="105" y="43" z="66" index="1123" color="#00d22c">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
-  <label x="68" y="47" z="64" index="1124" color="#0028d6">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
-  <label x="117" y="42" z="61" index="1125" color="#009d61">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
-  <label x="59" y="50" z="62" index="1126" color="#0000eb">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
-  <label x="132" y="52" z="76" index="1127" color="#ffcb00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 MT BA19</label>
-  <label x="41" y="60" z="78" index="1128" color="#f8ff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 MT BA19</label>
+  <label x="98" y="33" z="66" index="1121" color="#ffaa00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA18 Visual cortex V2</label>
+  <label x="75" y="42" z="65" index="1122" color="#0000b9">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA18 Visual cortex V2</label>
+  <label x="105" y="43" z="66" index="1123" color="#00d22c">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V3</label>
+  <label x="68" y="47" z="64" index="1124" color="#0028d6">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V3</label>
+  <label x="117" y="42" z="61" index="1125" color="#009d61">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V4</label>
+  <label x="59" y="50" z="62" index="1126" color="#0000eb">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V4</label>
+  <label x="132" y="52" z="76" index="1127" color="#ffcb00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V5 MT</label>
+  <label x="41" y="60" z="78" index="1128" color="#f8ff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V5 MT</label>
  </data>
 </atlas>

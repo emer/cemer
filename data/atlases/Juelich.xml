@@ -93,14 +93,14 @@
   <label x="78" y="53" z="125" index="80" color="#7fff00">Right/Parietal Lobe/Superior parietal lobule/Gray Matter/Superior parietal lobule BA7PC</label>
   <label x="99" y="30" z="74" index="81" color="#87ff00">Left/Occipital Lobe/Striate cortex/Gray Matter/Visual cortex V1 BA17</label>
   <label x="75" y="34" z="76" index="82" color="#8fff00">Right/Occipital Lobe/Striate cortex/Gray Matter/Visual cortex V1 BA17</label>
-  <label x="98" y="33" z="66" index="83" color="#97ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
-  <label x="75" y="42" z="65" index="84" color="#9fff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
-  <label x="105" y="43" z="66" index="85" color="#a7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
-  <label x="68" y="47" z="64" index="86" color="#afff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
-  <label x="117" y="42" z="61" index="87" color="#b7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
-  <label x="59" y="50" z="62" index="88" color="#bfff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
-  <label x="132" y="52" z="76" index="89" color="#c7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 BA19</label>
-  <label x="41" y="60" z="78" index="90" color="#cfff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 BA19</label>
+  <label x="98" y="33" z="66" index="83" color="#97ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter /BA18 Visual cortex V2</label>
+  <label x="75" y="42" z="65" index="84" color="#9fff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA18 Visual cortex V2</label>
+  <label x="105" y="43" z="66" index="85" color="#a7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V3</label>
+  <label x="68" y="47" z="64" index="86" color="#afff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V3</label>
+  <label x="117" y="42" z="61" index="87" color="#b7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V4</label>
+  <label x="59" y="50" z="62" index="88" color="#bfff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V4</label>
+  <label x="132" y="52" z="76" index="89" color="#c7ff00">Left/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V5</label>
+  <label x="41" y="60" z="78" index="90" color="#cfff00">Right/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/BA19 Visual cortex V5</label>
   <label x="102" y="112" z="138" index="91" color="#d7ff00">Left/Frontal Lobe/Precentral gyrus/Gray Matter/Premotor cortex BA6</label>
   <label x="77" y="110" z="143" index="92" color="#dfff00">Right/Frontal Lobe/Precentral gyrus/Gray Matter/Premotor cortex BA6</label>
   <label x="41" y="112" z="76" index="93" color="#e7ff00">Right/*/*/White Matter/Acoustic radiation</label>
