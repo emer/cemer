@@ -3199,7 +3199,7 @@ int nifti_type_and_names_match( nifti_image * nim, int show_warn )
  * (test as local string, with max length 7) */
 static int fileext_compare(const char * test_ext, const char * known_ext)
 {
-   char caps[8] = "";
+   char caps[16] = "";
    int  c, cmp, len;
 
    /* if equal, don't need to check case (store to avoid multiple calls) */
@@ -3225,7 +3225,7 @@ static int fileext_compare(const char * test_ext, const char * known_ext)
 static int fileext_n_compare(const char * test_ext,
                              const char * known_ext, int maxlen)
 {
-   char caps[8] = "";
+   char caps[16] = "";
    int  c, cmp, len;
 
    /* if equal, don't need to check case (store to avoid multiple calls) */
@@ -3667,10 +3667,9 @@ nifti_image* nifti_convert_nhdr2nim(struct nifti_1_header nhdr,
 
    /**- set bad grid spacings to 1.0 */
 
-   for( ii=1 ; ii <= nhdr.dim[0] ; ii++ ){
-     if( nhdr.pixdim[ii] == 0.0         ||
-         !IS_GOOD_FLOAT(nhdr.pixdim[ii])  ) nhdr.pixdim[ii] = 1.0 ;
-   }
+   for( ii=1 ; ii <= nhdr.dim[0] ; ii++ )
+     if( nhdr.pixdim[ii] == 0.0 ) 
+       nhdr.pixdim[ii] = 1.0;
 
   is_onefile = is_nifti && NIFTI_ONEFILE(nhdr) ;
 
@@ -3740,13 +3739,13 @@ nifti_image* nifti_convert_nhdr2nim(struct nifti_1_header nhdr,
   } else {
     /**- else NIFTI: use the quaternion-specified transformation */
     
-    nim->quatern_b = FIXED_FLOAT( nhdr.quatern_b ) ;
-    nim->quatern_c = FIXED_FLOAT( nhdr.quatern_c ) ;
-    nim->quatern_d = FIXED_FLOAT( nhdr.quatern_d ) ;
+    nim->quatern_b = nhdr.quatern_b;
+    nim->quatern_c = nhdr.quatern_c;
+    nim->quatern_d = nhdr.quatern_d;
     
-    nim->qoffset_x = FIXED_FLOAT(nhdr.qoffset_x) ;
-    nim->qoffset_y = FIXED_FLOAT(nhdr.qoffset_y) ;
-    nim->qoffset_z = FIXED_FLOAT(nhdr.qoffset_z) ;
+    nim->qoffset_x = nhdr.qoffset_x;
+    nim->qoffset_y = nhdr.qoffset_y;
+    nim->qoffset_z = nhdr.qoffset_z;
     
     nim->qfac = (nhdr.pixdim[0] < 0.0) ? -1.0 : 1.0 ;  /* left-handedness? */
     
@@ -3809,16 +3808,16 @@ nifti_image* nifti_convert_nhdr2nim(struct nifti_1_header nhdr,
   /**- set miscellaneous NIFTI stuff */
   
   if( is_nifti ){
-    nim->scl_slope   = FIXED_FLOAT( nhdr.scl_slope ) ;
-    nim->scl_inter   = FIXED_FLOAT( nhdr.scl_inter ) ;
+    nim->scl_slope   = nhdr.scl_slope;
+    nim->scl_inter   = nhdr.scl_inter;
     
     nim->intent_code = nhdr.intent_code ;
     
-    nim->intent_p1 = FIXED_FLOAT( nhdr.intent_p1 ) ;
-    nim->intent_p2 = FIXED_FLOAT( nhdr.intent_p2 ) ;
-    nim->intent_p3 = FIXED_FLOAT( nhdr.intent_p3 ) ;
+    nim->intent_p1 = nhdr.intent_p1;
+    nim->intent_p2 = nhdr.intent_p2;
+    nim->intent_p3 = nhdr.intent_p3;
     
-    nim->toffset   = FIXED_FLOAT( nhdr.toffset ) ;
+    nim->toffset   = nhdr.toffset;
     
     memcpy(nim->intent_name,nhdr.intent_name,15); nim->intent_name[15] = '\0';
     
@@ -3832,13 +3831,13 @@ nifti_image* nifti_convert_nhdr2nim(struct nifti_1_header nhdr,
     nim->slice_code     = nhdr.slice_code  ;
     nim->slice_start    = nhdr.slice_start ;
     nim->slice_end      = nhdr.slice_end   ;
-    nim->slice_duration = FIXED_FLOAT(nhdr.slice_duration) ;
+    nim->slice_duration = nhdr.slice_duration;
   }
   
   /**- set Miscellaneous ANALYZE stuff */
   
-  nim->cal_min = FIXED_FLOAT(nhdr.cal_min) ;
-  nim->cal_max = FIXED_FLOAT(nhdr.cal_max) ;
+  nim->cal_min = nhdr.cal_min;
+  nim->cal_max = nhdr.cal_max;
   
   memcpy(nim->descrip ,nhdr.descrip ,79) ; nim->descrip [79] = '\0' ;
   memcpy(nim->aux_file,nhdr.aux_file,23) ; nim->aux_file[23] = '\0' ;
@@ -4543,9 +4542,6 @@ static int nifti_fill_extension( nifti1_extension *ext, const char * data,
       fprintf(stderr,"** fill_ext: bad params (%p,%p,%d)\n",
               (void *)ext, data, len);
       return -1;
-   } else if( ! nifti_is_valid_ecode(ecode) ){
-      fprintf(stderr,"** fill_ext: invalid ecode %d\n", ecode);
-      return -1;
    }
 
    /* compute esize, first : len+8, and take ceiling up to a mult of 16 */
@@ -4673,11 +4669,6 @@ int valid_nifti_extensions(const nifti_image * nim)
    ext = nim->ext_list;
    errs = 0;
    for ( c = 0; c < nim->num_ext; c++ ){
-      if( ! nifti_is_valid_ecode(ext->ecode) ) {
-         if( g_opts.debug > 1 )
-            fprintf(stderr,"-d ext %d, invalid code %d\n", c, ext->ecode);
-         errs++;
-      }
 
       if( ext->esize <= 0 ){
          if( g_opts.debug > 1 )
@@ -4732,12 +4723,6 @@ int nifti_is_valid_ecode( int ecode )
 static int nifti_check_extension(nifti_image *nim, int size, int code, int rem)
 {
    /* check for bad code before bad size */
-   if( ! nifti_is_valid_ecode(code) ) {
-      if( g_opts.debug > 2 )
-         fprintf(stderr,"-d invalid extension code %d\n",code);
-      return 0;
-   }
-
    if( size < 16 ){
       if( g_opts.debug > 2 )
          fprintf(stderr,"-d ext size %d, no extension\n",size);
@@ -4962,44 +4947,6 @@ size_t nifti_read_buffer(znzFile fp, void* dataptr, size_t ntot,
        fprintf(stderr,"+d nifti_read_buffer: swapping data bytes...\n");
     nifti_swap_Nbytes( ntot / nim->swapsize, nim->swapsize , dataptr ) ;
   }
-
-#ifdef isfinite
-{
-  /* check input float arrays for goodness, and fix bad floats */
-  int fix_count = 0 ;
-  
-  switch( nim->datatype ){
-    
-    case NIFTI_TYPE_FLOAT32:
-    case NIFTI_TYPE_COMPLEX64:{
-        register float *far = (float *)dataptr ; register size_t jj,nj ;
-        nj = ntot / sizeof(float) ;
-        for( jj=0 ; jj < nj ; jj++ )   /* count fixes 30 Nov 2004 [rickr] */
-           if( !IS_GOOD_FLOAT(far[jj]) ){
-              far[jj] = 0 ;
-              fix_count++ ;
-           }
-      }
-      break ;
-    
-    case NIFTI_TYPE_FLOAT64:
-    case NIFTI_TYPE_COMPLEX128:{
-        register double *far = (double *)dataptr ; register size_t jj,nj ;
-        nj = ntot / sizeof(double) ;
-        for( jj=0 ; jj < nj ; jj++ )   /* count fixes 30 Nov 2004 [rickr] */
-           if( !IS_GOOD_FLOAT(far[jj]) ){
-              far[jj] = 0 ;
-              fix_count++ ;
-           }
-      }
-      break ;
-    
-  }
-
-  if( g_opts.debug > 1 )
-     fprintf(stderr,"+d in image, %d bad floats were set to 0\n", fix_count);
-}
-#endif
   
   return ii;
 }

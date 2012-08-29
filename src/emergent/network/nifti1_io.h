@@ -12,6 +12,8 @@
 #include <math.h>
 #include <ctype.h>
 
+#define HAVE_ZLIB 1
+
 #ifndef DONT_INCLUDE_ANALYZE_STRUCT
 #define DONT_INCLUDE_ANALYZE_STRUCT  /*** not needed herein ***/
 #endif
@@ -325,6 +327,7 @@ int    is_nifti_file      (const char *hname);
 char * nifti_find_file_extension(const char * name);
 int    nifti_is_complete_filename(const char* fname);
 int    nifti_validfilename(const char* fname);
+int    nifti_fileexists(const char* fname);
 
 int    disp_nifti_1_header(const char * info, const nifti_1_header * hp ) ;
 void   nifti_set_debug_level( int level ) ;
@@ -507,17 +510,6 @@ typedef struct {
 
                         /***** isfinite() is a C99 macro, which is
                                present in many C implementations already *****/
-
-#undef IS_GOOD_FLOAT
-#undef FIXED_FLOAT
-
-#ifdef isfinite       /* use isfinite() to check floats/doubles for goodness */
-#  define IS_GOOD_FLOAT(x) isfinite(x)       /* check if x is a "good" float */
-#  define FIXED_FLOAT(x)   (isfinite(x) ? (x) : 0)           /* fixed if bad */
-#else
-#  define IS_GOOD_FLOAT(x) 1                               /* don't check it */
-#  define FIXED_FLOAT(x)   (x)                               /* don't fix it */
-#endif
 
 #undef  ASSIF                                 /* assign v to *p, if possible */
 #define ASSIF(p,v) if( (p)!=NULL ) *(p) = (v)

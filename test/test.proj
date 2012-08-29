@@ -6581,15 +6581,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  num_slices=182;
 	  lock_num_slices=0;
 	  slice_spacing=1;
-	  slice_transparency=91;
+	  slice_transparency=1;
 	  unit_val_transparency=90;
 	  last_state_change=0;
 	  color_brain=1;
 	  brain_area_color {
 	  };
-	  color_brain_regexp=".*/Sub-lobar/.*/Gray Matter/Caudate Tail";
-	  show_atlas=1;
-	  brain_area_regexp=".*/.*/.*/.*/Nucleus Accumbens NAc";
+	  color_brain_regexp=".*/.*/.*/.*/.*";
+	  show_atlas=0;
+	  brain_area_regexp=".*/.*/.*/.*/Hippocampus subiculum";
 	 };
 	};
        };
