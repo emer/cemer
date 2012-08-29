@@ -1482,8 +1482,8 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [13] 1;1;1;1;1;1;1;1;1;1;
-1;1;1;      };
+	    [13] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -1524,8 +1524,8 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [13] "evt_20";"evt_11";"evt_14";"evt_10";"evt_8";"evt_22";"evt_17";"evt_0";"evt_15";"evt_12";
-"evt_6";"evt_2";"evt_9";      };
+	    [13] "evt_11";"evt_14";"evt_4";"evt_23";"evt_3";"evt_9";"evt_0";"evt_1";"evt_24";"evt_10";
+"evt_22";"evt_21";"evt_6";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -1582,8 +1582,8 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [13] 57;43;40;50;60;60;49;54;60;44;
-52;60;60;      };
+	    [13] 38;60;60;39;56;60;54;47;44;54;
+60;59;60;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -1598,8 +1598,8 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [13] 7.1130328;7.1396594;5.3205585;4.3277764;3.5953693;6.5102072;3.9891837;5.7381554;5.4101753;5.0516376;
-5.9622917;7.1111422;7.7812924;      };
+	    [13] 8.2848701;7.1079311;7.6315055;7.5794086;6.6830955;7.8886719;6.3930607;6.1645613;5.4902143;5.6737475;
+6.9773684;8.8817949;5.4647231;      };
      };
      float_Data @["ext_rew"] {
       name="ext_rew";
@@ -1653,7 +1653,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0;      };
+	    [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -1678,7 +1678,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0;      };
+	    [0]       };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -1693,7 +1693,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 6.7575769;      };
+	    [0]       };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -1708,7 +1708,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 25;      };
+	    [0]       };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -1723,7 +1723,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0;      };
+	    [0]       };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -1738,7 +1738,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 53.639999;      };
+	    [0]       };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -1753,7 +1753,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 16.469999;      };
+	    [0]       };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -1768,7 +1768,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 1.9;      };
+	    [0]       };
      };
      float_Data @["Input_netmax"] {
       name="Input_netmax";
@@ -1783,7 +1783,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0;      };
+	    [0]       };
      };
      float_Data @["Hidden_netmax"] {
       name="Hidden_netmax";
@@ -1798,7 +1798,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0.54345196;      };
+	    [0]       };
      };
      float_Data @["Output_netmax"] {
       name="Output_netmax";
@@ -1813,7 +1813,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0.41054457;      };
+	    [0]       };
      };
      float_Data @["Hidden_Fm_Input_netrel"] {
       name="Hidden_Fm_Input_netrel";
@@ -1828,7 +1828,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0.50623387;      };
+	    [0]       };
      };
      float_Data @["Hidden_Fm_Output_netrel"] {
       name="Hidden_Fm_Output_netrel";
@@ -1843,7 +1843,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 0.4937661;      };
+	    [0]       };
      };
      float_Data @["Output_Fm_Hidden_netrel"] {
       name="Output_Fm_Hidden_netrel";
@@ -1858,7 +1858,7 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [1] 1;      };
+	    [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2657,7 +2657,7 @@ LeabraProject .projects["test"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=1;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6588,8 +6588,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  brain_area_color {
 	  };
 	  color_brain_regexp=".*/.*/.*/.*/.*";
-	  show_atlas=0;
-	  brain_area_regexp=".*/.*/.*/.*/Hippocampus subiculum";
+	  show_atlas=1;
+	  brain_area_regexp=".*/.*/.*/.*/Hippocampus dentate gyrus";
 	 };
 	};
        };
@@ -7078,7 +7078,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*/.*/.*/.*/Brodmann area 17";
+     brain_area=".*/.*/.*/.*/BA17";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
@@ -7159,7 +7159,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*/.*/.*/.*/Brodmann area 7";
+     brain_area=".*/.*/.*/.*/BA7";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
@@ -7222,7 +7222,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
-     brain_area=".*/.*/.*/.*/Brodmann area 44";
+     brain_area=".*/.*/.*/.*/BA44";
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };

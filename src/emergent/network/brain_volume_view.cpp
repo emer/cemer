@@ -533,8 +533,8 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
       
       T3Color color(1.0f,1.0f,1.0f);
       QColor col = m_atlasColors.value(ci[i],WHITE); //default to white if not found
-      if (col != WHITE)
-        pixel8 = 255;
+      // if (col != WHITE)
+      //   pixel8 = 255;
       color.r = col.redF();
       color.g = col.greenF();
       color.b = col.blueF();
@@ -542,7 +542,10 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
       data[j] = (unsigned char)(pixel8 * color.r);
       data[j+1] = (unsigned char)(pixel8 * color.g);
       data[j+2] = (unsigned char)(pixel8 * color.b);    
-      data[j+3] = 255; // non-zero pixels are fully opaque
+      if(col != WHITE)
+	data[j+3] = 255; // non-zero pixels are fully opaque
+      else
+	data[j+3] = 128;	// white is half-transparent
     }
   }
   delete [] s;  
