@@ -2,7 +2,7 @@
 <atlas version="1.0">
  <header>
   <name>Talairach</name>
-  <description>Standard Talairach labels originally from the Talairach Daemon package at www.talairach.org: A conversion of the original Talairach structural labellings, kindly provided by Jack Lancaster and Diana Tordesillas GutiÃ©rrez at the Research Imaging Center, UTHSCSA, Texas.  This is a digitised version of the original (coarsely sliced) Talairach atlas (Lancaster 2000) after the application of a correcting affine transform (Lancaster 2007) to register it into MNI152 space.</description>
+  <description>Modification of Standard Talairach labels originally from the Talairach Daemon package at www.talairach.org -- added several areas from the Juelich atlas (hippocampal subregions, major visual areas) plus some specific subcortical areas of interest.  Original is a conversion of the Talairach structural labellings, kindly provided by Jack Lancaster and Diana Tordesillas GutiÃ©rrez at the Research Imaging Center, UTHSCSA, Texas.  This is a digitised version of the original (coarsely sliced) Talairach atlas (Lancaster 2000) after the application of a correcting affine transform (Lancaster 2007) to register it into MNI152 space.</description>
   <type>Label</type>
   <images>
    <imagefile>/Talairach-labels-1mm</imagefile>
@@ -699,8 +699,8 @@
   <label x="47" y="61" z="38" index="686" color="#77ff00">Left Cerebrum/Sub-lobar/Thalamus/Gray Matter/Anterior Nucleus</label>
   <label x="29" y="55" z="64" index="687" color="#78ff00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/White Matter/*</label>
   <label x="44" y="62" z="38" index="688" color="#79ff00">Inter-Hemispheric/*/*/White Matter/*</label>
-  <label x="13" y="69" z="38" index="689" color="#79ff00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44</label>
-  <label x="72" y="71" z="38" index="690" color="#7aff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44</label>
+  <label x="13" y="69" z="38" index="689" color="#79ff00">Right Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44 Broca's</label>
+  <label x="72" y="71" z="38" index="690" color="#7aff00">Left Cerebrum/Frontal Lobe/Precentral Gyrus/Gray Matter/Brodmann area 44 Broca's</label>
   <label x="0" y="0" z="0" index="691" color="#7bff00">Right Cerebrum/Sub-lobar/Insula/Gray Matter/Brodmann area 44</label>
   <label x="49" y="69" z="39" index="692" color="#7cff00">Left Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Body</label>
   <label x="39" y="70" z="39" index="693" color="#7dff00">Right Cerebrum/Sub-lobar/Caudate/Gray Matter/Caudate Body</label>
@@ -1121,5 +1121,23 @@
   <label x="47" y="51" z="27" index="1108" color="#ff0300">*/Midbrain/Midbrain/Gray Matter/Ventral Tegmental Area VTA</label>
   <label x="47" y="51" z="27" index="1109" color="#ff0200">*/Midbrain/Midbrain/Gray Matter/Lateral Hypothalamic area LHA</label>
   <label x="47" y="51" z="27" index="1110" color="#ff0100">*/Midbrain/Midbrain/Gray Matter/Lateral Habenula LHB</label>
+  <label x="119" y="110" z="53" index="1111" color="#7700ff">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus cornu ammonis</label>
+  <label x="56" y="111" z="53" index="1112" color="#6f00ff">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus cornu ammonis</label>
+  <label x="115" y="121" z="35" index="1113" color="#6700ff">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus entorhinal cortex</label>
+  <label x="64" y="125" z="34" index="1114" color="#5f00ff">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus entorhinal cortex</label>
+  <label x="119" y="109" z="53" index="1115" color="#5700ff">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus dentate gyrus</label>
+  <label x="58" y="110" z="54" index="1116" color="#4f00ff">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus dentate gyrus</label>
+  <label x="107" y="117" z="50" index="1117" color="#4700ff">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus hippocampal-amygdaloid transition area</label>
+  <label x="71" y="117" z="51" index="1118" color="#3f00ff">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus hippocampal-amygdaloid transition area</label>
+  <label x="112" y="115" z="43" index="1119" color="#3700ff">Left Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus subiculum</label>
+  <label x="64" y="107" z="54" index="1120" color="#2f00ff">Right Cerebrum/Limbic Lobe/Hippocampus/Gray Matter/Hippocampus subiculum</label>
+  <label x="98" y="33" z="66" index="1121" color="#97ff00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
+  <label x="75" y="42" z="65" index="1122" color="#9fff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V2 BA18</label>
+  <label x="105" y="43" z="66" index="1123" color="#a7ff00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
+  <label x="68" y="47" z="64" index="1124" color="#afff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V3V BA19</label>
+  <label x="117" y="42" z="61" index="1125" color="#b7ff00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
+  <label x="59" y="50" z="62" index="1126" color="#bfff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V4 BA19</label>
+  <label x="132" y="52" z="76" index="1127" color="#c7ff00">Left Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 MT BA19</label>
+  <label x="41" y="60" z="78" index="1128" color="#cfff00">Right Cerebrum/Occipital Lobe/Lateral occipital gyrus Extrastriate cortex/Gray Matter/Visual cortex V5 MT BA19</label>
  </data>
 </atlas>
