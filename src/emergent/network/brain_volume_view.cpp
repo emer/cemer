@@ -504,6 +504,10 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
   int j(0);
   unsigned int pixel(0); 
   unsigned char pixel8(0);
+  unsigned char pixelc(0);
+
+  pixelc = static_cast<unsigned char>(((pmax-pmin) * 255) / prange);
+
   const QColor WHITE(255,255,255);
   for (int h=0; h<height; h++) {
     for (int w=0; w<width; w++) {
@@ -538,7 +542,8 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
       color.r = col.redF();
       color.g = col.greenF();
       color.b = col.blueF();
-      
+
+#if 0      
       data[j] = (unsigned char)(pixel8 * color.r);
       data[j+1] = (unsigned char)(pixel8 * color.g);
       data[j+2] = (unsigned char)(pixel8 * color.b);    
@@ -546,6 +551,14 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
 	data[j+3] = 255; // non-zero pixels are fully opaque
       else
 	data[j+3] = 128;	// white is half-transparent
+#endif
+      data[j] = (unsigned char)(pixelc * color.r);
+      data[j+1] = (unsigned char)(pixelc * color.g);
+      data[j+2] = (unsigned char)(pixelc * color.b);    
+      if(col != WHITE)
+	data[j+3] = pixel8;
+      else
+	data[j+3] = (unsigned char)(.5f * pixel8);	// white is half-transparent
     }
   }
   delete [] s;  
