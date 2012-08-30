@@ -3770,20 +3770,20 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   // these are just random suggestions:
   if(gating_types & MAINT) {
     if(pfc_s_mnt_new || pfc_s_mnt->brain_area.empty()) {
-      pfc_s_mnt->brain_area = ".*/.*/.*/.*/Brodmann area 9";
-      pfc_d_mnt->brain_area = ".*/.*/.*/.*/Brodmann area 9";
+      pfc_s_mnt->brain_area = ".*/.*/.*/.*/BA9";
+      pfc_d_mnt->brain_area = ".*/.*/.*/.*/BA9";
     }
   }
   if(gating_types & INPUT) {
     if(pfc_s_in_new || pfc_s_in->brain_area.empty()) {
-      pfc_s_in->brain_area = ".*/.*/.*/.*/Brodmann area 45";
-      pfc_d_in->brain_area = ".*/.*/.*/.*/Brodmann area 45";
+      pfc_s_in->brain_area = ".*/.*/.*/.*/BA45";
+      pfc_d_in->brain_area = ".*/.*/.*/.*/BA45";
     }
   }
   if(gating_types & OUTPUT) {
     if(pfc_s_out_new || pfc_s_out->brain_area.empty()) {
-      pfc_s_out->brain_area = ".*/.*/.*/.*/Brodmann area 44";
-      pfc_d_out->brain_area = ".*/.*/.*/.*/Brodmann area 44";
+      pfc_s_out->brain_area = ".*/.*/.*/.*/BA44";
+      pfc_d_out->brain_area = ".*/.*/.*/.*/BA44";
     }
   }
 
