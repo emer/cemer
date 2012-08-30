@@ -13,7 +13,7 @@ if ! grep -q "$RUN_ON" /etc/hostname; then
 fi
 if [ "`id -u`" != "0" ]; then
   echo "Running script as root..."
-  sudo "$@"
+  sudo $0 "$@"
   exit
 fi
 
