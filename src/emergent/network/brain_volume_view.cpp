@@ -504,7 +504,6 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
   int j(0);
   unsigned int pixel(0); 
   unsigned char pixel8(0);
-  // unsigned char pixelc = static_cast<unsigned char>(((pmax-pmin) * 255) / prange);
 
   const QColor WHITE(255,255,255);
   for (int h=0; h<height; h++) {
@@ -534,28 +533,22 @@ void BrainVolumeView::SliceAsColorTexture( BrainView::AnatomicalPlane p, int ind
       
       T3Color color(1.0f,1.0f,1.0f);
       QColor col = m_atlasColors.value(ci[i],WHITE); //default to white if not found
-      // if (col != WHITE)
-      //   pixel8 = 255;
       color.r = col.redF();
       color.g = col.greenF();
       color.b = col.blueF();
 
-      data[j] = (unsigned char)(pixel8 * color.r);
-      data[j+1] = (unsigned char)(pixel8 * color.g);
-      data[j+2] = (unsigned char)(pixel8 * color.b);    
-      if(col != WHITE)
-	data[j+3] = 255; // non-zero pixels are fully opaque
-      else
+      if(col != WHITE) {
+	data[j] = (unsigned char)(255 * color.r);
+	data[j+1] = (unsigned char)(255 * color.g);
+	data[j+2] = (unsigned char)(255 * color.b);
+	data[j+3] = pixel8;	// colors modulate as transparency
+      }
+      else {			// white modultes as value
+	data[j] = (unsigned char)(pixel8 * color.r);
+	data[j+1] = (unsigned char)(pixel8 * color.g);
+	data[j+2] = (unsigned char)(pixel8 * color.b);    
 	data[j+3] = 128;	// white is half-transparent
-
-      // this alternative uses transparency instead of value to convey brain density -- not as good
-      // data[j] = (unsigned char)(pixelc * color.r);
-      // data[j+1] = (unsigned char)(pixelc * color.g);
-      // data[j+2] = (unsigned char)(pixelc * color.b);    
-      // if(col != WHITE)
-      //   data[j+3] = pixel8;
-      // else
-      //   data[j+3] = (unsigned char)(.5f * pixel8);	// white is half-transparent
+      }
     }
   }
   delete [] s;  
