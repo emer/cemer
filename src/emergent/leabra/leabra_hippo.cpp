@@ -131,10 +131,11 @@ bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   int in_prjn_idx;
   LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
-  if(lay->CheckError(!in_lay, quiet, rval,
-                "no projection from ECin Layer found: must recv from layer with ECinLayerSpec!")) {
-    return false;
-  }
+  if(!in_lay) return true;		// just hope it works out
+  // if(lay->CheckError(!in_lay, quiet, rval,
+  //               "no projection from ECin Layer found: must recv from layer with ECinLayerSpec!")) {
+  //   return false;
+  // }
   if(in_lay->unit_groups) {
     if(lay->CheckError(in_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
                        "ECout Layer unit groups must = ECinLayer unit groups, copiped from IN Layer; Please do a Build of network")) {
@@ -299,6 +300,15 @@ void SubiculumNoveltySpec::UpdateAfterEdit_impl() {
 
 void SubiculumLayerSpec::Initialize() {
   lrate_mod_con_spec.SetBaseType(&TA_LeabraConSpec);
+  Defaults_init();
+}
+
+void SubiculumLayerSpec::Defaults_init() {
+  scalar.rep = ScalarValSpec::GAUSSIAN;
+  unit_range.min = -0.5f;
+  unit_range.max = 1.5f;
+  inhib.kwta_pt = 0.5f;
+  kwta.k = 3;
 }
 
 bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -614,6 +624,13 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  ecin->brain_area = ".*/.*/.*/.*/Hippocampus entorhinal cortex";
+  ecout->brain_area = ".*/.*/.*/.*/Hippocampus entorhinal cortex";
+  dg->brain_area = ".*/.*/.*/.*/Hippocampus dentate gyrus";
+  ca3->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
+  ca1->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
+  subic->brain_area = ".*/.*/.*/.*/Hippocampus subiculum";
+
   ecin->unit_groups = true;
   ecin->SetNUnitGroups(n_ec_slots);
   ecin->SetNUnits(49);
@@ -668,6 +685,9 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ecout_ecin_cons->lrate = 0.0f;
   ecout_ecin_cons->SetUnique("wt_scale", true);
   ecout_ecin_cons->wt_scale.rel = 0.5f;
+  ecout_ecin_cons->SetUnique("rnd", true);
+  ecout_ecin_cons->rnd.mean = 0.5f;
+  ecout_ecin_cons->rnd.var = 0.01f;
 
   // HippoConSpecs, lrate = .2, hebb = 0.05
   hip_cons->SetUnique("lrate", true);
@@ -711,6 +731,9 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ca1_laysp->SetUnique("gp_kwta", true);
   ca1_laysp->gp_kwta.pct = 0.1f;
  
+
+  subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
+
   // todo; lrate schedule!
   
   //////////////////////////////////////////////////////////////////////////////////

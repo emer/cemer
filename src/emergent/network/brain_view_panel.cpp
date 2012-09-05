@@ -42,17 +42,17 @@
 ////////////////////////////////////////////////////
 //  BrainViewPanel
 ////////////////////////////////////////////////////
-BrainView* BrainViewPanel::bv() 
+BrainView* BrainViewPanel::bv()
 {
   return (BrainView*) m_dv;
 }
 
-void* BrainViewPanel::This() 
+void* BrainViewPanel::This()
 {
   return (void*) this;
 }
 
-TypeDef* BrainViewPanel::GetTypeDef() const 
+TypeDef* BrainViewPanel::GetTypeDef() const
 {
   return &TA_BrainViewPanel;
 }
@@ -60,7 +60,7 @@ TypeDef* BrainViewPanel::GetTypeDef() const
 BrainViewPanel::BrainViewPanel(BrainView* dv_)
   : inherited(dv_)
 {
- 
+
   // set a safe default if no BrainViewState yet...
   int max_slices(1);
   Network* net = NULL;
@@ -69,7 +69,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
     net = dv_->net();
   }
 
-  
+
   int font_spec = taiMisc::fonMedium;
   req_full_render = true;
   req_full_build = false;
@@ -78,8 +78,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
 
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw)
-    connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
-  
+    connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)));
+
   QWidget* widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(2);
@@ -91,7 +91,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
 
   /////////////////////////////////////////////////////////////////////
   QHBoxLayout* bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
-  
+
   QLabel* label = taiM->NewLabel("View\nPlane:", widg, font_spec);
   label->setToolTip("Which of the anatomical planes to view.");
   bvControls->addWidget(label);
@@ -99,206 +99,225 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   m_view_plane_comb->addItem("AXIAL");
   m_view_plane_comb->addItem("SAGITTAL");
   m_view_plane_comb->addItem("CORONAL");
-  connect(m_view_plane_comb, SIGNAL(currentIndexChanged(int)), this, SLOT(SetViewPlane(int)) );
-  connect(this, SIGNAL(ViewPlaneChanged(int)), m_view_plane_comb, SLOT(setCurrentIndex(int)) );
+  connect(m_view_plane_comb, SIGNAL(currentIndexChanged(int)), this, SLOT(SetViewPlane(int)));
+  connect(this, SIGNAL(ViewPlaneChanged(int)), m_view_plane_comb, SLOT(setCurrentIndex(int)));
   bvControls->addWidget(m_view_plane_comb);
-  bvControls->addSpacing(taiM->hspc_c); 
-  
+  bvControls->addSpacing(taiM->hspc_c);
+
   label = taiM->NewLabel("Starting\nSlice:", widg, font_spec);
-  label->setToolTip("The starting slice number to view."); 
+  label->setToolTip("The starting slice number to view.");
   bvControls->addWidget(label);
   m_slice_strt_sbox = new QSpinBox(widg);
   m_slice_strt_sbox->setRange(1,max_slices);
   m_slice_strt_sbox->setValue(1);
-  connect(m_slice_strt_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
-  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_sbox, SLOT(setValue(int)) );
+  connect(m_slice_strt_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)));
+  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_sbox, SLOT(setValue(int)));
   bvControls->addWidget(m_slice_strt_sbox);
   bvControls->addSpacing(taiM->hsep_c);
-  
+
   m_slice_strt_slid =  new QSlider(Qt::Horizontal, widg);
   m_slice_strt_slid->setRange(1, max_slices);
   m_slice_strt_slid->setValue(1);
   m_slice_strt_slid->setMinimumWidth(min_slider);
-  connect(m_slice_strt_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
-  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_slid, SLOT(setValue(int)) );
+  connect(m_slice_strt_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)));
+  connect(this, SIGNAL(SliceStartChanged(int)), m_slice_strt_slid, SLOT(setValue(int)));
   bvControls->addWidget(m_slice_strt_slid);
-  bvControls->addSpacing(taiM->hspc_c);  
-  
+  bvControls->addSpacing(taiM->hspc_c);
+
   label = taiM->NewLabel("Lock\n#Slices:", widg, font_spec);
-  label->setToolTip("Lock slice sliders to maintain number of slices."); 
+  label->setToolTip("Lock slice sliders to maintain number of slices.");
   bvControls->addWidget(label);
   m_lock_slices_chbox = new QCheckBox(widg);
   m_lock_slices_chbox->setCheckState(Qt::Unchecked);
-  connect(m_lock_slices_chbox, SIGNAL(stateChanged(int)), this, SLOT(SetLockSlices(int)) );
-  bvControls->addWidget(m_lock_slices_chbox);  
-  bvControls->addSpacing(taiM->hspc_c); 
-  
+  connect(m_lock_slices_chbox, SIGNAL(stateChanged(int)), this, SLOT(SetLockSlices(int)));
+  bvControls->addWidget(m_lock_slices_chbox);
+  bvControls->addSpacing(taiM->hspc_c);
+
   label = taiM->NewLabel("Ending\nSlice:", widg, font_spec);
-  label->setToolTip("The ending slice number to view."); 
+  label->setToolTip("The ending slice number to view.");
   bvControls->addWidget(label);
   m_slice_end_sbox = new QSpinBox(widg);
   m_slice_end_sbox->setRange(1, max_slices);
   m_slice_end_sbox->setValue(max_slices);
-  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_sbox, SLOT(setValue(int)) );
-  connect(m_slice_end_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
-  bvControls->addWidget(m_slice_end_sbox);  
-  bvControls->addSpacing(taiM->hsep_c); 
-  
+  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_sbox, SLOT(setValue(int)));
+  connect(m_slice_end_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)));
+  bvControls->addWidget(m_slice_end_sbox);
+  bvControls->addSpacing(taiM->hsep_c);
+
   m_slice_end_slid =  new QSlider(Qt::Horizontal, widg);
   m_slice_end_slid->setTickPosition(QSlider::NoTicks);
   m_slice_end_slid->setRange(1, max_slices);
   m_slice_end_slid->setValue(max_slices);
   m_slice_end_slid->setMinimumWidth(min_slider);
-  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_slid, SLOT(setValue(int)) );
-  connect(m_slice_end_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
+  connect(this, SIGNAL(SliceEndChanged(int)), m_slice_end_slid, SLOT(setValue(int)));
+  connect(m_slice_end_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)));
   bvControls->addWidget(m_slice_end_slid);
-  bvControls->addStretch();	// need final stretch to prevent full stretching
-  
+  bvControls->addStretch();     // need final stretch to prevent full stretching
+
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
-  
+
   const int unit_trans(60);
   label = taiM->NewLabel("Unit Values\nTransparency:", widg, font_spec);
-  label->setToolTip("The transparency value of unit values."); 
+  label->setToolTip("The transparency value of unit values.");
   bvControls->addWidget(label);
   m_unit_val_tran_sbox = new QSpinBox(widg);
   m_unit_val_tran_sbox->setRange(1, 100);
   m_unit_val_tran_sbox->setValue(unit_trans);
   m_unit_val_tran_sbox->setSuffix("%");
-  connect(m_unit_val_tran_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
-  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_sbox, SLOT(setValue(int)) );
-  bvControls->addWidget(m_unit_val_tran_sbox);  
-  bvControls->addSpacing(taiM->hsep_c); 
-  
+  connect(m_unit_val_tran_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)));
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_sbox, SLOT(setValue(int)));
+  bvControls->addWidget(m_unit_val_tran_sbox);
+  bvControls->addSpacing(taiM->hsep_c);
+
   m_unit_val_tran_slid =  new QSlider(Qt::Horizontal, widg);
   m_unit_val_tran_slid->setTickPosition(QSlider::NoTicks);
   m_unit_val_tran_slid->setRange(1,100);
   m_unit_val_tran_slid->setValue(unit_trans);
   m_unit_val_tran_slid->setMinimumWidth(min_slider);
-  connect(m_unit_val_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
-  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_slid, SLOT(setValue(int)) );
+  connect(m_unit_val_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)));
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), m_unit_val_tran_slid, SLOT(setValue(int)));
   bvControls->addWidget(m_unit_val_tran_slid);
-  bvControls->addSpacing(taiM->hspc_c); 
-  
+  bvControls->addSpacing(taiM->hspc_c);
+
   const int slice_trans(90);
   label = taiM->NewLabel("Slice\nTransparency:", widg, font_spec);
-  label->setToolTip("The transparency value of brain slices."); 
+  label->setToolTip("The transparency value of brain slices.");
   bvControls->addWidget(label);
   m_slice_trans_sbox = new QSpinBox(widg);
   m_slice_trans_sbox->setRange(1, 100);
   m_slice_trans_sbox->setValue(slice_trans);
   m_slice_trans_sbox->setSuffix("%");
-  connect(m_slice_trans_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
-  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_trans_sbox, SLOT(setValue(int)) );
-  bvControls->addWidget(m_slice_trans_sbox);  
-  bvControls->addSpacing(taiM->hsep_c); 
-  
+  connect(m_slice_trans_sbox, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)));
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_trans_sbox, SLOT(setValue(int)));
+  bvControls->addWidget(m_slice_trans_sbox);
+  bvControls->addSpacing(taiM->hsep_c);
+
   m_slice_tran_slid =  new QSlider(Qt::Horizontal, widg);
   m_slice_tran_slid->setTickPosition(QSlider::NoTicks);
   m_slice_tran_slid->setRange(1,100);
   m_slice_tran_slid->setValue(slice_trans);
   m_slice_tran_slid->setMinimumWidth(min_slider);
-  connect(m_slice_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
-  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_tran_slid, SLOT(setValue(int)) );
+  connect(m_slice_tran_slid, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)));
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), m_slice_tran_slid, SLOT(setValue(int)));
   bvControls->addWidget(m_slice_tran_slid);
   bvControls->addStretch();
-  
- 
+
+
   // the populator for the brain colorization and atlas widgets
   atlas_regexp_pop = new BrainAtlasRegexpPopulator();
-  
+
   ////////////////////////////////////////////////////////////////////////////
   // Brain colorization widgets
-  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
+  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
   label = taiM->NewLabel("Color brain:", widg, font_spec);
   bvControls->addWidget(label);
   m_chk_color_brain = new QCheckBox(widg);
   m_chk_color_brain->setCheckState(Qt::Unchecked);
   m_chk_color_brain->setEnabled(false);
-  connect(m_chk_color_brain, SIGNAL(stateChanged(int)), this, SLOT(SetColorBrain(int)) );
-  bvControls->addWidget(m_chk_color_brain);  
+  connect(m_chk_color_brain, SIGNAL(stateChanged(int)), this, SLOT(SetColorBrain(int)));
+  bvControls->addWidget(m_chk_color_brain);
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
-  label->setToolTip("Regexp to select brain areas to color."); 
+  label->setToolTip("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas.");
   bvControls->addWidget(label);
 
   fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
   fldBrainColorRegexp->SetFieldOwner(net);
+
+  // GetRep() returns the widget that holds the line edit and the edit button.
+  // (See code in taiText::taiText(), if (needs_edit_button), for details.)
+  // That is the correct widget to add to the BV panel.
   bvControls->addWidget(fldBrainColorRegexp->GetRep());
-  ((iLineEdit*)fldBrainColorRegexp->GetRep())->setCharWidth(40);
+  // rep() returns the line edit itself, which is what we want to set the
+  // width of and what we want to connect to.
+  if (iLineEdit* theLineEdit = dynamic_cast<iLineEdit*>(fldBrainColorRegexp->rep())) {
+    theLineEdit->setCharWidth(40);
+  }
+
   connect(fldBrainColorRegexp->rep(), SIGNAL(returnPressed()), this, SLOT(ColorBrainRegexpEdited()));
+  bvControls->addSpacing(taiM->hsep_c);
+  bvControls->addSpacing(taiM->hsep_c);
+
+  butEditAtlas = new QPushButton("Edit Atlas", widg);
+  butEditAtlas->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butEditAtlas->setMaximumWidth(taiM->maxButtonWidth() / 2);
+  bvControls->addWidget(butEditAtlas);
+  connect(butEditAtlas, SIGNAL(pressed()), this, SLOT(butEditAtlas_pressed()));
   bvControls->addStretch();
-  
+
   ////////////////////////////////////////////////////////////////////////////
-  // Brain atlas widgets  
-  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);  
+  // Brain atlas widgets
+  bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
   label = taiM->NewLabel("View atlas:", widg, font_spec);
   bvControls->addWidget(label);
   m_chk_atlas = new QCheckBox(widg);
   m_chk_atlas->setCheckState(Qt::Unchecked);
   m_chk_atlas->setEnabled(false);
-  connect(m_chk_atlas, SIGNAL(stateChanged(int)), this, SLOT(SetViewAtlas(int)) );
-  bvControls->addWidget(m_chk_atlas);  
+  connect(m_chk_atlas, SIGNAL(stateChanged(int)), this, SLOT(SetViewAtlas(int)));
+  bvControls->addWidget(m_chk_atlas);
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Atlas label (rexgexp)", widg, font_spec);
-  label->setToolTip("Regexp to select brain atlas labels to render.");
+  label->setToolTip("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow");
   bvControls->addWidget(label);
 
   fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
   fldBrainAtlasRegexp->SetFieldOwner(net);
   bvControls->addWidget(fldBrainAtlasRegexp->GetRep());
-  ((iLineEdit*)fldBrainAtlasRegexp->GetRep())->setCharWidth(40);
+  if (iLineEdit* theLineEdit = dynamic_cast<iLineEdit*>(fldBrainAtlasRegexp->rep())) {
+    theLineEdit->setCharWidth(40);
+  }
   connect(fldBrainAtlasRegexp->rep(), SIGNAL(returnPressed()), this, SLOT(ViewAtlasRegexpEdited()));
   bvControls->addStretch();
-  
+
   // listen for BrainViewState state changed
-  connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
+  connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)));
 
 
   layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
   chkNetText = new QCheckBox("Net\nTxt", widg);
   chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
-  connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   chkLayMove = new QCheckBox("Manip", widg);
   chkLayMove->setToolTip("Turn on the manipulation (moving, scaling, rotating the brain view) controls when in the manipulation mode (red arrow) of viewer");
-  connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkLayMove);
   layDispCheck->addSpacing(taiM->hsep_c);
-  
+
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
   chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
-  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkAutoScale);
   layDispCheck->addSpacing(taiM->hsep_c);
   layDispCheck->addStretch();
-  
+
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
   layDisplayValues->setSpacing(2);
   layDisplayValues->setMargin(0);
 
   layColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layColorBar);
-  
+
   butScaleDefault = new QPushButton("Defaults", widg);
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layColorBar->addWidget(butScaleDefault);
-  layColorBar->addSpacing(taiM->hsep_c); 
-  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
-  
+  layColorBar->addSpacing(taiM->hsep_c);
+  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()));
+
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
-  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
+  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()));
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
-  layColorBar->addSpacing(taiM->hsep_c); 
-  
+  layColorBar->addSpacing(taiM->hsep_c);
+
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layColorBar->addWidget(butSetColor);
-  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()));
 
   ////////////////////////////////////////////////////////////////////////////
   setCentralWidget(widg);
@@ -312,23 +331,23 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   lvDisplayValues->setHeaderLabels(hdr);
   lvDisplayValues->setSortingEnabled(false);
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
-  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
-  
+  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()));
+
   layTopCtrls->addWidget(tw);
 }
 
-BrainViewPanel::~BrainViewPanel() 
+BrainViewPanel::~BrainViewPanel()
 {
   BrainView* bv_ = bv();
   if (bv_) {
     bv_->bvp = NULL;
   }
-  if (atlas_regexp_pop != NULL){
-    delete atlas_regexp_pop;
-  }
+
+  delete atlas_regexp_pop;
+  atlas_regexp_pop = 0;
 }
 
-void BrainViewPanel::UpdatePanel_impl() 
+void BrainViewPanel::UpdatePanel_impl()
 {
   inherited::UpdatePanel_impl();
   ++updating;
@@ -344,14 +363,14 @@ void BrainViewPanel::UpdatePanel_impl()
     req_full_render = false;
     bv->Render();
   }
-  
+
   m_unit_val_tran_sbox->setValue((int)(bv->view_params.unit_trans*100));
   chkLayMove->setChecked(bv->lay_mv);
-  
+
   // update the brain coloring widgets
   if (bv->net()->brain_atlas.ptr() == NULL) {
     m_chk_color_brain->setEnabled(false);
-    m_chk_color_brain->setChecked(false); 
+    m_chk_color_brain->setChecked(false);
     fldBrainColorRegexp->setVisible(false); // @TODO - would be nice but seems to do nothing
   }
   else {
@@ -364,7 +383,7 @@ void BrainViewPanel::UpdatePanel_impl()
   // update the atlas viewing widgets
   if (bv->net()->brain_atlas.ptr() == NULL) {
     m_chk_atlas->setEnabled(false);
-    m_chk_atlas->setChecked(false); 
+    m_chk_atlas->setChecked(false);
     fldBrainAtlasRegexp->setVisible(false); // @TODO - would be nice but seems to do nothing
   }
   else {
@@ -373,8 +392,8 @@ void BrainViewPanel::UpdatePanel_impl()
     fldBrainAtlasRegexp->setVisible(true); // @TODO - would be nice but seems to do nothing
   }
   fldBrainAtlasRegexp->rep()->setText(bv->brain_area_regexp);
-  
-  
+
+
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
@@ -388,11 +407,11 @@ void BrainViewPanel::UpdatePanel_impl()
     ++i;
   }
   ColorScaleFromData();
-  
+
   --updating;
 }
 
-void BrainViewPanel::UpdateViewFromState(int state) 
+void BrainViewPanel::UpdateViewFromState(int state)
 {
   // BrainViewState has changed...determine if full render
   // is required and make call to apply the GUI change
@@ -418,7 +437,7 @@ void BrainViewPanel::SetDimensions(const TDCoord& dimensions)
 {
   bv()->SetDimensions(dimensions);
 }
-void BrainViewPanel::SetViewPlane( int plane )
+void BrainViewPanel::SetViewPlane(int plane)
 {
   bv()->SetViewPlane(plane);
 }
@@ -455,7 +474,7 @@ void BrainViewPanel::ColorBrainRegexpEdited()
   QString regexp = fldBrainColorRegexp->GetValue().toQString();
   QRegExp re(regexp);
   if (re.isValid()) {
-    SetColorBrainRegexp(regexp); 
+    SetColorBrainRegexp(regexp);
     m_chk_color_brain->setCheckable(true);
   }
   else {
@@ -473,11 +492,15 @@ void BrainViewPanel::SetViewAtlas(int state)
 }
 
 void BrainViewPanel::ViewAtlasRegexpEdited()
-{   
+{
   QString regexp = fldBrainAtlasRegexp->GetValue().toQString();
   QRegExp re(regexp);
   if (re.isValid()) {
-    SetViewAtlasRegexp(regexp); 
+    if(regexp == ".*/.*/.*/.*/.*") {
+      taMisc::Warning("You cannot set the match-all regular expression .*/.*/.*/.*/.* -- fills in the whole brain with squares and takes forever.");
+      m_chk_atlas->setCheckable(false);
+    }
+    SetViewAtlasRegexp(regexp);
     m_chk_atlas->setCheckable(true);
   }
   else {
@@ -490,73 +513,73 @@ void BrainViewPanel::SetViewAtlasRegexp(const QString& regexp)
 }
 void BrainViewPanel::EmitDataNameChanged(const QString& name)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit DataNameChanged(name);
 }
 void BrainViewPanel::EmitDimensionsChanged(const TDCoord& d)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit DimensionsChanged(d);
 }
 void BrainViewPanel::EmitViewPlaneChanged(int plane)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit ViewPlaneChanged(plane);
 }
 void BrainViewPanel::EmitNumSlicesChanged(int nSlices)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit NumSlicesChanged(nSlices);
 }
 void BrainViewPanel::EmitSliceStartChanged(int start)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit SliceStartChanged(start);
 }
 void BrainViewPanel::EmitSliceEndChanged(int end)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit SliceEndChanged(end);
 }
 void BrainViewPanel::EmitSliceSpacingChanged(int spacing)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit SliceSpacingChanged(spacing);
 }
 void BrainViewPanel::EmitSliceTransparencyChanged(int transparency)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit SliceTransparencyChanged(transparency);
 }
 void BrainViewPanel::EmitUnitValuesTransparencyChanged(int transparency)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit UnitValuesTransparencyChanged(transparency);
 }
 void BrainViewPanel::EmitStateChanged(int state)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit StateChanged(state);
 }
 void BrainViewPanel::EmitColorBrainAreaRegexpChanged(const QString& regexp)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit BrainColorRegexpChanged(regexp);
 }
 void BrainViewPanel::EmitViewAtlasRegexpChanged(const QString& regexp)
 {
-  // calling this method allows us to raise a signal, notifying 
+  // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it
   emit ViewAtlasRegexpChanged(regexp);
 }
@@ -566,16 +589,16 @@ void BrainViewPanel::GetValue_impl() {
   BrainView* bv = this->bv(); // cache
   if (!bv) return;
   req_full_build = false;
- 
+
   // update widget limits based on BrainViewState
   UpdateWidgetLimits();
-  
-  // It used to be we would re-render no matter what...but 
+
+  // It used to be we would re-render no matter what...but
   // this proved slow for some of the brain view controls,
   // so now we by default do NOT set that flag and let
   // UpdateFromViewState set it as necessary
   // req_full_render = true; // everything requires a re-render
-  
+
   bv->view_params.unit_trans = ((float)(m_unit_val_tran_sbox->value())/100.0f);
 
   // net text requires rebuild since it is controlled in BV::Render
@@ -587,31 +610,43 @@ void BrainViewPanel::GetValue_impl() {
 
   bv->color_brain_regexp = fldBrainColorRegexp->GetValue();
   bv->brain_area_regexp = fldBrainAtlasRegexp->GetValue();
-  
-  if (false == req_full_render) {
+
+  if (!req_full_render) {
     // just need update, not full rebuild/render
     bv->AsyncRenderUpdate();
   }
   bv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
 
-void BrainViewPanel::CopyFrom_impl() 
+void BrainViewPanel::CopyFrom_impl()
 {
   BrainView* bv_; if (!(bv_ = bv())) return;
   bv_->CallFun("CopyFromView");
 }
 
-void BrainViewPanel::butScaleDefault_pressed() 
+void BrainViewPanel::butScaleDefault_pressed()
 {
   if (updating) return;
   BrainView* bv_;
   if (!(bv_ = bv())) return;
-  
+
   bv_->SetScaleDefault();
   bv_->UpdateDisplay(true);
 }
 
-void BrainViewPanel::butSetColor_pressed() 
+void BrainViewPanel::butEditAtlas_pressed()
+{
+  if (updating) return;
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+
+  Network* net = bv_->net();
+  if(!net || !net->brain_atlas) return;
+  net->brain_atlas->EditAtlas();
+  bv_->UpdateDisplay(true);
+}
+
+void BrainViewPanel::butSetColor_pressed()
 {
   if (updating) return;
   BrainView* bv_;
@@ -620,7 +655,7 @@ void BrainViewPanel::butSetColor_pressed()
   bv_->CallFun("SetColorSpec");
 }
 
-void BrainViewPanel::ColorScaleFromData() 
+void BrainViewPanel::ColorScaleFromData()
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
@@ -631,7 +666,7 @@ void BrainViewPanel::ColorScaleFromData()
   --updating;
 }
 
-void BrainViewPanel::GetVars() 
+void BrainViewPanel::GetVars()
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
@@ -650,7 +685,7 @@ void BrainViewPanel::GetVars()
   lvDisplayValues->resizeColumnToContents(0);
 }
 
-void BrainViewPanel::InitPanel() 
+void BrainViewPanel::InitPanel()
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
@@ -660,13 +695,13 @@ void BrainViewPanel::InitPanel()
   --updating;
 }
 
-void BrainViewPanel::lvDisplayValues_selectionChanged() 
+void BrainViewPanel::lvDisplayValues_selectionChanged()
 {
   if (updating) return;
   BrainView* bv_;
   if (!(bv_ = bv())) return;
   // redo the list each time, to guard against stale values
-  bv_->cur_unit_vals.Reset(); 
+  bv_->cur_unit_vals.Reset();
   QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
   QTreeWidgetItem* item = NULL;
   for (int j = 0; j < items.size(); ++j) {
@@ -675,14 +710,14 @@ void BrainViewPanel::lvDisplayValues_selectionChanged()
   }
   MemberDef* md = (MemberDef*)bv_->membs.FindName(bv_->cur_unit_vals.SafeEl(0));
   if (md) {
-    bv_->setUnitDispMd(md); 
+    bv_->setUnitDispMd(md);
     bv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
   bv_->UpdateDisplay(false);
 }
 
-void BrainViewPanel::dynbuttonActivated(int but_no) 
+void BrainViewPanel::dynbuttonActivated(int but_no)
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
@@ -692,11 +727,11 @@ void BrainViewPanel::dynbuttonActivated(int but_no)
   taiAction* dyb = vw->getDynButton(but_no);
   if(!dyb) return;
   String nm = dyb->text();
-  bv_->cur_unit_vals.Reset(); 
+  bv_->cur_unit_vals.Reset();
   bv_->cur_unit_vals.Add(nm);
   MemberDef* md = (MemberDef*)bv_->membs.FindName(nm);
   if(md) {
-    bv_->setUnitDispMd(md); 
+    bv_->setUnitDispMd(md);
     bv_->UpdateViewerModeForMd(md);
     vw->setDynButtonChecked(but_no, true, true); // mutex
   }
@@ -704,24 +739,24 @@ void BrainViewPanel::dynbuttonActivated(int but_no)
   bv_->UpdateDisplay(true);     // update panel
 }
 
-void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) 
+void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op)
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
   bv_->viewWin_NotifySignal(src, op);
 }
 
-void BrainViewPanel::UpdateWidgetLimits() 
+void BrainViewPanel::UpdateWidgetLimits()
 {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
-  
+
   int max_slices(bv_->MaxSlices());
   int num_slices(bv_->NumSlices());
-  
+
   // if user wants number of slices to remain fixed
   // we need to be sure limits are adjusted appropriately
-  if (bv_->NumSlicesAreLocked()) { 
+  if (bv_->NumSlicesAreLocked()) {
     m_slice_strt_sbox->setRange(1, max_slices - num_slices);
     m_slice_strt_slid->setRange(1, max_slices - num_slices);
     m_slice_end_sbox->setRange(num_slices + 1, max_slices);
@@ -730,14 +765,14 @@ void BrainViewPanel::UpdateWidgetLimits()
   else {
     m_slice_strt_sbox->setRange(1, max_slices);
     m_slice_strt_slid->setRange(1, max_slices);
-    m_slice_end_sbox->setRange(1, max_slices);    
+    m_slice_end_sbox->setRange(1, max_slices);
     m_slice_end_slid->setRange(1, max_slices);
   }
 }
 
 
 //////////////////////////////////////////////
-//		iNetwork_Group
+//              iNetwork_Group
 
 iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
   : inherited(regexp_field, field_name, re_populator, fieldOwner, read_only, editor_mode) {
@@ -752,7 +787,7 @@ iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const S
 void iBrainViewEditDialog::SetColors() {
   BrainAtlasRegexpPopulator* bepop = (BrainAtlasRegexpPopulator*)m_populator;
 
-  QList<QColor>	clrs = bepop->getColors();
+  QList<QColor> clrs = bepop->getColors();
   int rows = clrs.size();
 
   int col = m_num_parts + NUM_EXTRA_COLS;
@@ -802,11 +837,11 @@ void iBrainViewEditDialog::AddButtons() {
   if(!m_editor_mode) return;
 
   QPushButton* btnRandomColors = m_button_box->addButton("RandomColors",
-							 QDialogButtonBox::ActionRole);
+                                                         QDialogButtonBox::ActionRole);
   btnRandomColors->setToolTip("generates random colors for the currently-selected items (according to the current filter) from a selected color scale");
 
   QPushButton* btnColorsFromScale = m_button_box->addButton("ColorsFromScale",
-							    QDialogButtonBox::ActionRole);
+                                                            QDialogButtonBox::ActionRole);
   btnColorsFromScale->setToolTip("generates colors for the currently-selected items (according to the current filter) from a selected color scale");
 
   // Connect the button-box buttons to our SLOTs.
@@ -816,11 +851,12 @@ void iBrainViewEditDialog::AddButtons() {
 
 void iBrainViewEditDialog::btnColorsFromScale_clicked() {
   taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
-						     "select a colorscale to apply to the currently-selected labels");
+                                                     "select a colorscale to apply to the currently-selected labels");
   bool rval = chs->Choose();
   if(!rval) return;
   ColorScaleSpec* cspec = (ColorScaleSpec*)chs->sel_obj();
   delete chs;
+  chs = 0;
   if(!cspec) return;
 
   int rows = m_proxy_model->rowCount();
@@ -829,7 +865,7 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked() {
   int clr_col = m_num_parts + NUM_EXTRA_COLS;
   TAColor_List cls;
   int extra = 0;
-  do {				// it doesn't always generate enough..
+  do {                          // it doesn't always generate enough..
     cspec->GenRanges(&cls, rows+extra);
     extra += 2;
   } while (cls.size < rows);
@@ -849,11 +885,12 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked() {
 
 void iBrainViewEditDialog::btnRandomColors_clicked() {
   taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
-						     "select a colorscale to select random colors from -- Rainbow is generally a good choice");
+                                                     "select a colorscale to select random colors from -- Rainbow is generally a good choice");
   bool rval = chs->Choose();
   if(!rval) return;
   ColorScaleSpec* cspec = (ColorScaleSpec*)chs->sel_obj();
   delete chs;
+  chs = 0;
   if(!cspec) return;
 
   int rows = m_proxy_model->rowCount();
@@ -862,7 +899,7 @@ void iBrainViewEditDialog::btnRandomColors_clicked() {
   int clr_col = m_num_parts + NUM_EXTRA_COLS;
   TAColor_List cls;
   int extra = 0;
-  do {				// it doesn't always generate enough..
+  do {                          // it doesn't always generate enough..
     cspec->GenRanges(&cls, rows+extra);
     extra += 2;
   } while (cls.size < rows);

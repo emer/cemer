@@ -60,10 +60,14 @@ using namespace std;
 #  include "ta_maketa_defs.h"
 #endif
 
+// required for ODE -- we use single precision only
+#define dSINGLE
+
 // Some global forward declarations
 
 class TypeDef;
 class MemberDef;
 class MethodDef;
+
 
 #endif // ta_stdef_h

@@ -49,6 +49,7 @@ public:
   taiRegexpField*   fldBrainColorRegexp;
   taiRegexpField*   fldBrainAtlasRegexp;
   BrainAtlasRegexpPopulator* atlas_regexp_pop;
+  QPushButton*		butEditAtlas;
   
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		layColorScaleCtrls;
@@ -140,6 +141,7 @@ signals:
   
 protected slots:
   void			butScaleDefault_pressed();
+  void			butEditAtlas_pressed();
   void 			butSetColor_pressed();
   void			lvDisplayValues_selectionChanged();
 

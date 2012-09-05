@@ -331,6 +331,8 @@ iTableView::iTableView(QWidget* parent)
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
+  setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
+
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(this_customContextMenuRequested(const QPoint&)) );
@@ -366,6 +368,14 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   }
 
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed && e->key() == Qt::Key_Y) {
+    // go into edit mode then press paste?
+    QCoreApplication* app = QCoreApplication::instance();
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space, Qt::MetaModifier));
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+    return true;
+  }
   if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
     return true;
   if((bool)m_window) {

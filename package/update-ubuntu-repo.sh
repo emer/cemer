@@ -13,7 +13,7 @@ if ! grep -q "$RUN_ON" /etc/hostname; then
 fi
 if [ "`id -u`" != "0" ]; then
   echo "Running script as root..."
-  sudo $0
+  sudo $0 "$@"
   exit
 fi
 
@@ -26,11 +26,11 @@ DIST_ROOT=/usr/local/ubuntu
 # Generally the main repo is only updated once per semester.
 REPOS=latest
 if [ -n "$1" ]; then
-  REPOS="$1"
+  REPOS="$@"
 fi
 
 for REPO in $REPOS; do
-  for DIST in lucid maverick natty oneiric; do
+  for DIST in lucid maverick natty oneiric precise; do
     for ARCH in i386 amd64; do
       echo "Copying ${ARCH} files ..."
       SUBDIR=dists/${DIST}/${REPO}/binary-${ARCH}
@@ -58,7 +58,7 @@ echo "Press enter to delete original .deb files,"
 read -p "or Ctrl-C if another repo needs to be updated " JUNK
 
 # Now that all repos have been updated, delete the files.
-for DIST in lucid maverick natty oneiric; do
+for DIST in lucid maverick natty oneiric precise; do
   for ARCH in i386 amd64; do
     for PACKAGE in emergent libquarter; do
       FILE=${PACKAGE}*${ARCH}.deb
