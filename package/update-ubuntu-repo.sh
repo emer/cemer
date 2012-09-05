@@ -26,7 +26,7 @@ DIST_ROOT=/usr/local/ubuntu
 # Generally the main repo is only updated once per semester.
 REPOS=latest
 if [ -n "$1" ]; then
-  REPOS="$1"
+  REPOS="$@"
 fi
 
 for REPO in $REPOS; do
