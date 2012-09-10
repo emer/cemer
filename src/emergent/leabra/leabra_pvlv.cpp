@@ -450,6 +450,7 @@ void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
   lvi_scale_min = false;
   lrn_pv_only = true;
+  nopv_cost = 0.0f;
   prior_gain = 1.0f;
   er_reset_prior = true;
 }
@@ -549,6 +550,17 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
       (lay,
        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
        u->ext = pve_val;
+       ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
+       Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
+     );
+  }
+  else if(!lv.lrn_pv_only && lv.nopv_cost > 0.0f) {
+    UNIT_GP_ITR
+      (lay,
+       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+       float clmp_val = u->act_m - lv.nopv_cost;
+       if(clmp_val < unit_range.min) clmp_val = unit_range.min;
+       u->ext = clmp_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
      );
