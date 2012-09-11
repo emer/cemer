@@ -450,7 +450,8 @@ void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
   lvi_scale_min = false;
   lrn_pv_only = true;
-  nopv_cost = 0.0f;
+  nopv_val = 0.0f;
+  nopv_lrate = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
 }
@@ -538,6 +539,20 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
+void LVeLayerSpec::Compute_LVCurLrate(LeabraLayer* lay, LeabraNetwork* net, LeabraUnit* u, 
+				   float lrate_mult) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
+      continue;
+    }
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    cs->SetCurLrate(net, net->epoch); // first reset to initial default value
+    cs->cur_lrate *= lrate_mult;      // then apply multilpier
+  }
+}
+
+
 void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   float pve_val = net->norew_val;
@@ -552,17 +567,17 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        u->ext = pve_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
+       Compute_LVCurLrate(lay, net, u, 1.0f);		// restore standard lrate
      );
   }
-  else if(!lv.lrn_pv_only && lv.nopv_cost > 0.0f) {
+  else if(!lv.lrn_pv_only) {
     UNIT_GP_ITR
       (lay,
        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-       float clmp_val = u->act_m - lv.nopv_cost;
-       if(clmp_val < unit_range.min) clmp_val = unit_range.min;
-       u->ext = clmp_val;
+       float clmp_val = lv.nopv_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
+       Compute_LVCurLrate(lay, net, u, lv.nopv_lrate);		// lrate is modulated
      );
   }
 }
