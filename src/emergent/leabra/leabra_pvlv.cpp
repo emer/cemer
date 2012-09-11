@@ -567,14 +567,15 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        u->ext = pve_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
-       Compute_LVCurLrate(lay, net, u, 1.0f);		// restore standard lrate
+       if(!lv.lrn_pv_only)
+	 Compute_LVCurLrate(lay, net, u, 1.0f);		// restore standard lrate
      );
   }
   else if(!lv.lrn_pv_only) {
     UNIT_GP_ITR
       (lay,
        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-       float clmp_val = lv.nopv_val;
+       u->ext = lv.nopv_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
        Compute_LVCurLrate(lay, net, u, lv.nopv_lrate);		// lrate is modulated
