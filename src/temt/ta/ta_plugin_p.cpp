@@ -472,16 +472,20 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
       if(taMisc::build_str.contains("dbg")) {
         cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
       }
-          else {
+      else {
         cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
-          }
+      }
       if(taMisc::build_str.contains("mpi")) {
         cmake_cmd += "-DMPI_BUILD=TRUE ";
       }
     }
-        else {
-        cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
-        }
+    else {
+      cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
+    }
+
+    if (taMisc::app_suffix.nonempty()) {
+      cmake_cmd += "-DEXTRA_SUFFIX=" + taMisc::app_suffix + " ";
+    }
 
     if(system_plugin)
       cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
