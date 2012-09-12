@@ -943,13 +943,10 @@ def rename_package():
   if len(version) > 0 and len(revision) > 0:
     # Old name must match format produced by EmergentCPack.cmake.
     win_arch_suffix = '-win64.exe' if build_64bit else '-win32.exe'
-    old_name = 'emergent-' + version + win_arch_suffix
+    old_name = 'emergent' + build_suffix + '-' + version + win_arch_suffix
     old_path = os.path.join(emer_build, old_name)
 
-    new_name = 'emergent-'
-    if build_suffix:
-      new_name += build_suffix[1:] + '-'
-    new_name += version + '-' + revision + win_arch_suffix
+    new_name = 'emergent' + build_suffix + '-' + version + '-' + revision + win_arch_suffix
     new_path = os.path.join(emer_build, new_name)
 
     if not os.path.isfile(old_path):
