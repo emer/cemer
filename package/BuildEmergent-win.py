@@ -572,6 +572,17 @@ def inst_emer_src():
       os.system(cmd)
 
 ##############################################################################
+# Function to prompt for a build suffix.
+
+build_suffix = ""
+def ask_suffix():
+  global build_suffix
+  print_horizontal()
+  build_suffix = raw_input('\nEnter a build suffix (optional): ')
+  if build_suffix and build_suffix[0] != '_':
+    build_suffix = '_' + build_suffix
+
+##############################################################################
 # Function to download third-party libraries (GSL, ODE)
 
 tools_dir = ''
@@ -851,7 +862,7 @@ def build_emergent():
   if not askUser('\nReady to build?'): quit(0)
 
   print '\nBuilding emergent...'
-  emer_build = os.path.join(emer_src, 'build' + get_compiler_extension())
+  emer_build = os.path.join(emer_src, 'build' + build_suffix + get_compiler_extension())
   makeDir(emer_build)
 
   # TODO: probably should update this to use setenv instead, at least for VC++2010.
@@ -877,6 +888,11 @@ def build_emergent():
   cmake_cmd = quoteFixPath(cmake_exe)
   if verbose_build:
     cmake_cmd = cmake_cmd + ' -DCMAKE_VERBOSE_MAKEFILE=ON'
+  else:
+    cmake_cmd = cmake_cmd + ' -DCMAKE_VERBOSE_MAKEFILE=OFF'
+
+  if build_suffix:
+    cmake_cmd = cmake_cmd + ' -DEXTRA_SUFFIX=' + build_suffix
 
   # Output the appropriate CMake command based on selected build type.
   if build_debug:
@@ -925,31 +941,39 @@ def rename_package():
   print 'Detected version: ' + version
   print '         svn rev: ' + revision
   if len(version) > 0 and len(revision) > 0:
+    # Old name must match format produced by EmergentCPack.cmake.
     win_arch_suffix = '-win64.exe' if build_64bit else '-win32.exe'
-    old_name = os.path.join(emer_build, 'emergent-' + version + win_arch_suffix)
-    new_name = os.path.join(emer_build, 'emergent-' + version + '-' + revision + win_arch_suffix)
-    if not os.path.isfile(old_name):
-      print '\nCould not find installer: ' + old_name
+    old_name = 'emergent-' + version + win_arch_suffix
+    old_path = os.path.join(emer_build, old_name)
+
+    new_name = 'emergent-'
+    if build_suffix:
+      new_name += build_suffix[1:] + '-'
+    new_name += version + '-' + revision + win_arch_suffix
+    new_path = os.path.join(emer_build, new_name)
+
+    if not os.path.isfile(old_path):
+      print '\nCould not find installer: ' + old_path
       quit(1)
     ok_to_overwrite = False
-    if os.path.isfile(new_name):
-      print '\nInstaller already exists with name: ' + new_name
+    if os.path.isfile(new_path):
+      print '\nInstaller already exists with name: ' + new_path
       if askUser('\nOK to overwrite?'):
         ok_to_overwrite = True
-        os.remove(new_name)
+        os.remove(new_path)
       else:
         print '\nWill not overwrite existing installer, quitting.'
         quit(0)
     print '\nWill rename installer:'
-    print '  from: ' + old_name
-    print '  to:   ' + new_name
+    print '  from: ' + old_path
+    print '  to:   ' + new_path
     if ok_to_overwrite or askUser('\nOK to rename?'):
-      os.rename(old_name, new_name)
+      os.rename(old_path, new_path)
       print 'Installer renamed.'
       scp_exe = 'c:\\cygwin\\bin\\scp.exe'
       if fileExists(scp_exe) and askUser('\nOK to scp to grey?'):
         cygpath_exe = 'c:\\cygwin\\bin\\cygpath.exe'
-        cygname = subprocess.check_output([cygpath_exe, new_name]).strip()
+        cygname = subprocess.check_output([cygpath_exe, new_path]).strip()
         subprocess.call([scp_exe, cygname, 'dpfurlani@grey.colorado.edu:/home/dpfurlani/'])
 
 ##############################################################################
@@ -967,6 +991,7 @@ def main():
     ask_debug_or_release()
     ask_32_or_64()
     ask_verbose()
+    ask_suffix()
     inst_emer_src()
     inst_3rd_party()
     inst_qt()
