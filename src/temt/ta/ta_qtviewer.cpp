@@ -2651,11 +2651,10 @@ iTabViewer::iTabViewer(PanelViewer* viewer_, QWidget* parent)
 iTabViewer::~iTabViewer()
 {
 //  delete m_tabViews;
-//  m_tabViews = NULL;
-  if (m_curTabView) {
-    delete m_curTabView;
-    m_curTabView = NULL;
-  }
+//  m_tabViews = 0;
+
+  delete m_curTabView;
+  m_curTabView = 0;
 }
 
 void iTabViewer::Init() {
@@ -4177,20 +4176,21 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
   // Clear and rebuild submenu.
   fileOpenFromWebMenu->Reset();
 
-  // For now, just one hard-coded value on menu.
-  String repository_name = "Emergent repository...";
+  // TODO: For now, just one hard-coded value on menu.
+  String repositoryName = "Emergent repository";
+  String label = repositoryName + "...";
 
   fileOpenFromWebMenu->AddItemWithNumericAccel(
-    repository_name,
+    label,
     taiAction::var_act,
     this, SLOT(fileOpenFromWeb(const Variant &)),
-    repository_name);
+    repositoryName);
 }
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
 {
-  String repository_name = repo.toString();
-  std::cout << "open from repo: " << repository_name.chars() << std::endl;
+  String repositoryName = repo.toString();
+  // TODO.
 }
 
 void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
@@ -4199,28 +4199,29 @@ void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
   filePublishDocsOnWebMenu->Reset();
 
   // For now, just one hard-coded value on menu.
-  String repository_name = "Emergent repository...";
+  String repositoryName = "Emergent repository";
+  String label = repositoryName + "...";
 
   filePublishDocsOnWebMenu->AddItemWithNumericAccel(
-    repository_name,
+    label,
     taiAction::var_act,
     this, SLOT(filePublishDocsOnWeb(const Variant &)),
-    repository_name);
+    repositoryName);
 }
 
 void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
 {
-  String repository_name = repo.toString();
-  std::cout << "publish docs to repo: " << repository_name.chars() << std::endl;
-//  if (taProject *proj = curProject()) {
-//    proj->PublishDocsOnWeb();
-//  }
+  String repositoryName = repo.toString();
+
+  if (taProject *proj = curProject()) {
+    proj->PublishDocsOnWeb(repositoryName);
+  }
 }
 
 void iMainWindowViewer::filePublishProjectOnWeb()
 {
   if (taProject *proj = curProject()) {
-//    proj->PublishProjectOnWeb();
+    // TODO: proj->PublishProjectOnWeb();
   }
 }
 

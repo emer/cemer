@@ -128,6 +128,7 @@ set(ta_HEADS_MOC
   ta_qtdata_def.h
   ta_qtdata.h
   ta_qtdialog.h
+  PublishDocsDialog.h
   ta_qtgroup.h
   ta_qtviewer.h
   ta_matrix_qt.h
@@ -149,6 +150,7 @@ set(ta_SRCS_GUI
   ta_type_qt.cpp
   ta_qtdata.cpp
   ta_qtdialog.cpp
+  PublishDocsDialog.cpp
   ta_qtgroup.cpp
   ta_qtviewer.cpp
   ta_matrix_qt.cpp
