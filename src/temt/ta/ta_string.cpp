@@ -699,8 +699,8 @@ String& String::cat(const char* y, int slen) {
 }
 
 String& String::cat(const char* y) {
-  uint slen;
-  if (y && (slen = (uint)strlen(y)) ) {
+  uint slen = y ? (uint) strlen(y) : 0;
+  if (slen) {
     if (mrep->canCat(slen))
       mrep->cat(y, slen);
     else

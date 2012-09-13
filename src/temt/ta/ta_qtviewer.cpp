@@ -8153,11 +8153,12 @@ void iTreeView::UpdateSelectedItems_impl() {
   // selection already; then we select any that remain in the list
   ISelectable_PtrList sel_items = selItems(); // copies
   QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
-  int lst_idx;
   while (QTreeWidgetItem *item = *it) {
     if (ISelectable* si = dynamic_cast<ISelectable*>(item)) {
-      if ((lst_idx = sel_items.FindEl(si)) >= 0)
+      int lst_idx = sel_items.FindEl(si);
+      if (lst_idx >= 0) {
         sel_items.RemoveIdx(lst_idx);
+      }
       else setItemSelected(item, false); // hope this is ok while iterating!!!!
     }
     ++it;

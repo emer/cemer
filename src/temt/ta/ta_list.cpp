@@ -409,17 +409,15 @@ bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
   return true;
 }
 bool taPtrList_impl::ReplaceEl_(void* ol, void* nw) {
-  int i;
-  if((i = FindEl_(ol)) < 0)
-    return false;
+  int i = FindEl_(ol);
+  if (i < 0) return false;
   ReplaceIdx_(i, nw);
   return true;
 }
 bool taPtrList_impl::ReplaceName_(const String& ol, void* nw) {
   int i = FindNameIdx(ol);
-  if(i >= 0)
-    return ReplaceIdx_(i, nw);
-  return false;
+  if(i < 0) return false;
+  return ReplaceIdx_(i, nw);
 }
 bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
   if((size == 0) || (ol >= size))
@@ -525,18 +523,16 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
 }
 
 bool taPtrList_impl::ReplaceLinkEl_(void* ol, void* nw) {
-  int i;
-  if((i = FindEl_(ol)) < 0)
-    return false;
+  int i = FindEl_(ol);
+  if (i < 0) return false;
   ReplaceLinkIdx_(i, nw);
   return true;
 }
 
 bool taPtrList_impl::ReplaceLinkName_(const String& ol, void* nw) {
   int i = FindNameIdx(ol);
-  if(i >= 0)
-    return ReplaceLinkIdx_(i, nw);
-  return false;
+  if(i < 0) return false;
+  return ReplaceLinkIdx_(i, nw);
 }
 
 bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
@@ -1348,9 +1344,8 @@ void taArray_impl::Permute() {
 }
 
 bool taArray_impl::RemoveEl_(const void* it) {
-  int i;
-  if((i = FindEl_(it)) < 0)
-    return false;
+  int i = FindEl_(it);
+  if (i < 0) return false;
   return RemoveIdx(i);
 }
 
