@@ -17,6 +17,7 @@
 
 #include "qconsole.h"
 #include "ta_platform.h"
+#include "ta_qt.h" // for taiMisc::KeyEventCtrlPressed(e)
 
 #include <qfile.h>
 
@@ -74,8 +75,8 @@ void QConsole::clear() {
   contPager = false;
   waiting_for_key = false;
   key_response = 0;
-  setAcceptRichText(false);	// just plain
-  displayPrompt(true);		// force
+  setAcceptRichText(false);     // just plain
+  displayPrompt(true);          // force
 }
 
 //Reset the console
@@ -93,7 +94,7 @@ void QConsole::exit() {
 }
 
 //QConsole constructor (init the QTextEdit & the attributes)
-QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor) 
+QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor)
   : QTextEdit(parent), cmdColor(Qt::blue), errColor(Qt::red), outColor(Qt::black),
     completionColor(Qt::green)
 #ifndef TA_OS_WIN
@@ -188,7 +189,7 @@ void QConsole::displayPrompt(bool force) {
   gotoEnd(cursor, false);
   setTextCursor(cursor);
   curPromptPos = cursor.position(); // save this position for future reference
-  quitPager = false;		// reset this flag whenver prompt returns
+  quitPager = false;            // reset this flag whenver prompt returns
   contPager = false;
   promptDisp = true;
 }
@@ -227,8 +228,8 @@ void QConsole::outputLine(QString line, bool err) {
   }
   promptDisp = false;
   append(line);
-  setTextColor(outColor);	// reset to default
-  if(scrolled_to_end) {		// keep on keeping on..
+  setTextColor(outColor);       // reset to default
+  if(scrolled_to_end) {         // keep on keeping on..
     gotoEnd();
   }
   emit receivedNewStdin(1);
@@ -251,9 +252,9 @@ bool QConsole::stdDisplay(QTextStream* s) {
       promptDisp = false;
       append(line);
       if(logfile.isOpen()) {
-	logfile.write(line.toLocal8Bit());
-	logfile.write("\n", strlen("\n"));
-	logfile.flush();
+        logfile.write(line.toLocal8Bit());
+        logfile.write("\n", strlen("\n"));
+        logfile.flush();
       }
     }
   }
@@ -264,26 +265,26 @@ bool QConsole::stdDisplay(QTextStream* s) {
       if(line.isNull()) break;
       n_lines_recvd++;
       if(!quitPager) {
-	promptDisp = false;
-	append(line);
-	if(logfile.isOpen()) {
-	  logfile.write(line.toLocal8Bit());
-	  logfile.write("\n", strlen("\n"));
-	  logfile.flush();
-	}
-	if(!contPager) {
-	  curOutputLn++;
-	  if(curOutputLn >= maxLines) {
-	    append("---Press Return for More, q=quit displaying, c=continue without paging ---");
-	    viewport()->update();	// repaint the window, in case it is weird
-	    return true;
-	  }
-	}
+        promptDisp = false;
+        append(line);
+        if(logfile.isOpen()) {
+          logfile.write(line.toLocal8Bit());
+          logfile.write("\n", strlen("\n"));
+          logfile.flush();
+        }
+        if(!contPager) {
+          curOutputLn++;
+          if(curOutputLn >= maxLines) {
+            append("---Press Return for More, q=quit displaying, c=continue without paging ---");
+            viewport()->update();       // repaint the window, in case it is weird
+            return true;
+          }
+        }
       }
     }
   }
 
-  if(scrolled_to_end) {		// keep on keeping on..
+  if(scrolled_to_end) {         // keep on keeping on..
     gotoEnd();
   }
   emit receivedNewStdin(n_lines_recvd);
@@ -297,27 +298,22 @@ void QConsole::resizeEvent(QResizeEvent* e) {
 }
 
 // Reimplemented key press event
-void QConsole::keyPressEvent(QKeyEvent* e) {
+void QConsole::keyPressEvent(QKeyEvent* e)
+{
   QTextCursor cursor(textCursor());
 
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
 
-  if(curOutputLn >= maxLines) {
-    if(e->key() == Qt::Key_Return) {
+  if (curOutputLn >= maxLines) {
+    if (is_enter) {
       curOutputLn = 0;
     }
-    else if(e->key() == Qt::Key_Q) {
+    else if (e->key() == Qt::Key_Q) {
       curOutputLn = 0;
       quitPager = true;
     }
-    else if(e->key() == Qt::Key_C) {
+    else if (e->key() == Qt::Key_C) {
       curOutputLn = 0;
       contPager = true;
     }
@@ -348,7 +344,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     else if(sl.count() > 1) {
       setTextColor(completionColor);
       append(sl.join(" "));
-      displayPrompt(true);	// force!
+      displayPrompt(true);      // force!
       cursor.insertText(command);
     }
   }
@@ -366,12 +362,12 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     }
     else {
       if(promptDisp) {
-	QString command = getCurrentCommand();
-	if(isCommandComplete(command))
-	  execCommand(command, false);
+        QString command = getCurrentCommand();
+        if(isCommandComplete(command))
+          execCommand(command, false);
       }
       else {
-	displayPrompt(true);
+        displayPrompt(true);
       }
     }
   }
@@ -385,7 +381,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
       historyIndex--; if(historyIndex < 0) historyIndex = 0;
       QString cmd = history[historyIndex];
       if(!cmd.isEmpty())
-	replaceCurrentCommand(cmd);
+        replaceCurrentCommand(cmd);
     }
   }
   else if((e->key() == Qt::Key_Down) || ((e->key() == Qt::Key_N) && ctrl_pressed)) {
@@ -394,7 +390,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
       historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;
       QString cmd = history[historyIndex];
       if(!cmd.isEmpty())
-	replaceCurrentCommand(cmd);
+        replaceCurrentCommand(cmd);
     }
   }
   else if((e->key() == Qt::Key_A) && ctrl_pressed) {
@@ -469,7 +465,7 @@ void QConsole::mouseReleaseEvent(QMouseEvent *e) {
   else
 #endif
  if(e->button() & Qt::LeftButton) {
-    copy();			// always copy!
+    copy();                     // always copy!
   }
   // this is actually confusing to people -- just let it be..
 //   QTextCursor cursor(textCursor());
@@ -502,7 +498,7 @@ void QConsole::replaceCurrentCommand(QString newCommand) {
   QTextCursor cursor = textCursor();
   gotoPrompt(cursor);
   gotoEnd(cursor, true); // select
-  cursor.insertText(newCommand);				   // replaces
+  cursor.insertText(newCommand);                                   // replaces
   cursor.clearSelection();
 }
 
@@ -517,7 +513,7 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
   //Display the prompt with the command first
   if (writeCommand) {
     if(getCurrentCommand() != "")
-      displayPrompt(true);	// force
+      displayPrompt(true);      // force
     append(command);
   }
   //execute the command and get back its text result and its return value
@@ -537,7 +533,7 @@ void QConsole::execCommand(QString command, bool writeCommand, bool showPrompt) 
 
 int QConsole::saveContents(QString fileName) {
   quitPager = true;
-  flushOutput();		// get anything pending
+  flushOutput();                // get anything pending
   QCoreApplication::processEvents();
   quitPager = false;
   QFile f(fileName);
@@ -622,7 +618,7 @@ QStringList QConsole::autocompleteCommand(QString) {
   return QStringList();
 }
 
-// note: implementations need to explicitly call this   
+// note: implementations need to explicitly call this
 QStringList QConsole::autocompleteFilename(QString cmd, QString pre_fnm) {
   QString path;
   QString fnm = cmd;
@@ -668,7 +664,7 @@ QString QConsole::findIntersection(const QStringList& lst) {
   }
   return isect;
 }
-  
+
 //default implementation: command always complete
 bool QConsole::isCommandComplete(QString cmd) {
 //   if(cmd.isEmpty()) return false;

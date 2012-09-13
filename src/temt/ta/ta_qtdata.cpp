@@ -952,18 +952,13 @@ void iRegexpDialog::CreateTableModel()
   }
 }
 
-void iRegexpDialog::keyPressEvent(QKeyEvent *e) {
+void iRegexpDialog::keyPressEvent(QKeyEvent *e)
+{
   // don't accept on enter
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  if(!ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)) {
-    e->accept();                // just bail!
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
+  if (!ctrl_pressed && is_enter) {
+    e->accept(); // just bail!
     return;
   }
 

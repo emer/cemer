@@ -824,19 +824,29 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
 }
 
 
-bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
+bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e)
+{
   bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
+  if (e->modifiers() & Qt::ControlModifier) {
     ctrl_pressed = true;
+  }
+
 #ifdef TA_OS_MAC
   // actual ctrl = meta on apple -- enable this
-  if(e->modifiers() & Qt::MetaModifier)
+  if (e->modifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
+  }
+
+  // TODO: Why is this the only key checked?  What about Command+C for Copy?
+  // Maybe this check isn't needed anymore.  If not, this function should take
+  // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
+
   // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  if((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+  if ((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
     ctrl_pressed = false;
   }
 #endif
+
   return ctrl_pressed;
 }
 
@@ -898,7 +908,7 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
     case Qt::Key_K:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
       return true;              // we absorb this event
-    case Qt::Key_Y:		// this doesn't seem to work to generate paste event
+    case Qt::Key_Y:             // this doesn't seem to work to generate paste event
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
       return true;              // we absorb this event
     case Qt::Key_W:
@@ -1002,7 +1012,7 @@ int taiMisc::MapToAreaV_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidg
 void taiMisc::DeleteWidgetsLater(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
-  const QObjectList& ol = obj->children(); 
+  const QObjectList& ol = obj->children();
   for(int i = ol.count()-1; i >= 0; i--) {
     chobj = ol.at(i);
     if(chobj->inherits("QWidget")) {
@@ -1015,7 +1025,7 @@ void taiMisc::DeleteWidgetsLater(QObject* obj) {
 void taiMisc::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
-  const QObjectList& ol = obj->children(); 
+  const QObjectList& ol = obj->children();
   for(int i = ol.count()-1; i >= 0; i--) {
     chobj = ol.at(i);
     chobj->deleteLater();
@@ -1025,7 +1035,7 @@ void taiMisc::DeleteChildrenLater(QObject* obj) {
 void taiMisc::DeleteChildrenNow(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
-  const QObjectList& ol = obj->children(); 
+  const QObjectList& ol = obj->children();
   int i = 0;
   while (ol.count() > 0) {
     i = ol.size() - 1;
