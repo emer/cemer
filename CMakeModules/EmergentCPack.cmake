@@ -21,7 +21,7 @@ if (WIN32)
   # Make sure there is at least one set of four (4) backslashes.
   
   # Set the name of the installer executable to be created.
-  SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-win${EMER_ARCH_BITS}")
+  SET(CPACK_PACKAGE_FILE_NAME "emergent${EMERGENT_SUFFIX}-${EMERGENT_VERSION}-win${EMER_ARCH_BITS}")
   
   # Set the icon used for the installer (and uninstaller).
   SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent.ico")
@@ -46,7 +46,7 @@ if (WIN32)
   #
   # Has to be lowercase "emergent", not "Emergent" to match what's in
   # CPACK_PACKAGE_EXECUTABLES.
-  SET(CPACK_CREATE_DESKTOP_LINKS emergent)
+  SET(CPACK_CREATE_DESKTOP_LINKS emergent${EMERGENT_SUFFIX})
   
 else (WIN32)
   # Replace CMAKE_INSTALL_PREFIX to Currently used one,
@@ -85,10 +85,10 @@ if (WIN32)
   # Normally these are all derived from the CPACK_PACKAGE_NAME, but
   # it looks funny when the version number gets appended after the
   # architecture, so instead set everything explicitly.
-  SET(EMER_FULL_NAME "Emergent ${EMERGENT_VERSION} (${EMER_ARCH_BITS}-bit)")
+  SET(EMER_FULL_NAME "Emergent${EMERGENT_SUFFIX} ${EMERGENT_VERSION} (${EMER_ARCH_BITS}-bit)")
   SET(CPACK_NSIS_DISPLAY_NAME "${EMER_FULL_NAME}")
   SET(CPACK_NSIS_PACKAGE_NAME "${EMER_FULL_NAME}")
-  SET(CPACK_PACKAGE_EXECUTABLES "emergent;${EMER_FULL_NAME}")
+  SET(CPACK_PACKAGE_EXECUTABLES "emergent${EMERGENT_SUFFIX};${EMER_FULL_NAME}")
   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${EMER_FULL_NAME}")
   SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${EMER_FULL_NAME}")
   SET(CPACK_PACKAGE_NAME "${EMER_FULL_NAME}")
