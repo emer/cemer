@@ -28,47 +28,49 @@ class QString;
 ////////////////////////////////////////////////////
 //   BrainViewPanel
 ////////////////////////////////////////////////////
-class EMERGENT_API BrainViewPanel: public iViewPanelFrame {
+
+class EMERGENT_API BrainViewPanel : public iViewPanelFrame
+{
   // frame for gui interface to a BrainView -- usually posted by the netview
-INHERITED(iViewPanelFrame)
   Q_OBJECT
+  INHERITED(iViewPanelFrame)
+
 public:
+  QWidget*              widg;
+  QVBoxLayout*          layTopCtrls;
+  QVBoxLayout*          layViewParams;
+  QHBoxLayout*          layDispCheck;
+  QCheckBox*            chkDisplay;
+  QCheckBox*            chkLayMove;
+  QCheckBox*            chkNetText;
 
-  QWidget*          widg;
-  QVBoxLayout*		layTopCtrls;
-  QVBoxLayout*		layViewParams;
-  QHBoxLayout*		layDispCheck;
-  QCheckBox*		chkDisplay;
-  QCheckBox*		chkLayMove;
-  QCheckBox*		chkNetText;
+  QHBoxLayout*          layFontsEtc;
+  QLabel*               lblUnitTrans;
+  taiField*             fldUnitTrans;
 
-  QHBoxLayout*		layFontsEtc;
-  QLabel*		    lblUnitTrans;
-  taiField*		    fldUnitTrans;
-
-  taiRegexpField*   fldBrainColorRegexp;
-  taiRegexpField*   fldBrainAtlasRegexp;
+  taiRegexpField*       fldBrainColorRegexp;
+  taiRegexpField*       fldBrainAtlasRegexp;
   BrainAtlasRegexpPopulator* atlas_regexp_pop;
-  QPushButton*		butEditAtlas;
-  
-  QVBoxLayout*		layDisplayValues;
-  QHBoxLayout*		layColorScaleCtrls;
-  QCheckBox*		chkAutoScale;       // autoscale ck_box
-  QPushButton*		butScaleDefault;    // revert to default  
+  QPushButton*          butEditAtlas;
 
-  QHBoxLayout*      layColorBar;
-  ScaleBar*         cbar;	      // colorbar
-  QPushButton*		butSetColor;
+  QVBoxLayout*          layDisplayValues;
+  QHBoxLayout*          layColorScaleCtrls;
+  QCheckBox*            chkAutoScale;       // autoscale ck_box
+  QPushButton*          butScaleDefault;    // revert to default
+
+  QHBoxLayout*          layColorBar;
+  ScaleBar*             cbar;         // colorbar
+  QPushButton*          butSetColor;
 
   QTabWidget*           tw;
   QTreeWidget*          lvDisplayValues;
 
   iMethodButtonMgr*     meth_but_mgr;
-  QWidget*          widCmdButtons;
+  QWidget*              widCmdButtons;
 
-  BrainView*            bv();
+  BrainView*            getBrainView();
 
-  void              ColorScaleFromData();
+  void                  ColorScaleFromData();
   virtual void          GetVars();
   virtual void          InitPanel();
 
@@ -89,10 +91,10 @@ protected:
   override void         CopyFrom_impl();
 
 public slots:
-  void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
-  void                  dynbuttonActivated(int but_no); // for hot member buttons
+  void          viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
+  void          dynbuttonActivated(int but_no); // for hot member buttons
   void          UpdateViewFromState(int state);
-  
+
   void          SetDataName(const QString& data_name);
   void          SetDimensions(const TDCoord& dimensions);
   void          SetViewPlane( int plane );
@@ -108,7 +110,7 @@ public slots:
   void          SetViewAtlas(int state);
   void          ViewAtlasRegexpEdited();
   void          SetViewAtlasRegexp(const QString& regexp);
-    
+
   void          EmitDataNameChanged(const QString& name);
   void          EmitDimensionsChanged(const TDCoord& d);
   void          EmitViewPlaneChanged(int plane);
@@ -118,7 +120,7 @@ public slots:
   void          EmitSliceSpacingChanged(int spacing);
   void          EmitSliceTransparencyChanged(int transparency);
   void          EmitUnitValuesTransparencyChanged(int transparency);
-  void          EmitStateChanged(int state);  
+  void          EmitStateChanged(int state);
   void          EmitColorBrainAreaRegexpChanged(const QString& regexp);
   void          EmitViewAtlasRegexpChanged(const QString& regexp);
 
@@ -133,17 +135,16 @@ signals:
   void          SliceSpacingChanged(int spacing);
   void          SliceTransparencyChanged(int transparency);
   void          UnitValuesTransparencyChanged(int transparency);
-  void          StateChanged(int state); 
+  void          StateChanged(int state);
   void          BrainColorRegexpChanged(const QString& regexp);
   void          ViewAtlasRegexpChanged(const QString& regexp);
-
 #endif
-  
+
 protected slots:
-  void			butScaleDefault_pressed();
-  void			butEditAtlas_pressed();
-  void 			butSetColor_pressed();
-  void			lvDisplayValues_selectionChanged();
+  void                  butScaleDefault_pressed();
+  void                  butEditAtlas_pressed();
+  void                  butSetColor_pressed();
+  void                  lvDisplayValues_selectionChanged();
 
 private:
   QComboBox*        m_view_plane_comb;
@@ -156,31 +157,37 @@ private:
   QSlider*          m_unit_val_tran_slid;
   QSpinBox*         m_slice_trans_sbox;
   QSlider*          m_slice_tran_slid;
-  QCheckBox*		m_chk_color_brain;
-  QCheckBox*		m_chk_atlas;
+  QCheckBox*        m_chk_color_brain;
+  QCheckBox*        m_chk_atlas;
   void              UpdateWidgetLimits();
-
 };
 
 // this is here for moc'ing
 
-class EMERGENT_API iBrainViewEditDialog : public iRegexpDialog {
+class EMERGENT_API iBrainViewEditDialog : public iRegexpDialog
+{
   Q_OBJECT
   INHERITED(iRegexpDialog)
+
 public:
-    iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, 	iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only,
-			 bool editor_mode=true);
+  iBrainViewEditDialog(
+    taiRegexpField* regexp_field,
+    const String& field_name,
+    iRegexpDialogPopulator *re_populator,
+    const void *fieldOwner,
+    bool read_only,
+    bool editor_mode = true
+  );
 
 protected:
-  virtual void         	AddButtons();
-  virtual  void		SetColors();
+  virtual void          AddButtons();
+  virtual void          SetColors();
 
 protected slots:
   void                  itemClicked(const QModelIndex & index);
   override void         btnApply_clicked();
   override void         btnRandomColors_clicked();
   override void         btnColorsFromScale_clicked();
-
 };
 
 #endif // BRAIN_VIEW_PANEL_H

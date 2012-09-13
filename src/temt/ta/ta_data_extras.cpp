@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,7 +20,7 @@
 #include <QDir>
 
 //////////////////////////
-//  DirectoryCatalog	//
+//  DirectoryCatalog    //
 //////////////////////////
 
 void DirectoryCatalog::Initialize() {
@@ -43,7 +43,7 @@ QDir& DirectoryCatalog::dir() {
     m_dir = new QDir();
   return *m_dir;
 }
-  
+
 const Variant DirectoryCatalog::GetData_impl(int chan) {
   switch (chan) {
   case 0: return dir()[rd_itr]; // blank if out of range
@@ -54,7 +54,7 @@ const Variant DirectoryCatalog::GetData_impl(int chan) {
 int DirectoryCatalog::ItemCount() const {
   return m_dir->count();
 }
-  
+
 void DirectoryCatalog::ReadOpen_impl(bool& ok) {
   inherited::ReadOpen_impl(ok);
   if (!ok) return;
@@ -89,7 +89,7 @@ const String DirectoryCatalog::SourceChannelName(int chan) const {
 
 
 //////////////////////////
-//  ImageReader		//
+//  ImageReader         //
 //////////////////////////
 
 void ImageReader::Initialize() {
@@ -103,7 +103,7 @@ void ImageReader::Initialize() {
 void ImageReader::Destroy() {
   SetMat(NULL);
 }
-  
+
 void ImageReader::InitLinks() {
   inherited::InitLinks();
   taBase::Own(img_size, this);
@@ -125,10 +125,10 @@ void ImageReader::Copy_(const ImageReader& cp) {
 
 taMatrix* ImageReader::GetDataMatrix_impl(int chan) {
   if (!m_mat) return NULL;
-  
+
   if (chan == chan_img)
     return m_mat;
-    
+
   //TODO: rgb_Matrix channel
 /*obs  switch (color_mode) {
   case CM_GRAYSCALE:
@@ -155,14 +155,14 @@ void ImageReader::ReadClose_impl() {
 }
 
 bool ImageReader::ReadImage_Jpeg() {
-  FILE* infile;
-  if ((infile = fopen(fname, "rb")) == NULL) {
+  FILE *infile = fopen(fname, "rb");
+  if (infile == NULL) {
     taMisc::Warning("ImageReader::ReadImage_Jpeg: can't open file: ", fname);
     return false;
   }
 
   // todo: use QtImage or taImage for this!  not worth the libjpeg dependency!!
-  
+
   return true;
 }
 
@@ -177,7 +177,7 @@ bool ImageReader::ReadItem_impl() {
 void ImageReader::ReadOpen_impl(bool& ok) {
   inherited::ReadOpen_impl(ok);
   if (!ok) return;
-  
+
   // if in auto mode, try to guess based on file name
   if (img_format == IF_AUTO) {
     String tmp = upcase(fname);
@@ -208,12 +208,12 @@ int ImageReader::sourceChannelCount() const {
 const String ImageReader::sourceChannelName(int chan) const {
 //note: it is safe to not care what current channel count is, because access by name checks
   static String nm_img("img");
-  
+
   if (chan == chan_img)
     return nm_img;
   else return _nilString;
   //TODO: rgb format
-  
+
 /*obs  switch (color_mode) {
   case CM_GRAYSCALE:
     switch (chan) {

@@ -596,7 +596,7 @@ bool    taMisc::emacs_mode = false;
 int     taMisc::undo_depth = 100;
 int     taMisc::undo_data_max_cells = 10000;
 float   taMisc::undo_new_src_thr = 0.3f;
-bool	taMisc::undo_debug = false;
+bool    taMisc::undo_debug = false;
 int     taMisc::auto_save_interval = 120;
 int     taMisc::wait_proc_delay = 20;
 int     taMisc::css_gui_event_interval = 200;
@@ -3416,22 +3416,22 @@ int MemberSpace::FindTypeName(const char* nm) const {
 }
 
 MemberDef* MemberSpace::FindNameR(const char* nm) const {
-  MemberDef* rval;
-  if((rval = FindName(nm)))
+  if (MemberDef *rval = FindName(nm)) {
     return rval;
+  }
 
-  int i;
-  for(i=0; i < size; i++) {
-    if((FastEl(i)->type->ptr == 0) &&
-       ((rval = FastEl(i)->type->members.FindNameR(nm)) != NULL))
-      return rval;
+  for (int i = 0; i < size; i++) {
+    if (FastEl(i)->type->ptr == 0) {
+      if (MemberDef *rval = FastEl(i)->type->members.FindNameR(nm)) {
+        return rval;
+      }
+    }
   }
   return NULL;
 }
 
 MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) const {
-  MemberDef* rval;
-  if((rval = FindName(nm))) {
+  if (MemberDef *rval = FindName(nm)) {
     ptr = rval->GetOff(base);
     return rval;
   }
@@ -3444,9 +3444,8 @@ MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) con
 //////////////////////////////////
 
 MemberDef* MemberSpace::FindType(TypeDef* it) const {
-  int i;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->type->InheritsFrom(it)) {
+  for (int i = 0; i<size; i++) {
+    if (FastEl(i)->type->InheritsFrom(it)) {
       return FastEl(i);
     }
   }
@@ -3454,22 +3453,22 @@ MemberDef* MemberSpace::FindType(TypeDef* it) const {
 }
 
 MemberDef* MemberSpace::FindTypeR(TypeDef* it) const {
-  MemberDef* rval;
-  if((rval = FindType(it)))
+  if (MemberDef *rval = FindType(it)) {
     return rval;
+  }
 
-  int i;
-  for(i=0; i < size; i++) {
-    if((FastEl(i)->type->ptr == 0) &&
-       ((rval = FastEl(i)->type->members.FindTypeR(it)) != NULL))
-      return rval;
+  for (int i = 0; i < size; i++) {
+    if (FastEl(i)->type->ptr == 0) {
+      if (MemberDef *rval = FastEl(i)->type->members.FindTypeR(it)) {
+        return rval;
+      }
+    }
   }
   return NULL;
 }
 
 MemberDef* MemberSpace::FindTypeAddr(TypeDef* it, void* base, void*& ptr) const {
-  MemberDef* rval;
-  if((rval = FindType(it))) {
+  if (MemberDef *rval = FindType(it)) {
     ptr = rval->GetOff(base);
     return rval;
   }
@@ -3630,15 +3629,16 @@ int PropertySpace::FindTypeName(const char* nm) const {
 }
 
 MemberDefBase* PropertySpace::FindNameR(const char* nm) const {
-  MemberDefBase* rval;
-  if((rval = FindName(nm)))
+  if (MemberDefBase *rval = FindName(nm)) {
     return rval;
+  }
 
-  int i;
-  for(i=0; i < size; i++) {
-    if((FastEl(i)->type->ptr == 0) &&
-       ((rval = FastEl(i)->type->properties.FindNameR(nm)) != NULL))
-      return rval;
+  for (int i = 0; i < size; i++) {
+    if (FastEl(i)->type->ptr == 0) {
+      if (MemberDefBase *rval = FastEl(i)->type->properties.FindNameR(nm)) {
+        return rval;
+      }
+    }
   }
   return NULL;
 }
@@ -3844,9 +3844,9 @@ void TypeItem::Copy_(const TypeItem& cp) {
 }
 
 String TypeItem::OptionAfter(const String& op) const {
-  int opt;
   String tmp_label;
-  if((opt = opts.FindStartsWith(op,-1)) >= 0) { // search bckwrds for overrides..
+  int opt = opts.FindStartsWith(op, -1);
+  if (opt >= 0) { // search bckwrds for overrides..
     tmp_label = opts.FastEl(opt).after(op);
   }
   return tmp_label;
@@ -3855,10 +3855,14 @@ String TypeItem::OptionAfter(const String& op) const {
 bool TypeItem::HasOptionAfter(const String& prefix, const String& op) const {
   int idx = -1;
   do {
-    if ((idx = opts.FindStartsWith(prefix, idx + 1)) >= 0) {
-      if (opts.FastEl(idx).after(prefix) == op) return true;
+    idx = opts.FindStartsWith(prefix, idx + 1);
+    if (idx >= 0) {
+      if (opts.FastEl(idx).after(prefix) == op) {
+        return true;
+      }
     }
-  } while (idx >= 0);
+  }
+  while (idx >= 0);
   return false;
 }
 
@@ -5271,20 +5275,20 @@ void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
 }
 
 TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
-  if((*md = members.FindName(nm)) != NULL) return this;
-  TypeDef* td;
-  int i;
-  for(i=0;i<children.size;i++){
-    if((td = children[i]->FindTypeWithMember(nm,md)) != NULL)
+  *md = members.FindName(nm);
+  if (*md) return this;
+
+  for (int i = 0; i < children.size; i++) {
+    if (TypeDef *td = children[i]->FindTypeWithMember(nm,md)) {
       return td;
+    }
   }
   return NULL;
 }
 
 bool TypeDef::CheckList(const String_PArray& lst) const {
-  int i;
-  for(i=0; i<lists.size; i++) {
-    if(lst.FindEl(lists.FastEl(i)) >= 0)
+  for (int i = 0; i < lists.size; i++) {
+    if (lst.FindEl(lists.FastEl(i)) >= 0)
       return true;
   }
   return false;
@@ -5300,7 +5304,7 @@ TypeDef* TypeDef::GetNonPtrType() const {
     if(rval->ptr == 0)
       return rval;
   }
-  return rval;			// always return something
+  return rval;                  // always return something
 }
 
 TypeDef* TypeDef::GetNonRefType() const {
@@ -5312,7 +5316,7 @@ TypeDef* TypeDef::GetNonRefType() const {
     if(!rval->ref)
       return rval;
   }
-  return rval;			// always return something
+  return rval;                  // always return something
 }
 
 TypeDef* TypeDef::GetTemplType() const {
@@ -5388,34 +5392,33 @@ String TypeDef::GetPtrString() const {
 String TypeDef::Get_C_Name() const {
   String rval;
   if(ref) {
-    TypeDef* nrt;
-    if((nrt = GetNonRefType()) == NULL) {
-//       taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
+    TypeDef *nrt = GetNonRefType();
+    if (!nrt) {
+      //taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
       return name;
     }
-    if(nrt == this) return name + "&";
+    if (nrt == this) return name + "&";
     rval = nrt->Get_C_Name() + "&";
     return rval;
   }
 
   if (ptr > 0) {
-    TypeDef* npt;
-    if((npt = GetNonPtrType()) == NULL) {
-//       taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
+    TypeDef *npt = GetNonPtrType();
+    if (!npt) {
+      //taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
       return name;
     }
-    if(npt == this) return name + GetPtrString();
+    if (npt == this) return name + GetPtrString();
     rval = npt->Get_C_Name() + GetPtrString();
     return rval;
   }
 
   // combo type
   if ((parents.size > 1) && !InheritsFormal(TA_class)) {
-    int i;
-    for(i=0; i<parents.size; i++) {
+    for (int i = 0; i < parents.size; i++) {
       TypeDef* pt = parents.FastEl(i);
       rval += pt->Get_C_Name();
-      if(i < parents.size-1) rval += " ";
+      if (i < parents.size-1) rval += " ";
     }
     return rval;
   }
@@ -5427,16 +5430,15 @@ String TypeDef::Get_C_Name() const {
   }
 
   if (InheritsFormal(TA_templ_inst) && (templ_pars.size > 0)) {
-    int i;
     TypeDef* tmpar = GetTemplParent();
-    if (tmpar == NULL) {
+    if (!tmpar) {
       taMisc::Error("Null TemplParent in TypeDef::Get_C_Name()", name);
       return name;
     }
     rval += tmpar->name + "<"; // note: name is always its valid c_name
-    for (i=0; i<templ_pars.size; i++) {
+    for (int i = 0; i < templ_pars.size; i++) {
       rval += templ_pars.FastEl(i)->Get_C_Name();
-      if(i < templ_pars.size-1)
+      if (i < templ_pars.size-1)
         rval += ",";
     }
     rval += ">";
@@ -5564,70 +5566,63 @@ void TypeDef::ComputeMembBaseOff() {
 }
 
 bool TypeDef::FindChildName(const char* nm) const {
-  if(children.FindName(nm))
+  if (children.FindName(nm))
     return true;
-  int i;
-  for(i=0; i < children.size; i++) {
-    if(children.FastEl(i)->FindChildName(nm))
+  for (int i = 0; i < children.size; i++) {
+    if (children.FastEl(i)->FindChildName(nm))
       return true;
   }
   return false;
 }
 bool TypeDef::FindChild(TypeDef* it) const {
-  if(children.FindEl(it) >= 0)
+  if (children.FindEl(it) >= 0)
     return true;
-  int i;
-  for(i=0; i < children.size; i++) {
-    if(children.FastEl(i)->FindChild(it))
+  for (int i = 0; i < children.size; i++) {
+    if (children.FastEl(i)->FindChild(it))
       return true;
   }
   return false;
 }
 
 void* TypeDef::GetParAddr(const char* it, void* base) const {
-  if(name == it) return base;   // you are it!
+  if (name == it) return base;   // you are it!
   int anidx = parents.FindNameIdx(it);
-  if(anidx >= 0)
+  if (anidx >= 0) {
     return (void*)((char*)base + par_off[anidx]);
-  int i;
-  for(i=0; i < parents.size; i++) {
+  }
+  for (int i = 0; i < parents.size; i++) {
     void* nw_base = (void*)((char*)base + par_off[i]);
-    void* rval;
-    if((rval=parents.FastEl(i)->GetParAddr(it, nw_base)) != NULL)
-      return rval;
+    void* rval = parents.FastEl(i)->GetParAddr(it, nw_base);
+    if (rval) return rval;
   }
   return NULL;
 }
 
 void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
-  if(it==this) return base;     // you are it!
+  if (it == this) return base;     // you are it!
   int anidx = parents.FindEl(it);
-  if(anidx >= 0)
+  if (anidx >= 0) {
     return (void*)((char*)base + par_off[anidx]);
-  int i;
-  for(i=0; i < parents.size; i++) {
+  }
+  for (int i = 0; i < parents.size; i++) {
     void* nw_base = (void*)((char*)base + par_off[i]);
-    void* rval;
-    if((rval=parents.FastEl(i)->GetParAddr(it, nw_base)) != NULL)
-      return rval;
+    void* rval = parents.FastEl(i)->GetParAddr(it, nw_base);
+    if (rval) return rval;
   }
   return NULL;
 }
 
 
 int TypeDef::GetParOff(TypeDef* it, int boff) const {
-  int use_boff=0;
-  if(boff >= 0)
-    use_boff = boff;
-  if(it==this) return use_boff; // you are it!
-  int anidx;
-  if((anidx = parents.FindEl(it)) >= 0)
+  int use_boff = (boff >= 0) ? boff : 0;
+  if (it == this) return use_boff; // you are it!
+  int anidx = parents.FindEl(it);
+  if (anidx >= 0) {
     return use_boff + par_off[anidx];
-  int i;
-  for(i=0; i < parents.size; i++) {
-    int rval;
-    if((rval=parents.FastEl(i)->GetParOff(it, use_boff + par_off[i])) >= 0)
-      return rval;
+  }
+  for (int i = 0; i < parents.size; i++) {
+    int rval = parents.FastEl(i)->GetParOff(it, use_boff + par_off[i]);
+    if (rval >= 0) return rval;
   }
   return -1;
 }
@@ -5749,25 +5744,23 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
 }
 
 EnumDef* TypeDef::FindEnum(const String& nm) const {
-  EnumDef* rval;
-  if((rval = enum_vals.FindName(nm)) != NULL)
-    return rval;
+  EnumDef* rval = enum_vals.FindName(nm);
+  if (rval) return rval;
 
-  int i;
-  for(i=0; i < sub_types.size; i++) {
+  for (int i = 0; i < sub_types.size; i++) {
     TypeDef* td = sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum)) {
-      if((rval = td->FindEnum(nm)) != NULL)
-        return rval;
+    if (td->InheritsFormal(TA_enum)) {
+      rval = td->FindEnum(nm);
+      if (rval) return rval;
     }
   }
 
   // try to look for an aka now..
-  for(i=0;i<enum_vals.size;i++) {
+  for (int i = 0; i < enum_vals.size; i++) {
     EnumDef* ed = enum_vals.FastEl(i);
     String aka = ed->OptionAfter("AKA_");
-    if(aka.empty()) continue;
-    if(aka == nm) return ed;
+    if (aka.empty()) continue;
+    if (aka == nm) return ed;
   }
 
   return NULL;
@@ -5775,8 +5768,8 @@ EnumDef* TypeDef::FindEnum(const String& nm) const {
 
 int TypeDef::GetEnumVal(const String& nm, String& enum_tp_nm) const {
   EnumDef* rval = FindEnum(nm);
-  if(rval != NULL) {
-    if((rval->owner != NULL) && (rval->owner->owner != NULL))
+  if (rval != NULL) {
+    if ((rval->owner != NULL) && (rval->owner->owner != NULL))
       enum_tp_nm = rval->owner->owner->name;
     return rval->enum_no;
   }
@@ -5863,16 +5856,15 @@ String TypeDef::GetEnumPrefix() const {
 #ifndef NO_TA_BASE
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   int rval = tokens.FindEl(addr);
-  if(rval >= 0) {
+  if (rval >= 0) {
     aptr = const_cast<TypeDef*>(this);
     return rval;
   }
 
   // depth-first...
-  int i;
-  for(i=0; i<children.size; i++) {
-    if((rval = children.FastEl(i)->FindTokenR(addr, aptr)) >= 0)
-      return rval;
+  for (int i = 0; i < children.size; i++) {
+    rval = children.FastEl(i)->FindTokenR(addr, aptr);
+    if (rval >= 0) return rval;
   }
   aptr = NULL;
   return -1;
@@ -5880,16 +5872,15 @@ int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
 
 int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
   int rval = tokens.FindNameIdx(nm);
-  if(rval >= 0) {
+  if (rval >= 0) {
     aptr = const_cast<TypeDef*>(this);
     return rval;
   }
 
   // depth-first...
-  int i;
-  for(i=0; i<children.size; i++) {
-    if((rval = children.FastEl(i)->FindTokenR(nm, aptr)) >= 0)
-      return rval;
+  for (int i = 0; i < children.size; i++) {
+    rval = children.FastEl(i)->FindTokenR(nm, aptr);
+    if (rval >= 0) return rval;
   }
   aptr = NULL;
   return -1;
@@ -5961,16 +5952,15 @@ void TypeDef::RegisterFinal(void* it) {
 }
 
 bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
-  int anidx;
-  if((anidx = parents.FindEl(old_tp)) >= 0) {
+  int anidx = parents.FindEl(old_tp);
+  if (anidx >= 0) {
     parents.ReplaceLinkIdx(anidx, new_tp);
     name.gsub(old_tp->name, new_tp->name);
     return true;
   }
   bool rval = false;
-  int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->ReplaceParent(old_tp, new_tp)) {
+  for (int i = 0; i < parents.size; i++) {
+    if (parents.FastEl(i)->ReplaceParent(old_tp, new_tp)) {
       rval = true;
       name.gsub(old_tp->name, new_tp->name); // updt name at all levels
     }
@@ -7336,12 +7326,12 @@ static void PrintType_OptsLists(String& strm, const String_PArray& opts,
                             const String_PArray& lists)
 {
   if((opts.size > 0) && ((taMisc::type_info_ == taMisc::ALL_INFO) ||
-			 (taMisc::type_info_ == taMisc::NO_LISTS))) {
+                         (taMisc::type_info_ == taMisc::NO_LISTS))) {
     for(int i=0; i<opts.size; i++)
       strm << " #" << opts.FastEl(i);
   }
   if((lists.size > 0) && ((taMisc::type_info_ == taMisc::ALL_INFO) ||
-			  (taMisc::type_info_ == taMisc::NO_OPTIONS))) {
+                          (taMisc::type_info_ == taMisc::NO_OPTIONS))) {
     strm << " LISTS:";
     for(int i=0; i<lists.size; i++)
       strm << " " << lists.FastEl(i);

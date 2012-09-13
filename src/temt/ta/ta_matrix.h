@@ -243,37 +243,37 @@ public:
 
   //////////////////////////////////////////////////////
   //   operators
-  MatrixIndex* 	operator+=(const MatrixIndex& ad);
-  MatrixIndex* 	operator-=(const MatrixIndex& ad);
-  MatrixIndex* 	operator*=(const MatrixIndex& ad);
-  MatrixIndex* 	operator/=(const MatrixIndex& ad);
+  MatrixIndex*  operator+=(const MatrixIndex& ad);
+  MatrixIndex*  operator-=(const MatrixIndex& ad);
+  MatrixIndex*  operator*=(const MatrixIndex& ad);
+  MatrixIndex*  operator/=(const MatrixIndex& ad);
 
-  MatrixIndex* 	operator+(const MatrixIndex& ad) const
+  MatrixIndex*  operator+(const MatrixIndex& ad) const
     { MatrixIndex* r = new MatrixIndex(this); *r += ad; return r; }
-  MatrixIndex* 	operator-(const MatrixIndex& ad) const
+  MatrixIndex*  operator-(const MatrixIndex& ad) const
     { MatrixIndex* r = new MatrixIndex(this); *r -= ad; return r; }
-  MatrixIndex* 	operator*(const MatrixIndex& ad) const
+  MatrixIndex*  operator*(const MatrixIndex& ad) const
   { MatrixIndex* r = new MatrixIndex(this); *r *= ad; return r; }
-  MatrixIndex* 	operator/(const MatrixIndex& ad) const
+  MatrixIndex*  operator/(const MatrixIndex& ad) const
     { MatrixIndex* r = new MatrixIndex(this); *r /= ad; return r; }
 
   bool operator==(const MatrixIndex& other) const
   { return Equal(other); }
   bool operator!=(const MatrixIndex& other) const
   { return !Equal(other); }
-    
+
   operator int_Matrix*() const;
   // convert indicies to equivalent int matrix
   MatrixIndex* operator=(const taMatrix* cp);
   // initialize from a matrix (converts matrix values to ints)
-  
-  bool		Equal(const MatrixIndex& other) const;
+
+  bool          Equal(const MatrixIndex& other) const;
   // #CAT_Access are two indexes equal to each other?
 
   ///////////////////////////////////////////////////////
   //    Input/Output/String
 
-  String&	Print(String& strm, int indent=0) const;
+  String&       Print(String& strm, int indent=0) const;
 
   String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
@@ -373,30 +373,30 @@ public:
 
   //////////////////////////////////////////////////////
   //   operators
-  MatrixGeom* 	operator+=(const MatrixGeom& ad);
-  MatrixGeom* 	operator-=(const MatrixGeom& ad);
-  MatrixGeom* 	operator*=(const MatrixGeom& ad);
-  MatrixGeom* 	operator/=(const MatrixGeom& ad);
+  MatrixGeom*   operator+=(const MatrixGeom& ad);
+  MatrixGeom*   operator-=(const MatrixGeom& ad);
+  MatrixGeom*   operator*=(const MatrixGeom& ad);
+  MatrixGeom*   operator/=(const MatrixGeom& ad);
 
-  MatrixGeom* 	operator+(const MatrixGeom& ad) const
+  MatrixGeom*   operator+(const MatrixGeom& ad) const
     { MatrixGeom* r = new MatrixGeom(this); *r += ad; return r; }
-  MatrixGeom* 	operator-(const MatrixGeom& ad) const
+  MatrixGeom*   operator-(const MatrixGeom& ad) const
     { MatrixGeom* r = new MatrixGeom(this); *r -= ad; return r; }
-  MatrixGeom* 	operator*(const MatrixGeom& ad) const
+  MatrixGeom*   operator*(const MatrixGeom& ad) const
   { MatrixGeom* r = new MatrixGeom(this); *r *= ad; return r; }
-  MatrixGeom* 	operator/(const MatrixGeom& ad) const
+  MatrixGeom*   operator/(const MatrixGeom& ad) const
     { MatrixGeom* r = new MatrixGeom(this); *r /= ad; return r; }
 
   bool operator==(const MatrixGeom& other) const
   { return Equal(other); }
   bool operator!=(const MatrixGeom& other) const
   { return !Equal(other); }
-    
+
   operator int_Matrix*() const;
   // convert indicies to equivalent int matrix
   MatrixGeom* operator=(const taMatrix* cp);
   // initialize from a matrix (converts matrix values to ints)
-  
+
   bool          Equal(const MatrixGeom& other) const;
   // #CAT_Access are two geometries equal to each other?
 
@@ -422,7 +422,7 @@ public:
   ///////////////////////////////////////////////////////
   //    Input/Output/String
 
-  String&	Print(String& strm, int indent=0) const;
+  String&       Print(String& strm, int indent=0) const;
 
   String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
@@ -513,7 +513,7 @@ public:
   // #CAT_Access the number of dimensions
   inline int            dim(int d) const {return geom.dim(d);}
   // #CAT_Access the value of dimenion d
-  inline int_Matrix*	Shape() const { return (int_Matrix*)geom; }
+  inline int_Matrix*    Shape() const { return (int_Matrix*)geom; }
   // #CAT_Access the shape of the matrix -- returns an int matrix with values for the size of each dimension
   int                   frames() const;
   // #CAT_Access number of frames currently in use (value of highest dimension)
@@ -551,7 +551,7 @@ public:
   ///////////////////////////////////////
   // Standard Elem and iterator interface
 
-  override bool		IsContainer()	{ return true; }
+  override bool         IsContainer()   { return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
   override int          ElemCount() const { return size; }
@@ -621,19 +621,37 @@ public:
 
   void          SetFmVar(const Variant& var, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)
-  { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6)) >= 0)
-               El_SetFmVar_(FastEl_Flat_(idx), var); }
+  {
+    int idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6);
+    if (idx >= 0) {
+      El_SetFmVar_(FastEl_Flat_(idx), var);
+    }
+  }
   // #CAT_Modify (safely) sets the element as a variant
+
   void          SetFmVarN(const Variant& var, const MatrixIndex& indices)
-  { int idx; if ((idx = SafeElIndexN(indices)) >= 0)
-               El_SetFmVar_(FastEl_Flat_(idx), var); }
+  {
+    int idx = SafeElIndexN(indices);
+    if (idx >= 0) {
+      El_SetFmVar_(FastEl_Flat_(idx), var);
+    }
+  }
   // #CAT_Modify (safely) sets the element as a variant
+
   void          SetFmVar_Flat(const Variant& var, int idx)
-  { if (InRange_Flat(idx))  El_SetFmVar_(FastEl_Flat_(idx), var); }
+  {
+    if (InRange_Flat(idx)) {
+      El_SetFmVar_(FastEl_Flat_(idx), var);
+    }
+  }
   // #CAT_Modify treats the matrix like a flat array, (safely) sets the element as a variant
 
   void          InitValsFmVar(const Variant& var)
-  { for(int i=0;i<size;i++) El_SetFmVar_(FastEl_Flat_(i), var); }
+  {
+    for (int i = 0; i < size; i++) {
+      El_SetFmVar_(FastEl_Flat_(i), var);
+    }
+  }
   // #CAT_Modify initialize values to given fixed value
 
 
@@ -779,7 +797,7 @@ public:
   bool                  SetGeomN(const MatrixGeom& geom_)
   { return SetGeom_(geom_.dims(), geom_.el); }
   // #MENU #MENU_CONTEXT #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive
-  bool			SetShape(const taMatrix* mat_shape)
+  bool                  SetShape(const taMatrix* mat_shape)
   { MatrixGeom gm; gm = mat_shape; return SetGeomN(gm); }
   // #CAT_Modify set geometry (shape) based on given matrix shape specification
 
@@ -814,7 +832,7 @@ public:
   virtual void          BinaryLoad(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
-  String&	Print(String& strm, int indent=0) const;
+  String&       Print(String& strm, int indent=0) const;
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                             bool force_inline = false) const;
@@ -1386,18 +1404,18 @@ class TA_API complex_Matrix: public double_Matrix {
 INHERITED(double_Matrix)
 public:
 
-  static bool	  	CheckComplexGeom(const MatrixGeom& gm, bool err = true);
+  static bool           CheckComplexGeom(const MatrixGeom& gm, bool err = true);
   // #CAT_Complex check to make sure given geometry is correct for representing complex numbers (inner-most dimension size = 2, 2+ dims overall)
-  static MatrixGeom	NonComplexGeom(const MatrixGeom& gm);
+  static MatrixGeom     NonComplexGeom(const MatrixGeom& gm);
   // #CAT_Complex return the equivalent geometry for a non-complex matrix of the same size as given geometry (i.e., remove the inner-most dimension)
-  static MatrixGeom	ComplexGeom(const MatrixGeom& gm);
+  static MatrixGeom     ComplexGeom(const MatrixGeom& gm);
   // #CAT_Complex return the equivalent geometry for complex matrix of the same size as given geometry (i.e., add the inner-most dimension)
 
   virtual  double_Matrix* SqMag() const;
   // #CAT_Complex return a new double matrix that contains the squared magnitudes of the complex numbers in this matrix (real * real + imag * imag)
   virtual  double_Matrix* Mag() const;
   // #CAT_Complex return a new double matrix that contains the magnitudes of the complex numbers in this matrix: sqrt(real * real + imag * imag)
-  override taMatrix* 	 Abs() const { return Mag(); }
+  override taMatrix*     Abs() const { return Mag(); }
   // #CAT_Complex return a new double matrix that contains the absolute values or magnitudes of the complex numbers in this matrix: sqrt(real * real + imag * imag) (also called the modulus)
   virtual  double_Matrix* Angle() const;
   // #CAT_Complex return a new double matrix that contains the angles of the complex numbers in this matrix: atan2(imag, real) -- see Expi function for inverse, which takes angles and produces cos(ang) + i sin(ang)
@@ -1408,23 +1426,23 @@ public:
   virtual  complex_Matrix* Conj() const;
   // #CAT_Complex return a new complex matrix that contains the complex conjugate of this complex matrix, where the imaginary component is replaced with its negative (i.e., real - imag)
 
-  virtual  void		Complex(const double_Matrix& reals, const double_Matrix& imags,
-				bool copy_geom=true);
+  virtual  void         Complex(const double_Matrix& reals, const double_Matrix& imags,
+                                bool copy_geom=true);
   // #CAT_Complex set both the real and imaginary components of this complex matrix from source matricies, which both must have the same geometry, and if copy_geom then we set our geometry based on that geometry
-  virtual  void		SetReal(const double_Matrix& reals, bool copy_geom=true);
+  virtual  void         SetReal(const double_Matrix& reals, bool copy_geom=true);
   // #CAT_Complex set the real-valued components of this complex matrix from given matrix of real values -- if copy_geom then we set our geometry based on the reals source matrix
-  virtual  void		SetImag(const double_Matrix& imags, bool copy_geom=true);
+  virtual  void         SetImag(const double_Matrix& imags, bool copy_geom=true);
   // #CAT_Complex set the imaginary-valued components of this complex matrix from given matrix of imaginary values -- if copy_geom then we set our geometry based on the reals source matrix
-  virtual  void		Expi(const double_Matrix& angles, bool copy_geom=true);
+  virtual  void         Expi(const double_Matrix& angles, bool copy_geom=true);
   // #CAT_Complex sets complex numbers in this matrix from angles in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula)
 
-  virtual  void		ComplexAll(double real, double imag);
+  virtual  void         ComplexAll(double real, double imag);
   // #CAT_Complex set both the real and imaginary components of this complex matrix from source values -- initializes all matrix values to the same numbers
-  virtual  void		SetRealAll(double real);
+  virtual  void         SetRealAll(double real);
   // #CAT_Complex set the real-valued components of this complex matrix from given real value -- initializes all matrix values to the same number
-  virtual  void		SetImagAll(double real);
+  virtual  void         SetImagAll(double real);
   // #CAT_Complex set the imaginary-valued components of this complex matrix from given imaginary value -- initializes all matrix values to the same number
-  virtual  void		ExpiAll(double angle);
+  virtual  void         ExpiAll(double angle);
   // #CAT_Complex sets complex numbers in this matrix from angle in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula) -- initializes all matrix values to the same numbers
 
   override taMatrix* Transpose() const;
@@ -1494,7 +1512,7 @@ class TA_API slice_Matrix: public int_Matrix {
 INHERITED(int_Matrix)
 public:
 
-  virtual int_Matrix*	Expand(int implicit_end = 100);
+  virtual int_Matrix*   Expand(int implicit_end = 100);
   // #CAT_Slice expand the slice range spec to a matrix of all the individual indexes implied in the range -- defaults for unspecified start, end, step are 0:implicit_end:1
 
   TA_MATRIX_FUNS_DERIVED(slice_Matrix, int);

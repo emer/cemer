@@ -333,7 +333,7 @@ bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taGroup_impl::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-				void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+                                void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
   rval += gp.ReplaceValStr(srch, repl, mbr_filt, this, GetTypeDef(), memb_def, sc);
   return rval;
@@ -599,7 +599,7 @@ taGroup_impl* taGroup_impl::GetSuperGp_() {
 }
 
 taBase* taGroup_impl::Leaf_(int idx) const {
-  if(idx < 0) idx += leaves;	// allow - indexes
+  if(idx < 0) idx += leaves;    // allow - indexes
   if ((idx < 0) || (idx >= leaves))
     return NULL;
   if(size && (idx < size))
@@ -746,16 +746,12 @@ bool taGroup_impl::RemoveLeafIdx(int idx) {
 
 bool taGroup_impl::RemoveLeafName(const char* it) {
   int i = FindLeafNameIdx(it);
-  if(i >= 0)
-    return RemoveLeafIdx(i);
-  return false;
+  return (i < 0) ? false : RemoveLeafIdx(i);
 }
 
 bool taGroup_impl::RemoveLeafEl(taBase* it) {
-  int i;
-  if((i = FindLeafEl(it)) < 0)
-    return false;
-  return RemoveLeafIdx(i);
+  int i = FindLeafEl(it);
+  return (i < 0) ? false : RemoveLeafIdx(i);
 }
 
 int taGroup_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {

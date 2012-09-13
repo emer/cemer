@@ -92,19 +92,26 @@ void ScaleRange::UpdateAfterEdit_impl() {
   taOBase::UpdateAfterEdit_impl(); // skip over taNbase to avoid c_name thing!
 }
 
+//////////////////////////
+//   nvDataView         //
+//////////////////////////
 
-
-NetView* nvDataView::nv() {
-  if (!m_nv)
+NetView* nvDataView::getNetView()
+{
+  if (!m_nv) {
+    // Cache the value on the first request.
     m_nv = GET_MY_OWNER(NetView);
+  }
   return m_nv;
 }
 
-void nvDataView::Initialize() {
+void nvDataView::Initialize()
+{
   m_nv = NULL;
 }
 
-void nvDataView::CutLinks() {
+void nvDataView::CutLinks()
+{
   m_nv = NULL;
   inherited::CutLinks();
 }
@@ -113,27 +120,32 @@ void nvDataView::CutLinks() {
 //   UnitView           //
 //////////////////////////
 
-void UnitView::Initialize() {
+void UnitView::Initialize()
+{
   m_nv = NULL;
   picked = 0;
 }
 
-void UnitView::CutLinks() {
+void UnitView::CutLinks()
+{
   m_nv = NULL;
   inherited::CutLinks();
 }
 
-NetView* UnitView::nv() {
-  if(!m_nv) {
-    LayerView* layv = this->lay();
-    if(layv)
-      m_nv = layv->nv();
+NetView* UnitView::getNetView()
+{
+  if (!m_nv) {
+    if (LayerView* layv = lay()) {
+      // Cache the value on the first request.
+      m_nv = layv->getNetView();
+    }
   }
   return m_nv;
 }
 
-void UnitView::Render_pre() {
-  NetView* nv = this->nv();
+void UnitView::Render_pre()
+{
+  NetView* nv = getNetView();
   float max_x = nv->max_size.x;
   float max_y = nv->max_size.y;
   float max_z = nv->max_size.z;
@@ -194,7 +206,7 @@ void UnitGroupView::Destroy() {
 
 void UnitGroupView::AllocUnitViewData() {
   //note: allocate based on geom, not current size, in case not built yet
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Layer* lay = this->layer(); //cache
   if (!lay) return;
   int mbs_sz = MAX(nv->membs.size, 1);
@@ -221,7 +233,7 @@ void UnitGroupView::AllocUnitViewData() {
 
 void UnitGroupView::BuildAll() {
   Reset(); // in case where we are rebuilding
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   UpdateUnitViewBases(nv->unit_src);
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) return; // optimized
 
@@ -242,12 +254,12 @@ void UnitGroupView::BuildAll() {
 }
 
 void UnitGroupView::InitDisplay() {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   UpdateUnitViewBases(nv->unit_src);
 }
 
 float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   float val = nv->scale.zero;
   if(nv->unit_disp_idx < 0) return val;
   base = uvd_bases.SafeEl(co.x, co.y, nv->unit_disp_idx);
@@ -279,7 +291,7 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
 }
 
 float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   float val = nv->scale.zero;
   base = uvd_bases.SafeEl(co.x, co.y, midx);
   MemberDef* md = nv->membs.SafeEl(midx);
@@ -300,7 +312,7 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*&
 void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   AllocUnitViewData();
   for(int midx=0;midx<nv->membs.size;midx++) {
     MemberDef* disp_md = nv->membs[midx];
@@ -408,7 +420,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
 }
 
 void UnitGroupView::UpdateAutoScale(bool& updated) {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   TwoDCoord co;
   void* base;
   Layer* lay = this->layer(); //cache
@@ -423,7 +435,7 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
         }
         else {
           nv->scale.UpdateMinMax(val);
-	}
+        }
       }
     }
   }
@@ -448,72 +460,72 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       SbVec2s mpos = mpos_orig;
       int fail_cnt = 0;
       do {
-	rp.setPoint(mpos);
-	rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
-	SoPickedPoint* pp = rp.getPickedPoint(0);
-	if(!pp) {
-// 	  taMisc::Info("no pick:", String(fail_cnt));
-	  int pm_x = fail_cnt % 4 < 2 ? -1 : 1;
-	  int pm_y = (fail_cnt % 4) % 2 == 0 ? -1 : 1;
-	  // search in increasingly wide area around central point to see if we pick
-	  mpos.setValue(mpos_orig[0] + pm_x * (fail_cnt / 4),
-			mpos_orig[1] + pm_y * (fail_cnt / 4));
-	  fail_cnt++;
-	  continue;
-	}
-	SoNode* pobj = pp->getPath()->getNodeFromTail(2);
-	if(!pobj) {
-	  // 	taMisc::Info("no pobj");
-	  fail_cnt++;
-	  continue;
-	}
-	//       taMisc::Info("obj typ: ", pobj->getTypeId().getName());
-	if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-	  pobj = pp->getPath()->getNodeFromTail(3);
-	  // 	taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
-	  if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-	    pobj = pp->getPath()->getNodeFromTail(1);
-	    // 	  taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
-	    if(pobj->getName() == "WtLines") {
-	      // disable selecting of wt lines!
-	      ecb->setHandled();
-	      // 	    taMisc::Info("wt lines bail");
-	      return;
-	    }
-	    // 	  taMisc::Info("not unitgroupnode! bail");
-	    fail_cnt++;
-	    continue;
-	  }
-	}
-	UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
-	Layer* lay = act_ugv->layer(); //cache
-	float disp_scale = lay->disp_scale;
+        rp.setPoint(mpos);
+        rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
+        SoPickedPoint* pp = rp.getPickedPoint(0);
+        if(!pp) {
+//        taMisc::Info("no pick:", String(fail_cnt));
+          int pm_x = fail_cnt % 4 < 2 ? -1 : 1;
+          int pm_y = (fail_cnt % 4) % 2 == 0 ? -1 : 1;
+          // search in increasingly wide area around central point to see if we pick
+          mpos.setValue(mpos_orig[0] + pm_x * (fail_cnt / 4),
+                        mpos_orig[1] + pm_y * (fail_cnt / 4));
+          fail_cnt++;
+          continue;
+        }
+        SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+        if(!pobj) {
+          //    taMisc::Info("no pobj");
+          fail_cnt++;
+          continue;
+        }
+        //       taMisc::Info("obj typ: ", pobj->getTypeId().getName());
+        if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+          pobj = pp->getPath()->getNodeFromTail(3);
+          //    taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
+          if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+            pobj = pp->getPath()->getNodeFromTail(1);
+            //    taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
+            if(pobj->getName() == "WtLines") {
+              // disable selecting of wt lines!
+              ecb->setHandled();
+              //            taMisc::Info("wt lines bail");
+              return;
+            }
+            //    taMisc::Info("not unitgroupnode! bail");
+            fail_cnt++;
+            continue;
+          }
+        }
+        UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
+        Layer* lay = act_ugv->layer(); //cache
+        float disp_scale = lay->disp_scale;
 
-	SbVec3f pt = pp->getObjectPoint(pobj);
-	int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
-	int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
+        SbVec3f pt = pp->getObjectPoint(pobj);
+        int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
+        int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
 
-	if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
-	  Unit* unit = lay->UnitAtDispCoord(xp, yp);
-	  if(unit && tnv->unit_src != unit) {
-	    tnv->setUnitSrc(NULL, unit);
-	    tnv->InitDisplay();   // this is apparently needed here!!
-	    tnv->UpdateDisplay();
-	  }
-	}
-	//       else {
-	// 	taMisc::Info("coords off");
-	//       }
-	got_one = true;
+        if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
+          Unit* unit = lay->UnitAtDispCoord(xp, yp);
+          if(unit && tnv->unit_src != unit) {
+            tnv->setUnitSrc(NULL, unit);
+            tnv->InitDisplay();   // this is apparently needed here!!
+            tnv->UpdateDisplay();
+          }
+        }
+        //       else {
+        //      taMisc::Info("coords off");
+        //       }
+        got_one = true;
       } while(!got_one && fail_cnt < 100);
     }  // for
-  } // if 
+  } // if
   if(got_one)
     ecb->setHandled();
 }
 
 void UnitGroupView::Render_pre() {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Layer* lay = this->layer(); //cache
 
   if(!lay || lay->Iconified()) {
@@ -537,7 +549,7 @@ void UnitGroupView::Render_pre() {
 void UnitGroupView::Render_impl() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
 
   //set origin: 0,0,0
 //   TDCoord& pos = ugrp->pos;
@@ -576,7 +588,7 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 }
 
 void UnitGroupView::Render_impl_children() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay || !nv) return;
 
@@ -678,7 +690,7 @@ void UnitGroupView::Render_impl_children() {
 // of all units are set to defaults in this function and later updated by
 // UpdateUnitValues_blocks() based on the value of each unit.
 void UnitGroupView::Render_impl_blocks() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -948,7 +960,7 @@ void UnitGroupView::Render_impl_blocks() {
 // returned by nv->GetUnitDisplayVals().  The blocks have already been
 // drawn and positioned by Render_impl_blocks(), so this should be fast.
 void UnitGroupView::UpdateUnitValues_blocks() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -987,7 +999,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
         col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
       if(unit && unit->lesioned()) {
-	sc_val = 0.0f;
+        sc_val = 0.0f;
       }
 
       float zp = .5f * sc_val / max_z;
@@ -1000,7 +1012,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
       if(unit && unit->lesioned()) {
-	alpha = 0.0f;
+        alpha = 0.0f;
       }
       color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
 
@@ -1029,7 +1041,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 }
 
 void UnitGroupView::UpdateUnitValues() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
@@ -1051,7 +1063,7 @@ void UnitGroupView::UpdateUnitValues() {
 }
 
 void UnitGroupView::SaveHist() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
 
@@ -1084,7 +1096,7 @@ void UnitGroupView::Render_impl_outnm() {
   // that doesn't depend on unit values, then it calls UpdateUnitValues
   // which sets all the values!
 
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -1134,7 +1146,7 @@ void UnitGroupView::Render_impl_outnm() {
 }
 
 void UnitGroupView::UpdateUnitValues_outnm() {
-  //  NetView* nv = this->nv(); //cache
+  //  NetView* nv = getNetView(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -1152,7 +1164,7 @@ void UnitGroupView::UpdateUnitValues_outnm() {
 }
 
 void UnitGroupView::Render_impl_snap_bord() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   T3UnitGroupNode* node_so = this->node_so(); //cache
   if(!node_so) return;
 
@@ -1236,7 +1248,7 @@ void UnitGroupView::Render_impl_snap_bord() {
 }
 
 void UnitGroupView::UpdateUnitValues_snap_bord() {
-  NetView* nv = this->nv(); //cache
+  NetView* nv = getNetView(); //cache
   if(!nv->snap_bord_disp) return;
 
   Layer* lay = this->layer(); //cache
@@ -1314,7 +1326,7 @@ void LayerView::UpdateAfterEdit_impl() {
 }
 
 void LayerView::UpdateNetLayDispMode() {
-  NetView* n = nv();
+  NetView* n = getNetView();
   Layer* lay = layer(); //cache
   if(n && lay) {
     n->SetLayDispMode(lay->name, disp_mode);
@@ -1322,7 +1334,7 @@ void LayerView::UpdateNetLayDispMode() {
 }
 
 void LayerView::BuildAll() {
-  NetView* n = nv();
+  NetView* n = getNetView();
   Layer* lay = layer(); //cache
 
   int dspmd = n->GetLayDispMode(lay->name);
@@ -1375,7 +1387,7 @@ taBase::DumpQueryResult LayerView::Dump_QuerySaveMember(MemberDef* md) {
 void LayerView::DoHighlightColor(bool apply) {
   T3LayerNode* nd = node_so();
   if (!nd) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
 
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
@@ -1397,7 +1409,7 @@ void LayerView::Render_pre() {
   if(vw)
     show_drag = vw->interactionModeOn();
 
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   if(!nv->lay_mv) show_drag = false;
 
   setNode(new T3LayerNode(this, show_drag));
@@ -1409,7 +1421,7 @@ void LayerView::Render_pre() {
 void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
 
   TDCoord& pos = lay->pos;      // with layer groups as real things now, use this!
   //  TDCoord pos; lay->GetAbsPos(pos);
@@ -1456,7 +1468,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   T3LayerNode* laynd = (T3LayerNode*)userData;
   LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
-  NetView* nv = lv->nv();
+  NetView* nv = lv->getNetView();
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
@@ -1497,7 +1509,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   T3LayerNode* laynd = (T3LayerNode*)userData;
   LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
-  NetView* nv = lv->nv();
+  NetView* nv = lv->getNetView();
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
@@ -1526,15 +1538,15 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 void LayerView::DispUnits() {
   disp_mode = DISP_UNITS;
   UpdateNetLayDispMode();
-  if(nv())
-    nv()->Render();
+  if (getNetView())
+    getNetView()->Render();
 }
 
 void LayerView::DispOutputName() {
   disp_mode = DISP_OUTPUT_NAME;
   UpdateNetLayDispMode();
-  if(nv())
-    nv()->Render();
+  if (getNetView())
+    getNetView()->Render();
 }
 
 void LayerView::UseViewer(T3DataViewMain* viewer) {
@@ -1542,7 +1554,7 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   UpdateNetLayDispMode();
 
   if(!viewer) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Layer* lay = this->layer(); //cache
   if(!nv || !lay) return;
 
@@ -1615,7 +1627,7 @@ void PrjnView::Destroy() {
 void PrjnView::DoHighlightColor(bool apply) {
   T3PrjnNode* nd = node_so();
   if (!nd) return;
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
   float prjn_trans = nv->view_params.prjn_trans;
   if(!prjn->projected)
@@ -1633,7 +1645,7 @@ void PrjnView::DoHighlightColor(bool apply) {
 }
 
 void PrjnView::Render_pre() {
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
   setNode(new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width));
   DoHighlightColor(false);
@@ -1642,7 +1654,7 @@ void PrjnView::Render_pre() {
 
 void PrjnView::Render_impl() {
   T3PrjnNode* node_so = this->node_so(); // cache
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   if(!node_so) return;
 
   // find the total receive num, and our ordinal
@@ -1757,7 +1769,7 @@ void LayerGroupView::BuildAll() {
   Reset(); //for when we are invoked after initial construction
 //  String node_nm;
 
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   Layer_Group* lgp = layer_group(); //cache
   for(int li=0;li<lgp->size;li++) {
     Layer* lay = lgp->FastEl(li);
@@ -1845,7 +1857,7 @@ taBase::DumpQueryResult LayerGroupView::Dump_QuerySaveMember(MemberDef* md) {
 void LayerGroupView::DoHighlightColor(bool apply) {
   T3LayerGroupNode* nd = node_so();
   if (!nd) return;
-//  NetView* nv = this->nv();
+//  NetView* nv = getNetView();
 
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
@@ -1863,7 +1875,7 @@ void LayerGroupView::Render_pre() {
   if(vw)
     show_drag = vw->interactionModeOn();
 
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
   if(!nv->lay_mv) show_drag = false;
 
   if(root_laygp)
@@ -1880,7 +1892,7 @@ void LayerGroupView::Render_pre() {
 
 void LayerGroupView::Render_impl() {
   Layer_Group* lgp = this->layer_group(); //cache
-  NetView* nv = this->nv();
+  NetView* nv = getNetView();
 
   TDCoord pos; lgp->GetAbsPos(pos);
   FloatTransform* ft = transform(true);
@@ -1931,7 +1943,7 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   T3LayerGroupNode* laynd = (T3LayerGroupNode*)userData;
   LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
-  NetView* nv = lv->nv();
+  NetView* nv = lv->getNetView();
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
@@ -1974,7 +1986,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   T3LayerGroupNode* laynd = (T3LayerGroupNode*)userData;
   LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
-  NetView* nv = lv->nv();
+  NetView* nv = lv->getNetView();
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
@@ -4075,22 +4087,22 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layOuter->addWidget(widCmdButtons);
 
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons);
-  meth_but_mgr->Constr(nv()->net());
+  meth_but_mgr->Constr(getNetView()->net());
 
   MakeButtons(layOuter);
 }
 
-NetViewPanel::~NetViewPanel() {
-  NetView* nv_ = nv();
-  if (nv_) {
-    nv_->nvp = NULL;
+NetViewPanel::~NetViewPanel()
+{
+  if (NetView *nv = getNetView()) {
+    nv->nvp = NULL;
   }
 }
 
 void NetViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   ++updating;
-  NetView* nv = this->nv(); // cache
+  NetView* nv = getNetView(); // cache
   if (!nv) return;
   if(req_full_build) {
     req_full_build = false;
@@ -4161,7 +4173,7 @@ void NetViewPanel::UpdatePanel_impl() {
 
 void NetViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
-  NetView* nv = this->nv(); // cache
+  NetView* nv = getNetView(); // cache
   if (!nv) return;
   req_full_render = true;       // everything requires a re-render
   req_full_build = false;
@@ -4217,98 +4229,98 @@ void NetViewPanel::GetValue_impl() {
 }
 
 void NetViewPanel::CopyFrom_impl() {
-  NetView* nv_; if (!(nv_ = nv())) return;
-  nv_->CallFun("CopyFromView");
+  if (NetView *nv = getNetView()) {
+    nv->CallFun("CopyFromView");
+  }
 }
 
 void NetViewPanel::butScaleDefault_pressed() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->SetScaleDefault();
-  nv_->UpdateDisplay(true);
+  if (NetView *nv = getNetView()) {
+    nv->SetScaleDefault();
+    nv->UpdateDisplay(true);
+  }
 }
 
 void NetViewPanel::butSetColor_pressed() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->CallFun("SetColorSpec");
+  if (NetView *nv = getNetView()) {
+    nv->CallFun("SetColorSpec");
+  }
 }
 
 void NetViewPanel::hist_back_all() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistBackAll();
+  if (NetView *nv = getNetView()) {
+    nv->HistBackAll();
+  }
 }
 
 void NetViewPanel::hist_back_f() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistBackF();
+  if (NetView *nv = getNetView()) {
+    nv->HistBackF();
+  }
 }
 
 void NetViewPanel::hist_back() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistBack1();
+  if (NetView *nv = getNetView()) {
+    nv->HistBack1();
+  }
 }
 
 void NetViewPanel::hist_fwd() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistFwd1();
+  if (NetView *nv = getNetView()) {
+    nv->HistFwd1();
+  }
 }
 
 void NetViewPanel::hist_fwd_f() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistFwdF();
+  if (NetView *nv = getNetView()) {
+    nv->HistFwdF();
+  }
 }
 
 void NetViewPanel::hist_fwd_all() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistFwdAll();
+  if (NetView *nv = getNetView()) {
+    nv->HistFwdAll();
+  }
 }
 
 void NetViewPanel::hist_movie() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->HistMovie();
+  if (NetView *nv = getNetView()) {
+    nv->HistMovie();
+  }
 }
 
 void NetViewPanel::ColorScaleFromData() {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  ++updating;
-  cbar->UpdateScaleValues();
-  if(chkAutoScale->isChecked() != nv_->scale.auto_scale)
-    chkAutoScale->setChecked(nv_->scale.auto_scale); //note: raises signal on widget! (grr...)
-  --updating;
+  if (NetView *nv = getNetView()) {
+    ++updating;
+    cbar->UpdateScaleValues();
+    if (chkAutoScale->isChecked() != nv->scale.auto_scale) {
+      //note: raises signal on widget! (grr...)
+      chkAutoScale->setChecked(nv->scale.auto_scale);
+    }
+    --updating;
+  }
 }
 
 void NetViewPanel::GetVars() {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
+  NetView *nv = getNetView();
+  if (!nv) return;
 
   lvDisplayValues->clear();
-  if (nv_->membs.size == 0) return;
+  if (nv->membs.size == 0) return;
 
   MemberDef* md;
   QTreeWidgetItem* lvi = NULL;
-  for (int i=0; i < nv_->membs.size; i++) {
-    md = nv_->membs[i];
+  for (int i=0; i < nv->membs.size; i++) {
+    md = nv->membs[i];
     if (md->HasOption("NO_VIEW")) continue;
     QStringList itm;
     itm << md->name << md->desc;
@@ -4318,42 +4330,45 @@ void NetViewPanel::GetVars() {
 }
 
 void NetViewPanel::InitPanel() {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  ++updating;
-  // fill monitor values
-  GetVars();
-  --updating;
+  if (NetView *nv = getNetView()) {
+    ++updating;
+    // fill monitor values
+    GetVars();
+    --updating;
+  }
 }
 
 void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
+
+  NetView *nv = getNetView();
+  if (!nv) return;
+
   // redo the list each time, to guard against stale values
-  nv_->cur_unit_vals.Reset();
+  nv->cur_unit_vals.Reset();
   QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
   QTreeWidgetItem* item = NULL;
   for (int j = 0; j < items.size(); ++j) {
     item = items.at(j);
-    nv_->cur_unit_vals.Add(item->text(0));
+    nv->cur_unit_vals.Add(item->text(0));
   }
-  MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->cur_unit_vals.SafeEl(0));
-  if (md) {
-    nv_->setUnitDispMd(md);
-    nv_->UpdateViewerModeForMd(md);
+
+  if (MemberDef *md = (MemberDef*) nv->membs.FindName(nv->cur_unit_vals.SafeEl(0))) {
+    nv->setUnitDispMd(md);
+    nv->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
-//   nv_->InitDisplay(false);
+  //nv->InitDisplay(false);
   // note: init will reset history etc and is now unnec for updating view guys..
-  nv_->UpdateDisplay(false);
+  nv->UpdateDisplay(false);
 }
 
 void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
   if ((spec == m_cur_spec) && !force) return;
   m_cur_spec = spec;
-  NetView* nv = this->nv(); // cache
-  nv->SetHighlightSpec(spec);
+  if (NetView *nv = getNetView()) {
+    nv->SetHighlightSpec(spec);
+  }
 }
 
 void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
@@ -4375,27 +4390,38 @@ void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
 }
 
 void NetViewPanel::tvSpecs_Notify(ISelectableHost* src, int op) {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
+  NetView *nv = getNetView();
+  if (!nv) return;
+
   switch (op) {
-  //case ISelectableHost::OP_GOT_FOCUS: return;
-  case ISelectableHost::OP_SELECTION_CHANGED: {
-    taBase* new_base = NULL;
-    ISelectable* si = src->curItem();
-    if (si && si->link()) {
-      new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
+    //case ISelectableHost::OP_GOT_FOCUS:
+    //  return;
+
+    case ISelectableHost::OP_SELECTION_CHANGED:
+    {
+      taBase* new_base = NULL;
+      ISelectable* si = src->curItem();
+      if (si && si->link()) {
+        new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
+      }
+      setHighlightSpec((BaseSpec*)new_base);
+      //    nv->UpdateDisplay(true);
+
+      break;
     }
-    setHighlightSpec((BaseSpec*)new_base);
-    //    nv_->UpdateDisplay(true);
-  } break;
-  //case ISelectableHost::OP_DESTROYING: return;
-  default: return;
+
+    //case ISelectableHost::OP_DESTROYING:
+    //  return;
+
+    default:
+      return;
   }
 }
 
 void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
+  NetView *nv = getNetView();
+  if (!nv) return;
+
   BaseSpec* spec = NULL;
   if (item) {
     taBase* ld_ = (taBase*)item->linkData();
@@ -4403,40 +4429,42 @@ void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
       spec = (BaseSpec*)ld_;
   }
   setHighlightSpec(spec);
-//   nv_->UpdateDisplay(true);
+//   nv->UpdateDisplay(true);
 }
 
 
 void NetViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->viewWin_NotifySignal(src, op);
+  if (NetView *nv = getNetView()) {
+    nv->viewWin_NotifySignal(src, op);
+  }
 }
 
 void NetViewPanel::dynbuttonActivated(int but_no) {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
+  NetView *nv = getNetView();
+  if (!nv) return;
 
-  T3ExaminerViewer* vw = nv_->GetViewer();
-  if(!vw) return;
+  T3ExaminerViewer* vw = nv->GetViewer();
+  if (!vw) return;
+
   taiAction* dyb = vw->getDynButton(but_no);
-  if(!dyb) return;
+  if (!dyb) return;
+
   String nm = dyb->text();
-  nv_->cur_unit_vals.Reset();
-  nv_->cur_unit_vals.Add(nm);
-  MemberDef* md = (MemberDef*)nv_->membs.FindName(nm);
-  if(md) {
-    nv_->setUnitDispMd(md);
-    nv_->UpdateViewerModeForMd(md);
+  nv->cur_unit_vals.Reset();
+  nv->cur_unit_vals.Add(nm);
+  if (MemberDef *md = (MemberDef*)nv->membs.FindName(nm)) {
+    nv->setUnitDispMd(md);
+    nv->UpdateViewerModeForMd(md);
     vw->setDynButtonChecked(but_no, true, true); // mutex
   }
   ColorScaleFromData();
-//   nv_->InitDisplay(false);
-  nv_->UpdateDisplay(true);     // update panel
+
+//   nv->InitDisplay(false);
+  nv->UpdateDisplay(true);     // update panel
 }
 
 void NetViewPanel::unTrappedKeyPressEvent(QKeyEvent* e) {
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  nv_->unTrappedKeyPressEvent(e);
+  if (NetView *nv = getNetView()) {
+    nv->unTrappedKeyPressEvent(e);
+  }
 }

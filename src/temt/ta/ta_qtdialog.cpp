@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -76,11 +76,11 @@
 /*obs class QHackMouseEvent: public QMouseEvent { // hack to enable us to change the mouse button
 public:
   QHackMouseEvent(const QHackMouseEvent& dummy): QMouseEvent(dummy) {}
-  void		setButton(ushort val) {b = val;}
+  void          setButton(ushort val) {b = val;}
 }; */
 
 //////////////////////////////////////////////////
-// 		HiLightButton			//
+//              HiLightButton                   //
 //////////////////////////////////////////////////
 /*
 ScriptButton::ScriptButton(char* name, ivAction* a, char* srp)
@@ -168,7 +168,7 @@ void HiLightButton::mouseMoveEvent(QMouseEvent*  mev) {
 
 
 //////////////////////////////////////////////////////////
-// 		taiChoiceDialog				//
+//              taiChoiceDialog                         //
 //////////////////////////////////////////////////////////
 
 const String taiChoiceDialog::delimiter("!|");
@@ -197,21 +197,21 @@ bool taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg,
   String buts;
   if(cancel_errs_but_)
     buts = "Cancel Remaining Error Dialogs" + delimiter + "OK";
-  taiChoiceDialog* dlg = new taiChoiceDialog(Warning, QString(title), 
+  taiChoiceDialog* dlg = new taiChoiceDialog(Warning, QString(title),
     QString(msg), buts, parent_, copy_but_);
   dlg->setIcon(QMessageBox::Critical);
   dlg->setWindowModality(Qt::ApplicationModal);
   int chs = dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
-  return chs == 0;		// true if cancel
+  return chs == 0;              // true if cancel
 }
 
 void taiChoiceDialog::ConfirmDialog(QWidget* parent_, const char* msg,
   const char* title, bool copy_but_)
 {
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
-  taiChoiceDialog* dlg = new taiChoiceDialog(Information, QString(title), 
+  taiChoiceDialog* dlg = new taiChoiceDialog(Information, QString(title),
     QString(msg), "", parent_, copy_but_);
   dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
@@ -265,13 +265,13 @@ taiChoiceDialog::taiChoiceDialog(Icon icon, const QString& title,
 void taiChoiceDialog::done(int r) {
   QAbstractButton* but = clickedButton();
   int id = -1;
-  if (but) 
+  if (but)
     id = bgChoiceButtons->id(but);
   if (id < -1) return; // ignore
   // if user goes Esc, it returns -1 -- we want our last button instead
   if ((id == -1) || (r < 0))
     r = num_chs - 1;
-  inherited::done(r);  
+  inherited::done(r);
 }
 
 int taiChoiceDialog::exec() {
@@ -299,7 +299,7 @@ QAbstractButton* taiChoiceDialog::Constr_OneBut(String lbl, int id, ButtonRole r
     lbl = lbl.after(' ');
   if (lbl.empty())
     return NULL; // not really supposed to happen...
-  
+
   QPushButton* but = new QPushButton(lbl, this);
   addButton(but, role);
   bgChoiceButtons->addButton(but, id);
@@ -324,11 +324,11 @@ void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
 
 
 //////////////////////////
-//   iHostDialog		//
+//   iHostDialog                //
 //////////////////////////
 
 iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
-:iDialog(parent, (Qt::WFlags)wflags) 
+:iDialog(parent, (Qt::WFlags)wflags)
 {
   owner = owner_;
   mcentralWidget = NULL;
@@ -338,7 +338,7 @@ iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
   layOuter->setMargin(0);
   layOuter->setSpacing(0); // none needed
   layOuter->addWidget(scr, 1);
-  
+
   iSize ss = taiM->scrn_s;
   setMaximumSize(ss.width(), ss.height());
   setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
@@ -410,11 +410,11 @@ void iHostDialog::setButtonsWidget(QWidget* widg) {
 void iHostDialog::setCentralWidget(QWidget* widg) {
   mcentralWidget = widg;
   scr->setWidget(widg);
-  widg->show(); 
+  widg->show();
 }
 
 //////////////////////////////////
-// 	EditDataPanel		//
+//      EditDataPanel           //
 //////////////////////////////////
 
 EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
@@ -442,7 +442,7 @@ void EditDataPanel::Closing(CancelOp& cancel_op) {
     return;
   } else if (!discarded) {
     owner->state = taiDataHost::ACCEPTED;
-    return; 
+    return;
   }
   // discarded, or didn't have any changes
   owner->state = taiDataHost::CANCELED;
@@ -456,7 +456,7 @@ const iColor EditDataPanel::GetTabColor(bool selected, bool& ok) const {
   if (owner) {
     ok = true;
     return (selected) ? owner->bg_color : owner->bg_color_dark;
-  } else       
+  } else
     return inherited::GetTabColor(selected, ok);
 }
 
@@ -482,7 +482,7 @@ void EditDataPanel::Render_impl() {
   inherited::Render_impl();
   taiEditDataHost* edh = editDataHost();
   if (edh->state >= taiDataHost::CONSTRUCTED) return;
-  
+
   edh->ConstrDeferred();
   setCentralWidget(edh->widget());
   setButtonsWidget(edh->widButtons);
@@ -504,13 +504,13 @@ void EditDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   taiEditDataHost* edh = editDataHost();
   if(edh && edh->state >= taiDataHost::CONSTRUCTED)  {
-    edh->GetButtonImage();		// update buttons whenver we show!
+    edh->GetButtonImage();              // update buttons whenver we show!
   }
 }
 
 
 //////////////////////////////////
-// iMethodButtonMgr		//
+// iMethodButtonMgr             //
 //////////////////////////////////
 
 iMethodButtonMgr::iMethodButtonMgr(QObject* parent)
@@ -565,20 +565,20 @@ void iMethodButtonMgr::Reset() {
   show_meth_buttons = false;
 }
 
-void iMethodButtonMgr::Constr(QWidget* widg_, QLayout* lay_, 
+void iMethodButtonMgr::Constr(QWidget* widg_, QLayout* lay_,
   taBase* base_, IDataHost* host_)
 {
   widg = widg_;
-  m_lay = lay_;  
+  m_lay = lay_;
   Constr_impl(base_, host_);
 }
 
-void iMethodButtonMgr::Constr(taBase* base_, IDataHost* host_) 
+void iMethodButtonMgr::Constr(taBase* base_, IDataHost* host_)
 {
   Constr_impl(base_, host_);
 }
 
-void iMethodButtonMgr::Constr_impl(taBase* base_, IDataHost* host_) 
+void iMethodButtonMgr::Constr_impl(taBase* base_, IDataHost* host_)
 {
   Reset();
   host = host_; // prob not needed
@@ -625,7 +625,7 @@ void iMethodButtonMgr::DataLinkDestroying(taDataLink* dl) {
   base = NULL;
   //TODO: delete the buttons etc.
 }
- 
+
 void iMethodButtonMgr::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   if (dcr > DCR_ITEM_UPDATED_ND) return;
   GetImage();
@@ -682,7 +682,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-	    NULL, host, NULL, widg);
+            NULL, host, NULL, widg);
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
@@ -691,11 +691,11 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 
 
 //////////////////////////////////
-// 	taiDataHostBase		//
+//      taiDataHostBase         //
 //////////////////////////////////
 
-#define LAYBODY_MARGIN	1
-#define LAYBODY_SPACING	0
+#define LAYBODY_MARGIN  1
+#define LAYBODY_SPACING 0
 
 void taiDataHostBase::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
   dk_bg.set(taiMisc::ivBrightness_to_Qt_lightdark(bg, taiM->edit_darkbg_brightness));
@@ -715,7 +715,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
 
   // default background colors
   setBgColor(QApplication::palette().color(QPalette::Active, QPalette::Background));
-  
+
   InitGuiFields(false);
 
   if (taiM == NULL) ctrl_size = taiMisc::sizMedium;
@@ -766,7 +766,7 @@ void taiDataHostBase::StartEndLayout(bool start) {
 void taiDataHostBase::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
-			     "&Apply", "&Revert", "&Cancel");
+                             "&Apply", "&Revert", "&Cancel");
     if(chs == 1) {
       Revert();
       return;
@@ -782,7 +782,7 @@ void taiDataHostBase::Apply() {
   --updating;
 }
 
-taBase*	taiDataHostBase::Base_() const {
+taBase* taiDataHostBase::Base_() const {
   if (typ && typ->InheritsFrom(&TA_taBase))
     return (taBase*)root;
   else return NULL;
@@ -797,7 +797,7 @@ void taiDataHostBase::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
     if(!taMisc::in_shutdown) {
-      dlg->deleteLater(); 
+      dlg->deleteLater();
       dlg->close(); // destructive close
     }
     dlg = NULL;
@@ -834,14 +834,14 @@ void taiDataHostBase::Changed() {
 
 /* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
 void taiDataHostBase::Constr(const char* aprompt, const char* win_title,
-  HostType host_type_, bool deferred) 
+  HostType host_type_, bool deferred)
 {
   if (aprompt) m_def_prompt = String(aprompt);
   if (win_title) m_def_title = String(win_title);
   host_type = host_type_;
   Constr_Strings();
   Constr_Widget();
-  if (host_type != HT_CONTROL) 
+  if (host_type != HT_CONTROL)
     Constr_Methods();
   Constr_RegNotifies(); // taiEditHost registers notifies
   state = DEFERRED1;
@@ -867,7 +867,7 @@ void taiDataHostBase::Constr_impl() {
   Constr_Prompt();
   Constr_Box();
   Constr_Body();
-  if (host_type != HT_CONTROL) 
+  if (host_type != HT_CONTROL)
     Insert_Methods(); // if created, AND unowned
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
@@ -903,10 +903,10 @@ void taiDataHostBase::Constr_Widget() {
 void taiDataHostBase::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
 //NOTE: don't use RichText format because it doesn't word wrap!
-  prompt = new QLabel(widget()); 
+  prompt = new QLabel(widget());
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
   QFont f = taiM->nameFont(taiMisc::fonBig);
-  f.setBold(true); 
+  f.setBold(true);
   prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
   vblDialog->addWidget(prompt);
@@ -955,7 +955,7 @@ void taiDataHostBase::Constr_Buttons() {
   } else {
      // dont' put apply/revert buttons on a readonly dialog!
     if (!read_only) {
-      layButtons->addSpacing(20); 
+      layButtons->addSpacing(20);
       apply_but = new HiLightButton("&Apply", par);
       layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
       connect(apply_but, SIGNAL(clicked()),
@@ -977,7 +977,7 @@ void taiDataHostBase::DataLinkDestroying(taDataLink* dl) {
   Cancel();
   root = NULL;
 }
- 
+
 void taiDataHostBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 //inherited class completely implements
 }
@@ -987,7 +987,7 @@ void taiDataHostBase::DoConstr_Dialog(iHostDialog*& dlg) {
   if (dlg) return; // already constructed
   if (modal) // s/b parented to current win
     dlg = new iHostDialog(this, QApplication::activeWindow());
-  else 
+  else
     dlg = new iHostDialog(this, NULL, Qt::WindowMinimizeButtonHint);
   // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
   // BUT it is also highly unusable to make them owned, since then they obscure parent window
@@ -1062,7 +1062,7 @@ void taiDataHostBase::Ok() { //note: only used for Dialogs
   }
 }
 
-void taiDataHostBase::Ok_impl() { 
+void taiDataHostBase::Ok_impl() {
 }
 
 void taiDataHostBase::Refresh() {
@@ -1140,7 +1140,7 @@ bool taiDataHostBase::AsyncWaitProc() {
       dhb->reshow_req = false;
       if(dhb->state == ACTIVE) {
         dhb->ReShow(dhb->reshow_req_forced);
-	did_some = true;
+        did_some = true;
       }
     }
   }
@@ -1156,7 +1156,7 @@ bool taiDataHostBase::AsyncWaitProc() {
       dhb->apply_req = false;
       if(dhb->state == ACTIVE) {
         dhb->Apply();
-	did_some = true;
+        did_some = true;
       }
     }
   }
@@ -1178,7 +1178,7 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-//    Apply();	     // no reason to actually async this..
+//    Apply();       // no reason to actually async this..
   if (apply_req) return; // already waiting
   if (state != ACTIVE) return;
   apply_req = true;
@@ -1213,7 +1213,7 @@ void taiDataHostBase::DebugDestroy(QObject* obj) {
 
 
 //////////////////////////////////
-//  taiDataHost_impl		//
+//  taiDataHost_impl            //
 //////////////////////////////////
 
 void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
@@ -1221,9 +1221,9 @@ void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   QObject* slot_obj, const char* slot)
 {
   // have to be a taBase to use SelEdit
-  if (!rbase || !md) return; 
+  if (!rbase || !md) return;
 //obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
-//    return; 
+//    return;
   // get list of select edits
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
   if (!proj || proj->edits.leaves == 0) return;
@@ -1243,7 +1243,7 @@ void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   }
   if (sub->actions().count() == 0)
     sub->setEnabled(false); // show item for usability, but disable
-    
+
   // TODO: if any edits, populate menu for removing, for all seledits already on
   sub = menu->addMenu("Remove from SelectEdit");
   connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
@@ -1282,7 +1282,7 @@ taiDataHost_impl::~taiDataHost_impl() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiDataHost_impl::InitGuiFields(bool virt) { 
+void taiDataHost_impl::InitGuiFields(bool virt) {
   if (virt)  inherited::InitGuiFields(virt);
   frmMethButtons = NULL;
   layMethButtons = NULL;
@@ -1364,11 +1364,11 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
   }
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (!isConstructed()) return;
-  
+
   if (updating) return; // it is us that caused this
   if (dcr == DCR_STRUCT_UPDATE_END) {
     Refresh_impl(true);
-  } 
+  }
   // RESOLVE_NOW is typically invoked by a button method
   else if (dcr == DCR_RESOLVE_NOW)
   {
@@ -1391,7 +1391,7 @@ void taiDataHost_impl::Refresh_impl(bool reshow) {
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
     if (reshow) {
-      ReShow();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
+      ReShow();                 // this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
     }
     else {
       GetImage_Async();
@@ -1463,16 +1463,16 @@ void taiDataHost_impl::ClearBody_impl() {
 void taiDataHost_impl::ReConstr_Body() {
   if (!isConstructed()) return;
   rebuild_body = true;
-  ++updating;			// prevents spurious changed flags from coming in
+  ++updating;                   // prevents spurious changed flags from coming in
   Constr_Body();
-  {		// this is key for selectedit rebuilding on bool toggles, for example
+  {             // this is key for selectedit rebuilding on bool toggles, for example
     taMisc::RunPending();
     taMisc::RunPending();
     taMisc::RunPending();
   }
-  GetImage_Async();		// async all the way -- otherwise doesn't work
+  GetImage_Async();             // async all the way -- otherwise doesn't work
 //   GetImage(false);
-  rebuild_body = false;		// in case..
+  rebuild_body = false;         // in case..
   --updating;
 }
 
@@ -1504,13 +1504,13 @@ bool taiDataHost_impl::ReShow(bool force) {
       }
     } else { // not forced, normal situation for datachanged notifies
       if (HasChanged()) {
-        warn_clobber = true; 
+        warn_clobber = true;
         defer_reshow_req = true;
         return false;
       }
     }
   }
-  state |= SHOW_CHANGED; 
+  state |= SHOW_CHANGED;
   ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
   defer_reshow_req = false; // if it was true
   return true;
@@ -1529,7 +1529,7 @@ void taiDataHost_impl::Revert_force() {
     }
   }
   Unchanged();
-  Revert();			// use real revert to be sure..
+  Revert();                     // use real revert to be sure..
 }
 
 taMisc::ShowMembs taiDataHost_impl::show() const {
@@ -1551,7 +1551,7 @@ void taiDataHost_impl::UnSetRevert(){
 
 
 //////////////////////////////////
-// 	taiDataHost		//
+//      taiDataHost             //
 //////////////////////////////////
 
 iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
@@ -1573,7 +1573,7 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
     QObject::connect(buddy, SIGNAL(settingHighlight(bool)),
         label, SLOT(setHighlight(bool)) );
   }
-  
+
 
   if (!desc.empty()) {
     label->setToolTip(desc);
@@ -1601,7 +1601,7 @@ taiDataHost::~taiDataHost() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiDataHost::InitGuiFields(bool virt) { 
+void taiDataHost::InitGuiFields(bool virt) {
   if (virt)  inherited::InitGuiFields(virt);
   splBody = NULL;
   scrBody = NULL;
@@ -1621,8 +1621,8 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
     wid->setToolTip(desc);
   }
   QHBoxLayout* layH = new QHBoxLayout();
-  
-  
+
+
   layH->addSpacing(2);
   // we add group-box-like frame lines to separate sections
   QFrame* ln = new QFrame(body);
@@ -1644,8 +1644,8 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   layBody->addRow(layH);
 #else
   layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
-  layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter)); 
-#endif  
+  layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter));
+#endif
   wid->show(); // needed for rebuilds, to make the widget show
   return row;
 }
@@ -1657,8 +1657,8 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
     row = layBody->rowCount();
 //LABEL
   iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
-    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row); 
-  
+    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
+
 //DATA
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
@@ -1666,7 +1666,7 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   lay_dat->setMargin(0);
   lay_dat->addWidget(data, 0, Qt::AlignVCenter/*, (Qt::AlignLeft | Qt::AlignVCenter)*/);
   if (!fill_hor) lay_dat->addStretch();
-  
+
 // add label/body and show
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   label->setMinimumHeight(row_height);
@@ -1675,19 +1675,19 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   layBody->addRow(label, lay_dat);
 #else
 
-  
+
   QHBoxLayout* lay_lbl = new QHBoxLayout();
   lay_lbl->setMargin(0);
   lay_lbl->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
   lay_lbl->addSpacing(2);
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN));
   layBody->addLayout(lay_lbl, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
   layBody->addLayout(lay_dat, row, 1);
-#endif  
-  
-  label->show(); // needed for rebuilds, to make the widget show  
+#endif
+
+  label->show(); // needed for rebuilds, to make the widget show
   data->show(); // needed for rebuilds, to make the widget show
-  
+
   return row;
 }
 
@@ -1695,8 +1695,8 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
 {
   if (row < 0)
     row = layBody->rowCount();
-  
-  
+
+
 //DATA
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
@@ -1709,18 +1709,18 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody->addRow(hbl);
 #else
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN));
   layBody->addLayout(hbl, row, 0, 1, 2); // col 0, span 1 row, span 2 cols
-#endif  
+#endif
 
 //   if(!first_tab_foc) {
 //     if(data->focusPolicy() & Qt::TabFocus) {
 //       first_tab_foc = data;
 //     }
 //   }
-  
+
   data->show(); // needed for rebuilds, to make the widget show
-  
+
   return row;
 }
 void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
@@ -1765,11 +1765,11 @@ void taiDataHost::Constr_Box() {
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
   scrBody = new iScrollArea(scr_par);
   SET_PALETTE_BACKGROUND_COLOR(scrBody->viewport(), bg_color_dark);
-  scrBody->setWidgetResizable(true); 
+  scrBody->setWidgetResizable(true);
   body = new iStripeWidget();
   body_vlay = new QVBoxLayout(body);
   body_vlay->setMargin(0);
-  
+
   scrBody->setWidget(body);
   SET_PALETTE_BACKGROUND_COLOR(body, bg_color);
   ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
@@ -1782,7 +1782,7 @@ void taiDataHost::Constr_Box() {
 }
 
 void taiDataHost::Constr_Body_impl() {
-  first_tab_foc = NULL;		// reset
+  first_tab_foc = NULL;         // reset
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody = new iFormLayout();
   layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -1810,7 +1810,7 @@ void taiDataHost::Constr_Body_impl() {
 
 void taiDataHost::ClearBody_impl() {
   if(body) {
-    delete body->layout();	// nuke our vboxlayout guy
+    delete body->layout();      // nuke our vboxlayout guy
     taiMisc::DeleteWidgetsLater(body);
     body_vlay = new QVBoxLayout(body);
     body_vlay->setMargin(0);
@@ -1826,7 +1826,7 @@ void taiDataHost::Constr_Final() {
 
 
 //////////////////////////////////
-// 	MembSet_List		//
+//      MembSet_List            //
 //////////////////////////////////
 
 MembSet_List::~MembSet_List() {
@@ -1836,7 +1836,7 @@ MembSet_List::~MembSet_List() {
 bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
   for (int i = 0; i < size; ++i) {
     MembSet* ms = FastEl(i);
-    int msd_size = ms->data_el.size; 
+    int msd_size = ms->data_el.size;
     if (idx >= msd_size) {
       idx -= msd_size;
       continue;
@@ -1906,20 +1906,20 @@ void MembSet_List::SetMinSize(int n) {
 
 
 //////////////////////////////////
-// 	taiEditDataHost		//
+//      taiEditDataHost         //
 //////////////////////////////////
 
 
 taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
-  	bool modal_, QObject* parent)
+        bool modal_, QObject* parent)
 :taiDataHost(typ_, read_only_, modal_, parent)
 {
   root = base;
   // note: subclass might add more membs, and might set def_size to use them
-  membs.SetMinSize(MS_CNT); 
+  membs.SetMinSize(MS_CNT);
   membs.def_size = MS_CNT;
   show_set(MS_NORM) = true;
-  
+
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     MembSet* ms = membs.SafeEl(j);
     if (!ms) break; // shouldn't happen
@@ -1936,8 +1936,8 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
     default: continue; // shouldn't happen!
     }
   }
-  
-  
+
+
   inline_mode = false;
   no_meth_menu = false;
   bgrp = new QButtonGroup(this);
@@ -1969,7 +1969,7 @@ taiEditDataHost::~taiEditDataHost() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiEditDataHost::InitGuiFields(bool virt) { 
+void taiEditDataHost::InitGuiFields(bool virt) {
   if (virt) inherited::InitGuiFields();
   cur_menu = NULL;
   cur_menu_but = NULL;
@@ -2011,7 +2011,7 @@ void taiEditDataHost::Cancel_impl() {
   } else if (isControl()) {
     //TODO: need to verify what to do!
     ClearBody(false); // no event loop
-  } 
+  }
   inherited::Cancel_impl();
 }
 
@@ -2040,19 +2040,19 @@ void taiEditDataHost::Enum_Members() {
     if (md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
       memb_el(MS_NORM).Add(md);
       continue;
-    } 
+    }
     if (membs.def_size <= MS_EXPT) continue;
     // set the show_set guys at this point to default to app values
-    if (!(show() & taMisc::NO_EXPERT)) 
+    if (!(show() & taMisc::NO_EXPERT))
       show_set(MS_EXPT) = true;
     if (md->ShowMember(0, TypeItem::SC_EDIT, taMisc::IS_EXPERT)) {
       memb_el(MS_EXPT).Add(md);
       continue;
-    } 
-    if (membs.def_size <= MS_HIDD) continue; 
-    if (!(show() & taMisc::NO_HIDDEN)) 
+    }
+    if (membs.def_size <= MS_HIDD) continue;
+    if (!(show() & taMisc::NO_HIDDEN))
       show_set(MS_HIDD) = true;
-    if (md->ShowMember(~taMisc::IS_HIDDEN & ~taMisc::IS_NORMAL, 
+    if (md->ShowMember(~taMisc::IS_HIDDEN & ~taMisc::IS_NORMAL,
       TypeItem::SC_EDIT, taMisc::IS_HIDDEN)) {
       memb_el(MS_HIDD).Add(md);
       continue;
@@ -2083,7 +2083,7 @@ void taiEditDataHost::Constr_Data_Labels() {
     if (j >= membs.def_size) return; // don't do those
     MembSet* ms = membs.SafeEl(j);
     if (!ms || ms->memb_el.size == 0) continue;
-    String text = ms->text; 
+    String text = ms->text;
     String desc = ms->desc;
     iCheckBox* chk = new iCheckBox(text.chars(), body);
     AddSectionLabel(idx, chk, desc);
@@ -2109,7 +2109,7 @@ void taiEditDataHost::Constr_Inline() {
 }
 
 void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
-  taiDataList* dl) 
+  taiDataList* dl)
 {
   String name;
   String desc;
@@ -2136,7 +2136,7 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
 void taiEditDataHost::Constr_Strings() {
 //NOTE: this is INSANE!
   win_str = String(def_title());
-  String desc; 
+  String desc;
   if (typ != NULL) {
     prompt_str = typ->name;
     taBase* rbase = Base();
@@ -2162,7 +2162,7 @@ void taiEditDataHost::Constr_Strings() {
 
 void taiEditDataHost::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
-  if ((typ == NULL) || no_meth_menu) return; 
+  if ((typ == NULL) || no_meth_menu) return;
 
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);
@@ -2195,10 +2195,10 @@ void taiEditDataHost::Constr_Methods_impl() {
 /*obs    // add to menu if a menu item
     if (mth_rep->is_menu_item) {
       if(md->HasOption("MENU_BUTTON")) {
-      	SetCurMenuButton(md);
+        SetCurMenuButton(md);
         mth_rep->AddToMenu(cur_menu_but);
       } else {
-      	SetCurMenu(md);
+        SetCurMenu(md);
         mth_rep->AddToMenu(cur_menu);
       }
     } else {
@@ -2242,19 +2242,20 @@ void taiEditDataHost::DoSelectForEdit(QAction* act){
 //note: this routine is duplicated in the ProgEditor
   taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
-  
+
   int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
- 
+
   if (!sel_item_base) return; // shouldn't happen!
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
-  
+
   //NOTE: this handler adds if not on, or removes if already on
-  int idx;
-  if ((idx = se->FindMbrBase(rbase, md)) >= 0)
+  int idx = se->FindMbrBase(rbase, md);
+  if (idx >= 0) {
     se->RemoveField(idx);
+  }
   else {
     se->SelectMember(rbase, md);
   }
@@ -2307,7 +2308,7 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
 
 EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
   panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
-  
+
   return panel;
 }
 
@@ -2322,7 +2323,7 @@ void taiDataHostBase::ConstrEditControl() {
 
 void taiEditDataHost::FillLabelContextMenu(QMenu* menu, int& last_id) {
   inherited::FillLabelContextMenu(menu, last_id);
-  if (sel_edit_mbrs) { 
+  if (sel_edit_mbrs) {
     FillLabelContextMenu_SelEdit(menu, last_id);
   }
 }
@@ -2389,8 +2390,8 @@ void taiEditDataHost::GetImage_Membs() {
        (rep->focusPolicy() & Qt::TabFocus) &&
        !rep->inherits("QCheckBox")) {
       if(rep->inherits("QLineEdit")) {
-	QLineEdit* qle = (QLineEdit*)rep;
-	if(qle->isReadOnly()) continue;
+        QLineEdit* qle = (QLineEdit*)rep;
+        if(qle->isReadOnly()) continue;
       }
       first_tab_foc = rep;
       break;
@@ -2400,7 +2401,7 @@ void taiEditDataHost::GetImage_Membs() {
 
 void taiEditDataHost::GetImageInline_impl(const void* base) {
   taiData* mb_dat = data_el(0).SafeEl(0);
-  if (mb_dat) 
+  if (mb_dat)
     typ->it->GetImage(mb_dat, base);
 }
 
@@ -2426,11 +2427,11 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
       // note: visibles are cached, so nothing happens if it hasn't changed
       layBody->setVisible(cur_row, mb_dat->visible());
-#else      
+#else
       if (mb_dat->visible()) {
-        layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
+        layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN));
       } else {
-        layBody->setRowMinimumHeight(cur_row, 0); 
+        layBody->setRowMinimumHeight(cur_row, 0);
       }
 #endif
       ++cur_row;
@@ -2466,7 +2467,7 @@ void taiEditDataHost::GetValue_Membs() {
     GetValue_Membs_def();
   }
   if (rbase) {
-    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
+    rbase->UpdateAfterEdit();   // hook to update the contents after an edit..
     // for gui updates, always make sure that the names are unique within the list
     rbase->MakeNameUnique();
     taiMisc::Update(rbase);
@@ -2493,7 +2494,7 @@ void taiEditDataHost::GetValue_impl(const Member_List* ms, const taiDataList& dl
     else {
       md->im->GetMbrValue(mb_dat, base, first_diff);
       if(rbase) {
-	rbase->MemberUpdateAfterEdit(md, true); // in edit dialog
+        rbase->MemberUpdateAfterEdit(md, true); // in edit dialog
       }
     }
   }
@@ -2503,7 +2504,7 @@ void taiEditDataHost::GetValue_impl(const Member_List* ms, const taiDataList& dl
 
 void taiEditDataHost::GetValueInline_impl(void* base) const {
   taiData* mb_dat = data_el(0).SafeEl(0);
-  if (mb_dat) 
+  if (mb_dat)
     typ->it->GetValue(mb_dat, base);
 }
 
@@ -2516,7 +2517,7 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
     GetValue();
   }
 }
- 
+
 bool taiEditDataHost::ShowMember(MemberDef* md) const {
   return (md->ShowMember(show(), TypeItem::SC_EDIT) && (md->im != NULL));
 }
@@ -2534,7 +2535,7 @@ void taiEditDataHost::SetCurMenu_Name(String men_nm) {
     // reason (doesn't become visible, no matter what); but a toolbar works
     // we don't use these on all platforms for uniformity because they SUCK!
 #ifdef TA_OS_MAC
-    menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
+    menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL);
     vblDialog->insertWidget(0, menu->GetRep()); //note: no spacing needed after
     vblDialog->insertSpacing(1, 2);
 #else
@@ -2569,14 +2570,14 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-	    NULL, this, NULL, widget());
+            NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
 }
 
 iMainWindowViewer* taiEditDataHost::viewerWindow() const {
-  iMainWindowViewer* dv = NULL; 
+  iMainWindowViewer* dv = NULL;
   if (panel) dv = panel->viewerWindow();
   return dv;
 }
@@ -2613,51 +2614,51 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
     switch(e->key()) {
     case Qt::Key_N:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_P:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_V:
       if(taMisc::emacs_mode) {
-	for(int i=0;i<5;i++)	// page up = 5
-	  app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
-	return true;		// we absorb this event
+        for(int i=0;i<5;i++)    // page up = 5
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+        return true;            // we absorb this event
       }
       return false;
     case Qt::Key_Down:
       for(int i=0;i<5;i++)
-	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
-      return true;		// we absorb this event
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+      return true;              // we absorb this event
     case Qt::Key_U:
     case Qt::Key_Up:
       for(int i=0;i<5;i++)
-	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
-      return true;		// we absorb this event
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
+      return true;              // we absorb this event
     }
   }
   else {
     switch (e->key()) {
     case Qt::Key_Down:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Up:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_PageDown:
       for(int i=0;i<5;i++)
-	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
-      return true;		// we absorb this event
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+      return true;              // we absorb this event
     case Qt::Key_PageUp:
       for(int i=0;i<5;i++)
-	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
-      return true;		// we absorb this event
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
+      return true;              // we absorb this event
     }
   }
   if(e->key() == Qt::Key_Escape) {
     if(modal)
       Cancel();
     else
-      Revert();			// do it!
+      Revert();                 // do it!
     if(mvw)
       mvw->FocusCurTreeView(); // return focus back to current browser
     return true;
@@ -2666,12 +2667,12 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
 }
 
 //////////////////////////////////////////////////
-//		StringDataHost
+//              StringDataHost
 //////////////////////////////////////////////////
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
      bool read_only_, bool modal_, QObject* parent, bool line_nos_,
-				     bool rich_text_)
+                                     bool rich_text_)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
   root = base_;
@@ -2725,7 +2726,7 @@ void taiStringDataHost::Constr_Strings() {
   if (mbr) {
     prompt_str = mbr->GetLabel() + ": " + mbr->desc;
   }
-  
+
 }
 
 void taiStringDataHost::Constr_Buttons() {
@@ -2801,11 +2802,11 @@ bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
     QKeyEvent* e = static_cast<QKeyEvent *>(event);
     bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      Ok();			// do it!
+      Ok();                     // do it!
       return true;
     }
     if(e->key() == Qt::Key_Escape) {
-      Cancel();			// do it!
+      Cancel();                 // do it!
       return true;
     }
   }
@@ -2818,7 +2819,7 @@ bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
 //////////////////////////////////////////////////
 
 taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
-	     bool read_only_, bool modal_, QObject* parent)
+             bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
   root = base_;
@@ -2880,21 +2881,21 @@ void taiWizardDataHost::Enum_Members() {
   if (!typ) return; // class browser or such
   page_names.Reset();
   membs.Reset();
-  
+
   MemberSpace& ms = typ->members;
   int page_no = 0; // always contains the most recent explicitly marked page
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
     // we skip the normal taNBase members
-    if ((md->name == "name") || (md->name == "auto_open")) 
+    if ((md->name == "name") || (md->name == "auto_open"))
       continue;
-    
+
     // we only show Normal guys in Wizards, sorry charlie!
     if (!md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
       continue;
-    } 
-    
+    }
+
     // parse page directive -- if none, values are 0, ""
     String pd = md->OptionAfter("PAGE_");
     String page_name; // we only set if included
@@ -2947,7 +2948,7 @@ void taiWizardDataHost::Ok_impl() { //note: only used for Dialogs
 }
 
 //////////////////////////////////////////////////
-//  	iPluginEditor
+//      iPluginEditor
 //////////////////////////////////////////////////
 
 iPluginEditor* iPluginEditor::New(const String& dir, const String& file_bse) {
@@ -2965,7 +2966,7 @@ iPluginEditor* iPluginEditor::New(const String& dir, const String& file_bse) {
 }
 
 // note: we parent to main_win so something will delete it
-iPluginEditor::iPluginEditor() 
+iPluginEditor::iPluginEditor()
 :inherited(taiMisc::main_window)
 {
   init();
@@ -3111,10 +3112,10 @@ bool iPluginEditor::eventFilter(QObject* obj, QEvent* event) {
     switch(e->key()) {
     case Qt::Key_O:
       if(hfile_view->hasFocus() || hfile_view->textEdit()->hasFocus())
-	cfile_view->textEdit()->setFocus();
+        cfile_view->textEdit()->setFocus();
       else
-	hfile_view->textEdit()->setFocus();
-      return true;		// we absorb this event
+        hfile_view->textEdit()->setFocus();
+      return true;              // we absorb this event
     case Qt::Key_M:
       Compile();
       return true;

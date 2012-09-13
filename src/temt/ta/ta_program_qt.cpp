@@ -872,9 +872,10 @@ void iProgramEditor::DoSelectForEdit(QAction* act) {
   if (!md || !se || !rbase) return; //shouldn't happen...
 
   //NOTE: this handler adds if not on, or removes if already on
-  int idx;
-  if ((idx = se->FindMbrBase(rbase, md)) >= 0)
+  int idx = se->FindMbrBase(rbase, md);
+  if (idx >= 0) {
     se->RemoveField(idx);
+  }
   else {
     se->SelectMember(rbase, md);
   }

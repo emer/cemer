@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -15,7 +15,7 @@
 
 #include "ta_dataproc.h"
 #include "css_machine.h"
-#include "ta_project.h"		// for debugging
+#include "ta_project.h"         // for debugging
 
 /////////////////////////////////////////////////////////
 //   DataOpEl Base class
@@ -158,7 +158,7 @@ void DataSortEl::Initialize() {
 
 String DataSortEl::GetDisplayName() const {
   String rval = col_name + " ";
-  if(order == ASCENDING) 
+  if(order == ASCENDING)
     rval += "up";
   else
     rval += "dn";
@@ -189,10 +189,10 @@ void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
     CheckError((agg.op == Aggregate::GROUP) && col_lookup->isMatrix(), quiet, rval,
-	       "cannot use matrix column to GROUP");
+               "cannot use matrix column to GROUP");
     ValType mvt = agg.MinValType();
     CheckError((mvt == Aggregate::VT_INT) && !col_lookup->isNumeric(), quiet, rval,
-	       "aggregation operator:", agg.GetAggName(), "requires numeric data to operate on, but column named:", col_name, "is not numeric");
+               "aggregation operator:", agg.GetAggName(), "requires numeric data to operate on, but column named:", col_name, "is not numeric");
   }
 }
 
@@ -212,7 +212,7 @@ void DataSelectEl::Initialize() {
 }
 
 String DataSelectEl::GetDisplayName() const {
-  String rval = col_name + " " + 
+  String rval = col_name + " " +
     GetTypeDef()->GetEnumString("Relations", rel)+ " ";
   if(use_var && (bool)var)
     rval += var->name;
@@ -223,7 +223,7 @@ String DataSelectEl::GetDisplayName() const {
 
 bool DataSelectEl::Eval(const Variant& val) {
   if(use_var && (bool)var) {
-    cmp = var->GetVar();	// get current val
+    cmp = var->GetVar();        // get current val
   }
   switch(rel) {
   case EQUAL:
@@ -256,9 +256,9 @@ void DataSelectEl::UpdateEnabled() {
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    CheckError(col_lookup->is_matrix && col_lookup->cell_size() > 1 && 
-	       !(rel == EQUAL || rel == NOTEQUAL), quiet, rval,
-	       "matrix column selection only uses EQUAL or NOTEQUAL and checks for a 1 value at matrix cell given by cmp index");
+    CheckError(col_lookup->is_matrix && col_lookup->cell_size() > 1 &&
+               !(rel == EQUAL || rel == NOTEQUAL), quiet, rval,
+               "matrix column selection only uses EQUAL or NOTEQUAL and checks for a 1 value at matrix cell given by cmp index");
   }
   CheckError(use_var && !var, quiet, rval, "use_var is selected but no var variable is set!");
   if(use_var && (bool)var) {
@@ -319,7 +319,7 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 /////////////////////////////////////////////////////////
 
 bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
-			 bool& in_place_req) {
+                         bool& in_place_req) {
   if(src == dest) {
     in_place_req = true;
     dest = new DataTable;
@@ -337,7 +337,7 @@ bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& s
 // manipulating lists of columns
 
 bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols,
-			       DataOpList* src_cols) {
+                               DataOpList* src_cols) {
   if(!dest || !src) return false;
   src_cols->Reset(); dest_cols->Reset();
   src_cols->AddAllColumns(src);
@@ -357,8 +357,8 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
     }
     if(sda->cell_size() > 1) {
       if(sda->valType() != dda->valType()) {
-	src_cols->RemoveIdx(i); i--;
-	continue; // must be compatible var types
+        src_cols->RemoveIdx(i); i--;
+        continue; // must be compatible var types
       }
     }
     DataOpEl* dop = (DataOpEl*)dest_cols->New(1);
@@ -396,14 +396,14 @@ bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
   }
   dest->StructUpdate(true);
   dest->Reset();
-  dest->Copy_NoData(*src);		// give it same structure
+  dest->Copy_NoData(*src);              // give it same structure
   AppendRows(dest, src);
   dest->StructUpdate(false);
   return true;
 }
 
 bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpList* dest_cols,
-				   DataOpList* src_cols, int dest_row, int src_row) {
+                                   DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
   if(dest == src) {
     taMisc::Error("taDataProc::CopyCommonColsRow_impl -- src cannot be same as dest for this operation!");
@@ -489,14 +489,14 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
   bool in_place_req = false;
   GetDest(dest, src, "ReplicateRows", in_place_req);
   dest->StructUpdate(true);
-  dest->Copy_NoData(*src);		// give it same structure
+  dest->Copy_NoData(*src);              // give it same structure
   for(int i=0;i<src->rows;i++) {
     for(int k=0;k<n_repl;k++) {
       dest->AddBlankRow();
       for(int j=0;j<src->data.size;j++) {
-	DataCol* sda = src->data[j];
-	DataCol* dda = dest->data[j];
-	dda->CopyFromRow(-1, *sda, i);
+        DataCol* sda = src->data[j];
+        DataCol* dda = dest->data[j];
+        dda->CopyFromRow(-1, *sda, i);
       }
     }
   }
@@ -509,7 +509,7 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
 }
 
 bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c,
-			    DataTable* src_d, DataTable* src_e, DataTable* src_f) {
+                            DataTable* src_d, DataTable* src_e, DataTable* src_f) {
   if(!src_a) { taMisc::Error("taDataProc::ConcatRows: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::ConcatRows: src_b is NULL"); return false; }
   bool in_place_req = false;
@@ -534,7 +534,7 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
 }
 
 bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val_type,
-				    const String& col_nm_contains, const String& dest_col_nm) {
+                                    const String& col_nm_contains, const String& dest_col_nm) {
   bool in_place_req = false;
   GetDest(dest, src, "AllDataToOneCell", in_place_req);
   if(in_place_req) {
@@ -547,7 +547,7 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
   int ysize = 0;
   int n_cols = 0;
   DataCol* first_da = NULL;
-  for(int i=0;i<src->data.size; i++) { 
+  for(int i=0;i<src->data.size; i++) {
     DataCol* da = src->data[i];
     if(da->valType() != val_type) continue;
     if(col_nm_contains.nonempty() && !da->name.contains(col_nm_contains)) continue;
@@ -558,8 +558,8 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
     else
       xsize++;
   }
-  
-  if(n_cols == 1 && first_da->isMatrix()) {		// special case
+
+  if(n_cols == 1 && first_da->isMatrix()) {             // special case
     xsize = first_da->cell_geom[0];
     int src_cel_sz = first_da->cell_size();
     int dst_cel_sz = src_cel_sz / xsize;
@@ -569,33 +569,33 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
     dest->EnforceRows(1);
     for(int row=0;row<src->rows;row++) {
       for(int cell=0;cell<src_cel_sz;cell++) {
-	int src_abs_idx = row * src_cel_sz + cell;
-	dda->SetValAsVarM(first_da->GetValAsVarM(row, cell), 0, src_abs_idx);
+        int src_abs_idx = row * src_cel_sz + cell;
+        dda->SetValAsVarM(first_da->GetValAsVarM(row, cell), 0, src_abs_idx);
       }
     }
   }
-  else {	
+  else {
     ysize = src->rows;
     DataCol* dda = dest->FindMakeColMatrix(dest_col_nm, val_type, 2, xsize, ysize);
     dest->EnforceRows(1);
 
     for(int row=0;row<src->rows;row++) {
       int stoff = row * xsize;
-      for(int i=0;i<src->data.size; i++) { 
-	DataCol* da = src->data[i];
-	if(da->valType() != val_type) continue;
-	if(col_nm_contains.nonempty() && !da->name.contains(col_nm_contains)) continue;
-	if(da->isMatrix()) {
-	  int src_cel_sz = da->cell_size();
-	  for(int k=0;k<src_cel_sz;k++) {
-	    dda->SetValAsVarM(da->GetValAsVarM(row, k), 0, stoff + k);
-	  }
-	  stoff += src_cel_sz;
-	}
-	else {
-	  dda->SetValAsVarM(da->GetValAsVar(row), 0, stoff);
-	  stoff++;
-	}
+      for(int i=0;i<src->data.size; i++) {
+        DataCol* da = src->data[i];
+        if(da->valType() != val_type) continue;
+        if(col_nm_contains.nonempty() && !da->name.contains(col_nm_contains)) continue;
+        if(da->isMatrix()) {
+          int src_cel_sz = da->cell_size();
+          for(int k=0;k<src_cel_sz;k++) {
+            dda->SetValAsVarM(da->GetValAsVarM(row, k), 0, stoff + k);
+          }
+          stoff += src_cel_sz;
+        }
+        else {
+          dda->SetValAsVarM(da->GetValAsVar(row), 0, stoff);
+          stoff++;
+        }
       }
     }
   }
@@ -605,7 +605,7 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
 }
 
 bool taDataProc::Slice2D(DataTable* dest, DataTable* src, int src_row, String src_col_nm, int dest_row, String dest_col_nm,
-			 int d0_start, int d0_end, int d1_start, int d1_end) {
+                         int d0_start, int d0_end, int d1_start, int d1_end) {
   int src_dims, src_col, d0_src_size, d1_src_size, d0_dest_size, d1_dest_size, i, j, k, l;
 
   if(dest_col_nm == "") dest_col_nm = "SliceData";
@@ -673,7 +673,7 @@ bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
 }
 
 int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
-			    DataSortSpec* spec) {
+                            DataSortSpec* spec) {
   for(int i=0;i<spec->ops.size; i++) {
     DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
@@ -688,22 +688,22 @@ int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int ro
       if(ds->order == DataSortEl::ASCENDING) return 1; else return -1;
     }
   }
-  return 0;			// must be all equal!
+  return 0;                     // must be all equal!
 }
 
 bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
   // todo: seems like you can just sort an index and then read that off.
-  // but the tmp copy stuff isn't going to work.  
+  // but the tmp copy stuff isn't going to work.
 
   dt->StructUpdate(true);
-  DataTable tmp_data(false);		// temporary buffer to hold vals during swap
-  taBase::Own(tmp_data, NULL);	// activates initlinks..
-  tmp_data.Copy_NoData(*dt);		// give it same structure
-  tmp_data.AddBlankRow();		// always just has one row
+  DataTable tmp_data(false);            // temporary buffer to hold vals during swap
+  taBase::Own(tmp_data, NULL);  // activates initlinks..
+  tmp_data.Copy_NoData(*dt);            // give it same structure
+  tmp_data.AddBlankRow();               // always just has one row
 
-  spec->GetColumns(dt);		// cache column pointers & indicies from names
+  spec->GetColumns(dt);         // cache column pointers & indicies from names
 
   // lets do a heap sort since it requires no secondary storage
   int n = dt->rows;
@@ -719,8 +719,8 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
       tmp_data.CopyFromRow(0, *dt, ir-1); // tmp_data = ra[ir]
       dt->CopyFromRow(ir-1, *dt, 0); // ra[ir] = ra[1]
       if(--ir == 1) {
-	dt->CopyFromRow(0, tmp_data, 0); // ra[1]=tmp_data
-	break;
+        dt->CopyFromRow(0, tmp_data, 0); // ra[1]=tmp_data
+        break;
       }
     }
     i=l;
@@ -728,8 +728,8 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
     while(j<= ir) {
       if(j<ir && (Sort_Compare(dt, j-1, dt, j, spec) == -1)) j++; // less-than
       if(Sort_Compare(&tmp_data, 0, dt, j-1, spec) == -1) { // tmp_data < ra[j]
-	dt->CopyFromRow(i-1, *dt, j-1); // ra[i]=ra[j];
-	j += (i=j);
+        dt->CopyFromRow(i-1, *dt, j-1); // ra[i]=ra[j];
+        j += (i=j);
       }
       else j = ir+1;
     }
@@ -746,7 +746,7 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   bool in_place_req = false;
   GetDest(dest, src, "Permute", in_place_req);
   dest->StructUpdate(true);
-  dest->Copy_NoData(*src);		// give it same structure
+  dest->Copy_NoData(*src);              // give it same structure
   // this just uses the index technique..
   int_Array idxs;
   idxs.SetSize(src->rows);
@@ -771,7 +771,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   bool in_place_req = false;
   GetDest(dest, src, "Group", in_place_req);
   dest->StructUpdate(true);
-  spec->GetColumns(src);		// cache column pointers & indicies from names
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   dest->Reset();
   // add the dest columns
   for(int i=0;i<spec->ops.size; i++) {
@@ -789,15 +789,15 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
     if(ds->agg.op == Aggregate::N) {
-      nda->name = "N";		// doesn't matter what the column was!
+      nda->name = "N";          // doesn't matter what the column was!
     }
     else if(spec->append_agg_name) {
       String dst_op = ds->agg.GetAggName();
       dst_op.downcase();
       nda->name += "_" + dst_op;
     }
-  }    
-  dest->UniqueColNames();	// make them unique!
+  }
+  dest->UniqueColNames();       // make them unique!
 
   // sort by grouped guys, in order (also add "LAST" and "FIRST" -- important to be sorted)
   DataSortSpec sort_spec(false);
@@ -838,55 +838,55 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
     DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
     if(sda->is_matrix) {
       if(sda->valType() == taBase::VT_DOUBLE) {
-	double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(0);
-	if(dmat) {
-	  taBase::Ref(dmat);
-	  taMath_double::mat_frame_aggregate(dmat, (double_Matrix*)sda->AR(), ds->agg);
-	  taBase::unRefDone(dmat);
-	}
+        double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(0);
+        if(dmat) {
+          taBase::Ref(dmat);
+          taMath_double::mat_frame_aggregate(dmat, (double_Matrix*)sda->AR(), ds->agg);
+          taBase::unRefDone(dmat);
+        }
       }
       else if(sda->valType() == taBase::VT_FLOAT) {
-	float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
-	if(dmat) {
-	  taBase::Ref(dmat);
-	  taMath_float::mat_frame_aggregate(dmat, (float_Matrix*)sda->AR(), ds->agg);
-	  taBase::unRefDone(dmat);
-	}
+        float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
+        if(dmat) {
+          taBase::Ref(dmat);
+          taMath_float::mat_frame_aggregate(dmat, (float_Matrix*)sda->AR(), ds->agg);
+          taBase::unRefDone(dmat);
+        }
       }
       else if(sda->valType() == taBase::VT_INT) {
-	float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
-	if(dmat) {
-	  taBase::Ref(dmat);
-	  int_Matrix* mat = (int_Matrix*)sda->AR();
-	  taMath_float::vec_fm_ints(&float_tmp, mat);
-	  taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
-	  taBase::unRefDone(dmat);
-	}
+        float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
+        if(dmat) {
+          taBase::Ref(dmat);
+          int_Matrix* mat = (int_Matrix*)sda->AR();
+          taMath_float::vec_fm_ints(&float_tmp, mat);
+          taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
+          taBase::unRefDone(dmat);
+        }
       }
     }
-    else {			// scalar
+    else {                      // scalar
       if(sda->valType() == taBase::VT_DOUBLE) {
-	dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
+        dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
       }
       else if(sda->valType() == taBase::VT_FLOAT) {
-	dda->SetValAsFloat(taMath_float::vec_aggregate((float_Matrix*)sda->AR(), ds->agg), 0);
+        dda->SetValAsFloat(taMath_float::vec_aggregate((float_Matrix*)sda->AR(), ds->agg), 0);
       }
       else if(sda->valType() == taBase::VT_INT) {
-	int_Matrix* mat = (int_Matrix*)sda->AR();
-	taMath_float::vec_fm_ints(&float_tmp, mat);
-	dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
+        int_Matrix* mat = (int_Matrix*)sda->AR();
+        taMath_float::vec_fm_ints(&float_tmp, mat);
+        dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
       }
       else if(sda->valType() == taBase::VT_STRING) {
-	String_Matrix* mat = (String_Matrix*)sda->AR();
-	if(ds->agg.op == Aggregate::FIRST) {
-	  dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), 0);
-	}
-	else if(ds->agg.op == Aggregate::LAST) {
-	  dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
-	}
-	else if(ds->agg.op == Aggregate::N) {
-	  dda->SetValAsInt(mat->size, 0);
-	}
+        String_Matrix* mat = (String_Matrix*)sda->AR();
+        if(ds->agg.op == Aggregate::FIRST) {
+          dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), 0);
+        }
+        else if(ds->agg.op == Aggregate::LAST) {
+          dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+        }
+        else if(ds->agg.op == Aggregate::N) {
+          dda->SetValAsInt(mat->size, 0);
+        }
       }
     }
   }
@@ -895,7 +895,7 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 
 bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
   DataTable ssrc(false);
-  taBase::Own(ssrc, NULL);	// activates initlinks, refs
+  taBase::Own(ssrc, NULL);      // activates initlinks, refs
 
   DataSortSpec full_sort_spec(false);
   taBase::Own(full_sort_spec, NULL);
@@ -914,11 +914,11 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     }
   }
   DataTable flsrc(false);
-  taBase::Own(flsrc, NULL);	// activates initlinks, refs
-  DataTable* use_src = src;	// source to actually use -- could be flsrc instead
+  taBase::Own(flsrc, NULL);     // activates initlinks, refs
+  DataTable* use_src = src;     // source to actually use -- could be flsrc instead
   if(has_first_last) {
     flsrc = *src;
-    use_src = &flsrc;		// new src
+    use_src = &flsrc;           // new src
     //    sort_spec->GetColumns(&flsrc); // re-get columns for new guy, just to be sure
     int_Data* rowno_col = flsrc.NewColInt("__fl_rowno");
     rowno_col->InitValsToRowNo();
@@ -931,7 +931,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 
   taDataProc::Sort(&ssrc, use_src, &full_sort_spec);
 
-  sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
+  sort_spec->GetColumns(&ssrc); // re-get columns -- they were nuked by Sort op!
 
   Variant_Array cur_vals;
   cur_vals.SetSize(sort_spec->ops.size);
@@ -950,19 +950,19 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   while(row <= ssrc.rows) {
     for(;row <= ssrc.rows; row++) {
       bool new_val = false;
-      if(row == ssrc.rows) { 
-	new_val = true;
+      if(row == ssrc.rows) {
+        new_val = true;
       }
       else {
-	for(int i=0;i<sort_spec->ops.size; i++) {
-	  DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
-	  DataCol* sda = ssrc.data.FastEl(ds->col_idx);
-	  Variant cval = sda->GetValAsVar(row);
-	  if(cval != cur_vals[i]) {
-	    new_val = true;
-	    cur_vals[i] = cval;
-	  }
-	}
+        for(int i=0;i<sort_spec->ops.size; i++) {
+          DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
+          DataCol* sda = ssrc.data.FastEl(ds->col_idx);
+          Variant cval = sda->GetValAsVar(row);
+          if(cval != cur_vals[i]) {
+            new_val = true;
+            cur_vals[i] = cval;
+          }
+        }
       }
       if(new_val) break;
     }
@@ -976,92 +976,92 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       DataCol* sda = ssrc.data.FastEl(ds->col_idx);
       DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
       if(ds->agg.op == Aggregate::GROUP) {
-	dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
+        dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
       }
       else {
-	if(sda->isMatrix()) {
-	  if(sda->valType() == taBase::VT_DOUBLE) {
-	    double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(-1);
-	    if(mat && dmat) {
-	      taBase::Ref(mat); taBase::Ref(dmat);
-	      taMath_double::mat_frame_aggregate(dmat, mat, ds->agg);
-	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
-	    }
-	  }
-	  else if(sda->valType() == taBase::VT_FLOAT) {
-	    float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
-	    if(mat && dmat) {
-	      taBase::Ref(mat); taBase::Ref(dmat);
-	      taMath_float::mat_frame_aggregate(dmat, mat, ds->agg);
-	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
-	    }
-	  }
-	  else if(sda->valType() == taBase::VT_INT) {
-	    int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
-	    if(mat && dmat) {
-	      taBase::Ref(mat); taBase::Ref(dmat);
-	      taMath_float::vec_fm_ints(&float_tmp, mat);
-	      taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
-	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
-	    }
-	  }
-	}
-	else {			// scalar
-	  if(sda->valType() == taBase::VT_DOUBLE) {
-	    double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    if(mat) {
-	      taBase::Ref(mat);
-	      dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	      taBase::unRefDone(mat);
-	    }
-	  }
-	  else if(sda->valType() == taBase::VT_FLOAT) {
-	    float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    if(mat) {
-	      taBase::Ref(mat);
-	      dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	      taBase::unRefDone(mat);
-	    }
-	  }
-	  else if(sda->valType() == taBase::VT_INT) {
-	    int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    if(mat) {
-	      taBase::Ref(mat);
-	      taMath_float::vec_fm_ints(&float_tmp, mat);
-	      dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
-	      taBase::unRefDone(mat);
-	    }
-	  }
-	  else if(sda->valType() == taBase::VT_STRING) {
-	    String_Matrix* mat = (String_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	    if(mat) {
-	      taBase::Ref(mat);
-	      if(ds->agg.op == Aggregate::FIRST) {
-		dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), -1);
-	      }
-	      else if(ds->agg.op == Aggregate::LAST) {
-		dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), -1);
-	      }
-	      else if(ds->agg.op == Aggregate::N) {
-		dda->SetValAsInt(mat->size, -1);
-	      }
-	      taBase::unRefDone(mat);
-	    }
-	  }
-	}
+        if(sda->isMatrix()) {
+          if(sda->valType() == taBase::VT_DOUBLE) {
+            double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(-1);
+            if(mat && dmat) {
+              taBase::Ref(mat); taBase::Ref(dmat);
+              taMath_double::mat_frame_aggregate(dmat, mat, ds->agg);
+              taBase::unRefDone(mat); taBase::unRefDone(dmat);
+            }
+          }
+          else if(sda->valType() == taBase::VT_FLOAT) {
+            float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+            if(mat && dmat) {
+              taBase::Ref(mat); taBase::Ref(dmat);
+              taMath_float::mat_frame_aggregate(dmat, mat, ds->agg);
+              taBase::unRefDone(mat); taBase::unRefDone(dmat);
+            }
+          }
+          else if(sda->valType() == taBase::VT_INT) {
+            int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+            if(mat && dmat) {
+              taBase::Ref(mat); taBase::Ref(dmat);
+              taMath_float::vec_fm_ints(&float_tmp, mat);
+              taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
+              taBase::unRefDone(mat); taBase::unRefDone(dmat);
+            }
+          }
+        }
+        else {                  // scalar
+          if(sda->valType() == taBase::VT_DOUBLE) {
+            double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            if(mat) {
+              taBase::Ref(mat);
+              dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+              taBase::unRefDone(mat);
+            }
+          }
+          else if(sda->valType() == taBase::VT_FLOAT) {
+            float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            if(mat) {
+              taBase::Ref(mat);
+              dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+              taBase::unRefDone(mat);
+            }
+          }
+          else if(sda->valType() == taBase::VT_INT) {
+            int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            if(mat) {
+              taBase::Ref(mat);
+              taMath_float::vec_fm_ints(&float_tmp, mat);
+              dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
+              taBase::unRefDone(mat);
+            }
+          }
+          else if(sda->valType() == taBase::VT_STRING) {
+            String_Matrix* mat = (String_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+            if(mat) {
+              taBase::Ref(mat);
+              if(ds->agg.op == Aggregate::FIRST) {
+                dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), -1);
+              }
+              else if(ds->agg.op == Aggregate::LAST) {
+                dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), -1);
+              }
+              else if(ds->agg.op == Aggregate::N) {
+                dda->SetValAsInt(mat->size, -1);
+              }
+              taBase::unRefDone(mat);
+            }
+          }
+        }
       }
     }
     st_row = row;
-    row++;			// move on to next row!
+    row++;                      // move on to next row!
   }
   return true;
 }
 
 bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
-	     const Variant& data_col_st, int n_cols, const Variant& col_names_col) {
+             const Variant& data_col_st, int n_cols, const Variant& col_names_col) {
   bool in_place_req = false;
   GetDest(dest, src, "TransposeColsToRows", in_place_req);
   if(in_place_req) {
@@ -1093,7 +1093,7 @@ bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
     n_cols = dest->cols() - st_idx;
   for(int ci = 0; ci < n_cols; ci++) {
     DataCol* scol = src->GetColData(ci + st_idx);
-    if(!scol) continue;		// shouldn't happen
+    if(!scol) continue;         // shouldn't happen
     dest->AddBlankRow();
     for(int i=0; i<src->rows; i++) {
       DataCol* dcol = dest->GetColData(i);
@@ -1106,7 +1106,7 @@ bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
 
 
 bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row, int n_rows,
-				     DataCol::ValType val_type) {
+                                     DataCol::ValType val_type) {
   bool in_place_req = false;
   GetDest(dest, src, "TransposeRowsToCols", in_place_req);
   if(in_place_req) {
@@ -1116,7 +1116,7 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
   }
   dest->StructUpdate(true);
   dest->RemoveAllCols();
-  if(n_rows < 0) 
+  if(n_rows < 0)
     n_rows = src->rows - st_row;
   for(int i=0; i<n_rows; i++) {
     String nm = "Row_" + String(i);
@@ -1143,8 +1143,8 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   bool in_place_req = false;
   GetDest(dest, src, "SelectRows", in_place_req);
   dest->StructUpdate(true);
-  dest->Copy_NoData(*src);		// give it same structure
-  spec->GetColumns(src);		// cache column pointers & indicies from names
+  dest->Copy_NoData(*src);              // give it same structure
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   // also sets act_enabled flag
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
@@ -1155,37 +1155,37 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
       DataCol* da = src->data.FastEl(ds->col_idx);
       bool ev = false;
       if(da->isMatrix()) {
-	if(da->cell_size() == 1) { // degenerate case
-	  Variant val = da->GetValAsVarM(row, 0);
-	  ev = ds->Eval(val);
-	}
-	else {
-	  if(ds->use_var && (bool)ds->var) {
-	    ds->cmp = ds->var->GetVar();	// get current val
-	  }
-	  int cmpidx = ds->cmp.toInt(); // convert to an integer index
-	  int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
-	  if(ds->rel == DataSelectEl::EQUAL)
-	    ev = (vl == 1);			  // true if cell value is 1
-	  else
-	    ev = (vl != 1);			  // true if cell value is NOT 1
-	}
+        if(da->cell_size() == 1) { // degenerate case
+          Variant val = da->GetValAsVarM(row, 0);
+          ev = ds->Eval(val);
+        }
+        else {
+          if(ds->use_var && (bool)ds->var) {
+            ds->cmp = ds->var->GetVar();        // get current val
+          }
+          int cmpidx = ds->cmp.toInt(); // convert to an integer index
+          int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
+          if(ds->rel == DataSelectEl::EQUAL)
+            ev = (vl == 1);                       // true if cell value is 1
+          else
+            ev = (vl != 1);                       // true if cell value is NOT 1
+        }
       }
       else {
-	Variant val = da->GetValAsVar(row);
-	ev = ds->Eval(val);
+        Variant val = da->GetValAsVar(row);
+        ev = ds->Eval(val);
       }
       if(spec->comb_op == DataSelectSpec::AND) {
-	if(!ev) { not_incl = true;  break; }
+        if(!ev) { not_incl = true;  break; }
       }
       else if(spec->comb_op == DataSelectSpec::OR) {
-	if(ev) { incl = true; break; }
+        if(ev) { incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_AND) {
-	if(ev) { not_incl = true; break; }
+        if(ev) { not_incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_OR) {
-	if(!ev) { incl = true; break; }
+        if(!ev) { incl = true; break; }
       }
     }
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
@@ -1206,7 +1206,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
 }
 
 bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
-			   DataSelectSpec* spec) {
+                           DataSelectSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::SplitRows: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::SplitRows: spec is NULL"); return false; }
   bool in_place_req = false;
@@ -1223,10 +1223,10 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
     return false;
   }
   dest_a->StructUpdate(true);
-  dest_a->Copy_NoData(*src);		// give it same structure
+  dest_a->Copy_NoData(*src);            // give it same structure
   dest_b->StructUpdate(true);
-  dest_b->Copy_NoData(*src);		// give it same structure
-  spec->GetColumns(src);		// cache column pointers & indicies from names
+  dest_b->Copy_NoData(*src);            // give it same structure
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
     bool not_incl = false;
@@ -1236,37 +1236,37 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
       DataCol* da = src->data.FastEl(ds->col_idx);
       bool ev = false;
       if(da->isMatrix()) {
-	if(da->cell_size() == 1) { // degenerate case
-	  Variant val = da->GetValAsVarM(row, 0);
-	  ev = ds->Eval(val);
-	}
-	else {
-	  if(ds->use_var && (bool)ds->var) {
-	    ds->cmp = ds->var->GetVar();	// get current val
-	  }
-	  int cmpidx = ds->cmp.toInt(); // convert to an integer index
-	  int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
-	  if(ds->rel == DataSelectEl::EQUAL)
-	    ev = (vl == 1);			  // true if cell value is 1
-	  else
-	    ev = (vl != 1);			  // true if cell value is NOT 1
-	}
+        if(da->cell_size() == 1) { // degenerate case
+          Variant val = da->GetValAsVarM(row, 0);
+          ev = ds->Eval(val);
+        }
+        else {
+          if(ds->use_var && (bool)ds->var) {
+            ds->cmp = ds->var->GetVar();        // get current val
+          }
+          int cmpidx = ds->cmp.toInt(); // convert to an integer index
+          int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
+          if(ds->rel == DataSelectEl::EQUAL)
+            ev = (vl == 1);                       // true if cell value is 1
+          else
+            ev = (vl != 1);                       // true if cell value is NOT 1
+        }
       }
       else {
-	Variant val = da->GetValAsVar(row);
-	ev = ds->Eval(val);
+        Variant val = da->GetValAsVar(row);
+        ev = ds->Eval(val);
       }
       if(spec->comb_op == DataSelectSpec::AND) {
-	if(!ev) { not_incl = true;  break; }
+        if(!ev) { not_incl = true;  break; }
       }
       else if(spec->comb_op == DataSelectSpec::OR) {
-	if(ev) { incl = true; break; }
+        if(ev) { incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_AND) {
-	if(ev) { not_incl = true; break; }
+        if(ev) { not_incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_OR) {
-	if(!ev) { incl = true; break; }
+        if(!ev) { incl = true; break; }
       }
     }
     bool sel_a = true;
@@ -1290,8 +1290,8 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 }
 
 bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
-			    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
-			    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+                            DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+                            DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
   if(!src) { taMisc::Error("taDataProc::SplitRowsN: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
@@ -1311,8 +1311,8 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
     dary[i]->Copy_NoData(*src);
     if(nary[i] < 0) {
       if(rest_idx >= 0) {
-	taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
-	break;
+        taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
+        break;
       }
       rest_idx = i;
     }
@@ -1322,7 +1322,7 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 
   if(n_tot > src->rows) {
     taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
-		    String(src->rows), "last one will be underfilled");
+                    String(src->rows), "last one will be underfilled");
   }
 
   if(rest_idx >=0) {
@@ -1346,11 +1346,11 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
       end_n = st_n + nary[ni];
 
       if(nary[ni] > 0) {
-	dary[ni]->AddBlankRow();
-	dary[ni]->CopyFromRow(-1, *src, row);
+        dary[ni]->AddBlankRow();
+        dary[ni]->CopyFromRow(-1, *src, row);
       }
       else {
-	row--;			// negate this row
+        row--;                  // negate this row
       }
     }
   }
@@ -1362,8 +1362,8 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 }
 
 bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
-				    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
-				    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+                                    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+                                    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
   if(!src) { taMisc::Error("taDataProc::SplitRowsNPermuted: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
@@ -1383,8 +1383,8 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
     dary[i]->Copy_NoData(*src);
     if(nary[i] < 0) {
       if(rest_idx >= 0) {
-	taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
-	break;
+        taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
+        break;
       }
       rest_idx = i;
     }
@@ -1394,7 +1394,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
 
   if(n_tot > src->rows) {
     taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
-		    String(src->rows), "last one will be underfilled");
+                    String(src->rows), "last one will be underfilled");
   }
 
   if(rest_idx >=0) {
@@ -1422,11 +1422,11 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
       end_n = st_n + nary[ni];
 
       if(nary[ni] > 0) {
-	dary[ni]->AddBlankRow();
-	dary[ni]->CopyFromRow(-1, *src, idxs[row]);
+        dary[ni]->AddBlankRow();
+        dary[ni]->CopyFromRow(-1, *src, idxs[row]);
       }
       else {
-	row--;			// negate this row
+        row--;                  // negate this row
       }
     }
   }
@@ -1446,7 +1446,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   bool in_place_req = false;
   GetDest(dest, src, "SelectCols", in_place_req);
   dest->StructUpdate(true);
-  spec->GetColumns(src);		// cache column pointers & indicies from names
+  spec->GetColumns(src);                // cache column pointers & indicies from names
   dest->Reset();
   for(int i=0;i<spec->size; i++) {
     DataOpEl* ds = spec->FastEl(i);
@@ -1478,7 +1478,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
 }
 
 bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
-		      DataJoinSpec* spec) {
+                      DataJoinSpec* spec) {
   if(!src_a) { taMisc::Error("taDataProc::Join: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
@@ -1491,13 +1491,13 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     return false;
   }
   dest->StructUpdate(true);
-  spec->GetColumns(src_a, src_b);	// cache column pointers & indicies from names
+  spec->GetColumns(src_a, src_b);       // cache column pointers & indicies from names
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
     //    if(i == spec->col_a.col_idx) continue; // include first guy..
     DataCol* sda = src_a->data.FastEl(i);
     DataCol* nda = (DataCol*)sda->MakeToken();
-    dest->data.Add(nda);	// todo: AddUniqueName?? + no reset + orphan?
+    dest->data.Add(nda);        // todo: AddUniqueName?? + no reset + orphan?
     nda->Copy_NoData(*sda);
   }
   int a_cols = src_a->data.size; // -1 if skipping index value
@@ -1508,7 +1508,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     dest->data.Add(nda);
     nda->Copy_NoData(*sdb);
   }
-  dest->UniqueColNames();	// make them unique!
+  dest->UniqueColNames();       // make them unique!
 
   DataSortSpec sort_spec_a(false);
   taBase::Own(sort_spec_a, NULL);
@@ -1519,7 +1519,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_a.col_lookup);
     ss->order = DataSortEl::ASCENDING;
   }
-  
+
   DataSortSpec sort_spec_b(false);
   taBase::Own(sort_spec_b, NULL);
   {
@@ -1531,11 +1531,11 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   }
 
   DataTable ssrc_a(false);
-  taBase::Own(ssrc_a, NULL);	// activates initlinks, refs
+  taBase::Own(ssrc_a, NULL);    // activates initlinks, refs
   taDataProc::Sort(&ssrc_a, src_a, &sort_spec_a);
 
   DataTable ssrc_b(false);
-  taBase::Own(ssrc_b, NULL);	// activates initlinks, refs
+  taBase::Own(ssrc_b, NULL);    // activates initlinks, refs
   taDataProc::Sort(&ssrc_b, src_b, &sort_spec_b);
 
   int b_row = 0;
@@ -1550,61 +1550,61 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     }
     else {
       while(b_row < ssrc_b.rows-1 && val_b < val_a) {
-	val_b = sdb->GetValAsVar(++b_row);
+        val_b = sdb->GetValAsVar(++b_row);
       }
-      if(val_a == val_b) 
-	got_one = true;
+      if(val_a == val_b)
+        got_one = true;
     }
     if(got_one) {
       Variant orig_b = val_b;
       int bi = b_row;
       while(val_a == val_b) {
-	dest->AddBlankRow();
-	for(int i=0;i<ssrc_a.data.size; i++) {
-	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
-	  DataCol* sda = ssrc_a.data.FastEl(i);
-	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-	  nda->CopyFromRow(-1, *sda, row); // just copy
-	}
-	int col_idx = a_cols;
-	for(int i=0; i < ssrc_b.data.size; i++) {
-	  if(i == spec->col_b.col_idx) continue; // don't include common index
-	  DataCol* sdb = ssrc_b.data.FastEl(i);
-	  DataCol* nda = dest->data.FastEl(col_idx);
-	  nda->CopyFromRow(-1, *sdb, bi); // just copy
-	  col_idx++;
-	}
-	if(bi >= ssrc_b.rows-1) break; // done!
-	val_b = sdb->GetValAsVar(++bi);
+        dest->AddBlankRow();
+        for(int i=0;i<ssrc_a.data.size; i++) {
+          //    if(i == spec->col_a.col_idx) continue; // include first guy..
+          DataCol* sda = ssrc_a.data.FastEl(i);
+          DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+          nda->CopyFromRow(-1, *sda, row); // just copy
+        }
+        int col_idx = a_cols;
+        for(int i=0; i < ssrc_b.data.size; i++) {
+          if(i == spec->col_b.col_idx) continue; // don't include common index
+          DataCol* sdb = ssrc_b.data.FastEl(i);
+          DataCol* nda = dest->data.FastEl(col_idx);
+          nda->CopyFromRow(-1, *sdb, bi); // just copy
+          col_idx++;
+        }
+        if(bi >= ssrc_b.rows-1) break; // done!
+        val_b = sdb->GetValAsVar(++bi);
       }
       if(row < ssrc_a.rows-1) {
-	Variant nxt_a = sda->GetValAsVar(row+1);
-	if(nxt_a != orig_b)
-	  b_row = bi;		// otherwise just go through same b's again
-	if(b_row > ssrc_b.rows-1 && spec->nomatch_warn) {
-	  taMisc::Warning("taDataProc::Join -- at end of src_b table:", src_b->name,
-			  "with:",String(ssrc_a.rows-row-1),
-			  "rows left in src_a!", src_a->name);
-	  break;
-	}
+        Variant nxt_a = sda->GetValAsVar(row+1);
+        if(nxt_a != orig_b)
+          b_row = bi;           // otherwise just go through same b's again
+        if(b_row > ssrc_b.rows-1 && spec->nomatch_warn) {
+          taMisc::Warning("taDataProc::Join -- at end of src_b table:", src_b->name,
+                          "with:",String(ssrc_a.rows-row-1),
+                          "rows left in src_a!", src_a->name);
+          break;
+        }
       }
     }
     else {
       if(spec->type == DataJoinSpec::LEFT) { // add blank!
-	dest->AddBlankRow();
-	for(int i=0;i<ssrc_a.data.size; i++) {
-	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
-	  DataCol* sda = ssrc_a.data.FastEl(i);
-	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-	  nda->CopyFromRow(-1, *sda, row); // just copy
-	}
+        dest->AddBlankRow();
+        for(int i=0;i<ssrc_a.data.size; i++) {
+          //    if(i == spec->col_a.col_idx) continue; // include first guy..
+          DataCol* sda = ssrc_a.data.FastEl(i);
+          DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+          nda->CopyFromRow(-1, *sda, row); // just copy
+        }
       }
-      else {			// left and inner: just skip b's
-	if(spec->nomatch_warn) {
-	  taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
-			  "from table:", src_a->name, "not found in column",
-			  spec->col_b.col_name, "of src_b:", src_b->name);
-	}
+      else {                    // left and inner: just skip b's
+        if(spec->nomatch_warn) {
+          taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
+                          "from table:", src_a->name, "not found in column",
+                          spec->col_b.col_name, "of src_b:", src_b->name);
+        }
       }
     }
   }
@@ -1648,26 +1648,26 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
       DataCol* nda = (DataCol*)sdb->MakeToken();
       dest->data.Add(nda);
       nda->Copy_NoData(*sdb);
-    }    
-    dest->UniqueColNames();	// make them unique!
+    }
+    dest->UniqueColNames();     // make them unique!
     int mx_rows = MAX(src_a->rows, src_b->rows);
     for(int row=0;row<mx_rows;row++) {
       dest->AddBlankRow();
       if(src_a->rows > row) {
-	for(int i=0;i<src_a->data.size; i++) {
-	  DataCol* sda = src_a->data.FastEl(i);
-	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-	  nda->CopyFromRow(row, *sda, row); // just copy
-	}
+        for(int i=0;i<src_a->data.size; i++) {
+          DataCol* sda = src_a->data.FastEl(i);
+          DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+          nda->CopyFromRow(row, *sda, row); // just copy
+        }
       }
       if(src_b->rows > row) {
-	int col_idx = a_cols;
-	for(int i=0; i < src_b->data.size; i++) {
-	  DataCol* sdb = src_b->data.FastEl(i);
-	  DataCol* nda = dest->data.FastEl(col_idx);
-	  nda->CopyFromRow(row, *sdb, row); // just copy
-	  col_idx++;
-	}
+        int col_idx = a_cols;
+        for(int i=0; i < src_b->data.size; i++) {
+          DataCol* sdb = src_b->data.FastEl(i);
+          DataCol* nda = dest->data.FastEl(col_idx);
+          nda->CopyFromRow(row, *sdb, row); // just copy
+          col_idx++;
+        }
       }
     }
     dest->StructUpdate(false);
@@ -1701,7 +1701,7 @@ bool DataProcCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-//		Data One
+//              Data One
 
 void DataOneProg::Initialize() {
 }
@@ -1712,7 +1712,7 @@ void DataOneProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   // this should actually be done by the var, not us!
   //  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
   CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
-	     "data_var variable does not point to a DataTable object");
+             "data_var variable does not point to a DataTable object");
 }
 
 DataTable* DataOneProg::GetData() const {
@@ -1722,7 +1722,7 @@ DataTable* DataOneProg::GetData() const {
 }
 
 //////////////////////////
-//      DataLoop	//
+//      DataLoop        //
 //////////////////////////
 
 void DataLoop::Initialize() {
@@ -1742,9 +1742,11 @@ DataBlock* DataLoop::GetData() {
 
 void DataLoop::GetOrderVar() {
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!order_var) {
-    if(!(order_var = my_prog->vars.FindName("data_loop_order"))) {
+  if (!my_prog) return;
+
+  if (!order_var) {
+    order_var = my_prog->vars.FindName("data_loop_order");
+    if (!order_var) {
       order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       order_var->name = "data_loop_order";
       order_var->DataChanged(DCR_ITEM_UPDATED);
@@ -1757,9 +1759,11 @@ void DataLoop::GetOrderVar() {
 
 void DataLoop::GetIndexVar() {
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!index_var) {
-    if(!(index_var = my_prog->vars.FindName("data_loop_index"))) {
+  if (!my_prog) return;
+
+  if (!index_var) {
+    index_var = my_prog->vars.FindName("data_loop_index");
+    if (!index_var) {
       index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       index_var->name = "data_loop_index";
       index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
@@ -1788,8 +1792,8 @@ void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
     if(data_var->object_val) {
-      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataBlock), 
-		 quiet, rval,"data_var does not point to a data table (or data block)");
+      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataBlock),
+                 quiet, rval,"data_var does not point to a data table (or data block)");
     }
   }
   CheckError(!index_var, quiet, rval, "index_var = NULL");
@@ -1813,7 +1817,7 @@ void DataLoop::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, "data_loop->item_idx_list.FillSeq();");
   prog->AddLine(this, "if(data_loop->order == DataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
   prog->AddLine(this, String("for(") + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->ItemCount(); "
-		+ idx_nm + "++) {");
+                + idx_nm + "++) {");
   prog->IncIndent();
   prog->AddLine(this, "int data_row_idx;");
   prog->AddLine(this, "if(data_loop->order == DataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);");
@@ -1848,13 +1852,13 @@ String DataLoop::GetDisplayName() const {
 }
 
 void DataLoop::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-				    int dcr, void* op1_, void* op2_) {
+                                    int dcr, void* op1_, void* op2_) {
   GetOrderVal();
   UpdateAfterEdit();
 }
 
 ///////////////////////////////////////////////////////
-//		DataVarProg
+//              DataVarProg
 ///////////////////////////////////////////////////////
 
 
@@ -1866,7 +1870,7 @@ void DataVarProg::Initialize() {
 void DataVarProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(row_spec == CUR_ROW)
-    row_var = NULL;		// reset to null
+    row_var = NULL;             // reset to null
 }
 
 void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1912,14 +1916,14 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& id
     return GenCss_OneVarMat(prog, var, idnm, var_no);
 
   // todo: could do some verbose logging here..
-    
+
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
   if(dt) {
     da = dt->FindColName(var->name);
     if(da && da->isString())
-      string_cvt = "(String)";	// cast variant value to a string for setting!
+      string_cvt = "(String)";  // cast variant value to a string for setting!
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
@@ -1930,18 +1934,18 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& id
   else if(row_spec == ROW_NUM) {
     if(set_data)
       prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
-		    + row_var->name + ", " + String(quiet)  + ");");
-    else 
+                    + row_var->name + ", " + String(quiet)  + ");");
+    else
       prog->AddLine(this, var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
-		    + row_var->name + ", " + String(quiet) + ");");
+                    + row_var->name + ", " + String(quiet) + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
       prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
-		    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
-    else 
+                    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
+    else
       prog->AddLine(this, var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
-		    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
+                    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
   }
   return true;
 }
@@ -1953,10 +1957,10 @@ bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String&
   if(dt) {
     da = dt->FindColName(var->name);
     if(da && da->isString())
-      string_cvt = "(String)";	// cast variant value to a string for setting!
+      string_cvt = "(String)";  // cast variant value to a string for setting!
   }
   // in all cases, we need a temp var that is ref counted, to hold the mat slice for the col
-  prog->AddLine(this, "{taMatrix* __tmp_mat;"); 
+  prog->AddLine(this, "{taMatrix* __tmp_mat;");
   prog->IncIndent();
   // first, get the mat slice
   if (row_spec == CUR_ROW) {
@@ -1964,11 +1968,11 @@ bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String&
   }
   else if (row_spec == ROW_NUM) {
     prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
-		  + row_var->name + ", " + String(quiet) + ");");
+                  + row_var->name + ", " + String(quiet) + ");");
   }
   else if (row_spec == ROW_VAL) {
     prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
-		  + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
+                  + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
   }
   if(set_data) {
     prog->AddLine(this, String("__tmp_mat.CopyFrom(") + var->name + ");");
@@ -2000,7 +2004,7 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
 }
 
 ///////////////////////////////////////////
-//		DataVarProgMatrix
+//              DataVarProgMatrix
 
 void DataVarProgMatrix::Initialize() {
 }
@@ -2017,38 +2021,38 @@ bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVarRef& var, const Stri
   if(dt) {
     da = dt->FindColName(col_nm);
     if(da && da->isString())
-      string_cvt = "(String)";	// cast variant value to a string for setting!
+      string_cvt = "(String)";  // cast variant value to a string for setting!
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
       prog->AddLine(this, idnm + ".SetMatrixCellDataByName(" + string_cvt + var->name
-		    + ", \"" + col_nm +"\", " + String(var_no) + ");");
+                    + ", \"" + col_nm +"\", " + String(var_no) + ");");
     else
       prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixCellDataByName(\"" + col_nm
-		    + "\", " + String(var_no) + ");");
+                    + "\", " + String(var_no) + ");");
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)
       prog->AddLine(this, idnm + ".SetMatrixFlatValColName(" + string_cvt + var->name
-		    + ", \"" + col_nm +"\", " + row_var->name + ", " + String(var_no) + ");");
-    else 
+                    + ", \"" + col_nm +"\", " + row_var->name + ", " + String(var_no) + ");");
+    else
       prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixFlatValColName(\"" + col_nm + "\", "
-		    + row_var->name + ", " + String(var_no) + ");");
+                    + row_var->name + ", " + String(var_no) + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
       prog->AddLine(this, idnm + ".SetMatrixFlatValColRowName(" + string_cvt + var->name
-		    + ", \"" + col_nm + "\", \"" + row_var->name + "\", " + row_var->name
-		    + ", " + String(var_no) + ");");
-    else 
+                    + ", \"" + col_nm + "\", \"" + row_var->name + "\", " + row_var->name
+                    + ", " + String(var_no) + ");");
+    else
       prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixFlatValColRowName(\"" + col_nm +"\", \""
-		    + row_var->name + "\", " + row_var->name + ", " + String(var_no) + ");");
+                    + row_var->name + "\", " + row_var->name + ", " + String(var_no) + ");");
   }
   return true;
 }
 
 ///////////////////////////////////////////
-//		Reset Data Rows
+//              Reset Data Rows
 
 void ResetDataRows::Initialize() {
 }
@@ -2070,7 +2074,7 @@ void ResetDataRows::GenCssBody_impl(Program* prog) {
 }
 
 ///////////////////////////////////////////
-//		Add New Data Row
+//              Add New Data Row
 
 void AddNewDataRow::Initialize() {
 }
@@ -2115,7 +2119,7 @@ void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-//		Src Dest
+//              Src Dest
 
 void DataSrcDestProg::Initialize() {
 }
@@ -2126,7 +2130,7 @@ void DataSrcDestProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   // should be done by var, not us
 //   CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_data_var->object_type != &TA_DataTable, quiet, rval,
-	     "src_data_var variable does not point to a DataTable object");
+             "src_data_var variable does not point to a DataTable object");
   // NULL OK in dest_data_var!
 }
 
@@ -2190,7 +2194,7 @@ void DataSortProg::GenCssBody_impl(Program* prog) {
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, String("taDataProc::Sort(") + dest_data_var->name + ", " + src_data_var->name
-		  + ", dsp->sort_spec);");
+                  + ", dsp->sort_spec);");
   }
   else {
     prog->AddLine(this, String("taDataProc::Sort(NULL, ") + src_data_var->name + ", dsp->sort_spec);");
@@ -2249,16 +2253,16 @@ void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
     return;
   }
   prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
-    prog->AddLine(this, "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
-		  src_data_var->name + ", dsp->select_spec);");
+    prog->AddLine(this, "taDataProc::SelectRows(" + dest_data_var->name + ", " +
+                  src_data_var->name + ", dsp->select_spec);");
   }
   else {
-    prog->AddLine(this, "taDataProc::SelectRows(NULL, " + 
-		  src_data_var->name + ", dsp->select_spec);");
+    prog->AddLine(this, "taDataProc::SelectRows(NULL, " +
+                  src_data_var->name + ", dsp->select_spec);");
   }
   if(dest_data_var) {
     prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
@@ -2311,20 +2315,20 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 void DataSelectColsProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
     prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
-		  + ", dsp->select_spec);");
+                  + ", dsp->select_spec);");
   }
   else {
     prog->AddLine(this, "taDataProc::SelectCols(NULL, " + src_data_var->name
-		  + ", dsp->select_spec);");
+                  + ", dsp->select_spec);");
   }
   if(dest_data_var) {
     prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
@@ -2380,16 +2384,16 @@ void DataGroupProg::GenCssBody_impl(Program* prog) {
     return;
   }
   prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
-		  + ", dsp->group_spec);");
+                  + ", dsp->group_spec);");
   }
   else {
     prog->AddLine(this, "taDataProc::Group(NULL, " + src_data_var->name
-		  + ", dsp->group_spec);");
+                  + ", dsp->group_spec);");
   }
   if(dest_data_var) {
     prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
@@ -2439,7 +2443,7 @@ void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   // should be done by var, not us
 //   CheckError(!src_b_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_b_data_var->object_type != &TA_DataTable, quiet, rval,
-	     "src_b_data_var variable does not point to a DataTable object");
+             "src_b_data_var variable does not point to a DataTable object");
 }
 
 void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2460,20 +2464,20 @@ DataTable* DataJoinProg::GetSrcBData() {
 void DataJoinProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var || !src_b_data_var) {
     prog->AddLine(this, "// DataJoin: src_data_var or src_b_data_var not set!  cannot run",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
-    prog->AddLine(this, "taDataProc::Join(" + dest_data_var->name + ", " + 
-		  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
+    prog->AddLine(this, "taDataProc::Join(" + dest_data_var->name + ", " +
+                  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
   }
   else {
-    prog->AddLine(this, "taDataProc::Join(NULL, " + 
-		  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
+    prog->AddLine(this, "taDataProc::Join(NULL, " +
+                  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
   }
   if(dest_data_var) {
     prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
@@ -2501,7 +2505,7 @@ void DataCalcLoop::UpdateAfterEdit_impl() {
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];
     if(pe->InheritsFrom(&TA_DataCalcAddDestRow) || pe->InheritsFrom(&TA_DataCalcSetDestRow))
-      pe->UpdateAfterEdit();	// get the data tables!
+      pe->UpdateAfterEdit();    // get the data tables!
   }
 }
 
@@ -2519,7 +2523,7 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
   pv->SetVarFlag(ProgVar::LOCAL_VAR);
-  if(!ds->col_lookup) return;	// nothing to do
+  if(!ds->col_lookup) return;   // nothing to do
   ValType vt = ds->col_lookup->valType();
   if(ds->col_lookup->is_matrix) {
     pv->var_type = ProgVar::T_Object;
@@ -2532,7 +2536,7 @@ void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
       pv->object_type = &TA_int_Matrix;
     else if(vt == VT_STRING)
       pv->object_type = &TA_String_Matrix;
-    else 
+    else
       pv->object_type = &TA_taMatrix;
   }
   else {
@@ -2656,7 +2660,7 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
   }
   src_cols.GetColumns(GetSrcData());
   prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
@@ -2666,14 +2670,14 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "DataOpList common_dest_cols_named; // only the cols named in dest_cols");
     prog->AddLine(this, "DataOpList common_src_cols_named;  // only the cols named in src_cols");
     prog->AddLine(this, String("taDataProc::GetCommonCols(") + dest_data_var->name + ", "
-		  + src_data_var->name + ", common_dest_cols, common_src_cols);");
+                  + src_data_var->name + ", common_dest_cols, common_src_cols);");
     prog->AddLine(this, "common_dest_cols_named = common_dest_cols; common_src_cols_named = common_src_cols;");
     prog->AddLine(this, "taDataProc::GetColIntersection(common_dest_cols_named, dcl->dest_cols);");
     prog->AddLine(this, "taDataProc::GetColIntersection(common_dest_cols_named, dcl->src_cols);");
     prog->AddLine(this, "taDataProc::GetColIntersection(common_src_cols_named, dcl->dest_cols);");
     prog->AddLine(this, "taDataProc::GetColIntersection(common_src_cols_named, dcl->src_cols);");
     prog->AddLine(this, dest_data_var->name + "->StructUpdate(true);");
-  }    
+  }
   prog->AddLine(this, src_data_var->name + "->StructUpdate(true);");
 
   prog->AddLine(this, String("for(int src_row=0; src_row < ") + src_data_var->name + ".rows; src_row++) {");
@@ -2689,13 +2693,13 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
       ValType vt = da->valType();
       String mat_type = "taMatrix";
       if(vt == VT_FLOAT)
-	mat_type = "float_Matrix";
+        mat_type = "float_Matrix";
       else if(vt == VT_DOUBLE)
-	mat_type = "double_Matrix";
+        mat_type = "double_Matrix";
       else if(vt == VT_INT)
-	mat_type = "int_Matrix";
+        mat_type = "int_Matrix";
       else if(vt == VT_STRING)
-	mat_type = "String_Matrix";
+        mat_type = "String_Matrix";
       rval += mat_type + "* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(";
     }
     else {
@@ -2785,22 +2789,22 @@ void DataCalcAddDestRow::UpdateAfterEdit_impl() {
 void DataCalcAddDestRow::InitLinks() {
   inherited::InitLinks();
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcAddDestRow::Copy_(const DataCalcAddDestRow& cp) {
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
-		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
+                "DataCalcLoop::dest_data_var is NULL, but is needed")) return;
   // should be done by var, not us
 //   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
-	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
+             "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
 void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
@@ -2808,13 +2812,13 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcAddDestRow Error -- DataCalcLoop not found!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* dd = dcl->GetDestData();
   if(!dd) {
     prog->AddLine(this, "// DataCalcAddDestRow Error -- dest_data_var not set!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
 
@@ -2831,13 +2835,13 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
       ValType vt = da->valType();
       String mat_type = "taMatrix";
       if(vt == VT_FLOAT)
-	mat_type = "float_Matrix";
+        mat_type = "float_Matrix";
       else if(vt == VT_DOUBLE)
-	mat_type = "double_Matrix";
+        mat_type = "double_Matrix";
       else if(vt == VT_INT)
-	mat_type = "int_Matrix";
+        mat_type = "int_Matrix";
       else if(vt == VT_STRING)
-	mat_type = "String_Matrix";
+        mat_type = "String_Matrix";
       rval += mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(";
     }
     else {
@@ -2886,22 +2890,22 @@ void DataCalcSetDestRow::UpdateAfterEdit_impl() {
 void DataCalcSetDestRow::InitLinks() {
   inherited::InitLinks();
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcSetDestRow::Copy_(const DataCalcSetDestRow& cp) {
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
-		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
+                "DataCalcLoop::dest_data_var is NULL, but is needed")) return;
   // should be done by var, not us
 //   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
-	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
+             "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
 void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
@@ -2909,19 +2913,19 @@ void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcSetDestRow Error -- DataCalcLoop not found!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* dd = dcl->GetDestData();
   if(!dd) {
     prog->AddLine(this, "// DataCalcSetDestRow Error -- dest_data_var not set!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
 
   prog->AddLine(this, String("if(") + dcl->dest_data_var->name
-	+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }",
-		ProgLine::MAIN_LINE);
+        + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }",
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   dcl->dest_cols.GetColumns(dd);
   for(int i=0;i<dcl->dest_cols.size; i++) {
@@ -2978,11 +2982,11 @@ void DataCalcSetSrcRow::UpdateAfterEdit_impl() {
 void DataCalcSetSrcRow::InitLinks() {
   inherited::InitLinks();
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcSetSrcRow::Copy_(const DataCalcSetSrcRow& cp) {
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -2995,13 +2999,13 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* sd = dcl->GetSrcData();
   if(!sd) {
     prog->AddLine(this, "// DataCalcSetSrcRow Error -- src_data_var not set!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
 
@@ -3064,23 +3068,23 @@ void DataCalcCopyCommonCols::UpdateAfterEdit_impl() {
 void DataCalcCopyCommonCols::InitLinks() {
   inherited::InitLinks();
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcCopyCommonCols::Copy_(const DataCalcCopyCommonCols& cp) {
   CopyInner_(cp);
   GetDataPtrsFmLoop();
-}  
+}
 
 void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
-		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
+                "DataCalcLoop::dest_data_var is NULL, but is needed")) return;
   // should be done by var, not us
 //   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
-	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
+             "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
 void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
@@ -3088,7 +3092,7 @@ void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
     prog->AddLine(this, "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!",
-		  ProgLine::MAIN_LINE);
+                  ProgLine::MAIN_LINE);
     return;
   }
   if(!dcl->dest_data_var) {
@@ -3097,13 +3101,13 @@ void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
   }
 
   prog->AddLine(this, String("if(") + dcl->dest_data_var->name
-		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }", ProgLine::MAIN_LINE);
+                + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
-  if(only_named_cols) 
-    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
-	  dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);");
+  if(only_named_cols)
+    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " +
+          dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);");
   else
-    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
-		  dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);");
+    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " +
+                  dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);");
 }
 

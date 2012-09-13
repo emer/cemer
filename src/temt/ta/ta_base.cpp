@@ -780,37 +780,37 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
     }
     else if(mat->InheritsFrom(&TA_int_Matrix)) {
       if(cont_dims == 1) {
-	if(mat->dims() == 1 && mat->dim(0) == 1) {
-	  mode = IDX_COORD;
-	}
-	else if(mat->dims() == 1 || (mat->dims() == 2 && mat->dim(0) == 1)) {
-	  mode = IDX_COORDS;
-	}
-	else if(mat->dims() == 2 && mat->dim(0) == 3 && mat->dim(1) == 1) {
-	  mode = IDX_SLICE;
-	}
+        if(mat->dims() == 1 && mat->dim(0) == 1) {
+          mode = IDX_COORD;
+        }
+        else if(mat->dims() == 1 || (mat->dims() == 2 && mat->dim(0) == 1)) {
+          mode = IDX_COORDS;
+        }
+        else if(mat->dims() == 2 && mat->dim(0) == 3 && mat->dim(1) == 1) {
+          mode = IDX_SLICE;
+        }
       }
       else {
-	if(mat->dims() == 1 && mat->dim(0) == cont_dims) { // dims must be exact match
-	  mode = IDX_COORD;
-	}
-	else if(mat->dims() == 2 && mat->dim(0) == 3 &&
-		(mat->dim(1) >= 1 && mat->dim(1) <= cont_dims)) {
-	  mode = IDX_SLICE;
-	}
-	else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
-	  mode = IDX_COORDS;
-	}
-	if(mode == IDX_UNK) {
-	  String matstr;
-	  mat->Print(matstr);
-	  TestError(true, "Index Decode",
-		    "index access failed, most likely because the number of dimensions provided did not match the dimensionality of the container:", String(cont_dims), " index provided was:", matstr);
-	}
+        if(mat->dims() == 1 && mat->dim(0) == cont_dims) { // dims must be exact match
+          mode = IDX_COORD;
+        }
+        else if(mat->dims() == 2 && mat->dim(0) == 3 &&
+                (mat->dim(1) >= 1 && mat->dim(1) <= cont_dims)) {
+          mode = IDX_SLICE;
+        }
+        else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
+          mode = IDX_COORDS;
+        }
+        if(mode == IDX_UNK) {
+          String matstr;
+          mat->Print(matstr);
+          TestError(true, "Index Decode",
+                    "index access failed, most likely because the number of dimensions provided did not match the dimensionality of the container:", String(cont_dims), " index provided was:", matstr);
+        }
       }
     }
     else {
-      mode = IDX_MISC;		// typically a Variant_Matrix
+      mode = IDX_MISC;          // typically a Variant_Matrix
     }
   }
   return mode;
@@ -820,123 +820,123 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
   switch(mode) {
   case IDX_IDX: {
     if(TestError(!idx.isNumeric(), "IndexModeValidate::IDX_IDX",
-		 "index is not numeric type:",
-		 idx.getTypeAsString()))
+                 "index is not numeric type:",
+                 idx.getTypeAsString()))
       return false;
     return true;
     break;
   }
   case IDX_NAME: {
     if(TestError(!idx.isStringType(), "IndexModeValidate::IDX_NAME/CONTAINS",
-		 "index is not String type:",
-		 idx.getTypeAsString()))
+                 "index is not String type:",
+                 idx.getTypeAsString()))
       return false;
     const String& nm = idx.toString();
     if(TestError(nm.empty(), "IndexModeValidate::IDX_NAME/CONTAINS",
-		 "index string is empty"))
+                 "index string is empty"))
       return false;
     return true;
     break;
   }
   case IDX_NAMES: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_NAMES",
-		 "index is not taMatrix type:",
-		 idx.getTypeAsString()))
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
       return false;
     String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "IndexModeValidate::IDX_NAMES",
-		 "index matrix is NULL or not a String_Matrix"))
+                 "index matrix is NULL or not a String_Matrix"))
       return false;
     return true;
     break;
   }
   case IDX_COORD: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_COORD",
-		 "index is not taMatrix type:",
-		 idx.getTypeAsString()))
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
       return false;
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "IndexModeValidate::IDX_COORD",
-		 "index matrix is NULL or not an int_Matrix"))
+                 "index matrix is NULL or not an int_Matrix"))
       return false;
     if(TestError(cmat->dims() != 1, "IndexModeValidate::IDX_COORD",
-		 "index matrix does not have dims = 1"))
+                 "index matrix does not have dims = 1"))
       return false;
     if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORD",
-		 "index matrix dim(0):", String(cmat->dim(0)),
-		 "is not size of container coordinates:", String(cont_dims)))
+                 "index matrix dim(0):", String(cmat->dim(0)),
+                 "is not size of container coordinates:", String(cont_dims)))
       return false;
     return true;
     break;
   }
   case IDX_COORDS: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_COORDS",
-		 "index is not taMatrix type:",
-		 idx.getTypeAsString()))
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
       return false;
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "IndexModeValidate::IDX_COORDS",
-		 "index matrix is NULL or not an int_Matrix"))
+                 "index matrix is NULL or not an int_Matrix"))
       return false;
     if(cont_dims == 1 && cmat->dims() == 1) {
       // empty is ok..
       // if(TestError(cmat->size == 0, "IndexModeValidate::IDX_COORDS",
-      // 		   "index matrix is empty -- no coordinates"))
-      // 	return false;
+      //                   "index matrix is empty -- no coordinates"))
+      //        return false;
     }
     else {
       if(TestError(cmat->dims() != 2, "IndexModeValidate::IDX_COORDS",
-		   "index matrix does not have dims = 2"))
-	return false;
+                   "index matrix does not have dims = 2"))
+        return false;
       if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORDS",
-		   "index matrix dim(0):", String(cmat->dim(0)),
-		   "is not size of container coordinates:", String(cont_dims)))
-	return false;
+                   "index matrix dim(0):", String(cmat->dim(0)),
+                   "is not size of container coordinates:", String(cont_dims)))
+        return false;
     }
     return true;
     break;
   }
   case IDX_SLICE: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_SLICE",
-		 "index is not taMatrix type:",
-		 idx.getTypeAsString()))
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
       return false;
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "IndexModeValidate::IDX_SLICE",
-		 "index matrix is NULL or not an int_Matrix"))
+                 "index matrix is NULL or not an int_Matrix"))
       return false;
     if(TestError(cmat->dims() != 2, "IndexModeValidate::IDX_SLICE",
-		 "index matrix does not have dims = 2"))
-	return false;
+                 "index matrix does not have dims = 2"))
+        return false;
     if(TestError(cmat->dim(0) != 3, "IndexModeValidate::IDX_SLICE",
-		 "index matrix dim(0):", String(cmat->dim(0)), "is not = 3"))
+                 "index matrix dim(0):", String(cmat->dim(0)), "is not = 3"))
       return false;
     if(TestError(cmat->dim(1) != cont_dims, "IndexModeValidate::IDX_SLICE",
-		 "index matrix dim(1):", String(cmat->dim(1)),
-		 "is not size of container coordinates:", String(cont_dims)))
+                 "index matrix dim(1):", String(cmat->dim(1)),
+                 "is not size of container coordinates:", String(cont_dims)))
       return false;
     return true;
     break;
   }
   case IDX_MASK: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_MASK",
-		 "index is not taMatrix type:",
-		 idx.getTypeAsString()))
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
       return false;
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "IndexModeValidate::IDX_MASK",
-		 "index matrix is NULL or not a byte_Matrix"))
+                 "index matrix is NULL or not a byte_Matrix"))
       return false;
     if(TestError(cmat->dims() != cont_dims, "IndexModeValidate::IDX_MASK",
-		 "index matrix dims:", String(cmat->dims()),
-		 "is not size of container coordinates:", String(cont_dims)))
+                 "index matrix dims:", String(cmat->dims()),
+                 "is not size of container coordinates:", String(cont_dims)))
       return false;
     // todo: needs further checks on cont dims
     return true;
     break;
   }
   case IDX_MISC: {
-    return true;		// nothing to do here
+    return true;                // nothing to do here
     break;
   }
   case IDX_UNK:
@@ -949,18 +949,18 @@ int taBase::IterCount() const {
   if(!ElView()) return ElemCount();
   IndexMode vmd = ElViewMode();
   if(vmd == IDX_COORDS) {
-    return ElView()->frames();	// outer dim value
+    return ElView()->frames();  // outer dim value
   }
   else if(vmd == IDX_MASK) {
     byte_Matrix* bmat = (byte_Matrix*)ElView();
     int mx = MIN(bmat->size, ElemCount());
     int sum = 0;
     for(int i=0; i<mx; i++) {
-      if(bmat->FastEl_Flat(i) > 0) sum++; 
+      if(bmat->FastEl_Flat(i) > 0) sum++;
     }
     return sum;
   }
-  return 0;			// nothing else supported by this base guy
+  return 0;                     // nothing else supported by this base guy
 }
 
 bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
@@ -968,34 +968,34 @@ bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
   if(mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(vmat);
     if(TestError(!cmat, "IterValidate::IDX_COORDS",
-		 "index matrix is NULL or not an int_Matrix"))
+                 "index matrix is NULL or not an int_Matrix"))
       return false;
     if(cont_dims == 1 && cmat->dims() == 1) {
     }
     else {
       if(TestError(cmat->dims() != 2, "IterValidate::IDX_COORDS",
-		   "index matrix does not have dims = 2"))
-	return false;
+                   "index matrix does not have dims = 2"))
+        return false;
       if(TestError(cmat->dim(0) < cont_dims, "IterValidate::IDX_COORDS",
-		   "index matrix dim(0):", String(cmat->dim(0)),
-		   "is not size of container coordinates:", String(cont_dims)))
-	return false;
+                   "index matrix dim(0):", String(cmat->dim(0)),
+                   "is not size of container coordinates:", String(cont_dims)))
+        return false;
     }
   }
   else if(mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(vmat);
     if(TestError(!cmat, "IterValidate::IDX_MASK",
-		 "index matrix is NULL or not a byte_Matrix"))
+                 "index matrix is NULL or not a byte_Matrix"))
       return false;
     if(TestError(cmat->dims() != cont_dims, "IterValidate::IDX_MASK",
-		 "index matrix dims:", String(cmat->dims()),
-		 "is not size of container coordinates:", String(cont_dims)))
+                 "index matrix dims:", String(cmat->dims()),
+                 "is not size of container coordinates:", String(cont_dims)))
       return false;
     if(ElViewMode() == IDX_MASK) {
       if(TestError(cmat->size != ElemCount(), "IterValidate::IDX_MASK",
-		   "el_view size:", String(cmat->size), "not equal to size of list:",
-		   String(ElemCount())))
-	return false;
+                   "el_view size:", String(cmat->size), "not equal to size of list:",
+                   String(ElemCount())))
+        return false;
     }
   }
   else {
@@ -1028,7 +1028,7 @@ int taBase::IterFirstIndex(taBaseItr*& itr) const {
 bool taBase::IterFirst_impl(taBaseItr*& itr) const {
   if(!itr) return false;
   itr->count = 0;
-  itr->el_idx = 0;		// just to be sure
+  itr->el_idx = 0;              // just to be sure
   if(!ElView()) {
     if(ElemCount() > 0) return true;
     return false;
@@ -1049,8 +1049,8 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
       if(cmat->FastEl_Flat(i)) {
-	itr->el_idx = i;
-	return true;		// byte_matrix guaranteed to be same size as list
+        itr->el_idx = i;
+        return true;            // byte_matrix guaranteed to be same size as list
       }
     }
   }
@@ -1083,8 +1083,8 @@ bool taBase::IterNext_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
       if(cmat->FastEl_Flat(i)) { // true
-	itr->el_idx = i;     // byte_matrix guaranteed to be same size as list
-	return true;
+        itr->el_idx = i;     // byte_matrix guaranteed to be same size as list
+        return true;
       }
     }
   }
@@ -1097,8 +1097,8 @@ bool taBase::FixSliceValsFromSize(int& start, int& end, int sz) const {
   if(start > sz-1) start = sz-1; // keep in bounds
   if(end > sz) end = sz;
   if(TestError(end < start, "Slice Vals",
-	       "slice end is before start.  start:", String(start),
-	       "end:", String(end)))
+               "slice end is before start.  start:", String(start),
+               "end:", String(end)))
     return false;
   return true;
 }
@@ -1118,15 +1118,14 @@ String taBase::GetPath_Long(taBase* ta, taBase* par_stop) const {
   else if(this != par_stop)
     rval = par->GetPath_Long((taBase*)this, par_stop);
 
-  if((par != NULL) && (GetName() != ""))
+  if ((par != NULL) && (GetName() != ""))
     rval += "(" + GetName() + ")";
 
-  if(ta != NULL) {
-    MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
+  if (ta != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
     }
-    else if((md = FindMemberPtr(ta)) != NULL) {
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
@@ -1143,17 +1142,22 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
   String rval;
   taBase* par = GetOwner();
   if (par == NULL) {
-    if (ta == NULL) rval = "root";
-  } else if (this != par_stop)
+    if (ta == NULL) {
+      rval = "root";
+    }
+  }
+  else if (this != par_stop) {
     rval = par->GetPath((taBase*)this, par_stop);
+  }
 
   if (ta != NULL) {
-    MemberDef* md;
-    if ((md = FindMember(ta)) != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
-    } else if ((md = FindMemberPtr(ta)) != NULL) {
+    }
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
-    } else {
+    }
+    else {
       rval += ".?.";
     }
   }
@@ -1161,7 +1165,7 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
 }
 
 String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
-  if(taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
+  if (taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
 
   if ((this == par_stop) && (ta == NULL))
     return ".";
@@ -1169,17 +1173,22 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
   String rval;
   taBase* par = GetOwner();
   if (par == NULL) {
-    if (ta == NULL) rval = "root";
-  } else if (this != par_stop)
+    if (ta == NULL) {
+      rval = "root";
+    }
+  }
+  else if (this != par_stop) {
     rval = par->GetPathNames((taBase*)this, par_stop);
+  }
 
   if (ta != NULL) {
-    MemberDef* md;
-    if ((md = FindMember(ta)) != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
-    } else if ((md = FindMemberPtr(ta)) != NULL) {
+    }
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
-    } else {
+    }
+    else {
       rval += ".?.";
     }
   }
@@ -1737,8 +1746,8 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     String msg;
     msg << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
-	<< ", parent path = " << GetPathNames()
-	<< ", el_path = " << el_path;
+        << ", parent path = " << GetPathNames()
+        << ", el_path = " << el_path;
     taMisc::Info(msg);
   }
   return nw_el;
@@ -1852,7 +1861,7 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
 }
 
 int taBase::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			  void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+                          void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   TypeDef* td = GetTypeDef();
   int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, par_typ, memb_def, sc);
   if(rval > 0)
@@ -2695,8 +2704,7 @@ void taBase::BrowseMe() {
 bool taBase::Edit() {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
-  taiEdit* ie;
-  if((ie = GetTypeDef()->ie) != NULL) {
+  if (taiEdit *ie = GetTypeDef()->ie) {
     //note: taiEdit looks up color, if hinting enabled
     return ie->Edit((void*)this, false);
   }
@@ -2708,8 +2716,7 @@ bool taBase::EditDialog(bool modal) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   if (modal) {
-    taiEdit* ie;
-    if ((ie = GetTypeDef()->ie)) {
+    if (taiEdit *ie = GetTypeDef()->ie) {
       //note: taiEdit looks up color, if hinting enabled
       return ie->EditDialog((void*)this, false, true); // r/w, modal
     }
@@ -2799,7 +2806,7 @@ void taBase::CallFun(const String& fun_name) {
 void taBase::CallObjFun(taBase* obj, const String& fun_name) {
   if(!obj) return;
   obj->CallFun(fun_name);
-  obj->UpdateAfterEdit();	// this is a program-level function so make it safe
+  obj->UpdateAfterEdit();       // this is a program-level function so make it safe
 }
 
 void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& str) {
@@ -2821,8 +2828,8 @@ void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& st
   }
   if(!md) {
     taMisc::Error("SetMemberStr", "member:", memb_name,
-		  "not found in object of type:",
-		  obj->GetTypeDef()->name);
+                  "not found in object of type:",
+                  obj->GetTypeDef()->name);
     return;
   }
   md->type->SetValStr(str, mbase, NULL, md);
@@ -2847,8 +2854,8 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
   }
   if(!md) {
     taMisc::Error("SetMemberVar", "member:", memb_name,
-		  "not found in object of type:",
-		  obj->GetTypeDef()->name);
+                  "not found in object of type:",
+                  obj->GetTypeDef()->name);
     return;
   }
   md->type->SetValVar(val, mbase, NULL, md);
@@ -3013,9 +3020,9 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
        rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
       // this is unfortunate but possible
       taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
-		   rec->diff_odr->GetDisplayName(), "=", rec->value);
+                   rec->diff_odr->GetDisplayName(), "=", rec->value);
       taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
-		   rec->GetDisplayName(), "=", rec->diff_odr->value);
+                   rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_b->GetOwner();
@@ -3043,9 +3050,9 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
                                          rec->diff_odr->par_addr, rec->diff_odr->mdef);
         }
         if(tab_par_b) {
-	  tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
-	  tab_par_b->UpdateAfterEdit();
-	}
+          tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+          tab_par_b->UpdateAfterEdit();
+        }
 
         if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
           DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
@@ -3057,9 +3064,9 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
           rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
         }
         if(tab_par_a) {
-	  tab_par_a->MemberUpdateAfterEdit(rec->mdef);
-	  tab_par_a->UpdateAfterEdit();
-	}
+          tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+          tab_par_a->UpdateAfterEdit();
+        }
       }
       continue;
     }
@@ -3069,7 +3076,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
       taMisc::Info("Copying A -> B:", tab_a_path, "->", tab_b_path, "\n",
-		   rec->diff_odr->GetDisplayName(), "=", rec->value);
+                   rec->diff_odr->GetDisplayName(), "=", rec->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_b->GetOwner();
@@ -3092,16 +3099,16 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
           }
         }
         if(tab_par_b) {
-	  tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
-	  tab_par_b->UpdateAfterEdit();
-	}
+          tab_par_b->MemberUpdateAfterEdit(rec->diff_odr->mdef);
+          tab_par_b->UpdateAfterEdit();
+        }
       }
       continue;
     }
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
       taMisc::Info("Copying B -> A:", tab_b_path, "->", tab_a_path, "\n",
-		   rec->GetDisplayName(), "=", rec->diff_odr->value);
+                   rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
         // need to replace old guy with new one
         taBase* down = tab_a->GetOwner();
@@ -3124,9 +3131,9 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
           }
         }
         if(tab_par_a) {
-	  tab_par_a->MemberUpdateAfterEdit(rec->mdef);
-	  tab_par_a->UpdateAfterEdit();
-	}
+          tab_par_a->MemberUpdateAfterEdit(rec->mdef);
+          tab_par_a->UpdateAfterEdit();
+        }
       }
       continue;
     }
@@ -4236,7 +4243,7 @@ bool taList_impl::SetElView(taMatrix* view_mat, IndexMode md) {
 taList_impl* taList_impl::NewElView(taMatrix* view_mat, IndexMode md) const {
   if(!IterValidate(view_mat, md, 1)) return NULL;
   taList_impl* rval = (taList_impl*)MakeToken(); // make a token of me
-  rval->LinkCopyLeaves(*this);	       // make links to all my guys
+  rval->LinkCopyLeaves(*this);         // make links to all my guys
   rval->SetElView(view_mat, md);
   return rval;
 }
@@ -4256,10 +4263,10 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_NAME: {
     const String& nm = idx.toString();
     int_Matrix* imat = new int_Matrix(1,0);
-    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm && itm->GetName().matches_wildcard(nm)) {
-	imat->Add(FOREACH_itr->el_idx); // add absolute index of item
+        imat->Add(FOREACH_itr->el_idx); // add absolute index of item
       }
     }
     if(imat->size == 1) {
@@ -4274,16 +4281,16 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_NAMES: {
     String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
     int_Matrix* imat = new int_Matrix(1,0);
-    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm) {
-	int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
-	TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
-	  const String nm = mitm.toString();
-	  if(itm->GetName().matches_wildcard(nm)) {
-	    imat->Add(el_idx); // add absolute index of item
-	  }
-	}
+        int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+        TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+          const String nm = mitm.toString();
+          if(itm->GetName().matches_wildcard(nm)) {
+            imat->Add(el_idx); // add absolute index of item
+          }
+        }
       }
     }
     if(imat->size == 1) {
@@ -4326,12 +4333,12 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     int_Matrix* imat = new int_Matrix(1,0);
     if(step > 0) {
       for(int i = start; i < end; i += step) {
-	imat->Add(i);
+        imat->Add(i);
       }
     }
     else {
       for(int i = end-1; i >= start; i += step) {
-	imat->Add(i);
+        imat->Add(i);
       }
     }
     taList_impl* nwvw = NewElView(imat, IDX_COORDS);
@@ -4341,8 +4348,8 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_MASK: {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
     if(TestError(cmat->dim(0) != ElemCount(), "Elem::IDX_MASK",
-		 "index matrix dim(0):", String(cmat->dim(0)),
-		 "is not size of list:", String(ElemCount())))
+                 "index matrix dim(0):", String(cmat->dim(0)),
+                 "is not size of list:", String(ElemCount())))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
       // take intersection of the existing mask
@@ -4358,33 +4365,33 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_MISC: {
     Variant_Matrix* cmat = dynamic_cast<Variant_Matrix*>(idx.toMatrix());
     if(TestError(!cmat, "Elem::IDX_MISC",
-		 "index matrix is NULL or not a Variant_Matrix"))
+                 "index matrix is NULL or not a Variant_Matrix"))
       return false;
     int_Matrix* imat = new int_Matrix(1,0);
-    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm) {
-	int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
-	TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
-	  // catch all for any kind of variant
-	  if(mitm.isTypeDef()) {
-	    if(itm->InheritsFrom(mitm.toTypeDef())) {
-	      imat->Add(el_idx); // add absolute index of item
-	    }
-	  }
-	  else if(mitm.isStringType()) {
-	    const String nm = mitm.toString();
-	    if(itm->GetName().matches_wildcard(nm)) {
-	      imat->Add(el_idx); // add absolute index of item
-	    }
-	  }
-	  else if(mitm.isNumeric()) {
-	    int el_idx = mitm.toInt();
-	    if(el_idx < 0) el_idx += ElemCount();
-	    if(el_idx < 0 || el_idx >= ElemCount()) continue; // skip out of range at this point
-	    imat->Add(el_idx); // add absolute index of item
-	  }
-	}
+        int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+        TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+          // catch all for any kind of variant
+          if(mitm.isTypeDef()) {
+            if(itm->InheritsFrom(mitm.toTypeDef())) {
+              imat->Add(el_idx); // add absolute index of item
+            }
+          }
+          else if(mitm.isStringType()) {
+            const String nm = mitm.toString();
+            if(itm->GetName().matches_wildcard(nm)) {
+              imat->Add(el_idx); // add absolute index of item
+            }
+          }
+          else if(mitm.isNumeric()) {
+            int el_idx = mitm.toInt();
+            if(el_idx < 0) el_idx += ElemCount();
+            if(el_idx < 0 || el_idx >= ElemCount()) continue; // skip out of range at this point
+            imat->Add(el_idx); // add absolute index of item
+          }
+        }
       }
     }
     if(imat->size == 1)
@@ -4405,7 +4412,7 @@ taBaseItr* taList_impl::Iter() const {
   return rval;
 }
 
-Variant	taList_impl::IterElem(taBaseItr* itr) const {
+Variant taList_impl::IterElem(taBaseItr* itr) const {
   if(!itr) return _nilVariant;
   return VarEl(itr->el_idx);
 }
@@ -4571,7 +4578,7 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taList_impl::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-	       void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+               void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
@@ -4592,7 +4599,7 @@ taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  Mem
 
   // this is the rep of this item
   taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def,
-					 (void*)this, (void*)par, par_typ, par_od);
+                                         (void*)this, (void*)par, par_typ, par_od);
   if(GetOwner()) {
     lsodr->tabref = new taBaseRef;
     ((taBaseRef*)lsodr->tabref)->set((taBase*)this);
@@ -4784,8 +4791,8 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
   if(taMisc::verbose_load >= taMisc::TRACE) {
     String msg;
     msg << "Success: Leaving TypeDef::Dump_Load_Path_parent, type: " << ld_el_typ->name
-	<< ", parent path = " << GetPathNames()
-	<< ", el_path = " << el_path;
+        << ", parent path = " << GetPathNames()
+        << ", el_path = " << el_path;
     taMisc::Info(msg);
   }
   return nw_el;
@@ -4843,7 +4850,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
           m_trg_load_size = idx; // target loading size
           if(m_trg_load_size == 0) {
             if(size > 0)
-	      taMisc::Info("load reset size:", String(size));
+              taMisc::Info("load reset size:", String(size));
             taList_impl::RemoveAll();
             // normal load size enforcement occurs on last item loaded --
             // if no items to load, it never happens!  This is the enforcer!
@@ -5034,28 +5041,28 @@ taBase* taList_impl::FindNameType_(const String& item_nm) const {
 }
 
 String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
-  if((((taBase*) this) == par_stop) && (ta == NULL))
+  if ((((taBase*) this) == par_stop) && (ta == NULL))
     return ".";
   String rval;
 
   taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
   }
-  else if(((taBase*) this) != par_stop)
+  else if (((taBase*) this) != par_stop) {
     rval = par->GetPath((taBase*)this, par_stop);
+  }
 
   if (ta != NULL) {
-    MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
     }
-    else if((md = FindMemberPtr(ta)) != NULL) {
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
       int gidx = FindEl_(ta);
-      if(gidx >= 0)
+      if (gidx >= 0)
         rval += "[" + String(gidx) + "]";
       else
         rval += "[?]";
@@ -5072,25 +5079,25 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
   String rval;
 
   taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
   }
-  else if(((taBase*) this) != par_stop)
+  else if (((taBase*) this) != par_stop) {
     rval = par->GetPathNames((taBase*)this, par_stop);
+  }
 
   if (ta != NULL) {
-    MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
     }
-    else if((md = FindMemberPtr(ta)) != NULL) {
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
       String obj_nm = ta->GetName();
       if (obj_nm.empty() || !ta->InheritsFrom(&TA_taNBase)) { // only use real nbase names.
         int gidx = FindEl_(ta);
-        if(gidx >= 0)
+        if (gidx >= 0)
           rval += "[" + String(gidx) + "]";
         else
           rval += "[?]";
@@ -5109,26 +5116,26 @@ String taList_impl::GetPath_Long(taBase* ta, taBase* par_stop) const {
   String rval;
 
   taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
   }
-  else if(((taBase*) this) != par_stop)
+  else if (((taBase*) this) != par_stop) {
     rval = par->GetPath_Long((taBase*)this, par_stop);
+  }
 
-  if(GetName() != "")
+  if (GetName() != "")
     rval += "(" + GetName() + ")";
 
   if (ta != NULL) {
-    MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
       rval += "." + md->name;
     }
-    else if((md = FindMemberPtr(ta)) != NULL) {
+    else if (MemberDef *md = FindMemberPtr(ta)) {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
       int gidx = FindEl_(ta);
-      if(gidx >= 0)
+      if (gidx >= 0)
         rval += "[" + String(gidx) + "]";
       else
         rval += "[?]";
@@ -5194,7 +5201,7 @@ String& taList_impl::Print(String& strm, int indent) const {
   strm << "Elements of List: " << GetDisplayName() << " [" << size << "] {\n";
   String_PArray nms;
   nms.Alloc(size);
-  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+  TA_FOREACH(vitm, *this) {     // use iterator so it is recursive on existing filtering
     taBase* itm = vitm.toBase();
     if(itm) {
       nms.Add(itm->GetName());
@@ -5770,7 +5777,7 @@ bool taArray_base::SetElView(taMatrix* view_mat, IndexMode md) {
 taArray_base* taArray_base::NewElView(taMatrix* view_mat, IndexMode md) const {
   if(!IterValidate(view_mat, md, 1)) return NULL;
   taArray_base* rval = (taArray_base*)MakeToken(); // make a token of me
-  rval->Copy_Duplicate(*this);			   // full copy
+  rval->Copy_Duplicate(*this);                     // full copy
   rval->SetElView(view_mat, md);
   return rval;
 }
@@ -5825,12 +5832,12 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
     int_Matrix* imat = new int_Matrix(1,0);
     if(step > 0) {
       for(int i = start; i < end; i += step) {
-	imat->Add(i);
+        imat->Add(i);
       }
     }
     else {
       for(int i = end-1; i >= start; i += step) {
-	imat->Add(i);
+        imat->Add(i);
       }
     }
     taArray_base* nwvw = NewElView(imat, IDX_COORDS);
@@ -5840,8 +5847,8 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_MASK: {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
     if(TestError(cmat->dim(0) != size, "Elem::IDX_MASK",
-		 "index matrix dim(0):", String(cmat->dim(0)),
-		 "is not size of list:", String(size)))
+                 "index matrix dim(0):", String(cmat->dim(0)),
+                 "is not size of list:", String(size)))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
       // take intersection of the existing mask
@@ -5866,7 +5873,7 @@ taBaseItr* taArray_base::Iter() const {
   return rval;
 }
 
-Variant	taArray_base::IterElem(taBaseItr* itr) const {
+Variant taArray_base::IterElem(taBaseItr* itr) const {
   if(!itr) return _nilVariant;
   return SafeElAsVar(itr->el_idx);
 }
@@ -5909,7 +5916,7 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taArray_base::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-		void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+                void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = 0;
   String mypath = GetPathNames();
   for(int i=0; i<size; i++) {
@@ -5919,8 +5926,8 @@ int taArray_base::ReplaceValStr(const String& srch, const String& repl, const St
     rval += str.gsub(srch, repl);
     El_SetFmStr_(FastEl_(i), str);
     taMisc::Info("Replaced string value in array object:",
-		 mypath,"orig val:", orig, "new val:", str);
-  }	
+                 mypath,"orig val:", orig, "new val:", str);
+  }
   if(rval > 0)
     UpdateAfterEdit();
   return rval;

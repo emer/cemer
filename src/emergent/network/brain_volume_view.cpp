@@ -67,9 +67,9 @@ T3BrainNode* BrainVolumeView::node_so() const
   return (T3BrainNode*) inherited::node_so();
 }
 
-BrainView* BrainVolumeView::bv()
+BrainView* BrainVolumeView::getBrainView()
 {
- return GET_MY_OWNER(BrainView);
+  return GET_MY_OWNER(BrainView);
 }
 
 void BrainVolumeView::Initialize()
@@ -82,7 +82,6 @@ void BrainVolumeView::Initialize()
   m_uvd_bases_map.clear();
   m_atlas_depth_map.clear();
   m_atlasColors.clear();
-
 }
 
 void BrainVolumeView::InitLinks()
@@ -107,7 +106,7 @@ void BrainVolumeView::Destroy()
 
 void BrainVolumeView::AllocUnitViewData()
 {
-  BrainView* bv = this->bv();
+  BrainView* bv = this->getBrainView();
   Network* net = this->net();
   if (!net) return;
 
@@ -132,20 +131,20 @@ void BrainVolumeView::AllocUnitViewData()
 
 void BrainVolumeView::BuildAll()
 {
-  BrainView* bv = this->bv();
+  BrainView* bv = this->getBrainView();
   Reset(); // in case where we are rebuilding
   UpdateUnitViewBases(bv->unit_src);
 }
 
 void BrainVolumeView::InitDisplay()
 {
-  BrainView* bv = this->bv();
+  BrainView* bv = this->getBrainView();
   UpdateUnitViewBases(bv->unit_src);
 }
 
 float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
 {
-  BrainView* bv = this->bv();
+  BrainView* bv = this->getBrainView();
   float val = bv->scale.zero;
   if (bv->unit_disp_idx < 0) return val;
 
@@ -154,40 +153,56 @@ float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
 
   switch (bv->unit_md_flags) {
     case BrainView::MD_FLOAT:
-      val = *((float*)base); break;
+      val = *((float*)base);
+      break;
     case BrainView::MD_DOUBLE:
-      val = *((double*)base); break;
+      val = *((double*)base);
+      break;
     case BrainView::MD_INT:
-      val = *((int*)base); break;
+      val = *((int*)base);
+      break;
     default:
-      val = 0.0f; break;
+      val = 0.0f;
+      break;
   }
   return val;
 }
 
 void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 {
-  BrainView* bv = this->bv();
+  BrainView* bv = this->getBrainView();
   AllocUnitViewData();
 
-  for(int midx=0;midx<bv->membs.size;midx++) {
+  for (int midx = 0; midx < bv->membs.size; midx++) {
     MemberDef* disp_md = bv->membs[midx];
     String nm = disp_md->name.before(".");
-    if(nm.empty()) { // direct unit member
+    if (nm.empty()) { // direct unit member
       UpdateUnitViewBase_Unit_impl(midx, disp_md);
-    } else if ((nm=="s") || (nm == "r")) {
+    }
+    else if ((nm=="s") || (nm == "r")) {
       UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
-    } else if (nm=="bias") {
+    }
+    else if (nm=="bias") {
       UpdateUnitViewBase_Bias_impl(midx, disp_md);
-    } else { // sub-member of unit
+    }
+    else { // sub-member of unit
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
     }
   }
 }
 
-void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {}
-void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {}
-void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {}
+void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u)
+{
+}
+
+void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md)
+{
+}
+
+void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md)
+{
+}
+
 void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md)
 {
   if (m_uvd_bases_map.size() == 0) return; //we don't have a list of units yet
@@ -197,15 +212,17 @@ void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md)
   }
 }
 
-void BrainVolumeView::UpdateAutoScale(bool& updated) {}
+void BrainVolumeView::UpdateAutoScale(bool& updated)
+{
+}
 
 bool BrainVolumeView::ColorBrain()
 {
   // this is a convenience method that encapsulates
   // dependency checking on externals
 
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return false;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return false;
 
   if (bv->net()->brain_atlas.ptr() && bv->ColorBrain()) {
     return true;
@@ -217,21 +234,20 @@ bool BrainVolumeView::ColorBrain()
 
 void BrainVolumeView::Render_pre()
 {
-
   // Create structural brain data object (high-res brain data for rendering)
-  m_brain_data = new NiftiReader(bv()->DataName());
+  m_brain_data = new NiftiReader(getBrainView()->DataName());
 
   if (m_brain_data->IsValid()) {
     setNode(new T3BrainNode(this));
     if (ColorBrain()) {
       // Get the atlas colors and change those which DO NOT MATCH
       // the regexp areas to white (effectively not coloring those areas)
-      BrainAtlas& atlas = bv()->net()->brain_atlas.ptr()->Atlas();
+      BrainAtlas& atlas = getBrainView()->net()->brain_atlas.ptr()->Atlas();
       m_atlasColors.clear();
       m_atlasColors = BrainAtlasUtils::Colors(atlas);
       const QColor WHITE("#ffffff");
-      QSet<int> indexes = BrainAtlasUtils::Indexes(atlas, bv()->ColorBrainRegexp());
-      for (int i=0; i<m_atlasColors.size();++i) {
+      QSet<int> indexes = BrainAtlasUtils::Indexes(atlas, getBrainView()->ColorBrainRegexp());
+      for (int i = 0; i < m_atlasColors.size(); ++i) {
         if (indexes.contains(i)) {
           continue;
         }
@@ -249,8 +265,8 @@ void BrainVolumeView::Render_pre()
 
 void BrainVolumeView::RenderBrain()
 {
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
 
   // If colorizing the structural brain, we need access
   // to the atlas image data...
@@ -321,7 +337,7 @@ void BrainVolumeView::RenderBrain()
   //unsigned char* tex = new unsigned char[d1*d2*2];
   unsigned char* tex(0);
   float transparency(bv->SliceTransparencyXformed());
-  for (int i=0; i<d3; i++) {
+  for (int i = 0; i < d3; i++) {
 
     if (ColorBrain()) {
       // texture is four bytes/pixel: RGBA
@@ -435,8 +451,7 @@ void BrainVolumeView::SliceAsTexture(BrainView::AnatomicalPlane p, int index, un
   int j(0);
   unsigned int pixel(0);
   unsigned char pixel8(0);
-  for (int i=0;i<plane_size; i++) {
-
+  for (int i = 0; i < plane_size; i++) {
     // skip zero-valued pixels to speed things up
     if (s[i] == 0) {
       data[j] = 0;
@@ -508,8 +523,8 @@ void BrainVolumeView::SliceAsColorTexture(BrainView::AnatomicalPlane p, int inde
   unsigned char pixel8(0);
 
   const QColor WHITE(255,255,255);
-  for (int h=0; h<height; h++) {
-    for (int w=0; w<width; w++) {
+  for (int h = 0; h < height; h++) {
+    for (int w = 0; w < width; w++) {
       int i=(width*h) + w;
 
       // skip zero-valued pixels to speed things up
@@ -727,18 +742,18 @@ void BrainVolumeView::DoActionChildren_impl(DataViewAction acts)
 
 void BrainVolumeView::Render_impl_children()
 {
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
   T3BrainNode* node_so = this->node_so(); // cache
-  if(!node_so) return;
+  if (!node_so) return;
 
   Render_impl_blocks();
 }
 
 void BrainVolumeView::Render_impl_blocks()
 {
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
 
   // Create atlas face sets if requested
   if (bv->show_atlas && bv->net()->brain_atlas.ptr() != NULL) {
@@ -764,8 +779,8 @@ void BrainVolumeView::CreateFaceSets()
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
   T3BrainNode& node = *(this->node_so());
 
   BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
@@ -817,7 +832,7 @@ void BrainVolumeView::CreateFaceSets()
 
   // iterate over all slices, and for each voxel at that slice depth, create face in face set
   FloatTDCoord voxel_coord;
-  for (int s=0; s<bv->MaxSlices(); s++) {
+  for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
     if (0 == voxels.size()) continue;
 
@@ -960,8 +975,8 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
   T3BrainNode& node = *(this->node_so());
 
   BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
@@ -1018,7 +1033,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
 
   // iterate over all slices
   // for each voxel at a slice depth, create face in the face set
-  for (int s=0; s<maxslice; s++) {
+  for (int s = 0; s < maxslice; s++) {
     QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
 
     SoIndexedFaceSet* ifs = node.atlas_face_set_array[s];
@@ -1156,8 +1171,8 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
 }
 void BrainVolumeView::UpdateSlices()
 {
-  BrainView* bv = this->bv(); //cache
-  if(!bv) return;
+  BrainView* bv = this->getBrainView(); //cache
+  if (!bv) return;
 
   // Hides slices not currently in stack defined by start,end
   if (NULL == this->node_so()) return;
@@ -1165,7 +1180,7 @@ void BrainVolumeView::UpdateSlices()
 
   // now update slices
   float transparency(bv->SliceTransparencyXformed());
-  for (int i=0; i<bv->MaxSlices(); i++) {
+  for (int i = 0; i < bv->MaxSlices(); i++) {
     QList<Voxel*> voxels = m_units_depth_map.values(i);
     if (0 == voxels.size()) continue;
 
@@ -1181,7 +1196,7 @@ void BrainVolumeView::UpdateSlices()
 
 void BrainVolumeView::UpdateUnitValues_blocks()
 {
-  BrainView* bv = this->bv(); //cache
+  BrainView* bv = this->getBrainView(); //cache
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
@@ -1192,7 +1207,7 @@ void BrainVolumeView::UpdateUnitValues_blocks()
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
   FloatTDCoord voxel_coord;
-  for (int s=0; s<bv->MaxSlices(); s++) {
+  for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
     if (0 == voxels.size()) continue;
 
@@ -1246,7 +1261,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
   // should be called with a transparency value sepaarte and unique from that
   // which controls the brain itself...
 
-  BrainView* bv = this->bv(); //cache
+  BrainView* bv = this->getBrainView(); //cache
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
@@ -1256,7 +1271,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
 
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
-  for (int s=0; s<bv->MaxSlices(); s++) {
+  for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
     if (0 == voxels.size()) continue;
 
@@ -1303,7 +1318,7 @@ void BrainVolumeView::UpdateUnitValues()
 
 void BrainVolumeView::DataUpdateView_impl()
 {
-//do nothing...we don't need to re-render when Network data changes
+  //do nothing...we don't need to re-render when Network data changes
 }
 
 void BrainVolumeView::Reset_impl()

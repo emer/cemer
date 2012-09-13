@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -34,7 +34,7 @@ QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
 {
   cmd_shell = cs;
   setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
-  setPager(false);		// we have our own front-end pager
+  setPager(false);              // we have our own front-end pager
 }
 
 QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
@@ -99,7 +99,7 @@ int QcssConsole::autocompletePath(String cmd_b4, String cmd, QStringList& lst) {
   if(!parent) return 0;
   TypeDef* par_td = parent->GetTypeDef();
 
-  par_path = cmd_b4 + par_path + ".";		// add back for returning
+  par_path = cmd_b4 + par_path + ".";           // add back for returning
 
   for(int i=0;i<par_td->members.size;i++) {
     MemberDef* md = par_td->members.FastEl(i);
@@ -123,49 +123,50 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
   int len = mb_name.length();
 //  taBase* parent = NULL;
   TypeDef* par_td = taMisc::types.FindName(par_path);
-  if(par_td == NULL) {
+  if (par_td == NULL) {
     cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg();
-    cssElPtr elp;
-    if(!(elp = cssMisc::cur_top->types.FindName(par_path))) {
-      if(src_prog) {
-	elp = src_prog->types.FindName(par_path);
+    cssElPtr elp = cssMisc::cur_top->types.FindName(par_path);
+    if (!elp) {
+      if (src_prog) {
+        elp = src_prog->types.FindName(par_path);
       }
     }
-    if(elp) {
-      par_path = cmd_b4 + par_path + "::";		// add back for returning
+
+    if (elp) {
+      par_path = cmd_b4 + par_path + "::";              // add back for returning
       if(elp.El()->GetType() == cssEl::T_ClassType) {
-	cssClassType* par_el = (cssClassType*)elp.El()->GetNonRefObj();
-	for(int i=0;i<par_el->members->size;i++) {
-	  cssEl* md = par_el->members->FastEl(i);
-	  if(md->name(0,len) == mb_name)
-	    lst.append(par_path + md->name);
-	}
-	for(int i=0;i<par_el->methods->size;i++) {
-	  cssEl* md = par_el->methods->FastEl(i);
-	  if(md->name(0,len) == mb_name)
-	    lst.append(par_path + md->name);
-	}
-	for(int i=0;i<par_el->types->size;i++) {
-	  cssEl* st = par_el->types->FastEl(i);
-	  if(st->name(0,len) == mb_name)
-	    lst.append(par_path + st->name);
-	  if(st->GetType() == cssEl::T_EnumType) {
-	    cssEnumType* et = (cssEnumType*)st->GetNonRefObj();
-	    for(int j=0;j<et->enums->size; j++) {
-	      cssEl* en = et->enums->FastEl(j);
-	      if(en->name(0,len) == mb_name)
-		lst.append(par_path + en->name);
-	    }
-	  }
-	}
+        cssClassType* par_el = (cssClassType*)elp.El()->GetNonRefObj();
+        for(int i=0;i<par_el->members->size;i++) {
+          cssEl* md = par_el->members->FastEl(i);
+          if(md->name(0,len) == mb_name)
+            lst.append(par_path + md->name);
+        }
+        for(int i=0;i<par_el->methods->size;i++) {
+          cssEl* md = par_el->methods->FastEl(i);
+          if(md->name(0,len) == mb_name)
+            lst.append(par_path + md->name);
+        }
+        for(int i=0;i<par_el->types->size;i++) {
+          cssEl* st = par_el->types->FastEl(i);
+          if(st->name(0,len) == mb_name)
+            lst.append(par_path + st->name);
+          if(st->GetType() == cssEl::T_EnumType) {
+            cssEnumType* et = (cssEnumType*)st->GetNonRefObj();
+            for(int j=0;j<et->enums->size; j++) {
+              cssEl* en = et->enums->FastEl(j);
+              if(en->name(0,len) == mb_name)
+                lst.append(par_path + en->name);
+            }
+          }
+        }
       }
       else if(elp.El()->GetType() == cssEl::T_EnumType) {
-	cssEnumType* et = (cssEnumType*)elp.El()->GetNonRefObj();
-	for(int j=0;j<et->enums->size; j++) {
-	  cssEl* en = et->enums->FastEl(j);
-	  if(en->name(0,len) == mb_name)
-	    lst.append(par_path + en->name);
-	}
+        cssEnumType* et = (cssEnumType*)elp.El()->GetNonRefObj();
+        for(int j=0;j<et->enums->size; j++) {
+          cssEl* en = et->enums->FastEl(j);
+          if(en->name(0,len) == mb_name)
+            lst.append(par_path + en->name);
+        }
       }
 
       return lst.size() - st_len;
@@ -173,7 +174,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
     return 0;
   }
 
-  par_path = cmd_b4 + par_path + "::";		// add back for returning
+  par_path = cmd_b4 + par_path + "::";          // add back for returning
 
   for(int i=0;i<par_td->members.size;i++) {
     MemberDef* md = par_td->members.FastEl(i);
@@ -191,9 +192,9 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
       lst.append(par_path + st->name);
     if(st->InheritsFormal(TA_enum)) {
       for(int j=0;j<st->enum_vals.size; j++) {
-	EnumDef* en = st->enum_vals.FastEl(j);
-	if(en->name(0,len) == mb_name)
-	  lst.append(par_path + en->name);
+        EnumDef* en = st->enum_vals.FastEl(j);
+        if(en->name(0,len) == mb_name)
+          lst.append(par_path + en->name);
       }
     }
   }
@@ -231,9 +232,9 @@ int QcssConsole::autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst
     spc = qcss_console_get_spc(top, spc_idx);
     if(spc == NULL) {
       if(top == cssMisc::cur_top) {
-	if(src_prog != NULL) {
-	  top = src_prog; continue;
-	}
+        if(src_prog != NULL) {
+          top = src_prog; continue;
+        }
       }
       break;
     }
@@ -241,7 +242,7 @@ int QcssConsole::autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst
     for(int i=0;i<spc->size;i++) {
       cssEl* el = spc->FastEl(i);
       if(el->name(0,len) == cmd)
-	lst.append(cmd_b4 + el->name);
+        lst.append(cmd_b4 + el->name);
     }
     spc_idx++;
   } while(spc != NULL);
@@ -259,17 +260,17 @@ QStringList QcssConsole::autocompleteCommand(QString q_cmd) {
 
   QStringList lst;
 
-  if(cmd[0] == '.') {		// path
+  if(cmd[0] == '.') {           // path
     autocompletePath(cmd_b4, cmd, lst);
   }
-  else if(cmd[0] == '"') {		// filename
+  else if(cmd[0] == '"') {              // filename
     cmd_b4 += '"';
     lst = autocompleteFilename(cmd.after(0), cmd_b4);
   }
   else if(cmd.contains("::")) { // scoped type
     autocompleteScoped(cmd_b4, cmd, lst);
   }
-  else {			// keyword
+  else {                        // keyword
     autocompleteKeyword(cmd_b4, cmd, lst);
   }
   return lst;
@@ -279,6 +280,6 @@ void QcssConsole::ctrlCPressed() {
   cssMisc::Warning(NULL, "User Interrupt");
   if(cssMisc::cur_top)
     cssMisc::cur_top->Stop();
-  Program::stop_req = true;	// notify any running programs to stop too
+  Program::stop_req = true;     // notify any running programs to stop too
 }
 

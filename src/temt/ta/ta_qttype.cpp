@@ -3538,7 +3538,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
     if (gui) {
       for (j=0; j <i_type_space.size; ++j) {
         taiType* tit_i = (taiType*) i_type_space.FastEl(j)->GetInstance();
-        if ((bid = tit_i->BidForType(td)) > 0) {
+        bid = tit_i->BidForType(td);
+        if (bid > 0) {
           taiType* tit = tit_i->TypeInst(td); // make one
           tit->bid = bid;
           tit->AddToType(td);             // add it
@@ -3548,7 +3549,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
 
     for (j=0; j < v_type_space.size; ++j) {
       taiViewType* tit_v = (taiViewType*) v_type_space.FastEl(j)->GetInstance();
-      if ((bid = tit_v->BidForView(td)) > 0) {
+      bid = tit_v->BidForView(td);
+      if (bid > 0) {
         taiViewType* tiv = tit_v->TypeInst(td); // make one
         tiv->bid = bid;
         tiv->AddView(td);               // add it
@@ -3558,7 +3560,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
     if (gui) {
       for (j=0; j < i_edit_space.size; ++j) {
         taiEdit* tie_i = (taiEdit*) i_edit_space.FastEl(j)->GetInstance();
-        if ((bid = tie_i->BidForEdit(td)) > 0) {
+        bid = tie_i->BidForEdit(td);
+        if (bid > 0) {
           taiEdit* tie = tie_i->TypeInst(td);
           tie->bid = bid;
           tie->AddEdit(td);
@@ -3577,7 +3580,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
         if (md->owner->owner != td) continue; // if we do not own this mdef, skip
         for (k=0; k < i_memb_space.size; ++k) {
           taiMember* tim_i = (taiMember*) i_memb_space.FastEl(k)->GetInstance();
-          if ((bid = tim_i->BidForMember(md,td)) > 0) {
+          bid = tim_i->BidForMember(md,td);
+          if (bid > 0) {
             taiMember* tim = tim_i->MembInst(md,td);
             tim->bid = bid;
             tim->AddMember(md);
@@ -3589,7 +3593,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
         TypeDef* subt = td->sub_types.FastEl(j);
         for(k=0; k < i_type_space.size; ++k) {
           taiType* tit_i = (taiType*) i_type_space.FastEl(k)->GetInstance();
-          if ((bid = tit_i->BidForType(subt)) > 0) {
+          bid = tit_i->BidForType(subt);
+          if (bid > 0) {
             taiType* tit = tit_i->TypeInst(subt); // make one
             tit->bid = bid;
             tit->AddToType(subt);               // add it
@@ -3605,7 +3610,8 @@ void taiTypeBase::InitializeTypes(bool gui) {
         if (md->owner->owner != td) continue; // if we do not own this mdef, skip
         for (k=0; k < i_meth_space.size; ++k) {
           taiMethod* tim_i = (taiMethod*) i_meth_space.FastEl(k)->GetInstance();
-          if ((bid = tim_i->BidForMethod(md,td)) > 0) {
+          bid = tim_i->BidForMethod(md,td);
+          if (bid > 0) {
             taiMethod* tim = tim_i->MethInst(md,td);
             tim->bid = bid;
             tim->AddMethod(md);

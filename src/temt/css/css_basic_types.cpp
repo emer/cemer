@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -28,17 +28,17 @@
 #endif
 
 //////////////////////////
-// 	cssInt		//
+//      cssInt          //
 //////////////////////////
 
 
 //////////////////////////
-// cssChar		//
+// cssChar              //
 //////////////////////////
 
 void cssChar::operator=(const cssEl& t) {
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
-    *this = t.GetStr();		// use string converter
+    *this = t.GetStr();         // use string converter
   }
   else {
     val = (Int)t;
@@ -47,7 +47,7 @@ void cssChar::operator=(const cssEl& t) {
 
 
 //////////////////////////
-// 	cssString	//
+//      cssString       //
 //////////////////////////
 
 String& cssString::PrintType(String& fh) const {
@@ -59,7 +59,7 @@ String& cssString::PrintInherit(String& fh) const {
 }
 
 cssEl* cssString::operator[](const Variant& idx) const {
-  String nw_val = val[idx];	// use string code
+  String nw_val = val[idx];     // use string code
   return new cssString(nw_val);
 }
 
@@ -134,19 +134,19 @@ void cssString::Save(ostream& strm) {
 
 void cssString::Load(istream& strm) {
   int c = taMisc::skip_till_start_quote_or_semi(strm);
-  if (c == '\"')			  // "
+  if (c == '\"')                          // "
     c = taMisc::read_till_end_quote_semi(strm);// then till second followed by semi
 
   if(c != ';') {
     taMisc::Error("*** Missing ';' in dump file for string:", name);
     return;
   }
-  *this = taMisc::LexBuf;	// set via string assgn
+  *this = taMisc::LexBuf;       // set via string assgn
 }
 
 
 //////////////////////////
-// 	cssBool 	//
+//      cssBool         //
 //////////////////////////
 
 String cssBool::GetStr() const {
@@ -160,7 +160,7 @@ String cssBool::GetStr() const {
 
 void cssBool::operator=(const cssEl& s) {
   if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
-    *this = s.GetStr();		// use string converter
+    *this = s.GetStr();         // use string converter
   else
     val = (Int)s;
 }
@@ -176,7 +176,7 @@ void cssBool::operator=(const String& cp) {
 
 
 /////////////////////////
-//  cssVariant	       //
+//  cssVariant         //
 /////////////////////////
 
 cssEl::cssTypes cssVariant::GetPtrType() const {
@@ -211,35 +211,43 @@ cssEl::cssTypes cssVariant::GetPtrType() const {
 }
 
 cssVariant::operator taBase*() const {
-  if (val.isBaseType()) 
+  if (val.isBaseType()) {
     return val.toBase();
-  else return inherited::operator taBase*();
+  }
+  else {
+    return inherited::operator taBase*();
+  }
 }
 
 cssVariant::operator TypeDef*() const {
-  TypeDef* rval;
-  if ((rval = val.toTypeDef())) 
+  if (TypeDef *rval = val.toTypeDef()) {
     return rval;
-  else return inherited::operator TypeDef*();
+  }
+  else {
+    return inherited::operator TypeDef*();
+  }
 }
 
 cssVariant::operator MemberDef*() const {
-  MemberDef* rval;
-  if ((rval = val.toMemberDef())) 
+  if (MemberDef *rval = val.toMemberDef()) {
     return rval;
-  else return inherited::operator MemberDef*();
+  }
+  else {
+    return inherited::operator MemberDef*();
+  }
 }
 
 cssVariant::operator MethodDef*() const {
-  MethodDef* rval;
-  if ((rval = val.toMethodDef())) 
+  if (MethodDef *rval = val.toMethodDef()) {
     return rval;
-  else return inherited::operator MethodDef*();
+  }
+  else {
+    return inherited::operator MethodDef*();
+  }
 }
 
-
 String cssVariant::PrintStr() const {
-  return String(GetTypeName())+" "+ name + " = ("
+  return String(GetTypeName()) + " " + name + " = ("
     + val.getTypeAsString() + ") " + val.toString();
 }
 
@@ -276,58 +284,58 @@ String& cssVariant::PrintInherit(String& fh) const {
   return fh;
 }
 
-cssEl* cssVariant::operator+(cssEl& t) { 
+cssEl* cssVariant::operator+(cssEl& t) {
 // string concatenation takes precedence over numeric addition
  if (val.isStringType()) {
-   cssVariant* r = new cssVariant(*this,""); 
-   r->val += t.GetStr(); 
-   return r; 
+   cssVariant* r = new cssVariant(*this,"");
+   r->val += t.GetStr();
+   return r;
  } else {
-   cssVariant* r = new cssVariant(*this,""); 
-   r->val += t.GetVar(); 
-   return r; 
+   cssVariant* r = new cssVariant(*this,"");
+   r->val += t.GetVar();
+   return r;
  }
 }
 
-cssEl* cssVariant::operator-(cssEl& t) { 
-  cssVariant* r = new cssVariant(*this,""); 
-  r->val -= t.GetVar(); 
+cssEl* cssVariant::operator-(cssEl& t) {
+  cssVariant* r = new cssVariant(*this,"");
+  r->val -= t.GetVar();
   return r;
 }
 
 cssEl* cssVariant::operator*() {
-  return cssEl::operator*(); 
+  return cssEl::operator*();
 }
 
-cssEl* cssVariant::operator*(cssEl& t) { 
-  cssVariant* r = new cssVariant(*this,""); 
-  r->val *= t.GetVar(); 
-  return r; 
+cssEl* cssVariant::operator*(cssEl& t) {
+  cssVariant* r = new cssVariant(*this,"");
+  r->val *= t.GetVar();
+  return r;
 }
 
 cssEl* cssVariant::operator/(cssEl& t) {
-  cssVariant* r = new cssVariant(*this,""); 
-  r->val /= t.GetVar(); 
-  return r; 
+  cssVariant* r = new cssVariant(*this,"");
+  r->val /= t.GetVar();
+  return r;
 }
 
 // implement the to-the-power of cssVariant::operator as ^
-cssEl* cssVariant::operator^(cssEl& t) { 
+cssEl* cssVariant::operator^(cssEl& t) {
   if (val.isNumeric()) {
-    cssVariant* r = new cssVariant(); 
-    r->val = pow(val.toDouble(), (Real)t); 
-    return r; 
+    cssVariant* r = new cssVariant();
+    r->val = pow(val.toDouble(), (Real)t);
+    return r;
   } else return inherited::operator^(t);
 }
 
-cssEl* cssVariant::operator-() { 
-  cssVariant* r = new cssVariant(-val,""); 
-  return r; 
+cssEl* cssVariant::operator-() {
+  cssVariant* r = new cssVariant(-val,"");
+  return r;
 }
 
-cssEl* cssVariant::operator~() { 
-  cssVariant* r = new cssVariant(~val,""); 
-  return r; 
+cssEl* cssVariant::operator~() {
+  cssVariant* r = new cssVariant(~val,"");
+  return r;
 }
 
 //note: TypeItem guys don't get css info, so we don't handle those as Variants below...
@@ -402,7 +410,7 @@ cssEl* cssVariant::operator[](const Variant& idx) const {
 
 
 //////////////////////////////////
-// 	cssPtr: Pointer Type	//
+//      cssPtr: Pointer Type    //
 //////////////////////////////////
 
 
@@ -538,9 +546,9 @@ cssEl* cssPtr::GetMethodFmName(const String& memb) const {
     if(rval->GetType() == T_MbrScriptFun) {
       cssMbrScriptFun* mbrf = (cssMbrScriptFun*)rval;
       if(mbrf->is_virtual)
-	return ptr.El()->GetMethodFmName(memb); // get from the pointer itself
+        return ptr.El()->GetMethodFmName(memb); // get from the pointer itself
       else
-	return rval;		// get from the declared class of the ptr
+        return rval;            // get from the declared class of the ptr
     }
   }
   return ptr.El()->GetMethodFmName(memb);
@@ -552,9 +560,9 @@ cssEl* cssPtr::GetMethodFmNo(int memb) const {
     if(rval->GetType() == T_MbrScriptFun) {
       cssMbrScriptFun* mbrf = (cssMbrScriptFun*)rval;
       if(mbrf->is_virtual)
-	return ptr.El()->GetMethodFmNo(memb); // get from the pointer itself
+        return ptr.El()->GetMethodFmNo(memb); // get from the pointer itself
       else
-	return rval;		// get from the declared class of the ptr
+        return rval;            // get from the declared class of the ptr
     }
   }
   return ptr.El()->GetMethodFmNo(memb);
@@ -563,13 +571,13 @@ cssEl* cssPtr::GetMethodFmNo(int memb) const {
 cssEl* cssPtr::operator[](const Variant& i) const {
   cssElPtr tmp = GetOprPtr();
   if(i.isNumeric()) {
-    tmp += i.toInt(); 
+    tmp += i.toInt();
   }
   else if(i.isMatrixType()) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(i.toMatrix());
     if(!cmat) {
       cssMisc::Error(prog, "cssPtr::operator[]",
-		     "index matrix is NULL or not an int_Matrix");
+                     "index matrix is NULL or not an int_Matrix");
       return &cssMisc::Void;
     }
     if(cmat->size <= 0) return &cssMisc::Void;
@@ -579,7 +587,7 @@ cssEl* cssPtr::operator[](const Variant& i) const {
 }
 
 //////////////////////////
-//	Array Type	//
+//      Array Type      //
 //////////////////////////
 
 void cssArray::Constr() {
@@ -759,7 +767,7 @@ void cssArray::operator=(const cssEl& cp) {
   for(i=0; (i<items->size) && (i<sary->items->size); i++) {
     cssEl* trg = items->FastEl(i);
     cssEl* src = sary->items->FastEl(i);
-    *trg = *src;		// do an item-wise copy
+    *trg = *src;                // do an item-wise copy
   }
 }
 
@@ -797,7 +805,7 @@ void cssArray::Load(istream& strm) {
     taMisc::skip_past_err(strm);
     return;
   }
-  strm.get();			// get the bracket
+  strm.get();                   // get the bracket
   int i;
   for(i=0; i<items->size; i++) {
     cssEl* itm = items->FastEl(i);
@@ -812,7 +820,7 @@ void cssArray::Load(istream& strm) {
     taMisc::skip_past_err(strm);
     return;
   }
-  strm.get();			// get rb
+  strm.get();                   // get rb
   if(strm.peek() == ';') strm.get(); // skip past ending semi
 }
 
@@ -825,12 +833,12 @@ void cssArrayType::Constr() {
   size = 0;
 }
 void cssArrayType::Copy(const cssArrayType& cp) {
-  cssEl::Copy(cp);		// note: skips copying array itself..
+  cssEl::Copy(cp);              // note: skips copying array itself..
   SetSize(cp.size);
   SetElType(cp.el_type);
 }
 void cssArrayType::CopyType(const cssArrayType& cp) {
-  cssArray::CopyType(cp);	// copy type shoudl be good all the way thru
+  cssArray::CopyType(cp);       // copy type shoudl be good all the way thru
   SetSize(cp.size);
 }
 
@@ -899,13 +907,13 @@ String& cssArrayType::PrintType(String& fh) const {
 
 
 /////////////////////////////////
-// 	Reference Type	       //
+//      Reference Type         //
 /////////////////////////////////
 
 cssElPtr cssRef::GetAddr() const {
   if(addr != NULL)
     return *addr;
-  return ptr;		// its always the thing you refer to, not you!
+  return ptr;           // its always the thing you refer to, not you!
 }
 
 void cssRef::operator=(const cssEl& cp) {
@@ -944,7 +952,7 @@ int cssRef::GetMethodNo(const String& memb) const {
 }
 
 //////////////////////////
-// 	cssEnumType	//
+//      cssEnumType     //
 //////////////////////////
 
 void cssEnumType::Constr() {
@@ -1016,7 +1024,7 @@ cssEl* cssEnumType::FindValue(int val) const {
 
 
 //////////////////////////
-// 	cssEnum 	//
+//      cssEnum         //
 //////////////////////////
 
 void cssEnum::Constr() {
@@ -1093,7 +1101,7 @@ void cssEnum::operator=(const String& cp) {
 
 void cssEnum::operator=(const cssEl& s) {
   if((s.GetType() == T_String) || (s.GetPtrType() == T_String))
-    *this = s.GetStr();		// use string converter
+    *this = s.GetStr();         // use string converter
   else
     val = (Int)s;
 }
@@ -1116,7 +1124,7 @@ cssEl* cssEnum::operator!=(cssEl& s) {
 
 
 //////////////////////////////////
-// 	css Class Member 	//
+//      css Class Member        //
 //////////////////////////////////
 
 void cssClassMember::Constr() {
@@ -1170,7 +1178,7 @@ String cssClassMember::PrintFStr() const {
 
 
 //////////////////////////////////
-// 	css Class Type  	//
+//      css Class Type          //
 //////////////////////////////////
 
 void cssClassType::Constr() {
@@ -1271,7 +1279,7 @@ void cssClassType::ConstructToken(cssClassInst* tok) {
 void cssClassType::DestructToken(cssClassInst* tok) {
   int i;
 //  members will get destructors run when they are unref'ed
-  DestructToken_impl(tok);	// destroy me first, then parents..
+  DestructToken_impl(tok);      // destroy me first, then parents..
   for(i=0; i<parents->size; i++) {
     ((cssClassType*)parents->FastEl(i))->DestructToken(tok);
   }
@@ -1284,7 +1292,7 @@ void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
     nm = nm.after('(');
   }
   cssElPtr ptr = methods->FindName(nm); // find name of this type..
-  if(ptr == 0) return;				       // didn't find it..
+  if(ptr == 0) return;                                 // didn't find it..
   cssMbrScriptFun* meth = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
   if(meth->GetSubProg() != NULL) {
     meth->GetSubProg()->state |= cssProg::State_NoBreak; // do not break this guy
@@ -1308,12 +1316,12 @@ void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
     tok->prog = prg;
   }
 
-  cssEl::Ref(tok);		// make sure it doesn't get to 0 refcount in arg del..
+  cssEl::Ref(tok);              // make sure it doesn't get to 0 refcount in arg del..
   cssEl::Ref(meth);
 
   prg->Reset();
   // not using prog::code function because it might go to another top..
-  cssElPtr elp;  elp.SetDirect(meth);		// code the meth
+  cssElPtr elp;  elp.SetDirect(meth);           // code the meth
   cssInst* tmp = new cssInst(prg, elp);
   tmp->idx = prg->AddCode(tmp);
 
@@ -1321,19 +1329,19 @@ void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
   prg->top->Shove(prg);
   prg->Stack()->Push(&cssMisc::Void); // argstop
   prg->Stack()->Push(tok);
-  prg->top->Cont();		// runs it
-  prg->top->Pull();		// pull the meth/dtor off of stack!
+  prg->top->Cont();             // runs it
+  prg->top->Pull();             // pull the meth/dtor off of stack!
   prg->Reset();
 
   if(meth->GetSubProg() != NULL) {
     meth->GetSubProg()->state &= ~cssProg::State_NoBreak; // do not break this guy
   }
 
-  cssEl::unRef(tok);		// undo that
-  cssEl::unRef(meth);		// undo that
+  cssEl::unRef(tok);            // undo that
+  cssEl::unRef(meth);           // undo that
 
-  if(old_prg_top != NULL)	prg->PopTop(old_prg_top);
-  if(old_tok_top != NULL)	tok->prog->PopTop(old_prg_top);
+  if(old_prg_top != NULL)       prg->PopTop(old_prg_top);
+  if(old_tok_top != NULL)       tok->prog->PopTop(old_prg_top);
   cssMisc::PopCurTop();
 }
 
@@ -1444,7 +1452,7 @@ cssEl* cssClassType::Load_stub(void*, int, cssEl* arg[]) {
 
 void cssClassType::MbrSetDesc(int mbr, const String& des) {
   if (member_desc.InRange(mbr) && member_opts.InRange(mbr)) {
-    SetDesc_impl(member_desc.FastEl(mbr), member_opts.FastEl(mbr), des); 
+    SetDesc_impl(member_desc.FastEl(mbr), member_opts.FastEl(mbr), des);
   }
 }
 
@@ -1465,11 +1473,11 @@ cssEl* cssClassType::Save_stub(void*, int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-String	cssClassType::PrintStr() const {
+String  cssClassType::PrintStr() const {
   String tmp = members->PrintStr();
   return String(GetTypeName())+" "+name+" {\n" + tmp + "\n}";
 }
-String	cssClassType::PrintFStr() const {
+String  cssClassType::PrintFStr() const {
   String tmp = members->PrintStr();
   return String("{\n") + tmp + "\n}";
 }
@@ -1545,10 +1553,10 @@ String& cssClassType::PrintType(String& fh) const {
     for(int j=2; j<=meth->argc; j++) {
       c2 << meth->argv[j].El()->GetTypeName() << " " << meth->argv[j].El()->name;
       if(j >= meth->def_start) {
-	c2 << " = " << meth->arg_defs.El((j-meth->def_start))->PrintFStr();
+        c2 << " = " << meth->arg_defs.El((j-meth->def_start))->PrintFStr();
       }
       if(j < meth->argc)
-	c2 << ", ";
+        c2 << ", ";
     }
     c2 << ")\t// " << meth->desc;
     if(prog && prog->top->debug > 0)
@@ -1563,9 +1571,9 @@ String& cssClassType::PrintType(String& fh) const {
 void cssClassType::SetDesc_impl(String& dsc, String& opt, const String& des) {
   dsc = "";
   String tmp = des;
-  tmp.gsub("\"", "'");		// don't let any quotes get through
-  tmp.gsub("\n", " ");		// replace whitespace..
-  tmp.gsub("\t", " ");		// replace whitespace..
+  tmp.gsub("\"", "'");          // don't let any quotes get through
+  tmp.gsub("\n", " ");          // replace whitespace..
+  tmp.gsub("\t", " ");          // replace whitespace..
   String ud;
   while(tmp.contains('#')) {
     dsc += tmp.before('#');
@@ -1592,10 +1600,7 @@ void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
   member_desc.SetSize(members->size);
   member_opts.SetSize(members->size);
 
-  if (!cmt)
-    return;
-
-  int mbridx;
+  if (!cmt) return;
 
   String comment = ((cssString*)cmt.El())->val;
 
@@ -1605,8 +1610,11 @@ void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
   else if (obj->GetType() == T_MbrScriptFun) {  // method description
     ((cssMbrScriptFun*)obj)->SetDesc(comment);
   }
-  else if ((mbridx = GetMemberNo(obj->name)) >= 0) { // member description
-    MbrSetDesc(mbridx, comment);
+  else {
+    int mbridx = GetMemberNo(obj->name);
+    if (mbridx >= 0) { // member description
+      MbrSetDesc(mbridx, comment);
+    }
   }
 }
 
@@ -1621,7 +1629,7 @@ cssEl* cssClassType::GetMemberFmName(const String& memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member not found:", memb, "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   return rval.El();
@@ -1630,7 +1638,7 @@ cssEl* cssClassType::GetMemberFmNo(int memb) const {
   cssEl* rval = members->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   return rval;
@@ -1646,13 +1654,13 @@ cssEl* cssClassType::GetMethodFmName(const String& memb) const {
   cssElPtr rval = methods->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   if(rval.El()->GetType() != T_MbrScriptFun &&
      rval.El()->GetType() != T_MbrCFun) {
     cssMisc::Error(prog, "Member:", memb, "of type:", rval.El()->GetTypeName(),
-	      "is not a function, in class:", name, "of type:", GetTypeName());
+              "is not a function, in class:", name, "of type:", GetTypeName());
     return &cssMisc::Void;
   }
   return rval.El();
@@ -1661,13 +1669,13 @@ cssEl* cssClassType::GetMethodFmNo(int memb) const {
   cssEl* rval = methods->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member function not found:", String(memb), "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   if(rval->GetType() != T_MbrScriptFun &&
      rval->GetType() != T_MbrCFun) {
     cssMisc::Error(prog, "Member:", String(memb), "of type:", rval->GetTypeName(),
-	      "is not a function, in class:", name, "of type:", GetTypeName());
+              "is not a function, in class:", name, "of type:", GetTypeName());
     return &cssMisc::Void;
   }
   return rval;
@@ -1679,12 +1687,12 @@ cssEl* cssClassType::GetScoped(const String& memb) const {
     if(rval == 0) {
       rval = members->FindName(memb);
       if(rval == 0) {
-	cssMisc::Error(prog, "Scoped type not found:", memb, "in class:", name, "of type:",
-		       GetTypeName());
-	return &cssMisc::Void;
+        cssMisc::Error(prog, "Scoped type not found:", memb, "in class:", name, "of type:",
+                       GetTypeName());
+        return &cssMisc::Void;
       }
       else
-	rval = ((cssClassMember*)rval.El())->mbr_type;
+        rval = ((cssClassMember*)rval.El())->mbr_type;
     }
   }
   return rval.El();
@@ -1692,7 +1700,7 @@ cssEl* cssClassType::GetScoped(const String& memb) const {
 
 
 //////////////////////////////////
-// 	css Class Inst  	//
+//      css Class Inst          //
 //////////////////////////////////
 
 void cssClassInst::Constr() {
@@ -1792,12 +1800,12 @@ String cssClassInst::GetStr() const {
   return PrintFStr();
 }
 
-String	cssClassInst::PrintStr() const {
+String  cssClassInst::PrintStr() const {
   String tmp;
   members->PrintTypeNameVals(tmp,1);
   return String(GetTypeName())+" "+name+" {\n" + tmp + "}";
 }
-String	cssClassInst::PrintFStr() const {
+String  cssClassInst::PrintFStr() const {
   String tmp;
   members->PrintTypeNameVals(tmp,1);
   return String("{\n") + tmp + "}";
@@ -1824,7 +1832,7 @@ cssEl* cssClassInst::GetMemberFmName(const String& memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member not found:", memb, "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   return rval.El();
@@ -1833,7 +1841,7 @@ cssEl* cssClassInst::GetMemberFmNo(int memb) const {
   cssEl* rval = members->El(memb);
   if(rval == NULL) {
     cssMisc::Error(prog, "Member not found:", String(memb), "in class:", name, "of type:",
-	      GetTypeName());
+              GetTypeName());
     return &cssMisc::Void;
   }
   return rval;
@@ -1848,21 +1856,21 @@ cssEl* cssClassInst::GetMethodFmName(const String& memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetMethodFmName(memb);
   cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
-		 GetTypeName());
+                 GetTypeName());
   return &cssMisc::Void;
 }
 cssEl* cssClassInst::GetMethodFmNo(int memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetMethodFmNo(memb);
   cssMisc::Error(prog, "Member function not found:", String(memb), "in class:", name, "of type:",
-		 GetTypeName());
+                 GetTypeName());
   return &cssMisc::Void;
 }
 cssEl* cssClassInst::GetScoped(const String& memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetScoped(memb);
   cssMisc::Error(prog, "Scoped type not found:", memb, "in class:", name, "of type:",
-		 GetTypeName());
+                 GetTypeName());
   return &cssMisc::Void;
 }
 
@@ -1896,7 +1904,7 @@ void cssClassInst::Load(istream& strm) {
   if((tpptr == 0) || (tpptr.El()->GetType() != T_ClassType) ||
      !type_def->InheritsFrom((cssClassType*)tpptr.El())) {
     taMisc::Error("*** type name:",tp_nm,"not a valid type, or this type:",
-		  type_def->name, "does not inherit from it");
+                  type_def->name, "does not inherit from it");
     taMisc::skip_past_err(strm);
     return;
   }
@@ -1921,7 +1929,7 @@ void cssClassInst::Load(istream& strm) {
       continue;
     }
     else {
-      strm.get();		// get the equals sign
+      strm.get();               // get the equals sign
       c = taMisc::skip_white(strm, true); // then skip past any new whitespace
     }
 
@@ -1954,7 +1962,7 @@ void cssClassInst::Save(ostream& strm) {
 
 
 //////////////////////////////////
-// 	css Sub Shell	  	//
+//      css Sub Shell           //
 //////////////////////////////////
 
 String cssSubShell::PrintStr() const {

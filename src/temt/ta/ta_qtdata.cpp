@@ -6602,11 +6602,13 @@ void taiMethodData::GenerateScript() {
 
   String arg_str;
   for (int i = 1; i < arg_dlg->obj->members->size; ++i) {
-    if (i > 1)
+    if (i > 1) {
       arg_str += ", ";
-    int idx;
-    if((idx = tmp_objs.FindEl(i)) >= 0)
+    }
+    int idx = tmp_objs.FindEl(i);
+    if (idx >= 0) {
       arg_str += "tmp_" + String(idx);
+    }
     else {
       cssEl* argv = arg_dlg->obj->members->FastEl(i);
       if(argv->GetType() == cssEl::T_String) {

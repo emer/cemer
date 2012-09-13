@@ -29,7 +29,7 @@ bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
 
 
 //////////////////////////
-//     NetDataLoop	//
+//     NetDataLoop      //
 //////////////////////////
 
 void NetDataLoop::Initialize() {
@@ -52,9 +52,11 @@ void NetDataLoop::DMem_Initialize(Network* net) {
 
 void NetDataLoop::GetOrderVal() {
   inherited::GetOrderVal();
-  if(!grouped) return;
+  if (!grouped) return;
 
-  if(!group_order_var) GetOrderVar();
+  if (!group_order_var) {
+    GetOrderVar();
+  }
   else {
     group_order = (Order)group_order_var->int_val;
   }
@@ -62,13 +64,14 @@ void NetDataLoop::GetOrderVal() {
 
 void NetDataLoop::GetOrderVar() {
   inherited::GetOrderVar();
-  if(!grouped) return;
+  if (!grouped) return;
 
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!group_order_var || group_order_var->name != "group_order") {
-    if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
-      group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+  if (!my_prog) return;
+  if (!group_order_var || group_order_var->name != "group_order") {
+    group_order_var = my_prog->vars.FindName("group_order");
+    if (!group_order_var) {
+      group_order_var = (ProgVar*) my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
       group_order_var->DataChanged(DCR_ITEM_UPDATED);
     }
@@ -81,9 +84,9 @@ void NetDataLoop::GetOrderVar() {
 void NetDataLoop::GetIndexVar() {
   inherited::GetIndexVar();
   Program* my_prog = program();
-  if(!my_prog) return;
+  if (!my_prog) return;
 
-  if(!my_prog->vars.FindName("trial")) {
+  if (!my_prog->vars.FindName("trial")) {
     ProgVar* trial = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     trial->name = "trial";
     trial->var_type = ProgVar::T_Int;
@@ -91,12 +94,13 @@ void NetDataLoop::GetIndexVar() {
     trial->DataChanged(DCR_ITEM_UPDATED);
   }
 
-  if(!grouped) return;
+  if (!grouped) return;
 
-  if(!group_index_var) {
-    if(!(group_index_var = my_prog->vars.FindName("group_index"))) {
+  if (!group_index_var) {
+    group_index_var = my_prog->vars.FindName("group_index");
+    if (!group_index_var) {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
-       group_index_var->name = "group_index";
+      group_index_var->name = "group_index";
       group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
       group_index_var->DataChanged(DCR_ITEM_UPDATED);
     }
@@ -273,7 +277,7 @@ String NetDataLoop::GetDisplayName() const {
 
 
 //////////////////////////
-//  NetGroupedDataLoop	//
+//  NetGroupedDataLoop  //
 //////////////////////////
 
 void NetGroupedDataLoop::Initialize() {
@@ -284,7 +288,9 @@ void NetGroupedDataLoop::Initialize() {
 }
 
 void NetGroupedDataLoop::GetOrderVals() {
-  if(!group_order_var || !item_order_var) GetOrderVars();
+  if (!group_order_var || !item_order_var) {
+    GetOrderVars();
+  }
   else {
     group_order = (Order)group_order_var->int_val;
     item_order = (Order)item_order_var->int_val;
@@ -293,9 +299,11 @@ void NetGroupedDataLoop::GetOrderVals() {
 
 void NetGroupedDataLoop::GetOrderVars() {
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!group_order_var || group_order_var->name != "group_order") {
-    if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
+  if (!my_prog) return;
+
+  if (!group_order_var || group_order_var->name != "group_order") {
+    group_order_var = my_prog->vars.FindName("group_order");
+    if (!group_order_var) {
       group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
       group_order_var->DataChanged(DCR_ITEM_UPDATED);
@@ -305,8 +313,9 @@ void NetGroupedDataLoop::GetOrderVars() {
   group_order_var->hard_enum_type = TA_NetGroupedDataLoop.sub_types.FindName("Order");
   group_order = (Order)group_order_var->int_val;
 
-  if(!item_order_var || item_order_var->name != "item_order") {
-    if(!(item_order_var = my_prog->vars.FindName("item_order"))) {
+  if (!item_order_var || item_order_var->name != "item_order") {
+    item_order_var = my_prog->vars.FindName("item_order");
+    if (!item_order_var) {
       item_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_order_var->name = "item_order";
       item_order_var->DataChanged(DCR_ITEM_UPDATED);
@@ -319,9 +328,9 @@ void NetGroupedDataLoop::GetOrderVars() {
 
 void NetGroupedDataLoop::GetIndexVars() {
   Program* my_prog = program();
-  if(!my_prog) return;
+  if (!my_prog) return;
 
-  if(!my_prog->vars.FindName("trial")) {
+  if (!my_prog->vars.FindName("trial")) {
     ProgVar* trial = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     trial->name = "trial";
     trial->var_type = ProgVar::T_Int;
@@ -329,8 +338,9 @@ void NetGroupedDataLoop::GetIndexVars() {
     trial->DataChanged(DCR_ITEM_UPDATED);
   }
 
-  if(!group_index_var) {
-    if(!(group_index_var = my_prog->vars.FindName("group_index"))) {
+  if (!group_index_var) {
+    group_index_var = my_prog->vars.FindName("group_index");
+    if (!group_index_var) {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_index_var->name = "group_index";
       group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
@@ -339,8 +349,9 @@ void NetGroupedDataLoop::GetIndexVars() {
   }
   group_index_var->var_type = ProgVar::T_Int;
 
-  if(!item_index_var) {
-    if(!(item_index_var = my_prog->vars.FindName("item_index"))) {
+  if (!item_index_var) {
+    item_index_var = my_prog->vars.FindName("item_index");
+    if (!item_index_var) {
       item_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_index_var->name = "item_index";
       item_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
@@ -363,8 +374,8 @@ void NetGroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
     if(!CheckError(!data_var->object_val, quiet, rval,"data_var is NULL!")) {
-      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), 
-		 quiet, rval,"data_var does not point to a data table");
+      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataTable),
+                 quiet, rval,"data_var does not point to a data table");
     }
   }
   CheckError(!group_index_var, quiet, rval, "group_index_var = NULL");
@@ -476,7 +487,7 @@ String NetGroupedDataLoop::GetDisplayName() const {
 
 
 //////////////////////////
-//  Network Counters	//
+//  Network Counters    //
 //////////////////////////
 
 void NetCounterBase::Initialize() {
@@ -505,16 +516,19 @@ void NetCounterBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!counter, quiet, rval, "counter is NULL");
   CheckError(!(bool)network_var, quiet, rval, "network_var = NULL");
   CheckError((bool)network_var && !network_var->object_val, quiet, rval,
-	     "network_var object = NULL");
+             "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }
 
 void NetCounterBase::GetLocalCtrVar() {
-  if(!counter) return;
-  if((bool)local_ctr_var && (local_ctr_var->name == counter->name)) return;
+  if (!counter) return;
+  if (local_ctr_var && (local_ctr_var->name == counter->name)) return;
+
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
+  if (!my_prog) return;
+
+  local_ctr_var = my_prog->vars.FindName(counter->name);
+  if (!local_ctr_var) {
     local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     local_ctr_var->name = counter->name;
     local_ctr_var->DataChanged(DCR_ITEM_UPDATED);
@@ -538,7 +552,7 @@ void NetCounterInit::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, counter->name + " = 0;");
   prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
   if(update_after)
@@ -561,7 +575,7 @@ void NetCounterIncr::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, counter->name + "++;");
   prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
   if(update_after)
@@ -569,7 +583,7 @@ void NetCounterIncr::GenCssBody_impl(Program* prog) {
 }
 
 //////////////////////////
-//  Network Update	//
+//  Network Update      //
 //////////////////////////
 
 void NetUpdateView::Initialize() {
@@ -598,10 +612,13 @@ String NetUpdateView::GetDisplayName() const {
 }
 
 void NetUpdateView::GetUpdateVar() {
-  if((bool)update_var && (update_var->name == "update_net_view")) return;
+  if (update_var && (update_var->name == "update_net_view")) return;
+
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!(update_var = my_prog->vars.FindName("update_net_view"))) {
+  if (!my_prog) return;
+
+  update_var = my_prog->vars.FindName("update_net_view");
+  if (!update_var) {
     update_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     update_var->name = "update_net_view";
     update_var->DataChanged(DCR_ITEM_UPDATED);
@@ -610,18 +627,18 @@ void NetUpdateView::GetUpdateVar() {
 }
 
 void NetUpdateView::GenCssBody_impl(Program* prog) {
-  if(!network_var) {
+  if (!network_var) {
     prog->AddLine(this, "// ERROR: network_var not set in NetUpdateView", ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, "if(update_net_view || this.IsStepProg())"
-		+ network_var->name + "->UpdateAllViews();", ProgLine::MAIN_LINE);
+                + network_var->name + "->UpdateAllViews();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
 }
 
 
 ////////////////////////////////////////////////////
-//		Named Units Framework
+//              Named Units Framework
 ////////////////////////////////////////////////////
 
 void InitNamedUnits::Initialize() {
@@ -675,9 +692,10 @@ bool InitNamedUnits::GetInputDataVar() {
 
 bool InitNamedUnits::GetUnitNamesVar() {
   Program* my_prog = program();
-  if(!my_prog) return false;
-  if(!unit_names_var || (unit_names_var->name != "unit_names")) {
-    if(!(unit_names_var = my_prog->vars.FindName("unit_names"))) {
+  if (!my_prog) return false;
+  if (!unit_names_var || (unit_names_var->name != "unit_names")) {
+    unit_names_var = my_prog->vars.FindName("unit_names");
+    if (!unit_names_var) {
       unit_names_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       unit_names_var->name = "unit_names";
       unit_names_var->DataChanged(DCR_ITEM_UPDATED);
@@ -696,7 +714,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
       taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
       rval->DataChanged(DCR_ITEM_UPDATED);
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe"); // todo: might be too radical.
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe"); // todo: might be too radical.
       }
     }
     unit_names_var->object_val = rval;
@@ -732,12 +750,12 @@ bool InitNamedUnits::InitNamesTable() {
     return false;
 
   bool rval = InitUnitNamesFmInputData((DataTable*)unit_names_var->object_val.ptr(),
-				       (DataTable*)input_data_var->object_val.ptr());
+                                       (DataTable*)input_data_var->object_val.ptr());
   return rval;
 }
 
 bool InitNamedUnits::InitUnitNamesFmInputData(DataTable* unit_names,
-					      const DataTable* input_data) {
+                                              const DataTable* input_data) {
   if(!unit_names || !input_data) {
     taMisc::Error("InitUnitNamesFmInputData", "null args -- should not happen -- report bug!");
     return false;
@@ -748,16 +766,16 @@ bool InitNamedUnits::InitUnitNamesFmInputData(DataTable* unit_names,
     DataCol* ndc;
     if(idc->cell_dims() == 4)
       ndc = unit_names->FindMakeColMatrix(idc->name, VT_STRING,
-					  idc->cell_dims(),
-					  idc->GetCellGeom(0), idc->GetCellGeom(1), 
-					  idc->GetCellGeom(2), idc->GetCellGeom(3));
+                                          idc->cell_dims(),
+                                          idc->GetCellGeom(0), idc->GetCellGeom(1),
+                                          idc->GetCellGeom(2), idc->GetCellGeom(3));
     else
       ndc = unit_names->FindMakeColMatrix(idc->name, VT_STRING,
-					  idc->cell_dims(),
-					  idc->GetCellGeom(0), idc->GetCellGeom(1));
+                                          idc->cell_dims(),
+                                          idc->GetCellGeom(0), idc->GetCellGeom(1));
   }
   if(unit_names->rows <= 0)
-    unit_names->AddBlankRow();		// only one row ever needed!
+    unit_names->AddBlankRow();          // only one row ever needed!
   return true;
 }
 
@@ -768,7 +786,7 @@ bool InitNamedUnits::InitDynEnums() {
     return false;
 
   DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
-  if(!undt) return false;	// should not happen
+  if(!undt) return false;       // should not happen
 
   for(int i=0;i<undt->cols();i++) {
     DataCol* ndc = undt->data.FastEl(i);
@@ -787,8 +805,8 @@ bool InitNamedUnits::InitDynEnums() {
 }
 
 bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
-					    const DataCol* unit_names_col,
-					    const String& prefix) {
+                                            const DataCol* unit_names_col,
+                                            const String& prefix) {
   if(!dyn_enum || !unit_names_col) {
     taMisc::Error("InitDynEnumFmUnitNames", "null args");
     return false;
@@ -814,9 +832,9 @@ bool InitNamedUnits::LabelNetwork(bool propagate_names) {
     return false;
 
   DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
-  if(!undt) return false;	// should not happen
+  if(!undt) return false;       // should not happen
   Network* net = (Network*)network_var->object_val.ptr();
-  if(!net) return false;	// should not happen
+  if(!net) return false;        // should not happen
 
   net->SetUnitNamesFromDataTable(undt, max_unit_chars, propagate_names);
   return true;
@@ -842,7 +860,7 @@ bool InitNamedUnits::ViewDataLegend() {
   ngtv->main_xform.translate.y = 1.13f;
   ngtv->main_xform.scale = .33f;
   frame->Render();
-  frame->ViewAll(); 
+  frame->ViewAll();
   // not sure we really want to do this
   //    fr->SaveCurView(0);
   return true;
@@ -906,25 +924,25 @@ bool SetUnitsLit::GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm,
     DynEnumType* det = un.enum_type.ptr();
     colno = idat->FindColNameIdx(det->name, true);
     if(TestError(colno < 0, "GenCss",
-		 "data table column:",det->name,"not found in input data table:",
-		 idat->name)) return false;
-    if(un.NumVal() >= 0) {	// could be neg
+                 "data table column:",det->name,"not found in input data table:",
+                 idat->name)) return false;
+    if(un.NumVal() >= 0) {      // could be neg
       String rval;
       rval += idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
       if(offset != 0)
-	rval += String(offset) + "+" + un.NameVal() + ");";
+        rval += String(offset) + "+" + un.NameVal() + ");";
       else
-	rval += un.NameVal() + ");";
+        rval += un.NameVal() + ");";
       prog->AddLine(this, rval);
       if(set_nm) {
-	colno = idat->FindColNameIdx("Name", true);
-	if(colno >= 0) {
-	  String rval2 = "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal().after("_") + "\"; "
-	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }";
-	  prog->AddLine(this, rval2);
-	  // todo: add verbose 
-	}
+        colno = idat->FindColNameIdx("Name", true);
+        if(colno >= 0) {
+          String rval2 = "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
+            + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal().after("_") + "\"; "
+            + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }";
+          prog->AddLine(this, rval2);
+          // todo: add verbose
+        }
       }
       return true;
     }
@@ -974,22 +992,22 @@ void SetUnitsVar::UpdateAfterEdit_impl() {
 void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!input_data_var, quiet, rval, "input_data = NULL");
-  if(!CheckError((bool)unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval, 
-		 "unit_1 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError((bool)unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval, 
-	       "unit_1 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError((bool)unit_2 && unit_2->var_type != ProgVar::T_DynEnum, quiet, rval, 
-		 "unit_2 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError((bool)unit_2 && !unit_2->dyn_enum_val.enum_type, quiet, rval, 
-	       "unit_2 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError((bool)unit_3 && unit_3->var_type != ProgVar::T_DynEnum, quiet, rval, 
-		 "unit_3 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError((bool)unit_3 && !unit_3->dyn_enum_val.enum_type, quiet, rval, 
-	       "unit_3 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError((bool)unit_4 && unit_4->var_type != ProgVar::T_DynEnum, quiet, rval, 
-		 "unit_4 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError((bool)unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval, 
-	       "unit_4 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError((bool)unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval,
+                 "unit_1 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError((bool)unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval,
+               "unit_1 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError((bool)unit_2 && unit_2->var_type != ProgVar::T_DynEnum, quiet, rval,
+                 "unit_2 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError((bool)unit_2 && !unit_2->dyn_enum_val.enum_type, quiet, rval,
+               "unit_2 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError((bool)unit_3 && unit_3->var_type != ProgVar::T_DynEnum, quiet, rval,
+                 "unit_3 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError((bool)unit_3 && !unit_3->dyn_enum_val.enum_type, quiet, rval,
+               "unit_3 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError((bool)unit_4 && unit_4->var_type != ProgVar::T_DynEnum, quiet, rval,
+                 "unit_4 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError((bool)unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval,
+               "unit_4 does not have enum_type set -- must be set to one associated with layer unit names!");
 }
 
 String SetUnitsVar::GetDisplayName() const {
@@ -1023,8 +1041,8 @@ bool SetUnitsVar::GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& id
     DynEnumType* det = un->dyn_enum_val.enum_type.ptr();
     colno = idat->FindColNameIdx(det->name, true);
     if(TestError(colno < 0, "GenCss",
-		 "data table column:",det->name,"not found in input data table:",
-		 idat->name)) return false;
+                 "data table column:",det->name,"not found in input data table:",
+                 idat->name)) return false;
     // if var has ability to go negative, check..
     bool neg_chk = false;
     if(det->enums.SafeEl(0) && det->enums.SafeEl(0)->value < 0) {
@@ -1042,11 +1060,11 @@ bool SetUnitsVar::GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& id
     if(set_nm) {
       colno = idat->FindColNameIdx("Name", true);
       if(colno >= 0) {
-	String rval2 = "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	  + ", -1); if(!nm.empty()) nm += \"_\"; String nwnm = " + un->name
-	  + "; nwnm = nwnm.after(\"_\"); nm += nwnm; "
-	  + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }";
-	prog->AddLine(this, rval2);
+        String rval2 = "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
+          + ", -1); if(!nm.empty()) nm += \"_\"; String nwnm = " + un->name
+          + "; nwnm = nwnm.after(\"_\"); nm += nwnm; "
+          + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }";
+        prog->AddLine(this, rval2);
       }
     }
     if(neg_chk) {
@@ -1079,7 +1097,7 @@ void SetUnitsVar::GenCssBody_impl(Program* prog) {
 
 
 //////////////////////////
-//  WtInitPrompt	//
+//  WtInitPrompt        //
 //////////////////////////
 
 void WtInitPrompt::Initialize() {
@@ -1093,15 +1111,15 @@ void WtInitPrompt::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "{ int chs = 0;");
     prog->IncIndent();
     prog->AddLine(this, String("if(network->epoch > 0) chs = taMisc::Choice(\"")
-		  + prompt + "\", \"" + yes_label + "\", \"" + no_label + "\");",
-		  ProgLine::MAIN_LINE);
+                  + prompt + "\", \"" + yes_label + "\", \"" + no_label + "\");",
+                  ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
     prog->AddLine(this, "if(chs == 0) {");
     prog->IncIndent();
     prog->AddVerboseLine(this, false, "\"inside choice == yes\"");
   }
   else {
-    prog->AddLine(this, "{");		// just a block to run..
+    prog->AddLine(this, "{");           // just a block to run..
     prog->IncIndent();
   }
 }
@@ -1109,7 +1127,7 @@ void WtInitPrompt::GenCssPre_impl(Program* prog) {
 void WtInitPrompt::GenCssPost_impl(Program* prog) {
   prog->DecIndent();
   prog->AddLine(this, "}");
-  if(taMisc::gui_active && !taMisc::server_active) {	// extra close
+  if(taMisc::gui_active && !taMisc::server_active) {    // extra close
     prog->DecIndent();
     prog->AddLine(this, "}");
   }

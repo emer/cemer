@@ -108,7 +108,7 @@ using namespace Qt;
 #define THUMB_WRAP_THR 800
 
 /////////////////////////////////////////////////////////////
-//		Saved Views
+//              Saved Views
 
 void T3SavedView::Initialize() {
   view_saved = false;
@@ -185,7 +185,7 @@ void T3SavedView_List::GetCameraFocDist(int view_no, float& fd) {
 }
 
 /////////////////////////////////////////////////////////////
-//		Quarter Widget
+//              Quarter Widget
 
 T3QuarterWidget::T3QuarterWidget(const QGLFormat & format, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)
   : inherited(format, parent, sharewidget, f)
@@ -226,7 +226,7 @@ void T3QuarterWidget::paintEvent(QPaintEvent * event) {
 }
 
 /////////////////////////////////////////////////////////////
-//		Examiner Viewer
+//              Examiner Viewer
 
 const int T3ExaminerViewer::n_views = 6;
 
@@ -1180,29 +1180,29 @@ void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
 void T3DataView::ChildClearing(taDataView* child_) { // child is always a T3DataView
   T3DataView* child = (T3DataView*)child_;
   // remove the visual rendering of child, if any
-  T3Node* ch_so;
-  if (!(ch_so = child->node_so())) return;
-  AddRemoveChildNode(ch_so, false); // remove node
-  child->setNode(NULL);
+  if (T3Node *ch_so = child->node_so()) {
+    AddRemoveChildNode(ch_so, false); // remove node
+    child->setNode(NULL);
+  }
 }
 
 void T3DataView::ChildRendered(taDataView* child_) { // child is always a T3DataView
   if (!node_so()) return; // shouldn't happen
-  T3DataView* child = dynamic_cast<T3DataView*>(child_);
-  if (!child) return;
-  T3Node* ch_so;
-  if (!(ch_so = child->node_so())) return; // shouldn't happen
-  AddRemoveChildNode(ch_so, true); // add node
+  if (T3DataView *child = dynamic_cast<T3DataView*>(child_)) {
+    if (T3Node *ch_so = child->node_so()) {
+      AddRemoveChildNode(ch_so, true); // add node
+    }
+  }
 }
 
 void T3DataView::ChildRemoving(taDataView* child_) {
-  T3DataView* child = dynamic_cast<T3DataView*>(child_);
-  if (!child) return;
-  // remove the visual rendering of child, if any
-  SoNode* ch_so;
-  if (!(ch_so = child->node_so())) return;
-  AddRemoveChildNode(ch_so, false); // remove node
-  child->setNode(NULL);
+  if (T3DataView *child = dynamic_cast<T3DataView*>(child_)) {
+    // remove the visual rendering of child, if any
+    if (SoNode *ch_so = child->node_so()) {
+      AddRemoveChildNode(ch_so, false); // remove node
+      child->setNode(NULL);
+    }
+  }
 }
 
 void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3DataView
@@ -1214,7 +1214,8 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
     parent()->ChildClearing(this); // parent clears us
-  } else {
+  }
+  else {
     setNode(NULL);
   }
 }
@@ -1226,10 +1227,10 @@ taiDataLink* T3DataView::clipParLink(GuiContext sh_typ) const {
 void T3DataView::setNode(T3Node* node_) {
   if (m_node_so.ptr() == node_) return; // generally shouldn't happen
   if (m_node_so.ptr()) {
-    T3DataViewFrame* dvf = GetFrame();
-    iT3DataViewFrame* idvf;
-    if (dvf && (idvf = dvf->widget())) {
-      idvf->NodeDeleting(m_node_so); // just desels all, for now
+    if (T3DataViewFrame *dvf = GetFrame()) {
+      if (iT3DataViewFrame *idvf = dvf->widget()) {
+        idvf->NodeDeleting(m_node_so); // just desels all, for now
+      }
     }
   }
   m_node_so = node_;
@@ -1330,15 +1331,16 @@ void T3DataView::ReInit() {
 }
 
 void T3DataView::ReInit_impl() {
-  T3Node* node;
-  if ((node = m_node_so.ptr()) != NULL) {
+  if (T3Node *node = m_node_so.ptr()) {
     node->clear();
   }
 }
 
 void T3DataView::Render_impl() {
-  T3ExaminerViewer* vw = GetViewer();
-  if(vw) vw->syncViewerMode();  // always make sure it is sync'd with what we think it should be
+  if (T3ExaminerViewer *vw = GetViewer()) {
+    // always make sure it is sync'd with what we think it should be
+    vw->syncViewerMode();
+  }
 
   T3Node* node = m_node_so.ptr();
   if (m_transform && node) {
@@ -2113,9 +2115,11 @@ void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {
 T3DataView* T3DataViewFrame::FindRootViewOfData(taBase* data) {
   if (!data) return NULL;
   for (int i = 0; i < root_view.children.size; ++i) {
-    T3DataView* dv;
-    if (!(dv = dynamic_cast<T3DataView*>(root_view.children[i]))) continue;
-    if (dv->data() == data) return dv;
+    if (T3DataView *dv = dynamic_cast<T3DataView*>(root_view.children[i])) {
+      if (dv->data() == data) {
+        return dv;
+      }
+    }
   }
   return NULL;
 }
@@ -2128,9 +2132,8 @@ T3DataView* T3DataViewFrame::singleChild() const {
 
 
 const iColor T3DataViewFrame::GetBgColor() const {
-  bool sm = singleMode();
   iColor rval;
-  if (sm) {
+  if (singleMode()) {
     T3DataView* sng = singleChild();
     if (sng) {
       bool ok = false;
@@ -2409,8 +2412,8 @@ void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp, boo
   if (n_horiz < 1) n_horiz = 1;
   int idx = 0;
   for (int i = 0; i < root_view.children.size; ++i) {
-    T3DataViewMain* dv;
-    if (!(dv = dynamic_cast<T3DataViewMain*>(root_view.children[i]))) continue;
+    T3DataViewMain* dv = dynamic_cast<T3DataViewMain*>(root_view.children[i]);
+    if (!dv) continue;
     int cur_x = idx % n_horiz;
     int cur_y = idx / n_horiz;
     float xp = (float)cur_x * (1.0 + horiz_sp);

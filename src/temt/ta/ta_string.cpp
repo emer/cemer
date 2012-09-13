@@ -76,26 +76,26 @@ String  String::operator [] (const Variant& i) const {
       if(end > length()) end = length();
       if(end < 0) end = 0;
       if(end < start) {
-	error("operator[] IDX_SLICE, slice end is before start. start: "+
-	      String(start) + " end: " + String(end) + " step: " + String(step));
-	return rval;
+        error("operator[] IDX_SLICE, slice end is before start. start: "+
+              String(start) + " end: " + String(end) + " step: " + String(step));
+        return rval;
       }
       if(step > 0) {
-	for(int i = start; i < end; i += step) {
-	  rval += elem(i);
-	}
+        for(int i = start; i < end; i += step) {
+          rval += elem(i);
+        }
       }
       else {
-	for(int i = end-1; i >= start; i += step) {
-	  rval += elem(i);
-	}
+        for(int i = end-1; i >= start; i += step) {
+          rval += elem(i);
+        }
       }
     }
-    else {			// just a bunch of coords
+    else {                      // just a bunch of coords
       for(int i=0; i< cmat->size; i++) {
-	int idx = cmat->FastEl_Flat(i);
-	if(idx >= 0 && idx < length())
-	  rval += elem(idx);
+        int idx = cmat->FastEl_Flat(i);
+        if(idx >= 0 && idx < length())
+          rval += elem(idx);
       }
     }
   }
@@ -108,20 +108,24 @@ String  String::operator [] (const Variant& i) const {
 void _capitalize(char* p, int n) {
   char* e = &(p[n]);
   for (; p < e; ++p) {
-    int at_word;
-    if ((at_word = islower(*p)))
+    int at_word = islower(*p);
+    if (at_word) {
       *p = toupper(*p);
-    else
+    }
+    else {
       at_word = isupper(*p) || isdigit(*p);
+    }
 
     if (at_word) {
       while (++p < e) {
-        if (isupper(*p))
+        if (isupper(*p)) {
           *p = tolower(*p);
+        }
         /* A '\'' does not break a word, so that "Nathan's" stays
            "Nathan's" rather than turning into "Nathan'S". */
-        else if (!islower(*p) && !isdigit(*p) && (*p != '\''))
+        else if (!islower(*p) && !isdigit(*p) && (*p != '\'')) {
           break;
+        }
       }
     }
   }
@@ -132,10 +136,19 @@ int _search(const char* s, int start, int sl, char c) {
     if (start >= 0) {
       const char* a = &(s[start]);
       const char* lasta = &(s[sl]);
-      while (a < lasta) if (*a++ == c) return (int)(--a - s); //safeint
-    } else {
+      while (a < lasta) {
+        if (*a++ == c) {
+          return (int)(--a - s); //safeint
+        }
+      }
+    }
+    else {
       const char* a = &(s[sl + start + 1]);
-      while (--a >= s) if (*a == c) return (int)(a - s);
+      while (--a >= s) {
+        if (*a == c) {
+          return (int)(a - s);
+        }
+      }
     }
   }
   return -1;
@@ -152,9 +165,14 @@ int _search(const char* s, int start, int sl, const char* t, int tl) {
       while (p <= lasts) {
         const char* x = p++;
         const char* y = t;
-        while (*x++ == *y++) if (y >= lastt) return (int)(--p - s); //safeint
+        while (*x++ == *y++) {
+          if (y >= lastt) {
+            return (int)(--p - s); //safeint
+          }
+        }
       }
-    } else {
+    }
+    else {
       const char* firsts = &(s[tl - 1]);
       const char* lastt =  &(t[tl - 1]);
       const char* p = &(s[sl + start + 1]);
@@ -162,7 +180,11 @@ int _search(const char* s, int start, int sl, const char* t, int tl) {
       while (--p >= firsts) {
         const char* x = p;
         const char* y = lastt;
-        while (*x-- == *y--) if (y < t) return (int)(++x - s); //safeint
+        while (*x-- == *y--) {
+          if (y < t) {
+            return (int)(++x - s); //safeint
+          }
+        }
       }
     }
   }
@@ -180,10 +202,14 @@ int _search_ci(const char* s, int start, int sl, const char* t, int tl) {
       while (p <= lasts) {
         const char* x = p++;
         const char* y = t;
-        while (tolower(*x++) == tolower(*y++))
-          if (y >= lastt) return (int)(--p - s); //safeint
+        while (tolower(*x++) == tolower(*y++)) {
+          if (y >= lastt) {
+            return (int)(--p - s); //safeint
+          }
+        }
       }
-    } else {
+    }
+    else {
       const char* firsts = &(s[tl - 1]);
       const char* lastt =  &(t[tl - 1]);
       const char* p = &(s[sl + start + 1]);
@@ -191,7 +217,11 @@ int _search_ci(const char* s, int start, int sl, const char* t, int tl) {
       while (--p >= firsts) {
         const char* x = p;
         const char* y = lastt;
-        while (tolower(*x--) == tolower(*y--)) if (y < t) return (int)(++x - s); //safeint
+        while (tolower(*x--) == tolower(*y--)) {
+          if (y < t) {
+            return (int)(++x - s); //safeint
+          }
+        }
       }
     }
   }
@@ -202,9 +232,13 @@ int _search_ci(const char* s, int start, int sl, const char* t, int tl) {
 
 inline static int ncmp(const char* a, int al, const char* b, int bl)
 {
-  int n = (al <= bl)? al : bl;
-  int diff;
-  while (n-- > 0) if ((diff = *a++ - *b++) != 0) return diff;
+  int n = (al <= bl) ? al : bl;
+  while (n-- > 0) {
+    int diff = *a++ - *b++;
+    if (diff != 0) {
+      return diff;
+    }
+  }
   return al - bl;
 }
 

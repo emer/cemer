@@ -615,7 +615,6 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
   // add the BUTTON and MENU_BUTTON items
   cnt = 0;
   taiMenu_List ta_menus;
-  taiActions* cur_menu = NULL;
   String men_nm = "Misc";  //see note in taiEditDataHost::SetCurMenuButton
   String on_nm;
   for (int i = 0; i < typ->methods.size; ++i) {
@@ -637,9 +636,11 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     //note: both are allowed, but we give priority to BUTTON
     if (md->HasOption("BUTTON")) {
       mth_rep->AddToMenu(menu);
-    } else { // has to be "MENU_BUTTON"
+    }
+    else { // has to be "MENU_BUTTON"
       // create the submenus when needed, and locate -- default is last created one
-      if (!(cur_menu = ta_menus.FindName(men_nm))) {
+      taiActions *cur_menu = ta_menus.FindName(men_nm);
+      if (!cur_menu) {
         cur_menu = menu->AddSubMenu(men_nm);
         ta_menus.Add(cur_menu);
       }
@@ -650,7 +651,6 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
 
   // now, finally, add the normal submenu items, ex. Object, Edit, etc.
   ta_menus.Reset();
-  cur_menu = NULL;
   cnt = 0;
   men_nm = "Actions"; // default until/unless explicit
   for (int i = 0; i < typ->methods.size; ++i) {
@@ -669,8 +669,10 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
+
     // create the submenus when needed, and locate -- default is last created one
-    if (!(cur_menu = ta_menus.FindName(men_nm))) {
+    taiActions *cur_menu = ta_menus.FindName(men_nm);
+    if (!cur_menu) {
       cur_menu = menu->AddSubMenu(men_nm);
       ta_menus.Add(cur_menu);
     }
@@ -933,7 +935,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
 
     if (md->type->ptr == 0) {
         chld = static_cast<taBase*>(md->GetOff(tab));
-    } else { // must be == 1
+    }
+    else { // must be == 1
       taBase** pchld = static_cast<taBase**>(md->GetOff(tab));
       if (!pchld || !(chld = *pchld)) continue;
       if (chld->GetOwner() != tab) continue;
@@ -7846,16 +7849,17 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     }
     if((ctrl_pressed && e->key() == Qt::Key_W) ||
        (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
-       || (e->key() == Qt::Key_Backspace)) {
+       || (e->key() == Qt::Key_Backspace))
+    {
       ext_select_on = false;
-      ISelectable* si = curItem();
-      ISelectableHost* host = NULL;
-      if(si && (host = si->host())) {
-        int ea = 0;
-        host->EditActionsEnabled(ea);
-        if (ea & taiClipData::EA_DELETE) {
-          host->EditAction(taiClipData::EA_DELETE);
-          //WARNING: we may be deleted at this point!!!
+      if (ISelectable *si = curItem()) {
+        if (ISelectableHost *host = si->host()) {
+          int ea = 0;
+          host->EditActionsEnabled(ea);
+          if (ea & taiClipData::EA_DELETE) {
+            host->EditAction(taiClipData::EA_DELETE);
+            //WARNING: we may be deleted at this point!!!
+          }
         }
       }
       e->accept();
@@ -8149,11 +8153,9 @@ void iTreeView::UpdateSelectedItems_impl() {
   // selection already; then we select any that remain in the list
   ISelectable_PtrList sel_items = selItems(); // copies
   QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
-  QTreeWidgetItem* item;
   int lst_idx;
-  while ( (item = *it) ) {
-    ISelectable* si = dynamic_cast<ISelectable*>(item);
-    if (si) {
+  while (QTreeWidgetItem *item = *it) {
+    if (ISelectable* si = dynamic_cast<ISelectable*>(item)) {
       if ((lst_idx = sel_items.FindEl(si)) >= 0)
         sel_items.RemoveIdx(lst_idx);
       else setItemSelected(item, false); // hope this is ok while iterating!!!!
@@ -8164,8 +8166,9 @@ void iTreeView::UpdateSelectedItems_impl() {
   for (int lst_idx = 0; lst_idx < sel_items.size; ++lst_idx) {
     ISelectable* si = sel_items.FastEl(lst_idx);
     if (si->GetTypeDef()->InheritsFrom(TA_iTreeViewItem)) { // should
-      item = (iTreeViewItem*)(si->This());
-      if (item) setItemSelected(item, true);
+      if (QTreeWidgetItem *item = (iTreeViewItem*) (si->This())) {
+        setItemSelected(item, true);
+      }
     }
   }
 }

@@ -1634,8 +1634,9 @@ protected:
 class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
   // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
   Q_OBJECT
-INHERITED(iDataPanel)
-friend class iViewPanelSet;
+  INHERITED(iDataPanel)
+  friend class iViewPanelSet;
+
 public:
   enum ViewPanelFlags { // #BITS misc flags
     VP_0                = 0, // #IGNORE

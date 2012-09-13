@@ -183,8 +183,10 @@ public:
   }
 
   taBase* LastEl_(taLeafItr& lf) const { // #IGNORE last leaf iter init
-    if (!(lf.cgp = LastGp_(lf.g)))
+    lf.cgp = LastGp_(lf.g);
+    if (!lf.cgp) {
       return NULL;
+    }
     lf.i = lf.cgp->size - 1;
     return (taBase*)lf.cgp->el[lf.i];
   }
@@ -195,10 +197,13 @@ public:
 
   taBase* PrevEl_(taLeafItr& lf) const { // #IGNORE prev leaf -- delete item safe
     if (--lf.i < 0) {
-      if (leaf_gp == NULL)
+      if (leaf_gp == NULL) {
         InitLeafGp(); // in case we did a delete of an item
-      if (!(lf.cgp = leaf_gp->SafeEl(--lf.g)))
+      }
+      lf.cgp = leaf_gp->SafeEl(--lf.g);
+      if (!lf.cgp) {
         return NULL;
+      }
       lf.i = lf.cgp->size - 1;
     }
     return (taBase*)lf.cgp->el[lf.i];
@@ -211,14 +216,14 @@ public:
 #endif
 
   override taBase* ElemLeaf(int leaf_idx) const { return Leaf_(leaf_idx); }
-  override int	   ElemCount() const 		{ return leaves; }
+  override int     ElemCount() const            { return leaves; }
 
   virtual taGroup_impl*  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);    // #IGNORE create items
 
   taGroup_impl*          NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
-				   const String& name="");
+                                   const String& name="");
   // #BUTTON #MENU #MENU_ON_Object #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL #CAT_Modify Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
   virtual taBase* FindLeafName_(const String& it) const;        // #IGNORE
@@ -288,11 +293,11 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
-  override int 	 ReplaceValStr(const String& srch, const String& repl,
-			      const String& mbr_filt,
-			      void* par = NULL, TypeDef* par_typ=NULL,
-			      MemberDef* md = NULL,
-			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+  override int   ReplaceValStr(const String& srch, const String& repl,
+                              const String& mbr_filt,
+                              void* par = NULL, TypeDef* par_typ=NULL,
+                              MemberDef* md = NULL,
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
   override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                               MemberDef* memb_def=NULL, const void* par=NULL,
@@ -322,7 +327,7 @@ public:
   override int  SelectForEditSearch(const String& memb_contains, SelectEdit*& editor); //
 
   override bool         ChildCanDuplicate(const taBase* chld,
-					  bool quiet = true) const;
+                                          bool quiet = true) const;
   override taBase*      ChildDuplicate(const taBase* chld);
 
   override void  Duplicate(const taGroup_impl& cp);

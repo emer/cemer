@@ -32,7 +32,7 @@ public:
 
   Network*      net() const;
   T3BrainNode*  node_so() const;
-  BrainView*    bv();
+  BrainView*    getBrainView();
 
   void          AllocUnitViewData(); // make sure we have correct space in uvd storage
   override void BuildAll(); // creates fully populated subviews
@@ -60,7 +60,7 @@ protected:
   void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
   // for cons
   void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
-  // for bias vals  
+  // for bias vals
   override void  DoActionChildren_impl(DataViewAction acts);
   virtual void   Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void   Render_impl_blocks();  // optimized blocks
@@ -78,18 +78,18 @@ private:
   void           RenderBrain();          // #IGNORE
   void           CreateReferenceWidget( SoSeparator* widg, BrainView::AnatomicalPlane p, float max_dim, float scale=0.0f ); // #IGNORE
   void           SliceAsTexture( BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data );       // #IGNORE
-  void           SliceAsColorTexture( BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data, NiftiReader* atlas_data ); // #IGNORE  
+  void           SliceAsColorTexture( BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data, NiftiReader* atlas_data ); // #IGNORE
   void           CreateFaceSets();        // #IGNORE
   void           CreateAtlasFaceSets(String brain_area, T3Color area_color); // #IGNORE
-  void           UpdateAtlasFaceValues(float alpha);   
-  
+  void           UpdateAtlasFaceValues(float alpha);
+
   NiftiReader*   m_brain_data;// #IGNORE
   NiftiReader*   m_atlas_data;// #IGNORE
-  
+
 #ifndef __MAKETA__
   QMultiMap<unsigned int, FloatTDCoord> m_atlas_depth_map; //#IGNORE
   QMultiMap<unsigned int, Voxel*>       m_units_depth_map; //#IGNORE
-  QMap<const Voxel*, FloatTDCoord>      m_voxel_map; //#IGNORE 
+  QMap<const Voxel*, FloatTDCoord>      m_voxel_map; //#IGNORE
   QMap<const Unit*, unsigned int>       m_uvd_bases_map; //#IGNORE
   QList<QColor>                         m_atlasColors; //#IGNORE
 #endif

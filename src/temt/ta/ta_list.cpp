@@ -370,20 +370,15 @@ bool taPtrList_impl::RemoveIdx(int i) {
 }
 
 bool taPtrList_impl::RemoveEl_(void* it) {
-  int i;
-  if((i = FindEl_(it)) < 0)
-    return false;
-  return RemoveIdx(i);
+  int i = FindEl_(it);
+  return (i < 0) ? false : RemoveIdx(i);
 }
 bool taPtrList_impl::RemoveName(const String& it) {
   int i = FindNameIdx(it);
-  if(i >= 0)
-    return RemoveIdx(i);
-  return false;
+  return (i < 0) ? false : RemoveIdx(i);
 }
 bool taPtrList_impl::RemoveLast() {
-  if(size == 0) return false;
-  return RemoveIdx(size-1);
+  return (size == 0) ? false : RemoveIdx(size - 1);
 }
 
 void taPtrList_impl::RemoveAll() {
@@ -749,12 +744,13 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
     if(cp.el[i] == NULL)  continue;
     ++taMisc::is_duplicating;
     void* it = El_MakeToken_(cp.el[i]);
-    int idx;
-    if((idx=Scratch_Find_(El_GetName_(cp.el[i]))) >= 0) {
-      ReplaceIdx_(idx,it, true); //note: only insert notify is suppressed
+    int idx = Scratch_Find_(El_GetName_(cp.el[i]));
+    if (idx >= 0) {
+      ReplaceIdx_(idx, it, true); //note: only insert notify is suppressed
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(idx - 1));
-    }  else {
+    }
+    else {
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
@@ -804,8 +800,8 @@ void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
   scratch_list.Borrow(*this);   // get this into scratch for find (using replace..)
   for(int i=0; i < cp.size; i++) {
     void* it = cp.el[i];
-    int idx;
-    if((idx=Scratch_Find_(El_GetName_(it))) >= 0)
+    int idx = Scratch_Find_(El_GetName_(it));
+    if (idx >= 0)
       ReplaceLinkIdx_(idx, it);
     else
       Link_(it);
