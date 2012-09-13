@@ -31,6 +31,7 @@
 # include "ta_qt.h"
 # include "ta_qtdata.h"
 # include "ta_qtdialog.h"
+# include "PublishDocsDialog.h"
 # include "ta_qttype_def.h"
 # include "colorscale.h"
 # include "css_qt.h"
@@ -647,7 +648,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   }
   else {
     taMisc::LogInfo("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
-		    "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
+                    "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
   }
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
@@ -667,9 +668,9 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src = undo_srcs.CircPeek(); // always grab the last guy
     if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
       if(cur_src && taMisc::undo_debug) {
-	taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
-		     "was greater than threshold:", String(new_src_thr),
-		     "saving a new src instead of the diff from previous src");
+        taMisc::Info("SaveUndo diff pct on last save:", String(cur_src->last_diff_pct),
+                     "was greater than threshold:", String(new_src_thr),
+                     "saving a new src instead of the diff from previous src");
       }
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
@@ -705,12 +706,12 @@ void taUndoMgr::PurgeUnusedSrcs() {
     int cnt = urec->UseCount();
     if(cnt == 0) {
       if(taMisc::undo_debug) {
-	taMisc::Info("Undo: purging unused save rec, size: ",
-		     String(urec->save_data.length()));
+        taMisc::Info("Undo: purging unused save rec, size: ",
+                     String(urec->save_data.length()));
       }
       else {
-	taMisc::DebugInfo("Undo: purging unused save rec, size: ",
-			  String(urec->save_data.length()));
+        taMisc::DebugInfo("Undo: purging unused save rec, size: ",
+                          String(urec->save_data.length()));
       }
       undo_srcs.CircShiftLeft(1);
       did_purge = true;
@@ -723,11 +724,11 @@ void taUndoMgr::PurgeUnusedSrcs() {
   if(n_purges > 0) {
     if(taMisc::undo_debug) {
       taMisc::Info("Undo: Total Purges: ", String(n_purges), " remaining length: ",
-		   String(undo_srcs.length));
+                   String(undo_srcs.length));
     }
     else {
       taMisc::DebugInfo("Undo: Total Purges: ", String(n_purges), " remaining length: ",
-			String(undo_srcs.length));
+                        String(undo_srcs.length));
     }
   }
 }
@@ -880,17 +881,17 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     if(show_list) {
       String msg;
       msg << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
-	  << " diffs: " << dif_lns
-	  << " action: " << urec->action << " on: " << urec->mod_obj_name
-	  << " at path: " << urec->mod_obj_path;
+          << " diffs: " << dif_lns
+          << " action: " << urec->action << " on: " << urec->mod_obj_name
+          << " at path: " << urec->mod_obj_path;
       taMisc::Info(msg);
       if(show_diffs && (bool)urec->diff_src && urec->save_data.empty()) {
-	String msg;
+        String msg;
         String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
         for(int j=0; j<diffstr.length(); j++) {
           msg << diffstr[j];
         }
-	taMisc::ConsoleOutput(msg, false, false);
+        taMisc::ConsoleOutput(msg, false, false);
       }
     }
   }
@@ -904,9 +905,9 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
   {
     String msg;
     msg << "Undo memory usage: small Edit saves: " << tot_size
-	<< " full proj saves: " << tot_saved
-	<< " in: " << undo_srcs.length << " recs, "
-	<< " diff lines: " << tot_diff_lines;
+        << " full proj saves: " << tot_saved
+        << " in: " << undo_srcs.length << " recs, "
+        << " diff lines: " << tot_diff_lines;
     taMisc::Info(msg);
   }
 }
@@ -1937,6 +1938,22 @@ int taProject::SaveAs(const String& fname) {
   taRefN::unRefDone(flr);
   DataChanged(DCR_ITEM_UPDATED_ND);
   return rval;
+}
+
+void taProject::PublishDocsOnWeb(const String &repositoryName)
+{
+  PublishDocsDialog dialog(repositoryName);
+  if (dialog.exec()) {
+    // User clicked OK.
+    QString name = dialog.getName();
+    QString desc = dialog.getDesc();
+    QStringList tags = dialog.getTags();
+
+    // TODO: upload the docs.  Initial plan was to turn the pub docs dialog
+    // into an "uploading progress" dialog, but after trying a few things
+    // it seems to make more sense to create a new progress dialog that
+    // could also be used for the PublishProject stage.
+  }
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {
@@ -3196,7 +3213,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   taMisc::use_gui = false;
 #endif
 
-  taMisc::interactive = true;	// default to true
+  taMisc::interactive = true;   // default to true
 
   // process gui flag right away -- has other implications
   if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version")
@@ -3360,9 +3377,9 @@ namespace { // anon
     QFileInfo fi(full_exe);
     if(!fi.exists()) {
       cerr << "\nWARNING: Not able to find executable at place we think it is:\n"
-	   << full_exe << "\n"
-	   << "this means that various things like checking for out-of-date plugins\n"
-	   << "and detecting if we're running the develoment executable won't work.\n";
+           << full_exe << "\n"
+           << "this means that various things like checking for out-of-date plugins\n"
+           << "and detecting if we're running the develoment executable won't work.\n";
     }
     else {
       taMisc::exe_mod_time_int = fi.lastModified().toTime_t();
@@ -3372,13 +3389,13 @@ namespace { // anon
 
 #if defined(TA_OS_MAC)
       /* Note: for Mac, if the bin is in a bundle, then it will be a link
-	 to the actual file, so in this case, we dereference it
-	 {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
-	 {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
-	 {app_dir}/bin (typically non-gui only, since gui must run from bundle)
+         to the actual file, so in this case, we dereference it
+         {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
+         {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
+         {app_dir}/bin (typically non-gui only, since gui must run from bundle)
       */
       if (taMisc::exe_path.endsWith("/Contents/MacOS")) {
-	taMisc::exe_path = fi.canonicalPath();
+        taMisc::exe_path = fi.canonicalPath();
       }
 #endif // Mac
     }
@@ -3717,7 +3734,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     inst->SetFileName(good_fnm); // reinstate for later saving
   }
 
-  // set GUI style 
+  // set GUI style
 #ifdef TA_GUI
   if(taMisc::use_gui) {
     // get optional style override
@@ -3725,13 +3742,13 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     // Vista style only available on Vista+, so force down if not
     // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
     if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) &&
-	(QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
+        (QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
       taMisc::gui_style = taMisc::GS_WINDOWSXP;
 # endif // TA_OS_WIN
     String gstyle;
     if(taMisc::gui_style != taMisc::GS_DEFAULT) {
-      gstyle = TA_taMisc.GetEnumString("GuiStyle", 
-				       taMisc::gui_style).after("GS_").downcase();
+      gstyle = TA_taMisc.GetEnumString("GuiStyle",
+                                       taMisc::gui_style).after("GS_").downcase();
     }
     if(gstyle.nonempty()) {
       QApplication::setStyle(gstyle.toQString());
@@ -4118,9 +4135,9 @@ bool taRootBase::Startup_ProcessArgs() {
 
   if(run_startup && taPlugins::plugins_out_of_date > 0) {
 #ifdef TA_OS_WIN
-    int chs = 1;		// don't recompile by default in windows
+    int chs = 1;                // don't recompile by default in windows
 #else
-    int chs = 0;		// default is to recompile on other platforms
+    int chs = 0;                // default is to recompile on other platforms
 #endif
     if(taMisc::interactive) {
       chs = taMisc::Choice("Some plugins are out of date -- rebuild them from the installed source code now?  If you do so, the program will quit after rebuilding, and the build process will not be visible in the GUI (run --nogui to see it).  This will only work if your system is configured for building plugins from source.  You will have to restart the software to then load the plugins.  If you Ignore, then those plugins will remain unavailable until rebuilt.  If you Clean, then the existing out-of-date plugin files will be removed and you won't be prompted again (you can always build them again later).", "Rebuild", "Ignore", "Clean");
@@ -4130,7 +4147,7 @@ bool taRootBase::Startup_ProcessArgs() {
       run_startup = false;
     }
     else if(chs == 2) {
-      // todo: could just clean all the out-of-date ones -- 
+      // todo: could just clean all the out-of-date ones --
       taPlugins::CleanAllOutOfDatePlugins();
       run_startup = false;
     }

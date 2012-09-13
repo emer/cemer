@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -53,7 +53,7 @@
 #include <qmenubar.h>
 #include <QList>
 #include <QMenu>
-#include <QNetworkReply>	
+#include <QNetworkReply>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStackedWidget>
@@ -79,238 +79,6 @@
 #include "iscrollarea.h"
 
 using namespace Qt;
-/*TODO: nuke
-static const unsigned char image0_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0x74, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xed, 0xd5, 0xc1, 0x09, 0xc0,
-    0x20, 0x0c, 0x05, 0xd0, 0x6f, 0xe9, 0x36, 0x81, 0x2c, 0x10, 0xb2, 0xff,
-    0xdd, 0x85, 0xd2, 0x53, 0x85, 0xb6, 0xa9, 0x91, 0x48, 0x0f, 0x05, 0x3f,
-    0x08, 0x1a, 0xf0, 0x29, 0x12, 0x10, 0xf8, 0x28, 0xc5, 0xa9, 0xd9, 0xc4,
-    0xde, 0x96, 0xcd, 0x2b, 0x9a, 0xd9, 0xeb, 0x00, 0x00, 0x66, 0x0e, 0x2f,
-    0xe0, 0xc2, 0x51, 0x98, 0x39, 0xc4, 0xf7, 0x0c, 0x4c, 0x44, 0x6d, 0x5e,
-    0x6b, 0x35, 0x38, 0xcf, 0x92, 0x82, 0x45, 0xe4, 0xb2, 0xf6, 0xf0, 0x14,
-    0xac, 0xaa, 0x8f, 0xda, 0x1d, 0x4f, 0xc1, 0xa5, 0x74, 0x1b, 0x22, 0x07,
-    0x9f, 0x9d, 0x11, 0x1d, 0x96, 0xea, 0x8a, 0x91, 0x2c, 0x78, 0xc1, 0x0b,
-    0xee, 0x64, 0xe6, 0x07, 0x19, 0xf5, 0x7e, 0x92, 0x03, 0xad, 0x45, 0x2a,
-    0x04, 0x03, 0x18, 0xf5, 0xf7, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e,
-    0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image1_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0x99, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xed, 0x94, 0x41, 0x0e, 0x85,
-    0x20, 0x0c, 0x44, 0x5f, 0x89, 0xc7, 0x36, 0x7f, 0x61, 0xbc, 0x77, 0x5d,
-    0x28, 0x48, 0xa4, 0x28, 0x60, 0xff, 0xce, 0xd9, 0x54, 0x8b, 0xbe, 0x8e,
-    0x13, 0x04, 0x3e, 0x1d, 0x92, 0x81, 0x77, 0xf4, 0x81, 0xa1, 0x23, 0xdc,
-    0x2b, 0x34, 0xf6, 0xf4, 0x7a, 0x3d, 0xe2, 0xb8, 0x65, 0xa8, 0x84, 0x3f,
-    0x40, 0x01, 0x98, 0x2a, 0x0b, 0x3d, 0x5f, 0x62, 0xc5, 0x83, 0x00, 0xaa,
-    0x1a, 0xd7, 0x05, 0x50, 0x44, 0x9a, 0xb9, 0xd5, 0x07, 0xa7, 0x73, 0xa8,
-    0xa4, 0xba, 0x4f, 0x92, 0xa2, 0xdf, 0x33, 0x3c, 0x64, 0xc6, 0x3b, 0xeb,
-    0xbd, 0x82, 0xe5, 0xb8, 0xad, 0xde, 0xcb, 0xcc, 0x78, 0x20, 0xeb, 0x42,
-    0x66, 0xc6, 0x39, 0x74, 0x5d, 0xfa, 0x80, 0xf3, 0x6f, 0xaf, 0x66, 0xc6,
-    0x6f, 0xa1, 0x9c, 0x3f, 0x88, 0x2f, 0xb4, 0x70, 0xec, 0x05, 0xcd, 0xc0,
-    0xbe, 0xd0, 0x78, 0x93, 0xf6, 0x8e, 0x17, 0x14, 0x92, 0x63, 0x5f, 0x68,
-    0x6c, 0x3e, 0xef, 0xf6, 0xba, 0x3c, 0x8f, 0xdd, 0x36, 0x6d, 0xc4, 0xc0,
-    0x45, 0x2c, 0xf1, 0x53, 0xa9, 0x59, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
-    0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image2_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0xa0, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xd5, 0x95, 0x4d, 0x0a, 0x80,
-    0x20, 0x10, 0x85, 0x9f, 0xd1, 0x46, 0x68, 0xe1, 0x8d, 0xe6, 0x62, 0xd2,
-    0x22, 0xbc, 0x98, 0x37, 0x6a, 0x21, 0xb4, 0xac, 0x45, 0x19, 0x92, 0xc6,
-    0x64, 0x69, 0xe0, 0xb7, 0xf1, 0x87, 0xf1, 0xf1, 0x1c, 0x47, 0x05, 0x2a,
-    0x21, 0x8e, 0x76, 0x2d, 0xad, 0xdb, 0xfb, 0x9e, 0x99, 0xf6, 0x56, 0x8f,
-    0x80, 0xb5, 0x36, 0x4b, 0x85, 0x88, 0xce, 0x35, 0x44, 0x04, 0x00, 0xe8,
-    0x0a, 0x39, 0x8c, 0xe8, 0xf9, 0x90, 0x34, 0xd2, 0x29, 0x2c, 0xc3, 0x7c,
-    0x8e, 0xbd, 0x53, 0x0f, 0xeb, 0x58, 0x3a, 0x05, 0xe9, 0x54, 0x34, 0x1f,
-    0x8a, 0x02, 0x7b, 0x2a, 0x7d, 0x3a, 0x1f, 0x09, 0xbf, 0x85, 0x4d, 0xc5,
-    0xd5, 0xd9, 0x53, 0xaa, 0x39, 0x6e, 0x4f, 0x38, 0xca, 0xb1, 0x99, 0xe2,
-    0xd2, 0xe1, 0x08, 0xab, 0xe1, 0x56, 0xf8, 0x2e, 0x30, 0x97, 0x7f, 0xcb,
-    0x4d, 0x8f, 0xf9, 0x42, 0xd7, 0x5d, 0xbe, 0xbe, 0xd2, 0xe1, 0x43, 0x95,
-    0x3a, 0x93, 0xf6, 0xca, 0xad, 0x3d, 0x61, 0x11, 0xf4, 0x4b, 0x7d, 0x4f,
-    0x82, 0x0f, 0xf9, 0xc0, 0x06, 0x9b, 0xb5, 0x1e, 0xcd, 0x12, 0x20, 0x66,
-    0x74, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60,
-    0x82
-};
-
-static const unsigned char image3_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x02,
-    0x9c, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0x8d, 0x95, 0xad, 0x76, 0xdb,
-    0x40, 0x10, 0x85, 0x3f, 0xf7, 0x18, 0xcc, 0x32, 0x89, 0xd9, 0x50, 0xd0,
-    0x61, 0x36, 0x34, 0x4c, 0x98, 0xc3, 0x62, 0x96, 0x40, 0x87, 0x25, 0x6f,
-    0x50, 0x3f, 0x42, 0x61, 0x61, 0x02, 0x1b, 0xe6, 0xb2, 0x84, 0x25, 0x50,
-    0x61, 0x2e, 0x8b, 0xe1, 0x42, 0x99, 0x49, 0x6c, 0x86, 0x6d, 0xc1, 0x4a,
-    0xb2, 0xfc, 0x77, 0xda, 0x21, 0x92, 0x66, 0x57, 0x77, 0xee, 0xdc, 0x3b,
-    0x5a, 0xf5, 0x38, 0x13, 0xaf, 0xaf, 0xaf, 0x41, 0x44, 0x48, 0xd3, 0x74,
-    0x2f, 0x6f, 0x66, 0x00, 0xa8, 0x2a, 0x00, 0x55, 0x55, 0x91, 0x24, 0x09,
-    0x57, 0x57, 0x57, 0xbd, 0xee, 0xbe, 0xfe, 0x39, 0x60, 0x11, 0x61, 0x32,
-    0x99, 0xb4, 0x40, 0x87, 0x6b, 0x4d, 0x94, 0x65, 0x89, 0xf7, 0xfe, 0x68,
-    0xcf, 0x59, 0x60, 0x80, 0xcd, 0x66, 0x73, 0x04, 0x76, 0x58, 0x48, 0x55,
-    0x71, 0xce, 0xfd, 0x3f, 0xf0, 0x29, 0x00, 0x33, 0x3b, 0x2a, 0x70, 0xaa,
-    0x23, 0x80, 0x6f, 0xa7, 0x92, 0x79, 0x9e, 0x07, 0x33, 0x6b, 0x99, 0x38,
-    0xe7, 0x70, 0xce, 0xed, 0xe9, 0xdd, 0xe8, 0x2f, 0x22, 0x47, 0xfa, 0x9e,
-    0x65, 0xac, 0xaa, 0x24, 0x49, 0x42, 0x59, 0x96, 0x88, 0x48, 0x6b, 0x54,
-    0x37, 0x4e, 0xb5, 0xff, 0x4f, 0xc6, 0x10, 0x5b, 0x3c, 0x9c, 0x88, 0x2e,
-    0x68, 0x53, 0xec, 0x9c, 0x14, 0x27, 0x19, 0x37, 0x6c, 0x4e, 0x31, 0xed,
-    0xe6, 0x55, 0x75, 0x6f, 0x42, 0xba, 0x71, 0xa4, 0x0d, 0xc0, 0x6a, 0xb5,
-    0x0a, 0x59, 0x96, 0x31, 0x1c, 0x0e, 0xcf, 0x82, 0x37, 0x46, 0x7e, 0x7e,
-    0x7e, 0x02, 0x20, 0x92, 0x30, 0x9f, 0x5f, 0xb7, 0x78, 0x7b, 0x8c, 0xdf,
-    0xdf, 0xdf, 0x83, 0xf7, 0x9e, 0xfc, 0x23, 0x47, 0x66, 0x82, 0x88, 0xb4,
-    0x00, 0x87, 0xd7, 0x86, 0x69, 0x59, 0x94, 0xe4, 0x79, 0xce, 0xb6, 0xda,
-    0xf2, 0xf0, 0xf0, 0x10, 0x66, 0xb3, 0x19, 0xd7, 0xd7, 0xd7, 0xbd, 0x5e,
-    0x17, 0x74, 0xb3, 0xf1, 0x54, 0xc5, 0x16, 0x35, 0x80, 0xd3, 0x4c, 0x01,
-    0x9c, 0xa4, 0x08, 0x02, 0x0e, 0x7c, 0xe1, 0x59, 0xaf, 0xff, 0xb0, 0xdd,
-    0x16, 0xa8, 0x1a, 0x17, 0x17, 0x19, 0x8b, 0xc5, 0x22, 0x4a, 0xd1, 0x30,
-    0xbd, 0x9c, 0x5e, 0xe2, 0xd2, 0x14, 0x55, 0x03, 0x53, 0x8e, 0x6c, 0x31,
-    0x03, 0x84, 0x9c, 0x4f, 0x3e, 0x78, 0x65, 0x6a, 0x53, 0xd2, 0xaf, 0x94,
-    0xe7, 0x97, 0x67, 0xfc, 0x57, 0xfc, 0xfa, 0xd4, 0x94, 0x6c, 0x74, 0x11,
-    0x41, 0x9f, 0x9e, 0x7e, 0x85, 0xb2, 0x28, 0xc3, 0xff, 0xc4, 0x57, 0xf8,
-    0x0a, 0xa3, 0x30, 0x0a, 0x12, 0x24, 0x8c, 0xc2, 0x28, 0xac, 0xd7, 0xeb,
-    0xf0, 0xe3, 0xfb, 0xcf, 0x30, 0x1e, 0x8f, 0xc3, 0x60, 0x90, 0x85, 0x24,
-    0x49, 0x42, 0x36, 0xc8, 0x42, 0xbf, 0xda, 0x56, 0xdc, 0xdd, 0xdd, 0x9c,
-    0x75, 0xf7, 0x30, 0x52, 0x52, 0x2e, 0x99, 0x92, 0x23, 0xcc, 0x98, 0x31,
-    0x1e, 0x8f, 0x49, 0x64, 0x48, 0x69, 0x05, 0xcf, 0xbf, 0x5e, 0xa8, 0xaa,
-    0x8a, 0x74, 0x90, 0xd2, 0x37, 0xc0, 0xfb, 0x22, 0xce, 0xa3, 0x19, 0x88,
-    0x10, 0x6b, 0x48, 0xed, 0x36, 0x38, 0x5c, 0x54, 0xdc, 0x14, 0xc4, 0xf1,
-    0x60, 0xdf, 0xb9, 0xc1, 0x33, 0xb4, 0x21, 0x7f, 0xd8, 0x80, 0x19, 0xe9,
-    0x70, 0x18, 0xd7, 0x6b, 0x77, 0xfa, 0x65, 0x51, 0xe0, 0x45, 0xa2, 0x9e,
-    0x66, 0xb4, 0xbe, 0x39, 0x88, 0x2e, 0xd6, 0x9d, 0x38, 0x03, 0x15, 0x20,
-    0xe6, 0x04, 0xf0, 0xb6, 0xc5, 0x88, 0x67, 0x88, 0xdf, 0x6c, 0x5a, 0x4f,
-    0x1c, 0xf5, 0xb8, 0x35, 0x09, 0x6b, 0x00, 0xb1, 0x76, 0x28, 0x14, 0x8b,
-    0x35, 0x74, 0x6f, 0x67, 0x3b, 0x39, 0xd2, 0x78, 0xda, 0x09, 0x45, 0xe9,
-    0x23, 0x60, 0x65, 0xe7, 0x05, 0xad, 0xc9, 0x76, 0x37, 0x1a, 0x20, 0x0a,
-    0x76, 0xb8, 0xe2, 0x30, 0x2b, 0xa9, 0xfb, 0x6c, 0x7a, 0x63, 0x32, 0x99,
-    0xf2, 0x0d, 0xeb, 0xb0, 0x6c, 0xc9, 0x6a, 0x7c, 0xb4, 0xfa, 0xba, 0x07,
-    0xea, 0x9a, 0x6d, 0x35, 0x68, 0x0d, 0x58, 0xcb, 0x39, 0x18, 0x0c, 0x58,
-    0x2c, 0xee, 0x22, 0x63, 0xef, 0x7d, 0x63, 0x15, 0x88, 0x41, 0x25, 0x40,
-    0x15, 0x9d, 0x33, 0x8b, 0x30, 0xd2, 0xb0, 0xb2, 0x1d, 0x18, 0x3b, 0xcd,
-    0x31, 0x43, 0x04, 0x96, 0xcb, 0x25, 0xf3, 0xf9, 0xbc, 0xd7, 0xcf, 0xb2,
-    0x8c, 0x8f, 0xb7, 0x0f, 0x7e, 0xbf, 0xbd, 0xa1, 0x6a, 0xc4, 0xf3, 0x47,
-    0xd8, 0x1b, 0x3e, 0xe9, 0x3c, 0xcb, 0x0e, 0xb2, 0xed, 0xb3, 0x9e, 0xa6,
-    0xe5, 0x72, 0xc9, 0xe3, 0xe3, 0x63, 0x0f, 0x3a, 0x87, 0xd0, 0x6a, 0xb5,
-    0x0a, 0xab, 0xd5, 0x1b, 0xdb, 0xfa, 0xff, 0xa5, 0x68, 0x6d, 0xca, 0xce,
-    0x99, 0xdd, 0x5f, 0x03, 0x54, 0xcb, 0x78, 0x5f, 0x19, 0x93, 0xe9, 0x84,
-    0xdb, 0xdb, 0x5b, 0xee, 0xef, 0xef, 0x5b, 0xbc, 0xbf, 0xd1, 0xf6, 0x9e,
-    0x0c, 0x0f, 0x84, 0x48, 0x03, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e,
-    0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image4_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0x73, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xed, 0x92, 0xc1, 0x0e, 0x80,
-    0x20, 0x08, 0x40, 0xb1, 0xef, 0x66, 0x1d, 0x1c, 0xff, 0x4d, 0x87, 0x6a,
-    0xa8, 0x88, 0xa1, 0x76, 0x69, 0xf9, 0x36, 0x0f, 0x28, 0x3e, 0xd8, 0x00,
-    0x60, 0xf1, 0x59, 0x42, 0x5f, 0x3a, 0x71, 0xf5, 0x36, 0x02, 0xe0, 0x8e,
-    0x99, 0x2b, 0x09, 0x88, 0x01, 0xd0, 0x28, 0x54, 0x17, 0x6a, 0xe4, 0x7f,
-    0x21, 0xce, 0x1f, 0xb5, 0xb0, 0x5d, 0x38, 0xed, 0xdc, 0x90, 0x60, 0xd0,
-    0xf1, 0x13, 0x79, 0x63, 0x5b, 0x3b, 0xc9, 0x2b, 0xd5, 0x18, 0xe2, 0x39,
-    0xa9, 0x43, 0xec, 0x1d, 0x5a, 0xb7, 0x78, 0x5c, 0xee, 0x10, 0x7b, 0xe4,
-    0xb2, 0x15, 0xaf, 0x40, 0x91, 0xf8, 0x94, 0xde, 0x47, 0x18, 0x1e, 0xce,
-    0xa5, 0x9e, 0xde, 0x9e, 0xc5, 0x9f, 0x38, 0x00, 0x62, 0xac, 0x28, 0xb1,
-    0x0f, 0xe7, 0x4f, 0xef, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44,
-    0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image5_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0x74, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xed, 0x92, 0xc1, 0x0a, 0xc0,
-    0x20, 0x08, 0x40, 0x6d, 0xdf, 0x2d, 0x3b, 0x84, 0xff, 0xed, 0x0e, 0xa3,
-    0x58, 0x6a, 0x26, 0xd1, 0x65, 0xe0, 0x83, 0x0e, 0xa5, 0x3e, 0x85, 0x04,
-    0x48, 0x7e, 0x4b, 0x91, 0x0f, 0x54, 0x89, 0xf1, 0x9e, 0xa5, 0xa3, 0xca,
-    0x0f, 0x8a, 0x89, 0x63, 0x65, 0xb3, 0x06, 0xc4, 0x2d, 0xd6, 0x13, 0xc6,
-    0x49, 0xbd, 0xc2, 0x59, 0x83, 0x16, 0x13, 0x62, 0x19, 0xf0, 0xf9, 0x36,
-    0xc0, 0xa2, 0xef, 0x00, 0xd7, 0x5a, 0x62, 0x61, 0x4d, 0x3a, 0xb2, 0x29,
-    0x96, 0xf2, 0xa3, 0x62, 0xff, 0xa3, 0x37, 0xc5, 0xeb, 0xed, 0xe9, 0x62,
-    0xaa, 0xd1, 0xa2, 0xe8, 0x4a, 0xaa, 0xa2, 0xf7, 0x50, 0xdd, 0x12, 0x74,
-    0x8c, 0x0f, 0xd0, 0xab, 0x93, 0x24, 0x67, 0x78, 0x00, 0x59, 0x6e, 0x28,
-    0xb1, 0xbb, 0x69, 0xe3, 0x51, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e,
-    0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image6_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0x82, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xcd, 0xd3, 0x41, 0x12, 0x80,
-    0x20, 0x08, 0x05, 0x50, 0xe8, 0xe0, 0x2e, 0xbc, 0x38, 0xad, 0x32, 0x73,
-    0x50, 0x3e, 0x48, 0x53, 0x7f, 0xe3, 0xe4, 0x8c, 0x4f, 0x24, 0x25, 0xfa,
-    0x28, 0xe2, 0x9c, 0x6f, 0x39, 0x92, 0x0b, 0xf9, 0x27, 0x6c, 0xb6, 0x01,
-    0x85, 0x35, 0x88, 0x77, 0x61, 0x13, 0x88, 0xc2, 0x57, 0x64, 0x18, 0xcd,
-    0xa0, 0x15, 0xf5, 0x20, 0xb4, 0xe6, 0xb5, 0x5b, 0xe1, 0x09, 0xdc, 0x06,
-    0x22, 0xb8, 0xe2, 0x2a, 0xcf, 0x31, 0x05, 0x6e, 0x18, 0xdf, 0xdf, 0xf8,
-    0x06, 0x06, 0xaa, 0x55, 0x1c, 0xc6, 0x35, 0x64, 0xc4, 0xdc, 0xf8, 0x0c,
-    0xd0, 0x20, 0x1d, 0x57, 0x7a, 0x5c, 0x85, 0xa8, 0x84, 0x5f, 0xdc, 0x02,
-    0x5e, 0xa5, 0x30, 0x7a, 0xfc, 0xcd, 0x07, 0xe2, 0x3a, 0x1d, 0xf2, 0x83,
-    0xec, 0x2b, 0x37, 0xd9, 0xad, 0x5f, 0xb4, 0xdf, 0xef, 0xd4, 0x9c, 0xfb,
-    0xf7, 0x2f, 0xac, 0xb6, 0x51, 0xb8, 0x9d, 0x00, 0x00, 0x00, 0x00, 0x49,
-    0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image7_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0xbf, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xd5, 0x93, 0x41, 0x0a, 0x83,
-    0x30, 0x10, 0x45, 0xdf, 0x48, 0x8e, 0xe5, 0x1d, 0xbc, 0x8c, 0x3b, 0xa9,
-    0x8b, 0xf4, 0x6a, 0x9e, 0xab, 0xd3, 0x85, 0x35, 0x0d, 0x26, 0x63, 0x62,
-    0x44, 0x4a, 0x3f, 0x0c, 0x42, 0x66, 0xfc, 0xf3, 0xf8, 0x24, 0xf0, 0x6f,
-    0x12, 0x40, 0x2b, 0x66, 0xda, 0x8c, 0x55, 0xf3, 0xde, 0x22, 0x12, 0xcf,
-    0x9d, 0x92, 0xcb, 0x98, 0xc0, 0xba, 0x2d, 0x7c, 0x45, 0x44, 0xcf, 0x9a,
-    0x07, 0x63, 0x8b, 0xba, 0xd5, 0x3c, 0x44, 0x91, 0x23, 0x5e, 0xcf, 0x7c,
-    0xc1, 0x62, 0x36, 0x97, 0xa9, 0x25, 0x40, 0xc1, 0x1f, 0xf4, 0xfd, 0xa7,
-    0x52, 0x75, 0x01, 0x5d, 0x24, 0xa9, 0x38, 0x9e, 0x7d, 0x6f, 0x53, 0xdf,
-    0x4f, 0xe4, 0xcc, 0xab, 0x32, 0x3e, 0xea, 0x0f, 0x03, 0xc0, 0xc4, 0xb2,
-    0xa0, 0x71, 0x2c, 0xe6, 0xad, 0xd8, 0x9b, 0x59, 0xb7, 0x66, 0x1c, 0x3b,
-    0xe0, 0x95, 0x98, 0x5f, 0x26, 0x16, 0x79, 0xee, 0x4e, 0xbc, 0xc2, 0x2c,
-    0x97, 0x88, 0x55, 0x1f, 0xe6, 0xa2, 0xcb, 0xc4, 0x96, 0x9a, 0x89, 0x4b,
-    0xcb, 0x6f, 0x23, 0xee, 0x36, 0x1a, 0xab, 0x62, 0xe2, 0x52, 0xc5, 0x72,
-    0x94, 0xdf, 0xbf, 0xb6, 0x10, 0xbb, 0xf2, 0xc8, 0x97, 0xb8, 0xa4, 0x6c,
-    0xc6, 0x67, 0x7e, 0xaa, 0x51, 0x95, 0x71, 0xfa, 0x08, 0x7e, 0xa8, 0x37,
-    0x62, 0xda, 0x9a, 0xba, 0x45, 0xb6, 0x37, 0x52, 0x00, 0x00, 0x00, 0x00,
-    0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-static const unsigned char image8_data[] = {
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x16,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0xc4, 0xb4, 0x6c, 0x3b, 0x00, 0x00, 0x00,
-    0xd5, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0xc5, 0x95, 0x5d, 0x0a, 0x84,
-    0x30, 0x0c, 0x84, 0x27, 0xe2, 0xa9, 0x0a, 0x9e, 0x6c, 0x8b, 0x0f, 0x4b,
-    0x3d, 0xd9, 0x82, 0xd7, 0xca, 0x3e, 0x58, 0xd7, 0xfe, 0x4c, 0xd0, 0xba,
-    0x5d, 0x76, 0x40, 0x02, 0x4d, 0xf2, 0x65, 0xda, 0x0a, 0x05, 0x7e, 0x24,
-    0x39, 0xc9, 0xeb, 0x8d, 0x9e, 0xaa, 0x88, 0x41, 0xa0, 0xc9, 0xaa, 0xd8,
-    0xc8, 0x2a, 0xb3, 0x2f, 0x9c, 0x42, 0x5b, 0xe1, 0xe3, 0x0e, 0x0d, 0xcf,
-    0x00, 0xc0, 0x03, 0x08, 0xf0, 0xb3, 0xa7, 0xa0, 0x74, 0x10, 0xa9, 0xd7,
-    0x14, 0x2e, 0x00, 0xb4, 0x2c, 0x5a, 0x5f, 0xab, 0x69, 0x6b, 0x97, 0x9b,
-    0x1c, 0x83, 0x7f, 0xc0, 0xc3, 0x16, 0xb6, 0xe4, 0x16, 0x5b, 0x64, 0xf7,
-    0x8d, 0x71, 0x63, 0x59, 0x91, 0x9b, 0xdc, 0x45, 0x70, 0xde, 0x47, 0xc0,
-    0x47, 0x32, 0xdd, 0x5e, 0x5b, 0xcc, 0x35, 0xf0, 0xc9, 0x77, 0x62, 0xae,
-    0x78, 0x79, 0x36, 0xdc, 0xcf, 0x75, 0x13, 0x57, 0x7e, 0x79, 0xf4, 0x8c,
-    0x4b, 0x27, 0xaa, 0x0f, 0x13, 0x27, 0xb2, 0x40, 0xf5, 0x11, 0x7f, 0xcb,
-    0xe3, 0x48, 0xaa, 0x33, 0xb6, 0xe0, 0x22, 0x4b, 0x05, 0x4d, 0x07, 0x46,
-    0xb8, 0x02, 0x5e, 0x2e, 0x3b, 0x3e, 0x73, 0xcd, 0xe0, 0xdd, 0x1c, 0x97,
-    0xf0, 0x2e, 0x8e, 0xd9, 0xd0, 0xaf, 0x1d, 0xb3, 0x81, 0x22, 0x4b, 0xdf,
-    0x33, 0xee, 0xe6, 0x98, 0xa9, 0x34, 0xa0, 0xf6, 0x17, 0xb4, 0x55, 0x40,
-    0xd0, 0x0b, 0xcf, 0x4c, 0xa0, 0x8f, 0xc0, 0xdf, 0xf4, 0x06, 0xe3, 0x25,
-    0xc1, 0x98, 0xb1, 0x6b, 0x67, 0xfb, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
-    0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
-*/
-
 
 /* Viewing/Browsing hierarchies
 
@@ -415,7 +183,7 @@ static const unsigned char image8_data[] = {
   as follows; the slots/signals can have any names (* is optional):
 
   Slots:
-    void EditAction(int); // called when user requests the indicated edit action, 
+    void EditAction(int); // called when user requests the indicated edit action,
       ex. via menu or accel key
     void GetEditActions(int&); // called to get current valid edit actions
     *void SetActionsEnabled(TBD); // enables/disables any actions
@@ -452,21 +220,21 @@ static const unsigned char image8_data[] = {
   examples are T3 and ListViews.
   The system does not make a distinction between "current" and "selected" (ex. as is made
     by Qt in its ListView).
-    
+
   A selection handler implies being a Clipboard Handler -- the ISelectableHost i/f
   provides an implementation ("ActionsEnabled" and "UpdateUi" are not needed.)
-  
+
   Selections affect:
     gui -- things like panels change when selections change
     clip -- legal clipboard operations change, depending on selection
     actions -- selected items have actions, and multiple selections
         have dynamic actions, such as adding a projection between layers
     context menus -- these need access to selection
-    
+
   Selection Sources/Sinks
-  
+
   A gui item can be a selection source, sink, or both. A selection Source is something
-  the user can work in to make selections. 
+  the user can work in to make selections.
   Sources:
     * tree nodes (browser, list views, specials, such as prog editor)
     * T3 viewer
@@ -477,19 +245,19 @@ static const unsigned char image8_data[] = {
   the panels should update; but if the user is in the prog editor, that containing
   panel should NOT update as the user clicks around on the items; however, the user
   still expects the clip menu items to be valid.
-  
+
 
   Selection handling involves the following elements:
-  
+
   Interfaces:
     ISelectableHost -- interface implemented by an object that supports selectable items
     ISelectable -- interface of an item that can be selected in the gui
-  
+
   Main Menu:
     Edit/clip menu -- enabling of clip items is based on selection
     Actions menu -- contains the actions available, based on selection
-    
-    
+
+
   ISelectableHost i/f -- for sources of selection
     enum NotifyOp: GotFocus, SelectionChanged, Destroying
     abstract public virtuals you must implement:
@@ -497,7 +265,7 @@ static const unsigned char image8_data[] = {
       bool hasMultiSelect() -- true if supports multi select
     abstract protected virtuals you must implement:
       ApplySelectedItems_impl -- called when force=true for changes, force gui to be selItems
-      
+
     implemented virtuals, possible (but not usual) to extend:
       selItems() -- list of selected items
       dynActions() -- Action list, of current dynamic actions available
@@ -519,12 +287,12 @@ static const unsigned char image8_data[] = {
       EditEnabled(int&) -- return enabled flags
       EditAction(int) -- perform the action
     connection methods:
-      Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
+      Connect_SelectableHostItemRemovingSlot(QObject* src_obj,
         const char* src_signal, bool disconnect = false) -- connects (or disconnects)
          an optional ItemRemoving notification
       Connect_SelectableHostNotifySignal(QObject* sink_obj,
         const char* sink_signal, bool disconnect = false) -- connects (or disconnects)
-         a sink (ex iFrame) to the notify signal raised when sel changes (or 
+         a sink (ex iFrame) to the notify signal raised when sel changes (or
          gets focus, etc.)
     protected:
       handler -- the impl widget object for signals/slots
@@ -534,7 +302,7 @@ static const unsigned char image8_data[] = {
       ApplySelectedItems_impl -- called when force=true for changes, force gui to be selItems
       UpdateActions() -- implementation function that updates the dyn methods/actions
         (can be overridden/extended if necessary)
-      
+
     SelectableHostHelper -- this is a helper QObject that handles signals/slots
       ISelectableHost* host -- the owning host
       Emit_NotifySignal(op) -- called to emit the signal
@@ -545,17 +313,17 @@ static const unsigned char image8_data[] = {
       ItemRemovingSlot(item)
       EditEnabled(int&) -- callback for when we are ClipHandler
       EditAction(int) --  callback for when we are ClipHandler
-    
+
     Client of ISelectableHost:
       members:
         ISelectableHost* cur_host -- the client should keep track of the host
           with focus, so it can ignore other hosts; it should also check for the
           Delete op, and delete this if so
-    
-      slots: 
+
+      slots:
         SelectableHostNotify(ISelectableHost* src, op) (name can be anything)
           this is the slot called by the ISelectableHost
-      
+
   Notes:
     * whenever the Actions guys gets cleared for any reason, the actions are deleted,
       and any menu guys that have been created will also be deleted
@@ -566,19 +334,19 @@ static const unsigned char image8_data[] = {
     guy -- until an explicit focus change happens again, they will typically
     ignore Notifies from other sources.
 
-      
+
   What the implementing class must do:
     * provide the implementations for the trivial abstract virtuals, like widget()
     * provide an implementation for ApplySelectedItems_impl, which has to take
       the list and then force the gui to reflect the selection in the list
     * when you detect that selection changes in the gui, call the non-force
-      member funcs, ex. setSelItem (for one guy), 
+      member funcs, ex. setSelItem (for one guy),
       or: SelChanging(t) ... changes .. SelChanging(f) (for multiple guys)
       -- the non-force version won't callback your own ApplySel.. guy
     * detect when your control *receives* focus, and call Emit_Notify(ReceivedFocus)
-      this will force the host/clients to configure themselves for our selections 
-  
-    
+      this will force the host/clients to configure themselves for our selections
+
+
   What the client class should do:
     * it should connect its Notify slot to the ISelectableHost via
       Connect_SelectableHostNotifySignal
@@ -586,9 +354,9 @@ static const unsigned char image8_data[] = {
       to keep track of the one with focus -- if so, it should ignore
       signals from any non-focus guys, update the focus guy, and delete
       it if the delete op is received
-    * if it is the main window, when it gets the GotFocus op, 
+    * if it is the main window, when it gets the GotFocus op,
       it should set the src as the cliphandler by calling:
-        SetClipboardHandler(src_host->handlerObj(), 
+        SetClipboardHandler(src_host->handlerObj(),
           SLOT(EditEnabled(int&)), SLOT(EditAction(int)) )
       Note: the cliphandler can disengage independently of ISH
         still being the selection handler
@@ -599,20 +367,20 @@ static const unsigned char image8_data[] = {
       do so through the instance pointer they cache (which gets a signal
       on deletion, so client doesn't have to independently connect
       a delete notify signal)
-  
+
   iFrame:
-    
+
     slots:
       SelectableHostNotifySlot_Internal_ -- connects guys nested below us; lets us trap
       SelectableHostNotifySlot_External -- from external guys (forwarded from main window)
-      
+
     signals:
       SelectableHostNotifySignal -- forwarder, from all internal guys
-    
+
 */
 
 //////////////////////////
-//   IDataHost	 	//
+//   IDataHost          //
 //////////////////////////
 
 //from ta_qtdata_def.h -- dependencies are here, so makes sense to impl here
@@ -634,7 +402,7 @@ void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
 
 
 //////////////////////////
-//   taiDataLink 	//
+//   taiDataLink        //
 //////////////////////////
 
 String taiDataLink::AnonymousItemName(const String& type_name, int index) {
@@ -644,13 +412,14 @@ String taiDataLink::AnonymousItemName(const String& type_name, int index) {
 }
 
 taiDataLink::taiDataLink(void* data_, taDataLink* &link_ref_)
-:inherited(data_, link_ref_)
+  : inherited(data_, link_ref_)
 {
-  qobj = NULL;
+  qobj = 0;
 }
 
 taiDataLink::~taiDataLink() {
-  if (qobj) {delete qobj; qobj = NULL;}
+  delete qobj;
+  qobj = 0;
 }
 
 void taiDataLink::Assert_QObj() {
@@ -706,11 +475,11 @@ void taiDataLink::FillContextMenu(taiActions* menu) {
 
 
 //////////////////////////////////
-// 	tabDataLink		//
+//      tabDataLink             //
 //////////////////////////////////
 
 tabDataLink::tabDataLink(taBase* data_, taDataLink* &link_ref_)
-:inherited((void*)data_, link_ref_)
+  : inherited((void*)data_, link_ref_)
 {
 }
 
@@ -787,7 +556,7 @@ taiDataLink* tabDataLink::ownLink() const {
   if (!m_data) return NULL;
   taBase* own = ((taBase*)m_data)->GetOwner();
   return (own) ? (taiDataLink*)own->GetDataLink() : NULL;
-} 
+}
 
 /*
 void tabDataLink::fileClose() {
@@ -819,7 +588,7 @@ Standard Edit menu items (Cut, Copy, etc.)
 ------
 Normal submenus (ex. Object Edit, etc.)
 ------
-Browser/gui framework items 
+Browser/gui framework items
 ------
 
 */
@@ -839,7 +608,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
-    mth_rep->AddToMenu(menu); 
+    mth_rep->AddToMenu(menu);
     ++cnt;
   }
 
@@ -867,7 +636,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
 
     //note: both are allowed, but we give priority to BUTTON
     if (md->HasOption("BUTTON")) {
-      mth_rep->AddToMenu(menu); 
+      mth_rep->AddToMenu(menu);
     } else { // has to be "MENU_BUTTON"
       // create the submenus when needed, and locate -- default is last created one
       if (!(cur_menu = ta_menus.FindName(men_nm))) {
@@ -956,7 +725,7 @@ int tabDataLink::checkConfigFlags() const {
 }
 
 static bool IsHit(const String_PArray& targs, const String_PArray& kicks, String& p,
-		  bool ci) {
+                  bool ci) {
   if(ci) {
     for (int i = 0; i < kicks.size; ++i) {
       if (p.contains_ci(kicks[i])) return false;
@@ -969,7 +738,7 @@ static bool IsHit(const String_PArray& targs, const String_PArray& kicks, String
   }
 
   String targ;
-  String px = p; 
+  String px = p;
   // px: highlighted version; we progressively put in placeholders for the
   // font start/end tags, which will split up partial overlapping strings
   // so we don't generate invalid html (some composite searches won't get full
@@ -985,9 +754,9 @@ static bool IsHit(const String_PArray& targs, const String_PArray& kicks, String
     if (pos >= 0) {
       rval = true;
       if(ci)
-	pos = px.index_ci(targ);
+        pos = px.index_ci(targ);
       else
-	pos = px.index(targ);
+        pos = px.index(targ);
       if (pos >= 0) { // can still highlight in already highlighted version
         px = px.left(pos) + "~~~~" +
           px.at(pos, targ.length()) + "```" +
@@ -1023,18 +792,18 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   String probed;
   String hits; // cumulative hits guy
   int n = 0; // hits counter, to know to call Add
-  bool ci = true;		// case independent
+  bool ci = true;               // case independent
   if(sd->options() & iSearchDialog::SO_MATCH_CASE)
     ci = false;
-  
+
   // NAME
   int item_type = iSearchDialog::SO_OBJ_NAME;
   if (sd->options() & item_type) {
     probed = tab->GetName();
-    if (IsHit(targs, kicks, probed, ci)) 
+    if (IsHit(targs, kicks, probed, ci))
       {++n; AddHit(item_type, probed, hits);}
   }
-  
+
   // TYPE
   item_type = iSearchDialog::SO_OBJ_TYPE;
   if (sd->options() & item_type) {
@@ -1044,14 +813,14 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     }
     else {
       if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
-	probed = tab->GetTypeDef()->desc;
-	if (IsHit(targs, kicks, probed, ci)) {
-	  ++n; AddHit(item_type, probed, hits);
-	}
+        probed = tab->GetTypeDef()->desc;
+        if (IsHit(targs, kicks, probed, ci)) {
+          ++n; AddHit(item_type, probed, hits);
+        }
       }
     }
   }
-  
+
   // DESC
   item_type = iSearchDialog::SO_OBJ_DESC;
   if (sd->options() & item_type) {
@@ -1062,11 +831,11 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     else {
       probed = tab->GetDisplayName(); // include display name
       if (IsHit(targs, kicks, probed, ci)) {
-	++n; AddHit(item_type, probed, hits);
+        ++n; AddHit(item_type, probed, hits);
       }
     }
   }
-  
+
   TypeDef* td = tab->GetTypeDef();
   // MEMB NAME (note: NO_SEARCH not applicable to name search)
   item_type = iSearchDialog::SO_MEMB_NAME;
@@ -1076,23 +845,23 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       probed = md->name;
       if (IsHit(targs, kicks, probed, ci)) {
-	++n; AddHit(item_type, probed, hits);
+        ++n; AddHit(item_type, probed, hits);
       }
       else {
-	if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
-	  probed = md->desc;
-	  if (IsHit(targs, kicks, probed, ci)) {
-	    ++n; AddHit(item_type, probed, hits);
-	  }
-	}
+        if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
+          probed = md->desc;
+          if (IsHit(targs, kicks, probed, ci)) {
+            ++n; AddHit(item_type, probed, hits);
+          }
+        }
       }
     }
   }
-  
-  
+
+
   // MEMB VALUE
-  
-  // first pass: "value" members: 
+
+  // first pass: "value" members:
   // non-ptrs, non-owned taBase values, owned no-browse taBase values
   item_type = iSearchDialog::SO_MEMB_VAL;
   if (sd->options() & item_type) {
@@ -1113,16 +882,16 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
             if (md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
               TypeItem::SC_TREE)) continue;
           }
-        } 
+        }
         // have to force getting an inline value, since default is often the path
-		probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-		if (IsHit(targs, kicks, probed, ci)) 
+                probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
+                if (IsHit(targs, kicks, probed, ci))
           {++n; AddHit(item_type, probed, hits);}
       }
       else if(md->type->ptr == 1) {
-	// if a pointer, treat it as a value and go for it!
-		  probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-		  if (IsHit(targs, kicks, probed, ci)) 
+        // if a pointer, treat it as a value and go for it!
+                  probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
+                  if (IsHit(targs, kicks, probed, ci))
           {++n; AddHit(item_type, probed, hits);}
       }
     }
@@ -1136,8 +905,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     String desc = tab->GetColText(taBase::key_desc);
     sd->AddItem(headline, href, desc, hits, path_long, level, n);
   }
-   
-  
+
+
   String def_child = td->OptionAfter("DEF_CHILD_");
   // browsable taBase members
   // second pass: recurse
@@ -1147,11 +916,11 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) {
       // def children are excluded from show, but should not be from search!!
       if (md->name != def_child)
-	continue;
+        continue;
     }
     if (md->is_static) continue;
     if (md->HasOption("NO_SEARCH")) continue;
-    
+
     taBase* chld = NULL;
     // we are only handling owned browsable taBase guys here
     if ((md->type->ptr > 1) || !md->type->InheritsFrom(TA_taBase) )
@@ -1160,10 +929,10 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     if (!md->type->InheritsFrom(TA_taList_impl)) {
       if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
           TypeItem::SC_TREE)) continue;
-    }      
-    
+    }
+
     if (md->type->ptr == 0) {
-	chld = static_cast<taBase*>(md->GetOff(tab));
+        chld = static_cast<taBase*>(md->GetOff(tab));
     } else { // must be == 1
       taBase** pchld = static_cast<taBase**>(md->GetOff(tab));
       if (!pchld || !(chld = *pchld)) continue;
@@ -1172,7 +941,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     // note: chld will have a value by here
     tabDataLink::SearchStat(chld, sd, level+1);
   }
-  
+
   // only for Lists:
   if (td->InheritsFrom(&TA_taList_impl)) {
     taList_impl* tal = static_cast<taList_impl*>(tab);
@@ -1184,7 +953,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       if (itm->GetOwner() != tab) continue;
       tabDataLink::SearchStat(itm, sd, level+1);
     }
-    
+
     // only for Groups:
     if (td->InheritsFrom(&TA_taGroup_impl)) {
       taGroup_impl* tag = static_cast<taGroup_impl*>(tab);
@@ -1195,7 +964,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
         tabDataLink::SearchStat(gp, sd, level+1);
       }
     }
-  }  
+  }
 }
 
 
@@ -1207,7 +976,7 @@ bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) 
   TypeDef* td = md->type;
   if (td == NULL) return false; // shouldn't happen...
   // should just be able to completely delegate to the memberdef...
-  
+
   return md->ShowMember(taMisc::USE_SHOW_GUI_DEF, show_context);
 /*obs
   // show: normally visible lists; items marked BROWSE
@@ -1218,11 +987,11 @@ bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) 
 
 
 //////////////////////////
-//   tabODataLink	//
+//   tabODataLink       //
 //////////////////////////
 
 tabODataLink::tabODataLink(taOBase* data_)
-:inherited((taBase*)data_, *(data_->addr_data_link()))
+  : inherited((taBase*)data_, *(data_->addr_data_link()))
 {
 }
 
@@ -1261,7 +1030,7 @@ taiDataLink* tabODataLink::GetListChild(int itm_idx) {
   if ((itm_idx < 0) || (itm_idx >= list()->size))
     return NULL;
   taBase* el = (taBase*)list()->SafeEl_(itm_idx);
-  if (!el) return NULL; 
+  if (!el) return NULL;
   TypeDef* typ = el->GetTypeDef();
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   return dl;
@@ -1289,11 +1058,11 @@ int tabODataLink::NumListCols() const {
 
 
 //////////////////////////////////
-//   tabListDataLink		//
+//   tabListDataLink            //
 //////////////////////////////////
 
 tabListDataLink::tabListDataLink(taList_impl* data_)
-:inherited((taOBase*)data_)
+  : inherited((taOBase*)data_)
 {
 }
 
@@ -1310,12 +1079,12 @@ taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTree
 
 
 //////////////////////////////////
-// 	tabGroupDataLink	//
+//      tabGroupDataLink        //
 //////////////////////////////////
 
 
 tabGroupDataLink::tabGroupDataLink(taGroup_impl* data_)
-:inherited((taList_impl*)data_)
+  : inherited((taList_impl*)data_)
 {
 }
 
@@ -1332,7 +1101,7 @@ taiTreeDataNode* tabGroupDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTre
 
 
 //////////////////////////////////
-//  IDataViewWidget		//
+//  IDataViewWidget             //
 //////////////////////////////////
 
 IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
@@ -1373,7 +1142,7 @@ void IDataViewWidget::closeEvent_Handler(QCloseEvent* e,
   else // proceed or not cancellable
     e->accept();
 }
- 
+
 void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
   if (m_viewer) {
     m_viewer->WindowClosing(cancel_op);
@@ -1400,7 +1169,7 @@ iMainWindowViewer* IDataViewWidget::viewerWindow() const {
 }
 
 //////////////////////////
-//   ISelectable	//
+//   ISelectable        //
 //////////////////////////
 
 ISelectable::~ISelectable() {
@@ -1417,43 +1186,43 @@ taiDataLink* ISelectable::clipParLink(GuiContext sh_typ) const {
 }
 
 // called from ui to handle drops
-void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos, 
-    int mods, int where) 
+void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
+    int mods, int where)
 {
 //Note: on Mac, "Ctrl" and test bits always refer to Command key (not Ctrl key)
   taiMimeSource* ms = taiMimeSource::New(mime);
   ISelectableHost* host_ = host(); //cache
-  
+
   // set for the menu callbacks
   host_->ctxt_ms = ms;
   host_->ctxt_item = this;
-  
+
   int ea = QueryEditActions_(ms, GC_DEFAULT);
   int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
     Qt::AltModifier);
   // only honor if user has chosen 1 and only 1 mod
   // and its shortcut ops is ambiguous and available
   if (key_mods == Qt::ShiftModifier) { // Move
-    if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) 
+    if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2)
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_MOVE2); // is only one or the other
     goto exit;
   } else if (key_mods == Qt::ControlModifier) { // Copy
-    if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) 
+    if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2)
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_COPY2); // is only one or the other
     goto exit;
   } else if (key_mods == Qt::AltModifier) { // Link
-    if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) 
+    if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2)
       goto show_menu;
     host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_LINK2); // is only one or the other
     goto exit;
   }
-  
-     
+
+
   // always show menu, for consistency
   // all following implicitly use the GC_DEFAULT code
-show_menu: 
+show_menu:
   { // block for jump
   taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
   QAction* act = NULL;
@@ -1469,24 +1238,24 @@ show_menu:
 // the next item, not as a child of the previous item
   if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) {
     act = menu->AddItem("Move Here", taiAction::int_act,
-      host_->helperObj(),  SLOT(DropEditAction(int)), 
+      host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_MOVE, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
       act = menu->AddItem("Move Into", taiAction::int_act,
-        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
     }
   } else {
     if (ea & taiClipData::EA_DROP_MOVE)
       act = menu->AddItem("&Move Here", taiAction::int_act,
-        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
     else if (ea & taiClipData::EA_DROP_MOVE_INTO)
       act = menu->AddItem("&Move "+IntoOrHere, taiAction::int_act,
-        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
   }
-  
+
   act = NULL;
   if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) {
     act = menu->AddItem("Copy Here", taiAction::int_act,
@@ -1507,17 +1276,17 @@ show_menu:
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
   }
-  
+
   act = NULL;
   // Assign only applicable for "On" drops
-  if ((where == iTreeWidgetItem::WI_ON) && 
-     (ea & taiClipData::EA_DROP_ASSIGN)) 
+  if ((where == iTreeWidgetItem::WI_ON) &&
+     (ea & taiClipData::EA_DROP_ASSIGN))
   {
     act = menu->AddItem("Assign To", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_ASSIGN, QKeySequence());
-  }   
-     
+  }
+
   act = NULL;
   if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) {
     act = menu->AddItem("Link Here", taiAction::int_act,
@@ -1543,14 +1312,14 @@ show_menu:
   menu->AddSep();
   host_->UpdateMethodsActionsForDrop();
   host_->AddDynActions(menu, 0);
-  
+
   menu->AddSep();
   act = menu->AddItem("C&ancel", -1);
   act->setShortcut(QKeySequence("Esc"));
 
   // get current mouse position
   QPoint men_pos = widget()->mapToGlobal(pos);
-  
+
   act = menu->menu()->exec(men_pos);
   //menu->deleteLater();
   delete menu;
@@ -1567,9 +1336,9 @@ taiDataLink* ISelectable::effLink(GuiContext sh_typ) const {
   if (sh_typ <= GC_DUAL_DEF_DATA) return link();
   return viewLink();
 }
-      
+
 void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
-  taiActions* menu, GuiContext sh_typ) 
+  taiActions* menu, GuiContext sh_typ)
 {
   FillContextMenu_impl(menu, sh_typ);
   int allowed = QueryEditActions_(sel_items, sh_typ);
@@ -1606,8 +1375,8 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
     mel->usr_data = taiClipData::EA_DUPE;
     mel->setData(sh_typ);
   }
-  
-  // Paste and Link guys are slightly complicated, because we can have 
+
+  // Paste and Link guys are slightly complicated, because we can have
   // OP/OP_INTO variants, so we can't have shortcuts with both
   int paste_cnt = 0;
   if (ea & taiClipData::EA_PASTE) ++paste_cnt;
@@ -1621,21 +1390,21 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE;
     mel->setData(sh_typ);
-  } 
+  }
   if (ea & taiClipData::EA_PASTE_INTO) {
     if (paste_cnt > 1) txt = "Paste Into"; else txt = "&Paste Into";
     mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_INTO;
     mel->setData(sh_typ);
-  } 
+  }
   if (ea & taiClipData::EA_PASTE_ASSIGN) {
     if (paste_cnt > 1) txt = "Paste Assign"; else txt = "&Paste Assign";
     mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_ASSIGN;
     mel->setData(sh_typ);
-  } 
+  }
   if (ea & taiClipData::EA_PASTE_APPEND) {
     if (paste_cnt > 1) txt = "Paste Append"; else txt = "&Paste Append";
     mel = menu->AddItem(txt, taiMenu::use_default,
@@ -1643,7 +1412,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
     mel->usr_data = taiClipData::EA_PASTE_APPEND;
     mel->setData(sh_typ);
   }
-  
+
   if (ea & taiClipData::EA_DELETE) {
     mel = menu->AddItem("&Delete  (Ctrl+D)", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
@@ -1659,20 +1428,20 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
-  } 
+  }
   else if (ea & taiClipData::EA_LINK) {
     mel = menu->AddItem("&Link", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
     mel->setData(sh_typ);
-  } 
+  }
   else if (ea & taiClipData::EA_LINK_INTO) {
     mel = menu->AddItem("&Link Into", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
-  } 
-  
+  }
+
   if (ea & taiClipData::EA_UNLINK) {
     mel = menu->AddItem("&Unlink", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
@@ -1686,9 +1455,9 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
 taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items,
   int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
-  if (sel_items.size <= 1) { 
+  if (sel_items.size <= 1) {
     return GetClipDataSingle(src_edit_action, for_drag, sh_typ);
-  } else { 
+  } else {
     return GetClipDataMulti(sel_items,src_edit_action, for_drag, sh_typ);
   }
 }
@@ -1736,12 +1505,12 @@ taiDataLink* ISelectable::par_link() const {
 
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
-  GuiContext sh_typ) 
+  GuiContext sh_typ)
 {
   taiMimeSource* ms = NULL;
   taiClipData* cd = NULL;
   int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
-  
+
   // get the appropriate data, either clipboard data, or item data, depending on op
   if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
     // we handle cut and copy
@@ -1751,33 +1520,33 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
       rval = taiClipData::ER_OK;
-      // clear the emacs-like extended selection after copy -- makes it clear that copy 
+      // clear the emacs-like extended selection after copy -- makes it clear that copy
       // took effect too
       iMainWindowViewer* imwv = host()->mainWindow();
       if(imwv) {
-	imwv->GetCurTreeView()->clearExtSelection();
+        imwv->GetCurTreeView()->clearExtSelection();
       }
     }
     else { // other ops, like Duplicate, Clear or Unlink
       taBase* tab = taData();
       taProject* proj = NULL;
       if(tab) {
-	proj = (taProject*)tab->GetThisOrOwner(&TA_taProject);
-	if (proj) {
-	  proj->undo_mgr.Nest(true); 
-	}
+        proj = (taProject*)tab->GetThisOrOwner(&TA_taProject);
+        if (proj) {
+          proj->undo_mgr.Nest(true);
+        }
       }
       bool multi = false;
       bool multi_off = false;
       if(sel_items.size > 1) {
-	++taMisc::in_gui_multi_action;
-	multi = true;
+        ++taMisc::in_gui_multi_action;
+        multi = true;
       }
       for (int i = 0; i < sel_items.size; ++i) {
-	if(multi && i == sel_items.size-1) {
-	  --taMisc::in_gui_multi_action;
-	  multi_off = true;
-	}
+        if(multi && i == sel_items.size-1) {
+          --taMisc::in_gui_multi_action;
+          multi_off = true;
+        }
         ISelectable* is = sel_items.SafeEl(i);
         if (!is) continue;
         int trval = is->EditActionS_impl_(ea, GC_DEFAULT);
@@ -1786,12 +1555,12 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
         if (rval < 0) break; // forbidden or error
       }
       if(multi && !multi_off) // didn't reach end
-	--taMisc::in_gui_multi_action;
+        --taMisc::in_gui_multi_action;
       if (proj) {
-	proj->undo_mgr.Nest(false); 
+        proj->undo_mgr.Nest(false);
       }
     }
-  }	
+  }
   else { // paste-like op, get item data
     // confirm only 1 item selected for dst op -- Error is diagnostic, not operational
     if (sel_items.size > 1) {
@@ -1858,7 +1627,7 @@ QWidget* ISelectable::widget() const {
 
 
 //////////////////////////////////
-//   IObjectSelectable		//
+//   IObjectSelectable          //
 //////////////////////////////////
 
 taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
@@ -1867,19 +1636,19 @@ taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
   // if it is taBase, we can make an object
   taBase* obj = this->taData(sh_typ);
   if (!obj) return NULL;
-  
+
   taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
   taiClipData* rval = new taiClipData(src_edit_action);
   mf->AddSingleObject(rval, obj);
   return rval;
 }
 
-taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
   taiClipData* rval = NULL;
   //note: although a bit sleazy, we just do this by optimistically
-  // assuming all are taBase (which realistically, they are) 
+  // assuming all are taBase (which realistically, they are)
   taBase_PtrList* bl = new taBase_PtrList;
   bool do_it = true;
   for (int i = 0; i < sel_items.size; ++i) {
@@ -1901,7 +1670,7 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
 }
 
 int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
-  int ea, GuiContext sh_typ) 
+  int ea, GuiContext sh_typ)
 {//note: follows same logic as the Query
   taiDataLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
@@ -1926,7 +1695,7 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
     eax = ea & (allowed & (~forbidden));
     if (eax)
       rval = link->ChildEditAction_impl(this->md(), NULL, ms, eax);
-    
+
     if (rval == taiClipData::ER_IGNORED) {
       allowed = forbidden = 0;
       link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
@@ -1957,13 +1726,13 @@ int IObjectSelectable::EditActionS_impl_(int ea, GuiContext sh_typ) {
 }
 
 void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
-  int& allowed, int& forbidden, GuiContext sh_typ) const 
+  int& allowed, int& forbidden, GuiContext sh_typ) const
 {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
   taiDataLink* pdl = clipParLink(sh_typ);
   taiDataLink* link = this->effLink(sh_typ);
-  if (pdl) 
+  if (pdl)
     pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
   if (link) {
     link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
@@ -1972,13 +1741,13 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
 }
 
 void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden,
-  GuiContext sh_typ) const 
+  GuiContext sh_typ) const
 {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
   taiDataLink* pdl = clipParLink(sh_typ);
   taiDataLink* link = this->effLink(sh_typ);
-  if (pdl) 
+  if (pdl)
     pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {
     // note: item-as-parent doesn't apply to src actions, so we omit that
@@ -1988,13 +1757,13 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden,
 
 
 //////////////////////////////////
-//   ISelectable_PtrList	//
+//   ISelectable_PtrList        //
 //////////////////////////////////
 
 taPtrList_impl* ISelectable_PtrList::insts;
 
 ISelectable_PtrList::ISelectable_PtrList(const ISelectable_PtrList& cp)
-:taPtrList<ISelectable>(cp) 
+  : taPtrList<ISelectable>(cp)
 {
   Initialize();
 }
@@ -2018,8 +1787,9 @@ ISelectable_PtrList::~ISelectable_PtrList() {
   }
 }
 
-TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ) 
-{ // greatest common subtype of items 1-N
+// greatest common subtype of items 1-N
+TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ)
+{
   if (size == 0) return NULL;
   taiDataLink* link = FastEl(0)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
@@ -2032,8 +1802,9 @@ TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ)
   return rval;
 }
 
-TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ) 
-{ // greatest common subtype of items 2-N
+// greatest common subtype of items 2-N
+TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ)
+{
   if (size <= 1) return NULL;
   taiDataLink* link = FastEl(1)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
@@ -2056,7 +1827,7 @@ TypeDef* ISelectable_PtrList::Type1(ISelectable::GuiContext gc_typ) {
 }
 
 //////////////////////////
-//   DynMethod_PtrList	//
+//   DynMethod_PtrList  //
 //////////////////////////
 
 DynMethod_PtrList::~DynMethod_PtrList() {
@@ -2072,7 +1843,7 @@ DynMethodDesc* DynMethod_PtrList::AddNew(int dmd_type, MethodDef* md) {
 }
 
 void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
-  ISelectable::GuiContext gc_typ) 
+  ISelectable::GuiContext gc_typ)
 {
   if (sel_items.size == 0) return;
 
@@ -2132,19 +1903,19 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
 
 }
 
-void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms, 
+void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
     ISelectable* drop_item)
 {
   taiObjectsMimeItem* mi = ms.objects();
   if (!mi || (mi->count() == 0)) return;
   TypeDef* tms = mi->CommonSubtype(); // greatest common subtype of source object(s)
-  TypeDef* tdi = drop_item->GetEffDataTypeDef(); 
+  TypeDef* tdi = drop_item->GetEffDataTypeDef();
   if (!tdi) return;
-  
+
   for (int i = 0; i < tdi->methods.size; ++i) {
     MethodDef* md = tdi->methods.FastEl(i);
     //look for all DROP methods with compatible arg0 type
-    if (md->arg_types.size == 0) continue; 
+    if (md->arg_types.size == 0) continue;
     TypeDef* arg0_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
     if (arg0_typ->ptr != 1) {
@@ -2153,7 +1924,7 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
     // meth must be marked for drop
     if (!(md->HasOption("DROPN") ||
       ((mi->count() == 1) && md->HasOption("DROP1")))) continue;
-    
+
     // now get the non-pointer type
     arg0_typ = arg0_typ->GetNonPtrType();
     if (!tms->InheritsFrom(arg0_typ)) continue;
@@ -2163,7 +1934,7 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
 }
 
 //////////////////////////////////
-//   ISelectableHost		//
+//   ISelectableHost            //
 //////////////////////////////////
 
 void ISelectableHost::ItemDeleting(ISelectable* item) {
@@ -2176,8 +1947,8 @@ void ISelectableHost::ItemDeleting(ISelectable* item) {
 }
 
 const char* ISelectableHost::edit_enabled_slot = SLOT(EditActionsEnabled(int&));
-const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int)); 
-const char* ISelectableHost::edit_menu_action_slot = SLOT(EditAction(taiAction*)); 
+const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int));
+const char* ISelectableHost::edit_menu_action_slot = SLOT(EditAction(taiAction*));
 const char* ISelectableHost::actions_enabled_slot; // currently NULL
 const char* ISelectableHost::update_ui_signal; // currently NULL
 
@@ -2203,13 +1974,13 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
 }
 
 void ISelectableHost::AddDynActions(taiActions* menu, int dyn_list,
-  ISelectable::GuiContext gc_typ) 
+  ISelectable::GuiContext gc_typ)
 {
   if (dyn_actions[dyn_list].count() == 0) return;
 //nn,at top  menu->AddSep();
   for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
     taiAction* act = dyn_actions[dyn_list].FastEl(i);
-    act->AddTo(menu);
+    menu->AddAction(act);
   }
 }
 
@@ -2221,7 +1992,7 @@ void ISelectableHost::ClearSelectedItems(bool forced) {
 
 QObject* ISelectableHost::clipHandlerObj() const {
   return helper;
-} 
+}
 
 void ISelectableHost::Connect_SelectableHostNotifySignal(QObject* sink_obj,
     const char* sink_slot, bool discnct)
@@ -2233,7 +2004,7 @@ void ISelectableHost::Connect_SelectableHostNotifySignal(QObject* sink_obj,
     QObject::connect(helper, sig_nm, sink_obj, sink_slot);
 }
 
-void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
+void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj,
     const char* src_signal, bool discnct)
 {
   static const char* slot_nm = SLOT(ItemRemoving(ISelectableItem*));
@@ -2252,13 +2023,13 @@ void ISelectableHost::ctxtMenu_destroyed() {
 }
 
 void ISelectableHost::DropEditAction(int ea) {
-  ISelectable* ci = ctxt_item; 
+  ISelectable* ci = ctxt_item;
   if (!ci) return;
   ci->EditActionD_impl_(ctxt_ms, ea, ISelectable::GC_DEFAULT);
 }
 
-void ISelectableHost::EditAction(int ea, 
-    ISelectable::GuiContext gc_typ) 
+void ISelectableHost::EditAction(int ea,
+    ISelectable::GuiContext gc_typ)
 {
   ISelectable* ci = curItem();
   if (!ci) return;
@@ -2266,7 +2037,7 @@ void ISelectableHost::EditAction(int ea,
   if (ea & taiClipData::EA_DELETE) {
     if(taMisc::delete_prompts) {
       int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
-			       "&No", "&Yes");
+                               "&No", "&Yes");
       if (chs != 1) return;
     }
     EditAction_Delete(gc_typ);
@@ -2281,21 +2052,21 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   // first, compile a ref list of all taBase guys
   taBase_RefList ta_items;
   for (int i = 0; i < items.size; ++i) {
-    ISelectable* ci = items.SafeEl(i); 
+    ISelectable* ci = items.SafeEl(i);
     if (!ci) continue;
     taBase* tab =  ci->taData(gc_typ);// is the effLink data
     if (!tab) continue;
     ta_items.Add(tab);
   }
   // now, just request deletion -- items could go missing
-  // if we've selected items that will get deleted by other items 
+  // if we've selected items that will get deleted by other items
 
   taProject* proj = myProject();
   if(proj) {
     taBase* tab = ta_items.Peek();
     if(ta_items.size > 1)
       proj->undo_mgr.SaveUndo(tab, "Delete " + String(ta_items.size) + " items", NULL, false,
-			      tab->GetOwner());
+                              tab->GetOwner());
     else
       proj->undo_mgr.SaveUndo(tab, "Delete", NULL, false, tab->GetOwner());
   }
@@ -2326,33 +2097,33 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
 void ISelectableHost::FillContextMenu(taiActions* menu) {
   if (sel_items.size == 0) return; // shouldn't happen
   QObject::connect(menu, SIGNAL(destroyed()), helper, SLOT(ctxtMenu_destroyed()) );
-  ISelectable_PtrList& sel_items = selItems(); 
+  ISelectable_PtrList& sel_items = selItems();
   ISelectable* item = sel_items.FastEl(0);
   if (sel_items.size == 1) {
     ctxt_ms = taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
     ctxt_item = item;
   }
-  
+
   FillContextMenu_pre(sel_items, menu);
-  
+
   ISelectable::GuiContext sh_typ = item->shType();
   // init the dyn context
   dyn_idx = 0;
-  
+
   if (sh_typ == ISelectable::GC_SINGLE_DATA) {
     FillContextMenu_int(sel_items, menu, 0, sh_typ);
   } else { // dual, make submenus
     String view_cap = "View";
-    String obj_cap = "Object"; 
+    String obj_cap = "Object";
     item->GetContextCaptions(view_cap, obj_cap);
     taiMenu* sub = menu->AddSubMenu(view_cap);
     FillContextMenu_int(sel_items, sub, 0, ISelectable::GC_DUAL_DEF_VIEW);
     sub = menu->AddSubMenu(obj_cap);
     FillContextMenu_int(sel_items, sub, 1, ISelectable::GC_DUAL_DEF_DATA);
   }
-  
+
   FillContextMenu_post(sel_items, menu);
-  
+
   // have to delete ms now, because Qt deletes MimeSource from clipboard in event loop
   if (ctxt_ms) {
     delete ctxt_ms;
@@ -2364,7 +2135,7 @@ void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& sel_items,
   taiActions* menu, int dyn_list, ISelectable::GuiContext sh_typ)
 {
   UpdateMethodsActions(dyn_list, sh_typ);
-  
+
   // do the item-mediated portion
   ISelectable* ci = curItem();
   if (ci) {
@@ -2386,9 +2157,9 @@ void ISelectableHost::DoDynAction(int idx) {
     list++;
   }
   DynMethod_PtrList& dyn_methods = this->dyn_methods[list];
-//nn  taiAction_List&    dyn_actions = this->dyn_actions[list]; 
+//nn  taiAction_List&    dyn_actions = this->dyn_actions[list];
   ISelectable::GuiContext gui_ctxt = dyn_context[list];
-  
+
   //note: we really won't have been called if any items don't have links,
   // but we have code in here to bail anyway if we do (maybe should put warning text?)
   if ((idx < 0) || (idx >= dyn_methods.size)) return; // shouldn't happen
@@ -2430,7 +2201,7 @@ void ISelectableHost::DoDynAction(int idx) {
   // if params to prompt for, do that now
   // NOTE: if it is also CONFIRM, we implicitly use param collection as confirm
   int prompt_argc = use_argc - hide_args;
-  cssiArgDialog* arg_dlg = NULL; // if needed 
+  cssiArgDialog* arg_dlg = NULL; // if needed
   cssEl** prompt_params = NULL; // if needed -- points inside arg_dlg
   if( (prompt_argc != 0) || meth->HasOption("CONFIRM")) {
     base = curItem()->effLink(gui_ctxt)->data();
@@ -2441,7 +2212,7 @@ void ISelectableHost::DoDynAction(int idx) {
       if (ok) arg_dlg->setBgColor(bgclr);
     }
     arg_dlg->Constr("", "");
-    int ok_can = arg_dlg->Edit(true);	// true = wait for a response
+    int ok_can = arg_dlg->Edit(true);   // true = wait for a response
     if (!(ok_can && !arg_dlg->err_flag))
       goto exit;
     // args in dlg are now: arg[0] arg[1] .. hide_args .. use_args
@@ -2469,23 +2240,23 @@ void ISelectableHost::DoDynAction(int idx) {
           base = link->data();
           if (!base) continue;
           rval = (*(meth->stubp))(base, prompt_argc, prompt_params);
-	  if(rval) {
-	    cssEl::Ref(rval);
-	    cssEl::unRefDone(rval);
-	  }
+          if(rval) {
+            cssEl::Ref(rval);
+            cssEl::unRefDone(rval);
+          }
         }
         goto exit;
       }
-      
+
       // remaining types use more complicated params
-      { // for jumps    
+      { // for jumps
       cssEl** param = (cssEl**)calloc(3 + prompt_argc, sizeof(cssEl*));
       param[0] = &cssMisc::Void; // method*
       param[1] = &cssMisc::Void; // this*
       param[2] = new cssTA_Base();
       for (i = 2; i <= prompt_argc; ++i)
-        param[1+i] = prompt_params[i]; 
-        
+        param[1+i] = prompt_params[i];
+
       const int si_presize = sel_items_cp.size; // size before ops
       switch(dmd->dmd_type) {
       case DynMethod_PtrList::Type_1_2N: { // call 1 with 2:N as a param
@@ -2496,19 +2267,19 @@ void ISelectableHost::DoDynAction(int idx) {
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem;
         base = link->data();
-        for (int i = 1; 
+        for (int i = 1;
           (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
-          ++i) 
+          ++i)
         {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[2] = (void*)link->data();
-          rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
-	  if(rval) {
-	    cssEl::Ref(rval);
-	    cssEl::unRefDone(rval);
-	  }
+          rval = (*(meth->stubp))(base, 1 + prompt_argc, param);
+          if(rval) {
+            cssEl::Ref(rval);
+            cssEl::unRefDone(rval);
+          }
         }
       } break;
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
@@ -2517,19 +2288,19 @@ void ISelectableHost::DoDynAction(int idx) {
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem; //note: we prob wouldn't get called if any were null
         *param[2] = (void*)link->data();
-        for (int i = 1; 
+        for (int i = 1;
           (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
-          ++i) 
+          ++i)
         {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
           rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
-	  if(rval) {
-	    cssEl::Ref(rval);
-	    cssEl::unRefDone(rval);
-	  }
+          if(rval) {
+            cssEl::Ref(rval);
+            cssEl::unRefDone(rval);
+          }
         }
       } break;
       case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
@@ -2539,24 +2310,24 @@ void ISelectableHost::DoDynAction(int idx) {
         }
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetEffDataTypeDef(gui_ctxt);
-	while (sel_items_cp.size > 0) {
-	  itN = sel_items_cp.TakeItem(0);
-	  link = itN->effLink(gui_ctxt);
-	  if (!link) continue; // prob won't happen, because we wouldn't have been called
-	  base = link->data();
-	  for (int j = 0; j < ctxt_ms->count(); ++j) {
-	    ctxt_ms->setIndex(j);
-	    taBase* obj = ctxt_ms->tabObject();
-	    if (!obj) continue;
-	    *param[2] = obj;
-	    rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
-	    if (link->isBase())
-	      ((taBase*)base)->UpdateAfterEdit();
-	    if(rval) {
-	      cssEl::Ref(rval);
-	      cssEl::unRefDone(rval);
-	    }
-	  }
+        while (sel_items_cp.size > 0) {
+          itN = sel_items_cp.TakeItem(0);
+          link = itN->effLink(gui_ctxt);
+          if (!link) continue; // prob won't happen, because we wouldn't have been called
+          base = link->data();
+          for (int j = 0; j < ctxt_ms->count(); ++j) {
+            ctxt_ms->setIndex(j);
+            taBase* obj = ctxt_ms->tabObject();
+            if (!obj) continue;
+            *param[2] = obj;
+            rval = (*(meth->stubp))(base, 1 + prompt_argc, param);
+            if (link->isBase())
+              ((taBase*)base)->UpdateAfterEdit();
+            if(rval) {
+              cssEl::Ref(rval);
+              cssEl::unRefDone(rval);
+            }
+          }
         }
       } break;
       default: break; // compiler food, we handled all cases
@@ -2564,7 +2335,7 @@ void ISelectableHost::DoDynAction(int idx) {
 free_mem:
       delete param[2];
       free(param);
-      } // for jumps     
+      } // for jumps
     }
 exit:
   if (arg_dlg) {
@@ -2676,7 +2447,7 @@ void ISelectableHost::setCurItem(ISelectable* item, bool forced) {
 
 
 //////////////////////////////////
-//  SelectableHostHelper	//
+//  SelectableHostHelper        //
 //////////////////////////////////
 
 
@@ -2695,7 +2466,7 @@ void SelectableHostHelper::EditAction(taiAction* act) {
   int ea = act->usr_data.toInt();
   ISelectable::GuiContext gc = (ISelectable::GuiContext)act->data().toInt();
   host->EditAction(ea, gc);
-} 
+}
 
 void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
   // selection ops need to go through the event loop or things get weird and nasty...
@@ -2709,17 +2480,18 @@ void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
 
 
 //////////////////////////////////
-//  iFrameViewer		//
+//  iFrameViewer                //
 //////////////////////////////////
 
 iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
-:inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IDataViewWidget(viewer_)
 {
   Init();
   // note: caller will still do a virtual Constr() on us after new
 }
 
-iFrameViewer::~iFrameViewer() {
+iFrameViewer::~iFrameViewer()
+{
 }
 
 void iFrameViewer::Init() {
@@ -2761,7 +2533,6 @@ void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int o
   case ISelectableHost::OP_DESTROYING: break;
   default: break; // shouldn't happen
   }
-  
 }
 
 MainWindowViewer* iFrameViewer::mainWindowViewer() {
@@ -2769,11 +2540,11 @@ MainWindowViewer* iFrameViewer::mainWindowViewer() {
 }
 
 //////////////////////////
-//   iBrowseViewer 	//
+//   iBrowseViewer      //
 //////////////////////////
 
 iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
-:inherited(browser_, parent)
+  : inherited(browser_, parent)
 {
   Init();
 }
@@ -2813,7 +2584,7 @@ void iBrowseViewer::Init() {
 */
   connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)),
       this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)) );
-  lvwDataTree->Connect_SelectableHostNotifySignal(this, 
+  lvwDataTree->Connect_SelectableHostNotifySignal(this,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
@@ -2825,7 +2596,7 @@ void iBrowseViewer::ApplyRoot() {
 
   // by definition, we should always be able to create a new browser on root of a browser
   int dn_flags_ = iTreeViewItem::DNF_CAN_BROWSE;
-  
+
   // we treat root slightly different if it is true root, or is just a subsidiary named item
   // also, we assume this guy is visible, so we don't apply the filter
   taiTreeDataNode* node;
@@ -2836,13 +2607,13 @@ void iBrowseViewer::ApplyRoot() {
     // if root is a member, we use that name, else the obj name
     MemberDef* md = root_md();
     String root_nm;
-    if (md) 
+    if (md)
       root_nm = md->name;
     else {
       root_nm = dl->GetName();
       dn_flags_ |= iTreeViewItem::DNF_UPDATE_NAME; // change it on data changes
     }
-    node = dl->CreateTreeDataNode(md, lvwDataTree, NULL, root_nm, 
+    node = dl->CreateTreeDataNode(md, lvwDataTree, NULL, root_nm,
       dn_flags_);
   }
   // always show the first items under the root
@@ -2852,7 +2623,7 @@ void iBrowseViewer::ApplyRoot() {
 }
 
 void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
-   taiActions* menu) 
+   taiActions* menu)
 {
 //note: nothing
 }
@@ -2868,29 +2639,22 @@ void iBrowseViewer::Reset() {
 
 
 //////////////////////////
-//   iTabViewer 	//
+//   iTabViewer         //
 //////////////////////////
 
 iTabViewer::iTabViewer(PanelViewer* viewer_, QWidget* parent)
-: inherited(viewer_, parent)
+  : inherited(viewer_, parent)
 {
   Init();
 }
 
-/* iTabViewer::iTabViewer(DataViewer* viewer_, QWidget* parent, WFlags fl)
-: iMainWindowViewer(viewer_, parent, fl)
-{
-  init();
-} */
-
 iTabViewer::~iTabViewer()
 {
 //  delete m_tabViews;
-//  m_tabViews = NULL;
-  if (m_curTabView) {
-    delete m_curTabView;
-    m_curTabView = NULL;
-  }
+//  m_tabViews = 0;
+
+  delete m_curTabView;
+  m_curTabView = 0;
 }
 
 void iTabViewer::Init() {
@@ -3042,19 +2806,19 @@ void iTabViewer::focusInEvent(QFocusEvent* ev) {
 }
 
 
-
 //////////////////////////
-//  iDockViewer		//
+//  iDockViewer         //
 //////////////////////////
 
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
-:inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IDataViewWidget(viewer_)
 {
   setAttribute(Qt::WA_DeleteOnClose, true);
   Init();
 }
 
-iDockViewer::~iDockViewer() {
+iDockViewer::~iDockViewer()
+{
 }
 
 void iDockViewer::Init() {
@@ -3073,8 +2837,8 @@ void iDockViewer::Init() {
 void iDockViewer::closeEvent(QCloseEvent* e) {
    // always closing if force-quitting, docked or we no longer have our mummy
   CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) ||
-    !isFloating() || (!m_viewer)) ? 
-    CO_NOT_CANCELLABLE : CO_PROCEED; 
+    !isFloating() || (!m_viewer)) ?
+    CO_NOT_CANCELLABLE : CO_PROCEED;
   closeEvent_Handler(e, cancel_op);
 }
 
@@ -3117,7 +2881,7 @@ void iDockViewer::Showing(bool showing) {
 
 
 //////////////////////////
-//   iToolBoxDockViewer	//
+//   iToolBoxDockViewer //
 //////////////////////////
 
 IDataViewWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
@@ -3126,12 +2890,13 @@ IDataViewWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 
 
 iToolBoxDockViewer::iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent)
-:inherited(viewer_, parent)
+  : inherited(viewer_, parent)
 {
   Init();
 }
 
-iToolBoxDockViewer::~iToolBoxDockViewer() {
+iToolBoxDockViewer::~iToolBoxDockViewer()
+{
 }
 
 void iToolBoxDockViewer::Init() {
@@ -3164,7 +2929,7 @@ QWidget* iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) 
   if (cwa->parent() == NULL) {
     cwa->setParent(this);
   }
-  w->addAction(cwa); 
+  w->addAction(cwa);
   connect(cwa, SIGNAL(triggered()), cwa, SLOT(copyToClipboard()) ); // ie to self
   return w->widgetForAction(cwa);
 }
@@ -3189,7 +2954,7 @@ QToolBar* iToolBoxDockViewer::sectionWidget(int sec) {
 }
 
 //////////////////////////
-//   iToolBar 		//
+//   iToolBar           //
 //////////////////////////
 
 IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
@@ -3200,12 +2965,13 @@ IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 }
 
 iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
-:inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IDataViewWidget(viewer_)
 {
   Init();
 }
 
-iToolBar::~iToolBar() {
+iToolBar::~iToolBar()
+{
 }
 
 void iToolBar::Init() {
@@ -3238,11 +3004,11 @@ void iToolBar::Showing(bool showing) {
 
 
 //////////////////////////////////
-//  iToolBar_List 		//
+//  iToolBar_List               //
 //////////////////////////////////
 
 String iToolBar_List::El_GetName_(void* it) const {
-  return ((QWidget*)it)->objectName(); 
+  return ((QWidget*)it)->objectName();
 }
 
 
@@ -3253,40 +3019,55 @@ String iToolBar_List::El_GetName_(void* it) const {
 void iApplicationToolBar::Constr_post() {
   iMainWindowViewer* win = viewerWindow(); //cache
   iToolBar* tb = this;
+
   int icon_sz = taiM_->label_height(taiMisc::sizMedium);
   tb->setIconSize(QSize(icon_sz, icon_sz));
-  win->historyBackAction->addTo(tb);
-  win->historyForwardAction->addTo(tb);
-  //TEMP 
-  QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction));
-  if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
-  but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction));
-  if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
-  win->editFindAction->addTo(tb);
+
+  // Actions have already been constructed for the viewer window's menus.
+  // Now add these actions to the toolbar for convenient access.
+  tb->addAction(win->historyBackAction);
+  tb->addAction(win->historyForwardAction);
+
+  //TEMP
+  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction))) {
+    but->setArrowType(Qt::LeftArrow);
+    but->setText("");
+  }
+  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction))) {
+    but->setArrowType(Qt::RightArrow);
+    but->setText("");
+  }
+
+  tb->addAction(win->editFindAction);
+
   tb->addSeparator();
-  win->fileNewAction->addTo(tb);
-  win->fileOpenAction->addTo(tb);
-  win->fileSaveAction->addTo(tb);
-  win->fileSaveAsAction->addTo(tb);
-//   win->fileSaveNotesAction->addTo(tb);
-  win->fileUpdateChangeLogAction->addTo(tb);
-  win->fileCloseAction->addTo(tb);
-//   win->filePrintAction->addTo(tb);
+  tb->addAction(win->fileNewAction);
+  tb->addAction(win->fileOpenAction);
+  tb->addAction(win->fileSaveAction);
+  tb->addAction(win->fileSaveAsAction);
+  // tb->addAction(win->fileSaveNotesAction);
+  tb->addAction(win->fileUpdateChangeLogAction);
+  tb->addAction(win->fileCloseAction);
+  // tb->addAction(win->filePrintAction);
+
   tb->addSeparator();
-  win->editUndoAction->addTo(tb);
-  win->editRedoAction->addTo(tb);
+  tb->addAction(win->editUndoAction);
+  tb->addAction(win->editRedoAction);
+
   tb->addSeparator();
-  win->editCutAction->addTo(tb);
-  win->editCopyAction->addTo(tb);
-  win->editPasteAction->addTo(tb);
-  win->editPasteIntoAction->addTo(tb);
-  win->editPasteAssignAction->addTo(tb);
-  win->editPasteAppendAction->addTo(tb);
+  tb->addAction(win->editCutAction);
+  tb->addAction(win->editCopyAction);
+  tb->addAction(win->editPasteAction);
+  tb->addAction(win->editPasteIntoAction);
+  tb->addAction(win->editPasteAssignAction);
+  tb->addAction(win->editPasteAppendAction);
+
   tb->addSeparator();
-  win->ctrlStopAction->addTo(tb);
-  win->ctrlContAction->addTo(tb);
+  tb->addAction(win->ctrlStopAction);
+  tb->addAction(win->ctrlContAction);
+
   tb->addSeparator();
-  win->helpHelpAction->addTo(tb);
+  tb->addAction(win->helpHelpAction);
 }
 
 //////////////////////////
@@ -3294,14 +3075,14 @@ void iApplicationToolBar::Constr_post() {
 //////////////////////////
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(taBase* inst_, QObject* parent)
-:inherited(parent)
+  : inherited(parent)
 {
   Init(inst_);
 }
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(const QIcon & icon_, taBase* inst_,
- QObject* parent)
-:inherited(parent)
+    QObject* parent)
+  : inherited(parent)
 {
   Init(inst_);
   setIcon(icon_);
@@ -3309,7 +3090,7 @@ iBaseClipWidgetAction::iBaseClipWidgetAction(const QIcon & icon_, taBase* inst_,
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const QIcon & icon_,
     taBase* inst_, QObject* parent)
-:inherited(parent)
+  : inherited(parent)
 {
   Init(inst_, tooltip_);
   setIcon(icon_);
@@ -3317,7 +3098,7 @@ iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const QIcon
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(const String& text_,
     taBase* inst_, QObject* parent)
-:inherited(parent)
+  : inherited(parent)
 {
   Init(inst_);
   setText(text_);
@@ -3325,13 +3106,13 @@ iBaseClipWidgetAction::iBaseClipWidgetAction(const String& text_,
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const String& text_,
     taBase* inst_, QObject* parent)
-:inherited(parent)
+  : inherited(parent)
 {
   Init(inst_, tooltip_);
   setText(text_);
 }
 
-  
+
 void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
   m_inst = inst_;
   if (tooltip_.empty() && inst_) {
@@ -3346,7 +3127,7 @@ void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
       setStatusTip(statustip);
   }
 }
-  		
+
 QMimeData* iBaseClipWidgetAction::mimeData() const {
   taiClipData* rval = NULL;
   if (m_inst) {
@@ -3356,7 +3137,7 @@ QMimeData* iBaseClipWidgetAction::mimeData() const {
       taBase* obj = link->taData();
       if (obj) {
         taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-        rval = new taiClipData( 
+        rval = new taiClipData(
           (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
         mf->AddSingleObject(rval, obj);
       }
@@ -3374,11 +3155,11 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 
 
 //////////////////////////
-//  iBrowseHistory	//
+//  iBrowseHistory      //
 //////////////////////////
 
-iBrowseHistory::iBrowseHistory(QObject* parent) 
-:inherited(parent)
+iBrowseHistory::iBrowseHistory(QObject* parent)
+  : inherited(parent)
 {
   max_items = taMisc::num_browse_history;
   if (max_items < 10) max_items = 10; // sanity
@@ -3409,7 +3190,7 @@ void iBrowseHistory::back() {
     taiDataLink* dl = items[cur_item];
     emit select_item(dl);
   } --navigating;
-  
+
 exit:
   doEnabling();
 }
@@ -3476,7 +3257,6 @@ void iBrowseHistory::ItemSelected(iTreeViewItem* tvi) {
   addItem(dl);
 }
 
-
 void iBrowseHistory::reset() {
   for (int i = items.size - 1; i >= 0; --i) {
     taiDataLink* dl = items[i];
@@ -3489,18 +3269,21 @@ void iBrowseHistory::reset() {
 
 
 //////////////////////////
-//  iMainWindowViewer	//
+//  iMainWindowViewer   //
 //////////////////////////
 
 int iMainWindowViewer::s_next_unique_id;
+const QString iMainWindowViewer::cmd_str = "Ctrl+";
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
-: inherited(parent, (Qt::Window |Qt:: WindowSystemMenuHint | 
-		     Qt::WindowMinMaxButtonsHint
+  : inherited(parent, (Qt::Window
+                       | Qt:: WindowSystemMenuHint
+                       | Qt::WindowMinMaxButtonsHint
 #if (QT_VERSION >= 0x040500)
-		      | Qt::WindowCloseButtonHint
+                       | Qt::WindowCloseButtonHint
 #endif
-		      )), IDataViewWidget(viewer_)
+                       ))
+  , IDataViewWidget(viewer_)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
@@ -3510,20 +3293,13 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
   // note: caller will still do a virtual Constr() on us after new
 }
 
-/*obs iMainWindowViewer::iMainWindowViewer(DataViewer* viewer_, QWidget* parent, WFlags flags)
-: QMainWindow(parent, NULL, flags)
-{
-  m_viewer = viewer_;
-  init();
-} */
-
 iMainWindowViewer::~iMainWindowViewer() {
   // this is a fix from http://bugreports.qt.nokia.com/browse/QTBUG-5279
 //   if (qt_mouseover == this)
 //     qt_mouseover = 0;
   // this doesn't work here -- too late in game
   //   if(isVisible())
-//     hide();			// prevents crash later on mac..
+//     hide();                  // prevents crash later on mac..
   taiMisc::active_wins.RemoveEl(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
@@ -3545,11 +3321,11 @@ void iMainWindowViewer::Init() {
   m_is_proj_browser = false;
   m_is_proj_viewer = false;
   m_close_proj_now = false; // only ever set once
-  
+
   // allow win to be any size, even bigger than screen -- esp important for
   // multi-monitor situations, so you can size across screens
   // note that we do constrain windows on restore to be on screen, even if
-  // their metrics indicated very big -- VERY IMPORTANT FOR MAC 
+  // their metrics indicated very big -- VERY IMPORTANT FOR MAC
 //  iSize ss = taiM->scrn_s;
 //  setMaximumSize(ss.width(), ss.height());
 
@@ -3563,7 +3339,7 @@ void iMainWindowViewer::Init() {
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
   (void)statusBar(); // creates the status bar
-  
+
   // these are modal, so NULL them for when unused
   toolsMenu = NULL;
   historyBackAction = NULL;
@@ -3575,6 +3351,9 @@ void iMainWindowViewer::Init() {
   fileSaveNotesAction = NULL;
   fileUpdateChangeLogAction = NULL;
   fileSaveAllAction = NULL;
+  fileOpenFromWebMenu = NULL;
+  filePublishDocsOnWebMenu = NULL;
+  filePublishProjectOnWebAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
   fileQuitAction = NULL;
@@ -3610,22 +3389,22 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   fv->m_window = this;
 //TODO: this stretch thing isn't working -- replace with sizing
   body->setStretchFactor(at_index, fv->stretchFactor());
-  
+
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
     fv, SLOT(SelectableHostNotifySlot_External(ISelectableHost*, int)) );
-  connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)), 
+  connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
     this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
-    
+
   taiAction* act = frameMenu->AddItem(fv->viewer()->GetName(), taiMenu::toggle,
     taiAction::men_act, this, SLOT(this_FrameSelect(taiAction*)), (void*)fv);
-  
+
   //TODO: the show decision should probably be elsewhere
   if (fv->viewer()->isVisible())
     fv->viewer()->Show(); // always needed when adding guys to visible
-  
+
   if (fv->viewer()->isVisible() != act->isChecked())
     act->setChecked(fv->isVisible()); // note: triggers action
-    
+
 }
 
 // this guy exists because we must always be able to add a panel,
@@ -3637,7 +3416,7 @@ void iMainWindowViewer::AddPanel(iDataPanel* panel, bool new_tab) {
   } else {
     itv->AddPanel(panel); // typically for ctrl panels
   }
-} 
+}
 
 iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
   int idx;
@@ -3649,15 +3428,15 @@ iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
     AddFrameViewer(tv->widget(), 1); // usually in middle
   }
   return tv->widget();
-} 
+}
 
 void iMainWindowViewer::EditItem(taiDataLink* link, bool not_in_cur) {
   iTabViewer* itv = GetTabViewer(true);
   itv->ShowLink(link, not_in_cur);
-} 
+}
 
 void iMainWindowViewer::AddToolBar(iToolBar* itb) {
-  if (!itb->parent()) 
+  if (!itb->parent())
     itb->setParent(this); // needs parent otherwise will leak
   itb->m_window = this;
   addToolBar(itb); //TODO: should specify area
@@ -3681,11 +3460,11 @@ void iMainWindowViewer::ch_destroyed() {
 void iMainWindowViewer::closeEvent(QCloseEvent* e) {
    // always closing if force-quitting or we no longer have our mummy
   CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (!m_viewer)) ?
-     CO_NOT_CANCELLABLE : CO_PROCEED; 
+     CO_NOT_CANCELLABLE : CO_PROCEED;
   closeEvent_Handler(e, cancel_op);
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
-    hide();			// prevent a possible bug on mac associated with hide and delete
+    hide();                     // prevent a possible bug on mac associated with hide and delete
     taiMiscCore::ProcessEvents();
     curProject()->CloseLater();
   }
@@ -3756,17 +3535,17 @@ void iMainWindowViewer::Constr_impl() {
   Constr_Menu_impl();
   // we always put the fileclose or quit action at bottom of menu
   fileMenu->insertSeparator();
-  
+
   if (!isRoot()) {
-    fileCloseWindowAction->AddTo(fileMenu);
+    fileMenu->AddAction(fileCloseWindowAction);
   }
-  
+
   //note: on Mac, this Quit will get moved to app menu (needed on all toplevel wins)
 #ifndef TA_OS_MAC
   if (isRoot())
 #endif
   {
-    fileQuitAction->AddTo(fileMenu);
+    fileMenu->AddAction(fileQuitAction);
   }
 
   body = new iSplitter(); // def is hor
@@ -3787,94 +3566,118 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
   ctrlMenu = menu->AddSubMenu("&Control");
-  connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
+  connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
   if (!(taMisc::show_gui & taMisc::NO_EXPERT))
     toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()),
-    this, SLOT(windowMenu_aboutToShow()) );
-  
+    this, SLOT(windowMenu_aboutToShow()));
+
   helpMenu = menu->AddSubMenu("&Help");;
 }
 
-void iMainWindowViewer::Constr_Menu_impl() {
-  QString cmd_str = "Ctrl+";
+void iMainWindowViewer::Constr_Menu_impl()
+{
+  // Project actions are always created for menu consistency,
+  // but are selectively enabled based on context.
 
-  // forward/back guys -- note: on Win the icons don't show up if Action has text
-  historyBackAction = AddAction(new taiAction("Back",
-      QKeySequence(Qt::ControlModifier, Qt::Key_Left), "historyBackAction" ));
-  historyBackAction->setToolTip("Ctrl + <- -- move back one step in browsing history");
-  historyBackAction->setStatusTip(historyBackAction->toolTip());
-  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
-  connect(brow_hist, SIGNAL(back_enabled(bool)), 
-    historyBackAction, SLOT(setEnabled(bool)) );
-  historyForwardAction = AddAction(new taiAction("Forward",
-QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
-  historyForwardAction->setToolTip("Ctrl + -> -- move forward one step in browsing history");
-  historyForwardAction->setStatusTip(historyForwardAction->toolTip());
-  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
-  connect(brow_hist, SIGNAL(forward_enabled(bool)), 
-    historyForwardAction, SLOT(setEnabled(bool)) );
-  connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
-    brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
-  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
-    this, SLOT(slot_AssertBrowserItem(taiDataLink*)) );
-  // no history, just manually disable
-  historyBackAction->setEnabled(false);
-  historyForwardAction->setEnabled(false);
-  
-  // project actions -- we always create them (for menu consistency) but selectively enable
-  fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence(), _fileNewAction ));
-  fileNewAction->setIcon( QIcon( ":/images/filenew.png") );
-  fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence(), _fileOpenAction ));
-  fileOpenAction->setIcon( QIcon( QPixmap(":/images/fileopen.png") ) );
-  
-  fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence(cmd_str+"S"), _fileSaveAction ));
-  fileSaveAction->setIcon( QIcon( QPixmap(":/images/filesave.png") ) );
-  fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
+  // Each of these functions creates action objects, adds them to menus,
+  // and wires the signals/slots connections.
+  Constr_FileMenu();
+  Constr_EditMenu();
+  Constr_ViewMenu();
+  Constr_ShowMenu();
+  Constr_ControlMenu();
+  Constr_ToolsMenu();
+  Constr_HelpMenu();
+}
+
+void iMainWindowViewer::Constr_FileMenu()
+{
+  fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence(), "fileNewAction"));
+  fileNewAction->setIcon(QIcon(":/images/filenew.png"));
+
+  fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence(), "fileOpenAction"));
+  fileOpenAction->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
+
+  fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence(cmd_str + "S"), "fileSaveAction"));
+  fileSaveAction->setIcon(QIcon(QPixmap(":/images/filesave.png")));
+
+  fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), "fileSaveAsAction"));
+  // filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(), "filePrintAction"));
+  // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
+
   fileSaveNotesAction = AddAction(new taiAction("Save Note &Changes", QKeySequence(), "fileSaveNotesAction"));
   fileSaveAsTemplateAction = AddAction(new taiAction("Save As &Template", QKeySequence(), "fileSaveAsTemplate"));
   fileUpdateChangeLogAction = AddAction(new taiAction("&Updt Change Log", QKeySequence(), "fileUpdateChangeLogAction"));
-  fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), _fileSaveAsAction ));
-  fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
-  
-  fileNewAction->AddTo(fileMenu);
-  fileOpenAction->AddTo(fileMenu );
+  fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
+
+  // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
+  filePublishProjectOnWebAction = AddAction(new taiAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
+
+  fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction"));
+  fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction"));
+
+  // Build menu items.
+  fileMenu->AddAction(fileNewAction);
+  fileMenu->AddAction(fileOpenAction);
   fileOpenRecentMenu = fileMenu->AddSubMenu("Open &Recent");
-  connect(fileOpenRecentMenu->menu(), SIGNAL(aboutToShow() ), 
-    this, SLOT( fileOpenRecent_aboutToShow() ) );
-  fileSaveAction->AddTo(fileMenu );
-  fileSaveAsAction->AddTo(fileMenu);
+  fileMenu->AddAction(fileSaveAction);
+  fileMenu->AddAction(fileSaveAsAction);
+  // fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
+  // fileMenu->AddAction(filePrintAction);
+
   fileMenu->insertSeparator();
-  fileSaveNotesAction->AddTo(fileMenu );
-  fileSaveAsTemplateAction->AddTo(fileMenu );
-  fileUpdateChangeLogAction->AddTo(fileMenu );
-  fileSaveAllAction->AddTo(fileMenu);
+  fileMenu->AddAction(fileSaveNotesAction);
+  fileMenu->AddAction(fileSaveAsTemplateAction);
+  fileMenu->AddAction(fileUpdateChangeLogAction);
+  fileMenu->AddAction(fileSaveAllAction);
+
   fileMenu->insertSeparator();
-  fileCloseAction->AddTo(fileMenu);
-  
-  // other actions
-  fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
-  
-//   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(), _filePrintAction ));
-//   filePrintAction->setIcon( QIcon( QPixmap(":/images/fileprint.png") ) );
+  fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
   if (!isRoot()) {
-    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(), _fileCloseWindowAction ));
-    connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
+    filePublishDocsOnWebMenu = fileMenu->AddSubMenu("Publish Project &Docs on Web");
+    fileMenu->AddAction(filePublishProjectOnWebAction);
   }
-  connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
-  connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
-  connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
+
+  fileMenu->insertSeparator();
+  fileMenu->AddAction(fileCloseAction);
+  fileMenu->AddAction(fileOptionsAction);
+
+  // Make connections.
+  if (!isRoot()) {
+    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(), "fileCloseWindowAction"));
+    connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
+  }
+
+  connect(fileNewAction, SIGNAL(Action()), this, SLOT(fileNew()));
+  connect(fileOpenAction, SIGNAL(Action()), this, SLOT(fileOpen()));
+  connect(fileOpenRecentMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileOpenRecent_aboutToShow()));
+  connect(fileSaveAllAction, SIGNAL(Action()), this, SLOT(fileSaveAll()));
+
+  // Connect "open from web" for all windows (even root).
+  connect(fileOpenFromWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileOpenFromWeb_aboutToShow()));
+
+  // TBD: is this the same as checking if (!isRoot()) ??
+  // Logic for isProjShower() is unclear.
   if (isProjShower()) {
-    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
-    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
-    connect( fileSaveNotesAction, SIGNAL( Action() ), this, SLOT( fileSaveNotes() ) );
-    connect( fileSaveAsTemplateAction, SIGNAL( Action() ), this, SLOT( fileSaveAsTemplate() ) );
-    connect( fileUpdateChangeLogAction, SIGNAL( Action() ), this, SLOT( fileUpdateChangeLog() ) );
-    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
+    connect(fileSaveAction, SIGNAL(Action()), this, SLOT(fileSave()));
+    connect(fileSaveAsAction, SIGNAL(Action()), this, SLOT(fileSaveAs()));
+    connect(fileSaveNotesAction, SIGNAL(Action()), this, SLOT(fileSaveNotes()));
+    connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
+    connect(fileUpdateChangeLogAction, SIGNAL(Action()), this, SLOT(fileUpdateChangeLog()));
+
+    // Connect "publish" options only for project windows.
+    if (filePublishDocsOnWebMenu) {
+      connect(filePublishDocsOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishDocsOnWeb_aboutToShow()));
+    }
+    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb()));
+
+    connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
     // disable the CloseWindow to help emphasize that Closing will close proj
-//no, not needed    fileCloseWindowAction->setEnabled(false);
-  } else {
+    //no, not needed    fileCloseWindowAction->setEnabled(false);
+  }
+  else {
     fileSaveAction->setEnabled(false);
     fileSaveAsAction->setEnabled(false);
     fileSaveNotesAction->setEnabled(false);
@@ -3882,147 +3685,221 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
     fileUpdateChangeLogAction->setEnabled(false);
     fileCloseAction->setEnabled(false);
   }
+
+  // Disable "Publish Project" -- won't be enabled until docs are first published.
+  filePublishProjectOnWebAction->setEnabled(false);
+
+  // connect(filePrintAction, SIGNAL(activated()), this, SLOT(filePrint()));
+  connect(fileOptionsAction, SIGNAL(Action()), this, SLOT(fileOptions()));
+
 #ifndef TA_OS_MAC
   if (isRoot())
 #endif
   {
-    fileQuitAction = AddAction(new taiAction("&Quit", QKeySequence(cmd_str+"Q"),
-      _fileQuitAction ));
-    connect(fileQuitAction, SIGNAL(Action()), this, SLOT(fileQuit()) );
+    fileQuitAction = AddAction(new taiAction("&Quit", QKeySequence(cmd_str + "Q"),
+      "fileQuitAction"));
+    connect(fileQuitAction, SIGNAL(Action()), this, SLOT(fileQuit()));
   }
-  
-  editUndoAction = AddAction(new taiAction("&Undo", QKeySequence(cmd_str+"Z"), _editUndoAction ));
-  editUndoAction->setIcon( QIcon( QPixmap(":/images/editundo.png") ) );
-  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(cmd_str+"Shift+Z"), _editRedoAction ));
-  editRedoAction->setIcon( QIcon( QPixmap(":/images/editredo.png") ) );
-  editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str+"X"), _editCutAction ));
-  editCutAction->setIcon( QIcon( QPixmap(":/images/editcut.png") ) );
-  editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence(cmd_str+"C"), _editCopyAction ));
-  editCopyAction->setIcon( QIcon( QPixmap(":/images/editcopy.png") ) );
-  //note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
-  editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction" ));
-  editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str+"V"), _editPasteAction ));
+}
+
+void iMainWindowViewer::Constr_EditMenu()
+{
+  editUndoAction = AddAction(new taiAction("&Undo", QKeySequence(cmd_str + "Z"), "editUndoAction"));
+  editUndoAction->setIcon(QIcon(QPixmap(":/images/editundo.png")));
+  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(cmd_str + "Shift+Z"), "editRedoAction"));
+  editRedoAction->setIcon(QIcon(QPixmap(":/images/editredo.png")));
+
+  editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str + "X"), "editCutAction"));
+  editCutAction->setIcon(QIcon(QPixmap(":/images/editcut.png")));
+  editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence(cmd_str + "C"), "editCopyAction"));
+  editCopyAction->setIcon(QIcon(QPixmap(":/images/editcopy.png")));
+
+  // Note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
+  editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction"));
   QPixmap editpaste(":/images/editpaste.png");
-  editPasteAction->setIcon( QIcon( editpaste ) );
-  editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str+"V"), "editPasteIntoAction" ));
-  editPasteIntoAction->setIcon( QIcon( editpaste ) );
-  editPasteAssignAction = AddAction(new taiAction(taiClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(cmd_str+"V"), "editPasteAssignAction" ));
-  editPasteAssignAction->setIcon( QIcon( editpaste ) );
-  editPasteAppendAction = AddAction(new taiAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str+"V"), "editPasteAppendAction" ));
-  editPasteAppendAction->setIcon( QIcon( editpaste ) );
-  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), _editDeleteAction ));
-//  editDeleteAction->setIcon( QIcon( editpaste ) );
-  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(), _editLinkAction ));
-  editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction" ));
-  editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
+  editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str + "V"), "editPasteAction"));
+  editPasteAction->setIcon(QIcon(editpaste));
+  editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str + "V"), "editPasteIntoAction"));
+  editPasteIntoAction->setIcon(QIcon(editpaste));
+  editPasteAssignAction = AddAction(new taiAction(taiClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(cmd_str + "V"), "editPasteAssignAction"));
+  editPasteAssignAction->setIcon(QIcon(editpaste));
+  editPasteAppendAction = AddAction(new taiAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str + "V"), "editPasteAppendAction"));
+  editPasteAppendAction->setIcon(QIcon(editpaste));
+  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), "editDeleteAction"));
+  // editDeleteAction->setIcon(QIcon(editpaste));
+
+  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
+  editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction"));
+  editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
+
   editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence(), "editFindAction"));
   editFindNextAction = AddAction(new taiAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
-  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
-  viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
-  toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
-  toolsTypeBrowseAction = AddAction(new taiAction(0, "&Help Browser", QKeySequence(), "toolsTypeBrowseAction"));
-  String s = taMisc::app_name + " Help on the web";
-  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence("F1"), _helpHelpAction ));
-  helpHelpAction->setToolTip(s);
-  helpHelpAction->setStatusTip(s);
-  helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
+  // Build menu items.
+  editMenu->AddAction(editUndoAction);
+  editMenu->AddAction(editRedoAction);
 
-  ctrlStopAction = AddAction(new taiAction("Stop", QKeySequence(), "ctrlStopAction"));
-  ctrlStopAction->setIcon( QIcon( QPixmap(":/images/stop_icon.png") ) );
-  ctrlStopAction->setToolTip("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button.");
-  ctrlContAction = AddAction(new taiAction("Cont", QKeySequence(), "ctrlContAction"));
-  ctrlContAction->setIcon( QIcon( QPixmap(":/images/play_icon.png") ) );
-  ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
-
-//   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
-  fileOptionsAction->AddTo( fileMenu );
-//   filePrintAction->AddTo( fileMenu );
-  editUndoAction->AddTo( editMenu ); 
-  editRedoAction->AddTo( editMenu );
   editMenu->insertSeparator();
-  editCutAction->AddTo( editMenu );
-  editCopyAction->AddTo( editMenu );
-  editDupeAction->AddTo( editMenu );
-  editPasteAction->AddTo( editMenu );
-  editPasteIntoAction->AddTo( editMenu );
-  editPasteAssignAction->AddTo( editMenu );
-  editPasteAppendAction->AddTo( editMenu );
-  editLinkAction->AddTo( editMenu );
-  editLinkIntoAction->AddTo( editMenu );
-  editUnlinkAction->AddTo( editMenu );
-  editDeleteAction->AddTo( editMenu );
+  editMenu->AddAction(editCutAction);
+  editMenu->AddAction(editCopyAction);
+  editMenu->AddAction(editDupeAction);
+  editMenu->AddAction(editPasteAction);
+  editMenu->AddAction(editPasteIntoAction);
+  editMenu->AddAction(editPasteAssignAction);
+  editMenu->AddAction(editPasteAppendAction);
+  editMenu->AddAction(editLinkAction);
+  editMenu->AddAction(editLinkIntoAction);
+  editMenu->AddAction(editUnlinkAction);
+  editMenu->AddAction(editDeleteAction);
+
   editMenu->insertSeparator();
-  editFindAction->AddTo( editMenu );
-  editFindNextAction->AddTo( editMenu );
-  
-  viewRefreshAction->AddTo(viewMenu);
+  editMenu->AddAction(editFindAction);
+  editMenu->AddAction(editFindNextAction);
+
+  // Make connections.
+  connect(editUndoAction, SIGNAL(Action()), this, SLOT(editUndo()));
+  connect(editRedoAction, SIGNAL(Action()), this, SLOT(editRedo()));
+  connect(editCutAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editCopyAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editPasteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editPasteIntoAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editPasteAssignAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editPasteAppendAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editLinkAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editLinkIntoAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editUnlinkAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editDeleteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
+  connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
+}
+
+void iMainWindowViewer::Constr_ViewMenu()
+{
+  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
+  viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction"));
+
+  // Forward and back buttons -- note: on Win the icons don't show up if Action has text
+  historyBackAction = AddAction(new taiAction("Back",
+    QKeySequence(Qt::ControlModifier + Qt::Key_Left), "historyBackAction"));
+  historyBackAction->setToolTip("Move back in object browsing history\nCtrl + Left");
+  historyBackAction->setStatusTip(historyBackAction->toolTip());
+
+  historyForwardAction = AddAction(new taiAction("Forward",
+    QKeySequence(Qt::ControlModifier + Qt::Key_Right), "historyForwardAction"));
+  historyForwardAction->setToolTip("Move forward in object browsing history\nCtrl + Right");
+  historyForwardAction->setStatusTip(historyForwardAction->toolTip());
+
+  // When window first created, there is no history, so manually disable.
+  historyBackAction->setEnabled(false);
+  historyForwardAction->setEnabled(false);
+
+  // Build menu items.
+  viewMenu->AddAction(viewRefreshAction);
+
   viewMenu->insertSeparator();
-  historyBackAction->AddTo(viewMenu);
-  historyForwardAction->AddTo(viewMenu);
+  viewMenu->AddAction(historyBackAction);
+  viewMenu->AddAction(historyForwardAction);
+
   viewMenu->insertSeparator();
   frameMenu = viewMenu->AddSubMenu("Frames");
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
   dockMenu = viewMenu->AddSubMenu("Dock Windows");
+
   viewMenu->insertSeparator();
-  viewSaveViewAction->AddTo(viewMenu);
-  
-  // next two items are commands that set the other toggle flags
-  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 0 );
-  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 1 );
-  show_menu->AddSep();
-  //  toggle flags
-  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 2 );
-  show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 3 );
-  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
-  //note: correct toggles set dynamically when user drops down menu
+  viewMenu->AddAction(viewSaveViewAction);
 
-  ctrlStopAction->AddTo( ctrlMenu );
-  ctrlContAction->AddTo( ctrlMenu );
- 
-  if (toolsMenu) {
-    toolsClassBrowseAction->AddTo(toolsMenu );
-    toolsTypeBrowseAction->AddTo(toolsMenu );
-  }
-  helpHelpAction->AddTo(helpMenu );
-  helpMenu->insertSeparator();
-  helpAboutAction->AddTo(helpMenu );
+  // Make connections.
+  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()));
+  connect(brow_hist, SIGNAL(back_enabled(bool)), historyBackAction, SLOT(setEnabled(bool)));
 
-    // signals and slots connections
-  connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
-//   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) );
-  connect( editUndoAction, SIGNAL( Action() ), this, SLOT( editUndo() ) );
-  connect( editRedoAction, SIGNAL( Action() ), this, SLOT( editRedo() ) );
-  connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editDupeAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editPasteIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editPasteAssignAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editPasteAppendAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editLinkIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editUnlinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
-  connect( editFindAction, SIGNAL( Action() ), this, SLOT(editFind()) );
-  connect( editFindNextAction, SIGNAL( Action() ), this, SLOT(editFindNext()) );
-  connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
-  connect( viewSaveViewAction, SIGNAL( Action() ), this, SLOT(viewSaveView()) );
-  connect( toolsClassBrowseAction, SIGNAL( triggered() ), 
-    this, SLOT( toolsClassBrowser() ) );
-  connect( toolsTypeBrowseAction, SIGNAL( triggered() ), 
-    this, SLOT( toolsTypeBrowser() ) );
-  connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
-  connect( helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()) );
+  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()));
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction, SLOT(setEnabled(bool)));
 
-  connect( ctrlStopAction, SIGNAL( Action() ), this, SLOT( ctrlStop() ) );
-  connect( ctrlContAction, SIGNAL( Action() ), this, SLOT( ctrlCont() ) );
+  connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
+    brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
+  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiDataLink*)));
+
+  connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
+  connect(viewSaveViewAction, SIGNAL(Action()), this, SLOT(viewSaveView()));
 }
+
+void iMainWindowViewer::Constr_ShowMenu()
+{
+  // These two items are presets for the other toggle flags.
+  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 0);
+  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 1);
+
+  // Toggle flags.
+  // Note: correct toggles are set dynamically when user drops down menu.
+  show_menu->AddSep();
+  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 2);
+  show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 3);
+  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 4);
+}
+
+void iMainWindowViewer::Constr_ControlMenu()
+{
+  ctrlStopAction = AddAction(new taiAction("Stop", QKeySequence(), "ctrlStopAction"));
+  ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
+  ctrlStopAction->setToolTip("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button.");
+
+  ctrlContAction = AddAction(new taiAction("Cont", QKeySequence(), "ctrlContAction"));
+  ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
+  ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
+
+  // Build menu items.
+  ctrlMenu->AddAction(ctrlStopAction);
+  ctrlMenu->AddAction(ctrlContAction);
+
+  // Make connections.
+  connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
+  connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
+}
+
+void iMainWindowViewer::Constr_ToolsMenu()
+{
+  toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
+  toolsTypeBrowseAction = AddAction(new taiAction(0, "&Help Browser", QKeySequence(), "toolsTypeBrowseAction"));
+
+  // Build menu items.
+  if (toolsMenu) {
+    toolsMenu->AddAction(toolsClassBrowseAction);
+    toolsMenu->AddAction(toolsTypeBrowseAction);
+  }
+
+  // Make connetions.
+  connect(toolsClassBrowseAction, SIGNAL(triggered()),
+    this, SLOT(toolsClassBrowser()));
+  connect(toolsTypeBrowseAction, SIGNAL(triggered()),
+    this, SLOT(toolsTypeBrowser()));
+}
+
+void iMainWindowViewer::Constr_HelpMenu()
+{
+  String s = taMisc::app_name + " Help on the web";
+  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence("F1"), "helpHelpAction"));
+  helpHelpAction->setToolTip(s);
+  helpHelpAction->setStatusTip(s);
+
+  helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), "helpAboutAction"));
+
+  // Build menu items.
+  helpMenu->AddAction(helpHelpAction);
+  helpMenu->insertSeparator();
+  helpMenu->AddAction(helpAboutAction);
+
+  // Make connetions.
+  connect(helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()));
+  connect(helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()));
+}
+
 
 taProject* iMainWindowViewer::curProject() const {
   taProject* rval = NULL;
@@ -4060,12 +3937,12 @@ void iMainWindowViewer::emit_EditAction(int param) {
 } */
 
 void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
-  // if an instance doesn't exist, need to make one; we tie it to ourself 
+  // if an instance doesn't exist, need to make one; we tie it to ourself
   if (!search_dialog) {
     search_dialog = iSearchDialog::New(0, this);
   }
   iSearchDialog* dlg = search_dialog;
-  
+
   dlg->setRoot(root);
   dlg->show();
   dlg->raise();
@@ -4075,8 +3952,8 @@ void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
 }
 
 void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_items,
-				const String& srch, const String& repl) {
-  
+                                const String& srch, const String& repl) {
+
   taGuiDialog Dlg1;
   String curow;
 
@@ -4111,7 +3988,7 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   Dlg1.AddSpace(20, "mainv");
   curow = "mbfltrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  String mttip = 
+  String mttip =
 "tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\nin order for the Replace operation to apply. If the member filter is left blank, \nthen the Replace operation applies to all members.;";
   Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;"+mttip);
   Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, mttip);
@@ -4128,7 +4005,7 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   }
 
   for (int i = 0; i < sel_items.size; ++i) {
-    ISelectable* ci = sel_items.SafeEl(i); 
+    ISelectable* ci = sel_items.SafeEl(i);
     if (!ci) continue;
     taBase* tab =  ci->taData();// is the effLink data
     if (!tab) continue;
@@ -4151,7 +4028,7 @@ void iMainWindowViewer::editRedo() {
 void iMainWindowViewer::editFind() {
   // assume root of this window's browser
   taiDataLink* root = NULL;
-  
+
   MainWindowViewer* db = viewer();
   BrowseViewer* bv = NULL;
   int idx;
@@ -4164,7 +4041,7 @@ void iMainWindowViewer::editFind() {
 }
 
 void iMainWindowViewer::editFindNext() {
-  // if we don't have a find window, just do Find 
+  // if we don't have a find window, just do Find
   if (search_dialog) {
     search_dialog->FindNext();
   } else {
@@ -4189,25 +4066,30 @@ void iMainWindowViewer::fileOpen() {
   if (!tabMisc::root) return;
   TypeDef* td = &TA_taProject;
 // get filename ourself, so we can check if it is already open!
-  taFiler* flr = tabMisc::root->projects.GetFiler(td); 
+  taFiler* flr = tabMisc::root->projects.GetFiler(td);
   taRefN::Ref(flr);
 //TODO: context path  flr->setFileName(fname);
   if (flr->GetFileName(taFiler::foOpen)) {
     String fname = flr->FileName();
     fileOpenFile(fname);
-  }  
-  taRefN::unRefDone(flr); 
+  }
+  taRefN::unRefDone(flr);
 }
 
 void iMainWindowViewer::fileOpenRecent_aboutToShow() {
-  // delete previous
+  // Clear and rebuild submenu.
   fileOpenRecentMenu->Reset();
-  // populate with current recent
+
+  // Populate with recent files.
   for (int i = 0; i < tabMisc::root->recent_files.size; ++i) {
-    String file = tabMisc::root->recent_files[i];
+    String filename = tabMisc::root->recent_files[i];
+
     //taiAction* item =
-    fileOpenRecentMenu->AddItem(file, taiAction::var_act, this, SLOT(fileOpenFile(const Variant&)),
-      file);
+    fileOpenRecentMenu->AddItemWithNumericAccel(
+      filename,
+      taiAction::var_act,
+      this, SLOT(fileOpenFile(const Variant&)),
+      filename);
   }
 }
 
@@ -4222,7 +4104,7 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
     proj = tabMisc::root->projects.FastEl(i);
     if (proj->file_name == fname) {
       int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
-			       "Ok", "Cancel");
+                               "Ok", "Cancel");
       switch (chs) {
       case 0: break; // break out of switch -- we'll also break out of the loop
       case 1: return;
@@ -4289,6 +4171,60 @@ void iMainWindowViewer::fileSaveAll() {
   tabMisc::root->SaveAll();
 }
 
+void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
+{
+  // Clear and rebuild submenu.
+  fileOpenFromWebMenu->Reset();
+
+  // TODO: For now, just one hard-coded value on menu.
+  String repositoryName = "Emergent repository";
+  String label = repositoryName + "...";
+
+  fileOpenFromWebMenu->AddItemWithNumericAccel(
+    label,
+    taiAction::var_act,
+    this, SLOT(fileOpenFromWeb(const Variant &)),
+    repositoryName);
+}
+
+void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
+{
+  String repositoryName = repo.toString();
+  // TODO.
+}
+
+void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
+{
+  // Clear and rebuild submenu.
+  filePublishDocsOnWebMenu->Reset();
+
+  // For now, just one hard-coded value on menu.
+  String repositoryName = "Emergent repository";
+  String label = repositoryName + "...";
+
+  filePublishDocsOnWebMenu->AddItemWithNumericAccel(
+    label,
+    taiAction::var_act,
+    this, SLOT(filePublishDocsOnWeb(const Variant &)),
+    repositoryName);
+}
+
+void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
+{
+  String repositoryName = repo.toString();
+
+  if (taProject *proj = curProject()) {
+    proj->PublishDocsOnWeb(repositoryName);
+  }
+}
+
+void iMainWindowViewer::filePublishProjectOnWeb()
+{
+  if (taProject *proj = curProject()) {
+    // TODO: proj->PublishProjectOnWeb();
+  }
+}
+
 void iMainWindowViewer::fileClose() {
   taProject* proj = curProject();
   if (!proj) return;
@@ -4296,10 +4232,10 @@ void iMainWindowViewer::fileClose() {
   if (proj->isDirty()) {
     int chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing it?",
         "&Save", "&Don't Save", "&Cancel");
-  
+
     switch (chs) {
     case 0:
-      SaveData(); 
+      SaveData();
       break;
     case 1:
       break;
@@ -4307,7 +4243,7 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
-  hide();	// prevent a possible bug on mac associated with hide and delete
+  hide();       // prevent a possible bug on mac associated with hide and delete
   taiMiscCore::ProcessEvents();
   proj->CloseLater();
 }
@@ -4493,12 +4429,12 @@ bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e) {
       return true;
     case Qt::Key_Tab:
       if(e->modifiers() & Qt::ShiftModifier) {
-	ShiftCurTabLeft();
+        ShiftCurTabLeft();
       }
       else {
-	ShiftCurTabRight();
+        ShiftCurTabRight();
       }
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     }
   }
   if(e->modifiers() & Qt::AltModifier) {
@@ -4531,7 +4467,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }
   }
-  else if(itv == cur_tree_view) { // try again with main 
+  else if(itv == cur_tree_view) { // try again with main
     itv = GetMainTreeView();
     itv->clearExtSelection();
     rval = itv->AssertItem(link);
@@ -4557,7 +4493,7 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
   if (rval) {
     itv->ExpandAllUnder(rval);
   }
-  else if(itv == cur_tree_view) { // try again with main 
+  else if(itv == cur_tree_view) { // try again with main
     itv = GetMainTreeView();
     rval = itv->AssertItem(link);
     if (rval) {
@@ -4578,7 +4514,7 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
   if (rval) {
     itv->CollapseAllUnder(rval);
   }
-  else if(itv == cur_tree_view) { // try again with main 
+  else if(itv == cur_tree_view) { // try again with main
     itv = GetMainTreeView();
     rval = itv->AssertItem(link);
     if (rval) {
@@ -4596,10 +4532,10 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
   if (!new_tab) new_tab_lock = false;
   iTabViewer* itv = GetTabViewer(); // should exist
   if (!itv) return false;
-  
+
   iDataPanel* pan = itv->tabView()->GetDataPanel(link);
   if (!pan) return false; // shouldn't happen
-  
+
   if (new_tab) {
     itv->AddPanelNewTab(pan, new_tab_lock);
   } else {
@@ -4614,18 +4550,18 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
 
 void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 // URLs are usually suffixed with a "#Xxx" where Xxx is the uniqueId()
-// of the window in which is embedded the doc viewer 
+// of the window in which is embedded the doc viewer
 // if no WinId (ex. Find) then we use that of the topmost window
 
   //NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
-  
+
   // TypeBrowser invocations are dependency-free so we check them first
   if(path.startsWith(".Type.")) {
     iHelpBrowser::StatLoadUrl(String(url.toString()));
-    return; 
+    return;
   }
-  
+
   // we usually embed the uniqueId of the win that had the invoking url
   String win_id_str = String(url.fragment()).after("#");
   int win_id = win_id_str.toInt(); // 0 if empty or not an int
@@ -4634,7 +4570,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     if (top_win)
       win_id = top_win->uniqueId();
   }
-  
+
   iMainWindowViewer* idoc_win = NULL; // win from which url was invoked
   if (win_id != 0) { // problem if not found!!!
     idoc_win = taiMisc::active_wins.FindMainWindowById(win_id);
@@ -4647,7 +4583,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   if (idoc_win) {
     proj = idoc_win->myProject();
   }
-  
+
   // for uniformity and simplicity, we look up the canonical windows
   // and corresponding viewers for the tree/panels and panels/t3 frames
   // note that these are the same for 2-pane
@@ -4671,7 +4607,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     String tbnm = path.after(".T3Tab.");
     if(!proj_view || !proj_view->SelectT3ViewTabName(tbnm)) {
       taMisc::Warning("ta: URL -- could not activate 3D View Tab named:", tbnm);
-    }      
+    }
   }
   else if(path.startsWith(".PanelTab.")) {
     String tbnm = path.after(".PanelTab.");
@@ -4685,10 +4621,10 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   }
   else {
     String fun_call;
-    if(path.endsWith("()")) {	// function call!
+    if(path.endsWith("()")) {   // function call!
       fun_call = path.after(".",-1);
       fun_call = fun_call.before("()");
-      path = path.before(".",-1);	// get part before last call
+      path = path.before(".",-1);       // get part before last call
     }
     taBase* tab = NULL;
     MemberDef* md;
@@ -4697,7 +4633,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     }
     else {
       if(path.startsWith("."))
-	path = path.after(".");
+        path = path.after(".");
       if (proj)
         tab = proj->FindFromPath(path, md);
     }
@@ -4716,25 +4652,25 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
       }
       Program* prg = (Program*)tab->GetThisOrOwner(&TA_Program);
       if(prg) {
-	prg->BrowserSelectMe();
-	taMisc::RunPending();
-	if(url.hasFragment()) {
-	  prg->ViewCssScript();
-	  // todo: could do something with this!
-	  // int lno = (int)url.fragment();
-	  // if(lno > 0) {
-	  //   ProgLine* pl = prg->script_list->SafeEl(lno);
-	  // }
-	}
-	else {
-	  prg->ViewProgEditor();
-	  taMisc::RunPending();
-	  prg->BrowserSelectMe_ProgItem((taOBase*)tab);
-	}
+        prg->BrowserSelectMe();
+        taMisc::RunPending();
+        if(url.hasFragment()) {
+          prg->ViewCssScript();
+          // todo: could do something with this!
+          // int lno = (int)url.fragment();
+          // if(lno > 0) {
+          //   ProgLine* pl = prg->script_list->SafeEl(lno);
+          // }
+        }
+        else {
+          prg->ViewProgEditor();
+          taMisc::RunPending();
+          prg->BrowserSelectMe_ProgItem((taOBase*)tab);
+        }
       }
       else {
-	//  iTreeViewItem* item = 
-	iproj_brow->AssertBrowserItem(link);
+        //  iTreeViewItem* item =
+        iproj_brow->AssertBrowserItem(link);
       }
     }
   }
@@ -4756,13 +4692,13 @@ void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
 //     if(db) {
 //       taRootBase* rt = dynamic_cast<taRootBase*>(db->data());
 //       if(rt) {
-// 	taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
-// 	browser->EditDialog();
-// 	return;
+//      taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
+//      browser->EditDialog();
+//      return;
 //       }
 //     }
 //   }
-//   QDesktopServices::openUrl(url);	// fall back on default
+//   QDesktopServices::openUrl(url);    // fall back on default
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
@@ -4797,29 +4733,28 @@ void iMainWindowViewer::viewSaveView() {
 }
 
 void iMainWindowViewer::windowMenu_aboutToShow() {
-  // delete previous
+  // Clear and rebuild submenu.
   windowMenu->Reset();
-  // populate with current windows
+
+  // Populate with current windows.
   Widget_List wl;
   taiMisc::GetWindowList(wl);
   for (int i = 0; i < wl.size; ++i) {
     QWidget* wid = wl.FastEl(i);
-    String title;
-    // for up to first 9, put numeric accelerator
-    if (i < 9) {
-      title = "&" + String(i + 1) + " ";
-    }
     if (wid->isWindow()) {
-      title.cat((String)wid->windowTitle());
+      String title = wid->windowTitle();
+
       // Indicate whether the file has unsaved changes
       // (see MainWindowViewer::MakeWinName_impl())
       title.gsub("[*]", wid->isWindowModified() ? "*" : "");
+
+      //taiAction* item =
+      windowMenu->AddItemWithNumericAccel(
+        title,
+        taiAction::int_act,
+        this, SLOT(windowActivate(int)),
+        i);
     }
-/*??    else 
-      title.cat((String)wid->text());*/
-    //taiAction* item =
-    windowMenu->AddItem(title, taiAction::int_act, 
-     this, SLOT(windowActivate(int)), i);
   }
 }
 
@@ -4864,7 +4799,7 @@ void iMainWindowViewer::Refresh_impl() {
     IDataViewWidget* dvw = dynamic_cast<IDataViewWidget*>(obj); // null if not type
     if (dvw) {
       dvw->Refresh();
-    } 
+    }
   }
 }
 
@@ -4873,7 +4808,7 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 
   taProject* proj = curProject();
   // only closing last browser is important (easier to check that here than below)
-  if(!proj) return;		// does happen!
+  if(!proj) return;             // does happen!
   MainWindowViewer* mwv = viewer();
   if (!mwv) return; // shouldn't happen
   if (!mwv->isProjBrowser()) return;
@@ -4891,13 +4826,13 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     if (forced)
       chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
         "&Save", "&Don't Save");
-    else 
+    else
       chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
         "&Save", "&Don't Save", "&Cancel");
 
     switch (chs) {
     case 0:
-      SaveData(); 
+      SaveData();
       break;
     case 1:
       if (proj)
@@ -4922,7 +4857,7 @@ bool iMainWindowViewer::isDirty() const {
 void iMainWindowViewer::SaveData() {
   taProject* proj = curProject(); // only if projviwer
    // only impl for projects, because they are only thing we know how to save
-  if (proj) 
+  if (proj)
     proj->Save();
 }
 
@@ -5004,8 +4939,8 @@ iMainWindowViewer* iMainWindowViewer::GetViewerForObj(taBase* obj) {
   if(!taMisc::gui_active) return NULL;
   taProject* proj = GET_OWNER(obj, taProject);
   if(!proj) return NULL;
-  
-  // iterate to find all Browsers 
+
+  // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
     if (!(vwr && vwr->isProjBrowser())) continue;
@@ -5088,13 +5023,11 @@ void iMainWindowViewer::toolsClassBrowser() {
 }
 
 void iMainWindowViewer::toolsTypeBrowser() {
- // iHelpBrowser* tdd = 
+ // iHelpBrowser* tdd =
   iHelpBrowser::instance();
 }
 
 void iMainWindowViewer::UpdateUi() {
-  QString cmd_str = "Ctrl+";
-
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
   // editCutAction->setEnabled(ea & taiClipData::EA_CUT);
@@ -5120,7 +5053,7 @@ void iMainWindowViewer::UpdateUi() {
       editPasteIntoAction->setShortcut(QKeySequence());
     } else {
       editPasteIntoAction->setText("&Paste Into");
-      editPasteIntoAction->setShortcut(QKeySequence(cmd_str+"V"));
+      editPasteIntoAction->setShortcut(QKeySequence(cmd_str + "V"));
     }
   }
   if (ea & taiClipData::EA_PASTE_ASSIGN)  {
@@ -5129,7 +5062,7 @@ void iMainWindowViewer::UpdateUi() {
       editPasteAssignAction->setShortcut(QKeySequence());
     } else {
       editPasteAssignAction->setText("&Paste Assign");
-      editPasteAssignAction->setShortcut(QKeySequence(cmd_str+"V"));
+      editPasteAssignAction->setShortcut(QKeySequence(cmd_str + "V"));
     }
   }
   if (ea & taiClipData::EA_PASTE_APPEND)  {
@@ -5138,32 +5071,32 @@ void iMainWindowViewer::UpdateUi() {
       editPasteAppendAction->setShortcut(QKeySequence());
     } else {
       editPasteAppendAction->setText("&Paste Append");
-      editPasteAppendAction->setShortcut(QKeySequence(cmd_str+"V"));
+      editPasteAppendAction->setShortcut(QKeySequence(cmd_str + "V"));
     }
   }
-  
+
   editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
-  
+
   // linking is currently not really used, so we'll not show by default
   // if we later add more linking capability, we may want to always enable,
   // just to hint user that it is sometimes available
   editLinkAction->setVisible(ea & taiClipData::EA_LINK);
   editLinkIntoAction->setVisible(ea & taiClipData::EA_LINK_INTO);
-  
+
   if ((ea & taiClipData::EA_LINK2) == taiClipData::EA_LINK2) {
     // need to remove accelerators
     editLinkAction->setText("Link");
     editLinkAction->setShortcut(QKeySequence());
     editLinkIntoAction->setText("Link Into");
     editLinkIntoAction->setShortcut(QKeySequence());
-  } else { 
+  } else {
     // restore accelerators
     editLinkAction->setText("&Link");
     editLinkAction->setShortcut(QKeySequence());
     editLinkIntoAction->setText("&Link Into");
     editLinkIntoAction->setShortcut(QKeySequence());
   }
-  
+
   editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
 
   taProject* proj = myProject();
@@ -5195,7 +5128,7 @@ void iMainWindowViewer::windowActivationChange(bool oldActive) {
 }
 
 //////////////////////////
-// 	iTabBar 	//
+//      iTabBar         //
 //////////////////////////
 
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
@@ -5235,7 +5168,7 @@ void iTabBarBase::keyPressEvent(QKeyEvent* e) {
 }
 
 
-QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1]; 
+QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1];
 
 void iTabBar::InitClass() {
   // load pushpin icons
@@ -5308,14 +5241,14 @@ iDataPanel* iTabBar::panel(int idx) {
   if (data.isNull() || !data.isValid()) return NULL;
   ta_intptr_t rval = data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
   return (iDataPanel*)rval;
-  
+
 }
 
 void iTabBar::setTabIcon(int idx, TabIcon ti) {
   QIcon* ico = NULL;
   if (ti != TI_NONE)
     ico = tab_icon[ti];
-  if (ico) 
+  if (ico)
     inherited::setTabIcon(idx, *ico);
   else
     inherited::setTabIcon(idx, QIcon());
@@ -5326,7 +5259,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   iDataPanel* m_panel = NULL;
   if (!data.isNull() && data.isValid())
     m_panel = (iDataPanel*)data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
-  
+
   if ((m_panel == value) && !force) goto set_cur;
   m_panel = value;
   if (m_panel) {
@@ -5343,7 +5276,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   }
   data = (ta_intptr_t)m_panel;
   setTabData(idx, data);
-  
+
 set_cur:
 ;/*don't autoset  if (currentIndex() != idx)
     setCurrentIndex(idx); */
@@ -5351,12 +5284,12 @@ set_cur:
 
 
 //////////////////////////
-//   iDataPanel_PtrList	//
+//   iDataPanel_PtrList //
 //////////////////////////
 
 void* iDataPanel_PtrList::El_Own_(void* it) {
-  if (m_tabView) 
-    ((iDataPanel*)it)->setTabView(m_tabView); 
+  if (m_tabView)
+    ((iDataPanel*)it)->setTabView(m_tabView);
   return it;
 }
 
@@ -5364,13 +5297,13 @@ void iDataPanel_PtrList::El_disOwn_(void* it_) {
   if (m_tabView) {
     iDataPanel* it = (iDataPanel*)it_;
     if (it->tabView() == m_tabView)
-      it->setTabView(NULL); 
+      it->setTabView(NULL);
   }
 }
 
 
 //////////////////////////
-//   iTabView		//
+//   iTabView           //
 //////////////////////////
 
 iTabView::iTabView(QWidget* parent)
@@ -5405,7 +5338,7 @@ void iTabView::Init() {
   tbPanels = new iTabBar(this);
 #if (QT_VERSION >= 0x040200)
   tbPanels->setUsesScrollButtons(true);
-  tbPanels->setElideMode(Qt::ElideMiddle/*Qt::ElideNone*/); 
+  tbPanels->setElideMode(Qt::ElideMiddle/*Qt::ElideNone*/);
 #endif
   layDetail->addWidget(tbPanels);
   wsPanels = new QStackedWidget(this);
@@ -5500,7 +5433,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iDataPanel* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
   taiAction* act = new taiAction(tab_idx, "&Add Tab",  QKeySequence());
-  act->connect(taiAction::int_act, this,  SLOT(AddTab(int))); 
+  act->connect(taiAction::int_act, this,  SLOT(AddTab(int)));
   act->setParent(contextMenu);
   contextMenu->addAction(act);
   // only add Close if on a tab
@@ -5509,10 +5442,10 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
     act = new taiAction(tab_idx, "&Close Tab", QKeySequence());
     act->setParent(contextMenu);
     contextMenu->addAction(act);
-    if (dp && dp->lockInPlace()) 
+    if (dp && dp->lockInPlace())
       act->setEnabled(false);
-    else 
-      act->connect(taiAction::int_act, this,  SLOT(CloseTab(int))); 
+    else
+      act->connect(taiAction::int_act, this,  SLOT(CloseTab(int)));
   }
   // pinning/unpinning only if not lockInPlace guy
   if (tab_idx < 0) return;
@@ -5583,7 +5516,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
       tb = tbPanels->addTab(panel);
     }
     // focus it
-    if (focus) 
+    if (focus)
       SetCurrentTab(tb);
   } else {
     for (int i = tabCount() - 1; i >= 0; --i) {
@@ -5609,7 +5542,7 @@ int iTabView::panelCount() const {
 
 void iTabView::panelSelected(int idx) {
   iDataPanel* panel = NULL;
-  if (idx >= 0) panel = tbPanels->panel(idx); 
+  if (idx >= 0) panel = tbPanels->panel(idx);
   ++(tabViewerWin()->tab_changing);
   if (panel) {
     wsPanels->setCurrentWidget(panel);
@@ -5652,7 +5585,7 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
           // activate next, unless we removed last
           int fi = i;
           if (fi >= tbPanels->count())
-            --fi; 
+            --fi;
           SetCurrentTab(fi);
         } else {
           tbPanels->SetPanel(0, NULL); // no panel
@@ -5677,7 +5610,7 @@ bool iTabView::SetCurrentTab(int tab_idx) {
   ++(tabViewerWin()->tab_changing);
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
-  pan->show();			// make it visible for sure!
+  pan->show();                  // make it visible for sure!
   --(tabViewerWin()->tab_changing);
   return true;
 }
@@ -5693,23 +5626,23 @@ bool iTabView::SetCurrentTabName(const String& tab_nm) {
 void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
   if (!panel) return;
   //note: panel has typically been added already, but we double check
-  
+
   iDataPanel* cur_pn = curPanel(); //note: can be null
-  
+
   // first, see if we have a tab for guy already -- don't create more than 1 per guy
   if (ActivatePanel(panel->link())) return;
-  
+
   // always create a new tab for lockinplace guys
   if (panel->lockInPlace()) {
     AddPanelNewTab(panel);
     return;
   }
-  
+
   // ok, so we'll either replace cur panel, swap one out, or make a new
-  
+
   // replace curr if allowed and it is not locked, pinned, or dirty+autocommit
   if (!not_in_cur && cur_pn && (!cur_pn->lockInPlace() && !cur_pn->pinned() &&
-     (!cur_pn->dirty() || autoCommit()))) 
+     (!cur_pn->dirty() || autoCommit())))
   {
     bool proceed = true;
     if (cur_pn->dirty()) { // must be autocommit
@@ -5723,7 +5656,7 @@ void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
       return;
     }
   }
-  
+
   // try switching to another eligible panel
   for (int i = 0; i < tbPanels->count(); ++i) {
     iDataPanel* pn = tbPanels->panel(i);
@@ -5743,7 +5676,7 @@ void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
       return;
     }
   }
-  
+
   // no eligible one, so make new
   AddPanelNewTab(panel);
 }
@@ -5799,10 +5732,10 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
     if(e->key() == Qt::Key_P) {
       iDataPanel* dp = curPanel();
       if(dp) {
-	if(dp->pinned())
-	  dp->Unpin();
-	else
-	  dp->Pin();
+        if(dp->pinned())
+          dp->Unpin();
+        else
+          dp->Pin();
       }
       e->accept();
       return;
@@ -5825,7 +5758,7 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
 
 
 //////////////////////////
-//   iTabView_PtrList	//
+//   iTabView_PtrList   //
 //////////////////////////
 
 
@@ -5845,7 +5778,7 @@ void iTabView_PtrList::DataPanelDestroying(iDataPanel* panel) {
 }
 
 //////////////////////////
-// 	iDataPanel 	//
+//      iDataPanel      //
 //////////////////////////
 
 iDataPanel::iDataPanel(taiDataLink* dl_)
@@ -5885,7 +5818,7 @@ void iDataPanel::customEvent(QEvent* ev_) {
   // we return early if we don't accept, otherwise fall through to accept
   bool focus = false;
   switch ((int)ev_->type()) {
-  case CET_SHOW_PANEL_FOCUS: 
+  case CET_SHOW_PANEL_FOCUS:
     focus = true; // FALL THROUGH
   case CET_SHOW_PANEL: {
     if (show_req) {
@@ -5893,7 +5826,7 @@ void iDataPanel::customEvent(QEvent* ev_) {
       show_req = false;
     }
   } break;
-  default: inherited(ev_); 
+  default: inherited(ev_);
     return; // don't accept
   }
   ev_->accept();
@@ -5946,7 +5879,7 @@ void iDataPanel::UpdatePanel() {
 void iDataPanel::UpdatePanel_impl() {
   m_update_req = false;
   if (tabView())
-    tabView()->UpdateTabName(this); //in case changed 
+    tabView()->UpdateTabName(this); //in case changed
 }
 
 void iDataPanel::Render() {
@@ -5970,12 +5903,12 @@ void iDataPanel::setButtonsWidget(QWidget* widg) {
 
 void iDataPanel::setCentralWidget(QWidget* widg) {
   scr->setWidget(widg);
-  widg->show(); 
+  widg->show();
 }
 
 void iDataPanel::setUpdateOnShow(bool value) {
   if (m_update_on_show == value) return;
-  m_update_on_show = value; // no action needed... 
+  m_update_on_show = value; // no action needed...
 }
 
 void iDataPanel::setPinned(bool value) {
@@ -6010,7 +5943,7 @@ void iDataPanel::showEvent(QShowEvent* ev) {
 
 iTabBar::TabIcon iDataPanel::tabIcon() const {
 //note: locked will be conveyed by no icon, since the lock icon takes up so much room
-  if (lockInPlace()) 
+  if (lockInPlace())
     return iTabBar::TI_NONE; //iTabBar::TI_LOCKED;
   else {
     if (pinned()) return iTabBar::TI_PINNED;
@@ -6050,7 +5983,7 @@ void iDataPanel::CenterOn(QWidget* widg) {
 
 void iDataPanel::KeepInView(QWidget* widg) {
   taiMisc::KeepInView_SA(scr, scr->widget(), widg);
-}  
+}
 
 bool iDataPanel::PosInView(int scr_pos) {
   return taiMisc::PosInView_SA(scr, scr_pos);
@@ -6065,13 +5998,13 @@ int iDataPanel::MapToPanelV(QWidget* widg, int pt_y) {
 }
 
 //////////////////////////
-//   iDataPanel_PtrList	//
+//   iDataPanel_PtrList //
 //////////////////////////
 
 
 
 //////////////////////////
-//   iDataPanelFrame 	//
+//   iDataPanelFrame    //
 //////////////////////////
 
 iDataPanelFrame::iDataPanelFrame(taiDataLink* dl_)
@@ -6113,7 +6046,7 @@ void iDataPanelFrame::DataLinkDestroying(taDataLink*) {
 }
 
 void iDataPanelFrame::UpdatePanel() {
-  if (!HasChanged()) 
+  if (!HasChanged())
     inherited::UpdatePanel();
 }
 
@@ -6139,7 +6072,7 @@ iTabViewer* iDataPanelFrame::tabViewerWin() const {
 
 
 //////////////////////////
-//    iViewPanelFrame 	//
+//    iViewPanelFrame   //
 //////////////////////////
 
 iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
@@ -6155,7 +6088,7 @@ iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
   taDataLink* dl = dv_->GetDataLink();
   dl->AddDataClient(this);
   btnApply = NULL;
-  btnRevert = NULL; 
+  btnRevert = NULL;
   btnCopyFrom = NULL;
   warn_clobber = false;
 }
@@ -6169,7 +6102,7 @@ iViewPanelFrame::~iViewPanelFrame() {
 void iViewPanelFrame::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
-			     "Apply", "Revert", "Cancel");
+                             "Apply", "Revert", "Cancel");
     if(chs == 1) {
       Revert();
       return;
@@ -6192,7 +6125,7 @@ void iViewPanelFrame::Apply_Async() {
 void iViewPanelFrame::ClosePanel() {
   CancelOp cancel_op = CO_NOT_CANCELLABLE;
   Closing(cancel_op); // forced, ignore cancel
-  
+
   emit destroyed(this); // signals tab view we are gone
 /*  if (m_tabView) // effectively unlink from system
     m_tabView->DataPanelDestroying(this); */
@@ -6223,7 +6156,7 @@ void iViewPanelFrame::customEvent(QEvent* ev_) {
       apply_req = false;
     }
   } break;
-  default: inherited::customEvent(ev_); 
+  default: inherited::customEvent(ev_);
     return; // don't accept
   }
   ev_->accept();
@@ -6262,7 +6195,7 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
   if (vp_flags & VP_USE_BTNS) return;
   if (!lay) return; // bug
   if (!par) par = this;
-  
+
   QHBoxLayout* layButtons = NULL;
   if (lay)
     layButtons = new QHBoxLayout();
@@ -6278,17 +6211,17 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
   btnApply = new HiLightButton("&Apply", par);
   layButtons->addWidget(btnApply);
   layButtons->addSpacing(4);
-  
+
   btnRevert = new HiLightButton("&Revert", par);
   layButtons->addWidget(btnRevert);
   layButtons->addSpacing(4);
   if (lay)
     lay->addLayout(layButtons);
-  
+
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
   connect(btnCopyFrom, SIGNAL(clicked()), this, SLOT(CopyFrom()) );
-  
+
   vp_flags |= VP_USE_BTNS;
   InternalSetModified(false);
 }
@@ -6299,7 +6232,7 @@ void iViewPanelFrame::ResolveChanges_impl(CancelOp& cancel_op) {
     Apply();
   }
 }
- 
+
 void iViewPanelFrame::Revert() {
   GetImage();
   InternalSetModified(false);
@@ -6348,15 +6281,15 @@ void iViewPanelFrame::UpdateButtons() {
 void iViewPanelFrame::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-    Apply();			// do it!
+    Apply();                    // do it!
   }
   if(e->key() == Qt::Key_Escape) {
-    Revert();			// do it!
+    Revert();                   // do it!
   }
 }
 
 //////////////////////////
-//    iDataPanelSet 	//
+//    iDataPanelSet     //
 //////////////////////////
 
 iDataPanelSetBase::iDataPanelSetBase(taiDataLink* link_)
@@ -6364,12 +6297,12 @@ iDataPanelSetBase::iDataPanelSetBase(taiDataLink* link_)
 {
   cur_panel_id = -1;
   widg = new QWidget();
-  layDetail = new QVBoxLayout(widg); 
+  layDetail = new QVBoxLayout(widg);
   // don't introduce any new margin
   layDetail->setMargin(0);
   layDetail->setSpacing(0);
   wsSubPanels = new QStackedWidget(widg); // add to lay by desc
-  
+
   setCentralWidget(widg);
 }
 
@@ -6488,7 +6421,7 @@ void iDataPanelSetBase::setTabView(iTabView* value) {
 }
 
 //////////////////////////
-//    iDataPanelSet 	//
+//    iDataPanelSet     //
 //////////////////////////
 
 iDataPanelSetButton::iDataPanelSetButton(QWidget* parent) : QToolButton(parent) {
@@ -6540,7 +6473,7 @@ bool iDataPanelSetButton::focusNextPrevChild(bool next) {
   else { // prev
     iTabView* itv = m_datapanelset->tabView(); // tab view
     if(!itv) return inherited::focusNextPrevChild(next);
-    itv->tbPanels->setFocus();	// focus back on overall tab bar
+    itv->tbPanels->setFocus();  // focus back on overall tab bar
   }
   return true;
 }
@@ -6602,7 +6535,7 @@ void iDataPanelSet::AddSubPanelDynamic(iDataPanelFrame* pn) {
   AddSubPanel(pn);
   // ok, now the tricky part -- esp if we have a minibar but others didn't
   if (pn->minibarCtrls()) {
-    if (layMinibar) { 
+    if (layMinibar) {
       // already created, so just add in our ctrl or dummy
       AddMinibarCtrl(pn);
     } else {
@@ -6724,7 +6657,7 @@ QWidget* iDataPanelSet::firstTabFocusWidget() {
 
 
 //////////////////////////
-//    iViewPanelSet 	//
+//    iViewPanelSet     //
 //////////////////////////
 
 iViewPanelSet::iViewPanelSet(taiDataLink* link_)
@@ -6747,7 +6680,7 @@ void iViewPanelSet::AddSubPanel(iViewPanelFrame* pn) {
   panels.Add(pn);
   wsSubPanels->addWidget(pn);
   tbSubPanels->addTab(pn->TabText());
-  
+
   pn->AddedToPanelSet();
   iTabViewer* itv = tabViewerWin();
   if (itv) pn->OnWindowBind(itv);
@@ -6779,7 +6712,7 @@ void iViewPanelSet::UpdatePanel() {
 
 
 //////////////////////////
-//    iListDataPanel 	//
+//    iListDataPanel    //
 //////////////////////////
 
 iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
@@ -6795,7 +6728,7 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
   list->setDragEnabled(true);
 //  list->setAcceptDrops(true);
 //  list->setDropIndicatorShown(true);
-  connect(list, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), 
+  connect(list, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
     this, SLOT(list_itemDoubleClicked(QTreeWidgetItem*, int)) );
   ConfigHeader();
   // set default sort order to ASC -- don't know why def is DESC!
@@ -6881,7 +6814,7 @@ void iListDataPanel::RenumberList() {
       list->item(j));
     dn->num = -1;
   }
-  
+
   // we have to iterate in proper link order, then find child, since items maybe
   // be sorted by some other column now
   for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
@@ -6897,7 +6830,7 @@ void iListDataPanel::RenumberList() {
       }
     }
   }
-  
+
   // now delete stales -- note: an item that is deleting would have deleted
   // its node, but doing so now is harmless
   for (int j = list->itemCount() - 1; j >=0; --j) {
@@ -6916,10 +6849,10 @@ void iListDataPanel::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/)
 //    ta->BrowserSelectMe();
     // neither of the above actually update the panel view to new item -- presumably because
     // it is still in use or something..
-    //    ta->EditPanel(true, false);	// new non-pinned panel -- leads to a proliferation
+    //    ta->EditPanel(true, false);   // new non-pinned panel -- leads to a proliferation
     // of panels and doesn't make a lot of sense.
-    ta->EditDialog();		// pop up the edit dialog -- not favored, but probably
-    				// the best thing for this situation
+    ta->EditDialog();           // pop up the edit dialog -- not favored, but probably
+                                // the best thing for this situation
   }
 }
 
@@ -6947,7 +6880,7 @@ void iListDataPanel::UpdatePanel_impl() {
 
 
 //////////////////////////
-//    iTextDataPanel 	//
+//    iTextDataPanel    //
 //////////////////////////
 
 iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
@@ -7002,7 +6935,7 @@ void iTextDataPanel::setText(const String& value) {
   txtText->setPlainText(value);
 }
 
-  
+
 void iTextDataPanel::textText_copyAvailable (bool) {
   viewerWindow()->UpdateUi();
 }
@@ -7014,7 +6947,7 @@ String iTextDataPanel::panel_type() const {
 
 
 //////////////////////////
-//    iDocDataPanel 	//
+//    iDocDataPanel     //
 //////////////////////////
 
 iDocDataPanel::iDocDataPanel()
@@ -7030,7 +6963,7 @@ iDocDataPanel::iDocDataPanel()
 
   url_bar = new QToolBar(wb_widg);
   wb_box->addWidget(url_bar);
-  
+
   bak_but = url_bar->addAction("<");
 //   bak_but->setArrowType(Qt::LeftArrow);
   bak_but->setToolTip("Go backward one step in browsing history");
@@ -7050,7 +6983,7 @@ iDocDataPanel::iDocDataPanel()
   url_bar->addWidget(wiki_label);
 //   url_bar->addSpacing(taiM->hsep_c);
   wiki_edit = new iLineEdit(wb_widg);
-  wiki_edit->setCharWidth(12);	// make this guy shorter
+  wiki_edit->setCharWidth(12);  // make this guy shorter
   url_bar->addWidget(wiki_edit);
 //   url_bar->addSpacing(taiM->hsep_c);
 
@@ -7114,7 +7047,7 @@ iDocDataPanel::iDocDataPanel()
 
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
-	  this, SLOT(doc_linkClicked(const QUrl&)) );
+          this, SLOT(doc_linkClicked(const QUrl&)) );
   connect(webview, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
     QWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
     QWebView*&)) );
@@ -7151,14 +7084,14 @@ void iDocDataPanel::doc_linkClicked(const QUrl& url) {
     String qry = url.queryItemValue("title");
     if(qry.startsWith("ta:") || qry.startsWith(".")) {
       if(!qry.startsWith("ta:"))
-	qry = "ta:"+qry;	// rectify
-      new_url.setUrl(qry);	// start from there.
+        qry = "ta:"+qry;        // rectify
+      new_url.setUrl(qry);      // start from there.
       ta_path = true;
     }
   }
   if(!ta_path) {
     // a standard path:
-    webview->load(url);	
+    webview->load(url);
     // todo: we could make a note of this somewhere, but key idea is that our URL
     // is fixed!!!
     return;
@@ -7202,8 +7135,8 @@ void iDocDataPanel::doc_goPressed() {
   else {
     doc_->wiki = wiki_edit->text();
     doc_->url = url_edit->text();
-    doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
-    UpdatePanel();		// also update us..
+    doc_->UpdateAfterEdit();    // this will drive all the updating, including toggle from local etc
+    UpdatePanel();              // also update us..
   }
 }
 
@@ -7255,7 +7188,7 @@ void iDocDataPanel::find_prev_clicked() {
 }
 
 bool iDocDataPanel::ignoreDataChanged() const {
-  return false;			
+  return false;
   //  return !isVisible(); -- this doesn't seem to be giving accurate results!!!
 }
 
@@ -7340,7 +7273,7 @@ void iDocDataPanel::setDoc(taDoc* doc) {
   if (m_link) {
     m_link->RemoveDataClient(this);
   }
-  
+
   m_doc = doc;
   if (doc) {
     taDataLink* dl = doc->GetDataLink();
@@ -7361,14 +7294,14 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
     return true;
   return inherited::eventFilter(obj, event);
 }
-  
+
 /*void iDocDataPanel::br_copyAvailable (bool) {
   viewerWindow()->UpdateUi();
 }*/
 
 
 //////////////////////////
-//    iTreeView 	//
+//    iTreeView         //
 //////////////////////////
 
 const String iTreeView::opt_treefilt("TREEFILT_");
@@ -7400,20 +7333,20 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_def_exp_levels = 2; // works well for most contexts
   m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
-  italic_font = NULL; 
+  italic_font = NULL;
   in_mouse_press = 0;
   m_saved_scroll_pos = 0;
   setIndentation(taMisc::tree_indent);
   // set default 'invalid' highlight colors, but don't enable highlighting by default
-  setHighlightColor(1, 
+  setHighlightColor(1,
     QColor(0xFF, 0x99, 0x99),  // pale dull red
     QColor(0x99, 0x33, 0x33) // dark dull red
   );
-  setHighlightColor(2, 
+  setHighlightColor(2,
     QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
     QColor(0x99, 0x99, 0x33) // dark dull yellow
   );
-  setHighlightColor(3, 		// disabled
+  setHighlightColor(3,          // disabled
     QColor(0xa0, 0xa0, 0xa0),  // light grey
     QColor(0x80, 0x80, 0x80) // medium grey
   );
@@ -7472,7 +7405,7 @@ bool iTreeView::RemoveColDataKey(int col, const KeyString& key, int role) {
   QVariant vmap = headerItem()->data(col, ColDataRole);
   // if no map at all, then the key itself is definitely not set
   if (!vmap.canConvert(QVariant::Map)) return false;
-  
+
   QMap_qstr_qvar map(vmap.toMap());
   bool rval = (map.remove(QString::number(role)) > 0);
   if (rval) // only need to re-set if it was actually removed
@@ -7485,7 +7418,7 @@ void iTreeView::ClearColDataKeys(int col) {
   // fetch existing map, if any
   QVariant vmap = headerItem()->data(col, ColDataRole);
   if (!vmap.canConvert(QVariant::Map)) return;
-  
+
   headerItem()->setData(col, ColDataRole, QVariant());
 }
 
@@ -7504,7 +7437,7 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
     if (el->treeWidget() == this) {
       return el;
     }
-  } 
+  }
   if (!super) return NULL; // when we are called by ourself
   // failed, so try to assert the owner
   taiDataLink* own_link = link->ownLink();
@@ -7524,7 +7457,7 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
 void iTreeView::CollapseAll() {
   for (int i = topLevelItemCount() - 1; i >= 0; --i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
-    if (node) 
+    if (node)
       CollapseAllUnder(node);
   }
 }
@@ -7540,17 +7473,17 @@ void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
       CollapseAllUnder(node);
   }
   // then ourself
-  setItemExpanded(item, false); 
+  setItemExpanded(item, false);
   taMisc::Busy(false);
-} 
+}
 
 void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
-} 
+}
 
 void iTreeView::InsertEl(bool after) {
   ISelectable* si = curItem();
-  if(!si || !si->link()) return;		// nothing selected
+  if(!si || !si->link()) return;                // nothing selected
   taBase* sb = si->link()->taData();
   if(!sb) return;
   taList_impl* sbo = NULL;
@@ -7582,12 +7515,12 @@ void iTreeView::InsertEl(bool after) {
     taBase* nwi = taBase::MakeToken(td);
     if(nwi) {
       int idx = 0;
-      if(sbo == sb) {		// it is the list
-	idx = sbo->size;
+      if(sbo == sb) {           // it is the list
+        idx = sbo->size;
       }
       else {
-	idx = sbo->FindEl(sb);
-	if(after) idx++;
+        idx = sbo->FindEl(sb);
+        if(after) idx++;
       }
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
@@ -7603,7 +7536,7 @@ void iTreeView::InsertEl(bool after) {
 
 void iTreeView::InsertDefaultEl(bool after) {
   ISelectable* si = curItem();
-  if(!si || !si->link()) return;		// nothing selected
+  if(!si || !si->link()) return;                // nothing selected
   taBase* sb = si->link()->taData();
   if(!sb) return;
   taList_impl* sbo = NULL;
@@ -7615,7 +7548,7 @@ void iTreeView::InsertDefaultEl(bool after) {
   }
   if(!sbo) return;
   if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
-  TypeDef* td = sbo->el_typ;	// default type
+  TypeDef* td = sbo->el_typ;    // default type
   if(td) {
     taProject* proj = myProject();
     if(proj) {
@@ -7624,12 +7557,12 @@ void iTreeView::InsertDefaultEl(bool after) {
     taBase* nwi = taBase::MakeToken(td);
     if(nwi) {
       int idx = 0;
-      if(sbo == sb) {		// it is the list
-	idx = sbo->size;
+      if(sbo == sb) {           // it is the list
+        idx = sbo->size;
       }
       else {
-	idx = sbo->FindEl(sb);
-	if(after) idx++;
+        idx = sbo->FindEl(sb);
+        if(after) idx++;
       }
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
@@ -7657,7 +7590,7 @@ void iTreeView::ExpandAll(int max_levels) {
 }
 
 void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
-  // NOTE: we can't user iterators for expanding, because we add/remove items which 
+  // NOTE: we can't user iterators for expanding, because we add/remove items which
   // crashes the iterator
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
@@ -7670,7 +7603,7 @@ void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
 }
 
 void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
-  int max_levels, int exp_flags) 
+  int max_levels, int exp_flags)
 {
   if (!item) return;
   if (isItemHidden(item)) return;
@@ -7686,14 +7619,14 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if(exp_def_str.nonempty()) {
       int exp_def = (int)exp_def_str;
       if(exp_def == 0) {
-	expand = false; // no expand
+        expand = false; // no expand
       }
       else {
-	max_levels = exp_def-1;	// remaining levels = val-1
+        max_levels = exp_def-1; // remaining levels = val-1
       }
     }
     else {
-      expand = false;		// if no custom filter, default for all other guys is no expandre
+      expand = false;           // if no custom filter, default for all other guys is no expandre
     }
   }
 
@@ -7709,10 +7642,10 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if (!isItemExpanded(item)) { // ok, eligible...
       setItemExpanded(item, true); // should trigger CreateChildren for lazy
     }
-    // check if we've expanded deeply enough 
+    // check if we've expanded deeply enough
     // (works for finite (>=1) and infinite (<0) cases)
     if (max_levels == 0) return;
-  
+
     if (level >= 0) ++level;
     // and expand item's children -- lazy children should be created by now
     for (int i = 0; i < item->childCount(); ++i) {
@@ -7737,7 +7670,7 @@ void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
     resizeColumnsToContents();
   }
   taMisc::Busy(false);
-} 
+}
 
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
@@ -7749,7 +7682,7 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
     resizeColumnsToContents();
   }
   taMisc::Busy(false);
-} 
+}
 
 void iTreeView::ExpandAllUnderInt(void* item) {
   ExpandAllUnder((iTreeViewItem*)item);
@@ -7774,7 +7707,7 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
     if(this == main_window->GetMainTreeView()) {
       main_window->FocusIsLeftBrowser();
     }
-    else {			// assume prog editor!
+    else {                      // assume prog editor!
       main_window->FocusIsMiddlePanel(iMainWindowViewer::PROG_TREE);
     }
   }
@@ -7795,7 +7728,7 @@ void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
 bool iTreeView::HasFilter(TypeItem* ti) const {
   if (m_filters) for (int i = 0; i < m_filters->size; ++i) {
     if (ti->HasOptionAfter(opt_treefilt, m_filters->FastEl(i)))
-      return true; 
+      return true;
   }
   return false;
 }
@@ -7864,13 +7797,13 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     if(sb) {
       taList_impl* sbo = NULL;
       if(sb->InheritsFrom(&TA_taList_impl)) {
-	sbo = (taList_impl*)sb;
+        sbo = (taList_impl*)sb;
       }
       else {
-	sbo = GET_OWNER(sb, taList_impl);
+        sbo = GET_OWNER(sb, taList_impl);
       }
       if(sbo && sbo->HasOption("FIXED_SIZE")) {
-	stru_actions_enabled = false;
+        stru_actions_enabled = false;
       }
     }
   }
@@ -7878,37 +7811,37 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   if(stru_actions_enabled) {
     if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
       ext_select_on = false;
-      InsertDefaultEl(true);		// after
+      InsertDefaultEl(true);            // after
       e->accept();
       return;
     }
     if(ctrl_pressed) {
       if(e->key() == Qt::Key_I) {
-	ext_select_on = false;
-	InsertEl();		// at
-	e->accept();
-	return;
+        ext_select_on = false;
+        InsertEl();             // at
+        e->accept();
+        return;
       }
       if(e->key() == Qt::Key_O) {
-	ext_select_on = false;
-	InsertEl(true);		// after
-	e->accept();
-	return;
+        ext_select_on = false;
+        InsertEl(true);         // after
+        e->accept();
+        return;
       }
       if(e->key() == Qt::Key_M) {
-	ext_select_on = false;
-	ISelectable* si = curItem();
-	if(si && si->link()) {
-	  taBase* sb = si->link()->taData();
-	  if(sb) {
-	    if(proj) {
-	      proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
-	    }
-	    sb->DuplicateMe();
-	  }
-	}
-	e->accept();
-	return;
+        ext_select_on = false;
+        ISelectable* si = curItem();
+        if(si && si->link()) {
+          taBase* sb = si->link()->taData();
+          if(sb) {
+            if(proj) {
+              proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
+            }
+            sb->DuplicateMe();
+          }
+        }
+        e->accept();
+        return;
       }
     }
     if((ctrl_pressed && e->key() == Qt::Key_W) ||
@@ -7918,12 +7851,12 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       ISelectable* si = curItem();
       ISelectableHost* host = NULL;
       if(si && (host = si->host())) {
-	int ea = 0;
-	host->EditActionsEnabled(ea);
-	if (ea & taiClipData::EA_DELETE) {
-	  host->EditAction(taiClipData::EA_DELETE);
-	  //WARNING: we may be deleted at this point!!!
-	}
+        int ea = 0;
+        host->EditActionsEnabled(ea);
+        if (ea & taiClipData::EA_DELETE) {
+          host->EditAction(taiClipData::EA_DELETE);
+          //WARNING: we may be deleted at this point!!!
+        }
       }
       e->accept();
       return;
@@ -7953,9 +7886,9 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     iMainWindowViewer* imw = mainWindow();
     if(imw && imw->brow_hist) {
       if(e->key() == Qt::Key_Left)
-	imw->brow_hist->back();
+        imw->brow_hist->back();
       else if(e->key() == Qt::Key_Right)
-	imw->brow_hist->forward();
+        imw->brow_hist->forward();
     }
     e->accept();
     return;
@@ -8005,55 +7938,55 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   }
   QTreeWidgetItem* item_ = itemFromIndex(index);
   iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
-  if (!item) return; 
+  if (!item) return;
   if (item->isExpanded())
     CollapseAllUnder(item);
   else
     ExpandAllUnder(item);
-  
+
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
   // i.e., the iListDataPanel
 }
 
 void iTreeView::mousePressEvent(QMouseEvent* event) {
   ++in_mouse_press;
-  inherited::mousePressEvent(event); 
- --in_mouse_press; 
+  inherited::mousePressEvent(event);
+ --in_mouse_press;
 }
 
 bool iTreeView::useCustomExpand() const {
   return (receivers(SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&))) > 0);
 }
 
-void iTreeView::setColKey(int col, const KeyString& key) { 
+void iTreeView::setColKey(int col, const KeyString& key) {
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, ColKeyRole, key);
 }
 
-void iTreeView::setHeaderText(int col, const String& value) { 
+void iTreeView::setHeaderText(int col, const String& value) {
   headerItem()->setText(col, value);
 }
 
-int iTreeView::maxColChars(int col) { 
+int iTreeView::maxColChars(int col) {
   if ((col < 0) || (col >= columnCount())) return -1;
   QVariant v = headerItem()->data(col, MaxColCharsRole);
   if (v.isNull()) return -1;
   else return v.toInt();
 }
 
-void iTreeView::setMaxColChars(int col, int value) { 
+void iTreeView::setMaxColChars(int col, int value) {
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, MaxColCharsRole, value);
 }
 
-int iTreeView::colFormat(int col) { 
+int iTreeView::colFormat(int col) {
   if ((col < 0) || (col >= columnCount())) return 0;
   QVariant v = headerItem()->data(col, ColFormatRole);
   if (v.isNull()) return 0;
   else return v.toInt();
 }
 
-void iTreeView::setColFormat(int col, int value) { 
+void iTreeView::setColFormat(int col, int value) {
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, ColFormatRole, value);
 }
@@ -8061,12 +7994,12 @@ void iTreeView::setColFormat(int col, int value) {
 void iTreeView::setDecorateEnabled(bool value) {
   if (m_decorate_enabled == value) return;
   m_decorate_enabled = value;
-} 
+}
 
 void iTreeView::setShow(taMisc::ShowMembs value) {
   if (m_show == value) return;
   Show_impl();
-} 
+}
 
 void iTreeView::setTvFlags(int value) {
   if (tv_flags == value) return;
@@ -8090,7 +8023,7 @@ void iTreeView::Refresh_impl() {
       // always refresh visible guys
       if (!hide_it) {
         // simulate update notification
-	item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+        item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
       }
     }
     ++it;
@@ -8131,7 +8064,7 @@ void iTreeView::showEvent(QShowEvent* ev) {
     QTimer::singleShot(250, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
-  
+
 }
 
 bool iTreeView::ShowNode(iTreeViewItem* item) const {
@@ -8141,7 +8074,7 @@ bool iTreeView::ShowNode(iTreeViewItem* item) const {
 
 void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiActions* menu) {
   emit FillContextMenuHookPre(sel_items, menu);
-} 
+}
 
 void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos,
  int col ) {
@@ -8149,7 +8082,7 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
   // note: we must force the sel_item to be the item, otherwise we frequently
   // are refering to the wrong item (not what user right clicked on)
   // this seems to be the easiest way:
-  this_itemSelectionChanged();  
+  this_itemSelectionChanged();
   FillContextMenu(menu);
   if (menu->count() > 0) { //only show if any items!
     menu->exec(pos);
@@ -8176,9 +8109,9 @@ void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiActions*
         this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
     }
   }
-  
+
   emit FillContextMenuHookPost(sel_items, menu);
-} 
+}
 
 //NOTE: this is a widget-level guy that just forwards to our signal --
 // it presumably is ALSO emitted in addition to itemSelectionChanged
@@ -8211,7 +8144,7 @@ void iTreeView::this_itemSelectionChanged() {
 
 void iTreeView::UpdateSelectedItems_impl() {
   //note: we are already guarded against spurious gui updates
-  // our approach is to copy the list, then iterate all currently selected items, 
+  // our approach is to copy the list, then iterate all currently selected items,
   // removing those from selection not in the list or removing from list if in
   // selection already; then we select any that remain in the list
   ISelectable_PtrList sel_items = selItems(); // copies
@@ -8221,7 +8154,7 @@ void iTreeView::UpdateSelectedItems_impl() {
   while ( (item = *it) ) {
     ISelectable* si = dynamic_cast<ISelectable*>(item);
     if (si) {
-      if ((lst_idx = sel_items.FindEl(si)) >= 0) 
+      if ((lst_idx = sel_items.FindEl(si)) >= 0)
         sel_items.RemoveIdx(lst_idx);
       else setItemSelected(item, false); // hope this is ok while iterating!!!!
     }
@@ -8255,7 +8188,7 @@ bool iTreeView::PosInView(int scr_pos) {
 }
 
 //////////////////////////
-//    iTreeViewItem 	//
+//    iTreeViewItem     //
 //////////////////////////
 
 class DataNodeDeleter: public QObject { // enables nodes to be put on deferredDelete list
@@ -8282,8 +8215,8 @@ iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* pare
   init(tree_name, link_, md_, dn_flags_);
 }
 
-void iTreeViewItem::init(const String& tree_name, taiDataLink* link_, 
-  MemberDef* md_, int dn_flags_) 
+void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
+  MemberDef* md_, int dn_flags_)
 {
   m_md = md_;
   dn_flags = dn_flags_;
@@ -8313,7 +8246,7 @@ iTreeViewItem::~iTreeViewItem() {
 
 bool iTreeViewItem::canAcceptDrop(const QMimeData* mime) const {
  return true;
-/*obs always say yes, since we put up a drop menu, and this decode 
+/*obs always say yes, since we put up a drop menu, and this decode
   // would be done all the time
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = QueryEditActions_(ms);
@@ -8423,13 +8356,13 @@ void iTreeViewItem::DecorateDataNode() {
     if(dec_key.nonempty()) {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
-	if(vc->use_bg)		// prefer bg color; always set bg so no conflict with type info
-	  setBackgroundColor(vc->bg_color.color());
- 	else if(vc->use_fg)
- 	  setBackgroundColor(vc->fg_color.color());
+        if(vc->use_bg)          // prefer bg color; always set bg so no conflict with type info
+          setBackgroundColor(vc->bg_color.color());
+        else if(vc->use_fg)
+          setBackgroundColor(vc->fg_color.color());
       }
       else {
-	resetBackgroundColor();//setHighlightIndex(0);
+        resetBackgroundColor();//setHighlightIndex(0);
       }
     }
     else {
@@ -8442,23 +8375,23 @@ void iTreeViewItem::DecorateDataNode() {
     if (dec_key.nonempty()) {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
-	if(vc->use_fg)
-	  setTextColor(vc->fg_color.color());
- 	else if(vc->use_bg)
- 	  setTextColor(vc->bg_color.color()); // always set text, even if bg, so no conflict with state info
+        if(vc->use_fg)
+          setTextColor(vc->fg_color.color());
+        else if(vc->use_bg)
+          setTextColor(vc->bg_color.color()); // always set text, even if bg, so no conflict with state info
       }
     }
   }
 }
 
-void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos, 
-    int key_mods, WhereIndicator where) 
+void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos,
+    int key_mods, WhereIndicator where)
 {
   DropHandler(mime, pos, key_mods, where);
 }
 
 void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
-  GuiContext sh_typ) const 
+  GuiContext sh_typ) const
 {
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
@@ -8470,13 +8403,13 @@ void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
   GuiContext sh_typ) {
   //taiAction* mel =
   menu->AddItem("Find from here (Alt+F)...", taiMenu::use_default,
-		taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
+                taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
   menu->AddItem("Replace in selected (Alt+R)...", taiMenu::use_default,
-		taiAction::men_act, treeView(), SLOT(mnuReplaceFromHere(taiAction*)), this);
+                taiAction::men_act, treeView(), SLOT(mnuReplaceFromHere(taiAction*)), this);
   // note: this causes it to always search from the first one entered!  need to trap
   // specific keyboard input
 //   menu->AddItem("Find from here...", taiAction::men_act, treeView(),
-// 		SLOT(mnuFindFromHere(taiAction*)), this, QKeySequence("Alt+F"));
+//              SLOT(mnuFindFromHere(taiAction*)), this, QKeySequence("Alt+F"));
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }
 
@@ -8485,7 +8418,7 @@ const String iTreeViewItem::GetColText(int col, const String& def) const
   iTreeView* tv = treeView();
   taiDataLink* link = this->link(); // local cache
   String rval;
-  if (tv && link) {  
+  if (tv && link) {
     KeyString key = tv->colKey(col);
     if (key.length() > 0) { // no point if no key
       const int max_chars = tv->maxColChars(col); // -1 if no limit
@@ -8509,14 +8442,14 @@ ISelectableHost* iTreeViewItem::host() const {
 }
 
 taiClipData* iTreeViewItem::GetClipDataSingle(int src_edit_action, bool for_drag,
-					      GuiContext sh_typ) const {
+                                              GuiContext sh_typ) const {
   taiClipData* rval = IObjectSelectable::GetClipDataSingle(src_edit_action, for_drag, sh_typ);
 //   treeView()->clearSelection();
   return rval;
 }
 
-taiClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items, 
-		     int src_edit_action, bool for_drag, GuiContext sh_typ) const {
+taiClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
+                     int src_edit_action, bool for_drag, GuiContext sh_typ) const {
   taiClipData* rval = IObjectSelectable::GetClipDataMulti(sel_items, src_edit_action, for_drag, sh_typ);
 //   treeView()->clearSelection();
   return rval;
@@ -8536,7 +8469,7 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   // if the fm is prior to to, we need to adjust index (for removal)
   if (fm_idx < to_idx) --to_idx;
   QTreeWidgetItem* tak = takeChild(fm_idx);
-  insertChild(to_idx, tak); 
+  insertChild(to_idx, tak);
   // need to re-assert the hidden, because everything goes visible after the take
   iTreeView* tv = treeView();
   if (!tv) return;
@@ -8570,8 +8503,8 @@ void iTreeViewItem::setName(const String& value) {
   this->setText(0, value);
 }
 
-bool iTreeViewItem::ShowNode_impl(int show, const String&) const 
-{ 
+bool iTreeViewItem::ShowNode_impl(int show, const String&) const
+{
   // if not a member, then we just always show, since it must be a list element,
   // or standalone item whose visibility will be controlled by a parent member somewhere
   if (!m_md) return true;
@@ -8593,7 +8526,7 @@ iTreeView* iTreeViewItem::treeView() const {
 
 
 //////////////////////////////////
-// 	taiListDataNode 	//
+//      taiListDataNode         //
 //////////////////////////////////
 
 taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
@@ -8619,7 +8552,7 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
   else {
     taiListDataNode* ldn = (taiListDataNode*)&item;
     return (num < ldn->num);
-  } 
+  }
 }
 
 void taiListDataNode::DecorateDataNode() {
@@ -8649,7 +8582,7 @@ QString taiListDataNode::text(int col) const {
 
 
 //////////////////////////////////
-// 	taiTreeDataNode 	//
+//      taiTreeDataNode         //
 //////////////////////////////////
 
 taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
@@ -8750,7 +8683,7 @@ taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
 
 
 //////////////////////////////////
-//   tabTreeDataNode 		//
+//   tabTreeDataNode            //
 //////////////////////////////////
 
 tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
@@ -8782,7 +8715,7 @@ void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     TypeDef* base_typ = tab->GetTypeDef();
     if(base_typ->HasOption("HAS_CONDTREE")) {
       if(dcr == DCR_ITEM_UPDATED)
-	do_updt = true;
+        do_updt = true;
     }
   }
   if(do_updt || dcr == DCR_STRUCT_UPDATE_ALL) { // special case for post-loading update
@@ -8792,22 +8725,22 @@ void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if(!itv) return;
     if(itv->itemCount() > 0) {
       if(itv->item(0) == this)
-	itv->ExpandDefault();
+        itv->ExpandDefault();
       else if(do_updt) {
-	itv->ExpandDefaultUnder(this);
+        itv->ExpandDefaultUnder(this);
       }
     }
   }
 }
 
 //////////////////////////////////
-//   tabParTreeDataNode 	//
+//   tabParTreeDataNode         //
 //////////////////////////////////
 
 tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
     const String& tree_name, int dn_flags_)
-:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, 
+:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
@@ -8871,7 +8804,7 @@ void tabParTreeDataNode::willHaveChildren_impl(bool& will) const {
 }
 
 taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
-  taiTreeDataNode* after, taBase* el) 
+  taiTreeDataNode* after, taBase* el)
 {
   if (!el) return NULL;
   taList_impl* list = this->list(); // cache
@@ -8884,7 +8817,7 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   taBase* own = el->GetOwner(); //note: own=NULL generally means <taOBase items
   if (own && (own != list))
     dn_flags_tmp |= DNF_IS_LINK;
-  taiTreeDataNode* dn = dl->CreateTreeDataNode((MemberDef*)NULL, 
+  taiTreeDataNode* dn = dl->CreateTreeDataNode((MemberDef*)NULL,
     par_node, after, _nilString, dn_flags_tmp);
   return dn;
 }
@@ -8906,7 +8839,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) {
     if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE) ||
-	(dcr == DCR_STRUCT_UPDATE_END)) {
+        (dcr == DCR_STRUCT_UPDATE_END)) {
       UpdateLazyChildren(); // updates
     }
     return;
@@ -8921,7 +8854,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   int idx;
   switch (dcr) {
   case DCR_LIST_INIT: break;
-  case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
+  case DCR_LIST_ITEM_INSERT: {  // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (!after_node) after_node = last_member_node; // insert, after
     taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
@@ -8932,24 +8865,24 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       tv->scrollTo(new_node);
     break;
   }
-  case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
+  case DCR_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
       if(tv) {
-	tv->SaveScrollPos();
-	tv->setAutoScroll(false);	// auto scroll is very bad for this in 4.7.0 -- scrolls to top..
+        tv->SaveScrollPos();
+        tv->setAutoScroll(false);       // auto scroll is very bad for this in 4.7.0 -- scrolls to top..
       }
       delete gone_node; // goodbye!
       iTreeView* tv2 = treeView(); // make sure it still exists!
       if(tv2) {
-	tv2->RestoreScrollPos();
-	tv2->setAutoScroll(true);
+        tv2->RestoreScrollPos();
+        tv2->setAutoScroll(true);
       }
     }
   }
     break;
-  case DCR_LIST_ITEM_MOVED: {	// op1=item, op2=item_after, null=at beginning
+  case DCR_LIST_ITEM_MOVED: {   // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
     if (!moved_node) break; // shouldn't happen
@@ -8963,15 +8896,15 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       treeView()->scrollTo(moved_node);
   }
     break;
-  case DCR_LIST_ITEMS_SWAP: {	// op1=item1, op2=item2
+  case DCR_LIST_ITEMS_SWAP: {   // op1=item1, op2=item2
     int n1_idx, n2_idx;
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
     if ((!node1) || (!node2)) break; // shouldn't happen
-    swapChildren(n1_idx, n2_idx); 
+    swapChildren(n1_idx, n2_idx);
   }
     break;
-  case DCR_LIST_SORTED: {	// no ops
+  case DCR_LIST_SORTED: {       // no ops
     int nd_idx; // index of the node
     taList_impl* list = this->list(); // cache
     for (int i = 0; i < list->size; ++i) {
@@ -9014,7 +8947,7 @@ void tabParTreeDataNode::UpdateListNames() {
 }
 
 //////////////////////////////////
-//   tabDefChildTreeDataNode 	//
+//   tabDefChildTreeDataNode    //
 //////////////////////////////////
 
 void tabDefChildRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
@@ -9028,7 +8961,7 @@ void tabDefChildRef::DataLinkDestroying(taDataLink* dl) {
 tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited(link_, md_, parent_, last_child_, tree_name, 
+:inherited(link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
@@ -9058,13 +8991,13 @@ void tabDefChildTreeDataNode::DefChild_DataChanged(int dcr, void* op1, void* op2
 
 
 //////////////////////////////////
-//   tabListTreeDataNode 	//
+//   tabListTreeDataNode        //
 //////////////////////////////////
 
 tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name, 
+:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
@@ -9086,7 +9019,7 @@ tabListTreeDataNode::~tabListTreeDataNode()
 }
 
 //////////////////////////////////
-//   taiGroupTreeDataNode 	//
+//   taiGroupTreeDataNode       //
 //////////////////////////////////
 
 tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_,
@@ -9133,7 +9066,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
 }
 
 taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node,
-  void* el) 
+  void* el)
 {
   taSubGroup* gp = &tadata()->gp;
   TypeDef* typ = gp->GetElType();
@@ -9177,7 +9110,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   AssertLastListItem();
   int idx;
   switch (dcr) {
-  case DCR_GROUP_INSERT: {	// op1=item, op2=item_after, null=at beginning
+  case DCR_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
@@ -9186,12 +9119,12 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       treeView()->scrollTo(new_node);
   }
     break;
-  case DCR_GROUP_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
+  case DCR_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) delete gone_node; // goodbye!
   }
     break;
-  case DCR_GROUP_MOVED: {	// op1=item, op2=item_after, null=at beginning
+  case DCR_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
     if (!moved_node) break; // shouldn't happen
@@ -9205,15 +9138,15 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       treeView()->scrollTo(moved_node);
   }
     break;
-  case DCR_GROUPS_SWAP: {	// op1=item1, op2=item2
+  case DCR_GROUPS_SWAP: {       // op1=item1, op2=item2
     int n1_idx, n2_idx;
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
     if ((!node1) || (!node2)) break; // shouldn't happen
-    swapChildren(n1_idx, n2_idx); 
+    swapChildren(n1_idx, n2_idx);
   }
     break;
-  case DCR_GROUPS_SORTED: {	// no ops
+  case DCR_GROUPS_SORTED: {     // no ops
     int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
     int nd_idx; // index of the node
     taGroup_impl* gp = this->tadata(); // cache
@@ -9262,7 +9195,7 @@ void tabGroupTreeDataNode::willHaveChildren_impl(bool& will) const {
 }
 
 //////////////////////////////////
-//   iTreeSearch		//
+//   iTreeSearch                //
 //////////////////////////////////
 
 void iTreeSearch::Constr() {
@@ -9322,18 +9255,18 @@ void iTreeSearch::search() {
     if (item) {
       int cols = item->columnCount();
       for(int i=0;i<cols;i++) {
-	String str = item->text(i);
-	if(str.contains_ci(ftxt)) {
-	  srch_found.append(item);
-	  break;		// out of for -- all done
-	}
+        String str = item->text(i);
+        if(str.contains_ci(ftxt)) {
+          srch_found.append(item);
+          break;                // out of for -- all done
+        }
       }
       if(!tree_view->isItemExpanded(item)) {
-	taiDataLink* dl = item->link();
-	if(dl->isBase()) {
-	  taBase* tab = (taBase*)dl->data();
-	  tab->Search(ftxt, sub_srch, &sub_srch_own); // go with defaults for now
-	}
+        taiDataLink* dl = item->link();
+        if(dl->isBase()) {
+          taBase* tab = (taBase*)dl->data();
+          tab->Search(ftxt, sub_srch, &sub_srch_own); // go with defaults for now
+        }
       }
     }
     ++it;
@@ -9408,7 +9341,7 @@ void iTreeSearch::srch_prev_clicked() {
 
 
 //////////////////////////////////
-//   iSearchDialog		//
+//   iSearchDialog              //
 //////////////////////////////////
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
@@ -9416,7 +9349,7 @@ public:
     using QTreeWidget::sizeHintForColumn;
 };
 
-iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_) 
+iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_)
 {
   iSearchDialog* rval = new iSearchDialog(par_window_);
   Qt::WindowFlags wflg = rval->windowFlags();
@@ -9441,7 +9374,7 @@ void iSearchDialog::init() {
   m_options = SO_DEF_OPTIONS;
   m_changing = 0;
   m_stop = false;
-  for (int i = 0; i < num_sorts; ++i) 
+  for (int i = 0; i < num_sorts; ++i)
     m_sorts[i] = -1;
   m_items.InitLinks();
   m_items.NewCol(DataCol::VT_INT, "row");
@@ -9459,8 +9392,8 @@ void iSearchDialog::init() {
 void iSearchDialog::Constr() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
-  
+  layOuter->setSpacing(taiM->vspc_c);
+
   TypeDef* typ = TA_iSearchDialog.sub_types.FindName("SearchOptions");
   bbOptions = new taiBitBox(true, typ, NULL, NULL, this);
   bbOptions->GetImage(m_options);
@@ -9481,13 +9414,13 @@ void iSearchDialog::Constr() {
   btnStop->setText("X");
   btnStop->setToolTip("stop search");
   lay->addWidget(btnStop);
-  lay->addSpacing(taiM->hspc_c); 
+  lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
-  
+
   results = new iTextBrowser(this);
   layOuter->addWidget(results, 1); // results is item to expand in host
   results->setHtml("Enter search words in the box above.<br>Enclose phrases in \" (quotation marks).<br>You can exclude items by preceding a search word or phrase with - (minus).<br>You can change the sort order by clicking on the column header link.");
-  
+
   status_bar = new QStatusBar(this);
   layOuter->addWidget(status_bar);
 
@@ -9533,15 +9466,15 @@ void iSearchDialog::go_clicked() {
 }
 
 void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
-  const QUrl& url, bool& cancel) 
+  const QUrl& url, bool& cancel)
 {
   if ((url.scheme() == "sort")) {
     int col = url.path().toInt();
     setFirstSort(col);
     Render();
-  } 
+  }
   else { // unknown, so forward to global, which is iMainWindowViewer::taUrlHandler
-    QDesktopServices::openUrl(url); 
+    QDesktopServices::openUrl(url);
   }
   cancel = true;
   //NOTE: we never let results call its own setSource because we don't want
@@ -9661,7 +9594,7 @@ void iSearchDialog::Render()
     path = path.after(root_path);
     int relev = m_items.GetValAsInt(col_relev, i);
     RenderItem(level, headline, href, desc, hits, path, relev);
-  }  
+  }
   src += "</table>";
   results->setHtml(src);
   taMisc::Busy(false);
@@ -9711,7 +9644,7 @@ bool iSearchDialog::setFirstSort(int col) {
 
 void iSearchDialog::setRoot(taiDataLink* root, bool update_gui) {
   if (link() != root) {
-    if (link()) link()->RemoveDataClient(this); 
+    if (link()) link()->RemoveDataClient(this);
     if (root) root->AddDataClient(this);
   }
   if (update_gui)
@@ -9742,12 +9675,12 @@ void iSearchDialog::stop_clicked() {
 }
 
 void iSearchDialog::closeEvent(QCloseEvent * e) {
-  m_stop = true;		// stop on close
+  m_stop = true;                // stop on close
   inherited::closeEvent(e);
 }
 
 //////////////////////////////////
-//   taBase			//
+//   taBase                     //
 //////////////////////////////////
 
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
@@ -9773,7 +9706,7 @@ bool taBase::BrowserSelectMe() {
   // first, check for an edit dialog and use that if found
   MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
   if(edlg) {
-    edlg->Show();		// focus on it
+    edlg->Show();               // focus on it
     return true;
   }
 
@@ -9781,16 +9714,16 @@ bool taBase::BrowserSelectMe() {
   if(!proj) return false;
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  
+
   bool rval = false;
-  // iterate to find all Browsers 
+  // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
     //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
-  
+
     rval = rval || (bool)imwv->AssertBrowserItem(link);
   }
   return rval;
@@ -9802,16 +9735,16 @@ bool taBase::BrowserExpandAll() {
   if(!proj) return false;
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  
+
   bool rval = false;
-  // iterate to find all Browsers 
+  // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
     //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
-  
+
     rval = rval || (bool)imwv->BrowserExpandAllItem(link);
   }
   return rval;
@@ -9823,16 +9756,16 @@ bool taBase::BrowserCollapseAll() {
   if(!proj) return false;
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  
+
   bool rval = false;
-  // iterate to find all Browsers 
+  // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
     //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
-  
+
     rval = rval || (bool)imwv->BrowserCollapseAllItem(link);
   }
   return rval;
@@ -9844,16 +9777,16 @@ bool taBase::GuiFindFromMe(const String& find_str) {
   if(!proj) return false;
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  
+
   bool rval = false;
-  // iterate to find all Browsers 
+  // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
     //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
-  
+
     rval= true;
     imwv->Find(link, find_str);
   }
@@ -9862,13 +9795,13 @@ bool taBase::GuiFindFromMe(const String& find_str) {
 
 
 //////////////////////////
-//   iHelpBrowser	//
+//   iHelpBrowser       //
 //////////////////////////
 
 QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
   QWebView* rval = NULL;
   emit sigCreateWindow(type, rval);
-  if (!rval) 
+  if (!rval)
     rval = inherited::createWindow(type);
   return rval;
 }
@@ -9947,7 +9880,7 @@ String iHelpBrowser::UrlToTabText(const String& url) {
 
 
 // note: we parent to main_win so something will delete it
-iHelpBrowser::iHelpBrowser() 
+iHelpBrowser::iHelpBrowser()
 :inherited(taiMisc::main_window)
 {
   init();
@@ -9965,7 +9898,7 @@ void iHelpBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
   this->setWindowTitle("Help Browser");
 //  this->setSizeGripEnabled(true);
-  
+
   int font_spec = taiMisc::fonMedium;
 
   split = new iSplitter;
@@ -9976,7 +9909,7 @@ void iHelpBrowser::init() {
 
   QToolBar* tool_bar = new QToolBar(tvw);
   lay_tv->addWidget(tool_bar);
-  
+
   actBack = tool_bar->addAction("<");
   actBack->setToolTip("Back one step in browsing history -- not often relevant due to opening new pages for each unique URL");
   actBack->setStatusTip(actBack->toolTip());
@@ -9984,7 +9917,7 @@ void iHelpBrowser::init() {
   actForward->setToolTip("Forward one step in browsing history  -- not often relevant due to opening new pages for each unique URL");
   actForward->setStatusTip(actForward->toolTip());
   tool_bar->addSeparator();
-  
+
 //   QLabel* lbl = taiM->NewLabel("search", tvw, font_spec);
   QLabel* lbl = new QLabel("search");
   lbl->setToolTip("Search for object type names to narrow the list below -- will find anything containing the text entered");
@@ -9992,7 +9925,7 @@ void iHelpBrowser::init() {
   filter = new iLineEdit();
   filter->setToolTip(lbl->toolTip());
   tool_bar->addWidget(filter);
-  
+
   tv = new QTreeWidget(tvw);
   tv->setColumnCount(2);
   // will always need a vert scroller so turn on so sizing is deterministic
@@ -10002,14 +9935,14 @@ void iHelpBrowser::init() {
   hdr->setText(0, "Type");
   hdr->setText(1, "Category");
   lay_tv->addWidget(tv, 1);
-  
+
   QWidget* wid_tab = new QWidget;
   QVBoxLayout* lay_tab = new QVBoxLayout(wid_tab);
   lay_tab->setMargin(0);
-  
+
   tool_bar = new QToolBar(wid_tab);
   lay_tab->addWidget(tool_bar);
-  
+
   url_text = new iLineEdit();
   tool_bar->addWidget(url_text);
 
@@ -10047,14 +9980,14 @@ void iHelpBrowser::init() {
   btnAdd->setToolTip("add a new empty tab");
   tab->setCornerWidget(btnAdd, Qt::TopLeftCorner);
   lay_tab->addWidget(tab);
-  
+
   setCentralWidget(split);
 //  layOuter->addWidget(status_bar);
 
   tool_bar->installEventFilter(this); // translate keys..
   tv->installEventFilter(this); // translate keys..
   filter->installEventFilter(this); // translate keys..
-  
+
   // add all types -- only non-virtual, base types
   AddTypesR(&taMisc::types);
   tv->setSortingEnabled(true);
@@ -10065,14 +9998,14 @@ void iHelpBrowser::init() {
     + tv->verticalScrollBar()->width() + 40;
   tv->resize(tv_width, tv->height());
 //  tv->resizeColumnToContents(1);
-  
+
   split->addWidget(tvw);
   split->addWidget(wid_tab);
 
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
   timFilter->setInterval(500);
-  
+
   status_bar = statusBar(); // asserts
 
   connect(actGo, SIGNAL(triggered()), this, SLOT(go_clicked()) );
@@ -10096,14 +10029,14 @@ void iHelpBrowser::init() {
   connect(tab, SIGNAL(currentChanged(int)),
     this, SLOT(tab_currentChanged(int)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
-  
+
   AddWebView(_nilString); // so stuff lays out
 }
 
 void iHelpBrowser::addTab_clicked() {
   AddWebView("");
 }
-    
+
 void iHelpBrowser::forward_clicked() {
   curWebView()->forward();
 }
@@ -10150,7 +10083,7 @@ void iHelpBrowser::AddTypesR(TypeSpace* ts) {
     if (typ->InheritsFormal(TA_templ_inst) ||
       typ->HasOption("VIRT_BASE") ||
       typ->HasOption("HIDDEN") ||
-      typ->HasOption("IGNORE")) 
+      typ->HasOption("IGNORE"))
       continue;
     // get rid of the junk stub types by looking for empties...
     if ((typ->members.size == 0) && (typ->methods.size == 0))
@@ -10210,7 +10143,7 @@ void iHelpBrowser::ApplyFiltering() {
   QString s;
   //QTreeWidgetItem* first_item = NULL;
   int n_items = 0;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     // TODO (maybe): don't hide NULL item
     bool show = ShowItem(item);
     tv->setItemHidden(item, !show);
@@ -10231,25 +10164,25 @@ void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
   }
 }
 
-void iHelpBrowser::brow_linkClicked(const QUrl& url) 
+void iHelpBrowser::brow_linkClicked(const QUrl& url)
 {
   // forward to global, which is iMainWindowViewer::taUrlHandler
   // for .Type. urls (us) it just calls back to LoadUrl(url)
-  QDesktopServices::openUrl(url); 
+  QDesktopServices::openUrl(url);
 }
 
-void iHelpBrowser::brow_urlChanged(const QUrl& url) 
+void iHelpBrowser::brow_urlChanged(const QUrl& url)
 { // NOTE: we assume it is only the current visible guy who can do this
   ++m_changing;
   url_text->setText(url.toString());
   tab->setTabText(tab->currentIndex(), UrlToTabText(url.toString()));
   tab->setTabToolTip(tab->currentIndex(), UrlToTabText(url.toString()));
-  --m_changing; 
+  --m_changing;
 }
 
 void iHelpBrowser::page_unsupportedContent(QNetworkReply* reply) {
   // this should only get called when a Open Window or Open Link gets ta: type of url
-  QDesktopServices::openUrl(reply->url()); 
+  QDesktopServices::openUrl(reply->url());
 }
 
 void iHelpBrowser::ClearFilter() {
@@ -10258,13 +10191,13 @@ void iHelpBrowser::ClearFilter() {
   last_filter.clear();
   QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::Hidden);
   QTreeWidgetItem* item;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     tv->setItemHidden(item, false);
     ++it;
   }
   taMisc::DoneBusy();
   --m_changing;
-} 
+}
 
 QWebView* iHelpBrowser::curWebView() {
   if (tab->count() == 0)
@@ -10296,7 +10229,7 @@ QTreeWidgetItem* iHelpBrowser::FindItem(TypeDef* typ) {
   QTreeWidgetItemIterator it(tv);
   QTreeWidgetItem* rval;
   while ((rval = *it)) {
-    if (GetTypeDef(rval) == typ) 
+    if (GetTypeDef(rval) == typ)
       return rval;
     ++it;
   }
@@ -10308,7 +10241,7 @@ QTreeWidgetItem* iHelpBrowser::FindItem(const String& typ_name_) {
   QTreeWidgetItemIterator it(tv);
   QTreeWidgetItem* rval;
   while ((rval = *it)) {
-    if (rval->text(0) == typ_name) 
+    if (rval->text(0) == typ_name)
       return rval;
     ++it;
   }
@@ -10320,7 +10253,7 @@ QWebView* iHelpBrowser::FindWebView(const String& url, int& idx) {
   if (url.contains("#")) {
     base_url = url.before("#");
   }
-  
+
   for (idx = 0; idx < tab->count(); ++idx) {
     QWebView* rval = webView(idx);
     String turl = rval->url().toString();
@@ -10340,7 +10273,7 @@ void iHelpBrowser::go_clicked() {
   if(urltxt.empty()) return;
   urltxt = taMisc::FixURL(urltxt);
   QUrl url(urltxt);
-  QDesktopServices::openUrl(url); 
+  QDesktopServices::openUrl(url);
 }
 
 void iHelpBrowser::ItemChanged(QTreeWidgetItem* item) {
@@ -10383,7 +10316,7 @@ void iHelpBrowser::LoadUrl(const String& url) {
   else if(url.startsWith("http://.type.")) {
     String typ_name(base_url.after(".type."));
     String nw_url = "ta:.Type." + typ_name;
-    LoadUrl(nw_url);		// convert..
+    LoadUrl(nw_url);            // convert..
   }
   else if (IsUrlExternal(url)) {
     LoadExternal_impl(url);
@@ -10450,7 +10383,7 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
 
 bool iHelpBrowser::ShowItem(const QTreeWidgetItem* item) const {
   // we show the item unless it either doesn't meet filter criteria, or not in cat
-  
+
 /*  // category filter
   if (m_cat_filter != 0) {
     String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
@@ -10458,25 +10391,25 @@ bool iHelpBrowser::ShowItem(const QTreeWidgetItem* item) const {
     if(multi_cats && act_cat.contains(", ")) {
       bool any_match = false;
       while(true) {
-	String cur_cat = act_cat.before(", ");
-	act_cat = act_cat.after(", ");
-	if(cur_cat == cat_txt) {
-	  any_match = true; break;
-	}
-	if(act_cat.contains(", ")) continue;
-	if(act_cat == cat_txt) {
-	  any_match = true;
-	}
-	break;
+        String cur_cat = act_cat.before(", ");
+        act_cat = act_cat.after(", ");
+        if(cur_cat == cat_txt) {
+          any_match = true; break;
+        }
+        if(act_cat.contains(", ")) continue;
+        if(act_cat == cat_txt) {
+          any_match = true;
+        }
+        break;
       }
       if(!any_match) return false;
     }
     else {
-      if (act_cat != cat_txt) 
-	return false;
+      if (act_cat != cat_txt)
+        return false;
     }
   }*/
-  
+
   // filter text filter
   if (!last_filter.isEmpty()) {
     bool hide = true;
@@ -10487,7 +10420,7 @@ bool iHelpBrowser::ShowItem(const QTreeWidgetItem* item) const {
       if (s.contains(last_filter, Qt::CaseInsensitive)) {
         hide = false;
         break;
-      }  
+      }
     }
     if (hide) return false;
   }
@@ -10575,11 +10508,11 @@ void iHelpBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem*
 void iHelpBrowser::UpdateTreeItem() {
   String url = curWebView()->url().toString();
   if (!url.startsWith("ta:.Type.")) return;
-  
+
   String typ_name = url.after("ta:.Type.");
   if (typ_name.contains("#"))
     typ_name = typ_name.before("#");
-  
+
   QTreeWidgetItem* twi = FindItem(typ_name);
   if (twi != tv->currentItem()) {
     ++m_changing;
@@ -10609,7 +10542,7 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
       filter->setFocus();
     else
       find_text->setFocus();
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   }
   return inherited::eventFilter(obj, event);
 }

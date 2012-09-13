@@ -794,6 +794,7 @@ int main(int argc, char* argv[])
     int ret_code;
     if ((ret_code = system((char*)comnd)) != 0) {
       cout << "**maketa command did not succeed (err code  " << ret_code << ")\n";
+      cout << "\n**maketa command was: " << comnd.chars() << "\n\n";
       return ret_code;
     }
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))

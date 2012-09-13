@@ -7,13 +7,14 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
 #include "ilineedit.h"
+#include "ta_qt.h" // for taiMisc::KeyEventCtrlPressed(e)
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -59,7 +60,7 @@ void iLineEdit::editInEditor() {
   QSize sz = d->availableGeometry(primaryScreen).size();
   int wd = (sz.width() * 3) / 4;
   int ht = (sz.height() * 3) / 4;
-  if(wd > 640) wd = 640; 	// don't make it too wide..
+  if(wd > 640) wd = 640;        // don't make it too wide..
   dlg->resize(wd, ht);
   if (isReadOnly())
     dlg->txtText->setReadOnly(true);
@@ -72,7 +73,7 @@ void iLineEdit::editInEditor() {
 
 void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
-  // activateWindow();		// make sure we're active when we click in a box!
+  // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
   // emit focusChanged(true);
 }
@@ -131,37 +132,33 @@ void iLineEdit::setReadOnly(bool value) {
     pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
   } else {
     setFocusPolicy(Qt::StrongFocus); // put back in tab chain
-    pal.setColor(backgroundRole(), 
+    pal.setColor(backgroundRole(),
       QApplication::palette(this).color(QPalette::Base));
   }
   setPalette(pal);
   update();
 }
 
-void iLineEdit::clearExtSelection() {
+void iLineEdit::clearExtSelection()
+{
   ext_select_on = false;
   inherited::deselect();
 }
 
-bool iLineEdit::event(QEvent* e) {
+bool iLineEdit::event(QEvent* e)
+{
   return inherited::event(e);
   // std::cerr << "event" << e->type() << std::endl;
 }
 
-void iLineEdit::keyPressEvent(QKeyEvent* e) {
+void iLineEdit::keyPressEvent(QKeyEvent* e)
+{
   // std::cerr << "keypress" << std::endl;
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
 
   // emacs keys!!
-  if(ctrl_pressed) {
-    switch(e->key()) {
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if (ctrl_pressed) {
+    switch (e->key()) {
     case Qt::Key_Space:
       e->accept();
       deselect();
@@ -194,13 +191,13 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       return;
     case Qt::Key_K:
       e->accept();
-      end(true);		// mark
+      end(true);                // mark
       cut();
       clearExtSelection();
       return;
     case Qt::Key_U:
-      e->accept();	 
-      selectAll();	 
+      e->accept();
+      selectAll();
       return;
     case Qt::Key_Y:
       e->accept();
@@ -226,36 +223,39 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  else if(e->modifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_W) { // copy
+  else if (e->modifiers() & Qt::AltModifier) {
+    if (e->key() == Qt::Key_W) { // copy
       e->accept();
       copy();
       clearExtSelection();
       return;
     }
   }
+
   // Esc interferes with dialog cancel and other such things
-//   if(e->key() == Qt::Key_Escape) {
-//     e->ignore();		// fake ignore so that any dialog ops will happen as expected
-//     clearExtSelection();
-//     return;
-//   }
+  // if(e->key() == Qt::Key_Escape) {
+  //   e->ignore();             // fake ignore so that any dialog ops will happen as expected
+  //   clearExtSelection();
+  //   return;
+  // }
 
   QLineEdit::keyPressEvent( e );
 }
 
-void iLineEdit::wheelEvent(QWheelEvent * event) {
+void iLineEdit::wheelEvent(QWheelEvent * event)
+{
   // actually, this is ok..
   inherited::wheelEvent(event);
   return;
 }
 
-void iLineEdit::emitReturnPressed() {
+void iLineEdit::emitReturnPressed()
+{
   emit returnPressed();
 }
 
 //////////////////////////////////
-//  iTextEditDialog		//
+//  iTextEditDialog             //
 //////////////////////////////////
 
 
@@ -270,7 +270,7 @@ void iTextEditDialog::init(bool readOnly_) {
   QRect rect(QApplication::desktop()->screenGeometry(0));
   int wd = (rect.width() * 3) / 4;
   int ht = (rect.height() * 3) / 4;
-  if(wd > 640) wd = 640; 	// don't make it too wide..
+  if(wd > 640) wd = 640;        // don't make it too wide..
   this->resize(wd, ht);
   QVBoxLayout* layOuter = new QVBoxLayout(this);
   txtText = new QTextEdit(this);
@@ -280,7 +280,7 @@ void iTextEditDialog::init(bool readOnly_) {
   layButtons->setSpacing(4);
   layOuter->addLayout(layButtons);
   layButtons->addStretch();
-  btnPrint = NULL;	      // really is silly..
+  btnPrint = NULL;            // really is silly..
 //   btnPrint = new QPushButton("&Print", this);
 //   layButtons->addWidget(btnPrint);
 //   layButtons->addSpacing(16);
@@ -304,7 +304,7 @@ void iTextEditDialog::init(bool readOnly_) {
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
   }
 }
- 
+
 iTextEditDialog::~iTextEditDialog() {
 }
 
