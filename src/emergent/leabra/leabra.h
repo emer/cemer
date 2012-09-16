@@ -3917,7 +3917,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
     non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
+	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
 	  thr_sub_e_rev_i);
 } 
 
@@ -3937,7 +3937,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
     non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a) /
+	   + u->gc.a * e_rev_sub_thr.a - u->adapt) /
 	  thr_sub_e_rev_i);
 } 
 
@@ -3953,20 +3953,20 @@ inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* n
 inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net) {
   // including the ga and gh terms and bias weights
   return ((u->net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
+	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
 	  thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
   // including the ga and gh terms -- only way to affect anything
   return ((u->gc.i * e_rev_sub_thr.i + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
+	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
 	  thr_sub_e_rev_e);
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
   float new_v_m = (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
-		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a)) / 
+		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a) - u->adapt) / 
 		  (u->net + u->gc.l + u->gc.i + u->gc.h + u->gc.a));
   return new_v_m;
 }
