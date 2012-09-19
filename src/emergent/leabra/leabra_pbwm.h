@@ -473,6 +473,7 @@ public:
 
   virtual void	Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // main routine that zeros out dwt for any units that should not learn on this trial -- finds the pfc deep layer and drives everything from there
+  virtual void  Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net);
 
   override void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
 
@@ -565,9 +566,6 @@ public:
     virtual void Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				      int gpidx,LeabraNetwork* net);
     // compute activation = maint_h for all units always
-    virtual void Compute_MaintActOnly_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-				      int gpidx,LeabraNetwork* net);
-    // compute activation = maint_h for all units always -- only act, not act_eq, act_nd -- for maint guys at postsettle_pre so it doesn't affect act_p state..
   virtual void 	Compute_MidMinusAct_ugp(LeabraLayer* lay,
 					Layer::AccessMode acc_md, int gpidx,
 					LeabraNetwork* net);
@@ -575,15 +573,19 @@ public:
   virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
   // compute the gating signal based on SNrThal layer activations -- each cycle during first minus phase
 
+  virtual void 	GateDeepPrjns(LeabraLayer* lay, LeabraNetwork* net, bool deep_on);
+  // control the strength of the PFC DEEP -> SUPER projection to only be active when gating signal has taken place
+
   virtual void 	Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net);
   // final gating at end of trial (phase_no == 1, PostSettle)
     virtual void Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
     // clear the non-maintaining stripes at end of trial
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)

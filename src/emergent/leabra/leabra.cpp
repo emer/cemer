@@ -261,6 +261,22 @@ bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
   return rval;
 }
 
+void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from) {
+  float savg = from->kwta.pct;
+  float from_sz = (float)from->units.leaves;
+  float n_cons = (float)recv_gp->size;
+  if(wt_scale.old) {
+    if(savg_cor.norm_con_n)       // this is default
+      recv_gp->scale_eff = wt_scale.NetScale() / (n_cons * savg);
+    else
+      recv_gp->scale_eff = wt_scale.NetScale() / (from_sz * savg);
+  }
+  else {                      // new way!
+    recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
+  }
+}
+
+
 void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if((int)net->learn_rule == (int)learn_rule) return;
   learn_rule = (LeabraConSpec::LearnRule)net->learn_rule;
@@ -1289,30 +1305,20 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   // possible dependence on recv_gp->size is why this cannot be computed in Projection
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    if(lay->lesioned() || !recv_gp->size)       continue;
+    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+    if(from->lesioned() || !recv_gp->size)       continue;
      // this is the normalization value: takes into account target activity of layer
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    WtScaleSpec& wt_scale = cs->wt_scale;
-    float savg = lay->kwta.pct;
-    float lay_sz = (float)lay->units.leaves;
-    float n_cons = (float)recv_gp->size;
-    if(wt_scale.old) {
+    cs->Compute_NetinScale(recv_gp, from);
+    if(cs->wt_scale.old)
       old_scaling = true; // any old = old..
-      if(cs->savg_cor.norm_con_n)       // this is default
-        recv_gp->scale_eff = wt_scale.NetScale() / (n_cons * savg);
-      else
-        recv_gp->scale_eff = wt_scale.NetScale() / (lay_sz * savg);
-    }
-    else {                      // new way!
-      recv_gp->scale_eff = wt_scale.FullScale(savg, lay_sz, n_cons);
-    }
+
     if(cs->inhib && !old_scaling) {
-      inhib_net_scale += wt_scale.rel;
+      inhib_net_scale += cs->wt_scale.rel;
     }
     else {
       n_active_cons++;
-      u->net_scale += wt_scale.rel;
+      u->net_scale += cs->wt_scale.rel;
     }
   }
   // add the bias weight into the netinput, scaled by 1/n
@@ -1327,8 +1333,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       Projection* prjn = (Projection*) recv_gp->prjn;
-      LeabraLayer* lay = (LeabraLayer*) prjn->from.ptr();
-      if(lay->lesioned() || !recv_gp->size)     continue;
+      LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)     continue;
       if(ff_bal.on && net->ct_cycle < net->mid_minus_cycle) { // before mid minus
         if(prjn->direction != Projection::FM_INPUT) {
           recv_gp->scale_eff = 0.0f; // turn off everything except feedforward!
@@ -1344,8 +1350,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   if(inhib_net_scale > 0.0f) {
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(lay->lesioned() || !recv_gp->size)     continue;
+      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)     continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(!cs->inhib) continue; // norm separately
       recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale

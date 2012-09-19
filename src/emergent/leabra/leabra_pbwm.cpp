@@ -1020,6 +1020,88 @@ void PFCsUnitSpec::Initialize() {
 void PFCsUnitSpec::Defaults_init() {
 }
 
+// this sets default wt scale from deep prjns to super to 0
+void PFCsUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
+  // NOTE: must keep this sync'd with one in leabra.cpp
+  // this is all receiver-based and done only at beginning of a trial
+  u->net_scale = 0.0f;  // total of scale values for this unit's inputs
+
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
+  PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
+
+  float inhib_net_scale = 0.0f;
+  int n_active_cons = 0;        // track this for bias weight scaling!
+  bool old_scaling = false;
+  // possible dependence on recv_gp->size is why this cannot be computed in Projection
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+    if(from->lesioned() || !recv_gp->size)       continue;
+     // this is the normalization value: takes into account target activity of layer
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    cs->Compute_NetinScale(recv_gp, from);
+    if(cs->wt_scale.old)
+      old_scaling = true; // any old = old..
+
+    // PBWM New part goes right here!
+    if(ls->pfc_layer == PFCLayerSpec::SUPER) {
+      if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
+	PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
+	if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
+	  recv_gp->scale_eff = 0.0f; // negate!!
+	}
+      }
+    }
+    // end new part
+
+    if(cs->inhib && !old_scaling) {
+      inhib_net_scale += cs->wt_scale.rel;
+    }
+    else {
+      n_active_cons++;
+      u->net_scale += cs->wt_scale.rel;
+    }
+  }
+  // add the bias weight into the netinput, scaled by 1/n
+  if(u->bias.size) {
+    LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
+    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+    if(u->n_recv_cons > 0)
+      u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
+  }
+  // now renormalize
+  if(u->net_scale > 0.0f) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      Projection* prjn = (Projection*) recv_gp->prjn;
+      LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)     continue;
+      if(ff_bal.on && net->ct_cycle < net->mid_minus_cycle) { // before mid minus
+        if(prjn->direction != Projection::FM_INPUT) {
+          recv_gp->scale_eff = 0.0f; // turn off everything except feedforward!
+          continue;
+        }
+      }
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(cs->inhib && !old_scaling) continue; // norm separately
+      recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
+    }
+  }
+  // separately normalize inhibitory connections
+  if(inhib_net_scale > 0.0f) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)     continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(!cs->inhib) continue; // norm separately
+      recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale
+    }
+  }
+}
+
 void PFCsUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   Compute_LearnMod(u, net);	// don't call dwt norm itself -- done for units that actually learn
 }
@@ -1028,36 +1110,22 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
   LeabraLayer* rlay = u->own_lay();
   if(rlay->lesioned()) return;
 
-  if(rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
-  // if we're the deep layer, then just bail
-
-  // first, find the deep pfc layer that we send to
-  PFCLayerSpec* dls = NULL;
-  LeabraLayer* dl = NULL;
-  for(int i=0; i< rlay->send_prjns.size; i++) {
-    Projection* prj = rlay->send_prjns[i];
-    LeabraLayer* play = (LeabraLayer*)prj->layer;
-    if(!play->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) continue;
-    dls = (PFCLayerSpec*)play->GetLayerSpec();
-    dl = play;
-    break;
-  }
-  if(TestWarning(!dls, "Compute_LearnMod", "PFC Deep layer spec not found, exiting"))
-    return;
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
+  PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
 
   // get my unit group index for accessing ungp data structures
   int rgpidx;
   int rui;
   rlay->UnGpIdxFmUnitIdx(u->idx, rui, rgpidx);
 
-  PBWMUnGpData* dlgpd = (PBWMUnGpData*)dl->ungp_data.SafeEl(rgpidx);
-  if(TestWarning(!dlgpd, "Compute_LearnMod", "PFC Deep layer unit group out of range", 
+  PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.SafeEl(rgpidx);
+  if(TestWarning(!gpd, "Compute_LearnMod", "PFC Deep layer unit group out of range", 
 		 String(rgpidx)))
     return;
 
-  bool learn_now = dlgpd->go_fired_trial || dlgpd->mnt_count > 0;
+  bool learn_now = gpd->go_fired_trial || gpd->mnt_count > 0;
 
-  if(learn_now || !dls->gate.learn_deep_act) {
+  if(learn_now || !ls->gate.learn_deep_act) {
     // just do norm and go on your way
     inherited::Compute_dWt_Norm(u, net, thread_no);
     return;
@@ -1447,18 +1515,6 @@ void PFCLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_
   }
 }
 
-void PFCLayerSpec::Compute_MaintActOnly_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-						int gpidx, LeabraNetwork* net) {
-  // activity is always just a literal copy of the maint_h
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int j=0;j<nunits;j++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-    if(u->lesioned()) continue;
-    u->act = u->maint_h;	// only update act, not act_eq -- for maint guys at end
-    u->da = 0.0f;
-  }
-}
-
 void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
 
@@ -1491,6 +1547,31 @@ void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Gating(lay, net);   // continuously during whole trial
   inherited::Compute_CycleStats(lay, net);
 }
+
+void PFCLayerSpec::GateDeepPrjns(LeabraLayer* lay, LeabraNetwork* net, bool deep_on) {
+  if(pfc_layer != SUPER) return;
+
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    if(deep_on) {
+      u->Compute_NetinScale(net,0);
+    }
+    else {
+      // todo: need a loop here...
+      // LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ecin_prjn_idx);
+      // if(!recv_gp) continue;
+      // if(!ecin_on)
+      //   recv_gp->scale_eff = 0.0f;
+    }
+  }
+  net->Compute_NetinScale_Senders(); // update senders!
+  net->DecayState(0.0f);               // need to re-send activations -- this triggers 
+}
+
+void PFCLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  // todo: not needed -- actually need to call gate deep guys at gating point!
+}
+
 
 void PFCLayerSpec::Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net) {
   if(pfc_type == MAINT) return;	// no clear
@@ -1525,8 +1606,8 @@ void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PFCLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle_Pre(lay, net);
+void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle(lay, net);
   if(net->phase_no == 1) {
     Compute_FinalGating(lay, net);     // final gating
   }
