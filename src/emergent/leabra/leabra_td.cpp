@@ -1024,7 +1024,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     lay->SetUnitType(&TA_LeabraTdUnit);
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda
-       && !laysp->InheritsFrom(&TA_PFCDeepLayerSpec)
+       && !laysp->InheritsFrom(&TA_PFCLayerSpec)
        && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);

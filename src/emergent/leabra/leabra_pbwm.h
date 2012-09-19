@@ -28,13 +28,12 @@ class LEABRA_API PBWMUnGpData : public LeabraUnGpData {
   // PBWM version of data to maintain for independent unit groups of competing units within a single layer -- contains extra information for PBWM state
 INHERITED(LeabraUnGpData)
 public:
-  bool		go_fired_now;	// #CAT_Activation has Go fired on this cycle?
+  bool		go_fired_now;	// #CAT_Activation has Go fired on this cycle?  only true for one cycle
   bool		go_fired_trial;	// #CAT_Activation has Go fired on this trial -- false until it fires
-  bool		go_fired_trial2;// #CAT_Activation has Go fired in late gating cohort -- only if snrtha.double_gate==true
   bool		go_forced;	// #CAT_Activation no other stripe had fired Go within the appropriate gating interval, so Go firing for this stripe was forced
   int		go_cycle;	// #CAT_Activation cycle on which Go fired, if it did on this trial (-1 if no Go)
-  int		mnt_count;	// #CAT_Activation current counter of number of trials in maint or empty state -- 0 = just cleared (empty) -- 1+ = maint for a trial or a more -- -1- = empty for a trial or more (was misc_state)
-  int		prv_mnt_count;	// #CAT_Activation previous counter of number of trials in maint or empty state, for the previous trial -- enables determination of whether a current Go signal was to a maintaining stripe (go_fired_trial && prv_mnt_count > 0) or an empty stripe (otherwise)
+  int		mnt_count;	// #CAT_Activation current counter of number of trials in maint or empty state -- 0 = gating just happened -- will only be true on trial when go_fired_trial is true -- 1+ = maint for a trial or a more (increments at start of each trial, 1 = trial right after gating, etc) -- -1- = empty for a trial or more (also increments at start of each trial)
+  int		prv_mnt_count;	// #CAT_Activation previous counter of number of trials in maint or empty state, just prior to last gating event (only updated at time of gating) -- enables determination of whether a current Go signal was to a maintaining stripe (go_fired_trial && prv_mnt_count > 0) or an empty stripe (otherwise)
 
   override void	Init_State();
 
@@ -56,14 +55,9 @@ class LEABRA_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
 public:
-  float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active within time frame will fire
-  int		min_go_cycle;	// below this number of cycles, cannot fire Go -- prevent premature go -- must be < network (mid_minus_cycle - go_b4_mid)
-  int		go_b4_mid;		// #DEF_0 how many cycles before mid_minus_cycle that a Go must occur if hasn't happened yet -- most active guy is chosen to go at this point
+  float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
+  int		gate_cycle; 		// cycle to compute gating signal on -- this is a fixed cycle count, which should be delayed enough to allow striatum to receive all the information it needs and neurons to get sufficiently activated, but also enough before the end of the minus phase to allow deep layer activations to produce whatever effects they might have
   bool		force;			// if nobody has fired by min_go_cycle, pick top unit by netin value (or at random if all netin == 0) to fire go
-  float		loser_gain;		// #DEF_0 how much of non-go unit activation seeps through for the gating activations -- this will affect learning in the corresponding Matrix stripes
-  float		nogo_gain;		// #DEF_0 multiplier on nogo activity values -- default is for all nogo competition to be managed in the Matrix layer, and not at all here in the SNrThal.  when this is set to 0, then 
-  float		leak;			// #DEF_0.2 #MIN_0 #CONDSHOW_OFF_nogo_gain:0 a leak-like term for the netinput computation -- just a constant added to the denominator in computing net input: go / (go + nogo + leak) -- only used when nogo_gain != 0 so not typically relevant
-  bool		act_is_gate;	// #DEF_true activation state is always equal to the value that was active at the time of actual gating (act_m2) -- this makes things clearer and can be important for some models that use snrthal activations as inputs to other processes
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -86,7 +80,7 @@ public:
     MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
     OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
 #ifndef __MAKETA__
-    MNT_OUT = MAINT | OUTPUT,	// #NO_BIT maint and output -- typical default
+    IN_MNT_OUT = INPUT | MAINT | OUTPUT,// #NO_BIT input maint and output -- typical default
 #endif
   };
 
@@ -99,16 +93,12 @@ public:
   virtual LeabraLayer* 	MatrixGoLayer(LeabraLayer* lay);
   // find the matrix go layer that projects into this snrthal layer
 
-  virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
-  // compute netinput as GO - NOGO on matrix layer
-  // hook for new netin goes here:
-  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
-
-  virtual void	Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net);
-  // compute act_eq reflecting the mutex on maint vs. output gating -- if the other has gated, then we turn our act_eq off to reflect that
-  // hook for gated acts goes here:
+  virtual void	Init_GateStats(LeabraLayer* lay, LeabraNetwork* net);
+  // initialize the gating stats in the group data -- called by Trial_Init_Layer
+  virtual void	Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net);
+  // compute gating activations -- called at gate_cycle
   virtual void	Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net);
-  // update layer user data gating statistics which are useful to monitor for overall performance -- happens at max_go_cycle
+  // update layer user data gating statistics which are useful to monitor for overall performance -- called at gate_cycle
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
@@ -357,6 +347,7 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		nogo_inhib;	// #DEF_0.2 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- nogo stripe average activation times this factor adds directly to gc.i inhibition in go units
+  float		refract_inhib;	// #MIN_0 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
   float		go_pfc_thr;	// #DEF_0:0.02 threshold on average activity within the corresponding PFC_s stripe before a Go pathway stripe can fire -- requires that matrix recv from PFC_s in first place -- avoids having to implement this constraint in connectivity
 
@@ -499,7 +490,10 @@ class LEABRA_API PFCGateSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
-  float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much does maintenance activation decay every trial?
+  int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
+  int		out_mnt;	// #DEF_1 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
+  float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
+  float		maint_thr;	// #DEF_0.2 #MIN_0 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -513,8 +507,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API PFCDeepLayerSpec : public LeabraLayerSpec {
-  // Prefrontal cortex deep layer -- receives one-to-one prjn from superficial PFC layer (must be first prjn -- can be any type of layerspec), and from SNrThalLayerSpec -- does gating
+class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
+  // #AKA_PFCDeepLayerSpec Prefrontal cortex layer -- deep and superficial types
 INHERITED(LeabraLayerSpec)
 public:
   enum MaintUpdtAct {
@@ -524,16 +518,24 @@ public:
   };
 
   enum PFCType {
-    INPUT,			// processes input stimuli, gating signal indicates that they are task relevant and activates deep layers, but activity is transient for trial only -- no sustained maintenance (gc.h cleared at end of trial)
-    MAINT,			// gating signal drives sustained maintenance in deep layers -- can recv from INPUT or directly from input layers
-    OUTPUT,			// gating signal drives transient deep layer activation as an output signal (gc.h cleared at end of trial)
+    INPUT,			// processes input stimuli, gating signal indicates that they are task relevant and activates deep layers, but activity is transient for one following trial only
+    MAINT,			// receives from input PFC, gating signal drives sustained maintenance 
+    OUTPUT,			// gating signal drives transient deep layer activation as an output signal, activity is transient for one following trial only
+  };
+
+  enum PFCLayer {
+    SUPER,			// superficial layer -- activations are labile until trial after gating event, when they get locked into maintenance for at least one trial
+    DEEP,			// deep layer -- not active at all until the trial when gating occurs -- after gating during that trial they track superficial, and then after that are locked into maintenance 
   };
 
   PFCType	pfc_type;    	// type of this particular PFC layer -- INPUT, MAINT, OUTPUT
+  PFCLayer	pfc_layer;	// which layer type is this -- superficial (SUPER) or deep (DEEP)?
+
   SNrThalLayerSpec::GatingTypes	gating_types;	// full set of types of gating units present in associated Matrix and SNrThal layers -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
 
-
+  virtual LeabraLayer* 	DeepLayer(LeabraLayer* lay);
+  // find the DEEP layer for this SUPER layer
   virtual LeabraLayer* 	SNrThalLayer(LeabraLayer* lay);
   // find the SNrThal layer that this pfc deep layer receives from
   virtual LeabraLayer* 	LVeLayer(LeabraLayer* lay);
@@ -577,10 +579,6 @@ public:
   // final gating at end of trial (phase_no == 1, PostSettle)
     virtual void Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
     // clear the non-maintaining stripes at end of trial
-    virtual void Compute_FinalGating_LV(LeabraLayer* lay, LeabraNetwork* net);
-    // final gating at end of trial (phase_no == 1, PostSettle) -- lv layer updates
-    virtual void Compute_FinalGating_DA(LeabraLayer* lay, LeabraNetwork* net);
-    // final gating at end of trial (phase_no == 1, PostSettle) -- da updates
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
@@ -600,7 +598,7 @@ public:
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_SIMPLE_BASEFUNS(PFCDeepLayerSpec);
+  TA_SIMPLE_BASEFUNS(PFCLayerSpec);
 protected:
   SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl();
@@ -610,6 +608,7 @@ private:
   void	Destroy()		{ CutLinks(); }
   void	Defaults_init();
 };
+
 
 //////////////////////////////////////////
 //	    Special PrjnSpecs	 	//

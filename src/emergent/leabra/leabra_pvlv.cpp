@@ -1276,7 +1276,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
        lay != lvi && lay != nv && lay != vta
-       && !laysp->InheritsFrom(&TA_PFCDeepLayerSpec)
+       && !laysp->InheritsFrom(&TA_PFCLayerSpec)
        && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);

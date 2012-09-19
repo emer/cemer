@@ -3985,7 +3985,7 @@ public:
     INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
     MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
     OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
-    MNT_OUT = 0x06,		// #NO_BIT maint and output -- typical default
+    IN_MNT_OUT = 0x07,		// #NO_BIT maint and output -- typical default
   };
 
   override bool StdNetwork();
@@ -4016,14 +4016,14 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, GatingTypes gating_types = MNT_OUT,
+  virtual bool 	PBWM(LeabraNetwork* net, GatingTypes gating_types = IN_MNT_OUT,
 		     bool da_mod_all = false, int n_stripes=9, bool pfc_learns=true);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool pfc_learns=true);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual bool PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types = MNT_OUT,
+  virtual bool PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types = IN_MNT_OUT,
 				int n_stripes=9, int n_units=-1,
 				int gp_geom_x=-1, int gp_geom_y=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
