@@ -9570,11 +9570,17 @@ void iSearchDialog::End()
 
 void iSearchDialog::Render()
 {
+  // If the dialog isn't visible because the user clicked the close button
+  // or hit escape to cancel the search, don't bother showing any results.
+  if (!isVisible()) {
+    return;
+  }
+
   // If thousands of results, or if stop was clicked and hundreds of results,
   // ask the user if they really want to display them all, since it may take
   // a while to render all rows as HTML.
   int num_rows_to_render = m_items.rows;
-  if (num_rows_to_render > 1000 || (m_stop && num_rows_to_render > 100)) {
+  if (num_rows_to_render > 1000 || (m_stop && num_rows_to_render > 50)) {
     int choice = taMisc::Choice(
       "Warning: There are " + taString(num_rows_to_render) + " results.\n"
       "Displaying them all may be very slow.\n\n"
