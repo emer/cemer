@@ -88,12 +88,6 @@ public:
   int			n_in_out_stripes; // number of input/output stripes -- maint stripes MUST be some multiple of this number
   SNrThalMiscSpec	snrthal;    	// misc specs for snrthal layer
 
-
-  virtual LeabraLayer* 	MatrixNoGoLayer(LeabraLayer* lay);
-  // find the matrix nogo layer that projects into this snrthal layer
-  virtual LeabraLayer* 	MatrixGoLayer(LeabraLayer* lay);
-  // find the matrix go layer that projects into this snrthal layer
-
   virtual void	Init_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // initialize the gating stats in the group data -- called by Trial_Init_Layer
   virtual void	Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net);
@@ -116,9 +110,11 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
 
-  static void	GatingTypesNStripes(GatingTypes gat_typs, int n_stripes_total, int& n_types,
-				    int& n_in, int& n_mnt, int& n_out);
-  // get the number of stripes associated with each gating type, given a total number of stripes in matrisome complex (i.e., number of units in SNrThal layer, or number of unit groups in matrix layer) -- assumes that equal numbers of stripes are associated with each type!
+  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out);
+  // get the number of stripes associated with each gating type, based on matrix projections into the snrthal layer -- also updates the gating_types to reflect actual connectivity
+  virtual int  SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type, 
+			       int& n_in, int& n_mnt, int& n_out);
+  // returns the starting index for a given gating type within the SNrThal, and also returns the number of each type of stripe.  returns -1 if snrthal does not have that kind of stripe
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
@@ -395,7 +391,7 @@ public:
   };
 
   GoNoGo		go_nogo; 	// is this a Go pathway or a NoGo pathway layer
-  SNrThalLayerSpec::GatingTypes		gating_types;	// types of gating units present within this Matrix layer -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
+  SNrThalLayerSpec::GatingTypes		gating_type;	// type of gating units present within this Matrix layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
@@ -518,21 +514,13 @@ public:
     DECAY,			// decay current maintenance currents
   };
 
-  enum PFCType {
-    INPUT,			// processes input stimuli, gating signal indicates that they are task relevant and activates deep layers, but activity is transient for one following trial only
-    MAINT,			// receives from input PFC, gating signal drives sustained maintenance 
-    OUTPUT,			// gating signal drives transient deep layer activation as an output signal, activity is transient for one following trial only
-  };
-
   enum PFCLayer {
     SUPER,			// superficial layer -- activations are labile until trial after gating event, when they get locked into maintenance for at least one trial
     DEEP,			// deep layer -- not active at all until the trial when gating occurs -- after gating during that trial they track superficial, and then after that are locked into maintenance 
   };
 
-  PFCType	pfc_type;    	// type of this particular PFC layer -- INPUT, MAINT, OUTPUT
+  SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
   PFCLayer	pfc_layer;	// which layer type is this -- superficial (SUPER) or deep (DEEP)?
-
-  SNrThalLayerSpec::GatingTypes	gating_types;	// full set of types of gating units present in associated Matrix and SNrThal layers -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
 
   virtual LeabraLayer* 	DeepLayer(LeabraLayer* lay);
@@ -543,13 +531,9 @@ public:
   // find the LVe layer that this pfc deep layer projects to
   virtual LeabraLayer* 	LViLayer(LeabraLayer* lay);
   // find the LVi layer that this pfc deep layer projects to
-  virtual LeabraLayer* 	MatrixGoLayer(LeabraLayer* lay);
-  // find the matrix Go layer that drives updating in this layer
-  virtual LeabraLayer* 	MatrixNoGoLayer(LeabraLayer* lay);
-  // find the matrix NoGo layer that drives updating in this layer
 
-  virtual LeabraLayer*  Compute_SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-						int& n_types, int& n_in, int& n_mnt, int& n_out);
+  virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
+					int& n_in, int& n_mnt, int& n_out);
   // get the starting index for this set of pfc stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no=-1);
@@ -656,28 +640,13 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API SNrToPFCPrjnSpec : public GpCustomPrjnSpecBase {
-  // SNrThal to PFCDeep projection -- automatically self-configures group one-to-one projections based on INPUT, MAINT, OUTPUT order of stripes in SNrThal to PFC Deep -- recv layer must be pfc deep, and send must be snrthal
+class LEABRA_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
+  // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, MAINT, OUTPUT) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
 public:
   void	Connect_impl(Projection* prjn);
 
-  TA_BASEFUNS_NOCOPY(SNrToPFCPrjnSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize()		{ };
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-class LEABRA_API PFCdToNoGoPrjnSpec : public GpCustomPrjnSpecBase {
-  // PFC deep to Matrix NoGo projection -- automatically self-configures group one-to-one projections based on INPUT, MAINT, OUTPUT order of stripes -- recv layer must be Matrix NoGo, and send must be PFC_deep (mnt, out, etc)
-INHERITED(GpCustomPrjnSpecBase)
-public:
-  void	Connect_impl(Projection* prjn);
-
-  TA_BASEFUNS_NOCOPY(PFCdToNoGoPrjnSpec);
+  TA_BASEFUNS_NOCOPY(SNrPrjnSpec);
 protected:
   SPEC_DEFAULTS;
 private:

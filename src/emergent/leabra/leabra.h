@@ -3970,14 +3970,6 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
-    NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
-    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
-    MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
-    OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
-    IN_MNT_OUT = 0x07,		// #NO_BIT input maint and output -- typical default
-  };
-
   override bool StdNetwork();
   override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
@@ -4006,18 +3998,19 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, int in_out_stripes = 3, int mnt_stripes_x = 3,
-		     GatingTypes gating_types = IN_MNT_OUT, bool da_mod_all = false,
+  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 3, int mnt_stripes = 9,
+		     int out_stripes = 3, bool da_mod_all = false,
 		     bool pfc_learns=true);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; in_out_stripes = number of input and output stripes -- this should correspond to number of independent elements that need to be encoded at any given time; mnt_stripes_x = multiplier on in_out_stripes for total number of maintenance stripes (typically larger than in/out by some factor, to allow for exlporation of different maintenance policies);  gating_types = which types of gating stripes to create -- input and maint are strongly recommended, output is more optional;  da_mod_all = have da value modulate all the regular units in the network;  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating (0 = do not create that type of gating pathway);  da_mod_all = have da value modulate all the regular units in the network;  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool pfc_learns=true);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int in_out_stripes = 3,
-				int mnt_stripes_x = 3, int n_units=-1,
-				int gp_geom_x=-1, int gp_geom_y=-1);
-  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers: in_out_stripes = number of input and output stripes -- this should correspond to number of independent elements that need to be encoded at any given time; mnt_stripes_x = multiplier on in_out_stripes for total number of maintenance stripes (typically larger than in/out by some factor, to allow for exlporation of different maintenance policies);  (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
+  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int in_stripes = 3,
+				int mnt_stripes = 9, int out_stripes = 3,
+				int n_matrix_units=-1, int n_pfc_units=-1);
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) for each different type of gating pathway in the network, and number of units per unit group in matrix and pfc (-1 = use current # of units)
+
   virtual bool PBWM_Remove(LeabraNetwork* net);
   // #MENU_BUTTON remove all the PBWM (and PVLV) specific items from the network (specs and layers) -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups
 
