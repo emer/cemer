@@ -9570,6 +9570,31 @@ void iSearchDialog::End()
 
 void iSearchDialog::Render()
 {
+  // If thousands of results, or if stop was clicked and hundreds of results,
+  // ask the user if they really want to display them all, since it may take
+  // a while to render all rows as HTML.
+  int num_rows_to_render = m_items.rows;
+  if (num_rows_to_render > 1000 || (m_stop && num_rows_to_render > 100)) {
+    int choice = taMisc::Choice(
+      "Warning: There are " + taString(num_rows_to_render) + " results.\n"
+      "Displaying them all may be very slow.\n\n"
+      "How many would you like to see?",
+      "&None",
+      "&20",
+      num_rows_to_render >= 120 ? "&100" : 0,
+      num_rows_to_render >= 600 ? "&500" : 0,
+      "&All (be patient)");
+    int limit = 0;
+    switch (choice) {
+      case 0:              break;
+      case 1: limit = 20;  break;
+      case 2: limit = 100; break;
+      case 3: limit = 500; break;
+      case 4: limit = num_rows_to_render; break;
+    }
+    num_rows_to_render = min(num_rows_to_render, limit);
+  }
+
   taMisc::Busy(true);
   if (m_sorts[0] != -1) {
     m_items.Sort(m_sorts[0], true, m_sorts[1],
@@ -9588,7 +9613,7 @@ void iSearchDialog::Render()
   if (m_sorts[0] == col_path) src += "path";
   else src += "<a href=sort:" + String(col_path) + ">path</a>";
   src += "</th></tr>\n";
-  for (int i = 0; i < m_items.rows; ++i) {
+  for (int i = 0; i < num_rows_to_render; ++i) {
     int level = m_items.GetValAsInt(col_level, i);
     String headline =  m_items.GetValAsString(col_headline, i);
     String href =  m_items.GetValAsString(col_href, i);
