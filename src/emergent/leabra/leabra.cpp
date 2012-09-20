@@ -2930,12 +2930,23 @@ void KWTASpec::Initialize() {
   pat_q = .2f;
   diff_act_pct = false;
   act_pct = .1f;
+
+  // note: legacy obsolete remove later (9/19/12, v.6.0.2)
   gp_i = false;
-  gp_g = .5f;
+  gp_g = 0.0f;
 }
 
 void KWTASpec::Defaults_init() {
   pat_q = .5f;
+}
+
+void GpInhibSpec::Initialize() {
+  on = false;
+  gp_g = 0.5f;
+}
+
+void GpInhibSpec::Defaults_init() {
+  // no sensible defaults
 }
 
 void KwtaTieBreak::Initialize() {
@@ -3011,10 +3022,6 @@ void LayAbsNetAdaptSpec::Defaults_init() {
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   inhib_group = ENTIRE_LAYER;
-
-  old_compute_i = KWTA_INHIB;
-  old_i_kwta_pt = -1.0f;
-  old_gp_i_pt = -1.0f;
 }
 
 void LeabraLayerSpec::Defaults_init() {
@@ -3024,14 +3031,18 @@ void LeabraLayerSpec::Defaults_init() {
 void LeabraLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if(old_gp_i_pt != -1.0f) {    // convert from old
-    if(GetUnique("compute_i") || GetUnique("i_kwta_pt") || GetUnique("gp_i_pt")) {
-      SetUnique("inhib", true);
-    }
-    inhib.type = (LeabraInhibSpec::InhibType)old_compute_i;
-    inhib.kwta_pt = old_i_kwta_pt;
-    inhib.gp_pt = old_gp_i_pt;
-    old_gp_i_pt = -1.0f;        // negatroid
+  if(kwta.gp_i) {		// update from obsolete
+    lay_gp_inhib.on = true;
+    lay_gp_inhib.gp_g = kwta.gp_g;
+    kwta.gp_i = false;
+    kwta.gp_g = 0.0f;
+  }
+
+  if(gp_kwta.gp_i) {		// update from obsolete
+    unit_gp_inhib.on = true;
+    unit_gp_inhib.gp_g = gp_kwta.gp_g;
+    gp_kwta.gp_i = false;
+    gp_kwta.gp_g = 0.0f;
   }
 }
 
@@ -3575,8 +3586,8 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
         Compute_Inhib_impl(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net, inhib);
         float gp_g_i = gpd->i_val.g_i;
-        if(gp_kwta.gp_i)
-          gp_g_i *= gp_kwta.gp_g;
+        if(unit_gp_inhib.on)
+          gp_g_i *= unit_gp_inhib.gp_g;
         lay->i_val.g_i = MAX(lay->i_val.g_i, gp_g_i);
       }
     }
@@ -4072,7 +4083,7 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
     }
   }
   else if(inhib_group == UNIT_GROUPS) {
-    if(gp_kwta.gp_i) {  // linking groups: get max from layer
+    if(unit_gp_inhib.on) {  // linking groups: get max from layer
       for(int g=0; g < lay->gp_geom.n; g++) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
         gpd->i_val.gp_g_i = lay->i_val.g_i;
@@ -6188,7 +6199,7 @@ void LeabraNetwork::Compute_Inhib() {
     lay->Compute_Inhib(this);
     if(!do_lay_gp) {
       LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-      if(laysp->kwta.gp_i) do_lay_gp = true;
+      if(laysp->lay_gp_inhib.on) do_lay_gp = true;
     }
   }
   if(layers.gp.size == 0) do_lay_gp = false; // now override anything
@@ -6199,18 +6210,16 @@ void LeabraNetwork::Compute_Inhib() {
       for(int li = 0; li < lg->size; li++) {
         LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
         LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-        if(lay->lesioned() || !laysp->kwta.gp_i) continue;
-        float lay_val = laysp->kwta.gp_g * lay->i_val.g_i;
+        if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
+        float lay_val = laysp->lay_gp_inhib.gp_g * lay->i_val.g_i;
         lay_gp_g_i = MAX(lay_val, lay_gp_g_i);
       }
       if(lay_gp_g_i > 0.0f) {   // actually got something
         for(int li = 0; li < lg->size; li++) {
           LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
           LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-          if(lay->lesioned() || !laysp->kwta.gp_i) continue;
+          if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
           lay->i_val.gp_g_i = lay_gp_g_i;
-          if(laysp->kwta.gp_g > 1.0)
-            lay->i_val.gp_g_i /= laysp->kwta.gp_g; // if > 1, need to renorm otherwise its own inhib will cancel itself out!!
           lay->i_val.g_i = MAX(lay->i_val.gp_g_i, lay->i_val.g_i);
 
           if(lay->unit_groups) {

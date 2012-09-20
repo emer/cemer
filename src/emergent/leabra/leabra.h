@@ -1815,12 +1815,32 @@ public:
   float		pat_q;		// #CONDSHOW_ON_k_from:USE_PAT_K #DEF_0.2;0.5 threshold for pat_k based activity level: add to k if ext > pat_q
   bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for overall layer activation
   float		act_pct;	// #CONDSHOW_ON_diff_act_pct actual percent activity to put in kwta.pct field of layer
-  bool		gp_i;		// compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value
-  float		gp_g;		// #CONDSHOW_ON_gp_i how much this item (layer or unit group) contributes to the pooled layer group values
+
+  // following are obsolete legacy parameters that have moved to GpInhibSpec
+  bool		gp_i;		// #NO_SAVE #HIDDEN #READ_ONLY obsolete legacy parameter that has moved to GpInhibSpec
+  float		gp_g;		// #NO_SAVE #HIDDEN #READ_ONLY obsolete legacy parameter that has moved to GpInhibSpec
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(KWTASpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+class LEABRA_API GpInhibSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among groups (either layers within a layer group or unit groups within a layer, both of which can operate according to different settings) -- each item's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value is then a MAX of the individual original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak items (layers or unit groups) to drop out
+INHERITED(SpecMemberBase)
+public:
+  bool		on;		// compute grouped inhibition at the level specified (layers or unit groups within layers)
+  float		gp_g;		// #CONDSHOW_ON_on #MIN_0 #MAX_1 how much this item (layer or unit group) contributes to the pooled group-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(GpInhibSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -1976,28 +1996,16 @@ public:
 
   InhibGroup	inhib_group;	// #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
   LeabraInhibSpec inhib;	// #CAT_Activation how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer
-  KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
-  KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  KWTASpec	kwta;		// #CONDSHOW_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  KWTASpec	gp_kwta;	// #CONDSHOW_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  GpInhibSpec	lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
+  GpInhibSpec	unit_gp_inhib;	// #CAT_Activation #CONDSHOW_ON_inhib_group:UNIT_GROUPS pooling of inhibition across unit groups within layers -- only applicable if the layer actually has unit groups -- each unit group's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given unit group is then a MAX of the individual unit group's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak unit groups to drop out
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
   AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
   CtLayerInhibMod  ct_inhib_mod; // layer-level inhibitory modulation parameters, to be used instead of network-level values where needed
   LayAbsNetAdaptSpec abs_net_adapt; // #CAT_Learning adapt absolute netinput values (must call AbsRelNetin functions, and AdaptAbsNetin)
-
-  // old parameters that have been moved into LeabraInhibSpec: only for converting old projects!
-  enum Compute_I {		// legacy conversion inhib compute enum -- keep sync'd with LeabraInhibSpec!!
-    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
-    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
-    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std for non-gelin -- doesn't seem to work as well for gelin and is thus somewhat deprecated
-    KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
-    AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
-    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
-    UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
-  };
-  Compute_I	old_compute_i;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_compute_i how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
-  float		old_i_kwta_pt;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_i_kwta_pt point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
-  float		old_gp_i_pt;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_gp_i_pt for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -3962,12 +3970,12 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  enum GatingTypes {		// #BITS types of gating stripes and associated pfc layers to create
+  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
     NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
     INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
     MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
     OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
-    IN_MNT_OUT = 0x07,		// #NO_BIT maint and output -- typical default
+    IN_MNT_OUT = 0x07,		// #NO_BIT input maint and output -- typical default
   };
 
   override bool StdNetwork();
@@ -3998,17 +4006,18 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, GatingTypes gating_types = IN_MNT_OUT,
-		     bool da_mod_all = false, int n_stripes=9, bool pfc_learns=true);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
+  virtual bool 	PBWM(LeabraNetwork* net, int in_out_stripes = 3, int mnt_stripes_x = 3,
+		     GatingTypes gating_types = IN_MNT_OUT, bool da_mod_all = false,
+		     bool pfc_learns=true);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; in_out_stripes = number of input and output stripes -- this should correspond to number of independent elements that need to be encoded at any given time; mnt_stripes_x = multiplier on in_out_stripes for total number of maintenance stripes (typically larger than in/out by some factor, to allow for exlporation of different maintenance policies);  gating_types = which types of gating stripes to create -- input and maint are strongly recommended, output is more optional;  da_mod_all = have da value modulate all the regular units in the network;  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool pfc_learns=true);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual bool PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types = IN_MNT_OUT,
-				int n_stripes=9, int n_units=-1,
+  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int in_out_stripes = 3,
+				int mnt_stripes_x = 3, int n_units=-1,
 				int gp_geom_x=-1, int gp_geom_y=-1);
-  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers: in_out_stripes = number of input and output stripes -- this should correspond to number of independent elements that need to be encoded at any given time; mnt_stripes_x = multiplier on in_out_stripes for total number of maintenance stripes (typically larger than in/out by some factor, to allow for exlporation of different maintenance policies);  (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
   virtual bool PBWM_Remove(LeabraNetwork* net);
   // #MENU_BUTTON remove all the PBWM (and PVLV) specific items from the network (specs and layers) -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups
 

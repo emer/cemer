@@ -155,19 +155,14 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // must have the appropriate ranges for unit specs..
   //  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
+  // todo: this all needs to check for multiple types etc
+
   LeabraLayer* go_lay = NULL;
-  LeabraLayer* nogo_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) nogo_lay = fmlay;
-      // todo: should NOT recv any other marker cons!
-    }
-    else {
-      if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) go_lay = fmlay;
-    }
+    if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) go_lay = fmlay;
   }
 
   if(lay->CheckError(go_lay == NULL, quiet, rval,
@@ -175,11 +170,13 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(go_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                "MatrixLayer unit groups must = SNrThalLayer unit groups!")) {
-    lay->unit_groups = true;
-    lay->gp_geom.n = go_lay->gp_geom.n;
-  }
+  // nope..  we need 
+
+  // if(lay->CheckError(go_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+  //               "MatrixLayer unit groups must = SNrThalLayer unit groups!")) {
+  //   lay->unit_groups = true;
+  //   lay->gp_geom.n = go_lay->gp_geom.n;
+  // }
 
   return true;
 }
@@ -609,8 +606,10 @@ void MatrixLayerSpec::Defaults_init() {
   //  SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_PCT;
   gp_kwta.pct = 0.25f;
-  gp_kwta.gp_i = true;
-  gp_kwta.gp_g = 1.0f;
+  unit_gp_inhib.on = true;
+  unit_gp_inhib.gp_g = 1.0f;
+  lay_gp_inhib.on = true;
+  lay_gp_inhib.gp_g = 1.0f;
 
   //  SetUnique("tie_brk", true);        // turn on tie breaking by default
   tie_brk.on = false;
@@ -1168,10 +1167,11 @@ void PFCLayerSpec::Defaults_init() {
   // SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
   gp_kwta.pct = 0.15f;
-  gp_kwta.gp_i = true;
-  gp_kwta.gp_g = 1.0f;
   gp_kwta.diff_act_pct = true;
-  gp_kwta.act_pct = 0.02f;
+  gp_kwta.act_pct = 0.05f; // s = 0.05, d = 0.02
+
+  unit_gp_inhib.on = true;
+  unit_gp_inhib.gp_g = 1.0f;
 
   // SetUnique("decay", true);
   decay.event = 0.0f;
@@ -3154,71 +3154,75 @@ static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
   lay_set_geom(lay, n_stripes, n_units, sp, gp_geom_x, gp_geom_y);
 }
 
-// NOTE: Perhaps ideally, would have multiple n_stripes vars for as many PFC layer roles as used
-//       For now, simply use same number for each role, then user can customize, if desired
-bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types,
-				    int n_stripes, int n_units,
-                                    int gp_geom_x, int gp_geom_y) {
-  if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
-    return false;
-
-  // this is called as a subroutine a lot too so don't save here -- could do impl but
-  // not really worth it..
-//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-//   if(proj) {
-//     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
-//   }
-
-  set_n_stripes(net, "PFCs_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFCd_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFCs_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFCd_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFCs_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-  set_n_stripes(net, "PFCd_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
-
-  // matrix layers need to preserve x dimension of pfc stripe geometry
-  TwoDCoord pfc_geom;
-
-  if(gp_geom_x > 0 && gp_geom_y > 0) {
-      pfc_geom.x = gp_geom_x;
-      pfc_geom.y = gp_geom_y;
-  }
-  else {
-    if(n_stripes <= 5 || n_stripes == 7 || n_stripes == 11 || n_stripes >= 13) {
-      pfc_geom.x = n_stripes;
-      pfc_geom.y = 1;
-    }
-    else{
-      if(n_stripes == 6 || n_stripes == 8 || n_stripes == 10) {
-        pfc_geom.x = n_stripes / 2;
-        pfc_geom.y = 2;
-      }
-      else {
-        if(n_stripes == 9 || n_stripes == 12) {
-          pfc_geom.x = n_stripes / 3;
-          pfc_geom.y = 3;
-        }
-      }
-    }
-  }
-
-  int n_types, n_in, n_mnt, n_out;
-  SNrThalLayerSpec::GatingTypesNStripes((SNrThalLayerSpec::GatingTypes)gating_types, 24, // just care about n_types
-					n_types, n_in, n_mnt, n_out);
-  // Matrix_Go, _NoGo, SNrThal have as many stripes as TOTAL for all PFCd layers
-  int tot_stripes = n_types * n_stripes;
-  set_n_stripes(net, "Matrix_Go",   tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
-  set_n_stripes(net, "Matrix_NoGo", tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
-  set_n_stripes(net, "SNrThal", tot_stripes, -1, false, pfc_geom.x, n_types * pfc_geom.y);
-
-  set_n_stripes(net, "LVe", 1, -1, false, 1, 1);
-  set_n_stripes(net, "LVi", 1, -1, false, 1, 1);
-  net->Build();
+bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork*, int, int, int, int, int) {
   return true;
 }
 
-bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
-			bool da_mod_all, int n_stripes, bool pfc_learns) {
+// NOTE: Perhaps ideally, would have multiple n_stripes vars for as many PFC layer roles as used
+//       For now, simply use same number for each role, then user can customize, if desired
+// bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, GatingTypes gating_types,
+// 				    int n_stripes, int n_units,
+//                                     int gp_geom_x, int gp_geom_y) {
+//   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
+//     return false;
+
+//   // this is called as a subroutine a lot too so don't save here -- could do impl but
+//   // not really worth it..
+// //   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+// //   if(proj) {
+// //     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
+// //   }
+
+//   set_n_stripes(net, "PFCs_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+//   set_n_stripes(net, "PFCd_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+//   set_n_stripes(net, "PFCs_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+//   set_n_stripes(net, "PFCd_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+//   set_n_stripes(net, "PFCs_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+//   set_n_stripes(net, "PFCd_in",  n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+
+//   // matrix layers need to preserve x dimension of pfc stripe geometry
+//   TwoDCoord pfc_geom;
+
+//   if(gp_geom_x > 0 && gp_geom_y > 0) {
+//       pfc_geom.x = gp_geom_x;
+//       pfc_geom.y = gp_geom_y;
+//   }
+//   else {
+//     if(n_stripes <= 5 || n_stripes == 7 || n_stripes == 11 || n_stripes >= 13) {
+//       pfc_geom.x = n_stripes;
+//       pfc_geom.y = 1;
+//     }
+//     else{
+//       if(n_stripes == 6 || n_stripes == 8 || n_stripes == 10) {
+//         pfc_geom.x = n_stripes / 2;
+//         pfc_geom.y = 2;
+//       }
+//       else {
+//         if(n_stripes == 9 || n_stripes == 12) {
+//           pfc_geom.x = n_stripes / 3;
+//           pfc_geom.y = 3;
+//         }
+//       }
+//     }
+//   }
+
+//   int n_types, n_in, n_mnt, n_out;
+//   SNrThalLayerSpec::GatingTypesNStripes((SNrThalLayerSpec::GatingTypes)gating_types, 24, // just care about n_types
+// 					n_types, n_in, n_mnt, n_out);
+//   // Matrix_Go, _NoGo, SNrThal have as many stripes as TOTAL for all PFCd layers
+//   int tot_stripes = n_types * n_stripes;
+//   set_n_stripes(net, "Matrix_Go",   tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
+//   set_n_stripes(net, "Matrix_NoGo", tot_stripes, -1, true, pfc_geom.x, n_types * pfc_geom.y);
+//   set_n_stripes(net, "SNrThal", tot_stripes, -1, false, pfc_geom.x, n_types * pfc_geom.y);
+
+//   set_n_stripes(net, "LVe", 1, -1, false, 1, 1);
+//   set_n_stripes(net, "LVi", 1, -1, false, 1, 1);
+//   net->Build();
+//   return true;
+// }
+
+bool LeabraWizard::PBWM(LeabraNetwork* net, int in_out_stripes, int mnt_stripes_x,
+			GatingTypes gating_types, bool da_mod_all, bool pfc_learns) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -3271,12 +3275,18 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   if(!rew_targ_lay || !lve || !pve || !pvi || !vta) return false;
 
   bool new_pbwm_laygp = false;
-  Layer_Group* pbwm_laygp = net->FindMakeLayerGroup("PBWM", NULL, new_pbwm_laygp);
+  Layer_Group* pbwm_laygp_go = NULL;
+  Layer_Group* pbwm_laygp_nogo = NULL;
+  Layer_Group* pbwm_laygp_pfc = NULL;
 
-  // if not new layers, don't make prjns into them!
-  bool matrix_go_new =   false; bool pfc_s_mnt_new = false; bool pfc_d_mnt_new = false;
-  bool matrix_nogo_new = false; bool pfc_s_out_new = false; bool pfc_d_out_new = false;
-  bool snrthal_new =     false; bool pfc_s_in_new =  false; bool pfc_d_in_new =  false;
+  pbwm_laygp_go = net->FindMakeLayerGroup("PBWM_Go", NULL, new_pbwm_laygp);
+  pbwm_laygp_nogo = net->FindMakeLayerGroup("PBWM_NoGo", NULL, new_pbwm_laygp);
+  pbwm_laygp_pfc = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pbwm_laygp);
+
+  // new gets full update, otherwise more just params
+  bool matrix_new =   false; 
+  bool pfc_new = false; 
+  bool snrthal_new =     false; 
 
   LeabraLayer* pfc_s_mnt = NULL;
   LeabraLayer* pfc_d_mnt = NULL;
@@ -3285,26 +3295,43 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   LeabraLayer* pfc_s_in = NULL;
   LeabraLayer* pfc_d_in = NULL;
 
-  LeabraLayer* matrix_go = NULL;
-  LeabraLayer* matrix_nogo = NULL;
+  LeabraLayer* matrix_go_in = NULL;
+  LeabraLayer* matrix_go_mnt = NULL;
+  LeabraLayer* matrix_go_out = NULL;
+  LeabraLayer* matrix_nogo_in = NULL;
+  LeabraLayer* matrix_nogo_mnt = NULL;
+  LeabraLayer* matrix_nogo_out = NULL;
   LeabraLayer* snrthal = NULL;
 
-  matrix_go = (LeabraLayer*)pbwm_laygp->FindMakeLayer("Matrix_Go", NULL, matrix_go_new, "Matrix");
-  matrix_nogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("Matrix_NoGo", NULL, matrix_nogo_new);
-  snrthal = (LeabraLayer*)pbwm_laygp->FindMakeLayer("SNrThal", NULL, snrthal_new, "SNrThal");
-
   if(gating_types & INPUT) {
-    pfc_s_in =  (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_in",  NULL, pfc_s_in_new);
-    pfc_d_in =  (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_in",  NULL, pfc_d_in_new);
+    matrix_go_in = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("Matrix_Go_in", NULL,
+							      matrix_new);
+    matrix_nogo_in = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_in", NULL,
+								  matrix_new);
+    pfc_s_in =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCs_in",  NULL, pfc_new);
+    pfc_d_in =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_in",  NULL, pfc_new);
   }
+
   if(gating_types & MAINT) {
-    pfc_s_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_mnt", NULL, pfc_s_mnt_new, "PFC");
-    pfc_d_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_mnt", NULL, pfc_d_mnt_new);
+    matrix_go_mnt = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("Matrix_Go_mnt", NULL,
+							      matrix_new, "Matrix");
+    matrix_nogo_mnt = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_mnt", NULL,
+								  matrix_new);
+    pfc_s_mnt = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCs_mnt", NULL, pfc_new);
+    pfc_d_mnt = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_mnt", NULL, pfc_new);
   }
+
   if(gating_types & OUTPUT) {
-    pfc_s_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCs_out", NULL, pfc_s_out_new);
-    pfc_d_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCd_out", NULL, pfc_d_out_new);
+    matrix_go_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("Matrix_Go_out", NULL,
+							      matrix_new, "Matrix");
+    matrix_nogo_out = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_out", NULL,
+								  matrix_new);
+    pfc_s_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCs_out", NULL, pfc_new);
+    pfc_d_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_out", NULL, pfc_new);
   }
+
+  // stick this in go..
+  snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal", NULL, snrthal_new);
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
@@ -3319,7 +3346,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
        && lay != lve && lay != lvi && lay != nv && lay != vta
-       && lay != snrthal && lay != matrix_go && lay != matrix_nogo
+       && lay != snrthal
+       && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
+       && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
        && lay != pfc_s_mnt && lay != pfc_d_mnt
        && lay != pfc_s_out && lay != pfc_d_out
        && lay != pfc_s_in  && lay != pfc_d_in) {
@@ -3404,13 +3433,14 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
-  PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCDeep_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_s_in_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
 
-  LeabraLayerSpec* pfc_s_mnt_sp = (LeabraLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_LeabraLayerSpec);
-  LeabraLayerSpec* pfc_s_out_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_LeabraLayerSpec);
-  LeabraLayerSpec* pfc_s_in_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_LeabraLayerSpec);
+  PFCLayerSpec* pfc_s_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCDeep_mnt", &TA_PFCLayerSpec);
+
+  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_s_out_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
 
   MatrixLayerSpec* matrix_go_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go", &TA_MatrixLayerSpec);
   MatrixLayerSpec* matrix_nogo_sp = (MatrixLayerSpec*)matrix_go_sp->FindMakeChild("Matrix_NoGo", &TA_MatrixLayerSpec);
@@ -3439,7 +3469,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
 
   // NOTE: called here so the gp_geom gets established (gp_geom.x, .y) for all layers!
-  PBWM_SetNStripes(net, gating_types, n_stripes);
+  // PBWM_SetNStripes(net, n_in_out_stripes, n_mnt_stripes_x);
 
   ////	Config Topo PrjnSpecs
 
@@ -3469,7 +3499,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   topofminput->send_range_start.y = 0;
   topofminput->SetUnique("send_range_end", true);
   topofminput->send_range_end.x = -1;
-  topofminput->send_range_end.y = (n_stripes / 2)-1; // unlikely to be generally useful..
+  // topofminput->send_range_end.y = (n_stripes / 2)-1; // unlikely to be generally useful..
   topofminput->SetUnique("custom_recv_range", true);
   topofminput->custom_recv_range = false;
 
@@ -3548,38 +3578,38 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   if(gating_types & INPUT) { // y-coords contingent whether INPUT used or not
     if(gating_types & MAINT) { // required for pfc_s_mnt to exist!
-	  topomatrixfmmnt->recv_range_start.y = pfc_s_in->gp_geom.y;
-	  topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1);
-	}
-	else { // assign anything not requiring a pfc_s_mnt
-	  topomatrixfmmnt->recv_range_start.y =0;
-	  topomatrixfmmnt->recv_range_end.y = 0;
-	}
+      topomatrixfmmnt->recv_range_start.y = pfc_s_in->gp_geom.y;
+      topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1);
+    }
+    else { // assign anything not requiring a pfc_s_mnt
+      topomatrixfmmnt->recv_range_start.y =0;
+      topomatrixfmmnt->recv_range_end.y = 0;
+    }
   }
   else { // MAINT are the first guys if they exist!
     if(gating_types & MAINT) {
-	  topomatrixfmmnt->recv_range_start.y = 0;
-	  topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
-	}
-	else { // means there are only OUTPUT guys, but assign something anyway
-	  topomatrixfmmnt->recv_range_start.y = 0;
-	  topomatrixfmmnt->recv_range_end.y = 0;
-	}
+      topomatrixfmmnt->recv_range_start.y = 0;
+      topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
+    }
+    else { // means there are only OUTPUT guys, but assign something anyway
+      topomatrixfmmnt->recv_range_start.y = 0;
+      topomatrixfmmnt->recv_range_end.y = 0;
+    }
   }
   if(gating_types & INPUT) { // y-coords contingent whether INPUT used or not
     if(gating_types & MAINT) { // required for pfc_s_mnt to exist!
-	  topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
-	}
-	else { // means only INPUT, or INPUT + OUTPUT
+      topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
+    }
+    else { // means only INPUT, or INPUT + OUTPUT
       topomatrixfmmnt->recv_range_end.y = 0; // assign anything
     }
   }
   else { // no INPUT so MAINT were the first guys if they exist!
     if(gating_types & MAINT) { // required for pfc_s_mnt to exist!
-	  topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
+      topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
     }
     else { // no INPUT or MAINT, just OUTPUT
-     topomatrixfmmnt->recv_range_end.y = 0; // assign anything
+      topomatrixfmmnt->recv_range_end.y = 0; // assign anything
     }
   }
 
@@ -3639,18 +3669,28 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   snrthal_units->bias_spec.SetSpec(bg_bias);
 
   snrthal->SetLayerSpec(snrthalsp); snrthal->SetUnitSpec(snrthal_units);
-  matrix_go->SetLayerSpec(matrix_go_sp);   matrix_go->SetUnitSpec(matrix_units);
-  matrix_nogo->SetLayerSpec(matrix_nogo_sp);   matrix_nogo->SetUnitSpec(matrix_nogo_units);
 
   if(gating_types & INPUT) {
+    matrix_go_in->SetLayerSpec(matrix_go_sp);   matrix_go_in->SetUnitSpec(matrix_units);
+    matrix_nogo_in->SetLayerSpec(matrix_nogo_sp); 
+    matrix_nogo_in->SetUnitSpec(matrix_nogo_units);
+
     pfc_s_in->SetLayerSpec(pfc_s_in_sp);  pfc_s_in->SetUnitSpec(pfc_units);
     pfc_d_in->SetLayerSpec(pfc_d_in_sp);  pfc_d_in->SetUnitSpec(pfcd_units);
   }
   if(gating_types & MAINT) {
+    matrix_go_mnt->SetLayerSpec(matrix_go_sp);   matrix_go_mnt->SetUnitSpec(matrix_units);
+    matrix_nogo_mnt->SetLayerSpec(matrix_nogo_sp); 
+    matrix_nogo_mnt->SetUnitSpec(matrix_nogo_units);
+
     pfc_s_mnt->SetLayerSpec(pfc_s_mnt_sp);  pfc_s_mnt->SetUnitSpec(pfc_units);
     pfc_d_mnt->SetLayerSpec(pfc_d_mnt_sp);  pfc_d_mnt->SetUnitSpec(pfcd_units);
   }
   if(gating_types & OUTPUT) {
+    matrix_go_out->SetLayerSpec(matrix_go_sp);   matrix_go_out->SetUnitSpec(matrix_units);
+    matrix_nogo_out->SetLayerSpec(matrix_nogo_sp); 
+    matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
+
     pfc_s_out->SetLayerSpec(pfc_s_out_sp);  pfc_s_out->SetUnitSpec(pfc_units);
     pfc_d_out->SetLayerSpec(pfc_d_out_sp);  pfc_d_out->SetUnitSpec(pfcd_units);
   }
@@ -3658,29 +3698,80 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
-
   //	  	 	   to		 from		prjn_spec	con_spec
-  net->FindMakePrjn(snrthal, matrix_go, gponetoone, matrix_to_snrthal);
-  net->FindMakePrjn(snrthal, matrix_nogo, gponetoone, marker_cons);
 
-  net->FindMakePrjn(matrix_go, matrix_nogo, gponetoone, marker_cons);
-  net->FindMakePrjn(matrix_go, snrthal, gponetoone, marker_cons);
-  net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(matrix_go, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
-  // input -> matrix_go, pfc -> matrix come below
+  // matrix <-> snrthal
+  if(gating_types & INPUT) {
+    net->FindMakePrjn(snrthal, matrix_go_in, gponetoone, matrix_to_snrthal);
+    net->FindMakePrjn(matrix_go_in, matrix_nogo_in, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_in, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_in, vta, fullprjn, marker_cons);
+    // todo: this can be a lot simpler now -- just 2 diff conspecs with full prjn right?
+    // net->FindMakePrjn(matrix_go_in, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
 
-  net->FindMakePrjn(matrix_nogo, snrthal, gponetoone, marker_cons);
-  net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
+    net->FindMakePrjn(matrix_nogo_in, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_nogo_in, vta, fullprjn, marker_cons);
+  }
+  if(gating_types & MAINT) {
+    net->FindMakePrjn(snrthal, matrix_go_mnt, gponetoone, matrix_to_snrthal);
+    net->FindMakePrjn(matrix_go_mnt, matrix_nogo_mnt, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_mnt, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_mnt, vta, fullprjn, marker_cons);
+    // todo: this can be a lot simpler now -- just 2 diff conspecs with full prjn right?
+    // net->FindMakePrjn(matrix_go_mnt, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
+
+    net->FindMakePrjn(matrix_nogo_mnt, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_nogo_mnt, vta, fullprjn, marker_cons);
+  }
+  if(gating_types & OUTPUT) {
+    net->FindMakePrjn(snrthal, matrix_go_out, gponetoone, matrix_to_snrthal);
+    net->FindMakePrjn(matrix_go_out, matrix_nogo_out, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_out, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
+    // todo: this can be a lot simpler now -- just 2 diff conspecs with full prjn right?
+    // net->FindMakePrjn(matrix_go_out, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
+
+    net->FindMakePrjn(matrix_nogo_out, snrthal, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
+  }
+
+  // matrix <-> pfc and pfc <-> pfc
+
+  // todo: need new topos and cons that separate super from deep, etc
+
+  if(gating_types & INPUT) {
+    net->FindMakePrjn(matrix_go_in, pfc_s_in, topomatrixfmin, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo_in, pfc_d_in, topomatrixfmin, matrix_cons_nogo);
+
+    if(gating_types & MAINT) {
+      // this is key context prjn from mnt -> in
+      // todo: should it be deep or super only or both??
+      net->FindMakePrjn(pfc_s_in, pfc_s_mnt, intrapfctopo, topfc_cons);
+      net->FindMakePrjn(pfc_s_in, pfc_d_mnt, intrapfctopo, topfc_cons);
+    }
+    if(gating_types & OUTPUT) {
+      net->FindMakePrjn(pfc_s_in, pfc_s_out, intrapfctopo, topfc_cons);
+      // also, deep??
+    }
+    net->FindMakePrjn(pfc_d_in, pfc_s_in, onetoone, marker_cons);
+    net->FindMakePrjn(pfc_d_in, snrthal, snr_to_pfc_prjn, marker_cons);
+  }
 
   if(gating_types & MAINT) {
-    net->FindMakePrjn(matrix_go, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo_weak);
-    net->FindMakePrjn(matrix_nogo, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_go_mnt, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo_weak);
+    net->FindMakePrjn(matrix_nogo_mnt, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
 
-    net->FindMakePrjn(pfc_s_mnt, pfc_d_mnt, intrapfctopo, topfcself_cons);
     if(gating_types & INPUT) {
+      // maint gates off of pfc input, not raw input..
+      net->FindMakePrjn(matrix_go_mnt, pfc_s_in, topomatrixfmmnt, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_mnt, pfc_d_in, topomatrixfmmnt, matrix_cons_nogo);
+
+      // todo: deep and super cons??
+      net->FindMakePrjn(pfc_s_mnt, pfc_s_in, intrapfctopo, topfctopo_cons);
       net->FindMakePrjn(pfc_s_mnt, pfc_d_in, intrapfctopo, topfctopo_cons);
     }
     if(gating_types & OUTPUT) {
+      net->FindMakePrjn(pfc_s_mnt, pfc_s_out, intrapfctopo, topfc_cons);
       // could be an extra feedback training signal, but not that useful (diluted)
       // net->FindMakePrjn(pfc_s_mnt, pfc_s_out, fullprjn, topfc_cons); signal!
     }
@@ -3689,35 +3780,34 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   }
 
   if(gating_types & OUTPUT) {
-    net->FindMakePrjn(matrix_go, pfc_s_out, topomatrixfmout, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo, pfc_d_out, topomatrixfmout, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_go_out, pfc_s_out, topomatrixfmout, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo_out, pfc_d_out, topomatrixfmout, matrix_cons_nogo);
 
-    net->FindMakePrjn(pfc_s_out, pfc_d_out, intrapfctopo, topfcself_cons);
+    if(gating_types & INPUT) {
+      // out gates off of pfc input, not raw input..
+      net->FindMakePrjn(matrix_go_out, pfc_s_in, topomatrixfmmnt, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_out, pfc_d_in, topomatrixfmmnt, matrix_cons_nogo);
+    }
     if(gating_types & MAINT) {
+      // out gates off of pfc maint as well
+      net->FindMakePrjn(matrix_go_out, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_out, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
+
       net->FindMakePrjn(pfc_s_out, pfc_d_mnt, intrapfctopo, topfctopo_cons);
+      // also super??
     }
     net->FindMakePrjn(pfc_d_out, pfc_s_out, onetoone, marker_cons);
     net->FindMakePrjn(pfc_d_out, snrthal, snr_to_pfc_prjn, marker_cons);
   }
 
+  // pvlv recv from deep only, input and maint
   if(gating_types & INPUT) {
-    net->FindMakePrjn(matrix_go, pfc_s_in, topomatrixfmin, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo, pfc_d_in, topomatrixfmin, matrix_cons_nogo);
-
-    net->FindMakePrjn(pfc_s_in, pfc_d_in, intrapfctopo, topfcself_cons);
-    if(gating_types & MAINT) {
-      // could be an extra feedback training signal, but not that useful (diluted)
-      // net->FindMakePrjn(pfc_s_in, pfc_s_mnt, fullprjn, topfc_cons);
-    }
-    if(gating_types & OUTPUT) {
-      // could be an extra feedback training signal, but not that useful (diluted)
-      // net->FindMakePrjn(pfc_s_in, pfc_s_out, fullprjn, topfc_cons);
-    }
-    net->FindMakePrjn(pfc_d_in, pfc_s_in, onetoone, marker_cons);
-    net->FindMakePrjn(pfc_d_in, snrthal, snr_to_pfc_prjn, marker_cons);
+    // net->FindMakePrjn(pvr, pfc_d_mnt, fullprjn, pvr_cons);
+    net->FindMakePrjn(pvi, pfc_d_in, fullprjn, pvi_cons);
+    net->FindMakePrjn(lve, pfc_d_in, fullprjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_d_in, fullprjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_d_in, fullprjn, nv_cons);
   }
-
-  // pvlv recv from deep only, maint only needed..
   if(gating_types & MAINT) {
     // net->FindMakePrjn(pvr, pfc_d_mnt, fullprjn, pvr_cons);
     net->FindMakePrjn(pvi, pfc_d_mnt, fullprjn, pvi_cons);
@@ -3725,6 +3815,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
     net->FindMakePrjn(lvi, pfc_d_mnt, fullprjn, lvi_cons);
     net->FindMakePrjn(nv,  pfc_d_mnt, fullprjn, nv_cons);
   }
+
   // TODO: error message not working; revisit at some point..
   /*else {
 	if(TestWarning((!(gating_types & MAINT)),
@@ -3738,22 +3829,24 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
 
-    if(matrix_go_new)  // posterior cortex presumably also projects from superficial..
-      net->FindMakePrjn(matrix_go, il, topofminput, matrix_cons_topo);
-    // if(matrix_nogo_new) // not to nogos!
-    //   net->FindMakePrjn(matrix_nogo, il, topofminput, matrix_cons_topo);
+    if(matrix_new) {  // posterior cortex presumably also projects from superficial..
+      if(gating_types & INPUT) {
+	net->FindMakePrjn(matrix_go_in, il, topofminput, matrix_cons_topo);
+      }
+      else if(gating_types & MAINT) { // only maint if no input
+	net->FindMakePrjn(matrix_go_mnt, il, topofminput, matrix_cons_topo);
+      }
+      // net->FindMakePrjn(matrix_nogo, il, topofminput, matrix_cons_topo);
+    }
 
-    if(gating_types & INPUT) {
-      if(pfc_s_in_new) {
+    if(pfc_new) {
+      if(gating_types & INPUT) {
         if(pfc_learns)
           net->FindMakePrjn(pfc_s_in, il, topofminput, topfctopo_cons);
         else
           net->FindMakePrjn(pfc_s_in, il, input_pfc, topfc_cons);
       }
-    }
-
-    if(gating_types & MAINT) {
-      if(pfc_s_mnt_new) {
+      else if(gating_types & MAINT) { // only maint if no input
         if(pfc_learns)
           net->FindMakePrjn(pfc_s_mnt, il, topofminput, topfctopo_cons);
         else
@@ -3764,18 +3857,21 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 
   for(i=0;i<output_lays.size;i++) {
     Layer* ol = (Layer*)output_lays[i];
-    if(gating_types & OUTPUT) {
-      net->FindMakePrjn(ol, pfc_d_out, fullprjn, fmpfcd_out);
-      if(pfc_d_out_new && pfc_learns) { // error feedback goes to superficial guys!
-        net->FindMakePrjn(pfc_s_out, ol, fullprjn, topfcfmout_cons);
+
+    if(pfc_new) {
+      if(gating_types & OUTPUT) {
+	net->FindMakePrjn(ol, pfc_d_out, fullprjn, fmpfcd_out);
+	if(pfc_learns) { // error feedback goes to superficial guys!
+	  net->FindMakePrjn(pfc_s_out, ol, fullprjn, topfcfmout_cons);
+	}
       }
-    }
-    if(gating_types & MAINT) {
-      if(!(gating_types & OUTPUT)) {
-    	net->FindMakePrjn(ol, pfc_d_mnt, fullprjn, fmpfcd_out);
-      }
-      if(pfc_d_mnt_new && pfc_learns) { // error feedback goes to superficial guys!
-        net->FindMakePrjn(pfc_s_mnt, ol, fullprjn, topfcfmout_cons);
+      if(gating_types & MAINT) {
+	if(!(gating_types & OUTPUT)) {
+	  net->FindMakePrjn(ol, pfc_d_mnt, fullprjn, fmpfcd_out);
+	}
+	if(pfc_learns) { // error feedback goes to superficial guys!
+	  net->FindMakePrjn(pfc_s_mnt, ol, fullprjn, topfcfmout_cons);
+	}
       }
     }
   }
@@ -3783,24 +3879,34 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
-  matrix_go->brain_area = ".*/.*/.*/.*/Caudate Body";
-  matrix_nogo->brain_area = ".*/.*/.*/.*/Caudate Body";
   snrthal->brain_area = ".*/.*/.*/.*/Substantia Nigra";
   // these are just random suggestions:
   if(gating_types & MAINT) {
-    if(pfc_s_mnt_new || pfc_s_mnt->brain_area.empty()) {
+    if(matrix_go_mnt->brain_area.empty()) 
+      matrix_go_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(matrix_nogo_mnt->brain_area.empty()) 
+      matrix_nogo_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(pfc_s_mnt->brain_area.empty()) {
       pfc_s_mnt->brain_area = ".*/.*/.*/.*/BA9";
       pfc_d_mnt->brain_area = ".*/.*/.*/.*/BA9";
     }
   }
   if(gating_types & INPUT) {
-    if(pfc_s_in_new || pfc_s_in->brain_area.empty()) {
+    if(matrix_go_in->brain_area.empty()) 
+      matrix_go_in->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(matrix_nogo_in->brain_area.empty()) 
+      matrix_nogo_in->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(pfc_s_in->brain_area.empty()) {
       pfc_s_in->brain_area = ".*/.*/.*/.*/BA45";
       pfc_d_in->brain_area = ".*/.*/.*/.*/BA45";
     }
   }
   if(gating_types & OUTPUT) {
-    if(pfc_s_out_new || pfc_s_out->brain_area.empty()) {
+    if(matrix_go_out->brain_area.empty()) 
+      matrix_go_out->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(matrix_nogo_out->brain_area.empty()) 
+      matrix_nogo_out->brain_area = ".*/.*/.*/.*/Caudate Body";
+    if(pfc_s_out->brain_area.empty()) {
       pfc_s_out->brain_area = ".*/.*/.*/.*/BA44";
       pfc_d_out->brain_area = ".*/.*/.*/.*/BA44";
     }
@@ -3809,8 +3915,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   int lay_spc = 2;
 
   if(new_pbwm_laygp) {
-    pbwm_laygp->pos.z = 0;
-    pbwm_laygp->pos.x = 20;
+    pbwm_laygp_go->pos.z = 0;
+    pbwm_laygp_go->pos.x = 20;
+    pbwm_laygp_go->pos.y = 0;
+    pbwm_laygp_nogo->pos.z = 0;
+    pbwm_laygp_nogo->pos.x = 20;
+    pbwm_laygp_nogo->pos.y = 50;
+    pbwm_laygp_pfc->pos.z = 1;
+    pbwm_laygp_pfc->pos.x = 20;
+    pbwm_laygp_pfc->pos.y = 0;
   }
 
   ///////////////	PFC Layout first -- get into z = 1
@@ -3820,7 +3933,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   int pfc_deep_y = 18;
   int pfc_z = 1;
   if(gating_types & INPUT) {
-    if(pfc_s_in_new) {
+    if(pfc_new) {
       pfc_s_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
       if(!pfc_learns && (input_lays.size > 0)) {
 	Layer* il = (Layer*)input_lays[0];
@@ -3830,21 +3943,20 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 	pfc_s_in->un_geom.n = 30; pfc_s_in->un_geom.x = 5; pfc_s_in->un_geom.y = 6;
       }
     }
-    lay_set_geom(pfc_s_in, n_stripes);
+    lay_set_geom(pfc_s_in, in_out_stripes);
     pfc_deep_y = pfc_s_in->disp_geom.y + 3 * lay_spc;
 
     // repeat for deep guys..
-    if(pfc_d_in_new) {
+    if(pfc_new) {
       pfc_d_in->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
       pfc_d_in->un_geom = pfc_s_in->un_geom;
     }
-    // TODO: Eureka!!! below had pfcd_mnt - I think was my problem!!1
-    lay_set_geom(pfc_d_in, n_stripes);
+    lay_set_geom(pfc_d_in, in_out_stripes);
     pfc_st_x += pfc_s_in->disp_geom.x + lay_spc; // TODO: what is pfc_st_x here? should be pfc_d_in??
   }
 
   if(gating_types & MAINT) {
-    if(pfc_s_mnt_new) {
+    if(pfc_new) {
       pfc_s_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
       if(!pfc_learns && (input_lays.size > 0)) {
 	Layer* il = (Layer*)input_lays[0];
@@ -3854,21 +3966,21 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 	pfc_s_mnt->un_geom.n = 30; pfc_s_mnt->un_geom.x = 5; pfc_s_mnt->un_geom.y = 6;
       }
     }
-    lay_set_geom(pfc_s_mnt, n_stripes);
+    lay_set_geom(pfc_s_mnt, in_out_stripes * mnt_stripes_x);
     pfc_deep_y = pfc_s_mnt->disp_geom.y + 3 * lay_spc;
 
     // repeat for deep guys..
-    if(pfc_d_mnt_new) {
+    if(pfc_new) {
       pfc_d_mnt->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
       pfc_d_mnt->un_geom = pfc_s_mnt->un_geom;
     }
 
-    lay_set_geom(pfc_d_mnt, n_stripes);
+    lay_set_geom(pfc_d_mnt, in_out_stripes * mnt_stripes_x);
     pfc_st_x += pfc_s_mnt->disp_geom.x + lay_spc;
   }
 
   if(gating_types & OUTPUT) {
-    if(pfc_s_out_new) {
+    if(pfc_new) {
       pfc_s_out->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
       if(!pfc_learns && (input_lays.size > 0)) {
 	Layer* il = (Layer*)input_lays[0];
@@ -3878,15 +3990,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
 	pfc_s_out->un_geom.n = 30; pfc_s_out->un_geom.x = 5; pfc_s_out->un_geom.y = 6;
       }
     }
-    lay_set_geom(pfc_s_out, n_stripes);
+    lay_set_geom(pfc_s_out, in_out_stripes);
     pfc_deep_y = pfc_s_out->disp_geom.y + 3 * lay_spc;
 
     // now repeat for out-deep guys;
-    if(pfc_d_out_new) {
+    if(pfc_new) {
       pfc_d_out->pos.SetXYZ(pfc_st_x, pfc_deep_y, pfc_z);
       pfc_d_out->un_geom = pfc_s_out->un_geom;
     }
-    lay_set_geom(pfc_d_out, n_stripes);
+    lay_set_geom(pfc_d_out, in_out_stripes);
   }
 
   ///////////////	Now Matrix, SNrThal
@@ -3899,56 +4011,81 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   else
     n_lv_u = 21;
 
+  // todo: this all needs to be redone..
+
   int n_types, n_in, n_mnt, n_out;
   SNrThalLayerSpec::GatingTypesNStripes((SNrThalLayerSpec::GatingTypes)gating_types, 24, // just care about n_types
 					n_types, n_in, n_mnt, n_out);
-  int tot_stripes = n_types * n_stripes;
-  if(matrix_go_new) {
-    matrix_go->un_geom.n = 28; matrix_go->un_geom.x = 4; matrix_go->un_geom.y = 7;
+  int tot_stripes = n_types; // * n_stripes;
+  if(gating_types & INPUT) {
+    if(matrix_new) {
+      matrix_go_in->un_geom.n = 28; matrix_go_in->un_geom.x = 4;
+      matrix_go_in->un_geom.y = 7;
+      matrix_nogo_in->un_geom.n = 28; matrix_nogo_in->un_geom.x = 4;
+      matrix_nogo_in->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_in, in_out_stripes);
+    lay_set_geom(matrix_nogo_in, in_out_stripes);
   }
-  if(matrix_nogo_new) {
-    matrix_nogo->un_geom.n = 28; matrix_nogo->un_geom.x = 4; matrix_nogo->un_geom.y = 7;
+  if(gating_types & MAINT) {
+    if(matrix_new) {
+      matrix_go_mnt->un_geom.n = 28; matrix_go_mnt->un_geom.x = 4;
+      matrix_go_mnt->un_geom.y = 7;
+      matrix_nogo_mnt->un_geom.n = 28; matrix_nogo_mnt->un_geom.x = 4;
+      matrix_nogo_mnt->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_mnt, in_out_stripes * mnt_stripes_x);
+    lay_set_geom(matrix_nogo_mnt, in_out_stripes * mnt_stripes_x);
   }
-  lay_set_geom(matrix_go, tot_stripes);
+  if(gating_types & OUTPUT) {
+    if(matrix_new) {
+      matrix_go_out->un_geom.n = 28; matrix_go_out->un_geom.x = 4;
+      matrix_go_out->un_geom.y = 7;
+      matrix_nogo_out->un_geom.n = 28; matrix_nogo_out->un_geom.x = 4;
+      matrix_nogo_out->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_out, in_out_stripes);
+    lay_set_geom(matrix_nogo_out, in_out_stripes);
+  }
+
   lay_set_geom(snrthal, tot_stripes, 1);
-  lay_set_geom(matrix_nogo, tot_stripes);
 
   // here again to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, gating_types, n_stripes);
+  // PBWM_SetNStripes(net, gating_types, n_stripes);
 
-  int mtx_x = 0;
-  if(matrix_go_new) {
-    matrix_go->pos.SetXYZ(mtx_x, 0, 0);
-  }
-  mtx_x += matrix_go->disp_geom.x + lay_spc;
+  // int mtx_x = 0;
+  // if(matrix_new) {
+  //   matrix_go->pos.SetXYZ(mtx_x, 0, 0);
+  // }
+  // mtx_x += matrix_go->disp_geom.x + lay_spc;
 
-  // repeat for nogo guys; offset x by maybe 10
-  if(matrix_nogo_new) {
-    matrix_nogo->pos.SetXYZ(mtx_x + snrthal->disp_geom.x + lay_spc, 0, 0);
-  }
-  if(snrthal_new) { // put between go and nogo
-    snrthal->pos.SetXYZ(mtx_x, 0, 0);
-  }
+  // // repeat for nogo guys; offset x by maybe 10
+  // if(matrix_nogo_new) {
+  //   matrix_nogo->pos.SetXYZ(mtx_x + snrthal->disp_geom.x + lay_spc, 0, 0);
+  // }
+  // if(snrthal_new) { // put between go and nogo
+  //   snrthal->pos.SetXYZ(mtx_x, 0, 0);
+  // }
 
-  // here AGAIN to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, gating_types, n_stripes);
+  // // here AGAIN to allow it to get disp_geom for laying out the pfc and matrix guys!
+  // PBWM_SetNStripes(net, gating_types, n_stripes);
 
-  if(new_pbwm_laygp) {
-    pbwm_laygp->pos.z = 0;
-    pbwm_laygp->pos.x = 20;
-  }
+  // if(new_pbwm_laygp) {
+  //   pbwm_laygp->pos.z = 0;
+  //   pbwm_laygp->pos.x = 20;
+  // }
 
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
-  PBWM_SetNStripes(net, gating_types, n_stripes);
+  // PBWM_SetNStripes(net, gating_types, n_stripes);
   PBWM_Defaults(net, pfc_learns); // sets all default params and gets selectedits
 
   net->LayerPos_Cleanup();
 
   // move back!
   if(new_pbwm_laygp) {
-    pbwm_laygp->pos.z = 0;
+    pbwm_laygp_go->pos.z = 0;
     net->RebuildAllViews();     // trigger update
   }
 
@@ -4117,20 +4254,24 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, GatingTypes gating_types,
   taMisc::CheckConfigStart(false, false);
 
   bool ok = false;
-  ok = matrix_go_sp->CheckConfig_Layer(matrix_go, false);
-  ok &= matrix_nogo_sp->CheckConfig_Layer(matrix_nogo, false);
-  ok &= snrthalsp->CheckConfig_Layer(snrthal, false);
+  ok = snrthalsp->CheckConfig_Layer(snrthal, false);
   if(gating_types & INPUT) {
     ok &= pfc_s_in_sp->CheckConfig_Layer(pfc_s_in, false);
     ok &= pfc_d_in_sp->CheckConfig_Layer(pfc_d_in, false);
+    ok &= matrix_go_sp->CheckConfig_Layer(matrix_go_in, false);
+    ok &= matrix_nogo_sp->CheckConfig_Layer(matrix_nogo_in, false);
   }
   if(gating_types & MAINT) {
-    ok  = pfc_s_mnt_sp->CheckConfig_Layer(pfc_s_mnt, false);
+    ok &= pfc_s_mnt_sp->CheckConfig_Layer(pfc_s_mnt, false);
     ok &= pfc_d_mnt_sp->CheckConfig_Layer(pfc_d_mnt, false);
+    ok &= matrix_go_sp->CheckConfig_Layer(matrix_go_mnt, false);
+    ok &= matrix_nogo_sp->CheckConfig_Layer(matrix_nogo_mnt, false);
   }
   if(gating_types & OUTPUT) {
     ok &= pfc_s_out_sp->CheckConfig_Layer(pfc_s_out, false);
     ok &= pfc_d_out_sp->CheckConfig_Layer(pfc_d_out, false);
+    ok &= matrix_go_sp->CheckConfig_Layer(matrix_go_out, false);
+    ok &= matrix_nogo_sp->CheckConfig_Layer(matrix_nogo_out, false);
   }
 
   taMisc::CheckConfigEnd(ok);
@@ -4242,13 +4383,14 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
-  PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCDeep_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_s_in_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
 
-  LeabraLayerSpec* pfc_s_mnt_sp = (LeabraLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_LeabraLayerSpec);
-  LeabraLayerSpec* pfc_s_out_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_LeabraLayerSpec);
-  LeabraLayerSpec* pfc_s_in_sp =  (LeabraLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_LeabraLayerSpec);
+  PFCLayerSpec* pfc_s_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCDeep_mnt", &TA_PFCLayerSpec);
+
+  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_s_out_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
 
   MatrixLayerSpec* matrix_go_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go", &TA_MatrixLayerSpec);
   MatrixLayerSpec* matrix_nogo_sp = (MatrixLayerSpec*)matrix_go_sp->FindMakeChild("Matrix_NoGo", &TA_MatrixLayerSpec);
@@ -4404,38 +4546,31 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   matrix_nogo_sp->SetUnique("go_nogo", true);
   matrix_nogo_sp->go_nogo = MatrixLayerSpec::NOGO;
 
-  pfc_s_mnt_sp->SetUnique("inhib",true);
-  pfc_s_mnt_sp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  pfc_s_mnt_sp->inhib.kwta_pt = 0.5f;
-  pfc_s_mnt_sp->SetUnique("decay",true);
-  pfc_s_mnt_sp->decay.event = 0.0f;
-  pfc_s_mnt_sp->decay.phase = 0.0f;
-  pfc_s_mnt_sp->decay.phase2 = 0.0f;
-  pfc_s_mnt_sp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-  pfc_s_mnt_sp->SetUnique("gp_kwta",true);
-  pfc_s_mnt_sp->gp_kwta.pct = 0.15f;
-  pfc_s_mnt_sp->gp_kwta.gp_i = true;
-  pfc_s_mnt_sp->gp_kwta.gp_g = 1.0f;
-  pfc_s_mnt_sp->gp_kwta.diff_act_pct = true;
-  pfc_s_mnt_sp->gp_kwta.act_pct = 0.05f;
-  // all other specs should inherit this!
+  pfc_d_in_sp->SetUnique("gp_kwta",true);
+  pfc_d_in_sp->gp_kwta.act_pct = 0.02f;
 
-  // todo -- sync: w above EXCEPT gp_g!
-  pfc_s_out_sp->SetUnique("gp_kwta",true);
-  pfc_s_out_sp->gp_kwta.pct = 0.15f;
-  pfc_s_out_sp->gp_kwta.gp_i = true;
-  pfc_s_out_sp->gp_kwta.gp_g = 0.8f;
-  pfc_s_out_sp->gp_kwta.diff_act_pct = true;
-  pfc_s_out_sp->gp_kwta.act_pct = 0.05f;
+  pfc_d_mnt_sp->SetUnique("gp_kwta",true);
+  pfc_d_mnt_sp->gp_kwta.act_pct = 0.02f;
 
-  pfc_d_mnt_sp->SetUnique("pfc_type",true);
-  pfc_d_mnt_sp->pfc_type = PFCLayerSpec::MAINT;
+  pfc_d_out_sp->SetUnique("gp_kwta",true);
+  pfc_d_out_sp->gp_kwta.act_pct = 0.02f;
 
-  pfc_d_out_sp->SetUnique("pfc_type",true);
-  pfc_d_out_sp->pfc_type = PFCLayerSpec::OUTPUT;
+  pfc_s_out_sp->unit_gp_inhib.gp_g = 0.8f;
 
-  pfc_d_in_sp->SetUnique("pfc_type",true);
-  pfc_d_in_sp->pfc_type = PFCLayerSpec::INPUT;
+  pfc_s_in_sp->pfc_type = PFCLayerSpec::INPUT;
+  pfc_s_in_sp->pfc_layer = PFCLayerSpec::SUPER;
+  pfc_d_in_sp->SetUnique("pfc_layer",true);
+  pfc_d_in_sp->pfc_layer = PFCLayerSpec::DEEP;
+
+  pfc_s_mnt_sp->pfc_type = PFCLayerSpec::MAINT;
+  pfc_s_mnt_sp->pfc_layer = PFCLayerSpec::SUPER;
+  pfc_d_mnt_sp->SetUnique("pfc_layer",true);
+  pfc_d_mnt_sp->pfc_layer = PFCLayerSpec::DEEP;
+
+  pfc_s_out_sp->pfc_type = PFCLayerSpec::OUTPUT;
+  pfc_s_out_sp->pfc_layer = PFCLayerSpec::SUPER;
+  pfc_d_out_sp->SetUnique("pfc_layer",true);
+  pfc_d_out_sp->pfc_layer = PFCLayerSpec::DEEP;
 
   snrthal_units->SetUnique("maxda", true);
   snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;

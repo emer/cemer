@@ -71,7 +71,7 @@ private:
 };
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex: computes activation based on netinput = Go / (Go + nogo_gain * NoGo + leak) from MatrixLayerSpec(s) -- gating val reflected in act_m2, gating status in unit group data per stripe
+  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_m2, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
@@ -85,6 +85,7 @@ public:
   };
 
   GatingTypes		gating_types;	// types of gating units present within this SNrThal layer -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
+  int			n_in_out_stripes; // number of input/output stripes -- maint stripes MUST be some multiple of this number
   SNrThalMiscSpec	snrthal;    	// misc specs for snrthal layer
 
 
