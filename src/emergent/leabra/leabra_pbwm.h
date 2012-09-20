@@ -721,9 +721,18 @@ public:
   virtual void 	SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist, int cg_idx);
   // actually set the weight value from distance value -- util used by both of above main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
+  bool   TestWarning(bool test, const char* fun_name,
+		     const char* a, const char* b=0, const char* c=0,
+		     const char* d=0, const char* e=0, const char* f=0,
+		     const char* g=0, const char* h=0) const;
+
+
   TA_SIMPLE_BASEFUNS(TopoWtsPrjnSpec);
 protected:
   SPEC_DEFAULTS;
+
+  int	already_warned;		// don't keep warning beyond first n..
+
 private:
   void	Initialize();
   void 	Destroy()		{ };

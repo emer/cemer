@@ -116,10 +116,9 @@ void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay,
 
   gating_types = NO_GATE_TYPE;
 
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+  for(int g=0; g<lay->projections.size; g++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections.FastEl(g);
+    LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
     if(!fmlay->GetLayerSpec()->InheritsFrom(TA_MatrixLayerSpec)) continue;
     MatrixLayerSpec* mls = (MatrixLayerSpec*)fmlay->GetLayerSpec();
     if(mls->go_nogo != MatrixLayerSpec::GO) continue;
@@ -707,11 +706,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(snr_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
-                "SNrThal layer does not have same number of stripes as we do!")) {
-    return false;
-  }
-
   if(go_nogo == GO) {
     if(lay->CheckError(nogo_lay == NULL, quiet, rval,
                 "Could not find NoGo Matrix layer for Go Matrix -- must receive MarkerConSpec projection from one!")) {
@@ -1235,18 +1229,16 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     us->acc.init = false;
   }
 
-  int snr_prjn_idx = 0; // actual arg value doesn't matter
-  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-
-  if(lay->CheckError(!snr_lay, quiet, rval,
-                "no projection from SNrThal Layer found: must exist with MarkerConSpec connection")) {
-    return false;
-  }
-
   // SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
 
   if(pfc_layer == DEEP) {
+    LeabraLayer* snr_lay = SNrThalLayer(lay);
+    if(lay->CheckError(!snr_lay, quiet, rval,
+		       "no projection from SNrThal Layer found: must exist with MarkerConSpec connection")) {
+      return false;
+    }
+
     if(lay->CheckError(u->recv.size < 2, quiet, rval,
 		       "Must receive at least 2 projections (0 = from superficial pfc, other from SNrThal")) {
       return false;
@@ -1726,7 +1718,7 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn) {
     }
     if(snr_st_idx >= 0) {
       for(int i=0; i<fm_lay->gp_geom.n; i++) {
-	Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, snr_st_idx + i);
+	Connect_Gp(prjn, Layer::ACC_GP, snr_st_idx + i, Layer::ACC_GP, i);
       }
     }
   }
@@ -1742,7 +1734,7 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn) {
     }
     if(snr_st_idx >= 0) {
       for(int i=0; i<to_lay->gp_geom.n; i++) {
-	Connect_Gp(prjn, Layer::ACC_GP, snr_st_idx + i, Layer::ACC_GP, i);
+	Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, snr_st_idx + i);
       }
     }
   }
@@ -1835,6 +1827,9 @@ void TopoWtsPrjnSpec::Initialize() {
   recv_range_start = 0;
   recv_range_end = -1;
   gauss_sig = 0.3f;
+
+  already_warned = 0;
+
   Defaults_init();
 }
 
@@ -1844,8 +1839,21 @@ void TopoWtsPrjnSpec::Defaults_init() {
   add_rnd_wts_scale = 1.0f;
 }
 
+bool TopoWtsPrjnSpec::TestWarning(bool test, const char* fun_name,
+				  const char* a, const char* b, const char* c,
+				  const char* d, const char* e, const char* f,
+				  const char* g, const char* h) const {
+  if(!test) return false;
+  const_cast<TopoWtsPrjnSpec*>(this)->already_warned++;
+  if(already_warned > 10)
+    return true;
+  return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
+}
+
 void TopoWtsPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
+
+  already_warned = 0;		// reset
 
   int recv_no = prjn->from->units.leaves;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
@@ -3281,10 +3289,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* topfcstrong_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCStrong", &TA_LeabraConSpec);
-  LeabraConSpec* topfctopo_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCTopo", &TA_LeabraConSpec);
+  LeabraConSpec* pfctopfc_s_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_s", &TA_LeabraConSpec);
+  LeabraConSpec* pfctopfc_d_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
+  LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
-  LeabraConSpec* topfcself_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCSelf", &TA_LeabraConSpec);
 
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
@@ -3343,16 +3351,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   TopoWtsPrjnSpec* topomaster = (TopoWtsPrjnSpec*)prjns->FindMakeSpec("TopoMaster", &TA_TopoWtsPrjnSpec);
   TopoWtsPrjnSpec* topofminput = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoFmInput", &TA_TopoWtsPrjnSpec);
   TopoWtsPrjnSpec* intrapfctopo = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoIntraPFC", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmmnt = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmMnt", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmout = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmOut", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmin = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmIn", &TA_TopoWtsPrjnSpec);
-
+  TopoWtsPrjnSpec* topomatrixpfc_self = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixPFC_Self", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixpfc_other = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixPFC_Other", &TA_TopoWtsPrjnSpec);
   TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
   input_pfc->send_offs.SetSize(1); // this is all it takes!
 
-
-  // NOTE: called here so the gp_geom gets established (gp_geom.x, .y) for all layers!
-  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes);
 
   ////	Config Topo PrjnSpecs
 
@@ -3386,6 +3389,44 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   topofminput->SetUnique("custom_recv_range", true);
   topofminput->custom_recv_range = false;
 
+  topomatrixpfc_self->SetUnique("grad_x", true);
+  topomatrixpfc_self->grad_x = true;
+  topomatrixpfc_self->SetUnique("grad_x_grad_y", true);
+  topomatrixpfc_self->grad_x_grad_y = false;
+  topomatrixpfc_self->SetUnique("grad_y", true);
+  topomatrixpfc_self->grad_y = true; // this is key diff for self vs. other
+  topomatrixpfc_self->SetUnique("grad_y_grad_x", true);
+  topomatrixpfc_self->grad_y_grad_x = false;
+  topomatrixpfc_self->SetUnique("wrap", true);
+  topomatrixpfc_self->wrap = true;
+  topomatrixpfc_self->SetUnique("use_recv_gps", true);
+  topomatrixpfc_self->use_recv_gps = true;
+  topomatrixpfc_self->SetUnique("use_send_gps", true);
+  topomatrixpfc_self->use_send_gps = true;
+  topomatrixpfc_self->SetUnique("custom_send_range", true);
+  topomatrixpfc_self->custom_send_range = false;
+  topomatrixpfc_self->SetUnique("custom_recv_range", true);
+  topomatrixpfc_self->custom_recv_range = false;
+
+  topomatrixpfc_other->SetUnique("grad_x", true);
+  topomatrixpfc_other->grad_x = true;
+  topomatrixpfc_other->SetUnique("grad_x_grad_y", true);
+  topomatrixpfc_other->grad_x_grad_y = false;
+  topomatrixpfc_other->SetUnique("grad_y", true);
+  topomatrixpfc_other->grad_y = false;
+  topomatrixpfc_other->SetUnique("grad_y_grad_x", true);
+  topomatrixpfc_other->grad_y_grad_x = false;
+  topomatrixpfc_other->SetUnique("wrap", true);
+  topomatrixpfc_other->wrap = true;
+  topomatrixpfc_other->SetUnique("use_recv_gps", true);
+  topomatrixpfc_other->use_recv_gps = true;
+  topomatrixpfc_other->SetUnique("use_send_gps", true);
+  topomatrixpfc_other->use_send_gps = true;
+  topomatrixpfc_other->SetUnique("custom_send_range", true);
+  topomatrixpfc_other->custom_send_range = false;
+  topomatrixpfc_other->SetUnique("custom_recv_range", true);
+  topomatrixpfc_other->custom_recv_range = false;
+
   intrapfctopo->SetUnique("grad_x", true);
   intrapfctopo->grad_x = true;
   intrapfctopo->SetUnique("grad_x_grad_y", true);
@@ -3404,138 +3445,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   intrapfctopo->custom_send_range = false;
   intrapfctopo->SetUnique("custom_recv_range", true);
   intrapfctopo->custom_recv_range = false;
-
-  // INPUT goes first if used..
-  topomatrixfmin->SetUnique("grad_x", true);
-  topomatrixfmin->grad_x = true;
-  topomatrixfmin->SetUnique("grad_x_grad_y", true);
-  topomatrixfmin->grad_x_grad_y = false;
-  topomatrixfmin->SetUnique("grad_y", true);
-  topomatrixfmin->grad_y = true;
-  topomatrixfmin->SetUnique("grad_y_grad_x", true);
-  topomatrixfmin->grad_y_grad_x = false;
-  topomatrixfmin->SetUnique("wrap", true);
-  topomatrixfmin->wrap = false;
-  topomatrixfmin->SetUnique("use_recv_gps", true);
-  topomatrixfmin->use_recv_gps = true;
-  topomatrixfmin->SetUnique("use_send_gps", true);
-  topomatrixfmin->use_send_gps = true;
-  topomatrixfmin->SetUnique("custom_send_range", true);
-  topomatrixfmin->custom_send_range = false;
-  topomatrixfmin->SetUnique("custom_recv_range", true);
-  topomatrixfmin->custom_recv_range = true;
-  topomatrixfmin->SetUnique("recv_range_start", true);
-  topomatrixfmin->recv_range_start.x = 0;
-  topomatrixfmin->recv_range_start.y = 0; // if used, INPUT always starts at 0
-  topomatrixfmin->SetUnique("recv_range_end", true);
-  topomatrixfmin->recv_range_end.x = -1;
-  if(in_stripes > 0) { // required for a pfc_s_in to exist!
-    topomatrixfmin->recv_range_end.y = (pfc_s_in->gp_geom.y -1); // works for MatrixNoGo too!! TODO: confirm actual lay name!!
-  }
-  else { // assign anything..
-    topomatrixfmin->recv_range_end.y = 0;
-  }
-
-  topomatrixfmmnt->SetUnique("grad_x", true);
-  topomatrixfmmnt->grad_x = true;
-  topomatrixfmmnt->SetUnique("grad_x_grad_y", true);
-  topomatrixfmmnt->grad_x_grad_y = false;
-  topomatrixfmmnt->SetUnique("grad_y", true);
-  topomatrixfmmnt->grad_y = true;
-  topomatrixfmmnt->SetUnique("grad_y_grad_x", true);
-  topomatrixfmmnt->grad_y_grad_x = false;
-  topomatrixfmmnt->SetUnique("wrap", true);
-  topomatrixfmmnt->wrap = true;
-  topomatrixfmmnt->SetUnique("use_recv_gps", true);
-  topomatrixfmmnt->use_recv_gps = true;
-  topomatrixfmmnt->SetUnique("use_send_gps", true);
-  topomatrixfmmnt->use_send_gps = true;
-  topomatrixfmmnt->SetUnique("custom_send_range", true);
-  topomatrixfmmnt->custom_send_range = false;
-  topomatrixfmmnt->SetUnique("custom_recv_range", true);
-  topomatrixfmmnt->custom_recv_range = true;
-  topomatrixfmmnt->SetUnique("recv_range_start", true);
-  topomatrixfmmnt->recv_range_start.x = 0;
-  topomatrixfmmnt->SetUnique("recv_range_end", true);
-  topomatrixfmmnt->recv_range_end.x = -1;
-
-  if(in_stripes > 0) { // y-coords contingent whether INPUT used or not
-    if(mnt_stripes > 0) { // required for pfc_s_mnt to exist!
-      topomatrixfmmnt->recv_range_start.y = pfc_s_in->gp_geom.y;
-      topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1);
-    }
-    else { // assign anything not requiring a pfc_s_mnt
-      topomatrixfmmnt->recv_range_start.y =0;
-      topomatrixfmmnt->recv_range_end.y = 0;
-    }
-  }
-  else { // MAINT are the first guys if they exist!
-    if(mnt_stripes > 0) {
-      topomatrixfmmnt->recv_range_start.y = 0;
-      topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
-    }
-    else { // means there are only OUTPUT guys, but assign something anyway
-      topomatrixfmmnt->recv_range_start.y = 0;
-      topomatrixfmmnt->recv_range_end.y = 0;
-    }
-  }
-  if(in_stripes > 0) { // y-coords contingent whether INPUT used or not
-    if(mnt_stripes > 0) { // required for pfc_s_mnt to exist!
-      topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
-    }
-    else { // means only INPUT, or INPUT + OUTPUT
-      topomatrixfmmnt->recv_range_end.y = 0; // assign anything
-    }
-  }
-  else { // no INPUT so MAINT were the first guys if they exist!
-    if(mnt_stripes > 0) { // required for pfc_s_mnt to exist!
-      topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1);
-    }
-    else { // no INPUT or MAINT, just OUTPUT
-      topomatrixfmmnt->recv_range_end.y = 0; // assign anything
-    }
-  }
-
-  topomatrixfmout->SetUnique("grad_x", true);
-  topomatrixfmout->grad_x = true;
-  topomatrixfmout->SetUnique("grad_x_grad_y", true);
-  topomatrixfmout->grad_x_grad_y = false;
-  topomatrixfmout->SetUnique("grad_y", true);
-  topomatrixfmout->grad_y = true;
-  topomatrixfmout->SetUnique("grad_y_grad_x", true);
-  topomatrixfmout->grad_y_grad_x = false;
-  topomatrixfmout->SetUnique("wrap", true);
-  topomatrixfmout->wrap = true;
-  topomatrixfmout->SetUnique("use_recv_gps", true);
-  topomatrixfmout->use_recv_gps = true;
-  topomatrixfmout->SetUnique("use_send_gps", true);
-  topomatrixfmout->use_send_gps = true;
-  topomatrixfmout->SetUnique("custom_send_range", true);
-  topomatrixfmout->custom_send_range = false;
-  topomatrixfmout->SetUnique("custom_recv_range", true);
-  topomatrixfmout->custom_recv_range = true;
-  topomatrixfmout->SetUnique("recv_range_start", true);
-  topomatrixfmout->recv_range_start.x = 0;
-  if(in_stripes > 0) { // y-coords contingent whether INPUT, MAINT, or BOTH used
-    if(mnt_stripes > 0) {
-      topomatrixfmout->recv_range_start.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y); // TODO: confirm works!!
-    }
-    else { // just INPUT
-      topomatrixfmout->recv_range_start.y = pfc_s_in->gp_geom.y; // TODO: confirm works!!
-    }
-  }
-  else { // no INPUT
-    if(mnt_stripes > 0) { // MAINT were the first guys
-      topomatrixfmout->recv_range_start.y = pfc_s_mnt->gp_geom.y; // TODO: confirm works!!
-    }
-    else { // just OUTPUT - rare, but possible!?
-      topomatrixfmout->recv_range_start.y = 0; // TODO: confirm works!!
-    }
-  }
-  //topomatrixfmout->recv_range_start.y = 2; // TODO: vestigial - only worked for n_stripes with 2 rows AND no INPUT!!
-  topomatrixfmout->SetUnique("recv_range_end", true);
-  topomatrixfmout->recv_range_end.x = -1;
-  topomatrixfmout->recv_range_end.y = -1; // OUTPUT always the last guys! TODO: confirm works..
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
@@ -3616,64 +3525,67 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   // matrix <-> pfc and pfc <-> pfc
 
-  // todo: need new topos and cons that separate super from deep, etc
-
   if(in_stripes > 0) {
-    net->FindMakePrjn(matrix_go_in, pfc_s_in, topomatrixfmin, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo_in, pfc_d_in, topomatrixfmin, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_go_in, pfc_s_in, topomatrixpfc_self, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo_in, pfc_d_in, topomatrixpfc_self, matrix_cons_nogo);
 
     if(mnt_stripes > 0) {
-      // this is key context prjn from mnt -> in
-      // todo: should it be deep or super only or both??
-      net->FindMakePrjn(pfc_s_in, pfc_s_mnt, intrapfctopo, topfc_cons);
-      net->FindMakePrjn(pfc_s_in, pfc_d_mnt, intrapfctopo, topfc_cons);
+      net->FindMakePrjn(pfc_s_in, pfc_s_mnt, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_in, pfc_d_mnt, intrapfctopo, pfctopfc_d_cons);
+
+      net->FindMakePrjn(matrix_go_in, pfc_s_mnt, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_in, pfc_d_mnt, topomatrixpfc_other, matrix_cons_nogo);
     }
     if(out_stripes > 0) {
-      net->FindMakePrjn(pfc_s_in, pfc_s_out, intrapfctopo, topfc_cons);
-      // also, deep??
+      net->FindMakePrjn(pfc_s_in, pfc_s_out, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_in, pfc_d_out, intrapfctopo, pfctopfc_d_cons);
+
+      net->FindMakePrjn(matrix_go_in, pfc_s_out, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_in, pfc_d_out, topomatrixpfc_other, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_d_in, pfc_s_in, onetoone, marker_cons);
     net->FindMakePrjn(pfc_d_in, snrthal, snr_prjn, marker_cons);
   }
 
   if(mnt_stripes > 0) {
-    net->FindMakePrjn(matrix_go_mnt, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo_weak);
-    net->FindMakePrjn(matrix_nogo_mnt, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_go_mnt, pfc_s_mnt, topomatrixpfc_self, matrix_cons_topo_weak);
+    net->FindMakePrjn(matrix_nogo_mnt, pfc_d_mnt, topomatrixpfc_self, matrix_cons_nogo);
 
     if(in_stripes > 0) {
-      // maint gates off of pfc input, not raw input..
-      net->FindMakePrjn(matrix_go_mnt, pfc_s_in, topomatrixfmmnt, matrix_cons_topo);
-      net->FindMakePrjn(matrix_nogo_mnt, pfc_d_in, topomatrixfmmnt, matrix_cons_nogo);
+      net->FindMakePrjn(pfc_s_mnt, pfc_s_in, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_mnt, pfc_d_in, intrapfctopo, pfctopfc_d_cons);
 
-      // todo: deep and super cons??
-      net->FindMakePrjn(pfc_s_mnt, pfc_s_in, intrapfctopo, topfctopo_cons);
-      net->FindMakePrjn(pfc_s_mnt, pfc_d_in, intrapfctopo, topfctopo_cons);
+      net->FindMakePrjn(matrix_go_mnt, pfc_s_in, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_mnt, pfc_d_in, topomatrixpfc_other, matrix_cons_nogo);
     }
     if(out_stripes > 0) {
-      net->FindMakePrjn(pfc_s_mnt, pfc_s_out, intrapfctopo, topfc_cons);
-      // could be an extra feedback training signal, but not that useful (diluted)
-      // net->FindMakePrjn(pfc_s_mnt, pfc_s_out, fullprjn, topfc_cons); signal!
+      net->FindMakePrjn(pfc_s_mnt, pfc_s_out, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_mnt, pfc_d_out, intrapfctopo, pfctopfc_d_cons);
+
+      net->FindMakePrjn(matrix_go_mnt, pfc_s_out, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_mnt, pfc_d_out, topomatrixpfc_other, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_d_mnt, pfc_s_mnt, onetoone, marker_cons);
     net->FindMakePrjn(pfc_d_mnt, snrthal, snr_prjn, marker_cons);
   }
 
   if(out_stripes > 0) {
-    net->FindMakePrjn(matrix_go_out, pfc_s_out, topomatrixfmout, matrix_cons_topo);
-    net->FindMakePrjn(matrix_nogo_out, pfc_d_out, topomatrixfmout, matrix_cons_nogo);
+    net->FindMakePrjn(matrix_go_out, pfc_s_out, topomatrixpfc_self, matrix_cons_topo);
+    net->FindMakePrjn(matrix_nogo_out, pfc_d_out, topomatrixpfc_self, matrix_cons_nogo);
 
     if(in_stripes > 0) {
-      // out gates off of pfc input, not raw input..
-      net->FindMakePrjn(matrix_go_out, pfc_s_in, topomatrixfmmnt, matrix_cons_topo);
-      net->FindMakePrjn(matrix_nogo_out, pfc_d_in, topomatrixfmmnt, matrix_cons_nogo);
+      net->FindMakePrjn(pfc_s_out, pfc_s_in, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_out, pfc_d_in, intrapfctopo, pfctopfc_d_cons);
+
+      net->FindMakePrjn(matrix_go_out, pfc_s_in, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_out, pfc_d_in, topomatrixpfc_other, matrix_cons_nogo);
     }
     if(mnt_stripes > 0) {
-      // out gates off of pfc maint as well
-      net->FindMakePrjn(matrix_go_out, pfc_s_mnt, topomatrixfmmnt, matrix_cons_topo);
-      net->FindMakePrjn(matrix_nogo_out, pfc_d_mnt, topomatrixfmmnt, matrix_cons_nogo);
+      net->FindMakePrjn(pfc_s_out, pfc_s_mnt, intrapfctopo, pfctopfc_s_cons);
+      net->FindMakePrjn(pfc_s_out, pfc_d_mnt, intrapfctopo, pfctopfc_d_cons);
 
-      net->FindMakePrjn(pfc_s_out, pfc_d_mnt, intrapfctopo, topfctopo_cons);
-      // also super??
+      net->FindMakePrjn(matrix_go_out, pfc_s_mnt, topomatrixpfc_other, matrix_cons_topo);
+      net->FindMakePrjn(matrix_nogo_out, pfc_d_mnt, topomatrixpfc_other, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_d_out, pfc_s_out, onetoone, marker_cons);
     net->FindMakePrjn(pfc_d_out, snrthal, snr_prjn, marker_cons);
@@ -3721,13 +3633,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(pfc_new) {
       if(in_stripes > 0) {
         if(pfc_learns)
-          net->FindMakePrjn(pfc_s_in, il, topofminput, topfctopo_cons);
+          net->FindMakePrjn(pfc_s_in, il, topofminput, topfcfmin_cons);
         else
           net->FindMakePrjn(pfc_s_in, il, input_pfc, topfc_cons);
       }
       else if(mnt_stripes > 0) { // only maint if no input
         if(pfc_learns)
-          net->FindMakePrjn(pfc_s_mnt, il, topofminput, topfctopo_cons);
+          net->FindMakePrjn(pfc_s_mnt, il, topofminput, topfcfmin_cons);
         else
           net->FindMakePrjn(pfc_s_mnt, il, input_pfc, topfc_cons);
       }
@@ -3738,6 +3650,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     Layer* ol = (Layer*)output_lays[i];
 
     if(pfc_new) {
+      if(in_stripes > 0) {
+	if(pfc_learns) { // error feedback goes to superficial guys!
+	  net->FindMakePrjn(pfc_s_in, ol, fullprjn, topfcfmout_cons);
+	}
+      }
       if(out_stripes > 0) {
 	net->FindMakePrjn(ol, pfc_d_out, fullprjn, fmpfcd_out);
 	if(pfc_learns) { // error feedback goes to superficial guys!
@@ -3793,6 +3710,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   int lay_spc = 2;
 
+  int n_lv_u;           // number of pvlv-type units
+  if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
+    n_lv_u = 4;
+  else if(lvesp->scalar.rep == ScalarValSpec::GAUSSIAN)
+    n_lv_u = 12;
+  else
+    n_lv_u = 21;
+
+
   if(new_pbwm_laygp) {
     pbwm_laygp_go->pos.z = 0;
     pbwm_laygp_go->pos.x = 20;
@@ -3805,12 +3731,73 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     pbwm_laygp_pfc->pos.y = 0;
   }
 
+  ///////////////	Matrix Layout
+
+  int mtx_st_x = 0;
+  int mtx_st_y = 0;
+  int mtx_nogo_y = mtx_st_y + matrix_go_mnt->disp_geom.y + 3 * lay_spc;
+  int mtx_go_y = 2 * lay_spc;
+  int mtx_z = 0;
+
+  if(in_stripes > 0) {
+    if(matrix_new) {
+      matrix_go_in->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+      matrix_nogo_in->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+
+      matrix_go_in->un_geom.n = 28; matrix_go_in->un_geom.x = 4;
+      matrix_go_in->un_geom.y = 7;
+      matrix_nogo_in->un_geom.n = 28; matrix_nogo_in->un_geom.x = 4;
+      matrix_nogo_in->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_in, in_stripes);
+    lay_set_geom(matrix_nogo_in, in_stripes);
+
+    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_in->disp_geom.y + 3 * lay_spc);
+    mtx_st_x += matrix_go_in->disp_geom.x + lay_spc; // move over..
+  }
+  if(mnt_stripes > 0) {
+    if(matrix_new) {
+      matrix_go_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+      matrix_nogo_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+
+      matrix_go_mnt->un_geom.n = 28; matrix_go_mnt->un_geom.x = 4;
+      matrix_go_mnt->un_geom.y = 7;
+      matrix_nogo_mnt->un_geom.n = 28; matrix_nogo_mnt->un_geom.x = 4;
+      matrix_nogo_mnt->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_mnt, mnt_stripes);
+    lay_set_geom(matrix_nogo_mnt, mnt_stripes);
+
+    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_mnt->disp_geom.y + 3 * lay_spc);
+    mtx_st_x += matrix_go_mnt->disp_geom.x + lay_spc; // move over..
+  }
+  if(out_stripes > 0) {
+    if(matrix_new) {
+      matrix_go_out->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+      matrix_nogo_out->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+
+      matrix_go_out->un_geom.n = 28; matrix_go_out->un_geom.x = 4;
+      matrix_go_out->un_geom.y = 7;
+      matrix_nogo_out->un_geom.n = 28; matrix_nogo_out->un_geom.x = 4;
+      matrix_nogo_out->un_geom.y = 7;
+    }
+    lay_set_geom(matrix_go_out, out_stripes);
+    lay_set_geom(matrix_nogo_out, out_stripes);
+
+    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_out->disp_geom.y + 3 * lay_spc);
+    mtx_st_x += matrix_go_out->disp_geom.x + lay_spc; // move over..
+  }
+
+  if(new_pbwm_laygp) {
+    pbwm_laygp_nogo->pos.y = mtx_nogo_y; // move over!
+  }
+
   ///////////////	PFC Layout first -- get into z = 1
 
   int pfc_st_x = 0;
   int pfc_st_y = 0;
   int pfc_deep_y = 18;
-  int pfc_z = 1;
+  int pfc_z = 0;
   if(in_stripes > 0) {
     if(pfc_new) {
       pfc_s_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
@@ -3880,96 +3867,16 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     lay_set_geom(pfc_d_out, out_stripes);
   }
 
-  ///////////////	Now Matrix, SNrThal
-
-  int n_lv_u;           // number of pvlv-type units
-  if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
-    n_lv_u = 4;
-  else if(lvesp->scalar.rep == ScalarValSpec::GAUSSIAN)
-    n_lv_u = 12;
-  else
-    n_lv_u = 21;
-
-  if(in_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_in->un_geom.n = 28; matrix_go_in->un_geom.x = 4;
-      matrix_go_in->un_geom.y = 7;
-      matrix_nogo_in->un_geom.n = 28; matrix_nogo_in->un_geom.x = 4;
-      matrix_nogo_in->un_geom.y = 7;
-    }
-    lay_set_geom(matrix_go_in, in_stripes);
-    lay_set_geom(matrix_nogo_in, in_stripes);
-  }
-  if(mnt_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_mnt->un_geom.n = 28; matrix_go_mnt->un_geom.x = 4;
-      matrix_go_mnt->un_geom.y = 7;
-      matrix_nogo_mnt->un_geom.n = 28; matrix_nogo_mnt->un_geom.x = 4;
-      matrix_nogo_mnt->un_geom.y = 7;
-    }
-    lay_set_geom(matrix_go_mnt, mnt_stripes);
-    lay_set_geom(matrix_nogo_mnt, mnt_stripes);
-  }
-  if(out_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_out->un_geom.n = 28; matrix_go_out->un_geom.x = 4;
-      matrix_go_out->un_geom.y = 7;
-      matrix_nogo_out->un_geom.n = 28; matrix_nogo_out->un_geom.x = 4;
-      matrix_nogo_out->un_geom.y = 7;
-    }
-    lay_set_geom(matrix_go_out, out_stripes);
-    lay_set_geom(matrix_nogo_out, out_stripes);
-  }
+  ///////////////	Now SNrThal
 
   int snr_stripes = in_stripes + mnt_stripes + out_stripes;
   lay_set_geom(snrthal, snr_stripes, 1);
 
-  // here again to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes);
-
-  int mtx_st_x = 0;
-  int mtx_st_y = 0;
-  int mtx_nogo_y = 18;
-  int mtx_z = 0;
-  if(in_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_in->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-    mtx_nogo_y = mtx_st_y + matrix_go_in->disp_geom.y + 4 * lay_spc;
-    if(matrix_new) {
-      matrix_go_in->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-
-    mtx_st_x += matrix_go_in->disp_geom.x + lay_spc; // move over..
-  }
-  if(mnt_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-    mtx_nogo_y = mtx_st_y + matrix_go_mnt->disp_geom.y + 4 * lay_spc;
-    if(matrix_new) {
-      matrix_go_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-
-    mtx_st_x += matrix_go_mnt->disp_geom.x + lay_spc; // move over..
-  }
-  if(out_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_out->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-    mtx_nogo_y = mtx_st_y + matrix_go_out->disp_geom.y + 4 * lay_spc;
-    if(matrix_new) {
-      matrix_go_out->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
-    }
-
-    mtx_st_x += matrix_go_out->disp_geom.x + lay_spc; // move over..
+  if(snrthal_new) { // put at front of go
+    snrthal->pos.SetXYZ(0, 0, mtx_z);
   }
 
-  if(snrthal_new) { // put between go and nogo
-    snrthal->pos.SetXYZ(0, mtx_nogo_y-2*lay_spc, mtx_z);
-  }
-
-  // here AGAIN to allow it to get disp_geom for laying out the pfc and matrix guys!
+  // here to allow it to get disp_geom for laying out the pfc and matrix guys!
   PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes);
 
   if(new_pbwm_laygp) {
@@ -3987,178 +3894,17 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
-  // PBWM_SetNStripes(net, gating_types, n_stripes);
   PBWM_Defaults(net, pfc_learns); // sets all default params and gets selectedits
 
   net->LayerPos_Cleanup();
+
+  net->Build();			// rebuild after defaults in place
 
   // move back!
   if(new_pbwm_laygp) {
     pbwm_laygp_go->pos.z = 0;
     net->RebuildAllViews();     // trigger update
   }
-
-//  ///////////////////////////////////////
-//  //	Config Topo PrjnSpecs
-//  ///////////////////////////////////////
-//
-//  topomaster->wt_range.min = 0.1f;
-//  topomaster->wt_range.max = 0.5f;
-//  topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
-//  topomaster->gauss_sig = 0.1f;
-//  topomaster->use_recv_gps = true;
-//  topomaster->use_send_gps = true;
-//
-//  topofminput->SetUnique("grad_x", true);
-//  topofminput->grad_x = false;
-//  topofminput->SetUnique("grad_y", true);
-//  topofminput->grad_y = true;
-//  topofminput->SetUnique("grad_y_grad_x", true);
-//  topofminput->grad_y_grad_x = true;
-//  topofminput->SetUnique("wrap", true);
-//  topofminput->wrap = false;
-//  topofminput->SetUnique("use_recv_gps", true);
-//  topofminput->use_recv_gps = true;
-//  topofminput->SetUnique("use_send_gps", true);
-//  topofminput->use_send_gps = false;
-//  topofminput->SetUnique("custom_send_range", true);
-//  topofminput->custom_send_range = true;
-//  topofminput->SetUnique("send_range_start", true);
-//  topofminput->send_range_start.x = 0;
-//  topofminput->send_range_start.y = 0;
-//  topofminput->SetUnique("send_range_end", true);
-//  topofminput->send_range_end.x = -1;
-//  topofminput->send_range_end.y = (n_stripes / 2)-1; // unlikely to be generally useful..
-//  topofminput->SetUnique("custom_recv_range", true);
-//  topofminput->custom_recv_range = false;
-//
-//  intrapfctopo->SetUnique("grad_x", true);
-//  intrapfctopo->grad_x = true;
-//  intrapfctopo->SetUnique("grad_x_grad_y", true);
-//  intrapfctopo->grad_x_grad_y = false;
-//  intrapfctopo->SetUnique("grad_y", true);
-//  intrapfctopo->grad_y = false;
-//  intrapfctopo->SetUnique("grad_y_grad_x", true);
-//  intrapfctopo->grad_y_grad_x = false;
-//  intrapfctopo->SetUnique("wrap", true);
-//  intrapfctopo->wrap = true;
-//  intrapfctopo->SetUnique("use_recv_gps", true);
-//  intrapfctopo->use_recv_gps = true;
-//  intrapfctopo->SetUnique("use_send_gps", true);
-//  intrapfctopo->use_send_gps = true;
-//  intrapfctopo->SetUnique("custom_send_range", true);
-//  intrapfctopo->custom_send_range = false;
-//  intrapfctopo->SetUnique("custom_recv_range", true);
-//  intrapfctopo->custom_recv_range = false;
-//
-//  // since first if used, can set with impunity
-//  topomatrixfmin->SetUnique("grad_x", true);
-//  topomatrixfmin->grad_x = true;
-//  topomatrixfmin->SetUnique("grad_x_grad_y", true);
-//  topomatrixfmin->grad_x_grad_y = false;
-//  topomatrixfmin->SetUnique("grad_y", true);
-//  topomatrixfmin->grad_y = true;
-//  topomatrixfmin->SetUnique("grad_y_grad_x", true);
-//  topomatrixfmin->grad_y_grad_x = false;
-//  topomatrixfmin->SetUnique("wrap", true);
-//  topomatrixfmin->wrap = false;
-//  topomatrixfmin->SetUnique("use_recv_gps", true);
-//  topomatrixfmin->use_recv_gps = true;
-//  topomatrixfmin->SetUnique("use_send_gps", true);
-//  topomatrixfmin->use_send_gps = true;
-//  topomatrixfmin->SetUnique("custom_send_range", true);
-//  topomatrixfmin->custom_send_range = false;
-//  topomatrixfmin->SetUnique("custom_recv_range", true);
-//  topomatrixfmin->custom_recv_range = true;
-//  topomatrixfmin->SetUnique("recv_range_start", true);
-//  topomatrixfmin->recv_range_start.x = 0;
-//  topomatrixfmin->recv_range_start.y = 0; // if used, INPUT always starts at 0
-//  topomatrixfmin->SetUnique("recv_range_end", true);
-//  topomatrixfmin->recv_range_end.x = -1;
-//  topomatrixfmin->recv_range_end.y = pfc_s_in->gp_geom.y -1; // works for MatrixNoGo too!! TODO: confirm actual lay name!!
-//  //topomatrixfmin->recv_range_end.y = 1; // TODO: vestigial - only worked for n_stripes with 2 rows..
-//
-//  topomatrixfmmnt->SetUnique("grad_x", true);
-//  topomatrixfmmnt->grad_x = true;
-//  topomatrixfmmnt->SetUnique("grad_x_grad_y", true);
-//  topomatrixfmmnt->grad_x_grad_y = false;
-//  topomatrixfmmnt->SetUnique("grad_y", true);
-//  topomatrixfmmnt->grad_y = true;
-//  topomatrixfmmnt->SetUnique("grad_y_grad_x", true);
-//  topomatrixfmmnt->grad_y_grad_x = false;
-//  topomatrixfmmnt->SetUnique("wrap", true);
-//  topomatrixfmmnt->wrap = true;
-//  topomatrixfmmnt->SetUnique("use_recv_gps", true);
-//  topomatrixfmmnt->use_recv_gps = true;
-//  topomatrixfmmnt->SetUnique("use_send_gps", true);
-//  topomatrixfmmnt->use_send_gps = true;
-//  topomatrixfmmnt->SetUnique("custom_send_range", true);
-//  topomatrixfmmnt->custom_send_range = false;
-//  topomatrixfmmnt->SetUnique("custom_recv_range", true);
-//  topomatrixfmmnt->custom_recv_range = true;
-//  topomatrixfmmnt->SetUnique("recv_range_start", true);
-//  topomatrixfmmnt->recv_range_start.x = 0;
-//  topomatrixfmmnt->SetUnique("recv_range_end", true);
-//  topomatrixfmmnt->recv_range_end.x = -1;
-//
-//  if(in_stripes > 0) { // y-coords contingent whether INPUT used or not
-//	  topomatrixfmmnt->recv_range_start.y = pfc_s_in->gp_geom.y; // TODO: confirm works!!
-//	  topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1);
-//  }
-//  else { // MAINT are the first guys!
-//	  topomatrixfmmnt->recv_range_start.y = 0;
-//	  topomatrixfmmnt->recv_range_end.y = (pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
-//  }
-//  //topomatrixfmmnt->SetUnique("recv_range_end", true);
-//  //topomatrixfmmnt->recv_range_end.x = -1;
-///*  if(in_stripes > 0) { // y-coords contingent whether INPUT used or not
-//	  topomatrixfmmnt->recv_range_end.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
-//  }
-//  else { // MAINT were the first guys!
-//	  topomatrixfmmnt->recv_range_end.y = pfc_s_mnt->gp_geom.y -1); // TODO: confirm works!!
-//  }*/
-//  //topomatrixfmmnt->recv_range_end.y = 1; // TODO: vestigial - only worked for n_stripes with 2 rows..
-//
-//  topomatrixfmout->SetUnique("grad_x", true);
-//  topomatrixfmout->grad_x = true;
-//  topomatrixfmout->SetUnique("grad_x_grad_y", true);
-//  topomatrixfmout->grad_x_grad_y = false;
-//  topomatrixfmout->SetUnique("grad_y", true);
-//  topomatrixfmout->grad_y = true;
-//  topomatrixfmout->SetUnique("grad_y_grad_x", true);
-//  topomatrixfmout->grad_y_grad_x = false;
-//  topomatrixfmout->SetUnique("wrap", true);
-//  topomatrixfmout->wrap = true;
-//  topomatrixfmout->SetUnique("use_recv_gps", true);
-//  topomatrixfmout->use_recv_gps = true;
-//  topomatrixfmout->SetUnique("use_send_gps", true);
-//  topomatrixfmout->use_send_gps = true;
-//  topomatrixfmout->SetUnique("custom_send_range", true);
-//  topomatrixfmout->custom_send_range = false;
-//  topomatrixfmout->SetUnique("custom_recv_range", true);
-//  topomatrixfmout->custom_recv_range = true;
-//  topomatrixfmout->SetUnique("recv_range_start", true);
-//  topomatrixfmout->recv_range_start.x = 0;
-//  if(in_stripes > 0) { // y-coords contingent whether INPUT, MAINT, or BOTH used
-//	  if(mnt_stripes > 0) {
-//		topomatrixfmout->recv_range_start.y = (pfc_s_in->gp_geom.y + pfc_s_mnt->gp_geom.y); // TODO: confirm works!!
-//	  }
-//	  else { // just INPUT
-//		topomatrixfmout->recv_range_start.y = pfc_s_in->gp_geom.y; // TODO: confirm works!!
-//	  }
-//  }
-//  else { // no INPUT
-//	  if(mnt_stripes > 0) { // MAINT were the first guys
-//	  	topomatrixfmout->recv_range_start.y = pfc_s_mnt->gp_geom.y; // TODO: confirm works!!
-//	  }
-//	  else { // just OUTPUT - rare, but possible!?
-//		  topomatrixfmout->recv_range_start.y = 0; // TODO: confirm works!!
-//	  }
-//  }
-//  //topomatrixfmout->recv_range_start.y = 2; // TODO: vestigial - only worked for n_stripes with 2 rows AND no INPUT!!
-//  topomatrixfmout->SetUnique("recv_range_end", true);
-//  topomatrixfmout->recv_range_end.x = -1;
-//  topomatrixfmout->recv_range_end.y = -1; // OUTPUT always the last guys! TODO: confirm works..
 
   taMisc::CheckConfigStart(false, false);
 
@@ -4261,10 +4007,10 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
-  LeabraConSpec* topfcstrong_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCStrong", &TA_LeabraConSpec);
-  LeabraConSpec* topfctopo_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCTopo", &TA_LeabraConSpec);
+  LeabraConSpec* pfctopfc_s_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_s", &TA_LeabraConSpec);
+  LeabraConSpec* pfctopfc_d_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
+  LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
-  LeabraConSpec* topfcself_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCSelf", &TA_LeabraConSpec);
 
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
@@ -4323,9 +4069,8 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   TopoWtsPrjnSpec* topomaster = (TopoWtsPrjnSpec*)prjns->FindMakeSpec("TopoMaster", &TA_TopoWtsPrjnSpec);
   TopoWtsPrjnSpec* topofminput = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoFmInput", &TA_TopoWtsPrjnSpec);
   TopoWtsPrjnSpec* intrapfctopo = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoIntraPFC", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmmnt = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmMnt", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmout = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmOut", &TA_TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* topomatrixfmin = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixFmIn", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixpfc_self = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixPFC_Self", &TA_TopoWtsPrjnSpec);
+  TopoWtsPrjnSpec* topomatrixpfc_other = (TopoWtsPrjnSpec*)topomaster->FindMakeChild("TopoMatrixPFC_Other", &TA_TopoWtsPrjnSpec);
 
   TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
   input_pfc->send_offs.SetSize(1); // this is all it takes!
@@ -4384,21 +4129,23 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   topfc_cons->SetUnique("lmix", true);
   topfc_cons->lmix.hebb = .001f;
 
-  topfcstrong_cons->SetUnique("wt_scale", true);
-  topfcstrong_cons->wt_scale.rel = 2.0f;
+  pfctopfc_s_cons->SetUnique("rnd", true);
+  pfctopfc_s_cons->rnd.mean = 0.0f;
+  pfctopfc_s_cons->rnd.var = 0.25f;
+  // todo: wt_scale??
 
-  topfctopo_cons->SetUnique("rnd", true);
-  topfctopo_cons->rnd.mean = 0.0f;
-  topfctopo_cons->rnd.var = 0.25f;
+  pfctopfc_d_cons->SetUnique("rnd", true);
+  pfctopfc_d_cons->rnd.mean = 0.0f;
+  pfctopfc_d_cons->rnd.var = 0.25f;
+  // todo: wt_scale??
+
+  topfcfmin_cons->SetUnique("rnd", true);
+  topfcfmin_cons->rnd.mean = 0.0f;
+  topfcfmin_cons->rnd.var = 0.25f;
+  // todo: wt_scale??
 
   topfcfmout_cons->SetUnique("wt_scale", true);
   topfcfmout_cons->wt_scale.rel = 0.5f;
-
-  topfcself_cons->SetUnique("rnd", true);
-  topfcself_cons->rnd.mean = 0.0f;
-  topfcself_cons->rnd.var = 0.25f;
-  topfcself_cons->SetUnique("wt_scale", true);
-  topfcself_cons->wt_scale.rel = 0.5f;
 
   matrix_cons->SetUnique("rnd", true);
   matrix_cons->rnd.mean = 0.5f; 
