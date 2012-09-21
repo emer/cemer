@@ -413,9 +413,11 @@ public:
   virtual float	Compute_NoGoInhibGo(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 				    LeabraNetwork* net);
   // compute nogo layer stripes inhibition onto go layer units -- called in ApplyInhib
+  virtual float	Compute_GoPfcThrInhib(LeabraLayer* lay, Layer::AccessMode acc_md,
+				      int gpidx, LeabraNetwork* net);
+  // compute inhib from go_pfc_thr
 
-  override void Compute_ApplyInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-					LeabraInhib* thr, LeabraNetwork* net);
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	Compute_GatingActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				       int gpidx, LeabraNetwork* net);
