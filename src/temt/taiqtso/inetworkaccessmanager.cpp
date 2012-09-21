@@ -85,13 +85,13 @@
 
 iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   : QNetworkAccessManager(parent)
+  , m_main_win(0)
 {
-  m_main_win = NULL;		// must be set!
   connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
-	  SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
+          SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
 #ifndef QT_NO_OPENSSL
   connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
-	  SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+          SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
 #endif
   loadSettings();
 
@@ -162,15 +162,14 @@ void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthen
   QString url_str = reply->url().toString();
   QString host = reply->url().host();
 
-  static QString last_realm;
-  static QString last_host;
+  bool same_place = (realm == m_last_realm && host == m_last_host);
+  m_last_realm = realm;
+  m_last_host = host;
 
-  bool same_place = (realm == last_realm && host == last_host);
-  last_realm = realm;  last_host = host;
-
-  QString user; QString password;
+  QString user;
+  QString password;
   bool found = m_auth_saver.findAuthRecord(user, password, realm, host);
-  if(found && !same_place) {
+  if (found && !same_place) {
     auth->setUser(user);
     auth->setPassword(password);
     return;
@@ -199,7 +198,7 @@ void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthen
     auth->setUser(user);
     auth->setPassword(password);
 
-    if(passwordDialog.saveFlag->isChecked()) {
+    if (passwordDialog.saveFlag->isChecked()) {
       m_auth_saver.saveAuthRecord(user, password, realm, host);
     }
   }
@@ -277,39 +276,39 @@ void iNetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslErro
 
   QString errors = errorStrings.join(QLatin1String("</li><li>"));
   int ret = QMessageBox::warning(m_main_win,
-				 QCoreApplication::applicationName() + tr(" - SSL Errors"),
-				 tr("<qt>SSL Errors:"
-				    "<br/><br/>for: <tt>%1</tt>"
-				    "<ul><li>%2</li></ul>\n\n"
-				    "Do you want to ignore these errors?</qt>").arg(reply->url().toString()).arg(errors),
-				 QMessageBox::Yes | QMessageBox::No,
-				 QMessageBox::No);
+                                 QCoreApplication::applicationName() + tr(" - SSL Errors"),
+                                 tr("<qt>SSL Errors:"
+                                    "<br/><br/>for: <tt>%1</tt>"
+                                    "<ul><li>%2</li></ul>\n\n"
+                                    "Do you want to ignore these errors?</qt>").arg(reply->url().toString()).arg(errors),
+                                 QMessageBox::Yes | QMessageBox::No,
+                                 QMessageBox::No);
 
   if (ret == QMessageBox::Yes) {
     if (ca_new.count() > 0) {
       QStringList certinfos;
       for (int i = 0; i < ca_new.count(); ++i)
-	certinfos += certToFormattedString(ca_new.at(i));
+        certinfos += certToFormattedString(ca_new.at(i));
       ret = QMessageBox::question(m_main_win, QCoreApplication::applicationName(),
-				  tr("<qt>Certifactes:<br/>"
-				     "%1<br/>"
-				     "Do you want to accept all these certificates?</qt>")
-				  .arg(certinfos.join(QString())),
-				  QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+                                  tr("<qt>Certifactes:<br/>"
+                                     "%1<br/>"
+                                     "Do you want to accept all these certificates?</qt>")
+                                  .arg(certinfos.join(QString())),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
       if (ret == QMessageBox::Yes) {
-	ca_merge += ca_new;
+        ca_merge += ca_new;
 
-	QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
-	QList<QSslCertificate> ca_list = sslCfg.caCertificates();
-	ca_list += ca_new;
-	sslCfg.setCaCertificates(ca_list);
-	QSslConfiguration::setDefaultConfiguration(sslCfg);
-	reply->setSslConfiguration(sslCfg);
+        QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
+        QList<QSslCertificate> ca_list = sslCfg.caCertificates();
+        ca_list += ca_new;
+        sslCfg.setCaCertificates(ca_list);
+        QSslConfiguration::setDefaultConfiguration(sslCfg);
+        reply->setSslConfiguration(sslCfg);
 
-	QByteArray pems;
-	for (int i = 0; i < ca_merge.count(); ++i)
-	  pems += ca_merge.at(i).toPem() + '\n';
-	settings.setValue(QLatin1String("CaCertificates"), pems);
+        QByteArray pems;
+        for (int i = 0; i < ca_merge.count(); ++i)
+          pems += ca_merge.at(i).toPem() + '\n';
+        settings.setValue(QLatin1String("CaCertificates"), pems);
       }
     }
     reply->ignoreSslErrors();
@@ -318,7 +317,7 @@ void iNetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslErro
 #endif
 
 /////////////////////////////////////////////////////////////////
-// 		AuthSaver
+//              AuthSaver
 
 #include <qdesktopservices.h>
 #include <qfile.h>
@@ -393,7 +392,7 @@ void iAuthSaver::load() {
 }
 
 bool iAuthSaver::findAuthRecord(QString& user, QString& password, const QString& realm,
-				const QString& host) const {
+                                const QString& host) const {
   user = "";
   password = "";
   for(int i=0;i<savedAuths.size(); i++) {
@@ -408,7 +407,7 @@ bool iAuthSaver::findAuthRecord(QString& user, QString& password, const QString&
 }
 
 bool iAuthSaver::saveAuthRecord(const QString& user, const QString& password,
-				const QString& realm, const QString& host) {
+                                const QString& realm, const QString& host) {
   bool rval = false;
   for(int i=0;i<savedAuths.size(); i++) {
     iAuthRecord& aurec = savedAuths[i];

@@ -3991,6 +3991,7 @@ bool taRootBase::Startup_MakeMainWin() {
   tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
+  // TODO: 'bw' stands for base window??
   iMainWindowViewer* bw = vwr->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls

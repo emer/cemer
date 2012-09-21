@@ -67,7 +67,7 @@
 
 class QDataStream;
 
-class iAuthRecord : public QObject { 
+class iAuthRecord : public QObject {
   // #IGNORE one authentication record
   Q_OBJECT
 public:
@@ -83,13 +83,13 @@ public:
   QString  realm;
   QString  host;
   QString  user;
-  QString  password;		
+  QString  password;
 
   friend QDataStream &operator<<(QDataStream &, const iAuthRecord&);
   friend QDataStream &operator>>(QDataStream &, iAuthRecord&);
 };
 
-class iAuthSaver : public QObject { 
+class iAuthSaver : public QObject {
   // #IGNORE saves authentication data
   Q_OBJECT
 public:
@@ -99,15 +99,15 @@ public:
   QList<iAuthRecord>  savedAuths;
 
   bool  findAuthRecord(QString& user, QString& password, const QString& realm,
-		       const QString& host) const;
+                       const QString& host) const;
   // find authentication record based on realm and host, returning user and password into args -- returns false if not found, true if found
   bool  saveAuthRecord(const QString& user, const QString& password, const QString& realm,
-		       const QString& host);
+                       const QString& host);
   // save given authentication record, and save to disk too -- returns true if updating existing record, false if new record
 
 public slots:
-  void	load();			// save to persistent file storage
-  void	save();			// load from persistent file storage
+  void  load();                 // save to persistent file storage
+  void  save();                 // load from persistent file storage
 };
 
 
@@ -120,8 +120,12 @@ public:
   void  setMainWindow(QMainWindow* mw) { m_main_win = mw; }
 
 protected:
-  QMainWindow* 	m_main_win;
-  iAuthSaver    m_auth_saver;			  
+  QMainWindow*  m_main_win;
+  iAuthSaver    m_auth_saver;
+
+private:
+  QString       m_last_realm;
+  QString       m_last_host;
 
 public slots:
   void loadSettings();
