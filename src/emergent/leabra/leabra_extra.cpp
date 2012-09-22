@@ -37,6 +37,8 @@ void MarkerConSpec::Defaults_init() {
   SetUnique("lrate", true);
   lrate = 0.0f;
   cur_lrate = 0.0f;
+  SetUnique("learn", true);
+  learn = false;
 }
 
 //////////////////////////////////

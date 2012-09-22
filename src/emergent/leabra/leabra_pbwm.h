@@ -34,6 +34,10 @@ public:
   int		go_cycle;	// #CAT_Activation cycle on which Go fired, if it did on this trial (-1 if no Go)
   int		mnt_count;	// #CAT_Activation current counter of number of trials in maint or empty state -- 0 = gating just happened -- will only be true on trial when go_fired_trial is true -- 1+ = maint for a trial or a more (increments at start of each trial, 1 = trial right after gating, etc) -- -1- = empty for a trial or more (also increments at start of each trial)
   int		prv_mnt_count;	// #CAT_Activation previous counter of number of trials in maint or empty state, just prior to last gating event (only updated at time of gating) -- enables determination of whether a current Go signal was to a maintaining stripe (go_fired_trial && prv_mnt_count > 0) or an empty stripe (otherwise)
+  float		nogo_inhib;	// #CAT_Activation amount of nogo inhibition for this stripe -- only valid in Matrix Go layers
+  float		refract_inhib;	// #CAT_Activation amount of refractory inhibition for this stripe -- only valid in Matrix Go layers
+  float		no_pfc_inhib;	// #CAT_Activation amount of no pfc activity inhibition for this stripe -- only valid in Matrix Go layers
+  float		pvr_inhib;	// #CAT_Activation amount of pvr activity inhibition for this stripe -- only valid in Matrix Go layers
 
   override void	Init_State();
 
@@ -85,7 +89,6 @@ public:
   };
 
   GatingTypes		gating_types;	// types of gating units present within this SNrThal layer -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
-  int			n_in_out_stripes; // number of input/output stripes -- maint stripes MUST be some multiple of this number
   SNrThalMiscSpec	snrthal;    	// misc specs for snrthal layer
 
   virtual void	Init_GateStats(LeabraLayer* lay, LeabraNetwork* net);
@@ -343,10 +346,12 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(SpecMemberBase)
 public:
-  float		nogo_inhib;	// #DEF_0.2 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- nogo stripe average activation times this factor adds directly to gc.i inhibition in go units
-  float		refract_inhib;	// #MIN_0 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
-  float		go_pfc_thr;	// #DEF_0:0.02 threshold on average activity within the corresponding PFC_s stripe before a Go pathway stripe can fire -- requires that matrix recv from PFC_s in first place -- avoids having to implement this constraint in connectivity
+  float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 #MAX_1 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
+  float		pvr_inhib;	// #DEF_0:0.5 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
+  float		refract_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
+  float		no_pfc_thr;	// #DEF_0:0.02 threshold for considering there to be no corresponding pfc activity -- average activity within the corresponding PFC_s stripe must be above this level -- if not, netin inhibition is applied to stripe by rescaling downward by (1 - no_pfc_inhib) -- enforces this as a hard constraint even if it is a soft constraint in connectivity
+  float		no_pfc_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of inhibition to apply for stripes with pfc activity below go_pfc_thr -- net inputs are rescaled downward by (1 - no_pfc_inhib) -- reshapes the competition so other stripes will win
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -410,14 +415,21 @@ public:
 				       LeabraNetwork* net);
   // set the effective mid-minus (gating) activation state to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment, for display purposes mostly as dopamine usually does the credit assignment)
 
-  virtual float	Compute_NoGoInhibGo(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				    LeabraNetwork* net);
+  virtual float	Compute_NoGoInhibGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					int gpidx, LeabraNetwork* net);
   // compute nogo layer stripes inhibition onto go layer units -- called in ApplyInhib
-  virtual float	Compute_GoPfcThrInhib(LeabraLayer* lay, Layer::AccessMode acc_md,
-				      int gpidx, LeabraNetwork* net);
+  virtual float	Compute_GoPfcThrInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					  int gpidx, LeabraNetwork* net);
   // compute inhib from go_pfc_thr
+  virtual float	Compute_PVrInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					 int gpidx, LeabraNetwork* net);
+  // compute pvr inhib
+  virtual float	Compute_RefractInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					 int gpidx, LeabraNetwork* net);
+  // compute refract inhib
 
-  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
+  // this is hook for modulating netinput according to above inhib factors
+  override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	Compute_GatingActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				       int gpidx, LeabraNetwork* net);
@@ -490,7 +502,7 @@ INHERITED(SpecMemberBase)
 public:
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
-  int		out_mnt;	// #DEF_1 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
+  int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
   float		maint_thr;	// #DEF_0.2 #MIN_0 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
 
