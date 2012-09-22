@@ -70,8 +70,10 @@ PublishDocsDialog::PublishDocsDialog(const char *repositoryName)
   // plus an inner layout (with margins) to hold everything else.
   QVBoxLayout *topVbox = new QVBoxLayout(this);
   QVBoxLayout *vbox = new QVBoxLayout; // inner
+#if (QT_VERSION >= 0x040600) // QMargins didn't exist until Qt 4.6
   vbox->setContentsMargins(topVbox->contentsMargins());
   topVbox->setContentsMargins(0, 0, 0, 0);
+#endif
   topVbox->addLayout(vbox);
 
   // Add a status bar for instructions.

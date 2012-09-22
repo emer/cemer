@@ -24,7 +24,7 @@
 class DataTable;
 
 #ifndef __MAKETA__
-class iNetworkAccessManager;
+class QNetworkAccessManager;
 class QNetworkReply;
 class QUrl;
 
@@ -40,7 +40,7 @@ class SynchronousNetRequest : public QObject
   Q_OBJECT
 
 public:
-  SynchronousNetRequest();
+  SynchronousNetRequest(QNetworkAccessManager *qnam = 0);
   virtual ~SynchronousNetRequest();
   bool get(const QUrl &url);
   bool post(const QUrl &url, const char *data, int size);
@@ -51,13 +51,17 @@ public:
 public slots:
   void cancel();
 
+private slots:
+  void finished();
+
 private:
   void reset();
   bool waitForReply();
 
-  iNetworkAccessManager *m_netManager;
+  QNetworkAccessManager *m_netManager;
   QNetworkReply *m_reply;
   bool m_isCancelled;
+  bool m_isFinished;
 };
 #endif
 

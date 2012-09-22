@@ -23,12 +23,10 @@
 #include "ta_program.h"
 #include "ta_qt.h"
 
-#include <QApplication>
-#include <QMainWindow>
+#include <QFile>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
-#include <QFile>
 
 /////////////////////////////////////
 //      SynchronousNetRequest      //
@@ -88,27 +86,20 @@
 //   application which means that it cannot bind directly to your
 //   application states.
 //
-// The r5613 commit is to checkpoint this initial (working) implementation of
-// SynchronousNetRequest before migrating to a scheme that shares the QNAM.
+// The r5613 commit checkpointed the initial (working) implementation of
+// SynchronousNetRequest before migrating to a scheme that shares the QNAM
+// created for Webkit (r5616).
 
-SynchronousNetRequest::SynchronousNetRequest()
-  : m_netManager(new iNetworkAccessManager(this))
+SynchronousNetRequest::SynchronousNetRequest(QNetworkAccessManager *qnam)
+  : m_netManager(qnam)
   , m_reply(0)
   , m_isCancelled(false)
+  , m_isFinished(false)
 {
-  // Setting the main window allows dialogs to be created as needed to
-  // prompt for credentials, etc.
-  if (QWidget *widget = QApplication::activeWindow()) {
-    if (QMainWindow *mw = qobject_cast<QMainWindow *>(widget)) {
-      m_netManager->setMainWindow(mw);
-    }
-    else {
-      taMisc::Warning("SynchronousNetRequest: no main window found, activeWindow() returned a",
-        widget->metaObject()->className());
-    }
-  }
-  else {
-    taMisc::Warning("SynchronousNetRequest: activeWindow() returned null");
+  if (!m_netManager) {
+    // If the provided QNAM is null (default), use the QNAM object
+    // created for emergent's embedded Webkit browser.
+    m_netManager = taiMisc::net_access_mgr;
   }
 }
 
@@ -173,12 +164,27 @@ void SynchronousNetRequest::cancel()
   // Abort the request.
   if (m_reply) {
     m_reply->abort();
+
+    // Use disconnect() and deleteLater() instead of just 'delete m_reply'
+    // in case there are any pending events for the reply.
+    m_reply->disconnect();
+    m_reply->deleteLater();
+
+    // Since m_reply will be deleted later, we are no longer responsible for
+    // it and can safely null our pointer as if it were already deleted.
+    m_reply = 0;
   }
 
-  // Set our flag that the request was cancelled and delete the reply.
+  // Set our flag that the request was cancelled.
   m_isCancelled = true;
-  delete m_reply;
-  m_reply = 0;
+}
+
+void SynchronousNetRequest::finished()
+{
+  // TODO: This method and member are only needed to support Qt 4.5, which
+  // doesn't have the QNetworkReply::isFinished() method.  Once support for
+  // Qt 4.5 is no longer needed, clean this up.
+  m_isFinished = true;
 }
 
 void SynchronousNetRequest::reset()
@@ -188,6 +194,7 @@ void SynchronousNetRequest::reset()
 
   // Get ready for a new request.
   m_isCancelled = false;
+  m_isFinished = false;
 }
 
 bool SynchronousNetRequest::waitForReply()
@@ -198,7 +205,7 @@ bool SynchronousNetRequest::waitForReply()
   // does the trick for now (and allows us to poll isAborted() easily).
   // See this page for details on using QEventLoop:
   // http://doc.qt.digia.com/qq/qq27-responsive-guis.html#waitinginalocaleventloop
-  while (m_reply && !m_reply->isFinished() && !m_isCancelled) {
+  while (m_reply && !m_isFinished && !m_isCancelled) {
     // Sleep to prevent 100% CPU usage.
     taPlatform::msleep(50); // milliseconds
 
@@ -220,12 +227,12 @@ bool SynchronousNetRequest::waitForReply()
       qPrintable(m_reply->errorString()));
   }
 
-  // Return true on success: operation was not cancelled, a reply exists, and
-  // finished without error.
+  // Return true on success: operation finished without being cancelled,
+  // a reply exists, and no error occurred.
   return
     !m_isCancelled
+    && m_isFinished
     && m_reply
-    && m_reply->isFinished()
     && (m_reply->error() == QNetworkReply::NoError);
 }
 
@@ -343,29 +350,33 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
     url.addQueryItem(QString("srlimit"), QString::number(max_results));
   }
 
-  // Make the network request; if successful, process the reply.
+  // Make the network request.
   SynchronousNetRequest request;
-  if (request.get(url)) {
-    QNetworkReply *reply = request.getReply();
+  bool success = request.get(url);
+  if (!success) {
+    return false;
+  }
 
-    results->RemoveAllRows();
-    DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+  // If request succeeded, process the reply.
+  QNetworkReply *reply = request.getReply();
 
-    QXmlStreamReader reader(reply);
-    while (!reader.atEnd()) {
-      QXmlStreamReader::TokenType tokenType = reader.readNext();
-      if (tokenType == QXmlStreamReader::StartElement) {
-        if (reader.name() == QString("p")) {
-          QXmlStreamAttributes attrs = reader.attributes();
-          String pt = attrs.value(QString("title")).toString();
-          results->AddBlankRow();
-          pt_col->SetVal(pt, -1);
-        }
-      }
-      else if (tokenType == QXmlStreamReader::Invalid) {
-        return false;
+  results->RemoveAllRows();
+  DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+
+  QXmlStreamReader reader(reply);
+  while (!reader.atEnd()) {
+    QXmlStreamReader::TokenType tokenType = reader.readNext();
+    if (tokenType == QXmlStreamReader::StartElement) {
+      if (reader.name() == QString("p")) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        String pt = attrs.value(QString("title")).toString();
+        results->AddBlankRow();
+        pt_col->SetVal(pt, -1);
       }
     }
-    return true;
+    else if (tokenType == QXmlStreamReader::Invalid) {
+      return false;
+    }
   }
+  return true;
 }
