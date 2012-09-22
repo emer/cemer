@@ -28,6 +28,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
+#include <QFile>
 
 /////////////////////////////////////
 //      SynchronousNetRequest      //
