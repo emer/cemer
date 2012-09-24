@@ -45,7 +45,9 @@ for REPO in $REPOS; do
         chown root.root ${SUBDIR}/${FILE}
       done
       echo "  Updating ${ARCH} repository ..."
-      dpkg-scanpackages ${SUBDIR} /dev/null | grep -v -E 'Depends:[^a-z]$' > ${SUBDIR}/Packages
+
+      # Include all found packages in the output (multiversion).
+      dpkg-scanpackages --multiversion ${SUBDIR} /dev/null | grep -v -E 'Depends:[^a-z]$' > ${SUBDIR}/Packages
       gzip -f ${SUBDIR}/Packages
     done
   done
