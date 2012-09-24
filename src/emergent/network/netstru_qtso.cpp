@@ -3657,6 +3657,7 @@ void NetView::SaveCtrHist() {
 
 void NetView::DataUpdateView_impl() {
   if (!display) return;
+  HistFwdAll();			// update to current point in history when updated externally
   UpdateUnitValues();
   if(net_text) {
     Render_net_text();

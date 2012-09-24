@@ -550,9 +550,9 @@ void MatrixGoNogoGainSpec::Initialize() {
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   nogo_inhib = 0.0f; // 0.2f;
-  pvr_inhib = 0.5f;
-  refract_inhib = 0.2f;
-  no_pfc_thr = 0.02f;
+  pvr_inhib = 0.8f;
+  refract_inhib = 0.0f;
+  no_pfc_thr = 0.0f;
   no_pfc_inhib = 0.2f;
 }
 
