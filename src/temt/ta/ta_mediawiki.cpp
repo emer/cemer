@@ -108,48 +108,49 @@ SynchronousNetRequest::~SynchronousNetRequest()
   cancel();
 }
 
-bool SynchronousNetRequest::get(const QUrl &url)
+QNetworkReply * SynchronousNetRequest::httpGet(const QUrl &url)
 {
-  // Make a GET request and wait for the reply.
+  // Make HTTP GET request, wait for reply.
   reset();
   m_reply = m_netManager->get(QNetworkRequest(url));
-  return waitForReply();
+  waitForReply();
+  return getReplyIfSuccess();
 }
 
-bool SynchronousNetRequest::post(const QUrl &url, const char *data, int size)
+QNetworkReply * SynchronousNetRequest::httpPost(const QUrl &url)
 {
-  reset();
-  if (data && size > 0) {
-    QByteArray byteArray(data, size);
-    m_reply = m_netManager->post(QNetworkRequest(url), byteArray);
-    return waitForReply();
-  }
-
-  taMisc::Warning("SynchronousNetRequest: no data provided");
-  return false;
+  // Make HTTP POST request with no data to send (other than URL query params).
+  return httpPost(url, 0, 0);
 }
 
-bool SynchronousNetRequest::post(const QUrl &url, const char *filename)
+QNetworkReply * SynchronousNetRequest::httpPost(const QUrl &url, const char *filename)
 {
   reset();
   QFile file(filename);
-  if (file.open(QIODevice::ReadOnly)) {
-    m_reply = m_netManager->post(QNetworkRequest(url), &file);
-    return waitForReply();
+  if (!file.open(QIODevice::ReadOnly)) {
+    taMisc::Warning("SynchronousNetRequest: could not open file", filename);
+    return 0;
   }
 
-  taMisc::Warning("SynchronousNetRequest: could not open file", filename);
-  return false;
+  // Make HTTP POST request, wait for reply.
+  m_reply = m_netManager->post(QNetworkRequest(url), &file);
+  waitForReply();
+  return getReplyIfSuccess();
 }
 
-bool SynchronousNetRequest::isAborted()
+QNetworkReply * SynchronousNetRequest::httpPost(const QUrl &url, const char *data, int size)
 {
-  // Subclass may override to check for other conditions.
-  if (Program::stop_req) {
-    return true;
-  }
+  reset();
 
-  return false;
+  // Note: it's valid for data to be null and/or size to be 0.
+  // For example, Mediawiki's login API requires POST but no additional data
+  // other than the query terms.
+  QByteArray byteArray(data, size);
+
+  // Make HTTP POST request, wait for reply.
+  m_reply = m_netManager->post(QNetworkRequest(url), byteArray);
+  waitForReply();
+  return getReplyIfSuccess();
 }
 
 QNetworkReply * SynchronousNetRequest::getReply()
@@ -157,6 +158,18 @@ QNetworkReply * SynchronousNetRequest::getReply()
   // Get the reply object.  If request failed, user can call
   // reply->error() or reply->errorString() to determine cause of error.
   return m_reply;
+}
+
+QNetworkReply * SynchronousNetRequest::getReplyIfSuccess()
+{
+  // If operation finished without being cancelled, a reply exists,
+  // and no error occurred, then return the reply.
+  if (!m_isCancelled && m_isFinished && m_reply
+      && (m_reply->error() == QNetworkReply::NoError))
+  {
+    return m_reply;
+  }
+  return 0;
 }
 
 void SynchronousNetRequest::cancel()
@@ -197,9 +210,14 @@ void SynchronousNetRequest::reset()
   m_isFinished = false;
 }
 
-bool SynchronousNetRequest::waitForReply()
+void SynchronousNetRequest::waitForReply()
 {
   // Loop until reply is completely received or the request is cancelled.
+
+  // See comment in finished() re: Qt 4.5.
+  if (m_reply) {
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+  }
 
   // TODO: It may be better to rewrite this using a QEventLoop, but this
   // does the trick for now (and allows us to poll isAborted() easily).
@@ -226,19 +244,38 @@ bool SynchronousNetRequest::waitForReply()
     taMisc::Warning("SynchronousNetRequest: error occurred:",
       qPrintable(m_reply->errorString()));
   }
+}
 
-  // Return true on success: operation finished without being cancelled,
-  // a reply exists, and no error occurred.
-  return
-    !m_isCancelled
-    && m_isFinished
-    && m_reply
-    && (m_reply->error() == QNetworkReply::NoError);
+bool SynchronousNetRequest::isAborted()
+{
+  // Subclass may override to check for other conditions.
+  if (Program::stop_req) {
+    return true;
+  }
+
+  return false;
 }
 
 ///////////////////////////
 //      taMediaWiki      //
 ///////////////////////////
+
+namespace { // anonymous
+  // Find the next element in the XML stream, regardless of nesting level.
+  bool findNextElement(QXmlStreamReader &reader, const char *element)
+  {
+    // As long as the XML stream isn't at the end (or errored),
+    while (!reader.atEnd()) {
+      // read tokens until a matching start element is found.
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        if (reader.name() == element) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
 
 void taMediaWiki::Initialize()
 {
@@ -255,6 +292,135 @@ String taMediaWiki::GetApiURL(const String& wiki_name)
   }
   return wiki_url + "/api.php";
 }
+
+/////////////////////////////////////////////////////
+//            Account operations
+
+String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
+{
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return "";
+
+  QUrl url(wikiUrl);
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("meta", "userinfo");
+
+  // Make the network request.
+  // Note: The reply will be deleted when the request goes out of scope.
+  SynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Find the <userinfo> tag and check for a non-zero ID.
+    QXmlStreamReader reader(reply);
+    if (findNextElement(reader, "userinfo")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      if (attrs.value("id") != "0") {
+        return attrs.value("name").toString();
+      }
+    }
+  }
+
+  return "";
+}
+
+bool taMediaWiki::Login(const String &wiki_name, const String &username)
+{
+  // Make sure wiki name is valid before doing anything else.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  // Return true if username specified is already logged in.
+  if (!username.empty()) {
+    String loggedInUser = GetLoggedInUsername(wiki_name);
+    if (username == loggedInUser) {
+      // User is already logged in.
+      return true;
+    }
+  }
+
+  // Prompt for username/password.
+  QString qUsername = username;
+  QString qPassword;
+  QString message = "Enter username and password for \"%1\" wiki at %2";
+  message = message.arg(QString(wiki_name)).arg(QString(wikiUrl));
+
+  if (!getUsernamePassword(qUsername, qPassword, message)) {
+    // User hit cancel on dialog.
+    return false;
+  }
+
+  // Mediawiki login is (potentially) a two-stage process.  The first
+  // attempt to log in, a token is returned.  The second attempt must
+  // pass the token back along with a cookie.  The QNAM should handle
+  // the cookie processing for us.
+
+  // Set up the URL for the first stage.
+  QUrl url(wikiUrl);
+  url.addQueryItem("action", "login");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("lgname", qUsername);
+  url.addQueryItem("lgpassword", qPassword);
+
+  // Make the network request, once per stage.
+  SynchronousNetRequest request;
+  for (int stage = 0; stage < 2; ++stage) {
+    if (QNetworkReply *reply = request.httpPost(url)) {
+      // Find the <login> tag.
+      QXmlStreamReader reader(reply);
+      if (!findNextElement(reader, "login")) {
+        taMisc::Warning("Malformed response logging in to ", wiki_name, "wiki");
+        return false;
+      }
+
+      // Check the login result.
+      QXmlStreamAttributes attrs = reader.attributes();
+      QString result = attrs.value("result").toString();
+
+      // Return true if success or false if user not recognized.
+      if (result == "Success") {
+        taMisc::Info("User logged in to", wiki_name, "wiki:",
+          qPrintable(qUsername));
+        return true;
+      }
+      else if (result == "NotExists") {
+        taMisc::Warning("Username not recognized on", wiki_name, "wiki:",
+          qPrintable(qUsername));
+        return false;
+      }
+      else if (result == "WrongPass") {
+        taMisc::Warning("Incorrect password for user", qPrintable(qUsername),
+          "on", wiki_name, "wiki.");
+        return false;
+      }
+      else if (result == "NeedToken") {
+        // This indicates we need to do the second stage.  Set up the URL
+        // for the second stage before the attrs goes out of scope.
+        taMisc::DebugInfo("Performing 2-stage login to", wiki_name, "wiki.");
+        url.addQueryItem("lgtoken", attrs.value("token").toString());
+      }
+      else {
+        taMisc::Warning("Unexpected error during login:", qPrintable(result));
+        return false;
+      }
+    }
+  }
+
+  // The only way to get here is if we made two passes through the loop
+  // and got "NeedToken" both times -- login has failed.
+  taMisc::Warning("Could not log in to", wiki_name, "wiki.");
+
+  return false;
+}
+
+bool taMediaWiki::Logout(const String &wiki_name)
+{
+  // #CAT_Account Logout from the wiki.
+  return false;
+}
+
+/////////////////////////////////////////////////////
+//            Page operations
 
 bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
 {
@@ -336,47 +502,39 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
   }
 
   // Build the request URL.
-  String wiurl = GetApiURL(wiki_name);
-  if (wiurl.empty()) return false;
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
 
-  QUrl url(wiurl);
-  url.addQueryItem(QString("action"), QString("query"));
-  url.addQueryItem(QString("format"), QString("xml"));
-  url.addQueryItem(QString("list"), QString("search"));
-  url.addQueryItem(QString("srsearch"), search_str);
-  url.addQueryItem(QString("srwhat"), QString(title_only ? "title" : "text"));
+  QUrl url(wikiUrl);
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("list", "search");
+  url.addQueryItem("srsearch", search_str);
+  url.addQueryItem("srwhat", title_only ? "title" : "text");
 
   if (max_results > 0) {
-    url.addQueryItem(QString("srlimit"), QString::number(max_results));
+    url.addQueryItem("srlimit", QString::number(max_results));
   }
 
   // Make the network request.
   SynchronousNetRequest request;
-  bool success = request.get(url);
-  if (!success) {
-    return false;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Prepare the datatable.
+    results->RemoveAllRows();
+    DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+
+    // For all <p> elements in the XML, add the page title to the datatable.
+    QXmlStreamReader reader(reply);
+    while (findNextElement(reader, "p")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      String pt = attrs.value("title").toString();
+      results->AddBlankRow();
+      pt_col->SetVal(pt, -1);
+    }
+
+    // Return true (success) as long as there were no errors in the XML.
+    return !reader.hasError();
   }
 
-  // If request succeeded, process the reply.
-  QNetworkReply *reply = request.getReply();
-
-  results->RemoveAllRows();
-  DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
-
-  QXmlStreamReader reader(reply);
-  while (!reader.atEnd()) {
-    QXmlStreamReader::TokenType tokenType = reader.readNext();
-    if (tokenType == QXmlStreamReader::StartElement) {
-      if (reader.name() == QString("p")) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        String pt = attrs.value(QString("title")).toString();
-        results->AddBlankRow();
-        pt_col->SetVal(pt, -1);
-      }
-    }
-    else if (tokenType == QXmlStreamReader::Invalid) {
-      return false;
-    }
-  }
-  return true;
+  return false;
 }

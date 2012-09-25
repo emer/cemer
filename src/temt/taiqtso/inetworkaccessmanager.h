@@ -138,4 +138,13 @@ private slots:
 #endif
 };
 
+bool getUsernamePassword(
+  QString &username,
+  QString &password,
+  QString message = QString(),
+  bool *saveFlag = 0,
+  QMainWindow *mw = 0
+);
+
+
 #endif // INETWORKACCESSMANAGER_H

@@ -42,11 +42,19 @@ class SynchronousNetRequest : public QObject
 public:
   SynchronousNetRequest(QNetworkAccessManager *qnam = 0);
   virtual ~SynchronousNetRequest();
-  bool get(const QUrl &url);
-  bool post(const QUrl &url, const char *data, int size);
-  bool post(const QUrl &url, const char *filename);
-  virtual bool isAborted();
+
+  // Operations to perform HTTP requests (GET or POST).
+  // As a convenience, if the request was successful, the reply object
+  // is returned.  If the request failed, it is still possible to get
+  // the reply object using getReply(), in order to check for errors.
+  // If the request was cancelled, getReply() will return null.
+  QNetworkReply * httpGet(const QUrl &url);
+  QNetworkReply * httpPost(const QUrl &url);
+  QNetworkReply * httpPost(const QUrl &url, const char *filename);
+  QNetworkReply * httpPost(const QUrl &url, const char *data, int size);
+
   QNetworkReply * getReply();
+  QNetworkReply * getReplyIfSuccess();
 
 public slots:
   void cancel();
@@ -56,7 +64,8 @@ private slots:
 
 private:
   void reset();
-  bool waitForReply();
+  void waitForReply();
+  virtual bool isAborted();
 
   QNetworkAccessManager *m_netManager;
   QNetworkReply *m_reply;
@@ -73,6 +82,18 @@ class TA_API taMediaWiki : public taOBase
 public:
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki gets the url for the wiki api
+
+  /////////////////////////////////////////////////////
+  //            Account operations
+
+  static String GetLoggedInUsername(const String &wiki_name);
+  // #CAT_Account Get the username of the user currently logged in via emergent's Webkit browser.
+
+  static bool Login(const String &wiki_name, const String &username = "");
+  // #CAT_Account Login to the wiki.  Returns true if username specified is already logged in.  Otherwise prompts for username/password and returns true if login succeeds.
+
+  static bool Logout(const String &wiki_name);
+  // #CAT_Account Logout from the wiki.
 
   /////////////////////////////////////////////////////
   //            Page operations
@@ -126,11 +147,6 @@ public:
                             const String& name_space="",
                             int max_results=-1);
   // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle
-
-#ifndef __MAKETA__
-  // put all the read guys in here to parse the results
-  static bool   SearchPages_read(DataTable* results, QNetworkReply* reply);
-#endif
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);

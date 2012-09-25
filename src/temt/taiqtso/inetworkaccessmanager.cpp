@@ -175,30 +175,15 @@ void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthen
     return;
   }
 
-  QDialog dialog(m_main_win);
-  dialog.setWindowFlags(Qt::Sheet);
-
-  Ui::PasswordDialog passwordDialog;
-  passwordDialog.setupUi(&dialog);
-
-  passwordDialog.iconLabel->setText(QString());
-  passwordDialog.iconLabel->setPixmap(m_main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, m_main_win).pixmap(32, 32));
-
   QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
   introMessage = introMessage.arg(realm).arg(url_str);
-  passwordDialog.introLabel->setText(introMessage);
-  passwordDialog.introLabel->setWordWrap(true);
 
-  passwordDialog.userNameLineEdit->setText(user);
-  passwordDialog.passwordLineEdit->setText(password);
-
-  if (dialog.exec() == QDialog::Accepted) {
-    user = passwordDialog.userNameLineEdit->text();
-    password = passwordDialog.passwordLineEdit->text();
+  bool saveFlag = false;
+  if (getUsernamePassword(user, password, introMessage, &saveFlag, m_main_win)) {
     auth->setUser(user);
     auth->setPassword(password);
 
-    if (passwordDialog.saveFlag->isChecked()) {
+    if (saveFlag) {
       m_auth_saver.saveAuthRecord(user, password, realm, host);
     }
   }
@@ -427,4 +412,61 @@ bool iAuthSaver::saveAuthRecord(const QString& user, const QString& password,
   }
   save();
   return rval;
+}
+
+/////////////////////////////////////////////////////////////////
+
+bool getUsernamePassword(
+  QString &username,
+  QString &password,
+  QString message,
+  bool *saveFlag,
+  QMainWindow *mw
+)
+{
+  // If no MainWindow passed in, use the currently active window.
+  if (!mw) {
+    if (QWidget *widget = QApplication::activeWindow()) {
+      mw = qobject_cast<QMainWindow *>(widget);
+    }
+  }
+
+  if (!mw) {
+    return false;
+  }
+
+  // If no message provided, use a generic one.
+  if (message.isEmpty()) {
+    message = "Enter username and password";
+  }
+
+  QDialog dialog(mw);
+  dialog.setWindowFlags(Qt::Sheet);
+
+  Ui::PasswordDialog passwordDialog;
+  passwordDialog.setupUi(&dialog);
+
+  passwordDialog.iconLabel->setText(QString());
+  passwordDialog.iconLabel->setPixmap(mw->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, mw).pixmap(32, 32));
+
+  passwordDialog.introLabel->setText(message);
+  passwordDialog.introLabel->setWordWrap(true);
+
+  passwordDialog.userNameLineEdit->setText(username);
+  passwordDialog.passwordLineEdit->setText(password);
+
+  if (!saveFlag) {
+    passwordDialog.saveFlag->hide();
+  }
+
+  if (dialog.exec() == QDialog::Accepted) {
+    username = passwordDialog.userNameLineEdit->text();
+    password = passwordDialog.passwordLineEdit->text();
+    if (saveFlag) {
+      *saveFlag = passwordDialog.saveFlag->isChecked();
+    }
+    return true;
+  }
+
+  return false;
 }
