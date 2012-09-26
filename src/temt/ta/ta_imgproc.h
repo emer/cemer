@@ -76,7 +76,9 @@ public:
   bool	ImageToMatrix_grey(float_Matrix& grey_data);
   // #CAT_Data convert image to greyscale Matrix floating point image data (alias for ImageToGrey_float): note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
   bool	ImageToMatrix_rgb(float_Matrix& rgb_data);
-  // #CAT_Data convert image to RGB Matrix floating point image data (alias for ImageToMatrix_rgb) -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
+  // #CAT_Data convert image to RGB Matrix floating point image data (alias for ImageToMatrix_rgb) -- rgb_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
+  bool	ImageToMatrix_rgba(float_Matrix& rgba_data);
+  // #CAT_Data convert image to RGBA Matrix floating point image data, preserving alpha channel -- rgba_data is 3 dimensional with 3rd dim = r,g,b,a: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
   bool	ImageFromMatrix_grey(const float_Matrix& grey_data);
   // #CAT_Data convert from greyscale Matrix floating point image data to this image: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
@@ -554,6 +556,9 @@ public:
   
   static bool	AdjustContrast(float_Matrix& img, float new_contrast);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant. Both new_contrast is in range [0 1]
+  
+  static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes both images are RGBA format, same size.
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);

@@ -141,6 +141,31 @@ bool taImage::ImageToMatrix_rgb(float_Matrix& rgb_data) {
   return true;
 }
 
+bool taImage::ImageToMatrix_rgba(float_Matrix& rgba_data) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  int ht = q_img.height();
+  int wd = q_img.width();
+
+  rgba_data.SetGeom(3, wd, ht, 4); // r,g,b,a
+
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      QRgb pix = q_img.pixel(x, y);
+      float rval = qRed(pix) / 255.0f;
+      float gval = qGreen(pix) / 255.0f;
+      float bval = qBlue(pix) / 255.0f;
+      float aval = qAlpha(pix) / 255.0f;
+      rgba_data.Set(rval, x, ht-1 -y, 0);
+      rgba_data.Set(gval, x, ht-1 -y, 1);
+      rgba_data.Set(bval, x, ht-1 -y, 2);
+      rgba_data.Set(aval, x, ht-1 -y, 3);
+    }
+  }
+  return true;
+}
+
 bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
   if(TestError((img_data.dims() < 2), "IMageFromMatrix_grey", "img data does not have at least 2 dimensions"))
     return false;
@@ -2300,6 +2325,27 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
           	  iv = nw_iv;
       	  }
   	  }
+  }
+  return true;
+}
+
+bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
+  // assume both images are same size
+  TwoDCoord img_size(img1.dim(0), img1.dim(1));
+
+  for(int yi=0; yi< img_size.y; yi++) {
+  	for(int xi=0; xi< img_size.x; xi++) {
+    	float& i1r = img1.FastEl(xi, yi, 0);
+    	float& i1g = img1.FastEl(xi, yi, 1);
+    	float& i1b = img1.FastEl(xi, yi, 2);
+    	
+    	// red
+    	i1r = i1r*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,0)*(1.0f-img1.FastEl(xi, yi, 3));
+    	// green
+    	i1g = i1g*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,1)*(1.0f-img1.FastEl(xi, yi, 3));
+    	// blue
+    	i1b = i1b*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,2)*(1.0f-img1.FastEl(xi, yi, 3));
+    }
   }
   return true;
 }
