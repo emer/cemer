@@ -2943,6 +2943,8 @@ void KWTASpec::Defaults_init() {
 void GpInhibSpec::Initialize() {
   on = false;
   gp_g = 0.5f;
+  diff_act_pct = false;
+  act_pct_mult = 0.25f;
 }
 
 void GpInhibSpec::Defaults_init() {
@@ -3364,6 +3366,8 @@ void LeabraLayerSpec::Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net) {
       lay->kwta.Compute_Pct(lay->units.leaves);
       if(gp_kwta.diff_act_pct)
         lay->kwta.pct = gp_kwta.act_pct;        // override!!
+      if(unit_gp_inhib.on && unit_gp_inhib.diff_act_pct)
+        lay->kwta.pct *= unit_gp_inhib.act_pct_mult;
     }
   }
   if(inhib_group != UNIT_GROUPS) {
@@ -3371,6 +3375,8 @@ void LeabraLayerSpec::Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net) {
     if(kwta.diff_act_pct)
       lay->kwta.pct = kwta.act_pct;     // override!!
   }
+  if(lay_gp_inhib.on && lay_gp_inhib.diff_act_pct)
+    lay->kwta.pct *= lay_gp_inhib.act_pct_mult;
 }
 
 void LeabraLayerSpec::Compute_Active_K_ugp(LeabraLayer* lay,

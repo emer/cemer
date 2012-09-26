@@ -415,7 +415,7 @@ public:
   inline void 	C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
 					float su_act_delta_eff);
   virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,
-				float su_act_delta_eff);
+				float su_act_delta);
   // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
@@ -1813,8 +1813,8 @@ public:
   int		k;		// #CONDSHOW_ON_k_from:USE_K desired number of active units in the layer
   float		pct;		// #CONDSHOW_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
   float		pat_q;		// #CONDSHOW_ON_k_from:USE_PAT_K #DEF_0.2;0.5 threshold for pat_k based activity level: add to k if ext > pat_q
-  bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for overall layer activation
-  float		act_pct;	// #CONDSHOW_ON_diff_act_pct actual percent activity to put in kwta.pct field of layer
+  bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for expected overall layer activation -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details
+  float		act_pct;	// #CONDSHOW_ON_diff_act_pct actual percent activity to put in kwta.pct field of layer -- see diff_act_pct for implications for netinput scaling, and read the Leabra NetinScaling section of the online wiki docs for full details
 
   // following are obsolete legacy parameters that have moved to GpInhibSpec
   bool		gp_i;		// #NO_SAVE #HIDDEN #READ_ONLY obsolete legacy parameter that has moved to GpInhibSpec
@@ -1837,6 +1837,8 @@ INHERITED(SpecMemberBase)
 public:
   bool		on;		// compute grouped inhibition at the level specified (layers or unit groups within layers)
   float		gp_g;		// #CONDSHOW_ON_on #MIN_0 #MAX_1 how much this item (layer or unit group) contributes to the pooled group-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
+  bool		diff_act_pct;	// #CONDSHOW_ON_on if true, adjust the expected overall layer activation by m-- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details
+  float		act_pct_mult;	// #CONDSHOW_ON_on&&diff_act_pct #MIN_0 #MAX_1 multiplier for expected percent activity in the layer -- multiplies value set by kwta spec (including its own diff_act_pct setting if set), to take into account the effects of group-level inhibition as set by this spec -- for unit group inhibition, should be roughly <expected groups active> / <total number of groups> -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details.
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

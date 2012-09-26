@@ -1006,6 +1006,14 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 //      PFC Layer Spec          //
 //////////////////////////////////
 
+void PFCDeepGatedConSpec::Initialize() {
+  Defaults_init();
+}
+
+void PFCDeepGatedConSpec::Defaults_init() {
+}
+
+
 void PFCsUnitSpec::Initialize() {
   Defaults_init();
 }
@@ -1295,6 +1303,21 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     if(lay->CheckError(!deep, quiet, rval,
 		       "Corresponding Deep layer not found -- PFC SUPER layers must project sending one-to-one prjn to DEEP layers")) {
     }
+
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)       continue;
+      if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
+	PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
+	if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
+	  LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+	  if(lay->CheckError(!cs->InheritsFrom(&TA_PFCDeepGatedConSpec), quiet, rval,
+					       "Connection from DEEP PFC to SUPER PFC is not using a PFCDeepGatedConSpec -- this will not work properly with the gating of these connections!  con from layer:", from->name)) {
+	  }
+	}
+      }
+    }
   }
 
   return true;
@@ -1506,8 +1529,6 @@ void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_m
       }
     }
   }
-  net->Compute_NetinScale_Senders(); // update senders!
-  net->DecayState(0.0f);               // need to re-send activations -- this triggers 
 }
 
 void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {

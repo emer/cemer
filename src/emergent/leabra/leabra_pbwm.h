@@ -347,7 +347,7 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
-  float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 #MAX_1 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
+  float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
   float		pvr_inhib;	// #DEF_0:0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
   float		refract_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
   float		no_pfc_thr;	// #DEF_0:0.02 threshold for considering there to be no corresponding pfc activity -- average activity within the corresponding PFC_s stripe must be above this level -- if not, netin inhibition is applied to stripe by rescaling downward by (1 - no_pfc_inhib) -- enforces this as a hard constraint even if it is a soft constraint in connectivity
@@ -476,6 +476,56 @@ private:
 //////////////////////////////////////////
 //	PFC Layer Spec (Maintenance)	//
 //////////////////////////////////////////
+
+class LEABRA_API PFCDeepGatedConSpec : public LeabraConSpec {
+  // projection from PFC Deep layers that goes via thalamus to another PFC layer, and is thus subject to gating in that layer -- just uses recv based scale_eff on con group for netin scaling, so it is stripe specific
+INHERITED(LeabraConSpec)
+public:
+
+  override void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+					int thread_no, float su_act_delta) {
+  if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
+    float* send_netin_vec = net->send_netin_tmp.el
+      + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+      C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+			     su_act_delta * rcg->scale_eff);
+    }
+  }
+  else {
+    if(thread_no < 0) {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
+      }
+    }
+    else {
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+			       su_act_delta * 	rcg->scale_eff);
+      }
+    }
+  }
+}
+
+
+  TA_SIMPLE_BASEFUNS(PFCDeepGatedConSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init();
+};
+
+
 
 class LEABRA_API PFCsUnitSpec : public LeabraUnitSpec {
   // superficial layer PFC unit spec -- supports modulation of learning as function of gating (resets dwts during dwt_norm for those that shouldn't learn)
