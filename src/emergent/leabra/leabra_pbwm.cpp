@@ -1144,11 +1144,13 @@ void PFCLayerSpec::Defaults_init() {
   // SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
   gp_kwta.pct = 0.15f;
-  gp_kwta.diff_act_pct = true;
-  gp_kwta.act_pct = 0.05f; // s = 0.05, d = 0.02
 
   unit_gp_inhib.on = true;
-  unit_gp_inhib.gp_g = 1.0f;
+  unit_gp_inhib.gp_g = 1.0f;	// 0.8 for output
+  unit_gp_inhib.diff_act_pct = true;
+  unit_gp_inhib.pct_fm_frac = true;
+  unit_gp_inhib.act_denom = 3.0f;
+  unit_gp_inhib.UpdateAfterEdit_NoGui();
 
   // SetUnique("decay", true);
   decay.event = 0.0f;
@@ -1510,11 +1512,6 @@ void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_m
 	  LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
 	  cs->Compute_NetinScale(recv_gp, from);
 	  recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale (prev computed)
-	  // if(j == 0) {
-	  //   taMisc::Info("net cyc:", String(net->ct_cycle), "deep prjn on:",
-	  // 		 lay->name, "gp", String(gpidx),
-	  // 		 "fm:", from->name, "scale_eff: " + String(recv_gp->scale_eff));
-	  // }
 	}
       }
     }
@@ -3381,12 +3378,12 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
   PFCLayerSpec* pfc_s_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_PFCLayerSpec);
-
   PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCDeep_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
+
+  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_s_in_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_s_out_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
 
   MatrixLayerSpec* matrix_go_mnt_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
   MatrixLayerSpec* matrix_go_in_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in", &TA_MatrixLayerSpec);
@@ -3967,6 +3964,30 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   PBWM_Defaults(net, pfc_learns); // sets all default params and gets selectedits
 
+  // Need to update act_denoms based on stripe counts
+
+  if(in_stripes > 0)
+    pfc_s_mnt_sp->unit_gp_inhib.act_denom = in_stripes;
+  else if(mnt_stripes > 0)
+    pfc_s_mnt_sp->unit_gp_inhib.act_denom = mnt_stripes;
+  else if(out_stripes > 0)
+    pfc_s_mnt_sp->unit_gp_inhib.act_denom = out_stripes;
+
+  pfc_s_mnt_sp->UpdateAfterEdit(); // update
+  
+  pfc_d_mnt_sp->SetUnique("unit_gp_inhib",true);
+  pfc_d_mnt_sp->unit_gp_inhib.act_denom = mnt_stripes;
+
+  pfc_s_out_sp->SetUnique("unit_gp_inhib",true);
+  if(out_stripes > 0)
+    pfc_s_out_sp->unit_gp_inhib.act_denom = out_stripes;
+  else if(in_stripes > 0)
+    pfc_s_out_sp->unit_gp_inhib.act_denom = in_stripes;
+  else if(mnt_stripes > 0)
+    pfc_s_out_sp->unit_gp_inhib.act_denom = mnt_stripes;
+  pfc_s_out_sp->unit_gp_inhib.gp_g = 0.8f; // special case
+  pfc_s_out_sp->UpdateAfterEdit(); // update
+
   net->LayerPos_Cleanup();
 
   net->Build();			// rebuild after defaults in place
@@ -4110,12 +4131,12 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
   PFCLayerSpec* pfc_s_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFCSuper_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_PFCLayerSpec);
-
   PFCLayerSpec* pfc_d_mnt_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCDeep_mnt", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_d_mnt_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
+
+  PFCLayerSpec* pfc_s_in_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_in_sp = (PFCLayerSpec*)pfc_s_in_sp->FindMakeChild("PFCDeep_in", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_s_out_sp = (PFCLayerSpec*)pfc_s_mnt_sp->FindMakeChild("PFCSuper_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_d_out_sp = (PFCLayerSpec*)pfc_s_out_sp->FindMakeChild("PFCDeep_out", &TA_PFCLayerSpec);
 
   MatrixLayerSpec* matrix_go_mnt_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
   MatrixLayerSpec* matrix_go_in_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in", &TA_MatrixLayerSpec);
@@ -4287,34 +4308,35 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   matrix_nogo_out_sp->SetUnique("gating_type",true);
   matrix_nogo_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
 
-  pfc_d_in_sp->SetUnique("gp_kwta",true);
-  pfc_d_in_sp->gp_kwta.act_pct = 0.02f;
-
-  pfc_d_mnt_sp->SetUnique("gp_kwta",true);
-  pfc_d_mnt_sp->gp_kwta.act_pct = 0.02f;
-
-  pfc_d_out_sp->SetUnique("gp_kwta",true);
-  pfc_d_out_sp->gp_kwta.act_pct = 0.02f;
-
-  pfc_s_out_sp->unit_gp_inhib.gp_g = 0.8f;
-
   pfc_s_mnt_sp->pfc_layer = PFCLayerSpec::SUPER;
   pfc_s_mnt_sp->pfc_type = SNrThalLayerSpec::MAINT;
 
+  pfc_d_mnt_sp->SetUnique("pfc_layer",true);
+  pfc_d_mnt_sp->pfc_layer = PFCLayerSpec::DEEP;
+  pfc_d_mnt_sp->SetUnique("pfc_type",true);
+  pfc_d_mnt_sp->pfc_type = SNrThalLayerSpec::MAINT;
+
+  pfc_s_in_sp->SetUnique("pfc_layer",true);
+  pfc_s_in_sp->pfc_layer = PFCLayerSpec::SUPER;
   pfc_s_in_sp->SetUnique("pfc_type",true);
   pfc_s_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
 
-  pfc_s_out_sp->SetUnique("pfc_type",true);
-  pfc_s_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
-
-  pfc_d_mnt_sp->SetUnique("pfc_layer",true);
-  pfc_d_mnt_sp->pfc_layer = PFCLayerSpec::DEEP;
-
+  pfc_d_in_sp->SetUnique("pfc_layer",true);
+  pfc_d_in_sp->pfc_layer = PFCLayerSpec::DEEP;
   pfc_d_in_sp->SetUnique("pfc_type",true);
   pfc_d_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
 
+  pfc_s_out_sp->SetUnique("pfc_layer",true);
+  pfc_s_out_sp->pfc_layer = PFCLayerSpec::SUPER;
+  pfc_s_out_sp->SetUnique("pfc_type",true);
+  pfc_s_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
+
+  pfc_d_out_sp->SetUnique("pfc_layer",true);
+  pfc_d_out_sp->pfc_layer = PFCLayerSpec::DEEP;
   pfc_d_out_sp->SetUnique("pfc_type",true);
   pfc_d_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
+
+  // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
 
   snrthal_units->SetUnique("maxda", true);
   snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;

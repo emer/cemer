@@ -2944,12 +2944,22 @@ void GpInhibSpec::Initialize() {
   on = false;
   gp_g = 0.5f;
   diff_act_pct = false;
-  act_pct_mult = 0.25f;
+  pct_fm_frac = true;
+  act_denom = 3.0f;
+  if(pct_fm_frac)
+    act_pct_mult = 1.0f / act_denom;
 }
 
 void GpInhibSpec::Defaults_init() {
   // no sensible defaults
 }
+
+void GpInhibSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(pct_fm_frac)
+    act_pct_mult = 1.0f / act_denom;
+}
+  
 
 void KwtaTieBreak::Initialize() {
   on = false;
@@ -3032,6 +3042,8 @@ void LeabraLayerSpec::Defaults_init() {
 
 void LeabraLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  unit_gp_inhib.UpdateAfterEdit_NoGui();
 
   if(kwta.gp_i) {		// update from obsolete
     lay_gp_inhib.on = true;

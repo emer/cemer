@@ -1839,12 +1839,15 @@ public:
   float		gp_g;		// #CONDSHOW_ON_on #MIN_0 #MAX_1 how much this item (layer or unit group) contributes to the pooled group-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
   bool		diff_act_pct;	// #CONDSHOW_ON_on if true, adjust the expected overall layer activation by m-- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details
   float		act_pct_mult;	// #CONDSHOW_ON_on&&diff_act_pct #MIN_0 #MAX_1 multiplier for expected percent activity in the layer -- multiplies value set by kwta spec (including its own diff_act_pct setting if set), to take into account the effects of group-level inhibition as set by this spec -- for unit group inhibition, should be roughly <expected groups active> / <total number of groups> -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details.
+  bool		pct_fm_frac;	// #CONDSHOW_ON_on&&diff_act_pct get the act_pct_mult from 1/act_denom -- often easier to express in terms of denominator of fraction rather than straight percent
+  float		act_denom;	// #CONDSHOW_ON_on&&diff_act_pct&&pct_fm_frac #MIN_1 1 over this value goes to act_pct_mult
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(GpInhibSpec);
 protected:
   SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
