@@ -482,38 +482,38 @@ class LEABRA_API PFCDeepGatedConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
 
-  override void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-					int thread_no, float su_act_delta) {
-  if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
-    float* send_netin_vec = net->send_netin_tmp.el
-      + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-      C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
-			     su_act_delta * rcg->scale_eff);
-    }
-  }
-  else {
-    if(thread_no < 0) {
-      for(int i=0; i<cg->size; i++) {
-	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-	C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
-      }
-    }
-    else {
+  override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				 int thread_no, float su_act_delta) {
+    if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
 	C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
-			       su_act_delta * 	rcg->scale_eff);
+			       su_act_delta * rcg->scale_eff);
+      }
+    }
+    else {
+      if(thread_no < 0) {
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
+	}
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+				 su_act_delta * 	rcg->scale_eff);
+	}
       }
     }
   }
-}
 
 
   TA_SIMPLE_BASEFUNS(PFCDeepGatedConSpec);
@@ -555,6 +555,7 @@ public:
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
   float		maint_thr;	// #DEF_0.2 #MIN_0 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
+  float		clear_decay;	// #MIN_0 how much to decay existing activations when a gating signal comes into an already-maintaining stripe
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -575,6 +576,7 @@ public:
   enum MaintUpdtAct {
     STORE,			// store current activity state in maintenance currents
     CLEAR,			// clear current activity state from maintenance currents
+    CLEAR_DECAY,		// apply clear decay to existing maintained activations
     DECAY,			// decay current maintenance currents
   };
 
