@@ -2330,6 +2330,11 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
 }
 
 bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
+  if(img1.dim(2) != 4) {
+    taMisc::Error("img1 must be rgba format");
+  	return false;
+  }
+
   // assume both images are same size
   TwoDCoord img_size(img1.dim(0), img1.dim(1));
 
@@ -2339,11 +2344,11 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
     	float& i1g = img1.FastEl(xi, yi, 1);
     	float& i1b = img1.FastEl(xi, yi, 2);
     	
-    	// red
+    	// red channel alpha blend
     	i1r = i1r*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,0)*(1.0f-img1.FastEl(xi, yi, 3));
-    	// green
+    	// green channel alpha blend
     	i1g = i1g*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,1)*(1.0f-img1.FastEl(xi, yi, 3));
-    	// blue
+    	// blue channel alpha blend
     	i1b = i1b*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,2)*(1.0f-img1.FastEl(xi, yi, 3));
     }
   }
