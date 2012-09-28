@@ -3347,7 +3347,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
   LeabraConSpec* pfctopfc_s_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_s", &TA_LeabraConSpec);
-  LeabraConSpec* pfctopfc_d_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
+  PFCDeepGatedConSpec* pfctopfc_d_cons = (PFCDeepGatedConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
 
@@ -4105,7 +4105,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
   LeabraConSpec* pfctopfc_s_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_s", &TA_LeabraConSpec);
-  LeabraConSpec* pfctopfc_d_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
+  PFCDeepGatedConSpec* pfctopfc_d_cons = (PFCDeepGatedConSpec*)topfc_cons->FindMakeChild("PFCtoPFC_d", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
   LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
 
