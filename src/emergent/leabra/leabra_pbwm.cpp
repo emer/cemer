@@ -1125,8 +1125,8 @@ void PFCGateSpec::Initialize() {
   learn_deep_act = true;
   in_mnt = 1;
   out_mnt = 0;
-  maint_drop = 0.2f;
-  drop_netin = true;
+  maint_drop = 0.0f;
+  drop_netin = false;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
