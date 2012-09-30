@@ -404,6 +404,9 @@ public:
   // find the SNrThal layer that this matrix layer interacts with
   virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
   // find the PVLVDaLayerSpec layer that this matrix layer interacts with
+  virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
+					int& n_in, int& n_mnt, int& n_out);
+  // get the starting index for this set of matrix stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   virtual void Compute_MidMinusAct_ugp(LeabraLayer* lay,
@@ -553,8 +556,10 @@ public:
   bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
+  float		maint_drop;	// #MIN_0 #MAX_1 amount that maintained activities drop after the trial on which they are gated -- maint_h values are downscaled by (1-maint_drop) this amount at the transition into stable maintenance
+  bool		drop_netin;	// drop the net input values as well as the activations -- so they compete less with the other inputs
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
-  float		maint_thr;	// #DEF_0.2 #MIN_0 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
+  float		maint_thr;	// #MIN_0 #DEF_0.2 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
   float		clear_decay;	// #MIN_0 how much to decay existing activations when a gating signal comes into an already-maintaining stripe
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
@@ -577,7 +582,8 @@ public:
     STORE,			// store current activity state in maintenance currents
     CLEAR,			// clear current activity state from maintenance currents
     CLEAR_DECAY,		// apply clear decay to existing maintained activations
-    DECAY,			// decay current maintenance currents
+    DROP,			// drop maintenance currents by maint_drop factor
+    DECAY,			// decay maintenance currents by maint_decay factor
   };
 
   enum PFCLayer {
@@ -631,6 +637,7 @@ public:
     virtual void Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
     // clear the non-maintaining stripes at end of trial
 
+  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);

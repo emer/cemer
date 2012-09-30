@@ -710,6 +710,15 @@ LeabraLayer* MatrixLayerSpec::PVLVDaLayer(LeabraLayer* lay) {
   return FindLayerFmSpec(lay, pvlvda_prjn_idx, &TA_PVLVDaLayerSpec);
 }
 
+LeabraLayer* MatrixLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
+					      int& n_in, int& n_mnt, int& n_out) {
+  snr_st_idx = 0;
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  snr_st_idx = snr_ls->SNrThalStartIdx(snr_lay, gating_type, n_in, n_mnt, n_out);
+  return snr_lay;
+}
+
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
   lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
@@ -878,18 +887,19 @@ void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
 void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
                                        Layer::AccessMode acc_md, int gpidx,
                                        LeabraNetwork* net) {
-  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  int snr_st_idx, n_in, n_mnt, n_out;
+  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_out);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
   int gate_cycle = snr_ls->snrthal.gate_cycle;
 
-  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(gpidx);
+  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
-  if(snr_gpd->go_fired_now) {
-    Compute_MidMinusAct_ugp(lay, acc_md, gpidx, net); // grab our mid minus
-  }
-  else {
-    if(net->ct_cycle == gate_cycle+1 && !snr_gpd->go_fired_trial) { // nogos will be nogos for sure by now
+  if(net->ct_cycle == gate_cycle) {
+    if(snr_gpd->go_fired_trial) {
+      Compute_MidMinusAct_ugp(lay, acc_md, gpidx, net); // grab our mid minus
+    }
+    else {
       Compute_ZeroMidMinusAct_ugp(lay, acc_md, gpidx, net); // zero our mid minus
     }
   }
@@ -910,9 +920,6 @@ void MatrixLayerSpec::Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMod
 
 void MatrixLayerSpec::Compute_ClearActAfterGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 						  int gpidx, LeabraNetwork* net) {
-  int snr_prjn_idx = 0; // actual arg value doesn't matter
-  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
   int nunits = lay->UnitAccess_NUnits(acc_md); // lay = matrix_go - how many units each unit group
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int j=0;j<nunits;j++) {
@@ -939,11 +946,12 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
-  int snr_prjn_idx = 0;
-  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  int snr_st_idx, n_in, n_mnt, n_out;
+  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_out);
 
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0, gi);
+    LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0,
+							 snr_st_idx + gi);
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     float snrthal_act = 0.0f;
     if(!snr_u->lesioned())
@@ -1117,6 +1125,8 @@ void PFCGateSpec::Initialize() {
   learn_deep_act = true;
   in_mnt = 1;
   out_mnt = 0;
+  maint_drop = 0.2f;
+  drop_netin = true;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
@@ -1382,6 +1392,28 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_TrialInitGates(lay, net);
 }
 
+void PFCLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
+  if(gate.drop_netin && pfc_layer == SUPER) {
+    float drop_c = 1.0f - gate.maint_drop;
+    Layer::AccessMode acc_md = Layer::ACC_GP;
+    int nunits = lay->UnitAccess_NUnits(acc_md);
+
+    for(int gi=0; gi<lay->gp_geom.n; gi++) {
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+      if(gpd->mnt_count > 0) {	// post-gated maint mode
+	for(int j=0;j<nunits;j++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
+	  if(u->lesioned()) continue;
+	  u->net *= drop_c;
+	  u->i_thr = u->Compute_IThresh(net);
+	}
+      }
+    }
+  }
+
+  inherited::Compute_NetinStats(lay, net);
+}
+
 void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // do NOT do this -- triggered by the snrthal gating signal
 }
@@ -1454,6 +1486,12 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc
     case CLEAR_DECAY: {
       u->v_m -= gate.clear_decay * (u->v_m - us->v_m_init.mean);
       u->net -= gate.clear_decay * u->net;
+      break;
+    }
+    case DROP: {
+      u->maint_h *= (1.0f - gate.maint_drop);
+      if(u->maint_h < 0.0f) u->maint_h = 0.0f;
+      u->vcb.g_h = u->maint_h;
       break;
     }
     case DECAY: {
@@ -1589,10 +1627,17 @@ void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
 
-    if(gpd->mnt_count >= 1) {
-      Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+    if(gpd->mnt_count == 0) {
+      Compute_MaintUpdt_ugp(lay, acc_md, mg, DROP, net);
     }
-    // todo: apply maint_thr here!
+    else if(gpd->mnt_count >= 1) {
+      if(gpd->acts.max < gate.maint_thr) { // below thresh, nuke!
+	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
+      }
+      else {			// continue to decay..
+	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+      }
+    }
   }
 }
 
@@ -3247,6 +3292,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraLayer* matrix_nogo_out = NULL;
   LeabraLayer* snrthal = NULL;
 
+  // stick this in go -- must be first!
+  snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal", NULL, snrthal_new);
+
   if(in_stripes > 0) {
     matrix_go_in = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("Matrix_Go_in", NULL,
 							      matrix_new);
@@ -3273,9 +3321,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     pfc_s_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCs_out", NULL, pfc_new);
     pfc_d_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_out", NULL, pfc_new);
   }
-
-  // stick this in go..
-  snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal", NULL, snrthal_new);
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
