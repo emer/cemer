@@ -104,7 +104,7 @@ fi
 # Get rid of the previous (existing) 'upgrader' subpackage.
 echo "Removing old subpackage ..."
 cd "${DMG_DIR}/Emergent.mpkg/Contents/"
-rm -rf Packages/emergent-5.*.*-mac.pkg
+rm -rf Packages/emergent-[1-9]*.[0-9]*.[0-9]*-mac.pkg
 
 # Mount the upgrader and extract its subpackage.
 echo "Mounting package ${UPGRADE_DMG} ..."
@@ -126,8 +126,8 @@ DIST_FILE="distribution.dist"
 BKUP=".bkup"
 echo "Updating ${DIST_FILE} file ..."
 sed -i "${BKUP}" "
-  s/Emergent version 5\.[0-9][0-9]*\.[0-9][0-9]*/Emergent version ${EMERGENT_VERSION}/
-  s/emergent-5\.[0-9][0-9]*\.[0-9][0-9]*/emergent-${EMERGENT_VERSION}/
+  s/Emergent version [1-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/Emergent version ${EMERGENT_VERSION}/
+  s/emergent-[1-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/emergent-${EMERGENT_VERSION}/
   /emergent-${EMERGENT_VERSION}-mac.pkg/s/installKBytes=\"[0-9]*\"/installKBytes=\"${PKG_SIZE}\"/
 " ${DIST_FILE}
 rm ${DIST_FILE}${BKUP}
