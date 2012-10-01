@@ -1125,15 +1125,23 @@ void PFCGateSpec::Initialize() {
   learn_deep_act = true;
   in_mnt = 1;
   out_mnt = 0;
-  maint_drop = 0.0f;
-  drop_netin = false;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
 }
 
-void PFCGateSpec::UpdateAfterEdit_impl() {
+void PFCMaintDropSpec::Initialize() {
+  on = false;
+  act_drop = 0.2f;
+  net_drop = 0.5f;
+  act_drop_c = 1.0f - act_drop;
+  net_drop_c = 1.0f - net_drop;
+}
+
+void PFCMaintDropSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  act_drop_c = 1.0f - act_drop;
+  net_drop_c = 1.0f - net_drop;
 }
 
 void PFCLayerSpec::Initialize() {
@@ -1171,7 +1179,7 @@ void PFCLayerSpec::Defaults_init() {
 
 void PFCLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gate.UpdateAfterEdit_NoGui();
+  maint_drop.UpdateAfterEdit_NoGui();
 }
 
 void PFCLayerSpec::HelpConfig() {
@@ -1393,11 +1401,12 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
-  if(gate.drop_netin && pfc_layer == SUPER) {
-    float drop_c = 1.0f - gate.maint_drop;
+  if(maint_drop.on && pfc_layer == SUPER) {
     Layer::AccessMode acc_md = Layer::ACC_GP;
     int nunits = lay->UnitAccess_NUnits(acc_md);
 
+    const float drop_c = maint_drop.net_drop_c;
+    
     for(int gi=0; gi<lay->gp_geom.n; gi++) {
       PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
       if(gpd->mnt_count > 0) {	// post-gated maint mode
@@ -1459,14 +1468,20 @@ LeabraLayer* PFCLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
   return snr_lay;
 }
 
-void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-                                         MaintUpdtAct updt_act, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+				 int gpidx, MaintUpdtAct updt_act, LeabraNetwork* net) {
+
+  if(updt_act == DROP && !maint_drop.on) return;
+
   int snr_st_idx, n_in, n_mnt, n_out;
   LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_out);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   int nunits = lay->UnitAccess_NUnits(acc_md);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+
+  const float drop_c = maint_drop.act_drop_c;
+
   for(int j=0;j<nunits;j++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
     if(u->lesioned()) continue;
@@ -1489,7 +1504,7 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc
       break;
     }
     case DROP: {
-      u->maint_h *= (1.0f - gate.maint_drop);
+      u->maint_h *= drop_c;
       if(u->maint_h < 0.0f) u->maint_h = 0.0f;
       u->vcb.g_h = u->maint_h;
       break;
