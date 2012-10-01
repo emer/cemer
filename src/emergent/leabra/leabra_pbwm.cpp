@@ -1103,8 +1103,13 @@ void PFCsUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
       new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
       // NEW CODE: maintaining
       if(gpd->mnt_count > 0) {
+	u->misc_1 = new_act;
 	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
       }
+      else {
+	u->misc_1 = 0.0f;
+      }
+
     }
     else {			// new gelin
       if(u->v_m <= act.thr) {
@@ -1116,8 +1121,13 @@ void PFCsUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
       }
       // NEW CODE: maintaining
       if(gpd->mnt_count > 0) {
+	u->misc_1 = new_act;
 	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
       }
+      else {
+	u->misc_1 = 0.0f;
+      }
+	
       if(net->cycle < dt.vm_eq_cyc) {
 	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
       }
@@ -1130,7 +1140,11 @@ void PFCsUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
     // NEW CODE: maintaining
     if(gpd->mnt_count > 0) {
+      u->misc_1 = new_act;
       new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
+    }
+    else {
+      u->misc_1 = 0.0f;
     }
   }
   if(depress.on) {                   // synaptic depression
@@ -1197,7 +1211,7 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 void PFCGateSpec::Initialize() {
   in_mnt = 1;
   out_mnt = 0;
-  maint_pct = 0.5f;
+  maint_pct = 0.8f;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
