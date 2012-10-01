@@ -1080,6 +1080,79 @@ void PFCsUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
+void PFCsUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
+  PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
+  int rgpidx = u->UnitGpIdx();
+  PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.FastEl(rgpidx);
+
+  float new_act;
+  if(act.gelin) {
+    if(act.old_gelin) {
+      float g_e_val = u->net;
+      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
+      if(vm_eq > 0.0f) {
+	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
+	if(vmrat > 1.0f) vmrat = 1.0f;
+	else if(vmrat < 0.0f) vmrat = 0.0f;
+	g_e_val *= vmrat;
+      }
+      float g_e_thr = Compute_EThresh(u);
+      new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
+      // NEW CODE: maintaining
+      if(gpd->mnt_count > 0) {
+	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
+      }
+    }
+    else {			// new gelin
+      if(u->v_m <= act.thr) {
+	new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
+      }
+      else {
+	float g_e_thr = Compute_EThresh(u);
+	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+      }
+      // NEW CODE: maintaining
+      if(gpd->mnt_count > 0) {
+	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
+      }
+      if(net->cycle < dt.vm_eq_cyc) {
+	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
+      }
+      else {
+	new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
+      }
+    }
+  }
+  else {
+    new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
+    // NEW CODE: maintaining
+    if(gpd->mnt_count > 0) {
+      new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
+    }
+  }
+  if(depress.on) {                   // synaptic depression
+    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
+    new_act *= MIN(u->spk_amp, 1.0f);
+    if((net->ct_cycle+1) % depress.interval == 0) {
+      u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    }
+    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
+  }
+
+  u->da = new_act - u->act;
+  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    new_act += Compute_Noise(u, net);
+  }
+  u->act = act_range.Clip(new_act);
+  u->act_eq = u->act;
+  if(!depress.on)
+    u->act_nd = u->act_eq;
+}
+
 void PFCsUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   Compute_LearnMod(u, net);	// don't call dwt norm itself -- done for units that actually learn
 }
@@ -1124,11 +1197,13 @@ void PFCsUnitSpec::Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int threa
 void PFCGateSpec::Initialize() {
   in_mnt = 1;
   out_mnt = 0;
-  maint_pct = 1.0f;
+  maint_pct = 0.5f;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
-  learn_deep_act = true;
+  learn_deep_act = false;
+
+  maint_pct_c = 1.0f - maint_pct;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
@@ -1144,7 +1219,7 @@ void PFCLayerSpec::Initialize() {
 }
 
 void PFCLayerSpec::Defaults_init() {
-  gate.learn_deep_act = true;
+  gate.learn_deep_act = false;
   gate.maint_decay = 0.02f;
 
   //  SetUnique("inhib", true);
@@ -1450,15 +1525,17 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc
   for(int j=0;j<nunits;j++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
     if(u->lesioned()) continue;
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+    LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
     switch(updt_act) {
     case STORE: {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
-      LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
       u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act
+      super_u->vcb.g_h = super_u->maint_h = super_u->act_eq;
       break;
     }
     case CLEAR: {
       u->vcb.g_h = u->maint_h = 0.0f;
+      super_u->vcb.g_h = super_u->maint_h = 0.0f;
       gpd->mnt_count = -1;	// indication of empty
       snr_gpd->mnt_count = -1;
       break;
@@ -1466,12 +1543,16 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc
     case CLEAR_DECAY: {
       u->v_m -= gate.clear_decay * (u->v_m - us->v_m_init.mean);
       u->net -= gate.clear_decay * u->net;
+      
+      super_u->v_m -= gate.clear_decay * (super_u->v_m - us->v_m_init.mean);
+      super_u->net -= gate.clear_decay * super_u->net;
       break;
     }
     case DECAY: {
       u->maint_h -= u->maint_h * gate.maint_decay;
       if(u->maint_h < 0.0f) u->maint_h = 0.0f;
       u->vcb.g_h = u->maint_h;
+      super_u->vcb.g_h = super_u->maint_h = u->maint_h;
       break;
     }
     }
@@ -1498,21 +1579,25 @@ void PFCLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_
       u->da = 0.0f;
     }
   }
-  else {			// SUPER
-    if(gpd->mnt_count > 0) {	// post-gated maintenance mode -- get from deep layer
-      LeabraLayer* deep = DeepLayer(lay);
-      for(int j=0;j<nunits;j++) {
-	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-	LeabraUnit* du = (LeabraUnit*)deep->UnitAccess(acc_md, j, gpidx);
-	if(u->lesioned()) continue;
-	const float mnt = du->maint_h;
-	u->maint_h = u->gc.h = mnt;
-	float act_mix = gate.maint_pct * mnt + gate.maint_pct_c * u->act;
-	u->act = u->act_eq = u->act_nd = act_mix; // copy deep! 
-	u->da = 0.0f;
-      }
-    }
-  }
+  // super is now done exclusively in unit spec!
+  // else {			// SUPER
+    // LeabraLayer* deep = DeepLayer(lay);
+    // for(int j=0;j<nunits;j++) {
+    //   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    //   LeabraUnit* du = (LeabraUnit*)deep->UnitAccess(acc_md, j, gpidx);
+    //   if(u->lesioned()) continue;
+    //   if(gpd->mnt_count > 0) {	// post-gated maintenance mode -- get from deep layer
+    // 	u->maint_h = u->act;	// store the original act in here!
+    // 	const float mnt = du->maint_h;
+    // 	float act_mix = gate.maint_pct * mnt + gate.maint_pct_c * u->act;
+    // 	u->act = u->act_eq = u->act_nd = act_mix; // copy deep! 
+    // 	u->da = 0.0f;
+    //   }
+    //   else {
+    // 	u->maint_h = 0.0f;
+    //   }
+    // }
+  // }
 }
 
 void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
