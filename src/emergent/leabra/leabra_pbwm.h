@@ -512,7 +512,7 @@ public:
 	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
 	  C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
-				 su_act_delta * 	rcg->scale_eff);
+				 su_act_delta *	rcg->scale_eff);
 	}
       }
     }
@@ -527,8 +527,6 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
-
-
 
 class LEABRA_API PFCsUnitSpec : public LeabraUnitSpec {
   // superficial layer PFC unit spec -- supports modulation of learning as function of gating (resets dwts during dwt_norm for those that shouldn't learn)
@@ -550,41 +548,22 @@ private:
 };
 
 class LEABRA_API PFCGateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(SpecMemberBase)
 public:
-  bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
+   float	maint_pct;	// #MIN_0 #MAX_1 what proportion (0-1) of activation value of maintaining units that comes from the gated maint activation value -- the rest comes from activation that would otherwise be computed live directly from current inputs
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
   float		maint_thr;	// #MIN_0 #DEF_0.2 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
   float		clear_decay;	// #MIN_0 how much to decay existing activations when a gating signal comes into an already-maintaining stripe
+  bool		learn_deep_act;	// #DEF_true superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
+
+  float		maint_pct_c;	// #READ_ONLY #NO_SAVE 1-maint_pct
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
-class LEABRA_API PFCMaintDropSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for the drop in maintained activation and netinput values post-gating
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// is dropping of maintained activations and net inputs enabled?
-  float		act_drop;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 amount that maintained activities drop after the trial on which they are gated -- maint_h values are downscaled by (1-maint_drop) at the transition into stable maintenance
-  float		net_drop;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 amount that maintained activities drop after the trial on which they are gated -- maint_h values are downscaled by (1-maint_drop) at the transition into stable maintenance
-
-  float		act_drop_c;	// #READ_ONLY #NO_SAVE 1-act_drop
-  float		net_drop_c;	// #READ_ONLY #NO_SAVE 1-net_drop
-
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(PFCMaintDropSpec);
 protected:
   SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl();
@@ -602,7 +581,6 @@ public:
     STORE,			// store current activity state in maintenance currents
     CLEAR,			// clear current activity state from maintenance currents
     CLEAR_DECAY,		// apply clear decay to existing maintained activations
-    DROP,			// drop maintenance currents by maint_drop factor
     DECAY,			// decay maintenance currents by maint_decay factor
   };
 
@@ -614,7 +592,7 @@ public:
   SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
   PFCLayer		pfc_layer;	// which layer type is this -- superficial (SUPER) or deep (DEEP)?
   PFCGateSpec		gate;		// parameters controlling the gating of pfc units
-  PFCMaintDropSpec	maint_drop;	// drop in activation and net input after gating signal
+
 
   virtual LeabraLayer* 	DeepLayer(LeabraLayer* lay);
   // find the DEEP layer for this SUPER layer
@@ -658,7 +636,6 @@ public:
     virtual void Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net);
     // clear the non-maintaining stripes at end of trial
 
-  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
