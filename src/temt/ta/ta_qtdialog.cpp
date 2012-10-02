@@ -2531,37 +2531,30 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
 
 void taiEditDataHost::SetCurMenu_Name(String men_nm) {
   if (!menu) {
-    // we can't use QMainMenu on Mac, and QMenu doesn't work for some
-    // reason (doesn't become visible, no matter what); but a toolbar works
-    // we don't use these on all platforms for uniformity because they SUCK!
-#ifdef TA_OS_MAC
-    menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL);
-    vblDialog->insertWidget(0, menu->GetRep()); //note: no spacing needed after
-    vblDialog->insertSpacing(1, 2);
-#else
-    menu = new taiMenuBar(taiMisc::fonSmall,
-      NULL, this, NULL, widget());
-    if (QMenuBar *qmb = dynamic_cast<QMenuBar *>(menu->GetRep())) {
-      vblDialog->setMenuBar(qmb);
+    menu = new taiMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
+    QMenuBar *qmb = menu->rep_bar();
+    vblDialog->setMenuBar(qmb);
 
-      // This menubar should never be used as a native menubar.  Without
-      // the following line, emergent doesn't work correctly on Ubuntu
-      // with the Unity desktop, which has a global menubar similar to
-      // the Mac's.  Specifically, there is no way to access the normal
-      // menubar (File, Edit, View) because this one (Object, SelectEdit)
-      // is taking its place.
-      qmb->setNativeMenuBar(false);
-    }
-#endif
+    // This menubar should never be used as a native menubar.  Without
+    // the following line, emergent doesn't work correctly on the Mac
+    // or on Ubuntu with the Unity desktop, which both have a global
+    // menubar.  Specifically, there is no way to access the normal
+    // menubar (File, Edit, View) because this one (Object, SelectEdit)
+    // is taking its place.
+    qmb->setNativeMenuBar(false);
   }
+
   if (men_nm.nonempty()) {
     cur_menu = ta_menus.FindName(men_nm);
-    if (cur_menu != NULL)  return;
+    if (cur_menu != NULL) return;
   }
+
   if (cur_menu != NULL) return;
 
-  if (men_nm.empty())
+  if (men_nm.empty()) {
     men_nm = "Actions";
+  }
+
   cur_menu = menu->AddSubMenu(men_nm);
   ta_menus.Add(cur_menu);
 }

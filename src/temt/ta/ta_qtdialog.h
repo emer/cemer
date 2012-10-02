@@ -678,8 +678,7 @@ public:
   taiMenu_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
   taiActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
   taiActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
-//temp  taiMenuBar*             menu;           // menu bar
-  taiActions*           menu;           // menu bar
+  taiMenuBar*           menu;           // menu bar
 
   MembSet_List          membs;
   QButtonGroup*         bgrp; // group used for set checkboxes
