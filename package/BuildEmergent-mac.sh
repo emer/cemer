@@ -28,11 +28,14 @@ if [ -z $ARCH ]; then
   if [ -z $ARCH ]; then ARCH="64"; fi
 fi
 
+# svn base directory
+SVN_BASE="http://grey.colorado.edu/svn/emergent/emergent"
+
 # Update source code and make package.
 EMERGENT_SRC_DIR=~/emergent
 mkdir -p ${EMERGENT_SRC_DIR}
 cd ${EMERGENT_SRC_DIR}
-svn checkout -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} .
+svn checkout -r ${REV} ${SVN_BASE}/${TAG} .
 ./configure --emer-mac-arch-bits=${ARCH}
 cd build
 NCPU=`sysctl -n hw.ncpu`
@@ -95,7 +98,9 @@ fi
 DMG_DIR=~/"Emergent ${EMERGENT_VERSION}"
 if [ -d "${DMG_DIR}" ]; then
   echo "Directory already exists: ${DMG_DIR}"
-  # exit
+  # This isn't fatal, no need to exit.  Sometimes this legitimately happens
+  # if a package needs to be rebuilt.
+  #exit
 else
   echo "Renaming ${OLD_DMG_DIR} --> ${DMG_DIR} ..."
   mv "${OLD_DMG_DIR}" "${DMG_DIR}"
@@ -141,6 +146,7 @@ fi
 hdiutil create -srcdir "${DMG_DIR}" "${INSTALL_DMG}"
 
 DMGS="${INSTALL_DMG} ${UPGRADE_DMG}"
+TAG_DIR="${SVN_BASE}/tags/${EMERGENT_VERSION}"
 cat <<INSTRUCTIONS
 
 Done!
@@ -155,13 +161,20 @@ Done!
 **
 ** Also, make an SVN tag:
 **
-** svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
+** svn copy -r ${REV} ${SVN_BASE}/trunk ${TAG_DIR} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
 
 INSTRUCTIONS
 
-# Only want to do this once per release.
+# Only want to do this once per release, so (arbitrarily) pick the 64-bit build.
 if [ ${ARCH} == "64" ]; then
-  svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
+  # Double check that it doesn't already exist, such as might happen when a
+  # package is rebuilt.  Otherwise you end up with a 'trunk' subdirectory
+  # under the tag directory, due to the funny way that svn copy works.
+  if svn list ${TAG_DIR} > /dev/null 2>&1; then
+    echo "Tag already exists: ${TAG_DIR}"
+  else
+    svn copy -r ${REV} ${SVN_BASE}/trunk ${TAG_DIR} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
+  fi
 fi
 
 scp ${DMGS} dpfurlani@grey.colorado.edu:/home/dpfurlani/
@@ -193,4 +206,3 @@ exit
 # manually edit the new Qt lines into the distribution.dist file
 #   also manually edit in the new Qt_imports.pkg
 #   also change 4.6.2 to 4.7.1
-
