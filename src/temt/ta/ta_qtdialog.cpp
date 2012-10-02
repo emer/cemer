@@ -2541,7 +2541,17 @@ void taiEditDataHost::SetCurMenu_Name(String men_nm) {
 #else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
-    vblDialog->setMenuBar(menu->GetRep());
+    if (QMenuBar *qmb = dynamic_cast<QMenuBar *>(menu->GetRep())) {
+      vblDialog->setMenuBar(qmb);
+
+      // This menubar should never be used as a native menubar.  Without
+      // the following line, emergent doesn't work correctly on Ubuntu
+      // with the Unity desktop, which has a global menubar similar to
+      // the Mac's.  Specifically, there is no way to access the normal
+      // menubar (File, Edit, View) because this one (Object, SelectEdit)
+      // is taking its place.
+      qmb->setNativeMenuBar(false);
+    }
 #endif
   }
   if (men_nm.nonempty()) {
