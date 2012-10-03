@@ -2297,32 +2297,43 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   return true;
 }
 
-bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
+bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, int bg_color) {
   TwoDCoord img_size(img.dim(0), img.dim(1));
 
-  // get background color
+  // if bg color not specified, use upper left corner pix
   float brd_clr[3];
-  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
-
-  // check for rgb img
-  bool rgb_img = false;
-  if(img.dims() == 3) { // rgb
-    rgb_img = true;
+  if(bg_color > -1) {
+  	brd_clr[0] = bg_color;
+  	brd_clr[1] = bg_color;
+  	brd_clr[2] = bg_color;
   }
-
-  // no support for rgb yet
-  if(rgb_img) {
-  }
-
   else {
-      // just use first dim for gray
-  	  float clr = 0.0f;
-  	  clr = brd_clr[0];
+    // get background color
+    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+  }
+
+  // different processing depending on whether image is rgb or gray
+  if(img.dim(2) >= 3) { // rgb or rgba
+  	for(int yi=0; yi< img_size.y; yi++) {
+    	for(int xi=0; xi< img_size.x; xi++) {        	 
+    		// red channel 	
+    		float& rv = img.FastEl(xi, yi, 0);
+    		rv = ((rv-brd_clr[0])*new_contrast)+brd_clr[0];
+    		// green channel
+    	    float& gv = img.FastEl(xi, yi, 1);
+    	    gv = ((gv-brd_clr[1])*new_contrast)+brd_clr[1];
+    	    // blue channel
+    	    float& bv = img.FastEl(xi, yi, 2);          	  
+    	    bv = ((bv-brd_clr[2])*new_contrast)+brd_clr[2];
+      	  }
+  	  }
+  }
+
+  else { // grayscale
   	  for(int yi=0; yi< img_size.y; yi++) {
-      	  for(int xi=0; xi< img_size.x; xi++) {
+      	  for(int xi=0; xi< img_size.x; xi++) {      	        	  	
           	  float& iv = img.FastEl(xi, yi);
-          	  float nw_iv = ((iv-clr)*new_contrast)+clr;
-          	  iv = nw_iv;
+          	  iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
       	  }
   	  }
   }

@@ -554,8 +554,8 @@ public:
   static bool	BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig=.05f, float_Matrix* foreground=NULL, int_Matrix* bubble_coords=NULL);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise Simplified version of Gosselin & Schyn's bubble paradigm which creates a mask from Gaussians Bubbles through which information is let through. Conceptually just the inverse of BlobBlurOcclude, but parameterization allows titration on number of bubbles. n_bubbles is the number of bubbles to create in the mask, bubble_sig controls the width of the bubble in image width normalized units (e.g., .05 = 5% of the width of the image). foreground specifies a foreground to bubble through (default = border color). if bubble_coords is specified, saves the coordinates of the bubble centers for analysis in an Nx2 xy matrix 
   
-  static bool	AdjustContrast(float_Matrix& img, float new_contrast);
-  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant. Both new_contrast is in range [0 1]
+  static bool	AdjustContrast(float_Matrix& img, float new_contrast, int bg_color=-1);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant at passed in value or if not specified, checks upper left pixel. new_contrast is a scalar in range [0 1] and bg_color is an integer in range [0 255]
   
   static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.
