@@ -529,16 +529,12 @@ private:
 };
 
 class LEABRA_API PFCsUnitSpec : public LeabraUnitSpec {
-  // superficial layer PFC unit spec -- supports modulation of learning as function of gating (resets dwts during dwt_norm for those that shouldn't learn)
+  // superficial layer PFC unit spec -- drives maintenance activation values
 INHERITED(LeabraUnitSpec)
 public:
 
   override void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-
-  virtual void	Compute_LearnMod(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // main routine that zeros out dwt for any units that should not learn on this trial -- finds the pfc deep layer and drives everything from there
   override void  Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net);
-  override void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(PFCsUnitSpec);
 protected:
@@ -555,11 +551,10 @@ INHERITED(SpecMemberBase)
 public:
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
-   float	maint_pct;	// #DEF_0.8 #MIN_0 #MAX_1 what proportion (0-1) of activation value of maintaining units that comes from the gated maint activation value -- the rest comes from activation that would otherwise be computed live directly from current inputs
+   float	maint_pct;	// #DEF_0.9 #MIN_0 #MAX_1 what proportion (0-1) of activation value of maintaining units that comes from the gated maint activation value -- the rest comes from activation that would otherwise be computed live directly from current inputs
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
   float		maint_thr;	// #MIN_0 #DEF_0.2 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
   float		clear_decay;	// #MIN_0 how much to decay existing activations when a gating signal comes into an already-maintaining stripe
-  bool		learn_deep_act;	// #DEF_false superficial layer PFC units only learn when corresponding deep pfc layers are active (i.e., have been gated) -- they must use a PFCsUnitSpec to support this learning modulation
 
   float		maint_pct_c;	// #READ_ONLY #NO_SAVE 1-maint_pct
 
