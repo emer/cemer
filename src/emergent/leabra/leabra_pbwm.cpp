@@ -687,6 +687,10 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
+  int snridx = lay->own_net->layers.FindLeafEl(snr_lay);
+  lay->CheckError(snridx > myidx, quiet, rval,
+                  "SNrThallayer (SNrThalLayerSpec) layer must be *before* this layer in list of layers -- it is now after, won't work!");
+
   if(go_nogo == GO) {
     if(lay->CheckError(nogo_lay == NULL, quiet, rval,
                 "Could not find NoGo Matrix layer for Go Matrix -- must receive MarkerConSpec projection from one!")) {
@@ -999,6 +1003,7 @@ void PFCsUnitSpec::Initialize() {
 }
 
 void PFCsUnitSpec::Defaults_init() {
+  g_bar.h = 0.0f;		// don't use it by default -- use mix
 }
 
 // this sets default wt scale from deep prjns to super to 0
@@ -4417,6 +4422,12 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 6.0f;
   matrix_cons->wt_sig.off = 1.25f;
+
+  matrix_cons->lrate_sched.SetSize(2);
+  matrix_cons->lrate_sched[0]->start_ctr = 0;
+  matrix_cons->lrate_sched[0]->start_val = 0.0f;
+  matrix_cons->lrate_sched[1]->start_ctr = 10; // enough time for reps pretrain
+  matrix_cons->lrate_sched[1]->start_val = 1.0f;
 
   matrix_cons_topo->SetUnique("rnd", true);
   matrix_cons_topo->rnd.mean = 0.0f;
