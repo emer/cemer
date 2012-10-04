@@ -133,7 +133,10 @@ QNetworkReply * SynchronousNetRequest::httpPost(const QUrl &url, const char *fil
   }
 
   // Make HTTP POST request, wait for reply.
-  m_reply = m_netManager->post(QNetworkRequest(url), &file);
+  QNetworkRequest request(url);
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+  m_reply = m_netManager->post(request, &file);
   waitForReply();
   return getReplyIfSuccess();
 }
@@ -148,7 +151,10 @@ QNetworkReply * SynchronousNetRequest::httpPost(const QUrl &url, const char *dat
   QByteArray byteArray(data, size);
 
   // Make HTTP POST request, wait for reply.
-  m_reply = m_netManager->post(QNetworkRequest(url), byteArray);
+  QNetworkRequest request(url);
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+  m_reply = m_netManager->post(request, byteArray);
   waitForReply();
   return getReplyIfSuccess();
 }
@@ -424,14 +430,109 @@ bool taMediaWiki::Logout(const String &wiki_name)
 
 bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
 {
-  // #CAT_Page determine if given page exists on wiki
+  // Determine if given page exists on wiki.
+
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("titles", page_name);
+
+  // Make the network request.
+  SynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Default the normalized name to the provided page name;
+    // will be changed if normalization was performed by the server.
+    String normalizedName = page_name;
+
+    QXmlStreamReader reader(reply);
+    int pageCount = 0;
+    while (!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        // Check for an <n> element indicating the normalized name.
+        // This is only present if the proivded page_name isn't
+        // canonical.
+        if (reader.name() == "n") {
+          QXmlStreamAttributes attrs = reader.attributes();
+          if (attrs.value("from").toString() == page_name) {
+            normalizedName = attrs.value("to").toString();
+          }
+        }
+        // Check for a <page> element
+        else if (reader.name() == "page") {
+          ++pageCount;
+          QXmlStreamAttributes attrs = reader.attributes();
+          if (attrs.value("title").toString() == normalizedName) {
+            // Check if the page name is marked as invalid or missing.
+            if (attrs.hasAttribute("invalid")) {
+              // For example, the page name "_" is invalid.
+              taMisc::Warning("Page name is invalid:", page_name);
+              return false;
+            }
+            else if (attrs.hasAttribute("missing")) {
+              // This is the normal case when a page does NOT exist.
+              return false;
+            }
+            else if (attrs.hasAttribute("pageid")) {
+              // Double check that the page ID is a positive number -- it
+              // should be since the page isn't marked invalid or missing!
+              bool ok = false;
+              QString pageIdStr = attrs.value("pageid").toString();
+              int pageId = pageIdStr.toInt(&ok);
+              if (!ok) {
+                // Shouldn't happen.
+                taMisc::Warning("Page ID is not numeric:", page_name,
+                  qPrintable(pageIdStr));
+                return false;
+              }
+              else if (pageId <= 0) {
+                // Shouldn't happen.
+                taMisc::Warning("Page ID is invalid:", page_name,
+                  qPrintable(pageIdStr));
+                return false;
+              }
+              else {
+                // This is the normal case when a page DOES exist.
+                return true;
+              }
+            }
+            else {
+              // Shouldn't happen.
+              taMisc::Warning(
+                "Unexpected condition; page isn't missing and doesn't exist:",
+                page_name);
+            }
+          }
+        }
+      }
+    }
+
+    if (pageCount == 0) {
+      // If page_name is "" or " ", for example, the entire response will be:
+      //   <api/>
+      taMisc::Warning("No page name provided:", page_name);
+    }
+    else {
+      // Not sure what happened if we got here.
+      taMisc::Warning("Unsure if page exists:", page_name);
+    }
+  }
+
+  // If request cancelled or response malformed, assume page doesn't exist.
   return false;
 }
 
 bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
                              const String& page_content)
 {
-  // #CAT_Page create given page on the wiki and populate it with given content if non-empty  -- return true on success
+  // Create given page on the wiki and populate it with given content.
+
+  // First, get edit token.
+  //api.php ? action=tokens & type=edit
+
   return false;
 }
 
