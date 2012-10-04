@@ -778,6 +778,7 @@ protected slots:
   void  Startup_ProcessArgs();
   void  Startup_RunStartupScript();
   void  ConsoleNewStdin(int n_lines); // console got new standard input
+  void  FocusRootWinAtStartup();
 #ifdef DMEM_COMPILE
   void  DMem_SubEventLoop();
 #endif

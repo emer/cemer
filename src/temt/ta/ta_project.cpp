@@ -2521,6 +2521,13 @@ void taRootBaseAdapter::ConsoleNewStdin(int n_lines) {
   taRootBase::instance()->ConsoleNewStdin(n_lines);
 }
 
+void taRootBaseAdapter::FocusRootWinAtStartup() {
+  if (taiMisc::main_window) {
+    taiMisc::main_window->activateWindow();
+    taiMisc::main_window->raise();
+  }
+}
+
 
 #ifdef DMEM_COMPILE
 void taRootBaseAdapter::DMem_SubEventLoop() {
@@ -4288,6 +4295,9 @@ bool taRootBase::Startup_Run() {
       QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
     }
   }
+
+  // Now give the root window focus.
+  QTimer::singleShot(0, root_adapter, SLOT(FocusRootWinAtStartup()));
 
   // now everyone goes into the event loop
   taiMC_->Exec();
