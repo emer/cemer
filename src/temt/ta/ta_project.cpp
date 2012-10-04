@@ -2525,6 +2525,15 @@ void taRootBaseAdapter::FocusRootWinAtStartup() {
   if (taiMisc::main_window) {
     taiMisc::main_window->activateWindow();
     taiMisc::main_window->raise();
+
+    // If there are any modal dialogs (e.g., recompile plugins), the main
+    // window may have just been raised above them.  Find and raise them.
+    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+      if (widget->isModal()) {
+        widget->activateWindow();
+        widget->raise();
+      }
+    }
   }
 }
 
