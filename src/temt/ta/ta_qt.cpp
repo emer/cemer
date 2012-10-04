@@ -23,6 +23,7 @@
 #include "ta_qtviewer.h"
 #include "ta_qttype_def.h"
 #include "css_qt.h"
+#include "css_qtconsole.h"
 #include "css_ta.h"
 #include "ta_qtcursors.h" //note: only place this s/b included
 #include "ta_platform.h"
@@ -554,6 +555,12 @@ void taiMisc::Quit_impl(CancelOp cancel_op) {
     QCoreApplication::instance()->quit();
   }
   else {
+    // Notify the CSS console that the application is quitting,
+    // otherwise it may remain blocked waiting for user input.
+    if (QcssConsole *qcons = QcssConsole::getInstance()) {
+      qcons->onQuit();
+    }
+    
     qApp->closeAllWindows();
   }
 }

@@ -54,7 +54,7 @@ public:
   // flush cout & cerr output to display -- runs ProcessEvents if anything is being output, to make sure it shows up, and if in paging mode, it waits until user has paged through everything in the buffer
 
   virtual void outputLine(QString line, bool err = false);
-  // append one line of text, marked as an error or not 
+  // append one line of text, marked as an error or not
 
   // cosmetic methods
   virtual void setCmdColor(QColor c) {cmdColor = c;};
@@ -66,16 +66,17 @@ public:
   virtual void setPager(bool pager);
   // determines whether to use a pager mechanism to control the flow of text through the console (as in the unix more command)
 
-  virtual int	queryForKeyResponse(QString query);
+  virtual int   queryForKeyResponse(QString query);
   // does a flushOutput, then displays the prompt and waits for a keyboard response, which is returned as an int value
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;
 
 public slots:
-  virtual void clear();	       // clear & reset the console (useful sometimes)
+  virtual void clear();         // clear & reset the console (useful sometimes)
   virtual void reset();
-  virtual void exit();		// exit shell
+  virtual void exit();          // exit shell
+  virtual void onQuit();        // used to notify the console that the application is quitting.
 
 protected:
   // code that new specific implementation should override:
@@ -94,7 +95,7 @@ protected:
   // find substring that is is common to all strings in the list (i.e., the intersection)
 
   virtual bool isCommandComplete(QString command);
-  virtual void ctrlCPressed();	// the user pressed ctrl-C -- do something (e.g., stop program)
+  virtual void ctrlCPressed();  // the user pressed ctrl-C -- do something (e.g., stop program)
 
 
 protected:
@@ -111,16 +112,16 @@ protected:
 
   virtual void displayPrompt(bool force = false);
   // displays the prompt, force = definitely do so
-  virtual void	gotoPrompt(QTextCursor& cursor);
+  virtual void  gotoPrompt(QTextCursor& cursor);
   // set position to just after prompt (moves anchor)
-  virtual void	gotoEnd(QTextCursor& cursor, bool select=true);
+  virtual void  gotoEnd(QTextCursor& cursor, bool select=true);
   // set position to end (and select text or not)
-  virtual void	gotoEnd();
+  virtual void  gotoEnd();
   // set position to end without selecting text, without using existing cursor
-  virtual bool	scrolledToEnd(); // check if display is scrolled to the end
-  virtual QString getCurrentCommand();			     // get text after prompt
+  virtual bool  scrolledToEnd(); // check if display is scrolled to the end
+  virtual QString getCurrentCommand();                       // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
-  virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
+  virtual bool cursorInCurrentCommand();        // cursor is in the current command editing zone
 #ifndef TA_OS_WIN
   virtual bool stdDisplay(QTextStream *s);
   // displays redirected stdout/stderr: return true for noPaging mode if anything was output, and if in paging mode returns true if user is waiting for more stuff
@@ -129,24 +130,25 @@ protected:
   //protected attributes
 protected:
   QColor cmdColor, errColor, outColor, completionColor;     // colors
-  int curPromptPos;		// just after current prompt position
-  int curOutputLn;		// last output line
-  int maxLines;			// max number of lines to display at a time (pager)
-  int maxCols;			// max display columns
-  int fontHeight;		// height of current font, used for computing maxLines
-  int fontWidth;		// width of current font, used for computing maxCols
-  bool noPager;			// completely disable pager mechanism
-  bool quitPager;		// quit pager until next time
-  bool contPager;		// continue pager until next time
-  bool promptDisp;		// just displayed the prompt -- no output in between
-  bool waiting_for_key;		// in promptForKeyResponse -- waiting for keypress -- this gets turned off when response is made
-  int key_response;		// key response made in promptForKeyResponse
-  int promptLength;		// cached prompt length
-  QString prompt;		// The prompt string
-  QStringList history;	// The commands history
+  int curPromptPos;             // just after current prompt position
+  int curOutputLn;              // last output line
+  int maxLines;                 // max number of lines to display at a time (pager)
+  int maxCols;                  // max display columns
+  int fontHeight;               // height of current font, used for computing maxLines
+  int fontWidth;                // width of current font, used for computing maxCols
+  bool applicationIsQuitting;   // flag set when the application is quitting
+  bool noPager;                 // completely disable pager mechanism
+  bool quitPager;               // quit pager until next time
+  bool contPager;               // continue pager until next time
+  bool promptDisp;              // just displayed the prompt -- no output in between
+  bool waiting_for_key;         // in promptForKeyResponse -- waiting for keypress -- this gets turned off when response is made
+  int key_response;             // key response made in promptForKeyResponse
+  int promptLength;             // cached prompt length
+  QString prompt;               // The prompt string
+  QStringList history;  // The commands history
   QStringList recordedScript; // commands that have succeeded
   int historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
-  QFile	logfile;    // log std out/err msgs to this file if open
+  QFile logfile;    // log std out/err msgs to this file if open
 
 #ifndef TA_OS_WIN
   Interceptor *stdoutInterceptor; // Stdout interceptor
@@ -155,7 +157,7 @@ protected:
 
   // Redefined virtual slots
 private slots:
-  virtual void stdReceived(); 	// standard output/err received: display and flush
+  virtual void stdReceived();   // standard output/err received: display and flush
 
 signals:
   // Signal emitted after that a command is executed

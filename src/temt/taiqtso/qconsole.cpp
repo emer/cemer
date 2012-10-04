@@ -93,12 +93,20 @@ void QConsole::exit() {
   qApp->exit();
 }
 
+void QConsole::onQuit() {
+  applicationIsQuitting = true;
+}
+
 //QConsole constructor (init the QTextEdit & the attributes)
 QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor)
-  : QTextEdit(parent), cmdColor(Qt::blue), errColor(Qt::red), outColor(Qt::black),
-    completionColor(Qt::green)
+  : QTextEdit(parent)
+  , cmdColor(Qt::blue)
+  , errColor(Qt::red)
+  , outColor(Qt::black)
+  , completionColor(Qt::green)
+  , applicationIsQuitting(false)
 #ifndef TA_OS_WIN
- ,stdoutInterceptor(NULL), stderrInterceptor(NULL)
+  , stdoutInterceptor(NULL), stderrInterceptor(NULL)
 #endif
 {
   //resets the console
@@ -156,7 +164,7 @@ int QConsole::queryForKeyResponse(QString query) {
   append(query);
   waiting_for_key = true;
   key_response = 0;
-  while(waiting_for_key) {
+  while (waiting_for_key && !applicationIsQuitting) {
     QCoreApplication::processEvents();
     taPlatform::msleep(10); //note: 1ms is fine, shorter values result in cpu thrashing
     // keypress event turns off waiting_for_key and sets key_response
