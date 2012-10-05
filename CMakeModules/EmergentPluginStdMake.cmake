@@ -17,7 +17,7 @@ set(plugin_full_SRCS
 )
 
 # adds the library as an official target to compile
-add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
+EMERGENT_ADD_LIBRARY(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
 # dependencies
 add_dependencies(${PROJECT_NAME} "${PROJECT_NAME}_TA")

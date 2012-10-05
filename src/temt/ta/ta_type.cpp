@@ -21,7 +21,10 @@
 #include "ta_variant.h"
 
 #ifndef NO_TA_BASE
-# include "svnrev.h"
+# define CMAKE_DEPENDENCY_HACK(a) #a
+#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
+# undef CMAKE_DEPENDENCY_HACK
+
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
@@ -31,7 +34,7 @@
 # ifdef DMEM_COMPILE
 #   include "ta_dmem.h"
 # endif
-# include "ta_TA_type.h"
+# include "ta_TA_type_WRAPPER.h"
 # include <QDir>
 # include <QFileInfo>
 # include <QCoreApplication>

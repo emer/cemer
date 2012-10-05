@@ -7,7 +7,7 @@ if (WIN32)
   set(emergentbin_SRCS ${emergentbin_SRCS} icon.rc)
 endif (WIN32)
 
-add_executable(emergent ${emergentbin_SRCS})
+EMERGENT_ADD_EXECUTABLE(emergent ${emergentbin_SRCS})
 
 EMERGENT_LINK_EXECUTABLES(emergent emergentlib temt)
 

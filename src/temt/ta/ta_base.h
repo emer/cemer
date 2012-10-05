@@ -19,7 +19,7 @@
 #include "ta_type.h"
 #include "icolor.h"
 //#include "ta_qtbrowse_def.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 #ifndef __MAKETA__
 #ifdef TA_GUI
@@ -108,35 +108,35 @@ protected:
 // Copy logic (this is complicated for dealing with constructors and = assignment
 //
 // void Copy_(const type& cp)   non-virtual private method that only copies data
-//				for THIS type does NOT call parent, nor copy parent data
+//                              for THIS type does NOT call parent, nor copy parent data
 // void Copy__(const type& cp)  simple COPYING flag wrapper around Copy_
-// copy constructor	        calls Copy__ to just copy stuff for this type
+// copy constructor             calls Copy__ to just copy stuff for this type
 // void Copy_impl(const type& cp) non-virtual protected method defined in BASEFUNS
-//				that calls parent copy_impl, and then this copy -- this
-//				is the master copy function for assignment =
-// void	Copy(const type& cp) 	public interface to call Copy_impl for a given guy
+//                              that calls parent copy_impl, and then this copy -- this
+//                              is the master copy function for assignment =
+// void Copy(const type& cp)    public interface to call Copy_impl for a given guy
 //
 // then there is, confusingly, an entirely separate set of copy mechanisms that
-// use the TA system to do more flexible copying using generic taBase* objects 
+// use the TA system to do more flexible copying using generic taBase* objects
 // these all take pointer args * instead of reference args
-// 
+//
 // void UnSafeCopy(const taBase* cp) virtual protected defined in BASEFUNS,
-//				calls Copy_impl if source inherits from us, and 
-//				CastCopyTo if we inherit from source, so we get
-//				common elements of subclass copied
-// void CastCopyTo(taBase* cp)	virtual protected defined in BASEFUNS,
-//				casts source to our type, and calls Copy_impl on
-//				that guy from us
-// bool	Copy(const taBase* cp)	virtual public function that is master interface
-//				to this generic interface
-// bool CanDoCopy_impl		master routine called by Copy that checks if it is
-//				OK to copy (Can = CanCopy_impl), and if it is ok, then it
-//				actually does the copy (Do = UnSafeCopy) -- this provides
-//				the high level of safe checking and flexibility
-// CopyFromCustom_impl		for special cases where objects of divergent inheritence
-//				branches can still copy -- example is Matrix objects
-//				that can still copy from different types using Variant
-//				conversion interface (e.g. float from string etc)
+//                              calls Copy_impl if source inherits from us, and
+//                              CastCopyTo if we inherit from source, so we get
+//                              common elements of subclass copied
+// void CastCopyTo(taBase* cp)  virtual protected defined in BASEFUNS,
+//                              casts source to our type, and calls Copy_impl on
+//                              that guy from us
+// bool Copy(const taBase* cp)  virtual public function that is master interface
+//                              to this generic interface
+// bool CanDoCopy_impl          master routine called by Copy that checks if it is
+//                              OK to copy (Can = CanCopy_impl), and if it is ok, then it
+//                              actually does the copy (Do = UnSafeCopy) -- this provides
+//                              the high level of safe checking and flexibility
+// CopyFromCustom_impl          for special cases where objects of divergent inheritence
+//                              branches can still copy -- example is Matrix objects
+//                              that can still copy from different types using Variant
+//                              conversion interface (e.g. float from string etc)
 //
 // The bottom line is: define Copy_ in each class to copy just that class's members
 // and use ->Copy(cp) to copy a generic taBase* guy -- only use = when the types are
@@ -714,7 +714,7 @@ public:
   //////////////////////////////////////////////////////////////
   //    Container element access
 
-  virtual bool		IsContainer()	{ return false; }
+  virtual bool          IsContainer()   { return false; }
   // #CAT_Access is this item a container object or not?
   virtual Variant       Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return _nilVariant; }
@@ -727,9 +727,9 @@ public:
     // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
     virtual IndexMode     ElViewMode() const  { return IDX_UNK; }
     // #CAT_Access #EXPERT View mode for view of list -- specifies what kind of view data there is, for display and other kinds of functions -- only valid cases are IDX_COORDS or IDX_MASK, or IDX_UNK if no view specified
-    virtual int		  ElemCount() const  { return 0; }
+    virtual int           ElemCount() const  { return 0; }
     // #CAT_Access #EXPERT number of elements in the container -- used for iteration control
-  virtual int	        IterCount() const; 
+  virtual int           IterCount() const;
   // #CAT_Access how many items will be iterated over if we iterate through this container -- this is fast for no view and IDX_COORDS views and slow (requiring summing over mask) for IDX_MASK views
   virtual Variant       IterBegin(taBaseItr*& itr) const
   { itr = Iter(); if(!itr) return _nilVariant; return IterFirst(itr); }
@@ -737,10 +737,10 @@ public:
   virtual Variant       IterNext(taBaseItr*& itr) const
   { if(IterNext_impl(itr)) return IterElem(itr); DelIter(itr); return _nilVariant; }
   // #CAT_Access iterate to next item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a next item -- see IterBegin() for more docs
-  virtual int	        IterBeginIndex(taBaseItr*& itr) const
+  virtual int           IterBeginIndex(taBaseItr*& itr) const
   { itr = Iter(); if(!itr) return -1; return IterFirstIndex(itr); }
   // #CAT_Access get iterator for this container and start index at the first item for iterating through items in this container, returns index if iterator was set to a valid index, -1 if not, in which case iterator is deleted: e.g., taBaseItr* itr; for(Variant itm = cont.IterBeginIndex(itr); (bool)itr; itm = cont.IterNextIndex(itr)) { ... } -- see also TA_FOREACH_INDEX macro
-  virtual int	        IterNextIndex(taBaseItr*& itr) const;
+  virtual int           IterNextIndex(taBaseItr*& itr) const;
   // #CAT_Access iterate to index of next item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a next item -- see IterBeginIndex() for more docs
 
     //////////////   Iteration Implementation, lower-level functions   //////////////
@@ -1153,15 +1153,15 @@ public:
 
   virtual void          CallFun(const String& fun_name);
   // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
-  static  void		CallObjFun(taBase* obj, const String& fun_name);
+  static  void          CallObjFun(taBase* obj, const String& fun_name);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
-  static  void		SetMemberStr(taBase* obj, const String& memb_name,
-				     const String& str);
+  static  void          SetMemberStr(taBase* obj, const String& memb_name,
+                                     const String& str);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on string value -- memb_name can be an arbitrary full path below the obj
-  static  void		SetMemberVar(taBase* obj, const String& memb_name,
-				     const Variant& val);
+  static  void          SetMemberVar(taBase* obj, const String& memb_name,
+                                     const Variant& val);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant -- memb_name can be an arbitrary full path below the obj
-  virtual void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) { };
+  virtual void          MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) { };
   // #CAT_ObjectMgmt the given member was just edited to a new value -- apply any member-specific changes before the global UpdateAfterEdit function is called.  if called from a gui edit dialog interface, the edit_dialog flag is set, so that behavior can be appropriately differentiated
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
@@ -1322,7 +1322,7 @@ public:
   virtual String&       Print(String& strm, int indent = 0) const
   { return GetTypeDef()->Print(strm, (void*)this, indent); }
   // #CAT_Display print the value of the object to given string
-  String		PrintStr(int indent=0) const
+  String                PrintStr(int indent=0) const
   { String rval; return Print(rval, indent); }
   // #CAT_Display print the value of the object to a string
 
@@ -1937,15 +1937,15 @@ public:
 
   virtual Variant       VarEl(int idx) const;
   // #CAT_Access #EXPERT get element at index as a Variant -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc) - this uses LeafElem interface and is thus fully generic
-  virtual taBase*	ElemLeaf(int leaf_idx) const { return (taBase*)SafeEl_(leaf_idx); }
+  virtual taBase*       ElemLeaf(int leaf_idx) const { return (taBase*)SafeEl_(leaf_idx); }
   // #CAT_Access #EXPERT return a terminal (leaf) element of the list -- this is interface used for iteration and elem generic accessor functionality
-  virtual void		LinkCopyLeaves(const taList_impl& cp);
+  virtual void          LinkCopyLeaves(const taList_impl& cp);
   // #CAT_ObjectMgmt #EXPERT create links in this list to all terminal leaf items in source list (i.e., Borrow) -- this is used for creating shallow container copies with different views -- does NOT copy full hierarchical substructure or anything -- just links leaves for accessor routines
 
-  override bool		IsContainer()	{ return true; }
+  override bool         IsContainer()   { return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
-  override int		ElemCount() const { return size; }
+  override int          ElemCount() const { return size; }
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
   override Variant      IterElem(taBaseItr* itr) const;
   override taBaseItr*   Iter() const;
@@ -2580,12 +2580,12 @@ public:
   Variant       SafeElAsVar(int idx) const { return El_GetVar_(SafeEl_(idx)); }
   // #CAT_Access get element with safe range checking as a variant
 
-  override bool		IsContainer()	{ return true; }
+  override bool         IsContainer()   { return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
-  override int		ElemCount() const { return size; }
-  override Variant   	Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
-  override Variant   	IterElem(taBaseItr* itr) const;
+  override int          ElemCount() const { return size; }
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
+  override Variant      IterElem(taBaseItr* itr) const;
   override taBaseItr*   Iter() const;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members

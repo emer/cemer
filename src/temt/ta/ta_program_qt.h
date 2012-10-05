@@ -33,7 +33,7 @@
 # include <QToolTip>
 #endif
 
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 class TA_API taiDynEnumMember : public taiMember {
   // an int member with #DYNENUM_ON_xxx flag indicating DynEnumType guy
@@ -255,7 +255,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void 	showEvent(QShowEvent* ev);
+  override void         showEvent(QShowEvent* ev);
 };
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {
@@ -280,7 +280,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void 	showEvent(QShowEvent* ev);
+  override void         showEvent(QShowEvent* ev);
 
 protected slots:
   void                  mb_Expert(bool checked); // expert button on minibar
@@ -414,7 +414,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void 	showEvent(QShowEvent* ev);
+  override void         showEvent(QShowEvent* ev);
 };
 
 ////////////////////////////////////////////////////////

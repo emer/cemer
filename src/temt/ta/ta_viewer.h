@@ -21,7 +21,7 @@
 #include "ta_base.h"
 #include "colorscale.h"
 
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 /* Node Bitmap flags
 

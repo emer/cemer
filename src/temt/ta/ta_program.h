@@ -23,7 +23,7 @@
 #include "ta_viewer.h"
 
 #include "ta_def.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 class cssElPtr;         // #IGNORE
 class cssSpace;         // #IGNORE
@@ -91,9 +91,9 @@ public:
   inline void           TogglePLineFlag(PLineFlags flg) { SetPLineFlagState(flg, !HasPLineFlag(flg)); }
   // toggle program flag
 
-  inline bool		IsMainLine() { return HasPLineFlag(MAIN_LINE); }
+  inline bool           IsMainLine() { return HasPLineFlag(MAIN_LINE); }
   // is this the main line for a given program element?
-  inline bool		IsComment() { return HasPLineFlag(COMMENT); }
+  inline bool           IsComment() { return HasPLineFlag(COMMENT); }
   // is this a comment non-coding line?
 
   const String          Indent();
@@ -125,8 +125,8 @@ class TA_API ProgLine_List : public taList<ProgLine> {
 INHERITED(taList<ProgLine>)
 public:
 
-  bool          AddLine(taBase* prog_el, int indent, const String& code, 
-			int pline_flags = ProgLine::PL_NONE);
+  bool          AddLine(taBase* prog_el, int indent, const String& code,
+                        int pline_flags = ProgLine::PL_NONE);
   // add one line of code to the program listing -- this is the official interface for adding to program -- code should be pure code without any indent,
   void          FullListing(String& script_code);
   // generate full listing of code from stored program lines into given string
@@ -297,7 +297,7 @@ public:
   virtual ostream& OutputType(ostream& fh) const;
   // output type information in C++ syntax
 
-  virtual bool	EnumsFromDataTable(DataTable* dt, const Variant& col);
+  virtual bool  EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (can be number or name) -- WARNING: replaces any existing enums.  handy for providing chooser access to column values
 
   override taList_impl* children_() {return &enums;}
@@ -328,8 +328,8 @@ private:
 SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
 
 // NOTE: prior to 12/11 the value for a non-bits enum was encoded as the index into the list
-// of enums.  this is typically the same as the actual int value, but not always.  it 
-// has now been changed to the more conventional storage of the actual numerical value in 
+// of enums.  this is typically the same as the actual int value, but not always.  it
+// has now been changed to the more conventional storage of the actual numerical value in
 // all cases..
 
 class TA_API DynEnum : public taOBase {
@@ -339,7 +339,7 @@ public:
   DynEnumTypeRef        enum_type; // enum type information (list of enum labels)
   int                   value;     // #DYNENUM_ON_enum_type current integer value
 
-  inline bool 	IsSet() const { return (bool)enum_type; }
+  inline bool   IsSet() const { return (bool)enum_type; }
   // has the type been set for this enum?
 
   inline int   NumVal() const { return value; }
@@ -348,7 +348,7 @@ public:
   // current name (string) value of enum ("" = no value set)
 
   inline void  SetNumVal(int val)  { value = val; }
-  // set current enum value by numerical value 
+  // set current enum value by numerical value
   bool  SetNameVal(const String& nm);
   // set current enum value by name -- for bits this clears any existing bits (use css |= to set bits without clearing)
 
@@ -379,7 +379,7 @@ public:
     T_Object,                   // #LABEL_Object* pointer to a C++ (hard coded) object -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
     T_HardEnum,                 // #LABEL_Enum enumerated list of options (existing C++ hard-coded one)
     T_DynEnum,                  // #LABEL_DynEnum enumerated list of labeled options (from a dynamically created list)
-    T_UnDef,			// #LABEL_UnDef undefined -- automatically-created variables start with an undefined type -- must specify a valid type before using
+    T_UnDef,                    // #LABEL_UnDef undefined -- automatically-created variables start with an undefined type -- must specify a valid type before using
   };
 
   enum VarFlags { // #BITS flags for modifying program variables
@@ -388,8 +388,8 @@ public:
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK          = 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
     SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
-    NEW_OBJ		= 0x0010, // #CONDSHOW_ON_var_type:T_Object&&flags:LOCAL_VAR automatically create a new object of given type when local variable is first initialized -- object will be automatically destroyed when this variable goes out of scope -- do not use if you are assigning this variable from a function return value -- only when you need a new temporary object of this type
-    QUIET            	= 0x0020, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
+    NEW_OBJ             = 0x0010, // #CONDSHOW_ON_var_type:T_Object&&flags:LOCAL_VAR automatically create a new object of given type when local variable is first initialized -- object will be automatically destroyed when this variable goes out of scope -- do not use if you are assigning this variable from a function return value -- only when you need a new temporary object of this type
+    QUIET               = 0x0020, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
     LOCAL_VAR           = 0x0040, // #NO_SHOW this is a local variable which does not set or update values!
     FUN_ARG             = 0x0080, // #NO_SHOW this is a function argument variable
     USED                = 0x0100, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
@@ -410,7 +410,7 @@ public:
   bool          reference;      // #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String        desc;           // #EDIT_DIALOG Description of what this variable is for
   ProgramRef    init_from;      // #CONDSHOW_OFF_flags:LOCAL_VAR initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs
-  int		css_idx; 	// #IGNORE index within script->prog_vars for this variable, valid once it has been created -- used for updating prog var when gui value changes
+  int           css_idx;        // #IGNORE index within script->prog_vars for this variable, valid once it has been created -- used for updating prog var when gui value changes
 
   cssEl*        parse_css_el;   // #IGNORE css el for parsing
 
@@ -486,7 +486,7 @@ public:
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
   // #IGNORE update the USED flag based on datalink refs
-  virtual bool		UpdateCssObjVal();
+  virtual bool          UpdateCssObjVal();
   // #IGNORE update cssSmartRef if we are a non-local object pointer
 
   virtual ProgVar*      GetInitFromVar(bool warn = true);
@@ -507,7 +507,7 @@ protected:
   String                m_this_sig; // the sig from most recent change
   String                m_prev_sig; // the sig last time it changed
 
-  virtual bool		CheckUndefType(const String& function_context) const;
+  virtual bool          CheckUndefType(const String& function_context) const;
   // #IGNORE check if var_type == T_UnDef and emit a warning if so -- returns true if undefined..
   override void         UpdateAfterEdit_impl();
   virtual String        GetSchemaSig() const;
@@ -832,7 +832,7 @@ public:
     NON_STD             = 0x0002, // non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
     NEW_EL              = 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
     VERBOSE             = 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
-    QUIET            	= 0x0010, // turn off warning messages if they are not relevant
+    QUIET               = 0x0010, // turn off warning messages if they are not relevant
     BREAKPOINT          = 0x0100, // #NO_SHOW breakpoint set at this prog el
     PROG_ERROR          = 0x0200, // #NO_SHOW css error was triggered at this prog el
     WARNING             = 0x0400, // #NO_SHOW css warning was triggered at this prog el
@@ -841,12 +841,12 @@ public:
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
-  String		orig_prog_code; // #HIDDEN original program code in a ProgCode used to create this element -- used e.g. for reverting
+  String                orig_prog_code; // #HIDDEN original program code in a ProgCode used to create this element -- used e.g. for reverting
 
   virtual ProgEl*       parent() const
   { return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl); }
   Program*              program() { return GET_MY_OWNER(Program); }
-  virtual int 		ProgElChildrenCount() const { return 0; }
+  virtual int           ProgElChildrenCount() const { return 0; }
   // number of program element children under this object -- overload for containers (loops, conditionals, etc)
 
   void                  PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
@@ -889,7 +889,7 @@ public:
   void                  ToggleBreakpoint();
   // #MENU #MENU_ON_Object #DYN1 toggle breakpoint flag to opposite of current state: will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
 
-  virtual bool		RevertToCode();
+  virtual bool          RevertToCode();
   // #BUTTON #GHOST_OFF_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
 
   virtual ProgVar*      FindVarName(const String& var_nm) const;
@@ -908,7 +908,7 @@ public:
   // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
   virtual  bool         CvtFmCode(const String& code);
   // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
-  virtual  bool		IsCtrlProgEl() 	{ return false; }
+  virtual  bool         IsCtrlProgEl()  { return false; }
   // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
 
   override bool         BrowserSelectMe();
@@ -930,7 +930,7 @@ public:
   TA_BASEFUNS(ProgEl);
 
 protected:
-  override void		UpdateAfterEdit_impl();
+  override void         UpdateAfterEdit_impl();
   override void         UpdateAfterMove_impl(taBase* old_owner);
   virtual void          UpdateAfterCopy(const ProgEl& cp);
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
@@ -946,7 +946,7 @@ protected:
     virtual ProgVar*    FindVarNameInScope_impl(const String& var_nm) const;
     // #IGNORE impl
 
-  virtual void		UpdateProgFlags();
+  virtual void          UpdateProgFlags();
   // #IGNORE update program element flags
 
   override bool         CheckConfig_impl(bool quiet);
@@ -1036,7 +1036,7 @@ INHERITED(ProgEl)
 public:
   ProgEl_List           loop_code; // #SHOW_TREE the items to execute in the loop
 
-  override int 		ProgElChildrenCount() const { return loop_code.size; }
+  override int          ProgElChildrenCount() const { return loop_code.size; }
 
   virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
@@ -1104,7 +1104,7 @@ public:
   ProgEl_List           fun_code;
   // the function code (list of program elements)
 
-  override int 		ProgElChildrenCount() const { return fun_code.size; }
+  override int          ProgElChildrenCount() const { return fun_code.size; }
 
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
@@ -1250,7 +1250,7 @@ public:
     PF_NONE             = 0, // #NO_BIT
     NO_STOP_STEP        = 0x0001, // #AKA_NO_STOP this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
     SELF_STEP           = 0x0002, // #NO_BIT this program has a StopStepPoint program element within it, and thus it shows up within its own list of Step programs -- this flag is set automatically during Init
-    TRACE    	        = 0x0004, // trace the running of this program by recording each line to the css console as the program runs
+    TRACE               = 0x0004, // trace the running of this program by recording each line to the css console as the program runs
     STARTUP_RUN         = 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
     OBJS_UPDT_GUI       = 0x0010, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
     LOCKED              = 0x0020, // this program should not be edited -- you must uncheck this flag prior to editing
@@ -1319,7 +1319,7 @@ public:
   // #READ_ONLY #NO_SAVE global run state -- set by the last program to run in gui mode (from the Run, Init, Step buttons) -- used primarily to prevent multiple programs from running at the same time
   static String         global_trace;
   // #READ_ONLY #NO_SAVE trace of programs called at point of last stop -- for GlobalTrace function
-  static int64_t	global_init_timestamp;
+  static int64_t        global_init_timestamp;
   // #READ_ONLY #NO_SAVE first program to call Init sets this timestamp, and others compare to it and don't run in CallInit multiple times if their timestamp matches this one
 
   String                short_nm;
@@ -1427,14 +1427,14 @@ public:
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
   virtual bool  RunFunction(const String& fun_name);
   // #CAT_Run run a particular function within the program -- returns false if function not found -- function must not take any args
-  virtual void	StepCss();
+  virtual void  StepCss();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run one step of underlying css script code, from current point of execution
 
   virtual bool  StopCheck();
   // #CAT_Run calls event loop, then checks for STOP state, true if so
   virtual bool  IsStepProg();
   // #CAT_Run is this program the currently selected step_prog? only true if in step_mode too
-  virtual void	UpdateUi();
+  virtual void  UpdateUi();
   // #IGNORE update gui from changes in run status etc -- for global program controls
 
   virtual void  Compile();
@@ -1447,7 +1447,7 @@ public:
   // #BUTTON #CAT_Code display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
     static String  RenderGlobalTrace(bool html = true);
     // #CAT_Code #EXPERT render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
-    
+
   virtual void  LocalTrace();
   // #BUTTON #GHOST_OFF_run_state:STOP #CAT_Code display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
     virtual String  RenderLocalTrace(bool html = true);
@@ -1478,9 +1478,9 @@ public:
   // EXPERT #CAT_Variables true if has a var/arg called var_nm (only top-level variables in vars or args) -- can be called from within a running program
   static bool           IsForbiddenName(const String& chk_nm, bool warn=true);
   // #CAT_Code check given name against list of forbidden names -- variables and other objects should check and if forbidden, add an extra character or something
-  virtual void  	AddVarTo(taNBase* src);
+  virtual void          AddVarTo(taNBase* src);
   // #DROPN add a variable in the global vars list to the given object
-  virtual void  	AddArgTo(taNBase* src);
+  virtual void          AddArgTo(taNBase* src);
   // #DROPN add an argument in the global args list to the given object
 
   virtual void          Reset();
@@ -1517,10 +1517,10 @@ public:
   // view the css script generated by given program element as highlighted text in view script
   virtual void          ViewScript_Editor();
   // #MENU #MENU_CONTEXT #CAT_Code open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
-  virtual void		ViewScriptUpdate();
+  virtual void          ViewScriptUpdate();
   // #IGNORE regenerate view_script listing
 
-  virtual String	GetProgCodeInfo(int line_no, const String& code_str);
+  virtual String        GetProgCodeInfo(int line_no, const String& code_str);
   // #CAT_Code attempt to get program code information (e.g., current variable value) for given code string element on given line number -- code_str may contain other surrounding text which is parsed to extract a variable name or other interpretable value
 
   virtual void          SaveListing(ostream& strm);
@@ -1569,10 +1569,10 @@ public: // XxxGui versions provide feedback to the user
   ////////////////////////////////////////////////////
   //    program script gen interface
   virtual bool          AddLine(taBase* prog_el, const String& code,
-		int pline_flags = ProgLine::PL_NONE, const String& desc = _nilString);
+                int pline_flags = ProgLine::PL_NONE, const String& desc = _nilString);
   // #IGNORE add one line of code to the program listing -- this is the official interface for adding to program -- code should be pure code without any indent -- indent managed separately -- main_line = this is the main line of code associated with this prog_el that is displayed during verbose logging etc
   virtual bool          AddVerboseLine(ProgEl* prog_el, bool insert_at_start = true,
-				       const String& msg_code = _nilString);
+                                       const String& msg_code = _nilString);
   // #IGNORE add one line of code to the program listing that calls Program::VerboseOut with optional code in msg_code that generates a message output strings (comma separated) that are passed as args to VerboseOut (default will provide listing of program and code -- only augment if can provide useful runtime info) -- if insert_start, then this verbose line will be inserted at the start of the prog_el code -- always call this *after* having added main code lines -- refers to the MAIN_LINE
   inline int            IncIndent()     { return ++cur_indent; }
   // #IGNORE increment the indent level, returning new level
@@ -1582,17 +1582,17 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE add an appropriately formatted version of the description string to code -- for a full line desc comment at start
   virtual bool          ToggleBreakpoint(ProgEl* pel);
   // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete
-    void		SetBreakpoint_impl(ProgEl* pel);
+    void                SetBreakpoint_impl(ProgEl* pel);
     // #IGNORE actually clear the breakpoint in css for this el
-    void		ClearBreakpoint_impl(ProgEl* pel);
+    void                ClearBreakpoint_impl(ProgEl* pel);
     // #IGNORE actually set the breakpoint in css for this el
-  virtual bool		ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln);
+  virtual bool          ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln);
   // #IGNORE get the script code lines (in 1-based line numbers, as used in css) associated with the given program element
 
-  static void		VerboseOut(Program* prg, int code_line,
-				   const char* a=0, const char* b=0, const char* c=0,
-				   const char* d=0, const char* e=0, const char* f=0,
-				   const char* g=0, const char* h=0, const char* i=0);
+  static void           VerboseOut(Program* prg, int code_line,
+                                   const char* a=0, const char* b=0, const char* c=0,
+                                   const char* d=0, const char* e=0, const char* f=0,
+                                   const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Debug generate verbose output as given by input strings for given code line -- this is called by verbose program elements when they run
 
   override int          GetSpecialState() const;
@@ -1620,7 +1620,7 @@ protected:
   bool                  m_checked; // flag to help us avoid doing CheckConfig twice
   int                   cur_indent;
   // current indent level -- used in adding code
-  int64_t		last_init_timestamp;
+  int64_t               last_init_timestamp;
 
   override void         UpdateAfterEdit_impl();
   override bool         CheckConfig_impl(bool quiet);

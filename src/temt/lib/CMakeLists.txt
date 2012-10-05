@@ -38,7 +38,7 @@ set(temtlib_SRCS
 	${temt_ta_SRCS} ${temt_ta_SRCS_MOC}
 	${temt_css_SRCS} ${temt_css_SRCS_MOC})
 
-add_library(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
+EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
 
 ########### get svn revision ###############
 # http://stackoverflow.com/questions/3780667/use-cmake-to-get-build-time-svn-revision

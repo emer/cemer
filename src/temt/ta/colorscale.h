@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -19,7 +19,7 @@
 #define colorscale_h
 
 #include "ta_group.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 #include "icolor.h"
 
@@ -46,20 +46,20 @@ class TA_API taColor : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value
 INHERITED(taBase)
 public:
-  bool 			no_a; // #NO_SHOW #NO_SAVE control using a, by context
-  float			r; // red
-  float			g; // green
-  float			b; // blue
-  float			a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
+  bool                  no_a; // #NO_SHOW #NO_SAVE control using a, by context
+  float                 r; // red
+  float                 g; // green
+  float                 b; // blue
+  float                 a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
 
-  const iColor		color() const;
+  const iColor          color() const;
   // return the internal value-based color object -- common currency for color reps
-  void			setColor(const iColor& cp);
+  void                  setColor(const iColor& cp);
   // set from the internal value-based color object -- common currency for color reps
-  void			setColorName(const String& nm);
+  void                  setColorName(const String& nm);
   // set from standard X11 color names, most of which are also web/html standard color names
-  
-  void			Set(float r_, float g_, float b_, float a_ = 1)
+
+  void                  Set(float r_, float g_, float b_, float a_ = 1)
   { r=r_; g=g_; b=b_; a=a_; }
 
   TA_BASEFUNS_LITE(taColor);
@@ -67,9 +67,9 @@ public:
   operator iColor() const {return color();}
 
 private:
-  void 	Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a
+  void  Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a
   void  Initialize() {no_a = false; r = g = b = 0; a = 1;}
-  void 	Destroy() {}
+  void  Destroy() {}
 };
 
 class TA_API RGBA : public taNBase {
@@ -77,75 +77,75 @@ class TA_API RGBA : public taNBase {
 INHERITED(taNBase)
 public:
 #ifdef __MAKETA__
-  String 		name; // color name -- use this to lookup standard X11 color names, most of which are also web/html standard color names
+  String                name; // color name -- use this to lookup standard X11 color names, most of which are also web/html standard color names
 #endif
-  float			r; // red
-  float			g; // green
-  float			b; // blue
-  float			a; // alpha (intensity, ratio of fg to bg)
-  String 		desc; // description of what this color is
+  float                 r; // red
+  float                 g; // green
+  float                 b; // blue
+  float                 a; // alpha (intensity, ratio of fg to bg)
+  String                desc; // description of what this color is
 
-  const iColor		color() const;
+  const iColor          color() const;
   // return the internal value-based color object -- common currency for color reps
-  void			setColor(const iColor& cp);
+  void                  setColor(const iColor& cp);
   // set from the internal value-based color object -- common currency for color reps
-  void			setColorName(const String& nm);
+  void                  setColorName(const String& nm);
   // set from standard X11 color names, most of which are also web/html standard color names
 
-  void			Set(float r_, float g_, float b_, float a_ = 1)
+  void                  Set(float r_, float g_, float b_, float a_ = 1)
      {r=r_; g=g_; b=b_; a=a_;}
   // set from rgb values
 
-  override void		SetDefaultName() { };
+  override void         SetDefaultName() { };
 
   String ToString_RGBA() const;
-  String	GetDesc() const			{ return desc; }
+  String        GetDesc() const                 { return desc; }
   TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
-  override void 	UpdateAfterEdit_impl(); // don't use C names
+  override void         UpdateAfterEdit_impl(); // don't use C names
   //note: we handle both directions of copy to/from taColor
-  override void		CanCopyCustom_impl(bool to, const taBase* cp,
+  override void         CanCopyCustom_impl(bool to, const taBase* cp,
     bool quiet, bool& allowed, bool& forbidden) const;
-  override void		CopyFromCustom_impl(const taBase* cp);
-  override void		CopyToCustom_impl(taBase* to) const;
-    
+  override void         CopyFromCustom_impl(const taBase* cp);
+  override void         CopyToCustom_impl(taBase* to) const;
+
 private:
-  void 	Copy_(const RGBA& cp);
+  void  Copy_(const RGBA& cp);
   void  Initialize();
-  void 	Destroy();
+  void  Destroy();
 };
 
 class TA_API RGBA_List : public taList<RGBA> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of RGBA objects
 INHERITED(taList<RGBA>)
 public:
-  void	Initialize() 		{SetBaseType(&TA_RGBA); };
-  void 	Destroy()		{ };
+  void  Initialize()            {SetBaseType(&TA_RGBA); };
+  void  Destroy()               { };
   TA_BASEFUNS_NOCOPY(RGBA_List);
 };
 
 class TA_API TAColor : public taBase { // ##NO_TOKENS Color
 INHERITED(taBase)
 public:
-  const iColor 	color() {return color_;}		// #IGNORE
-  const iColor	contrastcolor() {return contrastcolor_;}	// #IGNORE
+  const iColor  color() {return color_;}                // #IGNORE
+  const iColor  contrastcolor() {return contrastcolor_;}        // #IGNORE
   void SetColor(const iColor& c, RGBA* background = NULL){
     SetColor(c.redf(), c.greenf(), c.bluef(), c.alphaf(), background);
   }
   void SetColor(RGBA* c, RGBA* background = NULL) {
     SetColor(c->r, c->g, c->b, c->a, background);
   }
-  void SetColor(float r,float g, float b, float a=1.0,	RGBA* background=NULL);
+  void SetColor(float r,float g, float b, float a=1.0,  RGBA* background=NULL);
   // #USE_RVAL #ARGC=4
   TA_BASEFUNS_LITE(TAColor);
 protected:
-  iColor 	color_;		// #IGNORE
-  iColor	contrastcolor_;	// #IGNORE
+  iColor        color_;         // #IGNORE
+  iColor        contrastcolor_; // #IGNORE
 private:
-  void	Copy_(const TAColor& cp) 
+  void  Copy_(const TAColor& cp)
     { color_ = cp.color_; contrastcolor_ = cp.contrastcolor_;}
-  void Initialize()	{}
+  void Initialize()     {}
   void Destroy() {}
 };
 
@@ -155,18 +155,18 @@ INHERITED(taList<TAColor>)
 public:
   TA_BASEFUNS_NOCOPY(TAColor_List);
 private:
-  void	Initialize() 		{SetBaseType(&TA_TAColor); };
-  void 	Destroy()		{ };
+  void  Initialize()            {SetBaseType(&TA_TAColor); };
+  void  Destroy()               { };
 };
 
 class TA_API ColorScaleSpec : public taNBase {
   // ##CAT_Display Color Spectrum Data
 INHERITED(taNBase)
 public:
-  RGBA		background;	// background color
-  RGBA_List	clr;		// #SHOW_TREE group of colors
+  RGBA          background;     // background color
+  RGBA_List     clr;            // #SHOW_TREE group of colors
 
-  virtual void	GenRanges(TAColor_List* cl, int chunks);
+  virtual void  GenRanges(TAColor_List* cl, int chunks);
 
   static const KeyString key_bkclr;
   static const KeyString key_clr0;
@@ -175,12 +175,12 @@ public:
   static const KeyString key_clr3;
   static const KeyString key_clr4;
   override String GetColText(const KeyString& key, int itm_idx) const;
-  void 	InitLinks();
+  void  InitLinks();
   TA_BASEFUNS(ColorScaleSpec);
 private:
-  void 	Copy_(const ColorScaleSpec& cp);
-  void 	Initialize();
-  void 	Destroy()		{ };
+  void  Copy_(const ColorScaleSpec& cp);
+  void  Initialize();
+  void  Destroy()               { };
 };
 
 SmartRef_Of(ColorScaleSpec,TA_ColorScaleSpec); // ColorScaleSpecRef
@@ -189,75 +189,75 @@ class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
   // ##CAT_Display group of color scale specs
 INHERITED(taGroup<ColorScaleSpec>)
 public:
-  virtual void 		NewDefaults(); 	// create a set of default colors
-  virtual void		SetDefaultColor();// set the default color based on gui
+  virtual void          NewDefaults();  // create a set of default colors
+  virtual void          SetDefaultColor();// set the default color based on gui
 
-  override int		NumListCols() const;
+  override int          NumListCols() const;
   override const KeyString GetListColKey(int col) const;
-  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+  override String       GetColHeading(const KeyString& key) const; // header text for the indicated column
 
   TA_BASEFUNS_NOCOPY(ColorScaleSpec_Group);
 private:
-  void 	Initialize()	{SetBaseType(&TA_ColorScaleSpec);};
-  void 	Destroy()	{ };
+  void  Initialize()    {SetBaseType(&TA_ColorScaleSpec);};
+  void  Destroy()       { };
 };
 
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 INHERITED(taNBase)
 public:
-  static const iColor	def_color; 
+  static const iColor   def_color;
 
-  int			chunks;		// number of chunks to divide scale into
-  float 		min;
-  float 		max;
-  float			range;
-  float			zero;
-  ColorScaleSpec* 	spec;		// specifies the color ranges
-  bool			auto_scale;	// #DEF_true
+  int                   chunks;         // number of chunks to divide scale into
+  float                 min;
+  float                 max;
+  float                 range;
+  float                 zero;
+  ColorScaleSpec*       spec;           // specifies the color ranges
+  bool                  auto_scale;     // #DEF_true
 
-  TAColor_List		colors;		// #IGNORE the actual colors
-//  TAColor		background; 	// #IGNORE background color
-  iColor		background; 	// #IGNORE background color
+  TAColor_List          colors;         // #IGNORE the actual colors
+//  TAColor             background;     // #IGNORE background color
+  iColor                background;     // #IGNORE background color
 
-  TAColor		maxout;		// #IGNORE
-  TAColor		minout;		// #IGNORE
-  TAColor		nocolor;	// #IGNORE
+  TAColor               maxout;         // #IGNORE
+  TAColor               minout;         // #IGNORE
+  TAColor               nocolor;        // #IGNORE
 
-  virtual void		SetColorSpec(ColorScaleSpec* color_spec);
+  virtual void          SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON #INIT_ARGVAL_ON_spec set the color scale spec to determine the palette of colors representing values
 
-  virtual const iColor	Get_Background(); // #IGNORE
-  float 		GetAbsPercent(float val);
-  virtual const iColor	GetColor(int idx, bool* ok = NULL);
+  virtual const iColor  Get_Background(); // #IGNORE
+  float                 GetAbsPercent(float val);
+  virtual const iColor  GetColor(int idx, bool* ok = NULL);
   virtual const iColor  GetColor(float val, float& sc_val, iColor* maincolor=NULL,
-				 iColor* contrast=NULL);
+                                 iColor* contrast=NULL);
   // #IGNORE
-  virtual const iColor	GetContrastColor(int idx, bool* ok = NULL);
-  int 			GetIdx(float val);
-  void			DefaultChunks();
+  virtual const iColor  GetContrastColor(int idx, bool* ok = NULL);
+  int                   GetIdx(float val);
+  void                  DefaultChunks();
 
-  virtual void		MapColors(); 	// generates the colors from spec
-  virtual void 		NewDefaults(); //
+  virtual void          MapColors();    // generates the colors from spec
+  virtual void          NewDefaults(); //
 
   // funcs used to be in bar:
-  virtual void		ModRange(float val);
-  virtual void		ModRoundRange(float val);
-  virtual void		FixRangeZero();
-  virtual void		SetMinMax(float mn,float mx);
-  virtual void		UpdateMinMax(float mn, float mx); // maybe expand bounds
-  virtual bool		UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
-  virtual void		SymRange();		 // symmetrize min/max values around zero
+  virtual void          ModRange(float val);
+  virtual void          ModRoundRange(float val);
+  virtual void          FixRangeZero();
+  virtual void          SetMinMax(float mn,float mx);
+  virtual void          UpdateMinMax(float mn, float mx); // maybe expand bounds
+  virtual bool          UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
+  virtual void          SymRange();              // symmetrize min/max values around zero
 
-  void	InitLinks();
-  void	CutLinks();
+  void  InitLinks();
+  void  CutLinks();
   void  UpdateAfterEdit();
   TA_BASEFUNS(ColorScale);
   ColorScale(int chunk);
 private:
   SIMPLE_COPY(ColorScale) //note: added 4/12/07 for consistency, but may not be good
-  void 	Initialize();
-  void 	Destroy();
+  void  Initialize();
+  void  Destroy();
 };
 
 SmartRef_Of(ColorScale,TA_ColorScale); // ColorScaleRef
@@ -266,20 +266,20 @@ class TA_API ViewColor : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_Display view color specification -- name lookup of color highlighting for view display
 INHERITED(taNBase)
 public:
-  bool		use_fg;			// use a special foreground color
-  RGBA		fg_color;		// #CONDEDIT_ON_use_fg:true foreground color
-  bool		use_bg;			// use a special background color
-  RGBA		bg_color;		// #CONDEDIT_ON_use_fg:true background color
-  String 	desc;			// description of this view color item
+  bool          use_fg;                 // use a special foreground color
+  RGBA          fg_color;               // #CONDEDIT_ON_use_fg:true foreground color
+  bool          use_bg;                 // use a special background color
+  RGBA          bg_color;               // #CONDEDIT_ON_use_fg:true background color
+  String        desc;                   // description of this view color item
 
-  override String	GetDesc() const { return desc; }
+  override String       GetDesc() const { return desc; }
 
-  void	InitLinks();
+  void  InitLinks();
   TA_BASEFUNS(ViewColor);
 private:
   SIMPLE_COPY(ViewColor);
   void  Initialize();
-  void 	Destroy();
+  void  Destroy();
 };
 
 class TA_API ViewColor_List : public taList<ViewColor> {
@@ -287,15 +287,15 @@ class TA_API ViewColor_List : public taList<ViewColor> {
 INHERITED(taList<ViewColor>)
 public:
 
-  virtual bool	FindMakeViewColor(const String& nm, const String& dsc,
-				  bool fg, const String& fg_color_name,
-				  bool bg=false, const String& bg_color_name="");
+  virtual bool  FindMakeViewColor(const String& nm, const String& dsc,
+                                  bool fg, const String& fg_color_name,
+                                  bool bg=false, const String& bg_color_name="");
   // find view color of given name -- if not there, make it, with given params (returns false if didn't already exist)
 
   TA_BASEFUNS_NOCOPY(ViewColor_List);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_ViewColor); }
-  void 	Destroy()		{ };
+  void  Initialize()            { SetBaseType(&TA_ViewColor); }
+  void  Destroy()               { };
 };
 
 

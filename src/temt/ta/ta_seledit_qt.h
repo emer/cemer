@@ -30,7 +30,7 @@
 # include <QTableWidget>
 #endif
 
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 
 class TA_API tabSelectEditViewType: public tabOViewType {
@@ -246,7 +246,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void 	showEvent(QShowEvent* ev);
+  override void         showEvent(QShowEvent* ev);
 };
 
 
@@ -328,7 +328,7 @@ public:
                                 int font_type, QWidget* par_window_ = NULL);
 
   String                caption;        // current caption at top of chooser
-  taObjDiff_List*       odl;		// diffs list -- we own this list and will delete it when done
+  taObjDiff_List*       odl;            // diffs list -- we own this list and will delete it when done
   taiObjDiffBrowserFilter* filter_dlg;
 
   QVBoxLayout*          layOuter;
@@ -339,13 +339,13 @@ public:
   QPushButton*              btnFiltB;
   QPushButton*              btnOk;
   QPushButton*              btnCancel;
-  QBrush*		    add_color;
-  QBrush*		    del_color;
-  QBrush*		    chg_color;
-  QBrush*		    add_color_lt;
-  QBrush*		    del_color_lt;
-  QBrush*		    chg_color_lt;
-  QBrush*		    off_color;
+  QBrush*                   add_color;
+  QBrush*                   del_color;
+  QBrush*                   chg_color;
+  QBrush*                   add_color_lt;
+  QBrush*                   del_color_lt;
+  QBrush*                   chg_color_lt;
+  QBrush*                   off_color;
 
   virtual bool          Browse();
   // main user interface: this actually puts up the dialog -- is non-modal so will return immediately with true..
@@ -361,7 +361,7 @@ public:
   virtual void  UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
   // update display of item
 
-  virtual void	ViewItem(taObjDiffRec* rec);
+  virtual void  ViewItem(taObjDiffRec* rec);
 
   taiObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~taiObjDiffBrowser();

@@ -10,6 +10,29 @@ macro(ADD_PATH_TO_FILES _result _path _file_list)
    ENDFOREACH(_current ${_file_list})
 endmacro(ADD_PATH_TO_FILES)
 
+# Use these instead of ADD_EXECUTABLE and ADD_LIBRARY, except for maketa.
+# These versions take care of the CMAKE_DEPENDENCY_HACK.
+macro (EMERGENT_ADD_EXECUTABLE target)
+  add_executable(
+    ${target}
+    ${ARGN}
+  )
+  set_target_properties(
+    ${target} PROPERTIES
+    IMPLICIT_DEPENDS_INCLUDE_TRANSFORM "CMAKE_DEPENDENCY_HACK(%)=\"%\""
+  )
+endmacro (EMERGENT_ADD_EXECUTABLE)
+
+macro (EMERGENT_ADD_LIBRARY target)
+  add_library(
+    ${target}
+    ${ARGN}
+  )
+  set_target_properties(
+    ${target} PROPERTIES
+    IMPLICIT_DEPENDS_INCLUDE_TRANSFORM "CMAKE_DEPENDENCY_HACK(%)=\"%\""
+  )
+endmacro (EMERGENT_ADD_LIBRARY)
 
 # use this instead of TARGET_LINK_LIBRARIES -- sets suffix and other properties
 macro(EMERGENT_LINK_LIBRARIES _targ _xtra_libs)

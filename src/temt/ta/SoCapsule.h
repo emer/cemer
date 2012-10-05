@@ -32,7 +32,7 @@
 #endif
 
 #include "ta_def.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 class SoCylinder; // #IGNORE
 class SoGetPrimitiveCountAction; // #IGNORE
@@ -59,17 +59,17 @@ protected:
   virtual void generatePrimitives(SoAction * action);
 
   void generate_cylinder(const float radius,
-			    const float height,
-			    const int numslices,
-			    const unsigned int flags,
-			    SoAction * action);
+                            const float height,
+                            const int numslices,
+                            const unsigned int flags,
+                            SoAction * action);
 
   void generate_half_sphere(const float radius,
-			    const float offset,
-			    const int numstacks,
-			    const int numslices,
-			    const unsigned int flags,
-			    SoAction * action);
+                            const float offset,
+                            const int numstacks,
+                            const int numslices,
+                            const unsigned int flags,
+                            SoAction * action);
 };
 
 #endif // !COIN_SOCAPSULE_H

@@ -51,7 +51,7 @@ set(emergentlib_SRCS
 	${emergent_so_SRCS}
 )
 
-add_library(emergentlib SHARED ${emergentlib_SRCS})
+EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})
 
 # 2nd arg is extra libs to link to
 EMERGENT_LINK_LIBRARIES(emergentlib temt)

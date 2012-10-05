@@ -24,7 +24,7 @@
 #include "ta_variant.h"
 #include "ta_base.h"
 #include "ta_group.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 #ifndef __MAKETA__
 #  include <QAbstractTableModel>

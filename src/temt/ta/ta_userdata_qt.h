@@ -30,7 +30,7 @@
 # include <QItemDelegate>
 #endif
 
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 class iUserDataDataHost;
 class UserDataDelegate; // #IGNORE
@@ -41,15 +41,15 @@ class TA_API UserDataDelegate: public taiDataDelegate {
 INHERITED(taiDataDelegate)
 Q_OBJECT
 public:
-  UserDataItem_List*	udil;
-  iUserDataDataHost*	uddh;
-  
-  override bool		IndexToMembBase(const QModelIndex& index,
+  UserDataItem_List*    udil;
+  iUserDataDataHost*    uddh;
+
+  override bool         IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const;
 
-  override QWidget* createEditor(QWidget* parent, 
+  override QWidget* createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  
+
   UserDataDelegate(UserDataItem_List* udil_, iUserDataDataHost* uddh_);
 };
 #endif // !__MAKETA__
@@ -60,47 +60,47 @@ class TA_API iUserDataDataHost : public taiEditDataHost {
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public:
-  UserDataItem_List*	udil;
-  QTableWidget*		tw;
+  UserDataItem_List*    udil;
+  QTableWidget*         tw;
 
-  override void		Constr_Box();
-//obs  override taBase*	GetMembBase_Flat(int idx); // these are overridden by userdata
-//obs  override taBase*	GetMethBase_Flat(int idx);
-  override void 	GetImage_Item(int row); // called from GetImage and ed->GetValue
-  
+  override void         Constr_Box();
+//obs  override taBase* GetMembBase_Flat(int idx); // these are overridden by userdata
+//obs  override taBase* GetMethBase_Flat(int idx);
+  override void         GetImage_Item(int row); // called from GetImage and ed->GetValue
+
   iUserDataDataHost(void* base, TypeDef* td, bool read_only_ = false,
-  	QObject* parent = 0);
-  iUserDataDataHost()	{ Initialize();};
+        QObject* parent = 0);
+  iUserDataDataHost()   { Initialize();};
   ~iUserDataDataHost();
 
 public: // IDataLinkClient i/f
-  override void 	DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 protected:
-  int			sel_item_row;
-  UserDataDelegate*	udd;
-  
-  UserDataItemBase*	GetUserDataItem(int row);
-  
-  override void		Constr_impl();
-  override void		Constr_Body_impl();
-  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
+  int                   sel_item_row;
+  UserDataDelegate*     udd;
 
-  override void		Constr_Data_Labels(); 
-  override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void 	GetImage_Membs_def();
-  override void 	GetValue_Membs_def();
-  override void 	Constr_Methods_impl();
+  UserDataItemBase*     GetUserDataItem(int row);
+
+  override void         Constr_impl();
+  override void         Constr_Body_impl();
+  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
+
+  override void         Constr_Data_Labels();
+  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
+  override void         GetImage_Membs_def();
+  override void         GetValue_Membs_def();
+  override void         Constr_Methods_impl();
 
 protected slots:
-  virtual void		DoDeleteUserDataItem();
-  virtual void		DoRenameUserDataItem();
-  void 			tw_currentCellChanged( int currentRow, 
+  virtual void          DoDeleteUserDataItem();
+  virtual void          DoRenameUserDataItem();
+  void                  tw_currentCellChanged( int currentRow,
     int currentColumn, int previousRow, int previousColumn);
-  void 			tw_customContextMenuRequested(const QPoint& pos);
-  void 			tw_itemChanged(QTableWidgetItem* item);
+  void                  tw_customContextMenuRequested(const QPoint& pos);
+  void                  tw_itemChanged(QTableWidgetItem* item);
 private:
-  void	Initialize();
+  void  Initialize();
 };
 
 
@@ -109,26 +109,26 @@ class TA_API iUserDataPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  taiDataHost_impl*	se;
-  UserDataItem_List*	udil() {return (m_link) ? (UserDataItem_List*)(link()->data()) : NULL;}
-  
-  override bool		HasChanged(); // 'true' if user has unsaved changes
+  taiDataHost_impl*     se;
+  UserDataItem_List*    udil() {return (m_link) ? (UserDataItem_List*)(link()->data()) : NULL;}
 
-  override String	panel_type() const {return "User Data";}
+  override bool         HasChanged(); // 'true' if user has unsaved changes
+
+  override String       panel_type() const {return "User Data";}
 
   iUserDataPanel(taiDataLink* dl_);
   ~iUserDataPanel();
-  
+
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iUserDataPanel;}
-  override bool		ignoreDataChanged() const;
-  
+  override void*        This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iUserDataPanel;}
+  override bool         ignoreDataChanged() const;
+
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		UpdatePanel_impl();
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
+  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         OnWindowBind_impl(iTabViewer* itv);
+  override void         UpdatePanel_impl();
+  override void         ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 #endif

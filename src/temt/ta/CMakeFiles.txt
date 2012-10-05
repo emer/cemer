@@ -111,6 +111,7 @@ set(ta_HEADS
   qtdefs.h
   ta_qtcursors.h
   ta_TA_type.h
+  ta_TA_type_WRAPPER.h
   ta_TA_inst.h
 )
 

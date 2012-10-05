@@ -2,7 +2,7 @@
 
 set(css_SRCS main.cpp)
 
-add_executable(css ${css_SRCS})
+EMERGENT_ADD_EXECUTABLE(css ${css_SRCS})
 
 EMERGENT_LINK_EXECUTABLES(css temt)
 

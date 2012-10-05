@@ -21,7 +21,7 @@
 
 #include "ta_type.h"
 #include "icolor.h"
-#include "ta_TA_type.h"
+#include "ta_TA_type_WRAPPER.h"
 
 // externals
 class taBase;
