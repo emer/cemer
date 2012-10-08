@@ -23,7 +23,7 @@ sudo apt-get -q -y install subversion
 sudo apt-get -q -y --allow-unauthenticated install libquarter0
 
 # Tell subversion to store passwords plaintext.
-mkdir ~/.subversion
+mkdir -p ~/.subversion
 echo '' >> ~/.subversion/servers
 echo '[global]' >> ~/.subversion/servers
 echo 'store-plaintext-passwords = yes' >> ~/.subversion/servers
