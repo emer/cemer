@@ -6797,6 +6797,17 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                "eye input image input must be at least 2 dimensional"))
     return false;
 
+  // to fix the tiling problem with the image transforms
+  // float_Matrix scaled_img;
+  // taImageProc::ScaleImage_float(scaled_img, eye_image, edge_mode);
+  // if(scale < 1.0f) {
+  //   // fill in image back to original size, using border color..
+  // }
+  // else { 
+  //	// crop scaled image back down to original size
+  // }
+  // then pass scale = 1.0 into sampleimagewindow_float
+
   taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
                                        reg->input_size.retina_size.y,
                                        ctr_x, ctr_y, rotate, scale, edge_mode);
