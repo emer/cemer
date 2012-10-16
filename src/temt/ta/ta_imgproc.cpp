@@ -2333,19 +2333,27 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   return true;
 }
 
-bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, int bg_color) {
+bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg_color) {
   TwoDCoord img_size(img.dim(0), img.dim(1));
+  
+	if(bg_color > 1.0f) {	// hopefully user is smart enough not to use negative value aside from -1
+		taMisc::Error("bg_color must be between 0 and 1");
+		return false;
+	}
 
-  // if bg color not specified, use upper left corner pix
+  // if bg color not specified, use border color
   float brd_clr[4];
-  if(bg_color > -1) {
-    for(int cl=0; cl < 4; cl++) {
-      brd_clr[cl] = bg_color;
-    }
+  if(bg_color == -1) {
+		GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);  
+	}
+	else if(bg_color < 0.0f || bg_color > 1.0f) {
+		taMisc::Error("bg_color must be between 0 and 1");
   }
   else {
-    // get background color
-    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);
+    brd_clr[0] = bg_color;
+    brd_clr[1] = bg_color;
+    brd_clr[2] = bg_color;
+    brd_clr[3] = 1.0f;
   }
 
   // different processing depending on whether image is rgb or gray
@@ -2353,18 +2361,18 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, int bg_c
     int nclrs = img.dim(2);
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-	for(int cl=0; cl < nclrs; cl++) {
-	  float& val = img.FastEl(xi, yi, cl);
-	  val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
-	}
+				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+				  float& val = img.FastEl(xi, yi, cl);
+				  val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
+				}
       }
     }
   }
   else { // grayscale
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {      	        	  	
-	float& iv = img.FastEl(xi, yi);
-	iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
+				float& iv = img.FastEl(xi, yi);
+				iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
       }
     }
   }
@@ -2386,7 +2394,7 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
     return false;
   }
 
-  int nclrs = 1;
+  int nclrs = 1; // grayscale
   if(img2.dims() == 3) {
     nclrs = img2.dim(2);
   }
@@ -2398,19 +2406,19 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
       const float i1alpha = img1.FastEl(xi, yi, 3); // much faster to cache these values!!
       const float i1alpha_c = 1.0f - img1.FastEl(xi, yi, 3);
       if(nclrs > 1) {
-	for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
-	  float& i1clr = img1.FastEl(xi, yi, cl);
-	  i1clr = i1clr * i1alpha + img2.FastEl(xi,yi,cl) * i1alpha_c;
+				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+				  float& i1clr = img1.FastEl(xi, yi, cl);
+	 	 			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi,cl) * i1alpha_c; // assume img2 has no alpha channel
+				}
+  		}
+    	else {
+				for(int cl=0; cl < 3; cl++) {
+	  			float& i1clr = img1.FastEl(xi, yi, cl);
+	  			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi) * i1alpha_c; // // assume img2 has no alpha channel
+				}
+    	}
+  	}
 	}
-      }
-      else {
-	for(int cl=0; cl < 3; cl++) {
-	  float& i1clr = img1.FastEl(xi, yi, cl);
-	  i1clr = i1clr * i1alpha + img2.FastEl(xi,yi) * i1alpha_c;
-	}
-      }
-    }
-  }
   return true;
 }
 
@@ -2431,8 +2439,8 @@ bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {
   for(int yi=0; yi< img2.dim(1); yi++) {
     for(int xi=0; xi< img2.dim(0); xi++) {
       for(int di=0; di < nclrs; di++) {
-	float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
-	i1pix = img2.FastEl(xi, yi, di);
+				float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
+				i1pix = img2.FastEl(xi, yi, di);
       }
     }
   }
