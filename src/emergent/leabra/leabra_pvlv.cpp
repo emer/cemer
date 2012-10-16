@@ -1497,7 +1497,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   // set positions & geometries
 
   pve->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
-  pve->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  pvi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
   pvr->brain_area = ".*/.*/.*/.*/Caudate Head";
   lve->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
   lvi->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
