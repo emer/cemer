@@ -1563,6 +1563,30 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
   return true;
 }
 
+bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b) {
+
+  bool rgb_img = false;
+  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  if(img_data.dims() == 3) { // rgb -- no alpha support yet (coming soon)
+  	rgb_img = true;
+  }
+
+  for(int yi = 0; yi < img_size.y; yi++) {
+  	for(int xi = 0; xi < img_size.x; xi++) {
+  		if(rgb_img) { // rgb
+	  		img_data.FastEl(xi,yi,0) = r;
+	  		img_data.FastEl(xi,yi,1) = g;
+	  		img_data.FastEl(xi,yi,2) = b;
+	  		// alpha support coming soon
+	  	}
+	  	else {
+	  		img_data.FastEl(xi,yi) = r; // just use r channel for gray
+	  	}
+	}
+  }
+  return true;
+}
+
 bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img,
                                           int move_x, int move_y, EdgeMode edge) {
 
@@ -2313,7 +2337,7 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, int bg_c
   }
 
   // different processing depending on whether image is rgb or gray
-  if(img.dim(2) >= 3) { // rgb or rgba
+  if(img.dims() == 3) { // rgb or rgba
   	for(int yi=0; yi< img_size.y; yi++) {
     	for(int xi=0; xi< img_size.x; xi++) {        	 
     		// red channel 	
@@ -2345,8 +2369,12 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
     taMisc::Error("img1 must be rgba format");
   	return false;
   }
+  
+  if(img1.dim(0) != img2.dim(0) || img1.dim(1) != img2.dim(1)) {
+    taMisc::Error("img1 must be same size as img2");
+  	return false;
+  }
 
-  // assume both images are same size
   TwoDCoord img_size(img1.dim(0), img1.dim(1));
 
   for(int yi=0; yi< img_size.y; yi++) {
@@ -2361,6 +2389,30 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
     	i1g = i1g*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,1)*(1.0f-img1.FastEl(xi, yi, 3));
     	// blue channel alpha blend
     	i1b = i1b*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,2)*(1.0f-img1.FastEl(xi, yi, 3));
+    }
+  }
+  return true;
+}
+
+bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {  
+  if(img1.dims() != img2.dims()) {
+    taMisc::Error("img1 and img2 must either both be grayscale or both be color");
+  	return false;
+  }
+  if(img1.dim(0) < img2.dim(0) || img1.dim(1) < img2.dim(1)) {
+  	taMisc::Error("img1 must be same size as or larger than img2");
+  	return false;
+  }
+
+  int xoff = img1.dim(0)*0.5f - img2.dim(0)*0.5f; // center of x dim, 0 if both are the same
+  int yoff = img1.dim(1)*0.5f - img2.dim(1)*0.5f; // center of x dim, 0 if both are the same
+  
+  for(int yi=0; yi< img2.dim(1); yi++) {
+  	for(int xi=0; xi< img2.dim(0); xi++) {
+  		for(int di=0; di < img2.dims(); di++) {
+	    	float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
+			i1pix = img2.FastEl(xi, yi, di);
+    	}
     }
   }
   return true;
@@ -6781,10 +6833,10 @@ bool RetinaProc::Init() {
 bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                                          float_Matrix& xform_image,
                                          float move_x, float move_y,
-                                         float scale, float rotate)
+                                         float norm_scale, float abs_scale, float rotate)
 {
   if(regions.size == 0) return false;
-  if(TestError(scale == 0.0f, "TransformImageData_impl",
+  if(TestError(abs_scale == 0.0f, "TransformImageData_impl",
                "scale is 0 -- indicates bad parameters probably"))
     return false;
 
@@ -6797,20 +6849,34 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                "eye input image input must be at least 2 dimensional"))
     return false;
 
-  // to fix the tiling problem with the image transforms
-  // float_Matrix scaled_img;
-  // taImageProc::ScaleImage_float(scaled_img, eye_image, edge_mode);
-  // if(scale < 1.0f) {
-  //   // fill in image back to original size, using border color..
-  // }
-  // else { 
-  //	// crop scaled image back down to original size
-  // }
-  // then pass scale = 1.0 into sampleimagewindow_float
-
-  taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
+  // to fix the tiling problem with the scaling down images, do scaling here and pad image 
+  // appropriately (so that scale_image size is same as reg->input_size.retina_size.x/y).
+  // then call SampleImageWindow_float with scale=1.0
+  float_Matrix scale_image = eye_image;
+  taImageProc::ScaleImage_float(scale_image, eye_image, abs_scale, taImageProc::BORDER); // border! 
+  
+  if(norm_scale < 1.0f) { // need norm scale here since abs_scale doesn't tell us whether image was scaled up or down
+  	float pad_color[3];
+  	taImageProc::GetBorderColor_float(scale_image, pad_color[0], pad_color[1], pad_color[2]);
+  	
+  	float_Matrix pad_image;
+  	if(scale_image.dims() == 3) // rgb(a)
+	  	pad_image.SetGeom(3, reg->input_size.retina_size.x, reg->input_size.retina_size.y, scale_image.dim(2));
+	else // gray
+		pad_image.SetGeom(2, reg->input_size.retina_size.x, reg->input_size.retina_size.y);
+	  	
+  	taImageProc::RenderFill(pad_image,  pad_color[0], pad_color[1], pad_color[2]);
+  	taImageProc::OverlayImages(pad_image, scale_image);
+  	taImageProc::SampleImageWindow_float(xform_image, pad_image, reg->input_size.retina_size.x,
                                        reg->input_size.retina_size.y,
-                                       ctr_x, ctr_y, rotate, scale, edge_mode);
+                                       ctr_x, ctr_y, rotate, 1.0f, edge_mode); // 1.0f is dummy scale after above fixes
+  }
+  else {
+  	taImageProc::SampleImageWindow_float(xform_image, scale_image, reg->input_size.retina_size.x,
+                                       reg->input_size.retina_size.y,
+                                       ctr_x, ctr_y, rotate, 1.0f, edge_mode); // 1.0f is dummy scale after above fixes
+  }
+
   if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
   if(edge_mode == taImageProc::BORDER && fade_width > 0) {
     taImageProc::FadeEdgesToBorder_float(xform_image, fade_width);
@@ -6856,13 +6922,13 @@ bool RetinaProc::LookAtImageData_impl(float_Matrix& eye_image,
   float sc_y = (float)trg_reg->input_size.input_size.y / pix_y;
 
   float fov_sc = MIN(sc_x, sc_y);
-  scale *= fov_sc;
-  if(scale > 100.0f)
-    scale = 100.0f;
-  if(scale < .01f)
-    scale = .01f;
+  float abs_scale = scale * fov_sc;
+  if(abs_scale > 100.0f)
+    abs_scale = 100.0f;
+  if(abs_scale < .01f)
+    abs_scale = .01f;
 
-  bool rval = TransformImageData_impl(eye_image, xform_image, move_x, move_y, scale, rotate);
+  bool rval = TransformImageData_impl(eye_image, xform_image, move_x, move_y, scale, abs_scale, rotate);
   return rval;
 }
 
@@ -6886,11 +6952,13 @@ bool RetinaProc::TransformImageData(float_Matrix* right_eye_image,
   if(regions.size == 0) return false;
   if(right_eye_image) {
     raw_image_r.CopyFrom(right_eye_image);
-    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, rotate);
+    float abs_scale = scale; // effective scale is the same as scale since there is no foveation
+    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, abs_scale, rotate);
   }
   if(left_eye_image) {
     raw_image_l.CopyFrom(left_eye_image);
-    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, rotate);
+    float abs_scale = scale; // effective scale is the same as scale since there is no foveation
+    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, abs_scale, rotate);
   }
   return true;
 }
@@ -6935,11 +7003,13 @@ bool RetinaProc::TransformImage(taImage* right_eye_image, taImage* left_eye_imag
   VisRegionSpecBase* reg = regions[0]; // take params from first
   if(right_eye_image) {
     ConvertImageToMatrix(raw_image_r, right_eye_image, reg->region.color);
-    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, rotate);
+    float abs_scale = scale; // absolute scale is the same as norm scale since there is no foveation
+    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, abs_scale, rotate);
   }
   if(left_eye_image) {
     ConvertImageToMatrix(raw_image_l, left_eye_image, reg->region.color);
-    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, rotate);
+    float abs_scale = scale; // absolute scale is the same as norm scale since there is no foveation
+    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, abs_scale, rotate);
   }
   return true;
 }

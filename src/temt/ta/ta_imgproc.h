@@ -511,6 +511,9 @@ public:
   static bool	RenderOccluderBorderColor_float(float_Matrix& img_data,
 						float llx, float lly, float urx, float ury);
   // #CAT_Render render an occluder rectangle of given normalized size (ll = lower left corner (0,0 = farthest ll), ur = upper right (1,1 = farthest ur) using the border color
+  
+  static bool	RenderFill(float_Matrix& img_data, float r, float g, float b);
+  // #CAT_Render render a "blank" image at a specified color
 
   static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
   // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
@@ -559,6 +562,9 @@ public:
   
   static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.
+  
+  static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
@@ -1578,7 +1584,7 @@ protected:
   virtual bool	TransformImageData_impl(float_Matrix& eye_image,
 					float_Matrix& xform_image,
 					float move_x=0.0f, float move_y=0.0f,
-					float scale = 1.0f, float rotate = 0.0f);
+					float norm_scale = 1.0f, float abs_scale = 1.0f, float rotate = 0.0f);
   // implementation function that processes an eye input image into an xform output image
 
   virtual bool	LookAtImageData_impl(float_Matrix& eye_image,
