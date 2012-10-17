@@ -2541,7 +2541,7 @@ void taiEditDataHost::SetCurMenu_Name(String men_nm) {
     // menubar.  Specifically, there is no way to access the normal
     // menubar (File, Edit, View) because this one (Object, SelectEdit)
     // is taking its place.
-#if ((QT_VERSION >= 0x040600)
+#if (QT_VERSION >= 0x040600)
     qmb->setNativeMenuBar(false);
 #endif
   }
