@@ -2432,15 +2432,25 @@ bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {
     return false;
   }
 
-  int nclrs = img1.dim(2);
+  int nclrs = 1;
+  if(img1.dims() == 3) {
+    nclrs = img1.dim(2);
+  }
+
   int xoff = img1.dim(0)*0.5f - img2.dim(0)*0.5f; // center of x dim, 0 if both are the same
   int yoff = img1.dim(1)*0.5f - img2.dim(1)*0.5f; // center of x dim, 0 if both are the same
   
   for(int yi=0; yi< img2.dim(1); yi++) {
     for(int xi=0; xi< img2.dim(0); xi++) {
-      for(int di=0; di < nclrs; di++) {
-				float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
-				i1pix = img2.FastEl(xi, yi, di);
+      if(nclrs > 1) {
+	for(int di=0; di < nclrs; di++) {
+	  float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
+	  i1pix = img2.FastEl(xi, yi, di);
+	}
+      }
+      else {
+	float& i1pix = img1.FastEl(xi+xoff, yi+yoff);
+	i1pix = img2.FastEl(xi, yi);
       }
     }
   }
