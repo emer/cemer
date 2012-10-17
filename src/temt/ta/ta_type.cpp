@@ -2253,6 +2253,16 @@ String taMisc::FixURL(const String& urltxt) {
   return nwurl;
 }
 
+String taMisc::ExtraAppSuffix() {
+  if(app_suffix.empty()) return app_suffix;
+  String rval = app_suffix;
+  // remove standard suffixes
+  rval.gsub("_dbg", "");
+  rval.gsub("_mpi", "");
+  return rval;
+}
+
+
 bool taMisc::InternetConnected() {
   bool any_valid = false;
 #ifndef NO_TA_BASE
