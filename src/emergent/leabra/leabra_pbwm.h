@@ -148,7 +148,6 @@ class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for Matrix_Go connections only -- use MatrixNoGoConSpec for NoGo pathway
 INHERITED(LeabraConSpec)
 public:
-  float		err_gain;	// how much error-driven learning should be added to non-maintenance gating unit learning?
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     // do NOT do this under any circumstances!!
@@ -174,32 +173,13 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Matrix_Err(LeabraCon* cn, float lin_wt, 
-		       float mtx_act_m2, float mtx_da, float su_act_lrn,
-		       float mtx_act_m, float mtx_act_p, float su_act_m, float su_act_p) {
-    float sr_prod = mtx_act_m2 * su_act_lrn;
-    float err = err_gain * (mtx_act_p * su_act_p - mtx_act_m * su_act_m);
-    float dwt = mtx_da * sr_prod + err;
-    if(lmix.err_sb) {
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-    }
-    cn->dwt += cur_lrate * dwt;
-  }
-
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
-      if(err_gain > 0.0f && ru->name[0] != 'm') { 
-	C_Compute_dWt_Matrix_Err(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn,
-				 ru->act_m, ru->act_p, su->act_m, su->act_p);
-      }
-      else {
-	C_Compute_dWt_Matrix_Mnt(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
-	// note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
-      }
+      C_Compute_dWt_Matrix_Mnt(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
+      // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
 
@@ -232,14 +212,10 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API MatrixNoGoConSpec : public LeabraConSpec {
+class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
   // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns all the time based on minus-phase activations
-INHERITED(LeabraConSpec)
+INHERITED(MatrixConSpec)
 public:
-
-  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
-    // do NOT do this under any circumstances!!
-  }
 
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
 				   float mtx_act_m, float mtx_da, float su_act_m) {
@@ -256,27 +232,8 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, su->act_m);
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, su->act_m2);
     }
-  }
-
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
-  }
-
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
-  }
-
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // just run chl version through-and-through
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
-  }
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // just run chl version through-and-through
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
   TA_SIMPLE_BASEFUNS(MatrixNoGoConSpec);

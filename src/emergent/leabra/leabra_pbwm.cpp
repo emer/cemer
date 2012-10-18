@@ -383,7 +383,6 @@ void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
-  err_gain = 0.0f;
 
   Defaults_init();
 }
@@ -414,7 +413,7 @@ void MatrixConSpec::UpdateAfterEdit_impl() {
 //////////////////////////////////
 
 void MatrixNoGoConSpec::Initialize() {
-  //  min_obj_type = &TA_MatrixCon;
+  min_obj_type = &TA_MatrixCon;
 
   Defaults_init();
 }
@@ -961,17 +960,30 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
     if(!snr_u->lesioned())
       snrthal_act = matrix.da_gain * snr_u->act_m2;
 
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
-      if(u->lesioned()) continue;
-      if(go_nogo == NOGO) {
-	if(gpd->go_fired_trial)
-	  u->dav = 0.0f;	  // we don't learn on our own gating trial!
-	else
-	  u->dav *= matrix.da_gain; // not gated by snrthal act -- always happens!
-      }
-      else {
+    if(go_nogo == NOGO) {
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
+	if(u->lesioned()) continue;
 	u->dav *= snrthal_act;
+	if(go_nogo_gain.on) {
+	  if(u->dav >= 0.0f)
+	    u->dav *= go_nogo_gain.nogo_p;
+	  else
+	    u->dav *= go_nogo_gain.nogo_n;
+	}
+      }
+    }
+    else {			// GO
+      for(int i=0;i<nunits;i++) {
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
+	if(u->lesioned()) continue;
+	u->dav *= snrthal_act;
+	if(go_nogo_gain.on) {
+	  if(u->dav >= 0.0f)
+	    u->dav *= go_nogo_gain.go_p;
+	  else
+	    u->dav *= go_nogo_gain.go_n;
+	}
       }
     }
   }
@@ -4625,7 +4637,6 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     matrix_units->SelectForEditNm("noise_adapt", edit, "matrix", subgp);
     matrix_cons->SelectForEditNm("lrate", edit, "matrix", subgp,
      "Default Matrix lrate is .05");
-    matrix_cons->SelectForEditNm("err_gain", edit, "matrix", subgp);
 
     subgp = "SNrThal";
     snrthalsp->SelectForEditNm("kwta", edit, "snrthal", subgp,
