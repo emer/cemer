@@ -6844,7 +6844,7 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //              Full Retinal Spec
 
 void RetinaProc::Initialize() {
-  edge_mode = taImageProc::BORDER;
+  edge_mode = taImageProc::WRAP;
   fade_width = -1;
 }
 
@@ -6888,10 +6888,21 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                "eye input image input must be at least 2 dimensional"))
     return false;
 
-  // NOTE: the edge_mode of WRAP causes tiling effects for downscaling images and should be avoided!
+  // NOTE: the edge_mode of WRAP causes tiling effects for downscaling images -- switch to BORDER otherwise
+  taImageProc::EdgeMode eff_em = edge_mode;
+  if(edge_mode == taImageProc::WRAP) {
+    TwoDCoord img_size(eye_image.dim(0), eye_image.dim(1));
+    TwoDCoord scaled_size;
+    scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
+    scaled_size.y = 2 + (int)(scale * (img_size.y-2));
+    if(scaled_size.x < reg->input_size.retina_size.x || scaled_size.y < reg->input_size.retina_size.y) {
+      eff_em = taImageProc::BORDER;
+    }
+  }
+
   taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
 				       reg->input_size.retina_size.y,
-				       ctr_x, ctr_y, rotate, scale, edge_mode);
+				       ctr_x, ctr_y, rotate, scale, eff_em);
 
   if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
   if(edge_mode == taImageProc::BORDER && fade_width > 0) {
