@@ -1499,7 +1499,7 @@ class TA_API RetinaProc : public taNBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_regions ##DEF_CHILDNAME_Regions full specification of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(taNBase)
 public:
-  taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different)
+  taImageProc::EdgeMode	edge_mode;	// #DEF_BORDER how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different) -- note if you use WRAP then when images are smaller than retina, you get a bad tiling effect -- BORDER is strongly recommended!
   int 			fade_width;	// #CONDSHOW_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations 
   VisRegionSpecBaseList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
 

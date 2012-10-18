@@ -6844,7 +6844,7 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //              Full Retinal Spec
 
 void RetinaProc::Initialize() {
-  edge_mode = taImageProc::WRAP;
+  edge_mode = taImageProc::BORDER;
   fade_width = -1;
 }
 
@@ -6888,40 +6888,10 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                "eye input image input must be at least 2 dimensional"))
     return false;
 
-  // to fix the tiling problem with the scaling down images, do scaling here and pad image 
-  // appropriately (so that scale_image size is same as reg->input_size.retina_size.x/y).
-  // then call SampleImageWindow_float with scale=1.0
-  float_Matrix scale_image(false);	taBase::Ref(scale_image);
-  taImageProc::ScaleImage_float(scale_image, eye_image, scale, taImageProc::BORDER); // border! 
-
-  if(scale_image.dim(0) < reg->input_size.retina_size.x ||
-     scale_image.dim(1) < reg->input_size.retina_size.y) {
-    float pad_color[4];
-    taImageProc::GetBorderColor_float(scale_image, pad_color[0], pad_color[1], pad_color[2], pad_color[3]);
-  	
-    float_Matrix pad_image(false);	taBase::Ref(pad_image);
-    if(scale_image.dims() == 3) { // rgb(a)
-      pad_image.SetGeom(3, reg->input_size.retina_size.x, reg->input_size.retina_size.y,
-			scale_image.dim(2));
-    }
-    else { // gray
-      pad_image.SetGeom(2, reg->input_size.retina_size.x, reg->input_size.retina_size.y);
-    }
-	  	
-    taImageProc::RenderFill(pad_image, pad_color[0], pad_color[1], pad_color[2], pad_color[3]);
-    taImageProc::OverlayImages(pad_image, scale_image);
-    taImageProc::SampleImageWindow_float(xform_image, pad_image,
-					 reg->input_size.retina_size.x,
-					 reg->input_size.retina_size.y,
-					 ctr_x, ctr_y, rotate, 1.0f, edge_mode);
-    // 1.0f is dummy scale after above fixes
-  }
-  else {
-    taImageProc::SampleImageWindow_float(xform_image, scale_image, reg->input_size.retina_size.x,
-					 reg->input_size.retina_size.y,
-					 ctr_x, ctr_y, rotate, 1.0f, edge_mode);
-    // 1.0f is dummy scale after above fixes
-  }
+  // NOTE: the edge_mode of WRAP causes tiling effects for downscaling images and should be avoided!
+  taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
+				       reg->input_size.retina_size.y,
+				       ctr_x, ctr_y, rotate, scale, edge_mode);
 
   if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
   if(edge_mode == taImageProc::BORDER && fade_width > 0) {
