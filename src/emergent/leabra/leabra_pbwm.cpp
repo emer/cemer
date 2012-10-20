@@ -520,6 +520,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
+  nogo_wtscale_inc = 2.0f;
   nogo_inhib = 0.0f; // 0.2f;
   pvr_inhib = 0.8f;
   refract_inhib = 0.0f;
@@ -908,37 +909,48 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   }
 }
 
-// will clear anyone you tell it too -- clears activations of stripes, typically that fired Go early to allow others to Go in the late window, i.e., output gating guys
-void MatrixLayerSpec::Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMode acc_md,
-				  int gpidx, LeabraNetwork* net) {
-  if(gpidx < 0) { // -1 means do all
-    for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
-       Compute_ClearActAfterGo_ugp(lay, acc_md, gpidx, net);
-    }
-  }
-  else if(gpidx < lay->gp_geom.n) {
-     Compute_ClearActAfterGo_ugp(lay, acc_md, gpidx, net);
-  }
-}
-
-void MatrixLayerSpec::Compute_ClearActAfterGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-						  int gpidx, LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(acc_md); // lay = matrix_go - how many units each unit group
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-  for(int j=0;j<nunits;j++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-    if(u->lesioned()) continue;
-    u->vcb.g_a = 1.0f;
-    us->Compute_Conduct(u, net); // update displayed conductances!
-  }
-}
-
 void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
     Compute_GatingActs_ugp(lay, acc_md, gpidx, net);
   }
+  ModulateNoGoPrjns(lay, net);
   inherited::Compute_CycleStats(lay, net);
+}
+
+void MatrixLayerSpec::ModulateNoGoPrjns(LeabraLayer* lay, LeabraNetwork* net) {
+  if(go_nogo == MatrixLayerSpec::GO) return;
+
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  int gate_cycle = snr_ls->snrthal.gate_cycle;
+  if(net->ct_cycle != gate_cycle) return; // only on this one cycle
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+
+  for(int gi=0; gi<lay->gp_geom.n; gi++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+
+    for(int j=0;j<nunits;j++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
+      if(u->lesioned()) continue;
+
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+	LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+	if(from->lesioned() || !recv_gp->size)       continue;
+
+	if(gpd->go_fired_trial) {
+	  recv_gp->scale_eff *= matrix.nogo_wtscale_inc;
+	}
+	else {
+	  recv_gp->scale_eff = 0.0f; // turn off completely
+	}
+      }
+    }
+  }
+  net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
@@ -1018,81 +1030,31 @@ void PFCsUnitSpec::Defaults_init() {
   g_bar.h = 0.0f;		// don't use it by default -- use mix
 }
 
-// this sets default wt scale from deep prjns to super to 0
+// this sets default wt scale from deep prjns to super to 0 unless fired go
 void PFCsUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
-  // NOTE: must keep this sync'd with one in leabra.cpp
-  // this is all receiver-based and done only at beginning of a trial
-  u->net_scale = 0.0f;  // total of scale values for this unit's inputs
+  inherited::Compute_NetinScale(u, net);
 
   LeabraLayer* rlay = u->own_lay();
   if(rlay->lesioned()) return;
   if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
   PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
+  if(ls->pfc_layer != PFCLayerSpec::SUPER) return; // only for supers
+
   int rgpidx = u->UnitGpIdx();
   PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.FastEl(rgpidx);
+  if(gpd->go_fired_trial) return; // only if didn't fire go
 
-  float inhib_net_scale = 0.0f;
-  int n_active_cons = 0;        // track this for bias weight scaling!
-  bool old_scaling = false;
-  // possible dependence on recv_gp->size is why this cannot be computed in Projection
+  // didn't fire: zero it out
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     if(from->lesioned() || !recv_gp->size)       continue;
-     // this is the normalization value: takes into account target activity of layer
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    cs->Compute_NetinScale(recv_gp, from);
-    if(cs->wt_scale.old)
-      old_scaling = true; // any old = old..
 
-    // PBWM New part goes right here!
-    if(ls->pfc_layer == PFCLayerSpec::SUPER) {
-      if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
-	PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
-	if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
-	  if(!gpd->go_fired_trial)
-	    recv_gp->scale_eff = 0.0f; // negate!!
-	}
+    if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
+      PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
+      if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
+	recv_gp->scale_eff = 0.0f; // negate!!
       }
-    }
-    // end new part
-
-    if(cs->inhib && !old_scaling) {
-      inhib_net_scale += cs->wt_scale.rel;
-    }
-    else {
-      n_active_cons++;
-      u->net_scale += cs->wt_scale.rel; // note: negated still contributes to rel!
-    }
-  }
-  // add the bias weight into the netinput, scaled by 1/n
-  if(u->bias.size) {
-    LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    if(u->n_recv_cons > 0)
-      u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
-  }
-  // now renormalize
-  if(u->net_scale > 0.0f) {
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      Projection* prjn = (Projection*) recv_gp->prjn;
-      LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)     continue;
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      if(cs->inhib && !old_scaling) continue; // norm separately
-      recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
-    }
-  }
-  // separately normalize inhibitory connections
-  if(inhib_net_scale > 0.0f) {
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)     continue;
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      if(!cs->inhib) continue; // norm separately
-      recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale
     }
   }
 }
@@ -1566,30 +1528,13 @@ void PFCLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_
     }
   }
   // super is now done exclusively in unit spec!
-  // else {			// SUPER
-    // LeabraLayer* deep = DeepLayer(lay);
-    // for(int j=0;j<nunits;j++) {
-    //   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-    //   LeabraUnit* du = (LeabraUnit*)deep->UnitAccess(acc_md, j, gpidx);
-    //   if(u->lesioned()) continue;
-    //   if(gpd->mnt_count > 0) {	// post-gated maintenance mode -- get from deep layer
-    // 	u->maint_h = u->act;	// store the original act in here!
-    // 	const float mnt = du->maint_h;
-    // 	float act_mix = gate.maint_pct * mnt + gate.maint_pct_c * u->act;
-    // 	u->act = u->act_eq = u->act_nd = act_mix; // copy deep! 
-    // 	u->da = 0.0f;
-    //   }
-    //   else {
-    // 	u->maint_h = 0.0f;
-    //   }
-    // }
-  // }
 }
 
 void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				      int gpidx,LeabraNetwork* net) {
   if(pfc_layer != SUPER) return;
   int nunits = lay->UnitAccess_NUnits(acc_md);
+
   for(int j=0;j<nunits;j++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
     if(u->lesioned()) continue;
@@ -1608,7 +1553,7 @@ void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_m
       }
     }
   }
-  net->DecayState(0.0f);               // need to re-send activations -- this triggers   
+  net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
 }
 
 void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1639,7 +1584,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     }
     
     if(pfc_layer == SUPER && gpd->go_fired_trial) {
-      if(net->ct_cycle == gate_cycle || (net->phase_no > 0 && net->cycle == 0)) {
+      if(net->ct_cycle == gate_cycle) {
 	GateOnDeepPrjns_ugp(lay, acc_md, mg, net); // gate on the deep prjns
       }
     }

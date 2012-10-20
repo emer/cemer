@@ -162,8 +162,8 @@ public:
   }
   // RECV-based save current sender activation states to sravg_m for subsequent learning -- call this at time of gating..
 
-  inline void C_Compute_dWt_Matrix_Mnt(LeabraCon* cn, float lin_wt, 
-				       float mtx_act_m2, float mtx_da, float su_act_lrn) {
+  inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
+				   float mtx_act_m2, float mtx_da, float su_act_lrn) {
     float sr_prod = mtx_act_m2 * su_act_lrn;
     float dwt = mtx_da * sr_prod;
     if(lmix.err_sb) {
@@ -178,7 +178,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
-      C_Compute_dWt_Matrix_Mnt(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
       // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
@@ -213,13 +213,13 @@ private:
 };
 
 class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
-  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns all the time based on minus-phase activations
+  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_m2).  also uses recv scale_eff for stripe-specific wt scale params
 INHERITED(MatrixConSpec)
 public:
 
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
-				   float mtx_act_m, float mtx_da, float su_act_m) {
-    float sr_prod = mtx_act_m * su_act_m;
+				   float mtx_act_m, float mtx_da, float su_act_lrn) {
+    float sr_prod = mtx_act_m * su_act_lrn;
     float dwt = mtx_da * sr_prod;
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
@@ -232,7 +232,42 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, su->act_m2);
+      if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, cn->sact_lrn);
+      // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
+    }
+  }
+
+  override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				 int thread_no, float su_act_delta) {
+    if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+			       su_act_delta * rcg->scale_eff);
+      }
+    }
+    else {
+      if(thread_no < 0) {
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
+	}
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+				 su_act_delta *	rcg->scale_eff);
+	}
+      }
     }
   }
 
@@ -304,6 +339,7 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
+  float		nogo_wtscale_inc; // multiplier on effective weight scale for projections into the winning stripe's nogo units in the second half of the minus phase, after gating -- the weight scale for all other stripes goes to 0 -- only the winning stripe is allowed to become active
   float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
   float		pvr_inhib;	// #DEF_0:0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
   float		refract_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
@@ -388,17 +424,15 @@ public:
 					 int gpidx, LeabraNetwork* net);
   // compute refract inhib
 
+  virtual void ModulateNoGoPrjns(LeabraLayer* lay, LeabraNetwork* net);
+  // modulate effective weight scale for nogo projections, after gating
+
   // this is hook for modulating netinput according to above inhib factors
   override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	Compute_GatingActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				       int gpidx, LeabraNetwork* net);
   // save activations into act_m2 at point of gating
-  virtual void Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMode acc_md,
-				  int gpidx, LeabraNetwork* net);
-  // generally used only if doublegate.on --- to clear activity of stripes that fired Go in early gating window so others can fire in the late  
-  virtual void Compute_ClearActAfterGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-				      int gpidx, LeabraNetwork* net);
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 

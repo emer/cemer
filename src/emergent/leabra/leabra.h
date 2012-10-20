@@ -2030,9 +2030,10 @@ public:
 
   virtual void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
-
   virtual void	Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize act_avg values
+  virtual void	Init_Netins(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   virtual void 	DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
@@ -2627,6 +2628,8 @@ public:
 
   void	Init_ActAvg(LeabraNetwork* net) 	{ spec->Init_ActAvg(this, net); }
   // #CAT_Activation initialize act_avg values
+  void	Init_Netins(LeabraNetwork* net)		{ spec->Init_Netins(this, net); }
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   override void  Init_InputData(Network* net);
 
@@ -3213,6 +3216,7 @@ public:
   int		avg_norm_err_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
 
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
+  bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
 
   ///////////////////////////////////////////////////////////////////////
   //	Thread Flags
@@ -3237,6 +3241,9 @@ public:
   override void	Init_Stats();
   override void	Init_Sequence();
   override void Init_Weights();
+
+  virtual void  Init_Netins();
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   virtual void	DecayState(float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)

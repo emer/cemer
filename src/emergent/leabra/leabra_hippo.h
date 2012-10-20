@@ -129,8 +129,6 @@ public:
   // control the strength of the CA3 -> CA1 projection according to ca3_on arg
   virtual void 	ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool ecin_on);
   // control the strength of the EC_in -> CA1 projection according to ecin_on arg
-  virtual void 	FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net);
-  // broadcast modifications to projection strengths to make them actually take effect (Network::Compute_NetinScale_Senders and Network::DecayState(0))
 
   TA_SIMPLE_BASEFUNS(CA1LayerSpec);
 protected:

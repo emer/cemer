@@ -226,11 +226,16 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
       u->Compute_NetinScale(net,0);
     }
     else {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
-      if(!recv_gp) continue;
-      if(!ca3_on)
-        recv_gp->scale_eff = 0.0f;
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
+    if(recv_gp)
+      recv_gp->scale_eff = 0.0f;
     }
+  }
+
+  // re-trigger netinput sending for all senders
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ca3_lay->units) {
+    if(u->lesioned()) continue;
+    u->Compute_NetinScale_Senders(net,-1);
   }
 }
 
@@ -247,16 +252,16 @@ void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool e
     }
     else {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ecin_prjn_idx);
-      if(!recv_gp) continue;
-      if(!ecin_on)
-        recv_gp->scale_eff = 0.0f;
+      if(recv_gp) {
+	recv_gp->scale_eff = 0.0f;
+      }
     }
   }
-}
 
-void CA1LayerSpec::FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net) {
-  net->Compute_NetinScale_Senders(); // update senders!
-  net->DecayState(0.0f);               // need to re-send activations -- this triggers resend
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ecin_lay->units) {
+    if(u->lesioned()) continue;
+    u->Compute_NetinScale_Senders(net,-1);
+  }
 }
 
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -276,7 +281,8 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
     ModulateCA3Prjn(lay, net, true);    // turn on ca3 -- calls netinscale
     if(!(use_test_mode && net->train_mode == Network::TEST))
       ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
-    FinalizePrjnMods(lay, net);        // make 'em stick
+
+    net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
   }
   inherited::Compute_CycleStats(lay, net);
 }

@@ -3252,6 +3252,12 @@ void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+void LeabraLayerSpec::Init_Netins(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    u->Init_Netins(net);
+  }
+}
+
 void LeabraLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
   lay->ext_flag = Unit::NO_EXTERNAL;
   lay->hard_clamped = false;
@@ -5671,6 +5677,9 @@ void LeabraNetwork::Initialize() {
   avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
+
+  inhib_cons_used = false;
+  init_netins_cycle_stat = false;
 }
 
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -5799,6 +5808,13 @@ void LeabraNetwork::Init_Weights() {
 
   lrn_trig.lrn_trig = 0.0f;
   lrn_trig.lrn = 0;
+}
+
+void LeabraNetwork::Init_Netins() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Init_Netins(this);
+  }
 }
 
 void LeabraNetwork::DecayState(float decay) {
@@ -6276,10 +6292,14 @@ void LeabraNetwork::Compute_CycleStats() {
   output_name = "";             // this will be updated by layer
   maxda = 0.0f;         // initialize
   trg_max_act = 0.0f;
+  init_netins_cycle_stat = false;
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->Compute_CycleStats(this);
+  }
+  if(init_netins_cycle_stat) {
+    Init_Netins();
   }
 }
 
