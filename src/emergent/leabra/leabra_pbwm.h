@@ -220,7 +220,7 @@ public:
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
 				   float mtx_act_m, float mtx_da, float su_act_lrn) {
     float sr_prod = mtx_act_m * su_act_lrn;
-    float dwt = mtx_da * sr_prod;
+    float dwt = -mtx_da * sr_prod; // reverse the da here for NoGo -- not reversed anywhere else before this!
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;

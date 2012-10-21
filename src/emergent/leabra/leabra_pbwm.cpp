@@ -3941,6 +3941,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   ///////////////	PFC Layout first -- get into z = 1
 
+  int pfcu_n = 49; int pfcu_x = 7; int pfcu_y = 7;
   int pfc_st_x = 0;
   int pfc_st_y = 0;
   int pfc_deep_y = 18;
@@ -3953,7 +3954,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 	pfc_s_in->un_geom = il->un_geom;
       }
       else {
-	pfc_s_in->un_geom.n = 30; pfc_s_in->un_geom.x = 5; pfc_s_in->un_geom.y = 6;
+	pfc_s_in->un_geom.n = pfcu_n; pfc_s_in->un_geom.x = pfcu_x; pfc_s_in->un_geom.y = pfcu_y;
       }
     }
     lay_set_geom(pfc_s_in, in_stripes);
@@ -3976,7 +3977,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 	pfc_s_mnt->un_geom = il->un_geom;
       }
       else {
-	pfc_s_mnt->un_geom.n = 30; pfc_s_mnt->un_geom.x = 5; pfc_s_mnt->un_geom.y = 6;
+	pfc_s_mnt->un_geom.n = pfcu_n; pfc_s_mnt->un_geom.x = pfcu_x; pfc_s_mnt->un_geom.y = pfcu_y;
       }
     }
     lay_set_geom(pfc_s_mnt, mnt_stripes);
@@ -4000,7 +4001,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 	pfc_s_out->un_geom = il->un_geom;
       }
       else {
-	pfc_s_out->un_geom.n = 30; pfc_s_out->un_geom.x = 5; pfc_s_out->un_geom.y = 6;
+	pfc_s_out->un_geom.n = pfcu_n; pfc_s_out->un_geom.x = pfcu_x; pfc_s_out->un_geom.y = pfcu_y;
       }
     }
     lay_set_geom(pfc_s_out, out_stripes);
