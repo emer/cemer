@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -29,7 +29,7 @@
 static const int stub_arg_off = 2;
 
 //////////////////////////////////
-// 	Link Resolution		//
+//      Link Resolution         //
 //////////////////////////////////
 // (called before generating types)
 
@@ -47,11 +47,11 @@ void TypeSpace_Generate_AddUndef(TypeSpace* ths, TypeSpace* trg, TypeSpace* dst)
       continue;
 
     TypeDef* utd = dst->AddUniqNameOld(td);
-    utd->internal = true;		// make internal
-    if(utd == td) {		// add to dst
+    utd->internal = true;               // make internal
+    if(utd == td) {             // add to dst
       if((!td->DerivesFormal(TA_class) && !td->DerivesFormal(TA_enum))
-	 || (td->ptr > 0))	// add this stuff when unique
-	TypeSpace_Generate_AddUndef(&(td->parents), trg, dst); // non-class parents are added..
+         || (td->ptr > 0))      // add this stuff when unique
+        TypeSpace_Generate_AddUndef(&(td->parents), trg, dst); // non-class parents are added..
     }
   }
 }
@@ -65,11 +65,11 @@ void MemberSpace_Generate_AddUndef(MemberSpace* ths, TypeSpace* trg, TypeSpace* 
       continue;
 
     TypeDef* utd = dst->AddUniqNameOld(md->type);
-    utd->internal = true;		// make internal
-    if(utd == md->type) {	// add to dst
+    utd->internal = true;               // make internal
+    if(utd == md->type) {       // add to dst
       if((!utd->DerivesFormal(TA_class) && !utd->DerivesFormal(TA_enum))
-	 || (utd->ptr > 0))
-	TypeSpace_Generate_AddUndef(&(utd->parents), trg, dst); // non-class parents are added..
+         || (utd->ptr > 0))
+        TypeSpace_Generate_AddUndef(&(utd->parents), trg, dst); // non-class parents are added..
     }
   }
 }
@@ -87,11 +87,11 @@ void MethodSpace_Generate_AddUndef(MethodSpace* ths, TypeSpace* trg, TypeSpace* 
       continue;
 
     TypeDef* utd = dst->AddUniqNameOld(md->type);
-    utd->internal = true;		// make internal
-    if(utd == md->type) {	// add to dst
+    utd->internal = true;               // make internal
+    if(utd == md->type) {       // add to dst
       if((!utd->DerivesFormal(TA_class) && !utd->DerivesFormal(TA_enum))
-	 || (utd->ptr > 0))
-	TypeSpace_Generate_AddUndef(&(utd->parents), trg, dst); // non-class parents are added..
+         || (utd->ptr > 0))
+        TypeSpace_Generate_AddUndef(&(utd->parents), trg, dst); // non-class parents are added..
     }
   }
 }
@@ -110,12 +110,12 @@ void TypeSpace_Generate_LinkRefs(TypeSpace* ths,TypeSpace* dst) {
   int i;
   for(i=0; i< ths->size; i++)
     TypeDef_Generate_LinkRefs(ths->FastEl(i), ths, dst);
-  dst->AddUnique(&TA_taRegFun);	// always keep this one around
+  dst->AddUnique(&TA_taRegFun); // always keep this one around
 }
 
 
 //////////////////////////////////////////////////
-//   	List Sorting: Parents Before Children	//
+//      List Sorting: Parents Before Children   //
 //////////////////////////////////////////////////
 // (called before generating types)
 
@@ -128,12 +128,12 @@ bool TypeSpace_Sort_Order(TypeSpace* ths) {
     for(j=0; j<td->parents.size; j++) {
       TypeDef* par_td = td->parents.FastEl(j);
       if((td->idx < par_td->idx) && (td->owner == ths) && (par_td->owner == ths)) {
-	if(mta->verbose > 0)
-	  cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
-	       << par_td->idx+1 << "\n";
-	// child comes before parent..
-	ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
-	move_occurred = true;
+        if(mta->verbose > 0)
+          cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
+               << par_td->idx+1 << "\n";
+        // child comes before parent..
+        ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
+        move_occurred = true;
       }
     }
   }
@@ -142,7 +142,7 @@ bool TypeSpace_Sort_Order(TypeSpace* ths) {
 
 
 //////////////////////////////////
-// 	Declarations		//
+//      Declarations            //
 //////////////////////////////////
 // (_TA_type.h _TA_inst.h files)
 
@@ -215,11 +215,11 @@ void MTA::TypeDef_Declare_Instances(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-// 	      Includes 		//
+//            Includes          //
 //////////////////////////////////
 
 void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
-			bool instances)
+                        bool instances)
 {
   strm << "#include \"ta_type.h\"\n";
   if(!instances) {
@@ -250,12 +250,12 @@ void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
 
 
 //////////////////////////////////
-// 	  _TA.cc File		//
+//        _TA.cc File           //
 //////////////////////////////////
 
 
 void MTA::TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArray& hv,
-			const String_PArray& ppfiles)
+                        const String_PArray& ppfiles)
 {
   strm << "// File Automatically Generated by MakeTA\n"
        << "// DO NOT EDIT\n\n\n";
@@ -269,7 +269,7 @@ void MTA::TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArray&
 
 
 //////////////////////////////////
-// 	  References		//
+//        References            //
 //////////////////////////////////
 
 String TypeDef_Gen_Ref(TypeDef* ths) {
@@ -277,7 +277,7 @@ String TypeDef_Gen_Ref(TypeDef* ths) {
     cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
     return "TA_void";
   }
-  if(ths->owner->owner == NULL)	// on some kind of global list
+  if(ths->owner->owner == NULL) // on some kind of global list
     return "TA_" + ths->name;
   String rval = TypeDef_Gen_Ref_To(ths->owner->owner) + ths->owner->name;
   rval += ".FindName(\"" + ths->name + "\")";
@@ -302,7 +302,7 @@ String TypeDef_Gen_Ref_Of(TypeDef* ths) {
 
 
 //////////////////////////////////
-// 	TypeDef Constructors	//
+//      TypeDef Constructors    //
 //////////////////////////////////
 // (part 1 of _TA.cc file)
 
@@ -325,15 +325,15 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
 
  if (ths->internal) {
     strm <<  "(\"" << ths->name << "\", 1, " << ths->ptr;
-    if(ths->ref)	strm << ", 1";
-    else		strm << ", 0";
-    if(ths->formal)	strm << ", 1";
-    else		strm << ", 0";
-    strm << ", 1";		// this true makes it global object
+    if(ths->ref)        strm << ", 1";
+    else                strm << ", 0";
+    if(ths->formal)     strm << ", 1";
+    else                strm << ", 0";
+    strm << ", 1";              // this true makes it global object
     // if it is a built-in actual type, we get its size, otherwise just output 0
-    if ((ths->size == 1) & !ths->formal)	
+    if ((ths->size == 1) & !ths->formal)
       strm << ", sizeof(" << ths->Get_C_Name() << ")";
-    else		
+    else
       strm << ", " << 0;
     strm << ");\n";
   } else {
@@ -350,7 +350,7 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
 
     strm << "(\"" << ths->name << "\", \"" << ths->desc << "\", ";
     strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \""
-	 << str_lists << "\", ";
+         << str_lists << "\", ";
     if(ths->InheritsFormal(TA_enum))
       strm << "sizeof(int), ";
     else
@@ -363,12 +363,12 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     else
       strm << "0";
 
-    if(ths->tokens.keep)	strm << ", 1";
-    else			strm << ", 0";
+    if(ths->tokens.keep)        strm << ", 1";
+    else                        strm << ", 0";
     strm << ", " << ths->ptr;
-    if(ths->ref)	strm << ", 1";
-    else		strm << ", 0";
-    strm << ",1);\n";		// last true makes it global object
+    if(ths->ref)        strm << ", 1";
+    else                strm << ", 0";
+    strm << ",1);\n";           // last true makes it global object
   }
 }
 
@@ -381,7 +381,7 @@ void MTA::TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm) {
 
 
 //////////////////////////////////
-//   Type Instances & stubs	//
+//   Type Instances & stubs     //
 //////////////////////////////////
 // (part 2 of _TA.cc file)
 
@@ -408,7 +408,7 @@ void MTA::TypeDef_Generate_Instances(TypeDef* ths, ostream& strm) {
 
   if(this->gen_css && !ths->HasOption("NO_CSS"))
     MethodSpace_Generate_Stubs(&(ths->methods), ths, strm);
-    
+
   // generate property stubs
   MemberSpace_Generate_PropStubs(&(ths->members), ths, strm);
   MethodSpace_Generate_PropStubs(&(ths->methods), ths, strm);
@@ -423,7 +423,7 @@ void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
 
 
 //////////////////////////////////
-//  	      CSS Stubs		//
+//            CSS Stubs         //
 //////////////////////////////////
 // (part 2 of _TA.cc file)
 
@@ -449,9 +449,9 @@ void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
       ownr->properties.AssertProperty(prop_name, is_new, true, md);
-      strm << "  Variant ta_" << ownr->name << "_" << prop_name 
+      strm << "  Variant ta_" << ownr->name << "_" << prop_name
         << "_get(const void* inst){return Variant(((const "
-        << ownr->GetNonPtrType()->Get_C_Name() 
+        << ownr->GetNonPtrType()->Get_C_Name()
         << "*)inst)->" << md->name << ");}\n";
     }
     // setter stub
@@ -462,9 +462,9 @@ void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
       TypeDef* param_td = md->type;
       if (param_td) { // better exist!
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << prop_name 
+        strm << "  void ta_" << ownr->name << "_" << prop_name
           << "_set(void* inst, const Variant& val) {(("
-          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name 
+          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name
           << " = " << conv << ";}\n";
       }
     }
@@ -479,7 +479,7 @@ void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
       ownr->properties.AssertProperty(prop_name, is_new, true, md);
-      strm << "  Variant ta_" << ownr->name << "_" << prop_name 
+      strm << "  Variant ta_" << ownr->name << "_" << prop_name
         << "_get(const void* inst){return Variant(((const "
         << ownr->GetNonPtrType()->Get_C_Name()
         << "*)inst)->" << md->name << "());}\n";
@@ -492,9 +492,9 @@ void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
       if (param_td) { // better exist!
         ownr->properties.AssertProperty(prop_name, is_new, false, md);
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << prop_name 
+        strm << "  void ta_" << ownr->name << "_" << prop_name
           << "_set(void* inst, const Variant& val) {(("
-          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name 
+          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name
           << "(" << conv << ");}\n";
       } else {
       cerr << "**ERROR " << md->name << "SET method must have at least one arg!\n";
@@ -520,7 +520,7 @@ void MethodSpace_Generate_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) 
     if(md->fun_argd >= 0) {
       int j;
       for(j=md->fun_argd; j<= md->fun_argc; j++) {
-	MethodDef_GenFunCall(ownr, md, strm, j);
+        MethodDef_GenFunCall(ownr, md, strm, j);
       }
     }
     else {
@@ -549,7 +549,7 @@ void MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc) {
     int args_idx = j + stub_arg_off;
 
     if((nrt->ptr == 0) &&
-	 !(nrt->DerivesFrom(TA_taString) || !nrt->InheritsFormal(TA_class))) {
+         !(nrt->DerivesFrom(TA_taString) || !nrt->InheritsFormal(TA_class))) {
       // a non-ptr class reference: create a ref variable that doesn't get
       // assigned later (just to get around compiler warnings)
       got_one = true;
@@ -585,23 +585,23 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
     int args_idx = j + stub_arg_off;
 
     bool not_mod = true;
-    if(nrt->ptr == 0) {	// harder to do the non-ptr refs
+    if(nrt->ptr == 0) { // harder to do the non-ptr refs
       if(nrt->DerivesFrom(TA_taString) || !nrt->InheritsFormal(TA_class)) {
-	strm << "    *arg[" << args_idx << "]=" << MethodDef_GetCSSType(nrt);
-	strm << "refarg_" << args_idx << ";";
-	not_mod = false;	got_one = true;
+        strm << "    *arg[" << args_idx << "]=" << MethodDef_GetCSSType(nrt);
+        strm << "refarg_" << args_idx << ";";
+        not_mod = false;        got_one = true;
       }
     }
     else if(nrt->DerivesFrom(TA_taBase)) {
       // need to use taBase* to preserve reffing sanity!
       strm << "    *arg[" << args_idx << "]=(taBase" << nrt->GetPtrString() << ")";
       strm << "refarg_" << args_idx << ";";
-      not_mod = false;		got_one = true;
+      not_mod = false;          got_one = true;
     }
-    else {			// all ptrs just done through (void*)..
+    else {                      // all ptrs just done through (void*)..
       strm << "    *arg[" << args_idx << "]=(void" << nrt->GetPtrString() << ")";
       strm << "refarg_" << args_idx << ";";
-      not_mod = false;		got_one = true;
+      not_mod = false;          got_one = true;
     }
     //TODO: seems to be a conceptual bug, since we should be able to pass
     //  generic pointer to &ref to access the arg by value; therefore, no
@@ -610,7 +610,7 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
       String stargno = String(j);
       String stmbnm = ownr->Get_C_Name() + "::" + md->name + "()";
       taMisc::Error("non-const reference argument value not modified:",
-		     md->arg_names[j],"(arg",stargno,") in",stmbnm);
+                     md->arg_names[j],"(arg",stargno,") in",stmbnm);
     }
   }
   if(got_one)
@@ -631,17 +631,17 @@ String MethodDef_GetCSSType(TypeDef* td) {
      td->DerivesFrom(TA_long) || td->DerivesFormal(TA_enum) ||
      td->DerivesFrom(TA_unsigned_char) || td->DerivesFormal(TA_signed_char))
     return String("(Int)");
-  
+
   if(td->DerivesFrom(TA_char))
     return String("(Char)");
-  
+
   if(td->DerivesFrom(TA_bool))
     return String("(bool)");
-  
+
   if (td->DerivesFrom(TA_int64_t) || td->DerivesFrom(TA_uint64_t) ||
     td->DerivesFrom(TA_Variant))
     return String("(Variant)");
-  
+
   if(td->DerivesFrom(TA_double) || td->DerivesFrom(TA_float))
     return String("(Real)");
 
@@ -664,11 +664,11 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
     else {
       TypeDef* nrt = argt->GetNonRefType();
       if(nrt == NULL) {
-	taMisc::Error("Null NonRefType in GenArgCast()", argt->name); return;
+        taMisc::Error("Null NonRefType in GenArgCast()", argt->name); return;
       }
       TypeDef* nct = nrt->GetNonConstType();
       if(nct == NULL) {
-	taMisc::Error("Null NonConstType in GenArgCast()", nrt->name); return;
+        taMisc::Error("Null NonConstType in GenArgCast()", nrt->name); return;
       }
       MethodDef_GenArgCast(md, nct, j, strm); // use the base type for args
       return;
@@ -709,18 +709,18 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
   }
   else if(argt->InheritsFormal(TA_class)) { // inherits = ptr = 0
     strm << "*(" << argt->Get_C_Name() << "*)arg[" << args_idx << "]"
-	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
+         << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }
   else if((argt->ptr == 1) && (argt->DerivesFrom(TA_char))) {
     strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << args_idx << "]";
   }
   else if(argt->InheritsFormal(TA_enum)) {
     strm << "(" << argt->Get_C_Name() << ")"; // always cast the args
-    strm << "(int)*arg[" << args_idx << "]";		    // use int conversion
+    strm << "(int)*arg[" << args_idx << "]";                // use int conversion
   }
-  else if(class_typ) {		// is some kind of class object -- just cast away!
+  else if(class_typ) {          // is some kind of class object -- just cast away!
     strm << "(" << argt->Get_C_Name() << ")arg[" << args_idx << "]"
-	 << "->GetVoidPtrOfType(&TA_" << class_typ->name << ")";
+         << "->GetVoidPtrOfType(&TA_" << class_typ->name << ")";
   }
   else if(argt->ptr > 0) {
     // this is extremely dangerous, but hopefully will just fail
@@ -814,8 +814,8 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
       if (mta->verbose > 0) {
-      cerr << "W!!: Warning: in file: " << mta->cur_fname << " method: " << md->name << 
-        " don't know how to handle return type: " << md->type->name << 
+      cerr << "W!!: Warning: in file: " << mta->cur_fname << " method: " << md->name <<
+        " don't know how to handle return type: " << md->type->name <<
         " so it will be ignored!\n";
      }
     }
@@ -849,7 +849,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
     else if(md->type->DerivesFrom(TA_float))
       cmd = "cssCPtr_float(";
     else if(md->type->DerivesFrom(TA_bool))
-      cmd = "cssCPtr_bool("; 
+      cmd = "cssCPtr_bool(";
     //TODO: wrapping uint64 in int64 will give incorrect results for large vals!
     else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
       cmd = "cssCPtr_long_long(";
@@ -861,10 +861,10 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       TypeDef* cltp = md->type->GetClassType();
       include_td = true;
       if(cltp->name.endsWith("_Matrix")) { // apparently inherits not working here
-	cmd = "cssTA_Matrix(";
+        cmd = "cssTA_Matrix(";
       }
       else {
-	cmd = "cssTA_Base(";
+        cmd = "cssTA_Base(";
       }
     }
     else if(md->type->DerivesFrom(TA_TypeDef)) {
@@ -883,7 +883,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       cmd = "cssTA(";
       include_td = true;
     }
-    // everything is cast into a void*! 
+    // everything is cast into a void*!
     strm << "rval=new " << cmd << "(void*)";
     MethodDef_GenStubCall(ownr, md, strm);
     MethodDef_GenArgs(md, strm, act_argc);
@@ -894,7 +894,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       strm << ", " << TypeDef_Gen_Ref_Of(nptd);
     }
     strm << ");";
-  } 
+  }
 
   if(md->fun_argd >= 0) {
     MethodDef_AssgnTempArgVars(ownr, md, strm, act_argc);
@@ -905,7 +905,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
 
 
 //////////////////////////////////
-//   	      Type Data		//
+//            Type Data         //
 //////////////////////////////////
 // (part 3 of _TA.cc file)
 
@@ -941,7 +941,7 @@ String TypeDef_Generate_TypeFields(TypeDef* ths, TypeDef* ownr_ownr) {
     cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
     return "&TA_void,NULL";
   }
-  if(ths->owner->owner == NULL)	// on some kind of global list
+  if(ths->owner->owner == NULL) // on some kind of global list
     return "&TA_" + ths->name + ",NULL";
 
   if(ths->owner->owner == ownr_ownr) // on this type's list
@@ -952,7 +952,7 @@ String TypeDef_Generate_TypeFields(TypeDef* ths, TypeDef* ownr_ownr) {
 
 
 //////////////////////////////////
-//   	     Enum Data		//
+//           Enum Data          //
 //////////////////////////////////
 
 void TypeDef_Generate_EnumData(TypeDef* ths, ostream& strm) {
@@ -961,11 +961,11 @@ void TypeDef_Generate_EnumData(TypeDef* ths, ostream& strm) {
     for(i=0; i<ths->sub_types.size; i++) {
       TypeDef* enm = ths->sub_types.FastEl(i);
       if(!(enm->InheritsFormal(TA_enum)) || (enm->owner != &(ths->sub_types))
-	 || (enm->enum_vals.size == 0))
-	continue;
+         || (enm->enum_vals.size == 0))
+        continue;
 
       strm << "static EnumDef_data TA_" << ths->name << "_" << enm->name
-	   << "[]={\n";
+           << "[]={\n";
       EnumSpace_Generate_Data(&(enm->enum_vals), strm);
     }
   }
@@ -982,7 +982,7 @@ void EnumSpace_Generate_Data(EnumSpace* ths, ostream& strm) {
     if (enm->HasOption("IGNORE")) continue;
     String str_opts = taMisc::StrArrayToChar(enm->opts);
     strm << "  {\"" << enm->name << "\",\"" << enm->desc << "\",\""
-	 << str_opts << "\"," << enm->enum_no << "},\n";
+         << str_opts << "\"," << enm->enum_no << "},\n";
   }
   strm << "  {NULL}};\n";
 }
@@ -994,16 +994,16 @@ void TypeDef_Init_EnumData(TypeDef* ths, ostream& strm) {
     for(i=0; i<ths->sub_types.size; i++) {
       TypeDef* enm = ths->sub_types.FastEl(i);
       if(!(enm->InheritsFormal(TA_enum)) || (enm->owner != &(ths->sub_types))
-	 || (enm->enum_vals.size == 0))
-	continue;
+         || (enm->enum_vals.size == 0))
+        continue;
 
       String str_opts = taMisc::StrArrayToChar(enm->opts);
       String str_inh_opts = taMisc::StrArrayToChar(enm->inh_opts);
       String str_lists = taMisc::StrArrayToChar(enm->lists);
 
       strm << "    tac_AddEnum(TA_" << ths->name << ", \"" << enm->name << "\", \""
-	   << enm->desc  << "\", \"" << str_opts << "\", \"" << str_inh_opts
-	   << "\", \"" << str_lists << "\", ";
+           << enm->desc  << "\", \"" << str_opts << "\", \"" << str_inh_opts
+           << "\", \"" << str_lists << "\", ";
       strm << "TA_" << ths->name << "_" << enm->name << ");\n";
     }
   }
@@ -1015,7 +1015,7 @@ void TypeDef_Init_EnumData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-// 	   Member Data		//
+//         Member Data          //
 //////////////////////////////////
 
 void TypeDef_Generate_MemberData(TypeDef* ths, ostream& strm) {
@@ -1068,19 +1068,19 @@ void MemberSpace_Generate_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
 
     String tpfld = TypeDef_Generate_TypeFields(md->type, ownr);
     strm << "  {" << tpfld << ",\"" << md->name << "\",\"" << md->desc << "\",\""
-	 << str_opts << "\",\"" << str_lists << "\",\n";
+         << str_opts << "\",\"" << str_lists << "\",\n";
 
     if (md->is_static) {
       strm << "    (ta_memb_ptr)NULL,1,";
       strm << "(void*)(&" << ownr->Get_C_Name() << "::" << md->name << ")";
     } else {
       strm << "    *((ta_memb_ptr*)&(" << mbr_off_nm
-	    << "=(int " << ownr->Get_C_Name() << "::*)(&"
-	    << ownr->Get_C_Name() << "::" << md->name << ")))";
+            << "=(int " << ownr->Get_C_Name() << "::*)(&"
+            << ownr->Get_C_Name() << "::" << md->name << ")))";
       strm << ",0,NULL";
     }
-    if(md->fun_ptr)	strm << ",1";
-    else		strm << ",0";
+    if(md->fun_ptr)     strm << ",1";
+    else                strm << ",0";
     strm << "},\n";
   }
   strm << "  {NULL}};\n";
@@ -1104,7 +1104,7 @@ void TypeDef_Init_MemberData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-// 	   Method Data		//
+//         Method Data          //
 //////////////////////////////////
 
 void TypeDef_Generate_MethodData(TypeDef* ths, ostream& strm) {
@@ -1129,7 +1129,7 @@ bool MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md) {
     return false;
 
   if((md->owner != ths) && !ths->owner->HasOption("MULT_INHERIT"))
-    return false;		// don't reproduce owners functions (except multi inh)
+    return false;               // don't reproduce owners functions (except multi inh)
 
   // is_static is a problem in mult_inherit cases for compiler
   // what is the problem exactly??
@@ -1163,7 +1163,7 @@ void MethodDef_Generate_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
   for(i=0; i<ths->arg_types.size; i++) {
     String tpfld = TypeDef_Generate_TypeFields(ths->arg_types[i], ownr);
     strm << "  {" << tpfld << ",\"" << ths->arg_names[i] << "\",\""
-	 << ths->arg_defs[i] << "\"},\n";
+         << ths->arg_defs[i] << "\"},\n";
   }
   strm << "  {NULL}};\n";
 }
@@ -1183,18 +1183,18 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
 
     String tpfld = TypeDef_Generate_TypeFields(md->type, ownr);
     strm << "  {" << tpfld << ",\"" << md->name << "\",\"" << md->desc << "\",\""
-	 << str_opts << "\",\"" << str_lists << "\",\n    ";
+         << str_opts << "\",\"" << str_lists << "\",\n    ";
 
     strm << md->fun_overld << "," << md->fun_argc
-	 << "," << md->fun_argd;
+         << "," << md->fun_argd;
 
     if (md->is_virtual) strm << ",1"; else strm << ",0";
-    if(md->is_static) {				// only static gets addr
+    if(md->is_static) {                         // only static gets addr
       strm << ",1,(ta_void_fun)(";
       if(ownr->InheritsFrom(TA_taRegFun))
-	strm <<  md->name << ")";
+        strm <<  md->name << ")";
       else
-	strm << ownr->Get_C_Name() << "::" << md->name << ")";
+        strm << ownr->Get_C_Name() << "::" << md->name << ")";
     }
     else
       strm << ",0,NULL";
@@ -1202,9 +1202,9 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
     if((mta->gen_css && !ownr->HasOption("NO_CSS"))) {
       strm << ",cssElCFun_";
       if(ownr->InheritsFrom(TA_taRegFun))
-	strm << md->name << "_stub";
+        strm << md->name << "_stub";
       else
-	strm << ownr->name << "_" << md->name << "_stub";
+        strm << ownr->name << "_" << md->name << "_stub";
     }
     else {
       strm << ",NULL";
@@ -1238,7 +1238,7 @@ void TypeDef_Init_MethodData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-// 	  Property Data		//
+//        Property Data         //
 //////////////////////////////////
 
 /*NOTE: in maketa we only ever use the .properties to hold PropertyDef objs
@@ -1247,7 +1247,7 @@ void TypeDef_Generate_PropertyData(TypeDef* ths, ostream& strm) {
   int cnt = 0;
   int i;
   for(i=0; i<ths->properties.size; i++) {
-    if(PropertySpace_Filter_Property(&(ths->properties), 
+    if(PropertySpace_Filter_Property(&(ths->properties),
       dynamic_cast<PropertyDef*>(ths->properties.FastEl(i)))) {
       cnt++;
       break;
@@ -1290,7 +1290,7 @@ void PropertySpace_Generate_Data(PropertySpace* ths, TypeDef* ownr, ostream& str
 
     String tpfld = TypeDef_Generate_TypeFields(md->type, ownr);
     strm << "  {" << tpfld << ",\"" << md->name << "\",\"" << md->desc << "\",\""
-	 << str_opts << "\",\"" << str_lists << "\",\n";
+         << str_opts << "\",\"" << str_lists << "\",\n";
 
     if (md->is_static) {
       strm << "1,";
@@ -1319,7 +1319,7 @@ void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {
   int cnt = 0;
   int i;
   for(i=0; i<ths->properties.size; i++) {
-    if(PropertySpace_Filter_Property(&(ths->properties), 
+    if(PropertySpace_Filter_Property(&(ths->properties),
       dynamic_cast<PropertyDef*>(ths->properties.FastEl(i)))) {
       cnt++;
       break;
@@ -1333,7 +1333,7 @@ void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-// 	  Init Function		//
+//        Init Function         //
 //////////////////////////////////
 // (part 4 of _TA.cc file)
 
@@ -1348,7 +1348,7 @@ void MTA::TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PA
   else
 #endif
     strm << "void ta_Init_" << ths->name << "() {\n";
-  strm << "  TypeDef* sbt;\n\n";
+  strm << "  TypeDef* sbt = 0;\n\n";
 
   strm << "  if(ta_Init_" << ths->name << "_done) return;\n";
   strm << "  ta_Init_" << ths->name << "_done = true;\n\n";
@@ -1368,33 +1368,33 @@ void MTA::TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PA
 
   strm << "\n\n  taMisc::in_init = false;\n";
 
-  if(ths->name == "ta")		// add to the ta init function..
+  if(ths->name == "ta")         // add to the ta init function..
     strm << "  taMisc::Initialize();\n"; // so the ta_Globals stuff will be there
   strm << "} \n";
 }
 
-#define PAR_ARG_COUNT	6
+#define PAR_ARG_COUNT   6
 
 void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   TypeDef_Generate_AddOtherParents(ths, typ_ref, strm);
-  
+
 // (u)intptr_t requires test at runtime:
   if (ths == &TA_intptr_t) {
-    strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref 
+    strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
     return;
   } else if (ths == &TA_uintptr_t) {
-    strm << "    if (sizeof(uintptr_t) == sizeof(unsigned int)) " << typ_ref 
+    strm << "    if (sizeof(uintptr_t) == sizeof(unsigned int)) " << typ_ref
       << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
     return;
   } else
 // long types just get parented and thus aliased to the correct size
   if (ths == &TA_long) {
-    strm << "    if (sizeof(long) == sizeof(int)) " << typ_ref 
+    strm << "    if (sizeof(long) == sizeof(int)) " << typ_ref
       << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
     return;
   } else if (ths == &TA_unsigned_long) {
-    strm << "    if (sizeof(unsigned long) == sizeof(unsigned int)) " << typ_ref 
+    strm << "    if (sizeof(unsigned long) == sizeof(unsigned int)) " << typ_ref
       << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
     return;
   }
@@ -1416,41 +1416,41 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
    only defined in a later module)
 */
     if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-	(mta->spc_builtin.FindName(ptd->name) == NULL) &&
-	(mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
+        (mta->spc_builtin.FindName(ptd->name) == NULL) &&
+        (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
       if (mta->verbose > 0) {
-	cerr << "M!!: maketa: ("
-	     << (ptd->owner != ths->owner) << ", "
-	     << !ptd->pre_parsed << ", "
-	     << (mta->spc_builtin.FindName(ptd->name) == NULL) 
-	     << ") skipping parent '" << ptd->name << "' for: " << ths->name << endl;
-	if (ptd->owner) cerr << " ptd space: " <<  ptd->owner->name << endl;
-	if (ths->owner) cerr << " ths space: " <<  ths->owner->name << endl;
+        cerr << "M!!: maketa: ("
+             << (ptd->owner != ths->owner) << ", "
+             << !ptd->pre_parsed << ", "
+             << (mta->spc_builtin.FindName(ptd->name) == NULL)
+             << ") skipping parent '" << ptd->name << "' for: " << ths->name << endl;
+        if (ptd->owner) cerr << " ptd space: " <<  ptd->owner->name << endl;
+        if (ths->owner) cerr << " ths space: " <<  ths->owner->name << endl;
       }
       continue; // add parents only if on same list. (except if pre-parsed or builtin)
-    } 
+    }
     cnt++;
   }
   if (cnt == 0)
     return;
   if (cnt > PAR_ARG_COUNT) {
-    taMisc::Error("AddParents(): parents.size > ", String(PAR_ARG_COUNT), 
+    taMisc::Error("AddParents(): parents.size > ", String(PAR_ARG_COUNT),
       ", increase number of args to AddParents()", "type name:", ths->name);
     return;
   }
 
   strm << "    " << typ_ref;
-  if(ths->InheritsFormal(TA_class) && !ths->internal)	strm << "AddClassPar(";
-  else					strm << "AddParents(";
+  if(ths->InheritsFormal(TA_class) && !ths->internal)   strm << "AddClassPar(";
+  else                                  strm << "AddParents(";
   String ths_cnm = ths->Get_C_Name();
   cnt = 0;
   for (i=0; i < ths->parents.size; ++i) {
     TypeDef* ptd = ths->parents.FastEl(i);
     if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-	(mta->spc_builtin.FindName(ptd->name) == NULL) &&
-	(mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
+        (mta->spc_builtin.FindName(ptd->name) == NULL) &&
+        (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
       continue; // add parents only if on same list. (except if pre-parsed)
-    } 
+    }
     if (cnt > 0)
       strm << ", ";
     if((ptd->owner != NULL) && (ptd->owner->owner != NULL))
@@ -1459,23 +1459,23 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
       strm << "&TA_" << ptd->name;
     if(ths->InheritsFormal(TA_class) && !ths->internal) {
       if((ths->parents.size>1) && !ths->InheritsFormal(TA_template) && !ptd->InheritsFormal(TA_template)) {
-	if((mta->gen_instances || (ths->HasOption("INSTANCE")))
-	   && !(ths->HasOption("NO_INSTANCE")))
-	{
-	  strm << ",(int)((unsigned long)((" << ptd->Get_C_Name() << "*)"
-	       << "TAI_" << ths->name << ")-(unsigned long)TAI_" << ths->name
-	       << ")";
-	}
-	else {
-	  strm << ",0";
-	  if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios") &&
-	    !ths->HasOption("NO_MEMBERS"))
-	    taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
-			   "-parent offset cannot be computed!");
-	}
+        if((mta->gen_instances || (ths->HasOption("INSTANCE")))
+           && !(ths->HasOption("NO_INSTANCE")))
+        {
+          strm << ",(int)((unsigned long)((" << ptd->Get_C_Name() << "*)"
+               << "TAI_" << ths->name << ")-(unsigned long)TAI_" << ths->name
+               << ")";
+        }
+        else {
+          strm << ",0";
+          if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios") &&
+            !ths->HasOption("NO_MEMBERS"))
+            taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
+                           "-parent offset cannot be computed!");
+        }
       }
       else
-	strm << ",0";
+        strm << ",0";
     }
     ++cnt;
   }
@@ -1492,7 +1492,7 @@ void TypeDef_Generate_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm
       TypeDef* ptd = ths->par_formal.FastEl(i);
       strm << "&TA_" << ptd->name;
       if(i < ths->par_formal.size-1)
-	strm << ", ";
+        strm << ", ";
     }
     strm << ");\n";
   }
@@ -1519,7 +1519,7 @@ void TypeDef_Generate_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm) 
 
   if(ths->parents.size > PAR_ARG_COUNT) {
     taMisc::Error("AddParents(): parents.size > 6, increase number of args to AddParents()",
-		   "type name:", ths->name);
+                   "type name:", ths->name);
   }
 }
 
@@ -1532,8 +1532,8 @@ void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
 
     if(sbt->internal) {
       strm << "    sbt = new TypeDef(\"" << sbt->name << "\", 1, " << sbt->ptr;
-      if(sbt->ref)	strm << ", 1";
-      else		strm << ", 0";
+      if(sbt->ref)      strm << ", 1";
+      else              strm << ", 0";
       strm << ");\n";
     }
     else {
@@ -1562,9 +1562,9 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
   int reg_fun_level = 0;
   if(ths->InheritsFrom(TA_taRegFun)) {
     if(mta->basename == "ta")
-      reg_fun_level = 1;	// add reg_fun and its methods
+      reg_fun_level = 1;        // add reg_fun and its methods
     else
-      reg_fun_level = 2;	// just add reg_fun methods (not the typedef)
+      reg_fun_level = 2;        // just add reg_fun methods (not the typedef)
   }
 
   if(reg_fun_level < 2) {
@@ -1572,8 +1572,8 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
 
     if(!ths->internal) {
       if((mta->gen_instances || (ths->HasOption("INSTANCE")))
-	 && !(ths->HasOption("NO_INSTANCE")))
-	strm << "    TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
+         && !(ths->HasOption("NO_INSTANCE")))
+        strm << "    TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
     }
 
     String ths_ref = "TA_" + ths->name + ".";
@@ -1581,14 +1581,14 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
 
     if(!ths->internal) {
       if(ths->InheritsFormal(TA_enum)) {
-	TypeDef_Init_EnumData(ths, strm);
+        TypeDef_Init_EnumData(ths, strm);
       }
       if(ths->InheritsFormal(TA_class) && !(ths->HasOption("NO_MEMBERS"))) {
-	TypeDef_Init_EnumData(ths, strm);
-	SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
-	TypeDef_Init_MemberData(ths, strm);
-	TypeDef_Init_MethodData(ths, strm);
-	TypeDef_Init_PropertyData(ths, strm);
+        TypeDef_Init_EnumData(ths, strm);
+        SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
+        TypeDef_Init_MemberData(ths, strm);
+        TypeDef_Init_MethodData(ths, strm);
+        TypeDef_Init_PropertyData(ths, strm);
       }
     }
   }

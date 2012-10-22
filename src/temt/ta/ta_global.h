@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -47,7 +47,7 @@
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
 #define TA_POINTER_SIZE  QT_POINTER_SIZE // 4 or 8, all use MUST error if not 4/8
 // byte order -- note, rarely used, primarily to optimize placement of rgb
-// 
+//
 #define TA_BIG_ENDIAN Q_BIG_ENDIAN
 #define TA_LITTLE_ENDIAN Q_LITTLE_ENDIAN
 // BYTE_ORDER is one of TA_BIG or LITTLE -- tests must fail if neither
@@ -183,8 +183,8 @@
 // note: we put taiqtso/ta/css in one dll, so slave to TA
 // note: we put bp/cs/leabra/network/so in one dll, so slave to EMERGENT
 // define flags as follows:
-// DLL	    USING	  BUILDING
-// ta	    TA_DLL	  TA_DLL,TA_EXPORTS
+// DLL      USING         BUILDING
+// ta       TA_DLL        TA_DLL,TA_EXPORTS
 // emergent EMERGENT_DLL  EMERGENT_DLL,EMERGENT_EXPORTS
 
 #ifdef TA_OS_WIN
@@ -213,7 +213,7 @@
 # endif
 # if defined(HAVE_LIBGSL) || defined(HAVE_LIBGSLCBLAS)
 #    define GSL_DLL // see gsl:Readme_GnuWin32.txt
-# endif 
+# endif
 #endif
 
 
@@ -237,10 +237,10 @@ typedef void* voidptr; // for maketa, which chokes on void* in a template
 
 typedef unsigned char   uchar;
 typedef unsigned short  ushort;
-typedef unsigned	uint;
+typedef unsigned        uint;
 typedef unsigned long   ulong;
-typedef char*		pchar;
-typedef uchar*		puchar; //
+typedef char*           pchar;
+typedef uchar*          puchar; //
 
 #endif // TA_GUI
 
@@ -249,13 +249,13 @@ typedef unsigned char   byte;
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
 # ifdef _MSC_VER
-  typedef unsigned char		uint8_t;
-  typedef unsigned int		uint;
-  typedef unsigned int      	uint32_t;
-  //typedef signed __int64      	int64_t;
-  //typedef unsigned __int64    	uint64_t;
-  typedef long long      	int64_t;
-  typedef unsigned long long   	uint64_t;
+  typedef unsigned char         uint8_t;
+  typedef unsigned int          uint;
+  typedef unsigned int          uint32_t;
+  //typedef signed __int64              int64_t;
+  //typedef unsigned __int64            uint64_t;
+  typedef long long             int64_t;
+  typedef unsigned long long    uint64_t;
   //note: prob should inline these, rather than macros, but don't want naggling little
   // type differences to cause compile issues
 # define strtoll _strtoi64
@@ -269,25 +269,25 @@ typedef unsigned char   byte;
 // wordsize dependent stuff -- MSVC is (of course!) different
 #if (TA_POINTER_SIZE == 4)
 # if (defined(_WIN32))
-    typedef int			intptr_t;
-    typedef unsigned int	uintptr_t;
-    typedef int			ta_intptr_t;
-    typedef unsigned int	ta_uintptr_t;
-# else // gcc 
-    typedef int			ta_intptr_t;
-    typedef unsigned int	ta_uintptr_t;
+    typedef int                 intptr_t;
+    typedef unsigned int        uintptr_t;
+    typedef int                 ta_intptr_t;
+    typedef unsigned int        ta_uintptr_t;
+# else // gcc
+    typedef int                 ta_intptr_t;
+    typedef unsigned int        ta_uintptr_t;
 # endif
 # define QVARIANT_TO_INTPTR(qv) (qv.toInt())
 
 #elif (TA_POINTER_SIZE == 8)
 # if defined(_WIN64)
-    typedef long long	    	intptr_t;
-    typedef unsigned long long	uintptr_t;
-    typedef long long	    	ta_intptr_t;
-    typedef unsigned long long	ta_uintptr_t;
+    typedef long long           intptr_t;
+    typedef unsigned long long  uintptr_t;
+    typedef long long           ta_intptr_t;
+    typedef unsigned long long  ta_uintptr_t;
 # else // gcc
-    typedef long long		ta_intptr_t;
-    typedef unsigned long long	ta_uintptr_t;
+    typedef long long           ta_intptr_t;
+    typedef unsigned long long  ta_uintptr_t;
 # endif
 # define QVARIANT_TO_INTPTR(qv) (qv.toLongLong())
 
@@ -298,11 +298,11 @@ typedef unsigned char   byte;
 //#ifdef _MSC_VER
 //# define ta_int64_t signed __int64;//int64_t;
 //# define ta_uint64_t uint64_t;
-  //typedef __int64	    	ta_int64_t;
-  //typedef unsigned __int64	ta_uint64_t;
+  //typedef __int64             ta_int64_t;
+  //typedef unsigned __int64    ta_uint64_t;
 //#else // gcc
-  typedef long long		ta_int64_t;
-  typedef unsigned long long	ta_uint64_t;
+  typedef long long             ta_int64_t;
+  typedef unsigned long long    ta_uint64_t;
 //#endif
 
 // misc. compiler hacks for MAKETA
@@ -312,16 +312,16 @@ typedef unsigned char   byte;
 # define _(c) // hide the guy from maketa
 # define INHERITED(c)
 # define STATIC_CONST static
-# define CONST_STATIC static const 
+# define CONST_STATIC static const
 # define USING(b)
 # define volatile
 #else
 # define _(c) c
 # define INHERITED(c) typedef c inherited;
 # define STATIC_CONST static const
-# define CONST_STATIC const static 
+# define CONST_STATIC const static
 # define USING(b) using b; \
- 
+
 #endif
 
 // define Qt's macros, for Maketa
@@ -336,9 +336,9 @@ typedef unsigned char   byte;
 // Misc useful macros
 
 #ifndef MAX
-#define	MAX(a,b) (((a) > (b)) ? (a) : (b))
-#define	MIN(a,b) (((a) < (b)) ? (a) : (b))
-#define ABS(a)	((a) >= 0 ? (a) : -(a))
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+#define ABS(a)  ((a) >= 0 ? (a) : -(a))
 #endif
 
 // hmm... these are *supposed* to be standard...
@@ -348,18 +348,20 @@ typedef unsigned char   byte;
 #endif
 
 // Some OS-specific includes or types
-#if (defined(TA_OS_WIN))
-# ifndef __MAKETA__
-#   include <io.h>
-# endif
-# ifdef _MSC_VER
-#   define F_OK 00 // Existence only 
-#   define W_OK 02 // Write permission 
-#   define R_OK 04 // Read permission 
-# endif
-//#define F_OK 06 // Read and write permission 
+#ifdef TA_OS_WIN
+  #ifndef __MAKETA__
+    #include <io.h>
+  #endif
+  #ifdef _MSC_VER
+    #define F_OK 00 // Existence only
+    #define W_OK 02 // Write permission
+    #define R_OK 04 // Read permission
+  #endif
+  //#define F_OK 06 // Read and write permission
 
-typedef int pid_t; //
+  typedef int pid_t; //
+#else
+  #include <unistd.h>
 #endif
 
 
@@ -367,10 +369,10 @@ typedef int pid_t; //
 // when about to malloc/calloc etc. a number of bytes, call tweak_alloc to optimally tweak the
 //  allocation request size -- especially useful where the allocator use 2^n blocks, or 16n blocks
 
-// Platform	bits	Overhead	Min/Gran Size		Allocator
-// Linux	32	8 bytes		16/8 bytes	Doug Lea's malloc
-// Linux	64	16 bytes	24/8 bytes	Doug Lea's malloc
-// Mac OS       32	0		16/16 bytes
+// Platform     bits    Overhead        Min/Gran Size           Allocator
+// Linux        32      8 bytes         16/8 bytes      Doug Lea's malloc
+// Linux        64      16 bytes        24/8 bytes      Doug Lea's malloc
+// Mac OS       32      0               16/16 bytes
 
 #if (defined(TA_OS_LINUX))
 // Linux uses Doug Lea's malloc, which has:
@@ -403,103 +405,10 @@ inline size_t tweak_alloc(size_t n) {
 
 #endif
 
-// exceptions and assertions
-// note: maketa doesn't (yet) grok the throw() syntax
-#ifdef TA_NO_EXCEPTIONS
-class ta_exception { }; //TODO: should this even exist?
-#else
-#ifdef __MAKETA__
-class ta_exception {
-public:
-  void setWhat(const char* value, int len = -1);
-  ta_exception();
-  ta_exception(const ta_exception& cp);
-  explicit ta_exception(const char* value, int len = -1);
-  ~ta_exception();
-  const char* what() const; // note: override
-  ta_exception& operator =(const ta_exception& cp);
-};
-#else
-#include <exception>
-class ta_exception: public std::exception {
-public:
-  void setWhat(const char* value, int len = -1);
-  
-  ta_exception() throw();
-  ta_exception(const ta_exception& cp) throw();
-  explicit ta_exception(const char* value, int len = -1) throw();
-  ~ta_exception() throw();
-  
-  const char* what() const throw() ; // note: override
-  
-  ta_exception& operator =(const ta_exception& cp) throw();
-protected:
-  char* m_what; // dynamically allocated
-};
-
-#endif
-#endif
-
-
-#ifndef __MAKETA__
-inline ta_exception::ta_exception() throw() {
-  m_what = NULL;
-}
-
-inline ta_exception::ta_exception(const ta_exception& cp) throw() 
-#ifndef TA_NO_EXCEPTIONS
-:exception(cp)
-#endif
-{
-  m_what = NULL;
-  setWhat(cp.m_what);
-}
-
-inline ta_exception::ta_exception(const char* value, int len) throw() {
-  m_what = NULL;
-  setWhat(value, len);
-}
-
-inline ta_exception::~ta_exception() throw()  {
-  setWhat(NULL);
-}
-
-inline ta_exception& ta_exception::operator =(const ta_exception& cp) throw() {
-#ifndef TA_NO_EXCEPTIONS
-  exception::operator =(cp);
-#endif
-  setWhat(cp.m_what);
-  return *this;
-}
-
-inline void ta_exception::setWhat(const char* value, int len) {
-  if (m_what != NULL) {
-    delete m_what;
-    m_what = NULL;
-  }
-  if (value != NULL) {
-    if (len < 0) len = (int)strlen(value);
-    m_what = (char*)malloc(len + 1);
-    if (m_what != NULL) strcpy(m_what, value);
-  }
-}
-
-inline const char* ta_exception::what() const throw() {
-  if (m_what != NULL) return m_what;
-  else return "";
-}
-#endif // ndef __MAKETA__
-
-#ifndef __MAKETA__
-#include <iostream>
-#endif
-
-#define THROW(msg) throw ta_exception(msg);
-
 // Qt Event IDs in the PDP system should be allocated here:
 #ifdef TA_USE_QT
 enum CustomEventType {
-  FirstEvent		= 1000, //note: QT's custom events start at 1000
+  FirstEvent            = 1000, //note: QT's custom events start at 1000
   cssMisc_StartupShell_EventType, // css_machine.h
   iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
 };
