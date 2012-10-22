@@ -422,9 +422,9 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     return DQR_NO_SAVE;
 
   DataTable* dt = dataTable();
-  if(!dt) return DQR_NO_SAVE;	// should not happen
+  if(!dt) return DQR_NO_SAVE;   // should not happen
 
-  if(!taMisc::is_undo_saving) {	// if not undo, logic is simple..
+  if(!taMisc::is_undo_saving) { // if not undo, logic is simple..
     if(dt->HasDataFlag(DataTable::SAVE_ROWS))
       return DQR_SAVE;
     else
@@ -435,15 +435,15 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
     if(dt->Cells() > taMisc::undo_data_max_cells) {
       if(taMisc::undo_debug && last_dt != dt) {
-	taMisc::Info("not undo saving directly affected datatable -- too big:",
-		     dt->GetPathNames(), "cells:", String(dt->Cells()));
-	last_dt = dt;
+        taMisc::Info("not undo saving directly affected datatable -- too big:",
+                     dt->GetPathNames(), "cells:", String(dt->Cells()));
+        last_dt = dt;
       }
       return DQR_NO_SAVE; // too big or no save!
     }
     if(taMisc::undo_debug && last_dt != dt) {
       taMisc::Info("YES undo saving directly affected datatable:",
-		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+                   dt->GetPathNames(), "cells:", String(dt->Cells()));
       last_dt = dt;
     }
     return DQR_SAVE;
@@ -453,9 +453,9 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     // no need to save b/c unaffected by changes elsewhere..
     if(taMisc::undo_debug && last_dt != dt) {
       taMisc::Info("not undo saving datatable -- should be unaffected:",
-		   dt->GetPathNames());
+                   dt->GetPathNames());
       if(tabMisc::cur_undo_save_owner) {
-	taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
+        taMisc::Info("undo save owner:", tabMisc::cur_undo_save_owner->GetPathNames());
       }
       last_dt = dt;
     }
@@ -465,7 +465,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if(dt->Cells() > taMisc::undo_data_max_cells) {
     if(taMisc::undo_debug && last_dt != dt) {
       taMisc::Info("not undo saving datatable -- too big:",
-		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+                   dt->GetPathNames(), "cells:", String(dt->Cells()));
       last_dt = dt;
     }
     return DQR_NO_SAVE;   // too big!
@@ -474,7 +474,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if(dt->HasDataFlag(DataTable::SAVE_ROWS)) {
     if(taMisc::undo_debug && last_dt != dt) {
       taMisc::Info("YES undo saving datatable -- affected and small enough:",
-		   dt->GetPathNames(), "cells:", String(dt->Cells()));
+                   dt->GetPathNames(), "cells:", String(dt->Cells()));
       last_dt = dt;
     }
     return DQR_SAVE;
@@ -482,7 +482,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
 
   if(taMisc::undo_debug && last_dt != dt) {
     taMisc::Info("not undo saving datatable -- affected but no save at data table level:",
-		 dt->GetPathNames(), "cells:", String(dt->Cells()));
+                 dt->GetPathNames(), "cells:", String(dt->Cells()));
     last_dt = dt;
   }
   return DQR_NO_SAVE;
@@ -678,7 +678,7 @@ String DataCol::EncodeHeaderName(const MatrixIndex& dims) const {
   case VT_INT:          typ_info = "|"; break;
   case VT_BYTE:         typ_info = "@"; break;
   case VT_VARIANT:      typ_info = "&"; break;
-  case VT_VOIDPTR:	typ_info = "*"; break;
+  case VT_VOIDPTR:      typ_info = "*"; break;
   }
   String mat_info;
   if(is_matrix) {               // specify which cell in matrix this is [dims:d0,d1,d2..]
@@ -959,7 +959,7 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
 
 
 bool DataTable::CopyCell(const Variant& dest_col, int dest_row, const DataTable& src,
-			 const Variant& src_col, int src_row)
+                         const Variant& src_col, int src_row)
 {
   DataCol* dar = GetColData(dest_col);
   DataCol* sar = src.GetColData(src_col);
@@ -3532,43 +3532,42 @@ void DataTable::DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx
   cell_idx = -1;
 }
 
-taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
-  if(dat_str.empty())
-    return VT_VARIANT;
-
-  if(dat_str[0] == '\"')
-    return VT_STRING;
-
-  int idx = 0;
-  int c;
-  while(idx < dat_str.length()) {
-    c = dat_str[idx++];
-    if(isspace(c)) continue;
-
-    if((c == '.') || isdigit(c) || (c == '-')) {        // number
-      bool not_num = false;
-      bool gotreal = false;
-      if(c == '.') gotreal = true;
-
-      while(idx < dat_str.length()) {
-        c = dat_str[idx++];
-        if(isspace(c)) continue;
-        if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') || (c == '-') ||
-           (c == 'X') || (c == 'E')) {
-          if(c == '.') gotreal = true;
-        }
-        else {
-          not_num = true;
-          break;
-        }
-      }
-      if(!not_num) {
-        if(gotreal) return VT_DOUBLE;
-        return VT_INT;
+namespace { // anonymous
+  bool isWhitespace(const char *str)
+  {
+    // Returns true if string is empty or is all whitespace characters.
+    if (!str) return false;
+    for (; *str; ++str) {
+      if (!isspace(*str)) {
+        return false;
       }
     }
+    return true;
   }
-  // if not trapped earlier, then it must be a string..
+}
+
+taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
+  // Check for empty strings and strings containing only whitespace.
+  if (isWhitespace(dat_str.chars())) {
+    return VT_VARIANT;
+  }
+
+  // Check for quoted strings.
+  if (dat_str[0] == '"') {
+    return VT_STRING;
+  }
+
+  // Test if it's an integer.
+  // This will fail if the string is actually a floating point value.
+  char *endptr = 0;
+  long int li = std::strtol(dat_str.chars(), &endptr, 0);
+  if (isWhitespace(endptr)) return VT_INT;
+
+  // Not an integer, test if it's a floating point value.
+  double d = std::strtod(dat_str.chars(), &endptr);
+  if (isWhitespace(endptr)) return VT_DOUBLE;
+
+  // Otherwise a string.
   return VT_STRING;
 }
 
