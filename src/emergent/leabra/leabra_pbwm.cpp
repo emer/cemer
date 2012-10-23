@@ -1150,6 +1150,7 @@ void PFCGateSpec::Initialize() {
   in_mnt = 1;
   out_mnt = 0;
   maint_pct = 0.9f;
+  deep_freeze = false;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
   clear_decay = 0.0f;
@@ -1518,10 +1519,20 @@ void PFCLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
       if(u->lesioned()) continue;
       float dact = 0.0f;
-      if(gpd->mnt_count >= 0) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
-	LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
-	dact = super_u->act;
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+      LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
+      if(gate.deep_freeze) { 
+	if(gpd->mnt_count == 0) {
+	  dact = super_u->act;	// copy from super on labile gating trial
+	}
+	else if(gpd->mnt_count > 0) {
+	  dact = u->maint_h;	// veridical maint value
+	}
+      }
+      else {
+	if(gpd->mnt_count >= 0) {
+	  dact = super_u->act;	// always copy from super
+	}
       }
       u->act = u->act_eq = u->act_nd = dact;
       u->da = 0.0f;
