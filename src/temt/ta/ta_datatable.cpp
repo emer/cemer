@@ -24,6 +24,7 @@
 #  include "ta_datatable_qtso.h"
 #endif
 
+#include <cstdlib> // strtol, strtod
 #include <limits.h>
 #include <float.h>
 #include <ctype.h>
@@ -3560,11 +3561,11 @@ taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
   // Test if it's an integer.
   // This will fail if the string is actually a floating point value.
   char *endptr = 0;
-  long int li = strtol(dat_str.chars(), &endptr, 0);
+  long int li = std::strtol(dat_str.chars(), &endptr, 0);
   if (isWhitespace(endptr)) return VT_INT;
 
   // Not an integer, test if it's a floating point value.
-  double d = strtod(dat_str.chars(), &endptr);
+  double d = std::strtod(dat_str.chars(), &endptr);
   if (isWhitespace(endptr)) return VT_DOUBLE;
 
   // Otherwise a string.
