@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -24,7 +24,7 @@
 
 
 //////////////////////////
-//  CellRange		//
+//  CellRange           //
 //////////////////////////
 
 void CellRange::SetExtent(int wd, int ht) {
@@ -73,7 +73,7 @@ MatrixIndex::MatrixIndex(int init_n_dims) {
   Initialize();
   SetDims(init_n_dims);
 }
-  
+
 MatrixIndex::MatrixIndex(int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
   Initialize();
@@ -90,8 +90,8 @@ void MatrixIndex::Initialize() {
 void MatrixIndex::Destroy() {
 #ifdef DEBUG
   // helps detect multi-delete errors
-  for (int i = n_dims - 1; i >= 0; el[i--] = 0); 
-  n_dims = 0; 
+  for (int i = n_dims - 1; i >= 0; el[i--] = 0);
+  n_dims = 0;
 #endif
 }
 
@@ -100,7 +100,7 @@ void MatrixIndex::Copy_(const MatrixIndex& cp) {
   for (int i = 0; i < n_dims; ++i) {
     el[i] = cp.el[i];
   }
-} 
+}
 
 bool MatrixIndex::Equal(const MatrixIndex& other) const {
   if (n_dims != other.n_dims) return false;
@@ -108,10 +108,10 @@ bool MatrixIndex::Equal(const MatrixIndex& other) const {
     if (el[i] != other.el[i]) return false;
   }
   return true;
-} 
+}
 
 void MatrixIndex::SetIndexes(int dms, int d0, int d1, int d2, int d3, int d4,
-  int d5, int d6) 
+  int d5, int d6)
 {
   SetDims(dms);
   el[0] = d0;
@@ -124,7 +124,7 @@ void MatrixIndex::SetIndexes(int dms, int d0, int d1, int d2, int d3, int d4,
 }
 
 void MatrixIndex::GetIndexes(int& dms, int& d0, int& d1, int& d2, int& d3, int& d4,
-  int& d5, int& d6) 
+  int& d5, int& d6)
 {
   dms = dims();
   if(dms >= 1) d0 = dim(0); else d0 = 0;
@@ -224,13 +224,13 @@ void MatrixIndex::FromString(const String& str_, const char* ldelim, const char*
 }
 
 String MatrixIndex::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
-			      bool force_inline) const {
+                              bool force_inline) const {
   // always inline effectively
   return ToString();
 }
 
-bool MatrixIndex::SetValStr(const String& val, void* par, MemberDef* memb_def, 
-			   TypeDef::StrContext sc, bool force_inline) {
+bool MatrixIndex::SetValStr(const String& val, void* par, MemberDef* memb_def,
+                           TypeDef::StrContext sc, bool force_inline) {
   // always inline effectively
   FromString(val);
   return true;
@@ -266,8 +266,8 @@ int MatrixIndex::Dump_Load_Value(istream& strm, taBase*) {
     ++cnt;
     c = taMisc::read_till_rb_or_semi(strm);
   }
-  if (c==EOF)	return EOF;
-  SetDims(cnt);			// just to be double sure it is same as loaded size
+  if (c==EOF)   return EOF;
+  SetDims(cnt);                 // just to be double sure it is same as loaded size
   return true;
 }
 
@@ -291,14 +291,14 @@ bool MatrixIndex::SetDims(int new_sz) {
 
 
 //////////////////////////
-//  MatrixGeom		//
+//  MatrixGeom          //
 //////////////////////////
 
 MatrixGeom::MatrixGeom(int init_n_dims) {
   Initialize();
   SetDims(init_n_dims);
 }
-  
+
 MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
   Initialize();
@@ -315,8 +315,8 @@ void MatrixGeom::Initialize() {
 void MatrixGeom::Destroy() {
 #ifdef DEBUG
   // helps detect multi-delete errors
-  for (int i = n_dims - 1; i >= 0; el[i--] = 0); 
-  n_dims = 0; 
+  for (int i = n_dims - 1; i >= 0; el[i--] = 0);
+  n_dims = 0;
 #endif
 }
 
@@ -326,7 +326,7 @@ void MatrixGeom::Copy_(const MatrixGeom& cp) {
     el[i] = cp.el[i];
   }
   UpdateAfterEdit_impl();
-} 
+}
 
 void MatrixGeom::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
@@ -352,7 +352,7 @@ void MatrixGeom::Set(int i, int value) {
 void MatrixGeom::DimsFmIndex(int idx, MatrixIndex& d) const {
   d.SetDims(n_dims);
   div_t qr;
-  int dx = idx;			// local register
+  int dx = idx;                 // local register
   for(int i=n_dims-1; i>=1; i--) {
     qr = div(dx, elprod[i-1]);
     d[i] = qr.quot; dx = qr.rem;
@@ -362,10 +362,10 @@ void MatrixGeom::DimsFmIndex(int idx, MatrixIndex& d) const {
 
 int MatrixGeom::SafeIndexFmDimsN(const MatrixIndex& indicies) const {
   if(TestError((indicies.dims() < 1), "SafeIndexFmDimsN",
-	       "at least 1 index must be specified"))
+               "at least 1 index must be specified"))
     return -1;
   if(TestError((indicies.dims() > dims()), "SafeIndexFmDimsN",
-	       "too many indices for matrix"))
+               "too many indices for matrix"))
     return -1;
   return SafeIndexFmDims_(indicies.el);
 }
@@ -380,7 +380,7 @@ int MatrixGeom::IndexFmDims_(const int* d) const {
 
 int MatrixGeom::SafeIndexFmDims_(const int* d) const {
   if(TestError((dims() < 1), "SafeIndexFmDims",
-	       "matrix geometry has not been initialized"))
+               "matrix geometry has not been initialized"))
     return -1;
   int rval = SafeIndex_(d[0], el[0]);
   if(rval < 0) return rval;
@@ -470,7 +470,7 @@ bool MatrixGeom::Equal(const MatrixGeom& other) const {
     if (el[i] != other.el[i]) return false;
   }
   return true;
-} 
+}
 
 bool MatrixGeom::IsFrameOf(const MatrixGeom& other) const {
   if (n_dims != (other.n_dims - 1)) return false;
@@ -486,7 +486,7 @@ int MatrixGeom::Product() const {
 }
 
 void MatrixGeom::SetGeom(int dms, int d0, int d1, int d2, int d3, int d4,
-  int d5, int d6) 
+  int d5, int d6)
 {
   SetDims(dms);
   el[0] = d0;
@@ -500,7 +500,7 @@ void MatrixGeom::SetGeom(int dms, int d0, int d1, int d2, int d3, int d4,
 }
 
 void MatrixGeom::GetGeom(int& dms, int& d0, int& d1, int& d2, int& d3, int& d4,
-  int& d5, int& d6) 
+  int& d5, int& d6)
 {
   dms = dims();
   if(dms >= 1) d0 = dim(0); else d0 = 0;
@@ -574,7 +574,7 @@ int MatrixGeom::colCount(bool pat_4d) const {
     return 1;
   else if (n_dims < 4)
     return el[0];
-  else {	
+  else {
     if (pat_4d)
       return (el[0] * el[2]);
     else return (el[0]);
@@ -594,7 +594,7 @@ int MatrixGeom::rowCount(bool pat_4d) const {
       rval *= el[i];
   }
   return rval;
-  
+
 }
 
 String MatrixGeom::ToString(const char* ldelim, const char* rdelim) const {
@@ -636,13 +636,13 @@ void MatrixGeom::FromString(const String& str_, const char* ldelim, const char* 
 }
 
 String MatrixGeom::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
-			      bool force_inline) const {
+                              bool force_inline) const {
   // always inline effectively
   return ToString();
 }
 
-bool MatrixGeom::SetValStr(const String& val, void* par, MemberDef* memb_def, 
-			   TypeDef::StrContext sc, bool force_inline) {
+bool MatrixGeom::SetValStr(const String& val, void* par, MemberDef* memb_def,
+                           TypeDef::StrContext sc, bool force_inline) {
   // always inline effectively
   FromString(val);
   return true;
@@ -678,8 +678,8 @@ int MatrixGeom::Dump_Load_Value(istream& strm, taBase*) {
     ++cnt;
     c = taMisc::read_till_rb_or_semi(strm);
   }
-  if (c==EOF)	return EOF;
-  SetDims(cnt);			// just to be double sure it is same as loaded size
+  if (c==EOF)   return EOF;
+  SetDims(cnt);                 // just to be double sure it is same as loaded size
   UpdateAfterEdit_impl();
   return true;
 }
@@ -700,26 +700,27 @@ bool MatrixGeom::SetDims(int new_sz) {
 
 
 //////////////////////////
-//  taMatrix		//
+//  taMatrix            //
 //////////////////////////
 
 bool taMatrix::GeomIsValid(int dims_, const int geom_[],
   String* err_msg, bool allow_flex)
 {
-  if ((dims_ <= 0) || (dims_ >= TA_MATRIX_DIMS_MAX)) { 
+  if ((dims_ <= 0) || (dims_ >= TA_MATRIX_DIMS_MAX)) {
     if (err_msg)
-      *err_msg = "dims must be: 0 < dims <= " + String(TA_MATRIX_DIMS_MAX) + 
+      *err_msg = "dims must be: 0 < dims <= " + String(TA_MATRIX_DIMS_MAX) +
         " was: " + String(dims_);
     return false;
   }
-  
+
   // we only allow a non-zero value in top dim (flex sizing, if enabled)
-  for (int i = 0; i < (dims_ - 1) ; ++i) {
+  for (int i = 0; i < dims_ ; ++i) {
     if (geom_[i] < 0) {
       if (err_msg)
         *err_msg = "geoms must be >= 0";
       return false;
-    } else if (geom_[i] == 0) {
+    }
+    else if (geom_[i] == 0) {
       if (!(allow_flex && (i == (dims_ - 1)))) {
         if (err_msg)
           *err_msg = "all but highest-most geom must be >0";
@@ -727,7 +728,7 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[],
       }
     }
   }
-  
+
   return true;
 }
 
@@ -755,14 +756,14 @@ void taMatrix::Initialize() {
   table_model = NULL;
   el_view_mode = IDX_UNK;
 }
- 
+
 void taMatrix::Destroy() {
   CutLinks();
   size = 0;
   alloc_size = 0;
   if (slice_par) {
     SliceDestroying(slice_par, this);
-    slice_par = NULL; 
+    slice_par = NULL;
   }
   if (sliceCount() > 0) {
     DebugInfo("Destroy", "taMatrix being destroyed with slice_cnt=", String(sliceCount()));
@@ -812,11 +813,11 @@ String& taMatrix::Print(String& strm, int indent) const {
   int dim_break = dm / 2;
   if(dm == 2) {
     float dim_rat = (float)dim(1) / dim(0);
-    if(dim_rat > 2.0)		// if inner ratio is small, then keep it inline
+    if(dim_rat > 2.0)           // if inner ratio is small, then keep it inline
       dim_break = dm;
   }
   else if(dm % 2 == 1) {
-    dim_break++;		// one more outer is probably better for odd
+    dim_break++;                // one more outer is probably better for odd
   }
 
   taMatrix* elv = ElView();
@@ -833,49 +834,49 @@ String& taMatrix::Print(String& strm, int indent) const {
       int sc = 0;
       int break_level = -1;
       for(int d=0; d<dm; d++) {
-	if(idx[d] == 0 && idx[d] != lstidx[d]) {
-	  sc++;
-	  if(sc == 1) strm += " ";
-	  strm += "]";		// end previous
-	  if(d+1 == dim_break) {
-	    break_level = d+1;
-	  }
-	}
+        if(idx[d] == 0 && idx[d] != lstidx[d]) {
+          sc++;
+          if(sc == 1) strm += " ";
+          strm += "]";          // end previous
+          if(d+1 == dim_break) {
+            break_level = d+1;
+          }
+        }
       }
       if(break_level >= 0) {
-	strm += "\n" + String(dm-break_level, 0, ' ');
+        strm += "\n" + String(dm-break_level, 0, ' ');
       }
       for(int s=0; s<sc; s++) {
-	strm += "[";		// start new
-	if(s == sc-1) strm += " ";
+        strm += "[";            // start new
+        if(s == sc-1) strm += " ";
       }
       if(sc == 0 && i > 0) {
-	strm += ", ";
+        strm += ", ";
       }
       if(cmat && !((bool)cmat->SafeEl_Flat(i))) {
-	strm += "- ";		// filtered
+        strm += "- ";           // filtered
       }
       else {
-	strm += FastElAsStr_Flat(i);
+        strm += FastElAsStr_Flat(i);
       }
-      lstidx = idx;		// update
+      lstidx = idx;             // update
     }
     strm += " ";
     for(int d=0; d<dm; d++) {
       strm += "]";
     }
   }
-  else {			// coords!
+  else {                        // coords!
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     int nc = cmat->dim(1);
     strm = "[ ";
     for(int i=0; i<nc; i++) {
       for(int d=0;d<dm;d++) {
-	idx.Set(d, cmat->FastEl(d, i));	// outer index is count index
+        idx.Set(d, cmat->FastEl(d, i)); // outer index is count index
       }
       idx.Print(strm) << ": " << SafeElAsStrN(idx);
       if(i < nc-1)
-	strm += ", ";
+        strm += ", ";
     }
     strm += " ]";
   }
@@ -883,7 +884,7 @@ String& taMatrix::Print(String& strm, int indent) const {
 }
 
 //////////////////////////////////////////////
-// 	std accessor interface
+//      std accessor interface
 
 bool taMatrix::SetElView(taMatrix* view_mat, IndexMode md) {
   int dm = dims();
@@ -898,7 +899,7 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
   if(!IterValidate(view_mat, md, dm)) return NULL;
   taMatrix* rval = (taMatrix*)MakeToken(); // make a token of me
   void* base_el = const_cast<void*>(FastEl_Flat_(0));
-  rval->SetFixedData_(base_el, geom);	   // identical geom, same data
+  rval->SetFixedData_(base_el, geom);      // identical geom, same data
   SliceInitialize(const_cast<taMatrix*>(this), rval);
   rval->SetElView(view_mat, md);
   return rval;
@@ -907,18 +908,18 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
 Variant taMatrix::ElemFmCoord(int_Matrix* cmat) const {
   MatrixIndex idx;
   int dm = dims();
-  idx.SetDims(dm);		// set it to our dimensionality
+  idx.SetDims(dm);              // set it to our dimensionality
   int mx = MIN(dm, cmat->size);
   int i;
   for(i=0; i<mx; i++) {
     int el_idx = cmat->FastEl_Flat(i);
     if(el_idx < 0) el_idx += dim(i);
     if(el_idx < 0 || el_idx >= dim(i)) {
-      return _nilVariant;	// out of bounds!
+      return _nilVariant;       // out of bounds!
     }
     idx.Set(i, el_idx);
   }
-  for(;i<dm;i++) {		// fill in remaining indicies with 0 
+  for(;i<dm;i++) {              // fill in remaining indicies with 0
     idx.Set(i, 0);
   }
   return SafeElAsVarN(idx);
@@ -943,7 +944,7 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) { // use iterator so it is recursive on existing filtering
       String val = vitm.toString();
       if(val.matches_wildcard(nm)) {
-	imat->Add(FOREACH_itr->el_idx); // add absolute index of item
+        imat->Add(FOREACH_itr->el_idx); // add absolute index of item
       }
     }
     if(imat->size == 1) {
@@ -956,14 +957,14 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_NAMES: {
     String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
     int_Matrix* imat = new int_Matrix(1,0);
-    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       String val = vitm.toString();
       int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
       TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
-	const String nm = mitm.toString();
-	if(val.matches_wildcard(nm)) {
-	  imat->Add(el_idx); // add absolute index of item
-	}
+        const String nm = mitm.toString();
+        if(val.matches_wildcard(nm)) {
+          imat->Add(el_idx); // add absolute index of item
+        }
       }
     }
     if(imat->size == 1) {
@@ -1006,24 +1007,24 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     int_Matrix fixsmat;
     fixsmat.SetGeom(2,3,dm); // fixed slice matrix + total n
-    MatrixGeom sliceg(dm);		// slice geometry
+    MatrixGeom sliceg(dm);              // slice geometry
     for(int i=0;i<dm; i++) {
       int start = 0; int end = -1; int step = 1;
       if(i < cmat->dim(1)) {
-	start = cmat->FastEl(0,i);
-	end = cmat->FastEl(1,i);
-	step = cmat->FastEl(2,i);
+        start = cmat->FastEl(0,i);
+        end = cmat->FastEl(1,i);
+        step = cmat->FastEl(2,i);
       }
       if(step == 0) step = 1;
       if(FixSliceValsFromSize(start, end, dim(i))) {
-	int my_n = (end-start) / ABS(step); // number of guys in my slice
-	sliceg.Set(i, my_n);
-	fixsmat.FastEl(0,i) = start; 
-	fixsmat.FastEl(1,i) = end; 
-	fixsmat.FastEl(2,i) = step;
+        int my_n = (end-start) / ABS(step); // number of guys in my slice
+        sliceg.Set(i, my_n);
+        fixsmat.FastEl(0,i) = start;
+        fixsmat.FastEl(1,i) = end;
+        fixsmat.FastEl(2,i) = step;
       }
       else {
-	return _nilVariant;
+        return _nilVariant;
       }
     }
     int tot_n = sliceg.Product();
@@ -1031,21 +1032,21 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
       return _nilVariant;
     }
     int_Matrix* imat = new int_Matrix(2,dm,tot_n); // turn into coords list
-    MatrixIndex sidx;				   // slice idx
+    MatrixIndex sidx;                              // slice idx
     for(int i=0;i<tot_n; i++) {
       sliceg.DimsFmIndex(i, sidx); // get index into slice vals
       for(int d=0; d<dm; d++) {
-	int start = fixsmat.FastEl(0,d);
-	int end = fixsmat.FastEl(1,d);
-	int step = fixsmat.FastEl(2,d);
-	int sc;
-	if(step > 0) {
-	  sc = start + step * sidx[d];
-	}
-	else {
-	  sc = end-1 + step * sidx[d];
-	}
-	imat->FastEl(d, i) = sc;
+        int start = fixsmat.FastEl(0,d);
+        int end = fixsmat.FastEl(1,d);
+        int step = fixsmat.FastEl(2,d);
+        int sc;
+        if(step > 0) {
+          sc = start + step * sidx[d];
+        }
+        else {
+          sc = end-1 + step * sidx[d];
+        }
+        imat->FastEl(d, i) = sc;
       }
     }
     taMatrix* nwvw = NewElView(imat, IDX_COORDS);
@@ -1055,8 +1056,8 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
   case IDX_MASK: {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
     if(TestError(cmat->geom != geom, "Elem::IDX_MASK",
-		 "mask matrix geometry:", String(cmat->dim(0)),
-		 "is not size of list:", String(size)))
+                 "mask matrix geometry:", String(cmat->dim(0)),
+                 "is not size of list:", String(size)))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
       // take intersection of the existing mask
@@ -1081,7 +1082,7 @@ taBaseItr* taMatrix::Iter() const {
   return rval;
 }
 
-Variant	taMatrix::IterElem(taBaseItr* itr) const {
+Variant taMatrix::IterElem(taBaseItr* itr) const {
   if(!itr) return _nilVariant;
   return SafeElAsVar_Flat(itr->el_idx);
 }
@@ -1092,9 +1093,9 @@ bool taMatrix::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const
   if(!vmat) return true;
   if(el_view_mode == IDX_MASK) {
     if(TestError(ElView()->geom != geom, "IterValidate::IDX_MASK",
-		 "el_view geom:", ElView()->geom.ToString(),
-		 "not equal to size of matrix:",
-		 geom.ToString()))
+                 "el_view geom:", ElView()->geom.ToString(),
+                 "not equal to size of matrix:",
+                 geom.ToString()))
       return false;
   }
   return true;
@@ -1103,7 +1104,7 @@ bool taMatrix::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const
 bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
   if(!itr) return false;
   itr->count = 0;
-  itr->el_idx = 0;		// just to be sure
+  itr->el_idx = 0;              // just to be sure
   const int dm = dims();
   if(!ElView()) {
     if(ElemCount() > 0) return true;
@@ -1119,7 +1120,7 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, 0));	// outer index is count index
+      idx.Set(d, cmat->FastEl(d, 0));   // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
@@ -1131,8 +1132,8 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
       if(cmat->FastEl_Flat(i) != 0) {
-	itr->el_idx = i;
-	return true;
+        itr->el_idx = i;
+        return true;
       }
     }
   }
@@ -1157,7 +1158,7 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, itr->count));	// outer index is count index
+      idx.Set(d, cmat->FastEl(d, itr->count));  // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
@@ -1169,8 +1170,8 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
       if(cmat->FastEl_Flat(i) != 0) { // true
-	itr->el_idx = i;
-	return true;
+        itr->el_idx = i;
+        return true;
       }
     }
   }
@@ -1193,21 +1194,21 @@ bool taMatrix::Alloc_(int new_alloc) {
   if(TestError((alloc_size < 0), "Alloc_", "cannot alloc a fixed data matrix")) return false;
   // TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
   // NOTE: this is a low level allocator; alloc is typically managed in frames
-  if (alloc_size < new_alloc)	{
-    if(fastAlloc() && (alloc_size > 0)) {		// fast alloc = malloc/realloc
+  if (alloc_size < new_alloc)   {
+    if(fastAlloc() && (alloc_size > 0)) {               // fast alloc = malloc/realloc
       char* old = (char*)data();
       if(!FastRealloc_(new_alloc))
-	return false;
+        return false;
       ta_intptr_t delta = (char*)data() - old;
       UpdateSlices_Realloc(delta);
     }
     else {
       char* nw = (char*)MakeArray_(new_alloc);
       if(TestError(!nw, "Alloc_", "could not allocate matrix memory -- matrix is too big!  reverting to old size -- could be fatal!")) {
-	return false;
+        return false;
       }
       for (int i = 0; i < size; ++i) {
-	El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
+        El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
       }
       // calculate delta, in bytes, of the new address and update slices
       ta_intptr_t delta = nw - (char*)data();
@@ -1224,11 +1225,11 @@ bool taMatrix::AllocFrames(int n) {
   if(TestError((alloc_size < 0), "AllocFrames", "cannot alloc a fixed data matrix")) return false;
   if(TestError((n < 0), "AllocFrames", "n (num frames) must be >= 0")) return false;
   int frsz = frameSize();
-  if(frsz == 0) return false;		// not dimensioned yet -- don't bother
+  if(frsz == 0) return false;           // not dimensioned yet -- don't bother
   int cur_n = alloc_size / frsz;
-  if(cur_n >= n) return true;	// already sufficient!
+  if(cur_n >= n) return true;   // already sufficient!
 
-  int act_n = n;		// actual n frames to request
+  int act_n = n;                // actual n frames to request
   // start w/ 4, double up to 64, then 1.5x thereafter
   if (cur_n == 0) act_n = MAX(4, act_n);
   else if (cur_n < 64) act_n = MAX((cur_n * 2), act_n);
@@ -1242,12 +1243,12 @@ bool taMatrix::canResize() const {
 
 void taMatrix::Clear(int fm, int to) {
   if (size == 0) return;
-  if (to < 0) to = size - 1; 
+  if (to < 0) to = size - 1;
   if (fm > to) return;
   if (TestError((fm >= size), "Clear", "fm exceeds size")) return;
   if (TestError((to >= size), "Clear", "to exceeds size")) return;
   Clear_impl(fm, to);
-} 
+}
 
 void taMatrix::Clear_impl(int fm, int to) {
   if (fastAlloc()) {
@@ -1286,7 +1287,7 @@ void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
   SetGeomN(cp->geom);
   for (int i = 0; i < size; ++i) {
     El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
-  }  
+  }
   ClearBaseFlag(COPYING);
 }
 
@@ -1319,8 +1320,8 @@ void taMatrix::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
-taBase* taMatrix::GetOwner() const { 
-  if (slice_par) return slice_par; 
+taBase* taMatrix::GetOwner() const {
+  if (slice_par) return slice_par;
   return owner;
 }
 
@@ -1329,7 +1330,7 @@ int taMatrix::defAlignment() const {
 }
 
 String taMatrix::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
-			      bool force_inline) const {
+                              bool force_inline) const {
   // always inline effectively
   String rval = geom.GetValStr(par, memb_def, sc, force_inline);
   rval += " {";
@@ -1340,8 +1341,8 @@ String taMatrix::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext s
   return rval;
 }
 
-bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def, 
-			 TypeDef::StrContext sc, bool force_inline) {
+bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
+                         TypeDef::StrContext sc, bool force_inline) {
   // always inline effectively
   String gmstr = val.before('{');
   MatrixGeom ng;
@@ -1354,11 +1355,11 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
     if(el_val.empty()) {
       el_val = tmp.before('}');
       if (el_val.empty())
-	break;
+        break;
     }
     tmp = tmp.after(',');
     if(TestError(idx >= size, "SetValStr",
-		 "more items in val string than shoudl be according to geometry!")) break;
+                 "more items in val string than shoudl be according to geometry!")) break;
     if (el_val.contains(' '))
       el_val = el_val.after(' ');
     SetFmStr_Flat(el_val, idx);
@@ -1368,7 +1369,7 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			    void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+                            void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = 0;
   String mypath = GetPathNames();
   for(int i=0; i<size; i++) {
@@ -1378,7 +1379,7 @@ int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String
     rval += str.gsub(srch, repl);
     SetFmStr_Flat(str, i);
     taMisc::Info("Replaced string value in matrix object:",
-		 mypath,"orig val:", orig, "new val:", str);
+                 mypath,"orig val:", orig, "new val:", str);
   }
   if(rval > 0)
     UpdateAfterEdit();
@@ -1395,8 +1396,8 @@ int taMatrix::Dump_Load_Item(istream& strm, int idx) {
 
 int taMatrix::Dump_Load_Value(istream& strm, taBase* par) {
   int c = taMisc::skip_white(strm);
-  if(c == EOF)	return EOF;
-  if(c == ';')	return 2;	// signal that its a path
+  if(c == EOF)  return EOF;
+  if(c == ';')  return 2;       // signal that its a path
   if(c == '}') {
     if(strm.peek() == ';') strm.get();
     return 2;
@@ -1408,13 +1409,13 @@ int taMatrix::Dump_Load_Value(istream& strm, taBase* par) {
   }
   // now, load members (if we have dims, will exit at that point)
   int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
-  // 3 is a hacky code to tell us that it got the [ 
+  // 3 is a hacky code to tell us that it got the [
   if ((rval != 3) || (rval == EOF)) return rval;
-  
+
   // we now expect dims, if not completely null
   c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
-  
+
   if (c == '[') {
     MatrixGeom ar; // temp, while streaming
     if (strm.peek() == '[')
@@ -1435,9 +1436,9 @@ int taMatrix::Dump_Load_Value(istream& strm, taBase* par) {
   }
   // because we had data, we have to clean up
   c = taMisc::read_till_rbracket(strm);
-  if (c==EOF)	return EOF;
+  if (c==EOF)   return EOF;
   c = taMisc::read_till_semi(strm);
-  if (c==EOF)	return EOF;
+  if (c==EOF)   return EOF;
   return true;
 }
 
@@ -1447,9 +1448,9 @@ void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
 
 int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   // save the members -- it puts the { out
-  //int rval = 
+  //int rval =
   inherited::Dump_Save_Value(strm, par, indent);
-  
+
   // save data, if not completely null
   int i;
   if (geom.dims() > 0) {
@@ -1465,22 +1466,22 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
     for (i=0; i < size; ++i) {
       Dump_Save_Item(strm, i);
       strm <<  ';';
-      if((i+1) % 10 == 0)	// this helps a lot with readability and diffs..
-	strm << '\n';
+      if((i+1) % 10 == 0)       // this helps a lot with readability and diffs..
+        strm << '\n';
     }
   }
- 
+
   return true;
 }
 
 /////////////////////////////////////
-// 	Binary Dump Format
+//      Binary Dump Format
 
 int taMatrix::BinaryLoad_strm(istream& strm) {
   if(TestError(!BinaryFile_Supported(), "BinaryLoad", "Binary load is not supported for this type of matrix")) return false;
   int c = taMisc::skip_white(strm);
-  if(c == EOF)	return EOF;
-  if(c == ';')	return 2;	// signal that its a path
+  if(c == EOF)  return EOF;
+  if(c == ';')  return 2;       // signal that its a path
   if(c == '}') {
     if(strm.peek() == ';') strm.get();
     return 2;
@@ -1492,13 +1493,13 @@ int taMatrix::BinaryLoad_strm(istream& strm) {
   }
   // now, load members (if we have dims, will exit at that point)
   int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, NULL);
-  // 3 is a hacky code to tell us that it got the [ 
+  // 3 is a hacky code to tell us that it got the [
   if ((rval != 3) || (rval == EOF)) return rval;
-  
+
   // we now expect dims, if not completely null
   c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
-  
+
   if (c == '[') {
     MatrixGeom ar; // temp, while streaming
     if (strm.peek() == '[')
@@ -1519,18 +1520,18 @@ int taMatrix::BinaryLoad_strm(istream& strm) {
   }
   // because we had data, we have to clean up
   c = taMisc::read_till_rbracket(strm);
-  if (c==EOF)	return EOF;
+  if (c==EOF)   return EOF;
   c = taMisc::read_till_semi(strm);
-  if (c==EOF)	return EOF;
+  if (c==EOF)   return EOF;
   return true;
 }
 
 int taMatrix::BinarySave_strm(ostream& strm) {
   if(TestError(!BinaryFile_Supported(), "BinarySave", "Binary save is not supported for this type of matrix")) return false;
   // save the members -- it puts the { out
-  //int rval = 
+  //int rval =
   inherited::Dump_Save_Value(strm, NULL, 0);
-  
+
   // save data, if not completely null
   int i;
   if (geom.dims() > 0) {
@@ -1547,7 +1548,7 @@ int taMatrix::BinarySave_strm(ostream& strm) {
       BinarySave_Item(strm, i);
     }
   }
-  strm << endl << "};" << endl;	// terminate
+  strm << endl << "};" << endl; // terminate
   return true;
 }
 
@@ -1579,7 +1580,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   int new_size = n * frameSize();
   // avoid spurious notifies -- geom changes do their own notify
   if (new_size == size) {
-    geom.Set(geom.dims()-1, n);	
+    geom.Set(geom.dims()-1, n);
     return true;
   }
   StructUpdate(true);
@@ -1593,7 +1594,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   } else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
     size = new_size;
-    geom.Set(geom.dims()-1, n);	
+    geom.Set(geom.dims()-1, n);
   }
   StructUpdate(false);
   return true;
@@ -1606,7 +1607,7 @@ int taMatrix::FindVal_Flat(const Variant& val, int st_idx) const {
   }
   return -1;
 }
- 
+
 const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to) {
   if ((row_fr < 0) || (col_fr < 0) || (row_to < row_fr) || (col_to < col_fr))
     return _nilString;
@@ -1615,7 +1616,7 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
   // to access in 2d, you just ignore the higher dimensions
   for (int row = row_fr; row <= row_to; ++row) {
     if (row > row_fr) rval.cat('\n');
-    //int idx = (row * dim(0)) + col_fr; 
+    //int idx = (row * dim(0)) + col_fr;
     for (int col = col_fr; col <= col_to; ++col/*, ++idx*/) {
       if (col > col_fr) rval.cat('\t');
       // note: we assume range must already have been converted from display to canonical
@@ -1636,7 +1637,7 @@ int taMatrix::frameSize() const {
   if (geom.dims() == 0) return 0;
   if (geom.dims() == 1) return 1;
   int rval = geom[0];
-  for (int i = 1; i < (geom.dims() - 1); ++i) 
+  for (int i = 1; i < (geom.dims() - 1); ++i)
     rval *= geom[i];
   return rval;
 }
@@ -1657,8 +1658,8 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   int frames_ = frames(); // cache
   // check frame_base and num_frames in bounds
   if(TestError(((frame < 0) || (frame >= frames_)), "GetFrameSlice_",
-	       "frame is out of bounds")) return NULL;
-    
+               "frame is out of bounds")) return NULL;
+
   MatrixGeom slice_geom(dims_m1);
   for (int i = 0; i < dims_m1; ++i)
     slice_geom.Set(i, dim(i));
@@ -1666,17 +1667,17 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   void* base_el = FastEl_Flat_(sl_i);
   taMatrix* rval = FindSlice(base_el, slice_geom);
   if (rval) return rval;
-  
+
   rval = (taMatrix*)MakeToken(); // an empty instance of our type
   if(TestError((!rval), "GetFrameSlice_", "could not make token of matrix")) return NULL;
-  
+
   rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
 }
 
-taMatrix* taMatrix::GetSlice_(const MatrixIndex& base, 
+taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     int slice_frame_dims, int num_slice_frames)
 {
   if(TestError((num_slice_frames <= 0), "GetSlice_", "num_slice_frames must be >= 1"))
@@ -1686,7 +1687,7 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     slice_frame_dims = dims() - 1;
   // check dim size in bounds
   if(TestError((slice_frame_dims < 0) || (slice_frame_dims >= dims()),
-	       "GetSlice_", "slice_frame_dims must be >= 0 and < parent Matrix"))
+               "GetSlice_", "slice_frame_dims must be >= 0 and < parent Matrix"))
     return NULL;
   // check start cell in bounds and legal
   int sl_i = SafeElIndexN(base); // -1 if out of bounds
@@ -1698,19 +1699,19 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
   for (int i = 0; i < slice_frame_dims; ++i)
     slice_geom.Set(i, dim(i));
   slice_geom.Set(slice_frame_dims, num_slice_frames);
-  
+
   // easiest to now check for frames in bounds
   int sl_tot = slice_geom.Product();
   if(TestError(((sl_i + sl_tot) > size), "GetSlice_", "slice end is out of bounds"))
     return NULL;
-    
+
   void* base_el = FastEl_Flat_(sl_i);
   taMatrix* rval = FindSlice(base_el, slice_geom);
   if (rval) return rval;
-  
+
   rval = (taMatrix*)MakeToken(); // an empty instance of our type
   if(TestError((!rval), "GetSlice_", "could not make token of matrix")) return NULL;
-  
+
   rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
@@ -1734,7 +1735,7 @@ taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) {
       return mat;
   }
   return NULL;
-} 
+}
 
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   switch (geom.dims()) {
@@ -1757,8 +1758,8 @@ bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) c
   default: return false;
   }
 }
- 
- 
+
+
 bool taMatrix::InRangeN(const MatrixIndex& indices) const {
   if (indices.dims() < geom.dims()) return false;
   for (int i = 0; i < indices.dims(); ++i) {
@@ -1767,18 +1768,18 @@ bool taMatrix::InRangeN(const MatrixIndex& indices) const {
   }
   return true;
 }
- 
+
 bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
   if(TestError(!canResize(), "RemoveFrames", "resizing not allowed")) return false;
   int frames_ = frames(); // cache
   if(st_fr < 0) st_fr = frames_ - 1;
   if(TestError(((st_fr < 0) || (st_fr >= frames_)), "RemoveFrames",
-	       "starting frame number out of range:", String(st_fr)))
+               "starting frame number out of range:", String(st_fr)))
     return false;
   if(n_fr < 0) n_fr = frames_ - st_fr;
   int end_fr = st_fr + n_fr-1;
   if(TestError(((end_fr < 0) || (end_fr >= frames_)), "RemoveFrames",
-	       "ending frame number out of range:", String(end_fr)))
+               "ending frame number out of range:", String(end_fr)))
     return false;
   // check if we have to copy data
   int frsz = frameSize();
@@ -1805,18 +1806,18 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   int sz = frames(); // cache
   if(st_fr < 0) st_fr = sz;
   if(TestError((st_fr>sz), "InsertFrames", "starting frame number out of range",
-	       String(st_fr))) return false;
+               String(st_fr))) return false;
   if(TestError((n_fr <= 0), "InsertFrames", "number of frames <= 0")) return false;
   AddFrames(n_fr);
   if(st_fr==sz) {
-    return true;		// done!
+    return true;                // done!
   }
-  int n_mv = sz - st_fr;	// number that must be moved
-  sz += n_fr;			// update to added size
+  int n_mv = sz - st_fr;        // number that must be moved
+  sz += n_fr;                   // update to added size
   int frsz = frameSize();
   int trg_o = sz-1;
   int src_o = sz-1-n_fr;
-  for(int i=0; i<n_mv; i++) {	// shift everyone over
+  for(int i=0; i<n_mv; i++) {   // shift everyone over
     int trg_o_st = (trg_o - i) * frsz;
     int src_o_st = (src_o - i) * frsz;
     for(int j=0;j<frsz;j++) {
@@ -1826,7 +1827,7 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   // blank out new guys
   const void* blank = El_GetBlank_();
   int st = st_fr * frsz;
-  int ed = (st_fr+n_fr) * frsz; 
+  int ed = (st_fr+n_fr) * frsz;
   for (int i = st; i < ed; ++i) {
     El_Copy_(FastEl_Flat_(i), blank);
   }
@@ -1848,7 +1849,7 @@ void taMatrix::Reset() {
 
 
 void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
-    fixed_dealloc_fun fixed_dealloc_) 
+    fixed_dealloc_fun fixed_dealloc_)
 {
   // first, clear out any old data, use NULL first to dealloc if needed
   SetArray_(NULL);
@@ -1858,7 +1859,7 @@ void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
   alloc_size = -1; // flag for fixed data
   geom.Reset();
   SetGeomN(geom_);
-  
+
 }
 
 bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
@@ -1874,13 +1875,13 @@ bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
     bool valid = GeomIsValid(dims_, geom_, &err_msg);
     if (TestError(!valid, "SetGeom_", err_msg)) return false;
   }
-  
+
   // flex not allowed for fixed data
   if (isFixedData()) {
-    if (TestError((geom_[dims_-1] == 0), "SetGeom_", 
+    if (TestError((geom_[dims_-1] == 0), "SetGeom_",
       "fixed data cannot use flex sizing")) return false;
   }
-  
+
   // NOTE: following routine is conservative of existing geom
   // if you are using flex sizing, it will collapse any existing!!!
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
@@ -1895,7 +1896,7 @@ bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
   }
   if (geom[dims_ -1] > geom_[dims_ - 1])
     collapse_slices = true;
-  
+
   // assign storage if not fixed
   if (isFixedData()) {
     geom.Set(dims_ -1, geom_[dims_ - 1]);
@@ -1953,13 +1954,13 @@ void taMatrix::UpdateAfterEdit_impl() {
 void taMatrix::UpdateGeom() {
   // NOTE: this routine is ONLY intended for the case of updating after loading
   // from a stream -- no slice checking because there can't really be any yet!
-  // handle legacy/graceful case wherein size is non-zero, but no dims -- 
+  // handle legacy/graceful case wherein size is non-zero, but no dims --
   // set dims to 1, and dim[0] to the size
   if ((size != 0) && (geom.dims() == 0)) {
     geom.SetDims(1);
     geom.Set(0, size);
   }
-  
+
   // get overall framesize and frames
   int dims_ = geom.dims(); // cache
   // make sure dims are valid (outer dim can be 0, others must be >0)
@@ -2012,7 +2013,7 @@ void taMatrix::UpdateSlices_Realloc(ta_intptr_t base_delta) {
     mat->Slice_Realloc(base_delta); // note, recursively calls realloc
   }
 }
- 
+
 ////////////////////////////////////////////////////
 //   sub-matrix reading and writing functions
 
@@ -2045,8 +2046,8 @@ Variant taMatrix::RenderValue(const Variant& dest_val, const Variant& src_val, R
 }
 
 void taMatrix::WriteFmSubMatrix(const taMatrix* src, RenderOp render_op,
-				int off0, int off1, int off2,
-				int off3, int off4, int off5, int off6) {
+                                int off0, int off1, int off2,
+                                int off3, int off4, int off5, int off6) {
   if(!src) return;
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixIndex srcp;
@@ -2061,9 +2062,9 @@ void taMatrix::WriteFmSubMatrix(const taMatrix* src, RenderOp render_op,
   }
 }
 
-void taMatrix::ReadToSubMatrix(taMatrix* dest, RenderOp render_op, 
-			       int off0, int off1, int off2,
-			       int off3, int off4, int off5, int off6) {
+void taMatrix::ReadToSubMatrix(taMatrix* dest, RenderOp render_op,
+                               int off0, int off1, int off2,
+                               int off3, int off4, int off5, int off6) {
   if(!dest) return;
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixIndex srcp;
@@ -2081,13 +2082,13 @@ void taMatrix::ReadToSubMatrix(taMatrix* dest, RenderOp render_op,
 }
 
 void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, RenderOp render_op,
-				      int off0, int off1, int off2,
-				      int off3, int off4, int off5, int off6) {
+                                      int off0, int off1, int off2,
+                                      int off3, int off4, int off5, int off6) {
   if(!src) return;
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixIndex srcp;
   int fr_max = frames();
-  bool src_frames = false;	// source has frames
+  bool src_frames = false;      // source has frames
   if(src->dims() == dims()) {
     fr_max = MIN(fr_max, src->frames());
     src_frames = true;
@@ -2111,9 +2112,9 @@ void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, RenderOp render_op,
   }
 }
 
-void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
-				     int off0, int off1, int off2,
-				     int off3, int off4, int off5, int off6) {
+void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
+                                     int off0, int off1, int off2,
+                                     int off3, int off4, int off5, int off6) {
   if(!dest) return;
   dest->EnforceFrames(frames()); // match them up
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
@@ -2128,16 +2129,16 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
       trgp += srcp;
       Variant sval = sfr->SafeElAsVarN(trgp);
       if(!sval.isInvalid()) {
-	Variant dval = dfr->FastElAsVar_Flat(i);
-	dval = RenderValue(dval, sval, render_op);
-	dfr->SetFmVar_Flat(dval, i);
+        Variant dval = dfr->FastElAsVar_Flat(i);
+        dval = RenderValue(dval, sval, render_op);
+        dfr->SetFmVar_Flat(dval, i);
       }
     }
   }
 }
 
 /////////////////////////////////////////////////////////
-//		Operators
+//              Operators
 
 //////////// op =
 // taMatrix* taMatrix::operator=(const taMatrix& t) {
@@ -2153,7 +2154,7 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
 //       ((double_Matrix*)this)->FastEl_Flat(i) = ((double_Matrix*)&t)->FastEl_Flat(i);
 //     }
 //   }
-//   else {			// use variants -- no need to optimize
+//   else {                     // use variants -- no need to optimize
 //     TA_FOREACH_INDEX(i, *this) {
 //       SetFmVar_Flat(t.FastElAsVar_Flat(i), i);
 //     }
@@ -2178,7 +2179,7 @@ taMatrix* taMatrix::operator=(const Variant& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) = vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       SetFmVar_Flat(t, i);
     }
@@ -2204,7 +2205,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2235,7 +2236,7 @@ taMatrix* taMatrix::operator+(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2264,7 +2265,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2295,7 +2296,7 @@ taMatrix* taMatrix::operator-(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2322,7 +2323,7 @@ taMatrix* taMatrix::operator-() const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2352,7 +2353,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2383,7 +2384,7 @@ taMatrix* taMatrix::operator*(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2403,7 +2404,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     TA_FOREACH_INDEX(i, *this) {
       float den = ((float_Matrix*)&t)->FastEl_Flat(i);
       if(!TestError(den == 0.0f, "/", "Floating Point Exception: Division by Zero"))
-	rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) / den;
+        rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) / den;
     }
     return rval;
   }
@@ -2412,11 +2413,11 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     TA_FOREACH_INDEX(i, *this) {
       double den = ((double_Matrix*)&t)->FastEl_Flat(i);
       if(!TestError(den == 0.0, "/", "Floating Point Exception: Division by Zero"))
-	rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) / den;
+        rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) / den;
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2436,7 +2437,7 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
     float vt = t.toFloat();
     if(!TestError(vt == 0.0, "/", "Floating Point Exception: Division by Zero")) {
       TA_FOREACH_INDEX(i, *this) {
-	rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) / vt;
+        rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) / vt;
       }
     }
     return rval;
@@ -2446,12 +2447,12 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
     double vt = t.toDouble();
     if(!TestError(vt == 0.0, "/", "Floating Point Exception: Division by Zero")) {
       TA_FOREACH_INDEX(i, *this) {
-	rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) / vt;
+        rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) / vt;
       }
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2475,7 +2476,7 @@ taMatrix* taMatrix::operator%(const taMatrix& t) const {
     if(TestError(true, "%", "not supported for floating-point types"))
       return NULL;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2498,7 +2499,7 @@ taMatrix* taMatrix::operator%(const Variant& t) const {
     if(TestError(true, "%", "not supported for floating-point types"))
       return NULL;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2527,12 +2528,12 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
      rval->SetFmVar_Flat(pow(FastElAsVar_Flat(i).toDouble(),
-			     t.FastElAsVar_Flat(i).toDouble()), i);
+                             t.FastElAsVar_Flat(i).toDouble()), i);
     }
     return rval;
   }
@@ -2559,7 +2560,7 @@ taMatrix* taMatrix::operator^(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     double vt = t.toDouble();
@@ -2589,7 +2590,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2620,7 +2621,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2637,11 +2638,11 @@ Variant taMatrix::Max() const {
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = ((float_Matrix*)this)->FastEl_Flat(i);
-	first = false;
+        rval = ((float_Matrix*)this)->FastEl_Flat(i);
+        first = false;
       }
       else {
-	rval = MAX(((float_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = MAX(((float_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
@@ -2651,25 +2652,25 @@ Variant taMatrix::Max() const {
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = ((double_Matrix*)this)->FastEl_Flat(i);
-	first = false;
+        rval = ((double_Matrix*)this)->FastEl_Flat(i);
+        first = false;
       }
       else {
-	rval = MAX(((double_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = MAX(((double_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     Variant rval;
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = FastElAsVar_Flat(i);
-	first = false;
+        rval = FastElAsVar_Flat(i);
+        first = false;
       }
       else {
-	rval = MAX(FastElAsVar_Flat(i), rval);
+        rval = MAX(FastElAsVar_Flat(i), rval);
       }
     }
     return rval;
@@ -2695,7 +2696,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2726,7 +2727,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2743,11 +2744,11 @@ Variant taMatrix::Min() const {
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = ((float_Matrix*)this)->FastEl_Flat(i);
-	first = false;
+        rval = ((float_Matrix*)this)->FastEl_Flat(i);
+        first = false;
       }
       else {
-	rval = MIN(((float_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = MIN(((float_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
@@ -2757,25 +2758,25 @@ Variant taMatrix::Min() const {
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = ((double_Matrix*)this)->FastEl_Flat(i);
-	first = false;
+        rval = ((double_Matrix*)this)->FastEl_Flat(i);
+        first = false;
       }
       else {
-	rval = MIN(((double_Matrix*)this)->FastEl_Flat(i), rval);
+        rval = MIN(((double_Matrix*)this)->FastEl_Flat(i), rval);
       }
     }
     return Variant(rval);
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     Variant rval;
     bool first = true;
     TA_FOREACH_INDEX(i, *this) {
       if(first) {
-	rval = FastElAsVar_Flat(i);
-	first = false;
+        rval = FastElAsVar_Flat(i);
+        first = false;
       }
       else {
-	rval = MIN(FastElAsVar_Flat(i), rval);
+        rval = MIN(FastElAsVar_Flat(i), rval);
       }
     }
     return rval;
@@ -2806,7 +2807,7 @@ taMatrix* taMatrix::Abs() const {
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2833,7 +2834,7 @@ void taMatrix::operator+=(const taMatrix& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) += ((double_Matrix*)&t)->FastEl_Flat(i);
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2861,7 +2862,7 @@ void taMatrix::operator+=(const Variant& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) += vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2886,7 +2887,7 @@ void taMatrix::operator-=(const taMatrix& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) -= ((double_Matrix*)&t)->FastEl_Flat(i);
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2914,7 +2915,7 @@ void taMatrix::operator-=(const Variant& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) -= vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2939,7 +2940,7 @@ void taMatrix::operator*=(const taMatrix& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) *= ((double_Matrix*)&t)->FastEl_Flat(i);
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2967,7 +2968,7 @@ void taMatrix::operator*=(const Variant& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) *= vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -2992,7 +2993,7 @@ void taMatrix::operator/=(const taMatrix& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) /= ((double_Matrix*)&t)->FastEl_Flat(i);
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -3020,7 +3021,7 @@ void taMatrix::operator/=(const Variant& t) {
       ((double_Matrix*)this)->FastEl_Flat(i) /= vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -3041,7 +3042,7 @@ void taMatrix::operator%=(const taMatrix& t) {
     if(TestError(true, "%", "not supported for floating-point types"))
       return;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -3063,7 +3064,7 @@ void taMatrix::operator%=(const Variant& t) {
     if(TestError(true, "%", "not supported for floating-point types"))
       return;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
     TA_FOREACH_INDEX(i, *this) {
@@ -3087,7 +3088,7 @@ taMatrix* taMatrix::operator<(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) < ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) < t.FastElAsVar_Flat(i);
     }
@@ -3112,7 +3113,7 @@ taMatrix* taMatrix::operator<(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) < vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) < t;
     }
@@ -3135,7 +3136,7 @@ taMatrix* taMatrix::operator>(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) > ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) > t.FastElAsVar_Flat(i);
     }
@@ -3160,7 +3161,7 @@ taMatrix* taMatrix::operator>(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) > vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) > t;
     }
@@ -3183,7 +3184,7 @@ taMatrix* taMatrix::operator<=(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) <= ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) <= t.FastElAsVar_Flat(i);
     }
@@ -3208,7 +3209,7 @@ taMatrix* taMatrix::operator<=(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) <= vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) <= t;
     }
@@ -3231,7 +3232,7 @@ taMatrix* taMatrix::operator>=(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) >= ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) >= t.FastElAsVar_Flat(i);
     }
@@ -3256,7 +3257,7 @@ taMatrix* taMatrix::operator>=(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) >= vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) >= t;
     }
@@ -3279,7 +3280,7 @@ taMatrix* taMatrix::operator==(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) == ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) == t.FastElAsVar_Flat(i);
     }
@@ -3304,7 +3305,7 @@ taMatrix* taMatrix::operator==(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) == vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) == t;
     }
@@ -3327,7 +3328,7 @@ taMatrix* taMatrix::operator!=(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) != ((double_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) != t.FastElAsVar_Flat(i);
     }
@@ -3352,7 +3353,7 @@ taMatrix* taMatrix::operator!=(const Variant& t) const {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) != vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i) != t;
     }
@@ -3375,7 +3376,7 @@ taMatrix* taMatrix::operator&&(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((int_Matrix*)this)->FastEl_Flat(i) && ((int_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() && t.FastElAsVar_Flat(i).toBool();
     }
@@ -3400,7 +3401,7 @@ taMatrix* taMatrix::operator&&(const Variant& t) const {
       rval->FastEl_Flat(i) = ((int_Matrix*)this)->FastEl_Flat(i) && vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     bool vt = t.toBool();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() && vt;
@@ -3424,7 +3425,7 @@ taMatrix* taMatrix::operator||(const taMatrix& t) const {
       rval->FastEl_Flat(i) = (((int_Matrix*)this)->FastEl_Flat(i) || ((int_Matrix*)&t)->FastEl_Flat(i));
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() || t.FastElAsVar_Flat(i).toBool();
     }
@@ -3449,7 +3450,7 @@ taMatrix* taMatrix::operator||(const Variant& t) const {
       rval->FastEl_Flat(i) = ((int_Matrix*)this)->FastEl_Flat(i) || vt;
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     bool vt = t.toBool();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() || vt;
@@ -3470,7 +3471,7 @@ taMatrix* taMatrix::operator!() const {
       rval->FastEl_Flat(i) = !((int_Matrix*)this)->FastEl_Flat(i);
     }
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = !FastElAsVar_Flat(i).toBool();
     }
@@ -3501,22 +3502,22 @@ taMatrix* taMatrix::Flatten() const {
     // first go through and flatten any sub-matricies!
     taMatrix* tmp_mat = (taMatrix*)Clone(); // we store modified vals in here
     taBase::Ref(tmp_mat);
-    int nc = 0;			// new count with flattend submatricies
+    int nc = 0;                 // new count with flattend submatricies
     TA_FOREACH_INDEX(i, *this) {
       Variant var = tmp_mat->FastElAsVar_Flat(i);
       if(var.isMatrixType()) {
-	taMatrix* smat = var.toMatrix();
-	if(smat->ElView()) {	// it is a view
-	  taMatrix* flmat = smat->Flatten(); // flatten it!
-	  nc += flmat->size;
-	  tmp_mat->SetFmVar_Flat((Variant)flmat, i); // replace
-	}
-	else {
-	  nc += smat->size;	// keep
-	}
+        taMatrix* smat = var.toMatrix();
+        if(smat->ElView()) {    // it is a view
+          taMatrix* flmat = smat->Flatten(); // flatten it!
+          nc += flmat->size;
+          tmp_mat->SetFmVar_Flat((Variant)flmat, i); // replace
+        }
+        else {
+          nc += smat->size;     // keep
+        }
       }
       else {
-	nc++;			// just another item
+        nc++;                   // just another item
       }
     }
 
@@ -3525,20 +3526,20 @@ taMatrix* taMatrix::Flatten() const {
     TA_FOREACH_INDEX(i, *this) {
       Variant var = tmp_mat->FastElAsVar_Flat(i);
       if(var.isMatrixType()) {
-	taMatrix* smat = var.toMatrix(); // we know it is already flat
-	for(int j=0; j < smat->size; j++) {
-	  Variant fitm = smat->FastElAsVar_Flat(j);
-	  rval->SetFmVar_Flat(fitm, cnt++);
-	}
+        taMatrix* smat = var.toMatrix(); // we know it is already flat
+        for(int j=0; j < smat->size; j++) {
+          Variant fitm = smat->FastElAsVar_Flat(j);
+          rval->SetFmVar_Flat(fitm, cnt++);
+        }
       }
       else {
-	rval->SetFmVar_Flat(var, cnt++);
+        rval->SetFmVar_Flat(var, cnt++);
       }
     }
     taBase::UnRef(tmp_mat);
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeom(1, ic);
     TA_FOREACH_INDEX(i, *this) {
@@ -3557,7 +3558,7 @@ int_Matrix* taMatrix::Find() const {
   }
 
   int dm = dims();
-  MatrixIndex sidx;				   // slice idx
+  MatrixIndex sidx;                                // slice idx
   int_Matrix* rval = new int_Matrix(2, dm, n_nonz);
   int cnt = 0;
   for(int i=0;i<size;i++) {
@@ -3581,7 +3582,7 @@ taMatrix* taMatrix::Transpose() const {
     float_Matrix* rval = new float_Matrix(tg);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-	rval->FastEl(j,i) = ((float_Matrix*)this)->FastEl(i,j);
+        rval->FastEl(j,i) = ((float_Matrix*)this)->FastEl(i,j);
       }
     }
     return rval;
@@ -3590,17 +3591,17 @@ taMatrix* taMatrix::Transpose() const {
     double_Matrix* rval = new double_Matrix(tg);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-	rval->FastEl(j,i) = ((double_Matrix*)this)->FastEl(i,j);
+        rval->FastEl(j,i) = ((double_Matrix*)this)->FastEl(i,j);
       }
     }
     return rval;
   }
-  else {			// use variants -- no need to optimize
+  else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(tg);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-	rval->SetFmVar(SafeElAsVar(i,j), j,i);
+        rval->SetFmVar(SafeElAsVar(i,j), j,i);
       }
     }
     return rval;
@@ -3610,7 +3611,7 @@ taMatrix* taMatrix::Transpose() const {
 
 
 //////////////////////////
-//   String_Matrix	//
+//   String_Matrix      //
 //////////////////////////
 
 int String_Matrix::defAlignment() const {
@@ -3660,7 +3661,7 @@ void String_Matrix::FmDelimString(const String& str, const String& delim) {
       int extra = ((ar.size - size) / frameSize());
       AddFrames(extra);
       while(size < ar.size)
-	AddFrames(1);
+        AddFrames(1);
     }
   }
   int idx = 0;
@@ -3678,7 +3679,7 @@ void String_Matrix::FmDelimString(const String& str, const String& delim) {
 }
 
 //////////////////////////
-//   float_Matrix	//
+//   float_Matrix       //
 //////////////////////////
 
 void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {
@@ -3697,7 +3698,7 @@ bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 
 
 //////////////////////////
-//   double_Matrix	//
+//   double_Matrix      //
 //////////////////////////
 
 void double_Matrix::Dump_Save_Item(ostream& strm, int idx) {
@@ -3715,14 +3716,14 @@ bool double_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
-//   complex_Matrix	//
+//   complex_Matrix     //
 //////////////////////////
 
 bool complex_Matrix::CheckComplexGeom(const MatrixGeom& gm, bool err) {
   if(gm.dims() < 2 || gm.dim(0) != 2) {
     if(!err) return false;
     taMisc::Error("CheckComplexGeom: geometry is not correct for representing complex numbers -- inner-most dimension must be size 2, and there must be 2 or more dimensions",
-		  gm.PrintStr());
+                  gm.PrintStr());
     return false;
   }
   return true;
@@ -3735,17 +3736,17 @@ MatrixGeom complex_Matrix::NonComplexGeom(const MatrixGeom& gm) {
   for (int i = 1; i < gm.dims(); ++i) {
     ngm.Set(i-1, gm.dim(i));
   }
-  return ngm;	 
+  return ngm;
 }
 
 MatrixGeom complex_Matrix::ComplexGeom(const MatrixGeom& gm) {
   MatrixGeom ngm;
   ngm.SetDims(gm.dims() + 1); // add 1 dim
-  ngm.Set(0,2);		      // inner = 2
+  ngm.Set(0,2);               // inner = 2
   for (int i = 0; i < gm.dims(); ++i) {
     ngm.Set(i+1, gm.dim(i));
   }
-  return ngm;	 
+  return ngm;
 }
 
 double_Matrix* complex_Matrix::SqMag() const {
@@ -3820,7 +3821,7 @@ void complex_Matrix::SetReal(const double_Matrix& reals, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "SetReal", "input matrix does not have same geometry as 	destination matrix",reals.geom.PrintStr()))
+    if(TestError(cgm != geom, "SetReal", "input matrix does not have same geometry as destination matrix",reals.geom.PrintStr()))
       return;
   }
   for(int i=0; i < reals.size; ++i) {
@@ -3835,7 +3836,7 @@ void complex_Matrix::SetImag(const double_Matrix& imags, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "SetImag", "input matrix does not have same geometry as 	destination matrix",imags.geom.PrintStr()))
+    if(TestError(cgm != geom, "SetImag", "input matrix does not have same geometry as destination matrix",imags.geom.PrintStr()))
       return;
   }
   for(int i=0; i < imags.size; ++i) {
@@ -3844,7 +3845,7 @@ void complex_Matrix::SetImag(const double_Matrix& imags, bool copy_geom) {
 }
 
 void complex_Matrix::Complex(const double_Matrix& reals, const double_Matrix& imags,
-			     bool copy_geom) {
+                             bool copy_geom) {
   if(TestError(reals.geom != imags.geom, "Complex", "input reals and imags matricies do not have same geometry.  reals:",reals.geom.PrintStr(), "imags:", imags.geom.PrintStr()))
     return;
   MatrixGeom cgm = ComplexGeom(reals.geom);
@@ -3853,7 +3854,7 @@ void complex_Matrix::Complex(const double_Matrix& reals, const double_Matrix& im
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "Complex", "input matrices do not have same geometry as 	destination matrix",reals.geom.PrintStr()))
+    if(TestError(cgm != geom, "Complex", "input matrices do not have same geometry as destination matrix",reals.geom.PrintStr()))
       return;
   }
   for(int i=0; i < reals.size; ++i) {
@@ -3869,7 +3870,7 @@ void complex_Matrix::Expi(const double_Matrix& angles, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "Expi", "input matrix does not have same geometry as 	destination matrix",angles.geom.PrintStr()))
+    if(TestError(cgm != geom, "Expi", "input matrix does not have same geometry as destination matrix",angles.geom.PrintStr()))
       return;
   }
   for(int i=0; i < angles.size; ++i) {
@@ -3923,28 +3924,28 @@ taMatrix* complex_Matrix::operator*(const taMatrix& t) const {
     if(t.GetDataValType() == VT_DOUBLE) {
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double nr = tr * orr;	// just straight mult both factors
-	double nj = tj * orr;
-	rval->FastEl_Flat(ci) = nr;
-	rval->FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double nr = tr * orr;   // just straight mult both factors
+        double nj = tj * orr;
+        rval->FastEl_Flat(ci) = nr;
+        rval->FastEl_Flat(ci+1) = nj;
       }
       return rval;
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double nr = tr * orr;
-	double nj = tj * orr;
-	rval->FastEl_Flat(ci) = nr;
-	rval->FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double nr = tr * orr;
+        double nj = tj * orr;
+        rval->FastEl_Flat(ci) = nr;
+        rval->FastEl_Flat(ci+1) = nj;
       }
       return rval;
     }
@@ -3953,28 +3954,28 @@ taMatrix* complex_Matrix::operator*(const taMatrix& t) const {
     if(t.GetDataValType() == VT_DOUBLE) {
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
-	double nr = tr * orr - tj * oj;
-	double nj = tr * oj + tj * orr;
-	rval->FastEl_Flat(i) = nr;
-	rval->FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+        double nr = tr * orr - tj * oj;
+        double nj = tr * oj + tj * orr;
+        rval->FastEl_Flat(i) = nr;
+        rval->FastEl_Flat(i+1) = nj;
       }
       return rval;
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double oj = t.FastElAsVar_Flat(i+1).toDouble();
-	double nr = tr * orr - tj * oj;
-	double nj = tr * oj + tj * orr;
-	rval->FastEl_Flat(i) = nr;
-	rval->FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double oj = t.FastElAsVar_Flat(i+1).toDouble();
+        double nr = tr * orr - tj * oj;
+        double nj = tr * oj + tj * orr;
+        rval->FastEl_Flat(i) = nr;
+        rval->FastEl_Flat(i+1) = nj;
       }
       return rval;
     }
@@ -3992,36 +3993,36 @@ taMatrix* complex_Matrix::operator/(const taMatrix& t) const {
     if(t.GetDataValType() == VT_DOUBLE) {
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double nr = 0.0;
-	double nj = 0.0;
-	if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = tr / orr;	// just straight mult both factors
-	  nj = tj / orr;
-	}
-	rval->FastEl_Flat(ci) = nr;
-	rval->FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double nr = 0.0;
+        double nj = 0.0;
+        if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = tr / orr;        // just straight mult both factors
+          nj = tj / orr;
+        }
+        rval->FastEl_Flat(ci) = nr;
+        rval->FastEl_Flat(ci+1) = nj;
       }
       return rval;
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double nr = 0.0;
-	double nj = 0.0;
-	if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = tr / orr;	// just straight mult both factors
-	  nj = tj / orr;
-	}
-	rval->FastEl_Flat(ci) = nr;
-	rval->FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double nr = 0.0;
+        double nj = 0.0;
+        if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = tr / orr;        // just straight mult both factors
+          nj = tj / orr;
+        }
+        rval->FastEl_Flat(ci) = nr;
+        rval->FastEl_Flat(ci+1) = nj;
       }
       return rval;
     }
@@ -4030,38 +4031,38 @@ taMatrix* complex_Matrix::operator/(const taMatrix& t) const {
     if(t.GetDataValType() == VT_DOUBLE) {
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
-	double n = orr*orr + oj*oj;
-	double nr = 0.0f;
-	double nj = 0.0f;
-	if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = (tr * orr + tj * oj) / n;
-	  nj = (tj * orr - tr * oj) / n;
-	}
-	rval->FastEl_Flat(i) = nr;
-	rval->FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+        double n = orr*orr + oj*oj;
+        double nr = 0.0f;
+        double nj = 0.0f;
+        if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = (tr * orr + tj * oj) / n;
+          nj = (tj * orr - tr * oj) / n;
+        }
+        rval->FastEl_Flat(i) = nr;
+        rval->FastEl_Flat(i+1) = nj;
       }
       return rval;
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       complex_Matrix* rval = new complex_Matrix(this->geom);
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double oj = t.FastElAsVar_Flat(i+1).toDouble();
-	double n = orr*orr + oj*oj;
-	double nr = 0.0f;
-	double nj = 0.0f;
-	if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = (tr * orr + tj * oj) / n;
-	  nj = (tj * orr - tr * oj) / n;
-	}
-	rval->FastEl_Flat(i) = nr;
-	rval->FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double oj = t.FastElAsVar_Flat(i+1).toDouble();
+        double n = orr*orr + oj*oj;
+        double nr = 0.0f;
+        double nj = 0.0f;
+        if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = (tr * orr + tj * oj) / n;
+          nj = (tj * orr - tr * oj) / n;
+        }
+        rval->FastEl_Flat(i) = nr;
+        rval->FastEl_Flat(i+1) = nj;
       }
       return rval;
     }
@@ -4078,52 +4079,52 @@ void complex_Matrix::operator*=(const taMatrix& t) {
   if(t.geom == ncg) {
     if(t.GetDataValType() == VT_DOUBLE) {
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double nr = tr * orr;
-	double nj = tj * orr;
-	FastEl_Flat(ci) = nr;
-	FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double nr = tr * orr;
+        double nj = tj * orr;
+        FastEl_Flat(ci) = nr;
+        FastEl_Flat(ci+1) = nj;
       }
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double nr = tr * orr;
-	double nj = tj * orr;
-	FastEl_Flat(ci) = nr;
-	FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double nr = tr * orr;
+        double nj = tj * orr;
+        FastEl_Flat(ci) = nr;
+        FastEl_Flat(ci+1) = nj;
       }
     }
   }
   else if(t.geom == geom) {
     if(t.GetDataValType() == VT_DOUBLE) {
       for(int i=0; i < size; i++) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
-	double nr = tr * orr - tj * oj;
-	double nj = tr * oj + tj * orr;
-	FastEl_Flat(i) = nr;
-	FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+        double nr = tr * orr - tj * oj;
+        double nj = tr * oj + tj * orr;
+        FastEl_Flat(i) = nr;
+        FastEl_Flat(i+1) = nj;
       }
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double oj = t.FastElAsVar_Flat(i+1).toDouble();
-	double nr = tr * orr - tj * oj;
-	double nj = tr * oj + tj * orr;
-	FastEl_Flat(i) = nr;
-	FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double oj = t.FastElAsVar_Flat(i+1).toDouble();
+        double nr = tr * orr - tj * oj;
+        double nj = tr * oj + tj * orr;
+        FastEl_Flat(i) = nr;
+        FastEl_Flat(i+1) = nj;
       }
     }
   }
@@ -4138,70 +4139,70 @@ void complex_Matrix::operator/=(const taMatrix& t) {
   if(t.geom == ncg) {
     if(t.GetDataValType() == VT_DOUBLE) {
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double nr = 0.0;
-	double nj = 0.0;
-	if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = tr / orr;	// just straight mult both factors
-	  nj = tj / orr;
-	}
-	FastEl_Flat(ci) = nr;
-	FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double nr = 0.0;
+        double nj = 0.0;
+        if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = tr / orr;        // just straight mult both factors
+          nj = tj / orr;
+        }
+        FastEl_Flat(ci) = nr;
+        FastEl_Flat(ci+1) = nj;
       }
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       for(int i=0; i < t.size; i++) {
-	int ci = i*2;
-	double tr = FastEl_Flat(ci);
-	double tj = FastEl_Flat(ci+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double nr = 0.0;
-	double nj = 0.0;
-	if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = tr / orr;	// just straight mult both factors
-	  nj = tj / orr;
-	}
-	FastEl_Flat(ci) = nr;
-	FastEl_Flat(ci+1) = nj;
+        int ci = i*2;
+        double tr = FastEl_Flat(ci);
+        double tj = FastEl_Flat(ci+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double nr = 0.0;
+        double nj = 0.0;
+        if(!TestError(orr == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = tr / orr;        // just straight mult both factors
+          nj = tj / orr;
+        }
+        FastEl_Flat(ci) = nr;
+        FastEl_Flat(ci+1) = nj;
       }
     }
   }
   else if(t.geom == geom) {
     if(t.GetDataValType() == VT_DOUBLE) {
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
-	double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
-	double n = orr*orr + oj*oj;
-	double nr = 0.0f;
-	double nj = 0.0f;
-	if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = (tr * orr + tj * oj) / n;
-	  nj = (tj * orr - tr * oj) / n;
-	}
-	FastEl_Flat(i) = nr;
-	FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+        double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+        double n = orr*orr + oj*oj;
+        double nr = 0.0f;
+        double nj = 0.0f;
+        if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = (tr * orr + tj * oj) / n;
+          nj = (tj * orr - tr * oj) / n;
+        }
+        FastEl_Flat(i) = nr;
+        FastEl_Flat(i+1) = nj;
       }
     }
-    else {			// use variants -- no need to optimize
+    else {                      // use variants -- no need to optimize
       for(int i=0; i < size; i+=2) {
-	double tr = FastEl_Flat(i);
-	double tj = FastEl_Flat(i+1);
-	double orr = t.FastElAsVar_Flat(i).toDouble();
-	double oj = t.FastElAsVar_Flat(i+1).toDouble();
-	double n = orr*orr + oj*oj;
-	double nr = 0.0f;
-	double nj = 0.0f;
-	if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
-	  nr = (tr * orr + tj * oj) / n;
-	  nj = (tj * orr - tr * oj) / n;
-	}
-	FastEl_Flat(i) = nr;
-	FastEl_Flat(i+1) = nj;
+        double tr = FastEl_Flat(i);
+        double tj = FastEl_Flat(i+1);
+        double orr = t.FastElAsVar_Flat(i).toDouble();
+        double oj = t.FastElAsVar_Flat(i+1).toDouble();
+        double n = orr*orr + oj*oj;
+        double nr = 0.0f;
+        double nj = 0.0f;
+        if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+          nr = (tr * orr + tj * oj) / n;
+          nj = (tj * orr - tr * oj) / n;
+        }
+        FastEl_Flat(i) = nr;
+        FastEl_Flat(i+1) = nj;
       }
     }
   }
@@ -4227,7 +4228,7 @@ taMatrix* complex_Matrix::Transpose() const {
 }
 
 //////////////////////////
-//   int_Matrix		//
+//   int_Matrix         //
 //////////////////////////
 
 bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {
@@ -4241,7 +4242,7 @@ bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
-//   slice_Matrix	//
+//   slice_Matrix       //
 //////////////////////////
 
 int_Matrix* slice_Matrix::Expand(int implicit_end) {
@@ -4254,8 +4255,8 @@ int_Matrix* slice_Matrix::Expand(int implicit_end) {
   int end = FastEl(1);
   int step = FastEl(2);
   if(step == 0) step = 1;
-  int sz = implicit_end;		// default size
-  if(end > 0)			// if end set, then it is size
+  int sz = implicit_end;                // default size
+  if(end > 0)                   // if end set, then it is size
     sz = end;
   if(!FixSliceValsFromSize(start, end, sz)) {
     return NULL;
@@ -4279,7 +4280,7 @@ int_Matrix* slice_Matrix::Expand(int implicit_end) {
 
 
 //////////////////////////
-//   byte_Matrix	//
+//   byte_Matrix        //
 //////////////////////////
 
 bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
@@ -4296,7 +4297,7 @@ bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
-//   voidptr_Matrix	//
+//   voidptr_Matrix     //
 //////////////////////////
 
 bool voidptr_Matrix::StrValIsValid(const String& str, String* err_msg) const {
@@ -4310,7 +4311,7 @@ bool voidptr_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
-//   Variant_Matrix	//
+//   Variant_Matrix     //
 //////////////////////////
 
 int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
@@ -4318,11 +4319,11 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
   Variant& val = FastEl_Flat(idx);
   if (!val.Dump_Load_Type(strm, c)) goto end;
   if (c == EOF) return c;
-  
+
   switch (val.type()) {
   case Variant::T_Invalid: // no content
     c = taMisc::skip_white(strm); // should read ;
-    break; 
+    break;
   case Variant::T_Bool:
   case Variant::T_Int:
   case Variant::T_UInt:
@@ -4338,8 +4339,8 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
     val.setChar((char)sc, val.isNull());
     }
     break;
-  
-  case Variant::T_String: 
+
+  case Variant::T_String:
     //note: an empty string was not written
     c = taMisc::skip_till_start_quote_or_semi(strm);
     if (c == '\"') {
@@ -4350,8 +4351,8 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
 //  case Variant::T_Ptr:  //not streamable
 //TODO: maybe we should issue a warning???
 //    break;
-  
-  case Variant::T_Base: 
+
+  case Variant::T_Base:
   case Variant::T_Matrix:
     //note: an empty string was not written
     c = taMisc::skip_till_start_quote_or_semi(strm);
@@ -4360,11 +4361,11 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
       val.updateFromString(taMisc::LexBuf);
     }
     break;
-  default: 
+  default:
     c = taMisc::read_till_semi(strm);
     break;
   }
-  
+
 end:
   return c;
 }
@@ -4387,8 +4388,8 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
   case Variant::T_Char: // write chars as ints
     strm << ' ' << val.toInt();
     break;
-  
-  case Variant::T_String: 
+
+  case Variant::T_String:
     strm << ' ';
     //note: doesn't write empty strings
     taMisc::write_quoted_string(strm, val.toString());
@@ -4396,15 +4397,15 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
   case Variant::T_Ptr:  //not streamable
 //TODO: maybe we should issue a warning???
     break;
-  
-  case Variant::T_Base: 
+
+  case Variant::T_Base:
   case Variant::T_Matrix:
     strm << ' ';
     //note: doesn't write empty strings
     taMisc::write_quoted_string(strm, val.toString());
     break;
-  
-  default: 
+
+  default:
     break;
   }
 }
@@ -4417,7 +4418,7 @@ void Variant_Matrix::ReclaimOrphans_(int from, int to) {
 
 
 //////////////////////////
-//   rgb_Matrix	//
+//   rgb_Matrix //
 //////////////////////////
 
 bool rgb_Matrix::StrValIsValid(const String& str, String* err_msg) const {
@@ -4444,7 +4445,7 @@ const rgb_t rgb_Matrix::blank;
 
 
 //////////////////////////
-//  	CircMatrix	//
+//      CircMatrix      //
 //////////////////////////
 
 void CircMatrix::Initialize() {
