@@ -4431,7 +4431,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   fmpfcd_out->SetUnique("wt_scale", true);
   fmpfcd_out->SetUnique("wt_sig", true);
-  fmpfcd_out->wt_sig.dwt_norm = false; // not sure if this is necc but whatever..
+  fmpfcd_out->wt_sig.dwt_norm = false; // this definitely makes a difference!
 
   matrix_to_snrthal->SetUnique("rnd", true);
   matrix_to_snrthal->rnd.mean = 0.7f;

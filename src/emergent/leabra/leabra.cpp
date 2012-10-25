@@ -322,28 +322,14 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
     }
   }
   if(lrs_value == EXT_REW_STAT) {
-    int arval = 0;
     if(net->epoch < 1) {
-      arval = lrate_sched.last_ctr;
+      cur_lrate = lrate_sched.default_val;
     }
     else {
-      arval = (int)(100.0f * net->avg_ext_rew);
+      int arval = (int)(100.0f * net->avg_ext_rew);
+      cur_lrate = lrate * lrate_sched.GetVal(arval);
     }
-    cur_lrate = lrate * lrate_sched.GetVal(arval);
   }
-
-  // this is no longer relevant
-//   if(lrs_value == SE_STAT) {
-//     int seval = 0;
-//     if(net->epoch < 1) {
-//       seval = lrate_sched.last_ctr;
-//     }
-//     else {
-//       seval = (int);
-//     }
-//     cur_lrate = lrate * lrate_sched.GetVal(seval);
-//   }
-
   if(lrs_value == EPOCH) {
     cur_lrate = lrate * lrate_sched.GetVal(epoch);
   }

@@ -714,7 +714,7 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[],
   }
 
   // we only allow a non-zero value in top dim (flex sizing, if enabled)
-  for (int i = 0; i < dims_ ; ++i) {
+  for (int i = 0; i < (dims_-1) ; ++i) {
     if (geom_[i] < 0) {
       if (err_msg)
         *err_msg = "geoms must be >= 0";

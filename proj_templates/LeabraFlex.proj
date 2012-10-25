@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.0.3.0 rev5676
 LeabraProject .projects["LeabraFlex"] { 
   taBase_Group @.templates = [0] {
   };
@@ -656,7 +656,7 @@ LeabraProject .projects["LeabraFlex"] {
 	  ProgEl_List @.init_code = [0] {
 	  };
 
-	  ProgEl_List @.prog_code = [8] {
+	  ProgEl_List @.prog_code = [7] {
 	    Comment @[0] { };
 	    MemberAssign @[1] { };
 	    ProgramCall @[2] { 
@@ -672,13 +672,8 @@ LeabraProject .projects["LeabraFlex"] {
 		ProgArg @[0] { };
 	      };
 	    };
-	    ProgramCall @[5] { 
-	      ProgArg_List @.prog_args = [1] {
-		ProgArg @[0] { };
-	      };
-	    };
-	    MemberAssign @[6] { };
-	    IfElse @[7] { 
+	    MemberAssign @[5] { };
+	    IfElse @[6] { 
 	      ProgEl_List @.true_code = [4] {
 		ProgramCall @[0] { 
 		  ProgArg_List @.prog_args = [1] {
@@ -742,7 +737,7 @@ LeabraProject .projects["LeabraFlex"] {
 	  };
 	};
 
-	ProgEl_List @.prog_code = [21] {
+	ProgEl_List @.prog_code = [22] {
 	  MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
@@ -819,7 +814,12 @@ LeabraProject .projects["LeabraFlex"] {
 	    };
 	  };
 	  NetUpdateView @[19] { };
-	  MethodCall @[20] { 
+	  ProgramCall @[20] { 
+	    ProgArg_List @.prog_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[21] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
@@ -2589,7 +2589,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20120810082256 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20121024142835 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2624,7 +2624,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 2,553 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 3,255 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2667,7 +2667,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.191 secs. -->
+<!-- Served in 0.150 secs. -->
 
 
 
@@ -2884,7 +2884,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_418";
+       name="UserDataItem_List_18";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2906,7 +2906,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_419";
+       name="UserDataItem_List_19";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2940,7 +2940,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_420";
+       name="UserDataItem_List_20";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2962,7 +2962,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      };
      int_Data @["tick"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_421";
+       name="UserDataItem_List_21";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3069,7 +3069,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_420";
+       name="UserDataItem_List_20";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3091,7 +3091,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_421";
+       name="UserDataItem_List_21";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3817,6 +3817,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Function @[0] {
      desc=;
      flags=0;
+     orig_prog_code=;
      name="set_n_units";
      return_type=T_Bool;
      object_type=taOBase;
@@ -3853,6 +3854,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       IfElse @[0] {
        desc=;
        flags=0;
+       orig_prog_code=;
        cond {
 	expr="lay->un_geom.n == n_units || n_units <= 0";
        };
@@ -3864,6 +3866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	ReturnExpr @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 expr {
 	  expr="false";
 	 };
@@ -3878,6 +3881,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MethodCall @[1] {
        desc=;
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs["MasterStartup"].functions[0].args["lay"]$$;
        method=Layer::SetNUnits;
@@ -3900,6 +3904,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       PrintExpr @[2] {
        desc=;
        flags=0;
+       orig_prog_code=;
        expr {
 	expr="\"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
        };
@@ -3909,6 +3914,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ReturnExpr @[3] {
        desc=;
        flags=0;
+       orig_prog_code=;
        expr {
 	expr="true";
        };
@@ -3928,6 +3934,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     IfReturn @[0] {
      desc="don't run if running in the gui!";
      flags=0;
+     orig_prog_code=;
      cond {
       expr="taMisc::gui_active";
      };
@@ -3935,10 +3942,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     RegisterArgs @[1] {
      desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
      flags=0;
+     orig_prog_code=;
     };
     PrintExpr @[2] {
      desc=;
      flags=0;
+     orig_prog_code=;
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
@@ -3948,10 +3957,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[3] {
      desc="= Std variables in startup program itself =";
      flags=0;
+     orig_prog_code=;
     };
     ProgVarFmArg @[4] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog=.projects["LeabraFlex"].programs["MasterStartup"]$$;
      var_name="tag";
      arg_name="tag";
@@ -3959,6 +3970,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[5] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
      var_name="log_dir";
      arg_name="log_dir";
@@ -3966,6 +3978,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[6] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="max_batch";
      arg_name="batches";
@@ -3973,6 +3986,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[7] {
      desc="b_end is parallel-batch mode of operation (see b_start)";
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="max_batch";
      arg_name="b_end";
@@ -3980,6 +3994,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[8] {
      desc="b_start is parallel-batch mode of operation (see also b_end)";
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="batch";
      arg_name="b_start";
@@ -3987,10 +4002,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[9] {
      desc="add our special args from command line";
      flags=0;
+     orig_prog_code=;
     };
     ProgVarFmArg @[10] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      var_name="cur_config";
      arg_name="config";
@@ -3998,6 +4015,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[11] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      var_name="config_id";
      arg_name="config";
@@ -4005,6 +4023,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVarFmArg @[12] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
      var_name="log_trials";
      arg_name="log_trials";
@@ -4012,6 +4031,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     OtherProgramVar @[13] {
      desc=;
      flags=0;
+     orig_prog_code=;
      other_prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"]$;
      set_other=0;
      var_1=.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$$;
@@ -4022,10 +4042,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[14] {
      desc="= Network resize =";
      flags=0;
+     orig_prog_code=;
     };
     MethodCall @[15] {
      desc=;
      flags=OFF;
+     orig_prog_code=;
      result_var=NULL;
      obj=.projects["LeabraFlex"].programs["MasterStartup"].args["network"]$$;
      method=Network::Build;
@@ -4038,14 +4060,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[16] {
      desc="= Training timing sequencing parameters etc =";
      flags=0;
+     orig_prog_code=;
     };
     Comment @[17] {
      desc="= Network args =";
      flags=0;
+     orig_prog_code=;
     };
     MemberFmArg @[18] {
      desc=;
      flags=0;
+     orig_prog_code=;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].args["network"]$;
      path="ct_time.minus";
      arg_name="minus";
@@ -4055,6 +4080,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MemberFmArg @[19] {
      desc=;
      flags=0;
+     orig_prog_code=;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].args["network"]$;
      path="ct_time.plus";
      arg_name="plus";
@@ -4064,6 +4090,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MemberFmArg @[20] {
      desc=;
      flags=0;
+     orig_prog_code=;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].args["network"]$;
      path="ct_sravg.start";
      arg_name="sravg_start";
@@ -4073,6 +4100,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MemberFmArg @[21] {
      desc=;
      flags=0;
+     orig_prog_code=;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].args["network"]$;
      path="ct_sravg.end";
      arg_name="sravg_end";
@@ -4082,14 +4110,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[22] {
      desc="= Program specific vars =";
      flags=0;
+     orig_prog_code=;
     };
     Comment @[23] {
      desc="= Add args to tag name =";
      flags=0;
+     orig_prog_code=;
     };
     IfElse @[24] {
      desc=;
      flags=0;
+     orig_prog_code=;
      cond {
       expr="config_id.empty()";
      };
@@ -4101,6 +4132,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MiscCall @[0] {
        desc=;
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        object_type=taMisc;
        method=taMisc::Error;
@@ -4210,6 +4242,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     AssignExpr @[25] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$$;
      expr {
       expr="\"_\" +  config_id + tag";
@@ -4218,10 +4251,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[26] {
      desc="set any params from Config";
      flags=0;
+     orig_prog_code=;
     };
     DataColsFmArgs @[27] {
      desc=;
      flags=0;
+     orig_prog_code=;
      data_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$$;
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
@@ -4229,10 +4264,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[28] {
      desc="Set log files";
      flags=0;
+     orig_prog_code=;
     };
     IfElse @[29] {
      desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
      flags=0;
+     orig_prog_code=;
      cond {
       expr="taMisc::CheckArgByName(\"b_start\")";
      };
@@ -4244,6 +4281,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MethodCall @[0] {
        desc="directly set variable on batch program";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["batch"]$$;
        method=Program::SetVar;
@@ -4276,6 +4314,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVarFmArg @[1] {
        desc="read in the arg to us too, so we can set file names based on it";
        flags=0;
+       orig_prog_code=;
        prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
        var_name="batch_start";
        arg_name="b_start";
@@ -4283,6 +4322,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MiscCall @[2] {
        desc="string version with leading zeros";
        flags=0;
+       orig_prog_code=;
        result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["batch_str"]$$;
        object_type=taMisc;
        method=taMisc::LeadingZeros;
@@ -4315,6 +4355,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       VarIncr @[3] {
        desc="add to tag for setting log file names";
        flags=0;
+       orig_prog_code=;
        var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
        expr {
 	expr="\".\" + batch_str";
@@ -4330,6 +4371,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MethodCall @[30] {
      desc="save args to file: last arg is to include dmem proc number";
      flags=0;
+     orig_prog_code=;
      result_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$$;
      obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$$;
      method=taBase::GetFileNameFmProject;
@@ -4382,6 +4424,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MiscCall @[31] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
      object_type=taMisc;
      method=taMisc::FullArgStringToFile;
@@ -4404,6 +4447,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MethodCall @[32] {
      desc="last arg is to include dmem proc number";
      flags=0;
+     orig_prog_code=;
      result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$;
      method=taBase::GetFileNameFmProject;
@@ -4456,6 +4500,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     MethodCall @[33] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects["LeabraFlex"].programs["MasterStartup"].vars["EpochOutputData"]$;
      method=DataTable::SaveDataLog;
@@ -4498,6 +4543,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     IfElse @[34] {
      desc=;
      flags=0;
+     orig_prog_code=;
      cond {
       expr="log_trials";
      };
@@ -4509,6 +4555,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MethodCall @[0] {
        desc="last arg is to include dmem proc number";
        flags=0;
+       orig_prog_code=;
        result_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["log_file_nm"]$;
        obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["TrialOutputData"]$$;
        method=taBase::GetFileNameFmProject;
@@ -4561,6 +4608,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       MethodCall @[1] {
        desc="last arg is to restrict log to dmem_proc = 0";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs["MasterStartup"].vars["TrialOutputData"]$;
        method=DataTable::SaveDataLog;
@@ -4610,6 +4658,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     OtherProgramVar @[35] {
      desc=;
      flags=0;
+     orig_prog_code=;
      other_prog=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"]$$;
      set_other=1;
      var_1=$.projects["LeabraFlex"].programs["MasterStartup"].vars["tag"]$;
@@ -4620,10 +4669,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     Comment @[36] {
      desc="= Call sub-startup programs =";
      flags=0;
+     orig_prog_code=;
     };
     DataVarProg @[37] {
      desc=;
      flags=0;
+     orig_prog_code=;
      data_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["Config"]$;
      set_data=0;
      row_spec=ROW_VAL;
@@ -4637,6 +4688,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgramCallVar @[38] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -4658,6 +4710,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     PrintExpr @[39] {
      desc=;
      flags=0;
+     orig_prog_code=;
      expr {
       expr="\"Running: \" << batch.name";
      };
@@ -4667,6 +4720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgramCall @[40] {
      desc=;
      flags=0;
+     orig_prog_code=;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -4811,10 +4865,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[0] {
       desc="= Set log files =";
       flags=0;
+      orig_prog_code=;
      };
      MethodCall @[1] {
       desc="last arg is to include dmem proc number";
       flags=OFF;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["log_file_nm"]$$;
       obj=.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["SampleEpochOutData"]$$;
       method=taBase::GetFileNameFmProject;
@@ -4867,6 +4923,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc="last arg is to restrict log to dmem_proc = 0";
       flags=OFF;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["SampleEpochOutData"]$;
       method=DataTable::SaveDataLog;
@@ -4909,6 +4966,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[3] {
       desc=;
       flags=OFF;
+      orig_prog_code=;
       cond {
        expr="log_trials";
       };
@@ -4920,6 +4978,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="last arg is to include dmem proc number";
 	flags=0;
+	orig_prog_code=;
 	result_var=$.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["log_file_nm"]$;
 	obj=.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["SampleTrialOutData"]$$;
 	method=taBase::GetFileNameFmProject;
@@ -4972,6 +5031,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[1] {
 	desc="last arg is to restrict log to dmem_proc = 0";
 	flags=OFF;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["StartupProgs"]["BasicStartup"].vars["SampleTrialOutData"]$;
 	method=DataTable::SaveDataLog;
@@ -5108,6 +5168,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$$;
       local_ctr_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$$;
       counter=Network::batch;
@@ -5121,6 +5182,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="init_batch";
       };
@@ -5132,6 +5194,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        NetCounterInit @[0] {
 	desc="initializes local batch counter and batch field on network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
 	local_ctr_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -5145,6 +5208,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MemberAssign @[0] {
 	desc="just set directly to current batch value";
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
 	path="batch";
 	expr {
@@ -5157,6 +5221,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      WhileLoop @[1] {
       desc="the main loop over training runs";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -5164,6 +5229,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc="run the training program -- passes the network setting down";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -5185,6 +5251,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].args["network"]$;
 	local_ctr_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -5327,6 +5394,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["stop_train"]$$;
       expr {
        expr="false";
@@ -5335,6 +5403,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      UserScript @[1] {
       desc="update list of enum options from data table";
       flags=0;
+      orig_prog_code=;
       script {
        expr="this.types.ConfigOptions.EnumsFromDataTable(Config, \"config_id\");";
       };
@@ -5342,6 +5411,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$$;
       expr {
        expr="cur_config";
@@ -5350,6 +5420,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      WtInitPrompt @[3] {
       desc="don't initialize weights without checking";
       flags=0;
+      orig_prog_code=;
       prompt="Do you want to Initialize Network Weights";
       yes_label="Yes";
       no_label="No";
@@ -5360,6 +5431,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].args["network"]$$;
 	method=Network::Build;
@@ -5372,6 +5444,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[1] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -5384,6 +5457,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        PrintExpr @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -5400,6 +5474,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["stop_train"]$;
       expr {
        expr="false";
@@ -5408,6 +5483,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
       expr {
        expr="cur_config";
@@ -5416,6 +5492,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      DataVarProg @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       data_var=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["Config"]$$;
       set_data=0;
       row_spec=ROW_VAL;
@@ -5429,6 +5506,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCallVar @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -5460,6 +5538,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      WhileLoop @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -5467,6 +5546,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -5599,6 +5679,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCallVar @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -5711,6 +5792,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[0] {
        desc="always do std globals init";
        flags=0;
+       orig_prog_code=;
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -5742,6 +5824,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[1] {
        desc="get rid of all non-essential layers";
        flags=0;
+       orig_prog_code=;
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -5773,6 +5856,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[2] {
        desc="standard init of training";
        flags=0;
+       orig_prog_code=;
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -5794,6 +5878,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       IfElse @[3] {
        desc=;
        flags=0;
+       orig_prog_code=;
        cond {
 	expr="config_id.contains(\"_test\")";
        };
@@ -5805,6 +5890,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	MemberAssign @[0] {
 	 desc="set network to training mode";
 	 flags=0;
+	 orig_prog_code=;
 	 obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].args["network"]$$;
 	 path="train_mode";
 	 expr {
@@ -5820,6 +5906,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	MemberAssign @[0] {
 	 desc="set network to training mode";
 	 flags=0;
+	 orig_prog_code=;
 	 obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["InitProgs"]["BasicInit"].args["network"]$;
 	 path="train_mode";
 	 expr {
@@ -5945,10 +6032,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       Comment @[0] {
        desc="== Execute One Trial of Basic Training ==";
        flags=0;
+       orig_prog_code=;
       };
       MemberAssign @[1] {
        desc="always in tick 0 for this -- only one step of processing";
        flags=0;
+       orig_prog_code=;
        obj=.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$$;
        path="tick";
        expr {
@@ -5959,6 +6048,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgramCall @[2] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -6000,31 +6090,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       Comment @[3] {
        desc="== Done With One Trial ==";
        flags=0;
+       orig_prog_code=;
       };
       ProgramCall @[4] {
-       desc="standard end of trial stuff";
-       flags=0;
-       prog_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=LeabraNetwork;
-	 type="LeabraNetwork*";
-	 name="network";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="network";
-	 };
-	};
-       };
-       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
-       targ_ld_init="*TrialEnd*";
-      };
-      ProgramCall @[5] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_args {
 	name=;
 	el_typ=ProgArg;
@@ -6043,9 +6114,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        target=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"]$$;
        targ_ld_init="*LeabraTrialMonitor*";
       };
-      MemberAssign @[6] {
+      MemberAssign @[5] {
        desc=;
        flags=0;
+       orig_prog_code=;
        obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$;
        path="trial";
        expr {
@@ -6053,9 +6125,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        update_after=0;
       };
-      IfElse @[7] {
+      IfElse @[6] {
        desc=;
        flags=0;
+       orig_prog_code=;
        cond {
 	expr="network.trial >= trials_per_epoch";
        };
@@ -6067,6 +6140,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	ProgramCall @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 prog_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -6088,6 +6162,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	MemberAssign @[1] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 obj=$.projects["LeabraFlex"].programs.gp["ConfigProgs"].gp["RunProgs"]["BasicRun"].args["network"]$;
 	 path="epoch";
 	 expr {
@@ -6098,6 +6173,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	IfElse @[2] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 cond {
 	  expr="network.epoch >= train_epochs";
 	 };
@@ -6109,6 +6185,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  ProgramCall @[0] {
 	   desc="calls stop_train and does final training stuff";
 	   flags=0;
+	   orig_prog_code=;
 	   prog_args {
 	    name=;
 	    el_typ=ProgArg;
@@ -6130,6 +6207,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  ReturnExpr @[1] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   expr {
 	    expr=;
 	   };
@@ -6144,6 +6222,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	ProgramCall @[3] {
 	 desc="time to start a new epoch!";
 	 flags=0;
+	 orig_prog_code=;
 	 prog_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -6263,6 +6342,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$$;
       method=TimeUsed::ResetUsed;
@@ -6280,6 +6360,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::StartTimer;
@@ -6302,10 +6383,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[1] {
       desc="=== Start Trial ===";
       flags=0;
+      orig_prog_code=;
      };
      ProgramCall @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6327,6 +6410,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[3] {
       desc="pick next event permuted..";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6368,6 +6452,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[4] {
       desc="apply std external input activations from the input_data table to the network";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6399,10 +6484,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[5] {
       desc="=== Run Minus Phase ===";
       flags=0;
+      orig_prog_code=;
      };
      MethodCall @[6] {
       desc="initializes various counters at start of settling";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
       method=LeabraNetwork::Settle_Init;
@@ -6415,6 +6502,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[7] {
       desc="settle for minus phase, using ct_time.minus as fixed number of cycles to run";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6446,6 +6534,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[8] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Settle_Final;
@@ -6458,6 +6547,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[9] {
       desc="compute trial-level statistics -- only in minus phase!";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Compute_TrialStats;
@@ -6470,20 +6560,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      NetUpdateView @[10] {
       desc="update network views, if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$$;
      };
      StopStepPoint @[11] {
       desc=;
       flags=0;
+      orig_prog_code=;
      };
      Comment @[12] {
       desc="=== Run Plus Phase ===";
       flags=0;
+      orig_prog_code=;
      };
      ProgramCall @[13] {
       desc="start the plus phase";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6505,6 +6599,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[14] {
       desc="apply std external input activations from the input_data table to the network";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6536,6 +6631,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[15] {
       desc="initializes various counters at start of settling";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Settle_Init;
@@ -6548,6 +6644,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[16] {
       desc="settle for designated plus phase number of cycles";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -6579,6 +6676,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[17] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Settle_Final;
@@ -6591,6 +6689,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[18] {
       desc="get external reward information";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Compute_ExtRew;
@@ -6603,12 +6702,36 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      NetUpdateView @[19] {
       desc="update network views, if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
-     MethodCall @[20] {
+     ProgramCall @[20] {
+      desc="standard end of trial stuff";
+      flags=0;
+      orig_prog_code=;
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=LeabraNetwork;
+	type="LeabraNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+      target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
+      targ_ld_init="*TrialEnd*";
+     };
+     MethodCall @[21] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].vars["BasicTrainTime"]$;
       method=TimeUsed::EndTimer;
@@ -6773,6 +6896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Function @[0] {
       desc="compute target number of rows, based on current dmem settings";
       flags=0;
+      orig_prog_code=;
       name="ComputeDmemRows";
       return_type=T_Int;
       object_type=taOBase;
@@ -6788,6 +6912,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -6797,6 +6922,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="taMisc::dmem_nprocs <= 1";
 	};
@@ -6808,6 +6934,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 AssignExpr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$$;
 	  expr {
 	   expr="input_data.rows";
@@ -6821,6 +6948,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 AssignExpr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$;
 	  expr {
 	   expr="input_data.rows / taMisc::dmem_nprocs";
@@ -6829,6 +6957,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 WhileLoop @[1] {
 	  desc="ensure that we cover all the input data";
 	  flags=0;
+	  orig_prog_code=;
 	  loop_code {
 	   name="ProgEl_List_1382";
 	   el_typ=ProgCode;
@@ -6836,6 +6965,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   VarIncr @[0] {
 	    desc=;
 	    flags=0;
+	    orig_prog_code=;
 	    var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["dmem_rows"]$;
 	    expr {
 	     expr="1";
@@ -6853,6 +6983,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Function @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       name="PermuteIndexes";
       return_type=T_Int;
       object_type=taOBase;
@@ -6868,6 +6999,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -6877,6 +7009,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        AssignExpr @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$$;
 	expr {
 	 expr="0";
@@ -6885,6 +7018,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="permuted";
 	};
@@ -6896,6 +7030,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 DataProcCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  object_type=taDataProc;
 	  method=taDataProc::Permute;
@@ -6937,6 +7072,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Function @[2] {
       desc="initialize indexes from current input data table";
       flags=0;
+      orig_prog_code=;
       name="InitIndexes";
       return_type=T_Int;
       object_type=taOBase;
@@ -6952,6 +7088,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        LocalVars @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	local_vars {
 	 name="ProgVar_List_0";
 	 el_typ=ProgVar;
@@ -6961,6 +7098,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        FunctionCall @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[0]$$;
 	fun_args {
@@ -6972,6 +7110,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$$;
 	method=DataTable::EnforceRows;
@@ -6994,6 +7133,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[3] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::InitValsToRowNo;
@@ -7016,6 +7156,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        FunctionCall @[4] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[1]$$;
 	fun_args {
@@ -7034,6 +7175,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       fun=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[2]$$;
       fun_args {
@@ -7045,6 +7187,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[1] {
       desc="start off at -1 so it increments to 0 at first time through";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$;
       expr {
        expr="-1";
@@ -7058,6 +7201,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      FunctionCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[0]$;
       fun_args {
@@ -7069,6 +7213,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="dmem_rows != PermIdxTable.rows";
       };
@@ -7080,6 +7225,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        FunctionCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[2]$;
 	fun_args {
@@ -7098,6 +7244,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="cur_idx == PermIdxTable.rows -1";
       };
@@ -7109,6 +7256,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        FunctionCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	fun=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].functions[1]$;
 	fun_args {
@@ -7125,6 +7273,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        VarIncr @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["cur_idx"]$;
 	expr {
 	 expr="1";
@@ -7135,6 +7284,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="permuted";
       };
@@ -7146,6 +7296,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$$;
 	obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["PermIdxTable"]$;
 	method=DataTable::GetVal;
@@ -7183,6 +7334,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        AssignExpr @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	expr {
 	 expr="cur_idx";
@@ -7193,6 +7345,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_nprocs > 1";
       };
@@ -7204,6 +7357,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        AssignExpr @[0] {
 	desc="for dmem, transform from virtual idx counter into actual row, unique to this processor";
 	flags=0;
+	orig_prog_code=;
 	result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	expr {
 	 expr="taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
@@ -7212,6 +7366,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[1] {
 	desc="choose at random if above actual input data";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="input_idx > input_data.rows";
 	};
@@ -7223,6 +7378,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 RandomCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].vars["input_idx"]$;
 	  object_type=Random;
 	  method=Random::IntZeroN;
@@ -7259,6 +7415,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"].args["input_data"]$$;
       method=DataBlock_Idx::ReadItem;
@@ -7346,6 +7503,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      RandomCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].vars["event_idx"]$$;
       object_type=Random;
       method=Random::IntZeroN;
@@ -7368,6 +7526,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseRandomEvent"].args["input_data"]$$;
       method=DataBlock_Idx::ReadItem;
@@ -7505,6 +7664,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
@@ -7537,6 +7697,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::AutoConfig;
@@ -7559,6 +7720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
@@ -7586,6 +7748,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::SetDataNetwork;
@@ -7618,6 +7781,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
@@ -7823,10 +7987,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[0] {
       desc="== Grab Global Params from Config Table for current config_id ==";
       flags=0;
+      orig_prog_code=;
      };
      DataVarProg @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       data_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["Config"]$$;
       set_data=0;
       row_spec=ROW_VAL;
@@ -7840,6 +8006,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      DataVarProg @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       data_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["Config"]$;
       set_data=0;
       row_spec=ROW_VAL;
@@ -7853,6 +8020,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      DataVarProg @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       data_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["Config"]$;
       set_data=0;
       row_spec=ROW_VAL;
@@ -7866,6 +8034,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch_orig"]$$;
       expr {
        expr="trials_per_epoch";
@@ -7874,6 +8043,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_nprocs > 1";
       };
@@ -7885,6 +8055,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        AssignExpr @[0] {
 	desc="dmem means that each guy does less -- uses randomization to get good mix across processors";
 	flags=0;
+	orig_prog_code=;
 	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
 	expr {
 	 expr="trials_per_epoch / taMisc::dmem_nprocs";
@@ -7893,6 +8064,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="trials_per_epoch * taMisc::dmem_nprocs < trials_per_epoch_orig";
 	};
@@ -7904,6 +8076,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 VarIncr @[0] {
 	  desc="round up..";
 	  flags=0;
+	  orig_prog_code=;
 	  var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$;
 	  expr {
 	   expr="1";
@@ -8175,6 +8348,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["BatchRndSeed"].vars["rnd_seeds"]$$;
       method=RndSeed_List::UseSeed;
@@ -8307,10 +8481,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[0] {
       desc="== first unlesion everything ==";
       flags=0;
+      orig_prog_code=;
      };
      ForLoop @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -8318,6 +8494,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MemberMethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$$;
 	path="layers.gp";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$$;
@@ -8341,6 +8518,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
 	method=Layer_Group::UnLesionLayers;
@@ -8353,6 +8531,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
 	method=Layer_Group::DeIconifyLayers;
@@ -8376,10 +8555,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      Comment @[2] {
       desc="== then lesion named ones ==";
       flags=0;
+      orig_prog_code=;
      };
      MethodCall @[3] {
       desc="get into easier to use matrix format";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["les_lay_mat"]$$;
       method=String_Matrix::FmDelimString;
@@ -8412,6 +8593,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ForLoop @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -8419,6 +8601,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp_nm"]$$;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["les_lay_mat"]$;
 	method=taMatrixT_taString_::SafeEl_Flat;
@@ -8441,6 +8624,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MemberMethodCall @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
 	path="layers.gp";
 	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
@@ -8464,6 +8648,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="!laygp";
 	};
@@ -8475,6 +8660,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MiscCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  object_type=taMisc;
 	  method=taMisc::Error;
@@ -8577,6 +8763,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 IfContinue @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr=;
 	  };
@@ -8591,6 +8778,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[3] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
 	method=Layer_Group::LesionLayers;
@@ -8603,6 +8791,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[4] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].vars["laygp"]$;
 	method=Layer_Group::IconifyLayers;
@@ -8626,6 +8815,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
       method=Network::Build;
@@ -8638,6 +8828,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[6] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["ConfigNetwork"].args["network"]$;
       method=Network::UpdtAfterNetMod;
@@ -8650,6 +8841,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      PrintExpr @[7] {
       desc=;
       flags=0;
+      orig_prog_code=;
       expr {
        expr="\"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       };
@@ -8779,6 +8971,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="get into easier to use matrix format";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["les_lay_mat"]$$;
       method=String_Matrix::FmDelimString;
@@ -8811,6 +9004,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ForLoop @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -8818,6 +9012,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp_nm"]$$;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["les_lay_mat"]$;
 	method=taMatrixT_taString_::SafeEl_Flat;
@@ -8840,6 +9035,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MemberMethodCall @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].args["network"]$$;
 	path="layers.gp";
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$$;
@@ -8863,6 +9059,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="!laygp";
 	};
@@ -8874,6 +9071,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MiscCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  object_type=taMisc;
 	  method=taMisc::Error;
@@ -8976,6 +9174,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 IfContinue @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr=;
 	  };
@@ -8990,6 +9189,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[3] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="lesion";
 	};
@@ -9001,6 +9201,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$;
 	  method=Layer_Group::LesionLayers;
@@ -9018,6 +9219,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].vars["laygp"]$;
 	  method=Layer_Group::UnLesionLayers;
@@ -9043,6 +9245,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["NetworkToggleLesion"].args["network"]$;
       method=Network::UpdtAfterNetMod;
@@ -9179,6 +9382,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -9200,6 +9404,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="needs to have been built by now..";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$$;
       method=Network::Build;
@@ -9212,6 +9417,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc="initialize network weights: could also load pre-set weights or something else here";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
       method=Network::Init_Weights;
@@ -9224,6 +9430,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      PrintExpr @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       expr {
        expr="network.name << \" Weights Initialized\"";
       };
@@ -9233,6 +9440,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[4] {
       desc="Load  weights if file is specified";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="load_weights && weights_file.nonempty()";
       };
@@ -9244,6 +9452,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="Load weights from the specified file";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
 	method=Network::LoadWeights;
@@ -9276,6 +9485,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        PrintVar @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	message="loaded weights file:";
 	print_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["weights_file"]$$;
 	print_var2=NULL;
@@ -9289,6 +9499,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MemberAssign @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].args["network"]$;
 	path="epoch";
 	expr {
@@ -9306,6 +9517,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["LRSConSpec"]$$;
       method=LeabraConSpec::LogLrateSched;
@@ -9338,6 +9550,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[6] {
       desc="if dmem, then from here on out, processors diverge so that lists of objs per processor are different!";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_nprocs > 1";
       };
@@ -9349,6 +9562,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainStart"].vars["dmem_rnd_seed"]$$;
 	method=RndSeed::NewSeed;
@@ -9368,6 +9582,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[7] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -9465,6 +9680,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="save_final_wts";
       };
@@ -9476,6 +9692,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc="Always save weights at the end";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -9504,6 +9721,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="stop training!";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrainEnd"].vars["Train"]$$;
       method=Program::SetVar;
@@ -9613,6 +9831,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberAssign @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$$;
       path="trial";
       expr {
@@ -9623,6 +9842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberMethodCall @[1] {
       desc="start the epoch timer to record computation time per epoch";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].args["network"]$;
       path="epoch_time";
       result_var=NULL;
@@ -9646,6 +9866,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc="keep other time info on an epoch basis";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].vars["BasicTrainTime"]$$;
       method=TimeUsed::ResetUsed;
@@ -9658,6 +9879,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochStart"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
@@ -9755,6 +9977,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$$;
       method=LeabraNetwork::Compute_EpochStats;
@@ -9767,6 +9990,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[1] {
       desc=;
       flags=NEW_EL;
+      orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
@@ -9778,6 +10002,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
 	method=LeabraNetwork::Compute_AvgAbsRelNetin;
@@ -9790,6 +10015,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="adapt_rel_abs_netin";
 	};
@@ -9801,6 +10027,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
 	  method=LeabraNetwork::Compute_AdaptRelNetin;
@@ -9813,6 +10040,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 MethodCall @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
 	  method=LeabraNetwork::Compute_AdaptAbsNetin;
@@ -9839,6 +10067,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberMethodCall @[2] {
       desc="start the epoch timer to record computation time per epoch";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
       path="epoch_time";
       result_var=NULL;
@@ -9852,6 +10081,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgramCall @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -9873,6 +10103,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network->epoch % save_wts_interval == 0 && network->epoch > 0";
       };
@@ -9884,6 +10115,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -9967,6 +10199,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="initializes various counters at start of trial";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$$;
       method=LeabraNetwork::Trial_Init;
@@ -9979,6 +10212,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
       method=Network::Init_InputData;
@@ -9991,6 +10225,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberAssign @[2] {
       desc="start at 0 cycle";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
       path="cycle";
       expr {
@@ -10076,6 +10311,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$$;
       method=LeabraNetwork::Trial_Final;
@@ -10088,6 +10324,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[1] {
       desc=;
       flags=NEW_EL;
+      orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
@@ -10099,6 +10336,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="special for adapting netin";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$;
 	method=LeabraNetwork::Compute_AbsRelNetin;
@@ -10118,6 +10356,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      IfElse @[2] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
       };
@@ -10129,6 +10368,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        MethodCall @[0] {
 	desc="update the weight values based on changes computed by trial program";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$;
 	method=Network::Compute_Weights;
@@ -10148,6 +10388,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      NetUpdateView @[3] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].vars["update_net_view"]$$;
      };
@@ -10249,6 +10490,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].vars["minus_cycles"]$$;
       expr {
        expr="-1";
@@ -10257,6 +10499,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ForLoop @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -10264,6 +10507,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -10285,6 +10529,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        IfElse @[1] {
 	desc="compute number of cycles to get output over threshold -- used for objrec";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="minus_cycles < 0";
 	};
@@ -10296,6 +10541,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 IfElse @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr="network->layers.Output.acts.max >= output_thresh";
 	  };
@@ -10307,6 +10553,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   AssignExpr @[0] {
 	    desc=;
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].vars["minus_cycles"]$;
 	    expr {
 	     expr="network.ct_cycle";
@@ -10395,6 +10642,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberAssign @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$$;
       path="phase_no";
       expr {
@@ -10405,6 +10653,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[1] {
       desc="increments other phase state information to prepare for the next phase of settling";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
       method=LeabraNetwork::Trial_UpdatePhase;
@@ -10417,6 +10666,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
       method=Network::Init_InputData;
@@ -10429,6 +10679,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MemberAssign @[3] {
       desc="start at 0 cycle";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
       path="cycle";
       expr {
@@ -10514,6 +10765,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ForLoop @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -10521,6 +10773,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -10618,6 +10871,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      MethodCall @[0] {
       desc="this does all the standard leabra processing for one cycle of activation updating";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$$;
       method=LeabraNetwork::Cycle_Run;
@@ -10630,12 +10884,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$;
      };
      MemberAssign @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].args["network"]$;
       path="cycle";
       expr {
@@ -10782,6 +11038,7 @@ also save specs.";
      IfReturn @[0] {
       desc="do not save if not first dmem processor";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_proc > 0";
       };
@@ -10789,6 +11046,7 @@ also save specs.";
      MiscCall @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -10821,6 +11079,7 @@ also save specs.";
      MiscCall @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -10853,6 +11112,7 @@ also save specs.";
      AssignExpr @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
@@ -10861,6 +11121,7 @@ also save specs.";
      MethodCall @[4] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].vars["fname"]$$;
       obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
@@ -10913,6 +11174,7 @@ also save specs.";
      MethodCall @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].args["network"]$;
       method=Network::SaveWeights;
@@ -10945,6 +11207,7 @@ also save specs.";
      IfElse @[6] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="save_specs";
       };
@@ -10956,6 +11219,7 @@ also save specs.";
        AssignExpr @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].vars["spec_fname"]$$;
 	expr {
 	 expr="fname.before(\".wts\",-1) + \".spec\"";
@@ -10964,6 +11228,7 @@ also save specs.";
        MemberMethodCall @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SaveWeightsSpecs"].args["network"]$;
 	path="specs";
 	result_var=NULL;
@@ -11435,6 +11700,7 @@ also save specs.";
       MethodCall @[0] {
        desc="set the network and datatable for the NetMonitor";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$$;
        method=NetMonitor::SetDataNetwork;
@@ -11467,6 +11733,7 @@ also save specs.";
       MethodCall @[1] {
        desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=taBase::CheckConfig;
@@ -11489,6 +11756,7 @@ also save specs.";
       MethodCall @[2] {
        desc="update the monitor items and data schema based on current settings of the NetMonitor object";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=NetMonitor::UpdateMonitors;
@@ -11516,6 +11784,7 @@ also save specs.";
       MethodCall @[0] {
        desc="add a new blank row to the data";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_mon_data"]$$;
        method=DataTable::AddBlankRow;
@@ -11528,6 +11797,7 @@ also save specs.";
       MethodCall @[1] {
        desc="get the new monitor data from the network and other sources -- this does the main work";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
        method=NetMonitor::GetMonVals;
@@ -11540,6 +11810,7 @@ also save specs.";
       MethodCall @[2] {
        desc="update views and other things after writing new data to monitor data table";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].vars["trial_mon_data"]$;
        method=DataBlock::WriteClose;
@@ -11552,6 +11823,7 @@ also save specs.";
       MethodCall @[3] {
        desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"].args["network"]$$;
        method=Network::DMem_ShareTrialData;
@@ -12062,6 +12334,7 @@ also save specs.";
       AssignExpr @[0] {
        desc="get the epoch timer from current network";
        flags=0;
+       orig_prog_code=;
        result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_timer"]$$;
        expr {
 	expr="network.epoch_time";
@@ -12070,6 +12343,7 @@ also save specs.";
       MethodCall @[1] {
        desc="set data and network on NetMonitor object";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$$;
        method=NetMonitor::SetDataNetwork;
@@ -12102,6 +12376,7 @@ also save specs.";
       MethodCall @[2] {
        desc="check configuration and emit errors/warnings for problems";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=taBase::CheckConfig;
@@ -12124,6 +12399,7 @@ also save specs.";
       MethodCall @[3] {
        desc="update the monitor items and data schema based on current settings of NetMonitor";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=NetMonitor::UpdateMonitors;
@@ -12151,6 +12427,7 @@ also save specs.";
       MethodCall @[0] {
        desc="add a new blank row to the data";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$$;
        method=DataTable::AddBlankRow;
@@ -12163,6 +12440,7 @@ also save specs.";
       MethodCall @[1] {
        desc="get the new monitor data and stor it into the data table -- this does the main job here";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
        method=NetMonitor::GetMonVals;
@@ -12175,6 +12453,7 @@ also save specs.";
       AssignExpr @[2] {
        desc="get the epoch timer from current network";
        flags=0;
+       orig_prog_code=;
        result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_timer"]$;
        expr {
 	expr="network.epoch_time";
@@ -12183,6 +12462,7 @@ also save specs.";
       MethodCall @[3] {
        desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataTable::SetValColName;
@@ -12235,6 +12515,7 @@ also save specs.";
       MethodCall @[4] {
        desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataTable::SetValColName;
@@ -12287,6 +12568,7 @@ also save specs.";
       MethodCall @[5] {
        desc="update after writing new data to monitor data table";
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
        method=DataBlock::WriteClose;
@@ -12310,6 +12592,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
  
 ";
        flags=0;
+       orig_prog_code=;
       };
      };
      step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"]$;
@@ -13307,11 +13590,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
-     ff_bal {
-      on=0;
-      ff=0.5;
-      ff_c=0.5;
-     };
      adapt {
       on=0;
       dt=0.00694444;
@@ -13550,8 +13828,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	comp_gain=2;
 	gp_pt=0.2;
        };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
        adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
        clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: };
@@ -13587,8 +13867,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       comp_gain=2;
       gp_pt=0.2;
      };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: };
