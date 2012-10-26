@@ -7,7 +7,7 @@
 // subversion
 #include <Subversion.h>
 
-#include <iostream>
+//#include <qt4/QtCore/qdir.h>
 
 int main() {
 	std::string svnPath = "/home/houman/Desktop/wc/";
@@ -43,15 +43,24 @@ int main() {
 	}
 	*/
 
-	 const char * t = "/home/houman/Desktop/wc/dir2";
-	 svn::Path path(t);
+
+	 // COMMIT
+	 const char * p = "/home/houman/Desktop/wc/dir2";
+	 svn::Path path(p);
 	 svn::PathVector pathVector;
 	 pathVector.push_back(path);
 	 svn::Targets targets(pathVector);
 	 const char * message = "commit message.";
-	 std::cout << targets;
-	 std::cout << svnapi.Commit(targets, message, false, false);
+	 std::cout << svnapi.Commit(targets, message, true, false);
 
+
+	/*
+	 const char * p = "/home/houman/Desktop/wc/";
+	 svn::Path path(p);
+	 std::cout << svnapi.Update(p, svn::Revision::HEAD, true, false);
+	 */
+
+	//QDir("Folder").exists();
 
 	return 0;
 }
