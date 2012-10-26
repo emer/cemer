@@ -733,6 +733,18 @@ void SelectEdit::Reset() {
   ReShowEdit(true); //forced
 }
 
+void SelectEdit::RunOnCluster(
+  const String &repo,
+  const String &prefix,
+  const String &filename,
+  const String &desc,
+  int num_of_procs)
+{
+  // Run this model on a cluster using the parameters of this SelectEdit.
+  std::cout << "RunOnCluster" << std::endl;
+}
+
+
 bool SelectEdit::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
