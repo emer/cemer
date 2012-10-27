@@ -153,55 +153,247 @@ void LeabraLayer::TriggerContextUpdate() {
 }
 
 //////////////////////////////////
-//     DeepContextLayerSpec        //
+//     LeabraTISpec	        //
 //////////////////////////////////
 
-void DeepContextLayerSpec::Initialize() {
-  SetUnique("decay", true);
+void LeabraTICtxtSUnitSpec::Initialize() {
   Defaults_init();
 }
 
-void DeepContextLayerSpec::Defaults_init() {
-  decay.event = 0.0f;
-  decay.phase = 0.0f;
+void LeabraTICtxtSUnitSpec::Defaults_init() {
 }
 
-bool DeepContextLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_LeabraTILayerSpec)) return;
+  LeabraTILayerSpec* ls = (LeabraTILayerSpec*) rlay->GetLayerSpec();
+
+  float new_act;
+  if(act.gelin) {
+    if(act.old_gelin) {
+      float g_e_val = u->net;
+      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
+      if(vm_eq > 0.0f) {
+	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
+	if(vmrat > 1.0f) vmrat = 1.0f;
+	else if(vmrat < 0.0f) vmrat = 0.0f;
+	g_e_val *= vmrat;
+      }
+      float g_e_thr = Compute_EThresh(u);
+      new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
+      // NEW CODE: plus phase
+      if(net->phase_no >= 1) {
+	u->misc_1 = new_act;
+	new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
+      }
+      else {
+	u->misc_1 = 0.0f;
+      }
+
+    }
+    else {			// new gelin
+      if(u->v_m <= act.thr) {
+	new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
+      }
+      else {
+	float g_e_thr = Compute_EThresh(u);
+	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+      }
+      // NEW CODE: plus phase
+      if(net->phase_no >= 1) {
+	u->misc_1 = new_act;
+	new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
+      }
+      else {
+	u->misc_1 = 0.0f;
+      }
+	
+      if(net->cycle < dt.vm_eq_cyc) {
+	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
+      }
+      else {
+	new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
+      }
+    }
+  }
+  else {
+    new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
+    // NEW CODE: plus phase
+    if(net->phase_no >= 1) {
+      u->misc_1 = new_act;
+      new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
+    }
+    else {
+      u->misc_1 = 0.0f;
+    }
+  }
+  if(depress.on) {                   // synaptic depression
+    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
+    new_act *= MIN(u->spk_amp, 1.0f);
+    if((net->ct_cycle+1) % depress.interval == 0) {
+      u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    }
+    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
+  }
+
+  u->da = new_act - u->act;
+  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    new_act += Compute_Noise(u, net);
+  }
+  u->act = act_range.Clip(new_act);
+  u->act_eq = u->act;
+  if(!depress.on)
+    u->act_nd = u->act_eq;
+}
+
+void LeabraTISpec::Initialize() {
+  Defaults_init();
+}
+
+void LeabraTISpec::Defaults_init() {
+  ctxt_super_new = 0.6f;
+  ctxt_super_new_c = 1.0f - ctxt_super_new;
+}
+
+void LeabraTISpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ctxt_super_new_c = 1.0f - ctxt_super_new;
+}
+
+void LeabraTILayerSpec::Initialize() {
+  ti_type = ONLINE;
+  lamina = DEEP;
+  Defaults_init();
+}
+
+void LeabraTILayerSpec::Defaults_init() {
+}
+
+void LeabraTILayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ti.UpdateAfterEdit_NoGui();
+}
+
+bool LeabraTILayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-//   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+
+  if(lay->CheckError(net->no_plus_test, quiet, rval,
+                "requires LeabraNetwork no_plus_test = false, I just set it for you")) {
+    net->no_plus_test = false;
+  }
+
+  if(lamina == DEEP) {
+    LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+    if(lay->CheckError(!cg, quiet, rval,
+		       "Deep layer requires one recv projection!")) {
+      return false;
+    }
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    if(lay->CheckError(!su, quiet, rval, 
+		       "Deep layer requires one unit in recv projection!")) {
+      return false;
+    }
+  }
+
   return rval;
 }
 
-void DeepContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net) {
-  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
-  if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
-    return;
+void LeabraTILayerSpec::Clear_Maint(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    u->maint_h = 0.0f;
   }
-  LeabraUnit* su = (LeabraUnit*)cg->Un(0);
-  if(TestError(!su, "Compute_Context", "requires one unit in recv projection!")) {
-    return;
-  }
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-  if(net->phase_no >= 2) {
-    u->act = u->act_p;		// just use last plus phase state
-  }
-  else {
-    u->act = su->act_eq;
-  }
-  u->act_eq = u->act_nd = u->act;
-  u->da = 0.0f;            // I'm fully settled!
-  u->AddToActBuf(rus->syn_delay);
 }
 
-void DeepContextLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraTILayerSpec::Compute_MaintFmSuper(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+    if(!cg) return;
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    if(!su) return;
+    u->maint_h = su->act;
+  }
+}
+
+void LeabraTILayerSpec::Compute_ActFmSuper(LeabraLayer* lay, LeabraNetwork* net) {
   lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    Compute_Context(lay, u, net);
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+    if(!cg) return;
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    if(!su) return;
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
+    u->act = su->act;
+    u->act_eq = u->act_nd = u->act;
+    u->da = 0.0f;            // I'm fully settled!
+    u->AddToActBuf(rus->syn_delay);
   }
+}
+
+void LeabraTILayerSpec::Compute_ActFmMaint(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
+    u->act = u->maint_h;
+    u->act_eq = u->act_nd = u->act;
+    u->da = 0.0f;            // I'm fully settled!
+    u->AddToActBuf(rus->syn_delay);
+  }
+}
+
+void LeabraTILayerSpec::Compute_TIAct(LeabraLayer* lay, LeabraNetwork* net) {
+  if(ti_type == ONLINE) {
+    if(lamina == SUPER) {
+      // nop
+    }
+    else {			// DEEP
+      if(net->phase_no == 0) {
+	Compute_ActFmMaint(lay, net); // fix
+      }
+      else {
+	Compute_ActFmSuper(lay, net); // float
+      }	
+    }
+  }
+  else {			// CONTEXT
+    if(lamina == SUPER) {
+      // nop
+    }
+    else {			// DEEP
+      if(net->phase_no == 0) {
+	Compute_ActFmSuper(lay, net); // float
+      }
+      else {
+	Compute_ActFmMaint(lay, net); // fix
+      }	
+    }
+  }
+}
+
+void LeabraTILayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_TIAct(lay, net);
   inherited::Compute_CycleStats(lay, net);
+}
+
+void LeabraTILayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lamina == DEEP) {
+    if(ti_type == ONLINE && net->phase_no == 1) {
+      Compute_MaintFmSuper(lay, net); 
+    }
+    if(ti_type == CONTEXT && net->phase_no == 0) {
+      Compute_MaintFmSuper(lay, net); 
+    }
+  }
+  inherited::PostSettle(lay, net);
 }
 
 //////////////////////////////////
