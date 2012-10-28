@@ -90,7 +90,7 @@ void WtScaleSpecInit::Initialize() {
 
 void WtSigSpec::Initialize() {
   gain = 6.0f;
-  off = 1.25f;
+  off = 1.0f;
   dwt_norm = true;
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
@@ -178,7 +178,7 @@ bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
-  learn_rule = LEABRA_CHL;
+  learn_rule = CTLEABRA_XCAL;
   inhib = false;
   
   learn = true;
@@ -210,8 +210,8 @@ void LeabraConSpec::Defaults_init() {
 
   rnd.mean = .5f;
   rnd.var = .25f;
-  lrate = .01f;
-  cur_lrate = .01f;
+  lrate = .02f;
+  cur_lrate = .02f;
 }
 
 void LeabraConSpec::InitLinks() {
@@ -2162,7 +2162,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   bool do_s = net->sravg_vals.do_s; // set on net at start of call..
 
   float ru_act; // activation to use for updating averages
-  if(net->learn_rule <= LeabraNetwork::CTLEABRA_CAL || act_avg.use_nd) {
+  if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
+     net->learn_rule == LeabraNetwork::LEABRA_CHL) {
     ru_act = u->act_nd;
   }
   else {
@@ -3058,7 +3059,7 @@ bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool rval = true;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-  if(net && net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+  if(net && net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     if(TestWarning(decay.phase == 1.0f,
                    "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
       SetUnique("decay", true);
@@ -5603,7 +5604,7 @@ void LeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
 
-  learn_rule = LEABRA_CHL;
+  learn_rule = CTLEABRA_XCAL;
   prv_learn_rule = -1;
   phase_order = MINUS_PLUS;
   no_plus_test = true;
@@ -7025,6 +7026,7 @@ void LeabraWizard::Initialize() {
 String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
+* [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on biology -- functionally similar to an SRN but auto-encoding and predictive\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using quad-phase specs -- high functioning hippocampal episodic memory system.\n\

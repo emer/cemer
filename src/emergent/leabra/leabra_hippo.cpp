@@ -122,7 +122,7 @@ bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                    "ECoutLayerSpec: setting network min_cycles to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
       net->min_cycles = auto_m_cycles + 20;
     }
-    if(TestWarning((net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) &&
+    if(TestWarning((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
                    (net->ct_time.minus < auto_m_cycles + 20), "CheckConfig",
                    "ECoutLayerSpec: setting network ct_time.minus to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
       net->ct_time.minus = auto_m_cycles + 20;

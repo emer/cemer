@@ -269,6 +269,9 @@ void LeabraTILayerSpec::Initialize() {
 }
 
 void LeabraTILayerSpec::Defaults_init() {
+  decay.event = 0.0f;
+  inhib.kwta_pt = 0.6f;
+  kwta.pct = 0.15f;
 }
 
 void LeabraTILayerSpec::UpdateAfterEdit_impl() {
@@ -6531,6 +6534,131 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 
   UpdateLayerWriters(net, data_table);
 
+  return true;
+}
+
+///////////////////////////////////////////////////////////////
+//                LeabraTI -- temporal integration wizard
+///////////////////////////////////////////////////////////////
+
+bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
+  if(TestError(!net, "LeabraTI", "must have basic constructed network first")) {
+    return false;
+  }
+  LeabraTILayerSpec* ti_on_s = (LeabraTILayerSpec*)net->FindMakeSpec("TI_Online_S",
+							     &TA_LeabraTILayerSpec);
+  LeabraTILayerSpec* ti_on_d = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Online_D",
+							     &TA_LeabraTILayerSpec);
+  LeabraTILayerSpec* ti_cx_s = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Context_S",
+							     &TA_LeabraTILayerSpec);
+  LeabraTILayerSpec* ti_cx_d = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Context_D",
+							     &TA_LeabraTILayerSpec);
+  LeabraConSpec* stdcons = (LeabraConSpec*)net->FindMakeSpec("LeabraConSpec_0",
+							     &TA_LeabraConSpec);
+  LeabraConSpec* ti_toctxt = (LeabraConSpec*)stdcons->FindMakeChild("TIToContext",
+								   &TA_LeabraConSpec);
+  LeabraConSpec* ti_fmctxt = (LeabraConSpec*)stdcons->FindMakeChild("TIFmContext",
+								   &TA_LeabraConSpec);
+  MarkerConSpec* ti_sd_cons = (MarkerConSpec*)net->FindMakeSpec("TISuperDeepCons",
+							       &TA_MarkerConSpec);
+  LayerActUnitSpec* ti_dun = (LayerActUnitSpec*)net->FindMakeSpec("TIDeepUnits",
+								  &TA_LayerActUnitSpec);
+  LeabraUnitSpec* stduns = (LeabraUnitSpec*)net->FindMakeSpec("LeabraUnitSpec_0",
+							     &TA_LeabraUnitSpec);
+  LeabraTICtxtSUnitSpec* ti_cxsun =
+    (LeabraTICtxtSUnitSpec*)stduns->FindMakeChild("LeabraTICtxtSUnits",
+					      &TA_LeabraTICtxtSUnitSpec);
+
+  OneToOnePrjnSpec* ti_sd_prjn = (OneToOnePrjnSpec*)net->FindMakeSpec("TISuperDeepPrjn",
+								      &TA_OneToOnePrjnSpec);
+  FullPrjnSpec* full_prjn = (FullPrjnSpec*)net->FindMakeSpec("FullPrjnSpec_0",
+							     &TA_FullPrjnSpec);
+
+  net->learn_rule = LeabraNetwork::CTLEABRA_XCAL; // make sure
+  net->UpdateAfterEdit();	// trigger update
+
+  ti_on_s->SetUnique("ti_type", true);
+  ti_on_s->ti_type = LeabraTILayerSpec::ONLINE;
+  ti_on_s->SetUnique("lamina", true);
+  ti_on_s->lamina = LeabraTILayerSpec::SUPER;
+
+  ti_on_d->SetUnique("ti_type", true);
+  ti_on_d->ti_type = LeabraTILayerSpec::ONLINE;
+  ti_on_d->SetUnique("lamina", true);
+  ti_on_d->lamina = LeabraTILayerSpec::DEEP;
+
+  ti_cx_s->SetUnique("ti_type", true);
+  ti_cx_s->ti_type = LeabraTILayerSpec::CONTEXT;
+  ti_cx_s->SetUnique("lamina", true);
+  ti_cx_s->lamina = LeabraTILayerSpec::SUPER;
+
+  ti_cx_d->SetUnique("ti_type", true);
+  ti_cx_d->ti_type = LeabraTILayerSpec::CONTEXT;
+  ti_cx_d->SetUnique("lamina", true);
+  ti_cx_d->lamina = LeabraTILayerSpec::DEEP;
+
+  ti_toctxt->SetUnique("lrate", true);
+  ti_toctxt->lrate = 0.01f;
+  ti_fmctxt->SetUnique("wt_scale", true);
+  ti_fmctxt->wt_scale.rel = 1.5f;
+
+  stduns->adapt.on = true;
+  stduns->noise_type = LeabraUnitSpec::NETIN_NOISE;
+  stduns->noise.var = 0.001f;
+
+  const int lay_spc = 5;
+    
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+    if(lay->layer_type != Layer::HIDDEN) continue;
+
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    if(ls->InheritsFrom(&TA_LeabraTILayerSpec)) continue;
+    if(ls->InheritsFrom(&TA_LeabraContextLayerSpec)) continue; // skip existing srn's
+
+    Layer_Group* lg = (Layer_Group*)lay->owner;
+    String lnm = lay->name;
+
+    lay->name = lnm + "_On_S";
+    lay->SetLayerSpec(ti_on_s);
+
+    LeabraLayer* ond = (LeabraLayer*)lg->FindMakeLayer(lnm + "_On_D", &TA_LeabraLayer);
+    ond->SetLayerSpec(ti_on_d);
+    ond->SetUnitSpec(ti_dun);
+    ond->un_geom = lay->un_geom;
+    ond->unit_groups = lay->unit_groups;
+    ond->gp_geom = lay->gp_geom;
+    ond->pos = lay->pos;
+    ond->pos.y += lay->disp_geom.y + lay_spc;
+
+    LeabraLayer* cxs = (LeabraLayer*)lg->FindMakeLayer(lnm + "_Cx_S", &TA_LeabraLayer);
+    cxs->SetLayerSpec(ti_cx_s);
+    cxs->SetUnitSpec(ti_cxsun);
+    cxs->un_geom = lay->un_geom;
+    cxs->unit_groups = lay->unit_groups;
+    cxs->gp_geom = lay->gp_geom;
+    cxs->pos = lay->pos;
+    cxs->pos.x += lay->disp_geom.x + lay_spc;
+
+    LeabraLayer* cxd = (LeabraLayer*)lg->FindMakeLayer(lnm + "_Cx_D", &TA_LeabraLayer);
+    cxd->SetLayerSpec(ti_cx_d);
+    cxd->SetUnitSpec(ti_dun);
+    cxd->un_geom = lay->un_geom;
+    cxd->unit_groups = lay->unit_groups;
+    cxd->gp_geom = lay->gp_geom;
+    cxd->pos = lay->pos;
+    cxd->pos.x += lay->disp_geom.x + lay_spc;
+    cxd->pos.y += lay->disp_geom.y + lay_spc;
+
+    //	  	 	   to		 from		prjn_spec	con_spec
+    net->FindMakePrjn(ond, lay, ti_sd_prjn, ti_sd_cons);
+    net->FindMakePrjn(cxd, cxs, ti_sd_prjn, ti_sd_cons);
+
+    net->FindMakePrjn(lay, cxd, full_prjn,  ti_fmctxt);
+    net->FindMakePrjn(cxs, ond, full_prjn,  ti_toctxt);
+  }
+
+  net->Build();
   return true;
 }
 
