@@ -78,13 +78,16 @@ class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
   // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_m2, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:
-  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
+  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
     NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
-    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
-    MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
-    OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
+    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in SNrThal layer
+    IN_MNT = 0x02,		// Gating of maintenance in PFC_in_mnt layers -- if active, these are next units in SNrThal layer 
+    MNT_OUT = 0x04,		// Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after IN_MNT and before OUTPUT in SNrThal layer
+    OUTPUT = 0x08,		// Gating of output in PFC_out layers -- if active, these are typically the last units in SNrThal layer (unless OUT_MNT used)
+    OUT_MNT = 0x10,		// Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
+    
 #ifndef __MAKETA__
-    IN_MNT_OUT = INPUT | MAINT | OUTPUT,// #NO_BIT input maint and output -- typical default
+    IN_MNT_OUT = INPUT | IN_MNT | OUTPUT,// #NO_BIT input in_mnt output -- typical default
 #endif
   };
 
@@ -113,10 +116,11 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
 
-  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out);
+  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);
   // get the number of stripes associated with each gating type, based on matrix projections into the snrthal layer -- also updates the gating_types to reflect actual connectivity
   virtual int  SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type, 
-			       int& n_in, int& n_mnt, int& n_out);
+			       int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, 
+			       int& n_out_mnt);
   // returns the starting index for a given gating type within the SNrThal, and also returns the number of each type of stripe.  returns -1 if snrthal does not have that kind of stripe
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
@@ -389,7 +393,7 @@ public:
   };
 
   GoNoGo		go_nogo; 	// is this a Go pathway or a NoGo pathway layer
-  SNrThalLayerSpec::GatingTypes		gating_type;	// type of gating units present within this Matrix layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
+  SNrThalLayerSpec::GatingTypes		gating_type;	// type of gating units present within this Matrix layer -- must be just one of the options (INPUT, IN_MNT, OUTPUT, etc.)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
@@ -398,7 +402,7 @@ public:
   virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
   // find the PVLVDaLayerSpec layer that this matrix layer interacts with
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					int& n_in, int& n_mnt, int& n_out);
+					int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of matrix stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
@@ -543,7 +547,6 @@ public:
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
    float	maint_pct;	// #DEF_0.9 #MIN_0 #MAX_1 what proportion (0-1) of activation value of maintaining units that comes from the gated maint activation value -- the rest comes from activation that would otherwise be computed live directly from current inputs
-  bool		deep_freeze;	// freeze the deep layer units completely, so they don't reflect the maint_pct influence in the superficial layers -- this preserves stable context reps, but prevents deep from communicating error delta in super
   float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
   float		maint_thr;	// #MIN_0 #DEF_0.2 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
   float		clear_decay;	// #MIN_0 how much to decay existing activations when a gating signal comes into an already-maintaining stripe
@@ -578,7 +581,7 @@ public:
     DEEP,			// deep layer -- not active at all until the trial when gating occurs -- after gating during that trial they track superficial, and then after that are locked into maintenance 
   };
 
-  SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
+  SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, IN_MNT, OUTPUT, etc.)
   PFCLayer		pfc_layer;	// which layer type is this -- superficial (SUPER) or deep (DEEP)?
   PFCGateSpec		gate;		// parameters controlling the gating of pfc units
 
@@ -593,7 +596,7 @@ public:
   // find the LVi layer that this pfc deep layer projects to
 
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					int& n_in, int& n_mnt, int& n_out);
+					int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of pfc stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no=-1);
@@ -698,7 +701,7 @@ private:
 };
 
 class LEABRA_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
-  // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, MAINT, OUTPUT) and the SNrThal which represents all gating types in one layer 
+  // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, IN_MNT, OUTPUT, etc.) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
 public:
   void	Connect_impl(Projection* prjn);
