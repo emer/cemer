@@ -19,9 +19,9 @@
 #define leabra_hippo_h
 
 ///////////////////////////////////////
-// Special Hippocampal Layerspecs
+// Special Hippocampal Layerspecs for ThetaPhase learning dynamics
 
-// timing of quadphase dynamics -- split minus and normal plus:
+// timing of ThetaPhase dynamics -- split minus and normal plus:
 // [ ------ minus ------- ][ ---- plus ---- ]
 // [   auto-  ][ recall-  ][ -- both plus-- ]
 
@@ -45,8 +45,8 @@
 // learning just happens at end of trial as usual, but encoder projections use
 // the act_m2, act_p variables to learn on the right signals
 
-class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
-  // base layer spec for hippocampal layers that implements quad phase learning
+class LEABRA_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
+  // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning
 INHERITED(LeabraLayerSpec)
 public:
   int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_m2 is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
@@ -56,7 +56,7 @@ public:
   virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
   // compute act_dif2 as act_eq - act_m2, and based on that compute error stats as user data on layer (enc_sse, enc_norm_err)
 
-  TA_SIMPLE_BASEFUNS(HippoQuadLayerSpec);
+  TA_SIMPLE_BASEFUNS(ThetaPhaseLayerSpec);
 protected:
   SPEC_DEFAULTS;
 
@@ -66,9 +66,9 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API ECinLayerSpec : public HippoQuadLayerSpec {
-  // layer spec for EC input layers that implements quad phase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
-INHERITED(HippoQuadLayerSpec)
+class LEABRA_API ECinLayerSpec : public ThetaPhaseLayerSpec {
+  // layer spec for EC input layers that implements ThetaPhase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
+INHERITED(ThetaPhaseLayerSpec)
 public:
   // following is main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
@@ -78,9 +78,9 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API CA3LayerSpec : public HippoQuadLayerSpec {
-  // layer spec for CA3 layers that implements quad phase learning -- this serves only as a marker for CA1 layers to search for -- no new functionality over LeabraLayerSpec
-INHERITED(HippoQuadLayerSpec)
+class LEABRA_API CA3LayerSpec : public ThetaPhaseLayerSpec {
+  // layer spec for CA3 layers that implements ThetaPhase learning -- this serves only as a marker for CA1 layers to search for -- no new functionality over LeabraLayerSpec
+INHERITED(ThetaPhaseLayerSpec)
 public:
   TA_SIMPLE_BASEFUNS(CA3LayerSpec);
 private:
@@ -88,9 +88,9 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API ECoutLayerSpec : public HippoQuadLayerSpec {
-  // layer spec for EC out layers that implements quad phase learning -- automatically clamps to EC in activations in plus phase and records act_m2 mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_m2)
-INHERITED(HippoQuadLayerSpec)
+class LEABRA_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
+  // layer spec for EC out layers that implements ThetaPhase learning -- automatically clamps to EC in activations in plus phase and records act_m2 mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_m2)
+INHERITED(ThetaPhaseLayerSpec)
 public:
   // following is main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
@@ -111,9 +111,9 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
-  // layer spec for CA1 layers that implements quad phase learning -- modulates EC_in and CA1 weight scale strengths, and records act_m2 mid minus for auto encoder
-INHERITED(HippoQuadLayerSpec)
+class LEABRA_API CA1LayerSpec : public ThetaPhaseLayerSpec {
+  // layer spec for CA1 layers that implements ThetaPhase learning -- modulates EC_in and CA1 weight scale strengths, and records act_m2 mid minus for auto encoder
+INHERITED(ThetaPhaseLayerSpec)
 public:
   float		recall_decay; 		// #DEF_1 proportion to decay layer activations at start of recall phase
   bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then keep EC_in -> CA1 on, and don't do recall_decay -- makes it more likely to at least get input parts right

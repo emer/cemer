@@ -16,19 +16,19 @@
 #include "leabra_hippo.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//              Special Hippocampal Quadphase Layerspecs
+//              Special Hippocampal ThetaPhase Layerspecs
 
-void HippoQuadLayerSpec::Initialize() {
+void ThetaPhaseLayerSpec::Initialize() {
   auto_m_cycles = 30;
   Defaults_init();
 }
 
-void HippoQuadLayerSpec::Defaults_init() {
+void ThetaPhaseLayerSpec::Defaults_init() {
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = 0.7f;
 }
 
-void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
+void ThetaPhaseLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->act_m2 = u->act_nd;      // record the minus phase before overwriting it..
@@ -56,7 +56,7 @@ void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
+void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   float norm_err = 0.0f;
   float sse_err = 0.0f;
@@ -518,7 +518,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
     if(!StdNetwork()) return false;
   }
 
-  String msg = "Configuring Quad Phase Hippocampus:\n\n\
+  String msg = "Configuring ThetaPhase Hippocampus:\n\n\
  You will have to configure inputs/outputs to/from the EC layers after the configuration:\n\n";
 
   taMisc::Confirm(msg);
@@ -566,7 +566,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   XCalCHLConSpec* ca3ca1_cons = (XCalCHLConSpec*)hip_cons->FindMakeChild("CA3_CA1", &TA_XCalCHLConSpec);
 
   // layer specs
-  HippoQuadLayerSpec* hip_laysp = (HippoQuadLayerSpec*)hipspec->FindMakeSpec("HippoLayerSpec", &TA_HippoQuadLayerSpec);
+  ThetaPhaseLayerSpec* hip_laysp = (ThetaPhaseLayerSpec*)hipspec->FindMakeSpec("HippoLayerSpec", &TA_ThetaPhaseLayerSpec);
   ECoutLayerSpec* ecout_laysp = (ECoutLayerSpec*)hip_laysp->FindMakeChild("EC_out", &TA_ECoutLayerSpec);
   ECinLayerSpec* ecin_laysp = (ECinLayerSpec*)ecout_laysp->FindMakeChild("EC_in", &TA_ECinLayerSpec);
   LeabraLayerSpec* dg_laysp = (LeabraLayerSpec*)hip_laysp->FindMakeChild("DG", &TA_LeabraLayerSpec);

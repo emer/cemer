@@ -534,7 +534,7 @@ void MatrixMiscSpec::Initialize() {
   nogo_wtscale_inc = 2.0f;
   nogo_inhib = 0.0f; // 0.2f;
   pvr_inhib = 0.8f;
-  refract_inhib = 0.0f;
+  refract_inhib = 0.5f;
   no_pfc_thr = 0.0f;
   no_pfc_inhib = 0.2f;
 }
