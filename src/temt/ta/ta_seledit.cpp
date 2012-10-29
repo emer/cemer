@@ -20,6 +20,7 @@
 #include "ta_project.h"
 #include "ta_qt.h"
 #include "ta_datatable.h"
+#include "Subversion.h"
 
 //////////////////////////////////
 //  taBase                      //

@@ -113,6 +113,7 @@ set(ta_HEADS
   ta_TA_type.h
   ta_TA_type_WRAPPER.h
   ta_TA_inst.h
+  Subversion.h
 )
 
 # headers that need Qt moc run
@@ -226,6 +227,7 @@ set(ta_SRCS
   ${ta_SRCS_GUI}
   ta_qrc.cpp
   ta_ti.cpp
+  Subversion.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})
