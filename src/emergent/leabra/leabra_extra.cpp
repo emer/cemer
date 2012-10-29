@@ -3996,6 +3996,7 @@ void LeabraExtOnlyUnitSpec::Initialize() {
 void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(lay->hard_clamped) return;
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
@@ -4012,8 +4013,19 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
 
+  if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
+    LeabraInhib* thr;
+    int gpidx = u->UnitGpIdx();
+    if(gpidx < 0 || ls->inhib_group == LeabraLayerSpec::ENTIRE_LAYER) {
+      thr = (LeabraInhib*)lay;
+    }
+    else {
+      thr = (LeabraInhib*)lay->ungp_data.FastEl(gpidx);
+    }
+    tot_net += thr->netin.avg * ls->inhib.avg_boost * u->act_eq;
+  }
+
   if(u->HasExtFlag(Unit::EXT)) {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     float extin = u->ext * ls->clamp.gain;
     if(extin < opt_thresh.send)
       tot_net = 0.0f;           // not allowed to activate
