@@ -1870,9 +1870,18 @@ DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   return rval;
 }
 
+void taProject::ProjDirToCurrent() {
+  if(proj_dir.empty()) {
+    proj_dir = QDir::currentPath(); // default to current now..
+  }
+  QDir::setCurrent(proj_dir);
+}
+
 bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val) return true;
   inherited::SetFileName(val);
+  QFileInfo fi(val);
+  proj_dir = fi.absolutePath();
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
   if(vwr) {
     vwr->SetWinName();
@@ -1919,6 +1928,7 @@ int taProject::SaveAs(const String& fname) {
   taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
   if (flr->ostrm) {
     QFileInfo fi(flr->FileName()); // set to current working dir
+    proj_dir = fi.absolutePath();
     QDir::setCurrent(fi.absolutePath());
     if(auto_name) {
       String nwnm = taMisc::GetFileFmPath(flr->FileName());

@@ -501,6 +501,7 @@ public:
     SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
+  String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
   String                tags;      // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
@@ -585,6 +586,8 @@ public:
   virtual void          ReplaceString(const String& srch, const String& repl);
   // #BUTTON #CAT_File replace string in this project -- WARNING: this is potentially highly destructive and dangerous -- it just does a literal string replace for ANYTHING that matches srch in the ENTIRE project file (types, paths, values everything) -- this could end up rendering your project completely brain dead, which you will soon see due to error messages: it converts entire project to a string object, does the replace on that, and then attempts to load the new project string back over the top of the current one -- errors will typically be evident during this load process.  If you know what you're doing, this can be a very convenient way to update types or other such things globally.
 
+  virtual void		ProjDirToCurrent();
+  // #CAT_File set the proj_dir for this project to be the current working directory for the file system (whenever this project enters scope, this should be called, so files are always loaded appropriately)
   virtual void          SaveRecoverFile();
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
   virtual void          SaveRecoverFile_strm(ostream& strm);

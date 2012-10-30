@@ -226,7 +226,7 @@ public: \
 #define TA_BASEFUNS_TOK_(y) \
   private: \
   inline void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
-    if (!(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
+    if (reg && !(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
   public: \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
@@ -691,6 +691,8 @@ public:
   // #IGNORE
   virtual int           GetSpecialState() const { return -1; }
   // #IGNORE for items that support an alternative special state that should be communicated to users via a subtle background color (e.g., a flag of some sort is set that alters behavior in an important way) -- -1 = n/a, 0 = in non-special (default) state, 1..4 = special states -- multiple levels are supported with different colors: 1 = lavender, 2 = light yellow, 3 = light green, 4 = light red (pink)
+  virtual bool		HasName() const { return false; }
+  // #CAT_ObjectMgmt does the object have a name field that can be set?
   virtual bool          SetName(const String& nm) {return false;}
   // #CAT_ObjectMgmt #SET_name Set the object's name
   virtual String        GetName() const         { return _nilString; }
@@ -1821,8 +1823,9 @@ INHERITED(taOBase)
 public:
   String                name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
-  bool          SetName(const String& nm);
-  String        GetName() const                 { return name; }
+  override bool	HasName() const { return true; }
+  override bool SetName(const String& nm);
+  override String GetName() const  { return name; }
   override void SetDefaultName();
   override void MakeNameUnique();
 

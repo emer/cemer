@@ -3979,11 +3979,46 @@ void Function::InitLinks() {
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
+void Function::SetDefaultName() {
+  if(taMisc::not_constr || taMisc::in_init)
+    return;
+  SetDefaultName_();
+}
+
+void Function::MakeNameUnique() {
+  if(owner && owner->InheritsFrom(&TA_taList_impl)) {
+    ((taList_impl*)owner)->MakeElNameUnique(this); // just this guy
+  }
+}
+
+bool Function::SetName(const String& nm) {
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (name == new_name) return true;
+  name = new_name;
+  if (!taMisc::is_changing_type)
+    MakeNameUnique();
+  //UpdateAfterEdit();          // this turns out to be a bad idea -- just do it where needed
+  return true;
+}
+
+void Function::Copy_(const Function& cp) {
+  // note: do not copy name so it can be uniquified
+  return_type = cp.return_type;
+  object_type = cp.object_type;
+  args = cp.args;
+  fun_code = cp.fun_code;
+  UpdateAfterCopy(cp);
+}
+
 void Function::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  name = taMisc::StringCVar(name); // make names C legal names
+  // When a user enters a name in a dialog, it updates the 'name' member
+  // without making a SetName call.  Make the call here so it can do its
+  // validation.
+  SetName(name); 
   if(Program::IsForbiddenName(name)) {
-    name = "My" + name;
+    SetName("My" + name);
   }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
@@ -4014,7 +4049,7 @@ void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void Function::GenCssBody_impl(Program* prog) {
-  ProgVar rvt; rvt.var_type = return_type;  rvt.object_type = object_type;
+  ProgVar rvt(false); rvt.var_type = return_type;  rvt.object_type = object_type;
   String rval = rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
     rval += args.GenCss_FuncArgs();
@@ -4036,7 +4071,7 @@ const String Function::GenListing_children(int indent_level) {
 }
 
 String Function::GetDisplayName() const {
-  ProgVar rvt; rvt.var_type = return_type;  rvt.object_type = object_type;
+  ProgVar rvt(false); rvt.var_type = return_type;  rvt.object_type = object_type;
   String rval;
   rval += name + "(";
   if(args.size > 0) {
@@ -4529,6 +4564,7 @@ void Program::Init() {
 //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
   if(AlreadyRunning()) return;
+  ProjDirToCurrent();
   ClearStopReq();
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
@@ -4668,6 +4704,7 @@ void Program::Run() {
                "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
+  ProjDirToCurrent();
   ClearStopReq();
   last_run_prog = this;
   SetAllBreakpoints();          // reinstate all active breakpoints
@@ -4727,6 +4764,7 @@ void Program::Step(Program* step_prg) {
                "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
+  ProjDirToCurrent();
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
   last_run_prog = this;
@@ -4781,6 +4819,12 @@ void Program::Step(Program* step_prg) {
 void Program::ToggleTrace() {
   ToggleProgFlag(TRACE);
   DataChanged(DCR_ITEM_UPDATED);
+}
+
+void Program::ProjDirToCurrent() {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  proj->ProjDirToCurrent();
 }
 
 void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {

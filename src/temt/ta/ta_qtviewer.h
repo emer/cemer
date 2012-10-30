@@ -1144,6 +1144,8 @@ public:
   //bogus: see Qt docs on geometry under X
   bool                  AlignCssConsole();
   // align css console to our window, if applicable
+  void			ProjDirToCurrent();
+  // set current project directory to current directory
   override void         raise();
 
   static iMainWindowViewer* GetViewerForObj(taBase* obj);
@@ -2110,7 +2112,11 @@ public:
 
   virtual void          Refresh() {Refresh_impl();} // manually refresh
   virtual bool          ShowNode(iTreeViewItem* item) const;
-    // whether the node is visible in this show context
+  // whether the node is visible in this show context
+  virtual void		EmitTreeStructToUpdate();
+  // emit signal that tree structure is about to be updated
+  virtual void		EmitTreeStructUpdated();
+  // emit signal that tree structure was updated
 
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management
@@ -2139,6 +2145,10 @@ signals:
     // hook to allow client to add items to end of context menu before it shows
   void                  ItemSelected(iTreeViewItem* item);
     // NULL if none -- NOTE: the preferred way is to use ISelectableHost::Notify signal
+  void                  TreeStructToUpdate();
+  // structure of tree is just about to be updated (items removed or added) -- connect to this to update anything that depends on this tree view
+  void                  TreeStructUpdated();
+  // structure of tree is just about to be updated (items removed or added) -- connect to this to update anything that depends on this tree view
 #endif
 
 public slots:
@@ -2566,6 +2576,7 @@ public:
 public slots:
   void                  srch_text_entered();
   void                  srch_clear_clicked();
+  void                  treeview_to_updt();
   void                  srch_next_clicked();
   void                  srch_prev_clicked();
 

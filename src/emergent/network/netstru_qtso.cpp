@@ -2484,7 +2484,7 @@ void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
 
 void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   bool got_arw = false;
-  TwoDCoord dir;
+  TwoDCoord dir(0,0);
   if(e->key() == Qt::Key_Right) {
     got_arw = true;
     dir.x=1;
@@ -2503,10 +2503,12 @@ void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   }
   if(!got_arw) return;
   if(!(bool)unit_src) return;
-  TwoDCoord pos = (TwoDCoord)unit_src->pos;
-  pos += dir;
   Layer* lay = unit_src->own_lay();
   if(!lay) return;
+  TwoDCoord pos;
+  lay->UnitLogPos(unit_src, pos);
+  pos += dir;
+  if(pos.x < 0 || pos.y < 0) return;
   Unit* nw_u = lay->UnitAtCoord(pos);
   if(nw_u) {
     setUnitSrc(NULL, nw_u);

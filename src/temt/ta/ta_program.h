@@ -1112,12 +1112,17 @@ public:
   override ProgVar*     FindVarName(const String& var_nm) const;
   override String       GetDisplayName() const;
   override String       GetTypeDecoKey() const { return "Function"; }
-  override bool         SetName(const String& nm)       { name = nm; return true; }
-  override String       GetName() const                 { return name; }
   override String       GetToolbarName() const { return "fun def"; }
 
+  // below from taNBase for name:
+  override bool		HasName() const { return true; }
+  override bool         SetName(const String& nm);
+  override String       GetName() const { return name; }
+  override void 	SetDefaultName();
+  override void 	MakeNameUnique();
+
   override void         InitLinks();
-  PROGEL_SIMPLE_COPY(Function);
+  void Copy_(const Function& cp);
   TA_BASEFUNS(Function);
 protected:
   override void         UpdateAfterEdit_impl();
@@ -1391,6 +1396,8 @@ public:
   void                  ToggleTrace();
   // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state: flag indicates whether to record a trace of program execution in the css console or not
 
+  virtual void		ProjDirToCurrent();
+  // #CAT_Run make sure that the project directory is the current directory
   static void           SetStopReq(StopReason stop_rsn, const String& stop_message = "");
   // #CAT_Run request that the currently-running program stop at its earliest convenience..
   static void           ClearStopReq();

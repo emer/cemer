@@ -428,20 +428,9 @@ void taBase::Own(taBase* it, taBase* onr) {
 }
 
 void taBase::Own(taBase& it, taBase* onr) {
-//was causing list transfers to break
-//  if (it.GetOwner() == onr) return; // same owner, redundant
-
   Ref(it);
-//   bool prv_own = (it.GetOwner() != NULL);
   it.SetOwner(onr);
-//   if (!prv_own)
-//     it.SetTypeDefaults();
   it.InitLinks();
-//   if(prv_own) {
-//     if(it.InheritsFrom(TA_taNBase))
-//       taMisc::Warning("*** Warning: Object:",it.GetPathNames(),
-//                  "was transfered to a new owner, some parameters might have been reset");
-//   }
 }
 
 void taBase::Own(taSmartRef& it, taBase* onr) {
@@ -4101,7 +4090,10 @@ void taList_impl::UpdateAfterEdit(){
 
 bool taList_impl::MakeElNamesUnique() {
   static bool in_process = false;
-  if (!el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
+  if(size == 0) return true;
+  if(el_base->GetInstance()) {
+    if(!((taBase*)el_base->GetInstance())->HasName()) return true; // no names!
+  }
   if(HasOption("NO_UNIQUE_NAMES")) return true;        // not this guy
   if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
   in_process = true;
@@ -4152,7 +4144,7 @@ bool taList_impl::MakeElNamesUnique() {
 
 bool taList_impl::MakeElNameUnique(taBase* itm) {
   static bool in_process = false;
-  if (!itm || !el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
+  if (!itm || !itm->HasName()) return true; // only if el's actually have names
   if(HasOption("NO_UNIQUE_NAMES")) return true;        // not this guy
   if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
   in_process = true;
@@ -5095,7 +5087,7 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
     else {
       String obj_nm = ta->GetName();
-      if (obj_nm.empty() || !ta->InheritsFrom(&TA_taNBase)) { // only use real nbase names.
+      if (obj_nm.empty() || !ta->HasName()) { // only use real nbase names.
         int gidx = FindEl_(ta);
         if (gidx >= 0)
           rval += "[" + String(gidx) + "]";
