@@ -4,8 +4,11 @@ find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtNetwork QtWebKit)
 find_package(Coin REQUIRED)
 find_package(Quarter REQUIRED)
 find_package(OpenGL REQUIRED)
+
+set(SUBVERSION_INSTALL_PATH "${EMER_3RDPARTY_DIR}")
 find_package(SubversionLibrary REQUIRED)
 find_package(SvnCpp REQUIRED)
+
 if (NOT WIN32)
   find_package(Readline REQUIRED)
   if (APPLE)  

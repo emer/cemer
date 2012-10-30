@@ -202,11 +202,11 @@ ELSE (NOT WIN32)
 
 
   # search for libraries
-    FIND_SUB_LIB(APR_LIBRARY apr)
+    FIND_SUB_LIB(APR_LIBRARY libapr-1)
 
-    FIND_SUB_LIB(APRICONV_LIB apriconv)
+    FIND_SUB_LIB(APRICONV_LIB libapriconv-1)
 
-    FIND_SUB_LIB(APU_LIBRARY aprutil)
+    FIND_SUB_LIB(APU_LIBRARY libaprutil-1)
 
     #FIND_SUB_LIB(APU_XMLLIB xml)
 
