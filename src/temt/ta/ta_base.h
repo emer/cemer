@@ -822,8 +822,11 @@ public:
   // #CAT_File set file name for object
   virtual String        GetFileName() const     { return _nilString; }
   // #CAT_File get file name object was last saved with
-  virtual String        GetFileNameFmProject(const String& ext, const String& tag = "", const String& subdir = "", bool dmem_proc_no = false);
+  virtual String        GetFileNameFmProject(const String& ext, const String& tag = "",
+  	                          const String& subdir = "", bool dmem_proc_no = false);
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
+  virtual String	GetProjDir() const;
+  // #CAT_File get the directory path associated with the project that this object lives within
 
   static taFiler*       StatGetFiler(TypeItem* td, String exts= _nilString,
     int compress=-1, String filetypes =_nilString);

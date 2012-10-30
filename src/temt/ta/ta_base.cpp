@@ -1388,6 +1388,12 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
   return rval;
 }
 
+String taBase::GetProjDir() const {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return _nilString;
+  return proj->proj_dir;
+}
+
 taFiler* taBase::StatGetFiler(TypeItem* td, String exts, int compress, String filetypes)
 {
   bool cmprs = (compress <= 0); // either default or none
