@@ -1324,8 +1324,6 @@ public:
 
   virtual void 	Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
   virtual void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
@@ -1440,8 +1438,7 @@ public:
   float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
   float		act_m2;		// #VIEW_HOT #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
-  float		act_p2;		// #CAT_Activation second plus_phase activation (act_nd), set after settling, used for learning and performance stats
-  float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING, or act_p2 - act_p for MINUS_PLUS_PLUS)
+  float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING)
   float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
   float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
@@ -1637,9 +1634,6 @@ public:
   void 	Compute_dWt_FirstPlus(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstPlus(this, net, thread_no); }
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  void 	Compute_dWt_SecondPlus(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_SecondPlus(this, net, thread_no); }
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   void 	Compute_dWt_Nothing(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Nothing(this, net, thread_no); }
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
@@ -1927,10 +1921,9 @@ class LEABRA_API DecaySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
 INHERITED(SpecMemberBase)
 public:
-  float		event;		// #DEF_1 proportion decay of state vars between events
-  float		phase;		// [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
-  float		phase2;		// #DEF_0 proportion decay of state vars between 2nd set of phases (if appl, 0 std)
-  bool		clamp_phase2;	// #DEF_false if true, hard-clamp second plus phase activations to prev plus phase (only special layers will then update -- optimizes speed)
+  float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
+  float		phase;		// #MIN_0 #MAX_1 [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
+  float		phase2;		// #MIN_0 #MAX_1 #DEF_0 proportion decay of state vars after second phase, before third phase -- only applicable for 3-phase case (MINUS_PLUS_NOTHING)
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -2075,8 +2068,6 @@ public:
     // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
   virtual void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation prior to settling: hard-clamp inputs
-  virtual void	Compute_HardClampPhase2(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation prior to settling: hard-clamp inputs (special code for hard clamping in phase 2 based on prior acts)
 
   virtual void	ExtToComp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation change external inputs to comparisons (remove input)
@@ -2269,8 +2260,6 @@ public:
 
   virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
@@ -2753,9 +2742,6 @@ public:
   bool	Compute_dWt_FirstPlus_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_FirstPlus_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  bool	Compute_dWt_SecondPlus_Test(LeabraNetwork* net)
-  { return spec->Compute_dWt_SecondPlus_Test(this, net); }
-  // #CAT_Learning test whether to compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   bool	Compute_dWt_Nothing_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_Nothing_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
@@ -2871,7 +2857,7 @@ INHERITED(taOBase)
 public:
   int		minus;		// #DEF_50:200 number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// #DEF_20:200 number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
+  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- only relevant for MINUS_PLUS_NOTHING case
   int		n_avg_only_epcs; // #DEF_0 number of epochs during which time only ravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
@@ -3113,9 +3099,6 @@ public:
     PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
     MINUS_PLUS_NOTHING,		// standard for CtLeabra_X/CAL and auto-encoder version with final 'nothing' minus phase
     MINUS_PLUS_MINUS,		// alternative version for CtLeabra_X/CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
-    MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating in second plus phase, for the PBWM model
-    MINUS_PLUS_PLUS_NOTHING,	// PBWM in CtLeabra_X/CAL mode
-    MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_X/CAL mode, alternative final inhib stage
   };
 
   enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
@@ -3393,8 +3376,6 @@ public:
 
   virtual void	Compute_dWt_FirstPlus();
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_SecondPlus();
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing();
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
   virtual void	Compute_dWt_Norm();

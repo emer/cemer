@@ -89,9 +89,6 @@ void SNrThalLayerSpec::Defaults_init() {
   kwta.k_from = KWTASpec::USE_K;
   kwta.k = 1;
 
-  // SetUnique("decay", true);
-  decay.clamp_phase2 = false;
-
   // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
@@ -172,9 +169,6 @@ int SNrThalLayerSpec::SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type,
 bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  // SetUnique("decay", true);
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
@@ -530,7 +524,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 }
 
 void MatrixMiscSpec::Initialize() {
-  da_gain = 0.1f;
+  da_gain = 0.05f;
   nogo_wtscale_inc = 2.0f;
   nogo_inhib = 0.0f; // 0.2f;
   pvr_inhib = 0.8f;
@@ -561,7 +555,6 @@ void MatrixLayerSpec::Defaults_init() {
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -616,7 +609,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
                 "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space!")) {
@@ -1206,7 +1198,6 @@ void PFCLayerSpec::Defaults_init() {
   decay.event = 0.0f;
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;   // this is the one exception!
 }
 
 void PFCLayerSpec::UpdateAfterEdit_impl() {
@@ -1234,13 +1225,9 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
-  if(decay.clamp_phase2) {
-    // SetUnique("decay", true);
-    decay.event = 0.0f;
-    decay.phase = 0.0f;
-    decay.phase2 = 0.0f;
-    decay.clamp_phase2 = false;
-  }
+  decay.event = 0.0f;
+  decay.phase = 0.0f;
+  decay.phase2 = 0.0f;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
@@ -1251,11 +1238,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
                 "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
     lay->unit_groups = true;
     return false;
-  }
-
-  if(lay->CheckError(net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS, quiet, rval,
-                "requires LeabraNetwork phase_oder = MINUS_PLUS, I just set it for you")) {
-    net->phase_order = LeabraNetwork::MINUS_PLUS;
   }
 
   if(lay->CheckError(net->no_plus_test, quiet, rval,

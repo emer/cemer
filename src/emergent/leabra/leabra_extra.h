@@ -136,8 +136,6 @@ public:
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
 
@@ -231,8 +229,6 @@ public:
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_FirstPlus_Test(lay, net); }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { if(lamina == DEEP) return false; return inherited::Compute_dWt_SecondPlus_Test(lay, net); }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_Nothing_Test(lay, net); }
 
@@ -264,8 +260,6 @@ public:
 
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
@@ -2179,8 +2173,6 @@ public:
 
   // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }

@@ -2643,51 +2643,6 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
                         k, gp_geom_pos.x, gp_geom_pos.y);
       }
       break;
-    case LeabraNetwork::MINUS_PLUS_PLUS:
-      // don't use actual phase values because pluses might be minuses with testing
-      if(net->phase_no == 0) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 1) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(x_val - x_m, y_val - y_m, TwoDValLeabraLayer::TWOD_ACT_DIF,
-                         k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(x_val - x_p, y_val - y_p, TwoDValLeabraLayer::TWOD_ACT_DIF2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      break;
-    case LeabraNetwork::MINUS_PLUS_PLUS_NOTHING:
-    case LeabraNetwork::MINUS_PLUS_PLUS_MINUS:
-      // don't use actual phase values because pluses might be minuses with testing
-      if(net->phase_no == 0) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 1) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(x_val - x_m, y_val - y_m, TwoDValLeabraLayer::TWOD_ACT_DIF,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 2) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(x_val - x_p, y_val - y_p, TwoDValLeabraLayer::TWOD_ACT_DIF2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(x_p - x_val, y_p - y_val, TwoDValLeabraLayer::TWOD_ACT_DIF2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      break;
     }
   }
 }
@@ -3594,51 +3549,6 @@ void FourDValLayerSpec::PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp
         lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_M,
                         k, gp_geom_pos.x, gp_geom_pos.y);
         lay->SetFourDVals(x_p - x_val, y_p - y_val, FourDValLeabraLayer::FOURD_ACT_DIF,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      break;
-    case LeabraNetwork::MINUS_PLUS_PLUS:
-      // don't use actual phase values because pluses might be minuses with testing
-      if(net->phase_no == 0) {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_M,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 1) {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_P,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetFourDVals(x_val - x_m, y_val - y_m, FourDValLeabraLayer::FOURD_ACT_DIF,
-                         k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_P2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetFourDVals(x_val - x_p, y_val - y_p, FourDValLeabraLayer::FOURD_ACT_DIF2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      break;
-    case LeabraNetwork::MINUS_PLUS_PLUS_NOTHING:
-    case LeabraNetwork::MINUS_PLUS_PLUS_MINUS:
-      // don't use actual phase values because pluses might be minuses with testing
-      if(net->phase_no == 0) {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_M,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 1) {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_P,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetFourDVals(x_val - x_m, y_val - y_m, FourDValLeabraLayer::FOURD_ACT_DIF,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else if(net->phase_no == 2) {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_P2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetFourDVals(x_val - x_p, y_val - y_p, FourDValLeabraLayer::FOURD_ACT_DIF2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else {
-        lay->SetFourDVals(x_val, y_val, FourDValLeabraLayer::FOURD_ACT_M2,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetFourDVals(x_p - x_val, y_p - y_val, FourDValLeabraLayer::FOURD_ACT_DIF2,
                         k, gp_geom_pos.x, gp_geom_pos.y);
       }
       break;
