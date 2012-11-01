@@ -2531,6 +2531,13 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
 
 void taiEditDataHost::SetCurMenu_Name(String men_nm) {
   if (!menu) {
+#ifdef TA_OS_MAC
+    // This shouldn't be necessary but Mac still glitches occasionally.
+    // See bug 1518.
+    menu = new taiToolBar(widget(), taiMisc::fonSmall, NULL);
+    vblDialog->insertWidget(0, menu->GetRep());
+    vblDialog->insertSpacing(1, 2);
+#else
     menu = new taiMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
     QMenuBar *qmb = menu->rep_bar();
     vblDialog->setMenuBar(qmb);
@@ -2543,6 +2550,7 @@ void taiEditDataHost::SetCurMenu_Name(String men_nm) {
     // is taking its place.
 #if (QT_VERSION >= 0x040600)
     qmb->setNativeMenuBar(false);
+#endif
 #endif
   }
 
