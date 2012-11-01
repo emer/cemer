@@ -5,9 +5,9 @@ find_package(Coin REQUIRED)
 find_package(Quarter REQUIRED)
 find_package(OpenGL REQUIRED)
 
-set(SUBVERSION_INSTALL_PATH "${EMER_3RDPARTY_DIR}")
+# TODO: how will this work on Linux/Mac?  Might need separate env var for SUBVERSION_DIR.
+set(SUBVERSION_INSTALL_PATH "${EMER_3RDPARTY_DIR}/../subversion")
 find_package(SubversionLibrary REQUIRED)
-find_package(SvnCpp REQUIRED)
 
 if (NOT WIN32)
   find_package(Readline REQUIRED)
@@ -40,6 +40,7 @@ include(${QT_USE_FILE})
 include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
   ${ODE_INCLUDE_DIR}
   ${GSL_INCLUDE_DIR}
+  ${SUBVERSION_INCLUDE_DIRS}
 )
 if (WIN32)
   #note: valid in main app and plugin contexts:
