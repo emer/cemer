@@ -282,6 +282,7 @@ if (WIN32)
     "${EMER_3RDPARTY_DIR}/bin/*.dll"
     "${COINDIR}/bin/*.dll"
     "${QT_BINARY_DIR}/*.dll"
+    "${SUBVERSION_INSTALL_PATH}/bin/*.dll"
   )
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
