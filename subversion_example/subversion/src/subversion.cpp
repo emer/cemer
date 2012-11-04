@@ -19,6 +19,7 @@
 #include <svn_fs.h>
 #include <svn_pools.h>
 #include <svn_error.h>
+#include <svn_path.h>
 
 /* Convert a Subversion error into a simple boolean error code.
  *
@@ -126,15 +127,16 @@ static int make_new_directory(const char *repos_path, const char *new_directory,
 	INT_ERR(err);
 }
 
-int testSvnMakeDir()
-{
-  apr_initialize();
-  apr_pool_t * pool = svn_pool_create(0);
-  make_new_directory("/home/houman/Desktop/wc/", "dir3", pool);
-  apr_terminate();
-  return 0;
+int testSvnMakeDir() {
+	apr_initialize();
+	apr_pool_t * pool = svn_pool_create(0);
+	const char * path = svn_path_canonicalize("/home/houman/Desktop/wc/", pool);
+	const char * newDir = svn_path_dirname(svn_path_canonicalize("dir3", pool), pool);
+	make_new_directory(path, newDir, pool);
+	svn_pool_destroy(pool);
+	apr_terminate();
+	return 0;
 }
-
 
 int main() {
 	testSvnMakeDir();

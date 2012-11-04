@@ -28,7 +28,8 @@ src/subversion.d: ../src/subversion.cpp /usr/include/apr-1.0/apr.h \
  /usr/include/subversion-1/svn_diff.h \
  /usr/include/subversion-1/svn_repos.h /usr/include/subversion-1/svn_fs.h \
  /usr/include/subversion-1/svn_fs.h /usr/include/subversion-1/svn_pools.h \
- /usr/include/subversion-1/svn_error.h
+ /usr/include/subversion-1/svn_error.h \
+ /usr/include/subversion-1/svn_path.h
 
 /usr/include/apr-1.0/apr.h:
 
@@ -127,3 +128,5 @@ src/subversion.d: ../src/subversion.cpp /usr/include/apr-1.0/apr.h \
 /usr/include/subversion-1/svn_pools.h:
 
 /usr/include/subversion-1/svn_error.h:
+
+/usr/include/subversion-1/svn_path.h:
