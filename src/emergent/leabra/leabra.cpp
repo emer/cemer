@@ -1072,7 +1072,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->act_eq = 0.0f;
   lu->act_nd = 0.0f;
   lu->act_p = lu->act_m = lu->act_dif = 0.0f;
-  lu->act_m2 = lu->act_dif2 = 0.0f;
+  lu->act_m2 = lu->act_mid = lu->act_dif2 = 0.0f;
   lu->avg_ss = act.avg_init;
   lu->avg_s = act.avg_init;
   lu->avg_m = act.avg_init;
@@ -2009,7 +2009,7 @@ float LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) {
 //      Cycle Optional Misc
 
 void LeabraUnitSpec::Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net) {
-  u->act_m2 = u->act_eq;
+  u->act_mid = u->act_eq;
 }
 
 void LeabraUnitSpec::Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -2642,7 +2642,7 @@ void LeabraUnit::Initialize() {
   avg_l = 0.15f;
   davg = 0.0f;
   act_p = act_m = act_dif = 0.0f;
-  act_m2 = act_dif2 = 0.0f;
+  act_m2 = act_mid = act_dif2 = 0.0f;
   da = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
@@ -2729,6 +2729,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_p = cp.act_p;
   act_dif = cp.act_dif;
   act_m2 = cp.act_m2;
+  act_mid = cp.act_mid;
   act_dif2 = cp.act_dif2;
   da = cp.da;
   vcb = cp.vcb;

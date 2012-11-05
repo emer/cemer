@@ -37,24 +37,24 @@
 // CA3 -> CA1 = 0, EC_in -> CA1 = 1
 // (same as auto- -- training signal for CA3 -> CA1 is what EC would produce!
 
-// act_m2 = auto encoder minus phase state (in both CA1 and EC_out
+// act_mid = auto encoder minus phase state (in both CA1 and EC_out
 //   used by HippoEncoderConSpec relative to act_p plus phase)
 // act_m = recall minus phase (normal minus phase dynamics for CA3 recall learning)
 // act_p = plus (serves as plus phase for both auto and recall)
 
 // learning just happens at end of trial as usual, but encoder projections use
-// the act_m2, act_p variables to learn on the right signals
+// the act_mid, act_p variables to learn on the right signals
 
 class LEABRA_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
   // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning
 INHERITED(LeabraLayerSpec)
 public:
-  int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_m2 is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
+  int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_mid is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
 
   virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
-  // save current act_nd values as act_m2 -- minus phase for auto-encoder learning
+  // save current act_nd values as act_mid -- minus phase for auto-encoder learning
   virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
-  // compute act_dif2 as act_eq - act_m2, and based on that compute error stats as user data on layer (enc_sse, enc_norm_err)
+  // compute act_dif2 as act_eq - act_mid, and based on that compute error stats as user data on layer (enc_sse, enc_norm_err)
 
   TA_SIMPLE_BASEFUNS(ThetaPhaseLayerSpec);
 protected:
@@ -89,7 +89,7 @@ private:
 };
 
 class LEABRA_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
-  // layer spec for EC out layers that implements ThetaPhase learning -- automatically clamps to EC in activations in plus phase and records act_m2 mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_m2)
+  // layer spec for EC out layers that implements ThetaPhase learning -- automatically clamps to EC in activations in plus phase and records act_mid mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_mid)
 INHERITED(ThetaPhaseLayerSpec)
 public:
   // following is main hook into code:
@@ -112,7 +112,7 @@ private:
 };
 
 class LEABRA_API CA1LayerSpec : public ThetaPhaseLayerSpec {
-  // layer spec for CA1 layers that implements ThetaPhase learning -- modulates EC_in and CA1 weight scale strengths, and records act_m2 mid minus for auto encoder
+  // layer spec for CA1 layers that implements ThetaPhase learning -- modulates EC_in and CA1 weight scale strengths, and records act_mid mid minus for auto encoder
 INHERITED(ThetaPhaseLayerSpec)
 public:
   float		recall_decay; 		// #DEF_1 proportion to decay layer activations at start of recall phase
@@ -206,7 +206,7 @@ private:
 };
 
 class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
-  // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_m2) -- soft bounding as specified in spec
+  // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_mid) -- soft bounding as specified in spec
 INHERITED(LeabraConSpec)
 public:
 #ifdef __MAKETA__
@@ -223,8 +223,8 @@ public:
       float lin_wt = LinFmSigWt(cn->wt);
       C_Compute_dWt(cn, ru, 
 		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m2,
-					    su->act_p, su->act_m2));  
+		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_mid,
+					    su->act_p, su->act_mid));  
     }
   }
 

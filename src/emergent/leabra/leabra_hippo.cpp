@@ -31,15 +31,15 @@ void ThetaPhaseLayerSpec::Defaults_init() {
 void ThetaPhaseLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act_m2 = u->act_nd;      // record the minus phase before overwriting it..
+    u->act_mid = u->act_nd;      // record the minus phase before overwriting it..
   }
 
-  // record stats for act_m2
+  // record stats for act_mid
   AvgMaxVals& vals = lay->acts_m2;
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_m2");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_mid");
   }
   if(lay->unit_groups) {
     vals.InitVals();
@@ -62,7 +62,7 @@ void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* 
   float sse_err = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act_dif2 = u->act_eq - u->act_m2;
+    u->act_dif2 = u->act_eq - u->act_mid;
     float sse = u->act_dif2;
     if(fabsf(sse) < us->sse_tol)
       sse = 0.0f;
@@ -70,10 +70,10 @@ void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* 
     sse_err += sse;
 
     if(net->on_errs) {
-      if(u->act_m2 > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
+      if(u->act_mid > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
     }
     if(net->off_errs) {
-      if(u->act_m2 < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
+      if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
     }
   }
   int ntot = 0;

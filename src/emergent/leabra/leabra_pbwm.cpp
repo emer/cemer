@@ -104,7 +104,7 @@ void SNrThalLayerSpec::HelpConfig() {
   String help = "SNrThalLayerSpec Computation:\n\
  - net = Go if no NoGo, else Go / (Go + nogo_gain * NoGo + leak)\n\
  - act = raw activation from netin\n\
- - act_m2 = winner-filtered gating activations -- drives learning in Matrix\n\
+ - act_mid = winner-filtered gating activations -- drives learning in Matrix\n\
  - No learning, wt init variance, in afferent cons\n\
  \nSNrThalLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure.\n\
@@ -223,7 +223,7 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
     for(int i=0;i<nunits;i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
       if(u->lesioned()) continue;
-      u->act_m2 = 0.0f;	// reset gating act
+      u->act_mid = 0.0f;	// reset gating act
     }
   }
 
@@ -255,12 +255,12 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
 	gpd->go_cycle = net->ct_cycle;
 	gpd->prv_mnt_count = gpd->mnt_count;
 	gpd->mnt_count = 0;	// reset
-	u->act_m2 = u->act_eq;	// gating act
+	u->act_mid = u->act_eq;	// gating act
       }
     }
     else {
       gpd->go_fired_now = false; // turn it off after one cycle
-      u->act = u->act_eq = u->act_nd = u->act_m2; // activity is always gating signal
+      u->act = u->act_eq = u->act_nd = u->act_mid; // activity is always gating signal
     }
   }
 
@@ -281,7 +281,7 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
     gpd->go_cycle = net->ct_cycle;
     gpd->prv_mnt_count = gpd->mnt_count;
     gpd->mnt_count = 0;	// reset
-    u->act_m2 = snrthal.go_thr; // must be at least at threshold -- otherwise won't gate for pbwm!
+    u->act_mid = snrthal.go_thr; // must be at least at threshold -- otherwise won't gate for pbwm!
   }
 
   if(net->ct_cycle == snrthal.gate_cycle) {
@@ -504,7 +504,7 @@ void MatrixUnitSpec::InitLinks() {
 }
 
 void MatrixUnitSpec::Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net) {
-  u->act_m2 = u->act_eq;
+  u->act_mid = u->act_eq;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
@@ -788,7 +788,7 @@ void MatrixLayerSpec::Compute_ZeroMidMinusAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act_m2 = 0.0f;
+    u->act_mid = 0.0f;
   }
 }
 
@@ -979,7 +979,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     float snrthal_act = 0.0f;
     if(!snr_u->lesioned())
-      snrthal_act = matrix.da_gain * snr_u->act_m2;
+      snrthal_act = matrix.da_gain * snr_u->act_mid;
 
     if(go_nogo == NOGO) {
       for(int i=0;i<nunits;i++) {
@@ -1211,7 +1211,7 @@ void PFCLayerSpec::HelpConfig() {
  They maintain activation over time (activation-based working memory) via \
  excitatory intracelluar ionic mechanisms (implemented in hysteresis channels, gc.h),\
  and excitatory connections with superficial pfc layers, which is toggled by SNrThal.\n\
- Updating occurs by mid_minus_cycle, based on SNrThal act_m2 activations.\n\
+ Updating occurs by mid_minus_cycle, based on SNrThal act_mid activations.\n\
  \nPFCLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure layers.\n\
  - First prjn must be from PFC superficial layer (can be any spec type)\n\
@@ -1431,7 +1431,7 @@ void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act_m2 = u->act_eq;
+    u->act_mid = u->act_eq;
   }
 }
 

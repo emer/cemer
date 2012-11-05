@@ -1488,7 +1488,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   proj_template_paths.AddUnique(NameVar("WebLib",
     (Variant)(web_home + "/proj_templates"))); //note: urls always use '/'
 
-  String curdir = GetCurrentPath();
+  String curdir = QDir::currentPath();
   taMisc::load_paths.AddUnique(curdir);
 
   // max_cpu
@@ -2153,6 +2153,16 @@ bool taMisc::RemoveFile(const String& fn) {
 }
 
 String taMisc::GetCurrentPath() {
+#ifndef NO_TA_BASE
+  // before any projects have been opened, the current path is not really valid per QDir
+  // so we use the first of the recent paths -- this works well for the file chooser for
+  // example.
+  if(tabMisc::root->projects.size == 0) {
+    String_Array& rpth = tabMisc::root->recent_paths;
+    if(rpth.size > 0)
+      return rpth.SafeEl(0);
+  }
+#endif
   return QDir::currentPath();
 }
 

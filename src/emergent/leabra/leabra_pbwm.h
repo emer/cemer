@@ -75,7 +75,7 @@ private:
 };
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_m2, gating status in unit group data per stripe
+  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_mid, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
@@ -165,8 +165,8 @@ public:
   // RECV-based save current sender activation states to sravg_m for subsequent learning -- call this at time of gating..
 
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
-				   float mtx_act_m2, float mtx_da, float su_act_lrn) {
-    float sr_prod = mtx_act_m2 * su_act_lrn;
+				   float mtx_act_mid, float mtx_da, float su_act_lrn) {
+    float sr_prod = mtx_act_mid * su_act_lrn;
     float dwt = mtx_da * sr_prod;
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
@@ -180,7 +180,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_mid, ru->dav, cn->sact_lrn);
       // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
@@ -215,7 +215,7 @@ private:
 };
 
 class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
-  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_m2).  also uses recv scale_eff for stripe-specific wt scale params
+  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_mid).  also uses recv scale_eff for stripe-specific wt scale params
 INHERITED(MatrixConSpec)
 public:
 
@@ -290,7 +290,7 @@ INHERITED(LeabraBiasSpec)
 public:
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
-    float err = ru->act_m2 * ru->dav;
+    float err = ru->act_mid * ru->dav;
     if(fabsf(err) >= dwt_thresh)
       cn->dwt += cur_lrate * err;
   }
@@ -434,7 +434,7 @@ public:
 
   virtual void	Compute_GatingActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				       int gpidx, LeabraNetwork* net);
-  // save activations into act_m2 at point of gating
+  // save activations into act_mid at point of gating
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
