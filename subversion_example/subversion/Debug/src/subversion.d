@@ -29,7 +29,24 @@ src/subversion.d: ../src/subversion.cpp /usr/include/apr-1.0/apr.h \
  /usr/include/subversion-1/svn_repos.h /usr/include/subversion-1/svn_fs.h \
  /usr/include/subversion-1/svn_fs.h /usr/include/subversion-1/svn_pools.h \
  /usr/include/subversion-1/svn_error.h \
- /usr/include/subversion-1/svn_path.h
+ /usr/include/subversion-1/svn_path.h \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/client.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/vector_wrapper.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/utility_wrapper.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/map_wrapper.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/context.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/string_wrapper.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/pool.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/exception.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/path.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/entry.hpp \
+ /usr/include/subversion-1/svn_wc.h \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/revision.hpp \
+ /usr/include/subversion-1/svn_types.h \
+ /usr/include/subversion-1/svn_opt.h \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/datetime.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/log_entry.hpp \
+ /home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/annotate_line.hpp
 
 /usr/include/apr-1.0/apr.h:
 
@@ -130,3 +147,37 @@ src/subversion.d: ../src/subversion.cpp /usr/include/apr-1.0/apr.h \
 /usr/include/subversion-1/svn_error.h:
 
 /usr/include/subversion-1/svn_path.h:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/client.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/vector_wrapper.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/utility_wrapper.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/map_wrapper.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/context.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/string_wrapper.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/pool.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/exception.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/path.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/entry.hpp:
+
+/usr/include/subversion-1/svn_wc.h:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/revision.hpp:
+
+/usr/include/subversion-1/svn_types.h:
+
+/usr/include/subversion-1/svn_opt.h:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/datetime.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/log_entry.hpp:
+
+/home/houman/workspace/eclipse-C++/subversion/kdesubversion/kdevsvncpp/annotate_line.hpp:

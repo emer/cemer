@@ -32,6 +32,7 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1130615445" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/apr-1.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/subversion-1"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/subversion/kdesubversion}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2115530834" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -89,6 +90,8 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1445436218" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/apr-1.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/subversion-1"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/subversion/kdevsvncpp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/subversion/kdesubversion}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.806799062" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
