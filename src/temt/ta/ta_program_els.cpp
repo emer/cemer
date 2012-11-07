@@ -27,7 +27,7 @@
 // #include <QDir>
 
 //////////////////////////
-//  CodeBlock		//
+//  CodeBlock           //
 //////////////////////////
 
 void CodeBlock::Initialize() {
@@ -81,7 +81,7 @@ bool CodeBlock::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  LocalVars		//
+//  LocalVars           //
 //////////////////////////
 
 void LocalVars::Initialize() {
@@ -159,7 +159,7 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
   TypeDef* td = taMisc::types.FindName(vartyp);
-  if(td != NULL) return true;	// yep.
+  if(td != NULL) return true;   // yep.
   return false;
 }
 
@@ -181,14 +181,14 @@ bool LocalVars::CvtFmCode(const String& code) {
   else if(vartyp == "bool")
     var->SetBool(false);
   else {
-    var->SetObjectType(td);	// catch all.
+    var->SetObjectType(td);     // catch all.
   }
   return true;
 }
 
 
 //////////////////////////
-//    UserScript	//
+//    UserScript        //
 //////////////////////////
 
 
@@ -210,7 +210,7 @@ void UserScript::UpdateAfterEdit_impl() {
 }
 
 void UserScript::GenCssBody_impl(Program* prog) {
-  script.ParseExpr();		// re-parse just to be sure!
+  script.ParseExpr();           // re-parse just to be sure!
   prog->AddLine(this, script.GetFullExpr(), ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
 }
@@ -248,7 +248,7 @@ void UserScript::ExportToFileName(const String& fnm) {
 }
 
 //////////////////////////
-//  WhileLoop		//
+//  WhileLoop           //
 //////////////////////////
 
 void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -257,7 +257,7 @@ void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void WhileLoop::GenCssPre_impl(Program* prog) {
-  test.ParseExpr();		// re-parse just to be sure!
+  test.ParseExpr();             // re-parse just to be sure!
   prog->AddLine(this, String("while (") + test.GetFullExpr() + ") {", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
   prog->IncIndent();
@@ -290,7 +290,7 @@ bool WhileLoop::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  DoLoop		//
+//  DoLoop              //
 //////////////////////////
 
 void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -306,7 +306,7 @@ void DoLoop::GenCssPre_impl(Program* prog) {
 }
 
 void DoLoop::GenCssPost_impl(Program* prog) {
-  test.ParseExpr();		// re-parse just to be sure!
+  test.ParseExpr();             // re-parse just to be sure!
   prog->DecIndent();
   prog->AddLine(this, String("} while (") + test.GetFullExpr() + ");");
 }
@@ -333,7 +333,7 @@ bool DoLoop::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  ForLoop		//
+//  ForLoop             //
 //////////////////////////
 
 void ForLoop::SetProgExprFlags() {
@@ -349,8 +349,8 @@ void ForLoop::Initialize() {
   SetProgExprFlags();
 }
 
-void ForLoop::InitLinks() { 
-  inherited::InitLinks(); 
+void ForLoop::InitLinks() {
+  inherited::InitLinks();
   InitLinks_taAuto(&TA_ForLoop);
   if (taMisc::is_loading || taMisc::is_duplicating) return;
   UpdateOnInsert_impl();
@@ -369,7 +369,7 @@ void ForLoop::UpdateAfterEdit_impl() {
   bool is_local;
   String loop_var = GetLoopVar(is_local);
   if(!is_local)
-    MakeIndexVar(loop_var);	// make sure it exists
+    MakeIndexVar(loop_var);     // make sure it exists
 }
 
 void ForLoop::UpdateOnInsert_impl() {
@@ -384,7 +384,7 @@ void ForLoop::UpdateOnInsert_impl() {
     clashes = ParentForLoopVarClashes(loop_var);
   }
   ChangeLoopVar(loop_var);
-} 
+}
 
 void ForLoop::MorphVar(String& cur_loop_var) {
   char c;
@@ -424,15 +424,15 @@ String ForLoop::GetLoopVar(bool& is_local) const {
   }
   return loop_var;
 }
- 
+
 void ForLoop::MakeIndexVar(const String& var_nm) {
   if(var_nm.empty()) return;
 
   Program* my_prog = GET_MY_OWNER(Program);
   if(!my_prog) return;
   Function* my_fun = GET_MY_OWNER(Function);
-  
-  if(my_fun) {			// use function scope by default
+
+  if(my_fun) {                  // use function scope by default
     if(my_fun->FindVarName(var_nm)) return; // all good
   }
   if(my_prog->FindVarName(var_nm)) return; // still good
@@ -465,9 +465,9 @@ void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void ForLoop::GenCssPre_impl(Program* prog) {
-  init.ParseExpr();		// re-parse just to be sure!
-  test.ParseExpr();		// re-parse just to be sure!
-  iter.ParseExpr();		// re-parse just to be sure!
+  init.ParseExpr();             // re-parse just to be sure!
+  test.ParseExpr();             // re-parse just to be sure!
+  iter.ParseExpr();             // re-parse just to be sure!
   String full_expr = init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr();
   prog->AddLine(this, String("for(") + full_expr + ") {", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
@@ -516,12 +516,12 @@ bool ForLoop::CvtFmCode(const String& code) {
   String rest = cd.after(';');
   test.SetExpr(rest.before(';'));
   iter.SetExpr(rest.after(';'));
-  UpdateAfterEdit_impl();	// make local var
+  UpdateAfterEdit_impl();       // make local var
   return true;
 }
 
 //////////////////////////
-//  ForeachLoop		//
+//  ForeachLoop         //
 //////////////////////////
 
 void ForeachLoop::SetProgExprFlags() {
@@ -542,7 +542,7 @@ void ForeachLoop::UpdateAfterEdit_impl() {
   bool clashes = ParentForeachLoopVarClashes();
   if(clashes) {
     taMisc::Warning("foreach variable is same as one used in outer loop, which is usually not a good idea.  variable name is:",
-		    el_var->name);
+                    el_var->name);
   }
 }
 
@@ -566,7 +566,7 @@ void ForeachLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void ForeachLoop::GenCssPre_impl(Program* prog) {
-  in.ParseExpr();		// re-parse just to be sure!
+  in.ParseExpr();               // re-parse just to be sure!
   if(!el_var) return;
   String full_expr = el_var->name + " in " + in.GetFullExpr();
   prog->AddLine(this, String("foreach(") + full_expr + ") {", ProgLine::MAIN_LINE);
@@ -609,7 +609,7 @@ bool ForeachLoop::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//  IfContinue		//
+//  IfContinue          //
 //////////////////////////
 
 void IfContinue::Initialize() {
@@ -622,7 +622,7 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void IfContinue::GenCssBody_impl(Program* prog) {
-  cond.ParseExpr();		// re-parse just to be sure!
+  cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
     prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
@@ -665,7 +665,7 @@ bool IfContinue::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//  IfBreak		//
+//  IfBreak             //
 //////////////////////////
 
 void IfBreak::Initialize() {
@@ -678,7 +678,7 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void IfBreak::GenCssBody_impl(Program* prog) {
-  cond.ParseExpr();		// re-parse just to be sure!
+  cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
     prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
@@ -720,7 +720,7 @@ bool IfBreak::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  IfReturn		//
+//  IfReturn            //
 //////////////////////////
 
 void IfReturn::Initialize() {
@@ -733,7 +733,7 @@ void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void IfReturn::GenCssBody_impl(Program* prog) {
-  cond.ParseExpr();		// re-parse just to be sure!
+  cond.ParseExpr();             // re-parse just to be sure!
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) {
     prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
@@ -775,7 +775,7 @@ bool IfReturn::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  IfElse		//
+//  IfElse              //
 //////////////////////////
 
 void IfElse::Initialize() {
@@ -805,7 +805,7 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void IfElse::GenCssPre_impl(Program* prog) {
-  cond.ParseExpr();		// re-parse just to be sure!
+  cond.ParseExpr();             // re-parse just to be sure!
   prog->AddLine(this, "if(" + cond.GetFullExpr() + ") {", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"before if\"");
   prog->IncIndent();
@@ -874,7 +874,7 @@ bool IfElse::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  IfGuiPrompt		//
+//  IfGuiPrompt         //
 //////////////////////////
 
 void IfGuiPrompt::Initialize() {
@@ -896,7 +896,7 @@ void IfGuiPrompt::CheckChildConfig_impl(bool quiet, bool& rval) {
 void IfGuiPrompt::GenCssPre_impl(Program* prog) {
   if(taMisc::gui_active) {
     prog->AddLine(this, "{ int chs = taMisc::Choice(\"" + prompt + "\", \""
-		  + yes_label + "\", \"" + no_label + "\");", ProgLine::MAIN_LINE);
+                  + yes_label + "\", \"" + no_label + "\");", ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
     prog->IncIndent();
     prog->AddLine(this, "if(chs == 0) {");
@@ -904,7 +904,7 @@ void IfGuiPrompt::GenCssPre_impl(Program* prog) {
     prog->AddVerboseLine(this, false, "\"inside choice == yes\"");
   }
   else {
-    prog->AddLine(this, "{");		// just a block to run..
+    prog->AddLine(this, "{");           // just a block to run..
     prog->IncIndent();
   }
 }
@@ -916,7 +916,7 @@ void IfGuiPrompt::GenCssBody_impl(Program* prog) {
 void IfGuiPrompt::GenCssPost_impl(Program* prog) {
   prog->DecIndent();
   prog->AddLine(this, "}");
-  if(taMisc::gui_active) {	// extra close
+  if(taMisc::gui_active) {      // extra close
     prog->DecIndent();
     prog->AddLine(this, "}");
   }
@@ -940,7 +940,7 @@ ProgVar* IfGuiPrompt::FindVarName(const String& var_nm) const {
 }
 
 //////////////////////////
-//  CaseBlock		//
+//  CaseBlock           //
 //////////////////////////
 
 void CaseBlock::Initialize() {
@@ -952,7 +952,7 @@ void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void CaseBlock::GenCssPre_impl(Program* prog) {
-  case_val.ParseExpr();		// re-parse just to be sure!
+  case_val.ParseExpr();         // re-parse just to be sure!
   if(prog_code.size == 0) return;
   String expr = case_val.GetFullExpr();
   if(expr.empty())
@@ -1002,7 +1002,7 @@ bool CaseBlock::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//  Switch		//
+//  Switch              //
 //////////////////////////
 
 void Switch::Initialize() {
@@ -1058,8 +1058,8 @@ ProgVar* Switch::FindVarName(const String& var_nm) const {
 void Switch::CasesFmEnum() {
   if(TestError(!switch_var, "CasesFmEnum", "switch_var not set!"))
     return;
-  if(TestError(((switch_var->var_type != ProgVar::T_DynEnum) && 
-		(switch_var->var_type != ProgVar::T_HardEnum)), "CasesFmEnum", "switch_var is not an enumerated type (either hard-coded enum or a dynamic enum)!"))
+  if(TestError(((switch_var->var_type != ProgVar::T_DynEnum) &&
+                (switch_var->var_type != ProgVar::T_HardEnum)), "CasesFmEnum", "switch_var is not an enumerated type (either hard-coded enum or a dynamic enum)!"))
     return;
 
   if(switch_var->var_type == ProgVar::T_HardEnum)
@@ -1156,7 +1156,7 @@ bool Switch::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//    CssExpr	//
+//    CssExpr   //
 //////////////////////////
 
 void CssExpr::Initialize() {
@@ -1178,7 +1178,7 @@ void CssExpr::UpdateAfterEdit_impl() {
 }
 
 void CssExpr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   String rval = expr.GetFullExpr();
   if(!rval.endsWith(';'))
     rval += ';';
@@ -1201,7 +1201,7 @@ bool CssExpr::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//    AssignExpr	//
+//    AssignExpr        //
 //////////////////////////
 
 void AssignExpr::Initialize() {
@@ -1214,7 +1214,7 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void AssignExpr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   if (!result_var) {
     prog->AddLine(this, "// WARNING: AssignExpr not generated here -- result_var not specified", ProgLine::MAIN_LINE);
     return;
@@ -1228,7 +1228,7 @@ void AssignExpr::GenCssBody_impl(Program* prog) {
 String AssignExpr::GetDisplayName() const {
   if(!result_var)
     return "(result_var not selected)";
-  
+
   String rval;
   rval += result_var->name + "=" + expr.GetFullExpr();
   return rval;
@@ -1250,15 +1250,15 @@ bool AssignExpr::CvtFmCode(const String& code) {
   String lhs = trim(code.before('='));
   String rhs = trim(code.after('='));
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
-  
+
   result_var = FindVarNameInScope(lhs, true); // option to make
   expr.SetExpr(rhs);
-  
+
   return true;
 }
 
 //////////////////////////
-//      VarIncr 	//
+//      VarIncr         //
 //////////////////////////
 
 void VarIncr::Initialize() {
@@ -1272,12 +1272,12 @@ void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void VarIncr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   if (!var) {
     prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified", ProgLine::MAIN_LINE);
     return;
   }
-  
+
   prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + var->name + ")"); // moved above
   prog->AddVerboseLine(this, false, "\"new  value:\", String(" + var->name + ")"); // after
@@ -1286,7 +1286,7 @@ void VarIncr::GenCssBody_impl(Program* prog) {
 String VarIncr::GetDisplayName() const {
   if(!var)
     return "(var not selected)";
-  
+
   String rval;
   rval += var->name + "+=" + expr.GetFullExpr();
   return rval;
@@ -1310,18 +1310,18 @@ bool VarIncr::CvtFmCode(const String& code) {
     neg = true;
   }
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
-  
+
   var = FindVarNameInScope(lhs, true); // option to make
   if(neg)
     expr.SetExpr("-" + rhs);
   else
     expr.SetExpr(rhs);
-  
+
   return true;
 }
 
 //////////////////////////
-//    MethodCall	//
+//    MethodCall        //
 //////////////////////////
 
 void MethodCall::Initialize() {
@@ -1339,7 +1339,7 @@ void MethodCall::UpdateAfterEdit_impl() {
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
     meth_sig = method->prototype();
@@ -1366,7 +1366,7 @@ void MethodCall::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "// WARNING: MethodCall not generated here -- obj or method not specified", ProgLine::MAIN_LINE);
     return;
   }
-  
+
   String rval;
   if(result_var)
     rval += result_var->name + " = ";
@@ -1383,7 +1383,7 @@ void MethodCall::GenCssBody_impl(Program* prog) {
 String MethodCall::GetDisplayName() const {
   if (!obj || !method)
     return "(object or method not selected)";
-  
+
   String rval;
   if(result_var)
     rval += result_var->name + "=";
@@ -1428,7 +1428,7 @@ bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String objnm;
   if(mthobj.contains('.'))
     objnm = mthobj.before('.');
-  else 
+  else
     objnm = mthobj.before("->");
   if(objnm.nonempty() && !objnm.contains('[')) return true;
   // syntax above should be enough to rule in -- no [ ] paths either tho -- nowhere to put
@@ -1458,11 +1458,11 @@ bool MethodCall::CvtFmCode(const String& code) {
   obj = pv;
   if(rval.nonempty())
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
-  UpdateAfterEdit_impl();			   // update based on obj
+  UpdateAfterEdit_impl();                          // update based on obj
   MethodDef* md = obj_type->methods.FindName(methnm);
   if(md) {
     method = md;
-    UpdateAfterEdit_impl();			   // update based on obj
+    UpdateAfterEdit_impl();                        // update based on obj
   }
   // now tackle the args
   String args = trim(code.after('('));
@@ -1477,7 +1477,7 @@ bool MethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
-      args = "";		// all done
+      args = "";                // all done
     }
     pa->expr.SetExpr(arg);
     if(args.empty()) break;
@@ -1488,7 +1488,7 @@ bool MethodCall::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//    MemberProgEl	//
+//    MemberProgEl      //
 //////////////////////////
 
 void MemberProgEl::Initialize() {
@@ -1501,10 +1501,10 @@ void MemberProgEl::UpdateAfterEdit_impl() {
   if(member_lookup) {
     if(!path.empty() && (path.lastchar() != '.')) {
       if(path.contains('.')) {
-	path = path.through('.',-1);
+        path = path.through('.',-1);
       }
       else {
-	path = "";
+        path = "";
       }
     }
     path += member_lookup->name;
@@ -1513,7 +1513,7 @@ void MemberProgEl::UpdateAfterEdit_impl() {
       path += ".";
     member_lookup = NULL;
   }
-  path = trim(path);					   // keep it clean
+  path = trim(path);                                       // keep it clean
   GetTypeFromPath();
 }
 
@@ -1535,13 +1535,13 @@ bool MemberProgEl::GetTypeFromPath(bool quiet) {
       rval = true;
     }
   }
-  if(!rval) {			// didn't get it yet, try with static
+  if(!rval) {                   // didn't get it yet, try with static
     int net_base_off = 0;
     ta_memb_ptr net_mbr_off = 0;
     md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
     // gets static path based just on member types..
     if(md) {
-      obj_type = md->type;	// it is the type of the member, not the owner type.
+      obj_type = md->type;      // it is the type of the member, not the owner type.
     }
     rval = (bool)md;
   }
@@ -1574,7 +1574,7 @@ void MemberProgEl::Help() {
 
 
 //////////////////////////
-//    MemberAssign	//
+//    MemberAssign      //
 //////////////////////////
 
 void MemberAssign::Initialize() {
@@ -1595,7 +1595,7 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void MemberAssign::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   if (!(bool)obj || path.empty() || expr.empty()) {
     prog->AddLine(this, "// WARNING: MemberAssign not generated here -- obj or path not specified or expr empty", ProgLine::MAIN_LINE);
     return;
@@ -1620,7 +1620,7 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
   opath = trim(opath);
   String fpath = opath + "->" + path_term;
   String rval;
-  if(opath.endsWith(']')) {	// itr expression
+  if(opath.endsWith(']')) {     // itr expression
     rval = "set(" + opath + ", \"" + path_term + "\", " + expr.GetFullExpr() + ");";
   }
   else {
@@ -1630,12 +1630,12 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
   if (update_after) {
     prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path_term != path) {
-	// also do uae on immediate owner!
-      if(opath.endsWith(']')) {	// itr expression -- need to use call
-	prog->AddLine(this, "call(" + opath + ", \"UpdateAfterEdit\");");
+        // also do uae on immediate owner!
+      if(opath.endsWith(']')) { // itr expression -- need to use call
+        prog->AddLine(this, "call(" + opath + ", \"UpdateAfterEdit\");");
       }
       else {
-	prog->AddLine(this, opath + "->UpdateAfterEdit();");
+        prog->AddLine(this, opath + "->UpdateAfterEdit();");
       }
     }
   }
@@ -1646,7 +1646,7 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
 String MemberAssign::GetDisplayName() const {
   if (!obj || path.empty())
     return "(object or path not selected)";
-  
+
   String rval;
   rval = obj->name;
   if(path.startsWith('['))
@@ -1662,7 +1662,7 @@ bool MemberAssign::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('=')) return false;
   String lhs = code.before('=');
   if(!(lhs.contains('.') || lhs.contains("->"))) return false;
-  return true;			// probably enough?
+  return true;                  // probably enough?
 }
 
 bool MemberAssign::CvtFmCode(const String& code) {
@@ -1681,7 +1681,7 @@ bool MemberAssign::CvtFmCode(const String& code) {
   if(objnm.contains('[')) {
     if(pathnm.nonempty())
       pathnm = objnm.from('[') + "." + pathnm;
-    else 
+    else
       pathnm = objnm.from('[');
     objnm = objnm.before('[');
   }
@@ -1699,7 +1699,7 @@ bool MemberAssign::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//    MemberFmArg	//
+//    MemberFmArg       //
 //////////////////////////
 
 void MemberFmArg::Initialize() {
@@ -1719,7 +1719,7 @@ void MemberFmArg::UpdateAfterEdit_impl() {
   if(prv_obj && (bool)obj && (obj.ptr() != prv_obj)) {
     if((bool)obj->object_val && (bool)prv_obj->object_val &&
        !obj->object_val->InheritsFrom(prv_obj->object_val->GetTypeDef())) {
-      path = "";		// reset path
+      path = "";                // reset path
       arg_name = "";
     }
   }
@@ -1744,9 +1744,9 @@ void MemberFmArg::GenCssBody_impl(Program* prog) {
   }
 
   String flpth = obj->name + "->" + path;
-  
+
   prog->AddLine(this, "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->IncIndent();
   prog->AddLine(this, "if(arg_str.nonempty()) {");
   prog->IncIndent();
@@ -1759,7 +1759,7 @@ void MemberFmArg::GenCssBody_impl(Program* prog) {
     }
   }
 
-  if(!quiet || IsVerbose())	// special case
+  if(!quiet || IsVerbose())     // special case
     prog->AddLine(this, String("taMisc::Info(\"Set ") + flpth + " to:\"," + flpth + ");");
   prog->DecIndent();
   prog->AddLine(this, "}");
@@ -1770,14 +1770,14 @@ void MemberFmArg::GenCssBody_impl(Program* prog) {
 void MemberFmArg::GenRegArgs(Program* prog) {
   prog->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
   prog->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
-		+ "\", \"MemberFmArg: obj = " + (((bool)obj) ? obj->name : "NOT SET")
-		+ " path = " + path + "\");");
+                + "\", \"MemberFmArg: obj = " + (((bool)obj) ? obj->name : "NOT SET")
+                + " path = " + path + "\");");
 }
 
 String MemberFmArg::GetDisplayName() const {
   if (!obj || path.empty())
     return "(object or path not selected)";
-  
+
   String rval;
   rval = obj->name + "->" + path + " = ";
   rval += "Arg: " + arg_name;
@@ -1785,7 +1785,7 @@ String MemberFmArg::GetDisplayName() const {
 }
 
 //////////////////////////
-//    MemberMethodCall	//
+//    MemberMethodCall  //
 //////////////////////////
 
 void MemberMethodCall::Initialize() {
@@ -1799,7 +1799,7 @@ void MemberMethodCall::UpdateAfterEdit_impl() {
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
   }
@@ -1856,7 +1856,7 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
 String MemberMethodCall::GetDisplayName() const {
   if (!obj || !method)
     return "(object or method not selected)";
-  
+
   String rval;
   if(result_var)
     rval += result_var->name + "=";
@@ -1890,7 +1890,7 @@ bool MemberMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const 
   String objnm;
   if(mthobj.contains('.'))
     objnm = mthobj.before('.');
-  else 
+  else
     objnm = mthobj.before("->");
   if(objnm.nonempty()) return true; // syntax above should be enough to rule in..
   return false;
@@ -1917,7 +1917,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   if(objnm.contains('[')) {
     if(pathnm.nonempty())
       pathnm = objnm.from('[') + "." + pathnm;
-    else 
+    else
       pathnm = objnm.from('[');
     objnm = objnm.before('[');
   }
@@ -1936,11 +1936,11 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
     pathnm = pathnm.before("->", -1);
   }
   path = pathnm;
-  UpdateAfterEdit_impl();			   // update based on obj and path
+  UpdateAfterEdit_impl();                          // update based on obj and path
   MethodDef* md = obj_type->methods.FindName(methnm);
   if(md) {
     method = md;
-    UpdateAfterEdit_impl();			   // update based on obj
+    UpdateAfterEdit_impl();                        // update based on obj
   }
   // now tackle the args
   String args = trim(code.after('('));
@@ -1955,7 +1955,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
-      args = "";		// all done
+      args = "";                // all done
     }
     pa->expr.SetExpr(arg);
     if(args.empty()) break;
@@ -1964,7 +1964,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//      MathCall	//
+//      MathCall        //
 //////////////////////////
 
 void MathCall::Initialize() {
@@ -2025,7 +2025,7 @@ bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 //////////////////////////
-//      PrintVar	//
+//      PrintVar        //
 //////////////////////////
 
 void PrintVar::Initialize() {
@@ -2036,7 +2036,7 @@ void PrintVar::UpdateAfterEdit_impl() {
   Program* my_prog = program();
   if(!my_prog) return;
   if(!debug_level) {
-    debug_level = my_prog->vars.FindName("debug_level"); 
+    debug_level = my_prog->vars.FindName("debug_level");
   }
 }
 
@@ -2050,7 +2050,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
     return;
 
   String rval = "cout ";
-  if(message.nonempty()) 
+  if(message.nonempty())
     rval += "<< \"" + message + "\"";
   if((bool)print_var)
     rval += "<< \"  " + print_var->name + " = \" << " + print_var->name;
@@ -2136,24 +2136,30 @@ bool PrintVar::CvtFmCode(const String& code) {
     msg = msg.after('"');
     message = msg;
     exprstr = trim(exprstr.after('"',-1));
-    if(exprstr.contains(',')) exprstr = trim(exprstr.after(','));
-    if(exprstr.contains("<<")) exprstr = trim(exprstr.after("<<"));
+    if (exprstr.startsWith(',')) exprstr = trim(exprstr.after(','));
+    if (exprstr.startsWith("<<")) exprstr = trim(exprstr.after("<<"));
   }
   if(exprstr.empty()) return true; // ok, we'll take it -- just a meassage
   String varnms = exprstr;
   int idx = 0;
   ProgVarRef* refs[6] = {&print_var, &print_var2, &print_var3, &print_var4, &print_var5,
-			 &print_var6};
+                         &print_var6};
   do {
     String varnm = varnms;
-    if(varnms.contains(',')) {
-      varnm = trim(varnms.before(',')); varnms = trim(varnms.after(',')); }
-    if(varnms.contains("<<")) {
-      varnm = trim(varnms.before("<<")); varnms = trim(varnms.after("<<")); }
-    if(varnms.contains(' ')) {
-      varnm = trim(varnms.before(' ')); varnms = trim(varnms.after(' ')); }
+    if (varnms.contains(',')) {
+      varnm = trim(varnms.before(','));
+      varnms = trim(varnms.after(','));
+    }
+    else if (varnms.contains("<<")) {
+      varnm = trim(varnms.before("<<"));
+      varnms = trim(varnms.after("<<"));
+    }
+    else if (varnms.contains(' ')) {
+      varnm = trim(varnms.before(' '));
+      varnms = trim(varnms.after(' '));
+    }
     if(varnm == varnms)
-      varnms = "";		// done
+      varnms = "";              // done
     ProgVar* pv = FindVarNameInScope(varnm, false);
     if(pv) {
       *(refs[idx]) = pv;
@@ -2164,7 +2170,7 @@ bool PrintVar::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//      PrintExpr	//
+//      PrintExpr       //
 //////////////////////////
 
 void PrintExpr::Initialize() {
@@ -2175,7 +2181,7 @@ void PrintExpr::UpdateAfterEdit_impl() {
   Program* my_prog = program();
   if(!my_prog) return;
   if(!debug_level) {
-    debug_level = my_prog->vars.FindName("debug_level"); 
+    debug_level = my_prog->vars.FindName("debug_level");
   }
 }
 
@@ -2185,7 +2191,7 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void PrintExpr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
   if(my_mask && debug_level) {
@@ -2233,7 +2239,7 @@ bool PrintExpr::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//      Comment 	//
+//      Comment         //
 //////////////////////////
 
 void Comment::Initialize() {
@@ -2243,7 +2249,7 @@ void Comment::Initialize() {
 
 void Comment::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "/*******************************************************************",
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->AddDescString(this, desc);
   prog->AddLine(this, "*******************************************************************/");
 }
@@ -2266,7 +2272,7 @@ bool Comment::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//      StopStepPoint 	//
+//      StopStepPoint   //
 //////////////////////////
 
 void StopStepPoint::Initialize() {
@@ -2281,8 +2287,8 @@ String StopStepPoint::GetDisplayName() const {
   return "Stop/Step Point";
 }
 
-void StopStepPoint::InitLinks() { 
-  inherited::InitLinks(); 
+void StopStepPoint::InitLinks() {
+  inherited::InitLinks();
   InitLinks_taAuto(&TA_StopStepPoint);
 }
 
@@ -2294,7 +2300,7 @@ void StopStepPoint::PreGenMe_impl(int item_id) {
 }
 
 //////////////////////////
-//    ReturnExpr	//
+//    ReturnExpr        //
 //////////////////////////
 
 void ReturnExpr::Initialize() {
@@ -2306,7 +2312,7 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void ReturnExpr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();		// re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!
   prog->AddLine(this, "return " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
 }
@@ -2335,7 +2341,7 @@ bool ReturnExpr::CvtFmCode(const String& code) {
 
 
 ///////////////////////////////////////////////////////
-//		OtherProgramVar
+//              OtherProgramVar
 ///////////////////////////////////////////////////////
 
 
@@ -2351,22 +2357,22 @@ void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(var_1) {
       pv = other_prog->FindVarName(var_1->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_1->name,
-		 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+                 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
     }
     if(var_2) {
       pv = other_prog->FindVarName(var_2->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_2->name,
-		 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+                 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
     }
     if(var_3) {
       pv = other_prog->FindVarName(var_3->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_3->name,
-		 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+                 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
     }
     if(var_4) {
       pv = other_prog->FindVarName(var_4->name);
       CheckError(!pv, quiet, rval, "Could not find variable named:", var_4->name,
-		 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
+                 "in program:", other_prog->name, "path:", other_prog->GetPathNames());
     }
   }
 }
@@ -2394,7 +2400,7 @@ String OtherProgramVar::GetDisplayName() const {
 
 Program* OtherProgramVar::GetOtherProg() {
   TestError(!other_prog, "GetOtherProg", "Other program is NULL in OtherProgramVar:",
-	    desc, "in program:", program()->name);
+            desc, "in program:", program()->name);
   return other_prog.ptr();
 }
 
@@ -2402,12 +2408,12 @@ bool OtherProgramVar::GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no) 
   if(!var) return false;
   if(set_other) {
     prog->AddVerboseLine(this, false, "\"setting other prog's variable named: "+var->name +
-			 " to value:\", String(" + var->name + ")");
+                         " to value:\", String(" + var->name + ")");
     prog->AddLine(this, String("other_prog->SetVar(\"") + var->name + "\", " + var->name +");");
   }
   else {
     prog->AddVerboseLine(this, false, "\"setting my variable named: "+var->name +
-			 " current value:\", String(" + var->name + ")");
+                         " current value:\", String(" + var->name + ")");
     prog->AddLine(this, var->name + " = other_prog->GetVar(\"" + var->name + "\");");
     prog->AddVerboseLine(this, false, "\"new value:\", String(" + var->name + ")");
   }
@@ -2415,7 +2421,7 @@ bool OtherProgramVar::GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no) 
 }
 
 void OtherProgramVar::GenCssPre_impl(Program* prog) {
-  String rval = "{ // other program var: "; 
+  String rval = "{ // other program var: ";
   if (other_prog)
     rval += other_prog->name;
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
@@ -2426,7 +2432,7 @@ void OtherProgramVar::GenCssPre_impl(Program* prog) {
 void OtherProgramVar::GenCssBody_impl(Program* prog) {
   if (!other_prog) return;
   prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
-		+ "->GetOtherProg();");
+                + "->GetOtherProg();");
   GenCss_OneVar(prog, var_1, 0);
   GenCss_OneVar(prog, var_2, 1);
   GenCss_OneVar(prog, var_3, 2);
@@ -2439,7 +2445,7 @@ void OtherProgramVar::GenCssPost_impl(Program* prog) {
 }
 
 ///////////////////////////////////////////////////////
-//		ProgVarFmArg
+//              ProgVarFmArg
 ///////////////////////////////////////////////////////
 
 
@@ -2463,7 +2469,7 @@ void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   if((bool)prog && var_name.nonempty()) {
     ProgVar* pv = prog->FindVarName(var_name);
     CheckError(!pv, quiet, rval, "Could not find variable named:", var_name, "in program:",
-	       prog->name, "path:", prog->GetPathNames());
+               prog->name, "path:", prog->GetPathNames());
   }
 }
 
@@ -2481,7 +2487,7 @@ String ProgVarFmArg::GetDisplayName() const {
 Program* ProgVarFmArg::GetOtherProg() {
   if(!prog) {
     taMisc::CheckError("Program is NULL in ProgVarFmArg:",
-		       desc, "in program:", program()->name);
+                       desc, "in program:", program()->name);
   }
   return prog.ptr();
 }
@@ -2492,7 +2498,7 @@ void ProgVarFmArg::GenCssBody_impl(Program* prog) {
   prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
-		+ "->GetOtherProg();");
+                + "->GetOtherProg();");
   prog->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
   prog->DecIndent();
   prog->AddLine(this, "} // prog var fm arg");
@@ -2501,13 +2507,13 @@ void ProgVarFmArg::GenCssBody_impl(Program* prog) {
 void ProgVarFmArg::GenRegArgs(Program* prog) {
   prog->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
   prog->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
-			     + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
-			     + " var_name = " + var_name + "\");");
+                             + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
+                             + " var_name = " + var_name + "\");");
 }
 
 
 ///////////////////////////////////////////////////////
-//		DataColsFmArgs
+//              DataColsFmArgs
 ///////////////////////////////////////////////////////
 
 void DataColsFmArgs::Initialize() {
@@ -2524,7 +2530,7 @@ void DataColsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
   // should be done by var, not us
   //  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
   CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
-	     "data_var variable does not point to a DataTable object");
+             "data_var variable does not point to a DataTable object");
   CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
 }
 
@@ -2572,15 +2578,15 @@ void DataColsFmArgs::GenCssBody_impl(Program* prog) {
   }
   else if(row_spec == ROW_NUM) {
     prog->AddLine(this, data_var->name + ".SetValColName(dcfma_argval, dcfma_colnm, "
-		  + row_var->name + ");");
+                  + row_var->name + ");");
   }
   else if(row_spec == ROW_VAL) {
     prog->AddLine(this, data_var->name + ".SetValColRowName(dcfma_argval, dcfma_colnm, \""
-		  + row_var->name + "\", " + row_var->name + ");");
+                  + row_var->name + "\", " + row_var->name + ");");
   }
   if(taMisc::dmem_proc == 0) {
     prog->AddLine(this, String("taMisc::Info(\"Set column: \",dcfma_colnm,\"in data table:\",\"") +
-		  dt->name + "\",\"to val:\",dcfma_argval);");
+                  dt->name + "\",\"to val:\",dcfma_argval);");
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
@@ -2595,13 +2601,13 @@ void DataColsFmArgs::GenRegArgs(Program* prog) {
       DataCol* dc = dt->data[j];
       prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + dc->name + "\");");
       prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + dc->name
-		    + "\", \"DataColsFmArgs: data_table = " + dt->name + "\");");
+                    + "\", \"DataColsFmArgs: data_table = " + dt->name + "\");");
     }
   }
 }
 
 ///////////////////////////////////////////////////////
-//		SelectEditsFmArgs
+//              SelectEditsFmArgs
 ///////////////////////////////////////////////////////
 
 void SelectEditsFmArgs::Initialize() {
@@ -2615,7 +2621,7 @@ void SelectEditsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!sel_edit_var, quiet, rval, "sel_edit_var is NULL")) return; // fatal
   CheckError(sel_edit_var->object_type != &TA_SelectEdit, quiet, rval,
-	     "sel_edit_var variable does not point to a SelectEdit object");
+             "sel_edit_var variable does not point to a SelectEdit object");
 }
 
 String SelectEditsFmArgs::GetDisplayName() const {
@@ -2654,7 +2660,7 @@ void SelectEditsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "sei->PSearchCurVal_Set(sefma_argval);");
   if(taMisc::dmem_proc == 0) {
     prog->AddLine(this, String("taMisc::Info(\"Set select edit item: \",sefma_lbl,\" in select edit: \",\"") +
-		  se->name + "\",\"to val:\",sefma_argval);");
+                  se->name + "\",\"to val:\",sefma_argval);");
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
@@ -2670,14 +2676,14 @@ void SelectEditsFmArgs::GenRegArgs(Program* prog) {
       if(!sei->is_numeric) continue;
       prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + sei->label + "\");");
       prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + sei->label
-		    + "\", \"SelectEditsFmArgs: sel_edit = " + se->name + "\");");
+                    + "\", \"SelectEditsFmArgs: sel_edit = " + se->name + "\");");
     }
   }
 }
 
 
 ///////////////////////////////////////////////////////
-//		RegisterArgs
+//              RegisterArgs
 ///////////////////////////////////////////////////////
 
 
@@ -2716,14 +2722,14 @@ void RegisterArgs::AddArgsFmCode(Program* prog, ProgEl_List& progs) {
       SelectEditsFmArgs* sea = (SelectEditsFmArgs*)pel;
       sea->GenRegArgs(prog);
     }
-    else {			// look for sub-lists
+    else {                      // look for sub-lists
       TypeDef* td = pel->GetTypeDef();
       for(int j=0;j<td->members.size;j++) {
-	MemberDef* md = td->members[j];
-	if(md->type->InheritsFrom(&TA_ProgEl_List)) {
-	  ProgEl_List* nxt_prgs = (ProgEl_List*)md->GetOff(pel);
-	  AddArgsFmCode(prog, *nxt_prgs);
-	}
+        MemberDef* md = td->members[j];
+        if(md->type->InheritsFrom(&TA_ProgEl_List)) {
+          ProgEl_List* nxt_prgs = (ProgEl_List*)md->GetOff(pel);
+          AddArgsFmCode(prog, *nxt_prgs);
+        }
       }
     }
   }
