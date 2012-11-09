@@ -526,7 +526,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.05f;
   nogo_wtscale_inc = 2.0f;
-  nogo_inhib = 0.0f; // 0.2f;
+  nogo_inhib = 0.2f;
   pvr_inhib = 0.8f;
   refract_inhib = 0.5f;
   no_pfc_thr = 0.0f;
@@ -729,8 +729,7 @@ LeabraLayer* MatrixLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
   lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
-
-  NameMatrixUnits(lay, net);
+  // NameMatrixUnits(lay, net);
 }
 
 void MatrixLayerSpec::NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net) {
@@ -748,10 +747,10 @@ void MatrixLayerSpec::NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net) {
     nm = "o";
     break;
   case SNrThalLayerSpec::MNT_OUT:
-    nm = "m2";
+    nm = "mo";
     break;
   case SNrThalLayerSpec::OUT_MNT:
-    nm = "h";
+    nm = "om";
     break;
   default:			// compiler food
     break;
