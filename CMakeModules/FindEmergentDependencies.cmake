@@ -5,8 +5,11 @@ find_package(Coin REQUIRED)
 find_package(Quarter REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# TODO: how will this work on Linux/Mac?  Might need separate env var for SUBVERSION_DIR.
-set(SUBVERSION_INSTALL_PATH "${EMER_3RDPARTY_DIR}/../subversion")
+if (WIN32)
+  # Give FindSubversionLibrary a hint to where the libs are installed on Windows.
+  # TODO: verify this just works on its own on Linux/Mac.
+  set(SUBVERSION_INSTALL_PATH "${EMER_SVN_LIBS_DIR}")
+endif()
 find_package(SubversionLibrary REQUIRED)
 
 if (NOT WIN32)

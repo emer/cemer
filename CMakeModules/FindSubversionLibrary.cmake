@@ -180,6 +180,9 @@ ELSE (NOT WIN32)
     ENDMACRO(FIND_SUB_INC)
 
     MACRO(FIND_SUB_LIB targetvar libname)
+      IF (CMAKE_BUILD_TYPE MATCHES "Debug")
+          SET(libname ${libname}d)
+      ENDIF()
       IF (SUBVERSION_INSTALL_PATH)
           FIND_LIBRARY(${targetvar} ${libname}
               PATHS

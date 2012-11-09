@@ -610,6 +610,30 @@ def inst_3rd_party():
       zip.extractall(third_party_dir)
 
 ##############################################################################
+# Function to download the Subversion development libraries
+
+subversion_libs_dir = ''
+def inst_subversion_libs():
+  global subversion_libs_dir
+  # Extract Subversion (and related) libraries into its own directory.
+  subversion_libs_dir = os.path.join(tools_dir, 'subversion')
+  while not fileExists(os.path.join(subversion_libs_dir, 'include/svn_client.h')):
+    print_horizontal()
+    print 'You need to get the Subversion development libraries.'
+    print 'This can be done for you.'
+    if askUser('\nReady to download and unzip Subversion development libraries?'):
+      print '\nDownloading Subversion development libraries...'
+      if msvs == 2008:
+        print "\nSorry, the Subversion development libraries haven't been built for VS 2008"
+        return
+      elif build_64bit:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Subversion-1.7.7-bin-msvs2010-64.zip')
+      else:
+        file = getUrl('ftp://grey.colorado.edu/pub/emergent/Subversion-1.7.7-bin-msvs2010-32.zip')
+      zip = ZipFile(file)
+      zip.extractall(subversion_libs_dir)
+
+##############################################################################
 # Function to download Qt libraries
 
 qt_dir = ''
@@ -718,6 +742,7 @@ def remove_like_except(list, regexp, keep):
 def fix_environment():
   print_horizontal()
   checkEnvironmentVariable('EMER_3RDPARTY_DIR', fixPath(third_party_dir))
+  checkEnvironmentVariable('EMER_SVN_LIBS_DIR', fixPath(subversion_libs_dir))
   checkEnvironmentVariable('COINDIR', fixPath(coin_dir))
   if msvs == 2008:
     checkEnvironmentVariable('QMAKESPEC', 'win32-msvc2008')
@@ -730,6 +755,7 @@ def fix_environment():
   qt_bin_dir = fixPath(os.path.join(qt_dir, 'bin'))
   coin_bin_dir = fixPath(os.path.join(coin_dir, 'bin'))
   third_party_bin_dir = fixPath(os.path.join(third_party_dir, 'bin'))
+  subversion_libs_bin_dir = fixPath(os.path.join(subversion_libs_dir, 'bin'))
   cmake_bin_dir = fixPath(os.path.dirname(cmake_exe))
   needed_paths = [
     # TBD: need this?
@@ -737,6 +763,7 @@ def fix_environment():
     qt_bin_dir,
     coin_bin_dir,
     third_party_bin_dir,
+    subversion_libs_bin_dir,
     fixPath(jom_dir),
     cmake_bin_dir,
     ]
@@ -753,11 +780,14 @@ def fix_environment():
     # they aren't treated as escapes by the regexp compiler.
     remove_like_except(list, r'C:\\Qt\\[-0-9.msv]{5,}\\bin', qt_bin_dir)
     remove_like_except(list, r'C:\\Coin\\[-0-9.]{5,}\\bin', coin_bin_dir)
-    # TODO: ideally the 3rdparty directory would be in C:\src\, not in C:\src\emergent-foo\.
+    # The 3rdparty directory is now in C:\src\devtools, not in C:\src\emergent-foo\,
+    # but we still need to check there in case someone has a REALLY old environment
+    # variable set from long ago.
     remove_like_except(list, r'emergent.*\\3rdparty\\bin', third_party_bin_dir)
     remove_like_except(list, r'CMake [-0-9.]{3,}\\bin', cmake_bin_dir)
     remove_like_except(list, r'C:\\src\\devtools\\.*\\Coin\\3.1.3\\bin', coin_bin_dir)
     remove_like_except(list, r'C:\\src\\devtools\\.*\\3rdparty\\bin', third_party_bin_dir)
+    remove_like_except(list, r'C:\\src\\devtools\\.*\\subversion\\bin', subversion_libs_bin_dir)
 
   # Only need to add things that aren't already in the path (if any).
   list_difference(needed_paths, syspath + userpath)
@@ -991,6 +1021,7 @@ def main():
     ask_suffix()
     inst_emer_src()
     inst_3rd_party()
+    inst_subversion_libs()
     inst_qt()
     inst_coin()
     fix_environment()
