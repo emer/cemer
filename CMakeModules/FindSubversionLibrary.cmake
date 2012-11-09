@@ -181,16 +181,19 @@ ELSE (NOT WIN32)
 
     MACRO(FIND_SUB_LIB targetvar libname)
       IF (CMAKE_BUILD_TYPE MATCHES "Debug")
-          SET(libname ${libname}d)
+          # Add a "d" suffix.
+          SET(search_lib_name "${libname}d")
+      ELSE()
+          SET(search_lib_name "${libname}")
       ENDIF()
       IF (SUBVERSION_INSTALL_PATH)
-          FIND_LIBRARY(${targetvar} ${libname}
+          FIND_LIBRARY(${targetvar} ${search_lib_name}
               PATHS
               ${SUBVERSION_INSTALL_PATH}/lib
               "$ENV{ProgramFiles}/Subversion/lib
           )
       ELSE(SUBVERSION_INSTALL_PATH)
-          FIND_LIBRARY(${targetvar} ${libname}
+          FIND_LIBRARY(${targetvar} ${search_lib_name}
               PATHS
               "$ENV{ProgramFiles}/Subversion/lib
           )
