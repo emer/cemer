@@ -4,10 +4,10 @@
 Script to build emergent using Amazon Web Services (AWS).
 
 To launch all builds simultaneously:
-  rev=5618
+  rev=5751
   cd /c/src/emergent/package/aws
   rm ~/.ssh/known_hosts_amazon
-  for distro in lucid maverick natty oneiric precise; do
+  for distro in lucid maverick natty oneiric precise quantal; do
     for bits in 32 64; do
       mintty /c/src/emergent/package/aws/build.py $distro $bits $rev &
     done
@@ -39,7 +39,7 @@ Additionally, two key-pairs were created:
     to the EC2 instances.
 """
 
-import os, sys
+import os, sys, traceback
 from ec2 import Ec2Instance
 from grey import GreyAccess
 from ubuntu import UbuntuAmi
@@ -137,4 +137,5 @@ if __name__ == '__main__':
   try:
     main()
   except Exception:
-    raw_input('Exception occurred; press enter to quit')
+    traceback.print_exc()
+    raw_input('\nException occurred; press enter to quit')
