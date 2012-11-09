@@ -3983,7 +3983,7 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 3, int mnt_stripes = 9,
+  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 3, int mnt_stripes = 3,
 		     int out_stripes = 3, bool da_mod_all = false,
 		     bool pfc_learns=true);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating (0 = do not create that type of gating pathway);  da_mod_all = have da value modulate all the regular units in the network;  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)

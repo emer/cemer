@@ -6524,9 +6524,10 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   ti_fmctxt->SetUnique("wt_scale", true);
   ti_fmctxt->wt_scale.rel = 1.5f;
 
-  stduns->adapt.on = true;
-  stduns->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  stduns->noise.var = 0.001f;
+  // turns out, not so useful in general:
+  // stduns->adapt.on = true;
+  // stduns->noise_type = LeabraUnitSpec::NETIN_NOISE;
+  // stduns->noise.var = 0.001f;
 
   const int lay_spc = 5;
     

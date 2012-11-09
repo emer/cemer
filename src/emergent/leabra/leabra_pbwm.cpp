@@ -4346,11 +4346,11 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   //si->start_ctr = 90;
   //si->start_val = .1f;
 
-  // slow learning rate on to pfc cons!
+  // NOT: slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
   if(pfc_learns) {
     topfc_cons->learn = true;
-    topfc_cons->lrate = .005f;
+    topfc_cons->lrate = .02f;
     topfc_cons->SetUnique("rnd", false);
     topfc_cons->rnd.var = 0.25f;
   }
@@ -4410,6 +4410,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   matrix_cons->wt_sig.off = 1.25f;
 
   matrix_cons->lrate_sched.SetSize(2);
+  matrix_cons->lrate_sched.default_val = 0.0f; // this is the value that happens prior to stats being collected
   matrix_cons->lrate_sched[0]->start_ctr = 0;
   matrix_cons->lrate_sched[0]->start_val = 0.0f;
   matrix_cons->lrate_sched[1]->start_ctr = 10; // enough time for reps pretrain
