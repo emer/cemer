@@ -1219,9 +1219,7 @@ void VEJoint::SetValsToODE_ODEParams() {
 }
 
 static inline float get_val_no_nan(float val) {
-#ifndef TA_OS_WIN		// not avail on windows apparently??
-  if(isnan(val)) return 0.0f;
-#endif
+  if (isnan(val)) return 0.0f;
   return val;
 }
 
