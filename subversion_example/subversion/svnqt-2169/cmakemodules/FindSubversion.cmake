@@ -141,21 +141,29 @@ IF (WIN32)
   FIND_LIBRARY(APR_LIB libapr-1
     "${SUBVERSION_INSTALL_PATH}/lib/apr"
     "$ENV{ProgramFiles}/Subversion/lib/apr"
+    "${SUBVERSION_INSTALL_PATH}/lib"
+    "$ENV{ProgramFiles}/Subversion/lib"
   )
 
   FIND_LIBRARY(APRICONV_LIB libapriconv-1
     "${SUBVERSION_INSTALL_PATH}/lib/apr-iconv"
     "$ENV{ProgramFiles}/Subversion/lib/apr-iconv"
+    "${SUBVERSION_INSTALL_PATH}/lib"
+    "$ENV{ProgramFiles}/Subversion/lib"
   )
 
   FIND_LIBRARY(APU_LIB libaprutil-1
     "${SUBVERSION_INSTALL_PATH}/lib/apr-util"
     "$ENV{ProgramFiles}/Subversion/lib/apr-util"
+    "${SUBVERSION_INSTALL_PATH}/lib"
+    "$ENV{ProgramFiles}/Subversion/lib"
   )
 
   FIND_LIBRARY(APU_XMLLIB xml
     "${SUBVERSION_INSTALL_PATH}/lib/apr-util"
     "$ENV{ProgramFiles}/Subversion/lib/apr-util"
+    "${SUBVERSION_INSTALL_PATH}/lib"
+    "$ENV{ProgramFiles}/Subversion/lib"
   )
 
   FIND_LIBRARY(NEON_LIB libneon

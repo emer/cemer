@@ -18,6 +18,25 @@
  #   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         #
  ####
 
+# DPF: Some mods to be able to compile SvnQt as a separate library on Windows.
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+
+  # Make sure the SvnqtMacros file can be found.
+  # Also, this needs to be up top so find_package(Subversion) finds ours.
+  set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmakemodules")
+
+  # Get the Qt libraries we need.
+  find_package(Qt4 REQUIRED QtCore QtGui) ## QtOpenGL QtXml QtNetwork QtWebKit)
+
+  # Tell CMake where to find the Subversion (and prereq) libraries, headers, etc.
+  file(TO_CMAKE_PATH "$ENV{EMER_3RDPARTY_DIR}" EMER_3RDPARTY_DIR)
+  set(SUBVERSION_INSTALL_PATH "${EMER_3RDPARTY_DIR}")
+  find_package(Subversion REQUIRED)
+
+  # The SvnQt source includes its headers like so: #include "svnqt/svnqttypes.h"
+  # Put svnqt's parent directory in the include path along with Qt includes.
+  include_directories("${PROJECT_SOURCE_DIR}/.." ${QT_INCLUDES})
+
 include (SvnqtMacros)
 
 SET(SOURCES
@@ -175,16 +194,18 @@ ENDIF (QT_LUPDATE_EXECUTABLE)
 
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/svnqt_defines.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/svnqt_defines.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/svnqt/svnqt_defines.h"
     IMMEDIATE
     @ONLY)
 
-SET(INST_HEADERS ${INST_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/svnqt_defines.h)
+SET(INST_HEADERS ${INST_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/svnqt/svnqt_defines.h)
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_LIBRARY(${svnqt-name} SHARED ${SOURCES} ${svnhdr})
 IF(WIN32)
+  IF (CMAKE_SIZEOF_VOID_P EQUAL 4)
     ADD_DEFINITIONS(-D_USE_32BIT_TIME_T)
+  ENDIF (CMAKE_SIZEOF_VOID_P EQUAL 4)
 ELSE(WIN32)
     SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX})
     SET_TARGET_PROPERTIES(${svnqt-name}
