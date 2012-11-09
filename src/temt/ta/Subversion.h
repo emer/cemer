@@ -1,109 +1,54 @@
-/*
- * Subversion.h
- *
- *  Created on: Oct 17, 2012
- *      Author: houman
- */
+// Copyright, 1995-2007, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   Emergent is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   Emergent is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
 
-#ifndef Subversion_H_
-#define Subversion_H_
+#ifndef SUBVERSION_H_
+#define SUBVERSION_H_
 
-// svncpp
-#include <apr.hpp>
-#include <context.hpp>
-#include <client.hpp>
-#include <wc.hpp>
-#include <paths.h>
-#include <revision.hpp>
-#include <targets.hpp>
-#include <path.hpp>
-#include <context_listener.hpp>
-#include <status.hpp>
-#include <status_selection.hpp>
+#include "ta_def.h"
 
-#include <iostream>
-
-namespace mysvn {
-
-class Subversion; // fwd declare
-
-class EmergentSvnContextListener : public svn::ContextListener
+// TODO: inherit from generic version control abstract base class.
+class TA_API Subversion
 {
-  Subversion *pSvn;
-
 public:
-	EmergentSvnContextListener(Subversion *pSvn); // need this??
-	  virtual ~EmergentSvnContextListener(); // need this??
+  // TODO: how to handle authentication?
+  Subversion(const char *working_copy_path);
+  virtual ~Subversion();
 
-	  // TODO: implement all of these methods in the .cpp
-	virtual bool
-  contextGetLogin(const std::string & realm,
-                  std::string & username,
-                  std::string & password,
-                  bool & maySave);
+  // Check if the working copy has already been checked out.
+  bool IsWorkingCopy();
 
-  virtual void
-  contextNotify(const char *path,
-                svn_wc_notify_action_t action,
-                svn_node_kind_t kind,
-                const char *mime_type,
-                svn_wc_notify_state_t content_state,
-                svn_wc_notify_state_t prop_state,
-                svn_revnum_t revision);
+  // Checkout returns the revision checked out, or -1 on error.
+  int Checkout(const char *url, int rev = -1);
 
-  virtual bool
-  contextCancel();
+  // Update the working copy and return the revision checked out, or -1 on error.
+  int Update(int rev = -1);
 
-  virtual bool
-  contextGetLogMessage(std::string & msg);
+  // TODO: need to decide what return types make sense for each API.
+  int Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
+  int MakeDir(const char *new_dir, bool create_parents = true);
+  int MakeUrlDir(const char *url, bool create_parents = true);
 
-  virtual SslServerTrustAnswer
-  contextSslServerTrustPrompt(const SslServerTrustData & data,
-                              apr_uint32_t & acceptedFailures);
+  // Checkin 'files': a comma or newline separated list of files/dirs.
+  // If empty, the whole working copy will be committed.
+  int Checkin(const char *comment, const char *files = "");
+  int Status(const char *files = "");
 
-  virtual bool
-  contextSslClientCertPrompt(std::string & certFile);
-
-  virtual bool
-  contextSslClientCertPwPrompt(std::string & password,
-                               const std::string & realm,
-                               bool & maySave);
-};
-
-
-class Subversion
-{
 private:
-	friend EmergentSvnContextListener; // maybe need this?
-
-	//svn::Apr apr;	// might be unnecessary
-	svn::Context * context;
-	svn::Client client;
-	svn::Pool pool;	// might be unnecessary
-	svn::ContextListener * contextListener;
-	//svn::StatusSel statusSel;
-
-	std::string svnPath;
-public:
-	Subversion(std::string svnPath);
-	virtual ~Subversion();
-	int Mkdir(std::string name);
-	long int Checkout(const char* moduleName, const svn::Path destPath,
-			svn::Revision revision, bool recurse, bool ignoreExternals,
-			const svn::Revision pegRevision);
-	int Add(std::string origin, std::string destination);
-	int long Commit(const svn::Targets & targets, const char * message,
-			bool recurse, bool keepLocks);
-	svn::StatusEntries Status(const char * path, const bool descend,
-			const bool getAll, const bool update, const bool noIgnore,
-			const bool ignoreExternals);
-	svn_revnum_t Update(const svn::Path & path, const svn::Revision & revision,
-			bool recurse, bool ignore_externals);
-	bool AuthSetup();
-
+  const char *m_wc_path;
+  const char *m_url;
 };
 
-}
-/* namespace mysvn */
-#endif /* Subversion_H_ */
+#endif // SUBVERSION_H_
 

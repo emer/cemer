@@ -1,178 +1,103 @@
-/*
- * Subversion.cpp
- *
- *  Created on: Oct 17, 2012
- *      Author: houman
- */
+// Copyright, 1995-2007, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   Emergent is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   Emergent is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
 
 #include "Subversion.h"
 
-namespace mysvn {
+#include <cstring>
+#include <iostream>
 
-
-
-
-EmergentSvnContextListener::EmergentSvnContextListener(Subversion *pSvn)
-  : pSvn(pSvn)
+Subversion::Subversion(const char *working_copy_path)
+  : m_wc_path(working_copy_path)
+  , m_url()
 {
 }
 
-EmergentSvnContextListener~EmergentSvnContextListener()
+Subversion::~Subversion()
 {
 }
 
-bool
-EmergentSvnContextListener::contextGetLogin(const std::string & realm,
-                  std::string & username,
-                  std::string & password,
-                  bool & maySave)
+// Check if the working copy has already been checked out.
+bool Subversion::IsWorkingCopy()
 {
-	return false;
+  if (!m_url) return false;
+
+#if 0
+  // TODO: call some svn_wc_* function to determine if this is
+  // a valid working copy.
+  if (!fileExists(m_wc_path)) return false;
+  return svn_wc_is_valid(m_wc_path); // ??
+#else
+  return false;
+#endif
 }
 
-void
-EmergentSvnContextListener::contextNotify(const char *path,
-                svn_wc_notify_action_t action,
-                svn_node_kind_t kind,
-                const char *mime_type,
-                svn_wc_notify_state_t content_state,
-                svn_wc_notify_state_t prop_state,
-                svn_revnum_t revision)
+int Subversion::Checkout(const char *url, int rev)
 {
+  if (IsWorkingCopy()) {
+    if (0 == std::strcmp(m_url, url)) {
+      // If user requested checkout of the same URL, just do an update.
+      return Update(rev);
+    }
+    else {
+      // Otherwise error.
+      std::cout << "Error: Working copy already exists with URL: " << m_url
+        << "\nWill not checkout new URL: " << url << std::endl;
+      return -1;
+    }
+  }
+
+  // Working copy doesn't exist yet, call some svn_wc_* function to create it.
+  // TODO.
+  return -1;
 }
 
-bool
-EmergentSvnContextListener::contextCancel()
+int Subversion::Update(int rev)
 {
-	return false;
+  // TODO.
+  return -1;
 }
 
-bool
-EmergentSvnContextListener::contextGetLogMessage(std::string & msg)
+int Subversion::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
-	return false;
+  // TODO.
+  return -1;
 }
 
-svn::SslServerTrustAnswer
-EmergentSvnContextListener::contextSslServerTrustPrompt(const SslServerTrustData & data,
-                              apr_uint32_t & acceptedFailures)
+int Subversion::MakeDir(const char *new_dir, bool create_parents)
 {
-	static svn::SslServerTrustAnswer tmp;
-	return tmp;
+  // TODO.
+  return -1;
 }
 
-bool
-EmergentSvnContextListener::contextSslClientCertPrompt(std::string & certFile)
+int Subversion::MakeUrlDir(const char *url, bool create_parents)
 {
-	return false;
+  // TODO.
+  return -1;
 }
 
-bool
-EmergentSvnContextListener::contextSslClientCertPwPrompt(std::string & password,
-                               const std::string & realm,
-                               bool & maySave)
+int Subversion::Checkin(const char *comment, const char *files)
 {
-return false;
+  // 'files' is a comma or newline separated list of files and/or directories.
+  // If empty, the whole working copy will be committed.
+  // TODO.
+  return -1;
 }
 
-
-
-Subversion::Subversion(std::string svnPath)
-  : context(new svn::Context)
-  , client()
-  , pool()
-  , contextListener(new EmergentSvnContextListener)
-  , svnPath(svnPath)
+int Subversion::Status(const char *files)
 {
-	//this->context = new svn::Context("~/.subversion");	// no need to specify the subversion configuration file as if it's not set svncpp will find the default one
-	this->context->setListener(this->contextListener);
-	this->client.setContext(context);
-
-
-	//std::cout << this->statusSel.hasFiles();
-	//std::cout << this->context->getListener();
-	//this->contextListener = new svn::ContextListener();
+  // See comment in checkin() re: files param.
+  // TODO.
+  return -1;
 }
-
-Subversion::~Subversion() {
-}
-
-int Subversion::Mkdir(std::string name) {
-
-	std::string fullpath = this->svnPath + name;
-	try {
-		client.mkdir(fullpath);
-	} catch (const svn::ClientException &e) {
-		std::cout << "Caught exception: " << e.message() << std::endl;
-	}
-	return 1;	// success
-}
-
-bool Subversion::AuthSetup() {
-	return true;
-}
-
-/* INPUT:
- * moduleName 			name of the module to Checkout.
- * destPath 			destination directory for Checkout.
- * revision 			the revision number to Checkout. If the number is -1 then it will Checkout the latest revision.
- * recurse 				whether you want it to Checkout files recursively.
- * ignore_externals 	whether you want get external resources too.
- * peg_revision 		peg revision to Checkout, by default current.
- *
- * OUTPUT:
- * the revision checked out
- */
-long int Subversion::Checkout(const char* moduleName, const svn::Path destPath,
-		svn::Revision revision, bool recurse, bool ignoreExternals,
-		const svn::Revision pegRevision) {
-	long int checkedOutRev;
-	try {
-		checkedOutRev = client.checkout(moduleName, destPath, revision, recurse,
-				ignoreExternals, pegRevision);
-	} catch (const svn::ClientException &e) {
-		std::cout << "Caught exception: " << e.message() << std::endl;
-	}
-	return checkedOutRev;
-}
-
-long int Subversion::Commit(const svn::Targets & targets, const char * message,
-		bool recurse = true, bool keepLocks = false) {
-	long int checkedOutRev = 0;
-	try {
-		checkedOutRev = client.commit(targets, message, recurse, keepLocks);
-	} catch (const svn::ClientException &e) {
-		std::cout << "Caught exception: " << e.message() << std::endl;
-	}
-	return checkedOutRev;
-}
-
-svn::StatusEntries Subversion::Status(const char * path, const bool descend =
-		false, const bool getAll = true, const bool update = false,
-		const bool noIgnore = false, const bool ignoreExternals = false) {
-	svn::StatusEntries statusEntries;
-	try {
-		statusEntries = client.status(path, descend, getAll, update, noIgnore,
-				ignoreExternals);
-	} catch (const svn::ClientException &e) {
-		std::cout << "Caught exception: " << e.message() << std::endl;
-	}
-	return statusEntries;
-}
-
-svn_revnum_t Subversion::Update(const svn::Path & path,
-		const svn::Revision & revision, bool recurse = true,
-		bool ignore_externals = false) {
-	svn_revnum_t rev = 0;
-	try {
-		svn::Pool pool;
-		rev = client.update(path, revision, recurse, ignore_externals);
-	} catch (const svn::ClientException &e) {
-		std::cout << "Caught exception: " << e.message() << std::endl;
-	}
-	return rev;
-}
-
-
-
-} /* namespace mysvn */

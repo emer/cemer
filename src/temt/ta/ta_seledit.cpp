@@ -17,6 +17,7 @@
 #include "ta_seledit.h"
 
 #include "ta_type.h"
+#include "ta_platform.h"
 #include "ta_project.h"
 #include "ta_qt.h"
 #include "ta_datatable.h"
@@ -742,7 +743,26 @@ void SelectEdit::RunOnCluster(
   int num_of_procs)
 {
   // Run this model on a cluster using the parameters of this SelectEdit.
-  std::cout << "RunOnCluster" << std::endl;
+  std::cout << "Testing SVN checkout" << std::endl;
+  String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + "TODO_REPO_NAME";
+
+  // TODO: the Subversion object should be more global than this.
+  // Maybe have a registry of Subversion objects keyed off of wc_path?
+  Subversion svn(wc_path.chars());
+  int rev = svn.Checkout(repo.chars());
+  if (rev < 0) {
+    std::cout << "Error checking out code"
+      << "\n  from: " << repo.chars()
+      << "\n  to: " << wc_path.chars()
+      << "\nSubversion::Checkout() returned " << rev
+      << std::endl;
+  }
+  else {
+    std::cout << "Checked out revision: " << rev
+      << "\n  from: " << repo.chars()
+      << "\n  to: " << wc_path.chars()
+      << std::endl;
+  }
 }
 
 
