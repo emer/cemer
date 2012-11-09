@@ -1425,30 +1425,33 @@ void taImageProc::Initialize() {
 void taImageProc::Destroy() {
 }
 
-bool taImageProc::GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b) {
+bool taImageProc::GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b, float& a) {
   if(img_data.dims() == 3) {    // an rgb guy
-    return GetBorderColor_float_rgb(img_data, r, g, b);
+    return GetBorderColor_float_rgb(img_data, r, g, b, a);
   }
   else {
     bool rval = GetBorderColor_float_grey(img_data, r);
-    g = r; b = r;
+    g = r; b = r; a = 1.0f;
     return rval;
   }
 }
 
-bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b) {
+bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b, float& a) {
   if(img_data.dims() != 3) {
     taMisc::Error("taImageProc::GetBorderColor_float_rgb", "image must have 3 dims: x, y, color");
     return false; // err
   }
-  float clrs[3];
-  for(int i=0;i<3;i++) {
+  int nclrs = img_data.dim(2);
+  float clrs[4];
+  for(int i=0;i<nclrs;i++) {
     float_Matrix* cmp = img_data.GetFrameSlice(i);
     taBase::Ref(cmp);
     GetBorderColor_float_grey(*cmp, clrs[i]);
     taBase::unRefDone(cmp);
   }
   r = clrs[0]; g = clrs[1]; b = clrs[2];
+  if(nclrs == 4) a = clrs[3];
+  else	a = 1.0f;
   return true;
 }
 
@@ -1476,13 +1479,14 @@ bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey)
   lavg /= (float)(img_size.y);
   ravg /= (float)(img_size.y);
 
-  grey = .25 * (tavg + bavg + lavg + ravg);
+  grey = 0.25f * (tavg + bavg + lavg + ravg);
   return true;
 }
 
 bool taImageProc::RenderBorder_float(float_Matrix& img_data) {
   if(img_data.dims() == 3) {    // an rgb guy
-    for(int i=0;i<3;i++) {
+    int nclrs = img_data.dim(2);
+    for(int i=0;i<nclrs;i++) {
       float_Matrix* cmp = img_data.GetFrameSlice(i);
       taBase::Ref(cmp);
       RenderBorder_float(*cmp);
@@ -1508,7 +1512,8 @@ bool taImageProc::RenderBorder_float(float_Matrix& img_data) {
 
 bool taImageProc::FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width) {
   if(img_data.dims() == 3) {    // an rgb guy
-    for(int i=0;i<3;i++) {
+    int nclrs = img_data.dim(2);
+    for(int i=0;i<nclrs;i++) {
       float_Matrix* cmp = img_data.GetFrameSlice(i);
       taBase::Ref(cmp);
       FadeEdgesToBorder_float(*cmp, fade_width);
@@ -1541,7 +1546,8 @@ bool taImageProc::FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width
 bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
                                                   float llx, float lly, float urx, float ury) {
   if(img_data.dims() == 3) {    // an rgb guy
-    for(int i=0;i<3;i++) {
+    int nclrs = img_data.dim(2);
+    for(int i=0;i<nclrs;i++) {
       float_Matrix* cmp = img_data.GetFrameSlice(i);
       taBase::Ref(cmp);
       RenderOccluderBorderColor_float(*cmp, llx, lly, urx, ury);
@@ -1563,6 +1569,29 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
   return true;
 }
 
+bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b, float a) {
+  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  float clrs[4] = {r,g,b,a};
+  int nclrs = 1;
+  if(img_data.dims() == 3) {
+    nclrs = img_data.dim(2);
+  }
+
+  for(int yi = 0; yi < img_size.y; yi++) {
+    for(int xi = 0; xi < img_size.x; xi++) {
+      if(nclrs > 1) {
+	for(int cl=0; cl < nclrs; cl++) {
+	  img_data.FastEl(xi,yi,cl) = clrs[cl];
+	}
+      }
+      else {
+	img_data.FastEl(xi,yi) = r; // just use r channel for gray
+      }
+    }
+  }
+  return true;
+}
+
 bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img,
                                           int move_x, int move_y, EdgeMode edge) {
 
@@ -1570,13 +1599,14 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
   FloatTwoDCoord img_ctr = FloatTwoDCoord(img_size) / 2.0f;
   TwoDCoord img_off = TwoDCoord(move_x, move_y);
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
-    xlated_img.SetGeom(3, img_size.x, img_size.y, 3);
-    rgb_img = true;
+    nclrs = orig_img.dim(2);
+    xlated_img.SetGeom(3, img_size.x, img_size.y, nclrs);
   }
-  else
+  else {
     xlated_img.SetGeom(2, img_size.x, img_size.y);
+  }
 
   bool wrap = (edge == WRAP);
 
@@ -1588,8 +1618,8 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
       if(ic.WrapClip(wrap, img_size)) {
         if(edge == CLIP) continue; // bail on clipping only
       }
-      if(rgb_img) {
-        for(int i=0;i<3;i++)
+      if(nclrs > 1) {
+        for(int i=0;i<nclrs;i++)
           xlated_img.FastEl(nx, ny, i) = orig_img.FastEl(ic.x, ic.y, i);
       }
       else {
@@ -1626,13 +1656,14 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
   scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
   scaled_size.y = 2 + (int)(scale * (img_size.y-2));
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
-    scaled_img.SetGeom(3, scaled_size.x, scaled_size.y, 3);
-    rgb_img = true;
+    nclrs = orig_img.dim(2);
+    scaled_img.SetGeom(3, scaled_size.x, scaled_size.y, nclrs);
   }
-  else
+  else {
     scaled_img.SetGeom(2, scaled_size.x, scaled_size.y);
+  }
   float half_sc;
   if(scale < 1.0f)
     half_sc = .5f / scale; // how much on each side of the pixel to include in avg
@@ -1672,9 +1703,7 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
     int oyc = (int)floor(.5f + ((float)y / scale));
     for(x=0; x<scaled_size.x; x++) {
       int oxc = (int)floor(.5f + ((float)x / scale));
-      float r_avg = 0.0f;
-      float g_avg = 0.0f;
-      float b_avg = 0.0f;
+      float avgs[4] = {};	// init to 0
       int oxi, oyi;
       for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
         ic.y = oyc + oyi;
@@ -1684,23 +1713,23 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
             if(edge == CLIP) continue; // bail on clipping only
           }
           float sc = sc_ary.FastEl(oxi + n_orig_pix, oyi + n_orig_pix);
-          if(rgb_img) {
-            r_avg += sc * orig_img.FastEl(ic.x, ic.y, 0);
-            g_avg += sc * orig_img.FastEl(ic.x, ic.y, 1);
-            b_avg += sc * orig_img.FastEl(ic.x, ic.y, 2);
+          if(nclrs > 1) {
+	    for(int cl=0; cl < nclrs; cl++) {
+	      avgs[cl] += sc * orig_img.FastEl(ic.x, ic.y, cl);
+	    }
           }
           else {
-            r_avg += sc * orig_img.FastEl(ic.x, ic.y);
+            avgs[0] += sc * orig_img.FastEl(ic.x, ic.y);
           }
         }
       }
-      if(rgb_img) {
-        scaled_img.FastEl(x, y, 0) = r_avg;
-        scaled_img.FastEl(x, y, 1) = g_avg;
-        scaled_img.FastEl(x, y, 2) = b_avg;
+      if(nclrs > 1) {
+	for(int cl=0; cl < nclrs; cl++) {
+	  scaled_img.FastEl(x, y, cl) = avgs[cl];
+	}
       }
       else {
-        scaled_img.FastEl(x, y) = r_avg;
+        scaled_img.FastEl(x, y) = avgs[0];
       }
     }
   }
@@ -1733,13 +1762,14 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
                                     float rotate, EdgeMode edge) {
   TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
-    rotated_img.SetGeom(3, img_size.x, img_size.y, 3);
-    rgb_img = true;
+    nclrs = orig_img.dim(2);
+    rotated_img.SetGeom(3, img_size.x, img_size.y, nclrs);
   }
-  else
+  else {
     rotated_img.SetGeom(2, img_size.x, img_size.y);
+  }
   FloatTwoDCoord ctr = ((FloatTwoDCoord) img_size) / 2.0f;
 
   rotate *= 2.0f * taMath_float::pi; // convert to radians
@@ -1775,9 +1805,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
       }
       taMath_float::vec_norm_sum(&sc_ary);
 
-      float r_avg = 0.0f;
-      float g_avg = 0.0f;
-      float b_avg = 0.0f;
+      float avgs[4] = {};	// init to 0
       TwoDCoord ic;
       for(oyi=0;oyi<2;oyi++) {
         ic.y = pcy[oyi];
@@ -1786,23 +1814,23 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
           if(ic.WrapClip(wrap, img_size)) {
             if(edge == CLIP) continue; // bail on clipping only
           }
-          if(rgb_img) {
-            r_avg += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, 0);
-            g_avg += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, 1);
-            b_avg += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, 2);
+          if(nclrs > 1) {
+	    for(int cl=0; cl < nclrs; cl++) {
+	      avgs[cl] += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, cl);
+	    }
           }
           else {
-            r_avg += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ic.x, ic.y);
+            avgs[0] += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ic.x, ic.y);
           }
         }
       }
-      if(rgb_img) {
-        rotated_img.FastEl(x,y,0) = r_avg;
-        rotated_img.FastEl(x,y,1) = g_avg;
-        rotated_img.FastEl(x,y,2) = b_avg;
+      if(nclrs > 1) {
+	for(int cl=0; cl < nclrs; cl++) {
+	  rotated_img.FastEl(x,y,cl) = avgs[cl];
+	}
       }
       else {
-        rotated_img.FastEl(x,y) = r_avg;
+        rotated_img.FastEl(x,y) = avgs[0];
       }
     }
   }
@@ -1820,13 +1848,14 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
   TwoDCoord crop_ctr = crop_size / 2;
   TwoDCoord img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
-    crop_img.SetGeom(3, crop_size.x, crop_size.y, 3);
-    rgb_img = true;
+    nclrs = orig_img.dim(2);
+    crop_img.SetGeom(3, crop_size.x, crop_size.y, nclrs);
   }
-  else
+  else {
     crop_img.SetGeom(2, crop_size.x, crop_size.y);
+  }
 
   TwoDCoord ic;
   for(int ny = 0; ny < crop_size.y; ny++) {
@@ -1838,8 +1867,8 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
         if(edge == CLIP) continue; // bail on clipping only
       }
 
-      if(rgb_img) {
-        for(int i=0;i<3;i++)
+      if(nclrs > 1) {
+        for(int i=0;i<nclrs;i++)
           crop_img.FastEl(nx, ny, i) = orig_img.FastEl(ic.x, ic.y, i);
       }
       else {
@@ -1904,10 +1933,10 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   float rot_sin = sin(rotate);
   float rot_cos = cos(rotate);
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(in_img.dims() == 3) { // rgb
-    out_img.SetGeom(3, win_size.x, win_size.y, 3);
-    rgb_img = true;
+    nclrs = in_img.dim(2);
+    out_img.SetGeom(3, win_size.x, win_size.y, nclrs);
   }
   else {
     out_img.SetGeom(2, win_size.x, win_size.y);
@@ -1961,9 +1990,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
       TwoDCoord icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
                     (int)floor(.5f + icr.y + img_ctr.y));
 
-      float r_avg = 0.0f;
-      float g_avg = 0.0f;
-      float b_avg = 0.0f;
+      float avgs[4] = {};	// init to 0
 
       TwoDCoord oc;             // offsets
       for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
@@ -1987,9 +2014,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
             }
             taMath_float::vec_norm_sum(&rot_ary);
 
-            float r_r_avg = 0.0f;
-            float r_g_avg = 0.0f;
-            float r_b_avg = 0.0f;
+            float r_avgs[4] = {};
             TwoDCoord ric;
             for(oyi=0;oyi<2;oyi++) {
               ric.y = pcy[oyi];
@@ -2001,44 +2026,44 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
 
                 float rsc = rot_ary.FastEl(oxi, oyi);
 
-                if(rgb_img) {
-                  r_r_avg += rsc * in_img.FastEl(ric.x, ric.y, 0);
-                  r_g_avg += rsc * in_img.FastEl(ric.x, ric.y, 1);
-                  r_b_avg += rsc * in_img.FastEl(ric.x, ric.y, 2);
+                if(nclrs > 1) {
+		  for(int cl=0; cl < nclrs; cl++) {
+		    r_avgs[cl] += rsc * in_img.FastEl(ric.x, ric.y, cl);
+		  }
                 }
                 else {
-                  r_r_avg += rsc * in_img.SafeEl(ric.x, ric.y);
+                  r_avgs[0] += rsc * in_img.SafeEl(ric.x, ric.y);
                 }
               }
             }
-            if(rgb_img) {
-              r_avg += sc * r_r_avg;
-              g_avg += sc * r_g_avg;
-              b_avg += sc * r_b_avg;
+            if(nclrs > 1) {
+	      for(int cl=0; cl < nclrs; cl++) {
+		avgs[cl] += sc * r_avgs[cl];
+	      }
             }
             else {
-              r_avg += sc * r_r_avg;
+              avgs[0] += sc * r_avgs[0];
             }
           }
           else {
-            if(rgb_img) {
-              r_avg += sc * in_img.FastEl(ic.x, ic.y, 0);
-              g_avg += sc * in_img.FastEl(ic.x, ic.y, 1);
-              b_avg += sc * in_img.FastEl(ic.x, ic.y, 2);
+            if(nclrs > 1) {
+	      for(int cl=0; cl < nclrs; cl++) {
+		avgs[cl] += sc * in_img.FastEl(ic.x, ic.y, cl);
+	      }
             }
             else {
-              r_avg += sc * in_img.FastEl(ic.x, ic.y);
+              avgs[0] += sc * in_img.FastEl(ic.x, ic.y);
             }
           }
         }
       }
-      if(rgb_img) {
-        out_img.FastEl(wc.x, wc.y, 0) = r_avg;
-        out_img.FastEl(wc.x, wc.y, 1) = g_avg;
-        out_img.FastEl(wc.x, wc.y, 2) = b_avg;
+      if(nclrs > 1) {
+	for(int cl=0; cl < nclrs; cl++) {
+	  out_img.FastEl(wc.x, wc.y, cl) = avgs[cl];
+	}
       }
       else {
-        out_img.FastEl(wc.x, wc.y) = r_avg;
+        out_img.FastEl(wc.x, wc.y) = avgs[0];
       }
     }
   }
@@ -2047,6 +2072,16 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
 
 
 bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
+  if(mat.dims() == 3) {    // an rgb guy
+    int nclrs = mat.dim(2);
+    for(int i=0;i<nclrs;i++) {
+      float_Matrix* cmp = mat.GetFrameSlice(i);
+      taBase::Ref(cmp);
+      AttentionFilter(*cmp, radius_pct);
+      taBase::unRefDone(cmp);
+    }
+    return true;
+  }
   TwoDCoord img_size(mat.dim(0), mat.dim(1));
   TwoDCoord img_ctr = img_size / 2;
 
@@ -2111,17 +2146,17 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   taMath_float::vec_norm_sum(&filt_cnv, 1.0f); // conv = sum norm
   taMath_float::vec_norm_max(&filt_wt, 1.0f);  // weights = max norm
 
-  bool rgb_img = false;
+  int nclrs = 1;
   if(img.dims() == 3) { // rgb
-    rgb_img = true;
+    nclrs = img.dim(2);
   }
 
   bool wrap = (edge == WRAP);
 
-  float brd_clr[3];
+  float brd_clr[4];
 
   if(use_border_clr) {
-    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);
   }
 
   TwoDCoord ic;
@@ -2130,8 +2165,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
     ic.x = Random::IntMinMax(0, img_size.x);
     ic.y = Random::IntMinMax(0, img_size.y);
 
-    if(rgb_img) {
-      for(int rgb=0; rgb<3; rgb++) {
+    if(nclrs > 1) {
+      for(int rgb=0; rgb<nclrs; rgb++) {
         float clr = 0.0f;
         if(use_border_clr) {
           clr = brd_clr[rgb];
@@ -2198,7 +2233,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
-bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, float_Matrix* foreground, int_Matrix* bubble_coords) {
+bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
+			     float_Matrix* foreground, int_Matrix* bubble_coords) {
   // floor value for mask
   float floor_thr=pow(10.0f, -8.0f);
 
@@ -2217,9 +2253,9 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
     }
   }
  
- // for saving bubble coordinates
- if(bubble_coords != NULL) {
-        bubble_coords->SetGeom(2, 2, n_bubbles);
+  // for saving bubble coordinates
+  if(bubble_coords != NULL) {
+    bubble_coords->SetGeom(2, 2, n_bubbles);
   }
 
   // ndgrid from matlab
@@ -2237,34 +2273,34 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   // apply bubbles to the mask
   for(int bubble=0; bubble < n_bubbles; bubble++) {
     // random center
-   int xc = Random::IntMinMax(0, img_size.x-1);
-   int yc = Random::IntMinMax(0, img_size.y-1);
+    int xc = Random::IntMinMax(0, img_size.x-1);
+    int yc = Random::IntMinMax(0, img_size.y-1);
 
-   // save the bubble coords
-   if(bubble_coords != NULL) {
-     bubble_coords->FastEl(0, bubble) = xc;
-     bubble_coords->FastEl(1, bubble) = yc;
-   }
+    // save the bubble coords
+    if(bubble_coords != NULL) {
+      bubble_coords->FastEl(0, bubble) = xc;
+      bubble_coords->FastEl(1, bubble) = yc;
+    }
 
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-            float &mask_iv = mask_tmp.FastEl(xi, yi);
-            float ndgridx_val = ndgridx.FastEl(xi, yi);
-            float ndgridy_val = ndgridy.FastEl(xi, yi);
-            // key formula -- note that bubble_sig is in normalized image coords here, assumes image is square (uses img_size.x)
-            mask_iv = expf(-(pow(ndgridx_val-xc,2.0f) + pow(ndgridy_val-yc,2.0f))/2.0f/pow(bubble_sig*float(img_size.x),2.0f));
-          }
-        }
+	float &mask_iv = mask_tmp.FastEl(xi, yi);
+	float ndgridx_val = ndgridx.FastEl(xi, yi);
+	float ndgridy_val = ndgridy.FastEl(xi, yi);
+	// key formula -- note that bubble_sig is in normalized image coords here, assumes image is square (uses img_size.x)
+	mask_iv = expf(-(pow(ndgridx_val-xc,2.0f) + pow(ndgridy_val-yc,2.0f))/2.0f/pow(bubble_sig*float(img_size.x),2.0f));
+      }
+    }
 
-        // normalize mask each time, and combine with all masks using max
-        taMath_float::vec_norm_max(&mask_tmp);
-        for(int yi=0; yi< img_size.y; yi++) {
-          for(int xi=0; xi< img_size.x; xi++) {
-                float &mask_iv = mask.FastEl(xi, yi);
-                float mask_tmp_iv = mask_tmp.FastEl(xi, yi);
-                mask_iv = max(mask_iv, mask_tmp_iv);
-          }
-        }
+    // normalize mask each time, and combine with all masks using max
+    taMath_float::vec_norm_max(&mask_tmp);
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {
+	float &mask_iv = mask.FastEl(xi, yi);
+	float mask_tmp_iv = mask_tmp.FastEl(xi, yi);
+	mask_iv = max(mask_iv, mask_tmp_iv);
+      }
+    }
   }
 
   // floor anything in mask below floor thresh
@@ -2274,93 +2310,148 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   // if foreground is null, just use a blank image with border color
   float_Matrix fg;
   if(foreground == NULL) {
-    float brd_clr[3];
-    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
-	fg.SetGeom(2, img_size.x, img_size.y);
-	  for(int yi=0; yi< img_size.y; yi++) {
-   		 for(int xi=0; xi< img_size.x; xi++) {
-		      fg.FastEl(xi, yi) = brd_clr[0];
-    	 }
+    float brd_clr[4];
+    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);
+    fg.SetGeom(2, img_size.x, img_size.y);
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {
+	fg.FastEl(xi, yi) = brd_clr[0];
       }
+    }
   }
   for(int yi=0; yi< img_size.y; yi++) {
-        for(int xi=0; xi< img_size.x; xi++) {
-          float &img_iv = img.FastEl(xi, yi);
-          float mask_iv = mask.FastEl(xi, yi);
-          float foreground_iv;
-          if(foreground == NULL) {  foreground_iv = fg.FastEl(xi, yi); }
-          else { foreground_iv = foreground->FastEl(xi, yi); }
-          img_iv = mask_iv*img_iv + (1.0f-mask_iv)*foreground_iv;
-        }
+    for(int xi=0; xi< img_size.x; xi++) {
+      float &img_iv = img.FastEl(xi, yi);
+      float mask_iv = mask.FastEl(xi, yi);
+      float foreground_iv;
+      if(foreground == NULL) {  foreground_iv = fg.FastEl(xi, yi); }
+      else { foreground_iv = foreground->FastEl(xi, yi); }
+      img_iv = mask_iv*img_iv + (1.0f-mask_iv)*foreground_iv;
+    }
   }
   
   return true;
 }
 
-bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, int bg_color) {
+bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg_color) {
   TwoDCoord img_size(img.dim(0), img.dim(1));
+  
+	if(bg_color > 1.0f) {	// hopefully user is smart enough not to use negative value aside from -1
+		taMisc::Error("bg_color must be between 0 and 1");
+		return false;
+	}
 
-  // if bg color not specified, use upper left corner pix
-  float brd_clr[3];
-  if(bg_color > -1) {
-  	brd_clr[0] = bg_color;
-  	brd_clr[1] = bg_color;
-  	brd_clr[2] = bg_color;
+  // if bg color not specified, use border color
+  float brd_clr[4];
+  if(bg_color == -1) {
+		GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);  
+	}
+	else if(bg_color < 0.0f || bg_color > 1.0f) {
+		taMisc::Error("bg_color must be between 0 and 1");
   }
   else {
-    // get background color
-    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+    brd_clr[0] = bg_color;
+    brd_clr[1] = bg_color;
+    brd_clr[2] = bg_color;
+    brd_clr[3] = 1.0f;
   }
 
   // different processing depending on whether image is rgb or gray
-  if(img.dim(2) >= 3) { // rgb or rgba
-  	for(int yi=0; yi< img_size.y; yi++) {
-    	for(int xi=0; xi< img_size.x; xi++) {        	 
-    		// red channel 	
-    		float& rv = img.FastEl(xi, yi, 0);
-    		rv = ((rv-brd_clr[0])*new_contrast)+brd_clr[0];
-    		// green channel
-    	    float& gv = img.FastEl(xi, yi, 1);
-    	    gv = ((gv-brd_clr[1])*new_contrast)+brd_clr[1];
-    	    // blue channel
-    	    float& bv = img.FastEl(xi, yi, 2);          	  
-    	    bv = ((bv-brd_clr[2])*new_contrast)+brd_clr[2];
-      	  }
-  	  }
+  if(img.dims() == 3) { // rgb or rgba
+    int nclrs = img.dim(2);
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {
+				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+				  float& val = img.FastEl(xi, yi, cl);
+				  val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
+				}
+      }
+    }
   }
-
   else { // grayscale
-  	  for(int yi=0; yi< img_size.y; yi++) {
-      	  for(int xi=0; xi< img_size.x; xi++) {      	        	  	
-          	  float& iv = img.FastEl(xi, yi);
-          	  iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
-      	  }
-  	  }
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {      	        	  	
+				float& iv = img.FastEl(xi, yi);
+				iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
+      }
+    }
   }
   return true;
 }
 
 bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
+  if(img1.dims() != 3) {
+    taMisc::Error("img1 must be rgba format -- is only 2d greyscale");
+    return false;
+  }
   if(img1.dim(2) != 4) {
-    taMisc::Error("img1 must be rgba format");
-  	return false;
+    taMisc::Error("img1 must be rgba format -- does not have 4 colors in outer dimension");
+    return false;
   }
 
-  // assume both images are same size
+  if(img1.dim(0) != img2.dim(0) || img1.dim(1) != img2.dim(1)) {
+    taMisc::Error("img1 must be same size as img2");
+    return false;
+  }
+
+  int nclrs = 1; // grayscale
+  if(img2.dims() == 3) {
+    nclrs = img2.dim(2);
+  }
+
   TwoDCoord img_size(img1.dim(0), img1.dim(1));
 
   for(int yi=0; yi< img_size.y; yi++) {
-  	for(int xi=0; xi< img_size.x; xi++) {
-    	float& i1r = img1.FastEl(xi, yi, 0);
-    	float& i1g = img1.FastEl(xi, yi, 1);
-    	float& i1b = img1.FastEl(xi, yi, 2);
-    	
-    	// red channel alpha blend
-    	i1r = i1r*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,0)*(1.0f-img1.FastEl(xi, yi, 3));
-    	// green channel alpha blend
-    	i1g = i1g*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,1)*(1.0f-img1.FastEl(xi, yi, 3));
-    	// blue channel alpha blend
-    	i1b = i1b*img1.FastEl(xi, yi, 3) + img2.FastEl(xi,yi,2)*(1.0f-img1.FastEl(xi, yi, 3));
+    for(int xi=0; xi< img_size.x; xi++) {
+      const float i1alpha = img1.FastEl(xi, yi, 3); // much faster to cache these values!!
+      const float i1alpha_c = 1.0f - img1.FastEl(xi, yi, 3);
+      if(nclrs > 1) {
+				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+				  float& i1clr = img1.FastEl(xi, yi, cl);
+	 	 			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi,cl) * i1alpha_c; // assume img2 has no alpha channel
+				}
+  		}
+    	else {
+				for(int cl=0; cl < 3; cl++) {
+	  			float& i1clr = img1.FastEl(xi, yi, cl);
+	  			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi) * i1alpha_c; // // assume img2 has no alpha channel
+				}
+    	}
+  	}
+	}
+  return true;
+}
+
+bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {  
+  if(img1.dims() != img2.dims()) {
+    taMisc::Error("img1 and img2 must either both be grayscale or both be color");
+    return false;
+  }
+  if(img1.dim(0) < img2.dim(0) || img1.dim(1) < img2.dim(1)) {
+    taMisc::Error("img1 must be same size as or larger than img2");
+    return false;
+  }
+
+  int nclrs = 1;
+  if(img1.dims() == 3) {
+    nclrs = img1.dim(2);
+  }
+
+  int xoff = img1.dim(0)*0.5f - img2.dim(0)*0.5f; // center of x dim, 0 if both are the same
+  int yoff = img1.dim(1)*0.5f - img2.dim(1)*0.5f; // center of x dim, 0 if both are the same
+  
+  for(int yi=0; yi< img2.dim(1); yi++) {
+    for(int xi=0; xi< img2.dim(0); xi++) {
+      if(nclrs > 1) {
+	for(int di=0; di < nclrs; di++) {
+	  float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
+	  i1pix = img2.FastEl(xi, yi, di);
+	}
+      }
+      else {
+	float& i1pix = img1.FastEl(xi+xoff, yi+yoff);
+	i1pix = img2.FastEl(xi, yi);
+      }
     }
   }
   return true;
@@ -6797,9 +6888,22 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
                "eye input image input must be at least 2 dimensional"))
     return false;
 
+  // NOTE: the edge_mode of WRAP causes tiling effects for downscaling images -- switch to BORDER otherwise
+  taImageProc::EdgeMode eff_em = edge_mode;
+  if(edge_mode == taImageProc::WRAP) {
+    TwoDCoord img_size(eye_image.dim(0), eye_image.dim(1));
+    TwoDCoord scaled_size;
+    scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
+    scaled_size.y = 2 + (int)(scale * (img_size.y-2));
+    if(scaled_size.x < reg->input_size.retina_size.x || scaled_size.y < reg->input_size.retina_size.y) {
+      eff_em = taImageProc::BORDER;
+    }
+  }
+
   taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
-                                       reg->input_size.retina_size.y,
-                                       ctr_x, ctr_y, rotate, scale, edge_mode);
+				       reg->input_size.retina_size.y,
+				       ctr_x, ctr_y, rotate, scale, eff_em);
+
   if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
   if(edge_mode == taImageProc::BORDER && fade_width > 0) {
     taImageProc::FadeEdgesToBorder_float(xform_image, fade_width);

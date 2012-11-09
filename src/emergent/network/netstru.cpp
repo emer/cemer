@@ -5377,8 +5377,20 @@ void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
     y = gpos.y + un->pos.y;
   }
   else {
-    y = un->idx / flat_geom.x;  // unit index relative to flat geom
-    x = un->idx % flat_geom.x;
+    if(unit_groups && virt_groups) {
+      int gpidx = un->idx / un_geom.n;
+      int unidx = un->idx % un_geom.n;
+      int gp_y = gpidx / gp_geom.x;
+      int gp_x = gpidx % gp_geom.x;
+      int un_y = unidx / un_geom.x;
+      int un_x = unidx % un_geom.x;
+      y = gp_y * un_geom.y + un_y;
+      x = gp_x * un_geom.x + un_x;
+    }
+    else {
+      y = un->idx / flat_geom.x;  // unit index relative to flat geom
+      x = un->idx % flat_geom.x;
+    }
   }
 }
 

@@ -75,16 +75,19 @@ private:
 };
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_m2, gating status in unit group data per stripe
+  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_mid, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:
-  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, MAINT, OUTPUT gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
+  enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
     NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
-    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in Matrix and SNrThal layers (TODO: not well supported yet)
-    MAINT = 0x02,		// Gating of maintenance in PFC_mnt layers -- if active, these are next units in Matrix and SNrThal layers
-    OUTPUT = 0x04,		// Gating of output in PFC_out layers -- if active, these are last units in Matrix and SNrThal layers
+    INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in SNrThal layer
+    IN_MNT = 0x02,		// Gating of maintenance in PFC_in_mnt layers -- if active, these are next units in SNrThal layer 
+    MNT_OUT = 0x04,		// Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after IN_MNT and before OUTPUT in SNrThal layer
+    OUTPUT = 0x08,		// Gating of output in PFC_out layers -- if active, these are typically the last units in SNrThal layer (unless OUT_MNT used)
+    OUT_MNT = 0x10,		// Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
+    
 #ifndef __MAKETA__
-    IN_MNT_OUT = INPUT | MAINT | OUTPUT,// #NO_BIT input maint and output -- typical default
+    IN_MNT_OUT = INPUT | IN_MNT | OUTPUT,// #NO_BIT input in_mnt output -- typical default
 #endif
   };
 
@@ -108,15 +111,14 @@ public:
   { return false; }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
 
-  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out);
+  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);
   // get the number of stripes associated with each gating type, based on matrix projections into the snrthal layer -- also updates the gating_types to reflect actual connectivity
   virtual int  SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type, 
-			       int& n_in, int& n_mnt, int& n_out);
+			       int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, 
+			       int& n_out_mnt);
   // returns the starting index for a given gating type within the SNrThal, and also returns the number of each type of stripe.  returns -1 if snrthal does not have that kind of stripe
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
@@ -148,7 +150,6 @@ class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for Matrix_Go connections only -- use MatrixNoGoConSpec for NoGo pathway
 INHERITED(LeabraConSpec)
 public:
-  float		err_gain;	// how much error-driven learning should be added to non-maintenance gating unit learning?
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     // do NOT do this under any circumstances!!
@@ -163,23 +164,10 @@ public:
   }
   // RECV-based save current sender activation states to sravg_m for subsequent learning -- call this at time of gating..
 
-  inline void C_Compute_dWt_Matrix_Mnt(LeabraCon* cn, float lin_wt, 
-				       float mtx_act_m2, float mtx_da, float su_act_lrn) {
-    float sr_prod = mtx_act_m2 * su_act_lrn;
+  inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
+				   float mtx_act_mid, float mtx_da, float su_act_lrn) {
+    float sr_prod = mtx_act_mid * su_act_lrn;
     float dwt = mtx_da * sr_prod;
-    if(lmix.err_sb) {
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-    }
-    cn->dwt += cur_lrate * dwt;
-  }
-
-  inline void C_Compute_dWt_Matrix_Err(LeabraCon* cn, float lin_wt, 
-		       float mtx_act_m2, float mtx_da, float su_act_lrn,
-		       float mtx_act_m, float mtx_act_p, float su_act_m, float su_act_p) {
-    float sr_prod = mtx_act_m2 * su_act_lrn;
-    float err = err_gain * (mtx_act_p * su_act_p - mtx_act_m * su_act_m);
-    float dwt = mtx_da * sr_prod + err;
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
@@ -192,14 +180,8 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
-      if(err_gain > 0.0f && ru->name[0] != 'm') { 
-	C_Compute_dWt_Matrix_Err(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn,
-				 ru->act_m, ru->act_p, su->act_m, su->act_p);
-      }
-      else {
-	C_Compute_dWt_Matrix_Mnt(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn);
-	// note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
-      }
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_mid, ru->dav, cn->sact_lrn);
+      // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
 
@@ -232,19 +214,15 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API MatrixNoGoConSpec : public LeabraConSpec {
-  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns all the time based on minus-phase activations
-INHERITED(LeabraConSpec)
+class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
+  // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_mid).  also uses recv scale_eff for stripe-specific wt scale params
+INHERITED(MatrixConSpec)
 public:
 
-  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
-    // do NOT do this under any circumstances!!
-  }
-
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
-				   float mtx_act_m, float mtx_da, float su_act_m) {
-    float sr_prod = mtx_act_m * su_act_m;
-    float dwt = mtx_da * sr_prod;
+				   float mtx_act_m, float mtx_da, float su_act_lrn) {
+    float sr_prod = mtx_act_m * su_act_lrn;
+    float dwt = -mtx_da * sr_prod; // reverse the da here for NoGo -- not reversed anywhere else before this!
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
@@ -256,27 +234,43 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, su->act_m);
+      if(ru->dav == 0.0f) continue; // if dav == 0 then was not gated!  in any case, dwt = 0
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m, ru->dav, cn->sact_lrn);
+      // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
-  }
-
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
-  }
-
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // just run chl version through-and-through
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
-  }
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // just run chl version through-and-through
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				 int thread_no, float su_act_delta) {
+    if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+			       su_act_delta * rcg->scale_eff);
+      }
+    }
+    else {
+      if(thread_no < 0) {
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
+	}
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	for(int i=0; i<cg->size; i++) {
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+	  C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+				 su_act_delta *	rcg->scale_eff);
+	}
+      }
+    }
   }
 
   TA_SIMPLE_BASEFUNS(MatrixNoGoConSpec);
@@ -296,7 +290,7 @@ INHERITED(LeabraBiasSpec)
 public:
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
-    float err = ru->act_m2 * ru->dav;
+    float err = ru->act_mid * ru->dav;
     if(fabsf(err) >= dwt_thresh)
       cn->dwt += cur_lrate * err;
   }
@@ -347,9 +341,10 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
+  float		nogo_wtscale_inc; // multiplier on effective weight scale for projections into the winning stripe's nogo units in the second half of the minus phase, after gating -- the weight scale for all other stripes goes to 0 -- only the winning stripe is allowed to become active
   float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
-  float		pvr_inhib;	// #DEF_0:0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
-  float		refract_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
+  float		pvr_inhib;	// #DEF_0;0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
+  float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
   float		no_pfc_thr;	// #DEF_0:0.02 threshold for considering there to be no corresponding pfc activity -- average activity within the corresponding PFC_s stripe must be above this level -- if not, netin inhibition is applied to stripe by rescaling downward by (1 - no_pfc_inhib) -- enforces this as a hard constraint even if it is a soft constraint in connectivity
   float		no_pfc_inhib;	// #DEF_0:0.2 #MIN_0 #MAX_1 amount of inhibition to apply for stripes with pfc activity below go_pfc_thr -- net inputs are rescaled downward by (1 - no_pfc_inhib) -- reshapes the competition so other stripes will win
 
@@ -396,7 +391,7 @@ public:
   };
 
   GoNoGo		go_nogo; 	// is this a Go pathway or a NoGo pathway layer
-  SNrThalLayerSpec::GatingTypes		gating_type;	// type of gating units present within this Matrix layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
+  SNrThalLayerSpec::GatingTypes		gating_type;	// type of gating units present within this Matrix layer -- must be just one of the options (INPUT, IN_MNT, OUTPUT, etc.)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
@@ -405,7 +400,7 @@ public:
   virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
   // find the PVLVDaLayerSpec layer that this matrix layer interacts with
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					int& n_in, int& n_mnt, int& n_out);
+					int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of matrix stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
@@ -431,17 +426,15 @@ public:
 					 int gpidx, LeabraNetwork* net);
   // compute refract inhib
 
+  virtual void ModulateNoGoPrjns(LeabraLayer* lay, LeabraNetwork* net);
+  // modulate effective weight scale for nogo projections, after gating
+
   // this is hook for modulating netinput according to above inhib factors
   override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	Compute_GatingActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 				       int gpidx, LeabraNetwork* net);
-  // save activations into act_m2 at point of gating
-  virtual void Compute_ClearActAfterGo(LeabraLayer* lay, Layer::AccessMode acc_md,
-				  int gpidx, LeabraNetwork* net);
-  // generally used only if doublegate.on --- to clear activity of stripes that fired Go in early gating window so others can fire in the late  
-  virtual void Compute_ClearActAfterGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-				      int gpidx, LeabraNetwork* net);
+  // save activations into act_mid at point of gating
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
@@ -456,8 +449,6 @@ public:
 
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return true; }
-  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
-  { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   {return false; }
 
@@ -586,7 +577,7 @@ public:
     DEEP,			// deep layer -- not active at all until the trial when gating occurs -- after gating during that trial they track superficial, and then after that are locked into maintenance 
   };
 
-  SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, MAINT, OUTPUT)
+  SNrThalLayerSpec::GatingTypes	pfc_type;	// type of pfc units present within this PFC layer -- must be just one of the options (INPUT, IN_MNT, OUTPUT, etc.)
   PFCLayer		pfc_layer;	// which layer type is this -- superficial (SUPER) or deep (DEEP)?
   PFCGateSpec		gate;		// parameters controlling the gating of pfc units
 
@@ -601,7 +592,7 @@ public:
   // find the LVi layer that this pfc deep layer projects to
 
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					int& n_in, int& n_mnt, int& n_out);
+					int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of pfc stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no=-1);
@@ -706,7 +697,7 @@ private:
 };
 
 class LEABRA_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
-  // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, MAINT, OUTPUT) and the SNrThal which represents all gating types in one layer 
+  // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, IN_MNT, OUTPUT, etc.) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
 public:
   void	Connect_impl(Projection* prjn);

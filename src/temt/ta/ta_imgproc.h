@@ -28,6 +28,16 @@
 //	final coverage of the image processing from program user perspective:
 //	RetinaProc, DoGRetinaProc, V1RetinaProc
 
+// image format support:
+// most ops are done on float_Matrix, which can either be a 2d greyscale or 3d color, with either 3 or 4
+// values in the 3rd (outer) dimension -- in memory it is stored as a plane of each color, so often 
+// processing can be done by looping over the outer color dimension and calling the 2d version on the 
+// slice matrix.
+// 
+// the args for functions should retain separate r,g,b,a values where relevant, to make it easier to
+// interface with program code, instead of requiring color objects etc.  easy to convert to an array
+// internally for looping based ops
+
 #include "ta_math.h"
 #include "ta_program.h"
 #include "ta_geometry.h"
@@ -495,10 +505,10 @@ public:
     WRAP,			// wrap the image around to the other side: no edges!
   };
 
-  static bool	GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b);
+  static bool	GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b, float& a);
   // #CAT_Render get the average color around a 1 pixel border region of the image -- if grey-scale image, r,g,b are all set to the single grey value
-    static bool	GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b);
-    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb image
+  static bool	GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b, float& a);
+    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb(a) image
     static bool	GetBorderColor_float_grey(float_Matrix& img_data, float& grey);
     // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for grey scale image
 
@@ -511,6 +521,9 @@ public:
   static bool	RenderOccluderBorderColor_float(float_Matrix& img_data,
 						float llx, float lly, float urx, float ury);
   // #CAT_Render render an occluder rectangle of given normalized size (ll = lower left corner (0,0 = farthest ll), ur = upper right (1,1 = farthest ur) using the border color
+  
+  static bool	RenderFill(float_Matrix& img_data, float r, float g, float b, float a);
+  // #CAT_Render render a "blank" image at a specified color
 
   static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
   // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
@@ -551,14 +564,18 @@ public:
 				EdgeMode edge=BORDER, bool use_border_clr=true);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image -- blobs are uniform circles with gaussian blur around the edges -- radius and gaussian sigma are in image width normalized units (e.g., .05 = 5% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1, though there is an extra 2x factor at 1 to really try to occlude as completely as possible -- if use_border_clr, then the 1 pixel border around image provides the color for all the blobs -- otherwise color is weighted local average using same gaussian blobo kernel
 
-  static bool	BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig=.05f, float_Matrix* foreground=NULL, int_Matrix* bubble_coords=NULL);
+  static bool	BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig=.05f,
+			   float_Matrix* foreground=NULL, int_Matrix* bubble_coords=NULL);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise Simplified version of Gosselin & Schyn's bubble paradigm which creates a mask from Gaussians Bubbles through which information is let through. Conceptually just the inverse of BlobBlurOcclude, but parameterization allows titration on number of bubbles. n_bubbles is the number of bubbles to create in the mask, bubble_sig controls the width of the bubble in image width normalized units (e.g., .05 = 5% of the width of the image). foreground specifies a foreground to bubble through (default = border color). if bubble_coords is specified, saves the coordinates of the bubble centers for analysis in an Nx2 xy matrix 
   
-  static bool	AdjustContrast(float_Matrix& img, float new_contrast, int bg_color=-1);
-  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant at passed in value or if not specified, checks upper left pixel. new_contrast is a scalar in range [0 1] and bg_color is an integer in range [0 255]
+  static bool	AdjustContrast(float_Matrix& img, float new_contrast, float bg_color=-1.0f);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant at passed in value or if not specified, checks border. new_contrast is a scalar in range [0 1] and bg_color is an integer in range [0 1]
   
   static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
-  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.  img2 can be greyscale or rgb
+  
+  static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
@@ -1482,7 +1499,7 @@ class TA_API RetinaProc : public taNBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_regions ##DEF_CHILDNAME_Regions full specification of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(taNBase)
 public:
-  taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different)
+  taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different).  if mode = WRAP, and scaled image is smaller than the retina, then BORDER is actually used instead to prevent the weird tiling effect that otherwise occurs
   int 			fade_width;	// #CONDSHOW_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations 
   VisRegionSpecBaseList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
 

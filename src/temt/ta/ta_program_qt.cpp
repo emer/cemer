@@ -759,6 +759,7 @@ void iProgramEditor::GetValue() {
   }
   if (typ->InheritsFrom(TA_taBase)) {
     base->UpdateAfterEdit();    // hook to update the contents after an edit..
+    base->MakeNameUnique();
 //shouldn't be necessary    taiMisc::Update(base);
   }
   --m_changing;

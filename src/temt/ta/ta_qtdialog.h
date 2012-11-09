@@ -678,7 +678,13 @@ public:
   taiMenu_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
   taiActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
   taiActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
-  taiMenuBar*           menu;           // menu bar
+
+#ifdef TA_OS_MAC
+  // See bug 1518.
+  taiActions*           menu; // menu bar
+#else
+  taiMenuBar*           menu; // menu bar
+#endif
 
   MembSet_List          membs;
   QButtonGroup*         bgrp; // group used for set checkboxes

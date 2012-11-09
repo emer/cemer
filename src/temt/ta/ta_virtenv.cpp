@@ -959,17 +959,17 @@ void VEJoint::SetValsToODE() {
     pos2_norm = stops2.Normalize(pos2);
   }
 
-  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
-    DestroyODE();
-    return;
-  }
-
   if(TestError(!body1 || !body1->body_id,
                "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
     return;
   if(TestError(!body2 || !body2->body_id,
                "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
+
+  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
+    DestroyODE();
+    return;
+  }
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
 
@@ -1218,18 +1218,10 @@ void VEJoint::SetValsToODE_ODEParams() {
   }
 }
 
-// #ifdef 0 // __GNUC__
-// static inline float get_val_no_nan(float val) {
-//   // note: this may not be sufficiently cross-platform (e.g., windows)
-//   // could potentially try this: if(val != val) return 0.0f;  // supposed to be true of nans
-//   if(isnan(val)) return 0.0f;
-//   return val;
-// }
-// #else
 static inline float get_val_no_nan(float val) {
+  if (isnan(val)) return 0.0f;
   return val;
 }
-// #endif
 
 void VEJoint::GetValsFmODE(bool updt_disp) {
   if(!HasJointFlag(FEEDBACK)) return;

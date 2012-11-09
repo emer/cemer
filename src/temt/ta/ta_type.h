@@ -663,7 +663,7 @@ public:
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
 
   static bool           emacs_mode;     // #SAVE #CAT_GUI use full emacs key bindings -- all non-conflicting emacs keys are available regardless, but with this turned on, Ctrl+V is page down instead of Paste -- use Ctrl+Y (emacs yank) for paste instead -- on a Mac, Command+V is usually paste, so Ctrl+V can be used for page down without conflict, so this setting defaults to ON for macs
-  static int            undo_depth;     // #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
+  static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
   static bool		undo_debug; // #NO_SAVE #CAT_GUI display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
   static float          undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
@@ -1183,6 +1183,8 @@ public:
   // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
   static String FixURL(const String& url_str);
   // #CAT_File do some basic things to fix a url to make it at least somewhat viable (e.g., add http:// if no 'scheme' already there, add .com if no . present in an http:// url)
+  static String	ExtraAppSuffix();
+  // #CAT_File return any extra app suffix beyond the standard app suffixes (dbg, mpi) -- empty string if none -- parses the app_suffix member
 
   static bool   InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?

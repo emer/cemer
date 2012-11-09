@@ -90,7 +90,7 @@ void WtScaleSpecInit::Initialize() {
 
 void WtSigSpec::Initialize() {
   gain = 6.0f;
-  off = 1.25f;
+  off = 1.0f;
   dwt_norm = true;
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
@@ -178,7 +178,7 @@ bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
-  learn_rule = LEABRA_CHL;
+  learn_rule = CTLEABRA_XCAL;
   inhib = false;
   
   learn = true;
@@ -210,8 +210,8 @@ void LeabraConSpec::Defaults_init() {
 
   rnd.mean = .5f;
   rnd.var = .25f;
-  lrate = .01f;
-  cur_lrate = .01f;
+  lrate = .02f;
+  cur_lrate = .02f;
 }
 
 void LeabraConSpec::InitLinks() {
@@ -322,28 +322,14 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
     }
   }
   if(lrs_value == EXT_REW_STAT) {
-    int arval = 0;
     if(net->epoch < 1) {
-      arval = lrate_sched.last_ctr;
+      cur_lrate = lrate_sched.default_val;
     }
     else {
-      arval = (int)(100.0f * net->avg_ext_rew);
+      int arval = (int)(100.0f * net->avg_ext_rew);
+      cur_lrate = lrate * lrate_sched.GetVal(arval);
     }
-    cur_lrate = lrate * lrate_sched.GetVal(arval);
   }
-
-  // this is no longer relevant
-//   if(lrs_value == SE_STAT) {
-//     int seval = 0;
-//     if(net->epoch < 1) {
-//       seval = lrate_sched.last_ctr;
-//     }
-//     else {
-//       seval = (int);
-//     }
-//     cur_lrate = lrate * lrate_sched.GetVal(seval);
-//   }
-
   if(lrs_value == EPOCH) {
     cur_lrate = lrate * lrate_sched.GetVal(epoch);
   }
@@ -1086,7 +1072,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->act_eq = 0.0f;
   lu->act_nd = 0.0f;
   lu->act_p = lu->act_m = lu->act_dif = 0.0f;
-  lu->act_m2 = lu->act_p2 = lu->act_dif2 = 0.0f;
+  lu->act_m2 = lu->act_mid = lu->act_dif2 = 0.0f;
   lu->avg_ss = act.avg_init;
   lu->avg_s = act.avg_init;
   lu->avg_m = act.avg_init;
@@ -1478,6 +1464,7 @@ void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(lay->hard_clamped) return;
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
   if(net->NetinPerPrjn()) {
     for(int g=0; g<u->recv.size; g++) {
@@ -1507,8 +1494,20 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
+
+  if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
+    LeabraInhib* thr;
+    int gpidx = u->UnitGpIdx();
+    if(gpidx < 0 || ls->inhib_group == LeabraLayerSpec::ENTIRE_LAYER) {
+      thr = (LeabraInhib*)lay;
+    }
+    else {
+      thr = (LeabraInhib*)lay->ungp_data.FastEl(gpidx);
+    }
+    tot_net += thr->netin.avg * ls->inhib.avg_boost * u->act_eq;
+  }
+
   if(u->HasExtFlag(Unit::EXT)) {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     tot_net += u->ext * ls->clamp.gain;
   }
 
@@ -2010,7 +2009,7 @@ float LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) {
 //      Cycle Optional Misc
 
 void LeabraUnitSpec::Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net) {
-  u->act_m2 = u->act_eq;
+  u->act_mid = u->act_eq;
 }
 
 void LeabraUnitSpec::Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -2108,43 +2107,6 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       u->act_dif2 = u->act_p - u->act_m2;
     }
     break;
-  case LeabraNetwork::MINUS_PLUS_PLUS:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      u->act_m = u->act_nd;
-    }
-    else if(net->phase_no == 1) {
-      u->act_p = u->act_nd;
-      Compute_DaMod_PlusPost(u, net);
-      Compute_ActTimeAvg(u, net);
-      u->act_dif = u->act_p - u->act_m;
-    }
-    else {
-      u->act_p2 = u->act_nd;
-      u->act_dif2 = u->act_p2 - u->act_p;
-    }
-    break;
-  case LeabraNetwork::MINUS_PLUS_PLUS_NOTHING:
-  case LeabraNetwork::MINUS_PLUS_PLUS_MINUS:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      u->act_m = u->act_nd;
-    }
-    else if(net->phase_no == 1) {
-      u->act_p = u->act_nd;
-      u->act_dif = u->act_p - u->act_m;
-      Compute_DaMod_PlusPost(u, net);
-      Compute_ActTimeAvg(u, net);
-    }
-    else if(net->phase_no == 2) {
-      u->act_p2 = u->act_nd;
-      u->act_dif2 = u->act_p2 - u->act_p;
-    }
-    else {
-      u->act_m2 = u->act_nd;
-      u->act_dif2 = u->act_p2 - u->act_m2;
-    }
-    break;
   }
 }
 
@@ -2176,7 +2138,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   bool do_s = net->sravg_vals.do_s; // set on net at start of call..
 
   float ru_act; // activation to use for updating averages
-  if(net->learn_rule <= LeabraNetwork::CTLEABRA_CAL || act_avg.use_nd) {
+  if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
+     net->learn_rule == LeabraNetwork::LEABRA_CHL) {
     ru_act = u->act_nd;
   }
   else {
@@ -2248,21 +2211,6 @@ void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, in
 
   LeabraLayer* lay = u->own_lay();
   if(!lay->Compute_dWt_FirstPlus_Test(net)) return; // applies to bias weights now
-
-  LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
-}
-
-void LeabraUnitSpec::Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  for(int g = 0; g < u->send.size; g++) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-    LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
-    if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_SecondPlus_Test(net)) continue;
-    send_gp->Compute_Leabra_dWt(u);
-  }
-
-  LeabraLayer* lay = u->own_lay();
-  if(!lay->Compute_dWt_SecondPlus_Test(net)) return; // applies to bias weights now
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
   bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
@@ -2694,7 +2642,7 @@ void LeabraUnit::Initialize() {
   avg_l = 0.15f;
   davg = 0.0f;
   act_p = act_m = act_dif = 0.0f;
-  act_m2 = act_p2 = act_dif2 = 0.0f;
+  act_m2 = act_mid = act_dif2 = 0.0f;
   da = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
@@ -2781,7 +2729,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_p = cp.act_p;
   act_dif = cp.act_dif;
   act_m2 = cp.act_m2;
-  act_p2 = cp.act_p2;
+  act_mid = cp.act_mid;
   act_dif2 = cp.act_dif2;
   da = cp.da;
   vcb = cp.vcb;
@@ -2893,6 +2841,7 @@ void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
 
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;
+  avg_boost = 0.0f;
   low0 = false;
   min_i = 0.0f;
   Defaults_init();
@@ -2913,11 +2862,6 @@ void LeabraInhibSpec::Defaults_init() {
   default:
     break;
   }
-  net_gain = 0.35f;
-  act_gain = 0.4f;
-  kink_gain = 1.1f;
-  avg_up_dt = 0.9f;
-  avg_dn_dt = 0.3f;
   comp_thr = .5f;
   comp_gain = 2.0f;
   gp_pt = .2f;
@@ -3008,7 +2952,6 @@ void DecaySpec::Initialize() {
   event = 1.0f;
   phase = 1.0f;
   phase2 = 0.0f;
-  clamp_phase2 = false;
 }
 
 void CtLayerInhibMod::Initialize() {
@@ -3072,11 +3015,12 @@ bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool rval = true;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-  if(net && net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+  if(net && net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     if(TestWarning(decay.phase == 1.0f,
                    "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
       SetUnique("decay", true);
       decay.phase = 0.0f;
+      decay.phase2 = 0.0f;
     }
   }
 
@@ -3249,6 +3193,12 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     u->Init_ActAvg(net);
+  }
+}
+
+void LeabraLayerSpec::Init_Netins(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    u->Init_Netins(net);
   }
 }
 
@@ -3469,26 +3419,7 @@ void LeabraLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwor
   }
 }
 
-void LeabraLayerSpec::Compute_HardClampPhase2(LeabraLayer* lay, LeabraNetwork* net) {
-  // special case to speed up processing by clamping 2nd plus phase to prior + phase
-  lay->SetExtFlag(Unit::EXT);
-  lay->hard_clamped = true;
-  lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
-
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->SetExtFlag(Unit::EXT);
-    u->ext = u->act_p;
-    u->Compute_HardClampNoClip(net); // important: uses no clip here: not really external values!
-  }
-  Compute_CycleStats(lay, net); // compute once only now
-}
-
 void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(decay.clamp_phase2 && (net->phase != LeabraNetwork::MINUS_PHASE) && (net->phase_no >= 2)) {
-    Compute_HardClampPhase2(lay, net);
-    return;
-  }
   if(!(clamp.hard && lay->HasExtFlag(Unit::EXT))) {
     lay->hard_clamped = false;
     return;
@@ -3646,9 +3577,6 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
       break;
     case LeabraInhibSpec::MAX_INHIB:
       Compute_Inhib_Max(lay, acc_md, gpidx, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::AVG_NET_ACT:
-      Compute_Inhib_AvgNetAct(lay, acc_md, gpidx, thr, net, ispec);
       break;
     case LeabraInhibSpec::UNIT_INHIB:
       break;
@@ -4038,28 +3966,6 @@ void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay,
   thr->kwta.Compute_IThrR();
 }
 
-void LeabraLayerSpec::Compute_Inhib_AvgNetAct(LeabraLayer* lay,
-                         Layer::AccessMode acc_md, int gpidx,
-                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  float pt = ispec.kwta_pt;
-  if(adapt_i.type == AdaptISpec::KWTA_PT)
-    pt = thr->adapt_i.i_kwta_pt;
-  else if((inhib_group != ENTIRE_LAYER) && ((LeabraInhib*)lay != thr))
-    pt = ispec.gp_pt;           // use sub-group version for sub-groups..
-
-  float eff_act_gain = ispec.act_gain;
-  if(thr->acts_iavg.avg > thr->kwta.pct)
-    eff_act_gain *= ispec.kink_gain;
-
-  float nw_gi = thr->netin.avg * ispec.net_gain + thr->acts_iavg.avg * eff_act_gain;
-  nw_gi *= pt;                  // pt is basic overall multiplier
-
-  thr->i_val.kwta = nw_gi;
-  thr->kwta.k_ithr = nw_gi;
-  thr->kwta.k1_ithr = nw_gi;
-  thr->kwta.Compute_IThrR();
-}
-
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule == LeabraNetwork::LEABRA_CHL) return;
 
@@ -4175,8 +4081,6 @@ void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   Compute_Acts_AvgMax(lay, net);
-  if(inhib.type == LeabraInhibSpec::AVG_NET_ACT)
-    Compute_ActsIAvg_AvgMax(lay, net);
   Compute_MaxDa(lay, net);
   Compute_OutputName(lay, net);
 
@@ -4255,48 +4159,6 @@ void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
     Compute_AvgMaxActs_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay);
   }
 }
-
-void LeabraLayerSpec::Compute_ActsIAvg_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
-  AvgMaxVals& vals = lay->acts_iavg;
-  AvgMaxVals vals_prv;
-  vals_prv.CopyFrom(&lay->acts_iavg); // copy
-  static ta_memb_ptr mb_off = 0;
-  if(mb_off == 0) {
-    TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act");
-  }
-  if(lay->unit_groups) {
-    vals.InitVals();
-    int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      AvgMaxVals gp_vals_prv;
-      gp_vals_prv.CopyFrom(&gpd->acts_iavg); // copy
-      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_iavg, mb_off);
-
-      if(gpd->acts_iavg.avg > gp_vals_prv.avg) {
-        gpd->acts_iavg.avg = gp_vals_prv.avg + inhib.avg_up_dt * (gpd->acts_iavg.avg - gp_vals_prv.avg);
-      }
-      else {
-        gpd->acts_iavg.avg = gp_vals_prv.avg + inhib.avg_dn_dt * (gpd->acts_iavg.avg - gp_vals_prv.avg);
-      }
-
-      vals.UpdtFmAvgMax(gpd->acts_iavg, nunits, g);
-    }
-    vals.CalcAvg(lay->units.leaves);
-  }
-  else {
-    Compute_AvgMaxVals_ugp(lay, Layer::ACC_LAY, 0, vals, mb_off);
-  }
-
-  if(vals.avg > vals_prv.avg) {
-    vals.avg = vals_prv.avg + inhib.avg_up_dt * (vals.avg - vals_prv.avg);
-  }
-  else {
-    vals.avg = vals_prv.avg + inhib.avg_dn_dt * (vals.avg - vals_prv.avg);
-  }
-}
-
 
 void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay,
                                         Layer::AccessMode acc_md, int gpidx,
@@ -4547,36 +4409,6 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
       PostSettle_GetPhaseDifRatio(lay, net);
     }
     break;
-  case LeabraNetwork::MINUS_PLUS_PLUS:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      PostSettle_GetMinus(lay, net);
-    }
-    else if(net->phase_no == 1) {
-      PostSettle_GetPlus(lay, net);
-      PostSettle_GetPhaseDifRatio(lay, net);
-    }
-    else {
-      PostSettle_GetPlus2(lay, net);
-    }
-    break;
-  case LeabraNetwork::MINUS_PLUS_PLUS_NOTHING:
-  case LeabraNetwork::MINUS_PLUS_PLUS_MINUS:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      PostSettle_GetMinus(lay, net);
-    }
-    else if(net->phase_no == 1) {
-      PostSettle_GetPlus(lay, net);
-      PostSettle_GetPhaseDifRatio(lay, net);
-    }
-    else if(net->phase_no == 2) {
-      PostSettle_GetPlus2(lay, net);
-    }
-    else {
-      PostSettle_GetMinus2(lay, net);
-    }
-    break;
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
@@ -4747,10 +4579,6 @@ bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork
     return false;
   }
   return true;
-}
-
-bool LeabraLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  return false;         // standard layers never learn here
 }
 
 bool LeabraLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
@@ -5124,7 +4952,6 @@ void LeabraUnGpData::InitLinks() {
   taBase::Own(netin_top_k, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
-  taBase::Own(acts_iavg, this);
   taBase::Own(acts_top_k, this);
 
   taBase::Own(acts_p, this);
@@ -5280,7 +5107,6 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   netin.InitVals();
   i_thrs.InitVals();
   acts.InitVals();
-  acts_iavg.InitVals();
   un_g_i.InitVals();
   maxda = 0.0f;
 }
@@ -5316,7 +5142,6 @@ void LeabraLayer::InitLinks() {
   taBase::Own(netin_top_k, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
-  taBase::Own(acts_iavg, this);
   taBase::Own(acts_top_k, this);
 
   taBase::Own(acts_p, this);
@@ -5361,7 +5186,6 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   netin = cp.netin;
   i_thrs = cp.i_thrs;
   acts = cp.acts;
-  acts_iavg = cp.acts_iavg;
   acts_p = cp.acts_p;
   acts_m = cp.acts_m;
   acts_p2 = cp.acts_p2;
@@ -5611,7 +5435,7 @@ void LeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
 
-  learn_rule = LEABRA_CHL;
+  learn_rule = CTLEABRA_XCAL;
   prv_learn_rule = -1;
   phase_order = MINUS_PLUS;
   no_plus_test = true;
@@ -5671,6 +5495,9 @@ void LeabraNetwork::Initialize() {
   avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
+
+  inhib_cons_used = false;
+  init_netins_cycle_stat = false;
 }
 
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -5801,6 +5628,13 @@ void LeabraNetwork::Init_Weights() {
   lrn_trig.lrn = 0;
 }
 
+void LeabraNetwork::Init_Netins() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Init_Netins(this);
+  }
+}
+
 void LeabraNetwork::DecayState(float decay) {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
@@ -5919,13 +5753,6 @@ void LeabraNetwork::Trial_Init_Phases() {
   case PLUS_NOTHING:
     phase_max=2;        // ignore no_plus_test here -- just turn PLUS into MINUS
     break;
-  case MINUS_PLUS_PLUS:
-    phase_max=3;        // ignore no_plus_test here -- just turn PLUS into extra MINUS
-    break;
-  case MINUS_PLUS_PLUS_NOTHING:
-  case MINUS_PLUS_PLUS_MINUS:
-    phase_max=4;        // ignore no_plus_test here -- just turn PLUS into extra MINUS
-    break;
   }
 }
 
@@ -5999,34 +5826,16 @@ void LeabraNetwork::Settle_Init() {
 void LeabraNetwork::Settle_Init_CtTimes() {
   if(learn_rule == LEABRA_CHL) return;
 
-  if(phase_order >= MINUS_PLUS_PLUS_NOTHING) {
-    switch(phase_no) {
-    case 0:
-      cycle_max = ct_time.minus;
-      break;
-    case 1:
-      cycle_max = ct_time.plus;
-      break;
-    case 2:
-      cycle_max = ct_time.plus;
-      break;
-    case 3:
-      cycle_max = ct_time.inhib;
-      break;
-    }
-  }
-  else {                        // for all other cases
-    switch(phase_no) {
-    case 0:
-      cycle_max = ct_time.minus;
-      break;
-    case 1:
-      cycle_max = ct_time.plus;
-      break;
-    case 2:
-      cycle_max = ct_time.inhib;
-      break;
-    }
+  switch(phase_no) {
+  case 0:
+    cycle_max = ct_time.minus;
+    break;
+  case 1:
+    cycle_max = ct_time.plus;
+    break;
+  case 2:
+    cycle_max = ct_time.inhib;
+    break;
   }
 }
 
@@ -6039,7 +5848,7 @@ void LeabraNetwork::Compute_Active_K() {
 
 void LeabraNetwork::Settle_Init_Unit() {
   if(nothing_phase) {
-    if(phase_order != MINUS_PLUS_MINUS && phase_order != MINUS_PLUS_PLUS_MINUS) {
+    if(phase_order != MINUS_PLUS_MINUS) {
       TargExtToComp();          // all external input is now 'comparison' = nothing!
     }
   }
@@ -6066,7 +5875,7 @@ void LeabraNetwork::Settle_Init_Layer() {
 void LeabraNetwork::Settle_Init_TargFlags() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
   if(nothing_phase) {
-    if(phase_order != MINUS_PLUS_MINUS && phase_order != MINUS_PLUS_PLUS_MINUS) {
+    if(phase_order != MINUS_PLUS_MINUS) {
       TargExtToComp();          // all external input is now 'comparison' = nothing!
     }
   }
@@ -6276,10 +6085,14 @@ void LeabraNetwork::Compute_CycleStats() {
   output_name = "";             // this will be updated by layer
   maxda = 0.0f;         // initialize
   trg_max_act = 0.0f;
+  init_netins_cycle_stat = false;
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->Compute_CycleStats(this);
+  }
+  if(init_netins_cycle_stat) {
+    Init_Netins();
   }
 }
 
@@ -6354,25 +6167,6 @@ void LeabraNetwork::Settle_Compute_dWt() {
       AdaptKWTAPt();
     }
     break;
-  case MINUS_PLUS_PLUS:
-    if(phase_no == 1)
-      Compute_dWt_FirstPlus();
-    else if(phase_no == 2) {
-      Compute_dWt_SecondPlus();
-      AdaptKWTAPt();
-    }
-    break;
-  case MINUS_PLUS_PLUS_NOTHING:
-  case MINUS_PLUS_PLUS_MINUS:
-    if(phase_no == 1)
-      Compute_dWt_FirstPlus();
-    else if(phase_no == 2)
-      Compute_dWt_SecondPlus();
-    else if(phase_no == 3) {
-      Compute_dWt_Nothing();
-      AdaptKWTAPt();
-    }
-    break;
   }
 }
 
@@ -6424,26 +6218,6 @@ void LeabraNetwork::Trial_UpdatePhase() {
   case PLUS_NOTHING:
     phase = MINUS_PHASE;
     nothing_phase = true;
-    break;
-  case MINUS_PLUS_PLUS:
-    if(no_plus_testing)
-      phase = MINUS_PHASE;      // another minus
-    else
-      phase = PLUS_PHASE;
-    break;
-  case MINUS_PLUS_PLUS_NOTHING:
-  case MINUS_PLUS_PLUS_MINUS:
-    // diff between these two is in Settle_Init_Decay: TargExtToComp()
-    if(phase_no <= 2) {
-      if(no_plus_testing)
-        phase = MINUS_PHASE;    // another minus
-      else
-        phase = PLUS_PHASE;
-    }
-    else {
-      phase = MINUS_PHASE;
-      nothing_phase = true;
-    }
     break;
   }
 }
@@ -6632,21 +6406,6 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
-  if(thread_flags & DWT)
-    threads.Run(&un_call, 0.6f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
-  Compute_dWt_Norm();
-}
-
-void LeabraNetwork::Compute_dWt_SecondPlus() {
-  if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
-  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
-    return; // no learning while gathering data!
-  }
-  Compute_dWt_SRAvg();
-  Compute_dWt_Layer_pre();
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_SecondPlus);
   if(thread_flags & DWT)
     threads.Run(&un_call, 0.6f);
   else
@@ -6867,13 +6626,6 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
   case PLUS_NOTHING:
     if(phase_no == 1) is_time = true;
     break;
-  case MINUS_PLUS_PLUS:
-    if(phase_no == 0) is_time = true;
-    break;
-  case MINUS_PLUS_PLUS_NOTHING:
-  case MINUS_PLUS_PLUS_MINUS:
-    if(phase_no == 0) is_time = true;
-    break;
   }
 
   return is_time;
@@ -7019,6 +6771,7 @@ void LeabraWizard::Initialize() {
 String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
+* [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on biology -- functionally similar to an SRN but auto-encoding and predictive\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using quad-phase specs -- high functioning hippocampal episodic memory system.\n\

@@ -4276,6 +4276,9 @@ bool taiItemPtrBase::OpenChooser() {
     }
   }
   delete ic;
+  // return focus to rep and window
+  rep()->window()->setFocus();
+  rep()->setFocus();
   return rval;
 }
 
@@ -5802,6 +5805,9 @@ void taiToken::Chooser() {
       ta_actions->setLabel(chs->sel_str());*/
   }
   delete chs;
+  // todo: need to return focus after dialog if possible:
+  // rep()->window()->setFocus();
+  // rep()->setFocus();
 }
 
 void taiToken::Edit() {

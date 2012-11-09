@@ -98,7 +98,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     }
     // if no path specified, start at most recent, and if none, we'll just use none
     if (eff_dir.empty() || eff_dir == ".") {
-      eff_dir = rpth.SafeEl(0);
+      //      eff_dir = rpth.SafeEl(0);
+      eff_dir = taMisc::GetCurrentPath(); // use current!
     }
   }
 

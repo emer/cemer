@@ -483,8 +483,9 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
       cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
     }
 
-    if (taMisc::app_suffix.nonempty()) {
-      cmake_cmd += "-DEXTRA_SUFFIX=" + taMisc::app_suffix + " ";
+    String extra_suffix = taMisc::ExtraAppSuffix();
+    if (extra_suffix.nonempty()) {
+      cmake_cmd += "-DEXTRA_SUFFIX=" + extra_suffix + " ";
     }
 
     if(system_plugin)

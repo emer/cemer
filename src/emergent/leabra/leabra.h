@@ -354,11 +354,13 @@ class LEABRA_API LeabraConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Leabra Leabra connection specs
 INHERITED(ConSpec)
 public:
+  // IMPORTANT programming note: this enum must be same as in LeabraNetwork
+
   enum LearnRule {
-    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component
     CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
+    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
     CTLEABRA_XCAL_C,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, fully continuous version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
+    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
   };
 
   enum	LRSValue {		// what value to drive the learning rate schedule with
@@ -1293,7 +1295,7 @@ public:
   //	Cycle Optional Misc
 
   virtual void	Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_m2
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_mid
 
   virtual void 	Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate conspec subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on -- threaded direct to units
@@ -1322,8 +1324,6 @@ public:
 
   virtual void 	Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
   virtual void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
@@ -1437,9 +1437,9 @@ public:
   float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
   float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
-  float		act_m2;		// #VIEW_HOT #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
-  float		act_p2;		// #CAT_Activation second plus_phase activation (act_nd), set after settling, used for learning and performance stats
-  float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING, or act_p2 - act_p for MINUS_PLUS_PLUS)
+  float		act_m2;		// #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
+  float		act_mid;	// #VIEW_HOT #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) and PBWM algorithms (for gating activation, which occurs in the middle of the minus phase)
+  float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING)
   float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
   float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
@@ -1635,9 +1635,6 @@ public:
   void 	Compute_dWt_FirstPlus(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstPlus(this, net, thread_no); }
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  void 	Compute_dWt_SecondPlus(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_SecondPlus(this, net, thread_no); }
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   void 	Compute_dWt_Nothing(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Nothing(this, net, thread_no); }
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
@@ -1771,19 +1768,14 @@ public:
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
-    AVG_NET_ACT,		// compute inhibition as proportion of average net input and activation in layer or unit group, with kink in activation inhibition at kwta point -- gets stronger after kwta level is reached -- net is effectively feedforward inhibition, and act is feedback -- kwta.pt is overall multiplier on top of net_gain, act_gain, and kink_gain
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #DEF_0.2;0.5;0.25;0.6 [Defaults: for gelin: .2 for KWTA_INHIB, .5 for KWTA_AVG, for non-gelin: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		avg_boost; 	// #MIN_0 proportion of the netin.avg value for unit's inhibitory group (unit group or layer) that increments the net inputs for each unit in inhib group, in proportion to the unit activation (only favors the "winners") -- this produces a more intuitive and plausible reflection of overall excitation levels on layer activity, counteracting the tendency of kwta to completely neutralize such effects 
   bool		low0;		// CONDSHOW_ON_type:KWTA_INHIB||type:KWTA_AVG_INHIB use 0 for the low side of the kwta equation -- i.e., the kwta_pt sets the point between 0 and the either the top-k AVG or k'th unit inhib threshold -- ignore all the neurons below the top-k -- this may be more realistic and should give the most flexibility -- works a lot like the gp_g spreading inhib dynamic at the group level -- will generally need to set kwta_pt higher
   float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
-  float		net_gain;	// #DEF_1.4 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, gain on average netinput in layer or unit group -- should be relatively weaker than act_gain, but enough to anticipate inputs and make system more robust, like feedforward inhibition should
-  float		act_gain;	// #DEF_6 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, baseline gain on average activation in layer or unit group -- operates alone when act_avg is below kwta.pct -- see kink_gain
-  float		kink_gain;	// #DEF_1.5 #MIN_1 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, extra multiplier on act_gain when average activity exceeds kwta.pct level -- this nonlinearity works to strongly shut down excessive activation
-  float		avg_up_dt;	// #DEF_1 #MIN_0 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, rate for increases in average activation values for computing time-average activation average that drives act_gain term
-  float		avg_dn_dt;	// #DEF_0.2 #MIN_0 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, rate for decreases in average activation values for computing time-average activation average that drives act_gain term
   float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
@@ -1930,10 +1922,9 @@ class LEABRA_API DecaySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
 INHERITED(SpecMemberBase)
 public:
-  float		event;		// #DEF_1 proportion decay of state vars between events
-  float		phase;		// [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
-  float		phase2;		// #DEF_0 proportion decay of state vars between 2nd set of phases (if appl, 0 std)
-  bool		clamp_phase2;	// #DEF_false if true, hard-clamp second plus phase activations to prev plus phase (only special layers will then update -- optimizes speed)
+  float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
+  float		phase;		// #MIN_0 #MAX_1 [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
+  float		phase2;		// #MIN_0 #MAX_1 #DEF_0 proportion decay of state vars after second phase, before third phase -- only applicable for 3-phase case (MINUS_PLUS_NOTHING)
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -2030,9 +2021,10 @@ public:
 
   virtual void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
-
   virtual void	Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize act_avg values
+  virtual void	Init_Netins(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   virtual void 	DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
@@ -2077,8 +2069,6 @@ public:
     // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
   virtual void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation prior to settling: hard-clamp inputs
-  virtual void	Compute_HardClampPhase2(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation prior to settling: hard-clamp inputs (special code for hard clamping in phase 2 based on prior acts)
 
   virtual void	ExtToComp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation change external inputs to comparisons (remove input)
@@ -2146,10 +2136,6 @@ public:
 			 Layer::AccessMode acc_md, int gpidx,
 			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of max inhibition computation
-    virtual void Compute_Inhib_AvgNetAct(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx,
-			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of avg-net-act inhibition computation
 
     virtual void Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net);
     // #IGNORE compute extra dynamic inhibition for CtLeabra_X/CAL algorithm
@@ -2184,8 +2170,6 @@ public:
 					LeabraInhib* thr);
     // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
     virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Statistic compute activation AvgMaxVals (acts)
-    virtual void Compute_ActsIAvg_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute activation AvgMaxVals (acts)
 
     virtual void Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net);
@@ -2277,8 +2261,6 @@ public:
 
   virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
@@ -2511,7 +2493,6 @@ public:
   AvgMaxVals	netin_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
   AvgMaxVals	i_thrs;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
-  AvgMaxVals	acts_iavg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation time-averaged average activations (computed from unit.act var, not act_eq) for use in AVG_NET_ACT inhibition type (ONLY)
   AvgMaxVals	acts_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
@@ -2627,6 +2608,8 @@ public:
 
   void	Init_ActAvg(LeabraNetwork* net) 	{ spec->Init_ActAvg(this, net); }
   // #CAT_Activation initialize act_avg values
+  void	Init_Netins(LeabraNetwork* net)		{ spec->Init_Netins(this, net); }
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   override void  Init_InputData(Network* net);
 
@@ -2760,9 +2743,6 @@ public:
   bool	Compute_dWt_FirstPlus_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_FirstPlus_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  bool	Compute_dWt_SecondPlus_Test(LeabraNetwork* net)
-  { return spec->Compute_dWt_SecondPlus_Test(this, net); }
-  // #CAT_Learning test whether to compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   bool	Compute_dWt_Nothing_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_Nothing_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
@@ -2878,7 +2858,7 @@ INHERITED(taOBase)
 public:
   int		minus;		// #DEF_50:200 number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// #DEF_20:200 number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
+  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- only relevant for MINUS_PLUS_NOTHING case
   int		n_avg_only_epcs; // #DEF_0 number of epochs during which time only ravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
@@ -3093,15 +3073,13 @@ class LEABRA_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
 INHERITED(Network)
 public:
-  // IMPORTANT programming note: this enum must be same as in LeabraConSpec, and all Ct-like 
-  // algos that compute SRAvg etc must be *after* CTLEABRA_CAL, and vice-versa
-  // (i.e., logic uses >= and <= on CTLEABRA_CAL for some things)
+  // IMPORTANT programming note: this enum must be same as in LeabraConSpec
 
   enum LearnRule {
-    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component
     CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
+    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
     CTLEABRA_XCAL_C,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, fully continuous version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
+    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
   };
 
   enum StateInit {		// ways of initializing the state of the network
@@ -3122,9 +3100,6 @@ public:
     PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
     MINUS_PLUS_NOTHING,		// standard for CtLeabra_X/CAL and auto-encoder version with final 'nothing' minus phase
     MINUS_PLUS_MINUS,		// alternative version for CtLeabra_X/CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
-    MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating in second plus phase, for the PBWM model
-    MINUS_PLUS_PLUS_NOTHING,	// PBWM in CtLeabra_X/CAL mode
-    MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_X/CAL mode, alternative final inhib stage
   };
 
   enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
@@ -3213,6 +3188,7 @@ public:
   int		avg_norm_err_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
 
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
+  bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
 
   ///////////////////////////////////////////////////////////////////////
   //	Thread Flags
@@ -3237,6 +3213,9 @@ public:
   override void	Init_Stats();
   override void	Init_Sequence();
   override void Init_Weights();
+
+  virtual void  Init_Netins();
+  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
   virtual void	DecayState(float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
@@ -3398,8 +3377,6 @@ public:
 
   virtual void	Compute_dWt_FirstPlus();
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_SecondPlus();
-  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing();
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
   virtual void	Compute_dWt_Norm();
@@ -3981,6 +3958,9 @@ public:
   virtual bool	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
 
+  virtual bool	LeabraTI(LeabraNetwork* net);
+  // #MENU_BUTTON configure temporal integration (LeabraTI) specs and layers
+
   virtual bool	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
 
@@ -4003,7 +3983,7 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 3, int mnt_stripes = 9,
+  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 3, int mnt_stripes = 3,
 		     int out_stripes = 3, bool da_mod_all = false,
 		     bool pfc_learns=true);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating (0 = do not create that type of gating pathway);  da_mod_all = have da value modulate all the regular units in the network;  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)

@@ -81,7 +81,6 @@ void PViLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = .5f;           // default is no-information case; extrew = .5
@@ -121,7 +120,6 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
@@ -276,12 +274,6 @@ bool PViLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* n
   return true;
 }
 
-bool PViLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  return true;
-}
-
 bool PViLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
@@ -304,7 +296,6 @@ void PVrLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = .5f;           // default is no-information case; extrew = .5
@@ -345,7 +336,6 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
@@ -430,12 +420,6 @@ bool PVrLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* n
   return true;
 }
 
-bool PVrLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  return true;
-}
-
 bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
@@ -460,7 +444,6 @@ void LVeLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 0.5f;
@@ -500,7 +483,6 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
@@ -691,14 +673,6 @@ bool LVeLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* n
   return true;
 }
 
-bool LVeLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  if(lv.lrn_pv_only && !(net->ext_rew_avail || net->pv_detected))
-    return false; // no learn on no rew
-  return true;
-}
-
 bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
@@ -727,7 +701,6 @@ void NVLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 1.0f;          // this is the completely novel value
@@ -770,7 +743,6 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
@@ -872,12 +844,6 @@ bool NVLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* ne
   return true;
 }
 
-bool NVLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  return true;
-}
-
 bool NVLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
@@ -896,8 +862,6 @@ void PVLVDaSpec::Initialize() {
 }
 
 void PVLVDaLayerSpec::Initialize() {
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
   SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
   kwta.k = 1;
@@ -928,9 +892,6 @@ void PVLVDaLayerSpec::HelpConfig() {
 bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
 
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
@@ -1090,7 +1051,6 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 void PVLVTonicDaLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.event = 0.0f;
-  decay.clamp_phase2 = false;
   SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
   kwta.k = 3;
@@ -1128,9 +1088,6 @@ void PVLVTonicDaLayerSpec::HelpConfig() {
 bool PVLVTonicDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
 
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
@@ -1483,21 +1440,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   else
     n_lv_u = 21;
 
-  // optimization to speed up settling in phase 2: only the basic layers here
-  int j;
-  for(j=0;j<net->specs.size;j++) {
-    if(net->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
-      LeabraLayerSpec* sp = (LeabraLayerSpec*)net->specs[j];
-      sp->decay.clamp_phase2 = true;
-      sp->UpdateAfterEdit();
-    }
-  }
-
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
   pve->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
-  pve->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  pvi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
   pvr->brain_area = ".*/.*/.*/.*/Caudate Head";
   lve->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
   lvi->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
@@ -1645,7 +1592,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pvrsp->UpdateAfterEdit();
   nvsp->UpdateAfterEdit();
 
-  for(j=0;j<net->specs.leaves;j++) {
+  for(int j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }

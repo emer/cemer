@@ -57,14 +57,8 @@ void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net) {
 void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraNetwork* net) {
   inherited::EncodeState(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
-  if(net->phase_max >= 3)
-    lu->p_act_p = lu->act_p2;
-  else
-    lu->p_act_p = lu->act_p;
-  if(net->phase_max >= 4)
-    lu->p_act_m = lu->act_m2;
-  else
-    lu->p_act_m = lu->act_m;
+  lu->p_act_p = lu->act_p;
+  lu->p_act_m = lu->act_m;
   lu->trace = lambda * lu->trace + lu->p_act_p;
 }
 
@@ -94,7 +88,6 @@ void ExtRewLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = true;
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
@@ -143,7 +136,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = true;
 
   // sometimes this is used as a target layer for ext rew and it should NEVER drive sse
   lay->SetLayerFlag(Layer::NO_ADD_SSE);
@@ -427,7 +419,6 @@ void TDRewPredConSpec::Initialize() {
 void TDRewPredLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit_NoGui();
@@ -470,7 +461,6 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   SetUnique("decay", true);
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
@@ -582,15 +572,6 @@ bool TDRewPredLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetw
   return true;
 }
 
-bool TDRewPredLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  // doing second because act_p is computed only at end of settling!
-  // this is better than clamping the value in the middle of everything
-  // and then continuing with settling..
-  if(net->phase_no < net->phase_max-1)
-    return false; // only do FINAL dwt!
-  return true;
-}
-
 //////////////////////////////////////////
 //      TD Rew Integ Layer Spec         //
 //////////////////////////////////////////
@@ -603,7 +584,6 @@ void TDRewIntegSpec::Initialize() {
 void TDRewIntegLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit_NoGui();
@@ -652,7 +632,6 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   SetUnique("decay", true);
   decay.phase2 = 0.0f;
-  decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
@@ -759,8 +738,6 @@ void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* ne
 //////////////////////////////////
 
 void TdLayerSpec::Initialize() {
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
   SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
   kwta.k = 1;
@@ -794,9 +771,6 @@ void TdLayerSpec::HelpConfig() {
 bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-  SetUnique("decay", true);
-  decay.clamp_phase2 = false;
 
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
@@ -1121,15 +1095,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   }
   ersp->unit_range.max = 1.5f;
   ersp->unit_range.UpdateAfterEdit();
-
-  // optimization to speed up settling in phase 2: only the basic layers here
-  for(int j=0;j<net->specs.size;j++) {
-    if(net->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
-      LeabraLayerSpec* sp = (LeabraLayerSpec*)net->specs[j];
-      sp->decay.clamp_phase2 = true;
-      sp->UpdateAfterEdit();
-    }
-  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // set geometries

@@ -16,30 +16,30 @@
 #include "leabra_hippo.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
-//              Special Hippocampal Quadphase Layerspecs
+//              Special Hippocampal ThetaPhase Layerspecs
 
-void HippoQuadLayerSpec::Initialize() {
+void ThetaPhaseLayerSpec::Initialize() {
   auto_m_cycles = 30;
   Defaults_init();
 }
 
-void HippoQuadLayerSpec::Defaults_init() {
+void ThetaPhaseLayerSpec::Defaults_init() {
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = 0.7f;
 }
 
-void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
+void ThetaPhaseLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act_m2 = u->act_nd;      // record the minus phase before overwriting it..
+    u->act_mid = u->act_nd;      // record the minus phase before overwriting it..
   }
 
-  // record stats for act_m2
+  // record stats for act_mid
   AvgMaxVals& vals = lay->acts_m2;
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_m2");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_mid");
   }
   if(lay->unit_groups) {
     vals.InitVals();
@@ -56,13 +56,13 @@ void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
+void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   float norm_err = 0.0f;
   float sse_err = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act_dif2 = u->act_eq - u->act_m2;
+    u->act_dif2 = u->act_eq - u->act_mid;
     float sse = u->act_dif2;
     if(fabsf(sse) < us->sse_tol)
       sse = 0.0f;
@@ -70,10 +70,10 @@ void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* n
     sse_err += sse;
 
     if(net->on_errs) {
-      if(u->act_m2 > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
+      if(u->act_mid > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
     }
     if(net->off_errs) {
-      if(u->act_m2 < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
+      if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
     }
   }
   int ntot = 0;
@@ -122,7 +122,7 @@ bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                    "ECoutLayerSpec: setting network min_cycles to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
       net->min_cycles = auto_m_cycles + 20;
     }
-    if(TestWarning((net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) &&
+    if(TestWarning((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
                    (net->ct_time.minus < auto_m_cycles + 20), "CheckConfig",
                    "ECoutLayerSpec: setting network ct_time.minus to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
       net->ct_time.minus = auto_m_cycles + 20;
@@ -226,11 +226,16 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
       u->Compute_NetinScale(net,0);
     }
     else {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
-      if(!recv_gp) continue;
-      if(!ca3_on)
-        recv_gp->scale_eff = 0.0f;
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
+    if(recv_gp)
+      recv_gp->scale_eff = 0.0f;
     }
+  }
+
+  // re-trigger netinput sending for all senders
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ca3_lay->units) {
+    if(u->lesioned()) continue;
+    u->Compute_NetinScale_Senders(net,-1);
   }
 }
 
@@ -247,16 +252,16 @@ void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool e
     }
     else {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ecin_prjn_idx);
-      if(!recv_gp) continue;
-      if(!ecin_on)
-        recv_gp->scale_eff = 0.0f;
+      if(recv_gp) {
+	recv_gp->scale_eff = 0.0f;
+      }
     }
   }
-}
 
-void CA1LayerSpec::FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net) {
-  net->Compute_NetinScale_Senders(); // update senders!
-  net->DecayState(0.0f);               // need to re-send activations -- this triggers resend
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ecin_lay->units) {
+    if(u->lesioned()) continue;
+    u->Compute_NetinScale_Senders(net,-1);
+  }
 }
 
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -276,7 +281,8 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
     ModulateCA3Prjn(lay, net, true);    // turn on ca3 -- calls netinscale
     if(!(use_test_mode && net->train_mode == Network::TEST))
       ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
-    FinalizePrjnMods(lay, net);        // make 'em stick
+
+    net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
   }
   inherited::Compute_CycleStats(lay, net);
 }
@@ -512,7 +518,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
     if(!StdNetwork()) return false;
   }
 
-  String msg = "Configuring Quad Phase Hippocampus:\n\n\
+  String msg = "Configuring ThetaPhase Hippocampus:\n\n\
  You will have to configure inputs/outputs to/from the EC layers after the configuration:\n\n";
 
   taMisc::Confirm(msg);
@@ -560,7 +566,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   XCalCHLConSpec* ca3ca1_cons = (XCalCHLConSpec*)hip_cons->FindMakeChild("CA3_CA1", &TA_XCalCHLConSpec);
 
   // layer specs
-  HippoQuadLayerSpec* hip_laysp = (HippoQuadLayerSpec*)hipspec->FindMakeSpec("HippoLayerSpec", &TA_HippoQuadLayerSpec);
+  ThetaPhaseLayerSpec* hip_laysp = (ThetaPhaseLayerSpec*)hipspec->FindMakeSpec("HippoLayerSpec", &TA_ThetaPhaseLayerSpec);
   ECoutLayerSpec* ecout_laysp = (ECoutLayerSpec*)hip_laysp->FindMakeChild("EC_out", &TA_ECoutLayerSpec);
   ECinLayerSpec* ecin_laysp = (ECinLayerSpec*)ecout_laysp->FindMakeChild("EC_in", &TA_ECinLayerSpec);
   LeabraLayerSpec* dg_laysp = (LeabraLayerSpec*)hip_laysp->FindMakeChild("DG", &TA_LeabraLayerSpec);
