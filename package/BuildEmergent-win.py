@@ -227,10 +227,9 @@ def inst_msvs_2010_sp1():
       webbrowser.open_new_tab('http://www.microsoft.com/download/en/details.aspx?id=23691')
       print '\nWait for VS2010 SP1 to finish downloading and installing.'
       if askUser('\nDid VS2010 SP1 install successfully?', default=''):
-        f = open(msvs2010sp1_installed_file, 'w')
-        f.write('Microsoft Visual Studio 2010 Service Pack 1 has been installed,')
-        f.write('according to the user.  If that is not so, delete this file.')
-        f.close()
+        with open(msvs2010sp1_installed_file, 'w') as f:
+          f.write('Microsoft Visual Studio 2010 Service Pack 1 has been installed,')
+          f.write('according to the user.  If that is not so, delete this file.')
         if askUser('Were you prompted to reboot?', default=''):
           print '\nPlease reboot now and then re-run this script'
           quit(0)
@@ -875,45 +874,38 @@ def build_emergent():
     print "Can't continue because vcvarsall.bat file not found!  Quitting."
     quit(1)
 
-  cmake_bat = os.path.join(emer_src, 'do_cmake' + get_compiler_extension() + '.bat')
-  f = open(cmake_bat, 'w')
-  f.write('echo on\n')
-  if build_64bit:
-    f.write('call ' + quoteFixPath(vcvarsall_bat) + ' x64\n')
-  else:
-    f.write('call ' + quoteFixPath(vcvarsall_bat) + ' x86\n')
-  f.write('cd /d ' + fixPath(emer_build) + '\n')
-
-  # DOS-ify the path to CMake and add a verbose flag if requested.
+  # Build the CMake command line.
   cmake_cmd = quoteFixPath(cmake_exe)
-  if verbose_build:
-    cmake_cmd = cmake_cmd + ' -DCMAKE_VERBOSE_MAKEFILE=ON'
-  else:
-    cmake_cmd = cmake_cmd + ' -DCMAKE_VERBOSE_MAKEFILE=OFF'
+  if verbose_build:    cmake_cmd += ' -DCMAKE_VERBOSE_MAKEFILE=ON'
+  else:                cmake_cmd += ' -DCMAKE_VERBOSE_MAKEFILE=OFF'
 
-  if build_suffix:
-    cmake_cmd = cmake_cmd + ' -DEXTRA_SUFFIX=' + build_suffix
+  if build_suffix:     cmake_cmd += ' -DEXTRA_SUFFIX=' + build_suffix
 
-  # Output the appropriate CMake command based on selected build type.
   if build_debug:
-    if msvs == 2008:
-      f.write(cmake_cmd + ' .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
+    if msvs == 2008:   cmake_cmd += ' .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug'
     elif msvs == 2010:
-      if build_64bit:
-        f.write(cmake_cmd + ' .. -G "Visual Studio 10 Win64" -DCMAKE_BUILD_TYPE=Debug\n')
-      else:
-        f.write(cmake_cmd + ' .. -G "Visual Studio 10" -DCMAKE_BUILD_TYPE=Debug\n')
-    f.write('if ERRORLEVEL 1 exit\n')
-    f.write('start Emergent.sln\n')
-  elif use_jom:
-    f.write(cmake_cmd + ' .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
-    f.write('if ERRORLEVEL 1 exit\n')
-    f.write(quoteFixPath(jom_exe) + ' package\n')
-  else:
-    f.write(cmake_cmd + ' .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
-    f.write('if ERRORLEVEL 1 exit\n')
-    f.write('nmake package\n')
-  f.close()
+      if build_64bit:  cmake_cmd += ' .. -G "Visual Studio 10 Win64" -DCMAKE_BUILD_TYPE=Debug'
+      else:            cmake_cmd += ' .. -G "Visual Studio 10" -DCMAKE_BUILD_TYPE=Debug'
+  elif use_jom:        cmake_cmd += ' .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release'
+  else:                cmake_cmd += ' .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release'
+
+  if build_64bit: arch_flag = 'x64'
+  else:           arch_flag = 'x86'
+
+  if build_debug: start_cmd = 'start Emergent.sln'
+  elif use_jom:   start_cmd = quoteFixPath(jom_exe) + ' package'
+  else:           start_cmd = 'nmake package'
+
+  # Create a batch file to prepare the environment and kick off the build.
+  cmake_bat = os.path.join(emer_src, 'do_cmake' + get_compiler_extension() + '.bat')
+  with open(cmake_bat, 'w') as f:
+    f.write('echo on\n')
+    f.write('call ' + quoteFixPath(vcvarsall_bat) + ' ' + arch_flag + '\n')
+    f.write('cd /d ' + fixPath(emer_build) + '\n')
+    f.write(cmake_cmd + '\n')
+    f.write('if ERRORLEVEL 1 exit\n')   # CMake error
+    f.write('if ERRORLEVEL 255 exit\n') # Ctrl-C
+    f.write(start_cmd + '\n')
 
   while 0 != os.system(cmake_bat):
     global yes_to_all
