@@ -18,6 +18,12 @@
 
 #include "ta_def.h"
 
+// TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
+//#include <apr_pools.h>
+extern "C" {
+  typedef struct apr_pool_t apr_pool_t;
+}
+
 // TODO: inherit from generic version control abstract base class.
 class TA_API Subversion
 {
@@ -48,6 +54,7 @@ public:
 private:
   const char *m_wc_path;
   const char *m_url;
+  apr_pool_t *m_pool;
 };
 
 #endif // SUBVERSION_H_

@@ -18,14 +18,32 @@
 #include <cstring>
 #include <iostream>
 
+#include <apr.h>
+#include <apr_pools.h>
+#include <svn_client.h>
+#include <svn_path.h>
+#include <svn_pools.h>
+
 Subversion::Subversion(const char *working_copy_path)
-  : m_wc_path(working_copy_path)
-  , m_url()
+  : m_wc_path(0)
+  , m_url(0)
+  , m_pool(0) // initialized below
 {
+  // Set up APR and a pool -- eventually we'll move this somewhere
+  // more global.
+  apr_initialize();
+  m_pool = svn_pool_create(0);
+
+  // Canonicalize the path.
+  m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
 }
 
 Subversion::~Subversion()
 {
+  // Clean up the pool and APR context.
+  // TODO: this should be more global.
+  svn_pool_destroy(m_pool);
+  apr_terminate();
 }
 
 // Check if the working copy has already been checked out.
@@ -58,9 +76,58 @@ int Subversion::Checkout(const char *url, int rev)
     }
   }
 
-  // Working copy doesn't exist yet, call some svn_wc_* function to create it.
-  // TODO.
-  return -1;
+  // Working copy doesn't exist yet, so create it by checking out the URL.
+
+  // Out parameter -- the value of the revision checked out from the
+  // repository.
+  svn_revnum_t result_rev;
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+
+  // Set the revision number, if provided.  Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  if (rev < 0) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_number;
+    revision.value.number = rev;
+  }
+
+  // Set depth to get all files.
+  svn_depth_t depth = svn_depth_infinity;
+
+  // Set advanced options we don't care about.
+  svn_boolean_t ignore_externals = false;
+  svn_boolean_t allow_unver_obstructions = true;
+
+  // TODO: Not using kdesvncpp stuff so gotta roll our own context.
+  svn_client_ctx_t *ctx = 0;
+
+  svn_error_t *err =
+    svn_client_checkout3(
+      &result_rev, // out param
+      url,
+      m_wc_path,
+      &peg_revision,
+      &revision,
+      depth,
+      ignore_externals,
+      allow_unver_obstructions,
+      ctx,
+      m_pool);
+
+  // Check for error.
+  if (err) {
+    // TODO: Hook this into taMisc::Warning()
+    std::cout << "Subversion error: " << err->message << std::endl;
+    svn_error_clear(err);
+    return -1;
+  }
+
+  return result_rev;
 }
 
 int Subversion::Update(int rev)
