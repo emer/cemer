@@ -122,10 +122,19 @@ int main()
 {
   //testSvnMakeDir();
 
-  testSvnCheckOut(
-    "http://grey.colorado.edu/svn/emergent/emergent/trunk/package",
-    "/home/houman/Desktop/");
+  const char *url = "http://grey.colorado.edu/svn/emergent/emergent/trunk/package";
+  const char *path = "/home/houman/Desktop/";
 
-  std::cout << "DONE!";
+  int rev = checkout(url, path);
+
+  if (rev < 0) {
+    std::cout << "Error checking out code\n  from: " << url
+      << "\n  to: " << path
+      << "\ncheckout() returned " << rev << std::endl;
+  }
+  else {
+    std::cout << "Checked out revision: " << rev << std::endl;
+  }
+
   return 0;
 }
