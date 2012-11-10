@@ -21,6 +21,7 @@ def get_ssh_options(ssh_key=None, quiet=False):
   return opts
 
 def attempt_cmd(cmd, timeout_secs=60, delay=10):
+  print ' '.join(cmd)
   total_delay = 0
   while total_delay < timeout_secs:
     # check_output would be better here, but that's python 2.7.
@@ -31,7 +32,7 @@ def attempt_cmd(cmd, timeout_secs=60, delay=10):
     time.sleep(delay)
     total_delay += delay
   else:
-    raise IOError, 'scp/ssh failed, retries exhausted'
+    raise IOError, 'command failed, retries exhausted'
 
 def scp(filename, remote_user, remote_ip, remote_dir, ssh_key=None, quiet=False):
   """Use scp to copy a file to a remote host"""
@@ -39,7 +40,6 @@ def scp(filename, remote_user, remote_ip, remote_dir, ssh_key=None, quiet=False)
   opts = get_ssh_options(ssh_key, quiet)
   cmd = ['scp'] + opts + \
         [filename, '%s@%s:%s' % (remote_user, remote_ip, remote_dir)]
-  print ' '.join(cmd)
   attempt_cmd(cmd)
 
 def ssh(command, remote_user, remote_ip, ssh_key=None):
@@ -48,5 +48,11 @@ def ssh(command, remote_user, remote_ip, ssh_key=None):
   opts = get_ssh_options(ssh_key)
   cmd = ['ssh'] + opts + \
         ['%s@%s' % (remote_user, remote_ip), command]
-  print ' '.join(cmd)
+  attempt_cmd(cmd)
+
+def wget(url, outfile=None):
+  """Use wget to retrieve a URL"""
+
+  if not outfile: outfile = '/dev/null'
+  cmd = ['wget', '-q', '-O', outfile, url]
   attempt_cmd(cmd)
