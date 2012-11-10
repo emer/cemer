@@ -32,7 +32,7 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1130615445" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/apr-1.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/subversion-1"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/subversion/kdesubversion}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/subversion/svnqt-2169}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2115530834" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -99,6 +99,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.405184243" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.508139468" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="apr-1"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="svn_client-1"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="svn_repos-1"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1911538049" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
