@@ -765,8 +765,8 @@ public:
   LayerFlags	layer_flags;	// #ENVIROVIEW how to flag the layer's external input status
   PatUseFlags 	use_flags;	// how to use the flags (on each pattern or global_flags)
   int		n_vals;		// number of values in pattern
-  PosTDCoord    geom;		// geometry of pattern in EnviroView
-  PosTDCoord    pos;		// position of pattern in EnviroView
+  PosVector3i    geom;		// geometry of pattern in EnviroView
+  PosVector3i    pos;		// position of pattern in EnviroView
   float		initial_val;	// Initial value for pattern values
   RandomSpec	noise;		// #ENVIROVIEW Noise added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
@@ -1182,7 +1182,7 @@ class EMERGENT_API XYPattern : public Pattern {
   // specifies the x,y offset location of the pattern in the layer
 INHERITED(Pattern)
 public:
-  TwoDCoord	offset;		// #ENVIROVIEW offset within network layer for pattern
+  taVector2i	offset;		// #ENVIROVIEW offset within network layer for pattern
 
   void	Initialize()	{ };
   void 	Destroy()		{ CutLinks(); }
@@ -1210,7 +1210,7 @@ class EMERGENT_API XYSubPattern : public Pattern {
   // specifies the x,y offset location of the layer within the pattern
 INHERITED(Pattern)
 public:
-  TwoDCoord	offset;		// #ENVIROVIEW offset within pattern for network layer
+  taVector2i	offset;		// #ENVIROVIEW offset within pattern for network layer
 
   void	Initialize()	{ };
   void 	Destroy()		{ CutLinks(); }
@@ -1226,9 +1226,9 @@ class EMERGENT_API GroupPatternSpec : public PatternSpec {
   // organizes pattern values into sub-groups for viewing and/or sending to network
 INHERITED(PatternSpec)
 public:
-  PosTDCoord	sub_geom;
+  PosVector3i	sub_geom;
   // geometry of the individual sub-groups: must evenly divide into overall geom in both x & y
-  PosTDCoord	gp_geom;
+  PosVector3i	gp_geom;
   // #READ_ONLY geometry of the groups within overall geom (just geom / sub_geom)
   bool		trans_apply;
   // translate apply of values to network (only if units are flat, not grouped!)
@@ -1801,8 +1801,8 @@ public:
   float		data_shift;	// #EXPERT percentage to shift buffer upon overflow
   bool		record_proc_name; // whether to record process name in log file or not
   String_Array	display_labels;	// ordered list of labels to use for views and log files
-  TDCoord	pos;  // position of view
-  TDCoord	geom;  // size of view
+  taVector3i	pos;  // position of view
+  taVector3i	geom;  // size of view
   
   void	Initialize();
   void 	Destroy();

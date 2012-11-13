@@ -49,24 +49,24 @@ class BrainAtlasLabel
 {
 public:
   BrainAtlasLabel(); 
-  BrainAtlasLabel(const QString& text, unsigned int index, const QColor& color = QColor(255,255,255), const TDCoord& center = TDCoord(0,0,0) );
+  BrainAtlasLabel(const QString& text, unsigned int index, const QColor& color = QColor(255,255,255), const taVector3i& center = taVector3i(0,0,0) );
   ~BrainAtlasLabel();
   
   QString Text() const;
   unsigned int Index() const;
   QColor Color() const;
-  TDCoord Center() const;
+  taVector3i Center() const;
   
   
   void SetText(const QString& text);
   void SetColor(const QColor& color);
-  void SetCenter(const TDCoord& center);
+  void SetCenter(const taVector3i& center);
   
 private:
   QString m_text;
   unsigned int m_index;
   QColor m_color;
-  TDCoord m_center_coordinate;
+  taVector3i m_center_coordinate;
 };
 
 ////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ public:
   virtual QString   Description() const = 0;
   virtual QString   ImageFilename() const = 0;
   virtual QList<BrainAtlasLabel>  Labels(const QString& labels_regexp=QString(".*")) const = 0;
-  virtual QList<FloatTDCoord>  VoxelCoordinates(const QString& labels_regexp=QString(".*")) const = 0;
+  virtual QList<taVector3f>  VoxelCoordinates(const QString& labels_regexp=QString(".*")) const = 0;
   virtual void SetLabels(const QList<BrainAtlasLabel>& labels ) = 0;
   virtual bool Save(const QString& filename) = 0;
 };
@@ -138,7 +138,7 @@ public:
   QString   Description() const;
   QString   ImageFilename() const;
   QList<BrainAtlasLabel>  Labels(const QString& labels_regexp=QString(".*")) const;
-  QList<FloatTDCoord>  VoxelCoordinates(const QString& labels_regexp=QString(".*")) const;
+  QList<taVector3f>  VoxelCoordinates(const QString& labels_regexp=QString(".*")) const;
   void      SetLabels(const QList<BrainAtlasLabel>& labels);
   bool      Save(const QString& filename);
 

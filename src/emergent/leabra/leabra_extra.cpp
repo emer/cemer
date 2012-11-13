@@ -1903,7 +1903,7 @@ void TwoDValLeabraLayer::UpdateTwoDValsGeom() {
 }
 
 void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-                              Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                              Random* ran, const taVector2i& offs, bool na_by_range) {
   // only no unit_group supported!
   if(TestError(unit_groups, "ApplyInputData_2d",
                "input data must be 4d for layers with unit_groups: outer 2 are group dims, inner 2 are x,y vals and n_vals")) {
@@ -1923,7 +1923,7 @@ void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_fla
 }
 
 void TwoDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-                                  Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                                  Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   if(TestError(!unit_groups, "ApplyInputData_Flat4d",
                "input data must be 2d for layers without unit_groups: x,y vals and n_vals")) {
@@ -2321,7 +2321,7 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
                                       LeabraNetwork* net, float rescale) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits < 3) return;        // must be at least a few units..
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   // first initialize to zero
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
@@ -2361,7 +2361,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   if(twod.n_vals == 1) {        // special case
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
@@ -2466,7 +2466,7 @@ void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
 void TwoDValLayerSpec::Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
                                                        Layer::AccessMode acc_md, int gpidx,
                                                        LeabraNetwork* net) {
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   for(int k=0;k<twod.n_vals;k++) {
     float x_val, y_val;
     lay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_TARG,
@@ -2538,7 +2538,7 @@ void TwoDValLayerSpec::PostSettle(LeabraLayer* ly, LeabraNetwork* net) {
 void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
                                       Layer::AccessMode acc_md, int gpidx,
                                       LeabraNetwork* net) {
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
 
   bool no_plus_testing = false;
   if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
@@ -2651,7 +2651,7 @@ float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
                                         Layer::AccessMode acc_md, int gpidx,
                                         int& n_vals) {
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
@@ -2711,7 +2711,7 @@ float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly,
                                             Layer::AccessMode acc_md, int gpidx,
                                             LeabraInhib* thr, LeabraNetwork* net) {
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
+  taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
@@ -2824,7 +2824,7 @@ void FourDValLeabraLayer::UpdateFourDValsGeom() {
 }
 
 void FourDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-                              Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                              Random* ran, const taVector2i& offs, bool na_by_range) {
   // only no unit_group supported!
   if(TestError(unit_groups, "ApplyInputData_2d",
                "input data must be 4d for layers with unit_groups: outer 2 are group dims, inner 2 are x,y vals and n_vals")) {
@@ -2844,7 +2844,7 @@ void FourDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_fl
 }
 
 void FourDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-                                  Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                                  Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   if(TestError(!unit_groups, "ApplyInputData_Flat4d",
                "input data must be 2d for layers without unit_groups: x,y vals and n_vals")) {
@@ -3236,7 +3236,7 @@ void FourDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
 void FourDValLayerSpec::ClampValue_ugp(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(nunits < 3) return;        // must be at least a few units..
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ugp->own_lay;
-  TwoDCoord gp_geom_pos = ugp->GpLogPos();
+  taVector2i gp_geom_pos = ugp->GpLogPos();
   // first initialize to zero
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
@@ -3271,7 +3271,7 @@ void FourDValLayerSpec::ReadValue(FourDValLeabraLayer* lay, LeabraNetwork* net) 
 void FourDValLayerSpec::ReadValue_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
   if(nunits < 3) return;        // must be at least a few units..
   fourd.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
-  TwoDCoord gp_geom_pos = ugp->GpLogPos();
+  taVector2i gp_geom_pos = ugp->GpLogPos();
   if(fourd.n_vals == 1) {       // special case
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
@@ -3380,7 +3380,7 @@ void FourDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetw
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       UNIT_GP_ITR(tdlay,
                   for(int k=0;k<fourd.n_vals;k++) {
-                    TwoDCoord gp_geom_pos = ugp->GpLogPos();
+                    taVector2i gp_geom_pos = ugp->GpLogPos();
                     float x_val = tdlay->GetFourDVal(FourDValLeabraLayer::FOURD_X,
                                                     FourDValLeabraLayer::FOURD_TARG,
                                                     k, gp_geom_pos.x, gp_geom_pos.y);
@@ -3447,7 +3447,7 @@ void FourDValLayerSpec::PostSettle(LeabraLayer* ly, LeabraNetwork* net) {
 }
 
 void FourDValLayerSpec::PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
-  TwoDCoord gp_geom_pos = ugp->GpLogPos();
+  taVector2i gp_geom_pos = ugp->GpLogPos();
 
   bool no_plus_testing = false;
   if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
@@ -3558,7 +3558,7 @@ void FourDValLayerSpec::PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp
 
 float FourDValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* ly, int& n_vals) {
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GpLogPos();
+  taVector2i gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<fourd.n_vals;k++) { // first loop over and find potential target values
@@ -3623,7 +3623,7 @@ float FourDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
 float FourDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly, Unit_Group* ugp,
                                            LeabraInhib* thr, LeabraNetwork* net) {
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GpLogPos();
+  taVector2i gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<fourd.n_vals;k++) { // first loop over and find potential target values
@@ -3720,14 +3720,14 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //            "number of filters from rf_spec:", (String)rf_spec.n_filters,
 //            "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
 
-//   TwoDCoord rf_width = rf_spec.rf_width;
+//   taVector2i rf_width = rf_spec.rf_width;
 //   int n_cons = rf_width.Product();
-//   TwoDCoord rf_half_wd = rf_width / 2;
-//   TwoDCoord ru_geo = prjn->layer->gp_geom;
+//   taVector2i rf_half_wd = rf_width / 2;
+//   taVector2i ru_geo = prjn->layer->gp_geom;
 
-//   TwoDCoord su_geo = prjn->from->un_geom;
+//   taVector2i su_geo = prjn->from->un_geom;
 
-//   TwoDCoord ruc;
+//   taVector2i ruc;
 //   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
 //     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
 //       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
@@ -3735,7 +3735,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //      Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 //      if(ru_gp == NULL) continue;
 
-//      TwoDCoord su_st;
+//      taVector2i su_st;
 //      if(wrap) {
 //        su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
 //        su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
@@ -3746,7 +3746,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //      }
 
 //      su_st.WrapClip(wrap, su_geo);
-//      TwoDCoord su_ed = su_st + rf_width;
+//      taVector2i su_ed = su_st + rf_width;
 //      if(wrap) {
 //        su_ed.WrapClip(wrap, su_geo); // just wrap ends too
 //      }
@@ -3764,8 +3764,8 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //        if(!alloc_loop)
 //          ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-//        TwoDCoord suc;
-//        TwoDCoord suc_wrp;
+//        taVector2i suc;
+//        taVector2i suc_wrp;
 //        for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
 //          for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
 //            suc_wrp = su_st + suc;
@@ -4029,15 +4029,15 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
     }
   }
 
-  TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord ruu_geo = recv_lay->un_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i rug_geo = recv_lay->gp_geom;
+  taVector2i ruu_geo = recv_lay->un_geom;
+  taVector2i su_geo = send_lay->gp_geom;
 
   int fltsz = convergence;
   int sg_sz_tot = fltsz * fltsz;
 
   int feat_no = 0;
-  TwoDCoord rug;
+  taVector2i rug;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
       for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
@@ -4045,21 +4045,21 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
         if(!ru_gp) continue;
 
         int rui = 0;
-        TwoDCoord ruc;
+        taVector2i ruc;
         for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
           for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
 
-            TwoDCoord su_st = ruc*convergence;
+            taVector2i su_st = ruc*convergence;
 
             Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
             if(!ru_u) break;
             if(!reciprocal && !alloc_loop)
               ru_u->RecvConsPreAlloc(sg_sz_tot, prjn);
 
-            TwoDCoord suc;
+            taVector2i suc;
             for(suc.y = 0; suc.y < fltsz; suc.y++) {
               for(suc.x = 0; suc.x < fltsz; suc.x++) {
-                TwoDCoord sugc = su_st + suc;
+                taVector2i sugc = su_st + suc;
                 Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
                 if(!su_gp) continue;
 
@@ -4090,9 +4090,9 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord ruu_geo = recv_lay->un_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i rug_geo = recv_lay->gp_geom;
+  taVector2i ruu_geo = recv_lay->un_geom;
+  taVector2i su_geo = send_lay->gp_geom;
 
   int fltwd = dog_wts.filter_width; // no convergence..
   int fltsz = dog_wts.filter_size * convergence;
@@ -4104,27 +4104,27 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
   units_per_feat_gp = su_gp0->size / feat_gps;
 
   int feat_no = 0;
-  TwoDCoord rug;
+  taVector2i rug;
   for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
     for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
       Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(rug);
       if(!ru_gp) continue;
 
       int rui = 0;
-      TwoDCoord ruc;
+      taVector2i ruc;
       for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
         for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
 
-          TwoDCoord su_st = ruc*convergence - convergence*fltwd;
+          taVector2i su_st = ruc*convergence - convergence*fltwd;
 
           Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
           if(!ru_u) break;
           ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
-          TwoDCoord suc;
+          taVector2i suc;
           for(suc.y = 0; suc.y < fltsz; suc.y++) {
             for(suc.x = 0; suc.x < fltsz; suc.x++) {
-              TwoDCoord sugc = su_st + suc;
+              taVector2i sugc = su_st + suc;
               Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
               if(!su_gp) continue;
 
@@ -4157,26 +4157,26 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
 
   Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
 
-  TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord rgp_pos = rugp->GpLogPos();
+  taVector2i rug_geo = recv_lay->gp_geom;
+  taVector2i rgp_pos = rugp->GpLogPos();
 
   int feat_no = rgp_pos.y * rug_geo.x + rgp_pos.x; // unit group index
   int my_feat_gp = feat_no / units_per_feat_gp;
   int fg_st = my_feat_gp * units_per_feat_gp;
   int fg_ed = fg_st + units_per_feat_gp;
 
-  TwoDCoord ruu_geo = recv_lay->un_geom;
-  TwoDCoord su_st;              // su starting (left)
+  taVector2i ruu_geo = recv_lay->un_geom;
+  taVector2i su_st;              // su starting (left)
   su_st.x = (ru->idx % ruu_geo.x)*convergence - convergence*fltwd;
   su_st.y = (ru->idx / ruu_geo.x)*convergence - convergence*fltwd;
 
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
 
   int su_idx = 0;
-  TwoDCoord suc;
+  taVector2i suc;
   for(suc.y = 0; suc.y < fltsz; suc.y++) {
     for(suc.x = 0; suc.x < fltsz; suc.x++) {
-      TwoDCoord sugc = su_st + suc;
+      taVector2i sugc = su_st + suc;
       Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
       if(!su_gp) continue;
 
@@ -4255,18 +4255,18 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
   }
 
   Layer* lay = prjn->from;
-  TwoDCoord gp_geo = lay->gp_geom;
-  TwoDCoord un_geo = lay->un_geom;
+  taVector2i gp_geo = lay->gp_geom;
+  taVector2i un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
           for(suc.x = ruc.x-radius; suc.x <= ruc.x+radius; suc.x++) {
             suc_wrp = suc;
@@ -4275,7 +4275,7 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
             int sgpidx = lay->UnitGpIdxFmPos(suc_wrp);
             if(!lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-            TwoDCoord del = suc - ruc; // don't use wrap!
+            taVector2i del = suc - ruc; // don't use wrap!
             float dst = del.Mag();
             if(dst > (float)radius) continue; // out of bounds
             if(dst == 0.0f) continue;         // no selfs
@@ -4287,12 +4287,12 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
 
             float gauswt = taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
 
-            TwoDCoord run;
+            taVector2i run;
             for(run.x = 0; run.x < un_geo.x; run.x++) {
               float rang = taMath_float::pi * ((float)run.x / n_angles);
               float gangwt = powf(fabsf(cosf(gang-rang)), ang_pow);
 
-              TwoDCoord sun;
+              taVector2i sun;
               for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
                 float sang = taMath_float::pi * ((float)sun.x / n_angles);
                 float sangwt = powf(fabsf(cosf(sang-rang)), ang_pow);
@@ -4340,28 +4340,28 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
 void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* lay = prjn->from;
-  TwoDCoord gp_geo = lay->gp_geom;
-  TwoDCoord un_geo = lay->un_geom;
+  taVector2i gp_geo = lay->gp_geom;
+  taVector2i un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
-  TwoDCoord gp_geo_half = gp_geo / 2;
+  taVector2i gp_geo_half = gp_geo / 2;
 
   int rgpidx;
   int rui;
   lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
-  TwoDCoord ruc = lay->UnitGpPosFmIdx(rgpidx);
-  TwoDCoord run;
+  taVector2i ruc = lay->UnitGpPosFmIdx(rgpidx);
+  taVector2i run;
   run.SetFmIndex(rui, un_geo.x);
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     int sgpidx;
     int sui;
     lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
-    TwoDCoord suc = lay->UnitGpPosFmIdx(sgpidx);
-    TwoDCoord sun;
+    taVector2i suc = lay->UnitGpPosFmIdx(sgpidx);
+    taVector2i sun;
     sun.SetFmIndex(sui, un_geo.x);
 
-    TwoDCoord del = suc - ruc; // don't use wrap!
+    taVector2i del = suc - ruc; // don't use wrap!
     if(wrap) {                 // dist may be closer in wrapped case..
       suc.WrapMinDist(del, gp_geo, ruc, gp_geo_half);
     }
@@ -4414,7 +4414,7 @@ void V2BoLateralPrjnSpec::CreateStencils() {
   int n_angles = 4;
   int max_cnt = (2 * radius + 1);
   v2ffbo_weights.SetGeom(6, max_cnt, max_cnt, 2, n_angles, 2, n_angles);
-  TwoDCoord suc;                        // send coords
+  taVector2i suc;                        // send coords
   for(int rang_dx = 0; rang_dx < n_angles; rang_dx++) {
     for(int rdir = 0; rdir < 2; rdir++) {
       for(int sang_dx = 0; sang_dx < n_angles; sang_dx++) {
@@ -4433,7 +4433,7 @@ void V2BoLateralPrjnSpec::CreateStencils() {
   }
 }
 
-float V2BoLateralPrjnSpec::ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
+float V2BoLateralPrjnSpec::ConWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
   float n_angles = 4.0f;
   // integer angles -- useful for precise conditionals..
   int rang_n = rang_dx + rdir * 4;
@@ -4452,7 +4452,7 @@ float V2BoLateralPrjnSpec::ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int r
   if((test_ang >= 0) && (dang_n != test_ang))
     return 0.0f; // don't continue
 
-  TwoDCoord del = suc;
+  taVector2i del = suc;
   float dst = del.Mag();
   if(dst > (float)radius) return 0.0f;
   if(dst == 0.0f) return 0.0f;  // no self con
@@ -4546,17 +4546,17 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
   CreateStencils();
 
   Layer* lay = prjn->from;
-  TwoDCoord gp_geo = lay->gp_geom;
-  TwoDCoord un_geo = lay->un_geom;
+  taVector2i gp_geo = lay->gp_geom;
+  taVector2i un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
           for(suc.x = ruc.x-radius; suc.x <= ruc.x+radius; suc.x++) {
             suc_wrp = suc;
@@ -4565,13 +4565,13 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
             int sgpidx = lay->UnitGpIdxFmPos(suc_wrp);
             if(!lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-            TwoDCoord del = suc - ruc; // don't use wrap!
+            taVector2i del = suc - ruc; // don't use wrap!
             float dst = del.Mag();
             if(dst > (float)radius) continue; // out of bounds
             if(dst == 0.0f) continue;         // no selfs
 
-            TwoDCoord run;
-            TwoDCoord sun;
+            taVector2i run;
+            taVector2i sun;
 
             for(run.x = 0; run.x < un_geo.x; run.x++) {
               for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
@@ -4617,28 +4617,28 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* lay = prjn->from;
-  TwoDCoord gp_geo = lay->gp_geom;
-  TwoDCoord un_geo = lay->un_geom;
+  taVector2i gp_geo = lay->gp_geom;
+  taVector2i un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
-  TwoDCoord gp_geo_half = gp_geo / 2;
+  taVector2i gp_geo_half = gp_geo / 2;
 
   int rgpidx;
   int rui;
   lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
-  TwoDCoord ruc = lay->UnitGpPosFmIdx(rgpidx);
-  TwoDCoord run;
+  taVector2i ruc = lay->UnitGpPosFmIdx(rgpidx);
+  taVector2i run;
   run.SetFmIndex(rui, un_geo.x);
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     int sgpidx;
     int sui;
     lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
-    TwoDCoord suc = lay->UnitGpPosFmIdx(sgpidx);
-    TwoDCoord sun;
+    taVector2i suc = lay->UnitGpPosFmIdx(sgpidx);
+    taVector2i sun;
     sun.SetFmIndex(sui, un_geo.x);
 
-    TwoDCoord del = suc - ruc;
+    taVector2i del = suc - ruc;
     if(wrap) {                 // dist may be closer in wrapped case..
       suc.WrapMinDist(del, gp_geo, ruc, gp_geo_half);
     }
@@ -4675,7 +4675,7 @@ void FgBoEllipseGpPrjnEl::CreateStencil() {
   int n_angles = 4;
   int max_cnt = (2 * con_radius + 1);
   fgbo_weights.SetGeom(4, max_cnt, max_cnt, 2, n_angles);
-  TwoDCoord suc;                        // send coords
+  taVector2i suc;                        // send coords
   int cnt = 0;
   for(suc.y = -con_radius; suc.y <= con_radius; suc.y++) {
     int ysuc_dx = suc.y + con_radius;
@@ -4691,10 +4691,10 @@ void FgBoEllipseGpPrjnEl::CreateStencil() {
   }
 }
 
-float FgBoEllipseGpPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
+float FgBoEllipseGpPrjnEl::ConWt(taVector2i& suc, int sang_dx, int sdir) {
   float n_angles = 4.0f;
 
-  TwoDCoord del = suc;
+  taVector2i del = suc;
   float dst = del.Mag();
   if(dst > (float)con_radius) return 0.0f;
   if(dst == 0.0f) return 0.0f;  // no self con
@@ -4791,10 +4791,10 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
     recv_lay = prjn->from;
     send_lay = prjn->layer;
   }
-  TwoDCoord rgp_geo = recv_lay->gp_geom;
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sgp_geo = send_lay->gp_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i rgp_geo = recv_lay->gp_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sgp_geo = send_lay->gp_geom;
+  taVector2i sun_geo = send_lay->un_geom;
 
   int n_depth = sun_geo.y / 2;  // number of different depths represented
   int ruy_per_depth = run_geo.y / n_depth;
@@ -4810,18 +4810,18 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
                  "recv layer units per depth is not same as number of group specs -- should be -- redundant or incomplete connections will be created")) {
   }
 
-  TwoDCoord rgp_sc = sgp_geo / rgp_geo;
-  TwoDCoord rgp_chk = rgp_geo * rgp_sc;
+  taVector2i rgp_sc = sgp_geo / rgp_geo;
+  taVector2i rgp_chk = rgp_geo * rgp_sc;
 
   if(TestWarning(rgp_chk != sgp_geo, "Connect_impl",
                  "recv layer gp_geom is not an even multiple of send layer gp_geom -- should be!  Some units will not be connected", rgp_sc.GetStr(), rgp_chk.GetStr())) {
   }
 
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rcnt = 0;
-    TwoDCoord run;
+    taVector2i run;
     for(run.y = 0; run.y < run_geo.y; run.y++) {
       int depth = run.y / ruy_per_depth;
       int suy_st = depth * 2;
@@ -4833,10 +4833,10 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
         int rgpidx = 0;
         for(ruc.y = 0; ruc.y < rgp_geo.y; ruc.y++) {
           for(ruc.x = 0; ruc.x < rgp_geo.x; ruc.x++, rgpidx++) {
-            TwoDCoord ruc_s = ruc * rgp_sc; // project ruc into s coords
+            taVector2i ruc_s = ruc * rgp_sc; // project ruc into s coords
 
-            TwoDCoord suc;
-            TwoDCoord suc_wrp;
+            taVector2i suc;
+            taVector2i suc_wrp;
             for(suc.y = ruc_s.y-el->con_radius; suc.y <= ruc_s.y+el->con_radius; suc.y++) {
               for(suc.x = ruc_s.x-el->con_radius; suc.x <= ruc_s.x+el->con_radius; suc.x++) {
                 suc_wrp = suc;
@@ -4845,12 +4845,12 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
                 int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
                 if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-                TwoDCoord del = suc - ruc_s; // don't use wrap!
+                taVector2i del = suc - ruc_s; // don't use wrap!
                 float dst = del.Mag();
                 if(dst > (float)el->con_radius) continue; // out of bounds
                 if(dst == 0.0f) continue;             // no selfs
 
-                TwoDCoord sun;
+                taVector2i sun;
 
                 for(sun.x = 0; sun.x < sun_geo.x; sun.x++) {
                   for(sun.y = suy_st; sun.y < suy_st+2; sun.y++) {
@@ -4909,23 +4909,23 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     recv_lay = prjn->from;
     send_lay = prjn->layer;
   }
-  TwoDCoord rgp_geo = recv_lay->gp_geom;
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sgp_geo = send_lay->gp_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i rgp_geo = recv_lay->gp_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sgp_geo = send_lay->gp_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   float n_angles = (float)sun_geo.x;
   int n_depth = sun_geo.y / 2;  // number of different depths represented
   int ruy_per_depth = run_geo.y / n_depth;
 
-  TwoDCoord rgp_sc = sgp_geo / rgp_geo;
-  TwoDCoord sgp_geo_half = sgp_geo / 2;
+  taVector2i rgp_sc = sgp_geo / rgp_geo;
+  taVector2i sgp_geo_half = sgp_geo / 2;
 
   if(reciprocal) {
     int sgpidx;
     int sui;
     send_lay->UnGpIdxFmUnitIdx(ru->idx, sui, sgpidx); // send = recv!
-    TwoDCoord suc = send_lay->UnitGpPosFmIdx(sgpidx);
-    TwoDCoord sun;
+    taVector2i suc = send_lay->UnitGpPosFmIdx(sgpidx);
+    taVector2i sun;
     sun.SetFmIndex(sui, sun_geo.x);
     int depth = sun.y / 2;
     int suy_st = depth * 2;
@@ -4935,14 +4935,14 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
       int rgpidx;
       int rui;
       recv_lay->UnGpIdxFmUnitIdx(su->idx, rui, rgpidx); // recv = send!
-      TwoDCoord ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
-      TwoDCoord ruc_s = ruc * rgp_sc; // project ruc into s coords
-      TwoDCoord run;
+      taVector2i ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
+      taVector2i ruc_s = ruc * rgp_sc; // project ruc into s coords
+      taVector2i run;
       run.SetFmIndex(rui, run_geo.x);
       FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
       float wt_renorm = (1.0f - el->min_wt);
 
-      TwoDCoord del = suc - ruc_s;
+      taVector2i del = suc - ruc_s;
       if(wrap) {                       // dist may be closer in wrapped case..
         suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
@@ -4957,9 +4957,9 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     int rgpidx;
     int rui;
     recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
-    TwoDCoord ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
-    TwoDCoord ruc_s = ruc * rgp_sc; // project ruc into s coords
-    TwoDCoord run;
+    taVector2i ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
+    taVector2i ruc_s = ruc * rgp_sc; // project ruc into s coords
+    taVector2i run;
     run.SetFmIndex(rui, run_geo.x);
     int depth = run.y / ruy_per_depth;
     int suy_st = depth * 2;
@@ -4972,11 +4972,11 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
       int sgpidx;
       int sui;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
-      TwoDCoord suc = send_lay->UnitGpPosFmIdx(sgpidx);
-      TwoDCoord sun;
+      taVector2i suc = send_lay->UnitGpPosFmIdx(sgpidx);
+      taVector2i sun;
       sun.SetFmIndex(sui, sun_geo.x);
 
-      TwoDCoord del = suc - ruc_s;
+      taVector2i del = suc - ruc_s;
       if(wrap) {                       // dist may be closer in wrapped case..
         suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
@@ -5012,7 +5012,7 @@ void FgBoWedgeGpPrjnSpec::CreateStencil() {
   int n_angles = 4;
   int n_wedges = 8;
   fgbo_weights.SetGeom(5, send_gp_size.x, send_gp_size.y, 2, n_angles, n_wedges);
-  TwoDCoord suc;                        // send coords
+  taVector2i suc;                        // send coords
   for(int wedge=0; wedge < n_wedges; wedge++) {
     for(suc.y = 0; suc.y < send_gp_size.y; suc.y++) {
       for(suc.x = 0; suc.x < send_gp_size.x; suc.x++) {
@@ -5031,10 +5031,10 @@ void FgBoWedgeGpPrjnSpec::CreateStencil() {
   }
 }
 
-float FgBoWedgeGpPrjnSpec::ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir) {
+float FgBoWedgeGpPrjnSpec::ConWt_Wedge(int wedge, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir) {
   float n_angles = 4.0f;
 
-  TwoDCoord ctr;
+  taVector2i ctr;
   switch(wedge) {
   case 0:
     ctr.SetXY(0,0);
@@ -5050,7 +5050,7 @@ float FgBoWedgeGpPrjnSpec::ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_
     break;
   }
 
-  TwoDCoord del = suc - ctr;
+  taVector2i del = suc - ctr;
   float dst = del.Mag();
   float nrmdst = dst / (float)su_geo.x; // assume square
 
@@ -5076,10 +5076,10 @@ float FgBoWedgeGpPrjnSpec::ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_
   return netwt;
 }
 
-float FgBoWedgeGpPrjnSpec::ConWt_Line(int line, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir) {
+float FgBoWedgeGpPrjnSpec::ConWt_Line(int line, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir) {
   float n_angles = 4.0f;
 
-  TwoDCoord su_geo_half = su_geo / 2;
+  taVector2i su_geo_half = su_geo / 2;
 
   float dst;
   switch(line) {
@@ -5123,7 +5123,7 @@ void FgBoWedgeGpPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
   int su_nunits = send_lay->un_geom.n;
   int n_wedges = 8;
 
-  TwoDCoord sug;
+  taVector2i sug;
   if(reciprocal) {              // reciprocal is backwards!
     for(int sui=0; sui < su_nunits; sui++) {
       sug.SetFmIndex(sui, send_lay->un_geom.x);
@@ -5162,15 +5162,15 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
   if(reciprocal) {
     Layer* recv_lay = prjn->from;
     Layer* send_lay = prjn->layer;
-    TwoDCoord sgp_geo = send_lay->gp_geom;
-    TwoDCoord sgp_geo_half = sgp_geo / 2;
+    taVector2i sgp_geo = send_lay->gp_geom;
+    taVector2i sgp_geo_half = sgp_geo / 2;
 
     int sgpidx;
     int sui;
     send_lay->UnGpIdxFmUnitIdx(ru->idx, sui, sgpidx);  // recv = send!
-    TwoDCoord suc;
+    taVector2i suc;
     suc.SetFmIndex(sui, send_lay->un_geom.x);
-    TwoDCoord sgpc;
+    taVector2i sgpc;
     sgpc.SetFmIndex(sgpidx, send_lay->gp_geom.x);
     int sdir = suc.y % 2;
     int sang_dx = suc.x;
@@ -5188,10 +5188,10 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
       int ssgpidx;
       int ssui;
       send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
-      TwoDCoord ssgpc;
+      taVector2i ssgpc;
       ssgpc.SetFmIndex(ssgpidx, send_lay->gp_geom.x);
 
-      TwoDCoord del = sgpc - ssgpc;
+      taVector2i del = sgpc - ssgpc;
       sgpc.WrapMinDist(del, sgp_geo, ssgpc, sgp_geo_half);
 
       float wt = fgbo_weights.FastEl(del.x, del.y, sdir, sang_dx, wedge);
@@ -5201,8 +5201,8 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
   else {
     Layer* recv_lay = prjn->layer;
     Layer* send_lay = prjn->from;
-    TwoDCoord sgp_geo = send_lay->gp_geom;
-    TwoDCoord sgp_geo_half = sgp_geo / 2;
+    taVector2i sgp_geo = send_lay->gp_geom;
+    taVector2i sgp_geo_half = sgp_geo / 2;
 
     int rgpidx;
     int rui;
@@ -5213,7 +5213,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     int ssgpidx;
     int ssui;
     send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
-    TwoDCoord ssgpc;
+    taVector2i ssgpc;
     ssgpc.SetFmIndex(ssgpidx, send_lay->gp_geom.x);
 
     for(int i=0; i < cg->size; i++) {
@@ -5221,12 +5221,12 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
       int sgpidx;
       int sui;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
-      TwoDCoord suc;
+      taVector2i suc;
       suc.SetFmIndex(sui, send_lay->un_geom.x);
-      TwoDCoord sgpc;
+      taVector2i sgpc;
       sgpc.SetFmIndex(sgpidx, send_lay->gp_geom.x);
 
-      TwoDCoord del = sgpc - ssgpc;
+      taVector2i del = sgpc - ssgpc;
       sgpc.WrapMinDist(del, sgp_geo, ssgpc, sgp_geo_half);
 
       int sdir = suc.y % 2;
@@ -5384,10 +5384,10 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
-  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
+  taVector2i gp_geo = recv_lay->gp_geom; // same as sgp
 
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
 
@@ -5404,7 +5404,7 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
 
   int n_cons = sun_geo.y + 2 * 2 * (n_angles-1) * sun_geo.y;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
@@ -5417,7 +5417,7 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
           if(!alloc_loop)
             ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          TwoDCoord sun;
+          taVector2i sun;
           for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
             // central point (same as ruc -- use rgpidx)
             int sui = sun.y * n_angles + ang;
@@ -5430,9 +5430,9 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
                 int xp = v1c_es_stencils.FastEl(X,lpdx,sidx,ang);
                 int yp = v1c_es_stencils.FastEl(Y,lpdx,sidx,ang);
 
-                TwoDCoord suc = ruc;
+                taVector2i suc = ruc;
                 suc.x += xp;  suc.y += yp;
-                TwoDCoord suc_wrp = suc;
+                taVector2i suc_wrp = suc;
                 if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
                   continue;
                 int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
@@ -5463,10 +5463,10 @@ void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
+  taVector2i gp_geo = recv_lay->gp_geom; // same as sgp
 
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
 
@@ -5480,7 +5480,7 @@ void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   int ang = rui;
 
   int cnidx = 0;
-  TwoDCoord sun;
+  taVector2i sun;
   for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
     cg->Cn(cnidx++)->wt = 1.0f; // center point
     for(int sidx=0; sidx < 2; sidx++) {
@@ -5533,15 +5533,15 @@ void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord rgp_geo = recv_lay->gp_geom;
-  TwoDCoord sgp_geo = send_lay->gp_geom;
+  taVector2i rgp_geo = recv_lay->gp_geom;
+  taVector2i sgp_geo = send_lay->gp_geom;
 
   if(TestWarning(rgp_geo != sgp_geo, "Connect_Gps",
                  "Recv layer does not have same gp geometry as sending layer -- cannot connect!")) {
     return;
   }
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
 
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
@@ -5563,15 +5563,15 @@ void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
 void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord gp_geo = recv_lay->gp_geom;
+  taVector2i gp_geo = recv_lay->gp_geom;
 
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
 
   // note: could optimize this code b/c sender alloc = tot_disps so could be pre-alloc entirely
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
@@ -5597,7 +5597,7 @@ void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn) {
 
 void VisDisparityPrjnSpec::InitStencils(Projection* prjn) {
   Layer* send_lay = prjn->from;
-  TwoDCoord gp_geo = send_lay->gp_geom;
+  taVector2i gp_geo = send_lay->gp_geom;
 
   UpdateFmV1sSize(gp_geo.x);
 
@@ -5667,14 +5667,14 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
+  taVector2i gp_geo = recv_lay->gp_geom; // same as sgp
 
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
@@ -5694,9 +5694,9 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
               int off = v1b_stencils.FastEl(twidx, didx);
               // float wt = v1b_weights.FastEl(twidx, didx);
 
-              TwoDCoord suc = ruc;
+              taVector2i suc = ruc;
               suc.x += off;     // offset
-              TwoDCoord suc_wrp = suc;
+              taVector2i suc_wrp = suc;
               if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
                 continue;
               int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
@@ -5725,10 +5725,10 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
+  taVector2i gp_geo = recv_lay->gp_geom; // same as sgp
 
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord sun_geo = send_lay->un_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i sun_geo = send_lay->un_geom;
   int su_n = sun_geo.Product();
   int ru_n = run_geo.Product();
 
@@ -5745,7 +5745,7 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     }
   }
   else {
-    TwoDCoord ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
+    taVector2i ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
     if(ruc.x < gp_geo.x / 2) {
       int st = dwd - cg->size;
       for(int i=0; i<cg->size; i++) {
@@ -5927,8 +5927,8 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
 void TiledGpRFOneToOnePrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
 
-  TwoDCoord rf_half_wd = send_gp_size / 2;
-  FloatTwoDCoord rf_ctr = rf_half_wd;
+  taVector2i rf_half_wd = send_gp_size / 2;
+  taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == send_gp_size) // even
     rf_ctr -= .5f;
 
@@ -5986,7 +5986,7 @@ void V2toV4DepthPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
                                 Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
-  TwoDCoord sug;
+  taVector2i sug;
 
   if(reciprocal) {              // reciprocal is backwards!
     for(int sui=0; sui < su_nunits; sui++) {
@@ -6131,15 +6131,15 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
   for(int gpidx=0; gpidx < lay->gp_geom.n; gpidx++) {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(gpidx);
     LeabraInhib* thr = (LeabraInhib*)gpd;
-    TwoDCoord sc;                       // simple coords
+    taVector2i sc;                       // simple coords
     sc.SetFmIndex(gpidx, lay->gp_geom.x);
 
     int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
     float inhib_val = thr->i_val.g_i;
     // note: not doing tie break!
 
-    TwoDCoord fc;               // v1s feature coords
-    TwoDCoord oc;               // other coord
+    taVector2i fc;               // v1s feature coords
+    taVector2i oc;               // other coord
     float uidx = 0;
     for(int polclr = 0; polclr < lay->un_geom.y; polclr++) { // polclr features
       fc.y = polclr;
@@ -6200,19 +6200,19 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
-  TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord su_geo = send_lay->flat_geom;
+  taVector2i rf_half_wd = rf_width / 2;
+  taVector2i rug_geo = recv_lay->gp_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i su_geo = send_lay->flat_geom;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
         int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
         if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap) {
           su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
           su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
@@ -6223,7 +6223,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
         }
 
         su_st.WrapClip(wrap, su_geo);
-        TwoDCoord su_ed = su_st + rf_width;
+        taVector2i su_ed = su_st + rf_width;
         if(wrap) {
           su_ed.WrapClip(wrap, su_geo); // just wrap ends too
         }
@@ -6241,8 +6241,8 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
           if(!alloc_loop)
             ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          TwoDCoord suc;
-          TwoDCoord suc_wrp;
+          taVector2i suc;
+          taVector2i suc_wrp;
           for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
             for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
               suc_wrp = su_st + suc;
@@ -6277,14 +6277,14 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
   }
 
   int n_cons = rf_width.Product();
-  TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord run_geo = recv_lay->un_geom;
-  TwoDCoord su_geo = send_lay->flat_geom;
+  taVector2i rf_half_wd = rf_width / 2;
+  taVector2i rug_geo = recv_lay->gp_geom;
+  taVector2i run_geo = recv_lay->un_geom;
+  taVector2i su_geo = send_lay->flat_geom;
 
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(int rug=0;rug<recv_lay->gp_geom.n;rug++) {
-      TwoDCoord ruc;
+      taVector2i ruc;
       for(ruc.y = 0; ruc.y < run_geo.y; ruc.y++) {
         for(ruc.x = 0; ruc.x < run_geo.x; ruc.x++) {
           int rui = ruc.y * run_geo.x + ruc.x;
@@ -6293,7 +6293,7 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
           if(!alloc_loop)
             ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          TwoDCoord su_st;
+          taVector2i su_st;
           if(wrap) {
             su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
             su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
@@ -6304,7 +6304,7 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
           }
 
           su_st.WrapClip(wrap, su_geo);
-          TwoDCoord su_ed = su_st + rf_width;
+          taVector2i su_ed = su_st + rf_width;
           if(wrap) {
             su_ed.WrapClip(wrap, su_geo); // just wrap ends too
           }
@@ -6317,8 +6317,8 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
             }
           }
 
-          TwoDCoord suc;
-          TwoDCoord suc_wrp;
+          taVector2i suc;
+          taVector2i suc_wrp;
           for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
             for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
               suc_wrp = su_st + suc;
@@ -6340,8 +6340,8 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
 }
 
 void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  TwoDCoord rf_half_wd = rf_width / 2;
-  FloatTwoDCoord rf_ctr = rf_half_wd;
+  taVector2i rf_half_wd = rf_width / 2;
+  taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even
     rf_ctr -= .5f;
 

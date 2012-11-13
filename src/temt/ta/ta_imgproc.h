@@ -635,9 +635,9 @@ class TA_API VisRegionSizes : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
 INHERITED(taOBase)
 public:
-  TwoDCoord	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
-  TwoDCoord	border;		// border around retina that we don't process -- for non-WRAP mode, typically a 1 pixel background color border is retained in the input image processing, so this should be subtracted -- also for non-WRAP mode, good to ensure that this is >= than 1/2 of the width of the filters being applied
-  TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
+  taVector2i	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
+  taVector2i	border;		// border around retina that we don't process -- for non-WRAP mode, typically a 1 pixel background color border is retained in the input image processing, so this should be subtracted -- also for non-WRAP mode, good to ensure that this is >= than 1/2 of the width of the filters being applied
+  taVector2i	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
 
   void 	Initialize();
   void	Destroy() { };
@@ -786,7 +786,7 @@ public:
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
   XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
-  TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
+  taVector2i	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
 
   float_Matrix	dog_out_r;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
   float_Matrix	dog_out_l;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
@@ -1096,13 +1096,13 @@ class TA_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
 INHERITED(taOBase)
 public:
-  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
+  taVector2i	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
 
-  TwoDCoord	spat_half;	// #READ_ONLY half rf
-  TwoDCoord	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
-  TwoDCoord	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+  taVector2i	spat_half;	// #READ_ONLY half rf
+  taVector2i	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
+  taVector2i	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
 
   void 	Initialize();
   void	Destroy() { };
@@ -1393,7 +1393,7 @@ protected:
   virtual bool	InitFilters_V2();
   virtual bool	InitFilters_SpatInteg();
 
-  virtual float V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir);
+  virtual float V2FFBoWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir);
   // compute V2 Feed-forward border-ownership weights for stencils
 
   override bool	FilterImage_impl(bool motion_only = false);

@@ -52,8 +52,8 @@ class QGLContext;    // #IGNORE
 class taiClipData;
 class taiMimeItem;
 class taiMimeSource;
-class TDCoord;
-class FloatTransform;
+class taVector3i;
+class taTransform;
 class SoPath; // #IGNORE
 class SoCamera; // #IGNORE
 class SbViewportRegion; // #IGNORE
@@ -101,8 +101,8 @@ class TA_API T3SavedView : public taNBase {
 INHERITED(taNBase)
 public:
   bool          view_saved;     // #READ_ONLY #SHOW whether a view is currently saved or not
-  FloatTDCoord  pos;            // #READ_ONLY #EXPERT position of camera in view
-  FloatRotation orient;         // #READ_ONLY #EXPERT orientation of camera in view
+  taVector3f    pos;            // #READ_ONLY #EXPERT position of camera in view
+  taAxisAngle   orient;         // #READ_ONLY #EXPERT orientation of camera in view
   float         focal_dist;     // #READ_ONLY #EXPERT focal distance
 
   void          getCameraParams(SoCamera* cam);
@@ -414,7 +414,7 @@ public:
   static T3DataView*    GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
 
   int                   flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
-  FloatTransform*       m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
+  taTransform*       m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
 
   virtual const iColor  bgColor(bool& ok) const {ok = false; return iColor();}
     // high-level items can optionally supply a bg color, for when they are singles
@@ -425,7 +425,7 @@ public:
   virtual bool          expandable() const {return false;}
   virtual void          setExpandable(bool) {}
   DATAVIEW_PARENT(T3DataView) // always a T3DataView (except root guy)
-  FloatTransform*       transform(bool auto_create = false);  // transform, in Inventor coords
+  taTransform*       transform(bool auto_create = false);  // transform, in Inventor coords
   virtual bool          fixTransformAxis();
   // make sure transform doesn't have a zero axis
 
@@ -586,7 +586,7 @@ class TA_API T3DataViewMain: public T3DataViewPar {
 typedef T3DataViewPar inherited;
 #endif
 public:
-  FloatTransform        main_xform;
+  taTransform           main_xform;
   // this is the overall transform (position, scale, rotation) for this view object (typically can be adjusted by view's transform dragbox)
 
   override bool         isTopLevelView() const {return true;}

@@ -96,7 +96,7 @@ public slots:
   void          UpdateViewFromState(int state);
 
   void          SetDataName(const QString& data_name);
-  void          SetDimensions(const TDCoord& dimensions);
+  void          SetDimensions(const taVector3i& dimensions);
   void          SetViewPlane( int plane );
   void          SetSliceStart(int start);
   void          SetSliceEnd(int end);
@@ -112,7 +112,7 @@ public slots:
   void          SetViewAtlasRegexp(const QString& regexp);
 
   void          EmitDataNameChanged(const QString& name);
-  void          EmitDimensionsChanged(const TDCoord& d);
+  void          EmitDimensionsChanged(const taVector3i& d);
   void          EmitViewPlaneChanged(int plane);
   void          EmitNumSlicesChanged(int nSlices);
   void          EmitSliceStartChanged(int start);
@@ -127,7 +127,7 @@ public slots:
 #ifndef __MAKETA__
 signals:
   void          DataNameChanged(const QString& name);
-  void          DimensionsChanged(const TDCoord& d);
+  void          DimensionsChanged(const taVector3i& d);
   void          ViewPlaneChanged(int plane);
   void          NumSlicesChanged(int nSlices);
   void          SliceStartChanged(int start);

@@ -805,7 +805,7 @@ class EMERGENT_API Voxel : public taOBase
   // #NO_TOKENS #NO_UPDATE_AFTER A single voxel.
   INHERITED(taOBase)
 public:
-  FloatTDCoord  coord;  // #NO_SAVE Voxel coordinates.
+  taVector3f  coord;  // #NO_SAVE Voxel coordinates.
   float         size;   // #NO_SAVE Size of the voxel.
   TA_BASEFUNS_SC(Voxel);
 private:
@@ -878,7 +878,7 @@ public: //
 
   int           n_recv_cons;
   // #CAT_Structure #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT total number of receiving connections
-  TDCoord       pos;
+  taVector3i       pos;
   // #CAT_Structure display position in space relative to owning group or layer
   Voxel_List    voxels;
   // #CAT_Structure #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
@@ -1081,13 +1081,13 @@ public: //
   override void SetIndex(int i) { idx = i; }
   virtual int   GetMyLeafIndex();
   // #CAT_Structure compute leaf index from my individual index in an efficient manner
-  void          GetAbsPos(TDCoord& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
+  void          GetAbsPos(taVector3i& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void          LayerLogPos(TwoDCoord& log_pos);
+  void          LayerLogPos(taVector2i& log_pos);
   // #CAT_Structure get logical position of unit within layer, taking into account (virtual) unit groups etc relative to layer flat_geom (no display spacing) -- calls Layer::UnitLogPos on own_lay
-  void          LayerDispPos(TwoDCoord& disp_pos);
+  void          LayerDispPos(taVector2i& disp_pos);
   // #CAT_Structure get display position of this unit within the layer, taking into account (virtual) unit groups etc relative to layer disp_geom (includes display spacing) -- calls Layer::UnitDispPos on own_lay
-  void          AddRelPos(TDCoord& rel_pos);
+  void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
 
   override String       GetTypeDecoKey() const { return "Unit"; }
@@ -1364,7 +1364,7 @@ class EMERGENT_API Unit_Group: public taGroup<Unit> {
 INHERITED(taGroup<Unit>)
 public:
   Layer*        own_lay;        // #READ_ONLY #NO_SAVE #NO_SHOW #NO_SET_POINTER layer owner
-  PosTDCoord    pos;            // #CAT_Structure position of group relative to the layer -- for display purposes
+  PosVector3i   pos;            // #CAT_Structure position of group relative to the layer -- for display purposes
   String        output_name;    // #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   int           idx;
   // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of this unit_group within containing subgroup list
@@ -1372,17 +1372,17 @@ public:
   //////////////////////////////////////////////////////////////////////////
   //    Unit access API -- for internal use only -- use layer-level access of units instead!!
 
-  Unit*         UnitAtCoord(const TwoDCoord& coord)
+  Unit*         UnitAtCoord(const taVector2i& coord)
   { return UnitAtCoord(coord.x,coord.y); }
   // #EXPERT #CAT_Structure returns unit at given coordinates within unit group
   Unit*         UnitAtCoord(int x, int y);
   // #EXPERT #CAT_Structure get unit from given set of x and y coordinates within this group
-  TwoDCoord     GpLogPos();
+  taVector2i     GpLogPos();
   // #EXPERT #CAT_Structure returns unit group *logical* position in terms of layer unit group geometry gp_geom -- computed from idx -- only for subgroups
 
-  void          GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  void          GetAbsPos(taVector3i& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
   // #EXPERT #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void          AddRelPos(TDCoord& rel_pos);
+  void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
 
   virtual void  Copy_Weights(const Unit_Group* src);
@@ -1581,13 +1581,13 @@ public:
   Network*              own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
   LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  PosTDCoord            pos;            // #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
+  PosVector3i           pos;            // #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
   float                 disp_scale;     // #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom               un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer
   bool                  unit_groups;    // #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups
   bool                  virt_groups;    // #CONDSHOW_ON_unit_groups #CAT_Structure #DEF_true if true, do not allocate actual unit groups -- just organize a flat list of units into groups for display and computation purposes -- this is much more efficient and is the default behavior, but some rare cases require explicit unit groups still (e.g. unique positions for unit groups)
   XYNGeom               gp_geom;        // #CONDSHOW_ON_unit_groups #CAT_Structure geometry of unit sub-groups (if unit_groups) -- this is the layout of the groups, with gp_geom defining the layout of units within the groups
-  PosTwoDCoord          gp_spc;         // #CONDSHOW_ON_unit_groups #CAT_Structure spacing between unit sub-groups (if unit_groups) -- this is *strictly* for display purposes, and does not affect anything else in terms of projection connectivity calculations etc.
+  PosVector2i           gp_spc;         // #CONDSHOW_ON_unit_groups #CAT_Structure spacing between unit sub-groups (if unit_groups) -- this is *strictly* for display purposes, and does not affect anything else in terms of projection connectivity calculations etc.
   XYNGeom               flat_geom;      // #EXPERT #READ_ONLY #CAT_Structure geometry of the units flattening out over unit groups -- same as un_geom if !unit_groups; otherwise un_geom * gp_geom -- this is in logical (not display) sizes
   XYNGeom               disp_geom;      // #AKA_act_geom #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
   XYNGeom               scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
@@ -1642,7 +1642,7 @@ public:
   // and NOT via unit groups (layers can handle unit groups virtually or with real
   // allocated unit groups -- see virt_groups flag)
 
-  Unit*         UnitAtCoord(const TwoDCoord& coord) const
+  Unit*         UnitAtCoord(const taVector2i& coord) const
   { return UnitAtCoord(coord.x, coord.y); }
   // #CAT_Access get unit at given logical coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
   Unit*         UnitAtCoord(int x, int y) const;
@@ -1680,35 +1680,35 @@ public:
   }
   // #CAT_Access abstracted access of units in layer depending on mode -- number of groups associated with this access mode
 
-  Unit*         UnitAtGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord) const
+  Unit*         UnitAtGpCoord(const taVector2i& gp_coord, const taVector2i& coord) const
   { return UnitAtGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y); }
   // #CAT_Access get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
   Unit*         UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const;
   // #CAT_Access get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
 
 
-  Unit_Group*   UnitGpAtCoord(const TwoDCoord& coord) const
+  Unit_Group*   UnitGpAtCoord(const taVector2i& coord) const
   { return UnitGpAtCoord(coord.x,coord.y); }
   // #EXPERT #CAT_Access get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
   Unit_Group*   UnitGpAtCoord(int gp_x, int gp_y) const;
   // #EXPERT #CAT_Access get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
 
-  void          UnitLogPos(Unit* un, TwoDCoord& upos) const
+  void          UnitLogPos(Unit* un, taVector2i& upos) const
   { UnitLogPos(un, upos.x, upos.y); }
   // #CAT_Access get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
   void          UnitLogPos(Unit* un, int& x, int& y) const;
   // #CAT_Access get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
-  int           UnitIdxFmPos(TwoDCoord& pos) const
+  int           UnitIdxFmPos(taVector2i& pos) const
   { return pos.y * un_geom.x + pos.x; }
   // #CAT_Access get unit index from position for unit within a subgroup or unit in a layer without any subgroups
   bool          UnitIdxIsValid(int unidx) const
   { return unidx >= 0 && unidx < un_geom.n; }
   // #CAT_Access is the unit index valid (within range) for unit in subgroup or unit in layer without subgroups
 
-  TwoDCoord     UnitGpPosFmIdx(int gpidx) const
-  { TwoDCoord rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
+  taVector2i     UnitGpPosFmIdx(int gpidx) const
+  { taVector2i rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
   // #CAT_Access get unit group *logical* position from index
-  int           UnitGpIdxFmPos(TwoDCoord& pos) const
+  int           UnitGpIdxFmPos(taVector2i& pos) const
   { return pos.y * gp_geom.x + pos.x; }
   // #CAT_Access get unit group index from position
   bool          UnitGpIdxIsValid(int gpidx) const
@@ -1722,7 +1722,7 @@ public:
 
   Unit*         UnitAtDispCoord(int x, int y) const;
   // #CAT_Access get unit at given *display* coordinates relative to layer -- this takes into account spaces between groups etc
-  void          UnitDispPos(Unit* un, TwoDCoord& upos) const
+  void          UnitDispPos(Unit* un, taVector2i& upos) const
   { UnitDispPos(un, upos.x, upos.y); }
   // #CAT_Access get display position for unit, taking into account spacing, unit group positioning etc
   void          UnitDispPos(Unit* un, int& x, int& y) const;
@@ -1732,19 +1732,19 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   // obsolete versions -- do not use in new code
 
-  Unit*         FindUnitFmCoord(const TwoDCoord& coord)
+  Unit*         FindUnitFmCoord(const taVector2i& coord)
   { return UnitAtCoord(coord.x, coord.y); }
   // #CAT_zzzObsolete get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
   Unit*         FindUnitFmCoord(int x, int y)
   { return UnitAtCoord(x, y); }
   // #CAT_zzzObsolete get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
-  Unit*         FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
+  Unit*         FindUnitFmGpCoord(const taVector2i& gp_coord, const taVector2i& coord)
   { return UnitAtGpCoord(gp_coord.x, gp_coord.y, coord.x, coord.y); }
   // #CAT_zzzObsolete get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
   Unit*         FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y)
   { return UnitAtGpCoord(gp_x, gp_y, un_x, un_y); }
   // #CAT_zzzObsolete get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
-  Unit_Group*   FindUnitGpFmCoord(const TwoDCoord& coord)
+  Unit_Group*   FindUnitGpFmCoord(const taVector2i& coord)
   { return UnitGpAtCoord(coord.x,coord.y); }
   // #CAT_zzzObsolete get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
   Unit_Group*   FindUnitGpFmCoord(int gp_x, int gp_y)
@@ -1755,9 +1755,9 @@ public:
 
   bool          InLayerSubGroup();
   // #CAT_Structure is this layer in a layer subgroup or directly in network.layers main layer group?
-  void          GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  void          GetAbsPos(taVector3i& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
-  void          AddRelPos(TDCoord& rel_pos);
+  void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
   void          SetDefaultPos();
   // #IGNORE initialize position of layer
@@ -1846,7 +1846,7 @@ public:
   // #CAT_Activation set external input data flags for layer and all units in the layer
 
   virtual void  ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
-      Random* ran = NULL, const PosTwoDCoord* offset = NULL, bool na_by_range=false);
+      Random* ran = NULL, const PosVector2i* offset = NULL, bool na_by_range=false);
   // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end; na_by_range means that values are not applicable if they fall outside act_range on unit spec, and thus don't have flags or values set
   virtual void  TriggerContextUpdate() {} // for algorithms/specs that suport context layers (copy of previous state) this manually triggers an update
 
@@ -2019,10 +2019,10 @@ protected:
                                Random* ran, bool na_by_range=false);
   // #IGNORE 1d data -- just go in order -- offsets ignored
   virtual void          ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-                               Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+                               Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE 2d data is always treated the same: UnitAtCoord deals with unit grouping
   virtual void          ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-                               Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+                               Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE flat layer, 4d data
   virtual void          ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
                                Random* ran, bool na_by_range=false);
@@ -2072,13 +2072,13 @@ INHERITED(taGroup<Layer>)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
 
-  PosTDCoord    pos;            // Position of Group of layers relative to network
-  PosTDCoord    max_disp_size;  // #AKA_max_size #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
+  PosVector3i    pos;            // Position of Group of layers relative to network
+  PosVector3i    max_disp_size;  // #AKA_max_size #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
 
-  void          GetAbsPos(TDCoord& abs_pos)
+  void          GetAbsPos(taVector3i& abs_pos)
   { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
-  void          AddRelPos(TDCoord& rel_pos);
+  void          AddRelPos(taVector3i& rel_pos);
   // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
 
   virtual void  BuildLayers();
@@ -2234,9 +2234,9 @@ public:
   };
 
   String        desc;           // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
-  FloatTDCoord  pos;            // 3d position of object (can be moved within network view)
-  FloatRotation rot;            // 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  FloatTDCoord  scale;          // 3d scaling of object along each dimension (applied prior to rotation)
+  taVector3f    pos;            // 3d position of object (can be moved within network view)
+  taAxisAngle   rot;            // 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f    scale;          // 3d scaling of object along each dimension (applied prior to rotation)
   ObjType       obj_type;       // type of object to display
   String        obj_fname;      // #CONDSHOW_ON_obj_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
   String        text;           // #CONDSHOW_ON_obj_type:TEXT text to display for text type of object
@@ -2402,7 +2402,7 @@ public:
   int           n_units;        // #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int           n_cons;         // #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
   int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
-  PosTDCoord    max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
+  PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   bool          old_load_cons;  // #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)

@@ -2129,21 +2129,21 @@ int Unit::GetMyLeafIndex() {
   return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 
-void Unit::LayerLogPos(TwoDCoord& log_pos) {
+void Unit::LayerLogPos(taVector2i& log_pos) {
   Layer* mlay = own_lay();
   if(mlay) {
     mlay->UnitLogPos(this, log_pos);
   }
 }
 
-void Unit::LayerDispPos(TwoDCoord& disp_pos) {
+void Unit::LayerDispPos(taVector2i& disp_pos) {
   Layer* mlay = own_lay();
   if(mlay) {
     mlay->UnitDispPos(this, disp_pos);
   }
 }
 
-void Unit::AddRelPos(TDCoord& rel_pos) {
+void Unit::AddRelPos(taVector3i& rel_pos) {
   Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
   if (ugp) {
     rel_pos += ugp->pos;
@@ -3481,15 +3481,15 @@ Unit* Unit_Group::UnitAtCoord(int x, int y) {
   return SafeEl(idx);
 }
 
-TwoDCoord Unit_Group::GpLogPos() {
+taVector2i Unit_Group::GpLogPos() {
   if(!own_lay) return pos;
-  TwoDCoord rval;
+  taVector2i rval;
   rval.y = idx / own_lay->gp_geom.x;
   rval.x = idx % own_lay->gp_geom.x;
   return rval;
 }
 
-void Unit_Group::AddRelPos(TDCoord& rel_pos) {
+void Unit_Group::AddRelPos(taVector3i& rel_pos) {
   // note: vastly most likely case is a flat root group of units...
   Layer* lay = dynamic_cast<Layer*>(owner);
   if (lay) {
@@ -4230,7 +4230,7 @@ void Layer::RecomputeGeometry() {
     flat_geom.n = un_geom.n * gp_geom.n;
     if(flat_geom.n != flat_geom.x * flat_geom.y)
       flat_geom.n_not_xy = true;
-    TwoDCoord eff_un_sz = un_geom + gp_spc;
+    taVector2i eff_un_sz = un_geom + gp_spc;
     disp_geom = gp_geom * eff_un_sz;
     disp_geom -= gp_spc;        // no space at the end!
   }
@@ -4290,27 +4290,27 @@ void Layer::LayoutUnits() {
   RecomputeGeometry();
   units.pos = 0;                // our base guy must always be 0..
   if(unit_groups) {
-    TwoDCoord eff_un_sz = un_geom + gp_spc;
-    TwoDCoord gpgeo;
+    taVector2i eff_un_sz = un_geom + gp_spc;
+    taVector2i gpgeo;
     int gi = 0;
     int ui = 0;
     Unit_Group* eff_ug = &units;
     for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
       for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++) {
-        TwoDCoord gp_pos = gpgeo * eff_un_sz;
+        taVector2i gp_pos = gpgeo * eff_un_sz;
         if(!virt_groups) {
           Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
           ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
           eff_ug = ug;
           ui = 0;
         }
-        TwoDCoord ugeo;
+        taVector2i ugeo;
         for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
           for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
             if(ui >= eff_ug->size)
               break;
             Unit* un = (Unit*)eff_ug->FastEl(ui++);
-            TwoDCoord upos = ugeo;
+            taVector2i upos = ugeo;
             if(virt_groups)
               upos += gp_pos;
             un->pos.x = upos.x; un->pos.y = upos.y;
@@ -4320,7 +4320,7 @@ void Layer::LayoutUnits() {
     }
   }
   else {
-    TwoDCoord ugeo;
+    taVector2i ugeo;
     int i = 0;
     for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
       for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
@@ -4619,7 +4619,7 @@ void Layer::SetLayUnitExtFlags(int flg) {
 }
 
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
-           Random* ran, const PosTwoDCoord* offset, bool na_by_range)
+           Random* ran, const PosVector2i* offset, bool na_by_range)
 {
   // note: when use LayerWriters, we typically always just get a single frame of
   // the exact dimensions, and so ignore 'frame'
@@ -4629,7 +4629,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
                "data->dims must be 2 (2-d) or 4 (4-d)")) {
     return;
   }
-  TwoDCoord offs(0,0);
+  taVector2i offs(0,0);
   if(offset) offs = *offset;
 
   // apply flags if we are the controller (zero offset)
@@ -4662,7 +4662,7 @@ void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-                              Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                              Random* ran, const taVector2i& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
@@ -4677,7 +4677,7 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-                                  Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                                  Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
@@ -5372,7 +5372,7 @@ Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) const {
 void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
   Unit_Group* own_sgp = un->own_subgp();
   if(own_sgp) {
-    TwoDCoord gpos = own_sgp->GpLogPos();
+    taVector2i gpos = own_sgp->GpLogPos();
     x = gpos.x + un->pos.x;
     y = gpos.y + un->pos.y;
   }
@@ -5448,7 +5448,7 @@ int Layer::UnitGpIdx(Unit* u) const {
   }
 }
 
-void Layer::AddRelPos(TDCoord& rel_pos) {
+void Layer::AddRelPos(taVector3i& rel_pos) {
   Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
   if (lgp) {
     rel_pos += lgp->pos;
@@ -5552,7 +5552,7 @@ void Layer_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void Layer_Group::AddRelPos(TDCoord& rel_pos) {
+void Layer_Group::AddRelPos(taVector3i& rel_pos) {
   Layer_Group* lg = GET_MY_OWNER(Layer_Group);
   if (lg) {
     rel_pos += lg->pos;
@@ -5572,13 +5572,13 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
 void Layer_Group::UpdateMaxDispSize() {
   max_disp_size.x = 1;  max_disp_size.y = 1;  max_disp_size.z = 1;
 
-  TDCoord min_size;
+  taVector3i min_size;
   bool first_min = true;
 
-  TDCoord l_pos; // for abs_pos
+  taVector3i l_pos; // for abs_pos
   FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->GetAbsPos(l_pos);
-    TDCoord lrelpos = l_pos - pos; // subtract us
+    taVector3i lrelpos = l_pos - pos; // subtract us
     max_disp_size.z = MAX(max_disp_size.z, 1 + lrelpos.z);
     if(l->Iconified()) {
       max_disp_size.x = MAX(max_disp_size.x, lrelpos.x + 1);
@@ -5599,7 +5599,7 @@ void Layer_Group::UpdateMaxDispSize() {
 
   if(!owner->InheritsFrom(&TA_Network)) {
     if(min_size != pos) {
-      TDCoord pos_chg = min_size - pos;
+      taVector3i pos_chg = min_size - pos;
       FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
         l->pos -= pos_chg;      // fix up all the layer rels to be less.
       }
@@ -5655,16 +5655,16 @@ void Layer_Group::LayerPos_Cleanup() {
     moved = false;
     for(int i1=0;i1<leaves;i1++) {
       Layer* l1 = Leaf(i1);
-      TDCoord l1abs;
+      taVector3i l1abs;
       l1->GetAbsPos(l1abs);
-      TwoDCoord l1s = (TwoDCoord)l1abs;
-      TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_disp_geom;
+      taVector2i l1s = (taVector2i)l1abs;
+      taVector2i l1e = l1s + (taVector2i)l1->scaled_disp_geom;
       for(int i2 = i1+1; i2<leaves;i2++) {
         Layer* l2 = Leaf(i2);
-        TDCoord l2abs;
+        taVector3i l2abs;
         l2->GetAbsPos(l2abs);
-        TwoDCoord l2s = (TwoDCoord)l2abs;
-        TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_disp_geom;
+        taVector2i l2s = (taVector2i)l2abs;
+        taVector2i l2e = l2s + (taVector2i)l2->scaled_disp_geom;
         if(l2abs.z != l1abs.z) continue;
         if(l2s.x >= l1s.x && l2s.x < l1e.x &&
             l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
@@ -7806,7 +7806,7 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
 
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
-  TDCoord lpos;
+  taVector3i lpos;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->GetAbsPos(lpos);
     zvals.AddUnique(lpos.z);
@@ -8680,10 +8680,10 @@ void taBrainAtlas::Indexes(int_Matrix& indexes, const String& labels_regexp) {
 }
 
 void taBrainAtlas::VoxelCoordinates(float_Matrix& voxels, const String& label_regexp) {
-  QList<FloatTDCoord> qcrd = Atlas().VoxelCoordinates((QString)label_regexp.chars());
+  QList<taVector3f> qcrd = Atlas().VoxelCoordinates((QString)label_regexp.chars());
   voxels.SetGeom(2, 3, qcrd.size());
   for(int i=0; i< qcrd.size(); i++) {
-    FloatTDCoord td = qcrd[i];
+    taVector3f td = qcrd[i];
     voxels.Set(td.x, 0, i);
     voxels.Set(td.y, 1, i);
     voxels.Set(td.z, 2, i);

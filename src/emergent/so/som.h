@@ -40,7 +40,7 @@ class NeighborEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a neighborhood function
 INHERITED(taOBase)
 public:
-  TwoDCoord	off;		// offset from "winning" unit
+  taVector2i	off;		// offset from "winning" unit
   float		act_val;	// activation value for this unit
 
   TA_SIMPLE_BASEFUNS(NeighborEl);

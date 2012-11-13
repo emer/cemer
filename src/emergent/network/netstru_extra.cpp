@@ -367,7 +367,7 @@ void TesselPrjnSpec::MakeFromNetView(NetView* view) {
 void TesselPrjnSpec::WeightsFromDist(float scale) {
   last_weights_cmd = "WeightsFromDist(scale=" + String(scale) + ")";
   DataChanged(DCR_ITEM_UPDATED);
-  TwoDCoord zero;
+  taVector2i zero;
   int i;
   TessEl* te;
   for(i = 0; i< send_offs.size; i++) {
@@ -381,7 +381,7 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
   last_weights_cmd = "WeightsFromGausDist(scale=" + String(scale)
     + ", sigma=" + String(sigma) + ")";
   DataChanged(DCR_ITEM_UPDATED);
-  TwoDCoord zero;
+  taVector2i zero;
   int i;
   TessEl* te;
   for(i = 0; i< send_offs.size; i++) {
@@ -403,31 +403,31 @@ void TesselPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   }
 }
 
-void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
+void TesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
   ruc -= recv_off;
   ruc /= recv_group;    ruc *= recv_group;      // this takes int part of
   ruc += recv_off;      // then re-add offset
-  FloatTwoDCoord scruc = ruc;
+  taVector2f scruc = ruc;
   scruc *= send_scale;
   scruc += send_off;
   sctr = scruc;         // take int part at the end
 }
 
-void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn,
+void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const taVector2i& ruc, Projection* prjn,
                                       bool send_alloc) {
   // allocate cons
   if(!send_alloc)
     ru_u->RecvConsPreAlloc(send_offs.size, prjn);
 
-  PosTwoDCoord su_geo = prjn->from->flat_geom;
+  PosVector2i su_geo = prjn->from->flat_geom;
   // positions of center of recv in sending layer
-  TwoDCoord sctr;
+  taVector2i sctr;
   GetCtrFmRecv(sctr, ruc);
   int i;
   TessEl* te;
   for(i = 0; i< send_offs.size; i++) {
     te = (TessEl*)send_offs.FastEl(i);
-    TwoDCoord suc = te->send_off + sctr;
+    taVector2i suc = te->send_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
     Unit* su_u = prjn->from->UnitAtCoord(suc);
@@ -448,16 +448,16 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
 
 //   TestWarning(!wrap && init_wts, "Connect_impl",
 //            "non-wrapped tessel prjn spec with init_wts does not usually work!");
-  PosTwoDCoord ru_geo = prjn->layer->flat_geom;
+  PosVector2i ru_geo = prjn->layer->flat_geom;
 
-  TwoDCoord use_recv_n = recv_n;
+  taVector2i use_recv_n = recv_n;
 
   if(recv_n.x == -1)
     use_recv_n.x = ru_geo.x;
   if(recv_n.y == -1)
     use_recv_n.y = ru_geo.y;
 
-  TwoDCoord ruc, nuc;
+  taVector2i ruc, nuc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
     for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
         ruc.y += recv_skip.y, nuc.y++)
@@ -671,31 +671,31 @@ void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 float PolarRndPrjnSpec::UnitDist(UnitDistType typ, Projection* prjn,
-                               const TwoDCoord& ru, const TwoDCoord& su)
+                               const taVector2i& ru, const taVector2i& su)
 {
-  FloatTwoDCoord half(.5f);
-  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
-  PosTwoDCoord su_geom = prjn->from->flat_geom;
+  taVector2f half(.5f);
+  PosVector2i ru_geom = prjn->layer->flat_geom;
+  PosVector2i su_geom = prjn->from->flat_geom;
   switch(typ) {
   case XY_DIST:
     return ru.Dist(su);
   case XY_DIST_CENTER: {
-    FloatTwoDCoord rctr = ru_geom;   rctr *= half;
-    FloatTwoDCoord sctr = su_geom;    sctr *= half;
-    TwoDCoord ruc = ru - (TwoDCoord)rctr;
-    TwoDCoord suc = su - (TwoDCoord)sctr;
+    taVector2f rctr = ru_geom;   rctr *= half;
+    taVector2f sctr = su_geom;    sctr *= half;
+    taVector2i ruc = ru - (taVector2i)rctr;
+    taVector2i suc = su - (taVector2i)sctr;
     return ruc.Dist(suc);
   }
   case XY_DIST_NORM: {
-    FloatTwoDCoord ruc = ru;    ruc /= (FloatTwoDCoord)ru_geom;
-    FloatTwoDCoord suc = su;    suc /= (FloatTwoDCoord)su_geom;
+    taVector2f ruc = ru;    ruc /= (taVector2f)ru_geom;
+    taVector2f suc = su;    suc /= (taVector2f)su_geom;
     return ruc.Dist(suc);
   }
   case XY_DIST_CENTER_NORM: {
-    FloatTwoDCoord rctr = ru_geom;   rctr *= half;
-    FloatTwoDCoord sctr = su_geom;    sctr *= half;
-    FloatTwoDCoord ruc = ((FloatTwoDCoord)ru - rctr) / rctr;
-    FloatTwoDCoord suc = ((FloatTwoDCoord)su - sctr) / sctr;
+    taVector2f rctr = ru_geom;   rctr *= half;
+    taVector2f sctr = su_geom;    sctr *= half;
+    taVector2f ruc = ((taVector2f)ru - rctr) / rctr;
+    taVector2f suc = ((taVector2f)su - sctr) / sctr;
     return ruc.Dist(suc);
   }
   }
@@ -703,12 +703,12 @@ float PolarRndPrjnSpec::UnitDist(UnitDistType typ, Projection* prjn,
 }
 
 Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* prjn,
-                                   const TwoDCoord& ru, const FloatTwoDCoord& su_off)
+                                   const taVector2i& ru, const taVector2f& su_off)
 {
-  FloatTwoDCoord half(.5f);
-  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
-  PosTwoDCoord su_geom = prjn->from->flat_geom;
-  TwoDCoord suc;                // actual su coordinates
+  taVector2f half(.5f);
+  PosVector2i ru_geom = prjn->layer->flat_geom;
+  PosVector2i su_geom = prjn->from->flat_geom;
+  taVector2i suc;                // actual su coordinates
   switch(typ) {
   case XY_DIST: {
     suc = su_off;
@@ -716,26 +716,26 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
     break;
   }
   case XY_DIST_CENTER: {        // do everything relative to center
-    FloatTwoDCoord rctr = ru_geom;   rctr *= half;
-    FloatTwoDCoord sctr = su_geom;    sctr *= half;
-    TwoDCoord ruc = ru - (TwoDCoord)rctr;
+    taVector2f rctr = ru_geom;   rctr *= half;
+    taVector2f sctr = su_geom;    sctr *= half;
+    taVector2i ruc = ru - (taVector2i)rctr;
     suc = su_off;
     suc += ruc;                 // add the centerized coordinates
-    suc += (TwoDCoord)sctr;     // then add the sending center back into it..
+    suc += (taVector2i)sctr;     // then add the sending center back into it..
     break;
   }
   case XY_DIST_NORM: {
-    FloatTwoDCoord ruc = ru;    ruc /= (FloatTwoDCoord)ru_geom;
-    FloatTwoDCoord suf = su_off + ruc; // su_off is in normalized coords, so normalize ru
-    suf *= (FloatTwoDCoord)su_geom;
+    taVector2f ruc = ru;    ruc /= (taVector2f)ru_geom;
+    taVector2f suf = su_off + ruc; // su_off is in normalized coords, so normalize ru
+    suf *= (taVector2f)su_geom;
     suc = suf;
     break;
   }
   case XY_DIST_CENTER_NORM: {
-    FloatTwoDCoord rctr = ru_geom;   rctr *= half;
-    FloatTwoDCoord sctr = su_geom;    sctr *= half;
-    FloatTwoDCoord ruc = ((FloatTwoDCoord)ru - rctr) / rctr;
-    FloatTwoDCoord suf = su_off + ruc;
+    taVector2f rctr = ru_geom;   rctr *= half;
+    taVector2f sctr = su_geom;    sctr *= half;
+    taVector2f ruc = ((taVector2f)ru - rctr) / rctr;
+    taVector2f suf = su_off + ruc;
     suf *= sctr;    suf += sctr;
     suc = suf;
     break;
@@ -754,8 +754,8 @@ float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
     return p_con;
   float prob = p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, su->pos));
   if(wrap) {
-    PosTwoDCoord su_geom = prjn->from->flat_geom;
-    TwoDCoord suc = su->pos;
+    PosVector2i su_geom = prjn->from->flat_geom;
+    taVector2i suc = su->pos;
     suc.x += su_geom.x; // wrap around in x
     prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
     suc.y += su_geom.y; // wrap around in x & y
@@ -800,15 +800,15 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 
   Unit* ru, *su;
   taLeafItr ru_itr;
-  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
-  TwoDCoord ru_pos;             // do this according to act_geom..
+  PosVector2i ru_geom = prjn->layer->flat_geom;
+  taVector2i ru_pos;             // do this according to act_geom..
   int cnt = 0;
   for(ru = (Unit*)prjn->layer->units.FirstEl(ru_itr); ru;
       ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
     ru_pos.y = cnt / ru_geom.x;
     ru_pos.x = cnt % ru_geom.x;
     RecvCons* recv_gp = NULL;
-    FloatTwoDCoord suc;
+    taVector2f suc;
     int n_con = 0;
     int n_retry = 0;
     while((n_con < recv_no) && (n_retry < max_retries)) { // limit number of retries
@@ -1006,8 +1006,8 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
 
   // revert to main group if no sub groups
   Layer::AccessMode racc_md = Layer::ACC_GP;
@@ -1074,8 +1074,8 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
 
   // revert to main group if no sub groups
   Layer::AccessMode racc_md = Layer::ACC_GP;
@@ -1404,11 +1404,11 @@ void GpRndTesselPrjnSpec::SetPCon(float p_con, int start, int end) {
 }
 
 
-void GpRndTesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
+void GpRndTesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
   ruc -= recv_gp_off;
   ruc /= recv_gp_group; ruc *= recv_gp_group;   // this takes int part of
   ruc += recv_gp_off;   // then re-add offset
-  FloatTwoDCoord scruc = ruc;
+  taVector2f scruc = ruc;
   scruc *= send_gp_scale;
   sctr = scruc;         // center of sending units
   sctr += send_gp_border;
@@ -1652,7 +1652,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Full(int rgpidx, int sgpidx,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const TwoDCoord& ruc,
+void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const taVector2i& ruc,
                                          Projection* prjn, bool send_alloc) {
 
   Layer* recv_lay = prjn->layer;
@@ -1660,12 +1660,12 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const TwoDCoord& ruc,
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
-  TwoDCoord& su_geo = send_lay->gp_geom;
-  TwoDCoord sctr;
+  taVector2i& su_geo = send_lay->gp_geom;
+  taVector2i sctr;
   GetCtrFmRecv(sctr, ruc);  // positions of center of recv in sending layer
   for(int i = 0; i< send_gp_offs.size; i++) {
     GpTessEl* te = (GpTessEl*)send_gp_offs.FastEl(i);
-    TwoDCoord suc = te->send_gp_off + sctr;
+    taVector2i suc = te->send_gp_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
     int sgpidx = send_lay->UnitGpIdxFmPos(suc);
@@ -1696,15 +1696,15 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
-  TwoDCoord& ru_geo = prjn->layer->gp_geom;
-  TwoDCoord use_recv_gp_n = recv_gp_n;
+  taVector2i& ru_geo = prjn->layer->gp_geom;
+  taVector2i use_recv_gp_n = recv_gp_n;
 
   if(recv_gp_n.x == -1)
     use_recv_gp_n.x = ru_geo.x;
   if(recv_gp_n.y == -1)
     use_recv_gp_n.y = ru_geo.y;
 
-  TwoDCoord ruc, nuc;
+  taVector2i ruc, nuc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
     for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
         ruc.y += recv_gp_skip.y, nuc.y++)
@@ -1769,15 +1769,15 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
 // - recv off * scale
 
   n_recv_gps = ru_geo - (2 * recv_gp_border);   // total number of recv groups covered
-  n_send_units = TwoDCoord(su_act_geom) - (2 * send_border);
+  n_send_units = taVector2i(su_act_geom) - (2 * send_border);
 
   rf_ovlp.x = (int)floor(((float)(n_send_units.x + send_adj_rfsz.x) / (float)(n_recv_gps.x + 1)) + .5f);
   rf_ovlp.y = (int)floor(((float)(n_send_units.y + send_adj_rfsz.y) / (float)(n_recv_gps.y + 1)) + .5f);
 
   // how to move the receptive fields over the sending layer (floating point)
-  rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
+  rf_move = taVector2f(n_send_units + send_adj_sndloc) / taVector2f(n_recv_gps + 1);
 
-  FloatTwoDCoord rfw = (FloatTwoDCoord)rf_ovlp * 2.0f * rf_width_mult;
+  taVector2f rfw = (taVector2f)rf_ovlp * 2.0f * rf_width_mult;
   rf_width = rfw;
   return true;
 }
@@ -1785,7 +1785,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
 void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(!InitRFSizes(prjn)) return;
   int n_cons = rf_width.Product();
-  TwoDCoord ruc;
+  taVector2i ruc;
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -1802,18 +1802,18 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
         int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
         if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
-        TwoDCoord su_st;
+        taVector2i su_st;
         su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
         su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
-        TwoDCoord su_ed = su_st + rf_width;
+        taVector2i su_ed = su_st + rf_width;
 
         for(int rui=0;rui < ru_nunits; rui++) {
           Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
           if(!alloc_loop)
             ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          TwoDCoord suc;
+          taVector2i suc;
           for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
             for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
               Unit* su_u = prjn->from->UnitAtCoord(suc);
@@ -1847,7 +1847,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
   new_idxs.SetSize(n_cons);
   new_idxs.FillSeq();
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
       if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
@@ -1856,7 +1856,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
       int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
       if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
-      TwoDCoord su_st;
+      taVector2i su_st;
       su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
       su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
@@ -1867,7 +1867,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
 
         for(int i=0;i<n_new_cons;i++) {
           int su_idx = new_idxs[i];
-          TwoDCoord suc;
+          taVector2i suc;
           suc.y = su_idx / rf_width.x;
           suc.x = su_idx % rf_width.x;
           suc += su_st;
@@ -1898,7 +1898,7 @@ void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
   taBase_List* selgp = nv->GetSelectGroup();
   selgp->Reset();
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
       if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
@@ -1908,11 +1908,11 @@ void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
 
       selgp->LinkUnique(ru_gp);
 
-      TwoDCoord su_st;
+      taVector2i su_st;
       su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
       su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
-      TwoDCoord suc;
+      taVector2i suc;
       for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
         for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
           Unit* su_u = prjn->from->UnitAtCoord(suc);
@@ -1959,20 +1959,20 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
   int sg_sz_tot = send_gp_size.Product();
   int alloc_no = sg_sz_tot * su_nunits;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap)        su_st = (ruc-1) * send_gp_skip;
         else            su_st = ruc * send_gp_skip;
 
@@ -1982,8 +1982,8 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
             ru_u->RecvConsPreAlloc(alloc_no, prjn);
         }
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
           for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
             suc_wrp = suc;
@@ -2006,8 +2006,8 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   Layer* recv_lay = prjn->from; // from perspective of non-recip!
   Layer* send_lay = prjn->layer;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
@@ -2015,16 +2015,16 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
   alloc_sz.InitVals(0);
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      TwoDCoord su_st;
+      taVector2i su_st;
       if(wrap)  su_st = (ruc-1) * send_gp_skip;
       else      su_st = ruc * send_gp_skip;
 
-      TwoDCoord suc;
-      TwoDCoord suc_wrp;
+      taVector2i suc;
+      taVector2i suc_wrp;
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
         for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
           suc_wrp = suc;
@@ -2051,12 +2051,12 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap)        su_st = (ruc-1) * send_gp_skip;
         else            su_st = ruc * send_gp_skip;
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
           for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
             suc_wrp = suc;
@@ -2125,21 +2125,21 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
     send_lay = prjn->layer;
   }
 
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      TwoDCoord su_st;
+      taVector2i su_st;
       if(wrap)  su_st = (ruc-1) * send_gp_skip;
       else      su_st = ruc * send_gp_skip;
 
-      TwoDCoord suc;
-      TwoDCoord suc_wrp;
+      taVector2i suc;
+      taVector2i suc_wrp;
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
         for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
           suc_wrp = suc;
@@ -2262,12 +2262,12 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         su_st.x = (int)((float)ruc.x * rf_width.x);
         su_st.y = (int)((float)ruc.y * rf_width.y);
 
@@ -2277,7 +2277,7 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
           if(!alloc_loop)
             ru_u->RecvConsPreAlloc(alloc_sz, prjn);
 
-          TwoDCoord suc;
+          taVector2i suc;
           for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
             for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
               Unit* su_u = send_lay->UnitAtCoord(suc);
@@ -2307,15 +2307,15 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   alloc_sz.InitVals(0);
 
   // find alloc sizes
-  TwoDCoord ruc;
+  taVector2i ruc;
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      TwoDCoord su_st;
+      taVector2i su_st;
       su_st.x = (int)((float)ruc.x * rf_width.x);
       su_st.y = (int)((float)ruc.y * rf_width.y);
 
-      TwoDCoord suc;
+      taVector2i suc;
       for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
         for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
           Unit* su_u = send_lay->UnitAtCoord(suc);
@@ -2328,7 +2328,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 
   // do the alloc
-  TwoDCoord suc;
+  taVector2i suc;
   for(suc.y = 0; suc.y < send_lay->flat_geom.y; suc.y++) {
     for(suc.x = 0; suc.x < send_lay->flat_geom.x; suc.x++) {
       Unit* su_u = send_lay->UnitAtCoord(suc);
@@ -2343,11 +2343,11 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         su_st.x = (int)((float)ruc.x * rf_width.x);
         su_st.y = (int)((float)ruc.y * rf_width.y);
 
-        TwoDCoord suc;
+        taVector2i suc;
         for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
           for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
             Unit* su_u = send_lay->UnitAtCoord(suc);
@@ -2390,7 +2390,7 @@ void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
 
 Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord su_geo = send_lay->gp_geom;
+  taVector2i su_geo = send_lay->gp_geom;
   int n_su_gps = send_lay->gp_geom.n;
 
   int alloc_no = n_su_gps;      // number of cons per recv unit
@@ -2404,7 +2404,7 @@ Layer* recv_lay = prjn->layer;
     if(!ru_u) break;
     ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
-    TwoDCoord suc;
+    taVector2i suc;
     for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
       for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
         int sgpidx = send_lay->UnitGpIdxFmPos(suc);
@@ -2439,7 +2439,7 @@ void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
+  taVector2i ru_geo = recv_lay->gp_geom;
   int n_ru_gps = recv_lay->gp_geom.n;
 
   int su_alloc_no = n_ru_gps;   // number of cons from each send unit
@@ -2458,7 +2458,7 @@ void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn) {
   // now actually build connections
   for(int si = 0; si<send_lay->units.leaves; si++) {
     Unit* su_u = (Unit*)send_lay->units.Leaf(si);
-    TwoDCoord ruc;
+    taVector2i ruc;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
         int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
@@ -2501,8 +2501,8 @@ void TiledGpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->un_geom; // note: unit group geometry!
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->un_geom; // note: unit group geometry!
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
   int su_ngps = send_lay->gp_geom.n;
@@ -2510,12 +2510,12 @@ void TiledGpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
   int sg_sz_tot = send_tile_size.Product();
   int alloc_no = sg_sz_tot * su_ngps;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap)        su_st = (ruc-1) * send_tile_skip;
         else            su_st = ruc * send_tile_skip;
 
@@ -2525,8 +2525,8 @@ void TiledGpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
             ru_u->RecvConsPreAlloc(alloc_no, prjn);
         }
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
           for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
             suc_wrp = suc;
@@ -2549,8 +2549,8 @@ void TiledGpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
 void TiledGpMapConvergePrjnSpec::Connect_Reciprocal(Projection* prjn) {
   Layer* recv_lay = prjn->from; // from perspective of non-recip!
   Layer* send_lay = prjn->layer;
-  TwoDCoord ru_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->un_geom; // note: un_geom
+  taVector2i ru_geo = recv_lay->gp_geom;
+  taVector2i su_geo = send_lay->un_geom; // note: un_geom
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
   int su_ngps = send_lay->gp_geom.n;
@@ -2559,16 +2559,16 @@ void TiledGpMapConvergePrjnSpec::Connect_Reciprocal(Projection* prjn) {
   alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
   alloc_sz.InitVals(0);
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      TwoDCoord su_st;
+      taVector2i su_st;
       if(wrap)  su_st = (ruc-1) * send_tile_skip;
       else      su_st = ruc * send_tile_skip;
 
-      TwoDCoord suc;
-      TwoDCoord suc_wrp;
+      taVector2i suc;
+      taVector2i suc_wrp;
       for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
         for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
           suc_wrp = suc;
@@ -2595,12 +2595,12 @@ void TiledGpMapConvergePrjnSpec::Connect_Reciprocal(Projection* prjn) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap)        su_st = (ruc-1) * send_tile_skip;
         else            su_st = ruc * send_tile_skip;
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
           for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
             suc_wrp = suc;
@@ -2707,11 +2707,11 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
     return;
 
   int n_cons = rf_width.Product();
-  TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = prjn->layer->flat_geom; // uses flat geom -- not ug based
-  TwoDCoord su_geo = prjn->from->flat_geom;
+  taVector2i rf_half_wd = rf_width / 2;
+  taVector2i rug_geo = prjn->layer->flat_geom; // uses flat geom -- not ug based
+  taVector2i su_geo = prjn->from->flat_geom;
 
-  TwoDCoord ruc;
+  taVector2i ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
@@ -2721,7 +2721,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
         if(!alloc_loop)
           ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-        TwoDCoord su_st;
+        taVector2i su_st;
         if(wrap) {
           su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
           su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
@@ -2732,7 +2732,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
         }
 
         su_st.WrapClip(wrap, su_geo);
-        TwoDCoord su_ed = su_st + rf_width;
+        taVector2i su_ed = su_st + rf_width;
         if(wrap) {
           su_ed.WrapClip(wrap, su_geo); // just wrap ends too
         }
@@ -2746,8 +2746,8 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
         }
 
 
-        TwoDCoord suc;
-        TwoDCoord suc_wrp;
+        taVector2i suc;
+        taVector2i suc_wrp;
         for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
           for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
             suc_wrp = su_st + suc;
@@ -2771,8 +2771,8 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
 
-  TwoDCoord rf_half_wd = rf_width / 2;
-  FloatTwoDCoord rf_ctr = rf_half_wd;
+  taVector2i rf_half_wd = rf_width / 2;
+  taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even
     rf_ctr -= .5f;
 
@@ -2895,7 +2895,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   Layer* send_lay = (Layer*)prjn->from.ptr();
   Unit* lru = (Unit*)ru;
   int rgpidx = lru->UnitGpIdx();
-  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
+  taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
   float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
   float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
 
@@ -2908,7 +2908,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
-    TwoDCoord su_pos;
+    taVector2i su_pos;
     send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;
@@ -2963,7 +2963,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
-  TwoDCoord ru_pos;
+  taVector2i ru_pos;
   recv_lay->UnitLogPos(ru, ru_pos);
   float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1);
   float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
@@ -2977,7 +2977,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
 
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
-    TwoDCoord su_pos;
+    taVector2i su_pos;
     send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;

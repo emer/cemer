@@ -1317,7 +1317,7 @@ void SoMatrixGrid::render() {
 
   String val_str;
   T3Color col;
-  TwoDCoord pos;
+  taVector2i pos;
   int v_idx = 0;
   int t_idx = 2;		// base color + font
   // these go in normal order; indexes are backwards
@@ -1355,7 +1355,7 @@ void SoMatrixGrid::render() {
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  TwoDCoord apos = pos;
+	  taVector2i apos = pos;
 	  if(odd_y)
 	    apos.y += z * (ymax+1);
 	  else
@@ -1389,12 +1389,12 @@ void SoMatrixGrid::render() {
     int ymax = matrix->dim(1);
     int xxmax = matrix->dim(2);
     int yymax = matrix->dim(3);
-    TwoDCoord opos;
+    taVector2i opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    TwoDCoord apos = pos;
+	    taVector2i apos = pos;
 	    apos.x += opos.x * (xmax+1);
 	    apos.y += opos.y * (ymax+1);
 	    float xp = ((float)apos.x + cl_spc) * cl_x;
@@ -1480,7 +1480,7 @@ void SoMatrixGrid::render() {
     int ymax = matrix->dim(1);
     int xxmax = matrix->dim(2);
     int yymax = matrix->dim(3);
-    TwoDCoord opos;
+    taVector2i opos;
     for(opos.y=yymax-1; opos.y>=0; opos.y--) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=ymax-1; pos.y>=0; pos.y--) {
@@ -1612,7 +1612,7 @@ void SoMatrixGrid::renderValues() {
   float val;
   float sc_val;
   T3Color col;
-  TwoDCoord pos;
+  taVector2i pos;
   int v_idx = 0;
   int c_idx = 0;
   int t_idx = 2;		// base color + font
@@ -1729,7 +1729,7 @@ void SoMatrixGrid::renderValues() {
     int ymax = matrix->dim(1);
     int xxmax = matrix->dim(2);
     int yymax = matrix->dim(3);
-    TwoDCoord opos;
+    taVector2i opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
@@ -1992,7 +1992,7 @@ void So3DHeightField::render() {
 
   String val_str;
   T3Color col;
-  TDCoord pos;
+  taVector3i pos;
   int v_idx = 0;
   int t_idx = 2;		// base color + font
   // these go in normal order; indexes are backwards
@@ -2122,7 +2122,7 @@ void So3DHeightField::renderValues() {
   String val_str;
   float sc_val;
   T3Color col;
-  TDCoord pos;
+  taVector3i pos;
   int v_idx = 0;
   int c_idx = 0;
   int t_idx = 2;		// base color + font
@@ -2203,7 +2203,7 @@ void So3DHeightField::renderValues() {
         float dx = xm_zp - xp_zp;
         float dy = ym_zp - yp_zp;
 	
-	FloatTDCoord n;
+	taVector3f n;
 	n.x = dx;	n.y = dy;	n.z = max_xy;
 	n.MagNorm();
 	normal_dat[n_idx++].setValue(n.x, n.z, n.y); // yz switched
@@ -2264,7 +2264,7 @@ void So3DHeightField::renderGrid() {
   int cidx = 0;
 
   int nxy = geom_x * geom_y;
-  TDCoord pos;
+  taVector3i pos;
   for(pos.z=0; pos.z<geom_z; pos.z++) {
     // X guys
     for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
@@ -2325,7 +2325,7 @@ void So3DHeightField::renderVector() {
 
   SbVec3f* vertex_dat = vertex.startEditing();
 
-  TDCoord pos;
+  taVector3i pos;
   int v_idx = 0;
   // just standard points
   for(pos.z=0; pos.z<geom_z; pos.z++) {
@@ -2383,7 +2383,7 @@ void So3DHeightField::renderVectorValues() {
   float cl_y = 1.0f / (float)(geom_y-1);
   float cl_z = 1.0f / (float)(geom_z);
 
-  FloatTDCoord vec_ln;
+  taVector3f vec_ln;
   vec_ln.x = cl_x * vec_len;
   vec_ln.y = cl_y * vec_len;
   vec_ln.z = cl_z * vec_len;
@@ -2405,13 +2405,13 @@ void So3DHeightField::renderVectorValues() {
     normal_dat = normal.startEditing();
 
   T3Color col;
-  TDCoord pos;
+  taVector3i pos;
   int v_idx = 0;
   int c_idx = 0;
   float sc_val;
-  FloatTDCoord vec;
-  FloatTDCoord sp;
-  FloatTDCoord ep;
+  taVector3f vec;
+  taVector3f sp;
+  taVector3f ep;
 
 //   float max_trans = 1.0f - min_alpha;
 

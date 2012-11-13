@@ -439,7 +439,7 @@ void BrainViewPanel::SetDataName(const QString& data_name)
 {
   getBrainView()->SetDataName(data_name);
 }
-void BrainViewPanel::SetDimensions(const TDCoord& dimensions)
+void BrainViewPanel::SetDimensions(const taVector3i& dimensions)
 {
   getBrainView()->SetDimensions(dimensions);
 }
@@ -523,7 +523,7 @@ void BrainViewPanel::EmitDataNameChanged(const QString& name)
   // any widgets that may be connected to it
   emit DataNameChanged(name);
 }
-void BrainViewPanel::EmitDimensionsChanged(const TDCoord& d)
+void BrainViewPanel::EmitDimensionsChanged(const taVector3i& d)
 {
   // calling this method allows us to raise a signal, notifying
   // any widgets that may be connected to it

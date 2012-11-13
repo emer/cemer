@@ -96,7 +96,7 @@ NetworkVoxelMapper::AssignVoxels()
   foreach(const QString &brain_area, brain_areas) {
     // Get the collection of voxel coordinates associated with that
     // brain area.
-    QList<FloatTDCoord> voxels = GetVoxelsInArea(brain_area);
+    QList<taVector3f> voxels = GetVoxelsInArea(brain_area);
 
     // Assign voxel coordinates and sizes to all units.
     AssignVoxelsInArea(brain_area, voxels);
@@ -131,10 +131,10 @@ NetworkVoxelMapper::CreateLayerMap()
 
 // Get the collection of voxels associated with the given brain area,
 // in an atlas-specific manner.
-QList<FloatTDCoord>
+QList<taVector3f>
 NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
 {
-  QList<FloatTDCoord> voxels;
+  QList<taVector3f> voxels;
 
   if (DEBUG_LEVEL > 0) {
     // Some test brain areas.
@@ -142,7 +142,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
       for (int x = -2; x < 0; ++x) {
         for (int y = -2; y < 0; ++y) {
           for (int z = 70; z < 71; ++z) {
-            voxels << FloatTDCoord(x, y, z);
+            voxels << taVector3f(x, y, z);
           }
         }
       }
@@ -152,7 +152,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
       for (int x = 0; x < 20; ++x) {
         for (int y = 0; y < 20; ++y) {
           for (int z = 50; z < 51; ++z) {
-            voxels << FloatTDCoord(x, y, z);
+            voxels << taVector3f(x, y, z);
           }
         }
       }
@@ -162,7 +162,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
       for (int x = -40; x < 0; x += 4) {
         for (int y = 0; y < 40; y += 4) {
           for (int z = 0; z < 40; z += 10) {
-            voxels << FloatTDCoord(x, y, z);
+            voxels << taVector3f(x, y, z);
           }
         }
       }
@@ -181,7 +181,7 @@ NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
 }
 
 void
-NetworkVoxelMapper::AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> voxels)
+NetworkVoxelMapper::AssignVoxelsInArea(QString brain_area, QList<taVector3f> voxels)
 {
   // Each unit's voxels' coordinates and sizes will be based on:
   // * the layer's percent-fill parameter (voxel_fill_pct)
@@ -236,7 +236,7 @@ NetworkVoxelMapper::AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> v
 
 void
 NetworkVoxelMapper::AssignVoxelsToLayers(
-  QList<FloatTDCoord> voxels,
+  QList<taVector3f> voxels,
   QList<unsigned> subvoxel_idxs,
   unsigned voxel_divisions)
 {
@@ -487,8 +487,8 @@ NetworkVoxelMapper::GetSubvoxelIndexes(
   return subvoxel_idxs;
 }
 
-FloatTDCoord
-NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions)
+taVector3f
+NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<taVector3f> &voxels, unsigned voxel_divisions)
 {
   // Turn a subvoxel index into a voxel and x,y,z offset into that voxel.
   int temp = subvoxel_idx;
@@ -504,7 +504,7 @@ NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &v
   int voxel_idx = temp;
   assert(voxel_idx < voxels.size());
 
-  FloatTDCoord coord(dx, dy, dz);
+  taVector3f coord(dx, dy, dz);
   coord /= static_cast<float>(voxel_divisions);
   coord += voxels[voxel_idx];
 

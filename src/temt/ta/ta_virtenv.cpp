@@ -128,6 +128,19 @@ void VEBody::UpdateAfterEdit_impl() {
       length = 1.1f * 2.0f * radius;
     }
   }
+  // keep synchronized..
+  if(HasBodyFlag(EULER_ROT)) {
+    init_quat = init_euler;
+    init_quat.Normalize();
+    init_quat.ToEulerVec(init_euler);
+    init_rot = init_quat;
+  }
+  else {
+    init_quat = init_rot;
+    init_quat.Normalize();
+    init_rot = init_quat;
+    init_quat.ToEulerVec(init_euler);
+  }
 }
 
 VEWorld* VEBody::GetWorld() {
@@ -268,30 +281,45 @@ void VEBody::SetValsToODE_InitPos() {
 void VEBody::SetValsToODE_Rotation() {
   dBodyID bid = (dBodyID)body_id;
   cur_rot = init_rot;
+  cur_euler = init_euler;
+  cur_quat = init_quat;
 
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
-  dMatrix3 R;
+  taQuaternion eff_rot = cur_quat;
   if(shape == CAPSULE || shape == CYLINDER) {
-    SbRotation irot;
-    irot.setValue(SbVec3f(init_rot.x, init_rot.y, init_rot.z), init_rot.rot);
     if(long_axis == LONG_X) {
-      SbRotation sbrot;
-      sbrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), 1.5708f);
-      irot *= sbrot;
+      eff_rot.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
     }
     else if(long_axis == LONG_Y) {
-      SbRotation sbrot;
-      sbrot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      irot *= sbrot;
+      eff_rot.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
     }
-    SbVec3f rot_ax;    float rangle;
-    irot.getValue(rot_ax, rangle);
-    dRFromAxisAndAngle(R, rot_ax[0], rot_ax[1], rot_ax[2], rangle);
   }
-  else {
-    dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
-  }
-  dBodySetRotation(bid, R);
+  dQuaternion Q;
+  eff_rot.ToODE(Q);
+  dBodySetQuaternion(bid, Q);
+
+  // dMatrix3 R;
+  // if(shape == CAPSULE || shape == CYLINDER) {
+  //   SbRotation irot;
+  //   irot.setValue(SbVec3f(init_rot.x, init_rot.y, init_rot.z), init_rot.rot);
+  //   if(long_axis == LONG_X) {
+  //     SbRotation sbrot;
+  //     sbrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), 1.5708f);
+  //     irot *= sbrot;
+  //   }
+  //   else if(long_axis == LONG_Y) {
+  //     SbRotation sbrot;
+  //     sbrot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+  //     irot *= sbrot;
+  //   }
+  //   SbVec3f rot_ax;    float rangle;
+  //   irot.getValue(rot_ax, rangle);
+  //   dRFromAxisAndAngle(R, rot_ax[0], rot_ax[1], rot_ax[2], rangle);
+  // }
+  // else {
+  //   dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
+  // }
+  // dBodySetRotation(bid, R);
 }
 
 void VEBody::SetValsToODE_Velocity() {
@@ -379,15 +407,9 @@ void VEBody::GetValsFmODE(bool updt_disp) {
 
   // ODE quaternion = w,x,y,z; Inventor = x,y,z,w
   const dReal* quat = dBodyGetQuaternion(bid);
-  SbRotation sbrot;
-  sbrot.setValue(quat[1], quat[2], quat[3], quat[0]);
-
-  FixExtRotation(sbrot);
+  cur_quat.FromODE(quat);
+  UpdateCurRotFmQuat();
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
-
-  SbVec3f rot_ax;
-  sbrot.getValue(rot_ax, cur_rot.rot);
-  cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
 
   const dReal* olv = dBodyGetLinearVel(bid);
   cur_lin_vel.x = olv[0]; cur_lin_vel.y = olv[1]; cur_lin_vel.z = olv[2];
@@ -400,26 +422,23 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   //  dBodyGetMass(bid, &mass);
 }
 
-void VEBody::FixExtRotation(SbRotation& sbrot) {
+void VEBody::UpdateCurRotFmQuat() {
+  // update the current rotation parameters from cur_quat
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
   if(shape == CAPSULE || shape == CYLINDER) {
     if(long_axis == LONG_X) {
-      SbVec3f yaxis(0.0f, 1.0f, 0.0f);
-      SbVec3f new_yaxis;
-      sbrot.multVec(yaxis, new_yaxis);
-      SbRotation ubrot;
-      ubrot.setValue(new_yaxis, -1.5708f); // undo along the new yaxis, not the original one..
-      sbrot *= ubrot;
+      taVector3f yaxis(0.0f, 1.0f, 0.0f);
+      cur_quat.RotateVec(yaxis);	// rotate to current 
+      cur_quat.RotateAxis(yaxis.x, yaxis.y, yaxis.z, -1.5708f); // undo along the new yaxis, not the original one..
     }
     else if(long_axis == LONG_Y) {
-      SbVec3f xaxis(1.0f, 0.0f, 0.0f);
-      SbVec3f new_xaxis;
-      sbrot.multVec(xaxis, new_xaxis);
-      SbRotation ubrot;
-      ubrot.setValue(new_xaxis, -1.5708f); // undo along the new xaxis, not the original one..
-      sbrot *= ubrot;
+      taVector3f xaxis(1.0f, 0.0f, 0.0f);
+      cur_quat.RotateVec(xaxis);
+      cur_quat.RotateAxis(xaxis.x, xaxis.y, xaxis.z, -1.5708f); // undo along the new xaxis, not the original one..
     }
   }
+  cur_quat.ToAxisAngle(cur_rot);
+  cur_quat.ToEulerVec(cur_euler);
 }
 
 void VEBody::Translate(float dx, float dy, float dz, bool init) {
@@ -464,29 +483,34 @@ void VEBody::Scale(float sx, float sy, float sz) {
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
-void VEBody::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
-    "Rotate", "must specify a non-zero axis!"))
+    "RotateAxis", "must specify a non-zero axis!"))
     return;
 
-  SbRotation sbrot;
-  sbrot.setValue(SbVec3f(x_ax, y_ax, z_ax), rot);
-
   if(init) {
-    SbRotation irot;
-    irot.setValue(SbVec3f(init_rot.x, init_rot.y, init_rot.z), init_rot.rot);
-    irot *= sbrot;
-    SbVec3f rot_ax;
-    irot.getValue(rot_ax, init_rot.rot);
-    init_rot.x = rot_ax[0]; init_rot.y = rot_ax[1]; init_rot.z = rot_ax[2];
+    init_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    init_quat.ToAxisAngle(init_rot);
+    init_quat.ToEulerVec(init_euler);
   }
   else {
-    SbRotation irot;
-    irot.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-    irot *= sbrot;
-    SbVec3f rot_ax;
-    irot.getValue(rot_ax, cur_rot.rot);
-    cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
+    cur_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    cur_quat.ToAxisAngle(cur_rot);
+    cur_quat.ToEulerVec(cur_euler);
+  }
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+  if(init) {
+    init_quat.RotateEuler(euler_x, euler_y, euler_z);
+    init_quat.ToAxisAngle(init_rot);
+    init_quat.ToEulerVec(init_euler);
+  }
+  else {
+    cur_quat.RotateEuler(euler_x, euler_y, euler_z);
+    cur_quat.ToAxisAngle(cur_rot);
+    cur_quat.ToEulerVec(cur_euler);
   }
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
@@ -677,9 +701,15 @@ void VEBody_Group::Scale(float sx, float sy, float sz) {
   }
 }
 
-void VEBody_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+void VEBody_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
-    ob->Rotate(x_ax, y_ax, z_ax, rot, init);
+    ob->RotateAxis(x_ax, y_ax, z_ax, rot, init);
+  }
+}
+
+void VEBody_Group::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
+    ob->RotateEuler(euler_x, euler_y, euler_z, init);
   }
 }
 
@@ -985,7 +1015,7 @@ void VEJoint::SetValsToODE() {
 
 void VEJoint::SetValsToODE_Anchor() {
   dJointID jid = (dJointID)joint_id;
-  FloatTDCoord wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
+  taVector3f wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
 
   switch(joint_type) {
   case BALL:
@@ -1785,8 +1815,12 @@ void VEObject::Scale(float sx, float sy, float sz) {
   bodies.Scale(sx, sy, sz);
 }
 
-void VEObject::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
-  bodies.Rotate(x_ax, y_ax, z_ax, rot, init);
+void VEObject::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  bodies.RotateAxis(x_ax, y_ax, z_ax, rot, init);
+}
+
+void VEObject::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+  bodies.RotateEuler(euler_x, euler_y, euler_z, init);
 }
 
 void VEObject::CopyColorFrom(VEBody* cpy_fm) {
@@ -1840,9 +1874,15 @@ void VEObject_Group::Scale(float sx, float sy, float sz) {
   }
 }
 
-void VEObject_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+void VEObject_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
   FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
-    ob->Rotate(x_ax, y_ax, z_ax, rot, init);
+    ob->RotateAxis(x_ax, y_ax, z_ax, rot, init);
+  }
+}
+
+void VEObject_Group::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
+    ob->RotateEuler(euler_x, euler_y, euler_z, init);
   }
 }
 
@@ -1894,6 +1934,15 @@ void VEStatic::UpdateAfterEdit_impl() {
     if(TestWarning(length < 2.0f * radius, "", "capsule length must be > 2 * radius!")) {
       length = 1.1f * 2.0f * radius;
     }
+  }
+  // keep synchronized..
+  if(HasStaticFlag(EULER_ROT)) {
+    rot_quat = rot_euler;
+    rot = rot_quat;
+  }
+  else {
+    rot_quat = rot;
+    rot_quat.ToEulerVec(rot_euler);
   }
 }
 
@@ -2055,20 +2104,21 @@ void VEStatic::Scale(float sx, float sy, float sz) {
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
-void VEStatic::Rotate(float x_ax, float y_ax, float z_ax, float rt) {
+void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
     "RotateBody", "must specify a non-zero axis!"))
     return;
 
-  SbRotation sbrot;
-  sbrot.setValue(SbVec3f(x_ax, y_ax, z_ax), rt);
+  rot_quat.RotateAxis(x_ax, y_ax, z_ax, rt);
+  rot = rot_quat;
+  rot_quat.ToEulerVec(rot_euler);
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
 
-  SbRotation irot;
-  irot.setValue(SbVec3f(rot.x, rot.y, rot.z), rot.rot);
-  irot *= sbrot;
-  SbVec3f rot_ax;
-  irot.getValue(rot_ax, rot.rot);
-  rot.x = rot_ax[0]; rot.y = rot_ax[1]; rot.z = rot_ax[2];
+void VEStatic::RotateEuler(float euler_x, float euler_y, float euler_z) {
+  rot_quat.RotateEuler(euler_x, euler_y, euler_z);
+  rot = rot_quat;
+  rot_quat.ToEulerVec(rot_euler);
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
@@ -2129,9 +2179,15 @@ void VEStatic_Group::Scale(float sx, float sy, float sz) {
   }
 }
 
-void VEStatic_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
+void VEStatic_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot) {
   FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
-    ob->Rotate(x_ax, y_ax, z_ax, rot);
+    ob->RotateAxis(x_ax, y_ax, z_ax, rot);
+  }
+}
+
+void VEStatic_Group::RotateEuler(float euler_x, float euler_y, float euler_z) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
+    ob->RotateEuler(euler_x, euler_y, euler_z);
   }
 }
 
@@ -2226,8 +2282,12 @@ void VESpace::Scale(float sx, float sy, float sz) {
   static_els.Scale(sx, sy, sz);
 }
 
-void VESpace::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
-  static_els.Rotate(x_ax, y_ax, z_ax, rot);
+void VESpace::RotateAxis(float x_ax, float y_ax, float z_ax, float rot) {
+  static_els.RotateAxis(x_ax, y_ax, z_ax, rot);
+}
+
+void VESpace::RotateEuler(float euler_x, float euler_y, float euler_z) {
+  static_els.RotateEuler(euler_x, euler_y, euler_z);
 }
 
 void VESpace::CopyColorFrom(VEStatic* cpy_fm) {
@@ -2268,9 +2328,15 @@ void VESpace_Group::Scale(float sx, float sy, float sz) {
   }
 }
 
-void VESpace_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
+void VESpace_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot) {
   FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
-    ob->Rotate(x_ax, y_ax, z_ax, rot);
+    ob->RotateAxis(x_ax, y_ax, z_ax, rot);
+  }
+}
+
+void VESpace_Group::RotateEuler(float euler_x, float euler_y, float euler_z) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->RotateEuler(euler_x, euler_y, euler_z);
   }
 }
 

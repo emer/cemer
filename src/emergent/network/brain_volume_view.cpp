@@ -285,7 +285,7 @@ void BrainVolumeView::RenderBrain()
   T3BrainNode& node = *(this->node_so());
 
   // Get the dimensions of the brain
-  TDCoord dims(m_brain_data->XyzDimensions());
+  taVector3i dims(m_brain_data->XyzDimensions());
   float max_dim = taMath_float::max(dims.z, taMath_float::max(dims.x, dims.y));
 
   SoSeparator* ss = node.shapeSeparator();
@@ -429,7 +429,7 @@ void BrainVolumeView::RenderBrain()
 
 void BrainVolumeView::SliceAsTexture(BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data)
 {
-  TDCoord size(brain_data->XyzDimensions());
+  taVector3i size(brain_data->XyzDimensions());
   int plane_size(0);
   if (p == BrainView::AXIAL) {
     plane_size = size.x*size.y;
@@ -481,7 +481,7 @@ void BrainVolumeView::SliceAsTexture(BrainView::AnatomicalPlane p, int index, un
 
 void BrainVolumeView::SliceAsColorTexture(BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data, NiftiReader* atlas_data)
 {
-  TDCoord size(brain_data->XyzDimensions());
+  taVector3i size(brain_data->XyzDimensions());
   int plane_size(0), width(0), height(0), depth(0);
   if (p == BrainView::AXIAL) {
     plane_size = size.x*size.y;
@@ -784,8 +784,8 @@ void BrainVolumeView::CreateFaceSets()
   T3BrainNode& node = *(this->node_so());
 
   BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
-  FloatTDCoord dims(bv->Dimensions());
-  FloatTDCoord half_dims;
+  taVector3f dims(bv->Dimensions());
+  taVector3f half_dims;
   half_dims.SetXYZ(dims.x/2.0f, dims.y/2.0f, dims.z/2.0f);
 
   // clear the old maps
@@ -804,8 +804,8 @@ void BrainVolumeView::CreateFaceSets()
       FOREACH_ELEM_IN_LIST(Voxel, v, u->voxels) {
         if (v->size == 0) continue;
 
-        FloatTDCoord mniCoord(v->coord);
-        FloatTDCoord ijkCoord(m_brain_data->XyzToIjk(mniCoord));
+        taVector3f mniCoord(v->coord);
+        taVector3f ijkCoord(m_brain_data->XyzToIjk(mniCoord));
         if ((view_plane == BrainView::AXIAL) || (view_plane == BrainView::SAGITTAL)) {
           // reverse x coordinates:
           // we must do this for these views since we don't render the brain in neurological
@@ -831,7 +831,7 @@ void BrainVolumeView::CreateFaceSets()
   }
 
   // iterate over all slices, and for each voxel at that slice depth, create face in face set
-  FloatTDCoord voxel_coord;
+  taVector3f voxel_coord;
   for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
     if (0 == voxels.size()) continue;
@@ -980,8 +980,8 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   T3BrainNode& node = *(this->node_so());
 
   BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
-  FloatTDCoord dims(bv->Dimensions());
-  FloatTDCoord half_dims;
+  taVector3f dims(bv->Dimensions());
+  taVector3f half_dims;
   half_dims.SetXYZ(dims.x/2.0f, dims.y/2.0f, dims.z/2.0f);
 
   // return if we don't have a network atlas chosen
@@ -990,7 +990,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   BrainAtlas& atlas = bv->net()->brain_atlas.ptr()->Atlas();
 
   // Get and assign voxel coordinates and sizes to all units.
-  QList<FloatTDCoord> voxels = atlas.VoxelCoordinates(brain_area);
+  QList<taVector3f> voxels = atlas.VoxelCoordinates(brain_area);
 
   // clear the old map
   m_atlas_depth_map.clear();
@@ -998,8 +998,8 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   if(voxels.size() == 0) return;
 
   // create the depth map
-  foreach (FloatTDCoord v, voxels) {
-    FloatTDCoord ijkCoord(m_brain_data->XyzToIjk(v));
+  foreach (taVector3f v, voxels) {
+    taVector3f ijkCoord(m_brain_data->XyzToIjk(v));
     if ((view_plane == BrainView::AXIAL) || (view_plane == BrainView::SAGITTAL)) {
       // reverse x coordinates:
       // we must do this for these views since we don't render the brain in neurological
@@ -1034,7 +1034,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
   // iterate over all slices
   // for each voxel at a slice depth, create face in the face set
   for (int s = 0; s < maxslice; s++) {
-    QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
+    QList<taVector3f> voxels = m_atlas_depth_map.values(s);
 
     SoIndexedFaceSet* ifs = node.atlas_face_set_array[s];
     SoVertexProperty* vtx_prop = node.atlas_vrtx_prop_array[s];
@@ -1074,7 +1074,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
     const float shim  = 0.05f;
 
     // for each voxel at current slice depth, create face vertices in face set
-    foreach (FloatTDCoord voxel_coord, voxels) {
+    foreach (taVector3f voxel_coord, voxels) {
       float ri      = voxel_coord.x;
       float rj      = voxel_coord.y;
       float rk      = voxel_coord.z;
@@ -1148,7 +1148,7 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
     int nidx = 0;
     int midx = 0;
     int uidx = 0;
-    foreach (FloatTDCoord v, voxels) {
+    foreach (taVector3f v, voxels) {
       int c00_0 = uidx * n_per_vtx;
       int c10_0 = c00_0 + 1;
       int c01_0 = c00_0 + 2;
@@ -1206,7 +1206,7 @@ void BrainVolumeView::UpdateUnitValues_blocks()
 
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
-  FloatTDCoord voxel_coord;
+  taVector3f voxel_coord;
   for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
     if (0 == voxels.size()) continue;
@@ -1272,7 +1272,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
   for (int s = 0; s < bv->MaxSlices(); s++) {
-    QList<FloatTDCoord> voxels = m_atlas_depth_map.values(s);
+    QList<taVector3f> voxels = m_atlas_depth_map.values(s);
     if (0 == voxels.size()) continue;
 
     SoVertexProperty* vp  = node.atlas_vrtx_prop_array[s];
@@ -1281,7 +1281,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
     int idx(0);
     bool make_transparent = false;
     uint32_t* color_dat = color.startEditing();
-    foreach (FloatTDCoord voxel_coord,voxels) {
+    foreach (taVector3f voxel_coord,voxels) {
       if (view_plane == BrainView::AXIAL) {
         if ((voxel_coord.z > bv->SliceEnd()) || (voxel_coord.z < bv->SliceStart())) {
           make_transparent = true;

@@ -132,7 +132,8 @@ bool VETexture::UpdateTexture() {
 
 void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
-  cam->orientation.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  cam->orientation.setValue(cur_quat.x, cur_quat.y, cur_quat.z, cur_quat.s);
+  // SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
   cam->nearDistance = this->view_dist.near;
   cam->focalDistance = view_dist.focal;
   cam->farDistance = view_dist.far;
@@ -391,7 +392,8 @@ void VEBodyView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
-  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  //  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   if(ob->set_color) {
     SoMaterial* mat = obv->material();
@@ -420,7 +422,7 @@ void VEBodyView::Render_impl() {
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
       SoTransform* tx = node_so()->txfm_shape();
       if(ob->HasBodyFlag(VEBody::OFF)) {
-        FloatTransform off_tx = ob->obj_xform;
+        taTransform off_tx = ob->obj_xform;
         off_tx.scale.SetXYZ(off_size, off_size, off_size);
         off_tx.CopyTo(tx);
       }
@@ -495,16 +497,16 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   VEWorldView* wv = obv->parent();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  cur_rot.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   ob->cur_pos += tr;
   ob->init_pos = ob->cur_pos;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
@@ -515,14 +517,11 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   float angle;
   dragger->rotation.getValue(axis, angle);
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    // todo: does this need to undo cylinder/capsule stuff???
-    SbRotation rot;
-    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation nw_rot = rot * cur_rot;
-    nw_rot.getValue(axis, angle);
-//     ob->FixExtRotation(nw_rot);
-    ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+    ob->cur_quat.RotateAxis(axis[0], axis[1], axis[2], angle);
+    ob->UpdateCurRotFmQuat();
+    ob->init_quat = ob->cur_quat;
     ob->init_rot = ob->cur_rot;
+    ob->init_euler = ob->cur_euler;
   }
 
 //   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -660,7 +659,7 @@ void VEObjCarouselView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
-  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   SoTransform* shtx = obv->txfm_shape();
   ob->obj_xform.CopyTo(shtx);
@@ -855,14 +854,13 @@ void VEJointView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   SbRotation sbrot;
-  sbrot.setValue(SbVec3f(bod1->cur_rot.x, bod1->cur_rot.y, bod1->cur_rot.z), bod1->cur_rot.rot);
+  sbrot.setValue(bod1->cur_quat.x, bod1->cur_quat.y, bod1->cur_quat.z, bod1->cur_quat.s);
   // rotate the anchor too!
   SbVec3f anchor(ob->anchor.x, ob->anchor.y, ob->anchor.z);
   SbVec3f nw_anc;
   sbrot.multVec(anchor, nw_anc);
   tx->translation.setValue(bod1->cur_pos.x + nw_anc[0], bod1->cur_pos.y + nw_anc[1],
                            bod1->cur_pos.z + nw_anc[2]);
-//   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   SoMaterial* mat = obv->material();
   mat->diffuseColor.setValue(1.0f, 0.0f, 0.0f);
@@ -1231,7 +1229,7 @@ void VEStaticView::Render_impl() {
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
       if(ob->HasStaticFlag(VEStatic::OFF)) {
-        FloatTransform off_tx = ob->obj_xform;
+        taTransform off_tx = ob->obj_xform;
         off_tx.scale.SetXYZ(off_size, off_size, off_size);
         off_tx.CopyTo(tx);
       }
@@ -1321,15 +1319,15 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   VEWorldView* wv = obv->parent();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+  cur_rot.setValue(ob->rot_quat.x, ob->rot_quat.y, ob->rot_quat.z, ob->rot_quat.s);
 
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   ob->pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
@@ -1339,13 +1337,10 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    SbRotation rot;
-    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation nw_rot = rot * cur_rot;
-    nw_rot.getValue(axis, angle);
-    ob->rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+    ob->rot_quat.RotateAxis(axis[0], axis[1], axis[2], angle);
+    ob->rot_quat.ToAxisAngle(ob->rot);
+    ob->rot_quat.ToEulerVec(ob->rot_euler);
   }
 
 //   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -1811,12 +1806,12 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     return img;
   }
 
-  TwoDCoord cur_img_size = vecam->img_size;
+  taVector2i cur_img_size = vecam->img_size;
 
   SbViewportRegion vpreg;
   vpreg.setWindowSize(cur_img_size.x, cur_img_size.y);
 
-  static TwoDCoord last_img_size;
+  static taVector2i last_img_size;
 
   if(!cam_renderer) {
     cam_renderer = new SoOffscreenRendererQt(vpreg);

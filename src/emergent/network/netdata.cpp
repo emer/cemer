@@ -897,7 +897,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     }
   }
   else if(geom.dims() == 2) {
-    TwoDCoord c;
+    taVector2i c;
     for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
         Unit* u = lay->UnitAtCoord(c); // NULL if odd size or not built
@@ -907,10 +907,10 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     }
   }
   else if(geom.dims() == 4) {
-    TwoDCoord gc;
+    taVector2i gc;
     for (gc.y = 0; gc.y < lay->gp_geom.y; ++gc.y) {
       for (gc.x = 0; gc.x < lay->gp_geom.x; ++gc.x) {
-        TwoDCoord c;
+        taVector2i c;
         for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
           for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
             Unit* u = lay->UnitAtGpCoord(gc, c);
@@ -1032,7 +1032,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   if(!con_md) return;           // can't find that var!
 
   // always create a 4dimensional matrix: 1st 2 are units, 2nd 2 are cons
-  TwoDCoord lay_geom;
+  taVector2i lay_geom;
   if(lay->unit_groups) {
     if(lay->gp_geom.n_not_xy || lay->un_geom.n_not_xy) {
       lay_geom.x = lay->units.leaves;
@@ -1053,8 +1053,8 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   }
 
   // find the geometry span of the cons
-  TwoDCoord con_geom_max;
-  TwoDCoord con_geom_min(INT_MAX, INT_MAX);
+  taVector2i con_geom_max;
+  taVector2i con_geom_min(INT_MAX, INT_MAX);
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     if(recv) {
       RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
@@ -1062,7 +1062,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j);
         if(!su) continue;
-        TwoDCoord upos;  su->LayerLogPos(upos);
+        taVector2i upos;  su->LayerLogPos(upos);
         con_geom_max.Max(upos);
         con_geom_min.Min(upos);
       }
@@ -1073,7 +1073,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j);
         if(!su) continue;
-        TwoDCoord upos; su->LayerLogPos(upos);
+        taVector2i upos; su->LayerLogPos(upos);
         con_geom_max.Max(upos);
         con_geom_min.Min(upos);
       }
@@ -1082,7 +1082,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   con_geom_max += 1;            // add one for sizing
   if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
     con_geom_min = 0;
-  TwoDCoord con_geom = con_geom_max - con_geom_min;
+  taVector2i con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(4, con_geom.x, con_geom.y, lay_geom.x, lay_geom.y);
@@ -1101,7 +1101,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j);
         if(!su) continue;
-        TwoDCoord upos;  su->LayerLogPos(upos);
+        taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
         ptrs[st_idx + idx] = cg->Cn(j); // set the ptr
@@ -1113,7 +1113,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j);
         if(!su) continue;
-        TwoDCoord upos;  su->LayerLogPos(upos);
+        taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
         ptrs[st_idx + idx] = cg->Cn(j); // set the ptr
@@ -1181,7 +1181,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
     }
   }
   else {
-    TwoDCoord c;
+    taVector2i c;
     for (c.y = 0; c.y < ug->own_lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < ug->own_lay->un_geom.x; ++c.x) {
         Unit* u = ug->UnitAtCoord(c); // NULL if odd size or not built
@@ -1215,19 +1215,19 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   if(!con_md) return;           // can't find that var!
 
   // find the geometry span of the cons
-  TwoDCoord con_geom_max;
-  TwoDCoord con_geom_min(INT_MAX, INT_MAX);
+  taVector2i con_geom_max;
+  taVector2i con_geom_min(INT_MAX, INT_MAX);
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->LayerLogPos(upos);
+    taVector2i upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
   con_geom_max += 1;            // add one for sizing
   if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
     con_geom_min = 0;
-  TwoDCoord con_geom = con_geom_max - con_geom_min;
+  taVector2i con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
@@ -1240,7 +1240,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->LayerLogPos(upos);
+    taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = cg->Cn(j);      // set the ptr
@@ -1253,19 +1253,19 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   if(!con_md) return;           // can't find that var!
 
   // find the geometry span of the cons
-  TwoDCoord con_geom_max;
-  TwoDCoord con_geom_min(INT_MAX, INT_MAX);
+  taVector2i con_geom_max;
+  taVector2i con_geom_min(INT_MAX, INT_MAX);
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->LayerLogPos(upos);
+    taVector2i upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
   con_geom_max += 1;            // add one for sizing
   if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
     con_geom_min = 0;
-  TwoDCoord con_geom = con_geom_max - con_geom_min;
+  taVector2i con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
@@ -1278,7 +1278,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->LayerLogPos(upos);
+    taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = cg->Cn(j);      // set the ptr

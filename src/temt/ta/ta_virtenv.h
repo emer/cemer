@@ -82,7 +82,7 @@ class TA_API ODEFiniteRotation : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// #DEF_false whether to enable finite rotation mode -- False: An "infinitesimal" orientation update is used. This is fast to compute, but it can occasionally cause inaccuracies for bodies that are rotating at high speed, especially when those bodies are joined to other bodies. True: A finite orientation update is used. This is more costly to compute, but will be more accurate for high speed rotations. Note however that high speed rotations can result in many types of error in a simulation, and this mode will only fix one of those sources of error.
-  FloatTDCoord  axis; // #CONDSHOW_ON_on This sets the finite rotation axis for a body, if finite rotation mode is being used. If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can set the wheel's hinge axis here to try and improve its behavior.
+  taVector3f  axis; // #CONDSHOW_ON_on This sets the finite rotation axis for a body, if finite rotation mode is being used. If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can set the wheel's hinge axis here to try and improve its behavior.
 
   TA_SIMPLE_BASEFUNS(ODEFiniteRotation);
 private:
@@ -133,10 +133,10 @@ public:
   Mode		mode;		// how to apply texture to object
   Wrap		wrap_horiz;	// how to wrap in the horizontal (largest) dimension
   Wrap		wrap_vert;	// how to wrap in the vertical (smallest) dimension
-  FloatTwoDCoord offset;	// [0,0] offset of image from 0,0 (x=horizontal dim, y=vertical dim, shape dependent)
-  FloatTwoDCoord scale;		// [1,1] scaling of image (x=horizontal dim, y=vertical dim, shape dependent)
+  taVector2f    offset;	// [0,0] offset of image from 0,0 (x=horizontal dim, y=vertical dim, shape dependent)
+  taVector2f    scale;		// [1,1] scaling of image (x=horizontal dim, y=vertical dim, shape dependent)
   float 	rot;		// [0] rotation in the plane, in degrees
-  FloatTwoDCoord center;	// [0,0] center point for scale and rotation
+  taVector2f    center;	// [0,0] center point for scale and rotation
   taColor	blend_color;	// #CONDSHOW_ON_mode:BLEND color to use in blend case
 
   int		idx;
@@ -175,8 +175,6 @@ private:
 };
 
 
-class SbRotation;		// #IGNORE
-
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
@@ -185,11 +183,12 @@ public:
     BF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
     FIXED 		= 0x0002, // body cannot move at all
-    PLANE2D		= 0x0004, // body is constrained to the Z=0 plane
-    FM_FILE		= 0x0008, // load object image features from Inventor (iv) object file
-    NO_COLLIDE		= 0x0010, // this body is not part of the collision detection system -- useful for light beams and other ephemera
-    CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
-    GRAVITY_ON		= 0x0040, // does gravitational force affect this body?
+    EULER_ROT		= 0x0004, // use euler rotation angles instead of axis and angle
+    PLANE2D		= 0x0008, // body is constrained to the Z=0 plane
+    FM_FILE		= 0x0010, // load object image features from Inventor (iv) object file
+    NO_COLLIDE		= 0x0020, // this body is not part of the collision detection system -- useful for light beams and other ephemera
+    CUR_FM_FILE		= 0x0040, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
+    GRAVITY_ON		= 0x0080, // does gravitational force affect this body?
   };
     //    COLLIDE_FM_FILE	= 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -210,24 +209,28 @@ public:
   void*		body_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the body (cast to a dBodyID which is dxbody*)
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the body (cast to a dGeomID which is dxgeom*)
   BodyFlags	flags;		// flags for various body properties
-  FloatTDCoord	init_pos;  	// initial position of body (when creating it)
-  FloatRotation	init_rot;  	// initial rotation of body (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  FloatTDCoord	init_lin_vel;	// initial linear velocity
-  FloatTDCoord	init_ang_vel;	// initial angular velocity
+  taVector3f	init_pos;  	// initial position of body (when creating it)
+  taAxisAngle	init_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT initial rotation of body in terms of an axis and angle (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	init_euler;  	// #CONDSHOW_ON_flags:EULER_ROT initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
+  taQuaternion init_quat;  	// #READ_ONLY initial rotation of body in Quaternion form -- automatically converted from init_rot or init_euler depending on EULER_ROT flag
+  taVector3f	init_lin_vel;	// initial linear velocity
+  taVector3f	init_ang_vel;	// initial angular velocity
 
-  FloatTDCoord	cur_pos;  	// current position of body
-  FloatRotation	cur_rot;  	// current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  FloatTDCoord	cur_lin_vel;	// current linear velocity
-  FloatTDCoord	cur_ang_vel;	// current angular velocity
+  taVector3f	cur_pos;  	// current position of body
+  taAxisAngle	cur_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	cur_euler;  	// #CONDSHOW_ON_flags:EULER_ROT current rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
+  taQuaternion cur_quat;  	// #READ_ONLY current rotation of body in Quaternion form
+  taVector3f	cur_lin_vel;	// current linear velocity
+  taVector3f	cur_ang_vel;	// current angular velocity
 
   Shape		shape;		// shape of body for purposes of mass/inertia and collision (and visual rendering if not FM_FILE)
   float		mass;		// total mass of body (in kg)
   float		radius;		// #CONDSHOW_OFF_shape:BOX radius of body, for all but box
   float		length;		// #CONDSHOW_OFF_shape:BOX,SPHERE length of body, for all but box 
   LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
+  taVector3f	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
 
-  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
+  taTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
   String	obj_fname;	// #CONDSHOW_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
@@ -283,18 +286,17 @@ public:
   virtual void	SetValsToODE_Gravity();	// #CAT_ODE set the gravity mode
   virtual void	SetValsToODE_Damping();	// #CAT_ODE set the damping parameters
 
-  virtual void	FixExtRotation(SbRotation& sbrot);
-  // #IGNORE fix any external rotation applied to the body -- needed for capsule and cylinder types that have to correct for different types of axes
+  virtual void	UpdateCurRotFmQuat();
+  // #IGNORE update current rotation parameters from cur_quat read from ODE -- needed for capsule and cylinder types that have to correct for different types of axes
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
-  virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init)
-  { Rotate(x_ax, y_ax, z_ax, rot, init); }
-  // #CAT_zzzObsolete obsolete -- use Rotate instead
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
 
   virtual void 	AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
   // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame
@@ -370,8 +372,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -425,15 +429,15 @@ public:
 #ifdef __MAKETA__
   Shape		shape;		// #READ_ONLY #HIDDEN shape for camera must always be a cylinder
   LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented) -- must always be LONG_Z for a camera
-  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+  taVector3f	box;		// #READ_ONLY #HIDDEN not relevant
 #endif
 
-  TwoDCoord	img_size;	// size of image to record from camera -- IMPORTANT -- if you will be using multiple cameras, it is very important that they all are the same size, otherwise the rendering will consume a lot of memory because a new buffer has to be created and destroyed each time (a shared buffer is used for all cameras)
+  taVector2i	img_size;	// size of image to record from camera -- IMPORTANT -- if you will be using multiple cameras, it is very important that they all are the same size, otherwise the rendering will consume a lot of memory because a new buffer has to be created and destroyed each time (a shared buffer is used for all cameras)
   bool		color_cam;	// if true, get full color images (else greyscale)
   VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in degrees) -- how much of scene is it taking in
   VELightParams	light;		// directional "headlight" associated with the camera -- ensures that whatever is being viewed can be seen (but makes lighting artificially consistent and good)
-  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+  taVector3f	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual void 		ConfigCamera(SoPerspectiveCamera* cam);
   // config So camera parameters
@@ -469,7 +473,7 @@ public:
   VELightParams	light;		// light parameters
   float		drop_off_rate;	// #CONDSHOW_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle
   float		cut_off_angle;	// #CONDSHOW_ON_light_type:SPOT_LIGHT (45 default) angle in degrees from the direction vector where there will be no light
-  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+  taVector3f	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual SoLight*	CreateLight();
   // create the So light of correct type
@@ -612,9 +616,9 @@ public:
   VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
   VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
   JointType    	joint_type;	// type of joint
-  FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
-  FloatTDCoord	axis;  		// #CONDSHOW_OFF_joint_type:BALL axis orientation vector
-  FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
+  taVector3f	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
+  taVector3f	axis;  		// #CONDSHOW_OFF_joint_type:BALL axis orientation vector
+  taVector3f	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
   float		vis_size;	// visual size of the joint, for when show_joint is active in viewer -- has NO implication for function whatsoever -- this is typically the length of the axis rod
   VEJointStops	stops;		// stop parameters for first joint: where the joint will stop (specific meaning is joint-dependent)
   VEJointStops	stops2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 stop parameters for second joint: where the joint will stop (specific meaning is joint-dependent)
@@ -632,10 +636,10 @@ public:
   float		pos2_norm; 	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW normalized position value for 2nd axis (joint dependent; could be angle) -- if stops.stops_on, then 0 = lo stop, 1 = hi stop
   float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed velocity value for 2nd axis (joint dependent; could be angle)
 
-  FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
-  FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
-  FloatTDCoord	cur_force2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
-  FloatTDCoord	cur_torque2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
+  taVector3f	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
+  taVector3f	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
+  taVector3f	cur_force2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
+  taVector3f	cur_torque2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
 
   override String	GetDesc() const { return desc; }
   override int		GetEnabled() const {  return !HasJointFlag(OFF); }
@@ -879,8 +883,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -914,8 +920,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -939,6 +947,7 @@ public:
     SF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
     FM_FILE		= 0x0002, // load object image features from Inventor (iv) object file
+    EULER_ROT		= 0x0004, // use euler rotation angles instead of axis and angle
     CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
   };
 
@@ -964,19 +973,21 @@ public:
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the static item (cast to a dGeomID which is dxgeom*)
   StaticFlags	flags;		// flags for various env el properties
-  FloatTDCoord	pos;  		// #CONDSHOW_OFF_shape:PLANE position of static item
-  FloatRotation	rot;  		// #CONDSHOW_OFF_shape:PLANE rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	pos;  		// #CONDSHOW_OFF_shape:PLANE position of static item
+  taAxisAngle	rot;  		// #CONDSHOW_OFF_flags:EULER_ROT rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f	rot_euler;  	// #CONDSHOW_ON_flags:EULER_ROT rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taQuaternion rot_quat;	// #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
 
   Shape		shape;		// shape of static item for purposes of collision (and visual rendering if not FM_FILE)
   float		radius;		// #CONDSHOW_OFF_shape:BOX,PLANE radius of body, for all but box
   float		length;		// #CONDSHOW_OFF_shape:BOX,PLANE,SPHERE length of body, for all but box 
   LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,PLANE,SPHERE direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
+  taVector3f	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
   NormAxis	plane_norm;	// #CONDSHOW_ON_shape:PLANE direction of the plane normal axis (which way is "up" for a ground plane)
   float		plane_height;	// #CONDSHOW_ON_shape:PLANE height of the plane above/below 0 in the plane norm axis
-  FloatTwoDCoord plane_vis_size; // #CONDSHOW_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
+  taVector2f    plane_vis_size; // #CONDSHOW_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
 
-  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to object file to align/size/etc with static item
+  taTransform   obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to object file to align/size/etc with static item
   String	obj_fname;	// #CONDSHOW_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
@@ -1025,8 +1036,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static body to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1058,8 +1071,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values 
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1079,7 +1094,7 @@ public:
 
 #ifdef __MAKETA__
   Shape		shape;		// #READ_ONLY #HIDDEN shape is always height field
-  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+  taVector3f	box;		// #READ_ONLY #HIDDEN not relevant
 #endif
 
   // todo: lookup column in data table..
@@ -1130,8 +1145,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1162,8 +1179,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1219,7 +1238,7 @@ public:
   StepType	step_type;	// what type of stepping function to use
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDSHOW_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
-  FloatTDCoord	gravity;	// gravitational setting for world (0,0,-9.81) is std
+  taVector3f	gravity;	// gravitational setting for world (0,0,-9.81) is std
   bool		updt_display;	// if true, will update any attached display after each time step
   ODEWorldParams ode_params;	// parameters for tuning the ODE engine
 

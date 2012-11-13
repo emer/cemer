@@ -81,7 +81,7 @@ public:
   String 		layer_name;
   // #CONDSHOW_ON_net_target:LAYER the name of the Layer that will get read or written
 
-  PosTwoDCoord		offset;
+  PosVector2i		offset;
   // #EXPERT offset in layer or unit group at which to start reading/writing
   
   virtual void 	SetDataNetwork(DataBlock* db, Network* net);

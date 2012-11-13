@@ -26,8 +26,8 @@
 #include "t3node_so.h"
 
 class QString;
-class FloatTDCoord;
-class TDCoord;
+class taVector3f;
+class taVector3i;
 
 class NiftiReader {
 public:
@@ -42,7 +42,7 @@ public:
   virtual ~NiftiReader();
 
   bool    IsValid() const;
-  TDCoord XyzDimensions() const;
+  taVector3i XyzDimensions() const;
   int     BytesPerVoxel() const;
   float   CalMax() const;
   float   CalMin() const;
@@ -51,8 +51,8 @@ public:
   void    Slice(AnatomicalPlane p, int index, unsigned short* data) const;
   int     NumExtensions() const;
   int     NumVolumes() const;
-  FloatTDCoord XyzToIjk(const FloatTDCoord &xyz_coord) const;
-  FloatTDCoord IjkToXyz(const FloatTDCoord &ijk_coord) const;
+  taVector3f XyzToIjk(const taVector3f &xyz_coord) const;
+  taVector3f IjkToXyz(const taVector3f &ijk_coord) const;
   const void *RawData() const;
 
 protected:

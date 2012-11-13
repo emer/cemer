@@ -1987,9 +1987,9 @@ protected:
   override void	UpdateAfterEdit_impl();
 
   override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				  Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				      Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
 				    Random* ran, bool na_by_range=false);
 
@@ -2252,9 +2252,9 @@ protected:
   override void	UpdateAfterEdit_impl();
 
   override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				  Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				      Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
 				    Random* ran, bool na_by_range=false);
 
@@ -2430,12 +2430,12 @@ private:
 // INHERITED(ProjectionSpec)
 // public:
 //   GaborV1SpecBase rf_spec;	// #SHOW_TREE receptive field specs
-//   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
+//   taVector2f rf_move;	// how much to move in input coordinates per each receiving layer group
 //   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 //   float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
 
-//   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-//   TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+//   taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+//   taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
  
 //   void 		Connect_impl(Projection* prjn);
 //   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
@@ -2553,7 +2553,7 @@ public:
   ///////// use stencils to speed processing
   float_Matrix	v2ffbo_weights;  // #READ_ONLY #NO_SAVE weights for V2 feedforward border ownership inputs from length sum
 
-  virtual float	ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir);
+  virtual float	ConWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir);
   // connection weight in terms of send unit group coord (suc), recv angle index (0-3 in 45 deg incr), and send angle index (0-3), and r/s bo direction (0-1) -- used for creating stencil
   virtual void	CreateStencils();
   // create stencil -- always done as first step in connection function
@@ -2587,7 +2587,7 @@ public:
   ///////// use stencils to speed processing
   float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
 
-  virtual float	ConWt(TwoDCoord& suc, int sang_dx, int sdir);
+  virtual float	ConWt(taVector2i& suc, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
 
   virtual void	CreateStencil();
@@ -2647,9 +2647,9 @@ public:
   
   float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
 
-  virtual float	ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  virtual float	ConWt_Wedge(int wedge, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
-  virtual float	ConWt_Line(int line, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  virtual float	ConWt_Line(int line, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
 
   virtual void	CreateStencil();
@@ -2913,13 +2913,13 @@ class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
   // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
-  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
+  taVector2i 	 rf_width;	// size of the receptive field -- should be an even number
+  taVector2f     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
   float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   virtual  void Connect_Inner(Projection* prjn);
   // inner connect: unit position within the unit group determines sender location

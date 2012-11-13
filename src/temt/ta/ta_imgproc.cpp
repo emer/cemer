@@ -1460,7 +1460,7 @@ bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey)
     taMisc::Error("taImageProc::GetBorderColor_float_grey", "image must have 2 dims: x, y");
     return false; // err
   }
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  taVector2i img_size(img_data.dim(0), img_data.dim(1));
   float tavg = 0.0f;
   float bavg = 0.0f;
   for(int x=0;x<img_size.x;x++) {
@@ -1497,7 +1497,7 @@ bool taImageProc::RenderBorder_float(float_Matrix& img_data) {
   float grey;
   GetBorderColor_float_grey(img_data, grey);
 
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  taVector2i img_size(img_data.dim(0), img_data.dim(1));
 
   for(int x=0;x<img_size.x;x++) {
     img_data.FastEl(x, img_size.y-1) = grey;
@@ -1521,7 +1521,7 @@ bool taImageProc::FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width
     }
     return true;
   }
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  taVector2i img_size(img_data.dim(0), img_data.dim(1));
   float oavg = img_data.FastEl(0,0); // assuming already has renderborder called
   for(int wd=1; wd<=fade_width;wd++) {
     float pct = (float)wd / (float)(fade_width+1);
@@ -1555,10 +1555,10 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
     }
     return true;
   }
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
-  TwoDCoord ll;
+  taVector2i img_size(img_data.dim(0), img_data.dim(1));
+  taVector2i ll;
   ll.x = (int)(img_size.x * llx);  ll.y = (int)(img_size.y * lly);
-  TwoDCoord ur;
+  taVector2i ur;
   ur.x = (int)(img_size.x * urx);  ur.y = (int)(img_size.y * ury);
   float oavg = img_data.FastEl(0,0); // assuming already has renderborder called
   for(int y = ll.y; y < ur.y; y++) {
@@ -1570,7 +1570,7 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
 }
 
 bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b, float a) {
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  taVector2i img_size(img_data.dim(0), img_data.dim(1));
   float clrs[4] = {r,g,b,a};
   int nclrs = 1;
   if(img_data.dims() == 3) {
@@ -1595,9 +1595,9 @@ bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b, 
 bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img,
                                           int move_x, int move_y, EdgeMode edge) {
 
-  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
-  FloatTwoDCoord img_ctr = FloatTwoDCoord(img_size) / 2.0f;
-  TwoDCoord img_off = TwoDCoord(move_x, move_y);
+  taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
+  taVector2f img_ctr = taVector2f(img_size) / 2.0f;
+  taVector2i img_off = taVector2i(move_x, move_y);
 
   int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
@@ -1610,7 +1610,7 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
 
   bool wrap = (edge == WRAP);
 
-  TwoDCoord ic;
+  taVector2i ic;
   for(int ny = 0; ny < img_size.y; ny++) {
     ic.y = ny - img_off.y;
     for(int nx = 0; nx < img_size.x; nx++) {
@@ -1633,10 +1633,10 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
 bool taImageProc::TranslateImage_float(float_Matrix& xlated_img, float_Matrix& orig_img,
                                        float move_x, float move_y, EdgeMode edge) {
 
-  FloatTwoDCoord deltas(move_x, move_y);
-  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
-  FloatTwoDCoord img_ctr = FloatTwoDCoord(img_size) / 2.0f;
-  TwoDCoord img_off = TwoDCoord(deltas * img_ctr);
+  taVector2f deltas(move_x, move_y);
+  taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
+  taVector2f img_ctr = taVector2f(img_size) / 2.0f;
+  taVector2i img_off = taVector2i(deltas * img_ctr);
 
   return TranslateImagePix_float(xlated_img, orig_img, img_off.x, img_off.y, edge);
 }
@@ -1651,8 +1651,8 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
     taMisc::Error("Can't scale above 100.");
     return false;
   }
-  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
-  TwoDCoord scaled_size;
+  taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
+  taVector2i scaled_size;
   scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
   scaled_size.y = 2 + (int)(scale * (img_size.y-2));
 
@@ -1698,7 +1698,7 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
 
   bool wrap = (edge == WRAP);
 
-  TwoDCoord ic;
+  taVector2i ic;
   for(y=0; y<scaled_size.y; y++) {
     int oyc = (int)floor(.5f + ((float)y / scale));
     for(x=0; x<scaled_size.x; x++) {
@@ -1760,7 +1760,7 @@ void taImageProc::GetWeightedPixels_float(float coord, int size, int* pc, float*
 
 bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& orig_img,
                                     float rotate, EdgeMode edge) {
-  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
+  taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
 
   int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
@@ -1770,7 +1770,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
   else {
     rotated_img.SetGeom(2, img_size.x, img_size.y);
   }
-  FloatTwoDCoord ctr = ((FloatTwoDCoord) img_size) / 2.0f;
+  taVector2f ctr = ((taVector2f) img_size) / 2.0f;
 
   rotate *= 2.0f * taMath_float::pi; // convert to radians
   float rot_sin = sin(rotate);
@@ -1806,7 +1806,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
       taMath_float::vec_norm_sum(&sc_ary);
 
       float avgs[4] = {};	// init to 0
-      TwoDCoord ic;
+      taVector2i ic;
       for(oyi=0;oyi<2;oyi++) {
         ic.y = pcy[oyi];
         for(oxi=0;oxi<2;oxi++) {
@@ -1839,14 +1839,14 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
 
 bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img,
                                   int crop_width, int crop_height, EdgeMode edge) {
-  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
-  TwoDCoord crop_size(crop_width, crop_height);
+  taVector2i img_size(orig_img.dim(0), orig_img.dim(1));
+  taVector2i crop_size(crop_width, crop_height);
   if(crop_size.x < 0) crop_size.x = img_size.x;
   if(crop_size.y < 0) crop_size.y = img_size.y;
 
-  TwoDCoord img_ctr = img_size / 2;
-  TwoDCoord crop_ctr = crop_size / 2;
-  TwoDCoord img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
+  taVector2i img_ctr = img_size / 2;
+  taVector2i crop_ctr = crop_size / 2;
+  taVector2i img_off = img_ctr - crop_ctr; // offset for 0,0 pixel of cropped image, in orig_img
 
   int nclrs = 1;
   if(orig_img.dims() == 3) { // rgb
@@ -1857,7 +1857,7 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
     crop_img.SetGeom(2, crop_size.x, crop_size.y);
   }
 
-  TwoDCoord ic;
+  taVector2i ic;
   for(int ny = 0; ny < crop_size.y; ny++) {
     ic.y = img_off.y + ny;
     for(int nx = 0; nx < crop_size.x; nx++) {
@@ -1921,11 +1921,11 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
                                           float ctr_x, float ctr_y,
                                           float rotate, float scale,
                                           EdgeMode edge) {
-  TwoDCoord img_size(in_img.dim(0), in_img.dim(1));
-  TwoDCoord win_size(win_width, win_height);
+  taVector2i img_size(in_img.dim(0), in_img.dim(1));
+  taVector2i win_size(win_width, win_height);
 
-  FloatTwoDCoord img_ctr(img_size.x * ctr_x, img_size.y * ctr_y);
-  FloatTwoDCoord win_ctr = ((FloatTwoDCoord) win_size) / 2.0f;
+  taVector2f img_ctr(img_size.x * ctr_x, img_size.y * ctr_y);
+  taVector2f win_ctr = ((taVector2f) win_size) / 2.0f;
 
   if(edge == BORDER) taImageProc::RenderBorder_float(in_img);
 
@@ -1980,22 +1980,22 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   float pwx[2];  float pwy[2];
   float_Matrix rot_ary(false);  rot_ary.SetGeom(2, 2, 2);
 
-  TwoDCoord wc;
+  taVector2i wc;
   for(wc.y=0; wc.y<win_size.y; wc.y++) {
     for(wc.x=0; wc.x<win_size.x; wc.x++) {
-      FloatTwoDCoord wcd = ((FloatTwoDCoord)wc) - win_ctr; // delta from ctr in window
-      FloatTwoDCoord icd = wcd / scale;                    // scaled delta from ctr in img
-      FloatTwoDCoord icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
+      taVector2f wcd = ((taVector2f)wc) - win_ctr; // delta from ctr in window
+      taVector2f icd = wcd / scale;                    // scaled delta from ctr in img
+      taVector2f icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
                          icd.y * rot_cos - icd.x * rot_sin);
-      TwoDCoord icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
+      taVector2i icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
                     (int)floor(.5f + icr.y + img_ctr.y));
 
       float avgs[4] = {};	// init to 0
 
-      TwoDCoord oc;             // offsets
+      taVector2i oc;             // offsets
       for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
         for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
-          TwoDCoord ic = icc + oc;
+          taVector2i ic = icc + oc;
           if(ic.WrapClip(wrap, img_size)) {
             if(edge == CLIP) continue; // bail on clipping only
           }
@@ -2015,7 +2015,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
             taMath_float::vec_norm_sum(&rot_ary);
 
             float r_avgs[4] = {};
-            TwoDCoord ric;
+            taVector2i ric;
             for(oyi=0;oyi<2;oyi++) {
               ric.y = pcy[oyi];
               for(oxi=0;oxi<2;oxi++) {
@@ -2082,8 +2082,8 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
     }
     return true;
   }
-  TwoDCoord img_size(mat.dim(0), mat.dim(1));
-  TwoDCoord img_ctr = img_size / 2;
+  taVector2i img_size(mat.dim(0), mat.dim(1));
+  taVector2i img_ctr = img_size / 2;
 
   float max_radius = taMath_float::max(img_ctr.x, img_ctr.y);
   float scale_x = max_radius / (float)img_ctr.x;
@@ -2113,13 +2113,13 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
 bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
                                   float circ_radius, float gauss_sig,
                                   EdgeMode edge, bool use_border_clr) {
-  TwoDCoord img_size(img.dim(0), img.dim(1));
+  taVector2i img_size(img.dim(0), img.dim(1));
 
   float gauss_eff = gauss_sig * (float)img_size.x;
   float radius_eff = circ_radius * (float)img_size.x;
   int filt_half = (int)radius_eff + (int)(gauss_eff * 2);
   int filt_wd = filt_half * 2;
-  TwoDCoord ntot = (img_size / filt_half) + 1;
+  taVector2i ntot = (img_size / filt_half) + 1;
   int totblob = ntot.Product();
   int nblob = (int) (2.5f * pct_occlude * (float)totblob + 0.5f);
   if(pct_occlude == 1.0f) nblob *= 2; // really nuke it for sure!
@@ -2159,8 +2159,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
     GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);
   }
 
-  TwoDCoord ic;
-  TwoDCoord icw;
+  taVector2i ic;
+  taVector2i icw;
   for(int blob=0; blob < nblob; blob++) {
     ic.x = Random::IntMinMax(0, img_size.x);
     ic.y = Random::IntMinMax(0, img_size.y);
@@ -2239,7 +2239,7 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   float floor_thr=pow(10.0f, -8.0f);
 
   // get the img size -- need for lots of stuff
-  TwoDCoord img_size(img.dim(0), img.dim(1));
+  taVector2i img_size(img.dim(0), img.dim(1));
 
   // create the mask and temporary mask -- if bubble_coords is specified, init it for saving coords
   float_Matrix mask;
@@ -2334,7 +2334,7 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
 }
 
 bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg_color) {
-  TwoDCoord img_size(img.dim(0), img.dim(1));
+  taVector2i img_size(img.dim(0), img.dim(1));
   
 	if(bg_color > 1.0f) {	// hopefully user is smart enough not to use negative value aside from -1
 		taMisc::Error("bg_color must be between 0 and 1");
@@ -2399,7 +2399,7 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
     nclrs = img2.dim(2);
   }
 
-  TwoDCoord img_size(img1.dim(0), img1.dim(1));
+  taVector2i img_size(img1.dim(0), img1.dim(1));
 
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
@@ -2599,7 +2599,7 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
 }
 
 bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {
-  TwoDCoord img_size(img.dim(0), img.dim(1));
+  taVector2i img_size(img.dim(0), img.dim(1));
 
   cur_img_grey.SetGeom(2, img_size.x, img_size.y);
   cur_img_rc.SetGeom(2, img_size.x, img_size.y);
@@ -2906,14 +2906,14 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
 }
 
 void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
-  TwoDCoord dc;                 // dog coords
+  taVector2i dc;                 // dog coords
   dc.SetFmIndex(dog_idx, dog_img_geom.x);
-  TwoDCoord icc = input_size.border + dog_specs.spacing * dc; // image coords center
+  taVector2i icc = input_size.border + dog_specs.spacing * dc; // image coords center
 
   float_Matrix* dog_img = cur_img;
 
   // x = on/off, y = color channel
-  TwoDCoord ic;         // image coord
+  taVector2i ic;         // image coord
   for(int chan = 0; chan < dog_feat_geom.y; chan++) {
     ColorChannel cchan = (ColorChannel)chan;
     if(rgb_img) {
@@ -2986,8 +2986,8 @@ bool DoGRegionSpec::DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, co
   DataCol* col;
   int idx;
   if(dog_save & SEP_MATRIX) {
-    TwoDCoord dc;               // dog coords
-    TwoDCoord fc;               // feature coords
+    taVector2i dc;               // dog coords
+    taVector2i fc;               // feature coords
     for(int i=0;i<dog_feat_geom.n;i++) {
       fc.SetFmIndex(i, dog_feat_geom.x);
       String nm = name + "_" + GetDoGFiltName(i) + "_dog";
@@ -3040,7 +3040,7 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
   nmda->SetValAsString("DoG", -1);
   float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
   if(mat) {
-    TwoDCoord ic;
+    taVector2i ic;
     int x,y;
     for(y=input_size.border.y; y<= input_size.retina_size.y-input_size.border.y; y+= dog_specs.spacing) {
       for(x=input_size.border.x; x<= input_size.retina_size.x-input_size.border.x; x+=dog_specs.spacing) {
@@ -3779,7 +3779,7 @@ void V1RegionSpec::UpdateGeom() {
 //     return;
 //   }
 
-//   TwoDCoord v1s_fm_v1c;
+//   taVector2i v1s_fm_v1c;
 //   if(region.edge_mode == VisRegionParams::WRAP) {
 //     v1s_fm_v1c = v1c_specs.net_spacing * v1c_img_geom;
 //   }
@@ -3789,7 +3789,7 @@ void V1RegionSpec::UpdateGeom() {
 // //     sp (cg - 1) = (sg - 2b - 1);
 // //     sp (cg - 1) + 2b + 1 = sg;
 //     if(v1c_specs.sg4) {
-//       TwoDCoord v1csg_fm_v1c;
+//       taVector2i v1csg_fm_v1c;
 // //       v1sg_fm_v1c = v1c_specs.spat_spacing * (v1c_img_geom - 1) + 2 * v1c_specs.spat_border + 1;
 //       v1s_fm_v1c = v1c_specs.sg_spacing * (v1sg_fm_v1c - 1) + 2 * v1c_specs.sg_border + 1;
 //     }
@@ -3809,7 +3809,7 @@ void V1RegionSpec::UpdateGeom() {
 //     redo = true;             // recompute from here
 //   }
 
-//   TwoDCoord inp_fm_v1s;
+//   taVector2i inp_fm_v1s;
 //   if(region.edge_mode == VisRegionParams::WRAP) {
 //     inp_fm_v1s = v1s_img_geom * v1s_specs.spacing;
 //   }
@@ -4131,7 +4131,7 @@ bool V1RegionSpec::InitFilters_V2() {
   v2ffbo_weights.SetGeom(5, max_cnt, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
   v2ffbo_stencil_n.SetGeom(4, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
   v2ffbo_norms.SetGeom(4, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
-  TwoDCoord suc;                        // send coords
+  taVector2i suc;                        // send coords
   for(int rang_dx = 0; rang_dx < v1s_specs.n_angles; rang_dx++) {
     for(int rdir = 0; rdir < 2; rdir++) {
       for(int sang_dx = 0; sang_dx < v1s_specs.n_angles; sang_dx++) {
@@ -4162,7 +4162,7 @@ bool V1RegionSpec::InitFilters_V2() {
   return true;
 }
 
-float V1RegionSpec::V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
+float V1RegionSpec::V2FFBoWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
   float n_angles = v1s_specs.n_angles;
 
   // integer angles -- useful for precise conditionals..
@@ -4180,7 +4180,7 @@ float V1RegionSpec::V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir,
 //   if(dang_n == 0) return 0.0f;       // no self-line guys
   if(!v2_ffbo.opp_on && dang_n == 4) return 0.0f;       // no opposite angle cons
 
-  TwoDCoord del = suc;          // assume 0,0 ruc
+  taVector2i del = suc;          // assume 0,0 ruc
   float dst = del.Mag();
   if(dst > (float)v2_ffbo.radius) return 0.0f;
   if(dst == 0.0f) return 0.0f;  // no self con
@@ -4599,9 +4599,9 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
 }
 
 void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
-  TwoDCoord icc = input_size.border + v1s_specs.spacing * sc; // image coords center
+  taVector2i icc = input_size.border + v1s_specs.spacing * sc; // image coords center
   float_Matrix* v1s_img = cur_img;
 
   int ctr_off;
@@ -4612,7 +4612,7 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
 
   icc -= ctr_off;               // always offset
 
-  TwoDCoord ic;         // image coord
+  taVector2i ic;         // image coord
   for(int chan = 0; chan < n_colors; chan++) {
     ColorChannel cchan = (ColorChannel)chan;
     if(rgb_img) {
@@ -4649,12 +4649,12 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
 }
 
 void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   float gi = v1s_gci.FastEl(sc.x, sc.y);
 
-  TwoDCoord oc;         // other coord
+  taVector2i oc;         // other coord
   for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       float raw = cur_out->FastEl(ang, polclr, sc.x, sc.y);
@@ -4699,7 +4699,7 @@ bool V1RegionSpec::V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matri
 }
 
 void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -4751,13 +4751,13 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
 }
 
 void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   int cur_mot_idx = cur_circ->CircIdx_Last();
   int mot_len = cur_circ->length;
 
-  TwoDCoord mo;                 // motion offset
+  taVector2i mo;                 // motion offset
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float in_val = cur_in->FastEl(ang, 0, sc.x, sc.y);
     cur_hist->FastEl(ang, 0, sc.x, sc.y, cur_mot_idx) = in_val;
@@ -4765,13 +4765,13 @@ void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_n
 }
 
 void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   int cur_mot_idx = cur_circ->CircIdx_Last(); // e.g. 2
   int mot_len = cur_circ->length;             // e.g. 3
 
-  TwoDCoord mo;                 // motion offset
+  taVector2i mo;                 // motion offset
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float cur_val = cur_hist->FastEl(ang, 0, sc.x, sc.y, cur_mot_idx);
     float min_mot = cur_val;
@@ -4801,13 +4801,13 @@ void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no
 }
 
 void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   int cur_mot_idx = cur_circ->CircIdx_Last(); // e.g., 2
   int mot_len = cur_circ->length;             // e.g., 3
 
-  TwoDCoord mo;                 // motion offset
+  taVector2i mo;                 // motion offset
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float max_out = 0.0f;
     for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
@@ -4900,10 +4900,10 @@ bool V1RegionSpec::V1BinocularFilter() {
 }
 
 void V1RegionSpec::V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
-  TwoDCoord bo;
+  taVector2i bo;
   bo.y = sc.y;
 
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
@@ -4928,7 +4928,7 @@ void V1RegionSpec::V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no) {
 }
 
 void V1RegionSpec::V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   float sum_dist = 0.0f;
@@ -4951,7 +4951,7 @@ void V1RegionSpec::V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no)
 }
 
 void V1RegionSpec::V1BinocularFilter_HorizAgg() {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   for(sc.y=0; sc.y<v1s_img_geom.y; sc.y++) {
     int cur_st = -1;
     int cur_len = 0;
@@ -5022,7 +5022,7 @@ void V1RegionSpec::V1BinocularFilter_AvgSum() {
     sums[didx] = 0.0f;
   }
 
-  TwoDCoord bc;         // binocular coords
+  taVector2i bc;         // binocular coords
   for(bc.y = 0; bc.y < v1s_img_geom.y; bc.y++) {
     for(bc.x = 0; bc.x < v1s_img_geom.x; bc.x++) {
       for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
@@ -5068,23 +5068,23 @@ void V1RegionSpec::V1bDspCrossResMin(float extra_width, int max_extra,
       }
 
       // testing
-//       TwoDCoord sm_half = rs_sm->v1s_img_geom / 2;
-//       TwoDCoord sm_0 = 0;
+//       taVector2i sm_half = rs_sm->v1s_img_geom / 2;
+//       taVector2i sm_0 = 0;
 
-      TwoDCoord sm_to_lg;
+      taVector2i sm_to_lg;
       sm_to_lg = rs_lg->v1s_img_geom / rs_sm->v1s_img_geom;
-      TwoDCoord extra;
+      taVector2i extra;
       extra.x = (int)((float)sm_to_lg.x * extra_width + 0.5f);
       extra.y = (int)((float)sm_to_lg.y * extra_width + 0.5f);
       extra.x = MIN(max_extra, extra.x);
       extra.y = MIN(max_extra, extra.y);
 
-      TwoDCoord tot_wd = sm_to_lg + extra;
+      taVector2i tot_wd = sm_to_lg + extra;
 
-      TwoDCoord lc;             // large coords
-      TwoDCoord sc;             // small coords
-      TwoDCoord xc;             // extra coords
-      TwoDCoord alc;            // actual large coord
+      taVector2i lc;             // large coords
+      taVector2i sc;             // small coords
+      taVector2i xc;             // extra coords
+      taVector2i alc;            // actual large coord
       for(sc.y = 0; sc.y < rs_sm->v1s_img_geom.y; sc.y++) {
         for(sc.x = 0; sc.x < rs_sm->v1s_img_geom.x; sc.x++) {
           lc = sc * sm_to_lg;
@@ -5206,14 +5206,14 @@ bool V1RegionSpec::V1ComplexFilter() {
 }
 
 void V1RegionSpec::V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no) {
-  TwoDCoord pc;                 // pre coords
+  taVector2i pc;                 // pre coords
   pc.SetFmIndex(v1sg_idx, v1sg_img_geom.x);
-  TwoDCoord scs = v1c_specs.sg_spacing * pc; // v1s coords start
+  taVector2i scs = v1c_specs.sg_spacing * pc; // v1s coords start
   scs += v1c_specs.sg_border;
   scs -= v1c_specs.sg_half; // convert to lower-left starting position, not center
 
-  TwoDCoord sc;                 // simple coord
-  TwoDCoord scc;                // simple coord, center
+  taVector2i sc;                 // simple coord
+  taVector2i scc;                // simple coord, center
   for(int ang=0; ang<v1s_specs.n_angles; ang++) {
     float max_rf = 0.0f;   // max over spatial rfield
     int nctrs = v1sg_stencils.FastEl(2, 0, ang);         // length stored here
@@ -5234,10 +5234,10 @@ void V1RegionSpec::V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no) {
 }
 
 void V1RegionSpec::V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;         // line coord
+  taVector2i lc;         // line coord
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float line_sum = 0.0f;
     for(int lpdx=0; lpdx < v1c_specs.len_sum_width; lpdx++) {
@@ -5255,12 +5255,12 @@ void V1RegionSpec::V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no) {
 }
 
 void V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
   float gi = v1ls_gci.FastEl(cc.x, cc.y);
 
-  TwoDCoord oc;         // other coord
+  taVector2i oc;         // other coord
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float raw = cur_out->FastEl(ang, 0, cc.x, cc.y);
     float feat_inhib_max = 0.0f;
@@ -5287,11 +5287,11 @@ void V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread(int v1c_idx, int thr
 }
 
 void V1RegionSpec::V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;         // line coord
-  TwoDCoord oc;         // off coord
+  taVector2i lc;         // line coord
+  taVector2i oc;         // off coord
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     for(int dir=0; dir < 2; dir++) {                  // direction
       // len sum point
@@ -5364,10 +5364,10 @@ bool V1RegionSpec::V2Filter() {
 }
 
 void V1RegionSpec::V2Filter_TL_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;         // line coord
+  taVector2i lc;         // line coord
   float max_lval = 0.0f;
   float max_tval = 0.0f;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -5436,10 +5436,10 @@ void V1RegionSpec::V2Filter_TL_thread(int v1c_idx, int thread_no) {
 // * diff radii for straight vs. non-straight cases!
 // * multiple integration for ffstep???
 void V1RegionSpec::V2Filter_FFBO_thread(int v1s_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
-  TwoDCoord lc;
+  taVector2i lc;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
     float dirmax = 0.0f;
@@ -5510,10 +5510,10 @@ void V1RegionSpec::V2Filter_FFBO_thread(int v1s_idx, int thread_no) {
 }
 
 void V1RegionSpec::V2Filter_LatBO_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;
+  taVector2i lc;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
     if(lsedge < v2_specs.act_thr) {
@@ -5540,10 +5540,10 @@ void V1RegionSpec::V2Filter_LatBO_thread(int v1c_idx, int thread_no) {
 }
 
 void V1RegionSpec::V2Filter_LatBOinteg_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;
+  taVector2i lc;
   float dirvals[2];
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
@@ -5577,10 +5577,10 @@ void V1RegionSpec::V2Filter_LatBOinteg_thread(int v1c_idx, int thread_no) {
 }
 
 void V1RegionSpec::V2Filter_BOfinal_thread(int v1c_idx, int thread_no) {
-  TwoDCoord cc;                 // complex coords
+  taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
-  TwoDCoord lc;
+  taVector2i lc;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
     if(lsedge < v2_specs.act_thr) {
@@ -5666,7 +5666,7 @@ bool V1RegionSpec::SpatIntegFilter() {
     threads.Run(&ip_call_v1c, n_run_c);
 
     if(spat_integ & SI_V1S_SG) { // both are on -- combine output into same table prior to kwta
-      TwoDCoord cc;
+      taVector2i cc;
       for(cc.y = 0; cc.y < si_v1c_geom.y; cc.y++) {
         for(cc.x = 0; cc.x < si_v1c_geom.x; cc.x++) {
           for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -5696,14 +5696,14 @@ bool V1RegionSpec::SpatIntegFilter() {
 }
 
 void V1RegionSpec::SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1s_idx, si_v1s_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
       float max_rf = 0.0f;   // max over spatial rfield
@@ -5726,14 +5726,14 @@ void V1RegionSpec::SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no) {
 }
 
 void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1s_idx, si_v1s_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float max_rf = 0.0f;   // max over spatial rfield
     for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
@@ -5754,14 +5754,14 @@ void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
 }
 
 void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float max_rf = 0.0f;   // max over spatial rfield
     for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
@@ -5782,14 +5782,14 @@ void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
 }
 
 void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no) {
-  TwoDCoord pc;                 // pre coords
+  taVector2i pc;                 // pre coords
   pc.SetFmIndex(v1sg_idx, v1sg_img_geom.x);
-  TwoDCoord scs = v1c_specs.sg_spacing * pc; // v1s coords start
+  taVector2i scs = v1c_specs.sg_spacing * pc; // v1s coords start
   scs += v1c_specs.sg_border;
   scs -= v1c_specs.sg_half; // convert to lower-left starting position, not center
 
-  TwoDCoord sc;                 // simple coord
-  TwoDCoord scc;                // simple coord, center
+  taVector2i sc;                 // simple coord
+  taVector2i scc;                // simple coord, center
   for(int ang=0; ang<v1s_specs.n_angles; ang++) {
     for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
       float max_rf = 0.0f;   // max over spatial rfield
@@ -5812,14 +5812,14 @@ void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no)
 }
 
 void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
       float max_rf = 0.0f;   // max over spatial rfield
@@ -5842,14 +5842,14 @@ void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
 }
 
 void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1c_idx, si_v1c_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     for(int cfdx = 0; cfdx < v1c_feat_geom.y; cfdx++) { // cfdx features
       float max_rf = 0.0f;   // max over spatial rfield
@@ -5877,14 +5877,14 @@ void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
 
 
 void V1RegionSpec::SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no) {
-  TwoDCoord sc;
+  taVector2i sc;
   sc.SetFmIndex(v1c_idx, si_v1c_geom.x);
-  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
   ics += si_specs.spat_border;
   ics -= si_specs.spat_half; // convert to lower-left starting position, not center
 
-  TwoDCoord ic;                 // input coord
-  TwoDCoord icc;                // input coord, center
+  taVector2i ic;                 // input coord
+  taVector2i icc;                // input coord, center
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     for(int dir = 0; dir < 2; dir++) { // dir
       float max_rf = 0.0f;   // max over spatial rfield
@@ -5907,16 +5907,16 @@ void V1RegionSpec::SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no) {
 }
 
 // void V1RegionSpec::V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no) {
-//   TwoDCoord cc;                      // complex coords
+//   taVector2i cc;                      // complex coords
 //   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
-//   TwoDCoord pcs = v1c_specs.spat_spacing * cc; // v1sg_out coords start
+//   taVector2i pcs = v1c_specs.spat_spacing * cc; // v1sg_out coords start
 //   pcs += v1c_specs.spat_border;
 //   pcs -= v1c_specs.spat_half; // convert to lower-left starting position, not center
 
-//   TwoDCoord pc;                      // pre coord
-//   TwoDCoord pcc;             // pre coord, center
-//   TwoDCoord sfc;             // v1s feature coords
-//   TwoDCoord fc;                      // v1c feature coords
+//   taVector2i pc;                      // pre coord
+//   taVector2i pcc;             // pre coord, center
+//   taVector2i sfc;             // v1s feature coords
+//   taVector2i fc;                      // v1c feature coords
 //   for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features -- includes b/w on/off
 //     sfc.y = polclr;
 //     fc.y = v1c_feat_blob_y + polclr / v1c_feat_geom.x;
@@ -5961,7 +5961,7 @@ bool V1RegionSpec::V1OptionalFilter() {
 }
 
 void V1RegionSpec::V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;                 // simple coords
+  taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   float max_feat = 0.0f;
@@ -6048,7 +6048,7 @@ bool V1RegionSpec::V1SOutputToTable(DataTable* dtab, bool fmt_only) {
 
 bool V1RegionSpec::V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out,
                                          const String& col_sufx, bool fmt_only) {
-  TwoDCoord sc;         // simple coords
+  taVector2i sc;         // simple coords
   DataCol* col;
   int idx;
   if(v1s_save & SEP_MATRIX) {
@@ -6174,7 +6174,7 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab, bool fmt_only) {
 
 bool V1RegionSpec::V1COutputToTable(DataTable* dtab, bool fmt_only) {
   DataCol* col;
-  TwoDCoord cc;         // complex coords
+  taVector2i cc;         // complex coords
   int idx;
 
   if(v1c_save & SEP_MATRIX || !(v1c_filters & END_STOP)) {
@@ -6231,7 +6231,7 @@ bool V1RegionSpec::V1COutputToTable(DataTable* dtab, bool fmt_only) {
 
 bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
   DataCol* col;
-  TwoDCoord cc;         // complex coords
+  taVector2i cc;         // complex coords
   int idx;
 
   if(v2_filters & V2_TL) {
@@ -6327,7 +6327,7 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
 
 bool V1RegionSpec::SIOutputToTable(DataTable* dtab, bool fmt_only) {
   DataCol* col;
-  TwoDCoord cc;         // complex coords
+  taVector2i cc;         // complex coords
   int idx;
 
   if(spat_integ & SI_V1S) {
@@ -6404,7 +6404,7 @@ bool V1RegionSpec::OptOutputToTable(DataTable* dtab, bool fmt_only) {
 
 void V1RegionSpec::V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr) {
   DataCol* col;
-  TwoDCoord cc;         // complex coords
+  taVector2i cc;         // complex coords
   int idx;
 
   // todo: could thread this..
@@ -6443,7 +6443,7 @@ void V1RegionSpec::V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr) {
 
 void V1RegionSpec::V2BoDepthFmImgMask(DataTable* img_mask, V1RetinaProc* all_flat, float fg_thr) {
   DataCol* col;
-  TwoDCoord cc;         // complex coords
+  taVector2i cc;         // complex coords
   int idx;
 
   // todo: could thread this..
@@ -6514,26 +6514,26 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   graph_data->SetUserData("BLOCK_SPACE", 4.0f);
   //  graph_data->SetUserData("WIDTH", .5f + (float)input_size.retina_size.x / (float)input_size.retina_size.y);
 
-  TwoDCoord max_sz(v1s_specs.filter_size, v1s_specs.filter_size);
+  taVector2i max_sz(v1s_specs.filter_size, v1s_specs.filter_size);
   max_sz.Max(si_specs.spat_rf);
 
   int bin_rf_max = 5;;
   if(region.ocularity == VisRegionParams::BINOCULAR) {
-    TwoDCoord bin_max(v1b_specs.tot_offs, v1b_specs.tot_disps + 2);
+    taVector2i bin_max(v1b_specs.tot_offs, v1b_specs.tot_disps + 2);
     max_sz.Max(bin_max);
   }
 
   int mot_rf_max = 5;
   if(motion_frames > 1) {
     mot_rf_max = motion_frames * (1 << v1s_motion.n_speeds) + v1s_motion.tuning_width;
-    TwoDCoord mot_max(motion_frames * mot_rf_max, motion_frames * mot_rf_max);
+    taVector2i mot_max(motion_frames * mot_rf_max, motion_frames * mot_rf_max);
     max_sz.Max(mot_max);
   }
 
-  TwoDCoord brd(5,5);           // border
+  taVector2i brd(5,5);           // border
   max_sz += brd * 2;
 
-  TwoDCoord half_sz = max_sz / 2;
+  taVector2i half_sz = max_sz / 2;
 
   int idx;
   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
@@ -6546,8 +6546,8 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       graph_data->AddBlankRow();
       nmda->SetValAsString("V1b Binoc", -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-      TwoDCoord ic;
-      TwoDCoord dc;
+      taVector2i ic;
+      taVector2i dc;
       for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
         int didx = disp + v1b_specs.n_disps;
         int dwd = v1b_widths.FastEl(didx);
@@ -6577,7 +6577,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
           nmda->SetValAsString("V1m sp:" + String(speed) + " ang:" + String(AngleDeg(ang)) +
                                " dir:" + String(dir == 0 ? "-" : "+"), -1);
           float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-          TwoDCoord ic;
+          taVector2i ic;
           for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
             ic.y = half_sz.y;
             ic.x = brd.x + mot * mot_rf_max;
@@ -6610,7 +6610,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       graph_data->AddBlankRow();
       nmda->SetValAsString("V1C PreGp 4x4 Ctrs: " + String(AngleDeg(ang)), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-      TwoDCoord ic;
+      taVector2i ic;
       // first draw a bounding box
       for(int ys = -1; ys <= 4; ys++) {
         ic.x = brd.x-1; ic.y = brd.y + ys;
@@ -6645,7 +6645,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       graph_data->AddBlankRow();
       nmda->SetValAsString("Spat Integ RF", -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-      TwoDCoord sc;
+      taVector2i sc;
       for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // ysimple
         sc.y = brd.y + ys;
         for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xsimple
@@ -6662,7 +6662,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       graph_data->AddBlankRow();
       nmda->SetValAsString("V1C Len Sum Ang: " + String(AngleDeg(ang)), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-      TwoDCoord ic;
+      taVector2i ic;
       for(int lpdx=0; lpdx < v1c_specs.len_sum_width; lpdx++) {
         ic.x = brd.x + v1ls_stencils.FastEl(X,lpdx,ang);
         ic.y = brd.y + v1ls_stencils.FastEl(Y,lpdx,ang);
@@ -6677,7 +6677,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
                              + " Dir: " + String(dir), -1);
         float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
         mat->FastEl(brd.x,brd.y) = 0.5f;
-        TwoDCoord ic;
+        taVector2i ic;
         ic.x = brd.x + v1es_stencils.FastEl(X,0,ON,dir,ang);
         ic.y = brd.y + v1es_stencils.FastEl(Y,0,ON,dir,ang);
         if(ic.WrapClip(true, max_sz)) continue;
@@ -6705,7 +6705,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
                                  + " SDir: " + String(sdir), -1);
             float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
             mat->FastEl(brd.x,brd.y) = -0.5f;
-            TwoDCoord ic;
+            taVector2i ic;
             int cnt = v2ffbo_stencil_n.FastEl(sdir, sang, dir, ang);
             for(int i=0; i<cnt; i++) {
               ic.x = brd.x + v2ffbo_stencils.FastEl(X, i, sdir, sang, dir, ang);
@@ -6742,7 +6742,7 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
   graph_data->SetUserData("BLOCK_SPACE", 20.0f);
   graph_data->SetUserData("WIDTH", .5f + (float)input_size.retina_size.x / (float)input_size.retina_size.y);
 
-//   TwoDCoord ic;
+//   taVector2i ic;
 //   int x,y;
 //   { // first do dogs
 //     graph_data->AddBlankRow();
@@ -6760,15 +6760,15 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //     graph_data->AddBlankRow();
 //     nmda->SetValAsString("V1_Simple", -1);
 //     float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-//     TwoDCoord brd(input_size.border.x+v1s_specs.border*dog_specs.spacing.x,
+//     taVector2i brd(input_size.border.x+v1s_specs.border*dog_specs.spacing.x,
 //                input_size.border.y+v1s_specs.border*dog_specs.spacing.y);
-//     TwoDCoord spc(dog_specs.spacing.x * v1s_specs.spacing, dog_specs.spacing.y * v1s_specs.spacing);
+//     taVector2i spc(dog_specs.spacing.x * v1s_specs.spacing, dog_specs.spacing.y * v1s_specs.spacing);
 //     // first render borders of RF's, every other
 //     for(y=brd.y; y<= input_size.retina_size.y-brd.y; y+= 2*spc.y) {
 //       for(x=brd.x; x<= input_size.retina_size.x-brd.x; x+= 2*spc.x) {
 //      ic.y = y; ic.x = x;
 //      ic -= v1s_specs.rf_half*dog_specs.spacing; // lower left
-//      TwoDCoord ec;
+//      taVector2i ec;
 //      int ex,ey;
 //      for(ey=0; ey < v1s_specs.rf_size; ey++) {
 //        ec.y = ic.y + ey*dog_specs.spacing.y;  ec.x = ic.x;
@@ -6794,22 +6794,22 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //   }
 
 //   { // then v1 complex
-//     TwoDCoord ic;
+//     taVector2i ic;
 //     int x,y;
 //     graph_data->AddBlankRow();
 //     nmda->SetValAsString("V1_Complex", -1);
 //     float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-//     TwoDCoord brd(input_size.border.x+v1s_specs.spacing*v1c_specs.net_border.x,
+//     taVector2i brd(input_size.border.x+v1s_specs.spacing*v1c_specs.net_border.x,
 //                input_size.border.y+v1s_specs.spacing*v1c_specs.net_border.y);
-//     TwoDCoord spc(v1s_specs.spacing * v1c_specs.net_spacing.x,
+//     taVector2i spc(v1s_specs.spacing * v1c_specs.net_spacing.x,
 //                v1s_specs.spacing * v1c_specs.net_spacing.y);
-//     TwoDCoord spcb(v1s_specs.spacing, v1s_specs.spacing);
+//     taVector2i spcb(v1s_specs.spacing, v1s_specs.spacing);
 //     // first render borders of RF's, every other
 //     for(y=brd.y; y<= input_size.retina_size.y-brd.y; y+= 2*spc.y) {
 //       for(x=brd.x; x<= input_size.retina_size.x-brd.x; x+= 2*spc.x) {
 //      ic.y = y; ic.x = x;
 //      ic -= v1c_specs.net_half*spcb; // lower left
-//      TwoDCoord ec;
+//      taVector2i ec;
 //      int ex,ey;
 //      for(ey=0; ey < v1c_specs.spat_rf.y; ey++) {
 //        ec.y = ic.y + ey*spcb.y;  ec.x = ic.x;
@@ -6891,8 +6891,8 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
   // NOTE: the edge_mode of WRAP causes tiling effects for downscaling images -- switch to BORDER otherwise
   taImageProc::EdgeMode eff_em = edge_mode;
   if(edge_mode == taImageProc::WRAP) {
-    TwoDCoord img_size(eye_image.dim(0), eye_image.dim(1));
-    TwoDCoord scaled_size;
+    taVector2i img_size(eye_image.dim(0), eye_image.dim(1));
+    taVector2i scaled_size;
     scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
     scaled_size.y = 2 + (int)(scale * (img_size.y-2));
     if(scaled_size.x < reg->input_size.retina_size.x || scaled_size.y < reg->input_size.retina_size.y) {
@@ -6929,16 +6929,16 @@ bool RetinaProc::LookAtImageData_impl(float_Matrix& eye_image,
     return false;
 
   // translation: find the middle of the box
-  FloatTwoDCoord obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
+  taVector2f obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
                        (float) (0.5 * (float) (box_ll_y + box_ur_y)));
   // convert into center-relative coords:
-  FloatTwoDCoord obj_ctr_off = 2.0f * (obj_ctr - 0.5f);
+  taVector2f obj_ctr_off = 2.0f * (obj_ctr - 0.5f);
 
   move_x -= obj_ctr_off.x;
   move_y -= obj_ctr_off.y;
 
   // now, scale the thing to fit in trg_reg->input_size
-  TwoDCoord img_size(eye_image.dim(0), eye_image.dim(1));
+  taVector2i img_size(eye_image.dim(0), eye_image.dim(1));
 
   // height and width in pixels of box:
   float pix_x = (box_ur_x - box_ll_x) * img_size.x;
