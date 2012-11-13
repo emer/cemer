@@ -27,7 +27,8 @@ public:
 	Client();
 	virtual ~Client();
 	int Checkout(Pool pool, const char *url, const char *working_copy_path, int rev = -1);
-	bool Update(Pool pool, const char * path, int rev = -1);
+	bool Update(Pool pool, const char *path, int rev = -1);
+	bool Mkdir(Pool pool, const char *path);
 };
 
 #endif /* CLIENT_H_ */

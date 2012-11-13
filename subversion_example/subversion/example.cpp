@@ -46,7 +46,7 @@ int main() {
 	//const char *url = "http://grey.colorado.edu/svn/emergent/emergent/trunk/package";
 	const char *url = "file:///home/houman/Desktop/svn/";
 
-	const char *path = "/home/houman/Desktop/wc6/dir6";
+	const char *path = "/home/houman/Desktop/wc6/dir15";
 
 	Client client;
 
@@ -59,9 +59,13 @@ int main() {
 		} else {
 			std::cout << "Checked out revision: " << rev << std::endl;
 		}
-	*/
 
 	bool success = client.Update(pool, path);
+
+	*/
+
+	client.Mkdir(pool, path);
+
 
 	pool.~Pool();
 
