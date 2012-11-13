@@ -42,14 +42,14 @@ class taTransform; //
 
 // these are the old obsolete class names, defined for posterity, but should be phased out
 
-typedef taVector2i TwoDCoord;
-typedef PosVector2i PosTwoDCoord;
-typedef taVector3i TDCoord;
-typedef PosVector3i PosTDCoord;
-typedef taVector2f FloatTwoDCoord;
-typedef taVector3f FloatTDCoord;
-typedef taAxisAngle FloatRotation;
-typedef taTransform FloatTransform;
+typedef taVector2i TwoDCoord;		// #INSTANCE obsolete version of taVector2i
+typedef PosVector2i PosTwoDCoord;	// #INSTANCE obsolete version of PosVector2i
+typedef taVector3i TDCoord;		// #INSTANCE obsolete version of taVector3i
+typedef PosVector3i PosTDCoord;		// #INSTANCE obsolete version of PosVector3i
+typedef taVector2f FloatTwoDCoord;	// #INSTANCE obsolete version of taVector2f
+typedef taVector3f FloatTDCoord;	// #INSTANCE obsolete version of taVector3f
+typedef taAxisAngle FloatRotation;	// #INSTANCE obsolete version of taAxisAngle
+typedef taTransform FloatTransform;	// #INSTANCE obsolete version of taTransform
 
 class TA_API taVector2i : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
@@ -776,7 +776,7 @@ public:
   }
   // #CAT_Quaternion #BUTTON set quaternion from three Euler angles in vector form
 
-  inline void	ToEuler(float& theta_x, float& theta_y, float& theta_z, bool homogenous=true) const {
+  inline void	ToEuler(float& theta_z, float& theta_y, float& theta_x, bool homogenous=true) const {
     float sqs = s*s;    
     float sqx = x*x;    
     float sqy = y*y;    
