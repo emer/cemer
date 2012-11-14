@@ -113,7 +113,7 @@ void T3VEBody::initClass()
   SO_NODE_INIT_CLASS(T3VEBody, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEBody::T3VEBody(T3DataView* bod, bool show_drag)
+T3VEBody::T3VEBody(T3DataView* bod, bool show_drag, float drag_size)
   : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEBody);
@@ -121,7 +121,7 @@ T3VEBody::T3VEBody(T3DataView* bod, bool show_drag)
   show_drag_ = show_drag;
   drag_ = NULL;
   if(show_drag_) {
-    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+    drag_ = new T3TransformBoxDragger(drag_size, drag_size * 0.6f, drag_size * .5f);
 
     txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
     txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
@@ -150,7 +150,7 @@ void T3VEJoint::initClass()
   SO_NODE_INIT_CLASS(T3VEJoint, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEJoint::T3VEJoint(T3DataView* bod, bool show_drag)
+T3VEJoint::T3VEJoint(T3DataView* bod, bool show_drag, float drag_size)
   : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEJoint);
@@ -158,7 +158,7 @@ T3VEJoint::T3VEJoint(T3DataView* bod, bool show_drag)
   show_drag_ = show_drag;
   drag_ = NULL;
   if(show_drag_) {
-    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+    drag_ = new T3TransformBoxDragger(drag_size, drag_size * 0.6f, drag_size * .5f);
 
     txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
     txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
@@ -208,7 +208,7 @@ void T3VEStatic::initClass()
   SO_NODE_INIT_CLASS(T3VEStatic, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEStatic::T3VEStatic(T3DataView* bod, bool show_drag)
+T3VEStatic::T3VEStatic(T3DataView* bod, bool show_drag, float drag_size)
   : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEStatic);
@@ -216,7 +216,7 @@ T3VEStatic::T3VEStatic(T3DataView* bod, bool show_drag)
   show_drag_ = show_drag;
   drag_ = NULL;
   if(show_drag_) {
-    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+    drag_ = new T3TransformBoxDragger(drag_size, drag_size * 0.6f, drag_size * .5f);
 
     txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
     txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);

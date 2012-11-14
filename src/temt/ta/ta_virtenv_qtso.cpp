@@ -234,7 +234,7 @@ void VEBodyView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  T3VEBody* obv = new T3VEBody(this, show_drag);
+  T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -594,7 +594,7 @@ void VEObjCarouselView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  T3VEBody* obv = new T3VEBody(this, show_drag);
+  T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -671,7 +671,7 @@ void VEJointView::Render_pre() {
 
   if(!wv->show_joints) return;
 
-  T3VEJoint* obv = new T3VEJoint(this, show_drag);
+  T3VEJoint* obv = new T3VEJoint(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -952,7 +952,7 @@ void VEStaticView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  setNode(new T3VEStatic(this, show_drag));
+  setNode(new T3VEStatic(this, show_drag, wv->drag_size));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEStatic* ob = Static();
@@ -1379,6 +1379,7 @@ void VEWorld::UpdateView() {
 void VEWorldView::Initialize() {
   display_on = true;
   drag_objs = true;
+  drag_size = 0.1f;
   show_joints = true;
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
@@ -1399,6 +1400,7 @@ void VEWorldView::CutLinks() {
 void VEWorldView::Copy_(const VEWorldView& cp) {
   display_on = cp.display_on;
   drag_objs = cp.drag_objs;
+  drag_size = cp.drag_size;
 }
 
 void VEWorldView::UpdateAfterEdit_impl() {
@@ -1810,7 +1812,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 {
   req_full_redraw = false;
 
-//   int font_spec = taiMisc::fonMedium;
+  int font_spec = taiMisc::fonMedium;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
@@ -1822,14 +1824,26 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
+  layDispCheck->addSpacing(taiM->hspc_c);
 
   chkDragObjs = new QCheckBox("Drag Objs", widg);
   connect(chkDragObjs, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDragObjs);
+  layDispCheck->addSpacing(taiM->hspc_c);
 
   chkShowJoints = new QCheckBox("Show Joints", widg);
   connect(chkShowJoints, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkShowJoints);
+  layDispCheck->addSpacing(taiM->hspc_c);
+
+  lblDragSize = taiM->NewLabel("Drag Size: ", widg, font_spec);
+  lblDragSize->setToolTip("Size of the 'dragger' controls for manipulating the position, size, and rotation of objects.");
+  layDispCheck->addWidget(lblDragSize);
+  fldDragSize = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layDispCheck->addWidget(fldDragSize->GetRep());
+  //  layDispCheck->addSpacing(taiM->hspc_c);
+
+  layDispCheck->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   layCams = new QHBoxLayout; layOuter->addLayout(layCams);
@@ -1889,6 +1903,7 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   chkDisplay->setChecked(wv_->display_on);
   chkDragObjs->setChecked(wv_->drag_objs);
   chkShowJoints->setChecked(wv_->show_joints);
+  fldDragSize->GetImage((String)wv_->drag_size);
 
   if(wv_->display_on) {
     if(wl->camera_0) {
@@ -1929,6 +1944,7 @@ void VEWorldViewPanel::GetValue_impl() {
   wv_->display_on = chkDisplay->isChecked();
   wv_->drag_objs = chkDragObjs->isChecked();
   wv_->show_joints = chkShowJoints->isChecked();
+  wv_->drag_size = (float)fldDragSize->GetValue();
 
   req_full_redraw = true;       // not worth micro-managing: MOST changes require full redraw!
 }

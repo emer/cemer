@@ -189,6 +189,7 @@ public:
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		drag_objs;	// allow user to drag/rotate/rescale objects
+  float		drag_size;	// size of the dragger controls
   bool		show_joints;	// show a visual representation of the joints
 
   virtual const String	caption() const; // what to show in viewer
@@ -259,6 +260,8 @@ public:
   QCheckBox*		  chkDisplay;
   QCheckBox*		  chkDragObjs;
   QCheckBox*		  chkShowJoints;
+  QLabel*                   lblDragSize;
+  taiField*                 fldDragSize;
 
   QHBoxLayout*		 layCams;
   QVBoxLayout*		  layCam0;

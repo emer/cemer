@@ -111,7 +111,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void   initClass();
 
-  T3VEBody(T3DataView* bod = NULL, bool show_drag = false);
+  T3VEBody(T3DataView* bod = NULL, bool show_drag = false, float drag_size = 0.06f);
 
   T3TransformBoxDragger* getDragger() { return drag_; } // my position dragger
 
@@ -131,7 +131,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void   initClass();
 
-  T3VEJoint(T3DataView* bod = NULL, bool show_drag = false);
+  T3VEJoint(T3DataView* bod = NULL, bool show_drag = false, float drag_size = 0.06f);
 
   T3TransformBoxDragger* getDragger() { return drag_; } // my position dragger
 
@@ -166,7 +166,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void   initClass();
 
-  T3VEStatic(T3DataView* stat = NULL, bool show_drag = false);
+  T3VEStatic(T3DataView* stat = NULL, bool show_drag = false, float drag_size = 0.06f);
 
   T3TransformBoxDragger* getDragger() { return drag_; } // my position dragger
 
