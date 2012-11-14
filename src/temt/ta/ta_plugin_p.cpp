@@ -342,9 +342,9 @@ bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
   cout << cmd << endl;
   QString curpath = QDir::currentPath();
   QDir::setCurrent(working_dir);
-  system(cmd);
+  int ret_code = system(cmd);
   QDir::setCurrent(curpath);    // restore previous
-  return true;
+  return 0 == ret_code;
 
 // #ifdef TA_OS_WIN
 //   QProcess proc;
