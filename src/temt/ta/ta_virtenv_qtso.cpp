@@ -1103,7 +1103,22 @@ void VEStaticView::Render_impl() {
   if(!ob) return;
 
   SoTransform* tx = obv->transform();
-  tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
+  if(ob->shape == VEStatic::PLANE) {
+    switch (ob->plane_norm) {
+    case VEStatic::NORM_X:
+      tx->translation.setValue(ob->plane_height, 0.0f, 0.0f);
+      break;
+    case VEStatic::NORM_Y:
+      tx->translation.setValue(0.0f, ob->plane_height, 0.0f);
+      break;
+    case VEStatic::NORM_Z:
+      tx->translation.setValue(0.0f, 0.0f, ob->plane_height);
+      break;
+    }
+  }
+  else {
+    tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
+  }
   tx->rotation.setValue(ob->rot_quat.x, ob->rot_quat.y, ob->rot_quat.z, ob->rot_quat.s);
 
   if(ob->set_color) {
