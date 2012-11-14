@@ -273,23 +273,35 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create body in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy body in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
 
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
-  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
-  virtual void	SetValsToODE_InitPos();	// #CAT_ODE set initial position
-  virtual void	SetValsToODE_Rotation();// #CAT_ODE set rotation
-  virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
-  virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
-  virtual void	SetValsToODE_FiniteRotation();	// #CAT_ODE set the finite rotation mode of body in ODE
-  virtual void	SetValsToODE_Gravity();	// #CAT_ODE set the gravity mode
-  virtual void	SetValsToODE_Damping();	// #CAT_ODE set the damping parameters
+  virtual void	Init_Shape();	// #CAT_ODE #EXPERT set shape information
+  virtual void	Init_Pos();	// #CAT_ODE #EXPERT set initial position
+  virtual void	Init_Rotation();	// #CAT_ODE #EXPERT set initial rotation
+  virtual void	Init_Velocity();	// #CAT_ODE #EXPERT set initial velocity (linear and angular)
+  virtual void	Init_Mass();	// #CAT_ODE #EXPERT set the mass of body in ODE
+  virtual void	Init_FiniteRotation(); // #CAT_ODE #EXPERT set the finite rotation mode of body in ODE
+  virtual void	Init_Gravity();	// #CAT_ODE #EXPERT set the gravity mode
+  virtual void	Init_Damping();	// #CAT_ODE #EXPERT set the damping parameters
+
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON #GHOST_ON_body_id:NULL set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+
+  virtual void	CurToODE_Pos();	     // #CAT_ODE #EXPERT set current position
+  virtual void	CurToODE_Rotation();	// #CAT_ODE #EXPERT set current rotation
+  virtual void	CurToODE_Velocity();	// #CAT_ODE #EXPERT set current velocity (linear and angular)
+
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
 
   virtual void	UpdateCurRotFmQuat();
-  // #IGNORE update current rotation parameters from cur_quat read from ODE
+  // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
   virtual void	InitRotFromCur();
-  // #IGNORE set init rotation parameters from current rotation
+  // #CAT_ODE #EXPERT set init rotation parameters from current rotation
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
@@ -306,7 +318,7 @@ public:
 			      bool rel_force=false, bool rel_pos=false);
   // #BUTTON #CAT_ODE add given force vector to object at given position on object -- rel_force and rel_pos specify values relative to the reference frame (orientation, position) of the body, in contrast to global reference frame coordinates
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init 
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of body to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -363,12 +375,17 @@ class TA_API VEBody_Group : public taGroup<VEBody> {
   // ##CAT_VirtEnv a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
+  virtual void	Init();
+  // #CAT_ODE #BUTTON initialize all ODE params and set to init_ settings
+
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+
+  virtual void	CurFromODE(bool updt_disp = false);	// get the updated values from ODE after computing
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
@@ -444,8 +461,8 @@ public:
   virtual void 		ConfigCamera(SoPerspectiveCamera* cam);
   // config So camera parameters
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VECamera);
 private:
@@ -484,8 +501,8 @@ public:
   virtual bool		UpdateLight();
   // #BUTTON if environment is already initialized and viewed, this will update the light in the display based on current settings
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VELight);
 private:
@@ -555,7 +572,7 @@ private:
 };
 
 class TA_API VEJointMotor : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the GetValsFmODE call, using the motor system (be sure to set f_max!)
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
 INHERITED(taOBase)
 public:
   bool		motor_on;	// turn on motor mechanism, defined by subsequent parameters
@@ -666,8 +683,13 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+
+  virtual void	Init();		
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
 
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
   // #BUTTON #CAT_Force apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
@@ -678,10 +700,10 @@ public:
   virtual void	ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2 = 0.0f, float stop_buffer=0.02f);
   // #BUTTON #CAT_Force set servo_on and update target positions for the servos using *normalized* values relative to lo-hi joint stops, with stop_buffer bounds to prevent numerical errors, so it doesn't go lower than lo + stop_buffer and higher than hi - stop_buffer -- servo control automatically applied when the system is stepped
 
-  virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
-  virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
-  virtual void	SetValsToODE_Motor(); // #CAT_ODE set motor params
-  virtual void	SetValsToODE_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
+  virtual void	Init_Anchor(); // #CAT_ODE set anchor(s)
+  virtual void	Init_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
+  virtual void	Init_Motor(); // #CAT_ODE set motor params
+  virtual void	Init_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
 
   bool	IsCurType()  { return (joint_type == cur_type); }
   // #CAT_ODE is the ODE guy actually configured for the current joint type or not?
@@ -711,9 +733,15 @@ class TA_API VEJoint_Group : public taGroup<VEJoint> {
   // ##CAT_VirtEnv a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEJoint_Group);
 private:
@@ -832,8 +860,8 @@ public:
 				 float trg_norm_angle2 = 0.0f);
   // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VEMuscleJoint);
 protected:
@@ -874,13 +902,17 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
 
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE(bool updt_disp = false);
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+  virtual void	CurFromODE(bool updt_disp = false);
   // #CAT_ODE get the updated values from ODE after computing
 
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
@@ -912,9 +944,16 @@ class TA_API VEObject_Group : public taGroup<VEObject> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VEObject>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
@@ -1025,13 +1064,17 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create static element in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy static element in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
   virtual void	InitRotFromCur();
   // #IGNORE set init rotation parameters from current rotation (rot_quat)
 
-  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
-  virtual void	SetValsToODE_PosRot();	// #CAT_ODE set position and rotation
+  virtual void	Init_Shape();	// #CAT_ODE set shape information
+  virtual void	Init_PosRot();	// #CAT_ODE set position and rotation
 
   bool	IsCurShape()  { return ((shape == cur_shape) && 
 				(HasStaticFlag(FM_FILE) == HasStaticFlag(CUR_FM_FILE))); }
@@ -1069,7 +1112,11 @@ class TA_API VEStatic_Group : public taGroup<VEStatic> {
   // ##CAT_VirtEnv a group of virtual environment static elements
 INHERITED(taGroup<VEStatic>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   virtual void	Translate(float dx, float dy, float dz);
@@ -1108,7 +1155,7 @@ public:
   String	data_col;	// column name within table that has the data -- IMPORTANT: must be a 2d float/double matrix column!
   int		row_num;	// row number containing height field data
 
-  override void	SetValsToODE();	
+  override void	Init();	
 
   TA_SIMPLE_BASEFUNS(VEHeightField);
 private:
@@ -1143,8 +1190,10 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
 
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
   virtual void	Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
@@ -1177,8 +1226,12 @@ class TA_API VESpace_Group : public taGroup<VESpace> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VESpace>)
 public:
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   virtual void	Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
@@ -1261,18 +1314,20 @@ public:
   override String	GetDesc() const { return desc; }
   virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE();
-  // #CAT_ODE get the updated values from ODE after computing (called after each step)
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurFromODE();
+  // #CAT_ODE get the current updated values from ODE after computing (called after each step)
 
-  virtual void	Init() { SetValsToODE(); }
+  virtual void	Init();
   // #BUTTON #CAT_ODE initialize the virtual environment, placing all objects in their init configurations, updating with any added objects, etc
   virtual void	Step();		
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
   virtual void	Reset() { DestroyODE(); SetValsToODE(); }
   // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
 
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE -- for all bodies
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
