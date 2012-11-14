@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 2012, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -17,11 +17,15 @@
 #define SUBVERSION_H_
 
 #include "ta_def.h"
+#include <apr.h>  // apr_off_t
+#include <string>
 
 // TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
 //#include <apr_pools.h>
 extern "C" {
   typedef struct apr_pool_t apr_pool_t;
+  typedef struct svn_client_ctx_t svn_client_ctx_t;
+  typedef struct svn_wc_notify_t svn_wc_notify_t;
 }
 
 // TODO: inherit from generic version control abstract base class.
@@ -43,18 +47,35 @@ public:
 
   // TODO: need to decide what return types make sense for each API.
   int Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
-  int MakeDir(const char *new_dir, bool create_parents = true);
-  int MakeUrlDir(const char *url, bool create_parents = true);
+  bool MakeDir(const char *new_dir, bool create_parents = true);
+  bool MakeUrlDir(const char *url, bool create_parents = true);
 
   // Checkin 'files': a comma or newline separated list of files/dirs.
   // If empty, the whole working copy will be committed.
   int Checkin(const char *comment, const char *files = "");
   int Status(const char *files = "");
 
+  // Call to cancel current operation in progress.
+  void Cancel();
+
+  // TODO?
+  // Log();
+
 private:
+  void createContext();
+
+  // Callbacks.
+  struct Glue; // connects C-style callbacks with these methods.
+  bool isCancelled();
+  void notify(const svn_wc_notify_t *notify);
+  void notifyProgress(apr_off_t progress, apr_off_t total);
+  std::string getCommitMessage();
+
   const char *m_wc_path;
   const char *m_url;
   apr_pool_t *m_pool;
+  svn_client_ctx_t *m_ctx;
+  bool m_cancelled;
 };
 
 #endif // SUBVERSION_H_
