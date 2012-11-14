@@ -212,14 +212,14 @@ public:
   taVector3f	init_pos;  	// initial position of body (when creating it)
   taAxisAngle	init_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT initial rotation of body in terms of an axis and angle (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   taVector3f	init_euler;  	// #CONDSHOW_ON_flags:EULER_ROT initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
-  taQuaternion init_quat;  	// #READ_ONLY initial rotation of body in Quaternion form -- automatically converted from init_rot or init_euler depending on EULER_ROT flag
+  taQuaternion  init_quat;  	// #READ_ONLY initial rotation of body in Quaternion form -- automatically converted from init_rot or init_euler depending on EULER_ROT flag
   taVector3f	init_lin_vel;	// initial linear velocity
   taVector3f	init_ang_vel;	// initial angular velocity
 
   taVector3f	cur_pos;  	// current position of body
   taAxisAngle	cur_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   taVector3f	cur_euler;  	// #CONDSHOW_ON_flags:EULER_ROT current rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
-  taQuaternion cur_quat;  	// #READ_ONLY current rotation of body in Quaternion form
+  taQuaternion  cur_quat;  	// #READ_ONLY current rotation of body in Quaternion form
   taVector3f	cur_lin_vel;	// current linear velocity
   taVector3f	cur_ang_vel;	// current angular velocity
 
@@ -227,7 +227,7 @@ public:
   float		mass;		// total mass of body (in kg)
   float		radius;		// #CONDSHOW_OFF_shape:BOX radius of body, for all but box
   float		length;		// #CONDSHOW_OFF_shape:BOX,SPHERE length of body, for all but box 
-  LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
+  LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented) -- only for CAPSULE and CYLINDER -- this creates an additional rotation between init_ rotation and cur_ rotation, only applied at time of init
   taVector3f	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
 
   taTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
@@ -287,7 +287,9 @@ public:
   virtual void	SetValsToODE_Damping();	// #CAT_ODE set the damping parameters
 
   virtual void	UpdateCurRotFmQuat();
-  // #IGNORE update current rotation parameters from cur_quat read from ODE -- needed for capsule and cylinder types that have to correct for different types of axes
+  // #IGNORE update current rotation parameters from cur_quat read from ODE
+  virtual void	InitRotFromCur();
+  // #IGNORE set init rotation parameters from current rotation
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
@@ -976,7 +978,7 @@ public:
   taVector3f	pos;  		// #CONDSHOW_OFF_shape:PLANE position of static item
   taAxisAngle	rot;  		// #CONDSHOW_OFF_flags:EULER_ROT rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
   taVector3f	rot_euler;  	// #CONDSHOW_ON_flags:EULER_ROT rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
-  taQuaternion rot_quat;	// #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
+  taQuaternion  rot_quat;	// #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
 
   Shape		shape;		// shape of static item for purposes of collision (and visual rendering if not FM_FILE)
   float		radius;		// #CONDSHOW_OFF_shape:BOX,PLANE radius of body, for all but box
@@ -1024,6 +1026,9 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create static element in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy static element in ode (if created)
   virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+
+  virtual void	InitRotFromCur();
+  // #IGNORE set init rotation parameters from current rotation (rot_quat)
 
   virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
   virtual void	SetValsToODE_PosRot();	// #CAT_ODE set position and rotation

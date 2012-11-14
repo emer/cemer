@@ -43,8 +43,6 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation(bool force=false);
-  // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   bool			isVisible() const { return (taMisc::use_gui ); }
   override bool		ignoreDataChanged() const { return !isVisible(); }
@@ -88,10 +86,10 @@ public:
   
   DATAVIEW_PARENT(VEWorldView)
 
+  virtual void		FixOrientation(bool force=false);
+  // fix the orientation of joint
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation(bool force=false);
-  // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   bool			isVisible() const { return (taMisc::use_gui ); }
   override bool		ignoreDataChanged() const { return !isVisible(); }
@@ -143,8 +141,6 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation(bool force=false);
-  // fix the orientation of the body for different shape axes (capsule and cylinder)  -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   bool			isVisible() const { return (taMisc::use_gui ); }
   override bool		ignoreDataChanged() const { return !isVisible(); }
