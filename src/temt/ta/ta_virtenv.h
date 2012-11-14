@@ -361,7 +361,8 @@ public:
   override void CutLinks();
   TA_BASEFUNS(VEBody);
 protected:
-  Shape		cur_shape;	// current shape that was previously set
+  Shape		cur_shape;	// #IGNORE current shape that was previously set -- for detecting updates
+  LongAxis	cur_long_axis;	// #IGNORE long axis that was previously set -- for detecting updates
 
   override void 	UpdateAfterEdit_impl();
 private:

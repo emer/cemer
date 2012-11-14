@@ -16,6 +16,8 @@
 #include "ta_virtenv.h"
 #include "ta_math.h"
 
+#include <Inventor/SbLinear.h>
+
 // all objs should set this pointer while setting vals, for better err msgs
 static taBase* VE_last_ve_set_vals_to_ode = NULL;
 
@@ -87,15 +89,13 @@ bool VETexture::NeedsTransform() {
 ////////////////////////////////////////////////
 //              bodies (ridid object elements)
 
-
-#include <Inventor/SbLinear.h>
-
 void VEBody::Initialize() {
   body_id = NULL;
   geom_id = NULL;
   flags = (BodyFlags)(GRAVITY_ON | EULER_ROT);
   shape = CAPSULE;
-  cur_shape = BOX;
+  cur_shape = NO_SHAPE;
+  cur_long_axis = (LongAxis)0;
   mass = 1.0f;
   radius = .2f;
   length = 1.0f;
@@ -141,6 +141,28 @@ void VEBody::UpdateAfterEdit_impl() {
     init_rot = init_quat;
     init_quat.ToEulerVec(init_euler);
   }
+
+  if(!taMisc::is_loading) {
+    if(shape == CAPSULE || shape == CYLINDER) {
+      if(long_axis != cur_long_axis) {
+	// first, undo old setting
+	if(cur_long_axis == LONG_X) {
+	  cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
+	}
+	else if(cur_long_axis == LONG_Y) {
+	  cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
+	}
+	// next, set new one
+	if(long_axis == LONG_X) {
+	  cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
+	}
+	else if(long_axis == LONG_Y) {
+	  cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
+	}
+      }
+    }
+  }
+  cur_long_axis = long_axis;
 
   CurToODE();		// always update ODE with any changes!
 }
@@ -285,17 +307,16 @@ void VEBody::Init_Rotation() {
   dBodyID bid = (dBodyID)body_id;
 
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
-  taQuaternion eff_quat = init_quat;
+  cur_quat = init_quat;
   if(shape == CAPSULE || shape == CYLINDER) {
     if(long_axis == LONG_X) {
-      eff_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
+      cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
     }
     else if(long_axis == LONG_Y) {
-      eff_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
+      cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
     }
   }
 
-  cur_quat = eff_quat;
   cur_quat.ToAxisAngle(cur_rot);
   cur_quat.ToEulerVec(cur_euler);
 
@@ -2500,6 +2521,7 @@ void VEWorld::Initialize() {
   cur_space_type = HASH_SPACE;
   hash_levels.min = -3;  hash_levels.max = 10;
   gravity.y = -9.81f;
+  updt_display = true;
   step_type = STD_STEP;
   stepsize = .01f;
   quick_iters = 20;
