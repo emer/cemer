@@ -62,8 +62,7 @@ else (WIN32)
     SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-mac")
   else (APPLE)
     SET(CPACK_GENERATOR "DEB")
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, zlib1g-dev, libode-sp-dev, libpng-dev, libjpeg8-dev, libquarter")
-
+    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, zlib1g-dev, libode-sp-dev, libpng-dev, libjpeg-dev, libquarter, libncurses-dev, libsvn-dev")
     # CPACK_DEBIAN_PACKAGE_ARCHITECTURE should get set automatically by dpkg --print-architecture
     # ... except that doesn't happen until CPack runs, and we need it here to set the package filename
     # This is copied from CPackDeb.cmake.

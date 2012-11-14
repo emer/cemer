@@ -107,7 +107,7 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * only need checkinstall here to make the Quarter package.
 #    * (that was the old way of packaging)
 #  * don't need libquarter here since we will be building it ourselves.
-EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev"
+EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev libsvn-dev"
 
 # Packages needed to build Quarter.  It also requires some of the
 # ones already listed in EMERGENT_PKGS, but this one is specifically
