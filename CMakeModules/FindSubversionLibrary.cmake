@@ -499,5 +499,8 @@ MARK_AS_ADVANCED(
   APU_LIBRARY
 )
 
+IF (Subversion_FIND_REQUIRED AND NOT SUBVERSION_FOUND)
+  MESSAGE(FATAL_ERROR "Subversion libraries were not found.")
+ENDIF()
 
 #kate: space-indent on; indent-width 2; tab-width: 2; replace-tabs on; auto-insert-doxygen on
