@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.1.1.0 rev5758
 LeabraProject .projects["LeabraStd"] { 
   taBase_Group @.templates = [0] {
   };
@@ -222,7 +222,7 @@ LeabraProject .projects["LeabraStd"] {
 	};
 
 	Function_List @.functions = [1] {
-	  Function @[0] { 
+	  Function @["GetRandomSeed"] { 
 	    ProgVar_List @.args = [0] {
 	    };
 
@@ -1012,12 +1012,12 @@ LeabraProject .projects["LeabraStd"] {
 	      };
 
 	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @["View 0"] { };
-		T3SavedView @["View 1"] { };
-		T3SavedView @["View 2"] { };
-		T3SavedView @["View 3"] { };
-		T3SavedView @["View 4"] { };
-		T3SavedView @["View 5"] { };
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
 	      };
 	    };
 	  };
@@ -1054,7 +1054,7 @@ LeabraProject .projects["LeabraStd"] {
 	UserDataItem @["batch"] { };
    };
 
-      BaseSpec_Group @.specs = [5] {
+      BaseSpec_Group @.specs = [4] {
 	LeabraLayerSpec @["HiddenLayer"] { 
 	  BaseSpec_Group @.children = [1] {
 	    LeabraLayerSpec @["Input_Output"] { 
@@ -1070,8 +1070,15 @@ LeabraProject .projects["LeabraStd"] {
 	  Schedule @.noise_sched = [0] {
 	  };
 	};
-	LeabraBiasSpec @["LeabraBiasSpec_0"] { 
-	  BaseSpec_Group @.children = [0] {
+	LeabraConSpec @["LeabraConSpec_0"] { 
+	  BaseSpec_Group @.children = [1] {
+	    LeabraBiasSpec @["LeabraBiasSpec_0"] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
 	  };
 
 	  Schedule @.lrate_sched = [0] {
@@ -1079,13 +1086,6 @@ LeabraProject .projects["LeabraStd"] {
 	};
 	FullPrjnSpec @["FullPrjnSpec_0"] { 
 	  BaseSpec_Group @.children = [0] {
-	  };
-	};
-	LeabraConSpec @["LeabraConSpec_0"] { 
-	  BaseSpec_Group @.children = [0] {
-	  };
-
-	  Schedule @.lrate_sched = [0] {
 	  };
 	};
       };
@@ -1785,6 +1785,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$$;
       local_ctr_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].vars["batch"]$$;
       counter=Network::batch;
@@ -1798,6 +1799,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="init_batch";
       };
@@ -1809,6 +1811,7 @@ LeabraProject .projects["LeabraStd"] {
        NetCounterInit @[0] {
 	desc="initializes local batch counter and batch field on network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
 	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -1822,6 +1825,7 @@ LeabraProject .projects["LeabraStd"] {
        MemberAssign @[0] {
 	desc="just set directly to current batch value";
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
 	path="batch";
 	expr {
@@ -1834,6 +1838,7 @@ LeabraProject .projects["LeabraStd"] {
      WhileLoop @[1] {
       desc="the main loop over training runs";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -1841,6 +1846,7 @@ LeabraProject .projects["LeabraStd"] {
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1882,6 +1888,7 @@ LeabraProject .projects["LeabraStd"] {
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].args["network"]$;
 	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -2300,9 +2307,10 @@ LeabraProject .projects["LeabraStd"] {
      name=;
      el_typ=Function;
      el_def=0;
-     Function @[0] {
+     Function @["GetRandomSeed"] {
       desc=;
       flags=0;
+      orig_prog_code=;
       name="GetRandomSeed";
       return_type=T_Int;
       object_type=taOBase;
@@ -2318,6 +2326,7 @@ LeabraProject .projects["LeabraStd"] {
        LocalVars @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	local_vars {
 	 name=;
 	 el_typ=ProgVar;
@@ -2327,6 +2336,7 @@ LeabraProject .projects["LeabraStd"] {
        Switch @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	switch_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_init"]$$;
 	cases {
 	 name=;
@@ -2335,6 +2345,7 @@ LeabraProject .projects["LeabraStd"] {
 	 CaseBlock @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -2342,6 +2353,7 @@ LeabraProject .projects["LeabraStd"] {
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_seed"]$$;
 	    method=RndSeed::OldSeed;
@@ -2359,6 +2371,7 @@ LeabraProject .projects["LeabraStd"] {
 	 CaseBlock @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -2366,6 +2379,7 @@ LeabraProject .projects["LeabraStd"] {
 	   MethodCall @[0] {
 	    desc="new random numbers each time";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_seed"]$;
 	    method=RndSeed::NewSeed;
@@ -2383,6 +2397,7 @@ LeabraProject .projects["LeabraStd"] {
 	 CaseBlock @[2] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -2390,6 +2405,7 @@ LeabraProject .projects["LeabraStd"] {
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_seeds"]$$;
 	    method=RndSeed_List::UseSeed;
@@ -2426,6 +2442,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["no_prompts"]$$;
       expr {
        expr="false";
@@ -2434,6 +2451,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$$;
       method=taBase::CheckConfig;
@@ -2456,6 +2474,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["train_timer"]$$;
       expr {
        expr="network.train_time";
@@ -2464,6 +2483,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$$;
       expr {
        expr="0";
@@ -2472,8 +2492,9 @@ LeabraProject .projects["LeabraStd"] {
      FunctionCall @[4] {
       desc="initialize random seed";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
-      fun=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions[0]$$;
+      fun=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions["GetRandomSeed"]$$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -2483,6 +2504,7 @@ LeabraProject .projects["LeabraStd"] {
      WtInitPrompt @[5] {
       desc="don't initialize weights without checking";
       flags=0;
+      orig_prog_code=;
       prompt="Do you want to Initialize Network Weights";
       yes_label="Yes";
       no_label="No";
@@ -2493,6 +2515,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	method=Network::Build;
@@ -2505,6 +2528,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[1] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -2517,6 +2541,7 @@ LeabraProject .projects["LeabraStd"] {
        PrintExpr @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -2528,6 +2553,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[6] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$$;
       expr {
        expr="network.epoch";
@@ -2541,6 +2567,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["train_timer"]$;
       expr {
        expr="network.train_time";
@@ -2549,6 +2576,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[1] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["train_timer"]$;
       method=TimeUsed::StartTimer;
@@ -2571,6 +2599,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$;
       expr {
        expr="0";
@@ -2579,6 +2608,7 @@ LeabraProject .projects["LeabraStd"] {
      MemberAssign @[3] {
       desc="set network's training mode to our local value";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
       path="train_mode";
       expr {
@@ -2589,8 +2619,9 @@ LeabraProject .projects["LeabraStd"] {
      FunctionCall @[4] {
       desc="initialize random seed";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
-      fun=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions[0]$;
+      fun=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].functions["GetRandomSeed"]$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -2600,6 +2631,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="no_prompts";
       };
@@ -2611,6 +2643,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -2623,6 +2656,7 @@ LeabraProject .projects["LeabraStd"] {
        PrintExpr @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -2639,6 +2673,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[6] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$;
       expr {
        expr="network.epoch";
@@ -2647,6 +2682,7 @@ LeabraProject .projects["LeabraStd"] {
      WhileLoop @[7] {
       desc=;
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -2654,6 +2690,7 @@ LeabraProject .projects["LeabraStd"] {
        ProgramCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2685,6 +2722,7 @@ LeabraProject .projects["LeabraStd"] {
        NetCounterIncr @[1] {
 	desc="increment the epoch counter";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$;
 	counter=Network::epoch;
@@ -2693,6 +2731,7 @@ LeabraProject .projects["LeabraStd"] {
        IfElse @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="network.cnt_err <= err_stopcrit";
 	};
@@ -2704,6 +2743,7 @@ LeabraProject .projects["LeabraStd"] {
 	 VarIncr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="1";
@@ -2712,6 +2752,7 @@ LeabraProject .projects["LeabraStd"] {
 	 IfBreak @[1] {
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr="n_under_cnt >=  n_under_thr";
 	  };
@@ -2724,6 +2765,7 @@ LeabraProject .projects["LeabraStd"] {
 	 AssignExpr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="0";
@@ -2734,6 +2776,7 @@ LeabraProject .projects["LeabraStd"] {
        IfElse @[3] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="save_wts_interval >= 1";
 	};
@@ -2745,6 +2788,7 @@ LeabraProject .projects["LeabraStd"] {
 	 IfElse @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr="epoch % save_wts_interval == 0";
 	  };
@@ -2756,6 +2800,7 @@ LeabraProject .projects["LeabraStd"] {
 	   ProgramCall @[0] {
 	    desc=;
 	    flags=0;
+	    orig_prog_code=;
 	    prog_args {
 	     name=;
 	     el_typ=ProgArg;
@@ -2796,6 +2841,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[8] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="save_final_wts";
       };
@@ -2807,6 +2853,7 @@ LeabraProject .projects["LeabraStd"] {
        ProgramCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2835,6 +2882,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[9] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["train_timer"]$;
       method=TimeUsed::EndTimer;
@@ -2992,6 +3040,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$$;
       local_ctr_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["trial"]$$;
       counter=Network::trial;
@@ -3000,6 +3049,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
@@ -3013,6 +3063,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
       local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["trial"]$;
       counter=Network::trial;
@@ -3021,6 +3072,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
@@ -3029,6 +3081,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[2] {
       desc="start the epoch timer to record computation time per epoch";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::StartTimer;
@@ -3051,6 +3104,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
@@ -3063,6 +3117,7 @@ LeabraProject .projects["LeabraStd"] {
      NetDataLoop @[4] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -3070,6 +3125,7 @@ LeabraProject .projects["LeabraStd"] {
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -3101,10 +3157,11 @@ LeabraProject .projects["LeabraStd"] {
        IfElse @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="step_on_err && network.sse > 0.0";
 	};
-	show_false_code=1;
+	show_false_code=0;
 	true_code {
 	 name="ProgEl_List_100";
 	 el_typ=ProgCode;
@@ -3112,6 +3169,7 @@ LeabraProject .projects["LeabraStd"] {
 	 StopStepPoint @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	 };
 	};
 	false_code {
@@ -3138,6 +3196,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[5] {
       desc="if full batch mode, update only at end of epoch";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.wt_update == Network::BATCH";
       };
@@ -3149,6 +3208,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc="final update of weights based on accumulated changes";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
 	method=Network::Compute_Weights;
@@ -3168,6 +3228,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[6] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
       method=LeabraNetwork::Compute_EpochStats;
@@ -3180,6 +3241,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[7] {
       desc=;
       flags=NEW_EL;
+      orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
@@ -3191,6 +3253,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
 	method=LeabraNetwork::Compute_AvgAbsRelNetin;
@@ -3203,6 +3266,7 @@ LeabraProject .projects["LeabraStd"] {
        IfElse @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="adapt_rel_abs_netin";
 	};
@@ -3214,6 +3278,7 @@ LeabraProject .projects["LeabraStd"] {
 	 MethodCall @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
 	  method=LeabraNetwork::Compute_AdaptRelNetin;
@@ -3226,6 +3291,7 @@ LeabraProject .projects["LeabraStd"] {
 	 MethodCall @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
 	  method=LeabraNetwork::Compute_AdaptAbsNetin;
@@ -3252,6 +3318,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[8] {
       desc="done with the computation in the epoch -- record time it took";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::EndTimer;
@@ -3264,6 +3331,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgramCall @[9] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3386,6 +3454,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$$;
       local_ctr_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].vars["phase_no"]$$;
       counter=LeabraNetwork::phase_no;
@@ -3399,6 +3468,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
       local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].vars["phase_no"]$;
       counter=LeabraNetwork::phase_no;
@@ -3407,6 +3477,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
       method=LeabraNetwork::Trial_Init;
@@ -3419,6 +3490,7 @@ LeabraProject .projects["LeabraStd"] {
      WhileLoop @[2] {
       desc="loop over phases of settling in the network";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -3426,6 +3498,7 @@ LeabraProject .projects["LeabraStd"] {
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -3457,6 +3530,7 @@ LeabraProject .projects["LeabraStd"] {
        NetCounterIncr @[1] {
 	desc="increment the phase number (also on network)";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
 	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].vars["phase_no"]$;
 	counter=LeabraNetwork::phase_no;
@@ -3465,6 +3539,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
 	method=LeabraNetwork::Trial_UpdatePhase;
@@ -3482,6 +3557,7 @@ LeabraProject .projects["LeabraStd"] {
      MethodCall @[3] {
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
       method=LeabraNetwork::Trial_Final;
@@ -3494,6 +3570,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[4] {
       desc=;
       flags=NEW_EL;
+      orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
@@ -3505,6 +3582,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc="special for adapting netin";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
 	method=LeabraNetwork::Compute_AbsRelNetin;
@@ -3524,6 +3602,7 @@ LeabraProject .projects["LeabraStd"] {
      IfElse @[5] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
       };
@@ -3535,6 +3614,7 @@ LeabraProject .projects["LeabraStd"] {
        MethodCall @[0] {
 	desc="update the weight values based on changes computed by trial program";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
 	method=Network::Compute_Weights;
@@ -3554,6 +3634,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgramCall @[6] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3575,6 +3656,7 @@ LeabraProject .projects["LeabraStd"] {
      NetUpdateView @[7] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
       update_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].vars["update_net_view"]$$;
      };
@@ -3642,7 +3724,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["min_cycles"] {
       name="min_cycles";
       var_type=T_Int;
-      int_val=15;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3673,6 +3755,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$$;
       local_ctr_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["cycle"]$$;
       counter=Network::cycle;
@@ -3686,6 +3769,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
       local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["cycle"]$;
       counter=Network::cycle;
@@ -3694,6 +3778,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
       method=Network::Init_InputData;
@@ -3707,6 +3792,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3738,6 +3824,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MethodCall @[3] {
       desc="initializes various counters at start of settling";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
       method=LeabraNetwork::Settle_Init;
@@ -3750,6 +3837,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      IfElse @[4] {
       desc="get appropriate min_cycles value depending on which phase we're in";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.phase_no <= 1";
       };
@@ -3761,6 +3849,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        AssignExpr @[0] {
 	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["min_cycles"]$$;
 	expr {
 	 expr="network.min_cycles";
@@ -3774,6 +3863,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        AssignExpr @[0] {
 	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
 	flags=0;
+	orig_prog_code=;
 	result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["min_cycles"]$;
 	expr {
 	 expr="network.min_cycles_phase2";
@@ -3784,6 +3874,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      WhileLoop @[5] {
       desc="the main loop over cycles of updating";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -3791,6 +3882,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -3812,6 +3904,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        NetCounterIncr @[1] {
 	desc="increment cycle counter (also on network)";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
 	local_ctr_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["cycle"]$;
 	counter=Network::cycle;
@@ -3820,6 +3913,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        IfContinue @[2] {
 	desc="avoid subsequent stopping criteria if below min_cycles";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="cycle < min_cycles";
 	};
@@ -3827,6 +3921,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        IfBreak @[3] {
 	desc="stopping criterion for settling: based either on maximum change in activation (maxda) or on the maximum activation value in the network getting over threshold (which ever comes first).  Set either parmeter to values that are always false (e.g., trg_max_act_stopcrit = -1) to eliminate associated source of criterion for stopping settling.";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
@@ -3840,6 +3935,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MethodCall @[6] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
       method=LeabraNetwork::Settle_Final;
@@ -3853,6 +3949,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.Compute_TrialStats_Test()";
       };
@@ -3864,6 +3961,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        MethodCall @[0] {
 	desc="compute trial-level statistics";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
 	method=LeabraNetwork::Compute_TrialStats;
@@ -3883,6 +3981,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      IfElse @[8] {
       desc="this stat must be called in plus phase when reward information is avail";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.phase_no == 1";
       };
@@ -3894,6 +3993,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        MethodCall @[0] {
 	desc="get external reward information";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
 	method=LeabraNetwork::Compute_ExtRew;
@@ -3913,6 +4013,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[9] {
       desc="update network views, if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
       update_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["update_net_view"]$$;
      };
@@ -3984,6 +4085,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="this does all the standard leabra processing for one cycle of activation updating";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].args["network"]$$;
       method=LeabraNetwork::Cycle_Run;
@@ -3996,6 +4098,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].args["network"]$;
       update_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraCycle"].vars["update_net_view"]$$;
      };
@@ -4117,6 +4220,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
@@ -4149,6 +4253,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::AutoConfig;
@@ -4171,6 +4276,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
@@ -4198,6 +4304,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::SetDataNetwork;
@@ -4230,6 +4337,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
@@ -4613,6 +4721,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
@@ -4645,6 +4754,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
       method=taBase::CheckConfig;
@@ -4667,6 +4777,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::UpdateMonitors;
@@ -4694,6 +4805,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="add a new blank row to the data";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_mon_data"]$$;
       method=DataTable::AddBlankRow;
@@ -4706,6 +4818,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::GetMonVals;
@@ -4718,6 +4831,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["trial_mon_data"]$;
       method=DataBlock::WriteClose;
@@ -4730,6 +4844,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].args["network"]$$;
       method=Network::DMem_ShareTrialData;
@@ -5112,6 +5227,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[0] {
       desc="get the epoch timer from current network";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
@@ -5120,6 +5236,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
@@ -5152,6 +5269,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
       method=taBase::CheckConfig;
@@ -5174,6 +5292,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::UpdateMonitors;
@@ -5201,6 +5320,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="add a new blank row to the data";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$$;
       method=DataTable::AddBlankRow;
@@ -5213,6 +5333,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::GetMonVals;
@@ -5225,6 +5346,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
@@ -5233,6 +5355,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
@@ -5285,6 +5408,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
@@ -5337,6 +5461,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataBlock::WriteClose;
@@ -5360,6 +5485,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
  
 ";
       flags=0;
+      orig_prog_code=;
      };
     };
     step_prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitor"]$;
@@ -5479,6 +5605,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      IfReturn @[0] {
       desc="do not save if not the first dmem process (only relevant for dmem = distributed memory processing)";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_proc > 0";
       };
@@ -5486,6 +5613,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -5518,6 +5646,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -5550,6 +5679,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      AssignExpr @[3] {
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
@@ -5558,6 +5688,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].vars["fname"]$$;
       obj=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
@@ -5610,6 +5741,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      MethodCall @[5] {
       desc="save the weights to that file name";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"].args["network"]$;
       method=Network::SaveWeights;
@@ -5710,7 +5842,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=$.projects["LeabraStd"].networks["Network_0"]$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
 	  lay_mv=1;
@@ -5850,7 +5982,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
 	  m_data=$.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="T3DataView_List_0";
 	   el_typ=GraphColView;
@@ -5945,7 +6077,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=12: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=13: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -6261,43 +6393,43 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name="T3SavedView_List_2";
 	el_typ=T3SavedView;
 	el_def=0;
-	T3SavedView @["View 0"] {
-	 name="View 0";
+	T3SavedView @["View_0"] {
+	 name="View_0";
 	 view_saved=1;
 	 pos {x=1.465: y=0.4449999: z=1.452551: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=1.962551;
 	};
-	T3SavedView @["View 1"] {
-	 name="View 1";
+	T3SavedView @["View_1"] {
+	 name="View_1";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 2"] {
-	 name="View 2";
+	T3SavedView @["View_2"] {
+	 name="View_2";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 3"] {
-	 name="View 3";
+	T3SavedView @["View_3"] {
+	 name="View_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 4"] {
-	 name="View 4";
+	T3SavedView @["View_4"] {
+	 name="View_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View 5"] {
-	 name="View 5";
+	T3SavedView @["View_5"] {
+	 name="View_5";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -6456,23 +6588,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        inhib {
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
+	avg_boost=0;
 	low0=0;
 	min_i=0;
-	net_gain=0.35;
-	act_gain=0.4;
-	kink_gain=1.1;
-	avg_up_dt=0.9;
-	avg_dn_dt=0.3;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
        };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
        adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
-       decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+       decay {event=1: phase=0: phase2=0: };
        ct_inhib_mod {
 	sravg_delay=0;
 	use_sin=0;
@@ -6493,23 +6623,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      inhib {
       type=KWTA_AVG_INHIB;
       kwta_pt=0.5;
+      avg_boost=0;
       low0=0;
       min_i=0;
-      net_gain=0.35;
-      act_gain=0.4;
-      kink_gain=1.1;
-      avg_up_dt=0.9;
-      avg_dn_dt=0.3;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
      };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
-     decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+     decay {event=1: phase=0: phase2=0: };
      ct_inhib_mod {
       sravg_delay=0;
       use_sin=0;
@@ -6536,7 +6664,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["LeabraBiasSpec_0"]$$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {gelin=1: old_gelin=0: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
@@ -6563,11 +6691,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
-     ff_bal {
-      on=0;
-      ff=0.5;
-      ff_c=0.5;
-     };
      adapt {
       on=0;
       dt=0.007;
@@ -6593,33 +6716,75 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       interpolate=1;
      };
     };
-    LeabraBiasSpec @["LeabraBiasSpec_0"] {
-     name="LeabraBiasSpec_0";
+    LeabraConSpec @["LeabraConSpec_0"] {
+     name="LeabraConSpec_0";
      desc=;
-     unique{ rnd;wt_limits;wt_scale;wt_scale_init;     };
+     unique{      };
      children {
-      name="BaseSpec_Group_4";
-      el_typ=LeabraBiasSpec;
+      name="BaseSpec_Group_6";
+      el_typ=LeabraConSpec;
       el_def=0;
+      LeabraBiasSpec @["LeabraBiasSpec_0"] {
+       name="LeabraBiasSpec_0";
+       desc=;
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       children {
+	name="BaseSpec_Group_4";
+	el_typ=LeabraBiasSpec;
+	el_def=0;
+       };
+       rnd {name="RandomSpec_2": type=UNIFORM: mean=0: var=0: par=1: };
+       wt_limits {type=NONE: min=-1: max=5: sym=0: };
+       learn_rule=CTLEABRA_XCAL;
+       inhib=0;
+       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+       wt_scale_init {init=0: abs=1: rel=1: };
+       learn=1;
+       lrate=0.02;
+       cur_lrate=0.02;
+       lrs_value=EPOCH;
+       lrate_sched {
+	name="Schedule_1";
+	el_typ=SchedItem;
+	el_def=0;
+	default_val=1;
+	interpolate=0;
+       };
+       wt_sig {gain=6: off=1: dwt_norm=1: };
+       lmix {hebb=0.001: err=0.999: err_sb=1: };
+       xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
+       rel_net_adapt {
+	on=0;
+	trg_fm_input=0.85;
+	trg_fm_output=0.15;
+	trg_lateral=0;
+	trg_sum=1;
+	tol_lg=0.05;
+	tol_sm=0.2;
+	rel_lrate=0.2;
+       };
+       dwt_thresh=0.1;
+      };
      };
-     rnd {name="RandomSpec_2": type=UNIFORM: mean=0: var=0: par=1: };
-     wt_limits {type=NONE: min=-1: max=5: sym=0: };
-     learn_rule=LEABRA_CHL;
+     rnd {name="RandomSpec_6": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     learn_rule=CTLEABRA_XCAL;
      inhib=0;
      wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
-     lrate=0.01;
-     cur_lrate=0.01;
+     lrate=0.02;
+     cur_lrate=0.02;
      lrs_value=EPOCH;
      lrate_sched {
-      name="Schedule_1";
+      name="Schedule_2";
       el_typ=SchedItem;
       el_def=0;
       default_val=1;
       interpolate=0;
      };
-     wt_sig {gain=6: off=1.25: dwt_norm=1: };
+     wt_sig {gain=6: off=1: dwt_norm=1: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
@@ -6633,7 +6798,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       tol_sm=0.2;
       rel_lrate=0.2;
      };
-     dwt_thresh=0.1;
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -6648,47 +6812,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      init_wts=0;
      add_rnd_wts=0;
      add_rnd_wts_scale=1;
-    };
-    LeabraConSpec @["LeabraConSpec_0"] {
-     name="LeabraConSpec_0";
-     desc=;
-     unique{      };
-     children {
-      name="BaseSpec_Group_6";
-      el_typ=LeabraConSpec;
-      el_def=0;
-     };
-     rnd {name="RandomSpec_6": type=UNIFORM: mean=0.5: var=0.25: par=1: };
-     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
-     learn_rule=LEABRA_CHL;
-     inhib=0;
-     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
-     wt_scale_init {init=0: abs=1: rel=1: };
-     learn=1;
-     lrate=0.01;
-     cur_lrate=0.01;
-     lrs_value=EPOCH;
-     lrate_sched {
-      name="Schedule_2";
-      el_typ=SchedItem;
-      el_def=0;
-      default_val=1;
-      interpolate=0;
-     };
-     wt_sig {gain=6: off=1.25: dwt_norm=1: };
-     lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
-     rel_net_adapt {
-      on=0;
-      trg_fm_input=0.85;
-      trg_fm_output=0.15;
-      trg_lateral=0;
-      trg_sum=1;
-      tol_lg=0.05;
-      tol_sm=0.2;
-      rel_lrate=0.2;
-     };
     };
    };
    layers {
@@ -6922,16 +7045,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    n_cons=1875;
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
-   learn_rule=LEABRA_CHL;
+   learn_rule=CTLEABRA_XCAL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    sequence_init=DO_NOTHING;
    phase_max=2;
    time_inc=1;
-   cycle_max=60;
+   cycle_max=20;
    mid_minus_cycle=-1;
-   min_cycles=15;
-   min_cycles_phase2=35;
+   min_cycles=0;
+   min_cycles_phase2=0;
    dwt_norm_enabled=1;
    ct_time {
     minus=50;
@@ -6999,7 +7122,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     cyc_syn_dep=0;
     syn_dep_int=20;
    };
-   maxda_stopcrit=0.005;
+   maxda_stopcrit=-1;
    trg_max_act_stopcrit=1;
    norew_val=0.5;
    off_errs=1;

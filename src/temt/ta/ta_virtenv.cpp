@@ -1757,6 +1757,238 @@ void VEMuscleJoint::SetTargNormAngle(float trg_norm_angle, float co_contract,
   }
 }
 
+///////////////////////////////////////////////////////////////
+//  Arm: bodies and joints representing an arm (and a torso too)
+
+void VEArm::Initialize() {
+  // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here
+  arm_side = RIGHT_ARM;
+  // note: toroso ref is self initializing
+  La = 0.3f;
+  Lf = 0.26f + 0.05f;
+}
+
+void VEArm::Destroy() {
+  CutLinks();
+}
+
+bool VEArm::CheckArm(bool quiet) {
+  bool rval = true;
+  if(!torso) {
+    rval = false;
+    TestError(!quiet, "CheckArm", "torso not set -- must specify a body in another object to serve as the torso");
+  }
+  if(bodies.size < N_ARM_BODIES) {
+    rval = false;
+    TestError(!quiet, "CheckArm", "number of bodies < N_ARM_BODIES -- run ConfigArm");
+  }
+  if(joints.size < N_ARM_JOINTS) {
+    rval = false;
+    TestError(!quiet, "CheckArm", "number of joints < N_ARM_JOINTS -- run ConfigArm");
+  }
+  // probably that's sufficient for a quick-and-dirty sanity check
+  return rval;
+}
+
+bool VEArm::ConfigArm(const String& name_prefix,
+		      float humerus_length, float humerus_radius,
+		      float ulna_length, float ulna_radius,
+		      float hand_length, float hand_radius) {
+  // note: keeping torso out of it, so the arm is fully modular and can attach to anything
+
+  if(TestError(!torso, "ConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
+    return false;
+
+  if(bodies.size < N_ARM_BODIES)
+    bodies.SetSize(N_ARM_BODIES); // auto-creates the VEBody objects up to specified size
+  if(joints.size < N_ARM_JOINTS)
+    joints.SetSize(N_ARM_JOINTS); // auto-creates the VEJoint objects up to specified size
+
+  // this is how you access the bodies -- very fast and efficient
+  VEBody* humerus = bodies[HUMERUS];
+  VEBody* ulna = bodies[ULNA];
+  VEBody* hand = bodies[HAND];
+
+  VEJoint* shoulder = joints[SHOULDER];
+  VEJoint* elbow = joints[ELBOW];
+  VEJoint* wrist = joints[WRIST];
+
+  //------- Setting standard geometry -------
+  // todo: just need to know where to attach to torso..
+  // torso.shape = VEBody::BOX; 
+  // torso.length = 0.4;
+  // torso.init_pos.x = -0.25; torso.init_pos.y = 0; torso.init_pos.z = -0.2;
+  // torso.cur_pos.x = -0.25; torso.cur_pos.y = 0; torso.cur_pos.z = -0.2;
+  // torso.box.x = 0.35; torso.box.y = 0.1; torso.box.z = 0.4;
+  // torso.SetValsToODE();
+  
+  // todo: need to make all this conditional on arm_side!
+  humerus->name = name_prefix + "Humerus";
+  humerus->shape = VEBody::CAPSULE; humerus->long_axis = VEBody::LONG_Z;
+  humerus->length = humerus_length; humerus->radius = humerus_radius;
+  humerus->init_pos.x = 0; humerus->init_pos.y = 0; humerus->init_pos.z = -0.16;
+  humerus->init_rot.x = 0; humerus->init_rot.y = 0; humerus->init_rot.z = 0;
+  humerus->cur_pos.x = 0; humerus->cur_pos.y = 0; humerus->cur_pos.z = -0.16;
+  humerus->cur_rot.x = 0; humerus->cur_rot.y = 0; humerus->cur_rot.z = 0;
+
+  ulna->name = name_prefix + "Ulna";
+  ulna->shape = VEBody::CAPSULE; ulna->long_axis = VEBody::LONG_Z;
+  ulna->length = ulna_length; ulna->radius = ulna_radius;
+  ulna->init_pos.x = 0; ulna->init_pos.y = 0; ulna->init_pos.z = -0.45; // todo: depends on humerus..
+  ulna->init_rot.x = 0; ulna->init_rot.y = 0; ulna->init_rot.z = 0;
+  ulna->cur_pos.x = 0; ulna->cur_pos.y = 0; ulna->cur_pos.z = -0.45;
+  ulna->cur_rot.x = 0; ulna->cur_rot.y = 0; ulna->cur_rot.z = 0;
+
+  hand->name = name_prefix + "Hand";
+  hand->shape = VEBody::CAPSULE; hand->long_axis = VEBody::LONG_Z;
+  hand->length = 0.05; hand->radius = 0.05;
+  hand->init_pos.x = 0; hand->init_pos.y = 0; hand->init_pos.z = -0.64;
+  hand->init_rot.x = 0; hand->init_rot.y = 0; hand->init_rot.z = 0;
+  hand->cur_pos.x = 0; hand->cur_pos.y = 0; hand->cur_pos.z = -0.64;
+  hand->cur_rot.x = 0; hand->cur_rot.y = 0; hand->cur_rot.z = 0;
+
+  La = humerus_length;
+  Lf = ulna_length + hand_radius;
+
+  //-------- Creating initial joints -------
+
+  //-------- Setting joint locations -------
+  shoulder->name = name_prefix + "Shoulder";
+  shoulder->joint_type = VEJoint::BALL;
+  shoulder->body1 = torso; shoulder->body2 = humerus;
+
+  elbow->name = name_prefix + "Elbow";
+  elbow->joint_type = VEJoint::HINGE2;
+  elbow->body1 = humerus; elbow->body2 = ulna;
+
+  wrist->name = name_prefix + "Wrist";
+  wrist->joint_type = VEJoint::FIXED;
+  wrist->body1 = ulna; wrist->body2 = hand;
+
+  Init();			// this will attempt to init everything just created..
+
+  return true;
+}
+
+bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
+  if(!CheckArm()) return false;
+
+  // test with trg = -.2, .2, -2 to reproduce same as piecePointy
+  trg_x = -.2; trg_y = .2; trg_z = -.2;
+
+  // target coordinates
+  float t_f[] = {trg_x, trg_y, trg_z};
+  float_Matrix T(1,3);
+  T.InitFromFloats(t_f);
+  float D = taMath_float::vec_norm(&T); 
+
+  // From coordinates to angles as in (44)
+  float delta = taMath_float::pi - acos((La*La + Lf*Lf - D*D) / (2.0*La*Lf));
+  float gamma = 0;
+  float beta = acos(-trg_z/D) - acos((D*D + La*La - Lf*Lf)/(2.0*D*La));
+  float alpha = asin(-trg_x/sqrt(trg_x*trg_x + trg_y*trg_y));
+
+  taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma)); 
+
+  // Here are all the muscle insertion points in the trunk and shoulder, as
+  // labeled in (46) starting with point e
+  float ShouldIP_f[] = {-0.05,    0,      0,     -0.11,     0,     -0.07,    // e,g
+		      -0.08,    0.01,   0,     -0.08,    -0.01,    0,      // i,k
+		      -0.14,    0.06,   0.01,  -0.10,    -0.05,   0.01,    // m,o
+		      -0.14,    0.06,  -0.12,  -0.10,    -0.05,   -0.12,   // q,s
+		      -0.02,    0.02,   0.01};     // t
+
+  float_Matrix ShouldIP(2,3,9);
+  ShouldIP.InitFromFloats(ShouldIP_f);
+
+  // Here are all the muscle insertion points in the arm, as labeled in (46),
+  // starting with point d
+  float ArmIP_f[] = {0.02,  0,  -0.05, -0.02,   0,  -0.05,  // d,f
+		   0,    0.02,    0,    0,   -0.02,  0,	// h,j
+		   -0.01,   0.01,   -0.06,  -0.01, -0.01,  -0.06, // l,n
+		   -0.01,   0.01,   -0.05,  -0.01, -0.01,  -0.05, // p,r
+		   0,     -0.015    -0.06,    0  ,  0.015,  -0.15}; // v,x
+
+  float_Matrix ArmIP(2,3,10);
+  ArmIP.InitFromFloats(ArmIP_f);
+     
+  // Here are the muscle insertion points in the forearm, corresponding to the
+  // biceps, the triceps, and the brachialis.
+  float FarmIP_f[] = {0,    0.015,  -La-0.05,    0,   -0.005, -La+0.03,
+		      -0.01, 0.015, -La-0.04};
+  float_Matrix FarmIP(2,3,3);
+  FarmIP.InitFromFloats(FarmIP_f);
+
+  // Here are the initial and final points of the restricted bending lines for
+  // each one of the muscles 1-8. The values for muscles 3,4 are not used
+  float p1_f[] = {0.03,  -0.02,   0.02,   0.01,    0.03,   -0.02,
+		  0,      0.02,   0.01,   0,      -0.02,    0.01,
+		  -0.02,  0.03,  0.02,  -0.01,   -0.05,   -0.07,
+		  -0.02,  0.03,  0.02,  -0.01,   -0.05,   -0.07};
+  float_Matrix p1(2,3,8);
+  p1.InitFromFloats(p1_f);
+  
+  float p2_f[] = {0.03,  0.02,   0.02,   0.01, -0.03, -0.02,
+		  0,     0.02,  -0.01,   0,    -0.02, -0.01,
+		  -0.03, 0.03,  -0.06,   0,    -0.04,  0.02,
+		  -0.03, 0.03,  -0.06,   0,    -0.04,  0.02};
+  float_Matrix p2(2,3,8);
+  p2.InitFromFloats(p2_f);
+  
+  // Now we'll rotate the insertion points by the Euler angles in reverse order 
+  // This magic R matrix (from (42)) does it all in one step
+  float sa = sin(alpha); float ca = cos(alpha);
+  float sb = sin(beta);  float cb = cos(beta);
+  float sc = sin(gamma); float cc = cos(gamma);
+
+  float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
+		 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
+		 sb*sc,           sb*cc,          cb};
+  float_Matrix R(2,3,3);
+  R.InitFromFloats(R_f);
+
+  String Rout;
+  R.Print(Rout);
+  taMisc::Info("rotation matrix:\n", Rout, "\n");
+
+  //  taQuaternion quat(alpha, beta, gamma);
+  // this matches your matrix -- for some reason beta and gamma are reversed???
+  taQuaternion quat(beta, gamma, alpha);
+  float_Matrix qR;
+  quat.ToRotMatrix(qR);
+
+  String qRout;
+  qR.Print(qRout);
+  taMisc::Info("quat rotation matrix:\n", qRout, "\n");
+
+  // test direct quat rotation of first coords, against quat rotation matrix
+  taVector3f arm1;
+  arm1.FromMatrix(ArmIP);	// grab first coords
+  quat.RotateVec(arm1);
+  taMisc::Info("quat rotate first ArmIP coords:\n", arm1.GetStr(), "\n");
+
+  // compute: RotArmIP = (R*ArmIP')';
+  float_Matrix armipt;
+  taMath_float::mat_transpose(&armipt, &ArmIP);
+  float_Matrix armipr;
+  taMath_float::mat_mult(&armipr, &R, &armipt); 
+  float_Matrix RotArmIP;
+  taMath_float::mat_transpose(&RotArmIP, &armipr);
+
+  String out;
+  RotArmIP.Print(out);
+  taMisc::Info("rotated ArmIP:\n", out);
+
+  // For the forearm we also need the delta rotation
+ //  RotFarmIP = bsxfun(@plus,[0 0 -La], ...
+ // 		     ([1 0 0; 0 cos(delta) -sin(delta); 0 sin(delta) cos(delta)]* ...
+ // 		      bsxfun(@minus,FarmIP,[0 0 -La])')');
+
+ // RotFarmIP = (R*RotFarmIP')';
+  
+  return true;
+}
+
 ////////////////////////////////////////////////
 //      Object: collection of bodies and joints
 

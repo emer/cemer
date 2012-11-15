@@ -633,8 +633,8 @@ public:
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the joint (cast to a dJointID which is dxjoint*)
   JointFlags	flags;		// joint flags
-  VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
-  VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
+  VEBodyRef	body1;		// #SCOPE_VEWorld first body in the joint
+  VEBodyRef	body2;		// #SCOPE_VEWorld second body in the joint
   JointType    	joint_type;	// type of joint
   taVector3f	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
   taVector3f	axis;  		// #CONDSHOW_OFF_joint_type:BALL axis orientation vector
@@ -809,7 +809,7 @@ public:
   float_CircBuffer len_buf;	// #READ_ONLY #NO_SAVE current muscle length buffer (for delays)
   float_CircBuffer dlen_buf;	// #READ_ONLY #NO_SAVE current muscle length velocity buffer (for delays)
 
-  VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
+  VEBodyRef	muscle_obj;	// #SCOPE_VEWorld if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
 
   virtual float	LenFmAngle(float norm_angle);
   // #CAT_Muscle compute muscle length from *normalized* joint angle (0 = lo stop, 1 = hi stop) -- uses a simple linear projection onto len_range which is fairly accurate
@@ -940,6 +940,58 @@ private:
 };
 
 SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
+
+
+///////////////////////////////////////////////////////////////
+//      Arm: bodies and joints representing an arm
+
+class TA_API VEArm: public VEObject{
+  // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
+INHERITED(VEObject)
+public:
+  enum ArmBodies {		// indicies of bodies for arm
+    HUMERUS,
+    ULNA,
+    HAND,
+    N_ARM_BODIES,
+  };
+  enum ArmJoints {		// indicies of joints for arm
+    SHOULDER,
+    ELBOW,
+    WRIST,
+    N_ARM_JOINTS,
+  };
+  enum ArmSide {		// which arm are we simulating here?
+    RIGHT_ARM,
+    LEFT_ARM,
+  };
+
+  ArmSide	arm_side;	// is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
+  VEBodyRef	torso;		// the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
+
+  float La;     // #READ_ONLY #SHOW the length of the humerus
+  float Lf;     // #READ_ONLY #SHOW length of the forearm (ulna + hand radius) 
+
+  virtual bool	CheckArm(bool quiet = false);
+  // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
+
+  virtual bool	ConfigArm(const String& name_prefix="", 
+			  float humerus_length = 0.3, float humerus_radius = 0.06,
+			  float ulna_length = 0.26, float ulna_radius = 0.05,
+			  float hand_length = 0.05, float hand_radius = 0.05);
+  // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
+
+  virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
+  // #BUTTON place the hand at the specified target
+
+  TA_SIMPLE_BASEFUNS(VEArm);
+protected:
+  //  override CheckConfig_impl(); // todo
+
+private:
+  void  Initialize();
+  void  Destroy();
+};
 
 class TA_API VEObject_Group : public taGroup<VEObject> {
   // ##CAT_VirtEnv a group of virtual environment objects

@@ -1324,6 +1324,10 @@ double taMath_double::vec_ss_len(const double_Matrix* vec) {
   return rval;
 }
 
+double taMath_double::vec_norm(const double_Matrix* vec) {
+  return sqrt(vec_ss_len(vec));
+}
+
 double taMath_double::vec_ss_mean(const double_Matrix* vec) {
   if(!vec_check_type(vec)) return false;
   if(vec->size <= 1)    return 0.0;
@@ -1851,38 +1855,6 @@ bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
       new_index = -1;
     }
   }
-
-  return true;
-}
-
-bool taMath_double::mat_vec_product(const double_Matrix* A, const double_Matrix* x,
-                                    double_Matrix* y) {
-  if (!A||!x||!y) {
-    taMisc::Error("mat_vec_product - you must specify matrix A and vectors x,y.");
-    return false;
-  }
-  if (x->dims()!=1||y->dims()!=1) {
-    taMisc::Error("mat_vec_product - x and y must be one dimensional vectors");
-    return false;
-  }
-  if (A->dims()!=2) {
-    taMisc::Error("mat_vec_product - A must be a 2 dimensional matrix");
-    return false;
-  }
-
-  gsl_matrix A_gsl;
-  mat_get_gsl_fm_ta(&A_gsl, A);
-  const gsl_matrix* A_gsl_ptr = &A_gsl;
-
-  gsl_vector x_gsl;
-  vec_get_gsl_fm_ta(&x_gsl, x);
-  const gsl_vector* x_gsl_ptr = &x_gsl;
-
-  gsl_vector y_gsl;
-  vec_get_gsl_fm_ta(&y_gsl, y);
-  gsl_vector* y_gsl_ptr = &y_gsl;
-
-  gsl_blas_dgemv(CblasNoTrans, 1.0, A_gsl_ptr, x_gsl_ptr, 0.0, y_gsl_ptr);
 
   return true;
 }
@@ -2539,6 +2511,38 @@ double taMath_double::mat_det(const double_Matrix* a) {
   double det = gsl_linalg_LU_det(&g_a, s);
   gsl_permutation_free(p);
   return det;
+}
+
+bool taMath_double::mat_vec_product(const double_Matrix* A, const double_Matrix* x,
+                                    double_Matrix* y) {
+  if (!A||!x||!y) {
+    taMisc::Error("mat_vec_product - you must specify matrix A and vectors x,y.");
+    return false;
+  }
+  if (x->dims()!=1||y->dims()!=1) {
+    taMisc::Error("mat_vec_product - x and y must be one dimensional vectors");
+    return false;
+  }
+  if (A->dims()!=2) {
+    taMisc::Error("mat_vec_product - A must be a 2 dimensional matrix");
+    return false;
+  }
+
+  gsl_matrix A_gsl;
+  mat_get_gsl_fm_ta(&A_gsl, A);
+  const gsl_matrix* A_gsl_ptr = &A_gsl;
+
+  gsl_vector x_gsl;
+  vec_get_gsl_fm_ta(&x_gsl, x);
+  const gsl_vector* x_gsl_ptr = &x_gsl;
+
+  gsl_vector y_gsl;
+  vec_get_gsl_fm_ta(&y_gsl, y);
+  gsl_vector* y_gsl_ptr = &y_gsl;
+
+  gsl_blas_dgemv(CblasNoTrans, 1.0, A_gsl_ptr, x_gsl_ptr, 0.0, y_gsl_ptr);
+
+  return true;
 }
 
 bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,
@@ -4586,6 +4590,10 @@ float taMath_float::vec_ss_len(const float_Matrix* vec) {
   return rval;
 }
 
+float taMath_float::vec_norm(const float_Matrix* vec) {
+  return sqrt(vec_ss_len(vec));
+}
+
 float taMath_float::vec_ss_mean(const float_Matrix* vec) {
   if(!vec_check_type(vec)) return false;
   if(vec->size <= 1)    return 0.0;
@@ -5581,6 +5589,79 @@ bool taMath_float::mat_div_els(float_Matrix* a, const float_Matrix* b) {
   return gsl_matrix_float_div_elements(&g_a, &g_b);
 }
 
+bool taMath_float::mat_transpose(float_Matrix* dest, const float_Matrix* src) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
+  if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
+  int d0,d1;
+  d0 = src->dim(0);
+  d1 = src->dim(1);
+  dest->SetGeom(2,d1,d0);
+  for(int i=0;i<d0;i++) {
+    for(int j=0;j<d1;j++) {
+      dest->Set(src->FastElAsFloat(i,j),j,i);
+    }
+  }
+  return true;
+}
+
+bool taMath_float::mat_mult(float_Matrix* c, const float_Matrix* a, const float_Matrix* b) {
+  gsl_matrix_float g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix_float g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
+  if(!vec_check_type(c)) return false;
+  // ensure return matrix is correct size
+  c->SetGeom(2, b->dim(0), a->dim(1));
+  gsl_matrix_float g_c;  if(!mat_get_gsl_fm_ta(&g_c, c)) return false;
+  int rval = gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0, &g_a, &g_b, 0.0, &g_c);
+  return true;			// todo: decode rvals
+}
+
+float taMath_float::mat_det(const float_Matrix* a) {
+  if(a->dims() != 2) {
+    taMisc::Error("mat_det: matrix is not 2 dimensional!");
+    return false;
+  }
+  if(a->dim(0) != a->dim(1)) {
+    taMisc::Error("mat_det: matrix is not square!");
+    return false;
+  }
+  double_Matrix da(false);
+  mat_cvt_float_to_double(&da, a);
+  float rval = taMath_double::mat_det(&da);
+  return rval;
+}
+
+bool taMath_float::mat_vec_product(const float_Matrix* A, const float_Matrix* x,
+                                    float_Matrix* y) {
+  if (!A||!x||!y) {
+    taMisc::Error("mat_vec_product - you must specify matrix A and vectors x,y.");
+    return false;
+  }
+  if (x->dims()!=1||y->dims()!=1) {
+    taMisc::Error("mat_vec_product - x and y must be one dimensional vectors");
+    return false;
+  }
+  if (A->dims()!=2) {
+    taMisc::Error("mat_vec_product - A must be a 2 dimensional matrix");
+    return false;
+  }
+
+  gsl_matrix_float A_gsl;
+  mat_get_gsl_fm_ta(&A_gsl, A);
+  const gsl_matrix_float* A_gsl_ptr = &A_gsl;
+
+  gsl_vector_float x_gsl;
+  vec_get_gsl_fm_ta(&x_gsl, x);
+  const gsl_vector_float* x_gsl_ptr = &x_gsl;
+
+  gsl_vector_float y_gsl;
+  vec_get_gsl_fm_ta(&y_gsl, y);
+  gsl_vector_float* y_gsl_ptr = &y_gsl;
+
+  gsl_blas_sgemv(CblasNoTrans, 1.0, A_gsl_ptr, x_gsl_ptr, 0.0, y_gsl_ptr);
+
+  return true;
+}
+
 bool taMath_float::mat_eigen_owrite(float_Matrix* a, float_Matrix* eigen_vals,
                                     float_Matrix* eigen_vecs) {
   double_Matrix da(false);
@@ -5633,21 +5714,6 @@ bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int 
 
 bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
-}
-
-bool taMath_float::mat_transpose(float_Matrix* dest, const float_Matrix* src) {
-  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
-  if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
-  int d0,d1;
-  d0 = src->dim(0);
-  d1 = src->dim(1);
-  dest->SetGeom(2,d1,d0);
-  for(int i=0;i<d0;i++) {
-    for(int j=0;j<d1;j++) {
-      dest->Set(src->FastElAsFloat(i,j),j,i);
-    }
-  }
-  return true;
 }
 
 bool taMath_float::mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start, int d0_end, int d1_start, int d1_end) {

@@ -65,6 +65,12 @@ public:
   virtual void  CopyToMatrixGeom(MatrixGeom& geom);
   virtual void  CopyToMatrixIndex(MatrixIndex& idx);
 
+  inline void	ToMatrix(taMatrix& mat) const
+  { mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); }
+  // set values to a 1d matrix object (can be any type of matrix object)
+  inline void	FromMatrix(taMatrix& mat)
+  { x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt(); }
+  // set values from a matrix object (can be any type of matrix object)
 
   taVector2i(int xx)                     { SetXY(xx, xx); }
   taVector2i(int xx, int yy)             { SetXY(xx, yy); }
@@ -305,6 +311,14 @@ public:
   override void CopyToMatrixGeom(MatrixGeom& geom);
   override void CopyToMatrixIndex(MatrixIndex& idx);
 
+  inline void	ToMatrix(taMatrix& mat) const
+  { mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2); }
+  // set values to a 1d matrix object (can be any type of matrix object)
+  inline void	FromMatrix(taMatrix& mat)
+  { x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt();
+    z = mat.SafeElAsVar(2).toInt(); }
+  // set values from a matrix object (can be any type of matrix object)
+
   taVector3i(int xx)                       { SetXYZ(xx, xx, xx); }
   taVector3i(int xx, int yy, int zz)       { SetXYZ(xx, yy, zz); }
   taVector3i(float xx, float yy, float zz) { SetXYZ(xx, yy, zz); }
@@ -465,6 +479,13 @@ public:
   inline void   SetXY(float xx, float yy)       { x = xx; y = yy; }
   inline void   GetXY(float& xx, float& yy)     { xx = x; yy = y; }
 
+  inline void	ToMatrix(taMatrix& mat) const
+  { mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); }
+  // set values to a 1d matrix object (can be any type of matrix object)
+  inline void	FromMatrix(taMatrix& mat)
+  { x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat(); }
+  // set values from a matrix object (can be any type of matrix object)
+
   taVector2f(float xx)                      { SetXY(xx, xx); }
   taVector2f(float xx, float yy)            { SetXY(xx, yy); }
   taVector2f(int xx)                        { SetXY(xx, xx); }
@@ -581,6 +602,14 @@ public:
   inline void   GetXYZ(float& xx, float& yy, float& zz) {
     xx = x; yy = y; zz = z;
   }
+
+  inline void	ToMatrix(taMatrix& mat) const
+  { mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2); }
+  // set values to a 1d matrix object (can be any type of matrix object)
+  inline void	FromMatrix(taMatrix& mat)
+  { x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat();
+    z = mat.SafeElAsVar(2).toFloat(); }
+  // set values from a matrix object (can be any type of matrix object)
 
   TA_BASEFUNS_LITE(taVector3f)
   taVector3f(float xx)                        { SetXYZ(xx, xx, xx); }
@@ -756,6 +785,15 @@ public:
   { ss = s; xx = x; yy = y; zz = z; }
   // #CAT_Quaternion get scalar and xyz imaginary values
 
+  inline void	ToMatrix(taMatrix& mat) const
+  { mat.SetGeom(1,4); mat.SetFmVar(s,0); mat.SetFmVar(x,1); mat.SetFmVar(y,2);
+    mat.SetFmVar(z,3); }
+  // set values to a 1x4 matrix object (can be any type of matrix object) -- in order: s,x,y,z
+  inline void	FromMatrix(taMatrix& mat) 
+  { s = mat.SafeElAsVar(0).toFloat(); x = mat.SafeElAsVar(1).toFloat();
+    y = mat.SafeElAsVar(2).toFloat(); z = mat.SafeElAsVar(3).toFloat(); }
+  // set values from a matrix object (can be any type of matrix object) -- in order: s,x,y,z
+
   inline void	FromEuler(float theta_x, float theta_y, float theta_z) {
     float cos_z_2 = cosf(0.5f*theta_z);
     float cos_y_2 = cosf(0.5f*theta_y);
@@ -821,26 +859,25 @@ public:
   }
   // #CAT_Quaternion set taAxisAngle from this quaternion
 
-  inline void	ToMatrix(float_Matrix& mat) const {
+  inline void	ToRotMatrix(float_Matrix& mat) const {
     float mag = Mag();
     if(mag < 0.9999 || mag > 1.0001) { taMisc::Error("taQuaternion::ToMatrix -- must be normalized (Mag == 1.0), mag is:", 
 						     String(mag)); return; }
     mat.SetGeom(2,3,3);
 
-    // note: not 100% sure about r,c = x,y coordinates on this matrix -- might need to flip..
-
     mat.Set(1.0f - 2.0f*(y*y+z*z), 0,0);
-    mat.Set(2.0f*(x*y-s*z),0,1);
-    mat.Set(2.0f*(x*z+s*y),0,2);
+    mat.Set(2.0f*(x*y-s*z),1,0);
+    mat.Set(2.0f*(x*z+s*y),2,0);
 
-    mat.Set(2.0f*(x*y+s*z),1,0);
+    mat.Set(2.0f*(x*y+s*z),0,1);
     mat.Set(1.0f-2.0f*(x*x+z*z), 1,1);
-    mat.Set(2.0f*(y*z-s*x),1,2);
+    mat.Set(2.0f*(y*z-s*x),2,1);
     
-    mat.Set(2.0f*(x*z-s*y),2,0);
-    mat.Set(2.0f*(y*z+s*x),2,1);
+    mat.Set(2.0f*(x*z-s*y),0,2);
+    mat.Set(2.0f*(y*z+s*x),1,2);
     mat.Set(1.0f-2.0f*(x*x+y*y),2,2);
   }
+  // #CAT_Quaternion create a 3x3 rotation matrix from quaternion
 
   void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
     taQuaternion q; q.FromAxisAngle(x_axis, y_axis, z_axis, rot_ang);

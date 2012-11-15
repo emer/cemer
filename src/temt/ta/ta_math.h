@@ -612,6 +612,8 @@ public:
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static double vec_ss_len(const double_Matrix* vec);
   // #CAT_Statistics sum-of-squares length of the vector
+  static double vec_norm(const double_Matrix* vec);
+  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length
   static double vec_ss_mean(const double_Matrix* vec);
   // #CAT_Statistics sum-of-squares around the mean of the vector
   static void   vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
@@ -1249,6 +1251,8 @@ public:
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static float  vec_ss_len(const float_Matrix* vec);
   // #CAT_Statistics sum-of-squares length of the vector
+  static float  vec_norm(const float_Matrix* vec);
+  // #CAT_Statistics square root of the sum-of-squares length of the vector -- its norm or euclidean length
   static float  vec_ss_mean(const float_Matrix* vec);
   // #CAT_Statistics sum-of-squares around the mean of the vector
   static void   vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
@@ -1397,6 +1401,15 @@ public:
   // #CAT_Matrix transpose a 2d matrix -- swap rows and columns
 
   // note: the following all involve copying to/from double -- underlying computation is done in the double routines, because that is what gsl supports!
+  static bool mat_mult(float_Matrix* c, const float_Matrix* a, const float_Matrix* b);
+  // #CAT_Matrix #NO_CSS_MATH matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa -- does NOT support complex_Matrix type
+  static float mat_det(const float_Matrix* a);
+  // #CAT_Matrix #LABEL_det return the determinant of the given square matrix
+
+  static bool mat_vec_product(const float_Matrix* A, const float_Matrix* x,
+                              float_Matrix* y);
+  // #CAT_Statistics computes the matrix-vector product y=Ax -- uses entire matrix, ignoring any view of sub-elements
+
 
   static bool mat_eigen_owrite(float_Matrix* A, float_Matrix* eigen_vals, float_Matrix* eigen_vecs);
   // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already.    eigens are sorted from highest to lowest by magnitude (absolute value)
