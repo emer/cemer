@@ -1907,10 +1907,14 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 		   0,    0.02,    0,    0,   -0.02,  0,	// h,j
 		   -0.01,   0.01,   -0.06,  -0.01, -0.01,  -0.06, // l,n
 		   -0.01,   0.01,   -0.05,  -0.01, -0.01,  -0.05, // p,r
-		   0,     -0.015    -0.06,    0  ,  0.015,  -0.15}; // v,x
+		     0,     -1.5,    -6,    0  ,  1.5,  -15}; // v,x
 
   float_Matrix ArmIP(2,3,10);
   ArmIP.InitFromFloats(ArmIP_f);
+
+  String aout;
+  ArmIP.Print(aout);
+  taMisc::Info("init ArmIP:\n", aout);
      
   // Here are the muscle insertion points in the forearm, corresponding to the
   // biceps, the triceps, and the brachialis.
@@ -1970,8 +1974,18 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   // compute: RotArmIP = (R*ArmIP')';
   float_Matrix armipt;
   taMath_float::mat_transpose(&armipt, &ArmIP);
+
+  String tout;
+  armipt.Print(tout);
+  taMisc::Info("transposed ArmIP:\n", tout);
+
   float_Matrix armipr;
   taMath_float::mat_mult(&armipr, &R, &armipt); 
+
+  String rout;
+  armipr.Print(rout);
+  taMisc::Info("rot pretransposed ArmIP:\n", rout);
+
   float_Matrix RotArmIP;
   taMath_float::mat_transpose(&RotArmIP, &armipr);
 
