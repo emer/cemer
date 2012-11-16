@@ -635,7 +635,9 @@ protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
   NetViewPanel*         nvp; // created during first Render
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
+  LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 
+  override void         UpdateAfterEdit_impl();
   override void         ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void         ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void         DataUpdateView_impl();

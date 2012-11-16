@@ -333,7 +333,8 @@ public:
   bool			hideLines() { return hide_lines_; }
   SoDrawStyle* 		drawStyle() { return drw_styl_; }
 
-  T3LayerGroupNode(T3DataView* dataView_ = NULL, bool show_draggers = true, bool hide_lines = false);
+  T3LayerGroupNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
+		   bool hide_lines = false, bool mode_2d = false);
 
 protected:
   
@@ -350,6 +351,7 @@ private:
 
   bool			show_drag_;
   bool			hide_lines_;
+  bool			mode_2d_;
 
   SoSeparator*		xy_drag_sep_;
   SoTransform*		xy_drag_xf_;
@@ -410,7 +412,8 @@ public:
   SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
 
   T3NetNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
-	    bool show_net_text = true, bool show_nt_drag = true);
+	    bool show_net_text = true, bool show_nt_drag = true,
+	    bool mode_2d = false);
 
 protected:
   void		setDefaultCaptionTransform(); // override
@@ -427,6 +430,7 @@ protected:
 
   bool			show_drag_;
   bool			show_net_text_drag_;
+  bool			mode_2d_;
   T3TransformBoxDragger* drag_;	// my position dragger
   T3TransformBoxDragger* net_text_drag_;	// my net text dragger
   SoTransform*		net_text_xform_;

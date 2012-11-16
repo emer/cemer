@@ -647,13 +647,15 @@ extern void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragger);
 extern void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3LayerGroupNode::T3LayerGroupNode(T3DataView* dataView_, bool show_draggers, bool hide_lines)
+T3LayerGroupNode::T3LayerGroupNode(T3DataView* dataView_, bool show_draggers,
+				   bool hide_lines, bool md_2d)
   : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerGroupNode);
 
   show_drag_ = show_draggers;
   hide_lines_ = hide_lines;
+  mode_2d_ = md_2d;
 
   if(show_drag_) {
     const float len = .05f;	// bar_len
@@ -767,8 +769,14 @@ void T3LayerGroupNode::render() {
       + String(zfrac) + " + B[0], -(" + String(yfrac) + " + A[1]))";
     xy_drag_calc_->expression = expr.chars();
 
-    xy_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
-    z_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
+    if(mode_2d_) {
+      xy_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
+      z_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
+    }
+    else {
+      xy_drag_xf_->translation.setValue(-lay_wd_x, lay_ht_z, lay_wd_y);
+      z_drag_xf_->translation.setValue(-lay_wd_x, lay_ht_z, lay_wd_y);
+    }
 
     if(len != .08f) {
       xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
@@ -843,13 +851,15 @@ void T3NetNode::initClass()
 }
 
 T3NetNode::T3NetNode(T3DataView* dataView_, bool show_draggers,
-		     bool show_net_text, bool show_nt_drag)
+		     bool show_net_text, bool show_nt_drag,
+		     bool md_2d)
   : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 
   show_drag_ = show_draggers;
   show_net_text_drag_ = show_nt_drag && show_net_text;
+  mode_2d_ = md_2d;
 
   float net_margin = 0.05f;
   float two_net_marg = 2.0f * net_margin;
@@ -858,7 +868,13 @@ T3NetNode::T3NetNode(T3DataView* dataView_, bool show_draggers,
   if(show_drag_) {
     drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
 
-    drag_->xf_->translation.setValue(-net_margin, -net_margin, -net_margin);
+    if(mode_2d_) {
+      drag_->xf_->translation.setValue(-net_margin, net_margin, -net_margin);
+    }
+    else {
+      drag_->xf_->translation.setValue(-net_margin, -net_margin, -net_margin);
+    }
+
     String expr = "oA = vec3f(-" + String(net_margin) + " + A[0], -"
       + String(net_margin) + " + A[1], -" + String(net_margin) + " + A[2])";
     drag_->trans_calc_->expression = expr.chars();
@@ -873,7 +889,15 @@ T3NetNode::T3NetNode(T3DataView* dataView_, bool show_draggers,
     shape_draw_ = new SoDrawStyle;
     shape_draw_->style = SoDrawStyle::LINES;
     ss->addChild(shape_draw_);
-    shape_ = new SoLineBox3d(1.0f + two_net_marg, 1.0f + two_net_marg, 1.0f + two_net_marg, false); // false = no center
+    if(mode_2d_) {
+      shape_ = new SoLineBox3d(1.0f + two_net_marg, two_net_marg,
+			       1.0f + two_net_marg, false); // false = no center
+    }
+    else {
+      shape_ = new SoLineBox3d(1.0f + two_net_marg, 1.0f + two_net_marg,
+			       1.0f + two_net_marg, false); // false = no center
+    }
+
     ss->addChild(shape_);
   }
   else {

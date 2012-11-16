@@ -1411,14 +1411,6 @@ void LayerView::Render_pre() {
   setNode(node_so);
   DoHighlightColor(false);
 
-  // if(nv->lay_layout == NetView::TWO_D) {
-  //   SoSeparator* ss = node_so->shapeSeparator(); // cache
-  //   SoTransform* tx = new SoTransform;
-  //   tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5707963f);
-  //   SoNode* sp = (SoNode*)ss->getChild(ss->getNumChildren()-1); // last thing
-  //   node_so->insertChildBefore(ss, tx, sp);
-  // }
-
   inherited::Render_pre();
 }
 
@@ -1438,9 +1430,9 @@ void LayerView::Render_impl() {
   }
   else {
     ft->translate.SetXYZ((float)lay->pos2d.x / nv->eff_max_size.x,
-			 (float)lay->pos2d.y / nv->eff_max_size.y,
-			 (float)0.0f / nv->eff_max_size.z);
-    ft->rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+			 0.0f,
+			 (float)-lay->pos2d.y / nv->eff_max_size.y);
+    // ft->rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
   }
 
   if(lay->Iconified()) {
@@ -1694,6 +1686,8 @@ void PrjnView::Render_impl() {
 
   if(lay_fr == NULL) lay_fr = lay_to;
 
+  float net_margin = 0.05f;
+
   taVector3f src;             // source and dest coords
   taVector3f dst;
   taVector3i lay_fr_pos;
@@ -1774,21 +1768,20 @@ void PrjnView::Render_impl() {
     dst.x += lay_wd;            // give it some minimal something
   }
 
-  if(nv->lay_layout == NetView::THREE_D) {
-    transform(true)->translate.SetXYZ(src.x, src.y, src.z);
-    node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
-
-    // caption location is half way
-    if(nv->view_params.prjn_name) {
-      taVector3f cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
-      node_so->setCaption(prjn->name.chars());
-      node_so->transformCaption(cap);
-      node_so->resizeCaption(nv->font_sizes.prjn);
-    }
+  if(nv->lay_layout == NetView::TWO_D) {
+    src.y += net_margin;
+    dst.y += net_margin;
   }
-  else {
-    transform(true)->translate.SetXYZ(src.x, -src.z, 0.0);
-    node_so->setEndPoint(SbVec3f(dst.x - src.x, -(dst.z - src.z), 0.0));
+
+  transform(true)->translate.SetXYZ(src.x, src.y, src.z);
+  node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
+
+  // caption location is half way
+  if(nv->view_params.prjn_name) {
+    taVector3f cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
+    node_so->setCaption(prjn->name.chars());
+    node_so->transformCaption(cap);
+    node_so->resizeCaption(nv->font_sizes.prjn);
   }
 
   inherited::Render_impl();
@@ -1943,7 +1936,8 @@ void LayerGroupView::Render_pre() {
   bool hide_lines = !nv->view_params.show_laygp;
   if(root_laygp) hide_lines = true; // always true
 
-  setNode(new T3LayerGroupNode(this, show_drag, hide_lines));
+  setNode(new T3LayerGroupNode(this, show_drag, hide_lines,
+			       nv->lay_layout == NetView::TWO_D));
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1955,30 +1949,33 @@ void LayerGroupView::Render_impl() {
 
   taVector3i pos;
 
+  T3LayerGroupNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
+
+  float net_margin = 0.05f;
+  float gpz_2d = 0.05f;
+
+  taTransform* ft = transform(true);
   if(nv->lay_layout == NetView::THREE_D) {
     lgp->GetAbsPos(pos);
+    ft->translate.SetXYZ((float)pos.x / nv->eff_max_size.x,
+			 ((float)pos.z) / nv->eff_max_size.z,
+			 (float)-pos.y / nv->eff_max_size.y);
+
+    node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
+		     lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
+		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
   }
   else {
     lgp->GetAbsPos2d(pos);
-  }
-
-  taTransform* ft = transform(true);
-  if(root_laygp) {
-    ft->translate.SetXYZ((float)pos.x / nv->eff_max_size.x,
-                         ((float)pos.z) / nv->eff_max_size.z,
-                         (float)-pos.y / nv->eff_max_size.y);
-  }
-  else {
     ft->translate.SetXYZ(((float)pos.x) / nv->eff_max_size.x,
-                         ((float)pos.z) / nv->eff_max_size.z,
-                         (float)-pos.y / nv->eff_max_size.y);
-  }
+			 -.5 * gpz_2d,
+			 -net_margin + ((float)-pos.y) / nv->eff_max_size.y);
 
-  T3LayerGroupNode* node_so = this->node_so(); // cache
-  if(!node_so) return;
-  node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
-                   lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
-                   nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
+    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, 0,
+		     lgp->max_disp_size2d.x, lgp->max_disp_size2d.y, gpz_2d,
+		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
+  }
 
   if(!node_so->hideLines()) {
     node_so->drawStyle()->lineWidth = nv->view_params.laygp_width;
@@ -1997,8 +1994,15 @@ void LayerGroupView::Render_impl() {
     }
     node_so->resizeCaption(eff_lay_font_size);
 
-    SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
-    node_so->transformCaption(tran);
+    if(nv->lay_layout == NetView::THREE_D) {
+      SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
+      node_so->transformCaption(tran);
+    }
+    else {
+      SbVec3f tran(0.0f, 0.5f * lay_wd_y, 1.5f * eff_lay_font_size);
+      SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+      node_so->transformCaption(rot, tran);
+    }
   }
 
   inherited::Render_impl();
@@ -2281,7 +2285,6 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   fr->AddView(nv);
 
   // make sure we've got it all rendered:
-  nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
 
   new_net_view.showFrame();
@@ -2402,12 +2405,15 @@ void NetView::Initialize() {
   nvp = NULL;
   display = true;
   lay_layout = THREE_D;
+  prev_lay_layout = lay_layout;
   lay_mv = true;
   net_text = true;
   show_iconified = false;
-  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
+  main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
+  net_text_xform.translate.SetXYZ(1.0f, 0.0f, -0.5f); // right mid
+  //  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
-  net_text_xform.scale = 0.7f;
+  net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
 
   unit_con_md = false;
@@ -2457,6 +2463,13 @@ void NetView::InitLinks() {
   taBase::Own(net_text_xform, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
+}
+
+void NetView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {	// set to initial
+    prev_lay_layout = lay_layout;
+  }
 }
 
 void NetView::CutLinks() {
@@ -2613,6 +2626,14 @@ void NetView::BuildAll() { // populates all T3 guys
     return;
   }
   GetMaxSize();
+
+  if(lay_layout != prev_lay_layout) {
+    if(lay_layout == THREE_D)
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
+    else
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+    prev_lay_layout = lay_layout;
+  }
 
   Network* nt = net();
 
@@ -3059,7 +3080,8 @@ void NetView::Render_pre() {
   }
   if(!lay_mv) show_drag = false;
 
-  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));
+  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv,
+			lay_layout == TWO_D));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
@@ -3194,6 +3216,12 @@ void NetView::Render_impl() {
   T3NetNode* node_so = this->node_so(); //cache
   if(!node_so) return;
   node_so->resizeCaption(font_sizes.net_name);
+
+  if(lay_layout == NetView::TWO_D) {
+    SbVec3f tran(0.0f, -.2f, 0.03f);
+    SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+    node_so->transformCaption(rot, tran);
+  }
 
   String cap_txt = data()->GetName() + " Value: ";
   if(unit_disp_md)
