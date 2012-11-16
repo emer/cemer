@@ -477,10 +477,16 @@ public:
     UDM_CYLINDER        // #LABEL_3d_Cylinder
   };
 
+  enum LayerLayout {            // Visual mode of layer position/view
+    TWO_D,                      // #LABEL_2D all z = 0, no skew
+    THREE_D                     // #LABEL_3D z = layer index, default skew
+  };
+
+
   static NetView*       New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
-
   bool                  display;        // whether to update the display when values change (under control of programs)
+  LayerLayout   	lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display text box below network with counters etc
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
@@ -507,6 +513,8 @@ public:
   UnitDisplayMode       unit_disp_mode; // how to display unit values
   UnitTextDisplay       unit_text_disp; // what labels to display with units
   taVector3f            max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
+  taVector3f            max_size2d;  	// #NO_COPY #READ_ONLY maximum size in each dimension of the net for 2D display purposes (using pos2d)
+  taVector3f            eff_max_size;   // #NO_COPY #READ_ONLY effective maximum size in each dimension of the net for current view
   NetViewFontSizes      font_sizes;     // font sizes for various items
   NetViewParams         view_params;    // misc view parameters
   bool                  wt_line_disp;   // display weights from selected unit as lines?

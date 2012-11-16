@@ -136,16 +136,6 @@ float Schedule::GetVal(int ctr) {
   return cur_val;
 }
 
-#define DEFAULT_3D_NETSIZE_X 5
-#define DEFAULT_3D_NETSIZE_Y 2
-#define DEFAULT_3D_NETSIZE_Z 3
-#define DEFAULT_3D_NETVIEW_SKEW .15
-
-#define DEFAULT_2D_NETSIZE_X 5
-#define DEFAULT_2D_NETSIZE_Y 12
-#define DEFAULT_2D_NETSIZE_Z 0
-#define DEFAULT_2D_NETVIEW_SKEW 0
-
 ////////////////////////////////////////
 //      Connection - Groups & Specs   //
 ////////////////////////////////////////
@@ -2038,6 +2028,7 @@ void Unit::Initialize() {
   // pos = ??
   idx = -1;
   flat_idx = 0;
+  voxels = NULL;
   m_unit_spec = NULL;
 }
 
@@ -2051,7 +2042,6 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
-  taBase::Own(voxels, this);
   BuildUnits();
 }
 
@@ -2062,12 +2052,19 @@ void Unit::CutLinks() {
   m_unit_spec = NULL;
   idx = -1;
   flat_idx = 0;
+  if(voxels) {
+    taBase::DelPointer((taBase**)&voxels);
+  }
   inherited::CutLinks();
+}
+
+void Unit::MakeVoxelsList() {
+  if(voxels) return;
+  taBase::OwnPointer((taBase**)&voxels, new Voxel_List, this);
 }
 
 void Unit::Copy_(const Unit& cp) {
   pos = cp.pos;
-  voxels = cp.voxels;
   ext_flag = cp.ext_flag;
   targ = cp.targ;
   ext = cp.ext;
@@ -2148,6 +2145,14 @@ void Unit::AddRelPos(taVector3i& rel_pos) {
   if (ugp) {
     rel_pos += ugp->pos;
     ugp->AddRelPos(rel_pos);
+  }
+}
+
+void Unit::AddRelPos2d(taVector2i& rel_pos) {
+  Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+  if (ugp) {
+    rel_pos += ugp->pos;
+    ugp->AddRelPos2d(rel_pos);
   }
 }
 
@@ -3495,11 +3500,28 @@ void Unit_Group::AddRelPos(taVector3i& rel_pos) {
   if (lay) {
     rel_pos += lay->pos;
     lay->AddRelPos(rel_pos);
-  } else { // better be in a group then!
+  }
+  else { // better be in a group then!
     Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
     if (ugp) {
       rel_pos += ugp->pos;
       ugp->AddRelPos(rel_pos);
+    }
+  }
+}
+
+void Unit_Group::AddRelPos2d(taVector2i& rel_pos) {
+  // note: vastly most likely case is a flat root group of units...
+  Layer* lay = dynamic_cast<Layer*>(owner);
+  if (lay) {
+    rel_pos += lay->pos2d;
+    lay->AddRelPos2d(rel_pos);
+  }
+  else { // better be in a group then!
+    Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+    if (ugp) {
+      rel_pos += ugp->pos;
+      ugp->AddRelPos2d(rel_pos);
     }
   }
 }
@@ -3959,6 +3981,8 @@ void Layer::InitLinks() {
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
     SetDefaultPos();
+  if(pos2d == 0)
+    SetDefaultPos2d();
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
 }
@@ -4267,21 +4291,20 @@ void Layer::SetDefaultPos() {
   if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
   pos = 0;
-  switch(own_net->lay_layout) {
-  case Network::THREE_D: {
-    for(int i=0;i<index;i++) {
-      Layer* lay = (Layer*)own_net->layers.Leaf(i);
-      pos.z = MAX(pos.z, lay->pos.z + 1);
-    }
-    break;
+  for(int i=0;i<index;i++) {
+    Layer* lay = (Layer*)own_net->layers.Leaf(i);
+    pos.z = MAX(pos.z, lay->pos.z + 1);
   }
-  case Network::TWO_D: {
-    for(int i=0;i<index;i++) {
-      Layer* lay = (Layer*)own_net->layers.Leaf(i);
-      pos.y = MAX(pos.y, lay->pos.y + lay->un_geom.y + 2);
-    }
-    break;
-  }
+}
+
+void Layer::SetDefaultPos2d() {
+  if(!own_net) return;
+  int index = own_net->layers.FindLeafEl(this);
+  pos2d.x = pos.x;		// should transfer..
+  pos2d.y= 0;			// adapt y to fit..
+  for(int i=0;i<index;i++) {
+    Layer* lay = (Layer*)own_net->layers.Leaf(i);
+    pos2d.y = MAX(pos2d.y, lay->pos2d.y + lay->scaled_disp_geom.y + 2);
   }
 }
 
@@ -5456,6 +5479,14 @@ void Layer::AddRelPos(taVector3i& rel_pos) {
   }
 }
 
+void Layer::AddRelPos2d(taVector2i& rel_pos) {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
+    rel_pos += lgp->pos2d;
+    lgp->AddRelPos2d(rel_pos);
+  }
+}
+
 bool Layer::InLayerSubGroup() {
   if(owner && owner->GetOwner() && owner->GetOwner()->InheritsFrom(&TA_Network))
     return false;
@@ -5548,6 +5579,13 @@ void Layer_Group::CutLinks() {
   inherited::CutLinks();
 }
 
+void Layer_Group::Copy_(const Layer_Group& cp) {
+  pos = cp.pos;
+  pos2d = cp.pos2d;
+  max_disp_size = cp.max_disp_size;
+  max_disp_size2d = cp.max_disp_size2d;
+}
+
 void Layer_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
@@ -5557,6 +5595,14 @@ void Layer_Group::AddRelPos(taVector3i& rel_pos) {
   if (lg) {
     rel_pos += lg->pos;
     lg->AddRelPos(rel_pos);
+  }
+}
+
+void Layer_Group::AddRelPos2d(taVector2i& rel_pos) {
+  Layer_Group* lg = GET_MY_OWNER(Layer_Group);
+  if (lg) {
+    rel_pos += lg->pos2d;
+    lg->AddRelPos2d(rel_pos);
   }
 }
 
@@ -5571,29 +5617,42 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
 
 void Layer_Group::UpdateMaxDispSize() {
   max_disp_size.x = 1;  max_disp_size.y = 1;  max_disp_size.z = 1;
+  max_disp_size2d.x = 1;  max_disp_size2d.y = 1;
 
   taVector3i min_size;
+  taVector2i min_size2d;
   bool first_min = true;
 
   taVector3i l_pos; // for abs_pos
+  taVector2i l_pos2d; // for abs_pos
   FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->GetAbsPos(l_pos);
+    l->GetAbsPos2d(l_pos2d);
     taVector3i lrelpos = l_pos - pos; // subtract us
+    taVector2i lrelpos2d = l_pos2d - pos2d; // subtract us
     max_disp_size.z = MAX(max_disp_size.z, 1 + lrelpos.z);
     if(l->Iconified()) {
       max_disp_size.x = MAX(max_disp_size.x, lrelpos.x + 1);
       max_disp_size.y = MAX(max_disp_size.y, lrelpos.y + 1);
+
+      max_disp_size2d.x = MAX(max_disp_size2d.x, lrelpos2d.x + 1);
+      max_disp_size2d.y = MAX(max_disp_size2d.y, lrelpos2d.y + 1);
     }
     else {
       max_disp_size.x = MAX(max_disp_size.x, l->scaled_disp_geom.x + lrelpos.x);
       max_disp_size.y = MAX(max_disp_size.y, l->scaled_disp_geom.y + lrelpos.y);
+
+      max_disp_size2d.x = MAX(max_disp_size2d.x, l->scaled_disp_geom.x + lrelpos2d.x);
+      max_disp_size2d.y = MAX(max_disp_size2d.y, l->scaled_disp_geom.y + lrelpos2d.y);
     }
     if(first_min) {
       first_min = false;
       min_size = l_pos;
+      min_size2d = l_pos2d;
     }
     else {
       min_size.Min(l_pos);      // min of each coord
+      min_size2d.Min(l_pos2d);      // min of each coord
     }
   }
 
@@ -5605,6 +5664,14 @@ void Layer_Group::UpdateMaxDispSize() {
       }
       max_disp_size -= pos_chg; // reduce by amount moving
       pos = min_size;           // new position
+    }
+    if(min_size2d != pos2d) {
+      taVector2i pos_chg = min_size2d - pos2d;
+      FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+        l->pos2d -= pos_chg;      // fix up all the layer rels to be less.
+      }
+      max_disp_size2d -= pos_chg; // reduce by amount moving
+      pos2d = min_size2d;           // new position
     }
   }
 
@@ -6226,7 +6293,6 @@ void Network::Initialize() {
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   usr1_save_fmt = FULL_NET;
   wt_save_fmt = TEXT;
-  lay_layout = THREE_D;
 
   n_units = 0;
   n_cons = 0;
@@ -6234,6 +6300,9 @@ void Network::Initialize() {
   max_disp_size.x = 1;
   max_disp_size.y = 1;
   max_disp_size.z = 1;
+
+  max_disp_size2d.x = 1;
+  max_disp_size2d.y = 1;
 
   proj = NULL;
   old_load_cons = false;
@@ -6257,6 +6326,7 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(view_objs, this);
   taBase::Own(max_disp_size, this);
+  taBase::Own(max_disp_size2d, this);
 
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
@@ -6309,6 +6379,7 @@ void Network::CutLinks() {
   epoch_time.CutLinks();
   train_time.CutLinks();
   max_disp_size.CutLinks();
+  max_disp_size2d.CutLinks();
   view_objs.CutLinks();
   layers.CutLinks();            // then std kills
   specs.CutLinks();
@@ -6364,9 +6435,9 @@ void Network::Copy_(const Network& cp) {
 
   usr1_save_fmt = cp.usr1_save_fmt;
   wt_save_fmt = cp.wt_save_fmt;
-  lay_layout = cp.lay_layout;
 
   max_disp_size = cp.max_disp_size;
+  max_disp_size2d = cp.max_disp_size2d;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   SyncSendPrjns();
@@ -6485,33 +6556,6 @@ int Network::Save_strm(ostream& strm, taBase* par, int indent) {
   return rval;
 }
 
-int Network::GetDefaultX(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_X; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_X; break;
-  }
-  return rval;
-}
-
-int Network::GetDefaultY(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_Y; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Y; break;
-  }
-  return rval;
-}
-
-int Network::GetDefaultZ(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_Z; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Z; break;
-  }
-  return rval;
-}
-
 void Network::Build() {
   taMisc::Busy();
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
@@ -6521,7 +6565,8 @@ void Network::Build() {
   BuildUnits();
   BuildPrjns(); // note: for Area constructs
   Connect();
-  AssignVoxels();
+  if(taMisc::gui_active)	// only when gui is active..
+    AssignVoxels();
   StructUpdate(false);
 //   if (net_inst.ptr()) {
 //     net_inst->OnBuild();
@@ -8081,13 +8126,7 @@ void Network::UnLesionUnits() {
 void Network::UpdateMaxDispSize() {
   layers.UpdateMaxDispSize();
   max_disp_size = layers.max_disp_size;
-}
-
-void Network::TwoD_Or_ThreeD(LayerLayout lo){
-  lay_layout = lo;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
-    lay->SetDefaultPos();
-  }
+  max_disp_size2d = layers.max_disp_size2d;
 }
 
 bool Network::UpdateUnitSpecs(bool force) {

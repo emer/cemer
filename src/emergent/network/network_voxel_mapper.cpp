@@ -269,7 +269,8 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
     // the algo "bumps" the Y dimension, move on to the next unit.
     unsigned unit_idx = 0;
     Unit *unit = li->GetUnit(unit_idx);
-    unit->voxels.Reset();
+    unit->MakeVoxelsList();
+    unit->voxels->Reset();
 
     // Repeat until all subvoxels for this layer have been assigned.
     for (unsigned count = 0; count < li->num_subvoxels; ++count) {
@@ -282,7 +283,7 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
       voxel->size = unit->lesioned() ? 0.0 : voxel_size;
 
       // Add it to this unit's voxel list.
-      unit->voxels.Add(voxel);
+      unit->voxels->Add(voxel);
 
       if (DEBUG_LEVEL > 1) {
         std::cout << "  Added voxel to unit " << li->lay->name.chars()
@@ -311,7 +312,8 @@ NetworkVoxelMapper::AssignVoxelsToLayers(
 
         // Update the pointer and reset the new unit's voxel list.
         unit = li->GetUnit(unit_idx);
-        unit->voxels.Reset();
+	unit->MakeVoxelsList();
+        unit->voxels->Reset();
       }
 
       D += dy;
@@ -354,7 +356,8 @@ NetworkVoxelMapper::ClearVoxelAssignmentForLayer(LayerInfo *li)
   for (unsigned idx = 0; idx < li->num_units; ++idx) {
     // Reset each unit's voxel list.
     if (Unit *unit = li->GetUnit(idx)) {
-      unit->voxels.Reset();
+      if(unit->voxels)
+	unit->voxels->Reset();
     }
   }
 }

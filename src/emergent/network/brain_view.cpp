@@ -268,9 +268,9 @@ void BrainView::GetMembs() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxels.size == 0) continue;
+      if (!u->voxels || u->voxels->size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels.FastEl(0);
+      Voxel *voxel = u->voxels->FastEl(0);
       if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
 

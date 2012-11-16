@@ -115,7 +115,7 @@ void BrainVolumeView::AllocUnitViewData()
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxels.size == 0) continue;
+      if (!u->voxels || u->voxels->size == 0) continue;
       if (u->lesioned()) continue;
       i++;
     }
@@ -799,9 +799,9 @@ void BrainVolumeView::CreateFaceSets()
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       if (u->lesioned()) continue;
-      if (u->voxels.size == 0) continue;
+      if (!u->voxels || u->voxels->size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      FOREACH_ELEM_IN_LIST(Voxel, v, u->voxels) {
+      FOREACH_ELEM_IN_LIST(Voxel, v, *(u->voxels)) {
         if (v->size == 0) continue;
 
         taVector3f mniCoord(v->coord);

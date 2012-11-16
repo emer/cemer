@@ -879,9 +879,9 @@ public: //
   int           n_recv_cons;
   // #CAT_Structure #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT total number of receiving connections
   taVector3i       pos;
-  // #CAT_Structure display position in space relative to owning group or layer
-  Voxel_List    voxels;
-  // #CAT_Structure #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
+  // #CAT_Structure display position in space relative to owning group or layer -- in structural 3D coordinates
+  Voxel_List*    voxels;
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
   int           idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
@@ -1083,12 +1083,19 @@ public: //
   // #CAT_Structure compute leaf index from my individual index in an efficient manner
   void          GetAbsPos(taVector3i& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void          GetAbsPos2d(taVector2i& abs_pos)  { abs_pos = pos; AddRelPos2d(abs_pos); }
+  // #CAT_Structure get absolute pos in 2d, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
   void          LayerLogPos(taVector2i& log_pos);
   // #CAT_Structure get logical position of unit within layer, taking into account (virtual) unit groups etc relative to layer flat_geom (no display spacing) -- calls Layer::UnitLogPos on own_lay
   void          LayerDispPos(taVector2i& disp_pos);
   // #CAT_Structure get display position of this unit within the layer, taking into account (virtual) unit groups etc relative to layer disp_geom (includes display spacing) -- calls Layer::UnitDispPos on own_lay
   void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
+  void          AddRelPos2d(taVector2i& rel_pos);
+  // #IGNORE add relative pos, which factors in offsets from above
+
+  virtual void	MakeVoxelsList();
+  // make the voxels* list if it doesn't yet exist -- otherwise not
 
   override String       GetTypeDecoKey() const { return "Unit"; }
 
@@ -1384,6 +1391,10 @@ public:
   // #EXPERT #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
   void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
+  void          GetAbsPos2d(taVector2i& abs_pos) { abs_pos = pos; AddRelPos2d(abs_pos); }
+  // #EXPERT #CAT_Structure get absolute pos in 2d, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void          AddRelPos2d(taVector2i& rel_pos);
+  // #IGNORE add relative pos in 2d, which factors in offsets from above
 
   virtual void  Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt copies weights from other unit group (incl wts assoc with unit bias member)
@@ -1582,6 +1593,7 @@ public:
   LayerFlags            flags;          // flags controlling various aspects of layer funcdtion
   LayerType             layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosVector3i           pos;            // #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
+  PosVector2i       	pos2d;		// #CAT_Structure 2D network view display position of layer relative to the overall nework (0,0 is lower left hand corner)
   float                 disp_scale;     // #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom               un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer
   bool                  unit_groups;    // #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups
@@ -1759,8 +1771,14 @@ public:
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   void          AddRelPos(taVector3i& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
+  void          GetAbsPos2d(taVector2i& abs_pos) { abs_pos = pos2d; AddRelPos2d(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  void          AddRelPos2d(taVector2i& rel_pos);
+  // #IGNORE add relative pos, which factors in offsets from above
   void          SetDefaultPos();
   // #IGNORE initialize position of layer
+  void          SetDefaultPos2d();
+  // #IGNORE initialize position of layer -- 2d
 
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
@@ -2072,13 +2090,19 @@ INHERITED(taGroup<Layer>)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
 
-  PosVector3i    pos;            // Position of Group of layers relative to network
+  PosVector3i    pos;           // Position of Group of layers relative to network (0,0,0 is lower left hand corner)
+  PosVector2i    pos2d;		// #CAT_Structure 2D network view display position of layer group relative to the overall nework (0,0 is lower left hand corner)
   PosVector3i    max_disp_size;  // #AKA_max_size #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
+  PosVector2i    max_disp_size2d;  // #READ_ONLY #SHOW #CAT_Structure maximum 2D display size of the layer group -- computed automatically from the layers within the group
 
   void          GetAbsPos(taVector3i& abs_pos)
   { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from layer groups
   void          AddRelPos(taVector3i& rel_pos);
+  // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
+  void          GetAbsPos2d(taVector2i& abs_pos) { abs_pos = pos2d; AddRelPos2d(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  void          AddRelPos2d(taVector2i& rel_pos);
   // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
 
   virtual void  BuildLayers();
@@ -2129,7 +2153,7 @@ protected:
 private:
   void  Initialize()            { };
   void  Destroy()               { };
-  void  Copy_(const Layer_Group& cp)    { pos = cp.pos; max_disp_size = cp.max_disp_size; }
+  void  Copy_(const Layer_Group& cp);
 };
 
 TA_SMART_PTRS(Layer_Group)
@@ -2275,11 +2299,6 @@ INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;   // #IGNORE default arg val for FindMake..
 
-  enum LayerLayout {            // Visual mode of layer position/view
-    TWO_D,                      // #LABEL_2D all z = 0, no skew
-    THREE_D                     // #LABEL_3D z = layer index, default skew
-  };
-
   enum Usr1SaveFmt {            // how to save network on -USR1 signal
     FULL_NET,                   // save the full network (dump file)
     JUST_WEIGHTS                // just do a 'write weights' command
@@ -2397,12 +2416,12 @@ public:
 
   Usr1SaveFmt   usr1_save_fmt;  // #CAT_File save network for -USR1 signal: full net or weights
   WtSaveFormat  wt_save_fmt;    // #CAT_File format to save weights in if saving weights
-  LayerLayout   lay_layout;     // #CAT_Display Visual mode of layer position/view
 
   int           n_units;        // #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int           n_cons;         // #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
   int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
   PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
+  PosVector2i   max_disp_size2d; // #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net -- for 2D display
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   bool          old_load_cons;  // #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
@@ -2416,11 +2435,6 @@ public:
   inline void           SetNetFlagState(NetFlags flg, bool on)
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
-
-  // todo: these seem pretty lame:
-  virtual int   GetDefaultX();  // #IGNORE
-  virtual int   GetDefaultY();  // #IGNORE
-  virtual int   GetDefaultZ();  // #IGNORE
 
   void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
@@ -2653,9 +2667,6 @@ public:
   // #MENU #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
   virtual void  UnLesionUnits();
   // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
-
-  virtual void  TwoD_Or_ThreeD(LayerLayout layout_type);
-  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
   virtual DataTable*    WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
