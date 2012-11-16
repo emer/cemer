@@ -1239,13 +1239,17 @@ protected: \
   override const void*  El_GetBlank_() const    { return (const void*)&blank; }
 
 #define MAT_COPY_SAME_SLOW(y,T) \
-  void  Copy_(const y& cp) { SetGeomN(cp.geom); \
+  void  Copy_(const y& cp) { if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom); \
     for (int i = 0; i < size; ++i) { \
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i)); \
     }}
 
 #define MAT_COPY_SAME_FAST(y,T) \
-  void  Copy_(const y& cp) { SetGeomN(cp.geom); \
+  void  Copy_(const y& cp) {  if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom);				 \
     memcpy(data(), cp.data(), size * sizeof(T)); \
     }
 
