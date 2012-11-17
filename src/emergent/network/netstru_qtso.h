@@ -676,6 +676,8 @@ public:
   QCheckBox*                chkDisplay;
   QCheckBox*                chkLayMove;
   QCheckBox*                chkNetText;
+  QLabel*                   lblLayLayout;
+  taiComboBox*              cmbLayLayout;
   QLabel*                   lblTextRot;
   taiField*                 fldTextRot;
   QLabel*                   lblUnitText;

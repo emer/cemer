@@ -430,12 +430,13 @@ extern void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragger);
 extern void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3LayerNode::T3LayerNode(T3DataView* dataView_, bool show_draggers)
+T3LayerNode::T3LayerNode(T3DataView* dataView_, bool show_draggers, bool md_2d)
   : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerNode);
 
   show_drag_ = show_draggers;
+  mode_2d_ = md_2d;
 
   if(show_drag_) {
     const float len = .08f;	// bar_len
@@ -463,23 +464,30 @@ T3LayerNode::T3LayerNode(T3DataView* dataView_, bool show_draggers)
     xy_dragger_->addFinishCallback(T3LayerNode_XYDragFinishCB, (void*)this);
 
     // Z dragger
-    z_drag_sep_ = new SoSeparator;
-    z_drag_xf_ = new SoTransform;
-    z_drag_xf_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5707963f);
-    z_drag_sep_->addChild(z_drag_xf_);
-    z_dragger_ = new SoTranslate1Dragger;
-    z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
-    z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
-    z_drag_sep_->addChild(z_dragger_);
+    if(mode_2d_) {
+      z_drag_sep_ = NULL;
+      z_drag_xf_ = NULL;
+      z_dragger_ = NULL;
+      z_drag_calc_ = NULL;
+    }
+    else {
+      z_drag_sep_ = new SoSeparator;
+      z_drag_xf_ = new SoTransform;
+      z_drag_xf_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5707963f);
+      z_drag_sep_->addChild(z_drag_xf_);
+      z_dragger_ = new SoTranslate1Dragger;
+      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
+      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+      z_drag_sep_->addChild(z_dragger_);
 
-    topSeparator()->addChild(z_drag_sep_);
+      topSeparator()->addChild(z_drag_sep_);
 
-    // B = Z
-    xy_drag_calc_->B.connectFrom(&z_dragger_->translation);
+      z_dragger_->addFinishCallback(T3LayerNode_ZDragFinishCB, (void*)this);
+      // B = Z
+      xy_drag_calc_->B.connectFrom(&z_dragger_->translation);
+    }
     //    xy_drag_calc_->expression = "oA = vec3f(.5 + A[0], B[0], -(.5 + A[1]))";
     txfm_shape()->translation.connectFrom(&xy_drag_calc_->oA);
-
-    z_dragger_->addFinishCallback(T3LayerNode_ZDragFinishCB, (void*)this);
   }
   else {
     xy_drag_sep_ = NULL;
@@ -530,10 +538,16 @@ void T3LayerNode::render() {
     xy_drag_calc_->expression = expr.chars();
 
     if(len != .08f) {
-      xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
-      xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len, wd, cr, ch));
-      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
-      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+      xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd,
+								    cr, ch));
+      xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len,
+									  wd, cr, ch));
+      if(z_dragger_) {
+	z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd,
+								     cr, ch));
+	z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len,
+									   wd, cr, ch));
+      }
     }
   }
 }
@@ -683,23 +697,30 @@ T3LayerGroupNode::T3LayerGroupNode(T3DataView* dataView_, bool show_draggers,
     xy_dragger_->addFinishCallback(T3LayerGroupNode_XYDragFinishCB, (void*)this);
 
     // Z dragger
-    z_drag_sep_ = new SoSeparator;
-    z_drag_xf_ = new SoTransform;
-    z_drag_xf_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5707963f);
-    z_drag_sep_->addChild(z_drag_xf_);
-    z_dragger_ = new SoTranslate1Dragger;
-    z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
-    z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
-    z_drag_sep_->addChild(z_dragger_);
+    if(mode_2d_) {
+      z_drag_sep_ = NULL;
+      z_drag_xf_ = NULL;
+      z_dragger_ = NULL;
+      z_drag_calc_ = NULL;
+    }
+    else {
+      z_drag_sep_ = new SoSeparator;
+      z_drag_xf_ = new SoTransform;
+      z_drag_xf_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5707963f);
+      z_drag_sep_->addChild(z_drag_xf_);
+      z_dragger_ = new SoTranslate1Dragger;
+      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
+      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+      z_drag_sep_->addChild(z_dragger_);
 
-    topSeparator()->addChild(z_drag_sep_);
+      topSeparator()->addChild(z_drag_sep_);
 
-    // B = Z
-    xy_drag_calc_->B.connectFrom(&z_dragger_->translation);
+      z_dragger_->addFinishCallback(T3LayerGroupNode_ZDragFinishCB, (void*)this);
+      // B = Z
+      xy_drag_calc_->B.connectFrom(&z_dragger_->translation);
+    }
     //    xy_drag_calc_->expression = "oA = vec3f(.5 + A[0], B[0], -(.5 + A[1]))";
     txfm_shape()->translation.connectFrom(&xy_drag_calc_->oA);
-
-    z_dragger_->addFinishCallback(T3LayerGroupNode_ZDragFinishCB, (void*)this);
   }
   else {
     xy_drag_sep_ = NULL;
@@ -771,7 +792,6 @@ void T3LayerGroupNode::render() {
 
     if(mode_2d_) {
       xy_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
-      z_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
     }
     else {
       xy_drag_xf_->translation.setValue(-lay_wd_x, lay_ht_z, lay_wd_y);
@@ -781,8 +801,13 @@ void T3LayerGroupNode::render() {
     if(len != .08f) {
       xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
       xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len, wd, cr, ch));
-      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
-      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+
+      if(z_dragger_) {
+	z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd,
+								     cr, ch));
+	z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len,
+									   wd, cr, ch));
+      }
     }
   }
 }

@@ -250,7 +250,8 @@ public:
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z, float disp_scale);
 
-  T3LayerNode(T3DataView* dataView_ = NULL, bool show_draggers = true);
+  T3LayerNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
+	      bool mode_2d = false);
 
 protected:
   
@@ -265,6 +266,7 @@ private:
   SoFrame*		shape_;
 
   bool			show_drag_;
+  bool			mode_2d_;
 
   SoSeparator*		xy_drag_sep_;
   SoTransform*		xy_drag_xf_;

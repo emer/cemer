@@ -1032,14 +1032,15 @@ LeabraProject .projects["test"] {
 	tabBrowseViewer @["Tree"] { };
 	PanelViewer @["Panels"] { };
 	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [2] {
-	    T3DataViewFrame @["Network_0"] { 
+	  T3DataViewFrame_List @.frames = [3] {
+	    T3DataViewFrame @["Network_2D"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["Network_0_View"] { 
-		  ScaleRange_List @.scale_ranges = [3] {
+		  ScaleRange_List @.scale_ranges = [4] {
 		    ScaleRange @[0] { };
 		    ScaleRange @[1] { };
 		    ScaleRange @[2] { };
+		    ScaleRange @[3] { };
 		  };
 		};
 	      };
@@ -1061,6 +1062,25 @@ LeabraProject .projects["test"] {
 		    ScaleRange @[1] { };
 		    ScaleRange @[2] { };
 		    ScaleRange @[3] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
+	      };
+	    };
+	    T3DataViewFrame @["Network_3D"] { 
+	      T3DataView_List @.children = [1] {
+		NetView @["NetView_1"] { 
+		  ScaleRange_List @.scale_ranges = [2] {
+		    ScaleRange @[0] { };
+		    ScaleRange @[1] { };
 		  };
 		};
 	      };
@@ -6373,8 +6393,8 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="T3DataViewFrame_List_0";
       el_typ=T3DataViewFrame;
       el_def=0;
-      T3DataViewFrame @["Network_0"] {
-       name="Network_0";
+      T3DataViewFrame @["Network_2D"] {
+       name="Network_2D";
        m_data=NULL;
        visible=1;
        root_view {
@@ -6392,22 +6412,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1.000001: z=0.9999999: }: rotate={x=
 	  main_xform {scale={x=1: y=1.000001: z=0.9999999: }: rotate={x=1: y=9.523616e-8: z=1.683856e-8: rot=1.57466: }: translate={x=2.235175e-8: y=1.637297e-9: z=5.151107e-9: }: };
 	  display=1;
 	  lay_layout=TWO_D;
-	  lay_mv=1;
+	  lay_mv=0;
 	  net_text=1;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.3715494: y=0.3715492: z=0.3715498: }: rotate={x=1.000365: y=-4.031854e-6: z=-4.031868e-6: rot=0.02913392: }: translate={x=0.5961538: y=-0.01575547: z=-0.7608591: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  unit_src_path=".layers[1].units[0]";
+	  unit_src_path=".layers[2].units[0]";
 	  hist_idx=0;
 	  hist_save=1;
 	  hist_max=100;
 	  hist_ff=5;
 	  unit_disp_mode=UDM_RECT;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=5: y=5: z=6.142857: };
-	  max_size2d {x=9: y=37: z=1: };
-	  eff_max_size {x=9: y=37: z=1: };
+	  max_size {x=5: y=7: z=3.25: };
+	  max_size2d {x=9: y=34: z=1: };
+	  eff_max_size {x=9: y=34: z=1: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -6428,11 +6448,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1.000001: z=0.9999999: }: rotate={x=
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
-	   show_laygp=1;
+	   show_laygp=0;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
-	  wt_line_thr=0.8;
+	  wt_line_thr=0.1;
 	  wt_line_swt=0;
 	  wt_prjn_k_un=4;
 	  wt_prjn_k_gp=1;
@@ -6471,6 +6491,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1.000001: z=0.9999999: }: rotate={x=
 	    min=-1;
 	    max=1;
 	   };
+	   ScaleRange @[3] {
+	    var_name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
 	  };
 	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;New1=-1;New2=-1;	  };
 	 };
@@ -6487,7 +6513,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1.000001: z=0.9999999: }: rotate={x=
 	T3SavedView @["View_0"] {
 	 name="View_0";
 	 view_saved=1;
-	 pos {x=0.4600002: y=0.7892022: z=1.424234: };
+	 pos {x=0.4600002: y=0.7252022: z=1.424234: };
 	 orient {x=-0.9999999: y=0: z=0: rot=0.09799752: };
 	 focal_dist=0.6460807;
 	};
@@ -6552,7 +6578,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  unit_src_path=;
-	  max_size {x=5: y=5: z=6.142857: };
+	  max_size {x=5: y=7: z=3.25: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -6649,6 +6675,155 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 pos {x=0.4174311: y=0.5560121: z=0.9486581: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=1.174097;
+	};
+	T3SavedView @["View_1"] {
+	 name="View_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_2"] {
+	 name="View_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_3"] {
+	 name="View_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_4"] {
+	 name="View_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_5"] {
+	 name="View_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @["Network_3D"] {
+       name="Network_3D";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 NetView @["NetView_1"] {
+	  name="NetView_1";
+	  m_data=$.projects["test"].networks["Network_0"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  display=1;
+	  lay_layout=THREE_D;
+	  lay_mv=1;
+	  net_text=1;
+	  show_iconified=0;
+	  net_text_xform {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=1: y=0: z=-0.5: }: };
+	  net_text_rot=-90;
+	  cur_unit_vals{ r.wt;	  };
+	  unit_src_path=".layers[2].units[0]";
+	  hist_idx=0;
+	  hist_save=1;
+	  hist_max=100;
+	  hist_ff=5;
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=5: y=7: z=3.25: };
+	  max_size2d {x=9: y=37: z=1: };
+	  eff_max_size {x=5: y=7: z=3.25: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_min=0.01;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_B;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	   laygp_width=1;
+	   show_laygp=1;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.1;
+	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
+	  scale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  scale_ranges {
+	   name="ScaleRange_List_0";
+	   el_typ=ScaleRange;
+	   el_def=0;
+	   ScaleRange @[0] {
+	    var_name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[1] {
+	    var_name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;New1=-1;New2=-1;	  };
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_4";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View_0"] {
+	 name="View_0";
+	 view_saved=1;
+	 pos {x=0.6714405: y=0.5876588: z=1.779099: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.101408;
 	};
 	T3SavedView @["View_1"] {
 	 name="View_1";
@@ -7070,8 +7245,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_def=0;
     pos {x=0: y=0: z=0: };
     pos2d {x=0: y=0: };
-    max_disp_size {x=5: y=5: z=7: };
-    max_disp_size2d {x=9: y=37: };
+    max_disp_size {x=5: y=7: z=4: };
+    max_disp_size2d {x=9: y=34: };
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
@@ -7123,7 +7298,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      desc=;
      flags=0;
      layer_type=HIDDEN;
-     pos {x=0: y=0: z=1: };
+     pos {x=0: y=1: z=1: };
      pos2d {x=4: y=7: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
@@ -7224,7 +7399,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      desc=;
      flags=0;
      layer_type=TARGET;
-     pos {x=0: y=0: z=2: };
+     pos {x=0: y=2: z=2: };
      pos2d {x=1: y=16: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
@@ -7287,9 +7462,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      name="Layer_Group_1";
      el_typ=LeabraLayer;
      el_def=0;
-     pos {x=0: y=0: z=3: };
-     pos2d {x=1: y=28: };
-     max_disp_size {x=1: y=1: z=4: };
+     pos {x=0: y=2: z=3: };
+     pos2d {x=1: y=25: };
+     max_disp_size {x=4: y=1: z=1: };
      max_disp_size2d {x=1: y=9: };
      LeabraLayer @["New1"] {
       name="New1";
@@ -7379,7 +7554,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       desc=;
       flags=0;
       layer_type=HIDDEN;
-      pos {x=0: y=0: z=3: };
+      pos {x=3: y=0: z=0: };
       pos2d {x=0: y=8: };
       disp_scale=1;
       un_geom {x=1: y=1: n_not_xy=0: n=1: };
@@ -7473,8 +7648,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    n_units=77;
    n_cons=1927;
    max_prjns=3;
-   max_disp_size {x=5: y=5: z=7: };
-   max_disp_size2d {x=9: y=37: };
+   max_disp_size {x=5: y=7: z=4: };
+   max_disp_size2d {x=9: y=34: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;

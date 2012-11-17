@@ -1407,7 +1407,8 @@ void LayerView::Render_pre() {
   NetView* nv = getNetView();
   if(!nv->lay_mv) show_drag = false;
 
-  T3LayerNode* node_so = new T3LayerNode(this, show_drag);
+  T3LayerNode* node_so = new T3LayerNode(this, show_drag,
+					 nv->lay_layout == NetView::TWO_D);
   setNode(node_so);
   DoHighlightColor(false);
 
@@ -1466,7 +1467,7 @@ void LayerView::Render_impl() {
     node_so->transformCaption(tran);
   }
   else {
-    SbVec3f tran(0.0f, 0.5f * lay_wd, 1.5f * eff_lay_font_size);
+    SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
     node_so->transformCaption(rot, tran);
   }
@@ -1769,8 +1770,10 @@ void PrjnView::Render_impl() {
   }
 
   if(nv->lay_layout == NetView::TWO_D) {
-    src.y += net_margin;
-    dst.y += net_margin;
+    src.y -= .01f;		// slightly back in depth
+    dst.y -= .01f;
+    src.z -= net_margin;	// rise up just a bit per similar on layer
+    dst.z -= net_margin;
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
@@ -1953,7 +1956,7 @@ void LayerGroupView::Render_impl() {
   if(!node_so) return;
 
   float net_margin = 0.05f;
-  float gpz_2d = 0.05f;
+  float gpz_2d = 0.01f;
 
   taTransform* ft = transform(true);
   if(nv->lay_layout == NetView::THREE_D) {
@@ -1969,12 +1972,12 @@ void LayerGroupView::Render_impl() {
   else {
     lgp->GetAbsPos2d(pos);
     ft->translate.SetXYZ(((float)pos.x) / nv->eff_max_size.x,
-			 -.5 * gpz_2d,
+			 0.0f,
 			 -net_margin + ((float)-pos.y) / nv->eff_max_size.y);
 
-    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, 0,
-		     lgp->max_disp_size2d.x, lgp->max_disp_size2d.y, gpz_2d,
-		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
+    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, -.2f,
+		     lgp->max_disp_size2d.x, lgp->max_disp_size2d.y, 1.0,
+		     nv->eff_max_size.x, nv->eff_max_size.y, 5.0f);
   }
 
   if(!node_so->hideLines()) {
@@ -2627,14 +2630,6 @@ void NetView::BuildAll() { // populates all T3 guys
   }
   GetMaxSize();
 
-  if(lay_layout != prev_lay_layout) {
-    if(lay_layout == THREE_D)
-      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
-    else
-      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
-    prev_lay_layout = lay_layout;
-  }
-
   Network* nt = net();
 
   // cannot preserve LayerView objects, so recording disp_mode info separately
@@ -2960,6 +2955,14 @@ void NetView::InitDisplay(bool init_panel) {
   GetMaxSize();
   GetMembs();
 
+  if(lay_layout != prev_lay_layout) {
+    if(lay_layout == THREE_D)
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
+    else
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+    prev_lay_layout = lay_layout;
+  }
+
   hist_reset_req = false;       // this flag is used to sync history index resetting among
                                 // all the history elements in unit groups and network
   InitCtrHist();
@@ -3067,42 +3070,6 @@ const iColor NetView::bgColor(bool& ok) const {
 }
 
 
-void NetView::Render_pre() {
-  if(!no_init_on_rerender)
-    InitDisplay();
-  no_init_on_rerender = false;
-
-  bool show_drag = true;;
-  T3ExaminerViewer* vw = GetViewer();
-  if(vw) {
-    vw->syncViewerMode();
-    show_drag = vw->interactionModeOn();
-  }
-  if(!lay_mv) show_drag = false;
-
-  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv,
-			lay_layout == TWO_D));
-  SoMaterial* mat = node_so()->material(); //cache
-  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-  mat->transparency.setValue(0.5f);
-
-  if(vw && vw->interactionModeOn()) {
-    SoEventCallback* ecb = new SoEventCallback;
-    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
-    node_so()->addChild(ecb);
-  }
-
-  if(vw) {                      // add hot buttons to viewer
-    MemberDef* md;
-    for (int i=0; i < membs.size; i++) {
-      md = membs[i];
-      if(!md->HasOption("VIEW_HOT")) continue;
-      vw->addDynButton(md->name, md->desc); // add the button
-    }
-  }
-  inherited::Render_pre();
-}
-
 // callback for netview transformer dragger
 void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -3193,6 +3160,42 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->UpdateDisplay();
 }
 
+void NetView::Render_pre() {
+  if(!no_init_on_rerender)
+    InitDisplay();
+  no_init_on_rerender = false;
+
+  bool show_drag = true;;
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    vw->syncViewerMode();
+    show_drag = vw->interactionModeOn();
+  }
+  if(!lay_mv) show_drag = false;
+
+  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv,
+			lay_layout == TWO_D));
+  SoMaterial* mat = node_so()->material(); //cache
+  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
+  mat->transparency.setValue(0.5f);
+
+  if(vw && vw->interactionModeOn()) {
+    SoEventCallback* ecb = new SoEventCallback;
+    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
+    node_so()->addChild(ecb);
+  }
+
+  if(vw) {                      // add hot buttons to viewer
+    MemberDef* md;
+    for (int i=0; i < membs.size; i++) {
+      md = membs[i];
+      if(!md->HasOption("VIEW_HOT")) continue;
+      vw->addDynButton(md->name, md->desc); // add the button
+    }
+  }
+  inherited::Render_pre();
+}
+
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   taTransform* ft = transform(true);
@@ -3217,12 +3220,6 @@ void NetView::Render_impl() {
   if(!node_so) return;
   node_so->resizeCaption(font_sizes.net_name);
 
-  if(lay_layout == NetView::TWO_D) {
-    SbVec3f tran(0.0f, -.2f, 0.03f);
-    SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
-    node_so->transformCaption(rot, tran);
-  }
-
   String cap_txt = data()->GetName() + " Value: ";
   if(unit_disp_md)
     cap_txt += unit_disp_md->name;
@@ -3231,6 +3228,12 @@ void NetView::Render_impl() {
     node_so->shapeDraw()->lineWidth = view_params.laygp_width;
 
   node_so->setCaption(cap_txt.chars());
+
+  if(lay_layout == NetView::TWO_D) {
+    SbVec3f tran(0.0f, 0.0f, 0.05f);
+    SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+    node_so->transformCaption(rot, tran);
+  }
 
   if (scale.auto_scale) {
     UpdateAutoScale();
@@ -3845,6 +3848,15 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addSpacing(taiM->hsep_c);
 
+  lblLayLayout = taiM->NewLabel("2/3D:", widg, font_spec);
+  lblLayLayout->setToolTip("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)");
+  layDispCheck->addWidget(lblLayLayout);
+  cmbLayLayout = dl.Add(new taiComboBox(true, 
+		TA_NetView.sub_types.FindName("LayerLayout"),
+                               this, NULL, widg, taiData::flgAutoApply));
+  layDispCheck->addWidget(cmbLayLayout->GetRep());
+  layDispCheck->addSpacing(taiM->hsep_c);
+
   chkLayMove = new QCheckBox("Lay\nMv", widg);
   chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -3857,13 +3869,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
-  lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
-  lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
-  layDispCheck->addWidget(lblTextRot);
-  fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layDispCheck->addWidget(fldTextRot->GetRep());
-  ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
-  layDispCheck->addSpacing(taiM->hsep_c);
+  // lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
+  // lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
+  // layDispCheck->addWidget(lblTextRot);
+  // fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  // layDispCheck->addWidget(fldTextRot->GetRep());
+  // ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
+  // layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -4243,7 +4255,8 @@ void NetViewPanel::UpdatePanel_impl() {
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);
-  fldTextRot->GetImage((String)nv->net_text_rot);
+  // fldTextRot->GetImage((String)nv->net_text_rot);
+  cmbLayLayout->GetEnumImage(nv->lay_layout);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
@@ -4307,9 +4320,12 @@ void NetViewPanel::GetValue_impl() {
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
   nv->net_text = chkNetText->isChecked();
-  nv->net_text_rot = (float)fldTextRot->GetValue();
+  // nv->net_text_rot = (float)fldTextRot->GetValue();
 
   int i;
+  cmbLayLayout->GetEnumValue(i);
+  nv->lay_layout = (NetView::LayerLayout)i;
+
   cmbUnitText->GetEnumValue(i);
   nv->unit_text_disp = (NetView::UnitTextDisplay)i;
 

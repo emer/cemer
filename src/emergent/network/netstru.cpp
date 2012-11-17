@@ -5726,35 +5726,71 @@ void Layer_Group::LayerPos_Cleanup() {
       l1->GetAbsPos(l1abs);
       taVector2i l1s = (taVector2i)l1abs;
       taVector2i l1e = l1s + (taVector2i)l1->scaled_disp_geom;
+
+      taVector2i l1abs2d;
+      l1->GetAbsPos2d(l1abs2d);
+      taVector2i l1s2d = (taVector2i)l1abs2d;
+      taVector2i l1e2d = l1s2d + (taVector2i)l1->scaled_disp_geom;
+
       for(int i2 = i1+1; i2<leaves;i2++) {
         Layer* l2 = Leaf(i2);
         taVector3i l2abs;
         l2->GetAbsPos(l2abs);
         taVector2i l2s = (taVector2i)l2abs;
         taVector2i l2e = l2s + (taVector2i)l2->scaled_disp_geom;
-        if(l2abs.z != l1abs.z) continue;
-        if(l2s.x >= l1s.x && l2s.x < l1e.x &&
-            l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
-          if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
-            l2->pos.x += (l1e.x + 2) - l2s.x;
-          }
-          else {
-            l2->pos.y += (l1e.y + 2) - l2s.y;
-          }
-          l2->DataChanged(DCR_ITEM_UPDATED);
-          moved = true;
-        }
-        else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
-                l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
-          if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
-            l1->pos.x += (l2e.x + 2) - l1s.x;
-          }
-          else {
-            l1->pos.y += (l2e.y + 2) - l1s.y;
-          }
-          l1->DataChanged(DCR_ITEM_UPDATED);
-          moved = true;
-        }
+
+        taVector3i l2abs2d;
+        l2->GetAbsPos2d(l2abs2d);
+        taVector2i l2s2d = (taVector2i)l2abs2d;
+        taVector2i l2e2d = l2s2d + (taVector2i)l2->scaled_disp_geom;
+
+        if(l2abs.z == l1abs.z) { // 3D
+	  if(l2s.x >= l1s.x && l2s.x < l1e.x &&
+	     l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
+	    if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
+	      l2->pos.x += (l1e.x + 2) - l2s.x;
+	    }
+	    else {
+	      l2->pos.y += (l1e.y + 2) - l2s.y;
+	    }
+	    l2->DataChanged(DCR_ITEM_UPDATED);
+	    moved = true;
+	  }
+	  else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
+		  l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
+	    if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
+	      l1->pos.x += (l2e.x + 2) - l1s.x;
+	    }
+	    else {
+	      l1->pos.y += (l2e.y + 2) - l1s.y;
+	    }
+	    l1->DataChanged(DCR_ITEM_UPDATED);
+	    moved = true;
+	  }
+	}
+
+	if(l2s2d.x >= l1s2d.x && l2s2d.x < l1e2d.x &&
+	   l2s2d.y >= l1s2d.y && l2s2d.y < l1e2d.y) { // l2 starts in l1; move l2 rt/back
+	  if(l1e2d.x - l2s2d.x <= l1e2d.y - l2s2d.y) {    // closer to x than y
+	    l2->pos2d.x += (l1e2d.x + 2) - l2s2d.x;
+	  }
+	  else {
+	    l2->pos2d.y += (l1e2d.y + 2) - l2s2d.y;
+	  }
+	  l2->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+	else if(l1s2d.x >= l2s2d.x && l1s2d.x < l2e2d.x &&
+		l1s2d.y >= l2s2d.y && l1s2d.y < l2e2d.y) { // l1 starts in l2; move l1 rt/back
+	  if(l2e2d.x - l1s2d.x <= l2e2d.y - l1s2d.y) {    // closer to x than y
+	    l1->pos2d.x += (l2e2d.x + 2) - l1s2d.x;
+	  }
+	  else {
+	    l1->pos2d.y += (l2e2d.y + 2) - l1s2d.y;
+	  }
+	  l1->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
       }
     }
     n_itr++;
