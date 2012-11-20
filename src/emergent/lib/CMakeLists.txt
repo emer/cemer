@@ -53,6 +53,16 @@ set(emergentlib_SRCS
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})
 
+if (WIN32)
+  # Don't warn so much on 3rd party C files.
+  set_source_files_properties(
+    ${PROJECT_SOURCE_DIR}/src/emergent/network/nifti1_io.c
+    ${PROJECT_SOURCE_DIR}/src/emergent/network/znzlib.c
+    PROPERTIES
+    COMPILE_FLAGS "/D_CRT_SECURE_NO_WARNINGS /wd4101 /wd4244 /wd4267"
+  )
+endif (WIN32)
+
 # 2nd arg is extra libs to link to
 EMERGENT_LINK_LIBRARIES(emergentlib temt)
 
