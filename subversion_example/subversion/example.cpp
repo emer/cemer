@@ -15,7 +15,7 @@
 #include <context.hpp>
 
 #include "emergent_svn/pool.h"
-#include "emergent_svn/client.h"
+#include "emergent_svn/subversion.h"
 
 #include <iostream>
 
@@ -46,12 +46,12 @@ int main() {
 	//const char *url = "http://grey.colorado.edu/svn/emergent/emergent/trunk/package";
 	const char *url = "file:///home/houman/Desktop/svn/";
 
-	const char *path = "/home/houman/Desktop/wc6/dir15";
+	const char *path = "file:///home/houman/Desktop/svn/doit";
 
-	Client client;
+	Subversion subversion;
 
 	/*
-	int rev =  client.Checkout(pool, url, path);
+	int rev =  subversion.Checkout(pool, url, path);
 
 	if (rev < 0) {
 			std::cout << "Error checking out code\n  from: " << url << "\n  to: " << path << "\ncheckout() returned " << rev
@@ -59,16 +59,14 @@ int main() {
 		} else {
 			std::cout << "Checked out revision: " << rev << std::endl;
 		}
+	 */
 
-	bool success = client.Update(pool, path);
+	//bool success = subversion.Update(pool, path);
+	subversion.Mkdir(pool, path);
 
-	*/
+	//subversion.Commit(pool, path, "mymessage");
 
-	client.Mkdir(pool, path);
-
-
-	pool.~Pool();
-
+	//pool.~Pool();
 	return 0;
 }
 
