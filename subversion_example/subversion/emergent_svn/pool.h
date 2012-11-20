@@ -16,11 +16,11 @@
 
 class Pool {
 public:
-	Pool();
-	virtual ~Pool();
-	apr_pool_t * pool();
+  Pool();
+  virtual ~Pool();
+  apr_pool_t * pool();
 private:
-	apr_pool_t * m_pool;
+  apr_pool_t * m_pool;
 };
 
 #endif /* POOL_H_ */

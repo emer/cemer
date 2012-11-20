@@ -24,12 +24,12 @@
 
 class Subversion {
 public:
-	Subversion();
-	virtual ~Subversion();
-	int Checkout(Pool pool, const char *url, const char *working_copy_path, int rev = -1);
-	bool Update(Pool pool, const char *path, int rev = -1);
-	bool Mkdir(Pool pool, const char *path);
-	int Commit(Pool pool, const char *path, const char *message);
+  Subversion();
+  virtual ~Subversion();
+  int Checkout(Pool pool, const char *url, const char *working_copy_path, int rev = -1);
+  bool Update(Pool pool, const char *path, int rev = -1);
+  bool Mkdir(Pool pool, const char *path);
+  int Commit(Pool pool, const char *path, const char *message);
 };
 
 #endif /* CLIENT_H_ */
