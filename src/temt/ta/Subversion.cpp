@@ -423,15 +423,16 @@ Subversion::Update(int rev)
   apr_array_header_t *result_revs;
 
   // create an array containing a single element which is the input path to be updated
-  apr_array_header_t *paths = apr_array_make(pool.pool(), 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, pool.pool());
+  apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
+  path = svn_path_canonicalize(path, m_pool);
   (*((const char **) apr_array_push(paths))) = path;
 
   // Set the revision number, if provided. Otherwise get HEAD revision.
   svn_opt_revision_t revision;
   if (rev < 0) {
     revision.kind = svn_opt_revision_head;
-  } else {
+  }
+  else {
     revision.kind = svn_opt_revision_number;
     revision.value.number = rev;
   }
@@ -444,12 +445,17 @@ Subversion::Update(int rev)
   svn_boolean_t allow_unver_obstructions = true;
   svn_boolean_t depth_is_sticky = true;
 
-  // TODO: implement our own context
-  svn::Context context;
-  svn_client_ctx_t *ctx = context.ctx();
-
-  svn_error_t *err = svn_client_update3(&result_revs, paths, &revision, depth, depth_is_sticky, ignore_externals,
-      allow_unver_obstructions, ctx, pool.pool());
+  svn_error_t *err =
+    svn_client_update3(
+      &result_revs,
+      paths,
+      &revision,
+      depth,
+      depth_is_sticky,
+      ignore_externals,
+      allow_unver_obstructions,
+      m_ctx,
+      m_pool);
 
   // Check for error.
   if (err) {
@@ -488,11 +494,11 @@ Subversion::MakeDir(const char *new_dir, bool create_parents)
 // TODO: rest of function copied from example dir, needs cleanup.
 
   // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
-  svn_commit_info_t *commit_info_p = svn_create_commit_info(pool.pool());
+  svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
 
   // create an array containing a single path to be created
-  apr_array_header_t *paths = apr_array_make(pool.pool(), 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, pool.pool());
+  apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
+  path = svn_path_canonicalize(path, m_pool);
   (*((const char **) apr_array_push(paths))) = path;
 
   // create any non-existent parent directories
@@ -502,11 +508,14 @@ Subversion::MakeDir(const char *new_dir, bool create_parents)
   // svn_client_propget3 can be used to create an apr_hash_t
   const apr_hash_t *revprop_table = NULL;
 
-  // TODO: implement our own context
-  svn::Context context;
-  svn_client_ctx_t *ctx = context.ctx();
-
-  svn_error_t *err = svn_client_mkdir3(&commit_info_p, paths, make_parents, revprop_table, ctx, pool.pool());
+  svn_error_t *err =
+    svn_client_mkdir3(
+      &commit_info_p,
+      paths,
+      make_parents,
+      revprop_table,
+      m_ctx,
+      m_pool);
 
   // Check for error.
   if (err) {
@@ -536,12 +545,12 @@ Subversion::Checkin(const char *comment, const char *files)
 
 // TODO: rest of function copied from example dir, needs cleanup.
 
-  //svn_commit_info_t *commit_info_p = svn_create_commit_info(pool.pool());
+  //svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
   svn_commit_info_t *commit_info_p = NULL;
 
   // create an array containing a single element which is the path path to be committed
-  apr_array_header_t *paths = apr_array_make(pool.pool(), 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, pool.pool());
+  apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
+  path = svn_path_canonicalize(path, m_pool);
   (*((const char **) apr_array_push(paths))) = path;
 
   // commit changes to the children of the paths
@@ -552,22 +561,21 @@ Subversion::Checkin(const char *comment, const char *files)
 
   // no need to changelist filtering
   svn_boolean_t keep_changelists = false;
-  const apr_array_header_t *changelists = apr_array_make(pool.pool(), 0, sizeof(const char *));
+  const apr_array_header_t *changelists = apr_array_make(m_pool, 0, sizeof(const char *));
 
   const apr_hash_t *revprop_table = NULL;
 
-  // TODO: implement our own context
-  svn::Context context;
-  context.setLogMessage("message");
-  svn_client_ctx_t *ctx = context.ctx();
-
-
-  // to be used if we need to load the log message from a file
-  //const char *tmp_file = NULL;
-  //(*svn_client_get_commit_log3_t)(&message, tmp_file, paths, ctx->log_msg_baton3, pool.pool());
-
-  svn_error_t *err = svn_client_commit4(&commit_info_p, paths, depth, keep_locks, keep_changelists, changelists,
-      revprop_table, ctx, pool.pool());
+  svn_error_t *err =
+    svn_client_commit4(
+      &commit_info_p,
+      paths,
+      depth,
+      keep_locks,
+      keep_changelists,
+      changelists,
+      revprop_table,
+      m_ctx,
+      m_pool);
 
   // Check for error.
   if (err) {
