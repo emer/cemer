@@ -741,28 +741,39 @@ void SelectEdit::RunOnCluster(
   const String &filename,
   const String &desc,
   int num_of_procs)
-{
-  // Run this model on a cluster using the parameters of this SelectEdit.
-  std::cout << "Testing SVN checkout" << std::endl;
-  String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + "TODO_REPO_NAME";
+{  
+	Pool pool;
+	Subversion subversion;
 
-  // TODO: the Subversion object should be more global than this.
-  // Maybe have a registry of Subversion objects keyed off of wc_path?
-  Subversion svn(wc_path.chars());
-  int rev = svn.Checkout(repo.chars());
-  if (rev < 0) {
-    std::cout << "Error checking out code"
-      << "\n  from: " << repo.chars()
-      << "\n  to: " << wc_path.chars()
-      << "\nSubversion::Checkout() returned " << rev
-      << std::endl;
-  }
-  else {
-    std::cout << "Checked out revision: " << rev
-      << "\n  from: " << repo.chars()
-      << "\n  to: " << wc_path.chars()
-      << std::endl;
-  }
+	// Run this model on a cluster using the parameters of this SelectEdit.
+	std::cout << "Testing SVN checkout" << std::endl;
+	//char * wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + "TODO_REPO_NAME";
+
+	// for now I set these parameters here
+	char * user_app_dir = "/home/houman/Desktop/";
+	char * wc_path = user_app_dir + PATH_SEP + "repos" + PATH_SEP + "houmanwc";
+	char * proj_name = "myproj";
+	char * wc_proj_path = wc_path + PATH_SEP + proj_name;
+
+	QFileInfo fi(wc_path);
+
+	if (!fi.exists()) {	// user never used c2c or at least never used it on this emergent
+		// checkout the user's dir
+		subversion.Checkout(pool, repo, wc_path);	// TODO error handling
+		char * path;
+		if (!fi.exists()) {	// user doesn't have a dir in the repo
+			// TODO: create a dir for the user in the repo directly
+			subversion.Checkout(pool, repo, wc_path);
+			path = wc_proj_path + PATH_SEP + "submit";
+			subversion.Mkdir(pool, path);
+			path = wc_proj_path + PATH_SEP + "submit";
+			subversion.Mkdir(pool, path);
+			path = wc_proj_path + PATH_SEP + "model";
+			subversion.Mkdir(pool, path);
+			path = wc_proj_path + PATH_SEP + "results";
+			subversion.Mkdir(pool, path);
+		}
+	}
 }
 
 
