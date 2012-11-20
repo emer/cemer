@@ -18,12 +18,24 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <apr_pools.h>
 #include <svn_client.h>
 #include <svn_path.h>
 #include <svn_pools.h>
 #include <svn_wc.h>
 #include "ta_type.h" // taMisc::Error, etc.
+
+namespace {
+  template<typename T>
+  std::string
+  toString(const T &val)
+  {
+    std::ostringstream oss;
+    oss << val;
+    return oss.str();
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Apr
@@ -49,9 +61,7 @@ Apr::Apr()
     taMisc::Info("Initialized APR");
   }
   else {
-    std::ostringstream oss;
-    oss << status;
-    taMisc::Error("Failed to initialize APR:", oss.str().c_str());
+    taMisc::Error("Failed to initialize APR:", toString(status).c_str());
   }
 }
 
@@ -62,17 +72,17 @@ Apr::~Apr()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Subversion::Glue
+// SubversionClient::Glue
 ///////////////////////////////////////////////////////////////////////////////
 
-struct Subversion::Glue
+struct SubversionClient::Glue
 {
   // Glue code to connect C-style callbacks with C++ object methods.
   static
   svn_error_t *
   svn_cancel_func(void *cancel_baton)
   {
-    Subversion *sub = reinterpret_cast<Subversion *>(cancel_baton);
+    SubversionClient *sub = reinterpret_cast<SubversionClient *>(cancel_baton);
     if (sub && sub->isCancelled()) {
       return svn_error_create(SVN_ERR_CANCELLED, 0, "Operation cancelled");
     }
@@ -90,7 +100,7 @@ struct Subversion::Glue
     const svn_wc_notify_t *notify,
     apr_pool_t *pool)
   {
-    if (Subversion *sub = reinterpret_cast<Subversion *>(baton)) {
+    if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
       sub->notify(notify);
     }
   }
@@ -103,7 +113,7 @@ struct Subversion::Glue
     void *baton,
     apr_pool_t *pool)
   {
-    if (Subversion *sub = reinterpret_cast<Subversion *>(baton)) {
+    if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
       // progress is the number of bytes already transferred, total is
       // the total number of bytes to transfer or -1 if it's not known.
       sub->notifyProgress(progress, total);
@@ -143,7 +153,7 @@ struct Subversion::Glue
   {
     tmp_file = 0;
     log_msg = 0; // Should cause the operation to be cancelled if not set.
-    if (Subversion *sub = reinterpret_cast<Subversion *>(baton)) {
+    if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
       std::string msg = sub->getCommitMessage();
       if (!msg.empty()) {
         // Subversion requires that only line feeds be used, no CRLF or CR.
@@ -188,17 +198,17 @@ struct Subversion::Glue
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Subversion
+// SubversionClient
 ///////////////////////////////////////////////////////////////////////////////
 
-Subversion::Subversion(const char *working_copy_path)
+SubversionClient::SubversionClient(const char *working_copy_path)
   : m_wc_path(0)
   , m_url(0)
   , m_pool(0) // initialized below
   , m_ctx(0)
   , m_cancelled(false)
 {
-  taMisc::Info("Creating Subversion object");
+  taMisc::Info("Creating SubversionClient object");
 
   // Set up APR and a pool.
   Apr::initializeOnce(); // must be done prior to any other APR calls.
@@ -211,9 +221,9 @@ Subversion::Subversion(const char *working_copy_path)
   createContext();
 }
 
-Subversion::~Subversion()
+SubversionClient::~SubversionClient()
 {
-  taMisc::Info("Destroying Subversion object");
+  taMisc::Info("Destroying SubversionClient object");
 
   // Shouldn't need to destroy the context since it was allocated from
   // the pool, which is about to be destroyed.
@@ -224,7 +234,7 @@ Subversion::~Subversion()
 }
 
 void
-Subversion::createContext()
+SubversionClient::createContext()
 {
   // Allocate a new context object from the pool.
   svn_error_t *error = svn_client_create_context(&m_ctx, m_pool);
@@ -234,7 +244,8 @@ Subversion::createContext()
     m_ctx = 0;
     // TODO: throw?  docs say tihs call won't error in current implementation,
     // but in case a future implementation does error, we should handle it.
-    // Don't want calling code to have an uninitialized Subversion object.
+    // Don't want calling code to have an uninitialized SubversionClient
+    // object.
     return;
   }
 
@@ -300,38 +311,38 @@ Subversion::createContext()
 
   m_ctx->mimetypes_map = 0; // TODO: do I need to implement this somehow?
 
-  m_ctx->cancel_func = Subversion::Glue::svn_cancel_func;
+  m_ctx->cancel_func = Glue::svn_cancel_func;
   m_ctx->cancel_baton = this;
 
   m_ctx->notify_func = 0; // Deprecated in 1.2.
   m_ctx->notify_baton = 0;
-  m_ctx->notify_func2 = Subversion::Glue::svn_wc_notify_func2;
+  m_ctx->notify_func2 = Glue::svn_wc_notify_func2;
   m_ctx->notify_baton2 = this;
 
-  m_ctx->progress_func = Subversion::Glue::svn_ra_progress_notify_func;
+  m_ctx->progress_func = Glue::svn_ra_progress_notify_func;
   m_ctx->progress_baton = this;
 
   m_ctx->log_msg_func = 0; // Deprecated in 1.3.
   m_ctx->log_msg_baton = 0;
   m_ctx->log_msg_func2 = 0; // Deprecated in 1.5.
   m_ctx->log_msg_baton2 = 0;
-  m_ctx->log_msg_func3 = Subversion::Glue::svn_client_get_commit_log3;
+  m_ctx->log_msg_func3 = Glue::svn_client_get_commit_log3;
   m_ctx->log_msg_baton3 = this;
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  m_ctx->conflict_func = Subversion::Glue::svn_wc_conflict_resolver_func;
+  m_ctx->conflict_func = Glue::svn_wc_conflict_resolver_func;
   m_ctx->conflict_baton = this;
 #else
   m_ctx->conflict_func = 0; // Deprecated in 1.7.
   m_ctx->conflict_baton = 0;
-  m_ctx->conflict_func2 = Subversion::Glue::svn_wc_conflict_resolver_func2;
+  m_ctx->conflict_func2 = Glue::svn_wc_conflict_resolver_func2;
   m_ctx->conflict_baton2 = this;
 #endif
 }
 
 // Check if the working copy has already been checked out.
 bool
-Subversion::IsWorkingCopy()
+SubversionClient::IsWorkingCopy()
 {
   if (!m_url) return false;
 
@@ -346,7 +357,7 @@ Subversion::IsWorkingCopy()
 }
 
 int
-Subversion::Checkout(const char *url, int rev)
+SubversionClient::Checkout(const char *url, int rev)
 {
   m_cancelled = false;
   if (IsWorkingCopy()) {
@@ -366,7 +377,7 @@ Subversion::Checkout(const char *url, int rev)
 
   // Out parameter -- the value of the revision checked out from the
   // repository.
-  svn_revnum_t result_rev;
+  svn_revnum_t result_rev = 0;
 
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
@@ -413,19 +424,18 @@ Subversion::Checkout(const char *url, int rev)
 }
 
 int
-Subversion::Update(int rev)
+SubversionClient::Update(int rev)
 {
   m_cancelled = false;
 
 // TODO: rest of function copied from example dir, needs cleanup.
 
   // Out parameter -- the value of the revision checked out from the repository.
-  apr_array_header_t *result_revs;
+  apr_array_header_t *result_revs = 0;
 
   // create an array containing a single element which is the input path to be updated
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, m_pool);
-  (*((const char **) apr_array_push(paths))) = path;
+  (*((const char **) apr_array_push(paths))) = m_wc_path;
 
   // Set the revision number, if provided. Otherwise get HEAD revision.
   svn_opt_revision_t revision;
@@ -459,27 +469,21 @@ Subversion::Update(int rev)
 
   // Check for error.
   if (err) {
-    // TODO: Hook this into taMisc::Warning()
-    std::cout << "Subversion error: " << err->message << std::endl;
+    taMisc::Error("Subversion error:", err->message);
     svn_error_clear(err);
-    return false;
+    return -1;
   }
 
-  /*  the following loop provides a vector containing all updated revision numbers
-   *  I commented it out since we don't need it.
-   std::vector<svn_revnum_t> rev_nums;
-   int i;
-   for (i = 0; i < result_revs->nelts; i++) {
-   svn_revnum_t rev_num = APR_ARRAY_IDX(result_revs, i, svn_revnum_t) ;
-   rev_nums.push_back(rev_num);
-   }
-   */
-
-  return true;
+  // Should only be one element updated since we just provided one path.
+  taMisc::Info("Number of elements updated:",
+    toString(result_revs->nelts).c_str());
+  svn_revnum_t updateRev = APR_ARRAY_IDX(
+    result_revs, result_revs->nelts, svn_revnum_t);
+  return updateRev;
 }
 
 int
-Subversion::Add(const char *file_or_dir, bool recurse, bool add_parents)
+SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
   m_cancelled = false;
   // TODO.
@@ -487,7 +491,7 @@ Subversion::Add(const char *file_or_dir, bool recurse, bool add_parents)
 }
 
 bool
-Subversion::MakeDir(const char *new_dir, bool create_parents)
+SubversionClient::MakeDir(const char *new_dir, bool create_parents)
 {
   m_cancelled = false;
 
@@ -498,13 +502,12 @@ Subversion::MakeDir(const char *new_dir, bool create_parents)
 
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, m_pool);
-  (*((const char **) apr_array_push(paths))) = path;
+  (*((const char **) apr_array_push(paths))) = m_wc_path;
 
   // create any non-existent parent directories
   svn_boolean_t make_parents = true;
 
-  // we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
+  // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
   // svn_client_propget3 can be used to create an apr_hash_t
   const apr_hash_t *revprop_table = NULL;
 
@@ -519,8 +522,7 @@ Subversion::MakeDir(const char *new_dir, bool create_parents)
 
   // Check for error.
   if (err) {
-    // TODO: Hook this into taMisc::Warning()
-    std::cout << "Subversion error: " << err->message << std::endl;
+    taMisc::Error("Subversion error:", err->message);
     svn_error_clear(err);
     return false;
   }
@@ -529,7 +531,7 @@ Subversion::MakeDir(const char *new_dir, bool create_parents)
 }
 
 bool
-Subversion::MakeUrlDir(const char *url, bool create_parents)
+SubversionClient::MakeUrlDir(const char *url, bool create_parents)
 {
   m_cancelled = false;
   // TODO.
@@ -537,7 +539,7 @@ Subversion::MakeUrlDir(const char *url, bool create_parents)
 }
 
 int
-Subversion::Checkin(const char *comment, const char *files)
+SubversionClient::Checkin(const char *comment, const char *files)
 {
   m_cancelled = false;
   // 'files' is a comma or newline separated list of files and/or directories.
@@ -550,8 +552,7 @@ Subversion::Checkin(const char *comment, const char *files)
 
   // create an array containing a single element which is the path path to be committed
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  path = svn_path_canonicalize(path, m_pool);
-  (*((const char **) apr_array_push(paths))) = path;
+  (*((const char **) apr_array_push(paths))) = m_wc_path;
 
   // commit changes to the children of the paths
   svn_depth_t depth = svn_depth_infinity;
@@ -563,6 +564,7 @@ Subversion::Checkin(const char *comment, const char *files)
   svn_boolean_t keep_changelists = false;
   const apr_array_header_t *changelists = apr_array_make(m_pool, 0, sizeof(const char *));
 
+  // TODO: null?
   const apr_hash_t *revprop_table = NULL;
 
   svn_error_t *err =
@@ -579,17 +581,16 @@ Subversion::Checkin(const char *comment, const char *files)
 
   // Check for error.
   if (err) {
-    // TODO: Hook this into taMisc::Warning()
-    std::cout << "Subversion error: " << err->message << std::endl;
+    taMisc::Error("Subversion error:", err->message);
     svn_error_clear(err);
-
     return false;
   }
+
   return 1; // TODO: return the new revision
 }
 
 int
-Subversion::Status(const char *files)
+SubversionClient::Status(const char *files)
 {
   m_cancelled = false;
   // See comment in checkin() re: files param.
@@ -598,31 +599,31 @@ Subversion::Status(const char *files)
 }
 
 void
-Subversion::Cancel()
+SubversionClient::Cancel()
 {
   m_cancelled = true;
 }
 
 void
-Subversion::notify(const svn_wc_notify_t *notify)
+SubversionClient::notify(const svn_wc_notify_t *notify)
 {
   // TODO.
 }
 
 bool
-Subversion::isCancelled()
+SubversionClient::isCancelled()
 {
   return m_cancelled;
 }
 
 void
-Subversion::notifyProgress(apr_off_t progress, apr_off_t total)
+SubversionClient::notifyProgress(apr_off_t progress, apr_off_t total)
 {
   // TODO.
 }
 
 std::string
-Subversion::getCommitMessage()
+SubversionClient::getCommitMessage()
 {
   // TODO: prompt user using dialog or command line.
   return "because";

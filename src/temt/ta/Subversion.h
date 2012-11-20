@@ -29,12 +29,12 @@ extern "C" {
 }
 
 // TODO: inherit from generic version control abstract base class.
-class TA_API Subversion
+class TA_API SubversionClient
 {
 public:
   // TODO: how to handle authentication?
-  Subversion(const char *working_copy_path);
-  virtual ~Subversion();
+  SubversionClient(const char *working_copy_path);
+  virtual ~SubversionClient();
 
   // Check if the working copy has already been checked out.
   bool IsWorkingCopy();
