@@ -17,12 +17,49 @@
 
 #include <cstring>
 #include <iostream>
-
+#include <sstream>
 #include <apr_pools.h>
 #include <svn_client.h>
 #include <svn_path.h>
 #include <svn_pools.h>
 #include <svn_wc.h>
+#include "ta_type.h" // taMisc::Error, etc.
+
+///////////////////////////////////////////////////////////////////////////////
+// Apr
+///////////////////////////////////////////////////////////////////////////////
+class Apr
+{
+public:
+  static void initializeOnce();
+private:
+  Apr();
+  ~Apr();
+};
+
+void Apr::initializeOnce()
+{
+  static Apr apr;
+}
+
+Apr::Apr()
+{
+  apr_status_t status = apr_initialize();
+  if (APR_SUCCESS == status) {
+    taMisc::Info("Initialized APR");
+  }
+  else {
+    std::ostringstream oss;
+    oss << status;
+    taMisc::Error("Failed to initialize APR:", oss.str().c_str());
+  }
+}
+
+Apr::~Apr()
+{
+  apr_terminate();
+  taMisc::Info("Terminated APR");
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Subversion::Glue
@@ -161,13 +198,10 @@ Subversion::Subversion(const char *working_copy_path)
   , m_ctx(0)
   , m_cancelled(false)
 {
+  taMisc::Info("Creating Subversion object");
+
   // Set up APR and a pool.
-  // TODO: move this somewhere more global so we don't setup and teardown
-  // the APR with every Subversion object that gets created.  Also, this
-  // probably won't work as-is if there are more than two objects created
-  // at the same time, since APR probably expects to be initialized only
-  // once.
-  apr_initialize();
+  Apr::initializeOnce(); // must be done prior to any other APR calls.
   m_pool = svn_pool_create(0);
 
   // Canonicalize the path.
@@ -179,14 +213,14 @@ Subversion::Subversion(const char *working_copy_path)
 
 Subversion::~Subversion()
 {
+  taMisc::Info("Destroying Subversion object");
+
   // Shouldn't need to destroy the context since it was allocated from
   // the pool, which is about to be destroyed.
   m_ctx = 0;
 
   // Clean up the pool and APR context.
-  // TODO: this should be more global.
   svn_pool_destroy(m_pool);
-  apr_terminate();
 }
 
 void
@@ -195,9 +229,7 @@ Subversion::createContext()
   // Allocate a new context object from the pool.
   svn_error_t *error = svn_client_create_context(&m_ctx, m_pool);
   if (error) {
-    // TODO: Hook this into taMisc::Warning()
-    std::cout << "Subversion error creating context: "
-      << error->message << std::endl;
+    taMisc::Error("Subversion error creating context:", error->message);
     svn_error_clear(error);
     m_ctx = 0;
     // TODO: throw?  docs say tihs call won't error in current implementation,
@@ -226,14 +258,14 @@ Subversion::createContext()
   m_ctx->config = 0;
   error = svn_config_get_config(&m_ctx->config, userConfigDirPath, m_pool);
   if (error) {
-    std::cout << "Subversion error getting configuration info: "
-      << error->message << std::endl;
+    taMisc::Error("Subversion error getting configuration info:",
+      error->message);
     svn_error_clear(error);
     m_ctx = 0;
     return;
   }
   if (!m_ctx->config) {
-    std::cout << "Subversion did not populate m_ctx->config" << std::endl;
+    taMisc::Error("Subversion did not populate m_ctx->config");
     m_ctx = 0;
     return;
   }
@@ -249,15 +281,14 @@ Subversion::createContext()
     configData,
     m_pool);
   if (error) {
-    std::cout << "Subversion error getting authentication providers: "
-      << error->message << std::endl;
+    taMisc::Error("Subversion error getting authentication providers:",
+      error->message);
     svn_error_clear(error);
     m_ctx = 0;
     return;
   }
   if (!providers) {
-    std::cout << "Subversion did not provide authentication providers."
-      << std::endl;
+    taMisc::Error("Subversion did not provide authentication providers.");
     m_ctx = 0;
     return;
   }
@@ -325,8 +356,8 @@ Subversion::Checkout(const char *url, int rev)
     }
     else {
       // Otherwise error.
-      std::cout << "Error: Working copy already exists with URL: " << m_url
-        << "\nWill not checkout new URL: " << url << std::endl;
+      taMisc::Error("Working copy already exists with URL:", m_url,
+        "\nWill not checkout new URL:", url);
       return -1;
     }
   }
@@ -373,8 +404,7 @@ Subversion::Checkout(const char *url, int rev)
 
   // Check for error.
   if (err) {
-    // TODO: Hook this into taMisc::Warning()
-    std::cout << "Subversion error: " << err->message << std::endl;
+    taMisc::Error("Subversion error:", err->message);
     svn_error_clear(err);
     return -1;
   }
