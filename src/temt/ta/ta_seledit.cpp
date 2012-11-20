@@ -749,31 +749,68 @@ void SelectEdit::RunOnCluster(
 	std::cout << "Testing SVN checkout" << std::endl;
 	//char * wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + "TODO_REPO_NAME";
 
-	// for now I set these parameters here
-	char * user_app_dir = "/home/houman/Desktop/";
-	char * wc_path = user_app_dir + PATH_SEP + "repos" + PATH_SEP + "houmanwc";
-	char * proj_name = "myproj";
-	char * wc_proj_path = wc_path + PATH_SEP + proj_name;
+	// for now I set all the required parameters here
+	const char * username = "houmanwc";
+	const char * user_app_dir = "/home/houman/Desktop/";	// path to the emergent directory
+	const char * wc_path = user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;	// user's wc path
+	const char * repo_user_path = repo_path + PATH_SEP + "repos" + PATH_SEP + username;	// path to the user's dir in the repo
+	const char * proj_name = "myproj";
+	const char * wc_proj_path = wc_path + PATH_SEP + proj_name;
+	const char * submit_path = wc_proj_path + PATH_SEP + "submit";	// a subdir of the project
+	const char * models_path = wc_proj_path + PATH_SEP + "models";	// a subdir of the project to contain model files
+	const char * results_path = wc_proj_path + PATH_SEP + "results";	// a subdir of the project to contain results
+	const char * repo_proj_path = repo_path + PATH_SEP + proj_name;
 
-	QFileInfo fi(wc_path);
+	// check if the user has a wc. checkout a wc if needed
+	QFileInfo fi_wc(wc_path);
+	if (!fi_wc.exists()) {	// user never used c2c or at least never used it on this emergent instance
 
-	if (!fi.exists()) {	// user never used c2c or at least never used it on this emergent
 		// checkout the user's dir
-		subversion.Checkout(pool, repo, wc_path);	// TODO error handling
-		char * path;
-		if (!fi.exists()) {	// user doesn't have a dir in the repo
+		int co_rev = 0;
+		co_rev = subversion.Checkout(pool, repo_user_path, wc_path);
+		PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
+
+		// check if the user has a dir in the repo. create it for her if needed
+		if (!fi_wc.exists()) {	// user doesn't have a dir in the repo
 			// TODO: create a dir for the user in the repo directly
-			subversion.Checkout(pool, repo, wc_path);
-			path = wc_proj_path + PATH_SEP + "submit";
-			subversion.Mkdir(pool, path);
-			path = wc_proj_path + PATH_SEP + "submit";
-			subversion.Mkdir(pool, path);
-			path = wc_proj_path + PATH_SEP + "model";
-			subversion.Mkdir(pool, path);
-			path = wc_proj_path + PATH_SEP + "results";
-			subversion.Mkdir(pool, path);
+			co_rev = subversion.Checkout(pool, repo_user_path, wc_path);
+			PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
 		}
+	} else {	// update the existing wc
+		bool update_success = subversion.Update(pool, wc_proj_path);
+		PrintUpdateMessage(update_success, wc_proj_path);
 	}
+
+	// check if the the project's dir already exists. create the project's dir and subdirs if needed
+	QFileInfo fi_proj(wc_proj_path);
+	if (!fi_proj.exists()) {// the project already exists (possibilities: user is running the same project, running the same project with different parameters, duplicate submission)
+		// TODO warn user. what should be done here? (options: create a new dir for the project with a version number like "/project_2", use the existing project dir and attach a version number to the model file names, replace the old project with the new one)
+	} else {
+		bool mkdir_success = false;
+		mkdir_success = subversion.Mkdir(pool, submit_path);
+		PrintMkdirMessage(mkdir_success, submit_path);
+		mkdir_success = subversion.Mkdir(pool, models_path);
+		PrintMkdirMessage(mkdir_success, models_path);
+		mkdir_success = subversion.Mkdir(pool, results_path);
+		PrintMkdirMessage(mkdir_success, results_path);
+		// TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
+	}
+
+	// generate a txt file containing the model parameters
+	const char *model_filename = "model.txt";	// TODO might need a version number
+	const char *model_path = models_path + PATH_SEP + model_filename;
+	QFile file(model_path);
+	file.open(QIODevice::WriteOnly | QIODevice::Text);
+	QTextStream out(&file);
+	out << "<CONTENT OF THE MODEL>";	// TODO Where can I get the model parameters from?
+	// optional, as QFile destructor will already do it
+	file.close();
+
+	// add the generated model file to the wc and commit it
+	bool mkdir_success = false;
+	mkdir_success = subversion.Mkdir(pool, model_path);
+	// TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
+	PrintMkdirMessage(mkdir_success, model_path);
 }
 
 
