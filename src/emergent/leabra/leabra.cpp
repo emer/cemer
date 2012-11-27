@@ -2989,6 +2989,7 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
   unit_gp_inhib.UpdateAfterEdit_NoGui();
 
   if(kwta.gp_i) {		// update from obsolete
+    SetUnique("lay_gp_inhib", true);
     lay_gp_inhib.on = true;
     lay_gp_inhib.gp_g = kwta.gp_g;
     kwta.gp_i = false;
@@ -2996,6 +2997,7 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
   }
 
   if(gp_kwta.gp_i) {		// update from obsolete
+    SetUnique("unit_gp_inhib", true);
     unit_gp_inhib.on = true;
     unit_gp_inhib.gp_g = gp_kwta.gp_g;
     gp_kwta.gp_i = false;
