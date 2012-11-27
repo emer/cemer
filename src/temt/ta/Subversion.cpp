@@ -57,11 +57,9 @@ void Apr::initializeOnce()
 Apr::Apr()
 {
   apr_status_t status = apr_initialize();
-  if (APR_SUCCESS == status) {
-    taMisc::Info("Initialized APR");
-  }
-  else {
-    taMisc::Error("Failed to initialize APR:", toString(status).c_str());
+  if (status != APR_SUCCESS) {
+    throw SubversionClient::Exception(
+      "Failed to initialize APR: " + toString(status));
   }
 }
 
@@ -72,8 +70,60 @@ Apr::~Apr()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// SubversionClient::Exception
+///////////////////////////////////////////////////////////////////////////////
+
+SubversionClient::Exception::Exception(svn_error_t *svn_error)
+  : std::runtime_error(svn_error->message ? svn_error->message : "Error")
+  , m_error_code(EMER_GENERAL_SVN_ERROR)
+  , m_svn_error_code(svn_error->apr_err)
+{
+  svn_error_clear(svn_error);
+}
+
+SubversionClient::Exception::Exception(
+  const std::string &additional_msg,
+  svn_error_t *svn_error
+)
+  : std::runtime_error(
+      svn_error->message
+        ? (additional_msg + ": " + svn_error->message)
+        : additional_msg)
+  , m_error_code(EMER_GENERAL_SVN_ERROR)
+  , m_svn_error_code(svn_error->apr_err)
+{
+  svn_error_clear(svn_error);
+}
+
+SubversionClient::Exception::Exception(
+  const std::string &msg,
+  ErrorCode error_code,
+  int svn_error_code
+)
+  : std::runtime_error(msg)
+  , m_error_code(error_code)
+  , m_svn_error_code(svn_error_code)
+{
+}
+
+SubversionClient::ErrorCode
+SubversionClient::Exception::GetErrorCode() const
+{
+  return m_error_code;
+}
+
+int
+SubversionClient::Exception::GetSvnErrorCode() const
+{
+  return m_svn_error_code;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SubversionClient::Glue
 ///////////////////////////////////////////////////////////////////////////////
+
+// Note: Should never throw exceptions in callbacks, since the C code
+// won't know what to do with them.
 
 struct SubversionClient::Glue
 {
@@ -214,18 +264,28 @@ SubversionClient::SubversionClient(const char *working_copy_path)
   Apr::initializeOnce(); // must be done prior to any other APR calls.
   m_pool = svn_pool_create(0);
 
+  // Set the error handler to one that doesn't abort!
+  // We'll check for these errors and convert to exceptions.
+  svn_error_set_malfunction_handler(svn_error_raise_on_malfunction);
+
   // Canonicalize the path.
   m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
 
-  // Create a context object.  May throw on failure.
-  createContext();
+  try {
+    // Create a context object.  Throws on failure.
+    m_ctx = createContext();
+  }
+  catch (const Exception &ex) {
+    taMisc::Error("Could not construct SubversionClient.", ex.what());
+    throw;
+  }
 }
 
 SubversionClient::~SubversionClient()
 {
   taMisc::Info("Destroying SubversionClient object");
 
-  // Shouldn't need to destroy the context since it was allocated from
+  // No need to destroy the context since it was allocated from
   // the pool, which is about to be destroyed.
   m_ctx = 0;
 
@@ -233,111 +293,94 @@ SubversionClient::~SubversionClient()
   svn_pool_destroy(m_pool);
 }
 
-void
+svn_client_ctx_t *
 SubversionClient::createContext()
 {
   // Allocate a new context object from the pool.
-  svn_error_t *error = svn_client_create_context(&m_ctx, m_pool);
-  if (error) {
-    taMisc::Error("Subversion error creating context:", error->message);
-    svn_error_clear(error);
-    m_ctx = 0;
-    // TODO: throw?  docs say tihs call won't error in current implementation,
+  svn_client_ctx_t *ctx = 0;
+  if (svn_error_t *error = svn_client_create_context(&ctx, m_pool)) {
+    // The documentation says this call won't error in current implementation,
     // but in case a future implementation does error, we should handle it.
     // Don't want calling code to have an uninitialized SubversionClient
     // object.
-    return;
+    throw Exception("Subversion error creating context", error);
   }
 
   // Initialize the context with batons and callbacks and such.
-  m_ctx->client_name = "emergent";
+  ctx->client_name = "emergent";
 
   // Get the user configuration directory (e.g., ~/.subversion/).
+  // Or, better yet, leave this null and the library will find it for us.
   const char *userConfigDirPath = 0;
 
-  // Actually, there's no need to get the config dir -- the library will find
-  // it for us if we pass null to svn_config_get_config().
-  #if 0
-    error = svn_config_get_user_config_path(
-      &userConfigDirPath,
-      0, // config_dir
-      0, // set to SVN_CONFIG_CATEGORY_CONFIG to get the config file.
-      m_pool);
-  #endif
-
   // Initialize the context's configuration hash.
-  m_ctx->config = 0;
-  error = svn_config_get_config(&m_ctx->config, userConfigDirPath, m_pool);
-  if (error) {
-    taMisc::Error("Subversion error getting configuration info:",
-      error->message);
-    svn_error_clear(error);
-    m_ctx = 0;
-    return;
+  ctx->config = 0;
+  if (svn_error_t *error = svn_config_get_config(
+        &ctx->config,
+        userConfigDirPath,
+        m_pool))
+  {
+    throw Exception("Subversion error getting configuration info", error);
   }
-  if (!m_ctx->config) {
-    taMisc::Error("Subversion did not populate m_ctx->config");
-    m_ctx = 0;
-    return;
+
+  if (!ctx->config) {
+    throw Exception("Subversion did not populate ctx->config.");
   }
 
   // Get the svn_config_t configuration data object from the hash.
   svn_config_t *configData = reinterpret_cast<svn_config_t *>(apr_hash_get(
-    m_ctx->config, SVN_CONFIG_CATEGORY_CONFIG, APR_HASH_KEY_STRING));
+    ctx->config, SVN_CONFIG_CATEGORY_CONFIG, APR_HASH_KEY_STRING));
 
   // Get the list of authentication providers.
   apr_array_header_t *providers = 0;
-  error = svn_auth_get_platform_specific_client_providers(
-    &providers,
-    configData,
-    m_pool);
-  if (error) {
-    taMisc::Error("Subversion error getting authentication providers:",
-      error->message);
-    svn_error_clear(error);
-    m_ctx = 0;
-    return;
+  if (svn_error_t *error = svn_auth_get_platform_specific_client_providers(
+        &providers,
+        configData,
+        m_pool))
+  {
+    throw Exception("Subversion error getting authentication providers", error);
   }
+
   if (!providers) {
-    taMisc::Error("Subversion did not provide authentication providers.");
-    m_ctx = 0;
-    return;
+    throw Exception("Subversion did not provide authentication providers.");
   }
 
   // Initialize the authentication baton.
   // TODO: is this sufficient?
-  m_ctx->auth_baton = 0;
-  svn_auth_open(&m_ctx->auth_baton, providers, m_pool);
+  ctx->auth_baton = 0;
+  svn_auth_open(&ctx->auth_baton, providers, m_pool);
 
-  m_ctx->mimetypes_map = 0; // TODO: do I need to implement this somehow?
+  ctx->mimetypes_map = 0; // TODO: do I need to implement this somehow?
 
-  m_ctx->cancel_func = Glue::svn_cancel_func;
-  m_ctx->cancel_baton = this;
+  ctx->cancel_func = Glue::svn_cancel_func;
+  ctx->cancel_baton = this;
 
-  m_ctx->notify_func = 0; // Deprecated in 1.2.
-  m_ctx->notify_baton = 0;
-  m_ctx->notify_func2 = Glue::svn_wc_notify_func2;
-  m_ctx->notify_baton2 = this;
+  ctx->notify_func = 0; // Deprecated in 1.2.
+  ctx->notify_baton = 0;
+  ctx->notify_func2 = Glue::svn_wc_notify_func2;
+  ctx->notify_baton2 = this;
 
-  m_ctx->progress_func = Glue::svn_ra_progress_notify_func;
-  m_ctx->progress_baton = this;
+  ctx->progress_func = Glue::svn_ra_progress_notify_func;
+  ctx->progress_baton = this;
 
-  m_ctx->log_msg_func = 0; // Deprecated in 1.3.
-  m_ctx->log_msg_baton = 0;
-  m_ctx->log_msg_func2 = 0; // Deprecated in 1.5.
-  m_ctx->log_msg_baton2 = 0;
-  m_ctx->log_msg_func3 = Glue::svn_client_get_commit_log3;
-  m_ctx->log_msg_baton3 = this;
+  ctx->log_msg_func = 0; // Deprecated in 1.3.
+  ctx->log_msg_baton = 0;
+  ctx->log_msg_func2 = 0; // Deprecated in 1.5.
+  ctx->log_msg_baton2 = 0;
+  ctx->log_msg_func3 = Glue::svn_client_get_commit_log3;
+  ctx->log_msg_baton3 = this;
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  m_ctx->conflict_func = Glue::svn_wc_conflict_resolver_func;
-  m_ctx->conflict_baton = this;
+  ctx->conflict_func = Glue::svn_wc_conflict_resolver_func;
+  ctx->conflict_baton = this;
 #else
-  m_ctx->conflict_func = 0; // Deprecated in 1.7.
-  m_ctx->conflict_baton = 0;
-  m_ctx->conflict_func2 = Glue::svn_wc_conflict_resolver_func2;
-  m_ctx->conflict_baton2 = this;
+  ctx->conflict_func = 0; // Deprecated in 1.7.
+  ctx->conflict_baton = 0;
+  ctx->conflict_func2 = Glue::svn_wc_conflict_resolver_func2;
+  ctx->conflict_baton2 = this;
 #endif
+
+  return ctx;
 }
 
 // Check if the working copy has already been checked out.
@@ -366,10 +409,9 @@ SubversionClient::Checkout(const char *url, int rev)
       return Update(rev);
     }
     else {
-      // Otherwise error.
-      taMisc::Error("Working copy already exists with URL:", m_url,
-        "\nWill not checkout new URL:", url);
-      return -1;
+      throw Exception(
+        std::string("Working copy already exists with URL: ") + m_url
+          + "; will not checkout new URL: " + url);
     }
   }
 
@@ -400,24 +442,19 @@ SubversionClient::Checkout(const char *url, int rev)
   svn_boolean_t ignore_externals = false;
   svn_boolean_t allow_unver_obstructions = true;
 
-  svn_error_t *err =
-    svn_client_checkout3(
-      &result_rev, // out param
-      url,
-      m_wc_path,
-      &peg_revision,
-      &revision,
-      depth,
-      ignore_externals,
-      allow_unver_obstructions,
-      m_ctx,
-      m_pool);
-
-  // Check for error.
-  if (err) {
-    taMisc::Error("Subversion error:", err->message);
-    svn_error_clear(err);
-    return -1;
+  if (svn_error_t *error = svn_client_checkout3(
+        &result_rev, // out param
+        url,
+        m_wc_path,
+        &peg_revision,
+        &revision,
+        depth,
+        ignore_externals,
+        allow_unver_obstructions,
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion checkout error", error);
   }
 
   return result_rev;
@@ -455,23 +492,18 @@ SubversionClient::Update(int rev)
   svn_boolean_t allow_unver_obstructions = true;
   svn_boolean_t depth_is_sticky = true;
 
-  svn_error_t *err =
-    svn_client_update3(
-      &result_revs,
-      paths,
-      &revision,
-      depth,
-      depth_is_sticky,
-      ignore_externals,
-      allow_unver_obstructions,
-      m_ctx,
-      m_pool);
-
-  // Check for error.
-  if (err) {
-    taMisc::Error("Subversion error:", err->message);
-    svn_error_clear(err);
-    return -1;
+  if (svn_error_t *error = svn_client_update3(
+        &result_revs,
+        paths,
+        &revision,
+        depth,
+        depth_is_sticky,
+        ignore_externals,
+        allow_unver_obstructions,
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion update error", error);
   }
 
   // Should only be one element updated since we just provided one path.
@@ -511,20 +543,15 @@ SubversionClient::MakeDir(const char *new_dir, bool create_parents)
   // svn_client_propget3 can be used to create an apr_hash_t
   const apr_hash_t *revprop_table = NULL;
 
-  svn_error_t *err =
-    svn_client_mkdir3(
-      &commit_info_p,
-      paths,
-      make_parents,
-      revprop_table,
-      m_ctx,
-      m_pool);
-
-  // Check for error.
-  if (err) {
-    taMisc::Error("Subversion error:", err->message);
-    svn_error_clear(err);
-    return false;
+  if (svn_error_t *error = svn_client_mkdir3(
+        &commit_info_p,
+        paths,
+        make_parents,
+        revprop_table,
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion error", error);
   }
 
   return true;
@@ -567,23 +594,18 @@ SubversionClient::Checkin(const char *comment, const char *files)
   // TODO: null?
   const apr_hash_t *revprop_table = NULL;
 
-  svn_error_t *err =
-    svn_client_commit4(
-      &commit_info_p,
-      paths,
-      depth,
-      keep_locks,
-      keep_changelists,
-      changelists,
-      revprop_table,
-      m_ctx,
-      m_pool);
-
-  // Check for error.
-  if (err) {
-    taMisc::Error("Subversion error:", err->message);
-    svn_error_clear(err);
-    return false;
+  if (svn_error_t *error = svn_client_commit4(
+        &commit_info_p,
+        paths,
+        depth,
+        keep_locks,
+        keep_changelists,
+        changelists,
+        revprop_table,
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion error", error);
   }
 
   return 1; // TODO: return the new revision
@@ -603,6 +625,9 @@ SubversionClient::Cancel()
 {
   m_cancelled = true;
 }
+
+// Note: Should never throw exceptions in callbacks, since the C code
+// won't know what to do with them.
 
 void
 SubversionClient::notify(const svn_wc_notify_t *notify)

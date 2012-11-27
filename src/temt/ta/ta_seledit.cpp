@@ -745,85 +745,90 @@ void SelectEdit::RunOnCluster(
   const String &desc,
   int num_of_procs)
 {
-  // Run this model on a cluster using the parameters of this SelectEdit.
-  taMisc::Info("RunOnCluster() test");
+  try {
+    // Run this model on a cluster using the parameters of this SelectEdit.
+    taMisc::Info("RunOnCluster() test");
 
-  // TODO: need to get username from somewhere else.
-  String username = "houmanwc";
-  String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;
+    // TODO: need to get username from somewhere else.
+    String username = "houmanwc";
+    String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;
 
-  // Create Subversion client for this working copy directory.
-  SubversionClient svnClient(wc_path.chars());
+    // Create Subversion client for this working copy directory.
+    SubversionClient svnClient(wc_path.chars());
 
-  // TODO: for now I set all the required parameters here
-  String repo_path = "/home/houman/Desktop/svn"; // TODO need to be passed to this function
-  //String user_app_dir = "/home/houman/Desktop";  // path to the emergent directory
-  String repo_user_path = repo_path + PATH_SEP + "repos" + PATH_SEP + username;  // path to the user's dir in the repo
-  String proj_name = "myproj";
-  String wc_proj_path = wc_path + PATH_SEP + proj_name;
-  String wc_submit_path = wc_proj_path + PATH_SEP + "submit";  // a subdir of the project
-  String wc_models_path = wc_proj_path + PATH_SEP + "models";  // a subdir of the project to contain model files
-  String wc_results_path = wc_proj_path + PATH_SEP + "results";  // a subdir of the project to contain results
-  String repo_proj_path = repo_user_path + PATH_SEP + proj_name;
+    // TODO: for now I set all the required parameters here
+    String repo_path = "/home/houman/Desktop/svn"; // TODO need to be passed to this function
+    //String user_app_dir = "/home/houman/Desktop";  // path to the emergent directory
+    String repo_user_path = repo_path + PATH_SEP + "repos" + PATH_SEP + username;  // path to the user's dir in the repo
+    String proj_name = "myproj";
+    String wc_proj_path = wc_path + PATH_SEP + proj_name;
+    String wc_submit_path = wc_proj_path + PATH_SEP + "submit";  // a subdir of the project
+    String wc_models_path = wc_proj_path + PATH_SEP + "models";  // a subdir of the project to contain model files
+    String wc_results_path = wc_proj_path + PATH_SEP + "results";  // a subdir of the project to contain results
+    String repo_proj_path = repo_user_path + PATH_SEP + proj_name;
 
-  // check if the user has a wc. checkout a wc if needed
-  QFileInfo fi_wc(wc_path.chars());
-  if (!fi_wc.exists()) {  // user never used c2c or at least never used it on this emergent instance
-    taMisc::Info("wc wasn't found"); // TODO remove this
-    // checkout the user's dir
-    int co_rev = 0;
-    co_rev = svnClient.Checkout(repo_user_path);
-    //PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
-
-    // check if the user has a dir in the repo. create it for her if needed
-    if (!fi_wc.exists()) {  // user doesn't have a dir in the repo
-      // TODO: create a dir for the user in the repo directly
+    // check if the user has a wc. checkout a wc if needed
+    QFileInfo fi_wc(wc_path.chars());
+    if (!fi_wc.exists()) {  // user never used c2c or at least never used it on this emergent instance
+      taMisc::Info("wc wasn't found"); // TODO remove this
+      // checkout the user's dir
+      int co_rev = 0;
       co_rev = svnClient.Checkout(repo_user_path);
       //PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
-      taMisc::Info("user's dir was created on the repo and checked out"); // TODO remove this
+
+      // check if the user has a dir in the repo. create it for her if needed
+      if (!fi_wc.exists()) {  // user doesn't have a dir in the repo
+        // TODO: create a dir for the user in the repo directly
+        co_rev = svnClient.Checkout(repo_user_path);
+        //PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
+        taMisc::Info("user's dir was created on the repo and checked out"); // TODO remove this
+      }
     }
-  }
-  else {  // update the existing wc
-    bool update_success = svnClient.Update();
-    //PrintUpdateMessage(update_success, wc_proj_path);
-    taMisc::Info("existing wc was updated"); // TODO remove this
-  }
+    else {  // update the existing wc
+      bool update_success = svnClient.Update();
+      //PrintUpdateMessage(update_success, wc_proj_path);
+      taMisc::Info("existing wc was updated"); // TODO remove this
+    }
 
-  // check if the project's dir already exists. create the project's dir and subdirs if needed
-  QFileInfo fi_proj(wc_proj_path);
-  if (!fi_proj.exists()) {  // it's a new project, create a dir and subdirs for it
+    // check if the project's dir already exists. create the project's dir and subdirs if needed
+    QFileInfo fi_proj(wc_proj_path);
+    if (!fi_proj.exists()) {  // it's a new project, create a dir and subdirs for it
+      bool mkdir_success = false;
+      mkdir_success = svnClient.MakeDir(wc_proj_path);
+      //PrintMkdirMessage(mkdir_success, wc_proj_path);
+      mkdir_success = svnClient.MakeDir(wc_submit_path);
+      //PrintMkdirMessage(mkdir_success, submit_path);
+      mkdir_success = svnClient.MakeDir(wc_models_path);
+      //PrintMkdirMessage(mkdir_success, models_path);
+      mkdir_success = svnClient.MakeDir(wc_results_path);
+      //PrintMkdirMessage(mkdir_success, results_path);
+      // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
+      taMisc::Info("new project directory was created"); // TODO remove this
+    }
+    else { // the project already exists (possibilities: user is running the same project, running the same project with different parameters, duplicate submission)
+      // TODO warn user. what should be done here? (options: create a new dir for the project with a version number like "/project_2", use the existing project dir and attach a version number to the model file names, replace the old project with the new one)
+      taMisc::Info("the project already exsits"); // TODO remove this
+    }
+
+    // generate a txt file containing the model parameters
+    String model_filename = "model.txt";  // TODO might need a version number
+    String wc_model_path = wc_models_path + PATH_SEP + model_filename;
+    QFile file(wc_model_path);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream out(&file);
+    out << "<CONTENT OF THE MODEL>";  // TODO Where can I get the model parameters from?
+    // optional, as QFile destructor will already do it
+    file.close();
+
+    // add the generated model file to the wc and commit it
     bool mkdir_success = false;
-    mkdir_success = svnClient.MakeDir(wc_proj_path);
-    //PrintMkdirMessage(mkdir_success, wc_proj_path);
-    mkdir_success = svnClient.MakeDir(wc_submit_path);
-    //PrintMkdirMessage(mkdir_success, submit_path);
-    mkdir_success = svnClient.MakeDir(wc_models_path);
-    //PrintMkdirMessage(mkdir_success, models_path);
-    mkdir_success = svnClient.MakeDir(wc_results_path);
-    //PrintMkdirMessage(mkdir_success, results_path);
+    mkdir_success = svnClient.MakeDir(wc_model_path);
     // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
-    taMisc::Info("new project directory was created"); // TODO remove this
+    //PrintMkdirMessage(mkdir_success, model_path);
   }
-  else { // the project already exists (possibilities: user is running the same project, running the same project with different parameters, duplicate submission)
-    // TODO warn user. what should be done here? (options: create a new dir for the project with a version number like "/project_2", use the existing project dir and attach a version number to the model file names, replace the old project with the new one)
-    taMisc::Info("the project already exsits"); // TODO remove this
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Error running on cluster.", ex.what());
   }
-
-  // generate a txt file containing the model parameters
-  String model_filename = "model.txt";  // TODO might need a version number
-  String wc_model_path = wc_models_path + PATH_SEP + model_filename;
-  QFile file(wc_model_path);
-  file.open(QIODevice::WriteOnly | QIODevice::Text);
-  QTextStream out(&file);
-  out << "<CONTENT OF THE MODEL>";  // TODO Where can I get the model parameters from?
-  // optional, as QFile destructor will already do it
-  file.close();
-
-  // add the generated model file to the wc and commit it
-  bool mkdir_success = false;
-  mkdir_success = svnClient.MakeDir(wc_model_path);
-  // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
-  //PrintMkdirMessage(mkdir_success, model_path);
 }
 
 

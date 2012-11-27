@@ -18,6 +18,7 @@
 
 #include "ta_def.h"
 #include <apr.h>  // apr_off_t
+#include <stdexcept>
 #include <string>
 
 // TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
@@ -25,6 +26,7 @@
 extern "C" {
   typedef struct apr_pool_t apr_pool_t;
   typedef struct svn_client_ctx_t svn_client_ctx_t;
+  typedef struct svn_error_t svn_error_t;
   typedef struct svn_wc_notify_t svn_wc_notify_t;
 }
 
@@ -32,6 +34,39 @@ extern "C" {
 class TA_API SubversionClient
 {
 public:
+  enum ErrorCode
+  {
+    EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for SVN error.
+    // TBD.
+  };
+
+  // Any code using SubversionClient should be prepared to catch exceptions
+  // of this type.
+  class Exception : public std::runtime_error
+  {
+  public:
+    // Exception based on svn_error_t object.  An additional message may
+    // be provided; it will be prepended to the svn_error_t's message,
+    // which may be null.  In no case may svn_error itself be null!
+    explicit Exception(svn_error_t *svn_error);
+    Exception(const std::string &additional_msg, svn_error_t *svn_error);
+
+    // Exception with specified message and error code; svn error code is
+    // optional and defaults to "OK".  Intended use is for exceptions thrown
+    // that are not the result of an svn_error_t.
+    explicit Exception(
+      const std::string &msg,
+      ErrorCode error_code = EMER_GENERAL_SVN_ERROR,
+      int svn_error_code = 0);
+
+    ErrorCode GetErrorCode() const;
+    int GetSvnErrorCode() const;
+
+  private:
+    ErrorCode m_error_code;
+    int m_svn_error_code;
+  };
+
   // TODO: how to handle authentication?
   SubversionClient(const char *working_copy_path);
   virtual ~SubversionClient();
@@ -62,7 +97,7 @@ public:
   // Log();
 
 private:
-  void createContext();
+  svn_client_ctx_t * createContext();
 
   // Callbacks.
   struct Glue; // connects C-style callbacks with these methods.
