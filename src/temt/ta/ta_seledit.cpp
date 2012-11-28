@@ -756,16 +756,23 @@ void SelectEdit::RunOnCluster(
     // Create Subversion client for this working copy directory.
     SubversionClient svnClient(wc_path.chars());
 
+    // Get the canonicalized version of the working copy path.
+    wc_path = svnClient.GetWorkingCopyPath();
+
     // TODO: for now I set all the required parameters here
-    String repo_path = "/home/houman/Desktop/svn"; // TODO need to be passed to this function
+    String repo_path = repo;
+
     //String user_app_dir = "/home/houman/Desktop";  // path to the emergent directory
-    String repo_user_path = repo_path + PATH_SEP + "repos" + PATH_SEP + username;  // path to the user's dir in the repo
+
+    // Don't use PATH_SEP here, since on Windows that's '\\', which is
+    // non-canonical for URLs and causes errors.
+    String repo_user_path = repo_path + '/' + "repos" + '/' + username;  // path to the user's dir in the repo
     String proj_name = "myproj";
-    String wc_proj_path = wc_path + PATH_SEP + proj_name;
-    String wc_submit_path = wc_proj_path + PATH_SEP + "submit";  // a subdir of the project
-    String wc_models_path = wc_proj_path + PATH_SEP + "models";  // a subdir of the project to contain model files
-    String wc_results_path = wc_proj_path + PATH_SEP + "results";  // a subdir of the project to contain results
-    String repo_proj_path = repo_user_path + PATH_SEP + proj_name;
+    String wc_proj_path = wc_path + '/' + proj_name;
+    String wc_submit_path = wc_proj_path + '/' + "submit";  // a subdir of the project
+    String wc_models_path = wc_proj_path + '/' + "models";  // a subdir of the project to contain model files
+    String wc_results_path = wc_proj_path + '/' + "results";  // a subdir of the project to contain results
+    String repo_proj_path = repo_user_path + '/' + proj_name;
 
     // check if the user has a wc. checkout a wc if needed
     QFileInfo fi_wc(wc_path.chars());
@@ -812,7 +819,7 @@ void SelectEdit::RunOnCluster(
 
     // generate a txt file containing the model parameters
     String model_filename = "model.txt";  // TODO might need a version number
-    String wc_model_path = wc_models_path + PATH_SEP + model_filename;
+    String wc_model_path = wc_models_path + '/' + model_filename;
     QFile file(wc_model_path);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&file);

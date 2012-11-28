@@ -87,7 +87,7 @@ SubversionClient::Exception::Exception(
 )
   : std::runtime_error(
       svn_error->message
-        ? (additional_msg + ": " + svn_error->message)
+        ? (additional_msg + ":\n" + svn_error->message)
         : additional_msg)
   , m_error_code(EMER_GENERAL_SVN_ERROR)
   , m_svn_error_code(svn_error->apr_err)
@@ -293,6 +293,12 @@ SubversionClient::~SubversionClient()
   svn_pool_destroy(m_pool);
 }
 
+const char *
+SubversionClient::GetWorkingCopyPath() const
+{
+  return m_wc_path;
+}
+
 svn_client_ctx_t *
 SubversionClient::createContext()
 {
@@ -454,7 +460,8 @@ SubversionClient::Checkout(const char *url, int rev)
         m_ctx,
         m_pool))
   {
-    throw Exception("Subversion checkout error", error);
+    throw Exception(
+      std::string("Subversion checkout error for URL ") + url, error);
   }
 
   return result_rev;

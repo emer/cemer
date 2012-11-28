@@ -334,7 +334,7 @@ public: // public API
   // #MENU #CONFIRM reset (remove all) current members and methods
 
   virtual void  RunOnCluster(
-    const String &repo = "http://grey.colorado.edu/svn/cluster-test",
+    const String &repo = "http://grey.colorado.edu/svn/emergent/emergent/branches/houman/cluster-test",
     const String &prefix = "/cluster_name/svn_username/",
     const String &filename = "YourProjectName.proj",
     const String &desc = "description of the parameters used in this run on the cluster",
