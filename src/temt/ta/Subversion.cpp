@@ -25,6 +25,7 @@
 #include <svn_pools.h>
 #include <svn_wc.h>
 #include "ta_type.h" // taMisc::Error, etc.
+#include "inetworkaccessmanager.h" // getUsernamePassword()
 
 namespace {
   template<typename T>
@@ -75,7 +76,7 @@ Apr::~Apr()
 
 SubversionClient::Exception::Exception(svn_error_t *svn_error)
   : std::runtime_error(svn_error->message ? svn_error->message : "Error")
-  , m_error_code(EMER_GENERAL_SVN_ERROR)
+  , m_error_code(toEmerErrorCode(svn_error))
   , m_svn_error_code(svn_error->apr_err)
 {
   svn_error_clear(svn_error);
@@ -89,7 +90,7 @@ SubversionClient::Exception::Exception(
       svn_error->message
         ? (additional_msg + ":\n" + svn_error->message)
         : additional_msg)
-  , m_error_code(EMER_GENERAL_SVN_ERROR)
+  , m_error_code(toEmerErrorCode(svn_error))
   , m_svn_error_code(svn_error->apr_err)
 {
   svn_error_clear(svn_error);
@@ -116,6 +117,18 @@ int
 SubversionClient::Exception::GetSvnErrorCode() const
 {
   return m_svn_error_code;
+}
+
+// Convert certain SVN error codes to emergent error codes; the idea is that
+// client code shouldn't need to #include <svn_error_codes.h>, it can just
+// use the codes defined by the SubversionClient::ErrorCode enumeration.
+SubversionClient::ErrorCode
+SubversionClient::Exception::toEmerErrorCode(svn_error_t *svn_error)
+{
+  switch (svn_error->apr_err) {
+    case SVN_ERR_CANCELLED:   return EMER_OPERATION_CANCELLED;
+    default:                  return EMER_GENERAL_SVN_ERROR;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -245,6 +258,44 @@ struct SubversionClient::Glue
     return 0;
   }
 #endif
+
+  static
+  svn_error_t *
+  svn_auth_simple_prompt_func(
+    svn_auth_cred_simple_t **ppCred,
+    void *, // baton,
+    const char *realm,
+    const char *username,
+    svn_boolean_t may_save,
+    apr_pool_t *pool)
+  {
+    QString qUser(username);
+    QString qPass;
+    QString qMessage("Enter Subversion credentials.");
+    if (realm) {
+      qMessage.append("\n").append(realm);
+    }
+
+    // Only prompt the user to save their credentials if the may_save
+    // parameter indicates we're allowed to.
+    bool saveFlag = false;
+    bool *pSaveFlag = may_save ? &saveFlag : 0;
+
+    // GUI prompt for credentials.
+    if (getUsernamePassword(qUser, qPass, qMessage, pSaveFlag)) {
+      // User hit OK; build credential struct.
+      svn_auth_cred_simple_t *pCred = (svn_auth_cred_simple_t *)
+        apr_pcalloc(pool, sizeof(svn_auth_cred_simple_t));
+      *ppCred = pCred;
+      pCred->username = apr_pstrdup(pool, qPrintable(qUser));
+      pCred->password = apr_pstrdup(pool, qPrintable(qPass));
+      pCred->may_save = saveFlag;
+      return 0;
+    }
+
+    // User cancelled credentials dialog.
+    return svn_error_create(SVN_ERR_CANCELLED, 0, "Operation cancelled");
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,8 +402,22 @@ SubversionClient::createContext()
     throw Exception("Subversion did not provide authentication providers.");
   }
 
+  // Add an auth provider that checks the user's ~/.subversion directory
+  // for cached credentials.
+  svn_auth_provider_object_t *provider = 0;
+  svn_auth_get_simple_provider(&provider, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
+  // Add our own simple username/password auth provider.
+  svn_auth_get_simple_prompt_provider(
+    &provider,
+    Glue::svn_auth_simple_prompt_func,
+    0, // baton
+    1, // retries
+    m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
   // Initialize the authentication baton.
-  // TODO: is this sufficient?
   ctx->auth_baton = 0;
   svn_auth_open(&ctx->auth_baton, providers, m_pool);
 
@@ -479,7 +544,7 @@ SubversionClient::Update(int rev)
 
   // create an array containing a single element which is the input path to be updated
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  (*((const char **) apr_array_push(paths))) = m_wc_path;
+  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
 
   // Set the revision number, if provided. Otherwise get HEAD revision.
   svn_opt_revision_t revision;
@@ -541,7 +606,7 @@ SubversionClient::MakeDir(const char *new_dir, bool create_parents)
 
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  (*((const char **) apr_array_push(paths))) = m_wc_path;
+  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
 
   // create any non-existent parent directories
   svn_boolean_t make_parents = true;
@@ -586,7 +651,7 @@ SubversionClient::Checkin(const char *comment, const char *files)
 
   // create an array containing a single element which is the path path to be committed
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  (*((const char **) apr_array_push(paths))) = m_wc_path;
+  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
 
   // commit changes to the children of the paths
   svn_depth_t depth = svn_depth_infinity;

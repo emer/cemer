@@ -37,6 +37,7 @@ public:
   enum ErrorCode
   {
     EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for SVN error.
+    EMER_OPERATION_CANCELLED,
     // TBD.
   };
 
@@ -63,6 +64,8 @@ public:
     int GetSvnErrorCode() const;
 
   private:
+    static ErrorCode toEmerErrorCode(svn_error_t *svn_error);
+
     ErrorCode m_error_code;
     int m_svn_error_code;
   };
@@ -70,6 +73,8 @@ public:
   // TODO: how to handle authentication?
   SubversionClient(const char *working_copy_path);
   virtual ~SubversionClient();
+
+  const char * GetWorkingCopyPath() const;
 
   // Check if the working copy has already been checked out.
   bool IsWorkingCopy();

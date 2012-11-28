@@ -834,7 +834,12 @@ void SelectEdit::RunOnCluster(
     //PrintMkdirMessage(mkdir_success, model_path);
   }
   catch (const SubversionClient::Exception &ex) {
-    taMisc::Error("Error running on cluster.", ex.what());
+    if (ex.GetErrorCode() == SubversionClient::EMER_OPERATION_CANCELLED) {
+      taMisc::Info("Running on cluster cancelled.", ex.what());
+    }
+    else {
+      taMisc::Error("Error running on cluster.", ex.what());
+    }
   }
 }
 
