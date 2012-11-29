@@ -74,6 +74,25 @@ Apr::~Apr()
 // SubversionClient::Exception
 ///////////////////////////////////////////////////////////////////////////////
 
+namespace {
+  std::string
+  createMessage(const std::string &additional_msg, svn_error_t *svn_error)
+  {
+    std::string msg;
+    msg.reserve(500);
+    msg += additional_msg;
+    if (svn_error) {
+      msg += "\nError #";
+      msg += toString(svn_error->apr_err);
+      if (svn_error->message) {
+        msg += ": ";
+        msg += svn_error->message;
+      }
+    }
+    return msg;
+  }
+}
+
 SubversionClient::Exception::Exception(svn_error_t *svn_error)
   : std::runtime_error(svn_error->message ? svn_error->message : "Error")
   , m_error_code(toEmerErrorCode(svn_error))
@@ -86,10 +105,7 @@ SubversionClient::Exception::Exception(
   const std::string &additional_msg,
   svn_error_t *svn_error
 )
-  : std::runtime_error(
-      svn_error->message
-        ? (additional_msg + ":\n" + svn_error->message)
-        : additional_msg)
+  : std::runtime_error(createMessage(additional_msg, svn_error))
   , m_error_code(toEmerErrorCode(svn_error))
   , m_svn_error_code(svn_error->apr_err)
 {
@@ -367,8 +383,15 @@ SubversionClient::createContext()
   ctx->client_name = "emergent";
 
   // Get the user configuration directory (e.g., ~/.subversion/).
-  // Or, better yet, leave this null and the library will find it for us.
   const char *userConfigDirPath = 0;
+  if (svn_error_t *error = svn_config_get_user_config_path(
+        &userConfigDirPath,
+        0, // config_dir
+        0, // set to SVN_CONFIG_CATEGORY_CONFIG to get the config file.
+        m_pool))
+  {
+    throw Exception("Subversion error getting configuration directory", error);
+  }
 
   // Initialize the context's configuration hash.
   ctx->config = 0;
@@ -402,10 +425,12 @@ SubversionClient::createContext()
     throw Exception("Subversion did not provide authentication providers.");
   }
 
-  // Add an auth provider that checks the user's ~/.subversion directory
+  // Add auth providers that can check the user's ~/.subversion directory
   // for cached credentials.
   svn_auth_provider_object_t *provider = 0;
   svn_auth_get_simple_provider(&provider, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  svn_auth_get_username_provider(&provider, m_pool);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
   // Add our own simple username/password auth provider.
@@ -420,6 +445,12 @@ SubversionClient::createContext()
   // Initialize the authentication baton.
   ctx->auth_baton = 0;
   svn_auth_open(&ctx->auth_baton, providers, m_pool);
+
+  // Tell the auth_baton where to cache credentials.
+  svn_auth_set_parameter(
+    ctx->auth_baton,
+    SVN_AUTH_PARAM_CONFIG_DIR,
+    userConfigDirPath);
 
   ctx->mimetypes_map = 0; // TODO: do I need to implement this somehow?
 
