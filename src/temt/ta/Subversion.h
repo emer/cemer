@@ -82,7 +82,7 @@ public:
   bool IsWorkingCopy();
 
   // Checkout returns the revision checked out, or -1 on error.
-  int Checkout(const char *url, int rev = -1);
+  int Checkout(const char *url, bool recursive = true, int rev = -1);
 
   // Update the working copy and return the revision checked out, or -1 on error.
   int Update(int rev = -1);

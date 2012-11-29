@@ -548,9 +548,10 @@ SubversionClient::IsWorkingCopy()
 }
 
 int
-SubversionClient::Checkout(const char *url, int rev)
+SubversionClient::Checkout(const char *url, bool recursive, int rev)
 {
   m_cancelled = false;
+  /* TODO probably no need to the below code
   if (IsWorkingCopy()) {
     if (0 == std::strcmp(m_url, url)) {
       // If user requested checkout of the same URL, just do an update.
@@ -562,6 +563,7 @@ SubversionClient::Checkout(const char *url, int rev)
           + "; will not checkout new URL: " + url);
     }
   }
+  */
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
@@ -583,8 +585,12 @@ SubversionClient::Checkout(const char *url, int rev)
     revision.value.number = rev;
   }
 
-  // Set depth to get all files.
+  // Set the depth of subdirectories to be checked out.
+
   svn_depth_t depth = svn_depth_infinity;
+  if (!recursive) {
+    svn_depth_t depth = svn_depth_empty;
+  }
 
   // Set advanced options we don't care about.
   svn_boolean_t ignore_externals = false;
@@ -683,10 +689,11 @@ SubversionClient::MakeDir(const char *new_dir, bool create_parents)
 
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+  //APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+  APR_ARRAY_PUSH(paths, const char *) = new_dir;
 
   // create any non-existent parent directories
-  svn_boolean_t make_parents = true;
+  svn_boolean_t make_parents = create_parents;
 
   // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
   // svn_client_propget3 can be used to create an apr_hash_t
