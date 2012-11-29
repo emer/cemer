@@ -312,6 +312,18 @@ struct SubversionClient::Glue
     // User cancelled credentials dialog.
     return svn_error_create(SVN_ERR_CANCELLED, 0, "Operation cancelled");
   }
+
+  static
+  svn_error_t *
+  svn_auth_plaintext_prompt_func(
+    svn_boolean_t *may_save_plaintext,
+    const char *, // realmstring,
+    void *, // baton,
+    apr_pool_t *) // pool)
+  {
+    *may_save_plaintext = true;
+    return 0;
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -407,42 +419,8 @@ SubversionClient::createContext()
     throw Exception("Subversion did not populate ctx->config.");
   }
 
-  // Get the svn_config_t configuration data object from the hash.
-  svn_config_t *configData = reinterpret_cast<svn_config_t *>(apr_hash_get(
-    ctx->config, SVN_CONFIG_CATEGORY_CONFIG, APR_HASH_KEY_STRING));
-
-  // Get the list of authentication providers.
-  apr_array_header_t *providers = 0;
-  if (svn_error_t *error = svn_auth_get_platform_specific_client_providers(
-        &providers,
-        configData,
-        m_pool))
-  {
-    throw Exception("Subversion error getting authentication providers", error);
-  }
-
-  if (!providers) {
-    throw Exception("Subversion did not provide authentication providers.");
-  }
-
-  // Add auth providers that can check the user's ~/.subversion directory
-  // for cached credentials.
-  svn_auth_provider_object_t *provider = 0;
-  svn_auth_get_simple_provider(&provider, m_pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_username_provider(&provider, m_pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  // Add our own simple username/password auth provider.
-  svn_auth_get_simple_prompt_provider(
-    &provider,
-    Glue::svn_auth_simple_prompt_func,
-    0, // baton
-    1, // retries
-    m_pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
   // Initialize the authentication baton.
+  apr_array_header_t *providers = createAuthProviders(ctx->config);
   ctx->auth_baton = 0;
   svn_auth_open(&ctx->auth_baton, providers, m_pool);
 
@@ -483,6 +461,74 @@ SubversionClient::createContext()
 #endif
 
   return ctx;
+}
+
+apr_array_header_t *
+SubversionClient::createAuthProviders(apr_hash_t *config)
+{
+  // Based on code in
+  // subversion-1.7.7/subversion/bindings/javahl/native/ClientContext.cpp
+
+  // Get the svn_config_t configuration data object from the hash.
+  svn_config_t *configData = reinterpret_cast<svn_config_t *>(apr_hash_get(
+    config, SVN_CONFIG_CATEGORY_CONFIG, APR_HASH_KEY_STRING));
+
+  // Get the list of authentication providers.
+  apr_array_header_t *providers = 0;
+  if (svn_error_t *error = svn_auth_get_platform_specific_client_providers(
+        &providers,
+        configData,
+        m_pool))
+  {
+    throw Exception("Subversion error getting authentication providers", error);
+  }
+
+  if (!providers) {
+    throw Exception("Subversion did not provide authentication providers.");
+  }
+
+  // Add auth providers that can check the user's ~/.subversion directory
+  // for cached credentials.
+  svn_auth_provider_object_t *provider = 0;
+  svn_auth_get_simple_provider2(
+    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  svn_auth_get_username_provider(&provider, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
+    /* The server-cert, client-cert, and client-cert-password providers. */
+  if (svn_error_t *error = svn_auth_get_platform_specific_provider(
+        &provider,
+        "windows",
+        "ssl_server_trust",
+        m_pool))
+  {
+    // Not fatal, just clear the error.
+    svn_error_clear(error);
+  }
+  else if (provider) {
+    // If the cal succeeded, then put the provider on the list.
+    APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  }
+
+  svn_auth_get_ssl_server_trust_file_provider(&provider, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  svn_auth_get_ssl_client_cert_file_provider(&provider, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  svn_auth_get_ssl_client_cert_pw_file_provider2(
+    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
+  // Add our own simple username/password auth provider.
+  svn_auth_get_simple_prompt_provider(
+    &provider,
+    Glue::svn_auth_simple_prompt_func,
+    0, // baton
+    1, // retries
+    m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
+  return providers;
 }
 
 // Check if the working copy has already been checked out.

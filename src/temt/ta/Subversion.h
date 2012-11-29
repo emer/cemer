@@ -24,6 +24,8 @@
 // TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
 //#include <apr_pools.h>
 extern "C" {
+  typedef struct apr_array_header_t apr_array_header_t;
+  typedef struct apr_hash_t apr_hash_t;
   typedef struct apr_pool_t apr_pool_t;
   typedef struct svn_client_ctx_t svn_client_ctx_t;
   typedef struct svn_error_t svn_error_t;
@@ -103,6 +105,7 @@ public:
 
 private:
   svn_client_ctx_t * createContext();
+  apr_array_header_t * createAuthProviders(apr_hash_t *config);
 
   // Callbacks.
   struct Glue; // connects C-style callbacks with these methods.
