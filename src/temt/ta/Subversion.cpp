@@ -230,8 +230,8 @@ struct SubversionClient::Glue
     void *baton,
     apr_pool_t *pool)
   {
-    tmp_file = 0;
-    log_msg = 0; // Should cause the operation to be cancelled if not set.
+    *tmp_file = 0;
+    *log_msg = 0; // Should cause the operation to be cancelled if not set.
     if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
       std::string msg = sub->getCommitMessage();
       if (!msg.empty()) {
@@ -336,6 +336,7 @@ SubversionClient::SubversionClient(const char *working_copy_path)
   , m_pool(0) // initialized below
   , m_ctx(0)
   , m_cancelled(false)
+  , m_commit_message(0)
 {
   taMisc::Info("Creating SubversionClient object");
 
@@ -678,22 +679,16 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 }
 
 bool
-SubversionClient::MakeDir(const char *new_dir, bool create_parents)
+SubversionClient::MakeDir(const char *new_dir, bool make_parents)
 {
   m_cancelled = false;
-
-// TODO: rest of function copied from example dir, needs cleanup.
 
   // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
 
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  //APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
   APR_ARRAY_PUSH(paths, const char *) = new_dir;
-
-  // create any non-existent parent directories
-  svn_boolean_t make_parents = create_parents;
 
   // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
   // svn_client_propget3 can be used to create an apr_hash_t
@@ -702,7 +697,7 @@ SubversionClient::MakeDir(const char *new_dir, bool create_parents)
   if (svn_error_t *error = svn_client_mkdir3(
         &commit_info_p,
         paths,
-        make_parents,
+        make_parents, // whether to create non-existent parent directories
         revprop_table,
         m_ctx,
         m_pool))
@@ -714,17 +709,18 @@ SubversionClient::MakeDir(const char *new_dir, bool create_parents)
 }
 
 bool
-SubversionClient::MakeUrlDir(const char *url, bool create_parents)
+SubversionClient::MakeUrlDir(const char *url, const char *comment, bool make_parents)
 {
-  m_cancelled = false;
-  // TODO.
-  return false;
+  m_commit_message = comment;
+  return MakeDir(url, make_parents);
 }
 
 int
 SubversionClient::Checkin(const char *comment, const char *files)
 {
   m_cancelled = false;
+  m_commit_message = comment;
+
   // 'files' is a comma or newline separated list of files and/or directories.
   // If empty, the whole working copy will be committed.
 
@@ -806,6 +802,8 @@ SubversionClient::notifyProgress(apr_off_t progress, apr_off_t total)
 std::string
 SubversionClient::getCommitMessage()
 {
-  // TODO: prompt user using dialog or command line.
-  return "because";
+  // TODO: if m_commit_message is null, prompt user using dialog.
+  if (!m_commit_message) return "Automated checkin from emergent";
+
+  return m_commit_message;
 }

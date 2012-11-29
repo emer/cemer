@@ -786,8 +786,12 @@ void SelectEdit::RunOnCluster(
       int co_rev = 0;
       //co_rev = svnClient.Checkout(repo_path, false);  // the repo_path directory with no content will be checked out
       //taMisc::Info("wc_path is " + wc_path); // TODO remove this
+
       taMisc::Info("will try to mkdir " + repo_user_path); // TODO remove this
-      co_rev = svnClient.MakeDir(repo_user_path.chars());
+      std::string comment = "Creating cluster directory for user ";
+      comment += username;
+      co_rev = svnClient.MakeUrlDir(repo_user_path.chars(), comment.c_str());
+
       //svnClient.Checkin(); // commit the created wc
       taMisc::Info("user's dir created at " + repo_user_path); // TODO remove this
       co_rev = svnClient.Checkout(repo_user_path);

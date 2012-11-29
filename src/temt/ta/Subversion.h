@@ -89,12 +89,12 @@ public:
 
   // TODO: need to decide what return types make sense for each API.
   int Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
-  bool MakeDir(const char *new_dir, bool create_parents = true);
-  bool MakeUrlDir(const char *url, bool create_parents = true);
+  bool MakeDir(const char *new_dir, bool make_parents = true);
+  bool MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
 
   // Checkin 'files': a comma or newline separated list of files/dirs.
   // If empty, the whole working copy will be committed.
-  int Checkin(const char *comment, const char *files = "");
+  int Checkin(const char *comment = 0, const char *files = "");
   int Status(const char *files = "");
 
   // Call to cancel current operation in progress.
@@ -119,6 +119,7 @@ private:
   apr_pool_t *m_pool;
   svn_client_ctx_t *m_ctx;
   bool m_cancelled;
+  const char *m_commit_message;
 };
 
 #endif // SUBVERSION_H_
