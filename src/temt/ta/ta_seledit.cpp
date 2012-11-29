@@ -752,6 +752,7 @@ void SelectEdit::RunOnCluster(
     // TODO: need to get username from somewhere else.
     String username = "houmanwc";
     String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;
+    //String wc_path = "/home/houman/Desktop/houmanwc/"; // TODO remove this
 
     // Create Subversion client for this working copy directory.
     SubversionClient svnClient(wc_path.chars());
@@ -761,8 +762,9 @@ void SelectEdit::RunOnCluster(
 
     // TODO: for now I set all the required parameters here
     String repo_path = repo;
+    //String repo_path = "file:///home/houman/Desktop/svn/hoohoo"; // TODO remove this
 
-    //String user_app_dir = "/home/houman/Desktop";  // path to the emergent directory
+    //String user_app_dir = "/home/houman/Desktop"; // TODO remove this
 
     // Don't use PATH_SEP here, since on Windows that's '\\', which is
     // non-canonical for URLs and causes errors.
@@ -774,13 +776,22 @@ void SelectEdit::RunOnCluster(
     String wc_results_path = wc_proj_path + '/' + "results";  // a subdir of the project to contain results
     String repo_proj_path = repo_user_path + '/' + proj_name;
 
+    taMisc::Info("repo is at " + repo_user_path); // TODO remove this
+    taMisc::Info("wc is at " + wc_path); // TODO remove this
     // check if the user has a wc. checkout a wc if needed
     QFileInfo fi_wc(wc_path.chars());
     if (!fi_wc.exists()) {  // user never used c2c or at least never used it on this emergent instance
-      taMisc::Info("wc wasn't found"); // TODO remove this
+      taMisc::Info("wc wasn't found at " + wc_path); // TODO remove this
       // checkout the user's dir
       int co_rev = 0;
+      //co_rev = svnClient.Checkout(repo_path, false);  // the repo_path directory with no content will be checked out
+      //taMisc::Info("wc_path is " + wc_path); // TODO remove this
+      taMisc::Info("will try to mkdir " + repo_user_path); // TODO remove this
+      co_rev = svnClient.MakeDir(repo_user_path.chars());
+      //svnClient.Checkin(); // commit the created wc
+      taMisc::Info("user's dir created at " + repo_user_path); // TODO remove this
       co_rev = svnClient.Checkout(repo_user_path);
+      taMisc::Info("working copy checked out at " + wc_path); // TODO remove this
       //PrintCheckoutMessage(co_rev, repo_user_path, wc_path);
 
       // check if the user has a dir in the repo. create it for her if needed
