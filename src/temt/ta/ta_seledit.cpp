@@ -788,9 +788,9 @@ void SelectEdit::RunOnCluster(
       //taMisc::Info("wc_path is " + wc_path); // TODO remove this
 
       taMisc::Info("will try to mkdir " + repo_user_path); // TODO remove this
-      std::string comment = "Creating cluster directory for user ";
-      //comment += username;  TODO causes error: ambiguous overload for ‘operator+=
-      co_rev = svnClient.MakeUrlDir(repo_user_path.chars(), comment.c_str());
+      String comment = "Creating cluster directory for user ";
+      comment += username;
+      co_rev = svnClient.MakeUrlDir(repo_user_path.chars(), comment.chars());
 
       //svnClient.Checkin(); // commit the created wc
       taMisc::Info("user's dir created at " + repo_user_path); // TODO remove this

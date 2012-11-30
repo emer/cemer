@@ -235,6 +235,10 @@ struct SubversionClient::Glue
     if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
       std::string msg = sub->getCommitMessage();
       if (!msg.empty()) {
+        // TODO: Remove following line once testing is complete.
+        // It's only here so we don't spam the dev email list.
+        msg += " (quiet)";
+
         // Subversion requires that only line feeds be used, no CRLF or CR.
         msg = replaceLineEndingsWithLF(msg);
         *log_msg = apr_pstrdup(pool, msg.c_str());
