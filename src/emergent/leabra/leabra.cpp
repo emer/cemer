@@ -6335,6 +6335,19 @@ void LeabraNetwork::Compute_SRAvg_State() {
 }
 
 void LeabraNetwork::Compute_SRAvg() {
+  // update the network-level sravg_vals, even though these should not generally be used
+  if(sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    sravg_vals.m_sum += 1.0f;
+    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
+  }
+
+  if(sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    sravg_vals.s_sum += 1.0f;
+    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
+  }
+
   // first go through layers and let them update
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
