@@ -143,7 +143,8 @@ bool getUsernamePassword(
   QString &password,
   QString message = QString(),
   bool *saveFlag = 0,
-  QMainWindow *mw = 0
+  QMainWindow *mw = 0,
+  bool usernameOnly = false
 );
 
 

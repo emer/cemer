@@ -319,6 +319,42 @@ struct SubversionClient::Glue
 
   static
   svn_error_t *
+  svn_auth_username_prompt_func(
+    svn_auth_cred_username_t **ppCred,
+    void *, // baton,
+    const char *realm,
+    svn_boolean_t may_save,
+    apr_pool_t *pool)
+  {
+    QString qUser;
+    QString qPass;
+    QString qMessage("Enter Subversion username.");
+    if (realm) {
+      qMessage.append("\n").append(realm);
+    }
+
+    // Only prompt the user to save their credentials if the may_save
+    // parameter indicates we're allowed to.
+    bool saveFlag = false;
+    bool *pSaveFlag = may_save ? &saveFlag : 0;
+
+    // GUI prompt for credentials.
+    if (getUsernamePassword(qUser, qPass, qMessage, pSaveFlag, 0, true)) {
+      // User hit OK; build credential struct.
+      svn_auth_cred_username_t *pCred = (svn_auth_cred_username_t *)
+        apr_pcalloc(pool, sizeof(svn_auth_cred_username_t));
+      *ppCred = pCred;
+      pCred->username = apr_pstrdup(pool, qPrintable(qUser));
+      pCred->may_save = saveFlag;
+      return 0;
+    }
+
+    // User cancelled credentials dialog.
+    return svn_error_create(SVN_ERR_CANCELLED, 0, "Operation cancelled");
+  }
+
+  static
+  svn_error_t *
   svn_auth_plaintext_prompt_func(
     svn_boolean_t *may_save_plaintext,
     const char *, // realmstring,
@@ -533,6 +569,14 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
     m_pool);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
+  svn_auth_get_username_prompt_provider(
+    &provider,
+    Glue::svn_auth_username_prompt_func,
+    0, // baton
+    1, // retries
+    m_pool);
+  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+
   return providers;
 }
 
@@ -698,6 +742,7 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
   // svn_client_propget3 can be used to create an apr_hash_t
   const apr_hash_t *revprop_table = NULL;
 
+  // TODO: #ifdef this to use mkdir4 for svn >=1.7.
   if (svn_error_t *error = svn_client_mkdir3(
         &commit_info_p,
         paths,
