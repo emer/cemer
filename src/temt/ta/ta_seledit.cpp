@@ -750,7 +750,7 @@ void SelectEdit::RunOnCluster(
     taMisc::Info("RunOnCluster() test");
 
     // TODO: need to get username from somewhere else.
-    String username = "houmanwc";
+    String username = "testwc-ignoreme";
     String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;
     //String wc_path = "/home/houman/Desktop/houmanwc/"; // TODO remove this
 
@@ -789,7 +789,7 @@ void SelectEdit::RunOnCluster(
 
       taMisc::Info("will try to mkdir " + repo_user_path); // TODO remove this
       std::string comment = "Creating cluster directory for user ";
-      comment += username;
+      //comment += username;  TODO causes error: ambiguous overload for ‘operator+=
       co_rev = svnClient.MakeUrlDir(repo_user_path.chars(), comment.c_str());
 
       //svnClient.Checkin(); // commit the created wc
@@ -817,12 +817,16 @@ void SelectEdit::RunOnCluster(
     if (!fi_proj.exists()) {  // it's a new project, create a dir and subdirs for it
       bool mkdir_success = false;
       mkdir_success = svnClient.MakeDir(wc_proj_path);
+      svnClient.Checkin("project's directory created");
       //PrintMkdirMessage(mkdir_success, wc_proj_path);
       mkdir_success = svnClient.MakeDir(wc_submit_path);
+      svnClient.Checkin("project's submit directory created");
       //PrintMkdirMessage(mkdir_success, submit_path);
       mkdir_success = svnClient.MakeDir(wc_models_path);
+      svnClient.Checkin("project's models directory created");
       //PrintMkdirMessage(mkdir_success, models_path);
       mkdir_success = svnClient.MakeDir(wc_results_path);
+      svnClient.Checkin("project's results directory created");
       //PrintMkdirMessage(mkdir_success, results_path);
       // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
       taMisc::Info("new project directory was created"); // TODO remove this
@@ -845,6 +849,10 @@ void SelectEdit::RunOnCluster(
     // add the generated model file to the wc and commit it
     bool mkdir_success = false;
     mkdir_success = svnClient.MakeDir(wc_model_path);
+
+    // checkin the project's directory, subdirectories and model's file created
+    svnClient.Checkin("project's directory and model's file created");
+
     // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
     //PrintMkdirMessage(mkdir_success, model_path);
   }
