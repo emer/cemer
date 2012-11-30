@@ -161,7 +161,9 @@ class LEABRA_API LeabraTICtxtSUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
+  override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   override void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
+  override void	PostSettle(LeabraUnit* u, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtSUnitSpec);
 protected:
@@ -176,9 +178,10 @@ class LEABRA_API LeabraTISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra Temporal Integration misc specs
 INHERITED(SpecMemberBase)
 public:
-  float		ctxt_super_new;	// #DEF_0.6:0.8 how much of the new current activation state should drive the effective overall activation -- remainder is from minus phase activation value -- determines effective learning rate
+  bool		ctxt_s_net;	// use netinput instead of activation for carryover of information in the superficial context layer units
+  float		ctxt_s_new;	// #DEF_0.6:0.8 how much of the new current activation state should drive the effective overall activation -- remainder is from minus phase activation value -- determines effective learning rate
 
-  float 	ctxt_super_new_c;	// #NO_SAVE #READ_ONLY 1-ctxt_super_new
+  float 	ctxt_s_new_c;	// #NO_SAVE #READ_ONLY 1-ctxt_s_new
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

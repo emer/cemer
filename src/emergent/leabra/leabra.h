@@ -1322,6 +1322,8 @@ public:
   virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabraX/CAL)
 
+  virtual void 	Compute_dWt_FirstMinus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
   virtual void 	Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
   virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
@@ -1471,7 +1473,6 @@ public:
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
-  float		misc_2;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in ct_cycle units when spiking last occurred (-1 for not yet)
   float_CircBuffer* act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
   float_CircBuffer* spike_e_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of excitatory net input from spikes for synaptic integration over discrete spikes
@@ -1632,6 +1633,9 @@ public:
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg(this, net, thread_no); }
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabra_X/CAL)
 
+  void 	Compute_dWt_FirstMinus(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstMinus(this, net, thread_no); }
+  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
   void 	Compute_dWt_FirstPlus(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstPlus(this, net, thread_no); }
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
@@ -1752,6 +1756,38 @@ public:
   TA_BASEFUNS(AvgMaxVals);
 private:
   void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtSRAvgVals : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra sender-receiver average values accumulated during Ct processing -- e.g., overall vals used for normalization
+INHERITED(taOBase)
+public:
+  enum 	SRAvgState {		// what state are we in for computing sravg
+    NO_SRAVG,			// don't compute sravg right now
+    SRAVG_M,			// update ONLY medium time-scale (minus phase) sravg values
+    SRAVG_S,			// update ONLY short time-scale (plus phase) sravg values
+    SRAVG_SM,			// update BOTH short and medium time-scale sravg values -- this is the default for plus phase
+  };
+
+  SRAvgState	state;		// #GUI_READ_ONLY #SHOW what state of sravg computation are we currently in?  This is usually computed from the CtSRAvgSpec values on the network, but can be overridden and determined programmatically instead -- set the network CtSRAvgSpec manual flag on to do so..
+  float		s_sum;	// #READ_ONLY #EXPERT sum of sravg_s (short time-scale, plus phase) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
+  float		m_sum;	// #READ_ONLY #EXPERT sum of sravg_m (medium time-scale, trial) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
+
+  float		s_nrm;	// #READ_ONLY #EXPERT normalization term = 1 / sravg_s_sum -- multiply connection-level sravg_s by this value -- only for Compute_dWt_CtLeabraCAL 
+  float		m_nrm;	// #READ_ONLY #EXPERT normalization term = 1 / sravg_m_sum -- multiply connection-level sravg_m by this value -- only for Compute_dWt_CtLeabraCAL 
+
+  void		InitVals() { state = NO_SRAVG; s_sum = m_sum = 0.0f; s_nrm = m_nrm = 1.0f; }
+
+  override String       GetTypeDecoKey() const { return "Network"; }
+
+  SIMPLE_COPY(CtSRAvgVals);
+  TA_BASEFUNS(CtSRAvgVals);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize()	{ InitVals(); }
   void 	Destroy()	{ };
 };
 
@@ -1941,6 +1977,7 @@ class LEABRA_API CtLayerInhibMod : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(SpecMemberBase)
 public:
+  bool		manual_sravg;	// #DEF_false the sravg_vals.state flag must be set manually (i.e., by program control) for this layer -- otherwise it is copied directly from the network-level value
   int		sravg_delay;	// #DEF_0 [0 = use network value] -- delay in cycles to start computing medium time-scale average (not relevant for XCAL_C), specific to this layer.  adding a delay for layers that are higher up in the network, while setting the network start earlier, can result in better overall learning throughout the network
   bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
   float		burst_i;	// #CONDSHOW_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
@@ -2046,7 +2083,7 @@ public:
 						 LeabraInhib* thr, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
     virtual void Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL)
+    // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL) -- calls unit-level function of same name
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -2253,12 +2290,18 @@ public:
 				 LeabraInhib* thr, LeabraNetwork* net);
     // #CAT_Activation unit group -- adapt the kwta point based on average activity
 
+  virtual void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning compute state flag setting for sending-receiving activation averages (CtLeabra_X/CAL) -- called at the Cycle_Run level by network Compute_SRAvg_State -- unless manual_sravg flag is on, it just copies the network-level sravg_vals.state setting
+  virtual void	Compute_SRAvg_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning compute layer-level sravg values -- called in advance of the unit level call -- updates the sravg_vals for this layer based on the sravg_vals.state flag
   virtual bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
+  // #CAT_Learning test whether to compute sravg values at the connection level (expensive) -- default is true, but some layers might opt out to save time
 
   virtual void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
+  virtual bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning test whether to compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
   virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
   virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
@@ -2553,6 +2596,7 @@ INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
   bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Settle_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
+  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average activation accumulation values -- for normalizing averages and state field provides ultimate determination of when and how sravg is computed
   float		avg_l_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
   float		dav;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   AvgMaxVals	avg_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
@@ -2630,12 +2674,14 @@ public:
   // #CAT_Learning set current learning rate based on epoch
   void	Trial_Init_Layer(LeabraNetwork* net) { spec->Trial_Init_Layer(this, net); }
   // #CAT_Learning layer-level trial init
-
-    void	Trial_DecayState(LeabraNetwork* net)	{ spec->Trial_DecayState(this, net); }
+    void	Trial_DecayState(LeabraNetwork* net)
+    { spec->Trial_DecayState(this, net); }
     // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
-    void	Trial_NoiseInit(LeabraNetwork* net)	{ spec->Trial_NoiseInit(this, net); }
+    void	Trial_NoiseInit(LeabraNetwork* net)
+    { spec->Trial_NoiseInit(this, net); }
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
-    void 	Trial_Init_SRAvg(LeabraNetwork* net)   	{ spec->Trial_Init_SRAvg(this, net); }
+    void 	Trial_Init_SRAvg(LeabraNetwork* net)
+    { spec->Trial_Init_SRAvg(this, net); }
     // #CAT_Learning NOT CALLED DURING STD PROCESSING initialize sending-receiving activation product averages (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
@@ -2733,6 +2779,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
+  void	Compute_SRAvg_State(LeabraNetwork* net)
+  { spec->Compute_SRAvg_State(this, net); }
+  // #CAT_Learning compute state flag setting for sending-receiving activation averages (CtLeabra_X/CAL) -- called at the Cycle_Run level by network Compute_SRAvg_State -- unless manual_sravg flag is on, it just copies the network-level sravg_vals.state setting
+  void	Compute_SRAvg_Layer(LeabraNetwork* net)
+  { spec->Compute_SRAvg_Layer(this, net); }
+  // #CAT_Learning compute layer-level sravg values -- called in advance of the unit level call -- updates the sravg_vals for this layer based on the sravg_vals.state flag
   bool	Compute_SRAvg_Test(LeabraNetwork* net)
   { return spec->Compute_SRAvg_Test(this, net); }
   // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
@@ -2740,6 +2792,9 @@ public:
   void	Compute_dWt_Layer_pre(LeabraNetwork* net)  { spec->Compute_dWt_Layer_pre(this, net); }
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
+  bool	Compute_dWt_FirstMinus_Test(LeabraNetwork* net)
+  { return spec->Compute_dWt_FirstMinus_Test(this, net); }
+  // #CAT_Learning test whether to compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
   bool	Compute_dWt_FirstPlus_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_FirstPlus_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
@@ -2880,10 +2935,11 @@ class LEABRA_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
 INHERITED(taOBase)
 public:
-  int		start;		// #DEF_30:60 number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// #DEF_0;1 number of cycles from the start of the final inhibitory phase to continue recording sravg
-  int		interval;	// #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
-  int		plus_s_st;	// [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
+  bool		manual;		// the determination of when to compute sravg is made externally (e.g., by a program) -- sravg_vals.state flag must be set prior to calling Network::Cycle_Run() to take effect -- by default layers will copy network sravg_vals.state flag setting, so you only need to set it globally for the network (see layer-level manual_sravg flag if you want to set everything manually)
+  int		start;		// #CONDSHOW_OFF_manual #DEF_30:60 number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
+  int		end;		// #CONDSHOW_OFF_manual #DEF_0;1 number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		interval;	// #CONDSHOW_OFF_manual #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
+  int		plus_s_st;	// #CONDSHOW_OFF_manual [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
   bool		force_con;	// #DEF_false force connection-level SRAvg computation -- only use for experimental algorithms that need this -- otherwise needlessly slows computation
 
   override String       GetTypeDecoKey() const { return "Network"; }
@@ -2898,29 +2954,6 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtSRAvgVals : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra sender-receiver average values accumulated during Ct processing -- e.g., overall vals used for normalization
-INHERITED(taOBase)
-public:
-  float		s_sum;	// #READ_ONLY #EXPERT sum of sravg_s (short time-scale, plus phase) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
-  float		s_nrm;	// #READ_ONLY #EXPERT normalization term computed from sravg_s_sum -- multiply connection-level sravg_s by this value
-  float		m_sum;	// #READ_ONLY #EXPERT sum of sravg_m (medium time-scale, trial) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
-  float		m_nrm;	// #READ_ONLY #EXPERT normalization term computed from sravg_m_sum -- multiply connection-level sravg_m by this value
-  bool		do_s;	// #READ_ONLY #EXPERT flag set during Compute_SRAvg for whether to compute short-time scale (plus phase) sravg values now or not
-
-  void		InitVals() { s_sum = s_nrm = m_sum = m_nrm = 0.0f; do_s = false; }
-
-  override String       GetTypeDecoKey() const { return "Network"; }
-
-  SIMPLE_COPY(CtSRAvgVals);
-  TA_BASEFUNS(CtSRAvgVals);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
 
 class LEABRA_API CtSineInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
@@ -3138,7 +3171,7 @@ public:
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
-  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
+  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
   CtLrnTrigSpec	ct_lrn_trig;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger parameters based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
   CtLrnTrigVals	lrn_trig; 	// #CAT_Learning #EXPERT #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger values -- based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
   ThreadFlags	thread_flags;	// #NO_SAVE #CAT_Structure #EXPERT flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
@@ -3248,7 +3281,7 @@ public:
       virtual void Trial_Init_SRAvg();
       // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- goes to connections via units, layers
     virtual void Trial_Init_Layer();
-    // #CAT_TrialInit layer-level trial init (not used in base code, can be overloaded)
+    // #CAT_TrialInit layer-level trial init (used in base code to init layer-level sravg, can be overloaded)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -3362,19 +3395,19 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
+  virtual void 	Compute_SRAvg_State();
+  // #CAT_Learning compute state flag setting for sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- just updates the sravg_vals.state flag for network and layers, does nothing if 
   virtual void 	Compute_SRAvg();
-  // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level, and threaded down to unit level
-    virtual bool Compute_SRAvg_Now();
-    // #CAT_Learning determine if it is time to compute SRAvg -- this includes unit-level avg terms as well
+  // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- calls Compute_SRAvg_Layer on layers, and then threaded down to unit level -- behavior is completely determined by sravg_vals.state flag setting
+
   virtual void 	Compute_XCalC_dWt();
   // #CAT_Learning compute CT_LEABRA_XCA_C learning rule
-
-  virtual void 	Compute_dWt_SRAvg();
-  // #CAT_Learning compute sravg vals at start of dwt computation (nrm terms)
 
   virtual void	Compute_dWt_Layer_pre();
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
+  virtual void	Compute_dWt_FirstMinus();
+  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
   virtual void	Compute_dWt_FirstPlus();
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
   virtual void	Compute_dWt_Nothing();
@@ -3702,7 +3735,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUni
   LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
   CON_GROUP_LOOP(cg,
 		 C_Compute_dWt_CtLeabraCAL((LeabraSRAvgCon*)cg->OwnCn(i),
-			   net->sravg_vals.s_nrm, net->sravg_vals.m_nrm));
+			   rlay->sravg_vals.s_nrm, rlay->sravg_vals.m_nrm));
 }
 
 /////////////////////////////////////

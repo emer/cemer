@@ -163,11 +163,94 @@ void LeabraTICtxtSUnitSpec::Initialize() {
 void LeabraTICtxtSUnitSpec::Defaults_init() {
 }
 
+void LeabraTICtxtSUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
+					       int thread_no) {
+  
+  LeabraLayer* lay = u->own_lay();
+  if(lay->hard_clamped) return;
+  if(lay->lesioned()) return;
+  LeabraLayerSpec* lls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  if(!lls->InheritsFrom(&TA_LeabraTILayerSpec)) return;
+  LeabraTILayerSpec* ls = (LeabraTILayerSpec*)lls;
+  if(!ls->ti.ctxt_s_net) {
+    inherited::Compute_NetinInteg(u, net, thread_no);
+    return;
+  }
+
+  if(net->NetinPerPrjn()) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      recv_gp->net_raw += recv_gp->net_delta;
+      recv_gp->net_delta = 0.0f; // clear for next use
+    }
+  }
+
+  if(net->inhib_cons_used) {
+    u->g_i_raw += u->g_i_delta;
+    if(act_fun == SPIKE) {
+      u->gc.i = MAX(u->g_i_raw, 0.0f);
+      Compute_NetinInteg_Spike_i(u, net);
+    }
+    else {
+      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
+      u->prv_g_i = u->gc.i;
+    }
+  }
+
+  u->net_raw += u->net_delta;
+  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
+  // NEW CODE: plus phase
+  if(net->phase_no >= 1) {
+    tot_net = ls->ti.ctxt_s_new_c * u->misc_1 + ls->ti.ctxt_s_new * tot_net;
+  }
+
+  if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
+    LeabraInhib* thr;
+    int gpidx = u->UnitGpIdx();
+    if(gpidx < 0 || ls->inhib_group == LeabraLayerSpec::ENTIRE_LAYER) {
+      thr = (LeabraInhib*)lay;
+    }
+    else {
+      thr = (LeabraInhib*)lay->ungp_data.FastEl(gpidx);
+    }
+    tot_net += thr->netin.avg * ls->inhib.avg_boost * u->act_eq;
+  }
+
+  if(u->HasExtFlag(Unit::EXT)) {
+    tot_net += u->ext * ls->clamp.gain;
+  }
+
+  u->net_delta = 0.0f;  // clear for next use
+  u->g_i_delta = 0.0f;  // clear for next use
+
+  if(act_fun == SPIKE) {
+    // todo: need a mech for inhib spiking
+    u->net = MAX(tot_net, 0.0f); // store directly for integration
+    Compute_NetinInteg_Spike_e(u, net);
+  }
+  else {
+    float dnet = dt.net * (tot_net - u->prv_net);
+    u->net = u->prv_net + dnet;
+    u->prv_net = u->net;
+    u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
+  }
+
+  // add just before computing i_thr -- after all the other stuff is done..
+  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    u->net += Compute_Noise(u, net);
+  }
+  u->i_thr = Compute_IThresh(u, net);
+}
+
 void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* rlay = u->own_lay();
   if(rlay->lesioned()) return;
   if(!rlay->GetLayerSpec()->InheritsFrom(&TA_LeabraTILayerSpec)) return;
   LeabraTILayerSpec* ls = (LeabraTILayerSpec*) rlay->GetLayerSpec();
+  if(ls->ti.ctxt_s_net) {
+    inherited::Compute_ActFmVm_rate(u, net);
+    return;
+  }
 
   float new_act;
   if(act.gelin) {
@@ -184,11 +267,7 @@ void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* n
       new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
       // NEW CODE: plus phase
       if(net->phase_no >= 1) {
-	u->misc_1 = new_act;
-	new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
-      }
-      else {
-	u->misc_1 = 0.0f;
+	new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
       }
 
     }
@@ -202,11 +281,7 @@ void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* n
       }
       // NEW CODE: plus phase
       if(net->phase_no >= 1) {
-	u->misc_1 = new_act;
-	new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
-      }
-      else {
-	u->misc_1 = 0.0f;
+	new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
       }
 	
       if(net->cycle < dt.vm_eq_cyc) {
@@ -221,11 +296,7 @@ void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* n
     new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
     // NEW CODE: plus phase
     if(net->phase_no >= 1) {
-      u->misc_1 = new_act;
-      new_act = ls->ti.ctxt_super_new_c * u->act_m + ls->ti.ctxt_super_new * new_act;
-    }
-    else {
-      u->misc_1 = 0.0f;
+      new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
     }
   }
   if(depress.on) {                   // synaptic depression
@@ -248,18 +319,27 @@ void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* n
     u->act_nd = u->act_eq;
 }
 
+void LeabraTICtxtSUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::PostSettle(u,net);
+
+  if(net->phase_no == 0) {
+    u->misc_1 = u->net;		// save final minus phase netin
+  }
+}
+
 void LeabraTISpec::Initialize() {
   Defaults_init();
 }
 
 void LeabraTISpec::Defaults_init() {
-  ctxt_super_new = 0.6f;
-  ctxt_super_new_c = 1.0f - ctxt_super_new;
+  ctxt_s_net = true;
+  ctxt_s_new = 0.6f;
+  ctxt_s_new_c = 1.0f - ctxt_s_new;
 }
 
 void LeabraTISpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ctxt_super_new_c = 1.0f - ctxt_super_new;
+  ctxt_s_new_c = 1.0f - ctxt_s_new;
 }
 
 void LeabraTILayerSpec::Initialize() {

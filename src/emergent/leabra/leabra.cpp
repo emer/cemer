@@ -1006,7 +1006,6 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
   LeabraUnit* lu = (LeabraUnit*)u;
   lu->act_avg = act.avg_init;
   lu->misc_1 = 0.0f;
-  lu->misc_2 = 0.0f;
   lu->spk_amp = depress.max_amp;
   lu->vcb.hyst = lu->vcb.g_h = 0.0f;
   lu->vcb.hyst_on = false;
@@ -2134,8 +2133,8 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
-
-  bool do_s = net->sravg_vals.do_s; // set on net at start of call..
+  if(!lay) return;
+  if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
 
   float ru_act; // activation to use for updating averages
   if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
@@ -2148,6 +2147,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     if(rus->act_fun == LeabraUnitSpec::SPIKE)
       ru_act *= rus->spike.eq_gain;
   }
+
+  bool do_s = false;
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
     // note: this is cascade version -- each builds upon the other
@@ -2166,31 +2167,33 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   }
   else {
     // use continuous updating so these are always current -- no need for post-average step
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    float eff_m_sum = net->sravg_vals.m_sum;
-    if(ls->ct_inhib_mod.sravg_delay > 0) {
-      eff_m_sum = net->sravg_vals.m_sum - (float)ls->ct_inhib_mod.sravg_delay;
-      if(eff_m_sum < 0.0f)
-        return;                 // not ready yet
+    if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+       lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+      if(lay->sravg_vals.m_sum == 1.0f) {
+	u->avg_m = ru_act;
+      }
+      else {
+	u->avg_m = (ru_act + u->avg_m * (lay->sravg_vals.m_sum - 1.0f)) /
+	  lay->sravg_vals.m_sum;
+      }
     }
-    if(eff_m_sum == 0.0f) {
-      u->avg_m = ru_act;
-    }
-    else {
-      u->avg_m = (ru_act + u->avg_m * eff_m_sum) / (eff_m_sum + 1.0f);
-    }
-    if(do_s) {                  // not subject to delay!
-      if(net->sravg_vals.s_sum == 0.0f) {
+
+    if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+       lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+      do_s = true;
+      if(lay->sravg_vals.s_sum == 1.0f) {
         u->avg_s = ru_act;
       }
       else {
-        u->avg_s = (ru_act + u->avg_s * net->sravg_vals.s_sum) / (net->sravg_vals.s_sum + 1.0f);
+        u->avg_s = (ru_act + u->avg_s * (lay->sravg_vals.s_sum - 1.0f)) /
+	  lay->sravg_vals.s_sum;
       }
     }
   }
 
+  // lastly, do the connection-level sravg if needed:
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con) {
-    if(net->train_mode != LeabraNetwork::TEST) {        // expensive con-level only for training
+    if(net->train_mode != LeabraNetwork::TEST) { // expensive con-level only for training
       for(int g=0; g<u->send.size; g++) {
         LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
         LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
@@ -2199,6 +2202,21 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
       }
     }
   }
+}
+
+void LeabraUnitSpec::Compute_dWt_FirstMinus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  for(int g = 0; g < u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
+    if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_FirstMinus_Test(net)) continue;
+    send_gp->Compute_Leabra_dWt(u);
+  }
+
+  LeabraLayer* lay = u->own_lay();
+  if(!lay->Compute_dWt_FirstMinus_Test(net)) return; // applies to bias weights now
+
+  LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
+  bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
 }
 
 void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -2665,7 +2683,6 @@ void LeabraUnit::Initialize() {
   i_thr = 0.0f;
   spk_amp = 1.0f;
   misc_1 = 0.0f;
-  misc_2 = 0.0f;
   spk_t = -1;
 
   act_buf = NULL;
@@ -2752,7 +2769,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
-  misc_2 = cp.misc_2;
   spk_t = cp.spk_t;
 }
 
@@ -2955,6 +2971,7 @@ void DecaySpec::Initialize() {
 }
 
 void CtLayerInhibMod::Initialize() {
+  manual_sravg = false;
   sravg_delay = 0;
   use_sin = false;
   burst_i = 0.02f;
@@ -3152,6 +3169,7 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   }
   Init_Inhib(lay, net);         // initialize inhibition at start..
   Init_Stats(lay, net);
+  lay->sravg_vals.InitVals();
 }
 
 void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3244,6 +3262,7 @@ void LeabraLayerSpec::SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoc
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->sravg_vals.InitVals();
 }
 
 // NOTE: the following are not typically used, as the Trial_Init_Units calls directly
@@ -3308,7 +3327,6 @@ void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
     u->Trial_Init_SRAvg(net);
   }
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //      SettleInit -- at start of settling
@@ -4569,8 +4587,44 @@ void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net
 ///////////////////////////////////////////////////////////////////////
 //      Learning
 
+void LeabraLayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
+  if(!ct_inhib_mod.manual_sravg) {
+    lay->sravg_vals.state = net->sravg_vals.state; // default is to just copy
+
+    if(lay->sravg_vals.state != CtSRAvgVals::NO_SRAVG) {
+      if(ct_inhib_mod.sravg_delay > 0) {
+	if(net->phase != LeabraNetwork::PLUS_PHASE) {
+	  int into = net->ct_cycle - net->ct_sravg.start;
+	  if(into <= ct_inhib_mod.sravg_delay) // override!
+	    lay->sravg_vals.state = CtSRAvgVals::NO_SRAVG;
+	}
+      }
+    }
+  }
+}
+
+void LeabraLayerSpec::Compute_SRAvg_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
+
+  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    lay->sravg_vals.m_sum += 1.0f;
+    lay->sravg_vals.m_nrm = 1.0f / lay->sravg_vals.m_sum;
+  }
+
+  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    lay->sravg_vals.s_sum += 1.0f;
+    lay->sravg_vals.s_nrm = 1.0f / lay->sravg_vals.s_sum;
+  }
+}
+
 bool LeabraLayerSpec::Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net) {
   return true;
+}
+
+bool LeabraLayerSpec::Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
+  return false;			// standard layers never do it
 }
 
 bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
@@ -5158,6 +5212,8 @@ void LeabraLayer::InitLinks() {
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);
 
+  taBase::Own(sravg_vals, this);
+
   taBase::Own(ungp_data, this);
 
   taBase::Own(unit_idxs, this);
@@ -5290,19 +5346,12 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 }
 
 void CtSRAvgSpec::Initialize() {
+  manual = false;
   start = 30;
   end = 1;
   interval = 1;
   plus_s_st = 19;
   force_con = false;
-}
-
-void CtSRAvgVals::Initialize() {
-  s_sum = 0.0f;
-  s_nrm = 1.0f;
-  m_sum = 0.0f;
-  m_nrm = 1.0f;
-  do_s = false;
 }
 
 void CtSineInhibMod::Initialize() {
@@ -5954,6 +6003,7 @@ void LeabraNetwork::Cycle_Run() {
 
   Compute_CycSynDep();
 
+  Compute_SRAvg_State();
   Compute_SRAvg();              // note: only ctleabra variants do con-level compute here
   Compute_XCalC_dWt();
   Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
@@ -6149,6 +6199,10 @@ void LeabraNetwork::Settle_Compute_dWt() {
 
   switch(phase_order) {
   case MINUS_PLUS:
+    if(phase_no == 0) {
+      Compute_dWt_FirstMinus();
+    }
+    // note: no break -- intentional fallthrough..
   case PLUS_MINUS:
   case PLUS_NOTHING:
     if(phase_no == 1) {
@@ -6162,8 +6216,12 @@ void LeabraNetwork::Settle_Compute_dWt() {
     break;
   case MINUS_PLUS_NOTHING:
   case MINUS_PLUS_MINUS:
-    if(phase_no == 1)
+    if(phase_no == 0) {
+      Compute_dWt_FirstMinus();
+    }
+    else if(phase_no == 1) {
       Compute_dWt_FirstPlus();
+    }
     else if(phase_no == 2) {
       Compute_dWt_Nothing();
       AdaptKWTAPt();
@@ -6246,49 +6304,48 @@ void LeabraNetwork::Compute_SelfReg_Trial() {
 ///////////////////////////////////////////////////////////////////////
 //      Learning
 
-bool LeabraNetwork::Compute_SRAvg_Now() {
-  int eff_int = ct_sravg.interval;
-  if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-    if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-      eff_int = 1;              // make sure you get short-time/plus phase info!
+void LeabraNetwork::Compute_SRAvg_State() {
+  if(!ct_sravg.manual) {
+    sravg_vals.state = CtSRAvgVals::NO_SRAVG;
+    int eff_int = ct_sravg.interval;
+
+    if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
+      if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
+	eff_int = 1;              // make sure you get short-time/plus phase info!
+      }
+      if((ct_cycle - ct_sravg.start) % eff_int == 0) {
+	sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
+      }
+    }
+    else {
+      if((ct_cycle >= ct_sravg.start) &&
+	 (ct_cycle < (ct_time.inhib_start + ct_sravg.end)) &&
+	 ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
+	sravg_vals.state = CtSRAvgVals::SRAVG_M;
+      }
     }
   }
-  if((ct_cycle >= ct_sravg.start) &&
-     (ct_cycle < (ct_time.inhib_start + ct_sravg.end)) &&
-     ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-    return true;
+  
+  // now go through layers and let them update their own state values -- usu just
+  // copy from network..
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Compute_SRAvg_State(this);
   }
-  return false;
 }
 
 void LeabraNetwork::Compute_SRAvg() {
-  if(!Compute_SRAvg_Now()) return;
-
-  if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st)
-    sravg_vals.do_s = true;
-  else
-    sravg_vals.do_s = false;
+  // first go through layers and let them update
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Compute_SRAvg_Layer(this);
+  }
 
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
   if(thread_flags & SRAVG)
     threads.Run(&un_call, 0.9f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
-
-  sravg_vals.m_sum += 1.0f;     // normal weighting
-  if(sravg_vals.do_s)
-    sravg_vals.s_sum += 1.0f;
-}
-
-void LeabraNetwork::Compute_dWt_SRAvg() {
-  if(sravg_vals.m_sum > 0.0f)
-    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
-  else
-    sravg_vals.m_nrm = 1.0f;
-  if(sravg_vals.s_sum > 0.0f)
-    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
-  else
-    sravg_vals.s_nrm = 1.0f;
 }
 
 void LeabraNetwork::Compute_XCalC_dWt() {
@@ -6360,7 +6417,6 @@ void LeabraNetwork::Compute_XCalC_dWt() {
 
   if(do_lrn) {
     // this is all the std code from Compute_dWt_FirstPlus
-    Compute_dWt_SRAvg();
     Compute_dWt_Layer_pre();
     lrn_trig.lrn = 1;
     ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
@@ -6400,12 +6456,24 @@ void LeabraNetwork::Compute_dWt_Layer_pre() {
   }
 }
 
+void LeabraNetwork::Compute_dWt_FirstMinus() {
+  if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
+  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
+    return; // no learning while gathering data!
+  }
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstMinus);
+  if(thread_flags & DWT)
+    threads.Run(&un_call, 0.6f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  //  Compute_dWt_Norm(); // assume first plus will handle this.. 
+}
+
 void LeabraNetwork::Compute_dWt_FirstPlus() {
   if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
   if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
     return; // no learning while gathering data!
   }
-  Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
   if(thread_flags & DWT)
@@ -6420,7 +6488,6 @@ void LeabraNetwork::Compute_dWt_Nothing() {
   if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
     return; // no learning while gathering data!
   }
-  Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Nothing);
   if(thread_flags & DWT)
