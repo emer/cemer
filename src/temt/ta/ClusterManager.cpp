@@ -236,6 +236,10 @@ ClusterManager::ensureWorkingCopyExists()
     taMisc::Info("will try to mkdir", m_repo_user_path); // TODO remove this
     String comment = "Creating cluster directory for user ";
     comment += m_username;
+    // TODO: This gives a 175002 (SVN_ERR_RA_DAV_REQUEST_FAILED) error if the
+    // directory already exists in the repository but not in the working copy.
+    // Either need to catch that particular error (weak) or try a checkout
+    // first, and only MakeUrlDir() if the checkout fails.
     co_rev = m_svn_client->MakeUrlDir(m_repo_user_path.chars(), comment.chars());
 
     //m_svn_client->Checkin(); // commit the created wc
