@@ -40,6 +40,7 @@ public:
   {
     EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for SVN error.
     EMER_OPERATION_CANCELLED,
+    EMER_ERR_ENTRY_EXISTS,
     // TBD.
   };
 

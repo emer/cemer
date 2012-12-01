@@ -143,6 +143,7 @@ SubversionClient::Exception::toEmerErrorCode(svn_error_t *svn_error)
 {
   switch (svn_error->apr_err) {
     case SVN_ERR_CANCELLED:   return EMER_OPERATION_CANCELLED;
+    case SVN_ERR_ENTRY_EXISTS: return EMER_ERR_ENTRY_EXISTS;
     default:                  return EMER_GENERAL_SVN_ERROR;
   }
 }
