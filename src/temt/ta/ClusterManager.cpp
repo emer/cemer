@@ -196,7 +196,7 @@ void
 ClusterManager::setPaths()
 {
   // Set the working copy path and get a canonicalized version back.
-  String m_wc_path = taMisc::user_app_dir + '/' + "repos" + '/' + m_username;
+  m_wc_path = taMisc::user_app_dir + '/' + "repos" + '/' + m_username;
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
@@ -204,8 +204,9 @@ ClusterManager::setPaths()
   // non-canonical for URLs (and svn paths) and causes errors.
   m_repo_user_path = m_repo_url + '/' + "repos" + '/' + m_username;  // path to the user's dir in the repo
 
-  // Make a directory named based on the project name.
-  String proj_name = m_filename.before(".proj");
+  // Make a directory named based on the name of the project, without
+  // any path, and without the final ".proj" extension.
+  QString proj_name = QFileInfo(m_filename).completeBaseName();
   m_wc_proj_path = m_wc_path + '/' + proj_name;
 
   // Make subdirectories for various files (job params, models, results).
@@ -216,8 +217,8 @@ ClusterManager::setPaths()
   // TODO: What is this for?
   String repo_proj_path = m_repo_user_path + '/' + proj_name;
 
-  taMisc::Info("repo is at " + m_repo_user_path); // TODO remove this
-  taMisc::Info("wc is at " + m_wc_path); // TODO remove this
+  taMisc::Info("repo is at", m_repo_user_path); // TODO remove this
+  taMisc::Info("wc is at", m_wc_path); // TODO remove this
 }
 
 void
@@ -227,20 +228,20 @@ ClusterManager::ensureWorkingCopyExists()
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
     // User never used c2c or at least never used it on this emergent instance.
-    taMisc::Info("wc wasn't found at " + m_wc_path); // TODO remove this
+    taMisc::Info("wc wasn't found at", m_wc_path); // TODO remove this
     // checkout the user's dir
     int co_rev = 0;
     //co_rev = m_svn_client->Checkout(m_repo_url, false);  // the m_repo_url directory with no content will be checked out
 
-    taMisc::Info("will try to mkdir " + m_repo_user_path); // TODO remove this
+    taMisc::Info("will try to mkdir", m_repo_user_path); // TODO remove this
     String comment = "Creating cluster directory for user ";
     comment += m_username;
     co_rev = m_svn_client->MakeUrlDir(m_repo_user_path.chars(), comment.chars());
 
     //m_svn_client->Checkin(); // commit the created wc
-    taMisc::Info("user's dir created at " + m_repo_user_path); // TODO remove this
+    taMisc::Info("user's dir created at",  m_repo_user_path); // TODO remove this
     co_rev = m_svn_client->Checkout(m_repo_user_path);
-    taMisc::Info("working copy checked out at " + m_wc_path); // TODO remove this
+    taMisc::Info("working copy checked out at", m_wc_path); // TODO remove this
     //PrintCheckoutMessage(co_rev, m_repo_user_path, m_wc_path);
 
     // check if the user has a dir in the repo. create it for her if needed
