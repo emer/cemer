@@ -333,6 +333,7 @@ void LeabraTISpec::Initialize() {
 
 void LeabraTISpec::Defaults_init() {
   ctxt_s_net = true;
+  ctxt_s_rev_lrn = false;
   ctxt_s_new = 0.6f;
   ctxt_s_new_c = 1.0f - ctxt_s_new;
 }
@@ -477,6 +478,29 @@ void LeabraTILayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
     }
   }
   inherited::PostSettle(lay, net);
+}
+
+void LeabraTILayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
+  if(ti.ctxt_s_rev_lrn && 
+     ((ti_type == CONTEXT && lamina == SUPER) ||
+      (ti_type == ONLINE && lamina == DEEP))) {
+    // ALWAYS computing because always has inputs.. others should probably too
+    // backwards: plus = minus, minus = plus..
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      lay->sravg_vals.state = CtSRAvgVals::SRAVG_M;
+    }
+    else {
+      if(net->cycle >= net->ct_sravg.plus_s_st) {
+	lay->sravg_vals.state = CtSRAvgVals::SRAVG_SM;
+      }
+      else {
+	lay->sravg_vals.state = CtSRAvgVals::SRAVG_M;
+      }
+    }
+  }
+  else {
+    inherited::Compute_SRAvg_State(lay, net);
+  }
 }
 
 //////////////////////////////////

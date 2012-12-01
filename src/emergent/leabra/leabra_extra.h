@@ -157,7 +157,7 @@ private:
 };
 
 class LEABRA_API LeabraTICtxtSUnitSpec : public LeabraUnitSpec {
-  // Leabra Temporal Integration Context Super unit spec -- plus phase activity is blend of prior minus and current activation
+  // Leabra Temporal Integration Context Super unit spec
 INHERITED(LeabraUnitSpec)
 public:
 
@@ -179,6 +179,7 @@ class LEABRA_API LeabraTISpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		ctxt_s_net;	// use netinput instead of activation for carryover of information in the superficial context layer units
+  bool		ctxt_s_rev_lrn;	// reverse learning order in context s layer
   float		ctxt_s_new;	// #DEF_0.6:0.8 how much of the new current activation state should drive the effective overall activation -- remainder is from minus phase activation value -- determines effective learning rate
 
   float 	ctxt_s_new_c;	// #NO_SAVE #READ_ONLY 1-ctxt_s_new
@@ -229,7 +230,12 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
-  // don't do any learning:
+  override void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
+    if(ti.ctxt_s_rev_lrn && (ti_type == CONTEXT && lamina == SUPER)) return true;
+    return false;
+  }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_FirstPlus_Test(lay, net); }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)

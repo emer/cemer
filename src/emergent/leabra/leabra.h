@@ -1771,11 +1771,11 @@ public:
   };
 
   SRAvgState	state;		// #GUI_READ_ONLY #SHOW what state of sravg computation are we currently in?  This is usually computed from the CtSRAvgSpec values on the network, but can be overridden and determined programmatically instead -- set the network CtSRAvgSpec manual flag on to do so..
-  float		s_sum;	// #READ_ONLY #EXPERT sum of sravg_s (short time-scale, plus phase) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
-  float		m_sum;	// #READ_ONLY #EXPERT sum of sravg_m (medium time-scale, trial) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
+  float		s_sum;	// #READ_ONLY #SHOW sum of sravg_s (short time-scale, plus phase) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
+  float		m_sum;	// #READ_ONLY #SHOW sum of sravg_m (medium time-scale, trial) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
 
-  float		s_nrm;	// #READ_ONLY #EXPERT normalization term = 1 / sravg_s_sum -- multiply connection-level sravg_s by this value -- only for Compute_dWt_CtLeabraCAL 
-  float		m_nrm;	// #READ_ONLY #EXPERT normalization term = 1 / sravg_m_sum -- multiply connection-level sravg_m by this value -- only for Compute_dWt_CtLeabraCAL 
+  float		s_nrm;	// #READ_ONLY #SHOW normalization term = 1 / sravg_s_sum -- multiply connection-level sravg_s by this value -- only for Compute_dWt_CtLeabraCAL 
+  float		m_nrm;	// #READ_ONLY #SHOW normalization term = 1 / sravg_m_sum -- multiply connection-level sravg_m by this value -- only for Compute_dWt_CtLeabraCAL 
 
   void		InitVals() { state = NO_SRAVG; s_sum = m_sum = 0.0f; s_nrm = m_nrm = 1.0f; }
 
