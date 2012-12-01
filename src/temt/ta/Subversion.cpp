@@ -149,9 +149,21 @@ SubversionClient::ErrorCode
 SubversionClient::Exception::toEmerErrorCode(svn_error_t *svn_error)
 {
   switch (svn_error->apr_err) {
-    case SVN_ERR_CANCELLED:     return EMER_OPERATION_CANCELLED;
-    case SVN_ERR_ENTRY_EXISTS:  return EMER_ERR_ENTRY_EXISTS;
-    default:                    return EMER_GENERAL_SVN_ERROR;
+  default:                    return EMER_GENERAL_SVN_ERROR;
+  case SVN_ERR_CANCELLED:     return EMER_OPERATION_CANCELLED;
+  case SVN_ERR_ENTRY_EXISTS:  return EMER_ERR_ENTRY_EXISTS;
+
+  case SVN_ERR_RA_DAV_REQUEST_FAILED:
+    if (svn_error->message) {
+      if (std::strstr(svn_error->message, "403 Forbidden")) {
+        return EMER_FORBIDDEN;
+      }
+      if (std::strstr(svn_error->message, "405 Method Not Allowed")) {
+        // Probably...
+        return EMER_ERR_ENTRY_EXISTS;
+      }
+    }
+    return EMER_GENERAL_SVN_ERROR;
   }
 }
 

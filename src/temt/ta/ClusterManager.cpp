@@ -76,7 +76,7 @@ ClusterManager::Run()
     ).c_str();
 
     if (m_username.empty()) {
-      taMisc::Error("A Subversion username is needed to run on a cluster.");
+      taMisc::Error("A Subversion username is required to run on a cluster.");
       return false;
     }
 
@@ -94,11 +94,21 @@ ClusterManager::Run()
     return true;
   }
   catch (const SubversionClient::Exception &ex) {
-    if (ex.GetErrorCode() == SubversionClient::EMER_OPERATION_CANCELLED) {
+    switch (ex.GetErrorCode()) {
+    case SubversionClient::EMER_OPERATION_CANCELLED:
+      // User probably cancelled, don't error, just inform.
       taMisc::Info("Running on cluster cancelled.", ex.what());
-    }
-    else {
+      break;
+
+    case SubversionClient::EMER_FORBIDDEN:
+      // Probably a commit failure.
+      taMisc::Error("User", m_username, "is not authorized on this server",
+        ex.what());
+      break;
+
+    default:
       taMisc::Error("Error running on cluster.", ex.what());
+      break;
     }
   }
 

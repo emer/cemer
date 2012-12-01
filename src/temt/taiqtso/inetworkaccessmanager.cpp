@@ -462,6 +462,7 @@ bool getUsernamePassword(
 
   if (usernameOnly) {
     passwordDialog.passwordLineEdit->hide();
+    passwordDialog.lblPassword->hide();
   }
 
   if (dialog.exec() == QDialog::Accepted) {
