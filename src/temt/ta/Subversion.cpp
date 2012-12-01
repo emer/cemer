@@ -153,6 +153,11 @@ SubversionClient::Exception::toEmerErrorCode(svn_error_t *svn_error)
   case SVN_ERR_CANCELLED:     return EMER_OPERATION_CANCELLED;
   case SVN_ERR_ENTRY_EXISTS:  return EMER_ERR_ENTRY_EXISTS;
 
+  // On Ubuntu 10.4, if the user cancels authentication, it causes a 170001
+  // error (SVN_ERR_RA_NOT_AUTHORIZED).  We could translate that into
+  // EMER_OPERATION_CANCELLED, but it seems likely that something as
+  // generic as "not authorized" could also occur in other cirumstances.
+
   case SVN_ERR_RA_DAV_REQUEST_FAILED:
     if (svn_error->message) {
       if (std::strstr(svn_error->message, "403 Forbidden")) {
@@ -413,7 +418,7 @@ SubversionClient::SubversionClient()
     m_ctx = createContext();
   }
   catch (const Exception &ex) {
-    taMisc::Error("Could not construct SubversionClient.", ex.what());
+    taMisc::Error("Could not construct SubversionClient.\n", ex.what());
     throw;
   }
 }

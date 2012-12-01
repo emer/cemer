@@ -102,12 +102,12 @@ ClusterManager::Run()
 
     case SubversionClient::EMER_FORBIDDEN:
       // Probably a commit failure.
-      taMisc::Error("User", m_username, "is not authorized on this server",
+      taMisc::Error("User", m_username, "is not authorized on this server.\n",
         ex.what());
       break;
 
     default:
-      taMisc::Error("Error running on cluster.", ex.what());
+      taMisc::Error("Error running on cluster.\n", ex.what());
       break;
     }
   }
