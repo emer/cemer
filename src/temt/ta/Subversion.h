@@ -36,16 +36,16 @@ extern "C" {
 class TA_API SubversionClient
 {
 public:
+  // Some error codes translated from the <svn_error_codes.h> values.
   enum ErrorCode
   {
-    EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for SVN error.
+    EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for specific SVN error.
     EMER_OPERATION_CANCELLED,
     EMER_ERR_ENTRY_EXISTS,
     // TBD.
   };
 
-  // Any code using SubversionClient should be prepared to catch exceptions
-  // of this type.
+  // Code using SubversionClient should catch exceptions of this type.
   class Exception : public std::runtime_error
   {
   public:
@@ -73,11 +73,20 @@ public:
     int m_svn_error_code;
   };
 
-  // TODO: how to handle authentication?
-  SubversionClient(const char *working_copy_path);
+  // There are three ways to get the username.
+  enum UsernameSource
+  {
+    CHECK_CACHE_THEN_PROMPT_USER,
+    CHECK_CACHE_ONLY,
+    PROMPT_USER_ONLY,
+  };
+
+  SubversionClient();
   virtual ~SubversionClient();
 
-  const char * GetWorkingCopyPath() const;
+  void SetWorkingCopyPath(const char *working_copy_path);
+  std::string GetWorkingCopyPath() const;
+  std::string GetUsername(const char *url, UsernameSource source) const;
 
   // Check if the working copy has already been checked out.
   bool IsWorkingCopy();

@@ -333,13 +333,8 @@ public: // public API
   virtual void  Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
 
-  virtual void  RunOnCluster(
-    const String &repo = "http://grey.colorado.edu/svn/emergent/emergent/branches/houman/cluster-test",
-    const String &prefix = "/cluster_name/svn_username/",
-    const String &filename = "YourProjectName.proj",
-    const String &desc = "description of the parameters used in this run on the cluster",
-    int num_of_procs = 20);
-  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE Run this model on a cluster using the parameters of this SelectEdit.
+  virtual void  RunOnCluster();
+  // #BUTTON Run this model on a cluster using the parameters of this SelectEdit.
 
 
   //////////////////////////////////////////////////

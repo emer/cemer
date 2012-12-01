@@ -626,13 +626,13 @@ public:
   //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
   static String         svn_rev;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number
-  static int64_t	exe_mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for executable file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild plugins, for example
-  static String		exe_mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the executable file was last modified (installed)
+  static int64_t        exe_mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for executable file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild plugins, for example
+  static String         exe_mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the executable file was last modified (installed)
   static const BuildType build_type;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
   static const String    build_str;
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App an extension string based on build type -- no extension for "release gui no-dmem" configuration -- this reflects the actual compile-time parameters, not the suffix -- see app_sufix for empirical parameters
-  static String    	 app_suffix;
+  static String          app_suffix;
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App actual empirical suffix on the exe_cmd -- this is the official key used for plugins and prefs and other things like that
   static bool            save_old_fmt;
   // #SAVE #CAT_File save project and other 'dump' files in the old emergent format (version 2 of the file format) which was used up through version 5.0.1 -- files are unlikely to be very functional in older versions anyway, but this would allow them to at least be loaded -- only use this on a temporary basis when absolutely necessary! (note: old format files can be loaded without problem in current version)
@@ -659,13 +659,13 @@ public:
   static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
-  static int            indent_spc;  	// #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
+  static int            indent_spc;     // #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
   static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
 
   static bool           emacs_mode;     // #SAVE #CAT_GUI use full emacs key bindings -- all non-conflicting emacs keys are available regardless, but with this turned on, Ctrl+V is page down instead of Paste -- use Ctrl+Y (emacs yank) for paste instead -- on a Mac, Command+V is usually paste, so Ctrl+V can be used for page down without conflict, so this setting defaults to ON for macs
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
-  static bool		undo_debug; // #NO_SAVE #CAT_GUI display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
+  static bool           undo_debug; // #NO_SAVE #CAT_GUI display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
   static float          undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
   static int            auto_save_interval;     // #SAVE #CAT_GUI how many seconds to wait between automatic saves of opened projects that have been modified?  auto save files go to project file name + _autosave
   static int            wait_proc_delay; // #SAVE #CAT_GUI #DEF_20 #EXPERT delay in milliseconds before starting the wait processing function to process misc stuff after all of the current gui events have been processed -- a smaller number makes the system more responsive but also consumes a bit more CPU -- setting to 0 consumes a lot of CPU as the wait processing loop is constantly revisited
@@ -757,9 +757,17 @@ public:
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
   static NamedURL       wiki6_url;
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
-
   static NameVar_PArray wikis;
   // #NO_SAVE #READ_ONLY #HIDDEN the non-empty wiki names and urls from the above set of wikis -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
+
+  static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo3_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo4_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo5_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo6_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NameVar_PArray svn_repos;
+  // #NO_SAVE #READ_ONLY #HIDDEN the non-empty repo names and urls from the above set of repos -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
@@ -849,11 +857,11 @@ public:
   static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
-  static bool		err_cancel;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently canceling error messages
-  static int64_t	err_cancel_time; // #READ_ONLY #NO_SAVE #NO_SHOW time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
-  static int		err_cancel_time_thr; // #NO_SAVE #NO_SHOW threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0
-  static int		err_waitproc_cnt; // #READ_ONLY #NO_SAVE #NO_SHOW count of number of times through the waitproc during err_cancel -- if enough times through, then we lift the err cancel (see err_waitproc_thr)
-  static int		err_waitproc_thr; // #NO_SAVE #NO_SHOW threshold number of times through the waitproc to lift an err cancel 
+  static bool           err_cancel;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently canceling error messages
+  static int64_t        err_cancel_time; // #READ_ONLY #NO_SAVE #NO_SHOW time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
+  static int            err_cancel_time_thr; // #NO_SAVE #NO_SHOW threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0
+  static int            err_waitproc_cnt; // #READ_ONLY #NO_SAVE #NO_SHOW count of number of times through the waitproc during err_cancel -- if enough times through, then we lift the err cancel (see err_waitproc_thr)
+  static int            err_waitproc_thr; // #NO_SAVE #NO_SHOW threshold number of times through the waitproc to lift an err cancel
   static String         last_err_msg;
   // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Error function
   static String         last_warn_msg;
@@ -869,7 +877,7 @@ public:
   static fstream        log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
 
-  static String 	console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
+  static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
 
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<QMainWindow>  console_win;    // #IGNORE the console window
@@ -894,10 +902,10 @@ public:
   /////////////////////////////////////////////////
   //    Errors, Warnings, Simple Dialogs
 
-  static bool	ErrorCancelCheck();
+  static bool   ErrorCancelCheck();
   // #CAT_Dialog check if error messages have been canceled by the user
-  static bool	ErrorCancelSet(bool on = true);
-  // #CAT_Dialog turn on (or off) canceling of errors 
+  static bool   ErrorCancelSet(bool on = true);
+  // #CAT_Dialog turn on (or off) canceling of errors
 
   static String SuperCat(const char* a, const char* b, const char* c,
                       const char* d, const char* e, const char* f,
@@ -973,9 +981,9 @@ public:
 
   static void   FlushConsole();
   // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output (NOTE: output to cout, cerr is deprecated and should be avoided -- use ConsoleOutput instead)
-  static bool	ConsoleOutput(const String& str, bool err = false, bool pager = true);
+  static bool   ConsoleOutput(const String& str, bool err = false, bool pager = true);
   // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
-  static bool	ConsoleOutputChars(const String& str, bool err = false, bool pager = false);
+  static bool   ConsoleOutputChars(const String& str, bool err = false, bool pager = false);
   // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
 
   static int    ProcessEvents();
@@ -1105,15 +1113,15 @@ public:
 
   static String& IndentString(String& strm, int indent)
   { return strm << String(MAX(indent,0) * indent_spc, 0, ' '); }
-  // #CAT_Utility add indent to a string, using default indent spacing 
+  // #CAT_Utility add indent to a string, using default indent spacing
   static String& CrIndentString(String& strm, int indent)
   { return strm << "\n" << String(MAX(indent,0) * indent_spc, 0, ' '); }
-  // #CAT_Utility add carriage return (newline) and indent to a string, using default indent spacing 
+  // #CAT_Utility add carriage return (newline) and indent to a string, using default indent spacing
   static String& FancyPrintList(String& strm, const String_PArray& strs,
-				int indent=0, int max_col_width=20, int n_per_line = -1);
+                                int indent=0, int max_col_width=20, int n_per_line = -1);
   // #CAT_Utility generate a print string from an array of strings, where all the items are lined up in columns based on the maximum width of items in the array -- if an item exceeds the max_col_width it gets multiple columns as needed -- keeps things overall more compact if there are a few outliers with very long names -- can specify per line or if -1 it is auto-computed
   static String& FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
-				  const String_PArray& col2_strs, int indent=0);
+                                  const String_PArray& col2_strs, int indent=0);
   // #CAT_Utility generate a print string from two columns of strings (must be equal in size), where the 2nd column items are all aligned with proper spacing after the first column items, based on the maximum width of items in the first columnn
 
   /////////////////////////////////////////////////
@@ -1183,7 +1191,7 @@ public:
   // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
   static String FixURL(const String& url_str);
   // #CAT_File do some basic things to fix a url to make it at least somewhat viable (e.g., add http:// if no 'scheme' already there, add .com if no . present in an http:// url)
-  static String	ExtraAppSuffix();
+  static String ExtraAppSuffix();
   // #CAT_File return any extra app suffix beyond the standard app suffixes (dbg, mpi) -- empty string if none -- parses the app_suffix member
 
   static bool   InternetConnected();
@@ -1278,7 +1286,7 @@ public:
   //    File Parsing Stuff for Dump routines: Output
 
   static ostream& indent(ostream& strm, int indent, int tsp=2);
-  // #CAT_File generate indentation 
+  // #CAT_File generate indentation
   static ostream& write_quoted_string(ostream& strm, const String& str,
                                       bool write_if_empty = false);
   // #CAT_File writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
@@ -1675,7 +1683,7 @@ public:
 
   // IO
   String&       PrintType(String& strm, int indent = 0) const;
-  String&	Print(String& strm, int indent = 0) const
+  String&       Print(String& strm, int indent = 0) const
   { return PrintType(strm, indent); }
   String&       Print(String& strm, void* base, int indent=0) const;
 
@@ -1685,7 +1693,7 @@ public:
   int           Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
   int           Dump_Load(istream& strm, void* base, void* par,
-			  const char* prv_read_nm = NULL, int prv_c = 0); //
+                          const char* prv_read_nm = NULL, int prv_c = 0); //
 
 public: // lexical hacks
   inline MemberDef*     operator[](int i) const {return (MemberDef*)inherited::FastEl(i);}
@@ -1827,7 +1835,7 @@ public:
   virtual bool  ReplaceParents(const TypeSpace& ol, const TypeSpace& nw);
   // replace any parents on the old list with those on the new for all types
 
-  String& 	PrintAllTokens(String& strm) const;
+  String&       PrintAllTokens(String& strm) const;
   // print count for all types that are keeping tokens
 };
 
@@ -2045,7 +2053,7 @@ public:
     // name used for saving a reference in stream files, can be used to lookup again
 
   override const Variant GetValVar(const void* base) const;
-  override void 	 SetValVar(const Variant& val, void* base, void* par = NULL);
+  override void          SetValVar(const Variant& val, void* base, void* par = NULL);
     // note: par is only needed really needed for owned taBase ptrs)
 
   DefaultStatus         GetDefaultStatus(const void* base);
@@ -2063,8 +2071,8 @@ public:
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
-  void	        PrintType(String& col1, String& col2) const;
-  void	        Print(String& col1, String& col2, void* base, int indent=0) const;
+  void          PrintType(String& col1, String& col2) const;
+  void          Print(String& col1, String& col2, void* base, int indent=0) const;
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
@@ -2179,7 +2187,7 @@ public:
   bool                  CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
   bool                  CompareArgs(MethodDef* it) const;       // true if same, false if not
-  void	                PrintType(String& col1, String& col2) const;
+  void                  PrintType(String& col1, String& col2) const;
   void                  CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String          ParamsAsString() const; // returns what would be in () for a definition
@@ -2321,7 +2329,7 @@ public:
   // gets base type (not const) parent of this type
   TypeDef*              GetNonConstNonRefType() const;
   // gets base type (not const or ref) parent of this type
-  TypeDef*		GetClassType() const;
+  TypeDef*              GetClassType() const;
   // gets a parent type that is a basic class object (i.e., InheritsFormal from TA_class) -- this is the best way to cut through all the type qualifiers and just find out what kind of object you've got (preferred over GetNonConstNonRefType for class objects) -- returns NULL if this does NOT so inherit
   TypeDef*              GetTemplType() const;
   // gets base template parent of this type
@@ -2369,7 +2377,7 @@ public:
   bool                  DerivesFrom(const TypeDef& it) const
   { return DerivesFrom((TypeDef*)&it); }
 
-  // inheritance from a formal class (e.g. const, static, class) -- NOTE: these are NOT inherited from parent types, so only an actual class object InheritsFormal(&TA_class) 
+  // inheritance from a formal class (e.g. const, static, class) -- NOTE: these are NOT inherited from parent types, so only an actual class object InheritsFormal(&TA_class)
   bool                  InheritsFormal(TypeDef* it) const
   { if((ptr == 0) && (par_formal.FindEl(it)>=0)) return true; return false; }
   bool                  InheritsFormal(const TypeDef& it) const
@@ -2597,8 +2605,8 @@ INHERITED(taRefN)
 public:
   enum DiffFlags {              // #BITS
     DF_NONE     = 0x000000,     // nothing
-    SRC_A       = 0x000001,	// comes from a items
-    SRC_B       = 0x000002,	// comes from b items
+    SRC_A       = 0x000001,     // comes from a items
+    SRC_B       = 0x000002,     // comes from b items
     DIFF_DEL    = 0x000004,     // diff edit = delete from a, also marks corresponding point in b where a del starts
     DIFF_ADD    = 0x000008,     // diff edit = add from b to a, also marks corresponding point in a where b add starts
     DIFF_CHG    = 0x000010,     // diff edit = change from a to b
@@ -2624,10 +2632,10 @@ public:
   taObjDiff_List* owner;        // the owner of this one
   int           idx;            // the index number in owning list
   int           nest_level;     // how deeply nested or embedded is this object in the obj hierarchy
-  int		n_diffs;	// total number of diffs for this item and everything below it
-  int		diff_no;	// difference number -- indexes which original diff record this diff belongs to
-  int		diff_no_start;	// for parent objects, first difference number this object participates in
-  int		diff_no_end;	// for parent objects, ending difference number this object participates in
+  int           n_diffs;        // total number of diffs for this item and everything below it
+  int           diff_no;        // difference number -- indexes which original diff record this diff belongs to
+  int           diff_no_start;  // for parent objects, first difference number this object participates in
+  int           diff_no_end;    // for parent objects, ending difference number this object participates in
   String        name;           // object name (member name, object type) -- this is used in diffing and is not always best for display -- see GetDisplayName()
   String        value;          // string representation of this object
   taHashVal     hash_code;      // hash-code of name&value + nest_level -- this is what diff is based on
@@ -2638,7 +2646,7 @@ public:
   TypeDef*      par_type;       // type of parent object, if a member of a containing object
   taObjDiffRec* par_odr;        // parent diff record
   taObjDiffRec* diff_odr;       // paired diff record from other source
-  void*    	tabref;         // when this is used, it is a taBaseRef* 
+  void*         tabref;         // when this is used, it is a taBaseRef*
   void*         widget;         // points to the widget associated with this record
 
   inline void           SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
@@ -2671,11 +2679,11 @@ public:
   // computes the hash code based on name + & + value + nest_level -- called by GetValue, but call this manually if anything changes
 
 #ifndef NO_TA_BASE
-  taObjDiffRec*	GetOwnTaBaseRec();
+  taObjDiffRec* GetOwnTaBaseRec();
   // find the closest record with a tabref set, starting with this record, and moving up the parents
-  taBase*	GetOwnTaBase();
+  taBase*       GetOwnTaBase();
   // get the actual ta base pointer that owns this record
-  String	GetTypeDecoKey();
+  String        GetTypeDecoKey();
   // get the decoration key for coloring this record -- from ta base
 #endif
 
@@ -2717,8 +2725,8 @@ public:
   taBase*       tab_obj_a;      // initial diff object for GetObjDiffVal and A comparison object for diff
   taBase*       tab_obj_b;      // original B comparison object as a taBase
 #endif
-  taObjDiff_List* 	src_a; // source list of a items -- managed by this diff list -- create with CreateSrcs
-  taObjDiff_List* 	src_b; // source list of b items -- managed by this diff list -- create with CreateSrcs
+  taObjDiff_List*       src_a; // source list of a items -- managed by this diff list -- create with CreateSrcs
+  taObjDiff_List*       src_b; // source list of b items -- managed by this diff list -- create with CreateSrcs
 
   void          Initialize();
 
@@ -2732,7 +2740,7 @@ public:
   void          SetAllFlag(int flg);
   // set taObjDiffRec::DiffFlag flag value for all items on the list
 
-  void		CreateSrcs();
+  void          CreateSrcs();
   // create the src_a and src_b lists, which then need to be populated with content (outside scope of this diff object)
   void          Diff();
   // perform a diff on src_a vs. src_b records -- must have already called CreateSrcs and filled in those lists with source item records to be compared -- resulting diffs all end up here in this list -- typically are links to recs in one or other of the src lists
@@ -2745,7 +2753,7 @@ protected:
 
   bool          DiffFlagParents(taObjDiffRec* rec);
   // flag parents of rec item
-  int		DiffPurgeNoDiffs(taObjDiff_List* src);
+  int           DiffPurgeNoDiffs(taObjDiff_List* src);
   // purge all the items from src_a and src_b that have no diff items
 };
 

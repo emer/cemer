@@ -16,6 +16,8 @@
 
 #include "ta_seledit.h"
 
+#include <QBoxLayout>
+#include <QComboBox>
 #include <QFileInfo>
 #include <QFile>  // used by RunOnCluster()
 #include <QTextStream>
@@ -23,6 +25,7 @@
 #include "ta_platform.h"
 #include "ta_project.h"
 #include "ta_qt.h"
+#include "ta_gui.h"
 #include "ta_datatable.h"
 #include "Subversion.h"
 
@@ -738,38 +741,124 @@ void SelectEdit::Reset() {
   ReShowEdit(true); //forced
 }
 
-void SelectEdit::RunOnCluster(
-  const String &repo,
-  const String &prefix,
-  const String &filename,
-  const String &desc,
-  int num_of_procs)
+namespace { // anonymous
+  bool ShowRunOnClusterDialog(String &repo_url, String &description)
+  {
+    // Make sure there's at least one repository defined.
+    if (taMisc::svn_repos.size == 0) {
+      taMisc::Error(
+        "Please define at least one repository in preferences/options first");
+      return false;
+    }
+
+    taGuiDialog dlg;
+    dlg.win_title = "Run on cluster";
+    dlg.prompt = "Enter parameters";
+
+    String widget("main");
+    String vbox("mainv");
+    dlg.AddWidget(widget);
+    dlg.AddVBoxLayout(vbox, "", widget);
+
+    String row;
+    row = "instrRow";
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("Instructions", widget, row,
+      "label=Please choose a cluster and enter a description for this run.\n"
+      "The description will be used as a checkin comment.;");
+
+    dlg.AddSpace(20, vbox);
+    row = "clustRow";
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("clustLbl", widget, row, "label=Cluster: ;");
+
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+
+    QComboBox *combo = new QComboBox;
+    for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
+      combo->addItem(taMisc::svn_repos[idx].name.chars(),
+                     static_cast<QString>(taMisc::svn_repos[idx].value));
+    }
+    hbox->addWidget(combo);
+
+    dlg.AddSpace(20, vbox);
+    row = "descRow";
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("descLbl", widget, row, "label=Description: ;");
+
+    dlg.AddStringField(&description, "description", widget, row,
+      "tooltip=enter a description to be used as a checkin comment;");
+
+    bool modal = true;
+    int drval = dlg.PostDialog(modal);
+    if (drval == 0) return false; // User cancelled.
+
+    repo_url = combo->itemData(combo->currentIndex()).toString();
+    return true;
+  }
+}
+
+void SelectEdit::RunOnCluster()
 {
+  // Get the project object.
+  taProject *proj = GET_MY_OWNER(taProject);
+  if (!proj) {
+    taMisc::Error("Could not get project object to run on cluster.");
+    return;
+  }
+
+  // Get the project's filename and make sure it has been saved at least once.
+  // This intentionally doesn't check to see if the user has unsaved changes!
+  const String filename = proj->file_name;
+  if (filename.empty()) {
+    taMisc::Error(
+      "Please save project locally before attempting to run on cluster.");
+    return;
+  }
+
+  // Prompt the user for a repository and a description for this cluster run.
+  String repo_url;
+  String description;
+  if (!ShowRunOnClusterDialog(repo_url, description)) {
+    taMisc::Info("Running on cluster cancelled.");
+    return;
+  }
+
+  taMisc::Info("Running project", filename, "\n  on cluster", repo_url,
+    "\n  Description:", description);
+
   try {
     // Run this model on a cluster using the parameters of this SelectEdit.
     taMisc::Info("RunOnCluster() test");
 
-    // TODO: need to get username from somewhere else.
-    String username = "testwc-ignoreme";
-    String wc_path = taMisc::user_app_dir + PATH_SEP + "repos" + PATH_SEP + username;
-    //String wc_path = "/home/houman/Desktop/houmanwc/"; // TODO remove this
+    // Create Subversion client and get the user's username.  Need the URL to
+    // get the username from the cache so unfortunately we have to do this
+    // after presenting the dialog.  On the other hand, the only way this can
+    // fail is if the user provides an empty username, so it's hard for them
+    // to screw it up.
+    SubversionClient svnClient;
+    String username = svnClient.GetUsername(
+      repo_url, SubversionClient::CHECK_CACHE_THEN_PROMPT_USER
+    ).c_str();
 
-    // Create Subversion client for this working copy directory.
-    SubversionClient svnClient(wc_path.chars());
+    if (username.empty()) {
+      taMisc::Error("A Subversion username is needed to run on a cluster.");
+      return;
+    }
 
-    // Get the canonicalized version of the working copy path.
-    wc_path = svnClient.GetWorkingCopyPath();
-
-    // TODO: for now I set all the required parameters here
-    String repo_path = repo;
-    //String repo_path = "file:///home/houman/Desktop/svn/hoohoo"; // TODO remove this
-
-    //String user_app_dir = "/home/houman/Desktop"; // TODO remove this
+    // Set the working copy path and get a canonicalized version back.
+    String wc_path = taMisc::user_app_dir + '/' + "repos" + '/' + username;
+    svnClient.SetWorkingCopyPath(wc_path.chars());
+    wc_path = svnClient.GetWorkingCopyPath().c_str();
 
     // Don't use PATH_SEP here, since on Windows that's '\\', which is
-    // non-canonical for URLs and causes errors.
-    String repo_user_path = repo_path + '/' + "repos" + '/' + username;  // path to the user's dir in the repo
-    String proj_name = "myproj";
+    // non-canonical for URLs (and svn paths) and causes errors.
+    String repo_user_path = repo_url + '/' + "repos" + '/' + username;  // path to the user's dir in the repo
+    String proj_name = filename.before(".proj");
     String wc_proj_path = wc_path + '/' + proj_name;
     String wc_submit_path = wc_proj_path + '/' + "submit";  // a subdir of the project
     String wc_models_path = wc_proj_path + '/' + "models";  // a subdir of the project to contain model files
@@ -778,14 +867,14 @@ void SelectEdit::RunOnCluster(
 
     taMisc::Info("repo is at " + repo_user_path); // TODO remove this
     taMisc::Info("wc is at " + wc_path); // TODO remove this
+
     // check if the user has a wc. checkout a wc if needed
     QFileInfo fi_wc(wc_path.chars());
     if (!fi_wc.exists()) {  // user never used c2c or at least never used it on this emergent instance
       taMisc::Info("wc wasn't found at " + wc_path); // TODO remove this
       // checkout the user's dir
       int co_rev = 0;
-      //co_rev = svnClient.Checkout(repo_path, false);  // the repo_path directory with no content will be checked out
-      //taMisc::Info("wc_path is " + wc_path); // TODO remove this
+      //co_rev = svnClient.Checkout(repo_url, false);  // the repo_url directory with no content will be checked out
 
       taMisc::Info("will try to mkdir " + repo_user_path); // TODO remove this
       String comment = "Creating cluster directory for user ";
@@ -815,29 +904,27 @@ void SelectEdit::RunOnCluster(
     // check if the project's dir already exists. create the project's dir and subdirs if needed
     QFileInfo fi_proj(wc_proj_path);
     if (!fi_proj.exists()) {  // it's a new project, create a dir and subdirs for it
-      bool mkdir_success = false;
-      mkdir_success = svnClient.MakeDir(wc_proj_path);
-      mkdir_success = svnClient.MakeDir(wc_submit_path);
-      mkdir_success = svnClient.MakeDir(wc_models_path);
-      mkdir_success = svnClient.MakeDir(wc_results_path);
-      taMisc::Info("new project directory was created"); // TODO remove this
+      try {
+        bool mkdir_success = false;
+        mkdir_success = svnClient.MakeDir(wc_proj_path);
+        mkdir_success = svnClient.MakeDir(wc_submit_path);
+        mkdir_success = svnClient.MakeDir(wc_models_path);
+        mkdir_success = svnClient.MakeDir(wc_results_path);
+        taMisc::Info("new project directory was created"); // TODO remove this
+      }
+      catch (const SubversionClient::Exception &ex) {
+        if (ex.GetErrorCode() == SubversionClient::EMER_ERR_ENTRY_EXISTS) {
+          taMisc::Info("Directory already exist.", ex.what());
+        }
+        else {
+          throw;
+        }
+      }
     }
     else { // the project already exists (possibilities: user is running the same project, running the same project with different parameters, duplicate submission)
       // TODO warn user. what should be done here? (options: create a new dir for the project with a version number like "/project_2", use the existing project dir and attach a version number to the model file names, replace the old project with the new one)
       taMisc::Info("the project already exsits"); // TODO remove this
     }
-  }
-   catch (const SubversionClient::Exception &ex) {
-
-     switch (ex.GetErrorCode()) {
-     case SubversionClient::EMER_OPERATION_CANCELLED:
-       taMisc::Info("Running on cluster cancelled.", ex.what());
-     case SubversionClient::EMER_ERR_ENTRY_EXISTS:
-       taMisc::Info("Directory already exist.", ex.what());
-     default:
-       taMisc::Error("Error running on cluster.", ex.what());
-     }
-   }
 
     // generate a txt file containing the model parameters
     String model_filename = "model.txt";  // TODO might need a version number
@@ -858,7 +945,15 @@ void SelectEdit::RunOnCluster(
 
     // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
     //PrintMkdirMessage(mkdir_success, model_path);
-
+  }
+  catch (const SubversionClient::Exception &ex) {
+    if (ex.GetErrorCode() == SubversionClient::EMER_OPERATION_CANCELLED) {
+      taMisc::Info("Running on cluster cancelled.", ex.what());
+    }
+    else {
+      taMisc::Error("Error running on cluster.", ex.what());
+    }
+  }
 }
 
 

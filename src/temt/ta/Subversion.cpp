@@ -15,6 +15,13 @@
 
 #include "Subversion.h"
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QString>
+#include <QTextStream>
+#include <QUrl>
+
 #include <cstring>
 #include <iostream>
 #include <sstream>
@@ -371,7 +378,7 @@ struct SubversionClient::Glue
 // SubversionClient
 ///////////////////////////////////////////////////////////////////////////////
 
-SubversionClient::SubversionClient(const char *working_copy_path)
+SubversionClient::SubversionClient()
   : m_wc_path(0)
   , m_url(0)
   , m_pool(0) // initialized below
@@ -388,9 +395,6 @@ SubversionClient::SubversionClient(const char *working_copy_path)
   // Set the error handler to one that doesn't abort!
   // We'll check for these errors and convert to exceptions.
   svn_error_set_malfunction_handler(svn_error_raise_on_malfunction);
-
-  // Canonicalize the path.
-  m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
 
   try {
     // Create a context object.  Throws on failure.
@@ -414,10 +418,147 @@ SubversionClient::~SubversionClient()
   svn_pool_destroy(m_pool);
 }
 
-const char *
+void
+SubversionClient::SetWorkingCopyPath(const char *working_copy_path)
+{
+  // Canonicalize the working copy path.
+  m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
+}
+
+std::string
 SubversionClient::GetWorkingCopyPath() const
 {
   return m_wc_path;
+}
+
+namespace { // anonymous, helpers for GetUsername().
+  QString
+  urlToRealmString(const QString &url)
+  {
+#if (QT_VERSION >= 0x040600)
+    QUrl qurl(QUrl::fromUserInput(url));
+#else
+    QUrl qurl(url);
+#endif
+
+    QString scheme = qurl.scheme();
+    int defaultPort = 80;
+    if (scheme == "https") {
+      defaultPort = 443;
+    }
+    else if (scheme == "svn") {
+      defaultPort = 3690;
+    }
+
+    int port = qurl.port(defaultPort);
+    QString host = qurl.host();
+    QString realm = QString("<%1://%2:%3>").arg(scheme).arg(host).arg(port);
+    return realm;
+  }
+
+  QFileInfoList
+  getAllFilesUnder(const QString &directoryPath)
+  {
+    QFileInfoList files;
+    QFileInfoList dirs;
+    dirs << QFileInfo(directoryPath);
+    while (!dirs.isEmpty()) {
+      QDir d(dirs.first().absoluteFilePath());
+      dirs.removeFirst();
+
+      // Get files in this dir.
+      d.setFilter(QDir::Files);
+      files.append(d.entryInfoList());
+
+      // Get subdirs.
+      d.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+      dirs.append(d.entryInfoList());
+    }
+    return files;
+  }
+
+  QString
+  findUsernameInAuthFileMatchingRealm(
+    const QFileInfoList &authFiles,
+    const QString &realmString)
+  {
+    foreach (const QFileInfo &fi, authFiles) {
+      QFile file(fi.absoluteFilePath());
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream text(&file);
+        QString username;
+        bool realmMatches = false;
+        while (true) { // Read all lines of the file.
+          QString line = text.readLine();
+          if (line.isNull()) break; // EOF
+          if (line == SVN_CONFIG_REALMSTRING_KEY) { // "svn:realmstring"
+            line = text.readLine();
+            line = text.readLine();
+            realmMatches = line.contains(realmString, Qt::CaseInsensitive);
+          }
+          else if (line == SVN_CONFIG_OPTION_USERNAME) { // "username"
+            line = text.readLine();
+            line = text.readLine();
+            username = line;
+          }
+
+          if (realmMatches && !username.isEmpty()) {
+            return username;
+          }
+        }
+      }
+    }
+    return "";
+  }
+}
+
+std::string
+SubversionClient::GetUsername(const char *url, UsernameSource source) const
+{
+  QString realmString = urlToRealmString(url);
+
+  // Check the cache first.
+  if (source == CHECK_CACHE_THEN_PROMPT_USER ||
+      source == CHECK_CACHE_ONLY)
+  {
+    const char *userAuthDirPath = 0;
+    if (svn_error_t *error = svn_config_get_user_config_path(
+          &userAuthDirPath,
+          0, // config_dir
+          SVN_CONFIG_SECTION_AUTH,
+          m_pool))
+    {
+      svn_error_clear(error);
+      return "";
+    }
+
+    // There's gotta be an easier way to get the username for a given URL!!
+    // Can't just lookup the file based on the realmString, since its format
+    // may change based on the client and/or server in use!  This is pretty
+    // brute force.
+    QFileInfoList authFiles = getAllFilesUnder(userAuthDirPath);
+    QString username =
+      findUsernameInAuthFileMatchingRealm(authFiles, realmString);
+    if (!username.isEmpty()) {
+      return username.toStdString();
+    }
+  }
+
+  // Then prompt the user.
+  if (source == CHECK_CACHE_THEN_PROMPT_USER ||
+      source == PROMPT_USER_ONLY)
+  {
+    QString qUser;
+    QString qPass;
+    QString qMessage("Enter Subversion username.");
+    qMessage.append("\n").append(realmString);
+    if (getUsernamePassword(qUser, qPass, qMessage, 0, 0, true)) {
+      return qUser.toStdString();
+    }
+  }
+
+  // Oops.
+  return "";
 }
 
 svn_client_ctx_t *
