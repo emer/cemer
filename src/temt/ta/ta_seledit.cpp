@@ -817,24 +817,27 @@ void SelectEdit::RunOnCluster(
     if (!fi_proj.exists()) {  // it's a new project, create a dir and subdirs for it
       bool mkdir_success = false;
       mkdir_success = svnClient.MakeDir(wc_proj_path);
-      svnClient.Checkin("project's directory created");
-      //PrintMkdirMessage(mkdir_success, wc_proj_path);
       mkdir_success = svnClient.MakeDir(wc_submit_path);
-      svnClient.Checkin("project's submit directory created");
-      //PrintMkdirMessage(mkdir_success, submit_path);
       mkdir_success = svnClient.MakeDir(wc_models_path);
-      svnClient.Checkin("project's models directory created");
-      //PrintMkdirMessage(mkdir_success, models_path);
       mkdir_success = svnClient.MakeDir(wc_results_path);
-      svnClient.Checkin("project's results directory created");
-      //PrintMkdirMessage(mkdir_success, results_path);
-      // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
       taMisc::Info("new project directory was created"); // TODO remove this
     }
     else { // the project already exists (possibilities: user is running the same project, running the same project with different parameters, duplicate submission)
       // TODO warn user. what should be done here? (options: create a new dir for the project with a version number like "/project_2", use the existing project dir and attach a version number to the model file names, replace the old project with the new one)
       taMisc::Info("the project already exsits"); // TODO remove this
     }
+  }
+   catch (const SubversionClient::Exception &ex) {
+
+     switch (ex.GetErrorCode()) {
+     case SubversionClient::EMER_OPERATION_CANCELLED:
+       taMisc::Info("Running on cluster cancelled.", ex.what());
+     case SubversionClient::EMER_ERR_ENTRY_EXISTS:
+       taMisc::Info("Directory already exist.", ex.what());
+     default:
+       taMisc::Error("Error running on cluster.", ex.what());
+     }
+   }
 
     // generate a txt file containing the model parameters
     String model_filename = "model.txt";  // TODO might need a version number
@@ -855,15 +858,7 @@ void SelectEdit::RunOnCluster(
 
     // TODO set mkdir to commit immediately after adding dirs to avoid an explicit commit
     //PrintMkdirMessage(mkdir_success, model_path);
-  }
-  catch (const SubversionClient::Exception &ex) {
-    if (ex.GetErrorCode() == SubversionClient::EMER_OPERATION_CANCELLED) {
-      taMisc::Info("Running on cluster cancelled.", ex.what());
-    }
-    else {
-      taMisc::Error("Error running on cluster.", ex.what());
-    }
-  }
+
 }
 
 
