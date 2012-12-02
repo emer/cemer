@@ -163,184 +163,16 @@ void LeabraTICtxtSUnitSpec::Initialize() {
 void LeabraTICtxtSUnitSpec::Defaults_init() {
 }
 
-void LeabraTICtxtSUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
-					       int thread_no) {
-  
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-  if(lay->lesioned()) return;
-  LeabraLayerSpec* lls = (LeabraLayerSpec*)lay->GetLayerSpec();
-  if(!lls->InheritsFrom(&TA_LeabraTILayerSpec)) return;
-  LeabraTILayerSpec* ls = (LeabraTILayerSpec*)lls;
-  if(!ls->ti.ctxt_s_net) {
-    inherited::Compute_NetinInteg(u, net, thread_no);
-    return;
-  }
-
-  if(net->NetinPerPrjn()) {
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      recv_gp->net_raw += recv_gp->net_delta;
-      recv_gp->net_delta = 0.0f; // clear for next use
-    }
-  }
-
-  if(net->inhib_cons_used) {
-    u->g_i_raw += u->g_i_delta;
-    if(act_fun == SPIKE) {
-      u->gc.i = MAX(u->g_i_raw, 0.0f);
-      Compute_NetinInteg_Spike_i(u, net);
-    }
-    else {
-      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
-      u->prv_g_i = u->gc.i;
-    }
-  }
-
-  u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
-  // NEW CODE: plus phase
-  if(net->phase_no >= 1) {
-    tot_net = ls->ti.ctxt_s_new_c * u->misc_1 + ls->ti.ctxt_s_new * tot_net;
-  }
-
-  if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
-    LeabraInhib* thr;
-    int gpidx = u->UnitGpIdx();
-    if(gpidx < 0 || ls->inhib_group == LeabraLayerSpec::ENTIRE_LAYER) {
-      thr = (LeabraInhib*)lay;
-    }
-    else {
-      thr = (LeabraInhib*)lay->ungp_data.FastEl(gpidx);
-    }
-    tot_net += thr->netin.avg * ls->inhib.avg_boost * u->act_eq;
-  }
-
-  if(u->HasExtFlag(Unit::EXT)) {
-    tot_net += u->ext * ls->clamp.gain;
-  }
-
-  u->net_delta = 0.0f;  // clear for next use
-  u->g_i_delta = 0.0f;  // clear for next use
-
-  if(act_fun == SPIKE) {
-    // todo: need a mech for inhib spiking
-    u->net = MAX(tot_net, 0.0f); // store directly for integration
-    Compute_NetinInteg_Spike_e(u, net);
-  }
-  else {
-    float dnet = dt.net * (tot_net - u->prv_net);
-    u->net = u->prv_net + dnet;
-    u->prv_net = u->net;
-    u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
-  }
-
-  // add just before computing i_thr -- after all the other stuff is done..
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->net += Compute_Noise(u, net);
-  }
-  u->i_thr = Compute_IThresh(u, net);
-}
-
-void LeabraTICtxtSUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* rlay = u->own_lay();
-  if(rlay->lesioned()) return;
-  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_LeabraTILayerSpec)) return;
-  LeabraTILayerSpec* ls = (LeabraTILayerSpec*) rlay->GetLayerSpec();
-  if(ls->ti.ctxt_s_net) {
-    inherited::Compute_ActFmVm_rate(u, net);
-    return;
-  }
-
-  float new_act;
-  if(act.gelin) {
-    if(act.old_gelin) {
-      float g_e_val = u->net;
-      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
-      if(vm_eq > 0.0f) {
-	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
-	if(vmrat > 1.0f) vmrat = 1.0f;
-	else if(vmrat < 0.0f) vmrat = 0.0f;
-	g_e_val *= vmrat;
-      }
-      float g_e_thr = Compute_EThresh(u);
-      new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
-      // NEW CODE: plus phase
-      if(net->phase_no >= 1) {
-	new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
-      }
-
-    }
-    else {			// new gelin
-      if(u->v_m <= act.thr) {
-	new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
-      }
-      else {
-	float g_e_thr = Compute_EThresh(u);
-	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
-      }
-      // NEW CODE: plus phase
-      if(net->phase_no >= 1) {
-	new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
-      }
-	
-      if(net->cycle < dt.vm_eq_cyc) {
-	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
-      }
-      else {
-	new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
-      }
-    }
-  }
-  else {
-    new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
-    // NEW CODE: plus phase
-    if(net->phase_no >= 1) {
-      new_act = ls->ti.ctxt_s_new_c * u->act_m + ls->ti.ctxt_s_new * new_act;
-    }
-  }
-  if(depress.on) {                   // synaptic depression
-    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
-    new_act *= MIN(u->spk_amp, 1.0f);
-    if((net->ct_cycle+1) % depress.interval == 0) {
-      u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
-    }
-    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
-    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
-  }
-
-  u->da = new_act - u->act;
-  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += Compute_Noise(u, net);
-  }
-  u->act = act_range.Clip(new_act);
-  u->act_eq = u->act;
-  if(!depress.on)
-    u->act_nd = u->act_eq;
-}
-
-void LeabraTICtxtSUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::PostSettle(u,net);
-
-  if(net->phase_no == 0) {
-    u->misc_1 = u->net;		// save final minus phase netin
-  }
-}
 
 void LeabraTISpec::Initialize() {
   Defaults_init();
 }
 
 void LeabraTISpec::Defaults_init() {
-  ctxt_s_net = true;
-  ctxt_s_rev_lrn = false;
-  ctxt_s_new = 0.6f;
-  ctxt_s_new_c = 1.0f - ctxt_s_new;
 }
 
 void LeabraTISpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ctxt_s_new_c = 1.0f - ctxt_s_new;
 }
 
 void LeabraTILayerSpec::Initialize() {
@@ -357,7 +189,7 @@ void LeabraTILayerSpec::Defaults_init() {
 
 void LeabraTILayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ti.UpdateAfterEdit_NoGui();
+  // ti.UpdateAfterEdit_NoGui();
 }
 
 bool LeabraTILayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -440,12 +272,7 @@ void LeabraTILayerSpec::Compute_TIAct(LeabraLayer* lay, LeabraNetwork* net) {
       // nop
     }
     else {			// DEEP
-      if(net->phase_no == 0) {
-	Compute_ActFmMaint(lay, net); // fix
-      }
-      else {
-	Compute_ActFmSuper(lay, net); // float
-      }	
+      Compute_ActFmMaint(lay, net); // always fix
     }
   }
   else {			// CONTEXT
@@ -453,12 +280,10 @@ void LeabraTILayerSpec::Compute_TIAct(LeabraLayer* lay, LeabraNetwork* net) {
       // nop
     }
     else {			// DEEP
-      if(net->phase_no == 0) {
-	Compute_ActFmSuper(lay, net); // float
-      }
-      else {
-	Compute_ActFmMaint(lay, net); // fix
-      }	
+      Compute_ActFmMaint(lay, net); // fix
+      // if(net->phase_no == 0) {
+	// Compute_ActFmSuper(lay, net); // float
+      // }
     }
   }
 }
@@ -471,37 +296,18 @@ void LeabraTILayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net)
 void LeabraTILayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   if(lamina == DEEP) {
     if(ti_type == ONLINE && net->phase_no == 1) {
-      Compute_MaintFmSuper(lay, net); 
+      Compute_MaintFmSuper(lay, net); // for next trial
     }
-    if(ti_type == CONTEXT && net->phase_no == 0) {
-      Compute_MaintFmSuper(lay, net); 
+    if(ti_type == CONTEXT && net->phase_no == 1) {
+      Compute_MaintFmSuper(lay, net); // for next trial
     }
   }
   inherited::PostSettle(lay, net);
 }
 
-void LeabraTILayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
-  if(ti.ctxt_s_rev_lrn && 
-     ((ti_type == CONTEXT && lamina == SUPER) ||
-      (ti_type == ONLINE && lamina == DEEP))) {
-    // ALWAYS computing because always has inputs.. others should probably too
-    // backwards: plus = minus, minus = plus..
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      lay->sravg_vals.state = CtSRAvgVals::SRAVG_M;
-    }
-    else {
-      if(net->cycle >= net->ct_sravg.plus_s_st) {
-	lay->sravg_vals.state = CtSRAvgVals::SRAVG_SM;
-      }
-      else {
-	lay->sravg_vals.state = CtSRAvgVals::SRAVG_M;
-      }
-    }
-  }
-  else {
-    inherited::Compute_SRAvg_State(lay, net);
-  }
-}
+// void LeabraTILayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
+//   inherited::Compute_SRAvg_State(lay, net);
+// }
 
 //////////////////////////////////
 //      MultCopyLayerSpec

@@ -157,13 +157,9 @@ private:
 };
 
 class LEABRA_API LeabraTICtxtSUnitSpec : public LeabraUnitSpec {
-  // Leabra Temporal Integration Context Super unit spec
+  // Leabra Temporal Integration Context Super unit spec -- currently not doing anything special but might in the future
 INHERITED(LeabraUnitSpec)
 public:
-
-  override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  override void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-  override void	PostSettle(LeabraUnit* u, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtSUnitSpec);
 protected:
@@ -178,11 +174,6 @@ class LEABRA_API LeabraTISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra Temporal Integration misc specs
 INHERITED(SpecMemberBase)
 public:
-  bool		ctxt_s_net;	// use netinput instead of activation for carryover of information in the superficial context layer units
-  bool		ctxt_s_rev_lrn;	// reverse learning order in context s layer
-  float		ctxt_s_new;	// #DEF_0.6:0.8 how much of the new current activation state should drive the effective overall activation -- remainder is from minus phase activation value -- determines effective learning rate
-
-  float 	ctxt_s_new_c;	// #NO_SAVE #READ_ONLY 1-ctxt_s_new
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -212,7 +203,7 @@ public:
 
   TILayerType		ti_type; 	// which type of time layer is this -- online or context?
   LaminaType		lamina; 	// which neocortical lamina is this -- superficial or deep?
-  LeabraTISpec		ti;		// temporal-integration specific parameters
+  //  LeabraTISpec		ti;		// temporal-integration specific parameters
   
   virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net);
   // clear maint_h maintenance values in layer
@@ -230,12 +221,12 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
-  override void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
+  // override void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
 
-  override bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-    if(ti.ctxt_s_rev_lrn && (ti_type == CONTEXT && lamina == SUPER)) return true;
-    return false;
-  }
+  // override bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
+  //   if(ti.ctxt_s_rev_lrn && (ti_type == CONTEXT && lamina == SUPER)) return true;
+  //   return false;
+  // }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_FirstPlus_Test(lay, net); }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
