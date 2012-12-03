@@ -42,6 +42,7 @@ public:
     EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for specific SVN error.
     EMER_OPERATION_CANCELLED,
     EMER_ERR_ENTRY_EXISTS,
+    EMER_ERR_RA_DAV_REQUEST_FAILED,
     EMER_FORBIDDEN,
     // TBD.
   };
@@ -101,7 +102,9 @@ public:
   // TODO: need to decide what return types make sense for each API.
   int Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
   bool MakeDir(const char *new_dir, bool make_parents = true);
+  bool TryMakeDir(const char *new_dir, bool make_parents = true); // returns no error if the dir already exists.
   bool MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
+  bool TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true); // returns no error if the dir already exists.
 
   // Checkin 'files': a comma or newline separated list of files/dirs.
   // If empty, the whole working copy will be committed.

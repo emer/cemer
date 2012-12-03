@@ -917,10 +917,54 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
 }
 
 bool
+SubversionClient::TryMakeDir(const char *new_dir, bool make_parents)
+{
+  m_cancelled = false;
+
+  // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
+  svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
+
+  // create an array containing a single path to be created
+  apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
+  APR_ARRAY_PUSH(paths, const char *) = new_dir;
+
+  // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
+  // svn_client_propget3 can be used to create an apr_hash_t
+  const apr_hash_t *revprop_table = NULL;
+
+  // TODO: #ifdef this to use mkdir4 for svn >=1.7.
+
+  try {
+    svn_error_t *error = svn_client_mkdir3(
+        &commit_info_p,
+        paths,
+        make_parents, // whether to create non-existent parent directories
+        revprop_table,
+        m_ctx,
+        m_pool);
+  }
+  catch (const Exception &ex) {
+    if (ex.GetErrorCode() != EMER_ERR_ENTRY_EXISTS ||
+        ex.GetErrorCode() != EMER_ERR_RA_DAV_REQUEST_FAILED) {
+         taMisc::Error("Subversion error here", ex.what());
+         throw;
+       }
+  }
+  return true;
+}
+
+bool
 SubversionClient::MakeUrlDir(const char *url, const char *comment, bool make_parents)
 {
   m_commit_message = comment;
   return MakeDir(url, make_parents);
+}
+
+bool
+SubversionClient::TryMakeUrlDir(const char *url, const char *comment, bool make_parents)
+{
+  m_commit_message = comment;
+  return TryMakeDir(url, make_parents);
 }
 
 int
