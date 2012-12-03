@@ -156,56 +156,18 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API LeabraTICtxtSUnitSpec : public LeabraUnitSpec {
-  // Leabra Temporal Integration Context Super unit spec -- currently not doing anything special but might in the future
-INHERITED(LeabraUnitSpec)
-public:
-
-  TA_SIMPLE_BASEFUNS(LeabraTICtxtSUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init();
-};
-
-class LEABRA_API LeabraTISpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra Temporal Integration misc specs
-INHERITED(SpecMemberBase)
-public:
-
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraTISpec);
-protected:
-  SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
 class LEABRA_API LeabraTILayerSpec : public LeabraLayerSpec {
-  // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- supports Online and Context layer types, with superficial and deep cortical layer sub-types, and an alternating updating dynamic that supports high-dimensional coarse-coded integration of temporal information in a robust fashion, similar to a backprop Simple Recurrent Network (SRN) overall.
+  // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- effectively a simple recurrent network (SRN) context layer at this point, with a flexible api for future expansion -- only really need to use this for DEEP (Context) layers -- supers can be any layerspec -- deep should also have LayerActUnitSpec unit spec to optimize computation
 INHERITED(LeabraLayerSpec)
 public:
-  enum TILayerType {
-    ONLINE,			// online layer -- superficial layer is always labile, standard Leabra (and can use any layerspec), deep layer is frozen to prior act_p in minus (to project to context and allow it to update), copies super in plus cycle-by-cycle
-    CONTEXT,			// context type -- superficial layer updates from the online deep layer in minus phase, and has mix of maintained and updated activation in plus, deep layer is frozen to prior act_m in plus, copies super in minus cycle-by-cycle
-  };
   enum LaminaType {
-    SUPER,			// superficial layer (neocortical layers 2,3)
-    DEEP,			// deep layer (neocortical layers 5,6)
+    SUPER,			// superficial layer (neocortical layers 2,3) -- runs free at all times and receives context info from the deep layer
+    DEEP,			// deep layer (neocortical layers 5,6) -- copies the corresponding one-to-one super layer activations and holds them for a trial (~100 msec, alpha frequency updating)
   };
 
-  TILayerType		ti_type; 	// which type of time layer is this -- online or context?
-  LaminaType		lamina; 	// which neocortical lamina is this -- superficial or deep?
-  //  LeabraTISpec		ti;		// temporal-integration specific parameters
-  
-  virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net);
+  LaminaType		lamina;	// which neocortical lamina is this -- superficial or deep?
+
+    virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net);
   // clear maint_h maintenance values in layer
 
   virtual void Compute_MaintFmSuper(LeabraLayer* lay, LeabraNetwork* net);
@@ -221,12 +183,6 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
-  // override void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
-
-  // override bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  //   if(ti.ctxt_s_rev_lrn && (ti_type == CONTEXT && lamina == SUPER)) return true;
-  //   return false;
-  // }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_FirstPlus_Test(lay, net); }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)

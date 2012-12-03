@@ -156,27 +156,7 @@ void LeabraLayer::TriggerContextUpdate() {
 //     LeabraTISpec	        //
 //////////////////////////////////
 
-void LeabraTICtxtSUnitSpec::Initialize() {
-  Defaults_init();
-}
-
-void LeabraTICtxtSUnitSpec::Defaults_init() {
-}
-
-
-void LeabraTISpec::Initialize() {
-  Defaults_init();
-}
-
-void LeabraTISpec::Defaults_init() {
-}
-
-void LeabraTISpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void LeabraTILayerSpec::Initialize() {
-  ti_type = ONLINE;
   lamina = DEEP;
   Defaults_init();
 }
@@ -204,6 +184,11 @@ bool LeabraTILayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   if(lamina == DEEP) {
+    if(lay->CheckError(!lay->GetUnitSpec()->InheritsFrom(&TA_LayerActUnitSpec), 
+		       quiet, rval,
+		       "Deep layers should use LayerActUnitSpec unit specs to optimize computational costs")) {
+      // todo: could try to fix this..
+    }
     LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
     if(lay->CheckError(!cg, quiet, rval,
@@ -267,25 +252,10 @@ void LeabraTILayerSpec::Compute_ActFmMaint(LeabraLayer* lay, LeabraNetwork* net)
 }
 
 void LeabraTILayerSpec::Compute_TIAct(LeabraLayer* lay, LeabraNetwork* net) {
-  if(ti_type == ONLINE) {
-    if(lamina == SUPER) {
-      // nop
-    }
-    else {			// DEEP
-      Compute_ActFmMaint(lay, net); // always fix
-    }
+  if(lamina == DEEP) {
+    Compute_ActFmMaint(lay, net); // always fix to maintained value
   }
-  else {			// CONTEXT
-    if(lamina == SUPER) {
-      // nop
-    }
-    else {			// DEEP
-      Compute_ActFmMaint(lay, net); // fix
-      // if(net->phase_no == 0) {
-	// Compute_ActFmSuper(lay, net); // float
-      // }
-    }
-  }
+  // super is a NOP
 }
 
 void LeabraTILayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -295,19 +265,12 @@ void LeabraTILayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net)
 
 void LeabraTILayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   if(lamina == DEEP) {
-    if(ti_type == ONLINE && net->phase_no == 1) {
-      Compute_MaintFmSuper(lay, net); // for next trial
-    }
-    if(ti_type == CONTEXT && net->phase_no == 1) {
-      Compute_MaintFmSuper(lay, net); // for next trial
+    if(net->phase_no == 1) {
+      Compute_MaintFmSuper(lay, net); // grab and copy for next trial
     }
   }
   inherited::PostSettle(lay, net);
 }
-
-// void LeabraTILayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
-//   inherited::Compute_SRAvg_State(lay, net);
-// }
 
 //////////////////////////////////
 //      MultCopyLayerSpec
@@ -6377,60 +6340,34 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   if(TestError(!net, "LeabraTI", "must have basic constructed network first")) {
     return false;
   }
-  LeabraTILayerSpec* ti_on_s = (LeabraTILayerSpec*)net->FindMakeSpec("TI_Online_S",
+  LeabraTILayerSpec* ti_super = (LeabraTILayerSpec*)net->FindMakeSpec("TI_Super",
 							     &TA_LeabraTILayerSpec);
-  LeabraTILayerSpec* ti_on_d = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Online_D",
-							     &TA_LeabraTILayerSpec);
-  LeabraTILayerSpec* ti_cx_s = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Context_S",
-							     &TA_LeabraTILayerSpec);
-  LeabraTILayerSpec* ti_cx_d = (LeabraTILayerSpec*)ti_on_s->FindMakeChild("TI_Context_D",
+  LeabraTILayerSpec* ti_deep = (LeabraTILayerSpec*)ti_super->FindMakeChild("TI_Deep",
 							     &TA_LeabraTILayerSpec);
   LeabraConSpec* stdcons = (LeabraConSpec*)net->FindMakeSpec("LeabraConSpec_0",
 							     &TA_LeabraConSpec);
-  LeabraConSpec* ti_toctxt = (LeabraConSpec*)stdcons->FindMakeChild("TIToContext",
-								   &TA_LeabraConSpec);
   LeabraConSpec* ti_fmctxt = (LeabraConSpec*)stdcons->FindMakeChild("TIFmContext",
 								   &TA_LeabraConSpec);
   MarkerConSpec* ti_sd_cons = (MarkerConSpec*)net->FindMakeSpec("TISuperDeepCons",
 							       &TA_MarkerConSpec);
-  LayerActUnitSpec* ti_dun = (LayerActUnitSpec*)net->FindMakeSpec("TIDeepUnits",
-								  &TA_LayerActUnitSpec);
   LeabraUnitSpec* stduns = (LeabraUnitSpec*)net->FindMakeSpec("LeabraUnitSpec_0",
 							     &TA_LeabraUnitSpec);
-  LeabraTICtxtSUnitSpec* ti_cxsun =
-    (LeabraTICtxtSUnitSpec*)stduns->FindMakeChild("LeabraTICtxtSUnits",
-					      &TA_LeabraTICtxtSUnitSpec);
-
-  OneToOnePrjnSpec* ti_sd_prjn = (OneToOnePrjnSpec*)net->FindMakeSpec("TISuperDeepPrjn",
-								      &TA_OneToOnePrjnSpec);
+  LayerActUnitSpec* ti_dun = (LayerActUnitSpec*)net->FindMakeSpec("TIDeepUnits",
+								  &TA_LayerActUnitSpec);
+  OneToOnePrjnSpec* ti_sd_prjn = (OneToOnePrjnSpec*)
+    net->FindMakeSpec("TISuperDeepPrjn", &TA_OneToOnePrjnSpec);
   FullPrjnSpec* full_prjn = (FullPrjnSpec*)net->FindMakeSpec("FullPrjnSpec_0",
 							     &TA_FullPrjnSpec);
 
   net->learn_rule = LeabraNetwork::CTLEABRA_XCAL; // make sure
   net->UpdateAfterEdit();	// trigger update
 
-  ti_on_s->SetUnique("ti_type", true);
-  ti_on_s->ti_type = LeabraTILayerSpec::ONLINE;
-  ti_on_s->SetUnique("lamina", true);
-  ti_on_s->lamina = LeabraTILayerSpec::SUPER;
+  ti_super->SetUnique("lamina", true);
+  ti_super->lamina = LeabraTILayerSpec::SUPER;
 
-  ti_on_d->SetUnique("ti_type", true);
-  ti_on_d->ti_type = LeabraTILayerSpec::ONLINE;
-  ti_on_d->SetUnique("lamina", true);
-  ti_on_d->lamina = LeabraTILayerSpec::DEEP;
+  ti_deep->SetUnique("lamina", true);
+  ti_deep->lamina = LeabraTILayerSpec::DEEP;
 
-  ti_cx_s->SetUnique("ti_type", true);
-  ti_cx_s->ti_type = LeabraTILayerSpec::CONTEXT;
-  ti_cx_s->SetUnique("lamina", true);
-  ti_cx_s->lamina = LeabraTILayerSpec::SUPER;
-
-  ti_cx_d->SetUnique("ti_type", true);
-  ti_cx_d->ti_type = LeabraTILayerSpec::CONTEXT;
-  ti_cx_d->SetUnique("lamina", true);
-  ti_cx_d->lamina = LeabraTILayerSpec::DEEP;
-
-  ti_toctxt->SetUnique("lrate", true);
-  ti_toctxt->lrate = 0.01f;
   ti_fmctxt->SetUnique("wt_scale", true);
   ti_fmctxt->wt_scale.rel = 1.5f;
 
@@ -6452,43 +6389,21 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
     Layer_Group* lg = (Layer_Group*)lay->owner;
     String lnm = lay->name;
 
-    lay->name = lnm + "_On_S";
-    lay->SetLayerSpec(ti_on_s);
+    lay->name = lnm + "_S";
+    lay->SetLayerSpec(ti_super);
 
-    LeabraLayer* ond = (LeabraLayer*)lg->FindMakeLayer(lnm + "_On_D", &TA_LeabraLayer);
-    ond->SetLayerSpec(ti_on_d);
-    ond->SetUnitSpec(ti_dun);
-    ond->un_geom = lay->un_geom;
-    ond->unit_groups = lay->unit_groups;
-    ond->gp_geom = lay->gp_geom;
-    ond->pos = lay->pos;
-    ond->pos.y += lay->disp_geom.y + lay_spc;
-
-    LeabraLayer* cxs = (LeabraLayer*)lg->FindMakeLayer(lnm + "_Cx_S", &TA_LeabraLayer);
-    cxs->SetLayerSpec(ti_cx_s);
-    cxs->SetUnitSpec(ti_cxsun);
-    cxs->un_geom = lay->un_geom;
-    cxs->unit_groups = lay->unit_groups;
-    cxs->gp_geom = lay->gp_geom;
-    cxs->pos = lay->pos;
-    cxs->pos.x += lay->disp_geom.x + lay_spc;
-
-    LeabraLayer* cxd = (LeabraLayer*)lg->FindMakeLayer(lnm + "_Cx_D", &TA_LeabraLayer);
-    cxd->SetLayerSpec(ti_cx_d);
-    cxd->SetUnitSpec(ti_dun);
-    cxd->un_geom = lay->un_geom;
-    cxd->unit_groups = lay->unit_groups;
-    cxd->gp_geom = lay->gp_geom;
-    cxd->pos = lay->pos;
-    cxd->pos.x += lay->disp_geom.x + lay_spc;
-    cxd->pos.y += lay->disp_geom.y + lay_spc;
+    LeabraLayer* dlay = (LeabraLayer*)lg->FindMakeLayer(lnm + "_D", &TA_LeabraLayer);
+    dlay->SetLayerSpec(ti_deep);
+    dlay->SetUnitSpec(ti_dun);
+    dlay->un_geom = lay->un_geom;
+    dlay->unit_groups = lay->unit_groups;
+    dlay->gp_geom = lay->gp_geom;
+    dlay->pos = lay->pos;
+    dlay->pos.y += lay->disp_geom.y + lay_spc;
 
     //	  	 	   to		 from		prjn_spec	con_spec
-    net->FindMakePrjn(ond, lay, ti_sd_prjn, ti_sd_cons);
-    net->FindMakePrjn(cxd, cxs, ti_sd_prjn, ti_sd_cons);
-
-    net->FindMakePrjn(lay, cxd, full_prjn,  ti_fmctxt);
-    net->FindMakePrjn(cxs, ond, full_prjn,  ti_toctxt);
+    net->FindMakePrjn(dlay, lay, ti_sd_prjn, ti_sd_cons);
+    net->FindMakePrjn(lay, dlay, full_prjn,  ti_fmctxt);
   }
 
   net->Build();
