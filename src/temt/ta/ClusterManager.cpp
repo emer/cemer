@@ -224,9 +224,6 @@ ClusterManager::setPaths()
   m_wc_models_path = m_wc_proj_path + '/' + "models";
   m_wc_results_path = m_wc_proj_path + '/' + "results";
 
-  // TODO: What is this for?
-  String repo_proj_path = m_repo_user_path + '/' + proj_name;
-
   taMisc::Info("repo is at", m_repo_user_path); // TODO remove this
   taMisc::Info("wc is at", m_wc_path); // TODO remove this
 }
@@ -241,7 +238,6 @@ ClusterManager::ensureWorkingCopyExists()
     taMisc::Info("wc wasn't found at", m_wc_path); // TODO remove this
     // checkout the user's dir
     int co_rev = 0;
-    //co_rev = m_svn_client->Checkout(m_repo_url, false);  // the m_repo_url directory with no content will be checked out
 
     taMisc::Info("will try to mkdir", m_repo_user_path); // TODO remove this
     String comment = "Creating cluster directory for user ";
@@ -255,7 +251,7 @@ ClusterManager::ensureWorkingCopyExists()
     //m_svn_client->Checkin(); // commit the created wc
     taMisc::Info("user's dir created at",  m_repo_user_path); // TODO remove this
     co_rev = m_svn_client->Checkout(m_repo_user_path);
-    taMisc::Info("working copy checked out at", m_wc_path); // TODO remove this
+    taMisc::Info("working copy checked out from", m_wc_path); // TODO remove this
     //PrintCheckoutMessage(co_rev, m_repo_user_path, m_wc_path);
 
     // check if the user has a dir in the repo. create it for her if needed
@@ -282,25 +278,12 @@ ClusterManager::createSubdirs()
   QFileInfo fi_proj(m_wc_proj_path);
   if (!fi_proj.exists()) {
     // It's a new project, create a dir and subdirs for it.
-    try {
-      bool mkdir_success = false;
-      mkdir_success = m_svn_client->MakeDir(m_wc_proj_path);
-      mkdir_success = m_svn_client->MakeDir(m_wc_submit_path);
-      mkdir_success = m_svn_client->MakeDir(m_wc_models_path);
-      mkdir_success = m_svn_client->MakeDir(m_wc_results_path);
-      taMisc::Info("new project directory was created"); // TODO remove this
-    }
-    catch (const SubversionClient::Exception &ex) {
-      if (ex.GetErrorCode() == SubversionClient::EMER_ERR_ENTRY_EXISTS) {
-        // Not a show stopper if the directories already exist.
-        // TODO: Wrap each MakeDir() with try/catch, or better, make a
-        // TryMakeDir() API.  No need for this Info() log in that case.
-        taMisc::Info("Directory already exist.", ex.what());
-      }
-      else {
-        throw;
-      }
-    }
+    bool mkdir_success = false;
+    mkdir_success = m_svn_client->TryMakeDir(m_wc_proj_path);
+    mkdir_success = m_svn_client->TryMakeDir(m_wc_submit_path);
+    mkdir_success = m_svn_client->TryMakeDir(m_wc_models_path);
+    mkdir_success = m_svn_client->TryMakeDir(m_wc_results_path);
+    taMisc::Info("new project directory was created"); // TODO remove this
   }
   else {
     // the project already exists (possibilities: user is running the same
@@ -320,6 +303,12 @@ ClusterManager::createParamFile()
   // generate a txt file containing the model parameters
   String model_filename = "model.txt";  // TODO might need a version number
   String wc_model_path = m_wc_models_path + '/' + model_filename;
+
+  // try to add a file to contain the model's parameters in the wc
+  bool mkdir_success = false;
+  // TODO: MakeDir() looks like the wrong call since this is a file.  Add()?
+  mkdir_success = m_svn_client->TryMakeDir(wc_model_path);
+
   QFile file(wc_model_path);
   file.open(QIODevice::WriteOnly | QIODevice::Text);
   QTextStream out(&file);
@@ -332,9 +321,4 @@ ClusterManager::createParamFile()
   // to be generated based on m_select_edit.
   out << "<CONTENT OF THE MODEL>";
   file.close(); // close manually before committing
-
-  // add the generated model file to the wc
-  bool mkdir_success = false;
-  // TODO: MakeDir() looks like the wrong call since this is a file.  Add()?
-  mkdir_success = m_svn_client->MakeDir(wc_model_path);
 }
