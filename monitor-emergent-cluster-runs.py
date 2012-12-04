@@ -144,15 +144,18 @@ class SubversionPoller(object):
                             if self.re_comp.match(line)]
         return submit_files
 
-    def poll(self):
+    def poll(self, func):
         # Enter the loop to check for updates to job submission files.
         print '\nPolling the Subversion server every %d seconds ' \
               '(hit Ctrl-C to quit) ...' % self.delay
         while True:
             submit_files = self.check_for_updates()
             for filename in submit_files:
-                print 'Submitting job for file: %s' % filename
+                func(filename)
             time.sleep(self.delay)
+
+def run_job_for_file(filename):
+    print 'TODO: Submit job for file: %s' % filename
 
 def main():
     # Read the config file, allow the user to add a new repo, get
@@ -171,7 +174,7 @@ def main():
     delay = config.get_poll_interval()
     poller = SubversionPoller(username, repo_dir, repo_url, delay)
     revision = poller.get_initial_wc()
-    poller.poll() # Infinite loop.
+    poller.poll(run_job_for_file) # Infinite loop.
 
 if __name__ == '__main__':
     try:
