@@ -866,7 +866,7 @@ SubversionClient::Update(int rev)
   return updateRev;
 }
 
-int
+void
 SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
   m_cancelled = false;
@@ -875,10 +875,7 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
   file_or_dir = svn_path_canonicalize(file_or_dir, m_pool);
 
   // if adding dir, the depth of subdirectories to be added
-  svn_depth_t depth = svn_depth_infinity;
-  if (!recurse) {
-    svn_depth_t depth = svn_depth_empty;
-  }
+  svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_empty;
 
   // do not error on already-versioned items
   svn_boolean_t force = true;
@@ -887,18 +884,16 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
   svn_boolean_t no_ignore = false;
 
   if (svn_error_t *error = svn_client_add4(
-                  file_or_dir,
-                  depth,
-                  force,
-                  no_ignore,
-                  add_parents,  // whether or not to create non-versioned parent directories
-                  m_ctx,
-                  m_pool))
+        file_or_dir,
+        depth,
+        force,
+        no_ignore,
+        add_parents,  // whether or not to create non-versioned parent directories
+        m_ctx,
+        m_pool))
   {
     throw Exception("Subversion error adding files", error);
   }
-
-  return 1;
 }
 
 bool
@@ -976,7 +971,7 @@ SubversionClient::Checkin(const char *comment, const char *files)
   // 'files' is a comma or newline separated list of files and/or directories.
   // If empty, the whole working copy will be committed.
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  if (files) {
+  if (files && *files) {
     // TODO: this path hasn't been tested.
     QStringList list = QString(files).split(QRegExp("[\\n,]+"));
     foreach (const QString &str, list) {
