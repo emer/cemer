@@ -1,5 +1,5 @@
-[alloc pct]
-min_val = 0.2
+[]
+min_val = 0.1
 max_val = 0.7
 next_val = 0
 incr = 0.02
