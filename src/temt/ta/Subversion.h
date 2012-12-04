@@ -95,9 +95,6 @@ public:
   std::string GetWorkingCopyPath() const;
   std::string GetUsername(const char *url, UsernameSource source) const;
 
-  // Check if the working copy has already been checked out.
-  bool IsWorkingCopy();
-
   // Checkout returns the revision checked out, or -1 on error.
   int Checkout(const char *url, bool recurse = true, int rev = -1);
 

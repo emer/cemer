@@ -388,6 +388,7 @@ struct SubversionClient::Glue
     void *, // baton,
     apr_pool_t *) // pool)
   {
+    // TODO: prompt user for permission to cache their password in the clear.
     *may_save_plaintext = true;
     return 0;
   }
@@ -547,19 +548,22 @@ SubversionClient::GetUsername(const char *url, UsernameSource source) const
           SVN_CONFIG_SECTION_AUTH,
           m_pool))
     {
+      // Couldn't get config dir, so no way to check the cache.
+      // Ignore this error and skip down to the PROMPT logic.
       svn_error_clear(error);
-      return "";
     }
-
-    // There's gotta be an easier way to get the username for a given URL!!
-    // Can't just lookup the file based on the realmString, since its format
-    // may change based on the client and/or server in use!  This is pretty
-    // brute force.
-    QFileInfoList authFiles = getAllFilesUnder(userAuthDirPath);
-    QString username =
-      findUsernameInAuthFileMatchingRealm(authFiles, realmString);
-    if (!username.isEmpty()) {
-      return username.toStdString();
+    else {
+      // There's gotta be an easier way to get the username for a given URL!!
+      // Can't just lookup the file based on the realmString, since its format
+      // may change based on the client and/or server in use!  This is pretty
+      // brute force.
+      QFileInfoList authFiles = getAllFilesUnder(userAuthDirPath);
+      QString username =
+        findUsernameInAuthFileMatchingRealm(authFiles, realmString);
+      if (!username.isEmpty()) {
+        // Got a non-empty username so return it.
+        return username.toStdString();
+      }
     }
   }
 
@@ -741,39 +745,10 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
   return providers;
 }
 
-// Check if the working copy has already been checked out.
-bool
-SubversionClient::IsWorkingCopy()
-{
-  if (!m_url) return false;
-
-#if 0
-  // TODO: call some svn_wc_* function to determine if this is
-  // a valid working copy.
-  if (!fileExists(m_wc_path)) return false;
-  return svn_wc_is_valid(m_wc_path); // ??
-#else
-  return false;
-#endif
-}
-
 int
 SubversionClient::Checkout(const char *url, bool recurse, int rev)
 {
   m_cancelled = false;
-  /* TODO probably no need to the below code
-  if (IsWorkingCopy()) {
-    if (0 == std::strcmp(m_url, url)) {
-      // If user requested checkout of the same URL, just do an update.
-      return Update(rev);
-    }
-    else {
-      throw Exception(
-        std::string("Working copy already exists with URL: ") + m_url
-          + "; will not checkout new URL: " + url);
-    }
-  }
-  */
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
@@ -796,10 +771,7 @@ SubversionClient::Checkout(const char *url, bool recurse, int rev)
   }
 
   // Set the depth of subdirectories to be checked out.
-  svn_depth_t depth = svn_depth_infinity;
-  if (!recurse) {
-    svn_depth_t depth = svn_depth_empty;
-  }
+  svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_empty;
 
   // Set advanced options we don't care about.
   svn_boolean_t ignore_externals = false;
@@ -829,8 +801,6 @@ SubversionClient::Update(int rev)
 {
   m_cancelled = false;
 
-// TODO: rest of function copied from example dir, needs cleanup.
-
   // Out parameter -- the value of the revision checked out from the repository.
   apr_array_header_t *result_revs = 0;
 
@@ -856,6 +826,7 @@ SubversionClient::Update(int rev)
   svn_boolean_t allow_unver_obstructions = true;
   svn_boolean_t depth_is_sticky = true;
 
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   if (svn_error_t *error = svn_client_update3(
         &result_revs,
         paths,
@@ -866,6 +837,23 @@ SubversionClient::Update(int rev)
         allow_unver_obstructions,
         m_ctx,
         m_pool))
+#else
+  svn_boolean_t adds_as_modification = true;
+  svn_boolean_t make_parents = false;
+
+  if (svn_error_t *error = svn_client_update4(
+        &result_revs,
+        paths,
+        &revision,
+        depth,
+        depth_is_sticky,
+        ignore_externals,
+        allow_unver_obstructions,
+        adds_as_modification,
+        make_parents,
+        m_ctx,
+        m_pool))
+#endif
   {
     throw Exception("Subversion update error", error);
   }
@@ -907,7 +895,7 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
                   m_ctx,
                   m_pool))
   {
-    throw Exception("Subversion error", error);
+    throw Exception("Subversion error adding files", error);
   }
 
   return 1;
@@ -925,11 +913,10 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
   APR_ARRAY_PUSH(paths, const char *) = new_dir;
 
-  // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
-  // svn_client_propget3 can be used to create an apr_hash_t
-  const apr_hash_t *revprop_table = NULL;
+  // We don't need to set any custom revision properties, so null.
+  const apr_hash_t *revprop_table = 0;
 
-  // TODO: #ifdef this to use mkdir4 for svn >=1.7.
+  // Not implementing the 1.7 API -- see rationale in Checkin().
   if (svn_error_t *error = svn_client_mkdir3(
         &commit_info_p,
         paths,
@@ -938,7 +925,7 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
         m_ctx,
         m_pool))
   {
-    throw Exception("Subversion error", error);
+    throw Exception("Subversion error making directory", error);
   }
 
   return true;
@@ -953,12 +940,14 @@ SubversionClient::TryMakeDir(const char *new_dir, bool make_parents)
     return MakeDir(new_dir, make_parents);
   }
   catch (const Exception &ex) {
-    if (ex.GetErrorCode() != EMER_ERR_ENTRY_EXISTS &&
-        ex.GetErrorCode() != EMER_ERR_FS_ALREADY_EXISTS) {
-      taMisc::Error("Subversion error", ex.what());
-      throw;
+    if (ex.GetErrorCode() == EMER_ERR_ENTRY_EXISTS ||
+        ex.GetErrorCode() == EMER_ERR_FS_ALREADY_EXISTS)
+    {
+      return false; // duplicate dir
     }
-    return false; // duplicate dir
+
+    // No need to log here; it will be re-caught and logged later.
+    throw;
   }
 }
 
@@ -976,6 +965,8 @@ SubversionClient::TryMakeUrlDir(const char *url, const char *comment, bool make_
   return TryMakeDir(url, make_parents);
 }
 
+// Commits files and returns the new revision number.
+// Throws on error; returns -1 if there was nothing to commit.
 int
 SubversionClient::Checkin(const char *comment, const char *files)
 {
@@ -984,15 +975,22 @@ SubversionClient::Checkin(const char *comment, const char *files)
 
   // 'files' is a comma or newline separated list of files and/or directories.
   // If empty, the whole working copy will be committed.
-
-// TODO: rest of function copied from example dir, needs cleanup.
-
-  //svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
-  svn_commit_info_t *commit_info_p = NULL;
-
-  // create an array containing a single element which is the path path to be committed
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+  if (files) {
+    // TODO: this path hasn't been tested.
+    QStringList list = QString(files).split(QRegExp("[\\n,]+"));
+    foreach (const QString &str, list) {
+      // Docs say we don't need to canonicalize, but we at least need to
+      // make a copy of the string, since otherwise it would go out of
+      // scope outside this loop.
+      APR_ARRAY_PUSH(paths, const char *) =
+        apr_pstrdup(m_pool, qPrintable(str));
+    }
+  }
+  else {
+    // create an array containing a single element which is the path path to be committed
+    APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+  }
 
   // commit changes to the children of the paths
   svn_depth_t depth = svn_depth_infinity;
@@ -1002,11 +1000,18 @@ SubversionClient::Checkin(const char *comment, const char *files)
 
   // no need to changelist filtering
   svn_boolean_t keep_changelists = false;
-  const apr_array_header_t *changelists = apr_array_make(m_pool, 0, sizeof(const char *));
+  const apr_array_header_t *changelists =
+    apr_array_make(m_pool, 0, sizeof(const char *));
 
-  // TODO: null?
-  const apr_hash_t *revprop_table = NULL;
+  // We don't need to set any custom revision properties, so null.
+  const apr_hash_t *revprop_table = 0;
 
+  // Subversion 1.7 has a function svn_client_commit5(), but for now the
+  // 1.6 API svn_client_commit4() works just fine for us.  Implementing
+  // in terms of the 1.7 API would mean duplicating the logic in the 1.7
+  // version of svn_client_commit4(), which is just a wrapper around the
+  // new svn_client_commit5().
+  svn_commit_info_t *commit_info_p = 0; // out param.
   if (svn_error_t *error = svn_client_commit4(
         &commit_info_p,
         paths,
@@ -1018,10 +1023,10 @@ SubversionClient::Checkin(const char *comment, const char *files)
         m_ctx,
         m_pool))
   {
-    throw Exception("Subversion error", error);
+    throw Exception("Subversion error committing files", error);
   }
 
-  return 1; // TODO: return the new revision
+  return commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
 }
 
 int
