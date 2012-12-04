@@ -152,6 +152,8 @@ SubversionClient::Exception::toEmerErrorCode(svn_error_t *svn_error)
   default:                    return EMER_GENERAL_SVN_ERROR;
   case SVN_ERR_CANCELLED:     return EMER_OPERATION_CANCELLED;
   case SVN_ERR_ENTRY_EXISTS:  return EMER_ERR_ENTRY_EXISTS;
+  case SVN_ERR_CLIENT_NO_VERSIONED_PARENT: return EMER_ERR_CLIENT_NO_VERSIONED_PARENT;
+  case SVN_ERR_FS_ALREADY_EXISTS: return EMER_ERR_FS_ALREADY_EXISTS;
 
   // On Ubuntu 10.4, if the user cancels authentication, it causes a 170001
   // error (SVN_ERR_RA_NOT_AUTHORIZED).  We could translate that into
@@ -756,7 +758,7 @@ SubversionClient::IsWorkingCopy()
 }
 
 int
-SubversionClient::Checkout(const char *url, bool recursive, int rev)
+SubversionClient::Checkout(const char *url, bool recurse, int rev)
 {
   m_cancelled = false;
   /* TODO probably no need to the below code
@@ -794,9 +796,8 @@ SubversionClient::Checkout(const char *url, bool recursive, int rev)
   }
 
   // Set the depth of subdirectories to be checked out.
-
   svn_depth_t depth = svn_depth_infinity;
-  if (!recursive) {
+  if (!recurse) {
     svn_depth_t depth = svn_depth_empty;
   }
 
@@ -881,8 +882,35 @@ int
 SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
   m_cancelled = false;
-  // TODO.
-  return -1;
+
+  // canonicalize the path
+  file_or_dir = svn_path_canonicalize(file_or_dir, m_pool);
+
+  // if adding dir, the depth of subdirectories to be added
+  svn_depth_t depth = svn_depth_infinity;
+  if (!recurse) {
+    svn_depth_t depth = svn_depth_empty;
+  }
+
+  // do not error on already-versioned items
+  svn_boolean_t force = true;
+
+  // don not add files or dirs that match ignore patterns
+  svn_boolean_t no_ignore = false;
+
+  if (svn_error_t *error = svn_client_add4(
+                  file_or_dir,
+                  depth,
+                  force,
+                  no_ignore,
+                  add_parents,  // whether or not to create non-versioned parent directories
+                  m_ctx,
+                  m_pool))
+  {
+    throw Exception("Subversion error", error);
+  }
+
+  return 1;
 }
 
 bool
@@ -905,7 +933,7 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
   if (svn_error_t *error = svn_client_mkdir3(
         &commit_info_p,
         paths,
-        make_parents, // whether to create non-existent parent directories
+        make_parents, // whether or not to create non-versioned parent directories
         revprop_table,
         m_ctx,
         m_pool))
@@ -921,36 +949,17 @@ SubversionClient::TryMakeDir(const char *new_dir, bool make_parents)
 {
   m_cancelled = false;
 
-  // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
-  svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
-
-  // create an array containing a single path to be created
-  apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  APR_ARRAY_PUSH(paths, const char *) = new_dir;
-
-  // TODO: we need to set revprop_table to a non-null if we wanna make an immediate commit after adding files
-  // svn_client_propget3 can be used to create an apr_hash_t
-  const apr_hash_t *revprop_table = NULL;
-
-  // TODO: #ifdef this to use mkdir4 for svn >=1.7.
-
   try {
-    svn_error_t *error = svn_client_mkdir3(
-        &commit_info_p,
-        paths,
-        make_parents, // whether to create non-existent parent directories
-        revprop_table,
-        m_ctx,
-        m_pool);
+    return MakeDir(new_dir, make_parents);
   }
   catch (const Exception &ex) {
-    if (ex.GetErrorCode() != EMER_ERR_ENTRY_EXISTS ||
-        ex.GetErrorCode() != EMER_ERR_RA_DAV_REQUEST_FAILED) {
-         taMisc::Error("Subversion error here", ex.what());
-         throw;
-       }
+    if (ex.GetErrorCode() != EMER_ERR_ENTRY_EXISTS &&
+        ex.GetErrorCode() != EMER_ERR_FS_ALREADY_EXISTS) {
+      taMisc::Error("Subversion error", ex.what());
+      throw;
+    }
+    return false; // duplicate dir
   }
-  return true;
 }
 
 bool

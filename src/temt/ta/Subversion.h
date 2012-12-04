@@ -41,9 +41,14 @@ public:
   {
     EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for specific SVN error.
     EMER_OPERATION_CANCELLED,
-    EMER_ERR_ENTRY_EXISTS,
     EMER_ERR_RA_DAV_REQUEST_FAILED,
     EMER_FORBIDDEN,
+    // adding a dir when add_parents is true and none of the dir's parents are versioned
+    EMER_ERR_CLIENT_NO_VERSIONED_PARENT,
+    // adding a duplicate dir to a working copy
+    EMER_ERR_ENTRY_EXISTS,
+    // adding a duplicate dir to a repository
+    EMER_ERR_FS_ALREADY_EXISTS,
     // TBD.
   };
 
@@ -94,7 +99,7 @@ public:
   bool IsWorkingCopy();
 
   // Checkout returns the revision checked out, or -1 on error.
-  int Checkout(const char *url, bool recursive = true, int rev = -1);
+  int Checkout(const char *url, bool recurse = true, int rev = -1);
 
   // Update the working copy and return the revision checked out, or -1 on error.
   int Update(int rev = -1);
