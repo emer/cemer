@@ -5351,6 +5351,7 @@ void CtSRAvgSpec::Initialize() {
   end = 1;
   interval = 1;
   plus_s_st = 19;
+  plus_s_only = false;
   force_con = false;
 }
 
@@ -6309,19 +6310,38 @@ void LeabraNetwork::Compute_SRAvg_State() {
     sravg_vals.state = CtSRAvgVals::NO_SRAVG;
     int eff_int = ct_sravg.interval;
 
-    if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-      if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-	eff_int = 1;              // make sure you get short-time/plus phase info!
+    if(ct_sravg.plus_s_only) {
+      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
+	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
+	  eff_int = 1;              // make sure you get short-time/plus phase info!
+	}
+	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_S; // s-only
+	}
       }
-      if((ct_cycle - ct_sravg.start) % eff_int == 0) {
-	sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
+      else if(phase == LeabraNetwork::MINUS_PHASE) { // m only in minus phase
+	if((ct_cycle >= ct_sravg.start) &&
+	   (ct_cycle < (ct_time.inhib_start + ct_sravg.end)) &&
+	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
+	}
       }
     }
     else {
-      if((ct_cycle >= ct_sravg.start) &&
-	 (ct_cycle < (ct_time.inhib_start + ct_sravg.end)) &&
-	 ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-	sravg_vals.state = CtSRAvgVals::SRAVG_M;
+      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
+	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
+	  eff_int = 1;              // make sure you get short-time/plus phase info!
+	}
+	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
+	}
+      }
+      else {
+	if((ct_cycle >= ct_sravg.start) &&
+	   (ct_cycle < (ct_time.inhib_start + ct_sravg.end)) &&
+	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
+	}
       }
     }
   }

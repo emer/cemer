@@ -2940,6 +2940,7 @@ public:
   int		end;		// #CONDSHOW_OFF_manual #DEF_0;1 number of cycles from the start of the final inhibitory phase to continue recording sravg
   int		interval;	// #CONDSHOW_OFF_manual #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
   int		plus_s_st;	// #CONDSHOW_OFF_manual [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
+  bool		plus_s_only;	// #CONDSHOW_OFF_manual plus increments short-term only, not short and medium term activations
   bool		force_con;	// #DEF_false force connection-level SRAvg computation -- only use for experimental algorithms that need this -- otherwise needlessly slows computation
 
   override String       GetTypeDecoKey() const { return "Network"; }
