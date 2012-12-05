@@ -4,3 +4,7 @@ max_val = 0.7
 next_val = 0
 incr = 0.02
 
+[GENERAL_PARAMS]
+timestamp = Wed Dec 5 07:49:31 2012
+parameters = alloc pct
+
