@@ -2911,10 +2911,11 @@ class LEABRA_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taOBase)
 public:
-  int		minus;		// #DEF_50:200 number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
-  int		plus;		// #DEF_20:200 number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- only relevant for MINUS_PLUS_NOTHING case
-  int		n_avg_only_epcs; // #DEF_0 number of epochs during which time only ravg values are accumulated, and no learning occurs
+  bool		use;		// whether to use these parameters to determine trial timing -- on by default for all Ct (continuous time) algorithms, and off for CHL by default
+  int		minus;		// #DEF_50:200 #CONDSHOW_ON_use number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
+  int		plus;		// #DEF_20:200 #CONDSHOW_ON_use number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
+  int		inhib;		// #DEF_0;1 #CONDSHOW_ON_use number of cycles to run in the final inhibitory phase -- only relevant for MINUS_PLUS_NOTHING case
+  int		n_avg_only_epcs; // #DEF_0 #CONDSHOW_ON_use number of epochs during which time only ravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
   int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
@@ -3168,7 +3169,7 @@ public:
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
   bool		dwt_norm_enabled; // #CAT_Learning enable dwt_norm computation -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, but it does not turn it back off, so if this is not being used anymore, save time by turning this flag off
 
-  CtTrialTiming	 ct_time;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
+  CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
@@ -3193,7 +3194,7 @@ public:
   float		avg_send_pct_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
   int		avg_send_pct_n; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
 
-  float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
+  float		maxda_stopcrit;	// #DEF_0.005:-1 #CAT_Statistic stopping criterion for max da
   float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
 
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)

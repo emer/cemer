@@ -5330,6 +5330,7 @@ void LeabraNetMisc::Initialize() {
 }
 
 void CtTrialTiming::Initialize() {
+  use = false;			// has to be false for old projects, to get CHL default right -- Ct learn rules will automatically turn on anyway
   minus = 50;
   plus = 20;
   inhib = 1;
@@ -5562,6 +5563,9 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(learn_rule != LEABRA_CHL)
+    ct_time.use = true;		// has to be true for these guys
+
   ct_time.UpdateAfterEdit_NoGui();
   ct_lrn_trig.UpdateAfterEdit_NoGui();
 
@@ -5712,6 +5716,7 @@ void LeabraNetwork::SetLearnRule() {
     min_cycles = 15;
     min_cycles_phase2 = 35;
     cycle_max = 60;
+    ct_time.use = false;
   }
   else {
 //     if(phase_order == MINUS_PLUS) {
@@ -5728,6 +5733,7 @@ void LeabraNetwork::SetLearnRule() {
     maxda_stopcrit = -1;
     min_cycles = 0;
     min_cycles_phase2 = 0;
+    ct_time.use = true;
   }
 
   SetLearnRule_ConSpecs(&specs);
@@ -5876,7 +5882,7 @@ void LeabraNetwork::Settle_Init() {
 }
 
 void LeabraNetwork::Settle_Init_CtTimes() {
-  if(learn_rule == LEABRA_CHL) return;
+  if(!ct_time.use) return;
 
   switch(phase_no) {
   case 0:
