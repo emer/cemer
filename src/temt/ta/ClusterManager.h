@@ -35,6 +35,7 @@ private:
   void setPaths();
   void ensureWorkingCopyExists();
   void createSubdirs();
+  void saveCopyOfProject();
   void createParamFile();
 
   const SelectEdit *m_select_edit;

@@ -801,7 +801,8 @@ SubversionClient::Update(int rev)
 {
   m_cancelled = false;
 
-  // Out parameter -- the value of the revision checked out from the repository.
+  // The value of the revision(s) checked out from the repository will be
+  // populated into this array.
   apr_array_header_t *result_revs = 0;
 
   // create an array containing a single element which is the input path to be updated
@@ -859,10 +860,8 @@ SubversionClient::Update(int rev)
   }
 
   // Should only be one element updated since we just provided one path.
-  taMisc::Info("Number of elements updated:",
-    toString(result_revs->nelts).c_str());
-  svn_revnum_t updateRev = APR_ARRAY_IDX(
-    result_revs, result_revs->nelts, svn_revnum_t);
+  taMisc::Info("Number of elements updated:", String(result_revs->nelts));
+  svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
   return updateRev;
 }
 

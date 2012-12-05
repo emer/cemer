@@ -55,6 +55,9 @@ ClusterManager::~ClusterManager()
 bool
 ClusterManager::Run()
 {
+  // Can't do anything without a reference to the SelectEdit.
+  if (!m_select_edit) return false;
+
   // Get the project's filename.
   // Prompt the user for a repository and a description for this cluster run.
   if (!getFilename() || !showRepoDialog()) {
@@ -83,6 +86,7 @@ ClusterManager::Run()
     setPaths();
     ensureWorkingCopyExists();
     createSubdirs();
+    saveCopyOfProject();
     createParamFile();
 
     // checkin the project's directory, subdirectories and model's file created
@@ -120,20 +124,24 @@ ClusterManager::getFilename()
   // Get the project object.
   taProject *proj = GET_OWNER(m_select_edit, taProject);
   if (!proj) {
+    // Should never happen.
     taMisc::Error("Could not get project object to run on cluster.");
     return false;
   }
 
-  // Get the project's filename and make sure it has been saved at least once.
-  // This intentionally doesn't check to see if the user has unsaved changes!
-  m_filename = proj->file_name;
-  if (m_filename.empty()) {
-    taMisc::Error(
-      "Please save project locally before attempting to run on cluster.");
-    return false;
+  // Make sure the model is saved locally before proceeding.
+  if (proj->Save()) {
+    // Get the project's filename.  It should be valid since we just saved.
+    m_filename = proj->file_name;
+    if (!m_filename.empty()) {
+      // Non-empty filename is success!
+      return true;
+    }
   }
 
-  return true;
+  taMisc::Error(
+    "Please save project locally before attempting to run on cluster.");
+  return false;
 }
 
 bool
@@ -209,7 +217,9 @@ ClusterManager::setPaths()
 
   // Don't use PATH_SEP here, since on Windows that's '\\', which is
   // non-canonical for URLs (and svn paths) and causes errors.
-  m_repo_user_path = m_repo_url + '/' + "repos" + '/' + m_username;  // path to the user's dir in the repo
+
+  // This is the path to the user's directory in the repo.
+  m_repo_user_path = m_repo_url + '/' + "repos" + '/' + m_username;
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
@@ -222,7 +232,6 @@ ClusterManager::setPaths()
   m_wc_results_path = m_wc_proj_path + '/' + "results";
 
   taMisc::Info("Repository is at", m_repo_user_path); // TODO remove this
-  //taMisc::Info("Working copy is at", m_wc_path); // TODO remove this
 }
 
 void
@@ -230,64 +239,92 @@ ClusterManager::ensureWorkingCopyExists()
 {
   // check if the user has a wc. (create and) checkout a wc if needed
   QFileInfo fi_wc(m_wc_path.chars());
-  if (!fi_wc.exists()) {  // User never used c2c or at least never used it on this emergent instance.
+  if (!fi_wc.exists()) {
+    // This could be the first time the user has used Click-to-cluster.
+    taMisc::Info("Working copy wasn't found; will create at", m_wc_path);
 
-    taMisc::Info("Working copy wasn't found at", m_wc_path); // TODO remove this
-
+    // Create the directory on the repository.
     String comment = "Creating cluster directory for user ";
     comment += m_username;
     m_svn_client->TryMakeUrlDir(m_repo_user_path.chars(), comment.chars());
-    taMisc::Info("A directory for you was created in the repository."); // TODO remove this
 
-    m_svn_client->Checkout(m_repo_user_path);
-    taMisc::Info("Your working copy is available at", m_wc_path); // TODO remove this
+    // Check out the directory we just created.
+    int rev = m_svn_client->Checkout(m_repo_user_path);
+    taMisc::Info("Working copy checked out for revision", String(rev));
   }
   else {
-    // update the existing wc
-    bool update_success = m_svn_client->Update();
-    taMisc::Info("Working copy was updated."); // TODO remove this
+    // Update the existing wc.
+    int rev = m_svn_client->Update();
+    taMisc::Info("Working copy was updated to revision", String(rev));
   }
 }
 
 void
 ClusterManager::createSubdirs()
 {
-  // check if the project's dir already exists.
-  // create the project's dir and subdirs' if needed.
-  QFileInfo fi_proj(m_wc_proj_path);
-  if (!fi_proj.exists()) {
-    // it's a new project, create a dir and subdirs for it.
-    m_svn_client->TryMakeDir(m_wc_proj_path);
-    m_svn_client->TryMakeDir(m_wc_submit_path);
-    m_svn_client->TryMakeDir(m_wc_models_path);
-    m_svn_client->TryMakeDir(m_wc_results_path);
-    //taMisc::Info("A new directory for the project was created"); // TODO remove this
+  // We could check if these directories already exist, but it's easier
+  // to just try to create them all and ignore any creation errors.
+  m_svn_client->TryMakeDir(m_wc_proj_path);
+  m_svn_client->TryMakeDir(m_wc_submit_path);
+  m_svn_client->TryMakeDir(m_wc_models_path);
+  m_svn_client->TryMakeDir(m_wc_results_path);
+}
+
+void
+ClusterManager::saveCopyOfProject()
+{
+  // Copy the project from its local path to our cluster working copy.
+  QString new_filename(m_wc_models_path.chars());
+  new_filename.append('/').append(QFileInfo(m_filename).fileName());
+
+  // If the project already exists in the wc, delete it first,
+  // since QFile::copy() won't overwrite.
+  if (QFile::exists(new_filename)) {
+    QFile::remove(new_filename);
   }
-  else {
-    taMisc::Info("A project with the same name was found. The project was updated."); // TODO remove this
-  }
+
+  // Copy the file and add it to the working copy.
+  QFile::copy(m_filename, new_filename);
+  m_svn_client->Add(qPrintable(new_filename));
 }
 
 void
 ClusterManager::createParamFile()
 {
-  // generate a text file containing the model parameters
-  String model_filename = "model.txt";  // TODO might need a version number
-  String wc_model_path = m_wc_models_path + '/' + model_filename;
+  // TODO:
+  // There should be no need to associate version numbers with any of these
+  // files, since our commit will be atomic, and the cluster-side script's
+  // svn update will be atomic.  On the other hand, if the user kicks off
+  // another cluster run before the first has finished, the cluster-side
+  // script will blow away the currently running model file in the cluster's
+  // working copy.
 
-  QFile file(wc_model_path);
+  // Generate a text file containing the model parameters from the SelectEdit.
+  QString param_filename(m_wc_submit_path.chars());
+  param_filename.append("/submit.txt");
+
+  // If the param file already exists in the wc, delete it first.
+  if (QFile::exists(param_filename)) {
+    QFile::remove(param_filename);
+  }
+
+  // Open a stream to write to the file.
+  QFile file(param_filename);
   file.open(QIODevice::WriteOnly | QIODevice::Text);
   QTextStream out(&file);
-  // TODO Where can I get the model parameters from?
-  // DPF: If this is supposed to be the project file, probably makes sense to
-  // save it in its regular place, then do a Qt-based file copy over to this
-  // location.  If you instead did a SaveAs, then emergent would remember
-  // this location, which could confuse the user.
-  // On the other hand, if this is supposed to be a param file, then it needs
-  // to be generated based on m_select_edit.
-  out << "<CONTENT OF THE MODEL>";
-  file.close(); // close manually before committing
 
-  // add the model file to the wc
-  m_svn_client->Add(wc_model_path);
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_select_edit->mbrs) {
+    const EditParamSearch &ps = mbr->param_search;
+    if (ps.search) {
+      out << "[" << mbr->GetName().chars() << "]";
+      out << "\nmin_val = " << ps.min_val;
+      out << "\nmax_val = " << ps.max_val;
+      out << "\nnext_val = " << ps.next_val;
+      out << "\nincr = " << ps.incr << "\n\n";
+    }
+  }
+
+  // Add the parameters file to the wc.
+  file.close(); // close manually before adding
+  m_svn_client->Add(qPrintable(param_filename));
 }
