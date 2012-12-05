@@ -13,7 +13,7 @@ REPONAME=`lsb_release -cs` # e.g., "maverick"
 QUARTER_BLD_DIR=libquarter0-${QUARTER_VERSION}
 QUARTER_BLD_PATH=/tmp/${QUARTER_BLD_DIR}
 rm -fr ${QUARTER_BLD_PATH}
-hg clone http://hg.sim.no/Quarter/default ${QUARTER_BLD_PATH}
+hg clone https://bitbucket.org/Coin3D/quarter/default ${QUARTER_BLD_PATH}
 # r460 is the last rev of Quarter to compile with libcoin60-dev (3.1.x)
 cd ${QUARTER_BLD_PATH}
 hg update -r 460

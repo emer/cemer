@@ -583,8 +583,8 @@ void taDataGen::GSP_rotateLeft(int* v,int start,int n) {
 
 bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wrap) {
   if(!CheckDims(mat, 2)) return false;
-  bool clipped = (TwoDCoord::WrapClipOne(wrap, x, mat->dim(0)) ||
-                  TwoDCoord::WrapClipOne(wrap, y, mat->dim(1)));
+  bool clipped = (taVector2i::WrapClipOne(wrap, x, mat->dim(0)) ||
+                  taVector2i::WrapClipOne(wrap, y, mat->dim(1)));
   if(clipped)
     return false;
   mat->FastEl(x,y) = color;

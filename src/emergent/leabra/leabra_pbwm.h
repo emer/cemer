@@ -751,13 +751,13 @@ public:
 
   bool		custom_send_range;	// #CONDSHOW_ON_init_wts use custom (sub)range of send layer
 
-  TwoDCoord 	send_range_start;	// #CONDSHOW_ON_custom_send_range start coords used in send layer (either unit groups or units depending on use_send_gps setting)
-  TwoDCoord 	send_range_end;		// #CONDSHOW_ON_custom_send_range end coords used in send layer (either unit groups or units depending on use_send_gps setting) -- use -1 for last unit/group
+  taVector2i 	send_range_start;	// #CONDSHOW_ON_custom_send_range start coords used in send layer (either unit groups or units depending on use_send_gps setting)
+  taVector2i 	send_range_end;		// #CONDSHOW_ON_custom_send_range end coords used in send layer (either unit groups or units depending on use_send_gps setting) -- use -1 for last unit/group
   
   bool		custom_recv_range;	// #CONDSHOW_ON_init_wts use custom (sub)range of recv layer?
 
-  TwoDCoord 	recv_range_start;	// #CONDSHOW_ON_custom_recv_range start coords used in recv layer (either unit groups or units depending on use_recv_gps setting)
-  TwoDCoord 	recv_range_end;		// #CONDSHOW_ON_custom_recv_range end coords used in recv layer (either unit groups or units depending on use_recv_gps setting) -- use -1 for last unit/group
+  taVector2i 	recv_range_start;	// #CONDSHOW_ON_custom_recv_range start coords used in recv layer (either unit groups or units depending on use_recv_gps setting)
+  taVector2i 	recv_range_end;		// #CONDSHOW_ON_custom_recv_range end coords used in recv layer (either unit groups or units depending on use_recv_gps setting) -- use -1 for last unit/group
   
   GradType	grad_type;		// #CONDSHOW_ON_init_wts type of gradient to make -- applies to both axes
   float		gauss_sig;		// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0

@@ -156,61 +156,18 @@ private:
   void	Defaults_init();
 };
 
-class LEABRA_API LeabraTICtxtSUnitSpec : public LeabraUnitSpec {
-  // Leabra Temporal Integration Context Super unit spec -- plus phase activity is blend of prior minus and current activation
-INHERITED(LeabraUnitSpec)
-public:
-
-  override void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-
-  TA_SIMPLE_BASEFUNS(LeabraTICtxtSUnitSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()		{ };
-  void	Defaults_init();
-};
-
-class LEABRA_API LeabraTISpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra Temporal Integration misc specs
-INHERITED(SpecMemberBase)
-public:
-  float		ctxt_super_new;	// #DEF_0.6:0.8 how much of the new current activation state should drive the effective overall activation -- remainder is from minus phase activation value -- determines effective learning rate
-
-  float 	ctxt_super_new_c;	// #NO_SAVE #READ_ONLY 1-ctxt_super_new
-
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraTISpec);
-protected:
-  SPEC_DEFAULTS;
-  void  UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
 class LEABRA_API LeabraTILayerSpec : public LeabraLayerSpec {
-  // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- supports Online and Context layer types, with superficial and deep cortical layer sub-types, and an alternating updating dynamic that supports high-dimensional coarse-coded integration of temporal information in a robust fashion, similar to a backprop Simple Recurrent Network (SRN) overall.
+  // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- effectively a simple recurrent network (SRN) context layer at this point, with a flexible api for future expansion -- only really need to use this for DEEP (Context) layers -- supers can be any layerspec -- deep should also have LayerActUnitSpec unit spec to optimize computation
 INHERITED(LeabraLayerSpec)
 public:
-  enum TILayerType {
-    ONLINE,			// online layer -- superficial layer is always labile, standard Leabra (and can use any layerspec), deep layer is frozen to prior act_p in minus (to project to context and allow it to update), copies super in plus cycle-by-cycle
-    CONTEXT,			// context type -- superficial layer updates from the online deep layer in minus phase, and has mix of maintained and updated activation in plus, deep layer is frozen to prior act_m in plus, copies super in minus cycle-by-cycle
-  };
   enum LaminaType {
-    SUPER,			// superficial layer (neocortical layers 2,3)
-    DEEP,			// deep layer (neocortical layers 5,6)
+    SUPER,			// superficial layer (neocortical layers 2,3) -- runs free at all times and receives context info from the deep layer
+    DEEP,			// deep layer (neocortical layers 5,6) -- copies the corresponding one-to-one super layer activations and holds them for a trial (~100 msec, alpha frequency updating)
   };
 
-  TILayerType		ti_type; 	// which type of time layer is this -- online or context?
-  LaminaType		lamina; 	// which neocortical lamina is this -- superficial or deep?
-  LeabraTISpec		ti;		// temporal-integration specific parameters
-  
-  virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net);
+  LaminaType		lamina;	// which neocortical lamina is this -- superficial or deep?
+
+    virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net);
   // clear maint_h maintenance values in layer
 
   virtual void Compute_MaintFmSuper(LeabraLayer* lay, LeabraNetwork* net);
@@ -226,7 +183,6 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
-  // don't do any learning:
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
   { if(lamina == DEEP) return false; return inherited::Compute_dWt_FirstPlus_Test(lay, net); }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
@@ -1987,9 +1943,9 @@ protected:
   override void	UpdateAfterEdit_impl();
 
   override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				  Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				      Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
 				    Random* ran, bool na_by_range=false);
 
@@ -2252,9 +2208,9 @@ protected:
   override void	UpdateAfterEdit_impl();
 
   override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				  Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+				      Random* ran, const taVector2i& offs, bool na_by_range=false);
   override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
 				    Random* ran, bool na_by_range=false);
 
@@ -2430,12 +2386,12 @@ private:
 // INHERITED(ProjectionSpec)
 // public:
 //   GaborV1SpecBase rf_spec;	// #SHOW_TREE receptive field specs
-//   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
+//   taVector2f rf_move;	// how much to move in input coordinates per each receiving layer group
 //   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 //   float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
 
-//   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-//   TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+//   taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+//   taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
  
 //   void 		Connect_impl(Projection* prjn);
 //   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
@@ -2553,7 +2509,7 @@ public:
   ///////// use stencils to speed processing
   float_Matrix	v2ffbo_weights;  // #READ_ONLY #NO_SAVE weights for V2 feedforward border ownership inputs from length sum
 
-  virtual float	ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir);
+  virtual float	ConWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir);
   // connection weight in terms of send unit group coord (suc), recv angle index (0-3 in 45 deg incr), and send angle index (0-3), and r/s bo direction (0-1) -- used for creating stencil
   virtual void	CreateStencils();
   // create stencil -- always done as first step in connection function
@@ -2587,7 +2543,7 @@ public:
   ///////// use stencils to speed processing
   float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
 
-  virtual float	ConWt(TwoDCoord& suc, int sang_dx, int sdir);
+  virtual float	ConWt(taVector2i& suc, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
 
   virtual void	CreateStencil();
@@ -2647,9 +2603,9 @@ public:
   
   float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
 
-  virtual float	ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  virtual float	ConWt_Wedge(int wedge, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
-  virtual float	ConWt_Line(int line, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  virtual float	ConWt_Line(int line, taVector2i& suc, taVector2i& su_geo, int sang_dx, int sdir);
   // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
 
   virtual void	CreateStencil();
@@ -2913,13 +2869,13 @@ class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
   // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
-  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
+  taVector2i 	 rf_width;	// size of the receptive field -- should be an even number
+  taVector2f     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
   float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   virtual  void Connect_Inner(Projection* prjn);
   // inner connect: unit position within the unit group determines sender location

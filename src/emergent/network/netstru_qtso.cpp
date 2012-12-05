@@ -146,9 +146,9 @@ NetView* UnitView::getNetView()
 void UnitView::Render_pre()
 {
   NetView* nv = getNetView();
-  float max_x = nv->max_size.x;
-  float max_y = nv->max_size.y;
-  float max_z = nv->max_size.z;
+  float max_x = nv->eff_max_size.x;
+  float max_y = nv->eff_max_size.y;
+  float max_z = nv->eff_max_size.z;
   float un_spc= nv->view_params.unit_spacing;
 
   Unit* unit = this->unit(); //cache
@@ -170,7 +170,7 @@ void UnitView::Render_pre()
     break;
   }
 
-  TwoDCoord upos;  unit->LayerDispPos(upos);
+  taVector2i upos;  unit->LayerDispPos(upos);
   node_so()->transform()->translation.setValue
     (disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
      -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
@@ -239,7 +239,7 @@ void UnitGroupView::BuildAll() {
 
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -258,7 +258,7 @@ void UnitGroupView::InitDisplay() {
   UpdateUnitViewBases(nv->unit_src);
 }
 
-float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
+float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
   NetView* nv = getNetView();
   float val = nv->scale.zero;
   if(nv->unit_disp_idx < 0) return val;
@@ -290,7 +290,7 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
   return val;
 }
 
-float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {
+float UnitGroupView::GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*& base) {
   NetView* nv = getNetView();
   float val = nv->scale.zero;
   base = uvd_bases.SafeEl(co.x, co.y, midx);
@@ -332,7 +332,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
 void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -369,7 +369,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
 void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -386,7 +386,7 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
 void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -406,7 +406,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
   int net_base_off = 0;
   MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                  disp_md->name, false); // no warn
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -421,7 +421,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
 
 void UnitGroupView::UpdateAutoScale(bool& updated) {
   NetView* nv = getNetView();
-  TwoDCoord co;
+  taVector2i co;
   void* base;
   Layer* lay = this->layer(); //cache
   if(!lay) return;
@@ -502,8 +502,8 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         float disp_scale = lay->disp_scale;
 
         SbVec3f pt = pp->getObjectPoint(pobj);
-        int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
-        int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
+        int xp = (int)((pt[0] * tnv->eff_max_size.x) / disp_scale);
+        int yp = (int)(-(pt[2] * tnv->eff_max_size.y) / disp_scale);
 
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           Unit* unit = lay->UnitAtDispCoord(xp, yp);
@@ -540,8 +540,8 @@ void UnitGroupView::Render_pre() {
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-  ugrp_so->setGeom(lay->disp_geom.x, lay->disp_geom.y, nv->max_size.x,
-                   nv->max_size.y, nv->max_size.z, lay->disp_scale);
+  ugrp_so->setGeom(lay->disp_geom.x, lay->disp_geom.y, nv->eff_max_size.x,
+		   nv->eff_max_size.y, nv->eff_max_size.z, lay->disp_scale);
 
   inherited::Render_pre();
 }
@@ -550,14 +550,6 @@ void UnitGroupView::Render_impl() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   NetView* nv = getNetView();
-
-  //set origin: 0,0,0
-//   TDCoord& pos = ugrp->pos;
-//   float disp_scale = lay->disp_scale;
-//   FloatTransform* ft = transform(true);
-//   ft->translate.SetXYZ(disp_scale * ((float)pos.x / nv->max_size.x),
-//                     disp_scale * ((float)pos.z / nv->max_size.z),
-//                     disp_scale * ((float)-pos.y / nv->max_size.y));
 
   inherited::Render_impl();
 }
@@ -615,7 +607,7 @@ void UnitGroupView::Render_impl_children() {
 
   // for efficiency we assume responsibility for the _impl of UnitViews
   T3UnitNode* unit_so;
-  TwoDCoord co;
+  taVector2i co;
   float val;
   float sc_val;
   T3Color col;
@@ -626,15 +618,15 @@ void UnitGroupView::Render_impl_children() {
     font->size.setValue(nv->font_sizes.unit);
   }
 
-  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
-  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
+  float font_y = .45f / nv->eff_max_size.y;
   float trans = nv->view_params.unit_trans;
   float font_z = nv->font_sizes.unit*2.0f;
-  float font_y = .45f / nv->max_size.y;
   SbVec3f font_xform(0.0f, font_z, font_y);
 
   int ui = 0;
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -724,10 +716,10 @@ void UnitGroupView::Render_impl_blocks() {
   color.setNum(n_geom);
 
   float spacing = nv->view_params.unit_spacing;
-  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
-  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
 
-  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   if(nv->snap_bord_disp) {
     spacing += max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
     if(spacing > 0.25f) spacing = 0.25f;
@@ -770,8 +762,8 @@ void UnitGroupView::Render_impl_blocks() {
   String val_str = "0.0";       // initial default
   String unit_name;
   T3Color col;
-  TwoDCoord pos;
-  TwoDCoord upos;
+  taVector2i pos;
+  taVector2i upos;
   int v_idx = 0;
   int t_idx = 3;                // base color + complexity + font
   // these go in normal order; indexes are backwards
@@ -780,11 +772,12 @@ void UnitGroupView::Render_impl_blocks() {
       Unit* unit = lay->UnitAtCoord(pos);
       if(unit)
         lay->UnitDispPos(unit, upos);
-      float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
-      float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
-      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
-      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->max_size.y);
+      float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
+      float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
+      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
+      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
       float zp = .5f / max_z;
+
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp); // 00_0 = 0
       vertex_dat[v_idx++].setValue(xp1, 0.0f, yp); // 10_0 = 0
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp1); // 01_0 = 0
@@ -976,8 +969,8 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   uint32_t* color_dat = color.startEditing();
 
   float trans = nv->view_params.unit_trans;
-  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
-  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+  float max_z = MIN(nv->eff_max_size.x, nv->eff_max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->eff_max_size.z); // make sure Z isn't bigger
 
   SoSeparator* un_txt = node_so->unitText();
 
@@ -986,7 +979,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   float val;
   float sc_val;
   T3Color col;
-  TwoDCoord pos;
+  taVector2i pos;
   int v_idx = 0;
   int c_idx = 0;
   int t_idx = 3;                // base color + font
@@ -1071,7 +1064,7 @@ void UnitGroupView::SaveHist() {
   int circ_idx = uvd_hist_idx.CircAddLimit(nv->hist_max);
   int eff_hist_idx = uvd_hist_idx.CircIdx(circ_idx);
 
-  TwoDCoord coord;
+  taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
@@ -1126,8 +1119,8 @@ void UnitGroupView::Render_impl_outnm() {
     mfs->setValue(lay->output_name.chars());
   }
 
-  float szx = (float)lay->flat_geom.x / nv->max_size.x;
-  float szy = (float)lay->flat_geom.y / nv->max_size.y;
+  float szx = (float)lay->flat_geom.x / nv->eff_max_size.x;
+  float szy = (float)lay->flat_geom.y / nv->eff_max_size.y;
 
   float cx = .5f * szx;
   float cy = .5f * szy;
@@ -1210,23 +1203,25 @@ void UnitGroupView::Render_impl_snap_bord() {
   int cidx = 0;
   int midx = 0;
 
-  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
+  float max_z = MAX(max_xy, nv->eff_max_size.z); // make sure Z isn't bigger
+
   float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
   if(spacing > .1f) spacing = .1f;
-  float max_z = MAX(max_xy, nv->max_size.z); // make sure Z isn't bigger
   float zp = (spacing * 2.0f) / max_z;
 
-  TwoDCoord pos;
-  TwoDCoord upos;
+  taVector2i pos;
+  taVector2i upos;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       Unit* unit = lay->UnitAtCoord(pos);
       if(unit)
         lay->UnitDispPos(unit, upos);
-      float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
-      float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
-      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
-      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->max_size.y);
+      float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
+      float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
+      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
+      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
+
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = v_idx+1;
       coords_dat[cidx++] = v_idx+2; coords_dat[cidx++] = v_idx+3;
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
@@ -1272,7 +1267,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   float sc_val;
   iColor tc;
   T3Color col;
-  TwoDCoord pos;
+  taVector2i pos;
   int c_idx = 0;
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
@@ -1412,7 +1407,9 @@ void LayerView::Render_pre() {
   NetView* nv = getNetView();
   if(!nv->lay_mv) show_drag = false;
 
-  setNode(new T3LayerNode(this, show_drag));
+  T3LayerNode* node_so = new T3LayerNode(this, show_drag,
+					 nv->lay_layout == NetView::TWO_D);
+  setNode(node_so);
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1423,28 +1420,38 @@ void LayerView::Render_impl() {
   if(!lay) return;
   NetView* nv = getNetView();
 
-  TDCoord& pos = lay->pos;      // with layer groups as real things now, use this!
-  //  TDCoord pos; lay->GetAbsPos(pos);
-  FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-                       (float)pos.z / nv->max_size.z,
-                       (float)-pos.y / nv->max_size.y);
-
+  taTransform* ft = transform(true);
   T3LayerNode* node_so = this->node_so(); // cache
   if(!node_so) return;
+
+  if(nv->lay_layout == NetView::THREE_D) {
+    ft->translate.SetXYZ((float)lay->pos.x / nv->eff_max_size.x,
+			 (float)lay->pos.z / nv->eff_max_size.z,
+			 (float)-lay->pos.y / nv->eff_max_size.y);
+  }
+  else {
+    ft->translate.SetXYZ((float)lay->pos2d.x / nv->eff_max_size.x,
+			 0.0f,
+			 (float)-lay->pos2d.y / nv->eff_max_size.y);
+    // ft->rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+  }
+
   if(lay->Iconified()) {
-    node_so->setGeom(1, 1, nv->max_size.x, nv->max_size.y, nv->max_size.z, 1.0f);
+    node_so->setGeom(1, 1, nv->eff_max_size.x, nv->eff_max_size.y,
+		     nv->eff_max_size.z, 1.0f);
   }
   else {
     node_so->setGeom(lay->disp_geom.x, lay->disp_geom.y,
-                     nv->max_size.x, nv->max_size.y, nv->max_size.z, lay->disp_scale);
+		     nv->eff_max_size.x, nv->eff_max_size.y,
+		     nv->eff_max_size.z, lay->disp_scale);
   }
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
+  float fx = (float)lay->scaled_disp_geom.x / nv->eff_max_size.x;
+
   node_so->setCaption(data()->GetName().chars());
 
-  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_wd = T3LayerNode::width / max_xy;
   lay_wd = MIN(lay_wd, T3LayerNode::max_width);
-  float fx = (float)lay->scaled_disp_geom.x / nv->max_size.x;
 
   // ensure that the layer label does not go beyond width of layer itself!
   float eff_lay_font_size = nv->font_sizes.layer;
@@ -1455,10 +1462,15 @@ void LayerView::Render_impl() {
   eff_lay_font_size = MAX(eff_lay_font_size, nv->font_sizes.layer_min);
   node_so->resizeCaption(eff_lay_font_size);
 
-
-  SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
-  node_so->transformCaption(tran);
-
+  if(nv->lay_layout == NetView::THREE_D) {
+    SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
+    node_so->transformCaption(tran);
+  }
+  else {
+    SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
+    SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+    node_so->transformCaption(rot, tran);
+  }
   inherited::Render_impl();
 }
 
@@ -1472,14 +1484,14 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
-  float fx = (float)lay->disp_geom.x / nv->max_size.x;
-  float fy = (float)lay->disp_geom.y / nv->max_size.y;
+  float fx = (float)lay->disp_geom.x / nv->eff_max_size.x;
+  float fy = (float)lay->disp_geom.y / nv->eff_max_size.y;
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_x = trans[0] * nv->max_size.x;
-  float new_y = trans[1] * nv->max_size.y;
+  float new_x = trans[0] * nv->eff_max_size.x;
+  float new_y = trans[1] * nv->eff_max_size.y;
   if(new_x < 0.0f)      new_x -= .5f; // add an offset to effect rounding.
   else                  new_x += .5f;
   if(new_y < 0.0f)      new_y -= .5f;
@@ -1489,10 +1501,14 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
     proj->undo_mgr.SaveUndo(net, "Layer Move", net, false, NULL); // save at net
   }
 
-  lay->pos.x += (int)new_x;
-//   if(lay->pos.x < 0) lay->pos.x = 0;
-  lay->pos.y += (int)new_y;
-//   if(lay->pos.y < 0) lay->pos.y = 0;
+  if(nv->lay_layout == NetView::THREE_D) {
+    lay->pos.x += (int)new_x;
+    lay->pos.y += (int)new_y;
+  }
+  else {
+    lay->pos2d.x += (int)new_x;
+    lay->pos2d.y += (int)new_y;
+  }
 
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
@@ -1514,7 +1530,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   taProject* proj = GET_OWNER(net, taProject);
 
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_z = trans[0] * nv->max_size.z;
+  float new_z = trans[0] * nv->eff_max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
 
@@ -1558,28 +1574,35 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   Layer* lay = this->layer(); //cache
   if(!nv || !lay) return;
 
-  TDCoord pos; lay->GetAbsPos(pos);
   viewer->main_xform = nv->main_xform; // first get the network
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
                            nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
-
-  float szx = ((float)lay->scaled_disp_geom.x / nv->max_size.x);
-  float szy = ((float)lay->scaled_disp_geom.y / nv->max_size.y);
-
   // translate to layer offset + indent into layer
   SbVec3f trans;
-  trans[0] = nv->main_xform.scale.x * (((float)pos.x / nv->max_size.x) + .05f * szx);
-  trans[1] = nv->main_xform.scale.y * ((((float)pos.z + 0.5f) / nv->max_size.z));
-  trans[2] = nv->main_xform.scale.z * (((float)-pos.y / nv->max_size.y) - .05f * szy);
+  float szx = ((float)lay->scaled_disp_geom.x / nv->eff_max_size.x);
+  float szy = ((float)lay->scaled_disp_geom.y / nv->eff_max_size.y);
+  taVector3i pos;
+  if(nv->lay_layout == NetView::THREE_D) {
+    lay->GetAbsPos(pos);
+  }
+  else {
+    lay->GetAbsPos2d(pos);
+    pos.z = 0.0f;
+  }
+
+  trans[0] = nv->main_xform.scale.x * (((float)pos.x / nv->eff_max_size.x) + .05f * szx);
+  trans[1] = nv->main_xform.scale.y * ((((float)pos.z + 0.5f) / nv->eff_max_size.z));
+  trans[2] = nv->main_xform.scale.z * (((float)-pos.y / nv->eff_max_size.y) - .05f * szy);
+
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   viewer->main_xform.translate.x += trans[0];
   viewer->main_xform.translate.y += trans[1];
   viewer->main_xform.translate.z += trans[2];
 
   // scale to size of layer
-  FloatTDCoord sc;
+  taVector3f sc;
   sc.x = .8f * szx;
   sc.y = .8f * szy;
   sc.z = 1.0f;
@@ -1664,19 +1687,37 @@ void PrjnView::Render_impl() {
 
   if(lay_fr == NULL) lay_fr = lay_to;
 
-  FloatTDCoord src;             // source and dest coords
-  FloatTDCoord dst;
-  TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
-  TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
+  float net_margin = 0.05f;
 
-  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  taVector3f src;             // source and dest coords
+  taVector3f dst;
+  taVector3i lay_fr_pos;
+  taVector3i lay_to_pos;
+
+  if(nv->lay_layout == NetView::THREE_D) {
+    lay_fr->GetAbsPos(lay_fr_pos);
+    lay_to->GetAbsPos(lay_to_pos);
+  }
+  else {
+    lay_fr->GetAbsPos2d(lay_fr_pos);
+    lay_to->GetAbsPos2d(lay_to_pos);
+  }
+
+  float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
+  if(nv->lay_layout == NetView::THREE_D) {
+    // y = network z coords -- same for all cases
+    src.y = ((float)lay_fr_pos.z) / nv->eff_max_size.z;
+    dst.y = ((float)lay_to_pos.z) / nv->eff_max_size.z;
+  }
+  else {
+    // y = network z coords -- same for all cases
+    src.y = 0.0f;
+    dst.y = 0.0f;
+  }
+
   float lay_ht = T3LayerNode::height / max_xy;
   float lay_wd = T3LayerNode::width / max_xy;
   lay_wd = MIN(lay_wd, T3LayerNode::max_width);
-
-  // y = network z coords -- same for all cases
-  src.y = ((float)lay_fr_pos.z) / nv->max_size.z;
-  dst.y = ((float)lay_to_pos.z) / nv->max_size.z;
 
   // move above/below layer plane
   if(src.y < dst.y) {
@@ -1691,34 +1732,48 @@ void PrjnView::Render_impl() {
 
   if(nv->view_params.prjn_disp == NetViewParams::B_F) {
     // origin is *back* center
-    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_disp_geom.x) / nv->max_size.x;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_disp_geom.x) /
+      nv->eff_max_size.x;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->eff_max_size.y) -
+      lay_wd;
 
     // dest is *front* *center*
-    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->scaled_disp_geom.x) / nv->max_size.x;
-    dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
+    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->scaled_disp_geom.x) /
+      nv->eff_max_size.x;
+    dst.z = -((float)lay_to_pos.y / nv->eff_max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_F) { // easier to see
     // origin is *front* left
-    src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr_pos.y) / nv->max_size.y) + lay_wd;
+    src.x = ((float)lay_fr_pos.x) / nv->eff_max_size.x + lay_wd;
+    src.z = -((float)(lay_fr_pos.y) / nv->eff_max_size.y) + lay_wd;
 
     // dest is *front* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->eff_max_size.x
+      - lay_wd;
+    dst.z = -((float)lay_to_pos.y / nv->eff_max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_B) { // out of the way
     // origin is *back* left
-    src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x) / nv->eff_max_size.x + lay_wd;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->eff_max_size.y) -
+      lay_wd;
 
     // dest is *back* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->eff_max_size.x
+      - lay_wd;
+    dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_disp_geom.y) / nv->eff_max_size.y) -
+      lay_wd;
   }
 
   if(dst.y == src.y && dst.x == src.x && dst.z == src.z) {
     dst.x += lay_wd;            // give it some minimal something
+  }
+
+  if(nv->lay_layout == NetView::TWO_D) {
+    src.y -= .01f;		// slightly back in depth
+    dst.y -= .01f;
+    src.z -= net_margin;	// rise up just a bit per similar on layer
+    dst.z -= net_margin;
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
@@ -1726,7 +1781,7 @@ void PrjnView::Render_impl() {
 
   // caption location is half way
   if(nv->view_params.prjn_name) {
-    FloatTDCoord cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
+    taVector3f cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
     node_so->setCaption(prjn->name.chars());
     node_so->transformCaption(cap);
     node_so->resizeCaption(nv->font_sizes.prjn);
@@ -1884,7 +1939,8 @@ void LayerGroupView::Render_pre() {
   bool hide_lines = !nv->view_params.show_laygp;
   if(root_laygp) hide_lines = true; // always true
 
-  setNode(new T3LayerGroupNode(this, show_drag, hide_lines));
+  setNode(new T3LayerGroupNode(this, show_drag, hide_lines,
+			       nv->lay_layout == NetView::TWO_D));
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1894,32 +1950,43 @@ void LayerGroupView::Render_impl() {
   Layer_Group* lgp = this->layer_group(); //cache
   NetView* nv = getNetView();
 
-  TDCoord pos; lgp->GetAbsPos(pos);
-  FloatTransform* ft = transform(true);
-  if(root_laygp) {
-    ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-                         ((float)pos.z) / nv->max_size.z,
-                         (float)-pos.y / nv->max_size.y);
-  }
-  else {
-    ft->translate.SetXYZ(((float)pos.x) / nv->max_size.x,
-                         ((float)pos.z) / nv->max_size.z,
-                         (float)-pos.y / nv->max_size.y);
-  }
+  taVector3i pos;
 
   T3LayerGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
-  node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
-                   lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
-                   nv->max_size.x, nv->max_size.y, nv->max_size.z);
+
+  float net_margin = 0.05f;
+  float gpz_2d = 0.01f;
+
+  taTransform* ft = transform(true);
+  if(nv->lay_layout == NetView::THREE_D) {
+    lgp->GetAbsPos(pos);
+    ft->translate.SetXYZ((float)pos.x / nv->eff_max_size.x,
+			 ((float)pos.z) / nv->eff_max_size.z,
+			 (float)-pos.y / nv->eff_max_size.y);
+
+    node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
+		     lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
+		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
+  }
+  else {
+    lgp->GetAbsPos2d(pos);
+    ft->translate.SetXYZ(((float)pos.x) / nv->eff_max_size.x,
+			 0.0f,
+			 -net_margin + ((float)-pos.y) / nv->eff_max_size.y);
+
+    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, -.2f,
+		     lgp->max_disp_size2d.x, lgp->max_disp_size2d.y, 1.0,
+		     nv->eff_max_size.x, nv->eff_max_size.y, 5.0f);
+  }
 
   if(!node_so->hideLines()) {
     node_so->drawStyle()->lineWidth = nv->view_params.laygp_width;
 
     node_so->setCaption(data()->GetName().chars());
-    float lay_wd_y = T3LayerNode::width / nv->max_size.y;
-    float lay_ht_z = T3LayerNode::height / nv->max_size.z;
-    float fx = (float)lgp->max_disp_size.x / nv->max_size.x;
+    float lay_wd_y = T3LayerNode::width / nv->eff_max_size.y;
+    float lay_ht_z = T3LayerNode::height / nv->eff_max_size.z;
+    float fx = (float)lgp->max_disp_size.x / nv->eff_max_size.x;
     lay_wd_y = MIN(lay_wd_y, T3LayerNode::max_width);
 
     // ensure that the layer label does not go beyond width of layer itself!
@@ -1930,8 +1997,15 @@ void LayerGroupView::Render_impl() {
     }
     node_so->resizeCaption(eff_lay_font_size);
 
-    SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
-    node_so->transformCaption(tran);
+    if(nv->lay_layout == NetView::THREE_D) {
+      SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
+      node_so->transformCaption(tran);
+    }
+    else {
+      SbVec3f tran(0.0f, 0.5f * lay_wd_y, 1.5f * eff_lay_font_size);
+      SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+      node_so->transformCaption(rot, tran);
+    }
   }
 
   inherited::Render_impl();
@@ -1947,16 +2021,16 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
-  float fx = ((float)lgp->max_disp_size.x + 2.0f * T3LayerNode::width) / nv->max_size.x;
-  float fy = ((float)lgp->max_disp_size.y + 2.0f * T3LayerNode::width) / nv->max_size.y;
-  float fz = ((float)(lgp->max_disp_size.z-1) + 4.0f * T3LayerNode::height) / nv->max_size.z;
-  float xfrac = (.5f * fx) - (T3LayerNode::width / nv->max_size.x);
-  float yfrac = (.5f * fy) - (T3LayerNode::width / nv->max_size.y);
-  float zfrac = (.5f * fz) - 2.0f * (T3LayerNode::height / nv->max_size.z);
+  float fx = ((float)lgp->max_disp_size.x + 2.0f * T3LayerNode::width) / nv->eff_max_size.x;
+  float fy = ((float)lgp->max_disp_size.y + 2.0f * T3LayerNode::width) / nv->eff_max_size.y;
+  float fz = ((float)(lgp->max_disp_size.z-1) + 4.0f * T3LayerNode::height) / nv->eff_max_size.z;
+  float xfrac = (.5f * fx) - (T3LayerNode::width / nv->eff_max_size.x);
+  float yfrac = (.5f * fy) - (T3LayerNode::width / nv->eff_max_size.y);
+  float zfrac = (.5f * fz) - 2.0f * (T3LayerNode::height / nv->eff_max_size.z);
 
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_x = trans[0] * nv->max_size.x;
-  float new_y = trans[1] * nv->max_size.y;
+  float new_x = trans[0] * nv->eff_max_size.x;
+  float new_y = trans[1] * nv->eff_max_size.y;
   if(new_x < 0.0f)      new_x -= .5f; // add an offset to effect rounding.
   else                  new_x += .5f;
   if(new_y < 0.0f)      new_y -= .5f;
@@ -1966,10 +2040,18 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
     proj->undo_mgr.SaveUndo(net, "Layer Group Move", net, false, NULL); // save at net
   }
 
-  lgp->pos.x += (int)new_x;
-  if(lgp->pos.x < 0) lgp->pos.x = 0;
-  lgp->pos.y += (int)new_y;
-  if(lgp->pos.y < 0) lgp->pos.y = 0;
+  if(nv->lay_layout == NetView::THREE_D) {
+    lgp->pos.x += (int)new_x;
+    if(lgp->pos.x < 0) lgp->pos.x = 0;
+    lgp->pos.y += (int)new_y;
+    if(lgp->pos.y < 0) lgp->pos.y = 0;
+  }
+  else {
+    lgp->pos2d.x += (int)new_x;
+    if(lgp->pos2d.x < 0) lgp->pos2d.x = 0;
+    lgp->pos2d.y += (int)new_y;
+    if(lgp->pos2d.y < 0) lgp->pos2d.y = 0;
+  }
 
   laynd->txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
@@ -1990,11 +2072,11 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   Network* net = nv->net();
   taProject* proj = GET_OWNER(net, taProject);
 
-  float fz = (float)lgp->max_disp_size.z / nv->max_size.z;
+  float fz = (float)lgp->max_disp_size.z / nv->eff_max_size.z;
   float zfrac = .5f * fz;
 
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_z = trans[0] * nv->max_size.z;
+  float new_z = trans[0] * nv->eff_max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
 
@@ -2002,8 +2084,10 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
     proj->undo_mgr.SaveUndo(net, "Layer Group Move", net, false, NULL); // save at net
   }
 
-  lgp->pos.z += (int)new_z;
-  if(lgp->pos.z < 0) lgp->pos.z = 0;
+  if(nv->lay_layout == NetView::THREE_D) {
+    lgp->pos.z += (int)new_z;
+    if(lgp->pos.z < 0) lgp->pos.z = 0;
+  }
 
   const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
   laynd->txfm_shape()->translation.setValue(shptrans[0], zfrac, shptrans[2]); // reset!
@@ -2122,11 +2206,11 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nvo->scale.x;  trans[1] *= nvo->scale.y;  trans[2] *= nvo->scale.z;
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   nvo->pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nvo->scale *= sc;
 
@@ -2204,7 +2288,6 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   fr->AddView(nv);
 
   // make sure we've got it all rendered:
-  nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
 
   new_net_view.showFrame();
@@ -2324,12 +2407,16 @@ void NetView::Initialize() {
   data_base = &TA_Network;
   nvp = NULL;
   display = true;
+  lay_layout = THREE_D;
+  prev_lay_layout = lay_layout;
   lay_mv = true;
   net_text = true;
   show_iconified = false;
-  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
+  main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
+  net_text_xform.translate.SetXYZ(1.0f, 0.0f, -0.5f); // right mid
+  //  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
-  net_text_xform.scale = 0.7f;
+  net_text_xform.scale = 0.5f;
   net_text_rot = -90.0f;
 
   unit_con_md = false;
@@ -2372,11 +2459,20 @@ void NetView::InitLinks() {
   taBase::Own(ctr_hist, this);
   taBase::Own(ctr_hist_idx, this);
   taBase::Own(max_size, this);
+  taBase::Own(max_size2d, this);
+  taBase::Own(eff_max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
   taBase::Own(net_text_xform, this);
 
   ctr_hist_idx.matrix = &ctr_hist;
+}
+
+void NetView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {	// set to initial
+    prev_lay_layout = lay_layout;
+  }
 }
 
 void NetView::CutLinks() {
@@ -2484,7 +2580,7 @@ void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
 
 void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   bool got_arw = false;
-  TwoDCoord dir(0,0);
+  taVector2i dir(0,0);
   if(e->key() == Qt::Key_Right) {
     got_arw = true;
     dir.x=1;
@@ -2505,7 +2601,7 @@ void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
   if(!(bool)unit_src) return;
   Layer* lay = unit_src->own_lay();
   if(!lay) return;
-  TwoDCoord pos;
+  taVector2i pos;
   lay->UnitLogPos(unit_src, pos);
   pos += dir;
   if(pos.x < 0 || pos.y < 0) return;
@@ -2837,7 +2933,7 @@ void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   col = fl;
 }
 
-void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val, T3Color& col,
+void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, taVector2i& co, float& val, T3Color& col,
                                  float& sc_val) {
   sc_val = scale.zero;
   void* base = NULL;
@@ -2858,6 +2954,14 @@ void NetView::InitDisplay(bool init_panel) {
   // I guess it is just a "non structural state update" container..
   GetMaxSize();
   GetMembs();
+
+  if(lay_layout != prev_lay_layout) {
+    if(lay_layout == THREE_D)
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
+    else
+      main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+    prev_lay_layout = lay_layout;
+  }
 
   hist_reset_req = false;       // this flag is used to sync history index resetting among
                                 // all the history elements in unit groups and network
@@ -2933,6 +3037,21 @@ void NetView::GetMaxSize() {
     max_size.x = MAX(max_size.x, max_size.y);
     max_size.y = max_size.x;
   }
+
+  max_size2d.x = net()->max_disp_size2d.x;
+  max_size2d.y = net()->max_disp_size2d.y;
+  max_size2d.z = 1.0f;
+  if(view_params.xy_square) {
+    max_size2d.x = MAX(max_size2d.x, max_size2d.y);
+    max_size2d.y = max_size2d.x;
+  }
+
+  if(lay_layout == THREE_D) {
+    eff_max_size = max_size;
+  }
+  else {
+    eff_max_size = max_size2d;
+  }
 }
 
 void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
@@ -2951,41 +3070,6 @@ const iColor NetView::bgColor(bool& ok) const {
 }
 
 
-void NetView::Render_pre() {
-  if(!no_init_on_rerender)
-    InitDisplay();
-  no_init_on_rerender = false;
-
-  bool show_drag = true;;
-  T3ExaminerViewer* vw = GetViewer();
-  if(vw) {
-    vw->syncViewerMode();
-    show_drag = vw->interactionModeOn();
-  }
-  if(!lay_mv) show_drag = false;
-
-  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));
-  SoMaterial* mat = node_so()->material(); //cache
-  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-  mat->transparency.setValue(0.5f);
-
-  if(vw && vw->interactionModeOn()) {
-    SoEventCallback* ecb = new SoEventCallback;
-    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
-    node_so()->addChild(ecb);
-  }
-
-  if(vw) {                      // add hot buttons to viewer
-    MemberDef* md;
-    for (int i=0; i < membs.size; i++) {
-      md = membs[i];
-      if(!md->HasOption("VIEW_HOT")) continue;
-      vw->addDynButton(md->name, md->desc); // add the button
-    }
-  }
-  inherited::Render_pre();
-}
-
 // callback for netview transformer dragger
 void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -3000,11 +3084,11 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nv->main_xform.scale.x;  trans[1] *= nv->main_xform.scale.y;
   trans[2] *= nv->main_xform.scale.z;
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
@@ -3044,11 +3128,11 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nv->net_text_xform.scale.x;  trans[1] *= nv->net_text_xform.scale.y;
   trans[2] *= nv->net_text_xform.scale.z;
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   nv->net_text_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->net_text_xform.scale *= sc;
 
@@ -3076,9 +3160,45 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->UpdateDisplay();
 }
 
+void NetView::Render_pre() {
+  if(!no_init_on_rerender)
+    InitDisplay();
+  no_init_on_rerender = false;
+
+  bool show_drag = true;;
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    vw->syncViewerMode();
+    show_drag = vw->interactionModeOn();
+  }
+  if(!lay_mv) show_drag = false;
+
+  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv,
+			lay_layout == TWO_D));
+  SoMaterial* mat = node_so()->material(); //cache
+  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
+  mat->transparency.setValue(0.5f);
+
+  if(vw && vw->interactionModeOn()) {
+    SoEventCallback* ecb = new SoEventCallback;
+    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
+    node_so()->addChild(ecb);
+  }
+
+  if(vw) {                      // add hot buttons to viewer
+    MemberDef* md;
+    for (int i=0; i < membs.size; i++) {
+      md = membs[i];
+      if(!md->HasOption("VIEW_HOT")) continue;
+      vw->addDynButton(md->name, md->desc); // add the button
+    }
+  }
+  inherited::Render_pre();
+}
+
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
-  FloatTransform* ft = transform(true);
+  taTransform* ft = transform(true);
   *ft = main_xform;
 
   T3ExaminerViewer* vw = GetViewer();
@@ -3108,6 +3228,12 @@ void NetView::Render_impl() {
     node_so->shapeDraw()->lineWidth = view_params.laygp_width;
 
   node_so->setCaption(cap_txt.chars());
+
+  if(lay_layout == NetView::TWO_D) {
+    SbVec3f tran(0.0f, 0.0f, 0.05f);
+    SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+    node_so->transformCaption(rot, tran);
+  }
 
   if (scale.auto_scale) {
     UpdateAutoScale();
@@ -3285,7 +3411,7 @@ void NetView::Render_wt_lines() {
     mats.setNum(0);
     return;
   }
-  TDCoord src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
+  taVector3i src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
 
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = MAX(wt_line_width, 0.0f);
@@ -3347,9 +3473,9 @@ void NetView::Render_wt_lines() {
   int midx = 0;
 
   // note: only want layer_rel for ru_pos
-  TwoDCoord ru_pos; unit_src->LayerDispPos(ru_pos);
-  FloatTDCoord src;             // source and dest coords
-  FloatTDCoord dst;
+  taVector2i ru_pos; unit_src->LayerDispPos(ru_pos);
+  taVector3f src;             // source and dest coords
+  taVector3f dst;
 
   float max_xy = MAX(max_size.x, max_size.y);
   float lay_ht = T3LayerNode::height / max_xy;
@@ -3366,8 +3492,8 @@ void NetView::Render_wt_lines() {
     if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
     Layer* lay_to = (swt ? prjn->from : prjn->layer);
-    TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
-    TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
+    taVector3i lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
+    taVector3i lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
 
     // y = network z coords -- same for all cases
     src.y = ((float)lay_to_pos.z) / max_size.z;
@@ -3390,7 +3516,7 @@ void NetView::Render_wt_lines() {
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos
-      TwoDCoord su_pos; su->LayerDispPos(su_pos);
+      taVector2i su_pos; su->LayerDispPos(su_pos);
       dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
@@ -3408,7 +3534,7 @@ void NetView::Render_wt_lines() {
   }
 
   if((bool)wt_prjn_lay) {
-    TDCoord wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
+    taVector3i wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
 
     // y = network z coords -- same for all cases
     src.y = ((float)src_lay_pos.z) / max_size.z;
@@ -3429,7 +3555,7 @@ void NetView::Render_wt_lines() {
       float wt = su->wt_prjn;
       if(fabsf(wt) < wt_line_thr) continue;
 
-      TDCoord su_pos; su->GetAbsPos(su_pos);
+      taVector3i su_pos; su->GetAbsPos(su_pos);
       dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
@@ -3722,6 +3848,15 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addSpacing(taiM->hsep_c);
 
+  lblLayLayout = taiM->NewLabel("2/3D:", widg, font_spec);
+  lblLayLayout->setToolTip("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)");
+  layDispCheck->addWidget(lblLayLayout);
+  cmbLayLayout = dl.Add(new taiComboBox(true, 
+		TA_NetView.sub_types.FindName("LayerLayout"),
+                               this, NULL, widg, taiData::flgAutoApply));
+  layDispCheck->addWidget(cmbLayLayout->GetRep());
+  layDispCheck->addSpacing(taiM->hsep_c);
+
   chkLayMove = new QCheckBox("Lay\nMv", widg);
   chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -3734,13 +3869,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
-  lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
-  lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
-  layDispCheck->addWidget(lblTextRot);
-  fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layDispCheck->addWidget(fldTextRot->GetRep());
-  ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
-  layDispCheck->addSpacing(taiM->hsep_c);
+  // lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
+  // lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
+  // layDispCheck->addWidget(lblTextRot);
+  // fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  // layDispCheck->addWidget(fldTextRot->GetRep());
+  // ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
+  // layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -4120,7 +4255,8 @@ void NetViewPanel::UpdatePanel_impl() {
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);
-  fldTextRot->GetImage((String)nv->net_text_rot);
+  // fldTextRot->GetImage((String)nv->net_text_rot);
+  cmbLayLayout->GetEnumImage(nv->lay_layout);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
@@ -4184,9 +4320,12 @@ void NetViewPanel::GetValue_impl() {
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
   nv->net_text = chkNetText->isChecked();
-  nv->net_text_rot = (float)fldTextRot->GetValue();
+  // nv->net_text_rot = (float)fldTextRot->GetValue();
 
   int i;
+  cmbLayLayout->GetEnumValue(i);
+  nv->lay_layout = (NetView::LayerLayout)i;
+
   cmbUnitText->GetEnumValue(i);
   nv->unit_text_disp = (NetView::UnitTextDisplay)i;
 

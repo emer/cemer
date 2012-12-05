@@ -1131,7 +1131,7 @@ void T3DataView::Copy_(const T3DataView& cp) {
   m_md = cp.m_md;
   Clear_impl(); // hope this works!
   last_child_node = NULL;
-  FloatTransform* ft = cp.m_transform;
+  taTransform* ft = cp.m_transform;
   if (ft)
     transform(true)->Copy(*ft);
 }
@@ -1364,9 +1364,9 @@ T3DataViewRoot* T3DataView::root() {
   return rval;
 }
 
-FloatTransform* T3DataView::transform(bool auto_create) {
+taTransform* T3DataView::transform(bool auto_create) {
   if (!m_transform && auto_create) {
-    m_transform = new FloatTransform();
+    m_transform = new taTransform();
     taBase::Own(m_transform, this);
     fixTransformAxis();
   }

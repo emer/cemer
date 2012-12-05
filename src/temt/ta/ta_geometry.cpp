@@ -21,31 +21,31 @@
 #include <Inventor/nodes/SoTransform.h>
 #endif
 
-TwoDCoord::TwoDCoord(const FloatTwoDCoord& cp) {
+taVector2i::taVector2i(const taVector2f& cp) {
   Register(); Initialize(); x = (int)cp.x; y = (int)cp.y;
 }
 
 
-TwoDCoord& TwoDCoord::operator=(const FloatTwoDCoord& cp) {
+taVector2i& taVector2i::operator=(const taVector2f& cp) {
   x = (int)cp.x; y = (int)cp.y;
   return *this;
 }
 
-void TwoDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
-// NOTE: TDCoord just replaces this whole routine, for simplicity
+void taVector2i::CopyToMatrixGeom(MatrixGeom& geom) {
+// NOTE: taVector3i just replaces this whole routine, for simplicity
   geom.SetDims(2);
   geom.Set(0, x);
   geom.Set(1, y);
 }
 
-void TwoDCoord::CopyToMatrixIndex(MatrixIndex& idx) {
-// NOTE: TDCoord just replaces this whole routine, for simplicity
+void taVector2i::CopyToMatrixIndex(MatrixIndex& idx) {
+// NOTE: taVector3i just replaces this whole routine, for simplicity
   idx.SetDims(2);
   idx.Set(0, x);
   idx.Set(1, y);
 }
 
-bool TwoDCoord::FitN(int n) {
+bool taVector2i::FitN(int n) {
   if((x * y) == n)	return false;
   y = (int)sqrtf((float)n);
   if(y < 1)
@@ -73,7 +73,7 @@ bool TwoDCoord::FitN(int n) {
   return true;
 }
 
-bool TwoDCoord::WrapClipOne(bool wrap, int& c, int max) {
+bool taVector2i::WrapClipOne(bool wrap, int& c, int max) {
   bool out_of_range = false;
   if(wrap) {
     if(c >= max) {
@@ -99,7 +99,7 @@ bool TwoDCoord::WrapClipOne(bool wrap, int& c, int max) {
 }
 
 
-void PosTwoDCoord::UpdateAfterEdit_impl() {
+void PosVector2i::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetGtEq(0);
 }
@@ -125,66 +125,66 @@ void XYNGeom::UpdateAfterEdit_impl() {
   }
 }
 
-void XYNGeom::operator=(const TwoDCoord& cp) {
+void XYNGeom::operator=(const taVector2i& cp) {
   x = cp.x; y = cp.y; UpdateAfterEdit_NoGui();
 }
 
-TDCoord::TDCoord(const FloatTDCoord& cp) {
+taVector3i::taVector3i(const taVector3f& cp) {
   Register(); Initialize();
   x = (int)cp.x; y = (int)cp.y; z = (int)cp.z;
 }
 
-TDCoord& TDCoord::operator=(const FloatTDCoord& cp) {
+taVector3i& taVector3i::operator=(const taVector3f& cp) {
   x = (int)cp.x; y = (int)cp.y;	z = (int)cp.z;
   return *this;
 }
 
-void TDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
+void taVector3i::CopyToMatrixGeom(MatrixGeom& geom) {
   geom.SetDims(3);
   geom.Set(0, x);
   geom.Set(1, y);
   geom.Set(2, z);
 }
 
-void TDCoord::CopyToMatrixIndex(MatrixIndex& idx) {
+void taVector3i::CopyToMatrixIndex(MatrixIndex& idx) {
   idx.SetDims(3);
   idx.Set(0, x);
   idx.Set(1, y);
   idx.Set(2, z);
 }
 
-bool TDCoord::FitNinXY(int n) {
+bool taVector3i::FitNinXY(int n) {
   return FitN(n);
 }
 
-void PosTDCoord::UpdateAfterEdit_impl() {
+void PosVector3i::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetGtEq(0);
 }
 
 
-FloatTwoDCoord::FloatTwoDCoord(const TwoDCoord& cp) {
+taVector2f::taVector2f(const taVector2i& cp) {
   Register(); Initialize(); x = (float)cp.x; y = (float)cp.y;
 }
 
-FloatTwoDCoord& FloatTwoDCoord::operator=(const TwoDCoord& cp) {
+taVector2f& taVector2f::operator=(const taVector2i& cp) {
   x = (float)cp.x; y = (float)cp.y;
   return *this;
 }
 
-FloatTDCoord::FloatTDCoord(const TDCoord& cp) {
+taVector3f::taVector3f(const taVector3i& cp) {
   Register(); Initialize();
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
 }
 
-FloatTDCoord& FloatTDCoord::operator=(const TDCoord& cp) {
+taVector3f& taVector3f::operator=(const taVector3i& cp) {
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
   return *this;
 }
 
 #ifdef TA_USE_INVENTOR
 
-void FloatTransform::CopyTo(SoTransform* txfm) {
+void taTransform::CopyTo(SoTransform* txfm) {
   if (!txfm) return;
   txfm->translation.setValue(SbVec3f(translate.x, translate.y, translate.z));
   txfm->rotation.setValue(SbVec3f(rotate.x, rotate.y, rotate.z), rotate.rot);
@@ -194,4 +194,36 @@ void FloatTransform::CopyTo(SoTransform* txfm) {
 #endif
 
 const ValIdx ValIdx_Array::blank;
+
+taAxisAngle& taAxisAngle::operator=(const taQuaternion& cp) {
+  cp.ToAxisAngle(*this);
+  return *this;
+}
+
+void taAxisAngle::FromEuler(float theta_x, float theta_y, float theta_z) {
+  taQuaternion q(theta_x, theta_y, theta_z);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
+  taQuaternion q(*this);
+  q.RotateAxis(x_axis, y_axis, z_axis, rot_ang);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateEuler(float theta_x, float theta_y, float theta_z) {
+  taQuaternion q(*this);
+  q.RotateEuler(theta_x, theta_y, theta_z);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateXYZ(float& x, float& y, float& z) {
+  taQuaternion q(*this);
+  q.RotateXYZ(x, y, z);
+}
+
+void taAxisAngle::RotateVec(taVector3f& vec) {
+  taQuaternion q(*this);
+  q.RotateVec(vec);
+}
 

@@ -1274,7 +1274,9 @@ void taMatrix::CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
 
 void taMatrix::CopyFromCustom_impl(const taBase* cp_fm) {
   if (cp_fm->InheritsFrom(&TA_taMatrix)) {
-    Copy_Matrix_impl(static_cast<const taMatrix*>(cp_fm));
+    const taMatrix* cp = static_cast<const taMatrix*>(cp_fm);
+    inherited::Copy_impl(*cp); // do all common generic parent class copying
+    Copy_Matrix_impl(cp);
   }
   else inherited::CopyFromCustom_impl(cp_fm); // unlikely/prob doesn't happen
 }
@@ -1282,11 +1284,31 @@ void taMatrix::CopyFromCustom_impl(const taBase* cp_fm) {
 void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
   // note: caller has asserted Struct guys
   // assumes copy has been validated
-  inherited::Copy_impl(*cp); // do all common generic parent class copying
   SetBaseFlag(COPYING); // note: still have to set/reset here, because not nestable
-  SetGeomN(cp->geom);
-  for (int i = 0; i < size; ++i) {
-    El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
+
+  if(!ElView() && !cp->ElView()) { // neither has views -- simple case
+    SetGeomN(cp->geom);
+    for (int i = 0; i < size; ++i) {
+      El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
+    }
+  }
+  // views -- need to go through element-by-element in views
+  else if(size == 0) {		// i'm empty -- fill me up!
+    SetGeom(1, cp->IterCount());
+    TA_FOREACH_INDEX(i, *cp) {
+      El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
+    }
+  }
+  else {
+    taBaseItr* my_itr = NULL;
+    taBaseItr* cp_itr = NULL;
+    int my_idx, cp_idx;
+    for(my_idx = IterBeginIndex(my_itr), cp_idx = cp->IterBeginIndex(cp_itr);
+	(bool)my_itr;		// only conditional on me -- other guy restarts 
+	my_idx = IterNextIndex(my_itr), cp_idx = cp->IterNextIndex(cp_itr)) {
+      if(!cp_itr) cp_idx = cp->IterBeginIndex(cp_itr); // start over
+      El_SetFmVar_(FastEl_Flat_(my_idx), cp->FastElAsVar_Flat(cp_idx));
+    }
   }
   ClearBaseFlag(COPYING);
 }
@@ -2139,28 +2161,6 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
 
 /////////////////////////////////////////////////////////
 //              Operators
-
-//////////// op =
-// taMatrix* taMatrix::operator=(const taMatrix& t) {
-//   if(TestError(geom != t.geom, "=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
-//     return NULL;
-//   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-//     TA_FOREACH_INDEX(i, *this) {
-//       ((float_Matrix*)this)->FastEl_Flat(i) = ((float_Matrix*)&t)->FastEl_Flat(i);
-//     }
-//   }
-//   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-//     TA_FOREACH_INDEX(i, *this) {
-//       ((double_Matrix*)this)->FastEl_Flat(i) = ((double_Matrix*)&t)->FastEl_Flat(i);
-//     }
-//   }
-//   else {                     // use variants -- no need to optimize
-//     TA_FOREACH_INDEX(i, *this) {
-//       SetFmVar_Flat(t.FastElAsVar_Flat(i), i);
-//     }
-//   }
-//   return this;
-// }
 
 taMatrix* taMatrix::operator=(const Variant& t) {
   if(t.isMatrixType()) {

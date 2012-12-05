@@ -520,7 +520,7 @@ void XYSubPatternSpec::Initialize() {
 
 void GroupPatternSpec::Initialize() {
   sub_geom.SetGtEq(1);
-  TDCoord& gg = gp_geom;
+  taVector3i& gg = gp_geom;
   gg = geom / sub_geom;
   trans_apply = false;
 }

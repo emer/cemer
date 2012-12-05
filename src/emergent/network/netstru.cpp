@@ -136,16 +136,6 @@ float Schedule::GetVal(int ctr) {
   return cur_val;
 }
 
-#define DEFAULT_3D_NETSIZE_X 5
-#define DEFAULT_3D_NETSIZE_Y 2
-#define DEFAULT_3D_NETSIZE_Z 3
-#define DEFAULT_3D_NETVIEW_SKEW .15
-
-#define DEFAULT_2D_NETSIZE_X 5
-#define DEFAULT_2D_NETSIZE_Y 12
-#define DEFAULT_2D_NETSIZE_Z 0
-#define DEFAULT_2D_NETVIEW_SKEW 0
-
 ////////////////////////////////////////
 //      Connection - Groups & Specs   //
 ////////////////////////////////////////
@@ -2038,6 +2028,7 @@ void Unit::Initialize() {
   // pos = ??
   idx = -1;
   flat_idx = 0;
+  voxels = NULL;
   m_unit_spec = NULL;
 }
 
@@ -2051,7 +2042,6 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
-  taBase::Own(voxels, this);
   BuildUnits();
 }
 
@@ -2062,12 +2052,19 @@ void Unit::CutLinks() {
   m_unit_spec = NULL;
   idx = -1;
   flat_idx = 0;
+  if(voxels) {
+    taBase::DelPointer((taBase**)&voxels);
+  }
   inherited::CutLinks();
+}
+
+void Unit::MakeVoxelsList() {
+  if(voxels) return;
+  taBase::OwnPointer((taBase**)&voxels, new Voxel_List, this);
 }
 
 void Unit::Copy_(const Unit& cp) {
   pos = cp.pos;
-  voxels = cp.voxels;
   ext_flag = cp.ext_flag;
   targ = cp.targ;
   ext = cp.ext;
@@ -2129,25 +2126,33 @@ int Unit::GetMyLeafIndex() {
   return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 
-void Unit::LayerLogPos(TwoDCoord& log_pos) {
+void Unit::LayerLogPos(taVector2i& log_pos) {
   Layer* mlay = own_lay();
   if(mlay) {
     mlay->UnitLogPos(this, log_pos);
   }
 }
 
-void Unit::LayerDispPos(TwoDCoord& disp_pos) {
+void Unit::LayerDispPos(taVector2i& disp_pos) {
   Layer* mlay = own_lay();
   if(mlay) {
     mlay->UnitDispPos(this, disp_pos);
   }
 }
 
-void Unit::AddRelPos(TDCoord& rel_pos) {
+void Unit::AddRelPos(taVector3i& rel_pos) {
   Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
   if (ugp) {
     rel_pos += ugp->pos;
     ugp->AddRelPos(rel_pos);
+  }
+}
+
+void Unit::AddRelPos2d(taVector2i& rel_pos) {
+  Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+  if (ugp) {
+    rel_pos += ugp->pos;
+    ugp->AddRelPos2d(rel_pos);
   }
 }
 
@@ -3481,25 +3486,42 @@ Unit* Unit_Group::UnitAtCoord(int x, int y) {
   return SafeEl(idx);
 }
 
-TwoDCoord Unit_Group::GpLogPos() {
+taVector2i Unit_Group::GpLogPos() {
   if(!own_lay) return pos;
-  TwoDCoord rval;
+  taVector2i rval;
   rval.y = idx / own_lay->gp_geom.x;
   rval.x = idx % own_lay->gp_geom.x;
   return rval;
 }
 
-void Unit_Group::AddRelPos(TDCoord& rel_pos) {
+void Unit_Group::AddRelPos(taVector3i& rel_pos) {
   // note: vastly most likely case is a flat root group of units...
   Layer* lay = dynamic_cast<Layer*>(owner);
   if (lay) {
     rel_pos += lay->pos;
     lay->AddRelPos(rel_pos);
-  } else { // better be in a group then!
+  }
+  else { // better be in a group then!
     Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
     if (ugp) {
       rel_pos += ugp->pos;
       ugp->AddRelPos(rel_pos);
+    }
+  }
+}
+
+void Unit_Group::AddRelPos2d(taVector2i& rel_pos) {
+  // note: vastly most likely case is a flat root group of units...
+  Layer* lay = dynamic_cast<Layer*>(owner);
+  if (lay) {
+    rel_pos += lay->pos2d;
+    lay->AddRelPos2d(rel_pos);
+  }
+  else { // better be in a group then!
+    Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+    if (ugp) {
+      rel_pos += ugp->pos;
+      ugp->AddRelPos2d(rel_pos);
     }
   }
 }
@@ -3959,6 +3981,8 @@ void Layer::InitLinks() {
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
     SetDefaultPos();
+  if(pos2d == 0)
+    SetDefaultPos2d();
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
 }
@@ -4230,7 +4254,7 @@ void Layer::RecomputeGeometry() {
     flat_geom.n = un_geom.n * gp_geom.n;
     if(flat_geom.n != flat_geom.x * flat_geom.y)
       flat_geom.n_not_xy = true;
-    TwoDCoord eff_un_sz = un_geom + gp_spc;
+    taVector2i eff_un_sz = un_geom + gp_spc;
     disp_geom = gp_geom * eff_un_sz;
     disp_geom -= gp_spc;        // no space at the end!
   }
@@ -4267,21 +4291,20 @@ void Layer::SetDefaultPos() {
   if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
   pos = 0;
-  switch(own_net->lay_layout) {
-  case Network::THREE_D: {
-    for(int i=0;i<index;i++) {
-      Layer* lay = (Layer*)own_net->layers.Leaf(i);
-      pos.z = MAX(pos.z, lay->pos.z + 1);
-    }
-    break;
+  for(int i=0;i<index;i++) {
+    Layer* lay = (Layer*)own_net->layers.Leaf(i);
+    pos.z = MAX(pos.z, lay->pos.z + 1);
   }
-  case Network::TWO_D: {
-    for(int i=0;i<index;i++) {
-      Layer* lay = (Layer*)own_net->layers.Leaf(i);
-      pos.y = MAX(pos.y, lay->pos.y + lay->un_geom.y + 2);
-    }
-    break;
-  }
+}
+
+void Layer::SetDefaultPos2d() {
+  if(!own_net) return;
+  int index = own_net->layers.FindLeafEl(this);
+  pos2d.x = pos.x;		// should transfer..
+  pos2d.y= 0;			// adapt y to fit..
+  for(int i=0;i<index;i++) {
+    Layer* lay = (Layer*)own_net->layers.Leaf(i);
+    pos2d.y = MAX(pos2d.y, lay->pos2d.y + lay->scaled_disp_geom.y + 2);
   }
 }
 
@@ -4290,27 +4313,27 @@ void Layer::LayoutUnits() {
   RecomputeGeometry();
   units.pos = 0;                // our base guy must always be 0..
   if(unit_groups) {
-    TwoDCoord eff_un_sz = un_geom + gp_spc;
-    TwoDCoord gpgeo;
+    taVector2i eff_un_sz = un_geom + gp_spc;
+    taVector2i gpgeo;
     int gi = 0;
     int ui = 0;
     Unit_Group* eff_ug = &units;
     for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
       for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++) {
-        TwoDCoord gp_pos = gpgeo * eff_un_sz;
+        taVector2i gp_pos = gpgeo * eff_un_sz;
         if(!virt_groups) {
           Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
           ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
           eff_ug = ug;
           ui = 0;
         }
-        TwoDCoord ugeo;
+        taVector2i ugeo;
         for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
           for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
             if(ui >= eff_ug->size)
               break;
             Unit* un = (Unit*)eff_ug->FastEl(ui++);
-            TwoDCoord upos = ugeo;
+            taVector2i upos = ugeo;
             if(virt_groups)
               upos += gp_pos;
             un->pos.x = upos.x; un->pos.y = upos.y;
@@ -4320,7 +4343,7 @@ void Layer::LayoutUnits() {
     }
   }
   else {
-    TwoDCoord ugeo;
+    taVector2i ugeo;
     int i = 0;
     for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
       for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
@@ -4619,7 +4642,7 @@ void Layer::SetLayUnitExtFlags(int flg) {
 }
 
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
-           Random* ran, const PosTwoDCoord* offset, bool na_by_range)
+           Random* ran, const PosVector2i* offset, bool na_by_range)
 {
   // note: when use LayerWriters, we typically always just get a single frame of
   // the exact dimensions, and so ignore 'frame'
@@ -4629,7 +4652,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
                "data->dims must be 2 (2-d) or 4 (4-d)")) {
     return;
   }
-  TwoDCoord offs(0,0);
+  taVector2i offs(0,0);
   if(offset) offs = *offset;
 
   // apply flags if we are the controller (zero offset)
@@ -4662,7 +4685,7 @@ void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-                              Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                              Random* ran, const taVector2i& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
@@ -4677,7 +4700,7 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-                                  Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                                  Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
@@ -5372,7 +5395,7 @@ Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) const {
 void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
   Unit_Group* own_sgp = un->own_subgp();
   if(own_sgp) {
-    TwoDCoord gpos = own_sgp->GpLogPos();
+    taVector2i gpos = own_sgp->GpLogPos();
     x = gpos.x + un->pos.x;
     y = gpos.y + un->pos.y;
   }
@@ -5448,11 +5471,19 @@ int Layer::UnitGpIdx(Unit* u) const {
   }
 }
 
-void Layer::AddRelPos(TDCoord& rel_pos) {
+void Layer::AddRelPos(taVector3i& rel_pos) {
   Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
   if (lgp) {
     rel_pos += lgp->pos;
     lgp->AddRelPos(rel_pos);
+  }
+}
+
+void Layer::AddRelPos2d(taVector2i& rel_pos) {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
+    rel_pos += lgp->pos2d;
+    lgp->AddRelPos2d(rel_pos);
   }
 }
 
@@ -5548,15 +5579,30 @@ void Layer_Group::CutLinks() {
   inherited::CutLinks();
 }
 
+void Layer_Group::Copy_(const Layer_Group& cp) {
+  pos = cp.pos;
+  pos2d = cp.pos2d;
+  max_disp_size = cp.max_disp_size;
+  max_disp_size2d = cp.max_disp_size2d;
+}
+
 void Layer_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void Layer_Group::AddRelPos(TDCoord& rel_pos) {
+void Layer_Group::AddRelPos(taVector3i& rel_pos) {
   Layer_Group* lg = GET_MY_OWNER(Layer_Group);
   if (lg) {
     rel_pos += lg->pos;
     lg->AddRelPos(rel_pos);
+  }
+}
+
+void Layer_Group::AddRelPos2d(taVector2i& rel_pos) {
+  Layer_Group* lg = GET_MY_OWNER(Layer_Group);
+  if (lg) {
+    rel_pos += lg->pos2d;
+    lg->AddRelPos2d(rel_pos);
   }
 }
 
@@ -5571,40 +5617,61 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
 
 void Layer_Group::UpdateMaxDispSize() {
   max_disp_size.x = 1;  max_disp_size.y = 1;  max_disp_size.z = 1;
+  max_disp_size2d.x = 1;  max_disp_size2d.y = 1;
 
-  TDCoord min_size;
+  taVector3i min_size;
+  taVector2i min_size2d;
   bool first_min = true;
 
-  TDCoord l_pos; // for abs_pos
+  taVector3i l_pos; // for abs_pos
+  taVector2i l_pos2d; // for abs_pos
   FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->GetAbsPos(l_pos);
-    TDCoord lrelpos = l_pos - pos; // subtract us
+    l->GetAbsPos2d(l_pos2d);
+    taVector3i lrelpos = l_pos - pos; // subtract us
+    taVector2i lrelpos2d = l_pos2d - pos2d; // subtract us
     max_disp_size.z = MAX(max_disp_size.z, 1 + lrelpos.z);
     if(l->Iconified()) {
       max_disp_size.x = MAX(max_disp_size.x, lrelpos.x + 1);
       max_disp_size.y = MAX(max_disp_size.y, lrelpos.y + 1);
+
+      max_disp_size2d.x = MAX(max_disp_size2d.x, lrelpos2d.x + 1);
+      max_disp_size2d.y = MAX(max_disp_size2d.y, lrelpos2d.y + 1);
     }
     else {
       max_disp_size.x = MAX(max_disp_size.x, l->scaled_disp_geom.x + lrelpos.x);
       max_disp_size.y = MAX(max_disp_size.y, l->scaled_disp_geom.y + lrelpos.y);
+
+      max_disp_size2d.x = MAX(max_disp_size2d.x, l->scaled_disp_geom.x + lrelpos2d.x);
+      max_disp_size2d.y = MAX(max_disp_size2d.y, l->scaled_disp_geom.y + lrelpos2d.y);
     }
     if(first_min) {
       first_min = false;
       min_size = l_pos;
+      min_size2d = l_pos2d;
     }
     else {
       min_size.Min(l_pos);      // min of each coord
+      min_size2d.Min(l_pos2d);      // min of each coord
     }
   }
 
   if(!owner->InheritsFrom(&TA_Network)) {
     if(min_size != pos) {
-      TDCoord pos_chg = min_size - pos;
+      taVector3i pos_chg = min_size - pos;
       FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
         l->pos -= pos_chg;      // fix up all the layer rels to be less.
       }
       max_disp_size -= pos_chg; // reduce by amount moving
       pos = min_size;           // new position
+    }
+    if(min_size2d != pos2d) {
+      taVector2i pos_chg = min_size2d - pos2d;
+      FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
+        l->pos2d -= pos_chg;      // fix up all the layer rels to be less.
+      }
+      max_disp_size2d -= pos_chg; // reduce by amount moving
+      pos2d = min_size2d;           // new position
     }
   }
 
@@ -5655,39 +5722,75 @@ void Layer_Group::LayerPos_Cleanup() {
     moved = false;
     for(int i1=0;i1<leaves;i1++) {
       Layer* l1 = Leaf(i1);
-      TDCoord l1abs;
+      taVector3i l1abs;
       l1->GetAbsPos(l1abs);
-      TwoDCoord l1s = (TwoDCoord)l1abs;
-      TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_disp_geom;
+      taVector2i l1s = (taVector2i)l1abs;
+      taVector2i l1e = l1s + (taVector2i)l1->scaled_disp_geom;
+
+      taVector2i l1abs2d;
+      l1->GetAbsPos2d(l1abs2d);
+      taVector2i l1s2d = (taVector2i)l1abs2d;
+      taVector2i l1e2d = l1s2d + (taVector2i)l1->scaled_disp_geom;
+
       for(int i2 = i1+1; i2<leaves;i2++) {
         Layer* l2 = Leaf(i2);
-        TDCoord l2abs;
+        taVector3i l2abs;
         l2->GetAbsPos(l2abs);
-        TwoDCoord l2s = (TwoDCoord)l2abs;
-        TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_disp_geom;
-        if(l2abs.z != l1abs.z) continue;
-        if(l2s.x >= l1s.x && l2s.x < l1e.x &&
-            l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
-          if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
-            l2->pos.x += (l1e.x + 2) - l2s.x;
-          }
-          else {
-            l2->pos.y += (l1e.y + 2) - l2s.y;
-          }
-          l2->DataChanged(DCR_ITEM_UPDATED);
-          moved = true;
-        }
-        else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
-                l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
-          if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
-            l1->pos.x += (l2e.x + 2) - l1s.x;
-          }
-          else {
-            l1->pos.y += (l2e.y + 2) - l1s.y;
-          }
-          l1->DataChanged(DCR_ITEM_UPDATED);
-          moved = true;
-        }
+        taVector2i l2s = (taVector2i)l2abs;
+        taVector2i l2e = l2s + (taVector2i)l2->scaled_disp_geom;
+
+        taVector3i l2abs2d;
+        l2->GetAbsPos2d(l2abs2d);
+        taVector2i l2s2d = (taVector2i)l2abs2d;
+        taVector2i l2e2d = l2s2d + (taVector2i)l2->scaled_disp_geom;
+
+        if(l2abs.z == l1abs.z) { // 3D
+	  if(l2s.x >= l1s.x && l2s.x < l1e.x &&
+	     l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
+	    if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
+	      l2->pos.x += (l1e.x + 2) - l2s.x;
+	    }
+	    else {
+	      l2->pos.y += (l1e.y + 2) - l2s.y;
+	    }
+	    l2->DataChanged(DCR_ITEM_UPDATED);
+	    moved = true;
+	  }
+	  else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
+		  l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
+	    if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
+	      l1->pos.x += (l2e.x + 2) - l1s.x;
+	    }
+	    else {
+	      l1->pos.y += (l2e.y + 2) - l1s.y;
+	    }
+	    l1->DataChanged(DCR_ITEM_UPDATED);
+	    moved = true;
+	  }
+	}
+
+	if(l2s2d.x >= l1s2d.x && l2s2d.x < l1e2d.x &&
+	   l2s2d.y >= l1s2d.y && l2s2d.y < l1e2d.y) { // l2 starts in l1; move l2 rt/back
+	  if(l1e2d.x - l2s2d.x <= l1e2d.y - l2s2d.y) {    // closer to x than y
+	    l2->pos2d.x += (l1e2d.x + 2) - l2s2d.x;
+	  }
+	  else {
+	    l2->pos2d.y += (l1e2d.y + 2) - l2s2d.y;
+	  }
+	  l2->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+	else if(l1s2d.x >= l2s2d.x && l1s2d.x < l2e2d.x &&
+		l1s2d.y >= l2s2d.y && l1s2d.y < l2e2d.y) { // l1 starts in l2; move l1 rt/back
+	  if(l2e2d.x - l1s2d.x <= l2e2d.y - l1s2d.y) {    // closer to x than y
+	    l1->pos2d.x += (l2e2d.x + 2) - l1s2d.x;
+	  }
+	  else {
+	    l1->pos2d.y += (l2e2d.y + 2) - l1s2d.y;
+	  }
+	  l1->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
       }
     }
     n_itr++;
@@ -6226,7 +6329,6 @@ void Network::Initialize() {
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   usr1_save_fmt = FULL_NET;
   wt_save_fmt = TEXT;
-  lay_layout = THREE_D;
 
   n_units = 0;
   n_cons = 0;
@@ -6234,6 +6336,9 @@ void Network::Initialize() {
   max_disp_size.x = 1;
   max_disp_size.y = 1;
   max_disp_size.z = 1;
+
+  max_disp_size2d.x = 1;
+  max_disp_size2d.y = 1;
 
   proj = NULL;
   old_load_cons = false;
@@ -6257,6 +6362,7 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(view_objs, this);
   taBase::Own(max_disp_size, this);
+  taBase::Own(max_disp_size2d, this);
 
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
@@ -6309,6 +6415,7 @@ void Network::CutLinks() {
   epoch_time.CutLinks();
   train_time.CutLinks();
   max_disp_size.CutLinks();
+  max_disp_size2d.CutLinks();
   view_objs.CutLinks();
   layers.CutLinks();            // then std kills
   specs.CutLinks();
@@ -6364,9 +6471,9 @@ void Network::Copy_(const Network& cp) {
 
   usr1_save_fmt = cp.usr1_save_fmt;
   wt_save_fmt = cp.wt_save_fmt;
-  lay_layout = cp.lay_layout;
 
   max_disp_size = cp.max_disp_size;
+  max_disp_size2d = cp.max_disp_size2d;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   SyncSendPrjns();
@@ -6485,33 +6592,6 @@ int Network::Save_strm(ostream& strm, taBase* par, int indent) {
   return rval;
 }
 
-int Network::GetDefaultX(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_X; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_X; break;
-  }
-  return rval;
-}
-
-int Network::GetDefaultY(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_Y; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Y; break;
-  }
-  return rval;
-}
-
-int Network::GetDefaultZ(){
-  int rval = 1;
-  switch(lay_layout) {
-  case THREE_D: rval = DEFAULT_3D_NETSIZE_Z; break;
-  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Z; break;
-  }
-  return rval;
-}
-
 void Network::Build() {
   taMisc::Busy();
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
@@ -6521,7 +6601,8 @@ void Network::Build() {
   BuildUnits();
   BuildPrjns(); // note: for Area constructs
   Connect();
-  AssignVoxels();
+  if(taMisc::gui_active)	// only when gui is active..
+    AssignVoxels();
   StructUpdate(false);
 //   if (net_inst.ptr()) {
 //     net_inst->OnBuild();
@@ -7806,7 +7887,7 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
 
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
-  TDCoord lpos;
+  taVector3i lpos;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->GetAbsPos(lpos);
     zvals.AddUnique(lpos.z);
@@ -8081,13 +8162,7 @@ void Network::UnLesionUnits() {
 void Network::UpdateMaxDispSize() {
   layers.UpdateMaxDispSize();
   max_disp_size = layers.max_disp_size;
-}
-
-void Network::TwoD_Or_ThreeD(LayerLayout lo){
-  lay_layout = lo;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
-    lay->SetDefaultPos();
-  }
+  max_disp_size2d = layers.max_disp_size2d;
 }
 
 bool Network::UpdateUnitSpecs(bool force) {
@@ -8680,10 +8755,10 @@ void taBrainAtlas::Indexes(int_Matrix& indexes, const String& labels_regexp) {
 }
 
 void taBrainAtlas::VoxelCoordinates(float_Matrix& voxels, const String& label_regexp) {
-  QList<FloatTDCoord> qcrd = Atlas().VoxelCoordinates((QString)label_regexp.chars());
+  QList<taVector3f> qcrd = Atlas().VoxelCoordinates((QString)label_regexp.chars());
   voxels.SetGeom(2, 3, qcrd.size());
   for(int i=0; i< qcrd.size(); i++) {
-    FloatTDCoord td = qcrd[i];
+    taVector3f td = qcrd[i];
     voxels.Set(td.x, 0, i);
     voxels.Set(td.y, 1, i);
     voxels.Set(td.z, 2, i);

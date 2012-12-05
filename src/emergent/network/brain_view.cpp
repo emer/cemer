@@ -268,9 +268,9 @@ void BrainView::GetMembs() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxels.size == 0) continue;
+      if (!u->voxels || u->voxels->size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels.FastEl(0);
+      Voxel *voxel = u->voxels->FastEl(0);
       if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
 
@@ -406,7 +406,7 @@ void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, T3
   col.setValue(tc.redf(), tc.greenf(), tc.bluef());
 }
 
-void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, TwoDCoord& co, float& val, T3Color& col, float& sc_val) {
+void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val, T3Color& col, float& sc_val) {
 //  sc_val = scale.zero;
 //  void* base = NULL;
 //  if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
@@ -582,7 +582,7 @@ void BrainView::Render_pre() {
 void BrainView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   //  cerr << "nv render_impl" << endl;
-  FloatTransform* ft = transform(true);
+  taTransform* ft = transform(true);
   *ft = main_xform;
 
   T3ExaminerViewer* vw = GetViewer();
@@ -914,7 +914,7 @@ QString BrainView::DataName() const
   return brain_data_name;
 }
 
-TDCoord BrainView::Dimensions() const
+taVector3i BrainView::Dimensions() const
 {
   return brain_dimensions;
 }
@@ -1073,7 +1073,7 @@ void BrainView::SetDataName(const QString& data_name)
   state_valid = true;
 }
 
-void BrainView::SetDimensions(const TDCoord& dimensions)
+void BrainView::SetDimensions(const taVector3i& dimensions)
 {
   if (dimensions == brain_dimensions)
     return;

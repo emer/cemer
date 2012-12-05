@@ -1239,13 +1239,17 @@ protected: \
   override const void*  El_GetBlank_() const    { return (const void*)&blank; }
 
 #define MAT_COPY_SAME_SLOW(y,T) \
-  void  Copy_(const y& cp) { SetGeomN(cp.geom); \
+  void  Copy_(const y& cp) { if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom); \
     for (int i = 0; i < size; ++i) { \
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i)); \
     }}
 
 #define MAT_COPY_SAME_FAST(y,T) \
-  void  Copy_(const y& cp) { SetGeomN(cp.geom); \
+  void  Copy_(const y& cp) {  if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom);				 \
     memcpy(data(), cp.data(), size * sizeof(T)); \
     }
 
@@ -1327,8 +1331,14 @@ public:
   override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for float
 
-  virtual void          InitVals(float val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
+  virtual void          InitVals(float val=0.0)
+  { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+  virtual void		InitFromFloats(float* vals, int n=-1)
+  { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
+    for(int i=0;i<size;i++) FastEl_Flat(i) = vals[i]; }
+  // initialize values from an array of floats, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
+
   override bool         BinaryFile_Supported() { return true; }
 
   TA_MATRIX_FUNS_FAST(float_Matrix, float);
@@ -1368,6 +1378,12 @@ public:
 
   virtual void          InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+
+  virtual void		InitFromDoubles(double* vals, int n=-1)
+  { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
+    for(int i=0;i<size;i++) FastEl_Flat(i) = vals[i]; }
+  // initialize values from an array of doubles, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
+
   override bool         BinaryFile_Supported() { return true; }
 
   TA_MATRIX_FUNS_FAST(double_Matrix, double);
@@ -1480,8 +1496,15 @@ public:
   override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in-range for 32bit int
 
-  virtual void          InitVals(int val=0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
+  virtual void          InitVals(int val=0)
+  { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+
+  virtual void		InitFromInts(int* vals, int n=-1)
+  { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
+    for(int i=0;i<size;i++) FastEl_Flat(i) = vals[i]; }
+  // initialize values from an array of ints, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
+
   override bool         BinaryFile_Supported() { return true; }
 
   TA_MATRIX_FUNS_FAST(int_Matrix, int);

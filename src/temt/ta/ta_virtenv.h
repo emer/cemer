@@ -82,7 +82,7 @@ class TA_API ODEFiniteRotation : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// #DEF_false whether to enable finite rotation mode -- False: An "infinitesimal" orientation update is used. This is fast to compute, but it can occasionally cause inaccuracies for bodies that are rotating at high speed, especially when those bodies are joined to other bodies. True: A finite orientation update is used. This is more costly to compute, but will be more accurate for high speed rotations. Note however that high speed rotations can result in many types of error in a simulation, and this mode will only fix one of those sources of error.
-  FloatTDCoord  axis; // #CONDSHOW_ON_on This sets the finite rotation axis for a body, if finite rotation mode is being used. If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can set the wheel's hinge axis here to try and improve its behavior.
+  taVector3f  axis; // #CONDSHOW_ON_on This sets the finite rotation axis for a body, if finite rotation mode is being used. If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can set the wheel's hinge axis here to try and improve its behavior.
 
   TA_SIMPLE_BASEFUNS(ODEFiniteRotation);
 private:
@@ -133,10 +133,10 @@ public:
   Mode		mode;		// how to apply texture to object
   Wrap		wrap_horiz;	// how to wrap in the horizontal (largest) dimension
   Wrap		wrap_vert;	// how to wrap in the vertical (smallest) dimension
-  FloatTwoDCoord offset;	// [0,0] offset of image from 0,0 (x=horizontal dim, y=vertical dim, shape dependent)
-  FloatTwoDCoord scale;		// [1,1] scaling of image (x=horizontal dim, y=vertical dim, shape dependent)
+  taVector2f    offset;	// [0,0] offset of image from 0,0 (x=horizontal dim, y=vertical dim, shape dependent)
+  taVector2f    scale;		// [1,1] scaling of image (x=horizontal dim, y=vertical dim, shape dependent)
   float 	rot;		// [0] rotation in the plane, in degrees
-  FloatTwoDCoord center;	// [0,0] center point for scale and rotation
+  taVector2f    center;	// [0,0] center point for scale and rotation
   taColor	blend_color;	// #CONDSHOW_ON_mode:BLEND color to use in blend case
 
   int		idx;
@@ -175,8 +175,6 @@ private:
 };
 
 
-class SbRotation;		// #IGNORE
-
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
@@ -185,11 +183,12 @@ public:
     BF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
     FIXED 		= 0x0002, // body cannot move at all
-    PLANE2D		= 0x0004, // body is constrained to the Z=0 plane
-    FM_FILE		= 0x0008, // load object image features from Inventor (iv) object file
-    NO_COLLIDE		= 0x0010, // this body is not part of the collision detection system -- useful for light beams and other ephemera
-    CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
-    GRAVITY_ON		= 0x0040, // does gravitational force affect this body?
+    EULER_ROT		= 0x0004, // use euler rotation angles instead of axis and angle
+    PLANE2D		= 0x0008, // body is constrained to the Z=0 plane
+    FM_FILE		= 0x0010, // load object image features from Inventor (iv) object file
+    NO_COLLIDE		= 0x0020, // this body is not part of the collision detection system -- useful for light beams and other ephemera
+    CUR_FM_FILE		= 0x0040, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
+    GRAVITY_ON		= 0x0080, // does gravitational force affect this body?
   };
     //    COLLIDE_FM_FILE	= 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -210,24 +209,28 @@ public:
   void*		body_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the body (cast to a dBodyID which is dxbody*)
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the body (cast to a dGeomID which is dxgeom*)
   BodyFlags	flags;		// flags for various body properties
-  FloatTDCoord	init_pos;  	// initial position of body (when creating it)
-  FloatRotation	init_rot;  	// initial rotation of body (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  FloatTDCoord	init_lin_vel;	// initial linear velocity
-  FloatTDCoord	init_ang_vel;	// initial angular velocity
+  taVector3f	init_pos;  	// initial position of body (when creating it)
+  taAxisAngle	init_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT initial rotation of body in terms of an axis and angle (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	init_euler;  	// #CONDSHOW_ON_flags:EULER_ROT initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
+  taQuaternion  init_quat;  	// #READ_ONLY initial rotation of body in Quaternion form -- automatically converted from init_rot or init_euler depending on EULER_ROT flag
+  taVector3f	init_lin_vel;	// initial linear velocity
+  taVector3f	init_ang_vel;	// initial angular velocity
 
-  FloatTDCoord	cur_pos;  	// current position of body
-  FloatRotation	cur_rot;  	// current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  FloatTDCoord	cur_lin_vel;	// current linear velocity
-  FloatTDCoord	cur_ang_vel;	// current angular velocity
+  taVector3f	cur_pos;  	// current position of body
+  taAxisAngle	cur_rot;  	// #CONDSHOW_OFF_flags:EULER_ROT current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	cur_euler;  	// #CONDSHOW_ON_flags:EULER_ROT current rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
+  taQuaternion  cur_quat;  	// #READ_ONLY current rotation of body in Quaternion form
+  taVector3f	cur_lin_vel;	// current linear velocity
+  taVector3f	cur_ang_vel;	// current angular velocity
 
   Shape		shape;		// shape of body for purposes of mass/inertia and collision (and visual rendering if not FM_FILE)
   float		mass;		// total mass of body (in kg)
   float		radius;		// #CONDSHOW_OFF_shape:BOX radius of body, for all but box
   float		length;		// #CONDSHOW_OFF_shape:BOX,SPHERE length of body, for all but box 
-  LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
+  LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented) -- only for CAPSULE and CYLINDER -- this creates an additional rotation between init_ rotation and cur_ rotation, only applied at time of init
+  taVector3f	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
 
-  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
+  taTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
   String	obj_fname;	// #CONDSHOW_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
@@ -270,31 +273,44 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create body in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy body in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
 
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
-  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
-  virtual void	SetValsToODE_InitPos();	// #CAT_ODE set initial position
-  virtual void	SetValsToODE_Rotation();// #CAT_ODE set rotation
-  virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
-  virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
-  virtual void	SetValsToODE_FiniteRotation();	// #CAT_ODE set the finite rotation mode of body in ODE
-  virtual void	SetValsToODE_Gravity();	// #CAT_ODE set the gravity mode
-  virtual void	SetValsToODE_Damping();	// #CAT_ODE set the damping parameters
+  virtual void	Init_Shape();	// #CAT_ODE #EXPERT set shape information
+  virtual void	Init_Pos();	// #CAT_ODE #EXPERT set initial position
+  virtual void	Init_Rotation();	// #CAT_ODE #EXPERT set initial rotation
+  virtual void	Init_Velocity();	// #CAT_ODE #EXPERT set initial velocity (linear and angular)
+  virtual void	Init_Mass();	// #CAT_ODE #EXPERT set the mass of body in ODE
+  virtual void	Init_FiniteRotation(); // #CAT_ODE #EXPERT set the finite rotation mode of body in ODE
+  virtual void	Init_Gravity();	// #CAT_ODE #EXPERT set the gravity mode
+  virtual void	Init_Damping();	// #CAT_ODE #EXPERT set the damping parameters
 
-  virtual void	FixExtRotation(SbRotation& sbrot);
-  // #IGNORE fix any external rotation applied to the body -- needed for capsule and cylinder types that have to correct for different types of axes
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON #GHOST_ON_body_id:NULL set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+
+  virtual void	CurToODE_Pos();	     // #CAT_ODE #EXPERT set current position
+  virtual void	CurToODE_Rotation();	// #CAT_ODE #EXPERT set current rotation
+  virtual void	CurToODE_Velocity();	// #CAT_ODE #EXPERT set current velocity (linear and angular)
+
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
+
+  virtual void	UpdateCurRotFmQuat();
+  // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
+  virtual void	InitRotFromCur();
+  // #CAT_ODE #EXPERT set init rotation parameters from current rotation
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
-  virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init)
-  { Rotate(x_ax, y_ax, z_ax, rot, init); }
-  // #CAT_zzzObsolete obsolete -- use Rotate instead
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
 
   virtual void 	AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
   // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame
@@ -302,7 +318,7 @@ public:
 			      bool rel_force=false, bool rel_pos=false);
   // #BUTTON #CAT_ODE add given force vector to object at given position on object -- rel_force and rel_pos specify values relative to the reference frame (orientation, position) of the body, in contrast to global reference frame coordinates
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init 
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of body to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -345,7 +361,8 @@ public:
   override void CutLinks();
   TA_BASEFUNS(VEBody);
 protected:
-  Shape		cur_shape;	// current shape that was previously set
+  Shape		cur_shape;	// #IGNORE current shape that was previously set -- for detecting updates
+  LongAxis	cur_long_axis;	// #IGNORE long axis that was previously set -- for detecting updates
 
   override void 	UpdateAfterEdit_impl();
 private:
@@ -359,19 +376,26 @@ class TA_API VEBody_Group : public taGroup<VEBody> {
   // ##CAT_VirtEnv a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
+  virtual void	Init();
+  // #CAT_ODE #BUTTON initialize all ODE params and set to init_ settings
+
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+
+  virtual void	CurFromODE(bool updt_disp = false);	// get the updated values from ODE after computing
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
 
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -425,21 +449,21 @@ public:
 #ifdef __MAKETA__
   Shape		shape;		// #READ_ONLY #HIDDEN shape for camera must always be a cylinder
   LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented) -- must always be LONG_Z for a camera
-  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+  taVector3f	box;		// #READ_ONLY #HIDDEN not relevant
 #endif
 
-  TwoDCoord	img_size;	// size of image to record from camera -- IMPORTANT -- if you will be using multiple cameras, it is very important that they all are the same size, otherwise the rendering will consume a lot of memory because a new buffer has to be created and destroyed each time (a shared buffer is used for all cameras)
+  taVector2i	img_size;	// size of image to record from camera -- IMPORTANT -- if you will be using multiple cameras, it is very important that they all are the same size, otherwise the rendering will consume a lot of memory because a new buffer has to be created and destroyed each time (a shared buffer is used for all cameras)
   bool		color_cam;	// if true, get full color images (else greyscale)
   VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in degrees) -- how much of scene is it taking in
   VELightParams	light;		// directional "headlight" associated with the camera -- ensures that whatever is being viewed can be seen (but makes lighting artificially consistent and good)
-  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+  taVector3f	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual void 		ConfigCamera(SoPerspectiveCamera* cam);
   // config So camera parameters
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VECamera);
 private:
@@ -469,7 +493,7 @@ public:
   VELightParams	light;		// light parameters
   float		drop_off_rate;	// #CONDSHOW_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle
   float		cut_off_angle;	// #CONDSHOW_ON_light_type:SPOT_LIGHT (45 default) angle in degrees from the direction vector where there will be no light
-  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+  taVector3f	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual SoLight*	CreateLight();
   // create the So light of correct type
@@ -478,8 +502,8 @@ public:
   virtual bool		UpdateLight();
   // #BUTTON if environment is already initialized and viewed, this will update the light in the display based on current settings
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VELight);
 private:
@@ -549,7 +573,7 @@ private:
 };
 
 class TA_API VEJointMotor : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the GetValsFmODE call, using the motor system (be sure to set f_max!)
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
 INHERITED(taOBase)
 public:
   bool		motor_on;	// turn on motor mechanism, defined by subsequent parameters
@@ -609,12 +633,12 @@ public:
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the joint (cast to a dJointID which is dxjoint*)
   JointFlags	flags;		// joint flags
-  VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
-  VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
+  VEBodyRef	body1;		// #SCOPE_VEWorld first body in the joint
+  VEBodyRef	body2;		// #SCOPE_VEWorld second body in the joint
   JointType    	joint_type;	// type of joint
-  FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
-  FloatTDCoord	axis;  		// #CONDSHOW_OFF_joint_type:BALL axis orientation vector
-  FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
+  taVector3f	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
+  taVector3f	axis;  		// #CONDSHOW_OFF_joint_type:BALL axis orientation vector
+  taVector3f	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
   float		vis_size;	// visual size of the joint, for when show_joint is active in viewer -- has NO implication for function whatsoever -- this is typically the length of the axis rod
   VEJointStops	stops;		// stop parameters for first joint: where the joint will stop (specific meaning is joint-dependent)
   VEJointStops	stops2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 stop parameters for second joint: where the joint will stop (specific meaning is joint-dependent)
@@ -632,10 +656,10 @@ public:
   float		pos2_norm; 	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW normalized position value for 2nd axis (joint dependent; could be angle) -- if stops.stops_on, then 0 = lo stop, 1 = hi stop
   float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed velocity value for 2nd axis (joint dependent; could be angle)
 
-  FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
-  FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
-  FloatTDCoord	cur_force2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
-  FloatTDCoord	cur_torque2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
+  taVector3f	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
+  taVector3f	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
+  taVector3f	cur_force2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
+  taVector3f	cur_torque2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
 
   override String	GetDesc() const { return desc; }
   override int		GetEnabled() const {  return !HasJointFlag(OFF); }
@@ -660,8 +684,13 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+
+  virtual void	Init();		
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
 
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
   // #BUTTON #CAT_Force apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
@@ -672,10 +701,10 @@ public:
   virtual void	ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2 = 0.0f, float stop_buffer=0.02f);
   // #BUTTON #CAT_Force set servo_on and update target positions for the servos using *normalized* values relative to lo-hi joint stops, with stop_buffer bounds to prevent numerical errors, so it doesn't go lower than lo + stop_buffer and higher than hi - stop_buffer -- servo control automatically applied when the system is stepped
 
-  virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
-  virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
-  virtual void	SetValsToODE_Motor(); // #CAT_ODE set motor params
-  virtual void	SetValsToODE_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
+  virtual void	Init_Anchor(); // #CAT_ODE set ODE anchor(s) and axes to the anchor and axisX values
+  virtual void	Init_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
+  virtual void	Init_Motor(); // #CAT_ODE set motor params
+  virtual void	Init_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
 
   bool	IsCurType()  { return (joint_type == cur_type); }
   // #CAT_ODE is the ODE guy actually configured for the current joint type or not?
@@ -705,9 +734,15 @@ class TA_API VEJoint_Group : public taGroup<VEJoint> {
   // ##CAT_VirtEnv a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEJoint_Group);
 private:
@@ -774,7 +809,7 @@ public:
   float_CircBuffer len_buf;	// #READ_ONLY #NO_SAVE current muscle length buffer (for delays)
   float_CircBuffer dlen_buf;	// #READ_ONLY #NO_SAVE current muscle length velocity buffer (for delays)
 
-  VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
+  VEBodyRef	muscle_obj;	// #SCOPE_VEWorld if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
 
   virtual float	LenFmAngle(float norm_angle);
   // #CAT_Muscle compute muscle length from *normalized* joint angle (0 = lo stop, 1 = hi stop) -- uses a simple linear projection onto len_range which is fairly accurate
@@ -826,8 +861,8 @@ public:
 				 float trg_norm_angle2 = 0.0f);
   // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
-  override void	SetValsToODE();
-  override void	GetValsFmODE(bool updt_disp = false);
+  override void	Init();
+  override void	CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VEMuscleJoint);
 protected:
@@ -868,19 +903,25 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
 
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE(bool updt_disp = false);
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+  virtual void	CurFromODE(bool updt_disp = false);
   // #CAT_ODE get the updated values from ODE after computing
 
   virtual void	CurToInit();
-  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
   virtual void	Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -900,13 +941,21 @@ private:
 
 SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
 
+
 class TA_API VEObject_Group : public taGroup<VEObject> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VEObject>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
-  virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
+  virtual void	CurFromODE(bool updt_disp = false);
+  // #CAT_ODE get the updated values from ODE after computing
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
@@ -914,8 +963,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos 
   virtual void	Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void	CopyColorFrom(VEBody* cpy_fm);
@@ -925,6 +976,129 @@ public:
 private:
   void	Initialize() 		{ SetBaseType(&TA_VEObject); }
   void 	Destroy()		{ };
+};
+
+
+///////////////////////////////////////////////////////////////
+//   Linear Muscle: exerts force proportional to its input.
+
+class TA_API VELinearMuscle : public taNBase {
+// A muscle that exerts force proportional to its input
+  INHERITED(taNBase)
+public:
+
+  taVector3f IPprox;	// proximal/medial insertion point
+  taVector3f IPdist; 	// distal/lateral insertion point
+  taVector3f p3; 	// point of intersection with the bending line
+  float gain;
+	bool bend;	// true if the muscle is currently bending
+
+  taVector3f Contract(float stim);
+  // Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
+
+  TA_SIMPLE_BASEFUNS(VELinearMuscle);
+
+private: 
+
+  void Initialize();
+  void Initialize(taVector3f prox, taVector3f dist, float MrG);
+  void Initialize(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
+  void Destroy();
+
+};
+
+SmartRef_Of(VELinearMuscle,TA_VELinearMuscle); // VELinearMuscleRef
+
+////////////////////////////////////////////////////////////////
+// Linear Muscle Group
+
+class TA_API VELinMuscle_Group : public taGroup<VELinearMuscle> {
+  INHERITED(taGroup<VELinearMuscle>)
+public:
+
+  TA_BASEFUNS_NOCOPY(VELinMuscle_Group);
+
+private:
+  void	Initialize() 		{ SetBaseType(&TA_VELinearMuscle); }
+  void 	Destroy()		{ };
+};
+
+
+///////////////////////////////////////////////////////////////
+//      Arm: bodies and joints representing an arm
+
+class TA_API VEArm: public VEObject{
+  // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
+INHERITED(VEObject)
+public:
+  enum ArmBodies {		// indices of bodies for arm
+    HUMERUS,
+    ULNA,
+    HAND,
+    N_ARM_BODIES,
+  };
+  enum ArmJoints {		// indices of joints for arm
+    SHOULDER,
+    ELBOW,
+    WRIST,
+    N_ARM_JOINTS,
+  };
+  enum ArmSide {		// which arm are we simulating here?
+    RIGHT_ARM,
+    LEFT_ARM,
+  };
+
+  ArmSide	arm_side;	// is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
+  VEBodyRef	torso;		// the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
+
+  float La;     // #READ_ONLY #SHOW the length of the humerus
+  float Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps) 
+  float elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
+  float wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
+  float_Matrix ShouldIP; // shoulder insertion points at rest
+  float_Matrix ArmIP; // humerus insertion points at rest
+  float_Matrix FarmIP; // ulna insertion points at rest 
+  float_Matrix p1; // first end points for bending lines
+  float_Matrix p2; // second end points for bending lines
+  int Nmusc; // the total number of muscles, as implied by the IP matrices
+  
+  VELinMuscle_Group muscles;  // all the muscles attached to the arm
+
+  virtual bool	CheckArm(bool quiet = false);
+  // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
+
+  virtual bool	ConfigArm(const String& name_prefix="", 
+			  float humerus_length = 0.3, float humerus_radius = 0.04,
+			  float ulna_length = 0.24, float ulna_radius = 0.03,
+			  float hand_length = 0.08, float hand_radius = 0.03);
+  // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
+
+  virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
+  // #BUTTON place the hand at the specified target. This method can crash if the arm hasn't been set to its initial position. Returns true if a move is made (even if the target is not reachable).
+
+  virtual bool TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
+  // Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
+
+  virtual bool UpdateIPs();
+  // #BUTTON Setting the muscle IPs to the values in the xxxIP matrices
+
+	//virtual void Lenghts(float_Matrix &Len);
+	// current muscle lengths
+
+
+  TA_SIMPLE_BASEFUNS(VEArm);
+protected:
+  //  override CheckConfig_impl(); // todo
+
+  virtual bool bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2);
+  // This function is the C++ equivalent of piece5.m. 
+  // The points a and c are insertion points, whereas p1 and p2 are the extremes of the bending line.
+  // If the muscle wraps around the bending line, bender returns true, and inserts the value of
+  // the point of intersection with the muscle in the vector p3.
+
+private:
+  void  Initialize();
+  void  Destroy();
 };
 
 
@@ -939,6 +1113,7 @@ public:
     SF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
     FM_FILE		= 0x0002, // load object image features from Inventor (iv) object file
+    EULER_ROT		= 0x0004, // use euler rotation angles instead of axis and angle
     CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
   };
 
@@ -964,19 +1139,21 @@ public:
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the static item (cast to a dGeomID which is dxgeom*)
   StaticFlags	flags;		// flags for various env el properties
-  FloatTDCoord	pos;  		// #CONDSHOW_OFF_shape:PLANE position of static item
-  FloatRotation	rot;  		// #CONDSHOW_OFF_shape:PLANE rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  taVector3f	pos;  		// #CONDSHOW_OFF_shape:PLANE position of static item
+  taAxisAngle	rot;  		// #CONDSHOW_OFF_flags:EULER_ROT rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f	rot_euler;  	// #CONDSHOW_ON_flags:EULER_ROT rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taQuaternion  rot_quat;	// #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
 
   Shape		shape;		// shape of static item for purposes of collision (and visual rendering if not FM_FILE)
   float		radius;		// #CONDSHOW_OFF_shape:BOX,PLANE radius of body, for all but box
   float		length;		// #CONDSHOW_OFF_shape:BOX,PLANE,SPHERE length of body, for all but box 
   LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,PLANE,SPHERE direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
+  taVector3f	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
   NormAxis	plane_norm;	// #CONDSHOW_ON_shape:PLANE direction of the plane normal axis (which way is "up" for a ground plane)
   float		plane_height;	// #CONDSHOW_ON_shape:PLANE height of the plane above/below 0 in the plane norm axis
-  FloatTwoDCoord plane_vis_size; // #CONDSHOW_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
+  taVector2f    plane_vis_size; // #CONDSHOW_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
 
-  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to object file to align/size/etc with static item
+  taTransform   obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to object file to align/size/etc with static item
   String	obj_fname;	// #CONDSHOW_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
@@ -1012,10 +1189,17 @@ public:
 
   virtual bool	CreateODE();	// #CAT_ODE create static element in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy static element in ode (if created)
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
 
-  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
-  virtual void	SetValsToODE_PosRot();	// #CAT_ODE set position and rotation
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+
+  virtual void	InitRotFromCur();
+  // #IGNORE set init rotation parameters from current rotation (rot_quat)
+
+  virtual void	Init_Shape();	// #CAT_ODE set shape information
+  virtual void	Init_PosRot();	// #CAT_ODE set position and rotation
 
   bool	IsCurShape()  { return ((shape == cur_shape) && 
 				(HasStaticFlag(FM_FILE) == HasStaticFlag(CUR_FM_FILE))); }
@@ -1025,8 +1209,10 @@ public:
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static body to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1051,15 +1237,21 @@ class TA_API VEStatic_Group : public taGroup<VEStatic> {
   // ##CAT_VirtEnv a group of virtual environment static elements
 INHERITED(taGroup<VEStatic>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   virtual void	Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values 
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1079,7 +1271,7 @@ public:
 
 #ifdef __MAKETA__
   Shape		shape;		// #READ_ONLY #HIDDEN shape is always height field
-  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+  taVector3f	box;		// #READ_ONLY #HIDDEN not relevant
 #endif
 
   // todo: lookup column in data table..
@@ -1088,7 +1280,7 @@ public:
   String	data_col;	// column name within table that has the data -- IMPORTANT: must be a 2d float/double matrix column!
   int		row_num;	// row number containing height field data
 
-  override void	SetValsToODE();	
+  override void	Init();	
 
   TA_SIMPLE_BASEFUNS(VEHeightField);
 private:
@@ -1123,15 +1315,19 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
 
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
   virtual void	Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1155,15 +1351,21 @@ class TA_API VESpace_Group : public taGroup<VESpace> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VESpace>)
 public:
-  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
-  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+  virtual void	Init();
+  // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	DestroyODE();
+  // #CAT_ODE destroy ODE objs for these items
 
   virtual void	Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
   virtual void	Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void	Rotate(float x_ax, float y_ax, float z_ax, float rot);
-  // #BUTTON #DYN1 #CAT_ODE apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  virtual void	RotateEuler(float euler_x, float euler_y, float euler_z);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
   virtual void	SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static bodies to grid of given size
   virtual void	CopyColorFrom(VEStatic* cpy_fm);
@@ -1219,7 +1421,7 @@ public:
   StepType	step_type;	// what type of stepping function to use
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDSHOW_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
-  FloatTDCoord	gravity;	// gravitational setting for world (0,0,-9.81) is std
+  taVector3f	gravity;	// gravitational setting for world (0,0,-9.81) is std
   bool		updt_display;	// if true, will update any attached display after each time step
   ODEWorldParams ode_params;	// parameters for tuning the ODE engine
 
@@ -1237,18 +1439,20 @@ public:
   override String	GetDesc() const { return desc; }
   virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
-  virtual void	SetValsToODE();
-  // #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE();
-  // #CAT_ODE get the updated values from ODE after computing (called after each step)
+  virtual void	SetValsToODE() { Init(); }
+  // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void	CurFromODE();
+  // #CAT_ODE get the current updated values from ODE after computing (called after each step)
 
-  virtual void	Init() { SetValsToODE(); }
+  virtual void	Init();
   // #BUTTON #CAT_ODE initialize the virtual environment, placing all objects in their init configurations, updating with any added objects, etc
   virtual void	Step();		
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
   virtual void	Reset() { DestroyODE(); SetValsToODE(); }
   // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
 
+  virtual void	CurToODE();	
+  // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE -- for all bodies
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);

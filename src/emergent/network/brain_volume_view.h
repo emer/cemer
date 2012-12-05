@@ -87,9 +87,9 @@ private:
   NiftiReader*   m_atlas_data;// #IGNORE
 
 #ifndef __MAKETA__
-  QMultiMap<unsigned int, FloatTDCoord> m_atlas_depth_map; //#IGNORE
+  QMultiMap<unsigned int, taVector3f> m_atlas_depth_map; //#IGNORE
   QMultiMap<unsigned int, Voxel*>       m_units_depth_map; //#IGNORE
-  QMap<const Voxel*, FloatTDCoord>      m_voxel_map; //#IGNORE
+  QMap<const Voxel*, taVector3f>      m_voxel_map; //#IGNORE
   QMap<const Unit*, unsigned int>       m_uvd_bases_map; //#IGNORE
   QList<QColor>                         m_atlasColors; //#IGNORE
 #endif

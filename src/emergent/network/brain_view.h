@@ -63,7 +63,7 @@ public:
   bool                  display;        // whether to update the display when values change (under control of programs)
   bool                  lay_mv;         // keep this..
   bool                  net_text;       // whether to display text box below network with counters etc
-  FloatTransform        net_text_xform;  // transform of coordinate system for the net text display element
+  taTransform           net_text_xform;  // transform of coordinate system for the net text display element
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
@@ -76,7 +76,7 @@ public:
 
   ScaleRange*           unit_sr;        // #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
   MDFlags               unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
-  FloatTDCoord          max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
+  taVector3f            max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
   NetViewFontSizes      font_sizes;     // font sizes for various items
   NetViewParams         view_params;    // misc view parameters
   ColorScale            scale;          // contains current min,max,range,zero,auto_scale
@@ -111,7 +111,7 @@ public:
   // view state functions etc
   bool            IsValid() const;
   QString         DataName() const;
-  TDCoord         Dimensions() const;
+  taVector3i         Dimensions() const;
   AnatomicalPlane ViewPlane() const;
   int             SliceStart() const;
   int             SliceEnd() const;
@@ -132,7 +132,7 @@ public:
   // transformed slice transparency for use in actual rendering	
     
   void            SetDataName(const QString& data_name);
-  void            SetDimensions(const TDCoord& dimensions);
+  void            SetDimensions(const taVector3i& dimensions);
   void            SetViewPlane( AnatomicalPlane plane );
   void            SetViewPlane( int plane );
   void            SetSliceStart(int start);
@@ -148,7 +148,7 @@ public:
 
   bool          state_valid;
   String        brain_data_name;
-  TDCoord       brain_dimensions;
+  taVector3i    brain_dimensions;
   AnatomicalPlane   view_plane;
   int           slice_start;
   int           slice_end;
@@ -178,7 +178,7 @@ public:
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
   virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val,
                                        T3Color& col, float& sc_val);
-  virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, TwoDCoord& co, float& val,
+  virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val,
                                            T3Color& col, float& sc_val);
   void                  InitScaleRange(ScaleRange& sr);
   // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale

@@ -8875,15 +8875,19 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_LIST_INIT: break;
   case DCR_LIST_ITEM_INSERT: {  // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
-    iTreeView* tv = treeView();
     if (!after_node) after_node = last_member_node; // insert, after
-    tv->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
 //EVIL    tv->expandItem(new_node);
     // only scroll to it if parent is visible
-    tv->EmitTreeStructUpdated();
-    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-      tv->scrollTo(new_node);
+    if(tv) {
+      tv->EmitTreeStructUpdated();
+      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+	tv->scrollTo(new_node);
+    }
     break;
   }
   case DCR_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -8913,12 +8917,17 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
     if (!after_node) to_idx = indexOfChild(last_member_node); // insert, after
     ++to_idx; // after
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     moveChild(fm_idx, to_idx);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-      treeView()->scrollTo(moved_node);
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+	tv->scrollTo(moved_node);
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   case DCR_LIST_ITEMS_SWAP: {   // op1=item1, op2=item2
@@ -8926,22 +8935,32 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
     if ((!node1) || (!node2)) break; // shouldn't happen
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     swapChildren(n1_idx, n2_idx);
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   case DCR_LIST_SORTED: {       // no ops
     int nd_idx; // index of the node
     taList_impl* list = this->list(); // cache
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     for (int i = 0; i < list->size; ++i) {
       taBase* tab = (taBase*)list->FastEl_(i);
       FindChildForData(tab, nd_idx);
       if (i == nd_idx) continue; // in right place already
       moveChild(nd_idx, i);
     }
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   default: return; // don't update names
@@ -9143,20 +9162,30 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-      treeView()->scrollTo(new_node);
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+	tv->scrollTo(new_node);
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   case DCR_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
-      treeView()->EmitTreeStructToUpdate();
+      iTreeView* tv = treeView();
+      if(tv) {
+	tv->EmitTreeStructToUpdate();
+      }
       delete gone_node; // goodbye!
-      treeView()->EmitTreeStructUpdated();
+      if(tv) {
+	tv->EmitTreeStructUpdated();
+      }
     }
     break;
   }
@@ -9168,12 +9197,17 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
     if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
     ++to_idx; // after
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     moveChild(fm_idx, to_idx);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
-      treeView()->scrollTo(moved_node);
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
+	tv->scrollTo(moved_node);
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   case DCR_GROUPS_SWAP: {       // op1=item1, op2=item2
@@ -9181,23 +9215,33 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
     if ((!node1) || (!node2)) break; // shouldn't happen
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     swapChildren(n1_idx, n2_idx);
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   case DCR_GROUPS_SORTED: {     // no ops
     int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
     int nd_idx; // index of the node
     taGroup_impl* gp = this->tadata(); // cache
-    treeView()->EmitTreeStructToUpdate();
+    iTreeView* tv = treeView();
+    if(tv) {
+      tv->EmitTreeStructToUpdate();
+    }
     for (int i = 0; i < gp->gp.size; ++i) {
       taBase* tab = (taBase*)gp->FastGp_(i);
       FindChildForData(tab, nd_idx);
       if ((gp0_idx+i) == nd_idx) continue; // in right place already
       moveChild(nd_idx, (gp0_idx+i));
     }
-    treeView()->EmitTreeStructUpdated();
+    if(tv) {
+      tv->EmitTreeStructUpdated();
+    }
     break;
   }
   default: return; // don't update names

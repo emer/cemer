@@ -1,4 +1,4 @@
-    // Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of Emergent
@@ -50,7 +50,7 @@ BrainAtlasLabel::BrainAtlasLabel() :
 BrainAtlasLabel::BrainAtlasLabel(const QString& text, 
                                  unsigned int index, 
                                  const QColor& color,
-                                 const TDCoord& center) :
+                                 const taVector3i& center) :
   m_text(text),
   m_index(index),
   m_color(color),
@@ -75,7 +75,7 @@ QColor BrainAtlasLabel::Color() const
   return m_color;
 }
 
-TDCoord BrainAtlasLabel::Center() const
+taVector3i BrainAtlasLabel::Center() const
 {
   return m_center_coordinate;
 }
@@ -90,7 +90,7 @@ void BrainAtlasLabel::SetColor(const QColor& color)
   m_color = color;
 }
 
-void BrainAtlasLabel::SetCenter(const TDCoord& center)
+void BrainAtlasLabel::SetCenter(const taVector3i& center)
 {
   m_center_coordinate = center;
 }
@@ -330,13 +330,13 @@ QList<BrainAtlasLabel> FSLBrainAtlas::Labels(const QString& labels_regexp) const
   return list;
 }
 
-QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp) const
+QList<taVector3f> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp) const
 {
   // Extract all voxel coordinates which match the label regexp.
   // If the regexp does not match, voxel list is empty
   
-  QList<TDCoord> index_coords;
-  QList<FloatTDCoord> voxel_coords;
+  QList<taVector3i> index_coords;
+  QList<taVector3f> voxel_coords;
   
   // We don't currently support 2mm atlas image data 
   // files since we render to a 1mm brain 
@@ -363,7 +363,7 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
     
     // Get the dimensions of the data and a pointer to the data.
     // The data has already been byte-swapped for this platform.
-    TDCoord size(img.XyzDimensions());
+    taVector3i size(img.XyzDimensions());
     const short *data = reinterpret_cast<const short *>(img.RawData());
     // i,j,k are the array indexes in the x,y,z dimensions, respectively.
     for (int k = 0; k < size.z; ++k) {
@@ -372,7 +372,7 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
           short label_index = *data++;
           bool match = match_indexes.contains(label_index);
           if (match) {
-            index_coords << TDCoord(i, j, k);
+            index_coords << taVector3i(i, j, k);
           }
         }
       }
@@ -380,7 +380,7 @@ QList<FloatTDCoord> FSLBrainAtlas::VoxelCoordinates(const QString& labels_regexp
   }
   
   // Transform each ijk-based (index) coordinate to an xyz-based (voxel) coordinate.
-  foreach(const TDCoord &ijk_coord, index_coords) {
+  foreach(const taVector3i &ijk_coord, index_coords) {
     voxel_coords << img.IjkToXyz(ijk_coord);
   }
   return voxel_coords;
@@ -534,7 +534,7 @@ QList<BrainAtlasLabel> FSLBrainAtlasFileParser::ParseLabels()
   QString label_text("");
   QColor label_color(255,255,255);
   unsigned int label_index(0);
-  TDCoord label_center(0,0,0);
+  taVector3i label_center(0,0,0);
   
   QDomElement root = m_atlas_dom->documentElement();
   QDomNodeList elements = root.elementsByTagName("label");
@@ -636,7 +636,7 @@ void FSLBrainAtlasFileComposer::ComposeLabels(const QList<BrainAtlasLabel>& labe
   QDomElement data = addElement(*m_atlas_dom, root, "data");
   foreach(BrainAtlasLabel label, labels){
     QDomElement label_element = addElement(*m_atlas_dom, data, "label", label.Text());
-    TDCoord center = label.Center();
+    taVector3i center = label.Center();
     label_element.setAttribute("x", center.x);
     label_element.setAttribute("y", center.y);
     label_element.setAttribute("z", center.z);

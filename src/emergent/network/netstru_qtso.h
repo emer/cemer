@@ -192,9 +192,9 @@ public:
   override void         BuildAll(); // creates fully populated subviews
   virtual void          InitDisplay();
 
-  float                 GetUnitDisplayVal(const TwoDCoord& co, void*& base);
+  float                 GetUnitDisplayVal(const taVector2i& co, void*& base);
   // get raw floating point value to display according to current nv settings, at given *logical* coordinate within the layer -- fills in base for this value as well (NULL if not set) -- uses history values if nv hist_idx > 0
-  float                 GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base);
+  float                 GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*& base);
   // get raw floating point value to display at given member index (< membs.size), at given *logical* coordinate -- fills in base for this value as well (NULL if not set) -- does NOT use history vals ever
   void                  UpdateUnitViewBases(Unit* src_u);
   // update base void* for all current nv->membs, src_u only used for s./r. values
@@ -477,14 +477,20 @@ public:
     UDM_CYLINDER        // #LABEL_3d_Cylinder
   };
 
+  enum LayerLayout {            // Visual mode of layer position/view
+    TWO_D,                      // #LABEL_2D all z = 0, no skew
+    THREE_D                     // #LABEL_3D z = layer index, default skew
+  };
+
+
   static NetView*       New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
-
   bool                  display;        // whether to update the display when values change (under control of programs)
+  LayerLayout   	lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display text box below network with counters etc
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
-  FloatTransform        net_text_xform;  // transform of coordinate system for the net text display element
+  taTransform           net_text_xform;  // transform of coordinate system for the net text display element
   float                 net_text_rot;    // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace           membs;          // #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
@@ -506,7 +512,9 @@ public:
   MDFlags               unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
   UnitDisplayMode       unit_disp_mode; // how to display unit values
   UnitTextDisplay       unit_text_disp; // what labels to display with units
-  FloatTDCoord          max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
+  taVector3f            max_size;       // #NO_COPY #READ_ONLY maximum size in each dimension of the net
+  taVector3f            max_size2d;  	// #NO_COPY #READ_ONLY maximum size in each dimension of the net for 2D display purposes (using pos2d)
+  taVector3f            eff_max_size;   // #NO_COPY #READ_ONLY effective maximum size in each dimension of the net for current view
   NetViewFontSizes      font_sizes;     // font sizes for various items
   NetViewParams         view_params;    // misc view parameters
   bool                  wt_line_disp;   // display weights from selected unit as lines?
@@ -556,7 +564,7 @@ public:
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
-  virtual void          GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
+  virtual void          GetUnitDisplayVals(UnitGroupView* ugrv, taVector2i& co, float& val,
                                            T3Color& col, float& sc_val);
   void                  InitScaleRange(ScaleRange& sr);
   // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
@@ -627,7 +635,9 @@ protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
   NetViewPanel*         nvp; // created during first Render
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
+  LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 
+  override void         UpdateAfterEdit_impl();
   override void         ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void         ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void         DataUpdateView_impl();
@@ -666,6 +676,8 @@ public:
   QCheckBox*                chkDisplay;
   QCheckBox*                chkLayMove;
   QCheckBox*                chkNetText;
+  QLabel*                   lblLayLayout;
+  taiComboBox*              cmbLayLayout;
   QLabel*                   lblTextRot;
   taiField*                 fldTextRot;
   QLabel*                   lblUnitText;

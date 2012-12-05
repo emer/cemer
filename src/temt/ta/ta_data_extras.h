@@ -88,7 +88,7 @@ public:
   String                fname; // #NO_SAVE file we are to read
 
   ImageFormat           cur_img_format; // #READ_ONLY #SHOW #NO_SAVE image format of current image
-  TwoDCoord             img_size; // #READ_ONLY #SHOW #NO_SAVE size of current image
+  taVector2i            img_size; // #READ_ONLY #SHOW #NO_SAVE size of current image
 
 
   void  InitLinks();

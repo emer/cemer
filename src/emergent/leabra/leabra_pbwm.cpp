@@ -2089,10 +2089,10 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
 
-  TwoDCoord srs = send_range_start; // actual send range start
-  TwoDCoord sre = send_range_end;   // actual send range end
-  TwoDCoord rrs = recv_range_start; // actual recv range start
-  TwoDCoord rre = recv_range_end;   // actual recv range end
+  taVector2i srs = send_range_start; // actual send range start
+  taVector2i sre = send_range_end;   // actual send range end
+  taVector2i rrs = recv_range_start; // actual recv range start
+  taVector2i rre = recv_range_end;   // actual recv range end
 
   if(!custom_send_range) {
     srs = 0;
@@ -2131,7 +2131,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
   // else should be the values set by user
 
   int rgpidx = ru->UnitGpIdx();
-  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
+  taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
 
   float max_dist = 1.0f;
   if(grad_x && grad_y) // applies whether grad_x_grad_y && grad_y_grad_x also true, or not
@@ -2166,7 +2166,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     int sgpidx = su->UnitGpIdx();
-    TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
+    taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
     // send un_gp in range?  -- get next un_gp if not
     if(sgp_pos.x < srs.x || sgp_pos.x > sre.x || sgp_pos.y < srs.y || sgp_pos.y > sre.y) {
       SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
@@ -2268,10 +2268,10 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn,
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
 
-  TwoDCoord srs = send_range_start; // actual send range start
-  TwoDCoord sre = send_range_end;   // actual send range end
-  TwoDCoord rrs = recv_range_start; // actual recv range start
-  TwoDCoord rre = recv_range_end;   // actual recv range end
+  taVector2i srs = send_range_start; // actual send range start
+  taVector2i sre = send_range_end;   // actual send range end
+  taVector2i rrs = recv_range_start; // actual recv range start
+  taVector2i rre = recv_range_end;   // actual recv range end
 
   if(!custom_send_range) {
     srs = 0;
@@ -2314,7 +2314,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn,
   float max_dist = 1.0f;
   float dist = 0.0f;
   if (!recv_lay->unit_groups) { // no unit groups to worry about!
-    TwoDCoord ru_pos;
+    taVector2i ru_pos;
     recv_lay->UnitLogPos(ru, ru_pos);
     if(grad_x && grad_y) {// applies whether grad_x_grad_y && grad_y_grad_x also true, or not
       max_dist = sqrtf(2.0f);
@@ -2339,13 +2339,13 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn,
     ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
   }
   else { // recv_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
-    TwoDCoord ru_pos; // hold planar Cartesian coordinates within unit group
+    taVector2i ru_pos; // hold planar Cartesian coordinates within unit group
     int runidx = 0;
     int rgpidx = 0;
     recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
     ru_pos.x = runidx % recv_lay->un_geom.x;
     ru_pos.y = runidx / recv_lay->un_geom.x;
-    TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
+    taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
     // convert to planar x, y across whole layer
     //ru_pos.x = ru_pos.x + (recv_lay->un_geom.x * rgp_pos.x);
     ru_pos.x += recv_lay->un_geom.x * rgp_pos.x;
@@ -2380,7 +2380,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn,
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     int sgpidx = su->UnitGpIdx();
-    TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
+    taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // position relative to overall gp geom
     // send un_gp in range?  -- get next un_gp if not
     if(sgp_pos.x < srs.x || sgp_pos.x > sre.x) {
       SetWtFmDist(prjn, cg, ru, 1.0f, i); // 1.0 = max dist
@@ -2484,10 +2484,10 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
 
-  TwoDCoord srs = send_range_start; // actual send range start
-  TwoDCoord sre = send_range_end;   // actual send range end
-  TwoDCoord rrs = recv_range_start; // actual recv range start
-  TwoDCoord rre = recv_range_end;   // actual recv range end
+  taVector2i srs = send_range_start; // actual send range start
+  taVector2i sre = send_range_end;   // actual send range end
+  taVector2i rrs = recv_range_start; // actual recv range start
+  taVector2i rre = recv_range_end;   // actual recv range end
 
   if(!custom_send_range) {
     srs = 0;
@@ -2527,7 +2527,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   // TODO: should have tests for start > end at this point, but not very likely
 
   int rgpidx = ru->UnitGpIdx();
-  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
+  taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
 
   //  // recv un_gp in range?  -- get next un_gp if not
   //  if(rgp_pos.x < rrs.x || rgp_pos.x > rre.x)
@@ -2567,7 +2567,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   if(!send_lay->unit_groups) { // sending layer does NOT have unit groups anyway -- nothing to worry about!
     for(int i=0; i<cg->size; i++) {
       Unit* su = cg->Un(i);
-      TwoDCoord su_pos;
+      taVector2i su_pos;
       send_lay->UnitLogPos(su, su_pos);
       // sending unit in range?  -- get next unit if not
       if(su_pos.x < srs.x || su_pos.x > sre.x) {
@@ -2679,10 +2679,10 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
       int sgpidx = 0;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
 
-      TwoDCoord su_pos;
+      taVector2i su_pos;
       su_pos.x = sunidx % send_lay->un_geom.x;
       su_pos.y = sunidx / send_lay->un_geom.x;
-      TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+      taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
 
       // convert to planar x, y across whole layer
       //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
@@ -2799,10 +2799,10 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
 
-  TwoDCoord srs = send_range_start; // actual send range start
-  TwoDCoord sre = send_range_end;   // actual send range end
-  TwoDCoord rrs = recv_range_start; // actual recv range start
-  TwoDCoord rre = recv_range_end;   // actual recv range end
+  taVector2i srs = send_range_start; // actual send range start
+  taVector2i sre = send_range_end;   // actual send range end
+  taVector2i rrs = recv_range_start; // actual recv range start
+  taVector2i rre = recv_range_end;   // actual recv range end
 
   if(!custom_send_range) {
     srs = 0;
@@ -2845,7 +2845,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
   float max_dist = 1.0f;
   float dist = 0.0f;
   if (!recv_lay->unit_groups) { // no unit groups to worry about!
-    TwoDCoord ru_pos;
+    taVector2i ru_pos;
     recv_lay->UnitLogPos(ru, ru_pos);
     if(grad_x && grad_y) {// applies whether grad_x_grad_y && grad_y_grad_x also true, or not
       max_dist = sqrtf(2.0f);
@@ -2871,13 +2871,13 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
     ru_y = (float)ru_pos.y / (float)MAX((rre.y - rrs.y), 1);
   }
   else { // recv_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
-    TwoDCoord ru_pos; // hold planar Cartesian coordinates within unit group
+    taVector2i ru_pos; // hold planar Cartesian coordinates within unit group
     int runidx = 0;
     int rgpidx = 0;
     recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
     ru_pos.x = runidx % recv_lay->un_geom.x;
     ru_pos.y = runidx / recv_lay->un_geom.x;
-    TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
+    taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
     // convert to planar x, y across whole layer
     //ru_pos.x = ru_pos.x + (recv_lay->un_geom.x * rgp_pos.x);
     ru_pos.x += recv_lay->un_geom.x * rgp_pos.x;
@@ -2910,7 +2910,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
   if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
     for(int i=0; i<cg->size; i++) {
       Unit* su = cg->Un(i);
-      TwoDCoord su_pos;
+      taVector2i su_pos;
       send_lay->UnitLogPos(su, su_pos);
       // sending unit in range?  -- get next unit if not
       if(su_pos.x < srs.x || su_pos.x > sre.x) {
@@ -3022,10 +3022,10 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
       int sgpidx = 0;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
 
-      TwoDCoord su_pos;
+      taVector2i su_pos;
       su_pos.x = sunidx % send_lay->un_geom.x;
       su_pos.y = sunidx / send_lay->un_geom.x;
-      TwoDCoord sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+      taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
 
       // convert to planar x, y across whole layer
       //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
@@ -3339,7 +3339,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   int mx_z2 = 0;         // z=2
   Layer_Group other_lays;   Layer_Group hidden_lays;
   Layer_Group output_lays;  Layer_Group input_lays;
-  TDCoord lpos;
+  taVector3i lpos;
   int i;
   for(i=0;i<net->layers.leaves;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);

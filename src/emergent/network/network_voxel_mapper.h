@@ -22,7 +22,7 @@
 
 #include "netstru.h"
 #include "nifti_reader.h" // TalairachAtlas
-#include "ta_geometry.h" // FloatTDCoord
+#include "ta_geometry.h" // taVector3f
 class Network;
 class Layer;
 class Unit;
@@ -38,9 +38,9 @@ private:
   class LayerInfo;
 
   void CreateLayerMap();
-  QList<FloatTDCoord> GetVoxelsInArea(QString brain_area);
-  void AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> voxels);
-  void AssignVoxelsToLayers(QList<FloatTDCoord> voxels, QList<unsigned> subvoxel_idxs, unsigned voxel_divisions);
+  QList<taVector3f> GetVoxelsInArea(QString brain_area);
+  void AssignVoxelsInArea(QString brain_area, QList<taVector3f> voxels);
+  void AssignVoxelsToLayers(QList<taVector3f> voxels, QList<unsigned> subvoxel_idxs, unsigned voxel_divisions);
   bool HandleEmptyBrainArea(unsigned num_voxels, QString brain_area, QList<Layer *> layers);
   void ClearVoxelAssignmentForLayer(LayerInfo *li);
   void MakeLayerInfos(QList<Layer *> layers);
@@ -50,7 +50,7 @@ private:
   unsigned GetVoxelDivisions(unsigned num_voxels, unsigned &num_subvoxels);
   unsigned GetNeededSubvoxelCount(unsigned num_subvoxels);
   QList<unsigned> GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels);
-  FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions);
+  taVector3f GetCoord(unsigned subvoxel_idx, const QList<taVector3f> &voxels, unsigned voxel_divisions);
 
 private:
   QMultiHash<QString, Layer *> m_layer_map;

@@ -421,12 +421,18 @@ def inst_jom():
 emer_src = fixPath('C:/src/emergent')
 def is_emer_src_path(path):
   global emer_src
+  # Don't bulid in a temp directory.
+  if path.find('\\Temp\\') > 0:
+    return False
+  # If the directory name contains 'emergent', grab everything up to the first
+  # slash following that 'emergent' (e.g., C:/src/emergent-foo/)
   loc = path.find('emergent')
   if loc == -1:
     return False
   slash = path.find('\\', loc)
   if slash == -1: slash = path.find('/', loc)
   if slash > 0: path = path[:slash]
+  # If non-standard directory name, double-check with user.
   if path != emer_src:
     if askUser('Build in this emergent source directory: ' + path + ' ?'):
       emer_src = path

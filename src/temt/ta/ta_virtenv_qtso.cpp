@@ -132,7 +132,8 @@ bool VETexture::UpdateTexture() {
 
 void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
-  cam->orientation.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  cam->orientation.setValue(cur_quat.x, cur_quat.y, cur_quat.z, cur_quat.s);
+  // SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
   cam->nearDistance = this->view_dist.near;
   cam->focalDistance = view_dist.focal;
   cam->farDistance = view_dist.far;
@@ -233,7 +234,7 @@ void VEBodyView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  T3VEBody* obv = new T3VEBody(this, show_drag);
+  T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -284,6 +285,9 @@ void VEBodyView::Render_pre() {
       SoCapsule* sp = new SoCapsule;
       sp->radius = ob->radius;
       sp->height = ob->length;
+      SoTransform* tx = new SoTransform;
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f); // orient to Z
+      ssep->addChild(tx);
       ssep->addChild(sp);
       break;
     }
@@ -291,6 +295,9 @@ void VEBodyView::Render_pre() {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->radius;
       sp->height = ob->length;
+      SoTransform* tx = new SoTransform;
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f); // orient to Z
+      ssep->addChild(tx);
       ssep->addChild(sp);
       break;
     }
@@ -309,41 +316,9 @@ void VEBodyView::Render_pre() {
   }
  finish:
 
-  FixOrientation(true);
   SetDraggerPos();
 
   inherited::Render_pre();
-}
-
-void VEBodyView::FixOrientation(bool force) {
-  VEBody* ob = Body();
-  T3VEBody* obv = (T3VEBody*)node_so();
-  if(ob && (force || ob->IsCurShape())) {// only if we are currently the right shape, incl fm file flag
-    switch(ob->shape) {
-    case VEBody::CAPSULE: {
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    case VEBody::CYLINDER: {
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    default:
-      break;
-    }
-  }
 }
 
 void VEBodyView::SetDraggerPos() {
@@ -364,10 +339,8 @@ void VEBodyView::SetDraggerPos() {
   case VEBody::CAPSULE:
   case VEBody::CYLINDER: {
     if(ob->long_axis == VEBody::LONG_X)
-      drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
-    else if(ob->long_axis == VEBody::LONG_Y)
-      drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
-    else if(ob->long_axis == VEBody::LONG_Z)
+      drag->xf_->translation.setValue(-ob->radius, ob->radius, -ob->length*.5f);
+    else
       drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
     break;
   }
@@ -391,7 +364,7 @@ void VEBodyView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
-  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   if(ob->set_color) {
     SoMaterial* mat = obv->material();
@@ -420,7 +393,7 @@ void VEBodyView::Render_impl() {
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
       SoTransform* tx = node_so()->txfm_shape();
       if(ob->HasBodyFlag(VEBody::OFF)) {
-        FloatTransform off_tx = ob->obj_xform;
+        taTransform off_tx = ob->obj_xform;
         off_tx.scale.SetXYZ(off_size, off_size, off_size);
         off_tx.CopyTo(tx);
       }
@@ -482,8 +455,6 @@ void VEBodyView::Render_impl() {
       }
     }
   }
-
-  FixOrientation();
 }
 
 // callback for transformer dragger
@@ -495,16 +466,16 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   VEWorldView* wv = obv->parent();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  cur_rot.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   ob->cur_pos += tr;
   ob->init_pos = ob->cur_pos;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
@@ -515,14 +486,9 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   float angle;
   dragger->rotation.getValue(axis, angle);
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    // todo: does this need to undo cylinder/capsule stuff???
-    SbRotation rot;
-    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation nw_rot = rot * cur_rot;
-    nw_rot.getValue(axis, angle);
-//     ob->FixExtRotation(nw_rot);
-    ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
-    ob->init_rot = ob->cur_rot;
+    ob->cur_quat.RotateAxis(axis[0], axis[1], axis[2], angle);
+    ob->UpdateCurRotFmQuat();
+    ob->InitRotFromCur();
   }
 
 //   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -532,8 +498,6 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-
-  obv->FixOrientation();
 
   wv->UpdateDisplay();
 }
@@ -630,7 +594,7 @@ void VEObjCarouselView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  T3VEBody* obv = new T3VEBody(this, show_drag);
+  T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -660,7 +624,7 @@ void VEObjCarouselView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
-  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+  tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
 
   SoTransform* shtx = obv->txfm_shape();
   ob->obj_xform.CopyTo(shtx);
@@ -707,7 +671,7 @@ void VEJointView::Render_pre() {
 
   if(!wv->show_joints) return;
 
-  T3VEJoint* obv = new T3VEJoint(this, show_drag);
+  T3VEJoint* obv = new T3VEJoint(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
@@ -816,30 +780,6 @@ void VEJointView::SetDraggerPos() {
   // set dragger position
   T3TransformBoxDragger* drag = obv->getDragger();
   if(!drag) return;
-
-//   switch(ob->shape) {
-//   case VEJoint::SPHERE: {
-//     drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->radius);
-//     break;
-//   }
-//   case VEJoint::CAPSULE:
-//   case VEJoint::CYLINDER: {
-//     if(ob->long_axis == VEJoint::LONG_X)
-//       drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
-//     else if(ob->long_axis == VEJoint::LONG_Y)
-//       drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
-//     else if(ob->long_axis == VEJoint::LONG_Z)
-//       drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
-//     break;
-//   }
-//   case VEJoint::BOX: {
-//     drag->xf_->translation.setValue(-ob->box.x*.5f, -ob->box.y*.5f, ob->box.z*.5f);
-//     break;
-//   }
-//   case VEJoint::NO_SHAPE: {
-//     break;
-//   }
-//   }
 }
 
 void VEJointView::Render_impl() {
@@ -855,14 +795,13 @@ void VEJointView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   SbRotation sbrot;
-  sbrot.setValue(SbVec3f(bod1->cur_rot.x, bod1->cur_rot.y, bod1->cur_rot.z), bod1->cur_rot.rot);
+  sbrot.setValue(bod1->cur_quat.x, bod1->cur_quat.y, bod1->cur_quat.z, bod1->cur_quat.s);
   // rotate the anchor too!
   SbVec3f anchor(ob->anchor.x, ob->anchor.y, ob->anchor.z);
   SbVec3f nw_anc;
   sbrot.multVec(anchor, nw_anc);
   tx->translation.setValue(bod1->cur_pos.x + nw_anc[0], bod1->cur_pos.y + nw_anc[1],
                            bod1->cur_pos.z + nw_anc[2]);
-//   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   SoMaterial* mat = obv->material();
   mat->diffuseColor.setValue(1.0f, 0.0f, 0.0f);
@@ -1013,7 +952,7 @@ void VEStaticView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  setNode(new T3VEStatic(this, show_drag));
+  setNode(new T3VEStatic(this, show_drag, wv->drag_size));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEStatic* ob = Static();
@@ -1063,6 +1002,9 @@ void VEStaticView::Render_pre() {
       SoCapsule* sp = new SoCapsule;
       sp->radius = ob->radius;
       sp->height = ob->length;
+      SoTransform* tx = new SoTransform;
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f); // orient to Z
+      ssep->addChild(tx);
       ssep->addChild(sp);
       break;
     }
@@ -1070,6 +1012,9 @@ void VEStaticView::Render_pre() {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->radius;
       sp->height = ob->length;
+      SoTransform* tx = new SoTransform;
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f); // orient to Z
+      ssep->addChild(tx);
       ssep->addChild(sp);
       break;
     }
@@ -1086,8 +1031,7 @@ void VEStaticView::Render_pre() {
       sp->width = ob->plane_vis_size.x;
       sp->depth = ob->plane_vis_size.y;
       sp->height = .01f;
-      ssep->addChild(sp);
-      SoTransform* tx = node_so()->txfm_shape();
+      SoTransform* tx = new SoTransform;
       switch (ob->plane_norm) {
       case VEStatic::NORM_X:
         tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
@@ -1099,6 +1043,8 @@ void VEStaticView::Render_pre() {
         tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
         break;
       }
+      ssep->addChild(tx);
+      ssep->addChild(sp);
       break;
     }
     case VEStatic::NO_SHAPE: {
@@ -1109,55 +1055,8 @@ void VEStaticView::Render_pre() {
  finish:
 
   SetDraggerPos();
-  FixOrientation(true);
 
   inherited::Render_pre();
-}
-
-void VEStaticView::FixOrientation(bool force) {
-  VEStatic* ob = Static();
-  T3VEStatic* obv = (T3VEStatic*)node_so();
-  if(ob && (force || ob->IsCurShape())) {// only if we are currently the right shape, incl fm file flag
-    switch(ob->shape) {
-    case VEStatic::CAPSULE: {
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEStatic::LONG_X)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEStatic::LONG_Y)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEStatic::LONG_Z)
-        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    case VEStatic::CYLINDER: {
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEStatic::LONG_X)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEStatic::LONG_Y)
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEStatic::LONG_Z)
-        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    case VEStatic::PLANE: {
-      SoTransform* tx = node_so()->txfm_shape();
-      switch (ob->plane_norm) {
-      case VEStatic::NORM_X:
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-        break;
-      case VEStatic::NORM_Y:
-        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-        break;
-      case VEStatic::NORM_Z:
-        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-        break;
-      }
-      break;
-    }
-    default:
-      break;
-    }
-  }
 }
 
 void VEStaticView::SetDraggerPos() {
@@ -1177,10 +1076,8 @@ void VEStaticView::SetDraggerPos() {
   case VEStatic::CAPSULE:
   case VEStatic::CYLINDER: {
     if(ob->long_axis == VEStatic::LONG_X)
-      drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
-    else if(ob->long_axis == VEStatic::LONG_Y)
-      drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
-    else if(ob->long_axis == VEStatic::LONG_Z)
+      drag->xf_->translation.setValue(-ob->radius, ob->radius, -ob->length*.5f);
+    else
       drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
     break;
   }
@@ -1206,8 +1103,23 @@ void VEStaticView::Render_impl() {
   if(!ob) return;
 
   SoTransform* tx = obv->transform();
-  tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
-  tx->rotation.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+  if(ob->shape == VEStatic::PLANE) {
+    switch (ob->plane_norm) {
+    case VEStatic::NORM_X:
+      tx->translation.setValue(ob->plane_height, 0.0f, 0.0f);
+      break;
+    case VEStatic::NORM_Y:
+      tx->translation.setValue(0.0f, ob->plane_height, 0.0f);
+      break;
+    case VEStatic::NORM_Z:
+      tx->translation.setValue(0.0f, 0.0f, ob->plane_height);
+      break;
+    }
+  }
+  else {
+    tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
+  }
+  tx->rotation.setValue(ob->rot_quat.x, ob->rot_quat.y, ob->rot_quat.z, ob->rot_quat.s);
 
   if(ob->set_color) {
     SoMaterial* mat = obv->material();
@@ -1215,12 +1127,15 @@ void VEStaticView::Render_impl() {
     mat->transparency.setValue(1.0f - ob->color.a);
 
     if(ob->full_colors) {
-      mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g, ob->ambient_color.b);
+      mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g,
+				 ob->ambient_color.b);
       if(ob->specular_color.a > 0.0f) {
-        mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
+        mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g,
+				    ob->specular_color.b);
         mat->shininess.setValue(ob->specular_color.a);
       }
-      mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g, ob->emissive_color.b);
+      mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g,
+				  ob->emissive_color.b);
     }
   }
 
@@ -1231,7 +1146,7 @@ void VEStaticView::Render_impl() {
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
       if(ob->HasStaticFlag(VEStatic::OFF)) {
-        FloatTransform off_tx = ob->obj_xform;
+        taTransform off_tx = ob->obj_xform;
         off_tx.scale.SetXYZ(off_size, off_size, off_size);
         off_tx.CopyTo(tx);
       }
@@ -1300,6 +1215,18 @@ void VEStaticView::Render_impl() {
           sp->width = ob->plane_vis_size.x;
           sp->depth = ob->plane_vis_size.y;
         }
+	SoTransform* tx = (SoTransform*)ssep->getChild(ssep->getNumChildren()-2);
+	switch (ob->plane_norm) {
+	case VEStatic::NORM_X:
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+	  break;
+	case VEStatic::NORM_Y:
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+	  break;
+	case VEStatic::NORM_Z:
+	  tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+	  break;
+	}
         break;
       }
       case VEStatic::NO_SHAPE: {
@@ -1308,8 +1235,6 @@ void VEStaticView::Render_impl() {
       }
     }
   }
-
-  FixOrientation();
 }
 
 // callback for transformer dragger
@@ -1321,15 +1246,15 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   VEWorldView* wv = obv->parent();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+  cur_rot.setValue(ob->rot_quat.x, ob->rot_quat.y, ob->rot_quat.z, ob->rot_quat.s);
 
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   ob->pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
@@ -1339,13 +1264,9 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    SbRotation rot;
-    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation nw_rot = rot * cur_rot;
-    nw_rot.getValue(axis, angle);
-    ob->rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+    ob->rot_quat.RotateAxis(axis[0], axis[1], axis[2], angle);
+    ob->InitRotFromCur();
   }
 
 //   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -1355,8 +1276,6 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-
-  obv->FixOrientation();
 
   wv->UpdateDisplay();
 }
@@ -1460,6 +1379,7 @@ void VEWorld::UpdateView() {
 void VEWorldView::Initialize() {
   display_on = true;
   drag_objs = true;
+  drag_size = 0.1f;
   show_joints = true;
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
@@ -1480,6 +1400,7 @@ void VEWorldView::CutLinks() {
 void VEWorldView::Copy_(const VEWorldView& cp) {
   display_on = cp.display_on;
   drag_objs = cp.drag_objs;
+  drag_size = cp.drag_size;
 }
 
 void VEWorldView::UpdateAfterEdit_impl() {
@@ -1811,12 +1732,12 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     return img;
   }
 
-  TwoDCoord cur_img_size = vecam->img_size;
+  taVector2i cur_img_size = vecam->img_size;
 
   SbViewportRegion vpreg;
   vpreg.setWindowSize(cur_img_size.x, cur_img_size.y);
 
-  static TwoDCoord last_img_size;
+  static taVector2i last_img_size;
 
   if(!cam_renderer) {
     cam_renderer = new SoOffscreenRendererQt(vpreg);
@@ -1891,7 +1812,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 {
   req_full_redraw = false;
 
-//   int font_spec = taiMisc::fonMedium;
+  int font_spec = taiMisc::fonMedium;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
@@ -1903,14 +1824,26 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
+  layDispCheck->addSpacing(taiM->hspc_c);
 
   chkDragObjs = new QCheckBox("Drag Objs", widg);
   connect(chkDragObjs, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDragObjs);
+  layDispCheck->addSpacing(taiM->hspc_c);
 
   chkShowJoints = new QCheckBox("Show Joints", widg);
   connect(chkShowJoints, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkShowJoints);
+  layDispCheck->addSpacing(taiM->hspc_c);
+
+  lblDragSize = taiM->NewLabel("Drag Size: ", widg, font_spec);
+  lblDragSize->setToolTip("Size of the 'dragger' controls for manipulating the position, size, and rotation of objects.");
+  layDispCheck->addWidget(lblDragSize);
+  fldDragSize = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layDispCheck->addWidget(fldDragSize->GetRep());
+  //  layDispCheck->addSpacing(taiM->hspc_c);
+
+  layDispCheck->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   layCams = new QHBoxLayout; layOuter->addLayout(layCams);
@@ -1970,6 +1903,7 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   chkDisplay->setChecked(wv_->display_on);
   chkDragObjs->setChecked(wv_->drag_objs);
   chkShowJoints->setChecked(wv_->show_joints);
+  fldDragSize->GetImage((String)wv_->drag_size);
 
   if(wv_->display_on) {
     if(wl->camera_0) {
@@ -2010,6 +1944,7 @@ void VEWorldViewPanel::GetValue_impl() {
   wv_->display_on = chkDisplay->isChecked();
   wv_->drag_objs = chkDragObjs->isChecked();
   wv_->show_joints = chkShowJoints->isChecked();
+  wv_->drag_size = (float)fldDragSize->GetValue();
 
   req_full_redraw = true;       // not worth micro-managing: MOST changes require full redraw!
 }

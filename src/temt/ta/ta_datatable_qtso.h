@@ -899,7 +899,7 @@ public:
   float                 two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
 
   String                last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
-  FloatTDCoord          last_sel_pt;    // #READ_ONLY #SHOW #NO_SAVE values of last selected point
+  taVector3f            last_sel_pt;    // #READ_ONLY #SHOW #NO_SAVE values of last selected point
 
   bool          scrolling_;     // #IGNORE currently scrolling (in scroll callback)
 

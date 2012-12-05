@@ -42,7 +42,7 @@ class EMERGENT_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
 INHERITED(taOBase)
 public:
-  TwoDCoord	send_off;	// offset from current receiving unit
+  taVector2i	send_off;	// offset from current receiving unit
   float		wt_val;		// value to assign to weight
 
   TA_SIMPLE_BASEFUNS(TessEl);
@@ -65,13 +65,13 @@ class EMERGENT_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity -- sweeps over receiving units and connects with sending units based on projection of recv unit position into sending layer, plus sending offsets that specify the connectivity pattern
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting -- can leave some unconnected units around the edges if desired
-  TwoDCoord	recv_n;		// number of receiving units to connect in each dimension (-1 for all)
-  TwoDCoord	recv_skip;	// increment for recv units in each dimension -- 1 = connect all units; 2 = skip every other unit, etc
-  TwoDCoord	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern -- each member of the group (which needn't correspond to an actual unit group in the recv layer) gets the same effective location as the first member of the group
+  taVector2i	recv_off;	// offset in layer for start of recv units to begin connecting -- can leave some unconnected units around the edges if desired
+  taVector2i	recv_n;		// number of receiving units to connect in each dimension (-1 for all)
+  taVector2i	recv_skip;	// increment for recv units in each dimension -- 1 = connect all units; 2 = skip every other unit, etc
+  taVector2i	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern -- each member of the group (which needn't correspond to an actual unit group in the recv layer) gets the same effective location as the first member of the group
   bool		wrap;		// whether to wrap coordinates around in the sending layer (e.g., if it goes past the right side, then it continues back on the left).  otherwise it will clip off connections at the edges.  Any clipping will affect the ability to initialize weight patterns properly, so it is best to avoid that.
-  FloatTwoDCoord send_scale;	// scale to apply to transform receiving unit coords into sending unit coords -- can use this to compensate for differences in the sizes between the two layers
-  FloatTwoDCoord send_off;	// #AKA_send_border constant offset to add to sending offsets relative to the position of the receiving unit -- this just adds a constant to the specific send_offs that specify the detailed pattern of connectivity
+  taVector2f send_scale;	// scale to apply to transform receiving unit coords into sending unit coords -- can use this to compensate for differences in the sizes between the two layers
+  taVector2f send_off;	// #AKA_send_border constant offset to add to sending offsets relative to the position of the receiving unit -- this just adds a constant to the specific send_offs that specify the detailed pattern of connectivity
   TessEl_List	send_offs;	// offsets of the sending units -- these are added to the location of the recv unit to determine which sending units to receive from -- can create any arbitrary patterns here, or use the MakeEllipse or MakeRectangle buttons to create those std patterns
 
   String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
@@ -81,9 +81,9 @@ public:
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
 
-  virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
+  virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
   // get center of sender coords from receiving coords
-  virtual void	Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn,
+  virtual void	Connect_RecvUnit(Unit* ru_u, const taVector2i& ruc, Projection* prjn,
 				 bool send_alloc);
   // connects one recv unit to all senders
 
@@ -203,10 +203,10 @@ public:
   // uses weight values equal to the distance probability
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
-			 const TwoDCoord& ru, const TwoDCoord& su);
+			 const taVector2i& ru, const taVector2i& su);
   // computes the distance between two units according to distance type
   static Unit*	GetUnitFmOff(UnitDistType typ, bool wrap, Projection* prjn,
-			     const TwoDCoord& ru, const FloatTwoDCoord& su_off);
+			     const taVector2i& ru, const taVector2f& su_off);
   // gets unit from real-valued offset scaled according to distance type
 
   virtual float	GetDistProb(Projection* prjn, Unit* ru, Unit* su);
@@ -354,7 +354,7 @@ class EMERGENT_API GpTessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
 INHERITED(taOBase)
 public:
-  TwoDCoord	send_gp_off;	// offset of group from current receiving group
+  taVector2i	send_gp_off;	// offset of group from current receiving group
   float		p_con;		// proportion connectivity from this group -- negative value means just make symmetric cons
 
   TA_SIMPLE_BASEFUNS(GpTessEl);
@@ -377,12 +377,12 @@ class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
   // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
-  TwoDCoord	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
-  TwoDCoord	recv_gp_skip; 	// increment for recv groups in each dimension -- 1 = connect all groups; 2 = skip every other group, etc
-  TwoDCoord	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
-  FloatTwoDCoord send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
-  TwoDCoord	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
+  taVector2i	recv_gp_off; 	// offset for start of recv group to begin connecting
+  taVector2i	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
+  taVector2i	recv_gp_skip; 	// increment for recv groups in each dimension -- 1 = connect all groups; 2 = skip every other group, etc
+  taVector2i	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
+  taVector2f send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
+  taVector2i	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
   TessEl_List	send_gp_offs;	// offsets of the sending unit groups
   bool		wrap;		// whether to wrap coordinates around (else clip)
   float		def_p_con;	// default probability of connectivity when new send_gp_offs are created
@@ -392,7 +392,7 @@ public:
 
   override void	Connect_impl(Projection* prjn);
 
-  virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
+  virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
   // get center of sender coords from receiving coords
   virtual void  Connect_Gps(int rgpidx, int sgpidx, float p_con,
 			    Projection* prjn, bool send_alloc);
@@ -411,7 +411,7 @@ public:
   // #IGNORE standard, not symmetric/same
   virtual void  Connect_Gps_Full(int rgpidx, int sgpidx, Projection* prjn);
   // #IGNORE full connectivity, 
-  virtual void	Connect_RecvGp(int rgpidx, const TwoDCoord& ruc, Projection* prjn,
+  virtual void	Connect_RecvGp(int rgpidx, const taVector2i& ruc, Projection* prjn,
 			       bool send_alloc);
   // connects one recv unit to all senders
 
@@ -435,24 +435,24 @@ class EMERGENT_API TiledRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	recv_gp_border;		// number of groups around edge of layer to not connect 
-  TwoDCoord	recv_gp_ex_st; 		// start of groups to exclude (e.g., from the middle; -1 = no exclude)
-  TwoDCoord	recv_gp_ex_n; 		// number of groups to exclude
-  TwoDCoord	send_border;		// number of units around edge of sending layer to not connect
-  TwoDCoord	send_adj_rfsz;		// adjust the total number of sending units by this amount in computing rfield size
-  TwoDCoord	send_adj_sndloc;	// adjust the total number of sending units by this amount in computing sending locations
+  taVector2i	recv_gp_border;		// number of groups around edge of layer to not connect 
+  taVector2i	recv_gp_ex_st; 		// start of groups to exclude (e.g., from the middle; -1 = no exclude)
+  taVector2i	recv_gp_ex_n; 		// number of groups to exclude
+  taVector2i	send_border;		// number of units around edge of sending layer to not connect
+  taVector2i	send_adj_rfsz;		// adjust the total number of sending units by this amount in computing rfield size
+  taVector2i	send_adj_sndloc;	// adjust the total number of sending units by this amount in computing sending locations
   float		rf_width_mult;		// multiplier factor on the receptive field width: 1.0 = exactly half overlap of RF's across groups.  Larger number = more overlap
 
   // computed values below
-  TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
-  TwoDCoord recv_gp_ed;		// #READ_ONLY recv gp end
-  TwoDCoord recv_gp_ex_ed;	// #READ_ONLY recv gp ex end
-  PosTwoDCoord su_act_geom;	// #READ_ONLY sending actual geometry
-  TwoDCoord n_recv_gps;		// #READ_ONLY number of recv gps
-  TwoDCoord n_send_units;	// #READ_ONLY number of sending units total 
-  TwoDCoord rf_ovlp; 		// #READ_ONLY ovlp = send / (ng + 1)
-  FloatTwoDCoord rf_move;	// #READ_ONLY how much to move sending rf per recv group
-  TwoDCoord rf_width;		// #READ_ONLY width of the sending rf 
+  taVector2i ru_geo;		// #READ_ONLY receiving unit geometry
+  taVector2i recv_gp_ed;		// #READ_ONLY recv gp end
+  taVector2i recv_gp_ex_ed;	// #READ_ONLY recv gp ex end
+  PosVector2i su_act_geom;	// #READ_ONLY sending actual geometry
+  taVector2i n_recv_gps;		// #READ_ONLY number of recv gps
+  taVector2i n_send_units;	// #READ_ONLY number of sending units total 
+  taVector2i rf_ovlp; 		// #READ_ONLY ovlp = send / (ng + 1)
+  taVector2f rf_move;	// #READ_ONLY how much to move sending rf per recv group
+  taVector2i rf_width;		// #READ_ONLY width of the sending rf 
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
@@ -472,13 +472,13 @@ class EMERGENT_API TiledGpRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	send_gp_size;		// number of groups in the sending receptive field
-  TwoDCoord	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
+  taVector2i	send_gp_size;		// number of groups in the sending receptive field
+  taVector2i	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   override void Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
@@ -504,9 +504,9 @@ INHERITED(ProjectionSpec)
 public:
   bool		reciprocal;	// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
-  TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
-  PosTwoDCoord su_act_geom;	// #READ_ONLY sending actual geometry
-  FloatTwoDCoord rf_width;	// #READ_ONLY how much to move sending rf per recv group
+  taVector2i ru_geo;		// #READ_ONLY receiving unit geometry
+  PosVector2i su_act_geom;	// #READ_ONLY sending actual geometry
+  taVector2f rf_width;	// #READ_ONLY how much to move sending rf per recv group
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
@@ -559,13 +559,13 @@ class EMERGENT_API TiledGpMapConvergePrjnSpec : public ProjectionSpec {
   // generates a converging map of the units within a sending layer with unit groups, using tiled overlapping receptive fields within each unit group -- each recv unit receives from the corresponding unit in all of the sending unit groups, with the recv units organized into unit groups that each recv from one tiled subset of sending units within all the sending unit groups -- there must be the same number of recv unit groups as tiled subsets within the sending unit groups
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	send_tile_size;		// number of units in one tile of the sending unit group units
-  TwoDCoord	send_tile_skip;		// number of units to skip when moving the tiling over to the next position (typically 1/2 of the size for nice overlap)
+  taVector2i	send_tile_size;		// number of units in one tile of the sending unit group units
+  taVector2i	send_tile_skip;		// number of units to skip when moving the tiling over to the next position (typically 1/2 of the size for nice overlap)
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -tile_skip (wrapped to right/top) and goes +tile_skip past the right/top edge (wrapped to left/bottom) -- this produces more uniform overlapping coverage of the space
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   override void Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
@@ -589,13 +589,13 @@ class EMERGENT_API GaussRFPrjnSpec : public ProjectionSpec {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
-  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
+  taVector2i 	 rf_width;	// size of the receptive field -- should be an even number
+  taVector2f     rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
   float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+  taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   override void Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);

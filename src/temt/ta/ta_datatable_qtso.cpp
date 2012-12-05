@@ -733,7 +733,7 @@ void DataTableView::Render_pre() {
 
 void DataTableView::Render_impl() {
   // set origin: in allocated area
-  FloatTransform* ft = transform(true);
+  taTransform* ft = transform(true);
   *ft = main_xform;
 
   inherited::Render_impl();
@@ -1951,11 +1951,11 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   trans[0] *= nv->main_xform.scale.x;
   trans[1] *= nv->main_xform.scale.y;
   trans[2] *= nv->main_xform.scale.z;
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
@@ -4486,7 +4486,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   float cl_y = 1.0f / (float)geom_y;
   float max_xy = MAX(cl_x, cl_y);
 
-  TwoDCoord pos;
+  taVector2i pos;
   int idx = 0;
   if(mgeom.dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
@@ -4532,7 +4532,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
         for(pos.x=0; pos.x<xmax; pos.x++) {
-          TwoDCoord apos = pos;
+          taVector2i apos = pos;
           if(mat_odd_vert)
             apos.y += z * (ymax+1);
           else
@@ -4569,12 +4569,12 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
     int ymax = mgeom[1];
     int xxmax = mgeom[2];
     int yymax = mgeom[3];
-    TwoDCoord opos;
+    taVector2i opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
         for(pos.y=0; pos.y<ymax; pos.y++) {
           for(pos.x=0; pos.x<xmax; pos.x++) {
-            TwoDCoord apos = pos;
+            taVector2i apos = pos;
             apos.x += opos.x * (xmax+1);
             apos.y += opos.y * (ymax+1);
             float xp = ((float)apos.x) * cl_x;
@@ -5085,11 +5085,11 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   trans[0] *= nv->main_xform.scale.x;
   trans[1] *= nv->main_xform.scale.y;
   trans[2] *= nv->main_xform.scale.z;
-  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  taVector3f tr(trans[0], trans[1], trans[2]);
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  taVector3f sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 

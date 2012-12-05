@@ -1,4 +1,4 @@
-  // Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of Emergent
@@ -48,9 +48,9 @@ bool NiftiReader::IsValid() const
   return (m_img == 0) ? false : true;
 }
 
-TDCoord NiftiReader::XyzDimensions() const
+taVector3i NiftiReader::XyzDimensions() const
 {
-  TDCoord dims;
+  taVector3i dims;
   dims.SetXYZ(m_img->nx, m_img->ny, m_img->nz);
   return dims;
 }
@@ -77,7 +77,7 @@ float NiftiReader::CalRange() const
 
 void NiftiReader::SliceXY(int index, unsigned short* data) const
 {
-  TDCoord size(XyzDimensions());
+  taVector3i size(XyzDimensions());
   int nbytes(BytesPerVoxel());
   int start = size.x * size.y * (index-1);
   memcpy((void*)(data), (void*)((unsigned short*)m_img->data+(start)), size.x * size.y * nbytes);
@@ -87,7 +87,7 @@ void NiftiReader::Slice(AnatomicalPlane p, int index, unsigned short* data) cons
 {
   int start(0);
   int nbytes(BytesPerVoxel());
-  TDCoord size(XyzDimensions());
+  taVector3i size(XyzDimensions());
 
   if (p == AXIAL){
     SliceXY(index, data);
@@ -131,9 +131,9 @@ const void * NiftiReader::RawData() const
   return m_img->data;
 }
 
-FloatTDCoord NiftiReader::XyzToIjk(const FloatTDCoord &xyz_coord) const
+taVector3f NiftiReader::XyzToIjk(const taVector3f &xyz_coord) const
 {
-  FloatTDCoord ijk_coord(0,0,0);
+  taVector3f ijk_coord(0,0,0);
 
   if (IsValid()) {
     // Get the transform object from the nifti file -- this is loaded from
@@ -157,9 +157,9 @@ FloatTDCoord NiftiReader::XyzToIjk(const FloatTDCoord &xyz_coord) const
   return ijk_coord;
 }
 
-FloatTDCoord NiftiReader::IjkToXyz(const FloatTDCoord &ijk_coord) const
+taVector3f NiftiReader::IjkToXyz(const taVector3f &ijk_coord) const
 {
-  FloatTDCoord xyz_coord(0,0,0);
+  taVector3f xyz_coord(0,0,0);
 
   if (IsValid()) {
     // Get the transform object from the nifti file -- this is loaded from
