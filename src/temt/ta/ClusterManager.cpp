@@ -313,16 +313,32 @@ ClusterManager::createParamFile()
   file.open(QIODevice::WriteOnly | QIODevice::Text);
   QTextStream out(&file);
 
+  // For each parameter to be searched, make a section with its range.
+  String all_params;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_select_edit->mbrs) {
     const EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
-      out << "[" << mbr->GetName().chars() << "]";
+      String name = mbr->GetName();
+      all_params.cat(name).cat(',');
+      out << "[" << name.chars() << "]";
       out << "\nmin_val = " << ps.min_val;
       out << "\nmax_val = " << ps.max_val;
       out << "\nnext_val = " << ps.next_val;
       out << "\nincr = " << ps.incr << "\n\n";
     }
   }
+
+  // Strip trailing comma.
+  if (!all_params.empty()) {
+    all_params.truncate(all_params.length() - 1);
+  }
+
+  // Write a timestamp to ensure the file is modified and will get
+  // checked in.  Also write the list of parameter names.
+  out << "[GENERAL_PARAMS]";
+  out << "\ntimestamp = "
+      << qPrintable(QDateTime::currentDateTime().toString());
+  out << "\nparameters = " << all_params.chars() << "\n\n";
 
   // Add the parameters file to the wc.
   file.close(); // close manually before adding
