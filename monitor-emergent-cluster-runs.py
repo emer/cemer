@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, ConfigParser
+import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
 
 def make_dir(dir):
     try: os.makedirs(dir)
@@ -144,27 +144,62 @@ class SubversionPoller(object):
                             if self.re_comp.match(line)]
         return submit_files
 
-    def poll(self, func):
+    def poll(self, func, nohup_file=''):
         # Enter the loop to check for updates to job submission files.
         print '\nPolling the Subversion server every %d seconds ' \
               '(hit Ctrl-C to quit) ...' % self.delay
         while True:
+            # If running in background and the file was deleted, then exit.
+            if nohup_file and not os.path.isfile(nohup_file):
+                break
+
+            sys.stdout.write('.') # TODO: remove, or create spinner...
+            sys.stdout.flush()
+
             submit_files = self.check_for_updates()
+            if submit_files: print ''
             for filename in submit_files:
-                func(filename)
+                try:
+                    func(filename)
+                except:
+                    traceback.print_exc()
+                    print '\nCaught exception trying to parse job ' \
+                          'submission file'
+                    print 'Continuing to poll the Subversion server ' \
+                          '(hit Ctrl-C to quit) ...'
             time.sleep(self.delay)
 
 def run_job_for_file(filename):
     print 'TODO: Submit job for file: %s' % filename
+    params = ConfigParser.RawConfigParser()
+    params.read(filename)
+    general_section = 'GENERAL_PARAMS'
+    param_list = params.get(general_section, 'parameters').split(',')
+    for p in param_list:
+        min_val = params.getfloat(p, 'min_val')
+        max_val = params.getfloat(p, 'max_val')
+        incr    = params.getfloat(p, 'incr')
+        print '  %s = %f .. %f step %f' % (p, min_val, max_val, incr)
+
+# If the user chooses to run in the background, this file will be created.
+# The polling loop will exit if the file is subsequently deleted.  The user
+# may delete the file manually, or simply re-running this script will delete
+# the file.
+nohup_filename = 'nohup-running-monitor-emergent-cluster-runs.txt'
 
 def main():
+    # Delete the nohup file, if it exists.
+    if os.path.isfile(nohup_filename):
+        print 'Removing nohup file: %s' % nohup_filename
+        os.remove(nohup_filename)
+        print 'The background script should stop at its next poll interval.\n'
+
     # Read the config file, allow the user to add a new repo, get
     # the repo they'd like to use, and write it all back to disk.
     wc_root = 'emergent-cluster-runs'
     config = ClusterConfig(wc_root)
     username = config.get_username()
     repo_name, repo_url = config.choose_repo()
-    #print '\nUpdating repo "%s" at: %s ...' %(repo_name, repo_url)
 
     # Checkout or update the working copy.
     # The path format matches ClusterManager::setPaths() in the C++ code.
@@ -172,12 +207,39 @@ def main():
     repo_dir = os.path.join(wc_root, repo_name)
     print ''
     delay = config.get_poll_interval()
+
     poller = SubversionPoller(username, repo_dir, repo_url, delay)
     revision = poller.get_initial_wc()
-    poller.poll(run_job_for_file) # Infinite loop.
+
+    run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
+    if not run_nohup or run_nohup in 'yY':
+        cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay)]
+        subprocess.Popen(cmd)
+        time.sleep(1) # Give it a chance to start.
+        print 'Running in the background.  Re-run script to stop.'
+    else:
+        poller.poll(run_job_for_file) # Infinite loop.
+
+def main_background():
+    print '\nStarting background run at %s' % datetime.datetime.now()
+
+    username = sys.argv[1]
+    repo_dir = sys.argv[2]
+    repo_url = sys.argv[3]
+    delay    = int(sys.argv[4])
+
+    poller = SubversionPoller(username, repo_dir, repo_url, delay)
+    with open(nohup_filename, 'w') as f:
+        f.write('delete this file to stop the backgrounded script.')
+    poller.poll(run_job_for_file, nohup_filename) # Infinite loop.
+
+    print '\nStopping background run at %s' % datetime.datetime.now()
 
 if __name__ == '__main__':
     try:
-        main()
+        if len(sys.argv) == 1:
+            main()
+        else:
+            main_background()
     except KeyboardInterrupt:
         print '\n\nQuitting at user request (Ctrl-C).'
