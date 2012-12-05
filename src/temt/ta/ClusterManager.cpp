@@ -89,8 +89,11 @@ ClusterManager::Run()
     saveCopyOfProject();
     createParamFile();
 
-    // checkin the project's directory, subdirectories and model's file created
-    m_svn_client->Checkin("Ready to run on cluster: " + m_description);
+    // Check in all files and directories that were created or updated.
+    int rev = m_svn_client->Checkin(
+      "Ready to run on cluster: " + m_description);
+    taMisc::Info("Submitted project to run on cluster in revision:",
+      String(rev));
 
     return true;
   }
@@ -337,8 +340,12 @@ ClusterManager::createParamFile()
   // checked in.  Also write the list of parameter names.
   out << "[GENERAL_PARAMS]";
   out << "\norig_filename = " << m_filename.chars();
+  out << "\nselect_edit_name = " << m_select_edit->name.chars();
+  out << "\nrelative_filename = ../models/"
+      << qPrintable(QFileInfo(m_filename).fileName());
   out << "\ntimestamp = "
       << qPrintable(QDateTime::currentDateTime().toString());
+  out << "\ndescription = " << m_description.chars();
   out << "\nparameters = " << all_params.chars() << "\n\n";
 
   // Add the parameters file to the wc.
