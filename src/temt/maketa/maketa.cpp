@@ -540,8 +540,7 @@ void mta_cleanup(int err) {
   cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
-//  int res =
-  system(rm_tmp);
+  (void) system(rm_tmp);
   kill(getpid(), err);          // activate signal
 }
 #endif
@@ -791,8 +790,8 @@ int main(int argc, char* argv[])
     if(mta->verbose > 0)
       cerr << "M!!: " << comnd << "\n";
     cout.flush();
-    int ret_code;
-    if ((ret_code = system((char*)comnd)) != 0) {
+    int ret_code = system((char*)comnd);
+    if (ret_code != 0) {
       cout << "**maketa command did not succeed (err code  " << ret_code << ")\n";
       cout << "\n**maketa command was: " << comnd.chars() << "\n\n";
       return ret_code;
@@ -822,8 +821,7 @@ int main(int argc, char* argv[])
     mta->fh.close(); mta->fh.clear();
     mta->included.DupeUnique(mta->tmp_include); // copy over
     if (!keep_tmp) {
-//      int res =
-      system(rm + tmp_file);
+      (void) system(rm + tmp_file);
     }
   }
 

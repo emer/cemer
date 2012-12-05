@@ -675,6 +675,15 @@ NamedURL        taMisc::wiki6_url;
 
 NameVar_PArray  taMisc::wikis;
 
+NamedURL        taMisc::svn_repo1_url;
+NamedURL        taMisc::svn_repo2_url;
+NamedURL        taMisc::svn_repo3_url;
+NamedURL        taMisc::svn_repo4_url;
+NamedURL        taMisc::svn_repo5_url;
+NamedURL        taMisc::svn_repo6_url;
+
+NameVar_PArray  taMisc::svn_repos;
+
 String_PArray   taMisc::css_include_paths;
 String_PArray   taMisc::load_paths;
 NameVar_PArray  taMisc::prog_lib_paths;
@@ -844,6 +853,26 @@ void taMisc::UpdateAfterEdit() {
   }
   if(wiki6_url.name.nonempty() && wiki6_url.url.nonempty()) {
     wikis.Add(NameVar(wiki6_url.name, wiki6_url.url));
+  }
+
+  svn_repos.Reset();
+  if(svn_repo1_url.name.nonempty() && svn_repo1_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo1_url.name, svn_repo1_url.url));
+  }
+  if(svn_repo2_url.name.nonempty() && svn_repo2_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo2_url.name, svn_repo2_url.url));
+  }
+  if(svn_repo3_url.name.nonempty() && svn_repo3_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo3_url.name, svn_repo3_url.url));
+  }
+  if(svn_repo4_url.name.nonempty() && svn_repo4_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo4_url.name, svn_repo4_url.url));
+  }
+  if(svn_repo5_url.name.nonempty() && svn_repo5_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo5_url.name, svn_repo5_url.url));
+  }
+  if(svn_repo6_url.name.nonempty() && svn_repo6_url.url.nonempty()) {
+    svn_repos.Add(NameVar(svn_repo6_url.name, svn_repo6_url.url));
   }
 #endif
 }

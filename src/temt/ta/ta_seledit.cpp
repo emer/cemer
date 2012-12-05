@@ -20,6 +20,7 @@
 #include "ta_project.h"
 #include "ta_qt.h"
 #include "ta_datatable.h"
+#include "ClusterManager.h"
 
 //////////////////////////////////
 //  taBase                      //
@@ -733,13 +734,20 @@ void SelectEdit::Reset() {
   ReShowEdit(true); //forced
 }
 
+void SelectEdit::RunOnCluster()
+{
+  ClusterManager cm(this);
+  cm.Run();
+}
+
 bool SelectEdit::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   if (force) { // ugh
     DataChanged(DCR_STRUCT_UPDATE_BEGIN);
     DataChanged(DCR_STRUCT_UPDATE_END);
-  } else {
+  }
+  else {
     DataChanged(DCR_ITEM_UPDATED);
   }
 //  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);

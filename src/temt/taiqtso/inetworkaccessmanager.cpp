@@ -421,7 +421,8 @@ bool getUsernamePassword(
   QString &password,
   QString message,
   bool *saveFlag,
-  QMainWindow *mw
+  QMainWindow *mw,
+  bool usernameOnly
 )
 {
   // If no MainWindow passed in, use the currently active window.
@@ -437,7 +438,7 @@ bool getUsernamePassword(
 
   // If no message provided, use a generic one.
   if (message.isEmpty()) {
-    message = "Enter username and password";
+    message = usernameOnly ? "Enter username" : "Enter username and password";
   }
 
   QDialog dialog(mw);
@@ -457,6 +458,11 @@ bool getUsernamePassword(
 
   if (!saveFlag) {
     passwordDialog.saveFlag->hide();
+  }
+
+  if (usernameOnly) {
+    passwordDialog.passwordLineEdit->hide();
+    passwordDialog.lblPassword->hide();
   }
 
   if (dialog.exec() == QDialog::Accepted) {
