@@ -336,6 +336,7 @@ ClusterManager::createParamFile()
   // Write a timestamp to ensure the file is modified and will get
   // checked in.  Also write the list of parameter names.
   out << "[GENERAL_PARAMS]";
+  out << "\norig_filename = " << m_filename.chars();
   out << "\ntimestamp = "
       << qPrintable(QDateTime::currentDateTime().toString());
   out << "\nparameters = " << all_params.chars() << "\n\n";
