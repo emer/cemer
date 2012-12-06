@@ -29,6 +29,7 @@ public:
   ~ClusterManager();
   void SetRepoUrl(const char *repo_url);
   void SetDescription(const char *description);
+  void UseMpi(int num_mpi_nodes);
   bool Run();
 
 private:
@@ -52,6 +53,7 @@ private:
   String m_wc_submit_path;
   String m_wc_models_path;
   String m_wc_results_path;
+  int m_num_mpi_nodes; // 0 means don't use MPI.
 };
 
 #endif // CLUSTER_MANAGER_H_

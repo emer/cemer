@@ -49,7 +49,7 @@ public:
   static int Checkin(const String &paths, const String &comment);
   // #CAT_Subversion Checkin files under the given path(s) (comma or newline separated list of files/dirs).  Returns the new revision number or -1 if nothing to commit.  Returns -2 on error.
 
-  static bool RunOnCluster(const SelectEdit &select_edit, const String &repo_url, const String &description);
+  static bool RunOnCluster(const SelectEdit &select_edit, const String &repo_url, const String &description, int num_mpi_nodes = 0);
   // #CAT_Cluster Run this project on a cluster, using the given Subversion repository URL.
 
 protected:

@@ -41,6 +41,7 @@ ClusterManager::ClusterManager(const SelectEdit *select_edit)
   , m_wc_submit_path()
   , m_wc_models_path()
   , m_wc_results_path()
+  , m_num_mpi_nodes(0)
 {
 }
 
@@ -60,6 +61,12 @@ void
 ClusterManager::SetDescription(const char *description)
 {
   m_description = description;
+}
+
+void
+ClusterManager::UseMpi(int num_mpi_nodes)
+{
+  m_num_mpi_nodes = num_mpi_nodes;
 }
 
 // Run the model on a cluster using the parameters of the SelectEdit
@@ -181,15 +188,14 @@ ClusterManager::showRepoDialog()
   dlg.AddWidget(widget);
   dlg.AddVBoxLayout(vbox, "", widget);
 
-  String row;
-  row = "instrRow";
+  String row = "instrRow";
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("Instructions", widget, row,
     "label=Please choose a cluster and enter a description for this run.\n"
     "The description will be used as a checkin comment.;");
 
-  dlg.AddSpace(20, vbox);
   row = "clustRow";
+  dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("clustLbl", widget, row, "label=Cluster: ;");
 
@@ -205,14 +211,26 @@ ClusterManager::showRepoDialog()
                    static_cast<QString>(taMisc::svn_repos[idx].value));
   }
   hbox->addWidget(combo);
+  dlg.AddStretch(row);
 
-  dlg.AddSpace(20, vbox);
   row = "descRow";
+  dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("descLbl", widget, row, "label=Description: ;");
-
   dlg.AddStringField(&m_description, "description", widget, row,
-    "tooltip=enter a description to be used as a checkin comment;");
+    "tooltip=description to be used as a checkin comment;");
+
+  row = "mpi";
+  bool use_mpi = false;
+  dlg.AddSpace(10, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
+  dlg.AddBoolCheckbox(&use_mpi, "usempi", widget, row,
+    "tooltip=use MPI on the cluster;");
+  dlg.AddStretch(row);
+  dlg.AddLabel("nodesLbl", widget, row, "label=Number of nodes: ;");
+  dlg.AddIntField(&m_num_mpi_nodes, "numnodes", widget, row,
+    "tooltip=the number of MPI nodes to use;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
@@ -361,7 +379,9 @@ ClusterManager::createParamFile()
   out << "\ntimestamp = "
       << qPrintable(QDateTime::currentDateTime().toString());
   out << "\ndescription = " << m_description.chars();
-  out << "\nparameters = " << all_params.chars() << "\n\n";
+  out << "\nnum_mpi_nodes = " << m_num_mpi_nodes;
+  out << "\nparameters = " << all_params.chars();
+  out << "\n\n";
 
   // Add the parameters file to the wc.
   file.close(); // close manually before adding
