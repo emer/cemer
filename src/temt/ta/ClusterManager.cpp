@@ -26,7 +26,7 @@
 #include "ta_project.h"
 #include "ta_seledit.h"
 #include "ta_string.h"
-#include "Subversion.h"
+#include "SubversionClient.h"
 
 ClusterManager::ClusterManager(const SelectEdit *select_edit)
   : m_select_edit(select_edit)
@@ -50,6 +50,18 @@ ClusterManager::~ClusterManager()
   m_svn_client = 0;
 }
 
+void
+ClusterManager::SetRepoUrl(const char *repo_url)
+{
+  m_repo_url = repo_url;
+}
+
+void
+ClusterManager::SetDescription(const char *description)
+{
+  m_description = description;
+}
+
 // Run the model on a cluster using the parameters of the SelectEdit
 // provided in the constructor.
 bool
@@ -59,9 +71,12 @@ ClusterManager::Run()
   if (!m_select_edit) return false;
 
   // Get the project's filename.
-  // Prompt the user for a repository and a description for this cluster run.
-  if (!getFilename() || !showRepoDialog()) {
-    return false;
+  if (!getFilename()) return false;
+
+  // If a repository URL and description haven't been set, prompt the user
+  // for these values.
+  if (m_repo_url.empty() || m_description.empty()) {
+    if (!showRepoDialog()) return false;
   }
 
   taMisc::Info("Running project", m_filename, "\n  on cluster", m_repo_url,

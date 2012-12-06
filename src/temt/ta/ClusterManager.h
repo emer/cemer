@@ -27,6 +27,8 @@ class TA_API ClusterManager
 public:
   ClusterManager(const SelectEdit *select_edit);
   ~ClusterManager();
+  void SetRepoUrl(const char *repo_url);
+  void SetDescription(const char *description);
   bool Run();
 
 private:

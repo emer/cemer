@@ -89,6 +89,7 @@ set(ta_HEADS_MAKETA_LOCAL_2
   ta_datatable_so.h
   ta_virtenv_qtso.h
   ta_virtenv_so.h
+  Subversion.h
 )
 
 # all headers that need maketa run on them
@@ -114,7 +115,7 @@ set(ta_HEADS
   ta_TA_type_WRAPPER.h
   ta_TA_inst.h
   ClusterManager.h
-  Subversion.h
+  SubversionClient.h
 )
 
 # headers that need Qt moc run
@@ -230,6 +231,7 @@ set(ta_SRCS
   ta_ti.cpp
   ClusterManager.cpp
   Subversion.cpp
+  SubversionClient.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

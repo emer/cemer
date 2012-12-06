@@ -74,10 +74,10 @@ private:
 };
 #endif
 
-class TA_API taMediaWiki : public taOBase
+class TA_API taMediaWiki : public taNBase
 {
   // ##INLINE ##NO_TOKENS media wiki api interface -- all static functions for performing functions we actually want to perform
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 
 public:
   static String GetApiURL(const String& wiki_name);

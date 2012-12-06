@@ -17,129 +17,47 @@
 #define SUBVERSION_H_
 
 #include "ta_def.h"
-#include <apr.h>  // apr_off_t
-#include <stdexcept>
-#include <string>
+#include "ta_base.h"
+#include "ta_string.h"
 
-// TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
-//#include <apr_pools.h>
-extern "C" {
-  typedef struct apr_array_header_t apr_array_header_t;
-  typedef struct apr_hash_t apr_hash_t;
-  typedef struct apr_pool_t apr_pool_t;
-  typedef struct svn_client_ctx_t svn_client_ctx_t;
-  typedef struct svn_error_t svn_error_t;
-  typedef struct svn_wc_notify_t svn_wc_notify_t;
-}
-
-// TODO: inherit from generic version control abstract base class.
-class TA_API SubversionClient
+// This class provides emergent programs with static functions that wrap
+// the SubversionClient API.
+class TA_API Subversion : public taNBase
 {
+  // ##INLINE ##NO_TOKENS Subversion interface -- static functions for working with Subversion repositories.
+  INHERITED(taNBase)
+
 public:
-  // Some error codes translated from the <svn_error_codes.h> values.
-  enum ErrorCode
-  {
-    EMER_GENERAL_SVN_ERROR, // Check GetSvnErrorCode() for specific SVN error.
-    EMER_OPERATION_CANCELLED,
-    EMER_ERR_RA_DAV_REQUEST_FAILED,
-    EMER_FORBIDDEN,
-    // adding a dir when add_parents is true and none of the dir's parents are versioned
-    EMER_ERR_CLIENT_NO_VERSIONED_PARENT,
-    // adding a duplicate dir to a working copy
-    EMER_ERR_ENTRY_EXISTS,
-    // adding a duplicate dir to a repository
-    EMER_ERR_FS_ALREADY_EXISTS,
-    // TBD.
-  };
+  static String GetUsername(const String &url, bool prompt = true);
+  // #CAT_Subversion Get the cached username for the given URL.  If no username cached and prompt=true, prompt the user with a dialog.  Otherwise returns empty string.
 
-  // Code using SubversionClient should catch exceptions of this type.
-  class Exception : public std::runtime_error
-  {
-  public:
-    // Exception based on svn_error_t object.  An additional message may
-    // be provided; it will be prepended to the svn_error_t's message,
-    // which may be null.  In no case may svn_error itself be null!
-    explicit Exception(svn_error_t *svn_error);
-    Exception(const std::string &additional_msg, svn_error_t *svn_error);
+  static int Checkout(const String &working_copy_path, const String &url, int rev = -1, bool recurse = true);
+  // #CAT_Subversion Checkout a working copy and return the revision checked out.  Returns -1 on error.
 
-    // Exception with specified message and error code; svn error code is
-    // optional and defaults to "OK".  Intended use is for exceptions thrown
-    // that are not the result of an svn_error_t.
-    explicit Exception(
-      const std::string &msg,
-      ErrorCode error_code = EMER_GENERAL_SVN_ERROR,
-      int svn_error_code = 0);
+  static int Update(const String &working_copy_path, int rev = -1);
+  // #CAT_Subversion Update the working copy and return the revision.  Returns -1 on error.
 
-    ErrorCode GetErrorCode() const;
-    int GetSvnErrorCode() const;
+  static bool Add(const String &file_or_dir, bool recurse = true, bool add_parents = true);
+  // #CAT_Subversion Add files or directories to the working copy and schedule for future commit.  Returns false on error.
 
-  private:
-    static ErrorCode toEmerErrorCode(svn_error_t *svn_error);
+  static bool MakeDir(const String &new_dir, bool make_parents = true);
+  // #CAT_Subversion Create a directory in the working copy.  Returns true if the directory was created or already exists.
 
-    ErrorCode m_error_code;
-    int m_svn_error_code;
-  };
+  static bool MakeUrlDir(const String &url, const String &comment, bool make_parents = true);
+  // #CAT_Subversion Create a directory in the repository.  Returns true if the directory was created or already exists.
 
-  // There are three ways to get the username.
-  enum UsernameSource
-  {
-    CHECK_CACHE_THEN_PROMPT_USER,
-    CHECK_CACHE_ONLY,
-    PROMPT_USER_ONLY,
-  };
+  static int Checkin(const String &paths, const String &comment);
+  // #CAT_Subversion Checkin files under the given path(s) (comma or newline separated list of files/dirs).  Returns the new revision number or -1 if nothing to commit.  Returns -2 on error.
 
-  SubversionClient();
-  virtual ~SubversionClient();
+  static bool RunOnCluster(const SelectEdit &select_edit, const String &repo_url, const String &description);
+  // #CAT_Cluster Run this project on a cluster, using the given Subversion repository URL.
 
-  void SetWorkingCopyPath(const char *working_copy_path);
-  std::string GetWorkingCopyPath() const;
-  std::string GetUsername(const char *url, UsernameSource source) const;
-
-  // Checkout a working copy and return the revision checked out.
-  int Checkout(const char *url, bool recurse = true, int rev = -1);
-
-  // Update the working copy and return the revision.
-  int Update(int rev = -1);
-
-  // Add files to the working copy and schedule for future commit.
-  void Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
-
-  // Create a directory in the working copy or in the repository.
-  // The "Try" versions politely ignore cases where the directory
-  // already exists.  Other errors will throw exceptions.
-  // All functions return true if a new directory was created.
-  bool MakeDir(const char *new_dir, bool make_parents = true);
-  bool TryMakeDir(const char *new_dir, bool make_parents = true); // returns no error if the dir already exists.
-  bool MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
-  bool TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true); // returns no error if the dir already exists.
-
-  // Checkin 'files': a comma or newline separated list of files/dirs.
-  // If empty or null, the whole working copy will be committed.
-  // Returns the new revision number or -1 if nothing to commit.
-  int Checkin(const char *comment = 0, const char *files = 0);
-  int Status(const char *files = 0);
-
-  // Call to cancel current operation in progress.
-  void Cancel();
+protected:
+  TA_BASEFUNS_NOCOPY(Subversion);
 
 private:
-  svn_client_ctx_t * createContext();
-  apr_array_header_t * createAuthProviders(apr_hash_t *config);
-
-  // Callbacks.
-  struct Glue; // connects C-style callbacks with these methods.
-  bool isCancelled();
-  void notify(const svn_wc_notify_t *notify);
-  void notifyProgress(apr_off_t progress, apr_off_t total);
-  std::string getCommitMessage();
-
-  const char *m_wc_path;
-  const char *m_url;
-  apr_pool_t *m_pool;
-  svn_client_ctx_t *m_ctx;
-  bool m_cancelled;
-  const char *m_commit_message;
+  void Initialize() { }
+  void Destroy() { }
 };
 
 #endif // SUBVERSION_H_
-
