@@ -63,12 +63,14 @@ IF (NOT WIN32)
       FIND_LIBRARY(${targetvar} ${libname}
           HINTS
           ${SUBVERSION_INSTALL_PATH}/lib
+	  /opt/subversion/lib
       )
     ENDMACRO(FIND_SUB_LIB)
 
     FIND_PATH(SUBVERSION_INCLUDE_DIR svn_version.h
         HINTS
         ${SUBVERSION_INSTALL_PATH}/include
+	/opt/subversion/include/subversion-1
         PATH_SUFFIXES subversion-1
     )
 
