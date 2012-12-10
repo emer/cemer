@@ -542,7 +542,7 @@ SubversionClient::GetUsername(const char *url, UsernameSource source) const
       // Ignore this error and skip down to the PROMPT logic.
       svn_error_clear(error);
     }
-    else {
+    else if (userAuthDirPath && *userAuthDirPath) {
       // There's gotta be an easier way to get the username for a given URL!!
       // Can't just lookup the file based on the realmString, since its format
       // may change based on the client and/or server in use!  This is pretty

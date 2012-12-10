@@ -61,6 +61,12 @@ class ClusterConfig(object):
             self.user_section, 'username',
             'Enter your Subversion username:', os.environ['USER'])
 
+    def get_clustername(self):
+        # Get the name of this cluster.
+        return self.prompt_for_field(
+            self.user_section, 'clustername',
+            'Enter the name of this cluster:', os.environ['HOSTNAME'])
+
     def get_poll_interval(self):
         # Get the amount of time between polling the subversion server.
         return self.prompt_for_int_field(
@@ -199,11 +205,12 @@ def main():
     wc_root = 'emergent-cluster-runs'
     config = ClusterConfig(wc_root)
     username = config.get_username()
+    clustername = config.get_clustername()
     repo_name, repo_url = config.choose_repo()
 
     # Checkout or update the working copy.
     # The path format matches ClusterManager::setPaths() in the C++ code.
-    repo_url += '/repos/' + username
+    repo_url += '/' + clustername + '/' + username
     repo_dir = os.path.join(wc_root, repo_name)
     print ''
     delay = config.get_poll_interval()

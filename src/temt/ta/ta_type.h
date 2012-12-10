@@ -760,6 +760,13 @@ public:
   static NameVar_PArray wikis;
   // #NO_SAVE #READ_ONLY #HIDDEN the non-empty wiki names and urls from the above set of wikis -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
 
+  static String         cluster1_name; // #SAVE #CAT_File the name of a cluster
+  static String         cluster2_name; // #SAVE #CAT_File the name of a cluster
+  static String         cluster3_name; // #SAVE #CAT_File the name of a cluster
+  static String         cluster4_name; // #SAVE #CAT_File the name of a cluster
+  static String         cluster5_name; // #SAVE #CAT_File the name of a cluster
+  static String         cluster6_name; // #SAVE #CAT_File the name of a cluster
+
   static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo3_url; // #SAVE #CAT_File short name and url for Subversion repository.

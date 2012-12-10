@@ -28,9 +28,10 @@
 #include "ta_string.h"
 #include "SubversionClient.h"
 
-ClusterManager::ClusterManager(const SelectEdit *select_edit)
+ClusterManager::ClusterManager(SelectEdit *select_edit)
   : m_select_edit(select_edit)
   , m_svn_client(0)
+  , m_cluster_name()
   , m_username()
   , m_filename()
   , m_repo_url()
@@ -199,18 +200,43 @@ ClusterManager::showRepoDialog()
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("clustLbl", widget, row, "label=Cluster: ;");
 
-  // Get the hbox for this row so we can add our combobox to it.
-  taGuiLayout *hboxEmer = dlg.FindLayout(row);
-  if (!hboxEmer) return false;
-  QBoxLayout *hbox = hboxEmer->layout;
-  if (!hbox) return false;
+  QComboBox *combo1 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
 
-  QComboBox *combo = new QComboBox;
-  for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
-    combo->addItem(taMisc::svn_repos[idx].name.chars(),
-                   static_cast<QString>(taMisc::svn_repos[idx].value));
+    if (!taMisc::cluster1_name.empty()) combo1->addItem(taMisc::cluster1_name);
+    if (!taMisc::cluster2_name.empty()) combo1->addItem(taMisc::cluster2_name);
+    if (!taMisc::cluster3_name.empty()) combo1->addItem(taMisc::cluster3_name);
+    if (!taMisc::cluster4_name.empty()) combo1->addItem(taMisc::cluster4_name);
+    if (!taMisc::cluster5_name.empty()) combo1->addItem(taMisc::cluster5_name);
+    if (!taMisc::cluster6_name.empty()) combo1->addItem(taMisc::cluster6_name);
+    hbox->addWidget(combo1);
   }
-  hbox->addWidget(combo);
+  dlg.AddStretch(row);
+
+  row = "repoRow";
+  dlg.AddSpace(10, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("repoLbl", widget, row, "label=Repository: ;");
+
+  QComboBox *combo2 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+
+    for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
+      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
+                      static_cast<QString>(taMisc::svn_repos[idx].value));
+    }
+    hbox->addWidget(combo2);
+  }
   dlg.AddStretch(row);
 
   row = "descRow";
@@ -239,7 +265,8 @@ ClusterManager::showRepoDialog()
     return false;
   }
 
-  m_repo_url = combo->itemData(combo->currentIndex()).toString();
+  m_cluster_name = combo1->itemText(combo1->currentIndex());
+  m_repo_url = combo2->itemData(combo2->currentIndex()).toString();
   return true;
 }
 
@@ -247,7 +274,7 @@ void
 ClusterManager::setPaths()
 {
   // Set the working copy path and get a canonicalized version back.
-  m_wc_path = taMisc::user_app_dir + '/' + "repos" + '/' + m_username;
+  m_wc_path = taMisc::user_app_dir + '/' + m_cluster_name + '/' + m_username;
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
@@ -255,7 +282,7 @@ ClusterManager::setPaths()
   // non-canonical for URLs (and svn paths) and causes errors.
 
   // This is the path to the user's directory in the repo.
-  m_repo_user_path = m_repo_url + '/' + "repos" + '/' + m_username;
+  m_repo_user_path = m_repo_url + '/' + m_cluster_name + '/' + m_username;
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.

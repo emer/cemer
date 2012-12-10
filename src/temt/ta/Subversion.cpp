@@ -143,7 +143,7 @@ Subversion::Checkin(const String &paths, const String &comment)
 }
 
 bool
-Subversion::RunOnCluster(const SelectEdit &select_edit, const String &repo_url, const String &description, int num_mpi_nodes)
+Subversion::RunOnCluster(SelectEdit &select_edit, const String &repo_url, const String &description, int num_mpi_nodes)
 {
   // Run this project on a cluster, using the given Subversion repository URL.
   // As long as the repository URL and description strings are not empty, the

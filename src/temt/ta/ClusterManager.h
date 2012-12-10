@@ -25,7 +25,7 @@ class SubversionClient;
 class TA_API ClusterManager
 {
 public:
-  ClusterManager(const SelectEdit *select_edit);
+  ClusterManager(SelectEdit *select_edit);
   ~ClusterManager();
   void SetRepoUrl(const char *repo_url);
   void SetDescription(const char *description);
@@ -41,8 +41,9 @@ private:
   void saveCopyOfProject();
   void createParamFile();
 
-  const SelectEdit *m_select_edit;
+  SelectEdit *m_select_edit;
   SubversionClient *m_svn_client;
+  String m_cluster_name;
   String m_username;
   String m_filename;
   String m_repo_url;

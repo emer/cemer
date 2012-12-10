@@ -675,6 +675,13 @@ NamedURL        taMisc::wiki6_url;
 
 NameVar_PArray  taMisc::wikis;
 
+String          taMisc::cluster1_name;
+String          taMisc::cluster2_name;
+String          taMisc::cluster3_name;
+String          taMisc::cluster4_name;
+String          taMisc::cluster5_name;
+String          taMisc::cluster6_name;
+
 NamedURL        taMisc::svn_repo1_url;
 NamedURL        taMisc::svn_repo2_url;
 NamedURL        taMisc::svn_repo3_url;
