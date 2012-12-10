@@ -40,6 +40,9 @@ class VESpace;
 class VESpace_Group;
 class VEWorld;
 class VEWorldView;
+class VEArm;
+class VELinearMuscle;
+class VELinMuscle_Group;
 
 class taImage;
 
@@ -978,7 +981,6 @@ private:
   void 	Destroy()		{ };
 };
 
-
 ///////////////////////////////////////////////////////////////
 //   Linear Muscle: exerts force proportional to its input.
 
@@ -992,9 +994,13 @@ public:
   taVector3f p3; 	// point of intersection with the bending line
   float gain;
 	bool bend;	// true if the muscle is currently bending
+	float OldLength1, OldLength2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. OldLength2 is the length 2 timesteps ago.
 
   taVector3f Contract(float stim);
   // Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
+
+	float Length(); 	// Returns current length of muscle
+	float Speed(); 	// Returns muscle's contraction speed one world stepsize ago
 
   TA_SIMPLE_BASEFUNS(VELinearMuscle);
 
@@ -1004,6 +1010,7 @@ private:
   void Initialize(taVector3f prox, taVector3f dist, float MrG);
   void Initialize(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
   void Destroy();
+	virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 
 };
 
@@ -1023,11 +1030,10 @@ private:
   void 	Destroy()		{ };
 };
 
-
 ///////////////////////////////////////////////////////////////
 //      Arm: bodies and joints representing an arm
 
-class TA_API VEArm: public VEObject{
+class TA_API VEArm : public VEObject{
   // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
 INHERITED(VEObject)
 public:
@@ -1055,6 +1061,7 @@ public:
   float Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps) 
   float elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
   float wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
+	float WorldStep;	// #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float_Matrix ShouldIP; // shoulder insertion points at rest
   float_Matrix ArmIP; // humerus insertion points at rest
   float_Matrix FarmIP; // ulna insertion points at rest 
@@ -1082,9 +1089,11 @@ public:
   virtual bool UpdateIPs();
   // #BUTTON Setting the muscle IPs to the values in the xxxIP matrices
 
-	//virtual void Lenghts(float_Matrix &Len);
-	// current muscle lengths
+	virtual bool Lengths(float_Matrix &Len); 
+	// Put the current lengths of all muscles in the given matrix
 
+	virtual bool Speeds(float_Matrix &Vel); 
+	// Put the muscle contraction speeds of the last time step in the given matrix
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
