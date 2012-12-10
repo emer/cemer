@@ -6048,7 +6048,7 @@ void iDataTablePanel::GetSelectedItems(ISelectable_PtrList& lst) {
 void iDataTablePanel::GetWinState_impl() {
   inherited::GetWinState_impl();
   DataTable* dt = this->dt(); // cache
-  if (!dt) return;
+  if (!dt || !dte) return;
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
   float fwd = (float)tv->width();
@@ -6066,7 +6066,7 @@ void iDataTablePanel::GetWinState_impl() {
 void iDataTablePanel::SetWinState_impl() {
   inherited::SetWinState_impl();
   DataTable* dt = this->dt(); // cache
-  if (!dt) return;
+  if (!dt || !dte) return;
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
   float fwd = (float)tv->width();
