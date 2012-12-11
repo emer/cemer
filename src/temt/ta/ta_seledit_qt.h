@@ -23,6 +23,7 @@
 #include "ta_qtgroup.h"
 #include "ta_qtviewer.h"
 #include "ta_qtdialog.h"
+#include "ta_datatable_qtso.h"
 
 #ifndef __MAKETA__
 # include <QPointer>
@@ -374,6 +375,5 @@ protected slots:
   virtual  void         setFilteredB();
   void                  itemClicked(QTreeWidgetItem* itm, int column);
 };
-
 
 #endif

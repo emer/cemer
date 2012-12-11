@@ -18,6 +18,7 @@
 #include "ta_qt.h"
 #include "ta_qtdialog.h" // for Hilight button
 #include "ta_TA_inst.h"
+#include "ta_datatable_qtso.h"
 
 #include <QColor>
 #include <QHeaderView>
@@ -43,6 +44,20 @@ void tabSelectEditViewType::CreateDataPanel_impl(taiDataLink* dl_)
   // we create ours first, because it should be the default
   iSelectEditPanel* bldp = new iSelectEditPanel(dl_);
   DataPanelCreated(bldp);
+  
+  SelectEdit* se = dynamic_cast<SelectEdit *>(dl_->taData());
+  if(se && se->InheritsFrom(&TA_ClusterRun)) {
+    ClusterRun* cr = (ClusterRun*)se;
+    if(taiDataLink *datatableLink = dynamic_cast<taiDataLink *>(cr->jobs_running.GetDataLink())) {
+      iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
+      DataPanelCreated(dp);
+    }
+    if (taiDataLink *datatableLink = dynamic_cast<taiDataLink *>(cr->jobs_done.GetDataLink())) {
+      iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
+      DataPanelCreated(dp);
+    }
+  }
+
   inherited::CreateDataPanel_impl(dl_);
 }
 

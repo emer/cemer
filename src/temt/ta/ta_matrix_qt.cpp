@@ -621,6 +621,24 @@ int iTableView::MapToTreeV(QWidget* widg, int pt_y) {
   return taiMisc::MapToAreaV_SA(this, this, widg, pt_y);
 }
 
+bool iTableView::SelectedRows(int& st_row, int& end_row) {
+  st_row = -1;
+  end_row = -1;
+  QModelIndexList sels = selectedIndexes();
+  if(sels.count() == 0) {
+    return false;
+  }
+  st_row = sels.at(0).row();
+  end_row = st_row;
+  for(int i=1; i<sels.count(); i++) {
+    QModelIndex idx = sels.at(i);
+    st_row = MIN(st_row, idx.row());
+    end_row = MAX(end_row, idx.row());
+  }
+  return true;
+}
+
+
 //////////////////////////
 //    iMatrixTableView 	//
 //////////////////////////

@@ -6126,6 +6126,17 @@ void iDataTablePanel::tv_hasFocus(iTableView* sender) {
 }
 
 
+String iDataTablePanel_Mbr::panel_type() const {
+  DataTable* dat = dt();
+  if(dat) {
+    return dat->name;
+  }
+  return "DataTable";
+}
+
+iDataTablePanel_Mbr::~iDataTablePanel_Mbr() {
+}
+
 //////////////////////////////////
 //  taiTabularDataMimeFactory   //
 //////////////////////////////////

@@ -984,6 +984,8 @@ public:
   virtual taDataLink*   GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   bool                  AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
   bool                  RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
+  virtual String&       ListDataClients(String& strm, int indent = 0);
+  // #CAT_ObjectMgmt list all the data clients for this object to string
 protected:      // Impl
   virtual void          BatchUpdate(bool begin, bool struc);
   // #IGNORE bracket changes with (nestable) true/false calls; data clients can use it to supress change updates

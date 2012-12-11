@@ -1247,7 +1247,7 @@ INHERITED(iDataPanelFrame)
 public:
   iDataTableEditor*     dte;
 
-  DataTable*            dt() {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
+  DataTable*            dt() const {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
   override String       panel_type() const; // this string is on the subpanel button for this panel
 
   override int          EditAction(int ea);
@@ -1276,6 +1276,15 @@ protected:
 
 protected slots:
   void                  tv_hasFocus(iTableView* sender); // for both tableviews
+};
+
+class TA_API iDataTablePanel_Mbr : public iDataTablePanel {
+  Q_OBJECT			// use this for member data tables that you want to have an edit panel for -- does a few things differently
+INHERITED(iDataTablePanel)
+public:
+  override String       panel_type() const; // this string is on the subpanel button for this panel
+ iDataTablePanel_Mbr(taiDataLink* dl_) : iDataTablePanel(dl_) { };
+  ~iDataTablePanel_Mbr();
 };
 
 /*

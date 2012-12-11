@@ -20,11 +20,13 @@
 #include "ta_def.h"
 #include "ta_base.h"
 #include "ta_group.h"
+#include "ta_datatable.h"
 
 class SelectEditItem;
 class EditMbrItem;
 class EditMthItem;
 class DataTable;
+class iDataTableEditor;
 
 class TA_API SelectEditItem: public taOBase {
   // #STEM_BASE ##CAT_Display base class for membs/meths in a SelectEdit
@@ -333,10 +335,6 @@ public: // public API
   virtual void  Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
 
-  virtual void  RunOnCluster();
-  // #BUTTON Run this model on a cluster using the parameters of this SelectEdit.
-
-
   //////////////////////////////////////////////////
   //    Parameter Searching Interface
 
@@ -449,5 +447,52 @@ public: // legacy routines/members
 };
 
 TA_SMART_PTRS(SelectEdit); //
+
+
+class TA_API ClusterRun : public SelectEdit {
+  // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
+  INHERITED(SelectEdit)
+public:
+  DataTable	jobs_submit;	// current set of jobs to submit 
+  DataTable	jobs_running;	// #SHOW_TREE jobs that are currently running
+  DataTable	jobs_done;	// #SHOW_TREE jobs that have finished running 
+
+  String	notes;		// notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
+  String 	repo_url;	// svn repository url to use for file exchange with the cluster
+  String	cluster;	// name of cluster to run job on
+  String	queue;		// if specified, indicate a particular queue on the computing resource
+  String	run_time;	// how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
+  int		ram_gb;		// how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources
+  int		n_threads;	// number of parallel threads to use for running
+  bool		use_mpi;	// use message-passing-inteface distributed memory executable to run across multiple nodes?
+  int		mpi_nodes;	// #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
+
+  virtual void  Run();
+  // #BUTTON Run this model on a cluster using the parameters as specified here -- checks in 
+  virtual bool	Update();
+  // #BUTTON poll for job status of running jobs, grabbing any current results, and moving an completed jobs over to jobs_done -- returns true if new data or status was available
+  virtual void  Kill();
+  // #BUTTON kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
+  virtual void	ImportData();
+  // #BUTTON import the data for the selected rows in the jobs_done data table
+
+  virtual void	FormatTables();	// format all the jobs tables to contain proper columns
+
+  SIMPLE_COPY(ClusterRun);
+  SIMPLE_CUTLINKS(ClusterRun);
+  void InitLinks();
+  TA_BASEFUNS(ClusterRun);
+protected:
+  virtual void FormatTables_impl(DataTable& dt);
+  // all tables have the same format -- this ensures it
+  virtual iDataTableEditor* DataTableEditor(DataTable& dt);
+  // get editor for data table
+  virtual bool	SelectedRows(DataTable& dt, int& st_row, int& end_row);
+  // get selected rows in editor
+
+private:
+  void  Initialize();
+  void  Destroy();
+};
 
 #endif

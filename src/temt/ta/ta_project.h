@@ -570,7 +570,8 @@ public:
   // #CAT_Data create a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual taBase*       FindMakeNewDataProc(TypeDef* typ, const String& nm);
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
-  virtual SelectEdit*   FindMakeSelectEdit(const String& seledit_name);
+  virtual SelectEdit*   FindMakeSelectEdit(const String& seledit_name,
+					   TypeDef* type = &TA_SelectEdit);
   // #CAT_Edit get select edit object of given name, or make one if not found
   virtual taDoc*        FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                                     const String& web_url = "");

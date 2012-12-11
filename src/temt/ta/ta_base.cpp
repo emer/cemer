@@ -2017,6 +2017,13 @@ void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
   UpdateAfterEdit();
 }
 
+String& taBase::ListDataClients(String& strm, int indent) {
+  taDataLink* dl = GetDataLink();
+  if(!dl) return strm;
+  dl->ListClients(strm, indent);
+  return strm;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 //      Checking the configuration of objects prior to using them

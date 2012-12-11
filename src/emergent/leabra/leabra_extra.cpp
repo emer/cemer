@@ -6369,7 +6369,7 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   ti_deep->lamina = LeabraTILayerSpec::DEEP;
 
   ti_fmctxt->SetUnique("wt_scale", true);
-  ti_fmctxt->wt_scale.rel = 1.5f;
+  ti_fmctxt->wt_scale.rel = 1.0f;
 
   // turns out, not so useful in general:
   // stduns->adapt.on = true;

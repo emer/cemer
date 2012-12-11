@@ -1578,10 +1578,13 @@ void taProject::InitLinks_impl() {
   // if in datatable, it should be accessible in above
 //   FindMakeNewDataProc(&TA_taMath_float, "math_float")->SetUserData("NO_CLIP", true);
 //   FindMakeNewDataProc(&TA_taMath_double, "math_double")->SetUserData("NO_CLIP", true);
+
 }
 
 void taProject::InitLinks_post() {
   if (!taMisc::is_loading) {
+    // ensure we have a cluster run guy
+    FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
     DoView();
   }
 }
@@ -1628,6 +1631,9 @@ void taProject::Copy_(const taProject& cp) {
 
 void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  if(taMisc::is_loading) {	// make sure we have one of these for old projects
+    FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
+  }
 }
 
 taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
@@ -1639,10 +1645,10 @@ taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
   return rval;
 }
 
-SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
+SelectEdit* taProject::FindMakeSelectEdit(const String& nm, TypeDef* type) {
   SelectEdit* rval = edits.FindName(nm);
   if(rval) return rval;
-  rval = (SelectEdit*)edits.New(1);
+  rval = (SelectEdit*)edits.NewEl(1, type);
   rval->SetName(nm);
   rval->DataChanged(DCR_ITEM_UPDATED);
   return rval;

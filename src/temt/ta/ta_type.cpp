@@ -3203,6 +3203,21 @@ bool taDataLink::RemoveDataClient(IDataLinkClient* dlc) {
   return clients.RemoveEl(dlc);
 }
 
+String& taDataLink::ListClients(String& strm, int indent) const {
+  String_PArray nms;
+  nms.Alloc(clients.size);
+  for(int i=0; i<clients.size; i++) {
+    IDataLinkClient* dlc = clients.FastEl(i);
+    TypeDef* dlc_typ = dlc->GetTypeDef();
+    if (dlc_typ) {
+      nms.Add(dlc_typ->name);
+    }
+  }
+  taMisc::FancyPrintList(strm, nms, indent+1);
+  taMisc::IndentString(strm, indent);
+  return strm;
+}
+
 void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
   void* rval = NULL;
   while (dl && (i < dl->clients.size)) {

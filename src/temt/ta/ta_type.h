@@ -1499,6 +1499,9 @@ public:
     int itm_idx = -1) const  {return child->GetColText(key, itm_idx);}
     // default delegates to child; lists can override to control this
 
+  virtual String&       ListClients(String& strm, int indent = 0) const;
+  // list all the data clients for this object to string
+
   virtual TypeDef*      GetTypeDef() const;
   taDataLink(void* data_, taDataLink* &link_ref_);
   virtual ~taDataLink();
