@@ -1866,7 +1866,7 @@ bool VEArm::UpdateIPs() {
   // rotating the ulna's insertion points
 	//elbow->CurFromODE(true);	// so the angle we get is actualized
   float delta = elbow->pos;	// DON'T KNOW IF THIS WILL WORK
-  taMisc::Info("elbow pos: ", String(delta), "\n");
+  taMisc::Info("elbow pos at UpdateIPs: ", String(delta), "\n");
   float UlnaShift_f[] = {0, 0, -La, 
                          0, 0, -La,
                          0, 0, -La}; // should have one row per forearm IP
@@ -1948,7 +1948,6 @@ bool VEArm::UpdateIPs() {
 		muscles[8+i]->IPdist.y = RotFarmIP.FastElAsFloat(1,i);
 		muscles[8+i]->IPdist.z = RotFarmIP.FastElAsFloat(2,i);
 		muscles[8+i]->bend = false;
-  // the triceps and the brachialis connect from humerus to ulna
   }
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
@@ -2145,6 +2144,8 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   Init();			// this will attempt to init everything just created..
 
+  DataChanged(DCR_ITEM_UPDATED); // this will in theory update the display
+
   return true;
 }
 
@@ -2277,8 +2278,6 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
   humerus->Translate(RotHumCM.FastEl(0),RotHumCM.FastEl(1),RotHumCM.FastEl(2)-(humerus->init_pos.z),false);
 
-  // setting the anchor for the elbow 
-  // elbow->anchor.FromMatrix(RotElbow);	// set elbow joint's anchor point
 
 //------ Rotating ulna -------
 /*
@@ -2343,12 +2342,22 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 	// sending the values of the bodies to ODE
 	CurToODE();
 
-  // setting the anchor for the wrist
-	// wrist->anchor.FromMatrix(Rot2Wrist);	
+// calculating and updating the joint values
+	// setting the axes for the elbow joint
+	elbow->axis.x = cos(alpha);
+	elbow->axis.y = sin(alpha);
+	elbow->axis.z = 0.0f;
+	elbow->axis2.x = -sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
+	elbow->axis2.y = cos(alpha)*sin(beta+delta);
+	elbow->axis2.z = -cos(beta+delta);
+
+  // sending the joint axes and anchor points to ODE
+  //elbow->anchor.FromMatrix(RotElbow);	// set elbow joint's anchor point
+	// wrist->anchor.FromMatrix(Rot2Wrist);	// not necessary since relative coordinates are used
 	wrist->Init_Anchor();
 	elbow->Init_Anchor();
 
-	// sending the values of the joints to ODE
+	// looking at the values of the joints in ODE
   dJointID ejid = (dJointID)elbow->joint_id;
 	//dJointSetHinge2Anchor(ejid,	elbow->anchor.x, elbow->anchor.y, elbow->anchor.z);
 	float angl = (float)dJointGetHinge2Angle1(ejid);
@@ -2366,18 +2375,14 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 	taMisc::Info("elbow axis1: ", smax1, "\n");
 	taMisc::Info("elbow axis2: ", smax2, "\n");
 	//elbow->Init_Anchor();
-/*
-	humerus->SetValsToODE();
-	ulna->SetValsToODE();
-	hand->SetValsToODE();
-	elbow->SetValsToODE();
-	wrist->SetValsToODE();
-*/ 
+  //CurFromODE(true);
+
+  DataChanged(DCR_ITEM_UPDATED); // this will in theory update the display
+
   return true;
 }
 
   bool VEArm::bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2) {
-//bool VEArm::bender() {
   // This function is the C++ equivalent of piece5.m. 
   // The points a and c are insertion points, whereas p1 and p2 are the extremes of the bending line.
   // If the muscle wraps around the bending line, bender returns true, and inserts the value of
@@ -2636,6 +2641,36 @@ bool VEArm::Speeds(float_Matrix &Vel) {
 	}
 	return true;
 }
+
+bool VEArm::ApplyStim(float_Matrix stims, float_Matrix &forces) {
+  if(TestWarning(stims.count() != Nmusc, "","The stimulus matrix doesn't match the number of muscles \n"))
+		return false;
+	else if(TestWarning(forces.count() != 3*Nmusc, "","The forces matrix doesn't match the number of muscles \n"))
+		return false;
+
+  VEBody* humerus = bodies[HUMERUS];
+  VEBody* ulna = bodies[ULNA];
+
+	taVector3f daforce(0.0f, 0.0f, 0.0f);
+	for(int i=0; i<Nmusc; i++) {
+		daforce = muscles[i]->Contract(stims.FastElAsFloat(i));
+		forces.Set(daforce.x, i, 0);
+		forces.Set(daforce.y, i, 1);
+		forces.Set(daforce.z, i, 2);
+
+		if(i < 8) {  // muscles from shoulder to humerus
+			humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+		} else if(i == 8) {  // biceps
+			ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+		} else { // triceps and brachialis
+			humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z,muscles[i]->IPprox.x,muscles[i]->IPprox.y,muscles[i]->IPprox.z,false,false);
+			ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+		}
+			
+	}
+	return true;
+}
+	
 
 ///////////////////////////////////////////////////////////////
 //   Linear Muscle: exerts force proportional to its input.

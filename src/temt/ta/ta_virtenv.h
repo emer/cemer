@@ -1095,6 +1095,9 @@ public:
 	virtual bool Speeds(float_Matrix &Vel); 
 	// Put the muscle contraction speeds of the last time step in the given matrix
 
+	virtual bool ApplyStim(float_Matrix stims, float_Matrix &forces); 
+	// Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.
+
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
   //  override CheckConfig_impl(); // todo
