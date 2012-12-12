@@ -636,6 +636,9 @@ public:
   static String vec_stats(const double_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
+  static int   vec_prob_choose(double_Matrix* vec);
+  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability
+
   static void   vec_sort(double_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place) -- uses entire matrix, ignoring any view of sub-elements
 
@@ -1276,6 +1279,9 @@ public:
 
   static String vec_stats(const float_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+
+  static int   vec_prob_choose(float_Matrix* vec);
+  // #CAT_Statistics given a vector of probability values, choose an index according to its corresponding probability
 
   static void   vec_sort(float_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)

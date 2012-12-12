@@ -1727,6 +1727,20 @@ String taMath_double::vec_stats(const double_Matrix* vec) {
   return rval;
 }
 
+int taMath_double::vec_prob_choose(double_Matrix* vec) {
+  if(!vec_check_type(vec)) return -1;
+  double rndval = Random::ZeroOne();
+  double psum = 0.0;
+  int rval;
+  for(rval=0;rval<vec->size;rval++) {
+    psum += vec->FastEl_Flat(rval);
+    if(rndval < psum) {
+      return rval;
+    }
+  }
+  return vec->size-1;		// just to be safe..
+}
+
 double taMath_double::vec_dprime(const double_Matrix* signal_vec,
 				 const double_Matrix* noise_vec) {
   if(!vec_check_type(signal_vec) || !vec_check_type(noise_vec)) return 0.0f;
@@ -4921,6 +4935,20 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
   rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
   rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
   return rval;
+}
+
+int taMath_float::vec_prob_choose(float_Matrix* vec) {
+  if(!vec_check_type(vec)) return -1;
+  float rndval = Random::ZeroOne();
+  float psum = 0.0;
+  int rval;
+  for(rval=0;rval<vec->size;rval++) {
+    psum += vec->FastEl_Flat(rval);
+    if(rndval < psum) {
+      return rval;
+    }
+  }
+  return vec->size-1;		// just to be safe..
 }
 
 float taMath_float::vec_dprime(const float_Matrix* signal_vec,
