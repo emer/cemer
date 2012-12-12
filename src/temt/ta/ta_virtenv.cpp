@@ -145,26 +145,26 @@ void VEBody::UpdateAfterEdit_impl() {
   if(!taMisc::is_loading) {
     if(shape == CAPSULE || shape == CYLINDER) {
       if(long_axis != cur_long_axis) {
-	// first, undo old setting
-	if(cur_long_axis == LONG_X) {
-	  cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
-	}
-	else if(cur_long_axis == LONG_Y) {
-	  cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
-	}
-	// next, set new one
-	if(long_axis == LONG_X) {
-	  cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
-	}
-	else if(long_axis == LONG_Y) {
-	  cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
-	}
+        // first, undo old setting
+        if(cur_long_axis == LONG_X) {
+          cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
+        }
+        else if(cur_long_axis == LONG_Y) {
+          cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
+        }
+        // next, set new one
+        if(long_axis == LONG_X) {
+          cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
+        }
+        else if(long_axis == LONG_Y) {
+          cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
+        }
       }
     }
   }
   cur_long_axis = long_axis;
 
-  CurToODE();		// always update ODE with any changes!
+  CurToODE();           // always update ODE with any changes!
 }
 
 VEWorld* VEBody::GetWorld() {
@@ -494,7 +494,7 @@ void VEBody::Translate(float dx, float dy, float dz, bool init) {
     cur_pos.y += dy;
     cur_pos.z += dz;
   }
-  UpdateAfterEdit();		// calls CurToODE and updates display
+  UpdateAfterEdit();            // calls CurToODE and updates display
 }
 
 void VEBody::Scale(float sx, float sy, float sz) {
@@ -540,7 +540,7 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
     cur_quat.ToAxisAngle(cur_rot);
     cur_quat.ToEulerVec(cur_euler);
   }
-  UpdateAfterEdit();		// calls CurToODE and updates display
+  UpdateAfterEdit();            // calls CurToODE and updates display
 }
 
 void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
@@ -554,7 +554,7 @@ void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init)
     cur_quat.ToAxisAngle(cur_rot);
     cur_quat.ToEulerVec(cur_euler);
   }
-  UpdateAfterEdit();		// calls CurToODE and updates display
+  UpdateAfterEdit();            // calls CurToODE and updates display
 }
 
 void VEBody::CopyColorFrom(VEBody* cpy_fm) {
@@ -1765,33 +1765,33 @@ void VEArm::Initialize() {
   arm_side = RIGHT_ARM;
   // note: torso ref is self initializing
   La = 0.3f;
-  Lf = 0.33f; 
-  elbow_gap = 0.03; // space left between bodies so joint can rotate
-  wrist_gap = 0.03;
-	//VEWorld* Worldly = GetWorld(); // these lines crash Emergent on Startup
-	//WorldStep = Worldly->stepsize;
+  Lf = 0.33f;
+  elbow_gap = 0.03f; // space left between bodies so joint can rotate
+  wrist_gap = 0.03f;
+        //VEWorld* Worldly = GetWorld(); // these lines crash Emergent on Startup
+        //WorldStep = Worldly->stepsize;
 
 // Initializing the insertion point matrices, assuming RIGHT_ARM and shoulder at origin
 // Should copy this to ConfigArm
 
   // Here are all the muscle insertion points in the trunk and shoulder, as
   // labeled in (46) starting with point e
-  float ShouldIP_f[] = {-0.05,    0,      0,     -0.11,     0,     -0.07,    // e,g
-		      -0.08,    0.01,   0,     -0.08,    -0.01,    0,      // i,k
-		      -0.14,    0.06,   0.01,  -0.10,    -0.05,   0.01,    // m,o
-		      -0.14,    0.06,  -0.12,  -0.10,    -0.05,   -0.12,   // q,s
-		      -0.02,    0.02,   0.01};     // t
+  float ShouldIP_f[] = { -0.05f,  0,      0,       -0.11f,  0,     -0.07f, // e,g
+                         -0.08f,  0.01f,  0,       -0.08f, -0.01f,  0,     // i,k
+                         -0.14f,  0.06f,  0.01f,   -0.10f, -0.05f,  0.01f, // m,o
+                         -0.14f,  0.06f, -0.12f,   -0.10f, -0.05f, -0.12f, // q,s
+                         -0.02f,  0.02f,  0.01f };                         // t
 
   ShouldIP = float_Matrix(2,3,9);     // the matrix has two indices, 3 columns and 9 rows
   ShouldIP.InitFromFloats(ShouldIP_f);
 
   // Here are all the muscle insertion points in the arm, as labeled in (46),
   // starting with point d
-  float ArmIP_f[] = {0.02,  0,      -0.05,  -0.02,   0,    -0.05,  // d,f
-		    0, 	    0.02,    0,      0 ,   -0.02,  0,	// h,j
-		   -0.01,   0.01,   -0.06,  -0.01, -0.01,  -0.06, // l,n
-		   -0.01,   0.01,   -0.05,  -0.01, -0.01,  -0.05, // p,r
-		     0,    -0.015,  -0.06,    0  ,  0.015, -0.15}; // v,x
+  float ArmIP_f[] = {  0.02f,  0,      -0.05f,   -0.02f,  0,      -0.05f,   // d,f
+                       0,      0.02f,   0,        0,     -0.02f,   0,      // h,j
+                      -0.01f,  0.01f,  -0.06f,   -0.01f, -0.01f,  -0.06f,   // l,n
+                      -0.01f,  0.01f,  -0.05f,   -0.01f, -0.01f,  -0.05f,   // p,r
+                       0,     -0.015f, -0.06f,    0,      0.015f, -0.15f }; // v,x
 
   ArmIP = float_Matrix(2,3,10);
   ArmIP.InitFromFloats(ArmIP_f);
@@ -1799,49 +1799,50 @@ void VEArm::Initialize() {
   //String aout;
   //ArmIP.Print(aout);
   //taMisc::Info("init ArmIP:\n", aout);
-     
+
   // Here are the muscle insertion points in the forearm, corresponding to the
   // biceps, the triceps, and the brachialis.
-  float FarmIP_f[] = {0,    0.015,  -La-0.05,    0,   -0.005, -La+0.03,
-		                 -0.01, 0.015,  -La-0.04};
+  float FarmIP_f[] = {  0,      0.015f, -La - 0.05f,
+                        0,     -0.005f, -La + 0.03f,
+                       -0.01f,  0.015f, -La - 0.04f };
   FarmIP = float_Matrix(2,3,3);
   FarmIP.InitFromFloats(FarmIP_f);
 
   // Here are the initial and final points of the restricted bending lines for
   // each one of the muscles 1-8. The values for muscles 3,4 are not used
-  float p1_f[] = {0.03,  -0.02,   0.02,   0.01,    0.03,   -0.02,
-		              0,      0.02,   0.01,   0,      -0.02,    0.01,
-		             -0.02,   0.03,   0.02,  -0.01,   -0.05,   -0.07,
-		             -0.02,   0.03,   0.02,  -0.01,   -0.05,   -0.07};
+  float p1_f[] = {  0.03f, -0.02f,  0.02f,    0.01f,  0.03f, -0.02f,
+                    0,      0.02f,  0.01f,    0,     -0.02f,  0.01f,
+                   -0.02f,  0.03f,  0.02f,   -0.01f, -0.05f, -0.07f,
+                   -0.02f,  0.03f,  0.02f,   -0.01f, -0.05f, -0.07f };
   p1 = float_Matrix(2,3,8);
   p1.InitFromFloats(p1_f);
-  
-  float p2_f[] = {0.03,  0.02,   0.02,   0.01, -0.03, -0.02,
-		              0,     0.02,  -0.01,   0,    -0.02, -0.01,
-		             -0.03,  0.03,  -0.06,   0,    -0.04,  0.02,
-		             -0.03,  0.03,  -0.06,   0,    -0.04,  0.02};
+
+  float p2_f[] = {  0.03f,  0.02f,  0.02f,    0.01f, -0.03f, -0.02f,
+                    0,      0.02f, -0.01f,    0,     -0.02f, -0.01f,
+                   -0.03f,  0.03f, -0.06f,    0,     -0.04f,  0.02f,
+                   -0.03f,  0.03f, -0.06f,    0,     -0.04f,  0.02f };
   p2 = float_Matrix(2,3,8);
   p2.InitFromFloats(p2_f);
 
 // Initializing the muscles
   // the number of muscles is 1/2 the sum of points in ShoulderIP+ArmIP+FarmIP
-	Nmusc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
+        Nmusc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
   VELinearMuscle* musl = muscles.NewEl(Nmusc); // creating VELinearMuscle objects to populate group
 
   //UpdateIPs(); // attaching muscles to their corresponding insertion points
                  // crashes the program at VEBody* humerus = bodies[HUMERUS];
-	//for(int i=0; i<Nmusc; i++) // initializing past muscle lengths
-		//muscles[i]->OldLength2 = muscles[i]->OldLength1 = muscles[i]->Length();
-  
+        //for(int i=0; i<Nmusc; i++) // initializing past muscle lengths
+                //muscles[i]->OldLength2 = muscles[i]->OldLength1 = muscles[i]->Length();
+
 }
 
 bool VEArm::UpdateIPs() {
 
 // We update the muscles' past lengths before setting new IPs
-	for(int i=0; i<Nmusc; i++) {
-		muscles[i]->OldLength2 = muscles[i]->OldLength1;
-		muscles[i]->OldLength1 = muscles[i]->Length();
-	}
+        for(int i=0; i<Nmusc; i++) {
+                muscles[i]->OldLength2 = muscles[i]->OldLength1;
+                muscles[i]->OldLength1 = muscles[i]->Length();
+        }
 
 // To set new IPs, first we'll find the coordinates of the rotated IPs
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1857,20 +1858,20 @@ bool VEArm::UpdateIPs() {
 
   // rotating the humerus' insertion points
   float_Matrix RotArmIP;
-  taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT); 
+  taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
 
   String out;
   RotArmIP.Print(out);
   taMisc::Info("rotated ArmIP:\n", out);
 
   // rotating the ulna's insertion points
-	//elbow->CurFromODE(true);	// so the angle we get is actualized
-  float delta = elbow->pos;	// DON'T KNOW IF THIS WILL WORK
+        //elbow->CurFromODE(true);      // so the angle we get is actualized
+  float delta = elbow->pos;     // DON'T KNOW IF THIS WILL WORK
   taMisc::Info("elbow pos at UpdateIPs: ", String(delta), "\n");
-  float UlnaShift_f[] = {0, 0, -La, 
+  float UlnaShift_f[] = {0, 0, -La,
                          0, 0, -La,
                          0, 0, -La}; // should have one row per forearm IP
-  float T_elbowRot_f[] = {1, 0, 0, 
+  float T_elbowRot_f[] = {1, 0, 0,
                 0, cos(delta),  sin(delta),
                 0, -sin(delta), cos(delta)};
   // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation
@@ -1894,7 +1895,7 @@ bool VEArm::UpdateIPs() {
 
 // now we set the origin at the shoulder
   float_Matrix ReshiftedIP(2,3,3);
-  ReshiftedIP = Rot1FarmIP + UlnaShift; 
+  ReshiftedIP = Rot1FarmIP + UlnaShift;
 
 // finally we apply the shoulder rotation
   float_Matrix RotFarmIP(2,3,3);
@@ -1907,47 +1908,47 @@ bool VEArm::UpdateIPs() {
 
 // Now we assign the rotated IPs to the corresponding muscles
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-	taVector3f c1, c2, shoulderIP, humerIP, pv1, pv2, p3; 
-  for(int i=0; i<8; i++)  // the 8 shoulder to humerus muscles  
-	{		   
-		muscles[i]->IPprox.x = ShouldIP.FastElAsFloat(0,i);
-		muscles[i]->IPprox.y = ShouldIP.FastElAsFloat(1,i);
-		muscles[i]->IPprox.z = ShouldIP.FastElAsFloat(2,i);
-		muscles[i]->IPdist.x = RotArmIP.FastElAsFloat(0,i);
-		muscles[i]->IPdist.y = RotArmIP.FastElAsFloat(1,i);
-		muscles[i]->IPdist.z = RotArmIP.FastElAsFloat(2,i);
+        taVector3f c1, c2, shoulderIP, humerIP, pv1, pv2, p3;
+  for(int i=0; i<8; i++)  // the 8 shoulder to humerus muscles
+        {
+                muscles[i]->IPprox.x = ShouldIP.FastElAsFloat(0,i);
+                muscles[i]->IPprox.y = ShouldIP.FastElAsFloat(1,i);
+                muscles[i]->IPprox.z = ShouldIP.FastElAsFloat(2,i);
+                muscles[i]->IPdist.x = RotArmIP.FastElAsFloat(0,i);
+                muscles[i]->IPdist.y = RotArmIP.FastElAsFloat(1,i);
+                muscles[i]->IPdist.z = RotArmIP.FastElAsFloat(2,i);
 
-		humerIP = muscles[i]->IPdist;
-		shoulderIP = muscles[i]->IPprox;
-		pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i); 
-		pv1.y = p1.FastElAsFloat(1,i); pv2.y = p2.FastElAsFloat(1,i); 
-		pv1.z = p1.FastElAsFloat(2,i); pv2.z = p2.FastElAsFloat(2,i); 
+                humerIP = muscles[i]->IPdist;
+                shoulderIP = muscles[i]->IPprox;
+                pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i);
+                pv1.y = p1.FastElAsFloat(1,i); pv2.y = p2.FastElAsFloat(1,i);
+                pv1.z = p1.FastElAsFloat(2,i); pv2.z = p2.FastElAsFloat(2,i);
 
-		if(bender(p3,shoulderIP,humerIP,pv1,pv2) && i!=2 && i!=3) { 
-		// if muscle wraps around bending line (except for muscles 3 and 4)
-			muscles[i]->p3 = p3;
-			muscles[i]->bend = true;
-		} else {
-			muscles[i]->bend = false;
-		}
+                if(bender(p3,shoulderIP,humerIP,pv1,pv2) && i!=2 && i!=3) {
+                // if muscle wraps around bending line (except for muscles 3 and 4)
+                        muscles[i]->p3 = p3;
+                        muscles[i]->bend = true;
+                } else {
+                        muscles[i]->bend = false;
+                }
   }
   // next muscle is the biceps, from shoulder to forearm
-	muscles[8]->IPprox.x = ShouldIP.FastElAsFloat(0,8);
-	muscles[8]->IPprox.y = ShouldIP.FastElAsFloat(1,8);
-	muscles[8]->IPprox.z = ShouldIP.FastElAsFloat(2,8);
-	muscles[8]->IPdist.x = RotFarmIP.FastElAsFloat(0,0);
-	muscles[8]->IPdist.y = RotFarmIP.FastElAsFloat(1,0);
-	muscles[8]->IPdist.z = RotFarmIP.FastElAsFloat(2,0);
-	muscles[8]->bend = false;
+        muscles[8]->IPprox.x = ShouldIP.FastElAsFloat(0,8);
+        muscles[8]->IPprox.y = ShouldIP.FastElAsFloat(1,8);
+        muscles[8]->IPprox.z = ShouldIP.FastElAsFloat(2,8);
+        muscles[8]->IPdist.x = RotFarmIP.FastElAsFloat(0,0);
+        muscles[8]->IPdist.y = RotFarmIP.FastElAsFloat(1,0);
+        muscles[8]->IPdist.z = RotFarmIP.FastElAsFloat(2,0);
+        muscles[8]->bend = false;
   // the triceps and the brachialis connect from humerus to ulna
-  for(int i=1; i<=2; i++) { 
-		muscles[8+i]->IPprox.x = RotArmIP.FastElAsFloat(0,7+i);
-		muscles[8+i]->IPprox.y = RotArmIP.FastElAsFloat(1,7+i);
-		muscles[8+i]->IPprox.z = RotArmIP.FastElAsFloat(2,7+i);
-		muscles[8+i]->IPdist.x = RotFarmIP.FastElAsFloat(0,i);
-		muscles[8+i]->IPdist.y = RotFarmIP.FastElAsFloat(1,i);
-		muscles[8+i]->IPdist.z = RotFarmIP.FastElAsFloat(2,i);
-		muscles[8+i]->bend = false;
+  for(int i=1; i<=2; i++) {
+                muscles[8+i]->IPprox.x = RotArmIP.FastElAsFloat(0,7+i);
+                muscles[8+i]->IPprox.y = RotArmIP.FastElAsFloat(1,7+i);
+                muscles[8+i]->IPprox.z = RotArmIP.FastElAsFloat(2,7+i);
+                muscles[8+i]->IPdist.x = RotFarmIP.FastElAsFloat(0,i);
+                muscles[8+i]->IPdist.y = RotFarmIP.FastElAsFloat(1,i);
+                muscles[8+i]->IPdist.z = RotFarmIP.FastElAsFloat(2,i);
+                muscles[8+i]->bend = false;
   }
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
@@ -1973,7 +1974,7 @@ bool VEArm::CheckArm(bool quiet) {
     rval = false;
     TestError(!quiet, "CheckArm", "number of joints < N_ARM_JOINTS -- run ConfigArm");
   }
-	if(Nmusc != (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6)) {
+        if(Nmusc != (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6)) {
     rval = false;
     TestError(!quiet, "CheckArm", "number of muscles doesn't match number of insertion points -- run ConfigArm");
   }
@@ -1983,12 +1984,12 @@ bool VEArm::CheckArm(bool quiet) {
 }
 
 bool VEArm::ConfigArm(const String& name_prefix,
-		      float humerus_length, float humerus_radius,
-		      float ulna_length, float ulna_radius,
-		      float hand_length, float hand_radius) {
+                      float humerus_length, float humerus_radius,
+                      float ulna_length, float ulna_radius,
+                      float hand_length, float hand_radius) {
   // note: keeping torso out of it, so the arm is fully modular and can attach to anything
 
-  
+
   if(TestError(!torso, "ConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
     return false;
 
@@ -1997,9 +1998,9 @@ bool VEArm::ConfigArm(const String& name_prefix,
   if(joints.size < N_ARM_JOINTS)
     joints.SetSize(N_ARM_JOINTS); // auto-creates the VEJoint objects up to specified size
 
-	// Getting the stepsize of VEWorld containing this Arm
-	VEWorld* Worldly = GetWorld();
-	WorldStep = Worldly->stepsize;
+        // Getting the stepsize of VEWorld containing this Arm
+        VEWorld* Worldly = GetWorld();
+        WorldStep = Worldly->stepsize;
 
   // this is how you access the bodies -- very fast and efficient
   VEBody* humerus = bodies[HUMERUS];
@@ -2012,13 +2013,13 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   //------- Setting standard geometry -------
   // todo: just need to know where to attach to torso..
-  // torso.shape = VEBody::BOX; 
+  // torso.shape = VEBody::BOX;
   // torso.length = 0.4;
   // torso.init_pos.x = -0.25; torso.init_pos.y = 0; torso.init_pos.z = -0.2;
   // torso.cur_pos.x = -0.25; torso.cur_pos.y = 0; torso.cur_pos.z = -0.2;
   // torso.box.x = 0.35; torso.box.y = 0.1; torso.box.z = 0.4;
   // torso.SetValsToODE();
-  
+
   // todo: need to make all this conditional on arm_side!
   humerus->name = name_prefix + "Humerus";
   humerus->shape = VEBody::CAPSULE; humerus->long_axis = VEBody::LONG_Z;
@@ -2039,7 +2040,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
   hand->name = name_prefix + "Hand";
   hand->shape = VEBody::CAPSULE; hand->long_axis = VEBody::LONG_Z;
   hand->length = hand_length; hand->radius = hand_radius;
-  hand->init_pos.x = 0; hand->init_pos.y = 0; 
+  hand->init_pos.x = 0; hand->init_pos.y = 0;
   hand->init_pos.z = -(humerus_length+ulna_length+elbow_gap+wrist_gap+(hand_length/2));
   hand->init_rot.x = 0; hand->init_rot.y = 0; hand->init_rot.z = 0;
   hand->cur_pos.x = 0; hand->cur_pos.y = 0; hand->cur_pos.z = hand->init_pos.z;
@@ -2063,15 +2064,15 @@ bool VEArm::ConfigArm(const String& name_prefix,
   wrist->joint_type = VEJoint::FIXED;
   wrist->body1 = ulna; wrist->body2 = hand;
 
-	shoulder->anchor.x = 0; shoulder->anchor.y = 0; shoulder->anchor.z = 0;
+        shoulder->anchor.x = 0; shoulder->anchor.y = 0; shoulder->anchor.z = 0;
 
-  elbow->anchor.x = 0;	// set elbow joint's anchor point wrt humerus' CM
+  elbow->anchor.x = 0;  // set elbow joint's anchor point wrt humerus' CM
   elbow->anchor.y = 0;
-  elbow->anchor.z = -(humerus->length/2 +(elbow_gap/2));	
+  elbow->anchor.z = -(humerus->length/2 +(elbow_gap/2));
 
-	wrist->anchor.x = 0; // set wrist joint's anchor point wrt ulna's CM
-	wrist->anchor.y = 0;
-	wrist->anchor.z = -(ulna->length/2 + (wrist_gap/2));
+        wrist->anchor.x = 0; // set wrist joint's anchor point wrt ulna's CM
+        wrist->anchor.y = 0;
+        wrist->anchor.z = -(ulna->length/2 + (wrist_gap/2));
 
   elbow->axis.x = -1;  // setting elbow joint's axes
   elbow->axis.y = 0;
@@ -2085,22 +2086,22 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   // Here are all the muscle insertion points in the trunk and shoulder, as
   // labeled in (46) starting with point e
-  float ShouldIP_f[] = {-0.05,    0,      0,     -0.11,     0,     -0.07,    // e,g
-		      -0.08,    0.01,   0,     -0.08,    -0.01,    0,      // i,k
-		      -0.14,    0.06,   0.01,  -0.10,    -0.05,   0.01,    // m,o
-		      -0.14,    0.06,  -0.12,  -0.10,    -0.05,   -0.12,   // q,s
-		      -0.02,    0.02,   0.01};     // t
+  float ShouldIP_f[] = { -0.05f,  0,      0,       -0.11f,  0,     -0.07f, // e,g
+                         -0.08f,  0.01f,  0,       -0.08f, -0.01f,  0,     // i,k
+                         -0.14f,  0.06f,  0.01f,   -0.10f, -0.05f,  0.01f, // m,o
+                         -0.14f,  0.06f, -0.12f,   -0.10f, -0.05f, -0.12f, // q,s
+                         -0.02f,  0.02f,  0.01f };                         // t
 
   ShouldIP = float_Matrix(2,3,9);     // the matrix has two indices, 3 columns and 9 rows
   ShouldIP.InitFromFloats(ShouldIP_f);
 
   // Here are all the muscle insertion points in the arm, as labeled in (46),
   // starting with point d
-  float ArmIP_f[] = {0.02,  0,      -0.05,  -0.02,   0,    -0.05,  // d,f
-		    0, 	    0.02,    0,      0 ,   -0.02,  0,	// h,j
-		   -0.01,   0.01,   -0.06,  -0.01, -0.01,  -0.06, // l,n
-		   -0.01,   0.01,   -0.05,  -0.01, -0.01,  -0.05, // p,r
-		     0,    -0.015,  -0.06,    0  ,  0.015, -0.15}; // v,x
+  float ArmIP_f[] = {  0.02f,  0,      -0.05f,   -0.02f,  0,      -0.05f,   // d,f
+                       0,      0.02f,   0,        0,     -0.02f,   0,       // h,j
+                      -0.01f,  0.01f,  -0.06f,   -0.01f, -0.01f,  -0.06f,   // l,n
+                      -0.01f,  0.01f,  -0.05f,   -0.01f, -0.01f,  -0.05f,   // p,r
+                       0,     -0.015f, -0.06f,    0,      0.015f, -0.15f }; // v,x
 
   ArmIP = float_Matrix(2,3,10);
   ArmIP.InitFromFloats(ArmIP_f);
@@ -2108,41 +2109,42 @@ bool VEArm::ConfigArm(const String& name_prefix,
   //String aout;
   //ArmIP.Print(aout);
   //taMisc::Info("init ArmIP:\n", aout);
-     
+
   // Here are the muscle insertion points in the forearm, corresponding to the
   // biceps, the triceps, and the brachialis.
-  float FarmIP_f[] = {0,    0.015,  -La-0.05,    0,   -0.005, -La+0.03,
-		                 -0.01, 0.015,  -La-0.04};
+  float FarmIP_f[] = {  0,      0.015f, -La - 0.05f,
+                        0,     -0.005f, -La + 0.03f,
+                       -0.01f,  0.015f, -La - 0.04f };
   FarmIP = float_Matrix(2,3,3);
   FarmIP.InitFromFloats(FarmIP_f);
 
   // Here are the initial and final points of the restricted bending lines for
   // each one of the muscles 1-8. The values for muscles 3,4 are not used
-  float p1_f[] = {0.03,  -0.02,   0.02,   0.01,    0.03,   -0.02,
-		              0,      0.02,   0.01,   0,      -0.02,    0.01,
-		             -0.02,   0.03,   0.02,  -0.01,   -0.05,   -0.07,
-		             -0.02,   0.03,   0.02,  -0.01,   -0.05,   -0.07};
+  float p1_f[] = {  0.03f, -0.02f,  0.02f,    0.01f,  0.03f, -0.02f,
+                    0,      0.02f,  0.01f,    0,     -0.02f,  0.01f,
+                   -0.02f,  0.03f,  0.02f,   -0.01f, -0.05f, -0.07f,
+                   -0.02f,  0.03f,  0.02f,   -0.01f, -0.05f, -0.07f };
   p1 = float_Matrix(2,3,8);
   p1.InitFromFloats(p1_f);
-  
-  float p2_f[] = {0.03,  0.02,   0.02,   0.01, -0.03, -0.02,
-		              0,     0.02,  -0.01,   0,    -0.02, -0.01,
-		             -0.03,  0.03,  -0.06,   0,    -0.04,  0.02,
-		             -0.03,  0.03,  -0.06,   0,    -0.04,  0.02};
+
+  float p2_f[] = {  0.03f,  0.02f,  0.02f,    0.01f, -0.03f, -0.02f,
+                    0,      0.02f, -0.01f,    0,     -0.02f, -0.01f,
+                   -0.03f,  0.03f, -0.06f,    0,     -0.04f,  0.02f,
+                   -0.03f,  0.03f, -0.06f,    0,     -0.04f,  0.02f };
   p2 = float_Matrix(2,3,8);
   p2.InitFromFloats(p2_f);
 
 // Initializing the muscles
   // the number of muscles is 1/2 the sum of points in ShoulderIP+ArmIP+FarmIP
-	Nmusc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
-	muscles.SetSize(Nmusc);	
+        Nmusc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
+        muscles.SetSize(Nmusc);
 
   UpdateIPs(); // attaching muscles to their corresponding insertion points
 
-	for(int i=0; i<Nmusc; i++) // initializing past muscle lengths
-		muscles[i]->OldLength2 = muscles[i]->OldLength1 = muscles[i]->Length();
+        for(int i=0; i<Nmusc; i++) // initializing past muscle lengths
+                muscles[i]->OldLength2 = muscles[i]->OldLength1 = muscles[i]->Length();
 
-  Init();			// this will attempt to init everything just created..
+  Init();                       // this will attempt to init everything just created..
 
   DataChanged(DCR_ITEM_UPDATED); // this will in theory update the display
 
@@ -2153,19 +2155,21 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 // at some point I should set the arm to its initial position here
   if(!CheckArm()) return false;
 
-  if(trg_x == 0.0 && trg_y == 0.0) trg_y = 0.000001;  // this is to avoid a Gimble lock
+  if(trg_x == 0.0 && trg_y == 0.0) {
+    trg_y = 0.000001f;  // this is to avoid a Gimble lock
+  }
 
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
   VEBody* hand = bodies[HAND];
-	VEJoint* elbow = joints[ELBOW];
+        VEJoint* elbow = joints[ELBOW];
   VEJoint* wrist = joints[WRIST];
 
   // target coordinates
   float t_f[] = {trg_x, trg_y, trg_z};
   float_Matrix T(1,3);
   T.InitFromFloats(t_f);
-  float D = taMath_float::vec_norm(&T); 
+  float D = taMath_float::vec_norm(&T);
 
   if(D < 0.1) {
     taMisc::Info("Target too close \n");
@@ -2173,14 +2177,14 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
     float Lfactor = 0.15/D;
     trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
     T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-    D = taMath_float::vec_norm(&T); 
+    D = taMath_float::vec_norm(&T);
   } else if( D >= (La+Lf)) {
       taMisc::Info("Target too far \n");
     // bringing the target closer, maintaining direction
       float Lfactor = (La+Lf-0.01)/D;
       trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
       T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-      D = taMath_float::vec_norm(&T); 
+      D = taMath_float::vec_norm(&T);
   }
 
   // From coordinates to angles as in (44)
@@ -2193,17 +2197,17 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   if(trg_y < 0)  // if the target is behind
     alpha = taMath_float::pi - alpha;
 
-  taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma)); 
+  taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma));
 
-  // Now we'll rotate the insertion points by the Euler angles in reverse order 
+  // Now we'll rotate the insertion points by the Euler angles in reverse order
   // This magic R matrix (from (42)) does it all in one step
   float sa = sin(alpha); float ca = cos(alpha);
   float sb = sin(beta);  float cb = cos(beta);
   float sc = sin(gamma); float cc = cos(gamma);
 
   float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
-		 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
-		 sb*sc,           sb*cc,          cb};
+                 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
+                 sb*sc,           sb*cc,          cb};
   float_Matrix R(2,3,3);
   R.InitFromFloats(R_f);
 
@@ -2226,7 +2230,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
   // test direct quat rotation of first coords, against quat rotation matrix
   taVector3f arm1;
-  arm1.FromMatrix(ArmIP);	// grab first coords
+  arm1.FromMatrix(ArmIP);       // grab first coords
   quat.RotateVec(arm1);
   taMisc::Info("quat rotate first ArmIP coords:\n", arm1.GetStr(), "\n");
 
@@ -2240,7 +2244,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   taMisc::Info("transposed ArmIP:\n", tout);
 
   float_Matrix armipr;
-  taMath_float::mat_mult(&armipr, &R, &armipt); 
+  taMath_float::mat_mult(&armipr, &R, &armipt);
 
   String rout;
   armipr.Print(rout);
@@ -2265,7 +2269,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   float HumCM_f[] = {0.0f,0.0f,(-La+(elbow_gap/2))/2};  // humerus' geometrical center at rest
   //float Elbow_f[] = {0.0f,0.0f,(-La+(elbow_gap/2))};  // elbow coordinates at rest
   float Elbow_f[] = {0.0f,0.0f,-La};  // elbow coordinates at rest
-		      
+
   float_Matrix HumCM(2,1,3);
   HumCM.InitFromFloats(HumCM_f);
   float_Matrix Elbow(2,1,3);
@@ -2285,16 +2289,16 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   taQuaternion flex(0.0f,delta,0.0f); // elbow flexion rotation
   flex.RotateVec(UlnaCM);   // Ulna CM after elbow flexion with origin at elbow
   UlnaCM.SetXYZ(UlnaCM.x,UlnaCM.y,UlnaCM.z-La);  // Ulna CM after elbow flexion
-  quat.RotateVec(UlnaCM); 	// Ulna CM after elbow flexion, origin at shoulder
-  
+  quat.RotateVec(UlnaCM);       // Ulna CM after elbow flexion, origin at shoulder
+
   ulna->RotateEuler(delta, 0.0, 0.0, false);
   ulna->RotateEuler(beta,gamma,alpha,false);
   ulna->Translate(UlnaCM.x,UlnaCM.y,UlnaCM.z+La+Lf/2,false);
 */
   float UlnaCM_f[] = {0,0,-(ulna->length/2 + elbow_gap/2)};  // Ulna 'CM' with origin at elbow
   float Wrist_f[] = {0,0,-(ulna->length + elbow_gap/2 + wrist_gap/2)};  // wrist coords with origin at elbow
-  float elbow_rot_f[] = {1 , 0, 0, 
-		0, cos(delta), -sin(delta),
+  float elbow_rot_f[] = {1 , 0, 0,
+                0, cos(delta), -sin(delta),
                 0, sin(delta), cos(delta)};
   float_Matrix UlnaCM(2,1,3);
   UlnaCM.InitFromFloats(UlnaCM_f);
@@ -2316,22 +2320,22 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   Rot1UlnaCM.Print(ruout);
   taMisc::Info("rotated ulna before translation:\n", ruout);
 
-  Rot1UlnaCM.Set(Rot1UlnaCM.FastEl(2)-La,2); // setting origin at shoulder 
-  Rot1Wrist.Set(Rot1Wrist.FastEl(2)-La,2);  
+  Rot1UlnaCM.Set(Rot1UlnaCM.FastEl(2)-La,2); // setting origin at shoulder
+  Rot1Wrist.Set(Rot1Wrist.FastEl(2)-La,2);
 
   String rudout;
   Rot1UlnaCM.Print(rudout);
   taMisc::Info("rotated ulna after translation:\n", rudout);
 
   float_Matrix Rot2UlnaCM(2,1,3);
-  taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM);	// applying shoulder rotation
+  taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
   float_Matrix Rot2Wrist(2,1,3);
   taMath_float::mat_mult(&Rot2Wrist, &R, &Rot1Wrist);
 
 /*
   taVector3f Rot2UlnaCM;
   Rot2UlnaCM.FromMatrix(Rot1UlnaCM);
-  quat.RotateVec(Rot2UlnaCM); 
+  quat.RotateVec(Rot2UlnaCM);
 */
   ulna->RotateEuler(beta+delta,gamma,alpha,false);
   ulna->Translate(Rot2UlnaCM.FastEl(0),Rot2UlnaCM.FastEl(1),Rot2UlnaCM.FastEl(2)-(ulna->init_pos.z),false);
@@ -2339,42 +2343,42 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   hand->RotateEuler(beta+delta,gamma,alpha,false);
   hand->Translate(trg_x,trg_y,trg_z-(hand->init_pos.z),false);
 
-	// sending the values of the bodies to ODE
-	CurToODE();
+        // sending the values of the bodies to ODE
+        CurToODE();
 
 // calculating and updating the joint values
-	// setting the axes for the elbow joint
-	elbow->axis.x = cos(alpha);
-	elbow->axis.y = sin(alpha);
-	elbow->axis.z = 0.0f;
-	elbow->axis2.x = -sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
-	elbow->axis2.y = cos(alpha)*sin(beta+delta);
-	elbow->axis2.z = -cos(beta+delta);
+        // setting the axes for the elbow joint
+        elbow->axis.x = cos(alpha);
+        elbow->axis.y = sin(alpha);
+        elbow->axis.z = 0.0f;
+        elbow->axis2.x = -sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
+        elbow->axis2.y = cos(alpha)*sin(beta+delta);
+        elbow->axis2.z = -cos(beta+delta);
 
   // sending the joint axes and anchor points to ODE
-  //elbow->anchor.FromMatrix(RotElbow);	// set elbow joint's anchor point
-	// wrist->anchor.FromMatrix(Rot2Wrist);	// not necessary since relative coordinates are used
-	wrist->Init_Anchor();
-	elbow->Init_Anchor();
+  //elbow->anchor.FromMatrix(RotElbow); // set elbow joint's anchor point
+        // wrist->anchor.FromMatrix(Rot2Wrist); // not necessary since relative coordinates are used
+        wrist->Init_Anchor();
+        elbow->Init_Anchor();
 
-	// looking at the values of the joints in ODE
+        // looking at the values of the joints in ODE
   dJointID ejid = (dJointID)elbow->joint_id;
-	//dJointSetHinge2Anchor(ejid,	elbow->anchor.x, elbow->anchor.y, elbow->anchor.z);
-	float angl = (float)dJointGetHinge2Angle1(ejid);
-	float ax1[] = {0.0f, 0.0f, 0.0f, 0.0f}, ax2[] = {0.0f, 0.0f, 0.0f, 0.0f};
-	float anch[] = {0.0f, 0.0f, 0.0f, 0.0f};
-	dJointGetHinge2Anchor(ejid, anch);
-	dJointGetHinge2Axis1(ejid, ax1);
-	dJointGetHinge2Axis2(ejid, ax2);
-	float_Matrix max1(1,4), max2(1,4), manch(1,4);
-	String smax1, smax2, smanch;
-	max1.InitFromFloats(ax1); max2.InitFromFloats(ax2); manch.InitFromFloats(anch);
-	max1.Print(smax1); max2.Print(smax2); manch.Print(smanch);
-	taMisc::Info("elbow angle: ", String(angl), "\n");
-	taMisc::Info("elbow anchor: ", smanch, "\n");
-	taMisc::Info("elbow axis1: ", smax1, "\n");
-	taMisc::Info("elbow axis2: ", smax2, "\n");
-	//elbow->Init_Anchor();
+        //dJointSetHinge2Anchor(ejid,   elbow->anchor.x, elbow->anchor.y, elbow->anchor.z);
+        float angl = (float)dJointGetHinge2Angle1(ejid);
+        float ax1[] = {0.0f, 0.0f, 0.0f, 0.0f}, ax2[] = {0.0f, 0.0f, 0.0f, 0.0f};
+        float anch[] = {0.0f, 0.0f, 0.0f, 0.0f};
+        dJointGetHinge2Anchor(ejid, anch);
+        dJointGetHinge2Axis1(ejid, ax1);
+        dJointGetHinge2Axis2(ejid, ax2);
+        float_Matrix max1(1,4), max2(1,4), manch(1,4);
+        String smax1, smax2, smanch;
+        max1.InitFromFloats(ax1); max2.InitFromFloats(ax2); manch.InitFromFloats(anch);
+        max1.Print(smax1); max2.Print(smax2); manch.Print(smanch);
+        taMisc::Info("elbow angle: ", String(angl), "\n");
+        taMisc::Info("elbow anchor: ", smanch, "\n");
+        taMisc::Info("elbow axis1: ", smax1, "\n");
+        taMisc::Info("elbow axis2: ", smax2, "\n");
+        //elbow->Init_Anchor();
   //CurFromODE(true);
 
   DataChanged(DCR_ITEM_UPDATED); // this will in theory update the display
@@ -2383,7 +2387,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 }
 
   bool VEArm::bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2) {
-  // This function is the C++ equivalent of piece5.m. 
+  // This function is the C++ equivalent of piece5.m.
   // The points a and c are insertion points, whereas p1 and p2 are the extremes of the bending line.
   // If the muscle wraps around the bending line, bender returns true, and inserts the value of
   // the point of intersection with the muscle in the vector i.
@@ -2391,44 +2395,44 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 //---- declaring the variables to be used for bend test ----
   //taVector3f a(-10,-5,-12), c(-1,-1,-5), p1(-3,-4,-7), p2(-2,-4,2), p3(0,0,0);
   taVector3f b, r, v, s;
-	float gam;
+        float gam;
 
-//---- preliminary calculations ---- 
+//---- preliminary calculations ----
   b = p2 - p1;  // b points from p1 to p2
   b.MagNorm();  // b is now a unit vector
   r = p1 - ((p1*b).Sum())*b;  // shortest line from origin to bending line
-  //taMisc::Info("r = ", r.GetStr(), "\n"); 
+  //taMisc::Info("r = ", r.GetStr(), "\n");
 //----------------------------------
 
 // calculating side %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	v = p1 - a - (((p1-a)*b).Sum())*b;  // shortest vector from 'a' to bending line
-	s.x = b.y*v.z - v.y*b.z;
-	s.y = v.x*b.z - b.x*v.z;
-	s.z = b.x*v.y - v.x*b.y;
-	gam = ((c-r)*s).Sum();
-  //taMisc::Info("v = ", v.GetStr(), ", s = ", s.GetStr(), "\n"); 
-  //taMisc::Info("gam = ", String(gam), "\n"); 
+        v = p1 - a - (((p1-a)*b).Sum())*b;  // shortest vector from 'a' to bending line
+        s.x = b.y*v.z - v.y*b.z;
+        s.y = v.x*b.z - b.x*v.z;
+        s.z = b.x*v.y - v.x*b.y;
+        gam = ((c-r)*s).Sum();
+  //taMisc::Info("v = ", v.GetStr(), ", s = ", s.GetStr(), "\n");
+  //taMisc::Info("gam = ", String(gam), "\n");
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // get bending point depending on side ()()()()()()()()()()()
 //()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
   if(gam > 0)   // if muscle should wrap around bending line
-	{
-		taVector3f ar,cr,abs_b;
-		float f1,f2,f3,f4,ap,bp,cp,k,k1,k2,n1,n2,ind;
+        {
+                taVector3f ar,cr,abs_b;
+                float f1,f2,f3,f4,ap,bp,cp,k,k1,k2,n1,n2,ind;
 
     ar = a-r;  // I shift so b can be considered to intersect the origin
-		cr = c-r;
+                cr = c-r;
     f1 = ar.SqMag();
     f2 = cr.SqMag();
-		f3 = (ar*b).Sum();
-		f4 = (cr*b).Sum();
-		ap = f2 + (f3*f3) - f1 - (f4*f4);
-		bp = 2*(f1*f4 - f2*f3 + f3*f4*(f4-f3));
-		cp = f2*f3*f3 - f1*f4*f4;
+                f3 = (ar*b).Sum();
+                f4 = (cr*b).Sum();
+                ap = f2 + (f3*f3) - f1 - (f4*f4);
+                bp = 2*(f1*f4 - f2*f3 + f3*f4*(f4-f3));
+                cp = f2*f3*f3 - f1*f4*f4;
 
     // selecting the root with the smallest sum of distances
-		k1 = (-bp + sqrt(bp*bp - 4*ap*cp))/(2*ap);
+                k1 = (-bp + sqrt(bp*bp - 4*ap*cp))/(2*ap);
     k2 = (-bp - sqrt(bp*bp - 4*ap*cp))/(2*ap);
     n1 = (ar-k1*b).Mag() + (cr-k1*b).Mag();
     n2 = (ar-k2*b).Mag() + (cr-k2*b).Mag();
@@ -2437,34 +2441,34 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
     else
         k = k2;
 
-		// limiting p3 between p1 and p2
-		abs_b = b;  abs_b.Abs(); 
-			// this is because b may have entries equal to zero
-		if(abs_b.x > abs_b.y && abs_b.x > abs_b.z) 
-			ind = 0;
-		else if(abs_b.y > abs_b.x && abs_b.y > abs_b.z) 
-			ind = 1;
-		else 
-			ind = 2;
-		
-		if(ind == 0) {
-			k1 = (p1.x - r.x)/b.x;
-    	k2 = (p2.x - r.x)/b.x; }
-		else if(ind == 1) {
-			k1 = (p1.y - r.y)/b.y;
-    	k2 = (p2.y - r.y)/b.y; }
-		else if(ind == 2) {
-			k1 = (p1.z - r.z)/b.z;
-    	k2 = (p2.z - r.z)/b.z; }
+                // limiting p3 between p1 and p2
+                abs_b = b;  abs_b.Abs();
+                        // this is because b may have entries equal to zero
+                if(abs_b.x > abs_b.y && abs_b.x > abs_b.z)
+                        ind = 0;
+                else if(abs_b.y > abs_b.x && abs_b.y > abs_b.z)
+                        ind = 1;
+                else
+                        ind = 2;
 
-		k = MIN(k,MAX(k1,k2));
-		k = MAX(k,MIN(k1,k2)); // k is now restricted between p1 and p2
-		p3 = r + k*b;		// the point of intersection between muscle and bending line
+                if(ind == 0) {
+                        k1 = (p1.x - r.x)/b.x;
+        k2 = (p2.x - r.x)/b.x; }
+                else if(ind == 1) {
+                        k1 = (p1.y - r.y)/b.y;
+        k2 = (p2.y - r.y)/b.y; }
+                else if(ind == 2) {
+                        k1 = (p1.z - r.z)/b.z;
+        k2 = (p2.z - r.z)/b.z; }
 
-  	//taMisc::Info("p3 = ", p3.GetStr()); 
-  	return true;
-	}
-  //taMisc::Info("p3 = ", p3.GetStr()); 
+                k = MIN(k,MAX(k1,k2));
+                k = MAX(k,MIN(k1,k2)); // k is now restricted between p1 and p2
+                p3 = r + k*b;           // the point of intersection between muscle and bending line
+
+        //taMisc::Info("p3 = ", p3.GetStr());
+        return true;
+        }
+  //taMisc::Info("p3 = ", p3.GetStr());
   return false;
 //()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
 
@@ -2473,11 +2477,13 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
 
   if(TestWarning(trgLen.count() != Nmusc, "","The matrix provided to TargetLengths doesn't match the number of muscles \n"))
-		return false;
+                return false;
 
   if(!CheckArm()) return false;
 
-  if(trg_x == 0.0 && trg_y == 0.0) trg_y = 0.000001;  // this is to avoid a Gimble lock
+  if(trg_x == 0.0 && trg_y == 0.0) {
+    trg_y = 0.000001f;  // this is to avoid a Gimble lock
+  }
 
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
@@ -2487,7 +2493,7 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
   float t_f[] = {trg_x, trg_y, trg_z};
   float_Matrix T(1,3);
   T.InitFromFloats(t_f);
-  float D = taMath_float::vec_norm(&T); 
+  float D = taMath_float::vec_norm(&T);
 
   if(D < 0.1) {
     taMisc::Info("Target too close \n");
@@ -2495,14 +2501,14 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
     float Lfactor = 0.15/D;
     trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
     T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-    D = taMath_float::vec_norm(&T); 
+    D = taMath_float::vec_norm(&T);
   } else if( D >= (La+Lf) ) {
       taMisc::Info("Target too far \n");
     // bringing the target closer, maintaining direction
       float Lfactor = (La+Lf-0.01)/D;
       trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
       T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-      D = taMath_float::vec_norm(&T); 
+      D = taMath_float::vec_norm(&T);
   }
 
   // From coordinates to angles as in (44)
@@ -2515,17 +2521,17 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
   if(trg_y < 0)  // if the target is behind
     alpha = taMath_float::pi - alpha;
 
-  //taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma)); 
+  //taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma));
 
-  // Now we'll rotate the insertion points by the Euler angles in reverse order 
+  // Now we'll rotate the insertion points by the Euler angles in reverse order
   // This magic R matrix (from (42)) does it all in one step
   float sa = sin(alpha); float ca = cos(alpha);
   float sb = sin(beta);  float cb = cos(beta);
   float sc = sin(gamma); float cc = cos(gamma);
 
   float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
-		 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
-		 sb*sc,           sb*cc,          cb};
+                 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
+                 sb*sc,           sb*cc,          cb};
   float_Matrix R(2,3,3);
   R.InitFromFloats(R_f);
   float_Matrix RT(2,3,3); // the transpose of R
@@ -2533,7 +2539,7 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
 
   // rotating the humerus' insertion points
   float_Matrix RotArmIP;
-  taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT); 
+  taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
 
   String out;
   RotArmIP.Print(out);
@@ -2541,11 +2547,11 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
 
 // rotating the ulna's insertion points
   //float UlnaCM_f[] = {0,0,-(ulna->length/2 + elbow_gap/2)};  // Ulna CM with origin at elbow
-  float UlnaShift_f[] = {0, 0, -La, 
+  float UlnaShift_f[] = {0, 0, -La,
                          0, 0, -La,
                          0, 0, -La}; // should have one row per forearm IP
-  float T_elbowRot_f[] = {1 , 0, 0, 
-		0, cos(delta),  sin(delta),
+  float T_elbowRot_f[] = {1 , 0, 0,
+                0, cos(delta),  sin(delta),
                 0, -sin(delta), cos(delta)};
   // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation
   float_Matrix UlnaShift(2,3,3);
@@ -2568,7 +2574,7 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
 
 // now we set the origin at the shoulder
   float_Matrix ReshiftedIP(2,3,3);
-  ReshiftedIP = Rot1FarmIP + UlnaShift; 
+  ReshiftedIP = Rot1FarmIP + UlnaShift;
 
 // finally we apply the shoulder rotation
   float_Matrix RotFarmIP(2,3,3);
@@ -2580,38 +2586,38 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
 
 // next we obtain the distance between the rotated IPs and the original IPs
 // this code is highly dependent on the muscle geometry
-	taVector3f c1, c2, shoulderIP, humerIP, pv1, pv2, p3; 
-  for(int i=0; i<8; i++) { // the 8 shoulder to humerus muscles  
-		shoulderIP.x =  ShouldIP.FastElAsFloat(0,i); 
-		shoulderIP.y =  ShouldIP.FastElAsFloat(1,i);
-		shoulderIP.z =  ShouldIP.FastElAsFloat(2,i); 
-		humerIP.x = RotArmIP.FastElAsFloat(0,i);
-		humerIP.y = RotArmIP.FastElAsFloat(1,i);
-		humerIP.z = RotArmIP.FastElAsFloat(2,i);
-		pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i); 
-		pv1.y = p1.FastElAsFloat(1,i); pv2.y = p2.FastElAsFloat(1,i); 
-		pv1.z = p1.FastElAsFloat(2,i); pv2.z = p2.FastElAsFloat(2,i); 
+        taVector3f c1, c2, shoulderIP, humerIP, pv1, pv2, p3;
+  for(int i=0; i<8; i++) { // the 8 shoulder to humerus muscles
+                shoulderIP.x =  ShouldIP.FastElAsFloat(0,i);
+                shoulderIP.y =  ShouldIP.FastElAsFloat(1,i);
+                shoulderIP.z =  ShouldIP.FastElAsFloat(2,i);
+                humerIP.x = RotArmIP.FastElAsFloat(0,i);
+                humerIP.y = RotArmIP.FastElAsFloat(1,i);
+                humerIP.z = RotArmIP.FastElAsFloat(2,i);
+                pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i);
+                pv1.y = p1.FastElAsFloat(1,i); pv2.y = p2.FastElAsFloat(1,i);
+                pv1.z = p1.FastElAsFloat(2,i); pv2.z = p2.FastElAsFloat(2,i);
 
-		if(bender(p3,shoulderIP,humerIP,pv1,pv2) && i!=2 && i!=3) { 
-		// if muscle wraps around bending line (except for muscles 3 and 4)
-			c1 = shoulderIP - p3; c2 = p3 - humerIP;
-    	trgLen.Set(c1.Mag()+c2.Mag(),i); 
-		} else {
-			c1 = shoulderIP - humerIP;
-			trgLen.Set(c1.Mag(),i);
-		}
+                if(bender(p3,shoulderIP,humerIP,pv1,pv2) && i!=2 && i!=3) {
+                // if muscle wraps around bending line (except for muscles 3 and 4)
+                        c1 = shoulderIP - p3; c2 = p3 - humerIP;
+        trgLen.Set(c1.Mag()+c2.Mag(),i);
+                } else {
+                        c1 = shoulderIP - humerIP;
+                        trgLen.Set(c1.Mag(),i);
+                }
   }
   // next muscle is the biceps, from shoulder to forearm
    c1.x = ShouldIP.FastElAsFloat(0,8) - RotFarmIP.FastElAsFloat(0,0);
    c1.y = ShouldIP.FastElAsFloat(1,8) - RotFarmIP.FastElAsFloat(1,0);
    c1.z = ShouldIP.FastElAsFloat(2,8) - RotFarmIP.FastElAsFloat(2,0);
-   trgLen.Set(c1.Mag(),8); 
+   trgLen.Set(c1.Mag(),8);
   // the triceps and the brachialis connect from humerus to ulna
-  for(int i=1; i<=2; i++) { 
+  for(int i=1; i<=2; i++) {
     c1.x = RotArmIP.FastElAsFloat(0,7+i) - RotFarmIP.FastElAsFloat(0,i);
     c1.y = RotArmIP.FastElAsFloat(1,7+i) - RotFarmIP.FastElAsFloat(1,i);
     c1.z = RotArmIP.FastElAsFloat(2,7+i) - RotFarmIP.FastElAsFloat(2,i);
-    trgLen.Set(c1.Mag(),8+i); 
+    trgLen.Set(c1.Mag(),8+i);
   }
 
   String trLout;
@@ -2624,53 +2630,53 @@ bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float 
 
 bool VEArm::Lengths(float_Matrix &Len) {
   if(TestWarning(Len.count() != Nmusc, "","The matrix provided to Lengts() doesn't match the number of muscles \n"))
-		return false;
+                return false;
 
-	for(int i=0; i<Nmusc; i++) {
-			Len.Set(muscles[i]->Length(),i);
-	}
-	return true;
+        for(int i=0; i<Nmusc; i++) {
+                        Len.Set(muscles[i]->Length(),i);
+        }
+        return true;
 }
 
 bool VEArm::Speeds(float_Matrix &Vel) {
   if(TestWarning(Vel.count() != Nmusc, "","The matrix provided to Speeds() doesn't match the number of muscles \n"))
-		return false;
+                return false;
 
-	for(int i=0; i<Nmusc; i++) {
-			Vel.Set(muscles[i]->Speed(),i);
-	}
-	return true;
+        for(int i=0; i<Nmusc; i++) {
+                        Vel.Set(muscles[i]->Speed(),i);
+        }
+        return true;
 }
 
 bool VEArm::ApplyStim(float_Matrix stims, float_Matrix &forces) {
   if(TestWarning(stims.count() != Nmusc, "","The stimulus matrix doesn't match the number of muscles \n"))
-		return false;
-	else if(TestWarning(forces.count() != 3*Nmusc, "","The forces matrix doesn't match the number of muscles \n"))
-		return false;
+                return false;
+        else if(TestWarning(forces.count() != 3*Nmusc, "","The forces matrix doesn't match the number of muscles \n"))
+                return false;
 
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
 
-	taVector3f daforce(0.0f, 0.0f, 0.0f);
-	for(int i=0; i<Nmusc; i++) {
-		daforce = muscles[i]->Contract(stims.FastElAsFloat(i));
-		forces.Set(daforce.x, i, 0);
-		forces.Set(daforce.y, i, 1);
-		forces.Set(daforce.z, i, 2);
+        taVector3f daforce(0.0f, 0.0f, 0.0f);
+        for(int i=0; i<Nmusc; i++) {
+                daforce = muscles[i]->Contract(stims.FastElAsFloat(i));
+                forces.Set(daforce.x, i, 0);
+                forces.Set(daforce.y, i, 1);
+                forces.Set(daforce.z, i, 2);
 
-		if(i < 8) {  // muscles from shoulder to humerus
-			humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
-		} else if(i == 8) {  // biceps
-			ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
-		} else { // triceps and brachialis
-			humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z,muscles[i]->IPprox.x,muscles[i]->IPprox.y,muscles[i]->IPprox.z,false,false);
-			ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
-		}
-			
-	}
-	return true;
+                if(i < 8) {  // muscles from shoulder to humerus
+                        humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+                } else if(i == 8) {  // biceps
+                        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+                } else { // triceps and brachialis
+                        humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z,muscles[i]->IPprox.x,muscles[i]->IPprox.y,muscles[i]->IPprox.z,false,false);
+                        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z,muscles[i]->IPdist.x,muscles[i]->IPdist.y,muscles[i]->IPdist.z,false,false);
+                }
+
+        }
+        return true;
 }
-	
+
 
 ///////////////////////////////////////////////////////////////
 //   Linear Muscle: exerts force proportional to its input.
@@ -2680,7 +2686,7 @@ void VELinearMuscle::Initialize() {
   IPprox.SetXYZ(0.0f,0.0f,0.0f);
   IPdist.SetXYZ(0.1f,0.1f,0.1f);
   p3.SetXYZ(0.0f,0.0f,0.0f);
-	bend = false;
+        bend = false;
   OldLength2 = OldLength1 = Length();
 }
 
@@ -2689,7 +2695,7 @@ void VELinearMuscle::Initialize(taVector3f prox, taVector3f dist, float MrG) {
   IPprox = prox;
   IPdist = dist;
   p3.SetXYZ(0.0f,0.0f,0.0f);
-	bend = false;
+        bend = false;
   OldLength2 = OldLength1 = Length();
 }
 
@@ -2697,8 +2703,8 @@ void VELinearMuscle::Initialize(taVector3f prox, taVector3f dist, float MrG, taV
   gain = MrG;
   IPprox = prox;
   IPdist = dist;
-	p3 = pp3;
-	bend = bending;
+        p3 = pp3;
+        bend = bending;
   OldLength2 = OldLength1 = Length();
 }
 
@@ -2710,27 +2716,27 @@ VEArm* VELinearMuscle::GetArm() {
 
 taVector3f VELinearMuscle::Contract(float stim) {
   taVector3f force_vec;
-	if(bend) 
-		force_vec = IPprox - p3;
-	else
-  	force_vec = IPprox - IPdist;  // vector points from distal to proximal
+        if(bend)
+                force_vec = IPprox - p3;
+        else
+        force_vec = IPprox - IPdist;  // vector points from distal to proximal
 
-  force_vec.MagNorm();	// force_vec has now magnitude = 1
+  force_vec.MagNorm();  // force_vec has now magnitude = 1
   return force_vec*gain*MAX(stim,0);
 }
 
 float VELinearMuscle::Length() {
-	if(bend) // if muscle wraps around bending line
-		return (IPprox - p3).Mag() + (p3 - IPdist).Mag();
-	else
-		return (IPprox - IPdist).Mag();
+        if(bend) // if muscle wraps around bending line
+                return (IPprox - p3).Mag() + (p3 - IPdist).Mag();
+        else
+                return (IPprox - IPdist).Mag();
 }
 
 float VELinearMuscle::Speed() {
-	float length = Length();
-	VEArm* army = GetArm(); 
-	float step = army->WorldStep; // copy of VEWorld stepsize
-	return (length - OldLength2)/(2*step);	// 3 point rule
+        float length = Length();
+        VEArm* army = GetArm();
+        float step = army->WorldStep; // copy of VEWorld stepsize
+        return (length - OldLength2)/(2*step);  // 3 point rule
 }
 
 
@@ -2983,7 +2989,7 @@ void VEStatic::UpdateAfterEdit_impl() {
   if(!geom_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
   if(!wid) return;
-  Init();		// always update ODE with any changes!
+  Init();               // always update ODE with any changes!
 }
 
 void VEStatic::InitRotFromCur() {

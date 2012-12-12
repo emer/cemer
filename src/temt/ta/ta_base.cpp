@@ -48,6 +48,13 @@
 
 #include <QFileInfo>
 
+// See comment in ta_type.h.
+#ifdef SC_DEFAULT
+  #pragma message("Warning: undefining SC_DEFAULT macro")
+  #undef SC_DEFAULT
+#endif
+
+
 #ifdef TA_GUI
 static const char* folder_closed_xpm[]={
     "16 16 9 1",
