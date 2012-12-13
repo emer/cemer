@@ -44,10 +44,8 @@ void tabSelectEditViewType::CreateDataPanel_impl(taiDataLink* dl_)
   // we create ours first, because it should be the default
   iSelectEditPanel* bldp = new iSelectEditPanel(dl_);
   DataPanelCreated(bldp);
-  
-  SelectEdit* se = dynamic_cast<SelectEdit *>(dl_->taData());
-  if(se && se->InheritsFrom(&TA_ClusterRun)) {
-    ClusterRun* cr = (ClusterRun*)se;
+
+  if(ClusterRun* cr = dynamic_cast<ClusterRun *>(dl_->taData())) {
     if(taiDataLink *datatableLink = dynamic_cast<taiDataLink *>(cr->jobs_running.GetDataLink())) {
       iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
       DataPanelCreated(dp);
@@ -1147,7 +1145,7 @@ taiObjDiffBrowser::taiObjDiffBrowser(const String& caption_, QWidget* par_window
   chg_color_lt = new QBrush(chg_color->color().darker(darkness));
 
   off_color = new QBrush(Qt::lightGray);
-  
+
   resize(taiM->dialogSize(taiMisc::hdlg_b));
 }
 
@@ -1173,7 +1171,7 @@ void taiObjDiffBrowser::accept() {
   if(odl->tab_obj_a) {
     odl->tab_obj_a->DoDiffEdits(*odl);
   }
-  delete odl;			// all done!
+  delete odl;                   // all done!
   odl = NULL;
 }
 
@@ -1183,7 +1181,7 @@ void taiObjDiffBrowser::reject() {
 
 bool taiObjDiffBrowser::Browse() {
   // modal:
-  // return (exec() == iDialog::Accepted);	
+  // return (exec() == iDialog::Accepted);
   // non-modal:
   show();
   return true;
@@ -1305,7 +1303,7 @@ void taiObjDiffBrowser::AddItems() {
   int cur_nest = init_nest;
   for(int i=0;i<odl->size; i++) {
     if(a_idx >= odl->src_a->size && b_idx >= odl->src_b->size)
-      break;			// done!  shouldn't happen
+      break;                    // done!  shouldn't happen
 
     taObjDiffRec* rec = odl->FastEl(i); // from diffs guy itself
     String lbl_a;
@@ -1319,7 +1317,7 @@ void taiObjDiffBrowser::AddItems() {
       a_add = (rec->idx - a_idx) + 1; // add this many to catch up in a
       b_add = (rec->diff_odr->idx - b_idx); // " b
       if(!rec->HasDiffFlag(taObjDiffRec::DIFF_DEL))
-	b_add++;		// add the 1
+        b_add++;                // add the 1
     }
     else {
       // must be an ADD -- ony in B
@@ -1334,27 +1332,27 @@ void taiObjDiffBrowser::AddItems() {
       taObjDiffRec* a_rec = NULL;
       taObjDiffRec* b_rec = NULL;
       if(ad < a_add) {
-	a_rec = odl->src_a->SafeEl(a_idx);
-	a_idx++;
+        a_rec = odl->src_a->SafeEl(a_idx);
+        a_idx++;
       }
       if(ad < b_add) {
-	b_rec = odl->src_b->SafeEl(b_idx);
-	b_idx++;
+        b_rec = odl->src_b->SafeEl(b_idx);
+        b_idx++;
       }
 
       int ad_nest = cur_nest;
       if(a_rec)
-	ad_nest = a_rec->nest_level; // a dominates
+        ad_nest = a_rec->nest_level; // a dominates
       else if(b_rec)
-	ad_nest = b_rec->nest_level;
+        ad_nest = b_rec->nest_level;
 
       bool some_diff = false;
       bool chg_diff = false;
       if((a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK)) ||
-	 (b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK))) {
-	some_diff = true;
-	if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
-	  chg_diff = true;
+         (b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK))) {
+        some_diff = true;
+        if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
+          chg_diff = true;
       }
 
       bool condshow_off = false;
@@ -1362,50 +1360,50 @@ void taiObjDiffBrowser::AddItems() {
       bool b_off = false;
       // check for condshow off guys
       if(a_rec && a_rec->mdef && a_rec->par_type && a_rec->par_addr) {
-	bool anosho = !a_rec->mdef->GetCondOptTest("CONDSHOW", a_rec->par_type,
-						 a_rec->par_addr);
-	bool anoed = !a_rec->mdef->GetCondOptTest("CONDEDIT", a_rec->par_type,
-						 a_rec->par_addr);
-	a_off = (anosho || anoed);
+        bool anosho = !a_rec->mdef->GetCondOptTest("CONDSHOW", a_rec->par_type,
+                                                 a_rec->par_addr);
+        bool anoed = !a_rec->mdef->GetCondOptTest("CONDEDIT", a_rec->par_type,
+                                                 a_rec->par_addr);
+        a_off = (anosho || anoed);
       }
       if(b_rec && b_rec->mdef && b_rec->par_type && b_rec->par_addr) {
-	bool bnosho = !b_rec->mdef->GetCondOptTest("CONDSHOW", b_rec->par_type,
-						 b_rec->par_addr);
-	bool bnoed = !b_rec->mdef->GetCondOptTest("CONDEDIT", b_rec->par_type,
-						 b_rec->par_addr);
-	b_off = (bnosho || bnoed);
+        bool bnosho = !b_rec->mdef->GetCondOptTest("CONDSHOW", b_rec->par_type,
+                                                 b_rec->par_addr);
+        bool bnoed = !b_rec->mdef->GetCondOptTest("CONDEDIT", b_rec->par_type,
+                                                 b_rec->par_addr);
+        b_off = (bnosho || bnoed);
       }
 
       if(a_off && b_off) {
-	condshow_off = true;
-	if(!some_diff)
-	  continue;		// nothing to see here
+        condshow_off = true;
+        if(!some_diff)
+          continue;             // nothing to see here
       }
 
       if(some_diff && !chg_diff && (a_off || b_off)) {
-	continue;		// if off and add or del, will only show in one, so omit
+        continue;               // if off and add or del, will only show in one, so omit
       }
 
       QTreeWidgetItem* parw = NULL;
       int par_nest = ad_nest-1;
       if(par_nest > init_nest) {
-	if(par_nest < nest_pars.size) {
-	  parw = (QTreeWidgetItem*)nest_pars[par_nest];
-	}
-	if(!parw) {  // yes this does happen
-	  if(a_rec && a_rec->par_odr)
-	    parw = (QTreeWidgetItem*)a_rec->par_odr->widget;
-	}
+        if(par_nest < nest_pars.size) {
+          parw = (QTreeWidgetItem*)nest_pars[par_nest];
+        }
+        if(!parw) {  // yes this does happen
+          if(a_rec && a_rec->par_odr)
+            parw = (QTreeWidgetItem*)a_rec->par_odr->widget;
+        }
       }
       QTreeWidgetItem* witm;
       if(parw)
-	witm = new QTreeWidgetItem(parw);
+        witm = new QTreeWidgetItem(parw);
       else
-	witm = new QTreeWidgetItem(items);
+        witm = new QTreeWidgetItem(items);
       if(a_rec)
-	a_rec->widget = witm;
+        a_rec->widget = witm;
       if(b_rec)
-	b_rec->widget = witm;
+        b_rec->widget = witm;
 
       QVariant val_a = qVariantFromValue( a_rec );
       witm->setData(0, Qt::UserRole+1, val_a);
@@ -1419,126 +1417,126 @@ void taiObjDiffBrowser::AddItems() {
       witm->setText(COL_SEP, " | ");
 
       if(a_rec) {
-	String nm;
-	taMisc::IndentString(nm, a_rec->nest_level);
-	nm += a_rec->GetDisplayName().elidedTo(max_width);
-	witm->setText(COL_A_NM, nm);
-	witm->setText(COL_A_VAL, a_rec->value.elidedTo(max_width));
-	witm->setToolTip(COL_A_VAL, a_rec->value);
+        String nm;
+        taMisc::IndentString(nm, a_rec->nest_level);
+        nm += a_rec->GetDisplayName().elidedTo(max_width);
+        witm->setText(COL_A_NM, nm);
+        witm->setText(COL_A_VAL, a_rec->value.elidedTo(max_width));
+        witm->setToolTip(COL_A_VAL, a_rec->value);
 
-	String dec_key = a_rec->GetTypeDecoKey();
-	ViewColor* vc = taMisc::view_colors->FindName(dec_key);
-	if(vc) {
-	  iColor clr;
-	  if(vc->use_fg)
-	    clr = vc->fg_color.color();
-	  else if(vc->use_bg)
-	    clr = vc->bg_color.color();
-	  witm->setTextColor(COL_A_NM, clr);
-	  witm->setTextColor(COL_A_VAL, clr);
-	}
+        String dec_key = a_rec->GetTypeDecoKey();
+        ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+        if(vc) {
+          iColor clr;
+          if(vc->use_fg)
+            clr = vc->fg_color.color();
+          else if(vc->use_bg)
+            clr = vc->bg_color.color();
+          witm->setTextColor(COL_A_NM, clr);
+          witm->setTextColor(COL_A_VAL, clr);
+        }
 
-	if(a_rec->type->InheritsFrom(&TA_taBase) && a_rec->tabref && !a_rec->mdef) {
-	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	  witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
-	}
+        if(a_rec->type->InheritsFrom(&TA_taBase) && a_rec->tabref && !a_rec->mdef) {
+          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+          witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
+        }
 
-	if(a_off) {
-	  witm->setBackground(COL_A_VAL, *off_color);
-	  witm->setBackground(COL_A_NM, *off_color);
-	}
+        if(a_off) {
+          witm->setBackground(COL_A_VAL, *off_color);
+          witm->setBackground(COL_A_NM, *off_color);
+        }
       }
       if(b_rec) {
-	String nm;
-	taMisc::IndentString(nm, b_rec->nest_level);
-	nm += b_rec->GetDisplayName().elidedTo(max_width);
-	witm->setText(COL_B_NM, nm);
-	witm->setText(COL_B_VAL, b_rec->value.elidedTo(max_width));
-	witm->setToolTip(COL_B_VAL, b_rec->value);
+        String nm;
+        taMisc::IndentString(nm, b_rec->nest_level);
+        nm += b_rec->GetDisplayName().elidedTo(max_width);
+        witm->setText(COL_B_NM, nm);
+        witm->setText(COL_B_VAL, b_rec->value.elidedTo(max_width));
+        witm->setToolTip(COL_B_VAL, b_rec->value);
 
-	String dec_key = b_rec->GetTypeDecoKey();
-	ViewColor* vc = taMisc::view_colors->FindName(dec_key);
-	if(vc) {
-	  iColor clr;
-	  if(vc->use_fg)
-	    clr = vc->fg_color.color();
-	  else if(vc->use_bg)
-	    clr = vc->bg_color.color();
-	  witm->setTextColor(COL_B_NM, clr);
-	  witm->setTextColor(COL_B_VAL, clr);
-	}
+        String dec_key = b_rec->GetTypeDecoKey();
+        ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+        if(vc) {
+          iColor clr;
+          if(vc->use_fg)
+            clr = vc->fg_color.color();
+          else if(vc->use_bg)
+            clr = vc->bg_color.color();
+          witm->setTextColor(COL_B_NM, clr);
+          witm->setTextColor(COL_B_VAL, clr);
+        }
 
-	if(b_rec->type->InheritsFrom(&TA_taBase) && b_rec->tabref && !b_rec->mdef) {
-	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	  witm->setCheckState(COL_B_VIEW, Qt::Unchecked);
-	}
+        if(b_rec->type->InheritsFrom(&TA_taBase) && b_rec->tabref && !b_rec->mdef) {
+          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+          witm->setCheckState(COL_B_VIEW, Qt::Unchecked);
+        }
 
-	if(b_off) {
-	  witm->setBackground(COL_B_VAL, *off_color);
-	  witm->setBackground(COL_B_NM, *off_color);
-	}
+        if(b_off) {
+          witm->setBackground(COL_B_VAL, *off_color);
+          witm->setBackground(COL_B_NM, *off_color);
+        }
       }
 
       if((a_rec && a_rec->n_diffs > 0) || (b_rec && b_rec->n_diffs > 0)) {
-	witm->setExpanded(true);
+        witm->setExpanded(true);
       }
       else {
-	witm->setExpanded(false);
+        witm->setExpanded(false);
       }
 
       if(!some_diff) continue;
 
       if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, *del_color);
-	witm->setBackground(COL_A_VAL, a_off ? *del_color_lt : *del_color);
-	witm->setBackground(COL_A_NM, a_off ? *del_color_lt : *del_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, *add_color);
-	witm->setBackground(COL_B_VAL, b_off ? *add_color_lt : *add_color);
-	witm->setBackground(COL_B_NM, b_off ? *add_color_lt : *add_color);
-	witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
-	if(!a_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
-	  // only ta base items really feasible here..
-	  if(rec->type->InheritsFrom(&TA_taBase)) {
-	    witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	    witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-	    witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-	    witm->setText(COL_A_FLG, lbl_a);
-	    witm->setText(COL_B_FLG, lbl_b);
-	  }
-	}
+        if(chk_a) witm->setBackground(COL_A_FLG, *del_color);
+        witm->setBackground(COL_A_VAL, a_off ? *del_color_lt : *del_color);
+        witm->setBackground(COL_A_NM, a_off ? *del_color_lt : *del_color);
+        if(chk_b) witm->setBackground(COL_B_FLG, *add_color);
+        witm->setBackground(COL_B_VAL, b_off ? *add_color_lt : *add_color);
+        witm->setBackground(COL_B_NM, b_off ? *add_color_lt : *add_color);
+        witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
+        if(!a_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
+          // only ta base items really feasible here..
+          if(rec->type->InheritsFrom(&TA_taBase)) {
+            witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+            witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+            witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+            witm->setText(COL_A_FLG, lbl_a);
+            witm->setText(COL_B_FLG, lbl_b);
+          }
+        }
       }
       else if(b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
-	witm->setBackground(COL_A_VAL, a_off ? *add_color_lt : *add_color);
-	witm->setBackground(COL_A_NM, a_off ? *add_color_lt : *add_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, *del_color);
-	witm->setBackground(COL_B_VAL, b_off ? *del_color_lt : *del_color);
-	witm->setBackground(COL_B_NM, b_off ? *del_color_lt : *del_color);
-	witm->setExpanded(false);
-	if(!b_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
-	  // only ta base items really feasible here..
-	  if(rec->type->InheritsFrom(&TA_taBase)) {
-	    witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	    witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-	    witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-	    witm->setText(COL_A_FLG, lbl_a);
-	    witm->setText(COL_B_FLG, lbl_b);
-	  }
-	}
+        if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
+        witm->setBackground(COL_A_VAL, a_off ? *add_color_lt : *add_color);
+        witm->setBackground(COL_A_NM, a_off ? *add_color_lt : *add_color);
+        if(chk_b) witm->setBackground(COL_B_FLG, *del_color);
+        witm->setBackground(COL_B_VAL, b_off ? *del_color_lt : *del_color);
+        witm->setBackground(COL_B_NM, b_off ? *del_color_lt : *del_color);
+        witm->setExpanded(false);
+        if(!b_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
+          // only ta base items really feasible here..
+          if(rec->type->InheritsFrom(&TA_taBase)) {
+            witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+            witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+            witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+            witm->setText(COL_A_FLG, lbl_a);
+            witm->setText(COL_B_FLG, lbl_b);
+          }
+        }
       }
       else if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
-	witm->setBackground(COL_A_VAL, a_off ? *chg_color_lt : *chg_color);
-	witm->setBackground(COL_A_NM, a_off ? *chg_color_lt : *chg_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, *chg_color);
-	witm->setBackground(COL_B_VAL, b_off ? *chg_color_lt : *chg_color);
-	witm->setBackground(COL_B_NM, b_off ? *chg_color_lt : *chg_color);
+        if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
+        witm->setBackground(COL_A_VAL, a_off ? *chg_color_lt : *chg_color);
+        witm->setBackground(COL_A_NM, a_off ? *chg_color_lt : *chg_color);
+        if(chk_b) witm->setBackground(COL_B_FLG, *chg_color);
+        witm->setBackground(COL_B_VAL, b_off ? *chg_color_lt : *chg_color);
+        witm->setBackground(COL_B_NM, b_off ? *chg_color_lt : *chg_color);
 
-	witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-	witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-	witm->setText(COL_A_FLG, lbl_a);
-	witm->setText(COL_B_FLG, lbl_b);
+        witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+        witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+        witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+        witm->setText(COL_A_FLG, lbl_a);
+        witm->setText(COL_B_FLG, lbl_b);
       }
     }
   }

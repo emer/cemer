@@ -406,8 +406,8 @@ public: \
   TA_BASEFUNS2_LITE(y,x)
 
 // simplified Get owner functions B = ta_base object, T = class name
-#define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)
-#define GET_OWNER(B,T)  (T *) B ->GetOwner(T::StatTypeDef(0))
+#define GET_MY_OWNER(T) ((T *) GetOwner(&TA_##T))
+#define GET_OWNER(B,T)  ((T *) ((B)->GetOwner(T::StatTypeDef(0))))
 
 #define SET_POINTER(var,obj) (taBase::SetPointer((taBase**)&(var), (taBase*)(obj)))
 #define DEL_POINTER(var) (taBase::DelPointer((taBase**)&(var)))
@@ -691,7 +691,7 @@ public:
   // #IGNORE
   virtual int           GetSpecialState() const { return -1; }
   // #IGNORE for items that support an alternative special state that should be communicated to users via a subtle background color (e.g., a flag of some sort is set that alters behavior in an important way) -- -1 = n/a, 0 = in non-special (default) state, 1..4 = special states -- multiple levels are supported with different colors: 1 = lavender, 2 = light yellow, 3 = light green, 4 = light red (pink)
-  virtual bool		HasName() const { return false; }
+  virtual bool          HasName() const { return false; }
   // #CAT_ObjectMgmt does the object have a name field that can be set?
   virtual bool          SetName(const String& nm) {return false;}
   // #CAT_ObjectMgmt #SET_name Set the object's name
@@ -823,9 +823,9 @@ public:
   virtual String        GetFileName() const     { return _nilString; }
   // #CAT_File get file name object was last saved with
   virtual String        GetFileNameFmProject(const String& ext, const String& tag = "",
-  	                          const String& subdir = "", bool dmem_proc_no = false);
+                                  const String& subdir = "", bool dmem_proc_no = false);
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
-  virtual String	GetProjDir() const;
+  virtual String        GetProjDir() const;
   // #CAT_File get the directory path associated with the project that this object lives within
 
   static taFiler*       StatGetFiler(TypeItem* td, String exts= _nilString,
@@ -1828,7 +1828,7 @@ INHERITED(taOBase)
 public:
   String                name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
-  override bool	HasName() const { return true; }
+  override bool HasName() const { return true; }
   override bool SetName(const String& nm);
   override String GetName() const  { return name; }
   override void SetDefaultName();

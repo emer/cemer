@@ -54,7 +54,7 @@ void PVConSpec::Defaults_init() {
 
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
-  wt_sig.dwt_norm = false;	// bad news for pvlv
+  wt_sig.dwt_norm = false;      // bad news for pvlv
 }
 
 void PVConSpec::UpdateAfterEdit_impl() {
@@ -64,7 +64,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
   lmix.err = 1.0f;
   // actually now allowing sb!!
 //   lmix.err_sb = false;
-  wt_sig.dwt_norm = false;	// bad news for pvlv
+  wt_sig.dwt_norm = false;      // bad news for pvlv
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -521,8 +521,8 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
-void LVeLayerSpec::Compute_LVCurLrate(LeabraLayer* lay, LeabraNetwork* net, LeabraUnit* u, 
-				   float lrate_mult) {
+void LVeLayerSpec::Compute_LVCurLrate(LeabraLayer* lay, LeabraNetwork* net, LeabraUnit* u,
+                                   float lrate_mult) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
@@ -550,7 +550,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
        if(!lv.lrn_pv_only)
-	 Compute_LVCurLrate(lay, net, u, 1.0f);		// restore standard lrate
+         Compute_LVCurLrate(lay, net, u, 1.0f);         // restore standard lrate
      );
   }
   else if(!lv.lrn_pv_only) {
@@ -560,7 +560,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        u->ext = lv.nopv_val;
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
-       Compute_LVCurLrate(lay, net, u, lv.nopv_lrate);		// lrate is modulated
+       Compute_LVCurLrate(lay, net, u, lv.nopv_lrate);          // lrate is modulated
      );
   }
 }
@@ -1058,14 +1058,14 @@ void PVLVTonicDaLayerSpec::Initialize() {
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .25;
+  inhib.kwta_pt = 0.25f;
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
   SetUnique("scalar", true);
   scalar.rep = ScalarValSpec::GAUSSIAN;
-  scalar.un_width = 0.2;
+  scalar.un_width = 0.2f;
   scalar.norm_width = true;
   SetUnique("unit_range", true);
   unit_range.min = -0.2f;

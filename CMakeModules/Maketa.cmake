@@ -16,7 +16,9 @@ if (WIN32)
   # this is critical for allowing dependencies to work out, and for compiling w/out extra load
   macro(SET_TA_PROPS _ta_name _path)
     SET_SOURCE_FILES_PROPERTIES(${_path}/${_ta_name}_TA.cpp
-      PROPERTIES COMPILE_FLAGS "/Od" GENERATED 1    
+      PROPERTIES
+        COMPILE_FLAGS "/Od"  # causes warning, but without, compilation is horribly slow
+        GENERATED 1
       )
   endmacro(SET_TA_PROPS)
 

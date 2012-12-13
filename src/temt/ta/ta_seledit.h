@@ -449,34 +449,76 @@ public: // legacy routines/members
 TA_SMART_PTRS(SelectEdit); //
 
 
+class TA_API ClusterRun;
+
+class TA_API ParamSearchAlgo : public taNBase {
+  // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.
+  INHERITED(taNBase)
+public:
+  TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
+  virtual void CreateJobs(ClusterRun &cluster_run); // Should be pure virtual but how to make maketa understand?
+  virtual void ProcessResults(ClusterRun &cluster_run);
+private:
+  void Initialize() { }
+  void Destroy() { }
+};
+
+SmartRef_Of(ParamSearchAlgo, TA_ParamSearchAlgo); // ParamSearchAlgoRef
+
+class TA_API ParamSearchAlgo_List : public taList<ParamSearchAlgo> {
+  // #NO_TOKENS #NO_UPDATE_AFTER list of ParamSearchAlgo objects
+INHERITED(taList<ParamSearchAlgo>)
+public:
+  TA_BASEFUNS_NOCOPY(ParamSearchAlgo_List);
+private:
+  void  Initialize()            { SetBaseType(&TA_ParamSearchAlgo); }
+  void  Destroy()               { };
+};
+
+class TA_API GridSearch : public ParamSearchAlgo {
+  // Grid Search algorithm.
+  INHERITED(ParamSearchAlgo)
+public:
+  TA_BASEFUNS_NOCOPY(GridSearch)
+  override void CreateJobs(ClusterRun &cluster_run);
+  override void ProcessResults(ClusterRun &cluster_run);
+private:
+  void Initialize() { }
+  void Destroy() { }
+};
+
 class TA_API ClusterRun : public SelectEdit {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(SelectEdit)
 public:
-  DataTable	jobs_submit;	// current set of jobs to submit 
-  DataTable	jobs_running;	// #SHOW_TREE jobs that are currently running
-  DataTable	jobs_done;	// #SHOW_TREE jobs that have finished running 
+  DataTable     jobs_submit;    // current set of jobs to submit
+  DataTable     jobs_running;   // #SHOW_TREE jobs that are currently running
+  DataTable     jobs_done;      // #SHOW_TREE jobs that have finished running
+  ParamSearchAlgo_List search_algos; // #SHOW_TREE Possible search algorithms to run on the cluster
+  ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use
 
-  String	notes;		// notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
-  String 	repo_url;	// svn repository url to use for file exchange with the cluster
-  String	cluster;	// name of cluster to run job on
-  String	queue;		// if specified, indicate a particular queue on the computing resource
-  String	run_time;	// how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
-  int		ram_gb;		// how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources
-  int		n_threads;	// number of parallel threads to use for running
-  bool		use_mpi;	// use message-passing-inteface distributed memory executable to run across multiple nodes?
-  int		mpi_nodes;	// #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
+  String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
+  String        repo_url;       // svn repository url to use for file exchange with the cluster
+  String        cluster;        // name of cluster to run job on
+  String        queue;          // if specified, indicate a particular queue on the computing resource
+  String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
+  int           ram_gb;         // how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources
+  int           n_threads;      // number of parallel threads to use for running
+  bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
+  int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
 
+  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
+  // #BUTTON #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
   virtual void  Run();
-  // #BUTTON Run this model on a cluster using the parameters as specified here -- checks in 
-  virtual bool	Update();
+  // #BUTTON Run this model on a cluster using the parameters as specified here -- checks in
+  virtual bool  Update();
   // #BUTTON poll for job status of running jobs, grabbing any current results, and moving an completed jobs over to jobs_done -- returns true if new data or status was available
   virtual void  Kill();
   // #BUTTON kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
-  virtual void	ImportData();
+  virtual void  ImportData();
   // #BUTTON import the data for the selected rows in the jobs_done data table
 
-  virtual void	FormatTables();	// format all the jobs tables to contain proper columns
+  virtual void  FormatTables(); // format all the jobs tables to contain proper columns
 
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);
@@ -487,7 +529,7 @@ protected:
   // all tables have the same format -- this ensures it
   virtual iDataTableEditor* DataTableEditor(DataTable& dt);
   // get editor for data table
-  virtual bool	SelectedRows(DataTable& dt, int& st_row, int& end_row);
+  virtual bool  SelectedRows(DataTable& dt, int& st_row, int& end_row);
   // get selected rows in editor
 
 private:

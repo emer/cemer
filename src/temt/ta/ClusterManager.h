@@ -21,11 +21,12 @@
 
 class ClusterRun;
 class SubversionClient;
+class taProject;
 
 class TA_API ClusterManager
 {
 public:
-  ClusterManager(ClusterRun *clust_run);
+  ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
   void SetRepoUrl(const char *repo_url);
   void SetDescription(const char *description);
@@ -33,18 +34,20 @@ public:
   bool Run(bool prompt_user);
 
 private:
-  bool getFilename();
+  bool saveProject();
   bool showRepoDialog();
   void setPaths();
   void ensureWorkingCopyExists();
   void createSubdirs();
+  void runSearchAlgo();
   void saveCopyOfProject();
   void createParamFile();
 
-  ClusterRun *m_clust_run;
+  ClusterRun &m_cluster_run;
   SubversionClient *m_svn_client;
-  String m_username;
+  taProject *m_proj;
   String m_filename;
+  String m_username;
   String m_wc_path;
   String m_repo_user_path;
   String m_wc_proj_path;

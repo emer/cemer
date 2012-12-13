@@ -966,6 +966,32 @@ void SelectEdit::ConvertLegacy() {
   }}
 }
 
+
+/////////////////////////////////////////////////////
+//      ParamSearchAlgo, GridSearch, etc.
+
+void
+ParamSearchAlgo::CreateJobs(ClusterRun &cluster_run)
+{
+}
+
+void
+ParamSearchAlgo::ProcessResults(ClusterRun &cluster_run)
+{
+}
+
+
+void
+GridSearch::CreateJobs(ClusterRun &cluster_run)
+{
+}
+
+void
+GridSearch::ProcessResults(ClusterRun &cluster_run)
+{
+}
+
+
 /////////////////////////////////////////////////////
 //      Cluster Run
 
@@ -983,12 +1009,15 @@ void ClusterRun::Initialize() {
 }
 
 void ClusterRun::Destroy() {
+}
 
+void ClusterRun::NewSearchAlgo(TypeDef *type) {
+  search_algos.New(1, type);
 }
 
 void ClusterRun::Run() {
   FormatTables();               // ensure tables are formatted properly
-  ClusterManager cm(this);      // note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
+  ClusterManager cm(*this);     // note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
   cm.Run(true); // prompt user
 }
 
