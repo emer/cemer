@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
+import xml.etree.ElementTree as ET
 
 def make_dir(dir):
     try: os.makedirs(dir)
@@ -33,7 +34,7 @@ class ClusterConfig(object):
 
     def prompt_for_field(self, section, field, message, default=""):
         # Get the cached value (if any) otherwise use the default.
-        try: value = self.config.get(section, field)
+        try:    value = self.config.get(section, field)
         except: value = default
 
         # Allow the user to choose a different value.
@@ -73,6 +74,13 @@ class ClusterConfig(object):
             self.user_section, 'poll_interval',
             'Enter the polling interval, in seconds:')
 
+    def get_check_user(self):
+        # Should the script only start jobs committed by the selected user?
+        check = self.prompt_for_field(
+            self.user_section, 'check_user',
+            'Only run jobs you committed?', 'Yes')
+        return check and check[0] in 'yY'
+
     def get_repo_choice(self):
         return self.prompt_for_int_field(
             self.user_section, 'repo_choice', 'Your choice:')
@@ -106,11 +114,12 @@ class ClusterConfig(object):
             self.config.write(f)
 
 class SubversionPoller(object):
-    def __init__(self, username, repo_dir, repo_url, delay):
-        self.username = username
-        self.repo_dir = repo_dir
-        self.repo_url = repo_url
-        self.delay = delay
+    def __init__(self, username, repo_dir, repo_url, delay, check_user):
+        self.username   = username
+        self.repo_dir   = repo_dir
+        self.repo_url   = repo_url
+        self.delay      = delay
+        self.check_user = check_user
 
         esc_repo_dir = re.escape(self.repo_dir)
         self.re_comp = re.compile(
@@ -135,11 +144,7 @@ class SubversionPoller(object):
             sys.exit(1)
 
         # Now do an 'svn info' (non-interactive) to get the starting rev.
-        svn_info = check_output(['svn', 'info', self.repo_dir])
-        rev_line = [line for line in svn_info.splitlines()
-                         if line[:9] == "Revision:"]
-        revision = int(rev_line[0][10:])
-        #print 'Found revision %s' % revision
+        revision, author = self.get_commit_info(self.repo_dir)
         return revision
 
     def check_for_updates(self):
@@ -149,6 +154,21 @@ class SubversionPoller(object):
         submit_files = [line[1:].strip() for line in svn_update.splitlines()
                             if self.re_comp.match(line)]
         return submit_files
+
+    def get_commit_info(self, filename):
+        """Get the commit revision and author for the given filename."""
+
+        cmd = ['svn', 'info', '--xml', filename]
+        svn_info = check_output(cmd)
+
+        root = ET.fromstring(svn_info)
+        try:    revision = root.getiterator('commit')[0].attrib['revision']
+        except: revision = '0'
+
+        try:    author = root.getiterator('author')[0].text
+        except: author = ''
+
+        return (revision, author)
 
     def poll(self, func, nohup_file=''):
         # Enter the loop to check for updates to job submission files.
@@ -166,7 +186,12 @@ class SubversionPoller(object):
             if submit_files: print ''
             for filename in submit_files:
                 try:
-                    func(filename)
+                    rev, author = self.get_commit_info(filename)
+                    if self.check_user and author != self.username:
+                        print 'Ignoring job submitted by user %s:' % author
+                        print '  File: %s' % filename
+                    else:
+                        func(filename, rev)
                 except:
                     traceback.print_exc()
                     print '\nCaught exception trying to parse job ' \
@@ -175,8 +200,8 @@ class SubversionPoller(object):
                           '(hit Ctrl-C to quit) ...'
             time.sleep(self.delay)
 
-def run_job_for_file(filename):
-    print 'TODO: Submit job for file: %s' % filename
+def run_job_for_file(filename, rev):
+    print 'TODO: Submit job for revision %s of file: %s' % (rev, filename)
     params = ConfigParser.RawConfigParser()
     params.read(filename)
     general_section = 'GENERAL_PARAMS'
@@ -214,13 +239,15 @@ def main():
     repo_dir = os.path.join(wc_root, repo_name)
     print ''
     delay = config.get_poll_interval()
+    check_user = config.get_check_user()
 
-    poller = SubversionPoller(username, repo_dir, repo_url, delay)
+    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     revision = poller.get_initial_wc()
 
     run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
     if not run_nohup or run_nohup in 'yY':
-        cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay)]
+        cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay),
+               str(check_user)]
         subprocess.Popen(cmd)
         time.sleep(1) # Give it a chance to start.
         print 'Running in the background.  Re-run script to stop.'
@@ -230,12 +257,13 @@ def main():
 def main_background():
     print '\nStarting background run at %s' % datetime.datetime.now()
 
-    username = sys.argv[1]
-    repo_dir = sys.argv[2]
-    repo_url = sys.argv[3]
-    delay    = int(sys.argv[4])
+    username    = sys.argv[1]
+    repo_dir    = sys.argv[2]
+    repo_url    = sys.argv[3]
+    delay       = int(sys.argv[4])
+    check_user  = sys.argv[5] == 'True'
 
-    poller = SubversionPoller(username, repo_dir, repo_url, delay)
+    poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     with open(nohup_filename, 'w') as f:
         f.write('delete this file to stop the backgrounded script.')
     poller.poll(run_job_for_file, nohup_filename) # Infinite loop.

@@ -28,21 +28,17 @@
 #include "ta_string.h"
 #include "SubversionClient.h"
 
-ClusterManager::ClusterManager(SelectEdit *select_edit)
-  : m_select_edit(select_edit)
+ClusterManager::ClusterManager(ClusterRun *clust_run)
+  : m_clust_run(clust_run)
   , m_svn_client(0)
-  , m_cluster_name()
   , m_username()
   , m_filename()
-  , m_repo_url()
-  , m_description()
   , m_wc_path()
   , m_repo_user_path()
   , m_wc_proj_path()
   , m_wc_submit_path()
   , m_wc_models_path()
   , m_wc_results_path()
-  , m_num_mpi_nodes(0)
 {
 }
 
@@ -55,40 +51,44 @@ ClusterManager::~ClusterManager()
 void
 ClusterManager::SetRepoUrl(const char *repo_url)
 {
-  m_repo_url = repo_url;
+  m_clust_run->repo_url = repo_url;
 }
 
 void
 ClusterManager::SetDescription(const char *description)
 {
-  m_description = description;
+  m_clust_run->notes = description;
 }
 
 void
 ClusterManager::UseMpi(int num_mpi_nodes)
 {
-  m_num_mpi_nodes = num_mpi_nodes;
+  m_clust_run->mpi_nodes = num_mpi_nodes;
+  m_clust_run->use_mpi = num_mpi_nodes > 0;
 }
 
-// Run the model on a cluster using the parameters of the SelectEdit
+// Run the model on a cluster using the parameters of the ClusterRun
 // provided in the constructor.
 bool
-ClusterManager::Run()
+ClusterManager::Run(bool prompt_user)
 {
-  // Can't do anything without a reference to the SelectEdit.
-  if (!m_select_edit) return false;
+  // Can't do anything without a reference to the ClusterRun.
+  if (!m_clust_run) return false;
 
   // Get the project's filename.
   if (!getFilename()) return false;
 
   // If a repository URL and description haven't been set, prompt the user
   // for these values.
-  if (m_repo_url.empty() || m_description.empty()) {
+  if (prompt_user || m_clust_run->repo_url.empty() ||
+      m_clust_run->notes.empty())
+  {
     if (!showRepoDialog()) return false;
   }
 
-  taMisc::Info("Running project", m_filename, "\n  on cluster", m_repo_url,
-    "\n  Description:", m_description);
+  taMisc::Info("Running project", m_filename,
+    "\n  on cluster", m_clust_run->repo_url,
+    "\n  Description:", m_clust_run->notes);
 
   try {
     // Create Subversion client and get the user's username.  Need the URL to
@@ -98,7 +98,7 @@ ClusterManager::Run()
     // to screw it up.
     m_svn_client = new SubversionClient;
     m_username = m_svn_client->GetUsername(
-      m_repo_url, SubversionClient::CHECK_CACHE_THEN_PROMPT_USER
+      m_clust_run->repo_url, SubversionClient::CHECK_CACHE_THEN_PROMPT_USER
     ).c_str();
 
     if (m_username.empty()) {
@@ -114,7 +114,7 @@ ClusterManager::Run()
 
     // Check in all files and directories that were created or updated.
     int rev = m_svn_client->Checkin(
-      "Ready to run on cluster: " + m_description);
+      "Ready to run on cluster: " + m_clust_run->notes);
     taMisc::Info("Submitted project to run on cluster in revision:",
       String(rev));
 
@@ -148,7 +148,7 @@ bool
 ClusterManager::getFilename()
 {
   // Get the project object.
-  taProject *proj = GET_OWNER(m_select_edit, taProject);
+  taProject *proj = GET_OWNER(m_clust_run, taProject);
   if (!proj) {
     // Should never happen.
     taMisc::Error("Could not get project object to run on cluster.");
@@ -216,6 +216,8 @@ ClusterManager::showRepoDialog()
     if (!taMisc::cluster6_name.empty()) combo1->addItem(taMisc::cluster6_name);
     hbox->addWidget(combo1);
   }
+  int idx1 = combo1->findText(m_clust_run->cluster.toQString());
+  if (idx1 >= 0) combo1->setCurrentIndex(idx1);
   dlg.AddStretch(row);
 
   row = "repoRow";
@@ -237,25 +239,26 @@ ClusterManager::showRepoDialog()
     }
     hbox->addWidget(combo2);
   }
+  int idx2 = combo2->findData(m_clust_run->repo_url.toQString());
+  if (idx2 >= 0) combo2->setCurrentIndex(idx2);
   dlg.AddStretch(row);
 
   row = "descRow";
   dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("descLbl", widget, row, "label=Description: ;");
-  dlg.AddStringField(&m_description, "description", widget, row,
+  dlg.AddStringField(&m_clust_run->notes, "description", widget, row,
     "tooltip=description to be used as a checkin comment;");
 
   row = "mpi";
-  bool use_mpi = false;
   dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
-  dlg.AddBoolCheckbox(&use_mpi, "usempi", widget, row,
+  dlg.AddBoolCheckbox(&m_clust_run->use_mpi, "usempi", widget, row,
     "tooltip=use MPI on the cluster;");
   dlg.AddStretch(row);
   dlg.AddLabel("nodesLbl", widget, row, "label=Number of nodes: ;");
-  dlg.AddIntField(&m_num_mpi_nodes, "numnodes", widget, row,
+  dlg.AddIntField(&m_clust_run->mpi_nodes, "numnodes", widget, row,
     "tooltip=the number of MPI nodes to use;");
 
   bool modal = true;
@@ -265,8 +268,9 @@ ClusterManager::showRepoDialog()
     return false;
   }
 
-  m_cluster_name = combo1->itemText(combo1->currentIndex());
-  m_repo_url = combo2->itemData(combo2->currentIndex()).toString();
+  m_clust_run->cluster = combo1->itemText(combo1->currentIndex());
+  m_clust_run->repo_url =
+    combo2->itemData(combo2->currentIndex()).toString();
   return true;
 }
 
@@ -274,7 +278,8 @@ void
 ClusterManager::setPaths()
 {
   // Set the working copy path and get a canonicalized version back.
-  m_wc_path = taMisc::user_app_dir + '/' + m_cluster_name + '/' + m_username;
+  m_wc_path = taMisc::user_app_dir + '/' + m_clust_run->cluster +
+    '/' + m_username;
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
@@ -282,7 +287,8 @@ ClusterManager::setPaths()
   // non-canonical for URLs (and svn paths) and causes errors.
 
   // This is the path to the user's directory in the repo.
-  m_repo_user_path = m_repo_url + '/' + m_cluster_name + '/' + m_username;
+  m_repo_user_path = m_clust_run->repo_url + '/' + m_clust_run->cluster +
+    '/' + m_username;
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
@@ -362,7 +368,7 @@ ClusterManager::createParamFile()
   // script will blow away the currently running model file in the cluster's
   // working copy.
 
-  // Generate a text file containing the model parameters from the SelectEdit.
+  // Generate a text file containing the model parameters from the ClusterRun.
   QString param_filename(m_wc_submit_path.chars());
   param_filename.append("/submit.txt");
 
@@ -378,7 +384,7 @@ ClusterManager::createParamFile()
 
   // For each parameter to be searched, make a section with its range.
   String all_params;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_select_edit->mbrs) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_clust_run->mbrs) {
     const EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
       String name = mbr->GetName();
@@ -400,13 +406,13 @@ ClusterManager::createParamFile()
   // checked in.  Also write the list of parameter names.
   out << "[GENERAL_PARAMS]";
   out << "\norig_filename = " << m_filename.chars();
-  out << "\nselect_edit_name = " << m_select_edit->name.chars();
+  out << "\nclust_run_name = " << m_clust_run->name.chars();
   out << "\nrelative_filename = ../models/"
       << qPrintable(QFileInfo(m_filename).fileName());
   out << "\ntimestamp = "
       << qPrintable(QDateTime::currentDateTime().toString());
-  out << "\ndescription = " << m_description.chars();
-  out << "\nnum_mpi_nodes = " << m_num_mpi_nodes;
+  out << "\ndescription = " << m_clust_run->notes.chars();
+  out << "\nnum_mpi_nodes = " << m_clust_run->mpi_nodes;
   out << "\nparameters = " << all_params.chars();
   out << "\n\n";
 

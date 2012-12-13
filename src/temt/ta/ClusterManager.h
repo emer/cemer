@@ -19,18 +19,18 @@
 #include "ta_def.h"
 #include "ta_string.h"
 
-class SelectEdit;
+class ClusterRun;
 class SubversionClient;
 
 class TA_API ClusterManager
 {
 public:
-  ClusterManager(SelectEdit *select_edit);
+  ClusterManager(ClusterRun *clust_run);
   ~ClusterManager();
   void SetRepoUrl(const char *repo_url);
   void SetDescription(const char *description);
   void UseMpi(int num_mpi_nodes);
-  bool Run();
+  bool Run(bool prompt_user);
 
 private:
   bool getFilename();
@@ -41,20 +41,16 @@ private:
   void saveCopyOfProject();
   void createParamFile();
 
-  SelectEdit *m_select_edit;
+  ClusterRun *m_clust_run;
   SubversionClient *m_svn_client;
-  String m_cluster_name;
   String m_username;
   String m_filename;
-  String m_repo_url;
-  String m_description;
   String m_wc_path;
   String m_repo_user_path;
   String m_wc_proj_path;
   String m_wc_submit_path;
   String m_wc_models_path;
   String m_wc_results_path;
-  int m_num_mpi_nodes; // 0 means don't use MPI.
 };
 
 #endif // CLUSTER_MANAGER_H_

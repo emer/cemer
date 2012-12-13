@@ -967,7 +967,7 @@ void SelectEdit::ConvertLegacy() {
 }
 
 /////////////////////////////////////////////////////
-//	Cluster Run
+//      Cluster Run
 
 void ClusterRun::InitLinks() {
   inherited::InitLinks();
@@ -987,9 +987,9 @@ void ClusterRun::Destroy() {
 }
 
 void ClusterRun::Run() {
-  FormatTables();		// ensure tables are formatted properly
-  ClusterManager cm(this);	// note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
-  cm.Run();
+  FormatTables();               // ensure tables are formatted properly
+  ClusterManager cm(this);      // note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
+  cm.Run(true); // prompt user
 }
 
 bool ClusterRun::Update() {
@@ -1008,7 +1008,7 @@ void ClusterRun::FormatTables() {
   jobs_submit.name = "jobs_submit";
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
-  
+
   FormatTables_impl(jobs_submit);
   FormatTables_impl(jobs_running);
   FormatTables_impl(jobs_done);

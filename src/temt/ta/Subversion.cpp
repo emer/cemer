@@ -15,7 +15,6 @@
 
 #include "Subversion.h"
 
-#include "ClusterManager.h"
 #include "SubversionClient.h"
 
 String
@@ -140,22 +139,4 @@ Subversion::Checkin(const String &paths, const String &comment)
     taMisc::Error("Could not check in files.\n", ex.what());
     return -2;
   }
-}
-
-bool
-Subversion::RunOnCluster(SelectEdit &select_edit, const String &repo_url, const String &description, int num_mpi_nodes)
-{
-  // Run this project on a cluster, using the given Subversion repository URL.
-  // As long as the repository URL and description strings are not empty, the
-  // user should not be prompted for them.  The user may be prompted to save
-  // the file (if it's new and never been saved) and may be prompted for their
-  // Subversion credentials (if this is the first time using this feature).
-  ClusterManager cm(&select_edit);
-  cm.SetRepoUrl(repo_url.chars());
-  cm.SetDescription(description.chars());
-  if (num_mpi_nodes > 0) {
-    cm.UseMpi(num_mpi_nodes);
-  }
-
-  return cm.Run();
 }
