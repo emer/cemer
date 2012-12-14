@@ -10,6 +10,8 @@ def make_dir(dir):
 def check_output(cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
 
+#############################################################################
+
 class ClusterConfig(object):
     def __init__(self, wc_root):
         # Ensure the working copy root directory exists.
@@ -113,6 +115,8 @@ class ClusterConfig(object):
         with open(self.config_filename, 'wb') as f:
             self.config.write(f)
 
+#############################################################################
+
 class SubversionPoller(object):
     def __init__(self, username, repo_dir, repo_url, delay, check_user):
         self.username   = username
@@ -121,9 +125,14 @@ class SubversionPoller(object):
         self.delay      = delay
         self.check_user = check_user
 
+        # The repo directory only includes the working copy root and
+        # repo_name (as defined by the user and stored in config.ini).
+        # It does not include the project name, hence the '/[^/]+/'.
+        # The RE captures the whole (relative) filename to be retrieved
+        # later in a m.group(1) call.
         esc_repo_dir = re.escape(self.repo_dir)
         self.re_comp = re.compile(
-            r'[AUGR]\s+' + esc_repo_dir + r'/[^/]+/submit/')
+            r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
 
     def get_initial_wc(self):
         # Either checkout or update the directory.
@@ -144,18 +153,55 @@ class SubversionPoller(object):
             sys.exit(1)
 
         # Now do an 'svn info' (non-interactive) to get the starting rev.
-        revision, author = self.get_commit_info(self.repo_dir)
+        revision, author = self._get_commit_info(self.repo_dir)
         return revision
 
-    def check_for_updates(self):
+    def poll(self, func, nohup_file=''):
+        # Enter the loop to check for updates to job submission files.
+        print '\nPolling the Subversion server every %d seconds ' \
+              '(hit Ctrl-C to quit) ...' % self.delay
+        while True:
+            # If running in background and the file was deleted, then exit.
+            if nohup_file and not os.path.isfile(nohup_file):
+                break
+
+            sys.stdout.write('.') # TODO: remove, or create spinner...
+            sys.stdout.flush()
+
+            submit_files = self._check_for_updates()
+            if submit_files: print ''
+            for filename in submit_files:
+                try:
+                    rev, author = self._get_commit_info(filename)
+                    if self.check_user and author != self.username:
+                        print 'Ignoring job submitted by user %s:' % author
+                        print '  File: %s' % filename
+                    else:
+                        if os.path.basename(filename) == 'jobs_submit.dat':
+                            self._start_jobs(filename, rev)
+                        else:
+                            func(filename, rev)
+                except:
+                    traceback.print_exc()
+                    print '\nCaught exception trying to parse job ' \
+                          'submission file'
+                    print 'Continuing to poll the Subversion server ' \
+                          '(hit Ctrl-C to quit) ...'
+            time.sleep(self.delay)
+
+    def _check_for_updates(self):
         cmd = ['svn', 'up', '--username', self.username, '--force',
                '--accept', 'theirs-full', '--non-interactive', self.repo_dir]
         svn_update = check_output(cmd)
-        submit_files = [line[1:].strip() for line in svn_update.splitlines()
-                            if self.re_comp.match(line)]
+
+        # 'svn up' does not allow an '--xml' parameter, so we need to
+        # scrape the textual output it produces.
+        # The 'm' MatchObject iterates over a list of length 1.
+        submit_files = [m.group(1) for l in svn_update.splitlines()
+                                   for m in [self.re_comp.match(l)] if m]
         return submit_files
 
-    def get_commit_info(self, filename):
+    def _get_commit_info(self, filename):
         """Get the commit revision and author for the given filename."""
 
         cmd = ['svn', 'info', '--xml', filename]
@@ -170,35 +216,30 @@ class SubversionPoller(object):
 
         return (revision, author)
 
-    def poll(self, func, nohup_file=''):
-        # Enter the loop to check for updates to job submission files.
-        print '\nPolling the Subversion server every %d seconds ' \
-              '(hit Ctrl-C to quit) ...' % self.delay
-        while True:
-            # If running in background and the file was deleted, then exit.
-            if nohup_file and not os.path.isfile(nohup_file):
-                break
+    def _start_jobs(self, filename, rev):
+        # TODO:
+        # 1. read the jobs_submit.dat DataTable
+        # 2. start jobs
+        # 3. write the jobs_running.dat DataTable
+        # 4. commit the running table to svn.
 
-            sys.stdout.write('.') # TODO: remove, or create spinner...
-            sys.stdout.flush()
+        # Columns in jobs_running:
+        # model_svn = str(rev)
+        # submit_svn = str(rev)
+        # submit_job = str(row number)
+        # tag = '_'.join((submit_svn, submit_job))
+        # status = 'SUBMITTED'
+        # # Start job using scheduler.  Capture stdout+stderr to job_out_file.
+        # job_out_file = tag + '.out'
+        # job_out = first 2048 chars of job_out_file.
+        # job_no = job number assigned by scheduler, scraped from job_out_file.
+        # dat_files = committed results files matching tag_*.out
+        # command, notes, repo_url, cluster, queue, run_time, ram_gb,
+        #   n_threads, mpi_nodes = copied from jobs_submit.dat
+        pass
 
-            submit_files = self.check_for_updates()
-            if submit_files: print ''
-            for filename in submit_files:
-                try:
-                    rev, author = self.get_commit_info(filename)
-                    if self.check_user and author != self.username:
-                        print 'Ignoring job submitted by user %s:' % author
-                        print '  File: %s' % filename
-                    else:
-                        func(filename, rev)
-                except:
-                    traceback.print_exc()
-                    print '\nCaught exception trying to parse job ' \
-                          'submission file'
-                    print 'Continuing to poll the Subversion server ' \
-                          '(hit Ctrl-C to quit) ...'
-            time.sleep(self.delay)
+
+#############################################################################
 
 def run_job_for_file(filename, rev):
     print 'TODO: Submit job for revision %s of file: %s' % (rev, filename)
@@ -212,6 +253,8 @@ def run_job_for_file(filename, rev):
         incr    = params.getfloat(p, 'incr')
         print '  %s = %f .. %f step %f' % (p, min_val, max_val, incr)
 
+#############################################################################
+
 # If the user chooses to run in the background, this file will be created.
 # The polling loop will exit if the file is subsequently deleted.  The user
 # may delete the file manually, or simply re-running this script will delete
@@ -223,7 +266,8 @@ def main():
     if os.path.isfile(nohup_filename):
         print 'Removing nohup file: %s' % nohup_filename
         os.remove(nohup_filename)
-        print 'The background script should stop at its next poll interval.\n'
+        print 'The background script should stop at its next poll interval.'
+        print 'Hit Ctrl-C at any time if you just want to quit.\n'
 
     # Read the config file, allow the user to add a new repo, get
     # the repo they'd like to use, and write it all back to disk.
@@ -269,6 +313,8 @@ def main_background():
     poller.poll(run_job_for_file, nohup_filename) # Infinite loop.
 
     print '\nStopping background run at %s' % datetime.datetime.now()
+
+#############################################################################
 
 if __name__ == '__main__':
     try:
