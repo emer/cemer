@@ -2064,7 +2064,8 @@ bool VEArm::ConfigArm(const String& name_prefix,
   wrist->joint_type = VEJoint::FIXED;
   wrist->body1 = ulna; wrist->body2 = hand;
 
-        shoulder->anchor.x = 0; shoulder->anchor.y = 0; shoulder->anchor.z = 0;
+  // the shoulder anchor is wrt to torso's CM, should lie near one corner
+  shoulder->anchor.x = 0.2f; shoulder->anchor.y = 0; shoulder->anchor.z = 0.2f;
 
   elbow->anchor.x = 0;  // set elbow joint's anchor point wrt humerus' CM
   elbow->anchor.y = 0;
