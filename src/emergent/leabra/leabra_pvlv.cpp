@@ -75,6 +75,7 @@ void PVMiscSpec::Initialize() {
   pvi_scale_min = false;
   prior_gain = 1.0f;
   er_reset_prior = true;
+  no_y_dot = false;
 }
 
 void PViLayerSpec::Initialize() {
@@ -196,7 +197,14 @@ float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
     if(pv.pvi_scale_min && (pvd < 0.0f) && (u->act_m < pv.min_pvi)) {
       pvd *= (u->act_m / pv.min_pvi); // scale by how negative relative to min
     }
-    pv_da = pvd - u->misc_1; // delta relative to prior
+    //pv_da = pvd - u->misc_1; // delta relative to prior
+    if(pv.no_y_dot) {
+      pv_da = pvd; // try no Y-dot --- what you see is what you get!
+    }
+    else {
+      pv_da = pvd - u->misc_1; // delta relative to prior -- the original PVLV case
+    }
+    // TODO: eventually want to go a CS-onset triggered ramping PVi (and LVi)
   }
 
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -438,6 +446,7 @@ void LVMiscSpec::Initialize() {
   nopv_lrate = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
+  pos_y_dot_only = false;
 }
 
 void LVeLayerSpec::Initialize() {
@@ -576,7 +585,14 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   if(lv.lvi_scale_min && (lvd < 0.0f) && (lviu->act_eq < lv.min_lvi)) {
     lvd *= (lviu->act_eq / lv.min_lvi); // scale by how negative relative to min
   }
-  float lv_da = lvd - lveu->misc_1;
+  //float lv_da = lvd - lveu->misc_1;
+  float lv_da = 0.0f;
+  if(lv.pos_y_dot_only && (lvd - lveu->misc_1 > 0.0f)) { // only want the positive Y-dot! phaDA dips not its job!
+    lv_da = lvd - lveu->misc_1;
+  }
+  else {
+    lv_da = 0.0f;
+  }
 
   int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
   for(int i=0;i<nunits;i++) {

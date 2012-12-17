@@ -807,7 +807,7 @@ float MatrixLayerSpec::Compute_NoGoInhibGo_ugp(LeabraLayer* lay,
 float MatrixLayerSpec::Compute_GoPfcThrInhib_ugp(LeabraLayer* lay,
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraNetwork* net) {
-  if(matrix.no_pfc_thr == 0.0f || matrix.no_pfc_inhib) return 0.0f;
+  if(matrix.no_pfc_thr == 0.0f || matrix.no_pfc_inhib == 0.0f) return 0.0f;
 
   float noact_i = 0.0f;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
@@ -847,11 +847,11 @@ float MatrixLayerSpec::Compute_PVrInhib_ugp(LeabraLayer* lay,
   float pvr_i = 0.0f;
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   if(er_avail) {
-    if((gating_type != SNrThalLayerSpec::OUTPUT) && (gating_type !=          	   SNrThalLayerSpec::OUT_MNT))
+    if((gating_type != SNrThalLayerSpec::OUTPUT) && (gating_type != SNrThalLayerSpec::OUT_MNT))
       pvr_i = matrix.pvr_inhib;
   }
   else {
-    if((gating_type == SNrThalLayerSpec::OUTPUT) || (gating_type ==          	     SNrThalLayerSpec::OUT_MNT))
+    if((gating_type == SNrThalLayerSpec::OUTPUT) || (gating_type == SNrThalLayerSpec::OUT_MNT))
       pvr_i = matrix.pvr_inhib;
   }
   return pvr_i;
@@ -4331,7 +4331,10 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
-
+  lvesp->lv.pos_y_dot_only = false;
+  
+  pvisp->pv.no_y_dot = false;
+  
   nvsp->nv.da_gain = 0.0f;
   dasp->da.da_gain = 1.0f;
   dasp->da.pv_gain = 0.1f;

@@ -124,6 +124,7 @@ public:
   bool          pvi_scale_min;  // if both the PVe and PVi values are below min_pvi, then scale the result by (PVi/min_pvi) -- as PVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) to subtract away in computing the net PV dopamine signal (PV DA = pvd_t - prior_gain * pvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+  bool		no_y_dot; // #DEF_false if true do not use y-dot for phasic DA calculation (PVi)
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -297,6 +298,7 @@ public:
   float		nopv_lrate;	// #CONDSHOW_ON_lrn_pv_only:false learning rate for learning on non-pv trials -- see nopv_val for value that is clamped.  this can be used to simulate a baseline effort cost for non-reward trials.  only works when lrn_pv_only is false.
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+  bool		pos_y_dot_only; // #DEF_false use only positive deviations for computing LVe phasic DA 
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
