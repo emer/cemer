@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
+from collections import OrderedDict
 import xml.etree.ElementTree as ET
 
 def make_dir(dir):
@@ -114,6 +115,170 @@ class ClusterConfig(object):
         # Write any changes (username, new repo) to the config file.
         with open(self.config_filename, 'wb') as f:
             self.config.write(f)
+
+#############################################################################
+
+# NOTE: new types added to this class must also be added to the following methods of the DataTable class:
+# _encode_value, _decodE_value
+class ColumnType(object):
+    
+    STRING = 'String'
+    INT = 'int'
+    FLOAT = 'float'
+    
+    encode = {STRING : '$',
+              INT : '|',
+              FLOAT: '%'}
+    
+    decode = {'$' : STRING, 
+              '|' : INT,
+              '%' : FLOAT}
+
+#############################################################################
+
+class DataTable(object):
+    
+    DELIMITER = '\t'    
+    
+    _header = OrderedDict() # header of the data table 
+    _rows = []  # data of the data table
+    
+    def __init__(self):
+        pass
+    
+    #input: space_allowed = boolean, if False replace white spaces with '_'
+    @staticmethod
+    def scape_chars(string, space_allowed = True):
+        
+        string = string.replace('\\', '%s\\' % '\\')    # first off, scape '\'
+        
+        scape_chars_dic = {"'" : "\\'",
+                            '"': '\\"'}
+        if not space_allowed:
+            scape_chars_dic[' '] = '_'
+            
+        for char, replacement in scape_chars_dic.iteritems():
+            string = string.replace(char, replacement)
+        return string
+    
+    # PRIVATE METHODS
+    def _encode_header(self):
+        for col in self._header:
+            col = ColumnType.encode[self._header[col]]
+    
+    def _decode_header(self, header = None):
+        for col in self._header:
+            col = ColumnType.encode[self._header[col]]    
+    
+    def _encode_value(self, value, column_type):
+        encoded_value = ""
+        if column_type is ColumnType.STRING:
+            encoded_value = '"%s"' % value
+        elif column_type is ColumnType.INT:
+            encoded_value = value
+        elif column_type is ColumnType.FLOAT:
+            encoded_value = value                
+            
+        return encoded_value
+    
+    def _decode_value(self, value, column_type):
+        decoded_value = ""
+        if column_type is ColumnType.STRING:
+            decoded_value = value.lstrip('"').rstrip('"')
+        elif column_type is ColumnType.INT:
+            decoded_value = value
+        elif column_type is ColumnType.FLOAT:
+            decoded_value = value                      
+            
+        return decoded_value
+    
+    # PUBLIC METHODS
+    # input: header(optional) = OrderedDict, the header with key-values like ('column name', 'type')
+    # output: the header as string
+    def get_header_str(self, header = None):
+        if header is None:
+            header = self._header
+        header_str = "_H:"
+        for column_name in header:
+            column_type = ColumnType.encode[header[column_name]]
+            column_name = DataTable.scape_chars(column_name, space_allowed=False)
+            header_str += '%s%s%s' % (self.DELIMITER, column_type, column_name)
+            
+        return header_str
+    
+    # input: row_index = int, number of the row
+    # output: the row as string
+    def get_row_str(self, row_index):
+        row_str = '_D:'
+        column_index = 0
+        for value in self._rows[row_index]:
+            column_type = self._header.values()[column_index]
+            value = DataTable.scape_chars(value)
+            value = self._encode_value(value, column_type)
+            row_str += '%s%s' % (self.DELIMITER, value)
+            column_index += 1
+            
+        return row_str
+    
+    def set_header(self, header):
+        self._header = header
+        
+    def get_header(self):
+        return self._header
+    
+    def get_data(self):
+        return self._rows
+    
+    # takes the first line of a .dat file and sets up self._header
+    # input: header_str = string, the first row of a .dat file    
+    def load_header(self, header_str):
+        header = OrderedDict()
+        s = '_H:%s' % self.DELIMITER
+        header_str = header_str.lstrip(s).rstrip('\n')
+        columns = header_str.split(self.DELIMITER)
+        for c in columns:
+            column_type = ColumnType.decode[c[0]]
+            column_name = c[1:]
+            header[column_name] = column_type
+        self.set_header(header)  
+            
+    # takes a list of rows from a .dat file and sets up self.rows
+    # input: rows = list, list of rows containing the data part of a .dat file
+    def load_data(self, rows):
+        s = '_D:%s' % self.DELIMITER
+        for r in rows:
+            r = r.lstrip(s).rstrip('\n').strip('\t')
+            values = r.split(self.DELIMITER)
+            decoded_values = []
+            column_index = 0
+            for v in values:
+                column_type = self._header.values()[column_index]
+                decoded_values.append(self._decode_value(v, column_type))
+                column_index += 1
+            self.add_row(decoded_values)            
+    
+    # writes the data table into a .dat file
+    # input: path = string, path of the destination .dat file
+    #        append(optional) = boolean, if True append, otherwise overwrite
+    def write(self, path, append = False):
+        # mode = 'a' append, mode = 'w' overwrite 
+        mode = 'a' if append else 'w'
+        f = open(path, mode)
+        if len(self._header):
+            f.write(self.get_header_str() + '\n')
+        for i in range(len(self._rows)):
+            f.write(self.get_row_str(i) + '\n')
+        
+    def add_row(self, values):        
+        self._rows.append(values)
+
+    def load_from_file(self, path):
+        f = open(path, 'r')
+        lines = f.readlines()
+        header = lines[0]
+        rows = lines[1:]
+        self.load_header(header)
+        self.load_data(rows)
 
 #############################################################################
 
