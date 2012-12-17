@@ -705,7 +705,8 @@ ostream*        taMisc::record_script = NULL;
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
 //NOTE: Notepad could possibly really screw up files, because of crlf
-String  taMisc::edit_cmd = "Notepad.exe \"%s\"";
+// 'start' is the Windows equivalent of '&'.
+String  taMisc::edit_cmd = "start Notepad.exe \"%s\"";
 String  taMisc::plugin_make_env_cmd = "call \"C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\vcvarsall.bat\" x86";
 #else
 #ifdef TA_OS_MAC

@@ -40,6 +40,8 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   , m_wc_submit_path()
   , m_wc_models_path()
   , m_wc_results_path()
+  , m_proj_copy_filename()
+  , m_submit_dat_filename()
 {
 }
 
@@ -110,13 +112,7 @@ ClusterManager::Run(bool prompt_user)
     runSearchAlgo();
     saveCopyOfProject();
     createParamFile(); // TODO: probably don't need this anymore.
-
-    // Check in all files and directories that were created or updated.
-    int rev = m_svn_client->Checkin(
-      "Ready to run on cluster: " + m_cluster_run.notes);
-    taMisc::Info("Submitted project to run on cluster in revision:",
-      String(rev));
-
+    commitFiles();
     return true;
   }
   catch (const SubversionClient::Exception &ex) {
@@ -141,6 +137,18 @@ ClusterManager::Run(bool prompt_user)
   // There's a "return true" at the end of the try block, so the only way to
   // get here is if an exception was thrown.
   return false;
+}
+
+String
+ClusterManager::GetWcProjFilename() const
+{
+  return m_proj_copy_filename;
+}
+
+String
+ClusterManager::GetWcSubmitFilename() const
+{
+  return m_submit_dat_filename;
 }
 
 bool
@@ -349,17 +357,12 @@ ClusterManager::runSearchAlgo()
     m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
 
     // Create an external filename to save the datatable to.
-    String dat_filename = m_wc_submit_path + "/jobs_submit.dat";
-
-    // If the file already exists in the wc, delete it first.
-    QString q_dat_filename = dat_filename.toQString();
-    if (QFile::exists(q_dat_filename)) {
-      QFile::remove(q_dat_filename);
-    }
+    m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
+    deleteFile(m_submit_dat_filename);
 
     // Save the datatable and add it to source control.
-    m_cluster_run.jobs_submit.SaveData(dat_filename);
-    m_svn_client->Add(dat_filename.chars());
+    m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
+    m_svn_client->Add(m_submit_dat_filename.chars());
   }
 }
 
@@ -370,18 +373,15 @@ ClusterManager::saveCopyOfProject()
   m_proj->Save();
 
   // Copy the project from its local path to our cluster working copy.
-  QString new_filename(m_wc_models_path.chars());
-  new_filename.append('/').append(QFileInfo(m_filename).fileName());
+  m_proj_copy_filename = m_wc_models_path + "/" +
+    QFileInfo(m_filename).fileName();
 
-  // If the project already exists in the wc, delete it first,
-  // since QFile::copy() won't overwrite.
-  if (QFile::exists(new_filename)) {
-    QFile::remove(new_filename);
-  }
+  // Delete first, since QFile::copy() won't overwrite.
+  deleteFile(m_proj_copy_filename);
 
   // Copy the file and add it to the working copy.
-  QFile::copy(m_filename, new_filename);
-  m_svn_client->Add(qPrintable(new_filename));
+  QFile::copy(m_filename, m_proj_copy_filename);
+  m_svn_client->Add(qPrintable(m_proj_copy_filename));
 }
 
 void
@@ -400,9 +400,7 @@ ClusterManager::createParamFile()
   param_filename.append("/submit.txt");
 
   // If the param file already exists in the wc, delete it first.
-  if (QFile::exists(param_filename)) {
-    QFile::remove(param_filename);
-  }
+  deleteFile(param_filename);
 
   // Open a stream to write to the file.
   QFile file(param_filename);
@@ -446,4 +444,23 @@ ClusterManager::createParamFile()
   // Add the parameters file to the wc.
   file.close(); // close manually before adding
   m_svn_client->Add(qPrintable(param_filename));
+}
+
+void
+ClusterManager::commitFiles()
+{
+  // Check in all files and directories that were created or updated.
+  int rev = m_svn_client->Checkin(
+    "Ready to run on cluster: " + m_cluster_run.notes);
+  taMisc::Info("Submitted project to run on cluster in revision:",
+    String(rev));
+}
+
+void
+ClusterManager::deleteFile(const String &filename)
+{
+  QString q_filename = filename.toQString();
+  if (QFile::exists(q_filename)) {
+    QFile::remove(q_filename);
+  }
 }

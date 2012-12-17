@@ -32,6 +32,8 @@ public:
   void SetDescription(const char *description);
   void UseMpi(int num_mpi_nodes);
   bool Run(bool prompt_user);
+  String GetWcProjFilename() const;
+  String GetWcSubmitFilename() const;
 
 private:
   bool saveProject();
@@ -42,6 +44,8 @@ private:
   void runSearchAlgo();
   void saveCopyOfProject();
   void createParamFile();
+  void commitFiles();
+  void deleteFile(const String &filename);
 
   ClusterRun &m_cluster_run;
   SubversionClient *m_svn_client;
@@ -54,6 +58,8 @@ private:
   String m_wc_submit_path;
   String m_wc_models_path;
   String m_wc_results_path;
+  String m_proj_copy_filename;
+  String m_submit_dat_filename;
 };
 
 #endif // CLUSTER_MANAGER_H_

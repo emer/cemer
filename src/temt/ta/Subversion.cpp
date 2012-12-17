@@ -140,3 +140,18 @@ Subversion::Checkin(const String &paths, const String &comment)
     return -2;
   }
 }
+
+int
+Subversion::GetLastChangedRevision(const String &path)
+{
+  // Get the last revision in which the passed path was changed, according
+  // to the working copy.  Returns -1 on error.
+  try {
+    SubversionClient client;
+    return client.GetLastChangedRevision(path.chars());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Could not get revision info.\n", ex.what());
+    return -1;
+  }
+}

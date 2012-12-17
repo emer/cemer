@@ -117,7 +117,7 @@ public:
   // If empty or null, the whole working copy will be committed.
   // Returns the new revision number or -1 if nothing to commit.
   int Checkin(const char *comment = 0, const char *files = 0);
-  int Status(const char *files = 0);
+  int GetLastChangedRevision(const char *path);
 
   // Call to cancel current operation in progress.
   void Cancel();
@@ -139,6 +139,7 @@ private:
   svn_client_ctx_t *m_ctx;
   bool m_cancelled;
   const char *m_commit_message;
+  int m_last_changed_revision;
 };
 
 #endif // SUBVERSION_CLIENT_H_

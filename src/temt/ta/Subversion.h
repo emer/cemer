@@ -49,6 +49,9 @@ public:
   static int Checkin(const String &paths, const String &comment);
   // #CAT_Subversion Checkin files under the given path(s) (comma or newline separated list of files/dirs).  Returns the new revision number or -1 if nothing to commit.  Returns -2 on error.
 
+  static int GetLastChangedRevision(const String &path);
+  // #CAT_Subversion Get the last revision in which the passed path was changed, according to the working copy.  Returns -1 on error.
+
 protected:
   TA_BASEFUNS_NOCOPY(Subversion);
 

@@ -195,6 +195,7 @@ struct SubversionClient::Glue
     else {
       // Docs for svn_cancel_func_t say to return SVN_NO_ERROR, but
       // looking at the SVN_ERR macro suggests this makes more sense.
+      // (SVN_NO_ERROR happens to be #define 0... lovely.)
       return 0;
     }
   }
@@ -308,6 +309,25 @@ struct SubversionClient::Glue
 
   static
   svn_error_t *
+  svn_info_receiver(
+    void *baton,
+    const char *path,
+    const svn_info_t *info,
+    apr_pool_t *pool)
+  {
+    sub->m_last_changed_revision = -1;
+    if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
+      if (info) {
+        // Could extract a lot more out of this, but this suffices for now.
+        sub->m_last_changed_revision = info->last_changed_rev;
+      }
+    }
+  }
+
+  //////////////////// Authentication functions ////////////////////
+
+  static
+  svn_error_t *
   svn_auth_simple_prompt_func(
     svn_auth_cred_simple_t **ppCred,
     void *, // baton,
@@ -405,6 +425,7 @@ SubversionClient::SubversionClient()
   , m_ctx(0)
   , m_cancelled(false)
   , m_commit_message(0)
+  , m_last_changed_revision(-1)
 {
   // Set up APR and a pool.
   Apr::initializeOnce(); // must be done prior to any other APR calls.
@@ -1014,12 +1035,28 @@ SubversionClient::Checkin(const char *comment, const char *files)
 }
 
 int
-SubversionClient::Status(const char *files)
+SubversionClient::GetLastChangedRevision(const char *path)
 {
   m_cancelled = false;
-  // See comment in checkin() re: files param.
-  // TODO.
-  return -1;
+  m_last_changed_revision = -1;
+
+  // This call makes a callback to svn_info_receiver(), which
+  // sets our m_last_changed_revision member variable.
+  if (svn_error_t *error = svn_client_info2(
+        path,
+        0, // Set peg_revision and revision to
+        0, //   null to pull from working copy.
+        svn_info_receiver,
+        this,
+        svn_depth_empty, // Just want info on 'path'.
+        0, // No changelists filtering.
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion error getting revision info", error);
+  }
+
+  return m_last_changed_revision;
 }
 
 void
