@@ -119,7 +119,7 @@ class ClusterConfig(object):
 #############################################################################
 
 # NOTE: new types added to this class must also be added to the following methods of the DataTable class:
-# _encode_value, _decodE_value
+# _encode_value, _decode_value
 class ColumnType(object):
     
     STRING = 'String'
@@ -153,7 +153,8 @@ class DataTable(object):
         string = string.replace('\\', '%s\\' % '\\')    # first off, scape '\'
         
         scape_chars_dic = {"'" : "\\'",
-                            '"': '\\"'}
+                           '"' : '\\"',
+                           '\t' : ' ' }
         if not space_allowed:
             scape_chars_dic[' '] = '_'
             
@@ -206,7 +207,7 @@ class DataTable(object):
             
         return header_str
     
-    # input: row_index = int, number of the row
+    # input: row_index = int, the index of the row
     # output: the row as string
     def get_row_str(self, row_index):
         row_str = '_D:'
