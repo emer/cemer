@@ -1,0 +1,748 @@
+<html>
+<head>
+<title>build - scan-build results</title>
+<link type="text/css" rel="stylesheet" href="scanview.css"/>
+<script src="sorttable.js"></script>
+<script language='javascript' type="text/javascript">
+function SetDisplay(RowClass, DisplayVal)
+{
+  var Rows = document.getElementsByTagName("tr");
+  for ( var i = 0 ; i < Rows.length; ++i ) {
+    if (Rows[i].className == RowClass) {
+      Rows[i].style.display = DisplayVal;
+    }
+  }
+}
+
+function CopyCheckedStateToCheckButtons(SummaryCheckButton) {
+  var Inputs = document.getElementsByTagName("input");
+  for ( var i = 0 ; i < Inputs.length; ++i ) {
+    if (Inputs[i].type == "checkbox") {
+      if(Inputs[i] != SummaryCheckButton) {
+        Inputs[i].checked = SummaryCheckButton.checked;
+        Inputs[i].onclick();
+	  }
+    }
+  }
+}
+
+function returnObjById( id ) {
+    if (document.getElementById) 
+        var returnVar = document.getElementById(id);
+    else if (document.all)
+        var returnVar = document.all[id];
+    else if (document.layers) 
+        var returnVar = document.layers[id];
+    return returnVar; 
+}
+
+var NumUnchecked = 0;
+
+function ToggleDisplay(CheckButton, ClassName) {
+  if (CheckButton.checked) {
+    SetDisplay(ClassName, "");
+    if (--NumUnchecked == 0) {
+      returnObjById("AllBugsCheck").checked = true;
+    }
+  }
+  else {
+    SetDisplay(ClassName, "none");
+    NumUnchecked++;
+    returnObjById("AllBugsCheck").checked = false;
+  }
+}
+</script>
+<!-- SUMMARYENDHEAD -->
+</head>
+<body>
+<h1>build - scan-build results</h1>
+
+<table>
+<tr><th>User:</th><td>mingus@chunk</td></tr>
+<tr><th>Working Directory:</th><td>/home/mingus/emergent/build</td></tr>
+<tr><th>Command Line:</th><td>make -j8</td></tr>
+<tr><th>Date:</th><td>Mon Dec 17 22:24:06 2012</td></tr>
+</table>
+<h2>Bug Summary</h2><table>
+<thead><tr><td>Bug Type</td><td>Quantity</td><td class="sorttable_nosort">Display?</td></tr></thead>
+<tr style="font-weight:bold"><td class="SUMM_DESC">All Bugs</td><td class="Q">217</td><td><center><input type="checkbox" id="AllBugsCheck" onClick="CopyCheckedStateToCheckButtons(this);" checked/></center></td></tr>
+<tr><th>Dead code</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Idempotent operation</td><td class="Q">7</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_code_idempotent_operation');" checked/></center></td></tr>
+<tr><th>Dead store</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Dead assignment</td><td class="Q">49</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_store_dead_assignment');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dead increment</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_store_dead_increment');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dead initialization</td><td class="Q">129</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_dead_store_dead_initialization');" checked/></center></td></tr>
+<tr><th>Logic error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Assigned value is garbage or undefined</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_assigned_value_is_garbage_or_undefined');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dereference of null pointer</td><td class="Q">21</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_dereference_of_null_pointer');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Function call argument is an uninitialized value</td><td class="Q">3</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_function_call_argument_is_an_uninitialized_value');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Result of operation is garbage or undefined</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_result_of_operation_is_garbage_or_undefined');" checked/></center></td></tr>
+</table>
+<h2>Reports</h2>
+
+<table class="sortable" style="table-layout:automatic">
+<thead><tr>
+  <td>Bug Group</td>
+  <td class="sorttable_sorted">Bug Type<span id="sorttable_sortfwdind">&nbsp;&#x25BE;</span></td>
+  <td>File</td>
+  <td class="Q">Line</td>
+  <td class="Q">Path Length</td>
+  <td class="sorttable_nosort"></td>
+  <!-- REPORTBUGCOL -->
+</tr></thead>
+<tbody>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">2879</td><td class="Q">3</td><td><a href="report-cFImFs.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-cFImFs.html" -->
+</tr>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">2070</td><td class="Q">3</td><td><a href="report-hPefF6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-hPefF6.html" -->
+</tr>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">1452</td><td class="Q">4</td><td><a href="report-KLKUlY.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-KLKUlY.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">1645</td><td class="Q">1</td><td><a href="report-fR65UF.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-fR65UF.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">3795</td><td class="Q">1</td><td><a href="report-NNRxF4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-NNRxF4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">966</td><td class="Q">1</td><td><a href="report-DDvQKk.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-DDvQKk.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_basic_types.cpp</td><td class="Q">1933</td><td class="Q">1</td><td><a href="report-1vwZuc.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1vwZuc.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qtclassbrowse.cpp</td><td class="Q">592</td><td class="Q">1</td><td><a href="report-dfg9gs.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-dfg9gs.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_program.cpp</td><td class="Q">3417</td><td class="Q">1</td><td><a href="report-x0CnhT.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-x0CnhT.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">6035</td><td class="Q">1</td><td><a href="report-xk23p2.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-xk23p2.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_machine.cpp</td><td class="Q">182</td><td class="Q">1</td><td><a href="report-GeMSNT.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-GeMSNT.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/maketa.cpp</td><td class="Q">901</td><td class="Q">1</td><td><a href="report-snCdUa.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-snCdUa.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/bp<span class="W"> </span>/bp.cpp</td><td class="Q">561</td><td class="Q">1</td><td><a href="report-RWK1H6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-RWK1H6.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">1148</td><td class="Q">1</td><td><a href="report-8QxFwn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-8QxFwn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_server.cpp</td><td class="Q">383</td><td class="Q">1</td><td><a href="report-BHDxTi.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-BHDxTi.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/mta_lex.cpp</td><td class="Q">223</td><td class="Q">1</td><td><a href="report-2lBvTh.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2lBvTh.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">471</td><td class="Q">1</td><td><a href="report-5q0Fz6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5q0Fz6.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">969</td><td class="Q">1</td><td><a href="report-yl5UiG.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-yl5UiG.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3875</td><td class="Q">1</td><td><a href="report-R2sIy3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-R2sIy3.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3726</td><td class="Q">1</td><td><a href="report-kh6NjL.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-kh6NjL.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/taiqtso<span class="W"> </span>/qtthumbwheel.cpp</td><td class="Q">477</td><td class="Q">1</td><td><a href="report-ZFhk2C.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ZFhk2C.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qtclassbrowse.cpp</td><td class="Q">598</td><td class="Q">1</td><td><a href="report-WjRP71.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-WjRP71.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_lex.cpp</td><td class="Q">132</td><td class="Q">1</td><td><a href="report-qkd190.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-qkd190.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_math.cpp</td><td class="Q">5145</td><td class="Q">1</td><td><a href="report-FuWJBk.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-FuWJBk.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_base.cpp</td><td class="Q">4831</td><td class="Q">1</td><td><a href="report-FBTVC8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-FBTVC8.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pvlv.cpp</td><td class="Q">524</td><td class="Q">1</td><td><a href="report-TnH2Bn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-TnH2Bn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pvlv.cpp</td><td class="Q">151</td><td class="Q">1</td><td><a href="report-pxHzBE.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-pxHzBE.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/taiqtso<span class="W"> </span>/qtthumbwheel.cpp</td><td class="Q">435</td><td class="Q">1</td><td><a href="report-SKPkqB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-SKPkqB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_server.cpp</td><td class="Q">946</td><td class="Q">1</td><td><a href="report-FXwWgT.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-FXwWgT.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/mta_lex.cpp</td><td class="Q">482</td><td class="Q">1</td><td><a href="report-EquAmI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-EquAmI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/maketa.cpp</td><td class="Q">903</td><td class="Q">1</td><td><a href="report-8Mn8SR.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-8Mn8SR.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/mta_lex.cpp</td><td class="Q">258</td><td class="Q">1</td><td><a href="report-pTFZFz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-pTFZFz.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pvlv.cpp</td><td class="Q">375</td><td class="Q">1</td><td><a href="report-a7lh5v.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a7lh5v.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/colorscale.cpp</td><td class="Q">669</td><td class="Q">1</td><td><a href="report-Zh5GTd.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Zh5GTd.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_td.cpp</td><td class="Q">732</td><td class="Q">1</td><td><a href="report-loXohB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-loXohB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">1619</td><td class="Q">1</td><td><a href="report-IEEDU4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-IEEDU4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2686</td><td class="Q">1</td><td><a href="report-E7t4vK.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-E7t4vK.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">1628</td><td class="Q">1</td><td><a href="report-juBrFq.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-juBrFq.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_math.cpp</td><td class="Q">2048</td><td class="Q">1</td><td><a href="report-VsMLz6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-VsMLz6.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">989</td><td class="Q">1</td><td><a href="report-7FawT1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-7FawT1.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">6318</td><td class="Q">1</td><td><a href="report-9k0IvD.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9k0IvD.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_dump.cpp</td><td class="Q">1620</td><td class="Q">1</td><td><a href="report-vtoocJ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-vtoocJ.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qtclassbrowse.cpp</td><td class="Q">595</td><td class="Q">1</td><td><a href="report-qCGOrS.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-qCGOrS.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/mta_lex.cpp</td><td class="Q">477</td><td class="Q">1</td><td><a href="report-rT5H7Z.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-rT5H7Z.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qt.cpp</td><td class="Q">596</td><td class="Q">1</td><td><a href="report-9H7NED.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9H7NED.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3877</td><td class="Q">1</td><td><a href="report-yK7Kxo.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-yK7Kxo.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_server.cpp</td><td class="Q">104</td><td class="Q">1</td><td><a href="report-pVjBxI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-pVjBxI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_machine.cpp</td><td class="Q">180</td><td class="Q">1</td><td><a href="report-H2PFxj.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-H2PFxj.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3873</td><td class="Q">1</td><td><a href="report-denn2p.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-denn2p.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2686</td><td class="Q">1</td><td><a href="report-0749Mn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0749Mn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_base.cpp</td><td class="Q">4824</td><td class="Q">1</td><td><a href="report-Tc38hy.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Tc38hy.html" -->
+</tr>
+<tr class="bt_dead_store_dead_assignment"><td class="DESC">Dead store</td><td class="DESC">Dead assignment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3725</td><td class="Q">1</td><td><a href="report-s1q8zo.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-s1q8zo.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3946</td><td class="Q">1</td><td><a href="report-MadXO4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-MadXO4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">670</td><td class="Q">1</td><td><a href="report-peOdCr.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-peOdCr.html" -->
+</tr>
+<tr class="bt_dead_store_dead_increment"><td class="DESC">Dead store</td><td class="DESC">Dead increment</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">669</td><td class="Q">1</td><td><a href="report-DPQmSk.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-DPQmSk.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">2503</td><td class="Q">1</td><td><a href="report-W2cZTz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-W2cZTz.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">2361</td><td class="Q">1</td><td><a href="report-ut9s2u.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ut9s2u.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">2507</td><td class="Q">1</td><td><a href="report-aYhB8n.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-aYhB8n.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2526</td><td class="Q">1</td><td><a href="report-I12YNQ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-I12YNQ.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">4505</td><td class="Q">1</td><td><a href="report-zBKabf.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-zBKabf.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">4799</td><td class="Q">1</td><td><a href="report-3oKF6t.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3oKF6t.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_math.cpp</td><td class="Q">2050</td><td class="Q">1</td><td><a href="report-xP95kp.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-xP95kp.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2593</td><td class="Q">1</td><td><a href="report-OPnlRv.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-OPnlRv.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2506</td><td class="Q">1</td><td><a href="report-SbhJX4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-SbhJX4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2957</td><td class="Q">1</td><td><a href="report-1guUiY.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1guUiY.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5353</td><td class="Q">1</td><td><a href="report-ff7WYY.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ff7WYY.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2593</td><td class="Q">1</td><td><a href="report-oAodea.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-oAodea.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2911</td><td class="Q">1</td><td><a href="report-JbacLM.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-JbacLM.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1696</td><td class="Q">1</td><td><a href="report-YR9Bjc.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-YR9Bjc.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2831</td><td class="Q">1</td><td><a href="report-rJ2Yez.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-rJ2Yez.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">6020</td><td class="Q">1</td><td><a href="report-HHaiiU.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-HHaiiU.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2444</td><td class="Q">1</td><td><a href="report-qwFoDs.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-qwFoDs.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">2303</td><td class="Q">1</td><td><a href="report-WGCJYl.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-WGCJYl.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2904</td><td class="Q">1</td><td><a href="report-ybPmsP.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ybPmsP.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3392</td><td class="Q">1</td><td><a href="report-SnLYe3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-SnLYe3.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2464</td><td class="Q">1</td><td><a href="report-kKezuy.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-kKezuy.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2424</td><td class="Q">1</td><td><a href="report-OfSTTm.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-OfSTTm.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2546</td><td class="Q">1</td><td><a href="report-2uHI9W.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2uHI9W.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/znzlib.c</td><td class="Q">133</td><td class="Q">1</td><td><a href="report-tLMxh7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-tLMxh7.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1841</td><td class="Q">1</td><td><a href="report-GcqiSh.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-GcqiSh.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3466</td><td class="Q">1</td><td><a href="report-xkEO6H.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-xkEO6H.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3380</td><td class="Q">1</td><td><a href="report-RIwAGn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-RIwAGn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">2556</td><td class="Q">1</td><td><a href="report-AVoOmq.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-AVoOmq.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1576</td><td class="Q">1</td><td><a href="report-YBbGq7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-YBbGq7.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2623</td><td class="Q">1</td><td><a href="report-kvYSWg.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-kvYSWg.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1793</td><td class="Q">1</td><td><a href="report-OuuDVf.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-OuuDVf.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3463</td><td class="Q">1</td><td><a href="report-NvvnRI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-NvvnRI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">2263</td><td class="Q">1</td><td><a href="report-MPLiTj.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-MPLiTj.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2851</td><td class="Q">1</td><td><a href="report-bOi3eD.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bOi3eD.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3459</td><td class="Q">1</td><td><a href="report-0GlkS2.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0GlkS2.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4280</td><td class="Q">1</td><td><a href="report-h9eLvB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-h9eLvB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4282</td><td class="Q">1</td><td><a href="report-0DnQUa.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0DnQUa.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">556</td><td class="Q">1</td><td><a href="report-yxyL34.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-yxyL34.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">4861</td><td class="Q">1</td><td><a href="report-EmZgtG.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-EmZgtG.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1489</td><td class="Q">1</td><td><a href="report-GyVqW5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-GyVqW5.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qt.cpp</td><td class="Q">973</td><td class="Q">1</td><td><a href="report-v0tMge.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-v0tMge.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2546</td><td class="Q">1</td><td><a href="report-UxJ6Zh.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-UxJ6Zh.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4291</td><td class="Q">1</td><td><a href="report-i4ycV5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-i4ycV5.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2623</td><td class="Q">1</td><td><a href="report-XnTp57.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-XnTp57.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2424</td><td class="Q">1</td><td><a href="report-Yi0tkH.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Yi0tkH.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5616</td><td class="Q">1</td><td><a href="report-5HERdv.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5HERdv.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2984</td><td class="Q">1</td><td><a href="report-uWsGh8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-uWsGh8.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2937</td><td class="Q">1</td><td><a href="report-YPGdeV.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-YPGdeV.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4281</td><td class="Q">1</td><td><a href="report-9rJvVL.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9rJvVL.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5558</td><td class="Q">1</td><td><a href="report-dOxe2m.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-dOxe2m.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">4043</td><td class="Q">1</td><td><a href="report-9Cqu9m.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-9Cqu9m.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4285</td><td class="Q">1</td><td><a href="report-S1nFRU.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-S1nFRU.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">3017</td><td class="Q">1</td><td><a href="report-BnrCRb.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-BnrCRb.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1697</td><td class="Q">1</td><td><a href="report-mc2l5d.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-mc2l5d.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2964</td><td class="Q">1</td><td><a href="report-cYXov1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-cYXov1.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2990</td><td class="Q">1</td><td><a href="report-jHTDP4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-jHTDP4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2018</td><td class="Q">1</td><td><a href="report-A7G2hh.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-A7G2hh.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2506</td><td class="Q">1</td><td><a href="report-MKfTzK.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-MKfTzK.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">4690</td><td class="Q">1</td><td><a href="report-hWVhBm.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-hWVhBm.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">221</td><td class="Q">1</td><td><a href="report-UmPqSc.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-UmPqSc.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2878</td><td class="Q">1</td><td><a href="report-T95qKH.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-T95qKH.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/mta_constr.cpp</td><td class="Q">786</td><td class="Q">1</td><td><a href="report-v86m2E.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-v86m2E.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4289</td><td class="Q">1</td><td><a href="report-VFy2iR.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-VFy2iR.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_builtin.cpp</td><td class="Q">1308</td><td class="Q">1</td><td><a href="report-dexflB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-dexflB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2884</td><td class="Q">1</td><td><a href="report-AvUSbK.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-AvUSbK.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">4043</td><td class="Q">1</td><td><a href="report-AdR4Ku.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-AdR4Ku.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">1087</td><td class="Q">1</td><td><a href="report-3UfOlF.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3UfOlF.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/znzlib.c</td><td class="Q">167</td><td class="Q">1</td><td><a href="report-ozQqDV.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ozQqDV.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">246</td><td class="Q">1</td><td><a href="report-1ozqTF.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1ozqTF.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2464</td><td class="Q">1</td><td><a href="report-U3gZJS.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-U3gZJS.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3460</td><td class="Q">1</td><td><a href="report-pJWxFJ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-pJWxFJ.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2825</td><td class="Q">1</td><td><a href="report-ApI4aB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ApI4aB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">273</td><td class="Q">1</td><td><a href="report-mvVi5s.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-mvVi5s.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3448</td><td class="Q">1</td><td><a href="report-ni3JL2.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ni3JL2.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3446</td><td class="Q">1</td><td><a href="report-OpKhpn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-OpKhpn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5363</td><td class="Q">1</td><td><a href="report-XLYs8Q.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-XLYs8Q.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5354</td><td class="Q">1</td><td><a href="report-jtFLU6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-jtFLU6.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3379</td><td class="Q">1</td><td><a href="report-RmQ7h4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-RmQ7h4.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">6738</td><td class="Q">1</td><td><a href="report-6wTfUK.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6wTfUK.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">1221</td><td class="Q">1</td><td><a href="report-D3Zvi5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-D3Zvi5.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_base.cpp</td><td class="Q">4631</td><td class="Q">1</td><td><a href="report-Hoeo6X.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Hoeo6X.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/maketa<span class="W"> </span>/maketa.cpp</td><td class="Q">899</td><td class="Q">1</td><td><a href="report-Qgteow.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Qgteow.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">272</td><td class="Q">1</td><td><a href="report-e5FB6s.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-e5FB6s.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">403</td><td class="Q">1</td><td><a href="report-lmt4YB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-lmt4YB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">292</td><td class="Q">1</td><td><a href="report-3lyOGu.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3lyOGu.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">173</td><td class="Q">1</td><td><a href="report-MqvamQ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-MqvamQ.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_builtin.cpp</td><td class="Q">1933</td><td class="Q">1</td><td><a href="report-D8Ao7j.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-D8Ao7j.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2444</td><td class="Q">1</td><td><a href="report-P9EUVh.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-P9EUVh.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_base.cpp</td><td class="Q">2910</td><td class="Q">1</td><td><a href="report-ZBtYbO.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ZBtYbO.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2484</td><td class="Q">1</td><td><a href="report-It4otE.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-It4otE.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">4758</td><td class="Q">1</td><td><a href="report-WXKlFC.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-WXKlFC.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_qt.cpp</td><td class="Q">988</td><td class="Q">1</td><td><a href="report-jdibUO.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-jdibUO.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2931</td><td class="Q">1</td><td><a href="report-TBnnhS.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-TBnnhS.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">311</td><td class="Q">1</td><td><a href="report-Eqv30X.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Eqv30X.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2566</td><td class="Q">1</td><td><a href="report-56asPT.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-56asPT.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">4434</td><td class="Q">1</td><td><a href="report-hOOkQ7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-hOOkQ7.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/css<span class="W"> </span>/css_ta.cpp</td><td class="Q">271</td><td class="Q">1</td><td><a href="report-IZjAQD.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-IZjAQD.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/colorbar_qt.cpp</td><td class="Q">661</td><td class="Q">1</td><td><a href="report-GvGkvd.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-GvGkvd.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5275</td><td class="Q">1</td><td><a href="report-NgtkHB.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-NgtkHB.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4244</td><td class="Q">1</td><td><a href="report-LP6uhe.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-LP6uhe.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4288</td><td class="Q">1</td><td><a href="report-hFcRYp.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-hFcRYp.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4175</td><td class="Q">1</td><td><a href="report-GtXNZr.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-GtXNZr.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">5158</td><td class="Q">1</td><td><a href="report-wsRSBd.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-wsRSBd.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">4862</td><td class="Q">1</td><td><a href="report-YUZqu9.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-YUZqu9.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2018</td><td class="Q">1</td><td><a href="report-bepyV6.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-bepyV6.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2858</td><td class="Q">1</td><td><a href="report-wC3OqF.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-wC3OqF.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3458</td><td class="Q">1</td><td><a href="report-Xw1NHn.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Xw1NHn.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4284</td><td class="Q">1</td><td><a href="report-SM6Jdi.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-SM6Jdi.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1660</td><td class="Q">1</td><td><a href="report-IL2gCa.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-IL2gCa.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4250</td><td class="Q">1</td><td><a href="report-SKKmkO.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-SKKmkO.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3461</td><td class="Q">1</td><td><a href="report-2iXu6J.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2iXu6J.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5274</td><td class="Q">1</td><td><a href="report-zVzgnJ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-zVzgnJ.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">3010</td><td class="Q">1</td><td><a href="report-6ADlzf.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6ADlzf.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">970</td><td class="Q">1</td><td><a href="report-D102xN.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-D102xN.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2566</td><td class="Q">1</td><td><a href="report-Mfp9C3.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Mfp9C3.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4192</td><td class="Q">1</td><td><a href="report-ZcmCAu.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ZcmCAu.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2484</td><td class="Q">1</td><td><a href="report-5wtHKt.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5wtHKt.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">932</td><td class="Q">1</td><td><a href="report-4jM4QA.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-4jM4QA.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_type.cpp</td><td class="Q">2526</td><td class="Q">1</td><td><a href="report-f5TvnG.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f5TvnG.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">557</td><td class="Q">1</td><td><a href="report-FhQE9x.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-FhQE9x.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/netstru_extra.cpp</td><td class="Q">1661</td><td class="Q">1</td><td><a href="report-WiziZ8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-WiziZ8.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_math.cpp</td><td class="Q">2521</td><td class="Q">1</td><td><a href="report-xq1zgI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-xq1zgI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4290</td><td class="Q">1</td><td><a href="report-29EgLx.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-29EgLx.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3464</td><td class="Q">1</td><td><a href="report-6GIgBI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6GIgBI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">1103</td><td class="Q">1</td><td><a href="report-jjRvlM.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-jjRvlM.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">4177</td><td class="Q">1</td><td><a href="report-RjM577.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-RjM577.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_matrix.cpp</td><td class="Q">2474</td><td class="Q">1</td><td><a href="report-oOXJqx.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-oOXJqx.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">3493</td><td class="Q">1</td><td><a href="report-2FabcI.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-2FabcI.html" -->
+</tr>
+<tr class="bt_dead_store_dead_initialization"><td class="DESC">Dead store</td><td class="DESC">Dead initialization</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_math.cpp</td><td class="Q">5147</td><td class="Q">1</td><td><a href="report-LyZ6l1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-LyZ6l1.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">1972</td><td class="Q">6</td><td><a href="report-leOuqT.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-leOuqT.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">7141</td><td class="Q">6</td><td><a href="report-6cAbBz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6cAbBz.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_program.cpp</td><td class="Q">5947</td><td class="Q">2</td><td><a href="report-3GrM0a.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-3GrM0a.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">3838</td><td class="Q">6</td><td><a href="report-5txLA0.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5txLA0.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">191</td><td class="Q">4</td><td><a href="report-DXeuE7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-DXeuE7.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">7178</td><td class="Q">7</td><td><a href="report-APRaVz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-APRaVz.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_datagen.cpp</td><td class="Q">179</td><td class="Q">4</td><td><a href="report-fuimI4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-fuimI4.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra.cpp</td><td class="Q">7164</td><td class="Q">6</td><td><a href="report-tKQwG4.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-tKQwG4.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_datagen.cpp</td><td class="Q">180</td><td class="Q">5</td><td><a href="report-mH4syP.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-mH4syP.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">1882</td><td class="Q">4</td><td><a href="report-kUOE4r.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-kUOE4r.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_base.cpp</td><td class="Q">2980</td><td class="Q">50</td><td><a href="report-zY8W3n.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-zY8W3n.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">943</td><td class="Q">5</td><td><a href="report-Ne4nry.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Ne4nry.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_program.cpp</td><td class="Q">595</td><td class="Q">3</td><td><a href="report-n1IV6B.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-n1IV6B.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_program.cpp</td><td class="Q">5596</td><td class="Q">2</td><td><a href="report-BmVF41.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-BmVF41.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_hippo.cpp</td><td class="Q">365</td><td class="Q">6</td><td><a href="report-047DV8.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-047DV8.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">104</td><td class="Q">4</td><td><a href="report-Bewsa1.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-Bewsa1.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_td.cpp</td><td class="Q">189</td><td class="Q">7</td><td><a href="report-a7Xqmz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-a7Xqmz.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5673</td><td class="Q">4</td><td><a href="report-R2wKuD.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-R2wKuD.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_program.cpp</td><td class="Q">690</td><td class="Q">3</td><td><a href="report-1B6OCK.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-1B6OCK.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">225</td><td class="Q">2</td><td><a href="report-LX3Mde.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-LX3Mde.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_pbwm.cpp</td><td class="Q">699</td><td class="Q">13</td><td><a href="report-qoIq58.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-qoIq58.html" -->
+</tr>
+<tr class="bt_logic_error_function_call_argument_is_an_uninitialized_value"><td class="DESC">Logic error</td><td class="DESC">Function call argument is an uninitialized value</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">4615</td><td class="Q">10</td><td><a href="report-TMvXvr.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-TMvXvr.html" -->
+</tr>
+<tr class="bt_logic_error_function_call_argument_is_an_uninitialized_value"><td class="DESC">Logic error</td><td class="DESC">Function call argument is an uninitialized value</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">4617</td><td class="Q">10</td><td><a href="report-huSpNQ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-huSpNQ.html" -->
+</tr>
+<tr class="bt_logic_error_function_call_argument_is_an_uninitialized_value"><td class="DESC">Logic error</td><td class="DESC">Function call argument is an uninitialized value</td><td>emergent<span class="W"> </span>/network<span class="W"> </span>/nifti1_io.c</td><td class="Q">4608</td><td class="Q">10</td><td><a href="report-ZHEugg.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-ZHEugg.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5394</td><td class="Q">1</td><td><a href="report-dCCRVe.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-dCCRVe.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">3421</td><td class="Q">1</td><td><a href="report-uh86Ww.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-uh86Ww.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">3439</td><td class="Q">1</td><td><a href="report-yts382.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-yts382.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">3405</td><td class="Q">1</td><td><a href="report-e5oWU0.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-e5oWU0.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">3574</td><td class="Q">1</td><td><a href="report-OfM5Z5.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-OfM5Z5.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>emergent<span class="W"> </span>/leabra<span class="W"> </span>/leabra_extra.cpp</td><td class="Q">5914</td><td class="Q">1</td><td><a href="report-RWuTQL.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-RWuTQL.html" -->
+</tr>
+<tr class="bt_dead_code_idempotent_operation"><td class="DESC">Dead code</td><td class="DESC">Idempotent operation</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">3463</td><td class="Q">2</td><td><a href="report-KByHuz.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-KByHuz.html" -->
+</tr>
+<tr class="bt_logic_error_result_of_operation_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Result of operation is garbage or undefined</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">2375</td><td class="Q">7</td><td><a href="report-k8cOjZ.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-k8cOjZ.html" -->
+</tr>
+<tr class="bt_logic_error_result_of_operation_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Result of operation is garbage or undefined</td><td>temt<span class="W"> </span>/ta<span class="W"> </span>/ta_imgproc.cpp</td><td class="Q">2366</td><td class="Q">8</td><td><a href="report-uTlYKt.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-uTlYKt.html" -->
+</tr>
+</tbody>
+</table>
+
+</body></html>

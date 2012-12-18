@@ -1,0 +1,21 @@
+[/home/mingus/emergent/bench/020/shared/nb_netstru.h:148]: (error) Memory leak: RecvCons::cons
+[/home/mingus/emergent/bench/020/shared/nb_netstru.cpp:87]: (error) Common realloc mistake: 'cons' nulled but not freed upon failure
+[/home/mingus/emergent/bench/010/shared/nb_netstru.old.cpp:287]: (error) Invalid number of character (() when these macros are defined: 'DEBUG'.
+[/home/mingus/emergent/bench/010/shared/nb_netstru.h:484]: (error) Memory leak: Projection::cons
+[/home/mingus/emergent/plugins/LIBLINEAR/LIBLINEAR.cpp:40]: (error) Common realloc mistake: 'line' nulled but not freed upon failure
+[/home/mingus/emergent/plugins/LIBLINEAR/liblinear-1.8/matlab/libsvmread.c:45]: (error) Common realloc mistake: 'line' nulled but not freed upon failure
+[/home/mingus/emergent/plugins/LIBLINEAR/liblinear-1.8/predict.c:33]: (error) Common realloc mistake: 'line' nulled but not freed upon failure
+[/home/mingus/emergent/plugins/LIBLINEAR/liblinear-1.8/predict.c:97]: (error) Common realloc mistake: 'x' nulled but not freed upon failure
+[/home/mingus/emergent/plugins/LIBLINEAR/liblinear-1.8/train.c:65]: (error) Common realloc mistake: 'line' nulled but not freed upon failure
+[/home/mingus/emergent/plugins/audioproc/ap_files.cpp:72]: (error) Memory leak: codec
+[/home/mingus/emergent/src/emergent/leabra/leabra.cpp:7228]: (error) Possible null pointer dereference: proj - otherwise it is redundant to check if proj is null at line 7242
+[/home/mingus/emergent/src/emergent/network/netstru.cpp:6380]: (error) Division by zero
+[/home/mingus/emergent/src/emergent/network/nifti1_io.c:7219]: (error) Common realloc mistake: 'subv' nulled but not freed upon failure
+[/home/mingus/emergent/src/emergent/network/nifti1_io.c:7295]: (error) Common realloc mistake: 'subv' nulled but not freed upon failure
+[/home/mingus/emergent/src/emergent/network/nifti1_io.c:3620]: (error) Memory leak: nim
+[/home/mingus/emergent/src/temt/css/css_machine.cpp:2443]: (error) Common realloc mistake: 'els' nulled but not freed upon failure
+[/home/mingus/emergent/src/temt/css/css_machine.cpp:3019]: (error) Common realloc mistake: 'insts' nulled but not freed upon failure
+[/home/mingus/emergent/src/temt/css/css_machine.cpp:3028]: (error) Common realloc mistake: 'frame' nulled but not freed upon failure
+[/home/mingus/emergent/src/temt/css/css_machine.cpp:3791]: (error) Common realloc mistake: 'progs' nulled but not freed upon failure
+[/home/mingus/emergent/src/temt/css/css_machine.cpp:5363]: (error) Common realloc mistake: 'stack' nulled but not freed upon failure
+[/home/mingus/emergent/src/temt/css/css_misc_funs.cpp:72]: (error) Resource leak: dirp

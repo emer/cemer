@@ -1,0 +1,871 @@
+<!doctype html>
+<html>
+<head>
+<title>/home/mingus/emergent/src/emergent/leabra/leabra_hippo.cpp</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Andale Mono", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px 0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'rus' during its initialization is never read -->
+
+<!-- BUGTYPE Dead initialization -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /home/mingus/emergent/src/emergent/leabra/leabra_hippo.cpp -->
+
+<!-- BUGLINE 221 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>emergent/leabra/leabra_hippo.cpp</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 221, column 19</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'rus' during its initialization is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>// Copyright, 1995-2007, Regents of the University of Colorado,</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line"><span class='comment'>// Carnegie Mellon University, Princeton University.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"><span class='comment'>//</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line"><span class='comment'>// This file is part of Emergent</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"><span class='comment'>//</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"><span class='comment'>//   Emergent is free software; you can redistribute it and/or modify</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line"><span class='comment'>//   it under the terms of the GNU General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line"><span class='comment'>//   the Free Software Foundation; either version 2 of the License, or</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line"><span class='comment'>//   (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line"><span class='comment'>//</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line"><span class='comment'>//   Emergent is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line"><span class='comment'>//   but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"><span class='comment'>//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line"><span class='comment'>//   GNU General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line"><span class='directive'>#include "leabra_hippo.h"</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"><span class='comment'>///////////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"><span class='comment'>//              Special Hippocampal Quadphase Layerspecs</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='keyword'>void</span> HippoQuadLayerSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line">  auto_m_cycles = 30;</td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line">  Defaults_init();</td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='keyword'>void</span> HippoQuadLayerSpec::Defaults_init() {</td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line">  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;</td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">  inhib.kwta_pt = 0.7f;</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='keyword'>void</span> HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit*)<br> (lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">    u-&gt;act_m2 = u-&gt;act_nd;      <span class='comment'>// record the minus phase before overwriting it..</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">  <span class='comment'>// record stats for act_m2</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  AvgMaxVals&amp; vals = lay-&gt;acts_m2;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">  <span class='keyword'>static</span> ta_memb_ptr mb_off = 0;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  <span class='keyword'>if</span>(mb_off == 0) {</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">    TypeDef* td = &amp;TA_LeabraUnit; <span class='keyword'>int</span> net_base_off = 0;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, <span class='string_literal'>"act_m2"</span>);</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;unit_groups) {</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">    vals.InitVals();</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">    <span class='keyword'>int</span> nunits = lay-&gt;UnitAccess_NUnits(Layer::ACC_GP);</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">    <span class='keyword'>for</span>(<span class='keyword'>int</span> g=0; g &lt; lay-&gt;gp_geom.n; g++) {</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">      LeabraUnGpData* gpd = lay-&gt;ungp_data.FastEl(g);</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd-&gt;acts_m2, mb_off);</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">      vals.UpdtFmAvgMax(gpd-&gt;acts_m2, nunits, g);</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">    vals.CalcAvg(lay-&gt;units.leaves);</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">    Compute_AvgMaxVals_ugp(lay, Layer::ACC_LAY, 0, vals, mb_off);</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"><span class='keyword'>void</span> HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  LeabraUnitSpec* us = (LeabraUnitSpec*)lay-&gt;unit_spec.SPtr();</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">  <span class='keyword'>float</span> norm_err = 0.0f;</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>float</span> sse_err = 0.0f;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit*)<br> (lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">    u-&gt;act_dif2 = u-&gt;act_eq - u-&gt;act_m2;</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">    <span class='keyword'>float</span> sse = u-&gt;act_dif2;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    <span class='keyword'>if</span>(fabsf(sse) &lt; us-&gt;sse_tol)</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">      sse = 0.0f;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">    sse *= sse;</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">    sse_err += sse;</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    <span class='keyword'>if</span>(net-&gt;on_errs) {</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">      <span class='keyword'>if</span>(u-&gt;act_m2 &gt; 0.5f &amp;&amp; u-&gt;act_eq &lt; 0.5f) norm_err += 1.0f;</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">    <span class='keyword'>if</span>(net-&gt;off_errs) {</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">      <span class='keyword'>if</span>(u-&gt;act_m2 &lt; 0.5f &amp;&amp; u-&gt;act_eq &gt; 0.5f) norm_err += 1.0f;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">  <span class='keyword'>int</span> ntot = 0;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">  <span class='keyword'>if</span>(net-&gt;on_errs &amp;&amp; net-&gt;off_errs)</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">    ntot = 2 * lay-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">    ntot = lay-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  <span class='keyword'>if</span>(ntot &gt; 0)</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">    norm_err = norm_err / (<span class='keyword'>float</span>)ntot;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  <span class='keyword'>if</span>(norm_err &gt; 1.0f)</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">    norm_err = 1.0f;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">  lay-&gt;SetUserData(<span class='string_literal'>"enc_sse"</span>, sse_err);</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">  lay-&gt;SetUserData(<span class='string_literal'>"enc_norm_err"</span>, norm_err);</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line"><span class='keyword'>void</span> ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">  <span class='keyword'>if</span>(net-&gt;ct_cycle == auto_m_cycles)</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    RecordActM2(lay,net);</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">  inherited::Compute_CycleStats(lay, net);</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"><span class='keyword'>void</span> ECoutLayerSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  Defaults_init();</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"><span class='keyword'>void</span> ECoutLayerSpec::Defaults_init() {</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  SetUnique(<span class='string_literal'>"inhib_group"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">  inhib_group = UNIT_GROUPS;</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">  SetUnique(<span class='string_literal'>"inhib"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">  inhib.type = LeabraInhibSpec::KWTA_INHIB;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">  inhib.kwta_pt = 0.25f;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">  SetUnique(<span class='string_literal'>"clamp"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  clamp.max_plus = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line"><span class='keyword'>bool</span> ECoutLayerSpec::CheckConfig_Layer(Layer* ly, <span class='keyword'>bool</span> quiet) {</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">  LeabraLayer* lay = (LeabraLayer*)ly;</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">  <span class='keyword'>if</span>(!inherited::CheckConfig_Layer(lay, quiet)) <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">  <span class='keyword'>bool</span> rval = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  LeabraNetwork* net = (LeabraNetwork*)lay-&gt;own_net;</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">  <span class='keyword'>if</span>(net) {</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">    <span class='keyword'>if</span>(TestWarning(net-&gt;min_cycles &lt; auto_m_cycles + 20, <span class='string_literal'>"CheckConfig"</span>,</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                   <span class='string_literal'>"ECoutLayerSpec: setting network min_cycles to be auto_m_cycles + 20 to ensure minimum amount of time to settle"</span>)) {</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">      net-&gt;min_cycles = auto_m_cycles + 20;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='keyword'>if</span>(TestWarning((net-&gt;learn_rule &gt;= LeabraNetwork::CTLEABRA_CAL) &amp;&amp;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                   (net-&gt;ct_time.minus &lt; auto_m_cycles + 20), <span class='string_literal'>"CheckConfig"</span>,</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">                   <span class='string_literal'>"ECoutLayerSpec: setting network ct_time.minus to be auto_m_cycles + 20 to ensure minimum amount of time to settle"</span>)) {</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">      net-&gt;ct_time.minus = auto_m_cycles + 20;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  <span class='keyword'>int</span> in_prjn_idx;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &amp;TA_ECinLayerSpec);</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">  <span class='keyword'>if</span>(!in_lay) <span class='keyword'>return</span> <span class='keyword'>true</span>;		<span class='comment'>// just hope it works out</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">  <span class='comment'>// if(lay-&gt;CheckError(!in_lay, quiet, rval,</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">  <span class='comment'>//               "no projection from ECin Layer found: must recv from layer with ECinLayerSpec!")) {</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">  <span class='comment'>//   return false;</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  <span class='comment'>// }</span></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  <span class='keyword'>if</span>(in_lay-&gt;unit_groups) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    <span class='keyword'>if</span>(lay-&gt;CheckError(in_lay-&gt;gp_geom.n != lay-&gt;gp_geom.n, quiet, rval,</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">                       <span class='string_literal'>"ECout Layer unit groups must = ECinLayer unit groups, copiped from IN Layer; Please do a Build of network"</span>)) {</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">      lay-&gt;unit_groups = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">      lay-&gt;gp_geom.n = in_lay-&gt;gp_geom.n;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(in_lay-&gt;un_geom.n != lay-&gt;un_geom.n, quiet, rval,</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">                <span class='string_literal'>"ECout Layer units must = ECinLayer units, copied from IN Layer; Please do a Build of network"</span>)) {</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">    lay-&gt;un_geom = in_lay-&gt;un_geom;</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">  <span class='keyword'>return</span> <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"><span class='keyword'>void</span> ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">  <span class='keyword'>int</span> in_prjn_idx;</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &amp;TA_ECinLayerSpec);</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">  <span class='keyword'>if</span>(!in_lay) <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay-&gt;GetUnitSpec();</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">  <span class='keyword'>int</span> nunits = <span class='macro'>MIN(in_lay-&gt;units.leaves, lay-&gt;units.leaves)<span class='expansion'>(((in_lay-&gt;units.leaves) &lt; (lay-&gt;units.leaves)) ? (in_lay<br>-&gt;units.leaves) : (lay-&gt;units.leaves))</span></span>;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">  <span class='keyword'>for</span>(<span class='keyword'>int</span> i=0;i&lt;nunits;i++) {</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">    LeabraUnit* ru = (LeabraUnit*)lay-&gt;units.Leaf(i);</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">    LeabraUnit* inu = (LeabraUnit*)in_lay-&gt;units.Leaf(i);</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">    <span class='keyword'>float</span> inval = inu-&gt;act_eq;</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">    <span class='keyword'>if</span>(clamp.max_plus) {</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">      <span class='keyword'>float</span> min_max = <span class='macro'>MAX(lay-&gt;acts_m.max, lay-&gt;acts_m2.max)<span class='expansion'>(((lay-&gt;acts_m.max) &gt; (lay-&gt;acts_m2.max)) ? (lay-&gt;<br>acts_m.max) : (lay-&gt;acts_m2.max))</span></span>; <span class='comment'>// consider auto enc max too -- esp if doing pretraining on encoder only, this is important</span></td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">      <span class='keyword'>float</span> clmp = min_max + clamp.plus;</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">      clmp = <span class='macro'>MAX(clmp, clamp.min_clamp)<span class='expansion'>(((clmp) &gt; (clamp.min_clamp)) ? (clmp) : (clamp.min_clamp)<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">      inval *= clmp;            <span class='comment'>// downscale</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">    ru-&gt;act = rus-&gt;clamp_range.Clip(inval);</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">    ru-&gt;act_eq = ru-&gt;act_nd = ru-&gt;act;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">    ru-&gt;da = 0.0f;              <span class='comment'>// I'm fully settled!</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">    ru-&gt;AddToActBuf(rus-&gt;syn_delay);</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line"><span class='keyword'>void</span> ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  <span class='keyword'>if</span>(net-&gt;ct_cycle == auto_m_cycles)</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    RecordActM2(lay,net);</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">  <span class='keyword'>if</span>(net-&gt;phase == LeabraNetwork::PLUS_PHASE) {</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">    ClampFromECin(lay, net);</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">    <span class='keyword'>if</span>(net-&gt;cycle &lt;= 1)</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">      Compute_AutoEncStats(lay, net);</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">  inherited::Compute_CycleStats(lay, net);</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line"><span class='comment'>/////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line"><span class='comment'>//              CA1</span></td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line"><span class='keyword'>void</span> CA1LayerSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">  recall_decay = 1.0f;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">  use_test_mode = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line"><span class='keyword'>bool</span> CA1LayerSpec::CheckConfig_Layer(Layer* ly, <span class='keyword'>bool</span> quiet) {</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">  LeabraLayer* lay = (LeabraLayer*)ly;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">  <span class='keyword'>if</span>(!inherited::CheckConfig_Layer(lay, quiet)) <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">  <span class='keyword'>bool</span> rval = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">  <span class='keyword'>int</span> in_prjn_idx;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &amp;TA_CA3LayerSpec);</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(!in_lay, quiet, rval,</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">                <span class='string_literal'>"no projection from CA3 Layer found: must recv from layer with CA3LayerSpec!"</span>)) {</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">    <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">  in_lay = FindLayerFmSpec(lay, in_prjn_idx, &amp;TA_ECinLayerSpec);</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(!in_lay, quiet, rval,</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">                <span class='string_literal'>"no projection from EC_in Layer found: must recv from layer with ECinLayerSpec!"</span>)) {</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">    <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">  <span class='keyword'>return</span> <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line"><span class='keyword'>void</span> CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, <span class='keyword'>bool</span> ca3_on) {</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">  <span class='keyword'>int</span> ca3_prjn_idx;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">  LeabraLayer* ca3_lay = FindLayerFmSpec(lay, ca3_prjn_idx, &amp;TA_CA3LayerSpec);</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">  <span class='keyword'>if</span>(!ca3_lay) <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">  LeabraUnitSpec* <span class="mrange">rus</span> = <span class="mrange">(LeabraUnitSpec*)lay-&gt;GetUnitSpec()</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:19ex">Value stored to 'rus' during its initialization is never read</div></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit*)<br> (lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">    <span class='keyword'>if</span>(ca3_on) {</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">      u-&gt;Compute_NetinScale(net,0);</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">    <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u-&gt;recv.SafeEl(ca3_prjn_idx);</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">    <span class='keyword'>if</span>(recv_gp)</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">      recv_gp-&gt;scale_eff = 0.0f;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='comment'>// re-trigger netinput sending for all senders</span></td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ca3_lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (ca3_lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit<br>*) (ca3_lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">    u-&gt;Compute_NetinScale_Senders(net,-1);</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line"><span class='keyword'>void</span> CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, <span class='keyword'>bool</span> ecin_on) {</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">  <span class='keyword'>int</span> ecin_prjn_idx;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  LeabraLayer* ecin_lay = FindLayerFmSpec(lay, ecin_prjn_idx, &amp;TA_ECinLayerSpec);</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">  <span class='keyword'>if</span>(!ecin_lay) <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay-&gt;GetUnitSpec();</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit*)<br> (lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    <span class='keyword'>if</span>(ecin_on) {</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">      u-&gt;Compute_NetinScale(net,0);</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">    <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u-&gt;recv.SafeEl(ecin_prjn_idx);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">      <span class='keyword'>if</span>(recv_gp) {</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">	recv_gp-&gt;scale_eff = 0.0f;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraUnit, u, ecin_lay-&gt;units)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraUnit *u = (LeabraUnit<br>*) (ecin_lay-&gt;units).FirstEl(FOREACH_itr); u; u = (LeabraUnit<br>*) (ecin_lay-&gt;units).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">    <span class='keyword'>if</span>(u-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">    u-&gt;Compute_NetinScale_Senders(net,-1);</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"><span class='keyword'>void</span> CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  <span class='comment'>// always off at start of minus and plus phase</span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">  ModulateCA3Prjn(lay, net, <span class='keyword'>false</span>); <span class='comment'>// turn off ca3 in minus phase until further notice</span></td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">  <span class='keyword'>if</span>(net-&gt;phase == LeabraNetwork::PLUS_PHASE)</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">    lay-&gt;DecayState(net, recall_decay); <span class='comment'>// decay at start of plus phase too</span></td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  inherited::Settle_Init_Layer(lay, net);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"><span class='keyword'>void</span> CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">  <span class='keyword'>if</span>(net-&gt;ct_cycle == auto_m_cycles)</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">    RecordActM2(lay,net);</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">  <span class='keyword'>if</span>(net-&gt;ct_cycle == auto_m_cycles+1) {</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">    <span class='keyword'>if</span>(!(use_test_mode &amp;&amp; net-&gt;train_mode == Network::TEST))</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">      lay-&gt;DecayState(net, recall_decay); <span class='comment'>// specifically CA1 activations at recall</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">    ModulateCA3Prjn(lay, net, <span class='keyword'>true</span>);    <span class='comment'>// turn on ca3 -- calls netinscale</span></td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">    <span class='keyword'>if</span>(!(use_test_mode &amp;&amp; net-&gt;train_mode == Network::TEST))</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">      ModulateECinPrjn(lay, net, <span class='keyword'>false</span>); <span class='comment'>// turn off ecin -- must be after ca3 to specifically turn off</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">    net-&gt;init_netins_cycle_stat = <span class='keyword'>true</span>; <span class='comment'>// call net-&gt;Init_Netins() when done..</span></td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">  inherited::Compute_CycleStats(lay, net);</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line"><span class='comment'>///////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line"><span class='comment'>//   SubiculumLayerSpec</span></td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"><span class='keyword'>void</span> SubiculumNoveltySpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">  max_norm_err = 0.2f;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">  min_lrate = 0.01f;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">  nov_rescale = 1.0f / max_norm_err;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">  lrate_factor = (1.0f - min_lrate);</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line"><span class='keyword'>void</span> SubiculumNoveltySpec::UpdateAfterEdit_impl() {</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">  inherited::UpdateAfterEdit_impl();</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">  nov_rescale = 1.0f / max_norm_err;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">  lrate_factor = (1.0f - min_lrate);</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  lrate_mod_con_spec.SetBaseType(&amp;TA_LeabraConSpec);</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  Defaults_init();</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::Defaults_init() {</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  scalar.rep = ScalarValSpec::GAUSSIAN;</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  unit_range.min = -0.5f;</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">  unit_range.max = 1.5f;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  inhib.kwta_pt = 0.5f;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">  kwta.k = 3;</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"><span class='keyword'>bool</span> SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, <span class='keyword'>bool</span> quiet) {</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  LeabraLayer* lay = (LeabraLayer*)ly;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  <span class='keyword'>if</span>(!inherited::CheckConfig_Layer(lay, quiet)) <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  <span class='keyword'>bool</span> rval = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(lay-&gt;projections.size &lt; 2, quiet, rval,</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">        <span class='string_literal'>"must receive from at least 2 other layers -- one pair of EC_in / EC_out layers!"</span>)) {</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">    <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(lay-&gt;projections.size % 2 != 0, quiet, rval,</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        <span class='string_literal'>"must receive from an even number of other layers -- sequential matched pairs of EC_in / EC_out layers!"</span>)) {</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">    <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">  <span class='keyword'>for</span>(<span class='keyword'>int</span> pi=0; pi&lt;lay-&gt;projections.size; pi+=2) {</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">    Projection* pin = lay-&gt;projections.FastEl(pi);</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">    Projection* pout = lay-&gt;projections.FastEl(pi+1);</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">    LeabraLayer* lin = (LeabraLayer*)pin-&gt;from.ptr();</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">    LeabraLayer* lout = (LeabraLayer*)pout-&gt;from.ptr();</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">    LeabraLayerSpec* lsin = (LeabraLayerSpec*)lin-&gt;GetLayerSpec();</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">    LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout-&gt;GetLayerSpec();</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">    <span class='keyword'>if</span>(lay-&gt;CheckError(!lsin-&gt;InheritsFrom(&amp;TA_ECinLayerSpec), quiet, rval,</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">                       <span class='string_literal'>"projection number:"</span>, <span class='macro'>String<span class='expansion'>taString</span></span>(pi), <span class='string_literal'>"should have been ECin, instead was:"</span>,</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">                       lsin-&gt;name, <span class='string_literal'>"type:"</span>, lsin-&gt;GetTypeDef()-&gt;name)) {</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">      <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">    <span class='keyword'>if</span>(lay-&gt;CheckError(!lsout-&gt;InheritsFrom(&amp;TA_ECoutLayerSpec), quiet, rval,</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">               <span class='string_literal'>"projection number:"</span>, <span class='macro'>String<span class='expansion'>taString</span></span>(pi+1), <span class='string_literal'>"should have been ECout, instead was:"</span>,</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">               lsout-&gt;name, <span class='string_literal'>"type:"</span>, lsout-&gt;GetTypeDef()-&gt;name)) {</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">      <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">    <span class='keyword'>bool</span> geom_eq = (lin-&gt;un_geom == lout-&gt;un_geom) &amp;&amp; (lin-&gt;gp_geom == lout-&gt;gp_geom);</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">    <span class='keyword'>if</span>(lay-&gt;CheckError(!geom_eq, quiet, rval,</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">               <span class='string_literal'>"projection numbers starting at:"</span>, <span class='macro'>String<span class='expansion'>taString</span></span>(pi), <span class='string_literal'>"do not have the same geometry, ECin layer:"</span>,</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">                       lin-&gt;name, <span class='string_literal'>"ECout layer:"</span>, lout-&gt;name)) {</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">      <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;CheckError(!cs, quiet, rval,</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">                     <span class='string_literal'>"lrate_mod_con_spec is NULL"</span>)) {</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">      <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">  <span class='keyword'>if</span>(cs-&gt;lrate_sched.size &gt; 0) {</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">    TestWarning(<span class='keyword'>true</span>, <span class='string_literal'>"CheckConfig"</span>, <span class='string_literal'>"configuring lrate_sched on lrate_mod_con_spec to be empty:"</span></td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">                , cs-&gt;name);</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">    cs-&gt;lrate_sched.SetSize(0);</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">    cs-&gt;UpdateAfterEdit();      <span class='comment'>// update subs</span></td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">  <span class='keyword'>return</span> <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line"><span class='keyword'>float</span> SubiculumLayerSpec::Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* lout,</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">                                           Layer::AccessMode acc_md, <span class='keyword'>int</span> gpidx,</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">                                           LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">  <span class='keyword'>int</span> nunits = lin-&gt;UnitAccess_NUnits(acc_md);</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">  <span class='keyword'>float</span> nerr = 0.0f;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">  <span class='keyword'>for</span>(<span class='keyword'>int</span> i=0; i&lt;nunits; i++) {</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">    LeabraUnit* uin = (LeabraUnit*)lin-&gt;UnitAccess(acc_md, i, gpidx);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">    <span class='keyword'>if</span>(uin-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">    LeabraUnit* uout = (LeabraUnit*)lout-&gt;UnitAccess(acc_md, i, gpidx);</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">    <span class='keyword'>if</span>(uout-&gt;lesioned()) <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">    <span class='keyword'>float</span> outval = uout-&gt;act_eq;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">    <span class='keyword'>if</span>(net-&gt;phase == LeabraNetwork::PLUS_PHASE) outval = uout-&gt;act_m; <span class='comment'>// use minus</span></td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">    <span class='keyword'>if</span>(net-&gt;on_errs) { <span class='keyword'>if</span>(outval &gt; 0.5f &amp;&amp; uin-&gt;act_eq &lt; 0.5f) nerr += 1.0f; }</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">    <span class='keyword'>if</span>(net-&gt;off_errs) { <span class='keyword'>if</span>(outval &lt; 0.5f &amp;&amp; uin-&gt;act_eq &gt; 0.5f) nerr += 1.0f; }</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">  <span class='keyword'>return</span> nerr;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">  <span class='keyword'>float</span> nerr = 0.0f;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">  <span class='keyword'>int</span> ntot = 0;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">  <span class='keyword'>for</span>(<span class='keyword'>int</span> pi=0; pi&lt;lay-&gt;projections.size; pi+=2) {</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">    Projection* pin = lay-&gt;projections.FastEl(pi);</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">    Projection* pout = lay-&gt;projections.FastEl(pi+1);</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">    LeabraLayer* lin = (LeabraLayer*)pin-&gt;from.ptr();</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">    LeabraLayer* lout = (LeabraLayer*)pout-&gt;from.ptr();</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">    LeabraLayerSpec* lsin = (LeabraLayerSpec*)lin-&gt;GetLayerSpec();</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">    LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout-&gt;GetLayerSpec();</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">    <span class='keyword'>if</span>((lsin-&gt;inhib_group != ENTIRE_LAYER) &amp;&amp; lin-&gt;unit_groups) {</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">      <span class='keyword'>for</span>(<span class='keyword'>int</span> g=0; g &lt; lay-&gt;gp_geom.n; g++) {</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        LeabraUnGpData* gpdin = lin-&gt;ungp_data.FastEl(g);</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_GP, g, net);</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        <span class='keyword'>if</span>(net-&gt;on_errs &amp;&amp; net-&gt;off_errs)</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">          ntot += 2 * gpdin-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">          ntot += gpdin-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">    <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">      nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_LAY, 0, net);</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">      <span class='keyword'>if</span>(net-&gt;on_errs &amp;&amp; net-&gt;off_errs)</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">        ntot += 2 * lin-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">      <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">        ntot += lin-&gt;kwta.k;</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">  <span class='comment'>// store norm_err on us too..</span></td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">  lay-&gt;norm_err = nerr / (<span class='keyword'>float</span>)ntot;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">  <span class='keyword'>if</span>(lay-&gt;norm_err &gt; 1.0f) lay-&gt;norm_err = 1.0f;</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">  <span class='keyword'>float</span> nov = novelty.ComputeNovelty(lay-&gt;norm_err);</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">  <span class='keyword'>float</span> lrate = novelty.ComputeLrate(nov);</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">  lay-&gt;SetUserData(<span class='string_literal'>"novelty"</span>, nov);</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">  lay-&gt;SetUserData(<span class='string_literal'>"lrate"</span>, lrate);</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">  <span class='comment'>// clamp novelty value on our layer</span></td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">  <span class='macro'>UNIT_GP_ITR<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">    <span class='macro'>(lay,<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">     <span class='macro'>LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx);<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">     <span class='macro'>u-&gt;ext = nov;<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">     <span class='macro'>ClampValue_ugp(lay, acc_md, gpidx, net);<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">     <span class='macro'>Compute_ExtToAct_ugp(lay, acc_md, gpidx, net);<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span></td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">     <span class='macro'>)<span class='expansion'>if(lay-&gt;unit_groups) { for(int gpidx=0; gpidx &lt; lay-&gt;<br>gp_geom.n; gpidx++) { Layer::AccessMode acc_md = Layer::ACC_GP<br>; LeabraUnit* u = (LeabraUnit*)lay-&gt;UnitAccess(acc_md, 0, gpidx<br>); u-&gt;ext = nov; ClampValue_ugp(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp<br>(lay, acc_md, gpidx, net); } } else { Layer::AccessMode acc_md<br> = Layer::ACC_LAY; int gpidx = 0; LeabraUnit* u = (LeabraUnit<br>*)lay-&gt;UnitAccess(acc_md, 0, gpidx); u-&gt;ext = nov; ClampValue_ugp<br>(lay, acc_md, gpidx, net); Compute_ExtToAct_ugp(lay, acc_md, gpidx<br>, net); }</span></span>;</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">  Compute_ECNovelty(lay, net);</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">  <span class='keyword'>float</span> nov = novelty.ComputeNovelty(lay-&gt;norm_err);</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">  <span class='keyword'>float</span> lrate = novelty.ComputeLrate(nov);</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">  <span class='keyword'>if</span>(cs) {</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">    cs-&gt;lrate_sched.default_val = lrate;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">    cs-&gt;UpdateAfterEdit_NoGui();        <span class='comment'>// propagate to children</span></td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">    cs-&gt;SetCurLrate(net, net-&gt;epoch);	<span class='comment'>// actually make it take NOW to affect cur_lrate</span></td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">    <span class='macro'>FOREACH_ELEM_IN_GROUP(LeabraConSpec, lc, cs-&gt;children)<span class='expansion'>if (bool FOREACH_done = false) { } else for (taLeafItr FOREACH_itr<br>; !FOREACH_done; FOREACH_done = true) for (LeabraConSpec *lc =<br> (LeabraConSpec*) (cs-&gt;children).FirstEl(FOREACH_itr); lc;<br> lc = (LeabraConSpec*) (cs-&gt;children).NextEl(FOREACH_itr))</span></span> {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">      lc-&gt;lrate_sched.default_val = lrate;</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">      lc-&gt;UpdateAfterEdit_NoGui();        <span class='comment'>// propagate to children</span></td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">      lc-&gt;SetCurLrate(net, net-&gt;epoch);	<span class='comment'>// actually make it take NOW to affect cur_lrate</span></td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">  Compute_ECNovelty(lay, net);</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">  inherited::Compute_CycleStats(lay, net);</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line"><span class='keyword'>void</span> SubiculumLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">  inherited::PostSettle(lay, net);</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">  <span class='keyword'>if</span>(net-&gt;phase == LeabraNetwork::PLUS_PHASE) {</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">    Compute_SetLrate(lay, net);</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line"><span class='comment'>///////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line"><span class='comment'>//   HippoEncoderConSpec</span></td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line"><span class='keyword'>void</span> HippoEncoderConSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">  SetUnique(<span class='string_literal'>"lmix"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">  lmix.hebb = 0.005f;		<span class='comment'>// works better with tiny bit of hebb apparently..</span></td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">  lmix.err = 1.0f;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line"><span class='comment'>//   lmix.err_sb = false;</span></td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">  <span class='comment'>// SetUnique("wt_limits", true);</span></td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">  <span class='comment'>// wt_limits.sym = false;</span></td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">  SetUnique(<span class='string_literal'>"wt_sig"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">  wt_sig.gain = 6.0f;  wt_sig.off = 1.0f; <span class='comment'>// 1.0f seems to work better actually</span></td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">  SetUnique(<span class='string_literal'>"savg_cor"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">  savg_cor.cor = 1.0f;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line"><span class='comment'>//   SetUnique("xcalm", true);</span></td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line"><span class='comment'>//   xcalm.use_sb = false;</span></td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line"><span class='keyword'>void</span> HippoEncoderConSpec::UpdateAfterEdit_impl() {</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">  inherited::UpdateAfterEdit_impl();</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">  <span class='comment'>// these are enforced absolutely because the code does not use them:</span></td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">  <span class='comment'>// actually it does so turning this off!</span></td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">  <span class='comment'>// lmix.hebb = 0.0f;</span></td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">  <span class='comment'>// lmix.err = 1.0f;</span></td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line"><span class='keyword'>void</span> XCalCHLConSpec::Initialize() {</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">  use_chl = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line"><span class='comment'>///////////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line"><span class='comment'>//////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line"><span class='comment'>//              Wizard          //</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line"><span class='comment'>//////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line"><span class='keyword'>bool</span> LeabraWizard::Hippo(LeabraNetwork* net, <span class='keyword'>int</span> n_ec_slots) {</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">  <span class='keyword'>if</span>(!net) {</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">    LeabraProject* proj = <span class='macro'>GET_MY_OWNER(LeabraProject)<span class='expansion'>(LeabraProject *) GetOwner(&amp;TA_LeabraProject)</span></span>;</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">    net = (LeabraNetwork*)proj-&gt;GetNewNetwork();</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">    <span class='keyword'>if</span>(TestError(!net, <span class='string_literal'>"Hippo"</span>, <span class='string_literal'>"network is NULL and could not make a new one -- aborting!"</span>))</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">      <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">    <span class='keyword'>if</span>(!StdNetwork()) <span class='keyword'>return</span> <span class='keyword'>false</span>;</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">  <span class='macro'>String<span class='expansion'>taString</span></span> msg = <span class='string_literal'>"Configuring Quad Phase Hippocampus:\n\n\</span></td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line"> <span class='string_literal'>You will have to configure inputs/outputs to/from the EC layers after the configuration:\n\n"</span>;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">  taMisc::Confirm(msg);</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">  net-&gt;RemoveUnits();</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">  <span class='comment'>// make layers</span></td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">  <span class='keyword'>bool</span> new_lay;</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">  Layer_Group* hip_laygp = net-&gt;FindMakeLayerGroup(<span class='string_literal'>"Hippocampus"</span>);</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">  LeabraLayer* ecin = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"EC_in"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">  LeabraLayer* ecout = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"EC_out"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">  LeabraLayer* dg = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"DG"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">  LeabraLayer* ca3 = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"CA3"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">  LeabraLayer* ca1 = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"CA1"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">  LeabraLayer* subic = (LeabraLayer*)hip_laygp-&gt;FindMakeLayer(<span class='string_literal'>"Subiculum"</span>, <span class='macro'>NULL<span class='expansion'>__null</span></span>, new_lay);</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">  <span class='comment'>// make specs</span></td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">  BaseSpec_Group* hipspec = net-&gt;FindMakeSpecGp(<span class='string_literal'>"HippoSpecs"</span>);</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">  <span class='comment'>// unit specs</span></td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">  LeabraUnitSpec* hip_units = (LeabraUnitSpec*)hipspec-&gt;FindMakeSpec(<span class='string_literal'>"HippoUnitSpec"</span>, &amp;TA_LeabraUnitSpec);</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line"><span class='comment'>//   LeabraUnitSpec* dg_units = (LeabraUnitSpec*)hip_units-&gt;FindMakeChild("DGUnits", &amp;TA_LeabraUnitSpec);</span></td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line"><span class='comment'>//   LeabraUnitSpec* ecout_units = (LeabraUnitSpec*)units-&gt;FindMakeSpec("ECOutUnits", &amp;TA_LeabraUnitSpec);</span></td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">  HippoEncoderConSpec* ecca1_cons = (HippoEncoderConSpec*)hipspec-&gt;FindMakeSpec(<span class='string_literal'>"EC_CA1ConSpecs"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">  HippoEncoderConSpec* ecin_ca1_cons = (HippoEncoderConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"EC_in_CA1"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">  HippoEncoderConSpec* ca1_ecout_cons = (HippoEncoderConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"CA1_EC_out"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">  HippoEncoderConSpec* ecout_ca1_cons = (HippoEncoderConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"EC_out_CA1"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">  HippoEncoderConSpec* ecin_ecout_cons = (HippoEncoderConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"EC_in_EC_out"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  HippoEncoderConSpec* ecout_ecin_cons = (HippoEncoderConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"EC_out_EC_in"</span>, &amp;TA_HippoEncoderConSpec);</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">  LeabraConSpec* in_ecin_cons = (LeabraConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"Input_EC_in"</span>, &amp;TA_LeabraConSpec);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  LeabraConSpec* ecout_out_cons = (LeabraConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"EC_out_Output"</span>, &amp;TA_LeabraConSpec);</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">  LeabraConSpec* tosubic_cons = (LeabraConSpec*)ecca1_cons-&gt;FindMakeChild(<span class='string_literal'>"ToSubic"</span>, &amp;TA_LeabraConSpec);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">  <span class='comment'>// connection specs</span></td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">  XCalCHLConSpec* hip_cons = (XCalCHLConSpec*)hipspec-&gt;FindMakeSpec(<span class='string_literal'>"HippoConSpecs"</span>, &amp;TA_XCalCHLConSpec);</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">  LeabraBiasSpec* hip_bias = (LeabraBiasSpec*)hip_cons-&gt;FindMakeChild(<span class='string_literal'>"HippoBiasSpec"</span>, &amp;TA_LeabraBiasSpec);</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  XCalCHLConSpec* ppath_cons = (XCalCHLConSpec*)hip_cons-&gt;FindMakeChild(<span class='string_literal'>"PerfPath"</span>, &amp;TA_XCalCHLConSpec);</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  XCalCHLConSpec* mossy_cons = (XCalCHLConSpec*)hip_cons-&gt;FindMakeChild(<span class='string_literal'>"Mossy"</span>, &amp;TA_XCalCHLConSpec);</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">  XCalCHLConSpec* ca3ca3_cons = (XCalCHLConSpec*)hip_cons-&gt;FindMakeChild(<span class='string_literal'>"CA3_CA3"</span>, &amp;TA_XCalCHLConSpec);</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">  XCalCHLConSpec* ca3ca1_cons = (XCalCHLConSpec*)hip_cons-&gt;FindMakeChild(<span class='string_literal'>"CA3_CA1"</span>, &amp;TA_XCalCHLConSpec);</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">  <span class='comment'>// layer specs</span></td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">  HippoQuadLayerSpec* hip_laysp = (HippoQuadLayerSpec*)hipspec-&gt;FindMakeSpec(<span class='string_literal'>"HippoLayerSpec"</span>, &amp;TA_HippoQuadLayerSpec);</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">  ECoutLayerSpec* ecout_laysp = (ECoutLayerSpec*)hip_laysp-&gt;FindMakeChild(<span class='string_literal'>"EC_out"</span>, &amp;TA_ECoutLayerSpec);</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">  ECinLayerSpec* ecin_laysp = (ECinLayerSpec*)ecout_laysp-&gt;FindMakeChild(<span class='string_literal'>"EC_in"</span>, &amp;TA_ECinLayerSpec);</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">  LeabraLayerSpec* dg_laysp = (LeabraLayerSpec*)hip_laysp-&gt;FindMakeChild(<span class='string_literal'>"DG"</span>, &amp;TA_LeabraLayerSpec);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">  CA3LayerSpec* ca3_laysp = (CA3LayerSpec*)hip_laysp-&gt;FindMakeChild(<span class='string_literal'>"CA3"</span>, &amp;TA_CA3LayerSpec);</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">  CA1LayerSpec* ca1_laysp = (CA1LayerSpec*)hip_laysp-&gt;FindMakeChild(<span class='string_literal'>"CA1"</span>, &amp;TA_CA1LayerSpec);</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">  SubiculumLayerSpec* subic_laysp = (SubiculumLayerSpec*)hipspec-&gt;FindMakeSpec(<span class='string_literal'>"Subiculum"</span>, &amp;TA_SubiculumLayerSpec);</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">  <span class='comment'>// prjn specs</span></td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">  BaseSpec_Group* prjns = (BaseSpec_Group*)hipspec-&gt;FindMakeGpName(<span class='string_literal'>"HippoPrjns"</span>);</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">  ProjectionSpec* fullprjn = (ProjectionSpec*)prjns-&gt;FindMakeSpec(<span class='string_literal'>"FullPrjn"</span>, &amp;TA_FullPrjnSpec);</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">  ProjectionSpec* onetoone = (ProjectionSpec*)prjns-&gt;FindMakeSpec(<span class='string_literal'>"OneToOne"</span>, &amp;TA_OneToOnePrjnSpec);</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">  ProjectionSpec* gponetoone = (ProjectionSpec*)prjns-&gt;FindMakeSpec(<span class='string_literal'>"GpOneToOne"</span>, &amp;TA_GpOneToOnePrjnSpec);</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">  UniformRndPrjnSpec* ppath_prjn = (UniformRndPrjnSpec*)prjns-&gt;FindMakeSpec(<span class='string_literal'>"RandomPerfPath"</span>, &amp;TA_UniformRndPrjnSpec);</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">  UniformRndPrjnSpec* mossy_prjn = (UniformRndPrjnSpec*)prjns-&gt;FindMakeSpec(<span class='string_literal'>"UniformRndMossy"</span>, &amp;TA_UniformRndPrjnSpec);</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">  <span class='comment'>// apply specs to objects</span></td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">  <span class='comment'>// set bias specs for unit specs</span></td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">  hip_units-&gt;bias_spec.SetSpec(hip_bias);</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">  ecin-&gt;SetLayerSpec(ecin_laysp);</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">  ecout-&gt;SetLayerSpec(ecout_laysp);</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  dg-&gt;SetLayerSpec(dg_laysp);</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">  ca3-&gt;SetLayerSpec(ca3_laysp);</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">  ca1-&gt;SetLayerSpec(ca1_laysp);</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">  subic-&gt;SetLayerSpec(subic_laysp);</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">  ecin-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">  ecout-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">  dg-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">  ca3-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">  ca1-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">  subic-&gt;SetUnitSpec(hip_units);</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">  <span class='comment'>// make projections</span></td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">  <span class='comment'>// FindMakePrjn(Layer* recv, Layer* send,</span></td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">  net-&gt;FindMakePrjn(ecin, ecout, onetoone, ecout_ecin_cons);</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"><span class='comment'>//   net-&gt;FindMakePrjn(ecout, ecin, onetoone, ecin_ecout_cons);</span></td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">  net-&gt;FindMakePrjn(ecout, ca1, gponetoone, ca1_ecout_cons);</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">  net-&gt;FindMakePrjn(dg, ecin, ppath_prjn, ppath_cons);</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">  net-&gt;FindMakePrjn(ca3, ecin, ppath_prjn, ppath_cons);</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">  net-&gt;FindMakePrjn(ca3, dg, mossy_prjn, mossy_cons);</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">  net-&gt;FindMakePrjn(ca3, ca3, fullprjn, ca3ca3_cons);</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">  net-&gt;FindMakePrjn(ca1, ecin, gponetoone, ecin_ca1_cons);</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">  net-&gt;FindMakePrjn(ca1, ecout, gponetoone, ecout_ca1_cons);</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">  net-&gt;FindMakePrjn(ca1, ca3, fullprjn, ca3ca1_cons);</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">  net-&gt;FindMakePrjn(subic, ecin, onetoone, tosubic_cons);</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">  net-&gt;FindMakePrjn(subic, ecout, onetoone, tosubic_cons);</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">  <span class='comment'>// set positions &amp; geometries</span></td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">  ecin-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus entorhinal cortex"</span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">  ecout-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus entorhinal cortex"</span>;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">  dg-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus dentate gyrus"</span>;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">  ca3-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus cornu ammonis"</span>;</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">  ca1-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus cornu ammonis"</span>;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">  subic-&gt;brain_area = <span class='string_literal'>".*/.*/.*/.*/Hippocampus subiculum"</span>;</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">  ecin-&gt;unit_groups = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">  ecin-&gt;SetNUnitGroups(n_ec_slots);</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">  ecin-&gt;SetNUnits(49);</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">  ecout-&gt;unit_groups = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">  ecout-&gt;SetNUnitGroups(n_ec_slots);</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">  ecout-&gt;SetNUnits(49);</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">  ca1-&gt;unit_groups = <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">  ca1-&gt;SetNUnitGroups(n_ec_slots);</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">  ca1-&gt;SetNUnits(100);</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">  dg-&gt;SetNUnits(1000);</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">  ca3-&gt;SetNUnits(225);</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">  subic-&gt;SetNUnits(12);</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">  subic-&gt;un_geom.x = 12;</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">  subic-&gt;un_geom.y = 1;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">  hip_laygp-&gt;pos.SetXYZ(0, 0, 1);</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">  ecin-&gt;pos.SetXYZ(0, 0, 0);</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">  ecout-&gt;pos.SetXYZ(35, 0, 0);</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">  subic-&gt;pos.SetXYZ(70, 0, 0);</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">  dg-&gt;pos.SetXYZ(0, 0, 1);</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">  ca3-&gt;pos.SetXYZ(0, 0, 2);</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">  ca1-&gt;pos.SetXYZ(35, 0, 2);</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">  <span class='comment'>// params</span></td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">  <span class='comment'>// EC_CA1ConSpecs, wt_sig.gain = 6, off 1.25, cor = 1 (not .4)</span></td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">  <span class='comment'>// EC_in_CA1, abs = 2</span></td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">  ecin_ca1_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">  ecin_ca1_cons-&gt;wt_scale.abs = 2.0f;</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">  <span class='comment'>// CA1_EC_out, abs = 4</span></td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">  ca1_ecout_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">  ca1_ecout_cons-&gt;wt_scale.abs = 4.0f;</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">  <span class='comment'>// EC_in_EC_out mean/var = .9, .01, rel = 0, lrate = 0</span></td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">  ecin_ecout_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">  ecin_ecout_cons-&gt;wt_scale.rel = 0.0f;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">  ecin_ecout_cons-&gt;SetUnique(<span class='string_literal'>"lrate"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">  ecin_ecout_cons-&gt;lrate = 0.0f;</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">  ecin_ecout_cons-&gt;SetUnique(<span class='string_literal'>"rnd"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">  ecin_ecout_cons-&gt;rnd.mean = 0.9f;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">  ecin_ecout_cons-&gt;rnd.var = 0.01f;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">  ecout_ecin_cons-&gt;SetUnique(<span class='string_literal'>"lrate"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">  ecout_ecin_cons-&gt;lrate = 0.0f;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">  ecout_ecin_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">  ecout_ecin_cons-&gt;wt_scale.rel = 0.5f;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">  ecout_ecin_cons-&gt;SetUnique(<span class='string_literal'>"rnd"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">  ecout_ecin_cons-&gt;rnd.mean = 0.5f;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">  ecout_ecin_cons-&gt;rnd.var = 0.01f;</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">  <span class='comment'>// HippoConSpecs, lrate = .2, hebb = 0.05</span></td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">  hip_cons-&gt;SetUnique(<span class='string_literal'>"lrate"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">  hip_cons-&gt;lrate = 0.2f;</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  hip_cons-&gt;SetUnique(<span class='string_literal'>"lmix"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">  hip_cons-&gt;lmix.hebb = 0.05f;</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">  </td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">  <span class='comment'>// mossy mean = 0.9 var = 0.01, rel = 8 , lrate = 0</span></td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">  mossy_cons-&gt;SetUnique(<span class='string_literal'>"rnd"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">  mossy_cons-&gt;rnd.mean = 0.9f;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">  mossy_cons-&gt;rnd.var = 0.01f;</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">  mossy_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">  mossy_cons-&gt;wt_scale.rel = 8.0f;</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">  mossy_cons-&gt;SetUnique(<span class='string_literal'>"lrate"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">  mossy_cons-&gt;lrate = 0.0f;</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">  mossy_cons-&gt;SetUnique(<span class='string_literal'>"savg_cor"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">  mossy_cons-&gt;savg_cor.cor = 1.0f;</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">  </td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">  <span class='comment'>// ca3_ca3 rel = 2, </span></td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">  ca3ca3_cons-&gt;SetUnique(<span class='string_literal'>"wt_scale"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">  ca3ca3_cons-&gt;wt_scale.rel = 2.0f;</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">  ca3ca3_cons-&gt;SetUnique(<span class='string_literal'>"savg_cor"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">  ca3ca3_cons-&gt;savg_cor.cor = 1.0f;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">  <span class='comment'>// ca3_ca1 lrate = 0.05</span></td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">  ca3ca1_cons-&gt;SetUnique(<span class='string_literal'>"lrate"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">  ca3ca1_cons-&gt;lrate = 0.05f;</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">  ca3ca1_cons-&gt;SetUnique(<span class='string_literal'>"lmix"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">  ca3ca1_cons-&gt;lmix.hebb = 0.005f;</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">  <span class='comment'>// sparse hippocampal layers!</span></td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">  dg_laysp-&gt;SetUnique(<span class='string_literal'>"kwta"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">  dg_laysp-&gt;kwta.pct = 0.01f;</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">  ca3_laysp-&gt;SetUnique(<span class='string_literal'>"kwta"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">  ca3_laysp-&gt;kwta.pct = 0.02f;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">  ca1_laysp-&gt;SetUnique(<span class='string_literal'>"inhib_group"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">  ca1_laysp-&gt;inhib_group = LeabraLayerSpec::UNIT_GROUPS;</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">  ca1_laysp-&gt;SetUnique(<span class='string_literal'>"gp_kwta"</span>, <span class='keyword'>true</span>);</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">  ca1_laysp-&gt;gp_kwta.pct = 0.1f;</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">  subic_laysp-&gt;lrate_mod_con_spec.SetSpec(ca3ca1_cons);</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">  <span class='comment'>// todo; lrate schedule!</span></td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">  </td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">  <span class='comment'>//////////////////////////////////////////////////////////////////////////////////</span></td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">  <span class='comment'>// build and check</span></td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">  net-&gt;Build();</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">  net-&gt;LayerPos_Cleanup();</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line"><span class='comment'>//   taMisc::CheckConfigStart(false, false);</span></td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line"><span class='comment'>//   bool ok = patchsp-&gt;CheckConfig_Layer(patch, false);</span></td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line"><span class='comment'>//   ok &amp;= sncsp-&gt;CheckConfig_Layer(snc, false);</span></td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line"><span class='comment'>//   ok &amp;= pfcmsp-&gt;CheckConfig_Layer(pfc_m, false);</span></td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line"><span class='comment'>//   ok &amp;= matrixsp-&gt;CheckConfig_Layer(matrix_m, false);</span></td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line"><span class='comment'>//   ok &amp;= snrthalsp-&gt;CheckConfig_Layer(snrthal_m, false);</span></td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line"><span class='comment'>//   if(out_gate) {</span></td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line"><span class='comment'>//     ok &amp;= pfcosp-&gt;CheckConfig_Layer(pfc_o, false);</span></td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line"><span class='comment'>//     ok &amp;= matrixosp-&gt;CheckConfig_Layer(matrix_o, false);</span></td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line"><span class='comment'>//     ok &amp;= snrthalosp-&gt;CheckConfig_Layer(snrthal_o, false);</span></td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"><span class='comment'>//   }</span></td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line"><span class='comment'>//   taMisc::CheckConfigEnd(ok);</span></td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line"><span class='comment'>//   if(!ok) {</span></td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line"><span class='comment'>//     msg =</span></td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line"><span class='comment'>//       "BG/PFC: An error in the configuration has occurred (it should be the last message\</span></td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line"><span class='comment'>//  you received prior to this one).  The network will not run until this is fixed.\</span></td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line"><span class='comment'>//  In addition, the configuration process may not be complete, so you should run this\</span></td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line"><span class='comment'>//  function again after you have corrected the source of the error.";</span></td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line"><span class='comment'>//   }</span></td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line"><span class='comment'>//   else {</span></td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line"><span class='comment'>//     msg =</span></td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line"><span class='comment'>//     "BG/PFC configuration is now complete.  Do not forget the one remaining thing\</span></td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line"><span class='comment'>//  you need to do manually:\n\n" + man_msg;</span></td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line"><span class='comment'>//   }</span></td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line"><span class='comment'>//   taMisc::Confirm(msg);</span></td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">  <span class='keyword'>for</span>(<span class='keyword'>int</span> j=0;j&lt;net-&gt;specs.leaves;j++) {</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">    BaseSpec* sp = (BaseSpec*)net-&gt;specs.Leaf(j);</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">    sp-&gt;UpdateAfterEdit();</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">  LeabraProject* proj = <span class='macro'>GET_MY_OWNER(LeabraProject)<span class='expansion'>(LeabraProject *) GetOwner(&amp;TA_LeabraProject)</span></span>;</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">  <span class='keyword'>if</span>(proj) {</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">    proj-&gt;undo_mgr.SaveUndo(net, <span class='string_literal'>"Wizard::Hippo -- actually saves network specifically"</span>);</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">  <span class='keyword'>return</span> <span class='keyword'>true</span>;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line"> </td></tr>
+</table></body></html>
