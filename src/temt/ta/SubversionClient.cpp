@@ -315,13 +315,14 @@ struct SubversionClient::Glue
     const svn_info_t *info,
     apr_pool_t *pool)
   {
-    sub->m_last_changed_revision = -1;
     if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
+      sub->m_last_changed_revision = -1;
       if (info) {
         // Could extract a lot more out of this, but this suffices for now.
         sub->m_last_changed_revision = info->last_changed_rev;
       }
     }
+    return 0;
   }
 
   //////////////////// Authentication functions ////////////////////
@@ -1046,7 +1047,7 @@ SubversionClient::GetLastChangedRevision(const char *path)
         path,
         0, // Set peg_revision and revision to
         0, //   null to pull from working copy.
-        svn_info_receiver,
+        Glue::svn_info_receiver,
         this,
         svn_depth_empty, // Just want info on 'path'.
         0, // No changelists filtering.

@@ -1038,14 +1038,14 @@ void ClusterRun::Run() {
   // Get the revisions of the committed project file and jobs_submit.dat file.
   String wc_proj = cm.GetWcProjFilename();
   String wc_submit = cm.GetWcSubmitFilename();
-  int model_rev = Subversion.GetLastChangedRevision(wc_proj);
-  int submit_rev = Subversion.GetLastChangedRevision(wc_submit);
+  int model_rev = Subversion::GetLastChangedRevision(wc_proj);
+  int submit_rev = Subversion::GetLastChangedRevision(wc_submit);
 
   // Put those revisions into the datatable just committed.
   // (There's no way to put them in *before* committing.)
   for (int row = 0; row < jobs_submit.rows; ++row) {
-    SetValColName(model_rev, "model_svn", row);
-    SetValColName(submit_rev, "submit_svn", row);
+    jobs_submit.SetValColName(model_rev, "model_svn", row);
+    jobs_submit.SetValColName(submit_rev, "submit_svn", row);
   }
 #endif
 }
