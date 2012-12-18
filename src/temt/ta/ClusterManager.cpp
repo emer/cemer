@@ -381,7 +381,7 @@ ClusterManager::saveCopyOfProject()
 
   // Copy the file and add it to the working copy.
   QFile::copy(m_filename, m_proj_copy_filename);
-  m_svn_client->Add(qPrintable(m_proj_copy_filename));
+  m_svn_client->Add(m_proj_copy_filename.chars());
 }
 
 void
