@@ -69,6 +69,7 @@ String_Array& Dir(const char* dir_n) {
     String nm = dp->d_name;
     entries.Add(nm);
   }
+  closedir(dirp);
   return entries;
 }
 
