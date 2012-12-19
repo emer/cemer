@@ -1023,7 +1023,7 @@ private:
   void Initialize(taVector3f prox, taVector3f dist, float MrG);
   void Initialize(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
   void Destroy();
-        virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
+  virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 
 };
 
@@ -1088,9 +1088,10 @@ public:
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
 
   virtual bool  ConfigArm(const String& name_prefix="",
-                          float humerus_length = 0.3, float humerus_radius = 0.04,
-                          float ulna_length = 0.24, float ulna_radius = 0.03,
-                          float hand_length = 0.08, float hand_radius = 0.03);
+                          float humerus_length = 0.3, float humerus_radius = 0.03,
+                          float ulna_length = 0.24, float ulna_radius = 0.02,
+                          float hand_length = 0.08, float hand_radius = 0.03,
+                          float elbowGap = 0.03,   float wristGap = 0.03);
   // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
 
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
