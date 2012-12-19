@@ -1439,10 +1439,30 @@ bool DataTable::InitValsToRowNoColName(const String& col_nm) {
 
 /////////////////////
 
-int DataTable::FindVal(const Variant& val, const Variant& col, int st_row) const {
+int DataTable::FindVal(const Variant& val, const Variant& col, int st_row,
+		       bool not_found_err) const {
   DataCol* da = GetColData(col);
   if (!da) return false;
-  return da->FindVal(val, st_row);
+  int rval = da->FindVal(val, st_row);
+  if(rval < 0) {
+    TestError(not_found_err, "FindVal", "val:", val.toString(),
+	      "not found in col:", col.toString());
+  }
+  return rval;
+}
+
+Variant DataTable::LookupVal(const Variant& find_val, const Variant& find_in_col, 
+			     const Variant& value_col, int st_row, bool not_found_err) const {
+  int row_num = FindVal(find_val, find_in_col, st_row, false); // we'll do the err msg
+  if(row_num < 0) {
+    TestError(not_found_err, "LookupVal", "find_val:", find_val.toString(),
+	      "not found in find_in_col:", find_in_col.toString());
+    return _nilVariant;
+  }
+  
+  DataCol* da = GetColData(value_col);
+  if (!da) return _nilVariant;
+  return da->GetVal(row_num);
 }
 
 int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_row) const {
