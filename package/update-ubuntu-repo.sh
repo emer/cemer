@@ -1,4 +1,4 @@
-e!/bin/bash
+#!/bin/bash
 # Loads emergent and libquarter .deb files from your home directory
 # into the repositories.  Run as root.
 # Usage:
