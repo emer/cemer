@@ -682,6 +682,8 @@ String          taMisc::cluster4_name;
 String          taMisc::cluster5_name;
 String          taMisc::cluster6_name;
 
+String_PArray   taMisc::cluster_names;
+
 NamedURL        taMisc::svn_repo1_url;
 NamedURL        taMisc::svn_repo2_url;
 NamedURL        taMisc::svn_repo3_url;
