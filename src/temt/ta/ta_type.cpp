@@ -841,47 +841,39 @@ void taMisc::LoadConfig() {
 #endif
 }
 
+namespace {
+  void addUrl(NameVar_PArray &arr, const NamedURL &nurl) {
+    if (nurl.name.nonempty() && nurl.url.nonempty()) {
+      arr.Add(NameVar(nurl.name, nurl.url));
+    }
+  }
+}
+
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
   wikis.Reset();
-  if(wiki1_url.name.nonempty() && wiki1_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki1_url.name, wiki1_url.url));
-  }
-  if(wiki2_url.name.nonempty() && wiki2_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki2_url.name, wiki2_url.url));
-  }
-  if(wiki3_url.name.nonempty() && wiki3_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki3_url.name, wiki3_url.url));
-  }
-  if(wiki4_url.name.nonempty() && wiki4_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki4_url.name, wiki4_url.url));
-  }
-  if(wiki5_url.name.nonempty() && wiki5_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki5_url.name, wiki5_url.url));
-  }
-  if(wiki6_url.name.nonempty() && wiki6_url.url.nonempty()) {
-    wikis.Add(NameVar(wiki6_url.name, wiki6_url.url));
-  }
+  addUrl(wikis, wiki1_url);
+  addUrl(wikis, wiki2_url);
+  addUrl(wikis, wiki3_url);
+  addUrl(wikis, wiki4_url);
+  addUrl(wikis, wiki5_url);
+  addUrl(wikis, wiki6_url);
+
+  cluster_names.Reset();
+  if (cluster1_name.nonempty()) cluster_names.Add(taMisc::cluster1_name);
+  if (cluster2_name.nonempty()) cluster_names.Add(taMisc::cluster2_name);
+  if (cluster3_name.nonempty()) cluster_names.Add(taMisc::cluster3_name);
+  if (cluster4_name.nonempty()) cluster_names.Add(taMisc::cluster4_name);
+  if (cluster5_name.nonempty()) cluster_names.Add(taMisc::cluster5_name);
+  if (cluster6_name.nonempty()) cluster_names.Add(taMisc::cluster6_name);
 
   svn_repos.Reset();
-  if(svn_repo1_url.name.nonempty() && svn_repo1_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo1_url.name, svn_repo1_url.url));
-  }
-  if(svn_repo2_url.name.nonempty() && svn_repo2_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo2_url.name, svn_repo2_url.url));
-  }
-  if(svn_repo3_url.name.nonempty() && svn_repo3_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo3_url.name, svn_repo3_url.url));
-  }
-  if(svn_repo4_url.name.nonempty() && svn_repo4_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo4_url.name, svn_repo4_url.url));
-  }
-  if(svn_repo5_url.name.nonempty() && svn_repo5_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo5_url.name, svn_repo5_url.url));
-  }
-  if(svn_repo6_url.name.nonempty() && svn_repo6_url.url.nonempty()) {
-    svn_repos.Add(NameVar(svn_repo6_url.name, svn_repo6_url.url));
-  }
+  addUrl(svn_repos, svn_repo1_url);
+  addUrl(svn_repos, svn_repo2_url);
+  addUrl(svn_repos, svn_repo3_url);
+  addUrl(svn_repos, svn_repo4_url);
+  addUrl(svn_repos, svn_repo5_url);
+  addUrl(svn_repos, svn_repo6_url);
 #endif
 }
 

@@ -1030,24 +1030,26 @@ void ClusterRun::Run() {
   jobs_submit.ResetData();      // clear the submission table
 
   ClusterManager cm(*this);     // note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
-  cm.Run(true); // prompt user
+  bool prompt_user = true;
+  if (cm.Run(prompt_user)) {
+    // Maybe don't need this... these fields are more important in the running
+    // and completed tables.  For now, leave it in.
 
-// Maybe don't need this... these fields are more important in the running
-// and completed tables.  For now, leave it in.
-#if 1
-  // Get the revisions of the committed project file and jobs_submit.dat file.
-  String wc_proj = cm.GetWcProjFilename();
-  String wc_submit = cm.GetWcSubmitFilename();
-  int model_rev = Subversion::GetLastChangedRevision(wc_proj);
-  int submit_rev = Subversion::GetLastChangedRevision(wc_submit);
+    // Get revisions of the committed project and jobs_submit.dat files.
+    String wc_proj = cm.GetWcProjFilename();
+    String wc_submit = cm.GetWcSubmitFilename();
+    if (!wc_proj.empty() && !wc_submit.empty()) {
+      int model_rev = Subversion::GetLastChangedRevision(wc_proj);
+      int submit_rev = Subversion::GetLastChangedRevision(wc_submit);
 
-  // Put those revisions into the datatable just committed.
-  // (There's no way to put them in *before* committing.)
-  for (int row = 0; row < jobs_submit.rows; ++row) {
-    jobs_submit.SetValColName(model_rev, "model_svn", row);
-    jobs_submit.SetValColName(submit_rev, "submit_svn", row);
+      // Put those revisions into the datatable just committed.
+      // (There's no way to put them in *before* committing.)
+      for (int row = 0; row < jobs_submit.rows; ++row) {
+        jobs_submit.SetValColName(model_rev, "model_svn", row);
+        jobs_submit.SetValColName(submit_rev, "submit_svn", row);
+      }
+    }
   }
-#endif
 }
 
 bool ClusterRun::Update() {
@@ -1055,8 +1057,18 @@ bool ClusterRun::Update() {
 }
 
 void ClusterRun::Kill() {
+  // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
   SelectedRows(jobs_running, st_row, end_row);
+
+  // Populate the jobs_submit table with CANCEL requests for the selected jobs.
+  jobs_submit.ResetData();
+  for (int src_row = st_row; src_row <= end_row; ++src_row) {
+    int dst_row = jobs_submit.AddBlankRow();
+    jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", src_row);
+    jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", src_row);
+    jobs_submit.SetVal("CANCELLED", "status", dst_row);
+  }
 }
 
 void ClusterRun::ImportData() {

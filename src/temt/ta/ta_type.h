@@ -766,6 +766,7 @@ public:
   static String         cluster4_name; // #SAVE #CAT_File the name of a cluster
   static String         cluster5_name; // #SAVE #CAT_File the name of a cluster
   static String         cluster6_name; // #SAVE #CAT_File the name of a cluster
+  static String_PArray  cluster_names;
 
   static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
