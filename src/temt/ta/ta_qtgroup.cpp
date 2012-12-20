@@ -17,7 +17,6 @@
 // ta_qtgroup.cpp
 #include "ta_qtgroup.h"
 
-
 #include "ta_base.h"
 #include "ta_qt.h"
 #include "ta_qttype.h"
@@ -27,15 +26,14 @@
 
 #include "css_ta.h"
 
-#include <qapplication.h>
-#include <qframe.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmenudata.h>
+#include <QApplication>
+#include <QFrame>
+#include <QLabel>
+#include <QLayout>
 #include <QMenu>
 #include <QScrollArea> // for gpiGroupDialog
 #include <QSplitter>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QDesktopServices>
 
 #include "icolor.h"

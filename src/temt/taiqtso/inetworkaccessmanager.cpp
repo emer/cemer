@@ -65,23 +65,18 @@
 #include <ui_passworddialog.h>
 //#include "ui_proxy.h"
 
-#include <qdialog.h>
+#include <QDialog>
 #include <QMainWindow>
-#include <qmessagebox.h>
-#include <qsettings.h>
-#include <qstyle.h>
-#include <qtextdocument.h>
+#include <QMessageBox>
+#include <QSettings>
+#include <QStyle>
+#include <QTextDocument>
 
-#include <qauthenticator.h>
-#include <qnetworkreply.h>
-#include <qsslconfiguration.h>
-#include <qsslerror.h>
-#include <qdatetime.h>
-
-// #if QT_VERSION >= 0x040500
-// #include <qnetworkdiskcache.h>
-// #include <qdesktopservices.h>
-// #endif
+#include <QAuthenticator>
+#include <QNetworkReply>
+#include <QSslConfiguration>
+#include <QSslError>
+#include <QDateTime>
 
 iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   : QNetworkAccessManager(parent)
@@ -214,19 +209,33 @@ void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthen
 #ifndef QT_NO_OPENSSL
 static QString certToFormattedString(QSslCertificate cert)
 {
-  QString resultstring = QLatin1String("<p>");
   QStringList tmplist;
 
-  resultstring += cert.subjectInfo(QSslCertificate::CommonName);
+  QString subjinfo;
+  QString issuerinfo;
+#if (QT_VERSION >= 0x050000)
+  subjinfo = cert.subjectInfo(QSslCertificate::CommonName).first();
+  issuerinfo = cert.issuerInfo(QSslCertificate::CommonName).first();
+#else
+  subjinfo = cert.subjectInfo(QSslCertificate::CommonName);
+  issuerinfo = cert.issuerInfo(QSslCertificate::CommonName);
+#endif
+
+  QString resultstring = QLatin1String("<p>");
+  resultstring += subjinfo;
 
   resultstring += QString::fromLatin1("<br/>Issuer: %1")
-    .arg(cert.issuerInfo(QSslCertificate::CommonName));
+    .arg(issuerinfo);
 
   resultstring += QString::fromLatin1("<br/>Not valid before: %1<br/>Valid Until: %2")
     .arg(cert.effectiveDate().toString(Qt::ISODate))
     .arg(cert.expiryDate().toString(Qt::ISODate));
 
+#if (QT_VERSION >= 0x050000)
+  QMultiMap<QSsl::AlternativeNameEntryType, QString> names = cert.subjectAlternativeNames();
+#else
   QMultiMap<QSsl::AlternateNameEntryType, QString> names = cert.alternateSubjectNames();
+#endif
   if (names.count() > 0) {
     tmplist = names.values(QSsl::DnsEntry);
     resultstring += QLatin1String("<br/>Alternate Names:<ul><li>")
@@ -341,7 +350,12 @@ iAuthSaver::~iAuthSaver() {
 }
 
 void iAuthSaver::save() {
-  QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  QString directory;
+#if (QT_VERSION >= 0x050000)
+  directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
+  directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
   if (directory.isEmpty())
     directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
   if (!QFile::exists(directory)) {
@@ -359,7 +373,12 @@ void iAuthSaver::save() {
 }
 
 void iAuthSaver::load() {
-  QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  QString directory;
+#if (QT_VERSION >= 0x050000)
+  directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
+  directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
   if (directory.isEmpty())
     directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
   if (!QFile::exists(directory)) {

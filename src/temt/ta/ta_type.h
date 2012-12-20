@@ -1592,7 +1592,7 @@ public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
   bool          keep;           // true if tokens are kept
-  QAtomicInt    sub_tokens;     // number of tokens in sub-types
+  taAtomicInt   sub_tokens;     // number of tokens in sub-types
   taDataLink*   data_link;
 
   virtual void  Initialize();

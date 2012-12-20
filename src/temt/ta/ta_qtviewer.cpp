@@ -73,6 +73,9 @@
 #include <QWebPage>
 #include <QWebView>
 #include <QProgressBar>
+#if (QT_VERSION >= 0x050000)
+#include <QUrlQuery>
+#endif
 
 #include "itextbrowser.h"
 #include "itextedit.h"
@@ -5124,19 +5127,36 @@ void iMainWindowViewer::UpdateUi() {
   emit SetActionsEnabled();
 }
 
-void iMainWindowViewer::windowActivationChange(bool oldActive) {
-  if (isActiveWindow()) {
-    int idx = taiMisc::active_wins.FindEl(this);
-    if (idx < 0) {
-      taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
-    } else {
-      if (idx < (taiMisc::active_wins.size - 1)) {
-        // move us to the end
-        taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
+// void iMainWindowViewer::windowActivationChange(bool oldActive) {
+//   if (isActiveWindow()) {
+//     int idx = taiMisc::active_wins.FindEl(this);
+//     if (idx < 0) {
+//       taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
+//     } else {
+//       if (idx < (taiMisc::active_wins.size - 1)) {
+//         // move us to the end
+//         taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
+//       }
+//     }
+//   }
+//   inherited::windowActivationChange(oldActive);
+// }
+
+void iMainWindowViewer::changeEvent(QEvent* ev) {
+  if(ev->type() == QEvent::ActivationChange) {
+    if (isActiveWindow()) {
+      int idx = taiMisc::active_wins.FindEl(this);
+      if (idx < 0) {
+	taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
+      } else {
+	if (idx < (taiMisc::active_wins.size - 1)) {
+	  // move us to the end
+	  taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
+	}
       }
     }
   }
-  inherited::windowActivationChange(oldActive);
+  inherited::changeEvent(ev);
 }
 
 //////////////////////////
@@ -7090,10 +7110,19 @@ void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   String path = url.toString();
   bool ta_path = false;
   QUrl new_url(url);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq(url);
+#else
+#endif
   if(path.startsWith("ta:") || path.startsWith("."))
     ta_path = true;
+#if (QT_VERSION >= 0x050000)
+  if(!ta_path && urq.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
+    String qry = urq.queryItemValue("title");
+#else
   if(!ta_path && url.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
     String qry = url.queryItemValue("title");
+#endif
     if(qry.startsWith("ta:") || qry.startsWith(".")) {
       if(!qry.startsWith("ta:"))
         qry = "ta:"+qry;        // rectify

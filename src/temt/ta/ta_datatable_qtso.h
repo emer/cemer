@@ -1176,8 +1176,13 @@ signals:
 protected:
   override void         currentChanged(const QModelIndex& current,
                                        const QModelIndex& previous);
+#if (QT_VERSION >= 0x050000)
+  override void         dataChanged(const QModelIndex& topLeft,
+				    const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>());
+#else
   override void         dataChanged(const QModelIndex& topLeft,
                                     const QModelIndex & bottomRight);
+#endif
   // refresh mat cell if in here
   override void         FillContextMenu_impl(ContextArea ca, taiMenu* menu,
                                              const CellRange& sel);

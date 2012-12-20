@@ -144,7 +144,11 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setSidebarUrls(urls);
 
   fd->setDirectory(eff_dir);
+#if (QT_VERSION >= 0x050000)
+  fd->setNameFilters(filter_list);
+#else
   fd->setFilters(filter_list);
+#endif
 
   bool is_default_filename_compressed =
     CompressEnabled() && (CompressReq() || IsCompressed());

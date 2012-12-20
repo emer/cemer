@@ -795,9 +795,17 @@ void iSelectEditDataHost2::Constr_Box() {
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
+#if (QT_VERSION >= 0x050000)
+  tw->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+#else
   tw->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+#endif
   tw->verticalHeader()->setVisible(false);
+#if (QT_VERSION >= 0x050000)
+  tw->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+#else
   tw->verticalHeader()->setResizeMode(QHeaderView::Fixed);
+#endif
   tw->setSortingEnabled(false);
   // don't try to scroll by item, it looks ugly, just scroll smoothly
   tw->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);

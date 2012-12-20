@@ -740,14 +740,17 @@ void iNetworkCookieJar::setSecondLevelDomains(const QStringList &secondLevelDoma
 
 #include "iautosaver.h"
 
-#include <qapplication.h>
-#include <qdesktopservices.h>
-#include <qdir.h>
+#include <QApplication>
+#include <QDesktopServices>
+#if (QT_VERSION >= 0x050000)
+#include <QStandardPaths>
+#endif
+#include <QDir>
 #include <qmetaobject.h>
-#include <qsettings.h>
-#include <qurl.h>
+#include <QSettings>
+#include <QUrl>
 
-#include <qwebsettings.h>
+#include <QWebSettings>
 
 #include <qdebug.h>
 
@@ -819,7 +822,14 @@ void iCookieJar::load()
     return;
   // load cookies and exceptions
   qRegisterMetaTypeStreamOperators<QList<QNetworkCookie> >("QList<QNetworkCookie>");
-  QSettings cookieSettings(QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QLatin1String("/cookies.ini"), QSettings::IniFormat);
+
+  QString cookie_dir;
+#if (QT_VERSION >= 0x050000)
+  cookie_dir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
+  cookie_dir = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
+  QSettings cookieSettings(cookie_dir + QLatin1String("/cookies.ini"), QSettings::IniFormat);
   setAllCookies(qvariant_cast<QList<QNetworkCookie> >(cookieSettings.value(QLatin1String("cookies"))));
   cookieSettings.beginGroup(QLatin1String("Exceptions"));
   m_exceptions_block = cookieSettings.value(QLatin1String("block")).toStringList();
@@ -861,7 +871,12 @@ void iCookieJar::save()
   if (!m_loaded)
     return;
   purgeOldCookies();
-  QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  QString directory;
+#if (QT_VERSION >= 0x050000)
+  directory = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
+  directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
   if (directory.isEmpty())
     directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
   if (!QFile::exists(directory)) {

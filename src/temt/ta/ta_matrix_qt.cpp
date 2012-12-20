@@ -355,7 +355,11 @@ iTableView::iTableView(QWidget* parent)
     this, SLOT(hor_customContextMenuRequested(const QPoint&)) );
   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
   // note: auto resize a lot more important for vertical, for multi dims 
+#if (QT_VERSION >= 0x050000)
+  verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#else
   verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#endif
   connect(verticalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(ver_customContextMenuRequested(const QPoint&)) );
   // wire the selection signals to the UpdateUi, to update enabling

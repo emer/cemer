@@ -39,6 +39,9 @@
 # include "css_qtconsole.h"
 # include <QApplication>
 # include <QDesktopServices>
+#if (QT_VERSION >= 0x050000)
+# include <QStandardPaths>
+#endif
 # include <QFileDialog>
 # include <QMessageBox>
 # include <QWidgetList>
@@ -3798,8 +3801,14 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 
   // and sidebar paths
   instance()->sidebar_paths.AddUnique(taMisc::app_dir);
+#if (QT_VERSION >= 0x050000)
+  String desktop_path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+  String docs_path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#else
   String desktop_path = QDesktopServices::storageLocation(QDesktopServices::DesktopLocation);
   String docs_path = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#endif
+
   instance()->sidebar_paths.AddUnique(desktop_path);
   instance()->sidebar_paths.AddUnique(docs_path);
 

@@ -309,8 +309,8 @@ void taiIntType::GetImage_impl(taiData* dat, const void* base) {
   else if (typ->DerivesFrom(&TA_unsigned_char)) {
     val = (int)*((unsigned char*)base);
   }
-  else if (typ->DerivesFrom(&TA_QAtomicInt)) {
-    val = (int)*((QAtomicInt*)base);
+  else if (typ->DerivesFrom(&TA_taAtomicInt)) {
+    val = (int)*((taAtomicInt*)base);
   }
   else {
     // should never happen

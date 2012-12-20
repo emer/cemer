@@ -27,15 +27,14 @@
 
 #include "css_machine.h" // for trace flag
 
-#include <qapplication.h>
-#include <qclipboard.h>
-#include <qevent.h>
-#include <qfile.h>
-#include <qfiledialog.h>
-#include <qlayout.h>
-#include <qmime.h>
+#include <QApplication>
+#include <QClipboard>
+#include <QEvent>
+#include <QFile>
+#include <QFileDialog>
+#include <QLayout>
 #include <QMenu>
-#include <qscrollbar.h>
+#include <QScrollBar>
 #include <QTabWidget>
 #include <QTimer>
 #include <QPushButton>
@@ -1898,7 +1897,11 @@ void iT3DataViewFrame::fileExportInventor() {
 
   if (!fd) {
     fd = new QFileDialog(this, "fd");
+#if (QT_VERSION >= 0x050000)
+    fd->setNameFilter( "Inventor files (*.iv)" );
+#else
     fd->setFilter( "Inventor files (*.iv)" );
+#endif
   }
   fd->setFileMode(QFileDialog::AnyFile);
   if (!fd->exec()) return;

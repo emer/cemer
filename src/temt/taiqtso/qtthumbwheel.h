@@ -47,8 +47,8 @@
 #ifndef QTTHUMBWHEEL_H
 #define QTTHUMBWHEEL_H
 
-#include <QtGui/QPixmap>
-#include <QtGui/QAbstractSlider>
+#include <QPixmap>
+#include <QAbstractSlider>
 
 #if defined(Q_WS_WIN)
 #  if !defined(QT_QTTHUMBWHEEL_EXPORT) && !defined(QT_QTTHUMBWHEEL_IMPORT)

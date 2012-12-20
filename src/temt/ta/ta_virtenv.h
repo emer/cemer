@@ -42,7 +42,7 @@ class VEWorld;
 class VEWorldView;
 class VEArm;
 class VELinearMuscle;
-class VELinMuscle_Group;
+class VELinMuscle_List;
 
 class taImage;
 
@@ -998,33 +998,32 @@ private:
 //   Linear Muscle: exerts force proportional to its input.
 
 class TA_API VELinearMuscle : public taNBase {
-// A muscle that exerts force proportional to its input
+  // A muscle that exerts force proportional to its input
   INHERITED(taNBase)
 public:
 
-  taVector3f IPprox;    // proximal/medial insertion point
-  taVector3f IPdist;    // distal/lateral insertion point
-  taVector3f p3;        // point of intersection with the bending line
-  float gain;
-        bool bend;      // true if the muscle is currently bending
-        float OldLength1, OldLength2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. OldLength2 is the length 2 timesteps ago.
+  taVector3f 	IPprox;    // proximal/medial insertion point
+  taVector3f 	IPdist;    // distal/lateral insertion point
+  taVector3f 	p3;        // point of intersection with the bending line
+  float 	gain;
+  bool 		bend;      // true if the muscle is currently bending
+  float 	old_length1;
+  float 	old_length2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. old_length2 is the length 2 timesteps ago.
 
-  taVector3f Contract(float stim);
+  taVector3f 	Contract(float stim);
   // Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
 
-        float Length();         // Returns current length of muscle
-        float Speed();  // Returns muscle's contraction speed one world stepsize ago
+  float Length();       // Returns current length of muscle
+  float Speed();  	// Returns muscle's contraction speed one world stepsize ago
 
   TA_SIMPLE_BASEFUNS(VELinearMuscle);
-
 private:
 
   void Initialize();
-  void Initialize(taVector3f prox, taVector3f dist, float MrG);
-  void Initialize(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
+  void Init(taVector3f prox, taVector3f dist, float MrG);
+  void Init(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
   void Destroy();
   virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
-
 };
 
 SmartRef_Of(VELinearMuscle,TA_VELinearMuscle); // VELinearMuscleRef
@@ -1032,11 +1031,12 @@ SmartRef_Of(VELinearMuscle,TA_VELinearMuscle); // VELinearMuscleRef
 ////////////////////////////////////////////////////////////////
 // Linear Muscle Group
 
-class TA_API VELinMuscle_Group : public taGroup<VELinearMuscle> {
-  INHERITED(taGroup<VELinearMuscle>)
+class TA_API VELinMuscle_List : public taList<VELinearMuscle> {
+  // group of linear muscles
+  INHERITED(taList<VELinearMuscle>)
 public:
 
-  TA_BASEFUNS_NOCOPY(VELinMuscle_Group);
+  TA_BASEFUNS_NOCOPY(VELinMuscle_List);
 
 private:
   void  Initialize()            { SetBaseType(&TA_VELinearMuscle); }
@@ -1070,22 +1070,25 @@ public:
   ArmSide       arm_side;       // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
   VEBodyRef     torso;          // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
 
-  float La;     // #READ_ONLY #SHOW the length of the humerus
-  float Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
-  float elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
-  float wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
-        float WorldStep;        // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
+  float 	La;     // #READ_ONLY #SHOW the length of the humerus
+  float 	Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
+  float		elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
+  float 	wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
+  float 	WorldStep; // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float_Matrix ShouldIP; // shoulder insertion points at rest
   float_Matrix ArmIP; // humerus insertion points at rest
   float_Matrix FarmIP; // ulna insertion points at rest
   float_Matrix p1; // first end points for bending lines
   float_Matrix p2; // second end points for bending lines
-  int Nmusc; // the total number of muscles, as implied by the IP matrices
+  int 		Nmusc; // the total number of muscles, as implied by the IP matrices
 
-  VELinMuscle_Group muscles;  // all the muscles attached to the arm
+  VELinMuscle_List muscles;  // all the muscles attached to the arm
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
+
+  virtual void	InitMuscles();
+  // initialize muscles and insertion point data
 
   virtual bool  ConfigArm(const String& name_prefix="",
                           float humerus_length = 0.3, float humerus_radius = 0.03,
@@ -1103,14 +1106,14 @@ public:
   virtual bool UpdateIPs();
   // #BUTTON Setting the muscle IPs to the values in the xxxIP matrices
 
-        virtual bool Lengths(float_Matrix &Len);
-        // Put the current lengths of all muscles in the given matrix
+  virtual bool Lengths(float_Matrix &Len);
+  // Put the current lengths of all muscles in the given matrix
 
-        virtual bool Speeds(float_Matrix &Vel);
-        // Put the muscle contraction speeds of the last time step in the given matrix
+  virtual bool Speeds(float_Matrix &Vel);
+  // Put the muscle contraction speeds of the last time step in the given matrix
 
-        virtual bool ApplyStim(float_Matrix stims, float_Matrix &forces);
-        // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.
+  virtual bool ApplyStim(float_Matrix stims, float_Matrix &forces);
+  // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:

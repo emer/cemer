@@ -784,7 +784,7 @@ void iProgramEditor::GetImage() {
   // search through children to find first tab focus widget
   // skip over flags
   first_tab_foc = NULL;
-  QList<QWidget*> list = qFindChildren<QWidget*>(body);
+  QList<QWidget*> list = body->findChildren<QWidget*>();
   for (int i=0; i<list.size(); ++i) {
     QWidget* rep = list.at(i);
     if(rep->isVisible() && rep->isEnabled() && (rep->focusPolicy() & Qt::TabFocus) &&

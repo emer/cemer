@@ -6334,8 +6334,8 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
 #ifndef NO_TA_BASE
 # ifdef TA_USE_QT
-    else if(DerivesFrom(TA_QAtomicInt)) {
-      return String((int)(*((QAtomicInt*)base)));
+    else if(DerivesFrom(TA_taAtomicInt)) {
+      return String((int)(*((taAtomicInt*)base)));
     }
 # endif
     else if(DerivesFrom(TA_taBase)) {

@@ -8,11 +8,13 @@ if (QT_USE_5)
   message(STATUS "CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 
   find_package(Qt5Core)
+  find_package(Qt5Gui)
   find_package(Qt5Widgets)
   find_package(Qt5OpenGL)
   find_package(Qt5Xml)
   find_package(Qt5Network)
   find_package(Qt5WebKit)
+  find_package(Qt5WebKitWidgets)
   find_package(Qt5PrintSupport)
 
 #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
@@ -21,13 +23,15 @@ if (QT_USE_5)
   # Add compiler flags for building executables (-fPIE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
-  include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
+  include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5WebKit_INCLUDE_DIRS}
-    ${Qt5PrintSupport_INCLUDE_DIRS})
+    ${Qt5WebKitWidgets_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS})
   add_definitions(${Qt5Widgets_DEFINITIONS})
 
-  set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
-    ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES}  ${Qt5PrintSupport_LIBRARIES})
+  set(QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
+    ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES}
+    ${Qt5PrintSupport_LIBRARIES})
 
   find_package(Coin REQUIRED)
   find_package(Quarter REQUIRED)

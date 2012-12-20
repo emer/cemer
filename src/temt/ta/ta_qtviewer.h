@@ -29,13 +29,13 @@
 # include <QFrame>
 # include <QMainWindow>
 # include <QObject>
-# include <qpalette.h>
+# include <QPalette>
 # include <QIcon>
 # include <QList>
-# include <qtabbar.h>
+# include <QTabBar>
 # include <QTreeWidget>
 # include <QTreeWidgetItem>
-# include <qtoolbar.h>
+# include <QToolBar>
 # include <QWebView>
 # include <QTime>
 
@@ -1269,10 +1269,9 @@ protected:
   override void         showEvent(QShowEvent* ev);
   override void         hideEvent(QHideEvent* ev);
   override bool         eventFilter(QObject *obj, QEvent *event);
+  override void         changeEvent(QEvent* ev);
 
   virtual void          emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
-  override void         windowActivationChange(bool oldActive); // we manage active_wins in order of activation
-
   virtual void          Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images
   virtual void          Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
   virtual void          SelectableHostNotifying_impl(ISelectableHost* src_host, int op);

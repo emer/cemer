@@ -328,7 +328,7 @@ void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
 //////////////////////////
 
 iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
-:iDialog(parent, (Qt::WFlags)wflags)
+:iDialog(parent, (Qt::WindowFlags)wflags)
 {
   owner = owner_;
   mcentralWidget = NULL;
@@ -2382,7 +2382,8 @@ void taiEditDataHost::GetImage_Membs() {
   // search through children to find first tab focus widget
   // skip over flags
   first_tab_foc = NULL;
-  QList<QWidget*> list = qFindChildren<QWidget*>(body);
+  //  QList<QWidget*> list = qFindChildren<QWidget*>(body);
+  QList<QWidget*> list = body->findChildren<QWidget*>();
   for (int i=0; i<list.size(); ++i) {
     QWidget* rep = list.at(i);
     if(// rep->isVisible() &&

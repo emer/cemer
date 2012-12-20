@@ -27,6 +27,9 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
+#if (QT_VERSION >= 0x050000)
+#include <QUrlQuery>
+#endif
 
 /////////////////////////////////////
 //      SynchronousNetRequest      //
@@ -309,9 +312,17 @@ String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
   if (wikiUrl.empty()) return "";
 
   QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("meta", "userinfo");
+  url.setQuery(urq);
+#else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
   url.addQueryItem("meta", "userinfo");
+#endif
 
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
@@ -363,10 +374,19 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
 
   // Set up the URL for the first stage.
   QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "login");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("lgname", qUsername);
+  urq.addQueryItem("lgpassword", qPassword);
+  url.setQuery(urq);
+#else
   url.addQueryItem("action", "login");
   url.addQueryItem("format", "xml");
   url.addQueryItem("lgname", qUsername);
   url.addQueryItem("lgpassword", qPassword);
+#endif
 
   // Make the network request, once per stage.
   SynchronousNetRequest request;
@@ -403,7 +423,12 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
         // This indicates we need to do the second stage.  Set up the URL
         // for the second stage before the attrs goes out of scope.
         taMisc::DebugInfo("Performing 2-stage login to", wiki_name, "wiki.");
+#if (QT_VERSION >= 0x050000)
+        urq.addQueryItem("lgtoken", attrs.value("token").toString());
+	url.setQuery(urq);
+#else
         url.addQueryItem("lgtoken", attrs.value("token").toString());
+#endif
       }
       else {
         taMisc::Warning("Unexpected error during login:", qPrintable(result));
@@ -437,9 +462,17 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
   if (wikiUrl.empty()) return false;
 
   QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("titles", page_name);
+  url.setQuery(urq);
+#else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
   url.addQueryItem("titles", page_name);
+#endif
 
   // Make the network request.
   SynchronousNetRequest request;
@@ -607,15 +640,27 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
   if (wikiUrl.empty()) return false;
 
   QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("list", "search");
+  urq.addQueryItem("srsearch", search_str);
+  urq.addQueryItem("srwhat", title_only ? "title" : "text");
+  if (max_results > 0) {
+    urq.addQueryItem("srlimit", QString::number(max_results));
+  }
+  url.setQuery(urq);
+#else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
   url.addQueryItem("list", "search");
   url.addQueryItem("srsearch", search_str);
   url.addQueryItem("srwhat", title_only ? "title" : "text");
-
   if (max_results > 0) {
     url.addQueryItem("srlimit", QString::number(max_results));
   }
+#endif
 
   // Make the network request.
   SynchronousNetRequest request;

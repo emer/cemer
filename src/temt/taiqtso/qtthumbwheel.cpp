@@ -686,7 +686,10 @@ void QtThumbWheel::paintEvent(QPaintEvent *)
 	}
     }
 
+#if (QT_VERSION >= 0x050000)
+#else
     qDrawShadePanel(&pt, cr, palette());
+#endif
     QPainter painter(this);
     painter.drawPixmap(QPoint(0, 0), d->pix);
 }

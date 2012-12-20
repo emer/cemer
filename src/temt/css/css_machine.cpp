@@ -5653,7 +5653,7 @@ void cssCmdShell::Shell_NoConsole_Run() {
       free(curln); // spec has rl allocating this
       curln = NULL;
       if(str.length() > 0)
-        add_history((char*)(str.toAscii().constData()));
+        add_history((char*)(str.toLatin1().constData()));
       AcceptNewLine(str, false);
     }
   }

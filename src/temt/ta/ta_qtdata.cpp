@@ -838,12 +838,20 @@ void iRegexpDialog::LayoutTableView(
   header->setHighlightSections(false);
 
   // Resize the index column to fit the contents.
+#if (QT_VERSION >= 0x050000)
+  header->setSectionResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
+#else
   header->setResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
+#endif
 
   // Resize other columns to take up all available space equally.
   int num_cols = m_num_parts + NUM_EXTRA_COLS;
   for (int col = NUM_EXTRA_COLS; col < num_cols; ++col) {
+#if (QT_VERSION >= 0x050000)
+    header->setSectionResizeMode(col, QHeaderView::Stretch);
+#else
     header->setResizeMode(col, QHeaderView::Stretch);
+#endif
   }
 
   // Pad the combos hbox to accomodate the index column and scrollbar.
@@ -2813,7 +2821,7 @@ taiAction* taiActions::AddItem(
 )
 {
   taiAction* rval = AddItem(val, use_default, ct, receiver, member, usr);
-  if (shortcut) rval->setShortcut(shortcut);
+  if (!shortcut.isEmpty()) rval->setShortcut(shortcut);
   return rval;
 }
 
