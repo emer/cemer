@@ -4331,9 +4331,10 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
-  lvesp->lv.pos_y_dot_only = false;
   
-  pvisp->pv.no_y_dot = false;
+  // don't reset these here -- no reason to..
+  // lvesp->lv.pos_y_dot_only = false;
+  // pvisp->pv.no_y_dot = false;
   
   nvsp->nv.da_gain = 0.0f;
   dasp->da.da_gain = 1.0f;

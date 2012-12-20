@@ -298,7 +298,8 @@ public:
   float		nopv_lrate;	// #CONDSHOW_ON_lrn_pv_only:false learning rate for learning on non-pv trials -- see nopv_val for value that is clamped.  this can be used to simulate a baseline effort cost for non-reward trials.  only works when lrn_pv_only is false.
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
-  bool		pos_y_dot_only; // #DEF_false use only positive deviations for computing LVe phasic DA 
+  bool		no_y_dot; 	// #DEF_false don't use y-dot temporal derivative at all in computing LVe phasic DA 
+  bool		pos_y_dot_only; // #DEF_false use only positive deviations for computing LVe phasic DA -- mutex with no_y_dot
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

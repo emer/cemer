@@ -446,6 +446,7 @@ void LVMiscSpec::Initialize() {
   nopv_lrate = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
+  no_y_dot = false;
   pos_y_dot_only = false;
 }
 
@@ -585,13 +586,19 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   if(lv.lvi_scale_min && (lvd < 0.0f) && (lviu->act_eq < lv.min_lvi)) {
     lvd *= (lviu->act_eq / lv.min_lvi); // scale by how negative relative to min
   }
-  //float lv_da = lvd - lveu->misc_1;
+  
   float lv_da = 0.0f;
-  if(lv.pos_y_dot_only && (lvd - lveu->misc_1 > 0.0f)) { // only want the positive Y-dot! phaDA dips not its job!
+  if(lv.no_y_dot) {
+    lv_da = lvd;		// no y-dot at all
+  }
+  else if(lv.pos_y_dot_only) {
     lv_da = lvd - lveu->misc_1;
+    if(lv_da < 0.0f)
+      lv_da = 0.0f; // only want the positive Y-dot! phaDA dips not its job!  
+    // ROR: note: this seems bad -- weights will ony ever increase -- not computationally viable
   }
   else {
-    lv_da = 0.0f;
+    lv_da = lvd - lveu->misc_1;
   }
 
   int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
