@@ -148,17 +148,17 @@ class DataTable(object):
     
     #input: space_allowed = boolean, if False replace white spaces with '_'
     @staticmethod
-    def scape_chars(string, space_allowed = True):
+    def escape_chars(string, space_allowed = True):
         
-        string = string.replace('\\', '%s\\' % '\\')    # first off, scape '\'
+        string = string.replace('\\', '%s\\' % '\\')    # first off, escape '\'
         
-        scape_chars_dic = {"'" : "\\'",
+        escape_chars_dic = {"'" : "\\'",
                            '"' : '\\"',
                            '\t' : ' ' }
         if not space_allowed:
-            scape_chars_dic[' '] = '_'
+            escape_chars_dic[' '] = '_'
             
-        for char, replacement in scape_chars_dic.iteritems():
+        for char, replacement in escape_chars_dic.iteritems():
             string = string.replace(char, replacement)
         return string
     
@@ -202,7 +202,7 @@ class DataTable(object):
         header_str = "_H:"
         for column_name in header:
             column_type = ColumnType.encode[header[column_name]]
-            column_name = DataTable.scape_chars(column_name, space_allowed=False)
+            column_name = DataTable.escape_chars(column_name, space_allowed=False)
             header_str += '%s%s%s' % (self.DELIMITER, column_type, column_name)
             
         return header_str
@@ -214,7 +214,7 @@ class DataTable(object):
         column_index = 0
         for value in self._rows[row_index]:
             column_type = self._header.values()[column_index]
-            value = DataTable.scape_chars(value)
+            value = DataTable.escape_chars(value)
             value = self._encode_value(value, column_type)
             row_str += '%s%s' % (self.DELIMITER, value)
             column_index += 1
