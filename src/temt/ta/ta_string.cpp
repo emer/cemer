@@ -265,7 +265,7 @@ long long Cstring_prof::tot_size = 0;
 Cstring_prof string_prof;
 #endif
 
-taStrRep _nilStrRep = { 0, 1, {{1}}, { 0 } }; // nil StrReps point here, we init cnt to 1 so never released
+taStrRep _nilStrRep = { 0, 1, {1}, { 0 } }; // nil StrReps point here, we init cnt to 1 so never released
 taStrRep* _nilStrRepPtr = &_nilStrRep;
 
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
@@ -285,7 +285,7 @@ TA_API taStrRep* Snew(int slen, uint cap) {
   }
   rval->sz = cap;
   rval->len = slen;
-  rval->cnt = 0; // necessary, because ctor does not run and QBasicAtomicInt is POD
+  rval->cnt.store(0); // necessary, because ctor does not run and QBasicAtomicInt is POD
   rval->s[slen] = '\0';
   return rval;
 }

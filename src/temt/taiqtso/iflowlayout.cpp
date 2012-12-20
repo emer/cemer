@@ -111,7 +111,7 @@ int iFlowLayout::heightForWidth( int w ) const
     if ( cached_width != w ) {
         //Not all C++ compilers support "mutable" yet:
         iFlowLayout * mthis = (iFlowLayout*)this;
-        int h = mthis->doLayout( QRect(0,0,w,0), TRUE );
+        int h = mthis->doLayout( QRect(0,0,w,0), true );
         mthis->cached_hfw = h;
         return h;
     }
@@ -162,7 +162,7 @@ void iFlowLayout::setAlignment(Qt::Alignment value) {
 
 bool iFlowLayout::hasHeightForWidth() const
 {
-    return TRUE;
+    return true;
 }
 
 QSize iFlowLayout::sizeHint() const

@@ -68,12 +68,12 @@ public:
   uint                  len;    // string length (not including null terminator)
   uint                  sz;     // allocated space ((not including null terminator)
 #ifdef __MAKETA__
-  QBasicAtomicInt       cnt;    // reference count (when goes to 0, instance is deleted)
+  taBasicAtomicInt      cnt;    // reference count (when goes to 0, instance is deleted)
 #else
-union { // this lets us use static init of cnt to 1 for _nilStrRep
-  QBasicAtomicInt       cnt;
-  int                   cnt_int; // though shalt never use this!!!
-};
+ union { // this lets us use static init of cnt to 1 for _nilStrRep
+   int                   cnt_int; // though shalt never use this!!!
+   taBasicAtomicInt      cnt;
+ };
 #endif
   char          s[1];   // the string starts here, null terminator always maintained
 protected:

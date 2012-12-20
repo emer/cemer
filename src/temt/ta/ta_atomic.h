@@ -120,5 +120,57 @@ public:
 # endif
 #endif
 
+class taAtomicInt : public QAtomicInt {
+public:
+# if (QT_VERSION >= 0x050000)
+  // Non-atomic API
+  inline bool operator==(int value) const
+    {return _q_value == value;}
+
+  inline bool operator!=(int value) const
+    {return _q_value != value;}
+
+  inline bool operator!() const
+    {return _q_value == 0;}
+
+  inline operator int() const
+    {return _q_value;}
+#endif
+
+#ifndef __MAKETA__
+  inline taAtomicInt(int value = 0) : QAtomicInt(value) {};
+  inline taAtomicInt(const taAtomicInt &other) : QAtomicInt(other) {};
+  inline taAtomicInt& operator=(const taAtomicInt &other) {
+    QAtomicInt::operator=(other);
+    return *this;
+  }
+#endif
+
+};
+
+class taBasicAtomicInt : public QBasicAtomicInt {
+public:
+# if (QT_VERSION >= 0x050000)
+  // Non-atomic API
+  inline bool operator==(int value) const
+    {return _q_value == value;}
+
+  inline bool operator!=(int value) const
+    {return _q_value != value;}
+
+  inline bool operator!() const
+    {return _q_value == 0;}
+
+  inline operator int() const
+    {return _q_value;}
+
+  inline int operator=(int value)
+  { _q_value = value; return value; }
+#else
+  void store(int newValue) { QBasicAtomicInt::operator=(newValue); }
+#endif
+
+};
+
 #endif
 

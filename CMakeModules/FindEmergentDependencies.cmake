@@ -1,9 +1,58 @@
 # find all of the other packages that Temt/Emergent depend on
 
-find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtNetwork QtWebKit)
-find_package(Coin REQUIRED)
-find_package(Quarter REQUIRED)
-find_package(OpenGL REQUIRED)
+set(QT_USE_5 OFF)
+set(QT_DIR /Users/oreilly/Qt5.0.0/5.0.0/clang_64)
+
+if (QT_USE_5)
+  set(CMAKE_PREFIX_PATH ${QT_DIR}/lib/cmake)
+  message(STATUS "CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
+
+  find_package(Qt5Core)
+  find_package(Qt5Widgets)
+  find_package(Qt5OpenGL)
+  find_package(Qt5Xml)
+  find_package(Qt5Network)
+  find_package(Qt5WebKit)
+  find_package(Qt5PrintSupport)
+
+#  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
+#  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+  # Add compiler flags for building executables (-fPIE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+
+  include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
+    ${Qt5Xml_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5WebKit_INCLUDE_DIRS}
+    ${Qt5PrintSupport_INCLUDE_DIRS})
+  add_definitions(${Qt5Widgets_DEFINITIONS})
+
+  set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES}
+    ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES}  ${Qt5PrintSupport_LIBRARIES})
+
+  find_package(Coin REQUIRED)
+  find_package(Quarter REQUIRED)
+  find_package(OpenGL REQUIRED)
+
+  # Instruct CMake to run moc automatically when needed.
+#  set(CMAKE_AUTOMOC ON)
+else (QT_USE_5)
+  find_package(Qt4 REQUIRED QtCore QtGui QtOpenGL QtXml QtNetwork QtWebKit)
+  find_package(Coin REQUIRED)
+  find_package(Quarter REQUIRED)
+  find_package(OpenGL REQUIRED)
+
+  # setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
+  set(QT_USE_QT3SUPPORT 0)
+  set(QT_USE_QTOPENGL 1)
+  set(QT_USE_QTXML 1)
+  set(QT_USE_QTNETWORK 1)
+  set(QT_USE_QTWEBKIT 1)
+  include(${QT_USE_FILE})
+
+  include_directories(${QT_INCLUDES})
+
+endif (QT_USE_5)
+
 
 if (WIN32)
   # Give FindSubversionLibrary a hint to where the libs are installed on Windows.
@@ -32,15 +81,7 @@ endif (WIN32)
 # NOTE: could also do BISON but it is not really required so not worth the hassle
 #find_package(BISON)
 
-# setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
-set(QT_USE_QT3SUPPORT 0)
-set(QT_USE_QTOPENGL 1)
-set(QT_USE_QTXML 1)
-set(QT_USE_QTNETWORK 1)
-set(QT_USE_QTWEBKIT 1)
-include(${QT_USE_FILE})
-
-include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
+include_directories(${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
   ${ODE_INCLUDE_DIR}
   ${GSL_INCLUDE_DIR}
   ${SUBVERSION_INCLUDE_DIRS}

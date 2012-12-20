@@ -63,8 +63,8 @@
 #ifndef ICOOKIEJAR_H
 #define ICOOKIEJAR_H
 
-#include <qnetworkcookie.h>
-#include <qstringlist.h>
+#include <QNetworkCookieJar>
+#include <QStringList>
 
 class iNetworkCookieJarPrivate;
 class iNetworkCookieJar : public QNetworkCookieJar {

@@ -15,7 +15,6 @@ include(${PROJECT_SOURCE_DIR}/src/emergent/network/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_network_SRCS ${mypath}/network "${network_SRCS}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_MOC}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
-QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
 SET_TA_PROPS(network ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 # bp
@@ -41,6 +40,12 @@ include(${PROJECT_SOURCE_DIR}/src/emergent/so/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_so_SRCS ${mypath}/so "${so_SRCS}")
 ADD_PATH_TO_FILES(emergent_so_HEADS_MAKETA ${mypath}/so "${so_HEADS_MAKETA}")
 SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
+
+if (QT_USE_5)
+  qt5_wrap_cpp(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
+else (QT_USE_5)
+  QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
+endif (QT_USE_5)
 
 # just list whole set of files here
 set(emergentlib_SRCS

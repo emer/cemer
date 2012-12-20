@@ -1526,7 +1526,7 @@ public:
 
   mutable BaseFlags     base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY #CAT_taBase base_flags for ta system
 protected:
-  QAtomicInt            refn;   // number of references to this object
+  taAtomicInt            refn;   // number of references to this object
 private:
 // Initialize and Destroy are always private because they should only be called in ctor/dtor
   void                  Initialize() {base_flags = BF_0;}

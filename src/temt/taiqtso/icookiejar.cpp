@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "icookiejar.h"
-#include <qstringlist.h>
+#include <QNetworkCookie>
 
 // Updated from https://wiki.mozilla.org/TLD_List#External_Links
 // To set a custom list use NetworkCookieJar::setSecondLevelDomains()

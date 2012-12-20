@@ -1325,7 +1325,7 @@ protected:
   taRefN()              {}
   virtual ~taRefN()     { }; // all instances should consistently use ref counting for lifetime management
 
-  QAtomicInt            refn;
+  taAtomicInt            refn;
 };
 
 

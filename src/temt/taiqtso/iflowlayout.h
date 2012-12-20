@@ -78,7 +78,7 @@ protected:
 
 private:
   void init();
-  int doLayout( const QRect&, bool testonly = FALSE );
+  int doLayout( const QRect&, bool testonly = false );
   void layoutLine(const QRect& r, QLayoutItemList& line_it);
   QLayoutItemList itemList;
   int cached_width;
