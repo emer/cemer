@@ -1,11 +1,8 @@
 # find all of the other packages that Temt/Emergent depend on
 
-set(QT_USE_5 OFF)
-set(QT_DIR /Users/oreilly/Qt5.0.0/5.0.0/clang_64)
-
 if (QT_USE_5)
-  set(CMAKE_PREFIX_PATH ${QT_DIR}/lib/cmake)
-  message(STATUS "CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
+  set(CMAKE_PREFIX_PATH ${QTDIR}/lib/cmake)
+  message(STATUS "Using Qt5, QTDIR = ${QTDIR}")
 
   find_package(Qt5Core)
   find_package(Qt5Gui)
