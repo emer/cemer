@@ -45,6 +45,7 @@ public:
   taMatrix*             mat() const {return m_mat;}
   inline bool           pat4D() const {return m_pat_4d;} // for dims>=4 whether to group d0/d1 in row (default is true)
   void                  setPat4D(bool val, bool notify = true);
+  void			setDataCol(DataCol* dc);
 
   String_Matrix*        dimNames()  { return m_dim_names; }
   void                  setDimNames(String_Matrix* dnms);
@@ -83,6 +84,7 @@ public: // IDataLinkClient i/f
 
 protected:
   taMatrix*             m_mat;
+  DataCol*		m_mat_col; // in case this guy is a delegate for a data column
   String_Matrix*        m_dim_names;
   taMisc::MatrixView    m_view_layout; //#IGNORE #DEF_TOP_ZERO
   ContextFlag           notifying; // to avoid responding when we sent notify

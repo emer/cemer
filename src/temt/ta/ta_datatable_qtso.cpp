@@ -263,13 +263,19 @@ bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, i
 
   bool rval = false;
   switch (role) {
-  case Qt::EditRole:
+  case Qt::EditRole: {
+    taProject* proj = (taProject*)m_dt->GetOwner(&TA_taProject);
+    // save undo state!
+    if(proj) {
+      proj->undo_mgr.SaveUndo(col, "DataTableEdit", col);
+    }
     m_dt->SetValAsVar(value, index.column(), index.row());
     ++notifying;
     emit_dataChanged(index, index);
     col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh
     --notifying;
     rval = true;
+  }
   default: break;
   }
   return rval;
@@ -5889,6 +5895,8 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
   tvCell->setMatrix(mat, pat_4d);
   if (mat) {
     MatrixTableModel* mat_model = mat->GetTableModel();
+    if(m_cell_par)
+      mat_model->setDataCol((DataCol*)m_cell_par->owner);
     mat_model->col_idx = index.column(); // ok if done repeatedly, is always the same
     // connect the magic signal that updates the table -- note that there is just
     // one of these, and it hangs around even when the cell isn't viewed
@@ -5901,7 +5909,7 @@ void iDataTableEditor::tvTable_layoutChanged() {
   if(!isVisible()) return;
   ConfigView();
 //no-causes recursive invocation!  Refresh();
-  if (m_cell) {
+  if ((bool)m_cell) {
     MatrixTableModel* mat_model = m_cell->GetTableModel();
     mat_model->emit_layoutChanged(); // hacky but works
   }
@@ -5910,6 +5918,7 @@ void iDataTableEditor::tvTable_layoutChanged() {
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
   int colidx = index.column();
+  if(colidx < 0) return;			// invalid
   DataCol* col = dt_->GetColData(colidx, true); // quiet
   if (col && col->is_matrix) {
     taMatrix* tcell = dt_->GetValAsMatrix(index.column(), index.row());

@@ -813,7 +813,7 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   // finally, try select the originally modified object so it is clear what is happening!
   MemberDef* md;
   taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
-  if(modobj) {
+  if(modobj && !modobj->HasOption("NO_UNDO_SELECT")) {
     tabMisc::DelayedFunCall_gui(modobj, "BrowserSelectMe");
   }
 

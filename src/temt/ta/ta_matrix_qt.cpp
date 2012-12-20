@@ -20,6 +20,7 @@
 #include "ta_datatable_qtso.h" // for factories
 #include "ta_qt.h"
 #include "ta_datatable_qtso.h" // for factories
+#include "ta_project.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -39,6 +40,7 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_)
 {
   col_idx = -1;
   m_mat = mat_;
+  m_mat_col = NULL;
   m_pat_4d = false;
   m_dim_names = NULL;
 }
@@ -50,6 +52,11 @@ MatrixTableModel::~MatrixTableModel() {
     m_mat = NULL;
   }
   m_dim_names = NULL;
+  m_mat_col = NULL;
+}
+
+void MatrixTableModel::setDataCol(DataCol* dc) {
+  m_mat_col = dc;
 }
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
@@ -268,6 +275,13 @@ int MatrixTableModel::rowCount(const QModelIndex& parent) const {
 bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!m_mat) return false;
   if (index.isValid() && role == Qt::EditRole) {
+    if(m_mat_col) {
+      taProject* proj = (taProject*)m_mat_col->GetOwner(&TA_taProject);
+      // save undo state!
+      if(proj) {
+	proj->undo_mgr.SaveUndo(m_mat_col, "DataCol Matrix Cell Edit", m_mat_col);
+      }
+    }
     m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
     ++notifying;
     emit_dataChanged(index, index);
