@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
-from collections import OrderedDict
 import xml.etree.ElementTree as ET
 
 def make_dir(dir):
@@ -122,17 +121,21 @@ class ClusterConfig(object):
 # _encode_value, _decode_value
 class ColumnType(object):
     
-    STRING = 'String'
+    STRING = 'str'
     INT = 'int'
     FLOAT = 'float'
     
-    encode = {STRING : '$',
-              INT : '|',
-              FLOAT: '%'}
+    STRING_CODE = '$'
+    INT_CODE = '|'
+    FLOAT_CODE = '%'
     
-    decode = {'$' : STRING, 
-              '|' : INT,
-              '%' : FLOAT}
+    encode = {STRING : STRING_CODE,
+              INT : INT_CODE,
+              FLOAT: FLOAT}
+    
+    decode = {STRING_CODE : STRING,
+              INT_CODE : INT,
+              FLOAT_CODE : FLOAT}
 
 #############################################################################
 
@@ -140,15 +143,13 @@ class DataTable(object):
     
     DELIMITER = '\t'    
     
-    _header = OrderedDict() # header of the data table 
-    _rows = []  # data of the data table
-    
     def __init__(self):
-        pass
+        self._header = dict() # header of the data table 
+        self._rows = []  # data of the data table
     
     #input: space_allowed = boolean, if False replace white spaces with '_'
     @staticmethod
-    def escape_chars(string, space_allowed = True):
+    def escape_chars(string, space_allowed=True):
         
         string = string.replace('\\', '%s\\' % '\\')    # first off, escape '\'
         
@@ -163,85 +164,147 @@ class DataTable(object):
         return string
     
     # PRIVATE METHODS
+    
     def _encode_header(self):
         for col in self._header:
             col = ColumnType.encode[self._header[col]]
     
-    def _decode_header(self, header = None):
+    def _encode_val(self, val, col_type):
+        encoded_val = ""
+        if col_type is ColumnType.STRING:
+            encoded_val = '"%s"' % val
+        elif col_type is ColumnType.INT:
+            encoded_val = val
+        elif col_type is ColumnType.FLOAT:
+            encoded_val = val                
+            
+        return encoded_val
+    
+    def _decode_val(self, val, col_type):
+        decoded_val = ""
+        if col_type is ColumnType.STRING:
+            decoded_val = val.lstrip('"').rstrip('"')
+        elif col_type is ColumnType.INT:
+            decoded_val = val
+        elif col_type is ColumnType.FLOAT:
+            decoded_val = val                      
+            
+        return decoded_val
+    
+    def _decode_header(self, header=None):
         for col in self._header:
             col = ColumnType.encode[self._header[col]]    
-    
-    def _encode_value(self, value, column_type):
-        encoded_value = ""
-        if column_type is ColumnType.STRING:
-            encoded_value = '"%s"' % value
-        elif column_type is ColumnType.INT:
-            encoded_value = value
-        elif column_type is ColumnType.FLOAT:
-            encoded_value = value                
-            
-        return encoded_value
-    
-    def _decode_value(self, value, column_type):
-        decoded_value = ""
-        if column_type is ColumnType.STRING:
-            decoded_value = value.lstrip('"').rstrip('"')
-        elif column_type is ColumnType.INT:
-            decoded_value = value
-        elif column_type is ColumnType.FLOAT:
-            decoded_value = value                      
-            
-        return decoded_value
-    
+
     # PUBLIC METHODS
-    # input: header(optional) = OrderedDict, the header with key-values like ('column name', 'type')
+    
+    # input: header(optional) = a nested dict; the header with this format {col index:{'name': col name, 'type': col type}}
     # output: the header as string
-    def get_header_str(self, header = None):
+    def get_header_str(self, header=None):
         if header is None:
             header = self._header
         header_str = "_H:"
-        for column_name in header:
-            column_type = ColumnType.encode[header[column_name]]
-            column_name = DataTable.escape_chars(column_name, space_allowed=False)
-            header_str += '%s%s%s' % (self.DELIMITER, column_type, column_name)
+        for i in range(len(header)):
+            col_type = ColumnType.encode[self.get_col_type(i)]
+            col_name = DataTable.escape_chars(self.get_col_name(i), space_allowed=False)
+            header_str += '%s%s%s' % (self.DELIMITER, col_type, col_name)
             
         return header_str
     
-    # input: row_index = int, the index of the row
+    def get_header(self):
+        return self._header
+    
+    # input: row_idx = int; the index of the row
     # output: the row as string
-    def get_row_str(self, row_index):
+    def get_row_str(self, row_idx):
         row_str = '_D:'
-        column_index = 0
-        for value in self._rows[row_index]:
-            column_type = self._header.values()[column_index]
-            value = DataTable.escape_chars(value)
-            value = self._encode_value(value, column_type)
-            row_str += '%s%s' % (self.DELIMITER, value)
-            column_index += 1
+        for col_idx, val in enumerate(self._rows[row_idx]):
+            col_type = self.get_col_type(col_idx)
+            val = DataTable.escape_chars(val)
+            val = self._encode_val(val, col_type)
+            row_str += '%s%s' % (self.DELIMITER, val)
             
         return row_str
     
-    def set_header(self, header):
-        self._header = header
-        
-    def get_header(self):
-        return self._header
+    def get_row(self, row_num):
+        try:
+            return self._rows[row_num]
+        except:
+            return False
     
     def get_data(self):
         return self._rows
     
+    def get_col_type(self, idx):
+        try:
+            return self._header[idx]['type']
+        except:
+            print "Header column index %s is out of range." % idx
+    
+    def get_col_name(self, idx):
+        try:
+            return self._header[idx]['name']
+        except:
+            print "Header column index %s is out of range." % idx
+            return False
+    
+    # I removed col_type from the arguments since duplicate columns even with different types are not allowed in a DataTable 
+    def get_col_idx(self, col_name):
+        for i in self._header.iterkeys():
+            if self.get_col_name(i) == col_name:
+                return i
+        print "Column '%s' doesn't exist." % col_name
+        return -1  
+        
+        ''' Isn't it confusing and contradictory to insert a column in a get function?
+        except:
+            
+            # Insert the new column at the end.
+            new_idx = len(self.col_lookup)
+            self.col_lookup[col_name] = new_idx
+            self.col_names.append(col_name)
+            self.col_types.append(col_type)
+            return new_idx
+        '''
+
+    def add_col(self, col_name, col_type):
+        if self.get_col_idx(col_name) is -1:
+            self._header[len(self._header)] = {'name': col_name, 'type': col_type}
+            return True
+        else:
+            print "Column '%s' (%s) already exists." % (col_name, col_type)
+            return False   
+
+    def validate_val(self, val, col_name):
+        col_idx = self.get_col_idx(col_name)
+        col_type = self.get_col_type(col_idx)
+        return True if self.get_typed_val(val, col_type) else False
+        
+    def get_typed_val(self, v, t):
+        try:
+            if t == ColumnType.STRING: return v
+            if t == ColumnType.INT: return int(v)
+            if t == ColumnType.FLOAT: return float(v)
+        except:
+            print 'Value [%s] and type %s mismatch.' % (v, t)
+            return False
+
+    def get_val(self, row, col_name):
+        col_idx = self.get_col_idx(col_name)
+        str_val = self.data[row][col_idx]
+        return self.get_typed_val(str_val, self.col_types[col_idx])
+    
     # takes the first line of a .dat file and sets up self._header
     # input: header_str = string, the first row of a .dat file    
     def load_header(self, header_str):
-        header = OrderedDict()
+        header = dict()
         s = '_H:%s' % self.DELIMITER
         header_str = header_str.lstrip(s).rstrip('\n')
-        columns = header_str.split(self.DELIMITER)
-        for c in columns:
-            column_type = ColumnType.decode[c[0]]
-            column_name = c[1:]
-            header[column_name] = column_type
-        self.set_header(header)  
+        cols = header_str.split(self.DELIMITER)
+        for c in cols:
+            col_type = ColumnType.decode[c[0]]
+            col_name = c[1:]
+            header[len(header)] = {'name': col_name, 'type': col_type}
+        self.set_header(header)
             
     # takes a list of rows from a .dat file and sets up self.rows
     # input: rows = list, list of rows containing the data part of a .dat file
@@ -249,29 +312,41 @@ class DataTable(object):
         s = '_D:%s' % self.DELIMITER
         for r in rows:
             r = r.lstrip(s).rstrip('\n').strip('\t')
-            values = r.split(self.DELIMITER)
-            decoded_values = []
-            column_index = 0
-            for v in values:
-                column_type = self._header.values()[column_index]
-                decoded_values.append(self._decode_value(v, column_type))
-                column_index += 1
-            self.add_row(decoded_values)            
+            vals = r.split(self.DELIMITER)
+            decoded_vals = []
+            col_idx = 0
+            for v in vals:
+                col_type = self._header.vals()[col_idx]
+                decoded_vals.append(self._decode_val(v, col_type))
+                col_idx += 1
+            self.set_row(decoded_vals)            
     
-    # writes the data table into a .dat file
-    # input: path = string, path of the destination .dat file
-    #        append(optional) = boolean, if True append, otherwise overwrite
-    def write(self, path, append = False):
-        # mode = 'a' append, mode = 'w' overwrite 
-        mode = 'a' if append else 'w'
-        f = open(path, mode)
-        if len(self._header):
-            f.write(self.get_header_str() + '\n')
-        for i in range(len(self._rows)):
-            f.write(self.get_row_str(i) + '\n')
+    def set_val(self, row_num, col_name, val):
+        col_idx = self.get_col_idx(col_name)
+        if col_idx is not -1:
+            if self.get_typed_val(val, self.get_col_type(col_idx)):
+                try:
+                    self._rows[row_num][col_idx] = str(val)
+                except:
+                    print "Row number %s doesn't exist." % row_num
+                    return False
+            else:
+                return False
+        else:
+            return False
+        return True
         
-    def add_row(self, values):        
-        self._rows.append(values)
+    def set_header(self, header):
+        self._header = header
+        
+    def set_row(self, vals, row_num=None):
+        if len(vals) is not len(self._header):
+            return False
+        if row_num is not None:
+            self._rows[row_num] = vals
+        else:    
+            self._rows.append(vals)
+        return True
 
     def load_from_file(self, path):
         f = open(path, 'r')
@@ -280,6 +355,18 @@ class DataTable(object):
         rows = lines[1:]
         self.load_header(header)
         self.load_data(rows)
+        
+    # writes the data table into a .dat file
+    # input: path = string, path of the destination .dat file
+    #        append(optional) = boolean, if True append, otherwise overwrite
+    def write(self, path, append=False):
+        # mode = 'a' append, mode = 'w' overwrite 
+        mode = 'a' if append else 'w'
+        f = open(path, mode)
+        if len(self._header) and not append:
+            f.write(self.get_header_str() + '\n')
+        for i in range(len(self._rows)):
+            f.write(self.get_row_str(i) + '\n')
 
 #############################################################################
 
