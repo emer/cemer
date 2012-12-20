@@ -4,10 +4,13 @@
 Script to build emergent using Amazon Web Services (AWS).
 
 To launch all builds simultaneously:
-  rev=5751
+  rev=5943
   cd /c/src/emergent/package/aws
   rm ~/.ssh/known_hosts_amazon
-  for distro in lucid maverick natty oneiric precise quantal; do
+  # Note: not building maverick or oneiric using this method.
+  # Maverick is end-of-life and oneiric AMIs won't start up in EC2.
+  # Use a VM to build them.  For maverick, do the apt-get steps manually.
+  for distro in lucid natty precise quantal; do
     for bits in 32 64; do
       mintty /c/src/emergent/package/aws/build.py $distro $bits $rev &
     done
