@@ -676,7 +676,7 @@ void QtThumbWheel::paintEvent(QPaintEvent *)
 	}
     }
 
-    qDrawShadePanel(&pt, cr, palette());
+    //    qDrawShadePanel(&pt, cr, palette());
     QPainter painter(this);
     painter.drawPixmap(QPoint(0, 0), d->pix);
 }
