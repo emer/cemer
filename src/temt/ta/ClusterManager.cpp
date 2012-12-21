@@ -28,11 +28,16 @@
 #include "ta_string.h"
 #include "SubversionClient.h"
 
+ClusterManager::Exception::Exception(const char *msg)
+  : std::runtime_error(msg)
+{
+}
+
 ClusterManager::ClusterManager(ClusterRun &cluster_run)
   : m_cluster_run(cluster_run)
-  , m_svn_client(0)
-  , m_proj(0)
-  , m_filename()
+  , m_valid(false)      // set true if all goes well
+  , m_svn_client(0)     // initialized in ctor body
+  , m_proj(0)           // initialized in ctor body
   , m_username()
   , m_wc_path()
   , m_repo_user_path()
@@ -43,6 +48,23 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   , m_proj_copy_filename()
   , m_submit_dat_filename()
 {
+  m_proj = GET_OWNER(&m_cluster_run, taProject);
+  if (!m_proj) {
+    // Should never happen.
+    taMisc::Error("Could not get project object to run on cluster.");
+    return;
+  }
+
+  // Create Subversion client.
+  try {
+    m_svn_client = new SubversionClient;
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Error creating SubversionClient.\n", ex.what());
+    return;
+  }
+
+  m_valid = true;
 }
 
 ClusterManager::~ClusterManager()
@@ -51,91 +73,65 @@ ClusterManager::~ClusterManager()
   m_svn_client = 0;
 }
 
-void
-ClusterManager::SetRepoUrl(const char *repo_url)
-{
-  m_cluster_run.repo_url = repo_url;
-}
-
-void
-ClusterManager::SetDescription(const char *description)
-{
-  m_cluster_run.notes = description;
-}
-
-void
-ClusterManager::UseMpi(int num_mpi_nodes)
-{
-  m_cluster_run.mpi_nodes = num_mpi_nodes;
-  m_cluster_run.use_mpi = num_mpi_nodes > 0;
-}
-
 // Run the model on a cluster using the parameters of the ClusterRun
 // provided in the constructor.
 bool
 ClusterManager::Run(bool prompt_user)
 {
-  // Save the project and get its filename.
-  if (!saveProject()) return false;
-
-  // If a repository URL and description haven't been set, prompt the user
-  // for these values.
-  if (prompt_user || m_cluster_run.repo_url.empty() ||
-      m_cluster_run.notes.empty())
-  {
-    if (!showRepoDialog()) return false;
-  }
-
-  taMisc::Info("Running project", m_filename,
-    "\n  on cluster", m_cluster_run.repo_url,
-    "\n  Description:", m_cluster_run.notes);
+  if (!m_valid) return false; // Ensure proper construction.
 
   try {
-    // Create Subversion client and get the user's username.  Need the URL to
-    // get the username from the cache so unfortunately we have to do this
-    // after presenting the dialog.  On the other hand, the only way this can
-    // fail is if the user provides an empty username, so it's hard for them
-    // to screw it up.
-    m_svn_client = new SubversionClient;
-    m_username = m_svn_client->GetUsername(
-      m_cluster_run.repo_url, SubversionClient::CHECK_CACHE_THEN_PROMPT_USER
-    ).c_str();
+    saveProject();
 
-    if (m_username.empty()) {
-      taMisc::Error("A Subversion username is required to run on a cluster.");
-      return false;
+    // Prompt the user if the flag is set; otherwise the user is
+    // only prompted if required fields are blank.
+    if (prompt_user) {
+      // Prompt user; quit early if they cancel the dialog.
+      if (!showRepoDialog()) return false;
     }
 
-    setPaths();
+    taMisc::Info("Running project", getFilename(),
+      "\n  on cluster", getClusterName(),
+      "\n  using repository", getRepoUrl(),
+      "\n  Notes:", m_cluster_run.notes);
+
     ensureWorkingCopyExists();
-    createSubdirs();
     runSearchAlgo();
+    saveSubmitTable();
     saveCopyOfProject();
     createParamFile(); // TODO: probably don't need this anymore.
-    commitFiles();
+    commitFiles("Ready to run on cluster: " + m_cluster_run.notes);
     return true;
   }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not run on cluster:", ex.what());
+  }
   catch (const SubversionClient::Exception &ex) {
-    switch (ex.GetErrorCode()) {
-    case SubversionClient::EMER_OPERATION_CANCELLED:
-      // User probably cancelled, don't error, just inform.
-      taMisc::Info("Running on cluster cancelled.", ex.what());
-      break;
-
-    case SubversionClient::EMER_FORBIDDEN:
-      // Probably a commit failure.
-      taMisc::Error("User", m_username, "is not authorized on this server.\n",
-        ex.what());
-      break;
-
-    default:
-      taMisc::Error("Error running on cluster.\n", ex.what());
-      break;
-    }
+    handleException(ex);
   }
 
   // There's a "return true" at the end of the try block, so the only way to
   // get here is if an exception was thrown.
+  return false;
+}
+
+bool
+ClusterManager::CommitJobSubmissionTable()
+{
+  if (!m_valid) return false; // Ensure proper construction.
+
+  try {
+    ensureWorkingCopyExists();
+    saveSubmitTable();
+    commitFiles("Submitting new jobs_submit.dat: " + m_cluster_run.notes);
+    return true;
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not submit jobs table:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    handleException(ex);
+  }
   return false;
 }
 
@@ -151,39 +147,103 @@ ClusterManager::GetWcSubmitFilename() const
   return m_submit_dat_filename;
 }
 
-bool
+void
+ClusterManager::handleException(const SubversionClient::Exception &ex)
+{
+  switch (ex.GetErrorCode()) {
+  case SubversionClient::EMER_OPERATION_CANCELLED:
+    // User probably cancelled, don't error, just inform.
+    taMisc::Info("Cluster operation cancelled.", ex.what());
+    break;
+
+  case SubversionClient::EMER_FORBIDDEN:
+    // Probably a commit failure.
+    taMisc::Error("User", m_username, "is not authorized on this server.\n",
+      ex.what());
+    break;
+
+  default:
+    taMisc::Error("Cluster operation error.\n", ex.what());
+    break;
+  }
+}
+
+void
 ClusterManager::saveProject()
 {
-  // Get the project object.
-  m_proj = GET_OWNER(&m_cluster_run, taProject);
-  if (!m_proj) {
-    // Should never happen.
-    taMisc::Error("Could not get project object to run on cluster.");
-    return false;
-  }
+  // Save the model locally.
+  m_proj->Save();
 
-  // Make sure the model is saved locally before proceeding.
-  if (m_proj->Save()) {
-    // Get the project's filename.  It should be valid since we just saved.
-    m_filename = m_proj->file_name;
-    if (!m_filename.empty()) {
-      // Non-empty filename is success!
-      return true;
+  // If filename is still empty, save failed somehow.
+  if (m_proj->file_name.empty()) {
+    throw Exception("Please save project locally first.");
+  }
+}
+
+const String &
+ClusterManager::getFilename()
+{
+  if (m_proj->file_name.empty()) {
+    saveProject();
+  }
+  return m_proj->file_name;
+}
+
+const String &
+ClusterManager::getUsername()
+{
+  // Get username if we haven't already.
+  if (m_username.empty()) {
+    // Get username from cache, or prompt user.
+    std::string user = m_svn_client->GetUsername(
+      getRepoUrl().chars(),
+      SubversionClient::CHECK_CACHE_THEN_PROMPT_USER);
+    m_username = user.c_str();
+
+    // If still empty, can't proceed.
+    if (m_username.empty()) {
+      throw Exception("A Subversion username is required.");
     }
   }
+  return m_username;
+}
 
-  taMisc::Error(
-    "Please save project locally before attempting to run on cluster.");
-  return false;
+const String &
+ClusterManager::getClusterName()
+{
+  return promptForString(
+    m_cluster_run.cluster,
+    "A cluster name is required.");
+}
+
+const String &
+ClusterManager::getRepoUrl()
+{
+  return promptForString(
+    m_cluster_run.repo_url,
+    "A repository URL is required.");
+}
+
+const String &
+ClusterManager::promptForString(const String &str, const char *msg)
+{
+  if (str.empty()) {
+    showRepoDialog();
+    if (str.empty()) {
+      throw Exception(msg);
+    }
+  }
+  return str;
 }
 
 bool
 ClusterManager::showRepoDialog()
 {
   // Make sure there's at least one repository defined.
-  if (taMisc::svn_repos.size == 0) {
+  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
     taMisc::Error(
-      "Please define at least one repository in preferences/options first");
+      "Please define at least one cluster and repository in "
+      "preferences/options");
     return false;
   }
 
@@ -199,13 +259,15 @@ ClusterManager::showRepoDialog()
   String row = "instrRow";
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("Instructions", widget, row,
-    "label=Please choose a cluster and enter a description for this run.\n"
-    "The description will be used as a checkin comment.;");
+    "wrap=on;"
+    "label=Please choose a cluster and repository, enter notes for this run, "
+    "and set other parameters. The notes will be used as a checkin comment. "
+    "Required fields are indicated with an asterisk (*).;");
 
   row = "clustRow";
   dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("clustLbl", widget, row, "label=Cluster: ;");
+  dlg.AddLabel("clustLbl", widget, row, "label=* Cluster: ;");
 
   QComboBox *combo1 = new QComboBox;
   {
@@ -215,12 +277,9 @@ ClusterManager::showRepoDialog()
     QBoxLayout *hbox = hboxEmer->layout;
     if (!hbox) return false;
 
-    if (!taMisc::cluster1_name.empty()) combo1->addItem(taMisc::cluster1_name);
-    if (!taMisc::cluster2_name.empty()) combo1->addItem(taMisc::cluster2_name);
-    if (!taMisc::cluster3_name.empty()) combo1->addItem(taMisc::cluster3_name);
-    if (!taMisc::cluster4_name.empty()) combo1->addItem(taMisc::cluster4_name);
-    if (!taMisc::cluster5_name.empty()) combo1->addItem(taMisc::cluster5_name);
-    if (!taMisc::cluster6_name.empty()) combo1->addItem(taMisc::cluster6_name);
+    for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
+      combo1->addItem(taMisc::cluster_names[idx].chars());
+    }
     hbox->addWidget(combo1);
   }
   int idx1 = combo1->findText(m_cluster_run.cluster.toQString());
@@ -230,7 +289,7 @@ ClusterManager::showRepoDialog()
   row = "repoRow";
   dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("repoLbl", widget, row, "label=Repository: ;");
+  dlg.AddLabel("repoLbl", widget, row, "label=* Repository: ;");
 
   QComboBox *combo2 = new QComboBox;
   {
@@ -250,12 +309,12 @@ ClusterManager::showRepoDialog()
   if (idx2 >= 0) combo2->setCurrentIndex(idx2);
   dlg.AddStretch(row);
 
-  row = "descRow";
+  row = "notesRow";
   dlg.AddSpace(10, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("descLbl", widget, row, "label=Description: ;");
-  dlg.AddStringField(&m_cluster_run.notes, "description", widget, row,
-    "tooltip=description to be used as a checkin comment;");
+  dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
+  dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
+    "tooltip=notes about this run, used as a checkin comment;");
 
   row = "mpi";
   dlg.AddSpace(10, vbox);
@@ -284,47 +343,56 @@ ClusterManager::showRepoDialog()
 void
 ClusterManager::setPaths()
 {
+  // If already set, just return.
+  if (!m_wc_path.empty()) return;
+
+  const String &username = getUsername();
+  const String &filename = getFilename();
+  const String &cluster = getClusterName();
+  const String &repo_url = getRepoUrl();
+
   // Set the working copy path and get a canonicalized version back.
-  m_wc_path = taMisc::user_app_dir + '/' + m_cluster_run.cluster +
-    '/' + m_username;
+  m_wc_path = taMisc::user_app_dir + '/' + cluster + '/' + username;
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
-  // Don't use PATH_SEP here, since on Windows that's '\\', which is
-  // non-canonical for URLs (and svn paths) and causes errors.
-
   // This is the path to the user's directory in the repo.
-  m_repo_user_path = m_cluster_run.repo_url + '/' + m_cluster_run.cluster +
-    '/' + m_username;
+  m_repo_user_path = repo_url + '/' + cluster + '/' + username;
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
-  QString proj_name = QFileInfo(m_filename).completeBaseName();
-  m_wc_proj_path = m_wc_path + '/' + proj_name;
+  QFileInfo fi(filename);
+  m_wc_proj_path = m_wc_path + '/' + fi.completeBaseName();
 
   // Make subdirectories for various files (job params, models, results).
-  m_wc_submit_path = m_wc_proj_path + '/' + "submit";
-  m_wc_models_path = m_wc_proj_path + '/' + "models";
-  m_wc_results_path = m_wc_proj_path + '/' + "results";
+  m_wc_submit_path = m_wc_proj_path + "/submit";
+  m_wc_models_path = m_wc_proj_path + "/models";
+  m_wc_results_path = m_wc_proj_path + "/results";
 
-  taMisc::Info("Repository is at", m_repo_user_path); // TODO remove this
+  m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
+  m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
+
+  taMisc::Info("Repository is at", m_repo_user_path);
 }
 
 void
 ClusterManager::ensureWorkingCopyExists()
 {
-  // check if the user has a wc. (create and) checkout a wc if needed
+  // If the user already has a working copy, update it.  Otherwise, create
+  // it on the server.
+  setPaths();
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
     // This could be the first time the user has used Click-to-cluster.
-    taMisc::Info("Working copy wasn't found; will create at", m_wc_path);
+    taMisc::Info("Working copy not found; will try to create at", m_wc_path);
 
-    // Create the directory on the repository.
+    // Create the directory on the repository, if not already present.
     String comment = "Creating cluster directory for user ";
-    comment += m_username;
+    comment += getUsername();
     m_svn_client->TryMakeUrlDir(m_repo_user_path.chars(), comment.chars());
 
-    // Check out the directory we just created.
+    // Check out a working copy (possibly just an empty directory if we
+    // just created it for the first time).
     int rev = m_svn_client->Checkout(m_repo_user_path);
     taMisc::Info("Working copy checked out for revision", String(rev));
   }
@@ -333,11 +401,7 @@ ClusterManager::ensureWorkingCopyExists()
     int rev = m_svn_client->Update();
     taMisc::Info("Working copy was updated to revision", String(rev));
   }
-}
 
-void
-ClusterManager::createSubdirs()
-{
   // We could check if these directories already exist, but it's easier
   // to just try to create them all and ignore any creation errors.
   m_svn_client->TryMakeDir(m_wc_proj_path);
@@ -349,21 +413,25 @@ ClusterManager::createSubdirs()
 void
 ClusterManager::runSearchAlgo()
 {
-  // Run the current search algorithm, if one is selected, to generate the
-  // jobs_submit DataTable.  Then save that table to the working copy and
-  // check it in.
-  if (m_cluster_run.cur_search_algo) {
-    // Tell the search algorithm to populate the jobs_submit table.
-    m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
-
-    // Create an external filename to save the datatable to.
-    m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
-    deleteFile(m_submit_dat_filename);
-
-    // Save the datatable and add it to source control.
-    m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
-    m_svn_client->Add(m_submit_dat_filename.chars());
+  if (!m_cluster_run.cur_search_algo) {
+    throw Exception("No search algorithm chosen.");
   }
+
+  // Tell the chosen search algorithm to populate the jobs_submit table.
+  m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
+
+  if (m_cluster_run.jobs_submit.rows == 0) {
+    throw Exception("Search algorithm did not produce any jobs.");
+  }
+}
+
+void
+ClusterManager::saveSubmitTable()
+{
+  // Save the datatable and add it to source control (if not already).
+  deleteFile(m_submit_dat_filename);
+  m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
+  m_svn_client->Add(m_submit_dat_filename.chars());
 }
 
 void
@@ -373,14 +441,9 @@ ClusterManager::saveCopyOfProject()
   m_proj->Save();
 
   // Copy the project from its local path to our cluster working copy.
-  m_proj_copy_filename = m_wc_models_path + "/" +
-    QFileInfo(m_filename).fileName();
-
   // Delete first, since QFile::copy() won't overwrite.
   deleteFile(m_proj_copy_filename);
-
-  // Copy the file and add it to the working copy.
-  QFile::copy(m_filename, m_proj_copy_filename);
+  QFile::copy(m_proj->file_name, m_proj_copy_filename);
   m_svn_client->Add(m_proj_copy_filename.chars());
 }
 
@@ -430,10 +493,10 @@ ClusterManager::createParamFile()
   // Write a timestamp to ensure the file is modified and will get
   // checked in.  Also write the list of parameter names.
   out << "[GENERAL_PARAMS]";
-  out << "\norig_filename = " << m_filename.chars();
+  out << "\norig_filename = " << m_proj->file_name.chars();
   out << "\ncluster_run_name = " << m_cluster_run.name.chars();
   out << "\nrelative_filename = ../models/"
-      << qPrintable(QFileInfo(m_filename).fileName());
+      << qPrintable(QFileInfo(m_proj->file_name).fileName());
   out << "\ntimestamp = "
       << qPrintable(QDateTime::currentDateTime().toString());
   out << "\ndescription = " << m_cluster_run.notes.chars();
@@ -447,13 +510,14 @@ ClusterManager::createParamFile()
 }
 
 void
-ClusterManager::commitFiles()
+ClusterManager::commitFiles(const String &commit_msg)
 {
+  // Ensure the working copy has been set.
+  setPaths();
+
   // Check in all files and directories that were created or updated.
-  int rev = m_svn_client->Checkin(
-    "Ready to run on cluster: " + m_cluster_run.notes);
-  taMisc::Info("Submitted project to run on cluster in revision:",
-    String(rev));
+  int rev = m_svn_client->Checkin(commit_msg);
+  taMisc::Info("Committed files in revision:", String(rev));
 }
 
 void

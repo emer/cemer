@@ -1016,9 +1016,15 @@ void ClusterRun::Initialize() {
   n_threads = taMisc::thread_defaults.n_threads;
   use_mpi = false;
   mpi_nodes = 10;
+  m_cm = 0;
 }
 
 void ClusterRun::Destroy() {
+  delete m_cm; m_cm = 0;
+}
+
+void ClusterRun::initClusterManager() {
+  m_cm = new ClusterManager(*this);
 }
 
 void ClusterRun::NewSearchAlgo(TypeDef *type) {
@@ -1026,18 +1032,18 @@ void ClusterRun::NewSearchAlgo(TypeDef *type) {
 }
 
 void ClusterRun::Run() {
+  initClusterManager();         // ensure it has been created.
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
-
-  ClusterManager cm(*this);     // note this functionality should just be moved to ClusterRun -- the members are needed for persistence of settings and should be used instead of private transient members.  also need to access data tables etc -- just makes sense to put it all here..
-  bool prompt_user = true;
-  if (cm.Run(prompt_user)) {
+  bool prompt_user = true;      // always prompt the user on a new run.
+  if (m_cm->Run(prompt_user)) {
     // Maybe don't need this... these fields are more important in the running
     // and completed tables.  For now, leave it in.
+// TODO: move this logic to ClusterManager.
 
     // Get revisions of the committed project and jobs_submit.dat files.
-    String wc_proj = cm.GetWcProjFilename();
-    String wc_submit = cm.GetWcSubmitFilename();
+    String wc_proj = m_cm->GetWcProjFilename();
+    String wc_submit = m_cm->GetWcSubmitFilename();
     if (!wc_proj.empty() && !wc_submit.empty()) {
       int model_rev = Subversion::GetLastChangedRevision(wc_proj);
       int submit_rev = Subversion::GetLastChangedRevision(wc_submit);
@@ -1053,10 +1059,13 @@ void ClusterRun::Run() {
 }
 
 bool ClusterRun::Update() {
+  initClusterManager(); // ensure it has been created.
   return false;
 }
 
 void ClusterRun::Kill() {
+  initClusterManager(); // ensure it has been created.
+
   // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
   SelectedRows(jobs_running, st_row, end_row);
@@ -1069,6 +1078,9 @@ void ClusterRun::Kill() {
     jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", src_row);
     jobs_submit.SetVal("CANCELLED", "status", dst_row);
   }
+
+  // Commit the table.
+  m_cm->CommitJobSubmissionTable();
 }
 
 void ClusterRun::ImportData() {

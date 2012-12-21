@@ -22,6 +22,10 @@
 #include "ta_group.h"
 #include "ta_datatable.h"
 
+#ifndef __MAKETA__
+class ClusterManager;
+#endif
+
 class SelectEditItem;
 class EditMbrItem;
 class EditMthItem;
@@ -507,6 +511,13 @@ public:
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
 
+private:
+#ifndef __MAKETA__
+  void initClusterManager();
+  ClusterManager *m_cm;
+#endif
+
+public:
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
   // #BUTTON #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
   virtual void  Run();

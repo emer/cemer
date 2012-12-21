@@ -18,9 +18,9 @@
 
 #include "ta_def.h"
 #include "ta_string.h"
+#include "SubversionClient.h"
 
 class ClusterRun;
-class SubversionClient;
 class taProject;
 
 class TA_API ClusterManager
@@ -28,29 +28,40 @@ class TA_API ClusterManager
 public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
-  void SetRepoUrl(const char *repo_url);
-  void SetDescription(const char *description);
-  void UseMpi(int num_mpi_nodes);
   bool Run(bool prompt_user);
+  bool CommitJobSubmissionTable();
   String GetWcProjFilename() const;
   String GetWcSubmitFilename() const;
 
 private:
-  bool saveProject();
+  // This exception class only used internally.
+  class Exception : public std::runtime_error
+  {
+  public:
+    explicit Exception(const char *msg);
+  };
+
+  void handleException(const SubversionClient::Exception &ex);
+  void saveProject();
+  const String & getFilename();
+  const String & getUsername();
+  const String & getClusterName();
+  const String & getRepoUrl();
+  const String & promptForString(const String &str, const char *msg);
   bool showRepoDialog();
   void setPaths();
   void ensureWorkingCopyExists();
-  void createSubdirs();
   void runSearchAlgo();
+  void saveSubmitTable();
   void saveCopyOfProject();
   void createParamFile();
-  void commitFiles();
+  void commitFiles(const String &commit_msg);
   void deleteFile(const String &filename);
 
   ClusterRun &m_cluster_run;
+  bool m_valid;
   SubversionClient *m_svn_client;
   taProject *m_proj;
-  String m_filename;
   String m_username;
   String m_wc_path;
   String m_repo_user_path;

@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -177,7 +177,7 @@ void taGuiLayout_List::Initialize() {
 }
 
 ////////////////////////////////////////////
-//	 Actions
+//       Actions
 
 void taGuiAction::Initialize() {
   m_helper = new taGuiActionHelper(this);
@@ -243,7 +243,7 @@ void taGuiDataHost::Constr_Body() {
 }
 
 void taGuiDataHost::GetImage(bool force) {
-  ++updating;			// prevents spurious changed flags from coming in
+  ++updating;                   // prevents spurious changed flags from coming in
   gui_owner->GetImage();
   --updating;
 }
@@ -308,7 +308,7 @@ void taGuiDialog::GetValue() {
   widgets.GetValue();
   Program* prog = GET_MY_OWNER(Program);
   if(prog) {
-    prog->UpdateAfterEdit();	// trigger update of gui
+    prog->UpdateAfterEdit();    // trigger update of gui
   }
 }
 
@@ -345,9 +345,9 @@ String taGuiDialog::GetAttribute(const String& key, const String& attributes) {
 }
 
 taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const String& typ,
-					 const String& layout, const String& attributes,
-					 Variant data, const String& url, taiData* taidata) {
-  if(!data_host) Reset();		// make sure constructed!
+                                         const String& layout, const String& attributes,
+                                         Variant data, const String& url, taiData* taidata) {
+  if(!data_host) Reset();               // make sure constructed!
   if(!widg) return NULL;
   if(layout.nonempty()) {
     taGuiLayout* lay = FindLayout(layout, true);
@@ -387,23 +387,23 @@ taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const 
     if(att.nonempty()) wid->widget->setFont(QFont(att, taMisc::font_size)); }
   { String att = GetAttribute("font_size=", attributes);
     if(att.nonempty()) {
-      QFont font = wid->widget->font(); font.setPointSize((int)att); 
+      QFont font = wid->widget->font(); font.setPointSize((int)att);
       wid->widget->setFont(font); } }
   { String att = GetAttribute("bold=", attributes);
     if(att.nonempty()) {
-      QFont font = wid->widget->font(); font.setBold(att.toBool()); 
+      QFont font = wid->widget->font(); font.setBold(att.toBool());
       wid->widget->setFont(font); } }
   { String att = GetAttribute("italic=", attributes);
     if(att.nonempty()) {
-      QFont font = wid->widget->font(); font.setItalic(att.toBool()); 
+      QFont font = wid->widget->font(); font.setItalic(att.toBool());
       wid->widget->setFont(font); } }
   return wid;
 }
 
 taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
-					 const String& toolbar, const String& menu,
-					 const String& attributes, const String& url) {
-  if(!data_host) Reset();		// make sure constructed!
+                                         const String& toolbar, const String& menu,
+                                         const String& attributes, const String& url) {
+  if(!data_host) Reset();               // make sure constructed!
   if(!act) return NULL;
 
   taGuiAction* tact = (taGuiAction*)actions.New(1);
@@ -427,15 +427,15 @@ taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
     if(att.nonempty()) act->setFont(QFont(att, taMisc::font_size)); }
   { String att = GetAttribute("font_size=", attributes);
     if(att.nonempty()) {
-      QFont font = act->font(); font.setPointSize((int)att); 
+      QFont font = act->font(); font.setPointSize((int)att);
       act->setFont(font); } }
   { String att = GetAttribute("bold=", attributes);
     if(att.nonempty()) {
-      QFont font = act->font(); font.setBold(att.toBool()); 
+      QFont font = act->font(); font.setBold(att.toBool());
       act->setFont(font); } }
   { String att = GetAttribute("italic=", attributes);
     if(att.nonempty()) {
-      QFont font = act->font(); font.setItalic(att.toBool()); 
+      QFont font = act->font(); font.setItalic(att.toBool());
       act->setFont(font); } }
   { String att = GetAttribute("tooltip=", attributes);
     if(att.nonempty()) act->setToolTip(att); }
@@ -448,7 +448,7 @@ taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
 }
 
 bool taGuiDialog::AddWidget(const String& nm, const String& parent, const String& layout,
-			    const String& attributes) {
+                            const String& attributes) {
   QWidget* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -461,7 +461,7 @@ bool taGuiDialog::AddWidget(const String& nm, const String& parent, const String
 }
 
 bool taGuiDialog::AddFrame(const String& nm, const String& parent, const String& layout,
-			   const String& attributes) {
+                           const String& attributes) {
   QFrame* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -492,7 +492,7 @@ bool taGuiDialog::AddFrame(const String& nm, const String& parent, const String&
 }
 
 bool taGuiDialog::AddLabel(const String& nm, const String& parent, const String& layout,
-			   const String& attributes) {
+                           const String& attributes) {
   QLabel* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -502,13 +502,14 @@ bool taGuiDialog::AddLabel(const String& nm, const String& parent, const String&
   else
     widg = new QLabel();
   String label = GetAttribute("label=", attributes);
-  if(label.empty()) label = nm;	// backup
+  if(label.empty()) label = nm; // backup
   widg->setText(label);
+  widg->setWordWrap(GetAttribute("wrap=", attributes) == "on");
   return (bool)AddWidget_impl(widg, nm, "Label", layout, attributes);
 }
 
 bool taGuiDialog::AddPushButton(const String& nm, const String& parent, const String& layout,
-				const String& url, const String& attributes) {
+                                const String& url, const String& attributes) {
   QPushButton* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -528,7 +529,7 @@ bool taGuiDialog::AddPushButton(const String& nm, const String& parent, const St
 }
 
 bool taGuiDialog::AddToolButton(const String& nm, const String& parent, const String& layout,
-				const String& url, const String& attributes) {
+                                const String& url, const String& attributes) {
   QToolButton* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -548,7 +549,7 @@ bool taGuiDialog::AddToolButton(const String& nm, const String& parent, const St
 }
 
 bool taGuiDialog::AddToolBar(const String& nm, const String& parent, const String& layout,
-			     const String& attributes) {
+                             const String& attributes) {
   QToolBar* widg = NULL;
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
@@ -567,24 +568,24 @@ bool taGuiDialog::AddSeparator(const String& toolbar, const String& menu) {
   taGuiWidget* par = FindWidget(toolbar, true);
   if(!par) return false;
   if(TestError(!(par->widget_type == "ToolBar"),
-	       "AddAction", "destination toolbar to add to was not a toolbar, is:",
-	       par->widget_type, "named:", par->name))
+               "AddAction", "destination toolbar to add to was not a toolbar, is:",
+               par->widget_type, "named:", par->name))
     return false;
   if(menu.nonempty()) {
     taGuiAction* mnu = FindAction(menu, false);
     if(mnu) {
       QMenu* mm = mnu->action->menu();
       if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
-	return false;
+        return false;
       mm->addSeparator();
     }
     else {
       taGuiWidget* wmnu = FindWidget(menu, false);
       if(wmnu) {
-	QMenu* mm = ((QToolButton*)wmnu->widget.data())->menu();
-	if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
-	  return false;
-	mm->addSeparator();
+        QMenu* mm = ((QToolButton*)wmnu->widget.data())->menu();
+        if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
+          return false;
+        mm->addSeparator();
       }
     }
   }
@@ -594,20 +595,20 @@ bool taGuiDialog::AddSeparator(const String& toolbar, const String& menu) {
   }
   return true;
 }
-  
-bool taGuiDialog::AddMenu(const String& nm, const String& toolbar, const String& menu, 
-			  const String& attributes) {
+
+bool taGuiDialog::AddMenu(const String& nm, const String& toolbar, const String& menu,
+                          const String& attributes) {
   if(TestError(toolbar.empty(), "AddAction", "a toolbar is required"))
     return false;
   taGuiWidget* par = FindWidget(toolbar, true);
   if(!par) return false;
   if(TestError(!(par->widget_type == "ToolBar"),
-	       "AddAction", "destination toolbar to add to was not a toolbar, is:",
-	       par->widget_type, "named:", par->name))
+               "AddAction", "destination toolbar to add to was not a toolbar, is:",
+               par->widget_type, "named:", par->name))
     return false;
   String label = GetAttribute("label=", attributes);
-  if(label.empty()) label = nm;	// backup
-  QAction* mnu = NULL; 
+  if(label.empty()) label = nm; // backup
+  QAction* mnu = NULL;
   if(menu.nonempty()) {
     taGuiAction* act = FindAction(menu, true);
     if(!act) return false;
@@ -631,33 +632,33 @@ bool taGuiDialog::AddMenu(const String& nm, const String& toolbar, const String&
 }
 
 bool taGuiDialog::AddAction(const String& nm, const String& toolbar, const String& menu,
-			    const String& url, const String& attributes) {
+                            const String& url, const String& attributes) {
   if(TestError(toolbar.empty(), "AddAction", "a toolbaris required"))
     return false;
   taGuiWidget* par = FindWidget(toolbar, true);
   if(!par) return false;
   if(TestError(!(par->widget_type == "ToolBar"),
-	       "AddAction", "destination toolbar to add to was not a toolbar, is:",
-	       par->widget_type, "named:", par->name))
+               "AddAction", "destination toolbar to add to was not a toolbar, is:",
+               par->widget_type, "named:", par->name))
     return false;
   String label = GetAttribute("label=", attributes);
-  if(label.empty()) label = nm;	// backup
+  if(label.empty()) label = nm; // backup
   QAction* act = NULL;
   if(menu.nonempty()) {
     taGuiAction* mnu = FindAction(menu, false);
     if(mnu) {
       QMenu* mm = mnu->action->menu();
       if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
-	return false;
+        return false;
       act = mm->addAction(label);
     }
     else {
       taGuiWidget* wmnu = FindWidget(menu, false);
       if(wmnu) {
-	QMenu* mm = ((QToolButton*)wmnu->widget.data())->menu();
-	if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
-	  return false;
-	act = mm->addAction(label);
+        QMenu* mm = ((QToolButton*)wmnu->widget.data())->menu();
+        if(TestError(!mm, "AddAction", "menu named:", menu, "is not actually a menu!"))
+          return false;
+        act = mm->addAction(label);
       }
     }
   }
@@ -669,72 +670,72 @@ bool taGuiDialog::AddAction(const String& nm, const String& toolbar, const Strin
 }
 
 bool taGuiDialog::AddIntField(int* int_var, const String& nm, const String& parent,
-			      const String& layout, const String& attributes) {
+                              const String& layout, const String& attributes) {
   if(!int_var) return false;
   if(TestError(parent.empty(), "AddIntField", "a parent widget is required"))
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
   taiIncrField* taidata = new taiIncrField(&TA_int, data_host, NULL, par->widget);
-  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "IntField", layout, attributes, 
-				  Variant((void*)int_var), _nilString, taidata);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "IntField", layout, attributes,
+                                  Variant((void*)int_var), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddDoubleField(double* dvar, const String& nm, const String& parent,
-			      const String& layout, const String& attributes) {
+                              const String& layout, const String& attributes) {
   if(!dvar) return false;
   if(TestError(parent.empty(), "AddDoubleField", "a parent widget is required"))
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
   taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
-  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "DoubleField", layout, attributes, 
-				  Variant((void*)dvar), _nilString, taidata);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "DoubleField", layout, attributes,
+                                  Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddFloatField(float* dvar, const String& nm, const String& parent,
-			      const String& layout, const String& attributes) {
+                              const String& layout, const String& attributes) {
   if(!dvar) return false;
   if(TestError(parent.empty(), "AddFloatField", "a parent widget is required"))
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
   taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
-  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "FloatField", layout, attributes, 
-				  Variant((void*)dvar), _nilString, taidata);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "FloatField", layout, attributes,
+                                  Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddStringField(String* dvar, const String& nm, const String& parent,
-			      const String& layout, const String& attributes) {
+                              const String& layout, const String& attributes) {
   if(!dvar) return false;
   if(TestError(parent.empty(), "AddStringField", "a parent widget is required"))
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
   taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
-  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "StringField", layout, attributes, 
-				  Variant((void*)dvar), _nilString, taidata);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "StringField", layout, attributes,
+                                  Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddBoolCheckbox(bool* dvar, const String& nm, const String& parent,
-			      const String& layout, const String& attributes) {
+                              const String& layout, const String& attributes) {
   if(!dvar) return false;
   if(TestError(parent.empty(), "AddBoolCheckbox", "a parent widget is required"))
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
   taiToggle* taidata = new taiToggle(&TA_bool, data_host, NULL, par->widget);
-  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "BoolCheckbox", layout, attributes, 
-				  Variant((void*)dvar), _nilString, taidata);
+  taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "BoolCheckbox", layout, attributes,
+                                  Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm, const String& parent,
-				       const String& layout, const String& attributes) {
+                                       const String& layout, const String& attributes) {
   if(!obj) return false;
   if(TestError(parent.empty(), "AddObjectPtr", "a parent widget is required"))
     return false;
@@ -745,12 +746,12 @@ bool taGuiDialog::AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm, co
     atts = String("type=") + td->name + "; " + atts;
   taiTokenPtrButton* taidata = new taiTokenPtrButton(td, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "ObjectPtr",
-				  layout, atts,  Variant((void*)obj), _nilString, taidata);
+                                  layout, atts,  Variant((void*)obj), _nilString, taidata);
   return (bool)w;
 }
 
 bool taGuiDialog::AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
-	      const String& parent, const String& layout, const String& attributes) {
+              const String& parent, const String& layout, const String& attributes) {
   if(!iptr || !enum_td) return false;
   if(TestError(parent.empty(), "AddHardEnum", "a parent widget is required"))
     return false;
@@ -762,18 +763,18 @@ bool taGuiDialog::AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
   if(enum_td->HasOption("BITS")) {
     taiBitBox* taidata = new taiBitBox(true, enum_td, data_host, NULL, par->widget);
     w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Bits",
-		       layout, atts, Variant((void*)iptr), _nilString, taidata);
+                       layout, atts, Variant((void*)iptr), _nilString, taidata);
   }
   else {
     taiComboBox* taidata = new taiComboBox(true, enum_td, data_host, NULL, par->widget);
     w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Enum",
-		       layout, atts, Variant((void*)iptr), _nilString, taidata);
+                       layout, atts, Variant((void*)iptr), _nilString, taidata);
   }
   return (bool)w;
 }
 
 bool taGuiDialog::AddDynEnum(DynEnum* deptr, const String& nm,
-	      const String& parent, const String& layout, const String& attributes) {
+              const String& parent, const String& layout, const String& attributes) {
   if(!deptr || !deptr->enum_type) return false;
   if(TestError(parent.empty(), "AddDynEnum", "a parent widget is required"))
     return false;
@@ -786,21 +787,21 @@ bool taGuiDialog::AddDynEnum(DynEnum* deptr, const String& nm,
     taiBitBox* taidata = new taiBitBox(&TA_DynEnum, data_host, NULL, par->widget);
     taiDynEnumMember::UpdateDynEnumBits(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Bits",
-		       layout, atts, Variant((void*)deptr), _nilString, taidata);
+                       layout, atts, Variant((void*)deptr), _nilString, taidata);
   }
   else {
     taiComboBox* taidata = new taiComboBox(&TA_DynEnum, data_host, NULL, par->widget);
     taiDynEnumMember::UpdateDynEnumCombo(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Enum",
-		       layout, atts, Variant((void*)deptr), _nilString, taidata);
+                       layout, atts, Variant((void*)deptr), _nilString, taidata);
   }
   return (bool)w;
 }
 
 bool taGuiDialog::AddProgVar(ProgVar& pvar, const String& nm, const String& parent,
-			     const String& layout, const String& attributes) {
+                             const String& layout, const String& attributes) {
   if(TestError(pvar.HasVarFlag(ProgVar::LOCAL_VAR),
-	       "AddProgVar", "prog var is not configured properly -- be sure you used this.vars.varname to pass it as an arg"))
+               "AddProgVar", "prog var is not configured properly -- be sure you used this.vars.varname to pass it as an arg"))
     return false;
   if(TestError(parent.empty(), "AddProgVar", "a parent widget is required"))
     return false;
@@ -844,7 +845,7 @@ bool taGuiDialog::AddProgVar(ProgVar& pvar, const String& nm, const String& pare
 }
 
 bool taGuiDialog::AddDataTable(DataTable* dt, const String& nm, const String& parent,
-				       const String& layout, const String& attributes) {
+                                       const String& layout, const String& attributes) {
   if(!dt) return false;
   iDataTableEditor* widg;
   if(parent.nonempty()) {
@@ -860,7 +861,7 @@ bool taGuiDialog::AddDataTable(DataTable* dt, const String& nm, const String& pa
 }
 
 bool taGuiDialog::AddVBoxLayout(const String& nm, const String& parent,
-				const String& widget, const String& attributes) {
+                                const String& widget, const String& attributes) {
   taGuiLayout* par = NULL;
   if(parent.nonempty()) {
     par = FindLayout(parent, true);
@@ -886,7 +887,7 @@ bool taGuiDialog::AddVBoxLayout(const String& nm, const String& parent,
 }
 
 bool taGuiDialog::AddHBoxLayout(const String& nm, const String& parent,
-				const String& widget, const String& attributes) {
+                                const String& widget, const String& attributes) {
   taGuiLayout* par = NULL;
   if(parent.nonempty()) {
     par = FindLayout(parent, true);

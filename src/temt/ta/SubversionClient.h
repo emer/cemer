@@ -102,6 +102,7 @@ public:
   int Update(int rev = -1);
 
   // Add files to the working copy and schedule for future commit.
+  // Does not throw if file is already versioned.
   void Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
 
   // Create a directory in the working copy or in the repository.
