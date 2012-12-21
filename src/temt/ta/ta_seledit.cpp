@@ -1036,17 +1036,13 @@ void ClusterRun::Run() {
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
   bool prompt_user = true;      // always prompt the user on a new run.
-  if (m_cm->Run(prompt_user)) {
-    // Maybe don't need this... these fields are more important in the running
-    // and completed tables.  For now, leave it in.
-// TODO: move this logic to ClusterManager.
-
+  if (m_cm->BeginSearch(prompt_user)) {
     // Get revisions of the committed project and jobs_submit.dat files.
     String wc_proj = m_cm->GetWcProjFilename();
     String wc_submit = m_cm->GetWcSubmitFilename();
     if (!wc_proj.empty() && !wc_submit.empty()) {
-      int model_rev = Subversion::GetLastChangedRevision(wc_proj);
-      int submit_rev = Subversion::GetLastChangedRevision(wc_submit);
+      int model_rev = m_cm->GetLastChangedRevision(wc_proj);
+      int submit_rev = m_cm->GetLastChangedRevision(wc_submit);
 
       // Put those revisions into the datatable just committed.
       // (There's no way to put them in *before* committing.)
@@ -1060,7 +1056,13 @@ void ClusterRun::Run() {
 
 bool ClusterRun::Update() {
   initClusterManager(); // ensure it has been created.
-  return false;
+
+  // Update the working copy and load the running/done tables.
+  bool has_updates = m_cm->UpdateTables();
+  if (has_updates && cur_search_algo) {
+    cur_search_algo->ProcessResults(*this);
+  }
+  return has_updates;
 }
 
 void ClusterRun::Kill() {
@@ -1068,19 +1070,19 @@ void ClusterRun::Kill() {
 
   // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
-  SelectedRows(jobs_running, st_row, end_row);
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    // Populate the jobs_submit table with CANCEL requests for the selected jobs.
+    jobs_submit.ResetData();
+    for (int src_row = st_row; src_row <= end_row; ++src_row) {
+      int dst_row = jobs_submit.AddBlankRow();
+      jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", src_row);
+      jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", src_row);
+      jobs_submit.SetVal("CANCELLED", "status", dst_row);
+    }
 
-  // Populate the jobs_submit table with CANCEL requests for the selected jobs.
-  jobs_submit.ResetData();
-  for (int src_row = st_row; src_row <= end_row; ++src_row) {
-    int dst_row = jobs_submit.AddBlankRow();
-    jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", src_row);
-    jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", src_row);
-    jobs_submit.SetVal("CANCELLED", "status", dst_row);
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
   }
-
-  // Commit the table.
-  m_cm->CommitJobSubmissionTable();
 }
 
 void ClusterRun::ImportData() {

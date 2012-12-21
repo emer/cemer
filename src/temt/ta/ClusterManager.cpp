@@ -40,7 +40,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   , m_proj(0)           // initialized in ctor body
   , m_username()
   , m_wc_path()
-  , m_repo_user_path()
+  , m_repo_user_url()
   , m_wc_proj_path()
   , m_wc_submit_path()
   , m_wc_models_path()
@@ -76,7 +76,7 @@ ClusterManager::~ClusterManager()
 // Run the model on a cluster using the parameters of the ClusterRun
 // provided in the constructor.
 bool
-ClusterManager::Run(bool prompt_user)
+ClusterManager::BeginSearch(bool prompt_user)
 {
   if (!m_valid) return false; // Ensure proper construction.
 
@@ -95,7 +95,7 @@ ClusterManager::Run(bool prompt_user)
       "\n  using repository", getRepoUrl(),
       "\n  Notes:", m_cluster_run.notes);
 
-    ensureWorkingCopyExists();
+    updateWorkingCopy(); // creates the working copy if needed.
     runSearchAlgo();
     saveSubmitTable();
     saveCopyOfProject();
@@ -121,13 +121,52 @@ ClusterManager::CommitJobSubmissionTable()
   if (!m_valid) return false; // Ensure proper construction.
 
   try {
-    ensureWorkingCopyExists();
+    // Not necessary to update the working copy here; if it doesn't exist,
+    // the user should do an Update first before trying to Kill jobs.
+    //updateWorkingCopy();
     saveSubmitTable();
     commitFiles("Submitting new jobs_submit.dat: " + m_cluster_run.notes);
     return true;
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not submit jobs table:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    handleException(ex);
+  }
+  return false;
+}
+
+bool
+ClusterManager::UpdateTables()
+{
+  if (!m_valid) return false; // Ensure proper construction.
+
+  try {
+    // Get old revisions of the two tables in the working copy.
+    setPaths();
+    bool quiet = true;
+    int old_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
+    int old_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
+
+    updateWorkingCopy();
+
+    // Get new revisions.
+    int new_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
+    int new_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
+
+    bool updated = (new_rev_run  > old_rev_run) ||
+                   (new_rev_done > old_rev_done);
+
+    bool ok1 = loadTable(m_running_dat_filename, m_cluster_run.jobs_running);
+    bool ok2 = loadTable(m_done_dat_filename, m_cluster_run.jobs_done);
+
+    // Return true as long as one of the files was updated and loaded --
+    // in that case, the search algo will probably want to do something.
+    return updated && (ok1 || ok2);
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not update working copy:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
     handleException(ex);
@@ -145,6 +184,24 @@ String
 ClusterManager::GetWcSubmitFilename() const
 {
   return m_submit_dat_filename;
+}
+
+int
+ClusterManager::GetLastChangedRevision(const String &path, bool quiet)
+{
+  if (!m_valid) return -1;
+
+  // Get the last revision in which the passed path was changed, according
+  // to the working copy.  Returns -1 on error.
+  try {
+    return m_svn_client->GetLastChangedRevision(path.chars());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    if (!quiet) {
+      taMisc::Error("Could not get revision info.\n", ex.what());
+    }
+    return -1;
+  }
 }
 
 void
@@ -351,13 +408,27 @@ ClusterManager::setPaths()
   const String &cluster = getClusterName();
   const String &repo_url = getRepoUrl();
 
+  // Create a URL to the user's directory in the repo.
+  const char *opt_slash = repo_url.endsWith('/') ? "" : "/";
+  m_repo_user_url = repo_url + opt_slash + cluster + '/' + username;
+
+  // Create paths for files/directories in the working copy:
+  //   user_app_dir/
+  //     clustername/
+  //       username/                    # m_wc_path
+  //         projname/                  # m_wc_proj_path
+  //           submit/                  # m_wc_submit_path
+  //             jobs_submit.dat        # m_submit_dat_filename
+  //             jobs_running.dat       # m_running_dat_filename
+  //             jobs_done.dat          # m_done_dat_filename
+  //           models/                  # m_wc_models_path
+  //             projname.proj          # m_proj_copy_filename
+  //           results/                 # m_wc_results_path
+
   // Set the working copy path and get a canonicalized version back.
   m_wc_path = taMisc::user_app_dir + '/' + cluster + '/' + username;
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
-
-  // This is the path to the user's directory in the repo.
-  m_repo_user_path = repo_url + '/' + cluster + '/' + username;
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
@@ -369,17 +440,22 @@ ClusterManager::setPaths()
   m_wc_models_path = m_wc_proj_path + "/models";
   m_wc_results_path = m_wc_proj_path + "/results";
 
+  // Could create these filenames using "m_cluster_run.jobs_submit.name"
+  // but seems better to just use fixed names that the cluster script
+  // won't have to guess about (in case user renames tables).
   m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
+  m_running_dat_filename = m_wc_submit_path + "/jobs_running.dat";
+  m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
-  taMisc::Info("Repository is at", m_repo_user_path);
+  taMisc::Info("Repository is at", m_repo_user_url);
 }
 
 void
-ClusterManager::ensureWorkingCopyExists()
+ClusterManager::updateWorkingCopy()
 {
   // If the user already has a working copy, update it.  Otherwise, create
-  // it on the server.
+  // it on the server and check it out.
   setPaths();
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
@@ -389,11 +465,11 @@ ClusterManager::ensureWorkingCopyExists()
     // Create the directory on the repository, if not already present.
     String comment = "Creating cluster directory for user ";
     comment += getUsername();
-    m_svn_client->TryMakeUrlDir(m_repo_user_path.chars(), comment.chars());
+    m_svn_client->TryMakeUrlDir(m_repo_user_url.chars(), comment.chars());
 
     // Check out a working copy (possibly just an empty directory if we
     // just created it for the first time).
-    int rev = m_svn_client->Checkout(m_repo_user_path);
+    int rev = m_svn_client->Checkout(m_repo_user_url);
     taMisc::Info("Working copy checked out for revision", String(rev));
   }
   else {
@@ -423,6 +499,20 @@ ClusterManager::runSearchAlgo()
   if (m_cluster_run.jobs_submit.rows == 0) {
     throw Exception("Search algorithm did not produce any jobs.");
   }
+}
+
+bool
+ClusterManager::loadTable(const String &filename, DataTable &table)
+{
+  // Ensure the file exists.
+  if (!QFileInfo(filename.chars()).exists()) {
+    return false;
+  }
+
+  // Clear the table and reload data from the file.
+  table.ResetData();
+  table.LoadAnyData(filename);
+  return true;
 }
 
 void

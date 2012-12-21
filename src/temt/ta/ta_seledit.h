@@ -521,9 +521,9 @@ public:
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
   // #BUTTON #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
   virtual void  Run();
-  // #BUTTON Run this model on a cluster using the parameters as specified here -- checks in
+  // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository.
   virtual bool  Update();
-  // #BUTTON poll for job status of running jobs, grabbing any current results, and moving an completed jobs over to jobs_done -- returns true if new data or status was available
+  // #BUTTON poll for job status of running jobs, grabbing any current results, and moving any completed jobs over to jobs_done -- returns true if new data or status was available
   virtual void  Kill();
   // #BUTTON kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  ImportData();

@@ -21,17 +21,24 @@
 #include "SubversionClient.h"
 
 class ClusterRun;
+class DataTable;
 class taProject;
 
+// The ClusterManager class handles all Subversion operations and
+// doesn't know anything about the contents of the job DataTables.
+// The ClusterRun class (and its search algorithm) take care of everything
+// DataTable related and for the most part do no Subversion operations.
 class TA_API ClusterManager
 {
 public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
-  bool Run(bool prompt_user);
+  bool BeginSearch(bool prompt_user);
   bool CommitJobSubmissionTable();
+  bool UpdateTables();
   String GetWcProjFilename() const;
   String GetWcSubmitFilename() const;
+  int GetLastChangedRevision(const String &path, bool quiet = false);
 
 private:
   // This exception class only used internally.
@@ -50,8 +57,9 @@ private:
   const String & promptForString(const String &str, const char *msg);
   bool showRepoDialog();
   void setPaths();
-  void ensureWorkingCopyExists();
+  void updateWorkingCopy();
   void runSearchAlgo();
+  bool loadTable(const String &filename, DataTable &table);
   void saveSubmitTable();
   void saveCopyOfProject();
   void createParamFile();
@@ -64,13 +72,15 @@ private:
   taProject *m_proj;
   String m_username;
   String m_wc_path;
-  String m_repo_user_path;
+  String m_repo_user_url;
   String m_wc_proj_path;
   String m_wc_submit_path;
   String m_wc_models_path;
   String m_wc_results_path;
   String m_proj_copy_filename;
   String m_submit_dat_filename;
+  String m_running_dat_filename;
+  String m_done_dat_filename;
 };
 
 #endif // CLUSTER_MANAGER_H_
