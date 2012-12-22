@@ -493,10 +493,12 @@ ClusterManager::runSearchAlgo()
     throw Exception("No search algorithm chosen.");
   }
 
-  // Tell the chosen search algorithm to populate the jobs_submit table.
-  m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
+  // Tell the chosen search algorithm to populate the jobs_submit table
+  // for the first batch of jobs.
+  m_cluster_run.cur_search_algo->Reset(m_cluster_run);
+  bool created = m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
 
-  if (m_cluster_run.jobs_submit.rows == 0) {
+  if (!created || m_cluster_run.jobs_submit.rows == 0) {
     throw Exception("Search algorithm did not produce any jobs.");
   }
 }

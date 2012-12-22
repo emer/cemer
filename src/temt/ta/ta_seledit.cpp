@@ -971,9 +971,19 @@ void SelectEdit::ConvertLegacy() {
 /////////////////////////////////////////////////////
 //      ParamSearchAlgo, GridSearch, etc.
 
+// TODO: Make ParamSearchAlgo::Initialize() call GET_OWNER to find
+// its parent ClusterRun object, and set a protected member pointer
+// ParamSearchAlgo::m_cluster_run so we don't need to pass args to
+// all of these functions!
 void
+ParamSearchAlgo::Reset(ClusterRun &cluster_run)
+{
+}
+
+bool
 ParamSearchAlgo::CreateJobs(ClusterRun &cluster_run)
 {
+  return false;
 }
 
 void
@@ -989,18 +999,18 @@ ParamSearchAlgo::BuildCommand(const ClusterRun &cluster_run, const String &proj_
 
   if (cluster_run.use_mpi) {
     // TODO: What's the right switch(es) for MPI settings?
-    cmd.cat(" --mpi_nodes").cat(cluster_run.mpi_nodes);
+    cmd.cat(" --mpi_nodes ").cat(String(cluster_run.mpi_nodes));
   }
 
   if (cluster_run.n_threads > 0) {
-    cmd.cat(" --n_threads ").cat(cluster_run.n_threads);
+    cmd.cat(" --n_threads ").cat(String(cluster_run.n_threads));
   }
 
   // Add a name=val term for each parameter in the search.
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
     const EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
-      cmd.cat(" ").cat(mbr->GetName()).cat("=").cat(ps.next_val);
+      cmd.cat(" ").cat(mbr->GetName()).cat("=").cat(String(ps.next_val));
     }
   }
 
@@ -1024,6 +1034,46 @@ GridSearch::Initialize()
 }
 
 void
+GridSearch::Reset(ClusterRun &cluster_run)
+{
+  // Build the m_counts and m_names arrays.
+  m_names.Reset();
+  m_counts.Reset();
+  int total_jobs = 1;
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
+    EditParamSearch &ps = mbr->param_search;
+    if (ps.search) {
+      // Keep track of names to make sure they haven't changed by the time
+      // ProcessResults is called.
+      String name = mbr->GetName();
+      m_names.Push(name);
+
+      // Sanity check range.
+      if (ps.max_val <= ps.min_val || ps.incr > (ps.max_val - ps.min_val)) {
+        taMisc::Warning("ClusterRun search range invalid for parameter", name);
+      }
+
+      // Count how many values this parameter will take.  The +1 is to
+      // include the beginning and end points; the +.01 is for rounding
+      // error.  For example, (0.9 - 0.2) / 0.1 + 1.01 == 8.
+      int count = (ps.max_val - ps.min_val) / ps.incr + 1.01;
+      m_counts.Push(count);
+      total_jobs *= count;
+
+      // Reset the next_val to the minimum.
+      ps.next_val = ps.min_val;
+    }
+  }
+
+  // Initialize the iterator array to all 0s.
+  m_iter.SetSize(m_counts.size);
+  m_iter.InitVals(0);
+
+  m_cmd_id = 0;
+  m_all_jobs_created = false;
+}
+
+bool
 GridSearch::CreateJobs(ClusterRun &cluster_run)
 {
   // Need to add rows to the jobs_submit DataTable.
@@ -1038,64 +1088,89 @@ GridSearch::CreateJobs(ClusterRun &cluster_run)
   // TODO: move/copy code from ClusterRun::Kill() to a new function
   // ParamSearchAlgo::CancelJob(), for the search algos to use.
 
-  // Build the m_counts array.
-  m_names.Reset();
-  m_counts.Reset();
-  int total_jobs = 1;
+  // If we've already created all jobs for this search, don't create any more.
+  if (m_all_jobs_created) return false;
+
+  // If max_jobs is 0, create them all.
+  bool create_all = (max_jobs <= 0);
+
+  // Check how many jobs are currently running so we know how many more
+  // we can create.
+  int num_jobs = max_jobs;
+  if (!create_all) {
+    int running_jobs = 0; // TODO: calculate correctly.
+    num_jobs -= running_jobs;
+
+    // Check if we can't create any more jobs because the maximum number
+    // allowed are already running.
+    if (num_jobs <= 0) {
+      return false;
+    }
+  }
+
+  // Create num_jobs jobs (or all jobs if create_all set).
+  cluster_run.jobs_submit.ResetData();
+  for (int idx = 0; idx < num_jobs || create_all; ++idx, ++m_cmd_id) {
+    // Add the current job.
+    String cmd = BuildCommand(cluster_run, "TODO_proj_path");
+    AddJobRow(cluster_run.jobs_submit, cmd, m_cmd_id);
+
+    // Cycle parameters for the next job.
+    if (!nextParamCombo(cluster_run)) {
+      // No next combo means all jobs have been created.
+      m_all_jobs_created = true;
+      break;
+    }
+  }
+
+  // Success: jobs created.
+  return true;
+}
+
+bool
+GridSearch::nextParamCombo(ClusterRun &cluster_run)
+{
+  // Cycle parameters for the next job by adding 1 to the least-significant
+  // element in the iterator array, and carrying if needed.
+  int idx = 0;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
     EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
-      // Keep track of names to make sure they haven't changed by the time
-      // ProcessResults is called.
-      m_names.Push(mbr->GetName());
+      // Sanity check that the parameters to search haven't changed.
+      String name = mbr->GetName();
+      if (name != m_names[idx]) {
+        taMisc::Error("Search parameters have changed; expected parameter",
+          m_names[idx], "at index", String(idx), "but got", name);
+        return false;
+      }
 
-      // Count how many values this parameter will take.  The +1 is to
-      // include the beginning and end points; the +.01 is for rounding
-      // error.  For example, (0.9 - 0.2) / 0.1 + 1.01 == 8.
-      int count = (ps.max_val - ps.min_val) / ps.incr + 1.01;
-      m_counts.Push(count);
-      total_jobs *= count;
+      // Increment the current iterator element.
+      if (++m_iter[idx] < m_counts[idx]) {
+        // No carry, so incrementing the iterator is complete.
+        ps.next_val = ps.min_val + (m_iter[idx] * ps.incr);
+        return true;
+      }
 
-      // Reset the next_val to the minimum.
+      // Iterator elem rolled over; reset to 0/min and carry the 1 to
+      // the next element (if there is one).
+      m_iter[idx] = 0;
       ps.next_val = ps.min_val;
-    }
-  }
-
-  int_PArray iter(m_counts);
-  iter.InitVals(0);
-
-  // Create max_jobs jobs to start with.
-  for (int cmd_id = 0; cmd_id < max_jobs; ++cmd_id) {
-    // Add the current job first.
-    String cmd = BuildCommand(cluster_run, "TODO_proj_path");
-    AddJobRow(cluster_run.jobs_submit, cmd, cmd_id);
-
-    // Cycle parameters to the next job by adding 1 to the iterator array.
-    int idx = 0;
-    FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
-      EditParamSearch &ps = mbr->param_search;
-      if (ps.search) {
-        ps.next_val += ps.incr;
-        if (++iter[idx] >= m_counts[idx]) {
-          // Overflow; reset to 0/min.
-          iter[idx] = 0;
-          ps.next_val = ps.min_val;
-
-          // Carry the 1 (continue on to the next iterator element).
-          ++idx;
-        }
-        else {
-          // Didn't overflow, so we're done.
-          break;
-        }
+      if (++idx >= m_iter.size) {
+        // The iterator overflowed (all elements rolled over to 0)
+        // so we're done creating jobs.
+        return false;
       }
     }
   }
+
+  // Should never get here due to the idx>=m_iter.size check.
+  return false;
 }
 
 void
 GridSearch::ProcessResults(ClusterRun &cluster_run)
 {
+  // TODO: load result files??
 }
 
 
@@ -1160,6 +1235,16 @@ bool ClusterRun::Update() {
     cur_search_algo->ProcessResults(*this);
   }
   return has_updates;
+}
+
+void ClusterRun::Cont() {
+  initClusterManager(); // ensure it has been created.
+
+  // Create the next batch of jobs.
+  if (cur_search_algo && cur_search_algo->CreateJobs(*this)) {
+    // Commit the table to submit the jobs.
+    m_cm->CommitJobSubmissionTable();
+  }
 }
 
 void ClusterRun::Kill() {

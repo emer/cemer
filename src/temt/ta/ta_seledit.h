@@ -460,7 +460,8 @@ class TA_API ParamSearchAlgo : public taNBase {
   INHERITED(taNBase)
 public:
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
-  virtual void CreateJobs(ClusterRun &cluster_run); // Should be pure virtual but how to make maketa understand?
+  virtual void Reset(ClusterRun &cluster_run);
+  virtual bool CreateJobs(ClusterRun &cluster_run); // Should be pure virtual but how to make maketa understand?
   virtual void ProcessResults(ClusterRun &cluster_run);
 protected:
   String BuildCommand(const ClusterRun &cluster_run, const String &proj_path);
@@ -491,12 +492,17 @@ public:
 private:
   String_PArray m_names;
   int_PArray m_counts;
+  int_PArray m_iter;
+  int m_cmd_id;
+  bool m_all_jobs_created;
 
 public:
   TA_BASEFUNS_NOCOPY(GridSearch)
-  override void CreateJobs(ClusterRun &cluster_run);
+  override void Reset(ClusterRun &cluster_run);
+  override bool CreateJobs(ClusterRun &cluster_run);
   override void ProcessResults(ClusterRun &cluster_run);
 private:
+  bool nextParamCombo(ClusterRun &cluster_run);
   void Initialize();
   void Destroy() { }
 };
@@ -534,6 +540,8 @@ public:
   // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository.
   virtual bool  Update();
   // #BUTTON poll for job status of running jobs, grabbing any current results, and moving any completed jobs over to jobs_done -- returns true if new data or status was available
+  virtual void  Cont();
+  // #BUTTON Continue the search process by submitting the next batch of jobs.
   virtual void  Kill();
   // #BUTTON kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  ImportData();
