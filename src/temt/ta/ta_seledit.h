@@ -462,6 +462,9 @@ public:
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
   virtual void CreateJobs(ClusterRun &cluster_run); // Should be pure virtual but how to make maketa understand?
   virtual void ProcessResults(ClusterRun &cluster_run);
+protected:
+  String BuildCommand(const ClusterRun &cluster_run, const String &proj_path);
+  void AddJobRow(DataTable &table, const String &cmd, int cmd_id = 0);
 private:
   void Initialize() { }
   void Destroy() { }
@@ -483,11 +486,18 @@ class TA_API GridSearch : public ParamSearchAlgo {
   // Grid Search algorithm.
   INHERITED(ParamSearchAlgo)
 public:
+  int max_jobs; // The maximum number of jobs that may be run concurrently on the cluster.
+
+private:
+  String_PArray m_names;
+  int_PArray m_counts;
+
+public:
   TA_BASEFUNS_NOCOPY(GridSearch)
   override void CreateJobs(ClusterRun &cluster_run);
   override void ProcessResults(ClusterRun &cluster_run);
 private:
-  void Initialize() { }
+  void Initialize();
   void Destroy() { }
 };
 
