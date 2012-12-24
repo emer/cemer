@@ -144,7 +144,7 @@ class DataTable(object):
     DELIMITER = '\t'    
     
     def __init__(self):
-        self._header = dict() # header of the data table 
+        self._header = [] # header of the data table 
         self._rows = []  # data of the data table
     
     #input: space_allowed = boolean, if False replace white spaces with '_'
@@ -193,11 +193,37 @@ class DataTable(object):
     
     def _decode_header(self, header=None):
         for col in self._header:
-            col = ColumnType.encode[self._header[col]]    
+            col = ColumnType.encode[self._header[col]]
+            
+    # takes the first line of a .dat file and sets up self._header
+    # input: header_str = string, the first row of a .dat file    
+    def _load_header(self, header_str):
+        s = '_H:%s' % self.DELIMITER
+        header_str = header_str.lstrip(s).rstrip('\n')
+        cols = header_str.split(self.DELIMITER)
+        
+        header = [ {'name': c[1:], 'type':  ColumnType.decode[c[0]]} for c in cols ]
+        self.set_header(header)
+            
+    # takes a list of rows from a .dat file and sets self.rows
+    # input: rows = list, list of rows containing the data part of a .dat file
+    def _load_data(self, rows):
+        s = '_D:%s' % self.DELIMITER
+        for r in rows:
+            r = r.lstrip(s).rstrip('\n').strip('\t')
+            vals = r.split(self.DELIMITER)
+            decoded_vals = []
+            #col_idx = 0
+            for i, v in enumerate(vals):
+                #col_type = self._header.vals()[col_idx]
+                col_type = self._header[i]['type']
+                decoded_vals.append(self._decode_val(v, col_type))
+                #col_idx += 1
+            self.set_row(decoded_vals)                
 
     # PUBLIC METHODS
     
-    # input: header(optional) = a nested dict; the header with this format {col index:{'name': col name, 'type': col type}}
+    # input: header(optional) = a list, the header of data table with this format [{'name': col name, 'type': col type}, ...]
     # output: the header as string
     def get_header_str(self, header=None):
         if header is None:
@@ -210,9 +236,12 @@ class DataTable(object):
             
         return header_str
     
+    # returns the header of the data table
+    # output: list, the header of data table with this format [{'name': col name, 'type': col type}, ...]
     def get_header(self):
         return self._header
     
+    # returns a row as string
     # input: row_idx = int; the index of the row
     # output: the row as string
     def get_row_str(self, row_idx):
@@ -225,21 +254,27 @@ class DataTable(object):
             
         return row_str
     
+    # returns a row of the data table given its row index
     def get_row(self, row_num):
         try:
             return self._rows[row_num]
         except:
             return False
     
+    # returns the data section (rows) of the data table
+    # output: list, list of rows
     def get_data(self):
         return self._rows
     
+    # returns the type of a column given its index
     def get_col_type(self, idx):
         try:
             return self._header[idx]['type']
         except:
             print "Header column index %s is out of range." % idx
+            return False
     
+    # returns the name of a column given its index
     def get_col_name(self, idx):
         try:
             return self._header[idx]['name']
@@ -247,38 +282,36 @@ class DataTable(object):
             print "Header column index %s is out of range." % idx
             return False
     
-    # I removed col_type from the arguments since duplicate columns even with different types are not allowed in a DataTable 
+    # return the index of a column given its name  
     def get_col_idx(self, col_name):
-        for i in self._header.iterkeys():
+        for i in range(len(self._header)):
             if self.get_col_name(i) == col_name:
                 return i
         print "Column '%s' doesn't exist." % col_name
-        return -1  
-        
-        ''' Isn't it confusing and contradictory to insert a column in a get function?
-        except:
-            
-            # Insert the new column at the end.
-            new_idx = len(self.col_lookup)
-            self.col_lookup[col_name] = new_idx
-            self.col_names.append(col_name)
-            self.col_types.append(col_type)
-            return new_idx
-        '''
+        return -1
 
+    # adds a new column to the data table in memory
     def add_col(self, col_name, col_type):
         if self.get_col_idx(col_name) is -1:
-            self._header[len(self._header)] = {'name': col_name, 'type': col_type}
+            self._header.append({'name': col_name, 'type': col_type})
+            for r in self._rows:
+                r.append('')
             return True
         else:
             print "Column '%s' (%s) already exists." % (col_name, col_type)
             return False   
-
+    
+    # validates a value with regard to a column
+    # input: val = value to validate
+    #        col_name = the column name of the value
     def validate_val(self, val, col_name):
         col_idx = self.get_col_idx(col_name)
         col_type = self.get_col_type(col_idx)
         return True if self.get_typed_val(val, col_type) else False
-        
+    
+    # return a typed value for a value
+    # input: v = value to be turned into a typed value
+    #        t = the destination type
     def get_typed_val(self, v, t):
         try:
             if t == ColumnType.STRING: return v
@@ -288,57 +321,38 @@ class DataTable(object):
             print 'Value [%s] and type %s mismatch.' % (v, t)
             return False
 
-    def get_val(self, row, col_name):
+    # returns the value of a single cell
+    # input: row_num = the row index of the cell to update
+    #        col_name = the column name of the cell to update
+    def get_val(self, row_num, col_name):
         col_idx = self.get_col_idx(col_name)
-        str_val = self.data[row][col_idx]
+        str_val = self.data[row_num][col_idx]
         return self.get_typed_val(str_val, self.col_types[col_idx])
     
-    # takes the first line of a .dat file and sets up self._header
-    # input: header_str = string, the first row of a .dat file    
-    def load_header(self, header_str):
-        header = dict()
-        s = '_H:%s' % self.DELIMITER
-        header_str = header_str.lstrip(s).rstrip('\n')
-        cols = header_str.split(self.DELIMITER)
-        for c in cols:
-            col_type = ColumnType.decode[c[0]]
-            col_name = c[1:]
-            header[len(header)] = {'name': col_name, 'type': col_type}
-        self.set_header(header)
-            
-    # takes a list of rows from a .dat file and sets up self.rows
-    # input: rows = list, list of rows containing the data part of a .dat file
-    def load_data(self, rows):
-        s = '_D:%s' % self.DELIMITER
-        for r in rows:
-            r = r.lstrip(s).rstrip('\n').strip('\t')
-            vals = r.split(self.DELIMITER)
-            decoded_vals = []
-            col_idx = 0
-            for v in vals:
-                col_type = self._header.vals()[col_idx]
-                decoded_vals.append(self._decode_val(v, col_type))
-                col_idx += 1
-            self.set_row(decoded_vals)            
-    
+   
+    # sets value of a single cell
+    # input: row_num = the row index of the cell to update
+    #        col_name = the column of the cell to update
+    #        val = the new value of the cell 
     def set_val(self, row_num, col_name, val):
         col_idx = self.get_col_idx(col_name)
-        if col_idx is not -1:
-            if self.get_typed_val(val, self.get_col_type(col_idx)):
-                try:
-                    self._rows[row_num][col_idx] = str(val)
-                except:
-                    print "Row number %s doesn't exist." % row_num
-                    return False
-            else:
+        if col_idx is not -1 and self.get_typed_val(val, self.get_col_type(col_idx)):
+            try:
+                self._rows[row_num][col_idx] = str(val)
+                return True
+            except:
+                print "Row number %s doesn't exist." % row_num
                 return False
         else:
+            print "Row number %s doesn't exist." % row_num
             return False
-        return True
         
     def set_header(self, header):
         self._header = header
-        
+    
+    # sets values of a [new] row      
+    # input: vals = list, list of values in the row
+    #        row_num = int, the index of row to update            
     def set_row(self, vals, row_num=None):
         if len(vals) is not len(self._header):
             return False
@@ -347,14 +361,16 @@ class DataTable(object):
         else:    
             self._rows.append(vals)
         return True
-
+    
+    # loads a .dat file into memoory
+    # input: path = string, path to the .dat file
     def load_from_file(self, path):
         f = open(path, 'r')
         lines = f.readlines()
         header = lines[0]
         rows = lines[1:]
-        self.load_header(header)
-        self.load_data(rows)
+        self._load_header(header)
+        self._load_data(rows)
         
     # writes the data table into a .dat file
     # input: path = string, path of the destination .dat file
