@@ -27,14 +27,19 @@ class ClusterConfig(object):
         # Ensure all needed sections are present (e.g., first script run).
         self.repo_section = 'repo_names'
         self.user_section = 'user_data'
-        self.ensure_section_exists(self.repo_section)
-        self.ensure_section_exists(self.user_section)
+        self._ensure_section_exists(self.repo_section)
+        self._ensure_section_exists(self.user_section)
 
-    def ensure_section_exists(self, section):
+    def _ensure_section_exists(self, section):
         if not self.config.has_section(section):
             self.config.add_section(section)
 
-    def prompt_for_field(self, section, field, message, default=""):
+    def _write_config(self):
+        # Write any changes (username, new repo) to the config file.
+        with open(self.config_filename, 'wb') as f:
+            self.config.write(f)
+
+    def _prompt_for_field(self, section, field, message, default=""):
         # Get the cached value (if any) otherwise use the default.
         try:    value = self.config.get(section, field)
         except: value = default
@@ -47,44 +52,44 @@ class ClusterConfig(object):
 
         # Cache the value in the config object and return it.
         self.config.set(section, field, value)
-        self.write_config()
+        self._write_config()
         return value
 
-    def prompt_for_int_field(self, section, field, message, default=""):
+    def _prompt_for_int_field(self, section, field, message, default=""):
         while True:
             try:
-                return int(self.prompt_for_field(
+                return int(self._prompt_for_field(
                     section, field, message, default))
             except ValueError: pass
 
     def get_username(self):
         # Get the user's Subversion username (defaults to cached value or
         # $USER).
-        return self.prompt_for_field(
+        return self._prompt_for_field(
             self.user_section, 'username',
             'Enter your Subversion username:', os.environ['USER'])
 
     def get_clustername(self):
         # Get the name of this cluster.
-        return self.prompt_for_field(
+        return self._prompt_for_field(
             self.user_section, 'clustername',
             'Enter the name of this cluster:', os.environ['HOSTNAME'])
 
     def get_poll_interval(self):
         # Get the amount of time between polling the subversion server.
-        return self.prompt_for_int_field(
+        return self._prompt_for_int_field(
             self.user_section, 'poll_interval',
             'Enter the polling interval, in seconds:')
 
     def get_check_user(self):
         # Should the script only start jobs committed by the selected user?
-        check = self.prompt_for_field(
+        check = self._prompt_for_field(
             self.user_section, 'check_user',
             'Only run jobs you committed?', 'Yes')
         return check and check[0] in 'yY'
 
     def get_repo_choice(self):
-        return self.prompt_for_int_field(
+        return self._prompt_for_int_field(
             self.user_section, 'repo_choice', 'Your choice:')
 
     def choose_repo(self):
@@ -107,32 +112,27 @@ class ClusterConfig(object):
         repo_name = raw_input('\nEnter name of new repository: ')
         repo_url  = raw_input(  'Enter URL of new repository:  ')
         self.config.set(self.repo_section, repo_name, repo_url)
-        self.write_config()
+        self._write_config()
         return (repo_name, repo_url)
-
-    def write_config(self):
-        # Write any changes (username, new repo) to the config file.
-        with open(self.config_filename, 'wb') as f:
-            self.config.write(f)
 
 #############################################################################
 
 # NOTE: new types added to this class must also be added to the following methods of the DataTable class:
 # _encode_value, _decode_value
 class ColumnType(object):
-    
+
     STRING = 'str'
     INT = 'int'
     FLOAT = 'float'
-    
+
     STRING_CODE = '$'
     INT_CODE = '|'
     FLOAT_CODE = '%'
-    
+
     encode = {STRING : STRING_CODE,
               INT : INT_CODE,
               FLOAT: FLOAT}
-    
+
     decode = {STRING_CODE : STRING,
               INT_CODE : INT,
               FLOAT_CODE : FLOAT}
@@ -140,35 +140,34 @@ class ColumnType(object):
 #############################################################################
 
 class DataTable(object):
-    
-    DELIMITER = '\t'    
-    
+
+    DELIMITER = '\t'
+
     def __init__(self):
-        self._header = [] # header of the data table 
+        self._header = [] # header of the data table
         self._rows = []  # data of the data table
-    
+
     #input: space_allowed = boolean, if False replace white spaces with '_'
     @staticmethod
     def escape_chars(string, space_allowed=True):
-        
-        string = string.replace('\\', '%s\\' % '\\')    # first off, escape '\'
-        
-        escape_chars_dic = {"'" : "\\'",
-                           '"' : '\\"',
-                           '\t' : ' ' }
+        escape_map = [('\\', '\\\\'),     # \ --> \\  (must be first)
+                      ("'",  "\\'"),      # ' --> \'
+                      ('"',  '\\"'),      # " --> \"
+                      ('\t', ' ')]        # (tab) --> (space)
         if not space_allowed:
-            escape_chars_dic[' '] = '_'
-            
-        for char, replacement in escape_chars_dic.iteritems():
+            escape_map.append((' ', '_')) # (space) --> _  (must be last)
+
+        for char, replacement in escape_map:
             string = string.replace(char, replacement)
+
         return string
-    
+
     # PRIVATE METHODS
-    
+
     def _encode_header(self):
         for col in self._header:
             col = ColumnType.encode[self._header[col]]
-    
+
     def _encode_val(self, val, col_type):
         encoded_val = ""
         if col_type is ColumnType.STRING:
@@ -176,10 +175,10 @@ class DataTable(object):
         elif col_type is ColumnType.INT:
             encoded_val = val
         elif col_type is ColumnType.FLOAT:
-            encoded_val = val                
-            
+            encoded_val = val
+
         return encoded_val
-    
+
     def _decode_val(self, val, col_type):
         decoded_val = ""
         if col_type is ColumnType.STRING:
@@ -187,24 +186,24 @@ class DataTable(object):
         elif col_type is ColumnType.INT:
             decoded_val = val
         elif col_type is ColumnType.FLOAT:
-            decoded_val = val                      
-            
+            decoded_val = val
+
         return decoded_val
-    
+
     def _decode_header(self, header=None):
         for col in self._header:
             col = ColumnType.encode[self._header[col]]
-            
+
     # takes the first line of a .dat file and sets up self._header
-    # input: header_str = string, the first row of a .dat file    
+    # input: header_str = string, the first row of a .dat file
     def _load_header(self, header_str):
         s = '_H:%s' % self.DELIMITER
         header_str = header_str.lstrip(s).rstrip('\n')
         cols = header_str.split(self.DELIMITER)
-        
+
         header = [ {'name': c[1:], 'type':  ColumnType.decode[c[0]]} for c in cols ]
         self.set_header(header)
-            
+
     # takes a list of rows from a .dat file and sets self.rows
     # input: rows = list, list of rows containing the data part of a .dat file
     def _load_data(self, rows):
@@ -219,11 +218,12 @@ class DataTable(object):
                 col_type = self._header[i]['type']
                 decoded_vals.append(self._decode_val(v, col_type))
                 #col_idx += 1
-            self.set_row(decoded_vals)                
+            self.set_row(decoded_vals)
 
     # PUBLIC METHODS
-    
-    # input: header(optional) = a list, the header of data table with this format [{'name': col name, 'type': col type}, ...]
+
+    # input: header(optional) = a list, the header of data table with this
+    #        format: [{'name': col name, 'type': col type}, ...]
     # output: the header as string
     def get_header_str(self, header=None):
         if header is None:
@@ -231,16 +231,18 @@ class DataTable(object):
         header_str = "_H:"
         for i in range(len(header)):
             col_type = ColumnType.encode[self.get_col_type(i)]
-            col_name = DataTable.escape_chars(self.get_col_name(i), space_allowed=False)
+            col_name = DataTable.escape_chars(self.get_col_name(i),
+                                              space_allowed=False)
             header_str += '%s%s%s' % (self.DELIMITER, col_type, col_name)
-            
+
         return header_str
-    
+
     # returns the header of the data table
-    # output: list, the header of data table with this format [{'name': col name, 'type': col type}, ...]
+    # output: list, the header of data table with this format:
+    #             [{'name': col name, 'type': col type}, ...]
     def get_header(self):
         return self._header
-    
+
     # returns a row as string
     # input: row_idx = int; the index of the row
     # output: the row as string
@@ -251,21 +253,21 @@ class DataTable(object):
             val = DataTable.escape_chars(val)
             val = self._encode_val(val, col_type)
             row_str += '%s%s' % (self.DELIMITER, val)
-            
+
         return row_str
-    
+
     # returns a row of the data table given its row index
     def get_row(self, row_num):
         try:
             return self._rows[row_num]
         except:
             return False
-    
+
     # returns the data section (rows) of the data table
     # output: list, list of rows
     def get_data(self):
         return self._rows
-    
+
     # returns the type of a column given its index
     def get_col_type(self, idx):
         try:
@@ -273,7 +275,7 @@ class DataTable(object):
         except:
             print "Header column index %s is out of range." % idx
             return False
-    
+
     # returns the name of a column given its index
     def get_col_name(self, idx):
         try:
@@ -281,8 +283,8 @@ class DataTable(object):
         except:
             print "Header column index %s is out of range." % idx
             return False
-    
-    # return the index of a column given its name  
+
+    # return the index of a column given its name
     def get_col_idx(self, col_name):
         for i in range(len(self._header)):
             if self.get_col_name(i) == col_name:
@@ -299,8 +301,8 @@ class DataTable(object):
             return True
         else:
             print "Column '%s' (%s) already exists." % (col_name, col_type)
-            return False   
-    
+            return False
+
     # validates a value with regard to a column
     # input: val = value to validate
     #        col_name = the column name of the value
@@ -308,7 +310,7 @@ class DataTable(object):
         col_idx = self.get_col_idx(col_name)
         col_type = self.get_col_type(col_idx)
         return True if self.get_typed_val(val, col_type) else False
-    
+
     # return a typed value for a value
     # input: v = value to be turned into a typed value
     #        t = the destination type
@@ -328,12 +330,12 @@ class DataTable(object):
         col_idx = self.get_col_idx(col_name)
         str_val = self.data[row_num][col_idx]
         return self.get_typed_val(str_val, self.col_types[col_idx])
-    
-   
+
+
     # sets value of a single cell
     # input: row_num = the row index of the cell to update
     #        col_name = the column of the cell to update
-    #        val = the new value of the cell 
+    #        val = the new value of the cell
     def set_val(self, row_num, col_name, val):
         col_idx = self.get_col_idx(col_name)
         if col_idx is not -1 and self.get_typed_val(val, self.get_col_type(col_idx)):
@@ -346,22 +348,22 @@ class DataTable(object):
         else:
             print "Row number %s doesn't exist." % row_num
             return False
-        
+
     def set_header(self, header):
         self._header = header
-    
-    # sets values of a [new] row      
+
+    # sets values of a [new] row
     # input: vals = list, list of values in the row
-    #        row_num = int, the index of row to update            
+    #        row_num = int, the index of row to update
     def set_row(self, vals, row_num=None):
         if len(vals) is not len(self._header):
             return False
         if row_num is not None:
             self._rows[row_num] = vals
-        else:    
+        else:
             self._rows.append(vals)
         return True
-    
+
     # loads a .dat file into memoory
     # input: path = string, path to the .dat file
     def load_from_file(self, path):
@@ -371,12 +373,12 @@ class DataTable(object):
         rows = lines[1:]
         self._load_header(header)
         self._load_data(rows)
-        
+
     # writes the data table into a .dat file
     # input: path = string, path of the destination .dat file
     #        append(optional) = boolean, if True append, otherwise overwrite
     def write(self, path, append=False):
-        # mode = 'a' append, mode = 'w' overwrite 
+        # mode = 'a' append, mode = 'w' overwrite
         mode = 'a' if append else 'w'
         f = open(path, mode)
         if len(self._header) and not append:
@@ -393,6 +395,11 @@ class SubversionPoller(object):
         self.repo_url   = repo_url
         self.delay      = delay
         self.check_user = check_user
+
+        self.all_submit_files = set()
+        self.jobs_submit = DataTable()
+        self.jobs_running = DataTable()
+        self.jobs_done = DataTable()
 
         # The repo directory only includes the working copy root and
         # repo_name (as defined by the user and stored in config.ini).
@@ -425,37 +432,51 @@ class SubversionPoller(object):
         revision, author = self._get_commit_info(self.repo_dir)
         return revision
 
-    def poll(self, func, nohup_file=''):
-        # Enter the loop to check for updates to job submission files.
+    def poll(self, nohup_file=''):
+        # Enter the loop to check for updates to job submission files
+        # and to query the job scheduler regarding submitted jobs.
         print '\nPolling the Subversion server every %d seconds ' \
               '(hit Ctrl-C to quit) ...' % self.delay
         while True:
-            # If running in background and the file was deleted, then exit.
+            # If running in background and the nohup "keep running" file
+            # was deleted, then exit.
             if nohup_file and not os.path.isfile(nohup_file):
                 break
 
-            sys.stdout.write('.') # TODO: remove, or create spinner...
+            sys.stdout.write('.') # TODO: remove, or create spinner...?
             sys.stdout.flush()
 
+            # Update the working copy and get the list of files updated in
+            # the 'submit'-folder (typically only one file at a time).
             submit_files = self._check_for_updates()
-            if submit_files: print ''
+
+            # Things to do each poll cycle, in order:
+            # 1. Cancel existing jobs and submit new jobs as requested in
+            #    any submission files that were committed.  Those files
+            #    will be added to the self.all_submit_files set.
             for filename in submit_files:
-                try:
-                    rev, author = self._get_commit_info(filename)
-                    if self.check_user and author != self.username:
-                        print 'Ignoring job submitted by user %s:' % author
-                        print '  File: %s' % filename
-                    else:
-                        if os.path.basename(filename) == 'jobs_submit.dat':
-                            self._start_jobs(filename, rev)
-                        else:
-                            func(filename, rev)
-                except:
-                    traceback.print_exc()
-                    print '\nCaught exception trying to parse job ' \
-                          'submission file'
-                    print 'Continuing to poll the Subversion server ' \
-                          '(hit Ctrl-C to quit) ...'
+                print '\nProcessing %s' % filename
+                self._process_new_submission(filename)
+
+            # Remaining steps are done on *all* submit files seen so far.
+            # This is necessary for two reasons:
+            # a. There may not have been any new job submissions this cycle.
+            # b. This script may be monitoring multple parameter searches.
+            for filename in self.all_submit_files:
+                # 2. Query the status of submitted jobs.  Any cancellations
+                #    or new submissions have already been made, so we won't
+                #    query cancelled jobs (or when we do, their status will
+                #    be "KILLED") and so we get (possibly) updated status
+                #    of jobs just submitted.
+                self._query_submitted_jobs(filename)
+
+                # 3. Move any completed jobs to the 'done' table.
+                self._move_completed_jobs(filename)
+
+            # 4. Commit the changes.
+            self._commit_changes()
+
+            # 5. Sleep until next poll cycle.
             time.sleep(self.delay)
 
     def _check_for_updates(self):
@@ -485,19 +506,58 @@ class SubversionPoller(object):
 
         return (revision, author)
 
-    def _start_jobs(self, filename, rev):
-        # TODO:
-        # 1. read the jobs_submit.dat DataTable
-        # 2. start jobs
-        # 3. write the jobs_running.dat DataTable
-        # 4. commit the running table to svn.
+    def _process_new_submission(self, filename):
+        try:
+            # Check if the commit author matches (if requested).
+            rev, author = self._get_commit_info(filename)
+            if self.check_user and author != self.username:
+                print 'Ignoring job submitted by user %s:' % author
+                print '  File: %s' % filename
+            else:
+                # Start jobs for any 'jobs_submit.dat' files.
+                if os.path.basename(filename) == 'jobs_submit.dat':
+                    self.all_submit_files.add(filename)
+                    self._start_or_cancel_jobs(filename, rev)
+                else:
+                    self._unexpected_file(filename, rev)
+        except:
+            traceback.print_exc()
+            print '\nCaught exception trying to parse job ' \
+                  'submission file'
+            print 'Continuing to poll the Subversion server ' \
+                  '(hit Ctrl-C to quit) ...'
 
-        # Columns in jobs_running:
+    def _start_or_cancel_jobs(self, filename, rev):
+        # TODO:
+        # 1. Load the new 'submit' table from the working copy.  Also
+        # load the 'running' table, since we'll be adding new jobs to it.
+        # Cancelled jobs don't get moved to the 'done' table until after
+        # querying the scheduler and determining that they have in fact
+        # completed, so there's no need to load the 'done' table here.
+
+        # Then,
+        # 2. Start jobs
+        # 3. Write the jobs_running.dat DataTable to disk.
+        # 4. Don't commit anything here, since other functions may need
+        #    to modify it as well.
+
+        # To start a job:
+        # The 'command' column in jobs_submit contains only the emergent
+        # command line.  This script needs to modify it in three ways:
+        # 1. Change '<PROJ_FILENAME>' to the correct relative filename
+        #    for the project file in this working copy.
+        # 2. Change '<TAG>' to the tag value.
+        # 3. Prepend the job submission command (sp_qsub_q or dm_qsub_q)
+        #    and its arguments taken from datatable columns.
+        #    This step will vary depending on the cluster.
+
+        # Columns written to jobs_running after submitting the job:
         # model_svn = str(rev)
         # submit_svn = str(rev)
         # submit_job = str(row number)
         # tag = '_'.join((submit_svn, submit_job))
         # status = 'SUBMITTED'
+        #     (will be updated to QUEUED by _query_submitted_jobs())
         # # Start job using scheduler.  Capture stdout+stderr to job_out_file.
         # job_out_file = tag + '.out'
         # job_out = first 2048 chars of job_out_file.
@@ -507,20 +567,30 @@ class SubversionPoller(object):
         #   n_threads, mpi_nodes = copied from jobs_submit.dat
         pass
 
+    def _unexpected_file(self, filename, rev):
+        print 'Ignoring file committed to "submit" folder ' \
+              'in revision %s: %s' % (rev, filename)
 
-#############################################################################
+    def _query_submitted_jobs(self, filename):
+        # TODO: Query the status of submitted jobs.
+        # qstat -j <cluster_job_number> is the actual command to get status.
+        # There is a lot of info there that we might want to extract at some
+        # point.
+        # Filter the qstat command on $USER (os.environ['USER']).
+        pass
 
-def run_job_for_file(filename, rev):
-    print 'TODO: Submit job for revision %s of file: %s' % (rev, filename)
-    params = ConfigParser.RawConfigParser()
-    params.read(filename)
-    general_section = 'GENERAL_PARAMS'
-    param_list = params.get(general_section, 'parameters').split(',')
-    for p in param_list:
-        min_val = params.getfloat(p, 'min_val')
-        max_val = params.getfloat(p, 'max_val')
-        incr    = params.getfloat(p, 'incr')
-        print '  %s = %f .. %f step %f' % (p, min_val, max_val, incr)
+    def _move_completed_jobs(self, filename):
+        # TODO: Move any completed jobs to the 'done' table.
+        # If it makes more sense, merge into _query_submitted_jobs().
+        pass
+
+    def _commit_changes(self, message='Updates from cluster'):
+        # Commit the whole repo (should only be files under 'submit').
+        cmd = ['svn', 'ci', '--username', self.username, '-m', message,
+               '--non-interactive', self.repo_dir]
+
+        # Don't check_output, just dump it to stdout (or nohup.out).
+        subprocess.call(cmd)
 
 #############################################################################
 
@@ -565,7 +635,7 @@ def main():
         time.sleep(1) # Give it a chance to start.
         print 'Running in the background.  Re-run script to stop.'
     else:
-        poller.poll(run_job_for_file) # Infinite loop.
+        poller.poll() # Infinite loop.
 
 def main_background():
     print '\nStarting background run at %s' % datetime.datetime.now()
@@ -579,7 +649,7 @@ def main_background():
     poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     with open(nohup_filename, 'w') as f:
         f.write('delete this file to stop the backgrounded script.')
-    poller.poll(run_job_for_file, nohup_filename) # Infinite loop.
+    poller.poll(nohup_filename) # Infinite loop.
 
     print '\nStopping background run at %s' % datetime.datetime.now()
 
