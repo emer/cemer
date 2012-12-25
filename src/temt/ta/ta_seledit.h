@@ -460,6 +460,9 @@ class TA_API ParamSearchAlgo : public taNBase {
   INHERITED(taNBase)
 public:
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
+  SIMPLE_CUTLINKS(ParamSearchAlgo);
+  virtual void InitLinks();
+
   // TODO: These APIs should be pure virtual but how to make maketa understand?
   virtual void Reset();
   virtual bool CreateJobs();

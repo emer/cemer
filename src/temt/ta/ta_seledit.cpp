@@ -974,6 +974,13 @@ void SelectEdit::ConvertLegacy() {
 void
 ParamSearchAlgo::Initialize()
 {
+}
+
+void
+ParamSearchAlgo::InitLinks()
+{
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ParamSearchAlgo);
   m_cluster_run = GET_MY_OWNER(ClusterRun);
 }
 
@@ -1038,11 +1045,6 @@ GridSearch::Initialize()
 void
 GridSearch::Reset()
 {
-  // TODO: shouldn't need to do this here, since it's done in
-  // ParamSearchAlgo::Initialize(), but for some reason that
-  // doesn't work.
-  m_cluster_run = GET_MY_OWNER(ClusterRun);
-
   // Build the m_counts and m_names arrays.
   m_names.Reset();
   m_counts.Reset();
