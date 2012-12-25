@@ -460,14 +460,15 @@ class TA_API ParamSearchAlgo : public taNBase {
   INHERITED(taNBase)
 public:
   TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
-  virtual void Reset(ClusterRun &cluster_run);
-  virtual bool CreateJobs(ClusterRun &cluster_run); // Should be pure virtual but how to make maketa understand?
-  virtual void ProcessResults(ClusterRun &cluster_run);
+  // TODO: These APIs should be pure virtual but how to make maketa understand?
+  virtual void Reset();
+  virtual bool CreateJobs();
+  virtual void ProcessResults();
 protected:
-  String BuildCommand(const ClusterRun &cluster_run, const String &proj_path);
-  void AddJobRow(DataTable &table, const String &cmd, int cmd_id = 0);
+  String BuildCommand();
+  ClusterRun *m_cluster_run;
 private:
-  void Initialize() { }
+  void Initialize();
   void Destroy() { }
 };
 
@@ -498,11 +499,11 @@ private:
 
 public:
   TA_BASEFUNS_NOCOPY(GridSearch)
-  override void Reset(ClusterRun &cluster_run);
-  override bool CreateJobs(ClusterRun &cluster_run);
-  override void ProcessResults(ClusterRun &cluster_run);
+  override void Reset();
+  override bool CreateJobs();
+  override void ProcessResults();
 private:
-  bool nextParamCombo(ClusterRun &cluster_run);
+  bool nextParamCombo();
   void Initialize();
   void Destroy() { }
 };
@@ -548,6 +549,11 @@ public:
   // #BUTTON import the data for the selected rows in the jobs_done data table
 
   virtual void  FormatTables(); // format all the jobs tables to contain proper columns
+
+  // These APIs are mainly for the search algos to use.
+  void AddJobRow(const String &cmd, int cmd_id);
+  void CancelJob(int running_row);
+  int CountJobs(const DataTable &table, const String &status_regexp);
 
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);

@@ -62,7 +62,6 @@ private:
   bool loadTable(const String &filename, DataTable &table);
   void saveSubmitTable();
   void saveCopyOfProject();
-  void createParamFile();
   void commitFiles(const String &commit_msg);
   void deleteFile(const String &filename);
 

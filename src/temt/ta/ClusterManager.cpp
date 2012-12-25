@@ -99,7 +99,6 @@ ClusterManager::BeginSearch(bool prompt_user)
     runSearchAlgo();
     saveSubmitTable();
     saveCopyOfProject();
-    createParamFile(); // TODO: probably don't need this anymore.
     commitFiles("Ready to run on cluster: " + m_cluster_run.notes);
     return true;
   }
@@ -293,110 +292,6 @@ ClusterManager::promptForString(const String &str, const char *msg)
   return str;
 }
 
-bool
-ClusterManager::showRepoDialog()
-{
-  // Make sure there's at least one repository defined.
-  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
-    taMisc::Error(
-      "Please define at least one cluster and repository in "
-      "preferences/options");
-    return false;
-  }
-
-  taGuiDialog dlg;
-  dlg.win_title = "Run on cluster";
-  dlg.prompt = "Enter parameters";
-
-  String widget("main");
-  String vbox("mainv");
-  dlg.AddWidget(widget);
-  dlg.AddVBoxLayout(vbox, "", widget);
-
-  String row = "instrRow";
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("Instructions", widget, row,
-    "wrap=on;"
-    "label=Please choose a cluster and repository, enter notes for this run, "
-    "and set other parameters. The notes will be used as a checkin comment. "
-    "Required fields are indicated with an asterisk (*).;");
-
-  row = "clustRow";
-  dlg.AddSpace(10, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("clustLbl", widget, row, "label=* Cluster: ;");
-
-  QComboBox *combo1 = new QComboBox;
-  {
-    // Get the hbox for this row so we can add our combobox to it.
-    taGuiLayout *hboxEmer = dlg.FindLayout(row);
-    if (!hboxEmer) return false;
-    QBoxLayout *hbox = hboxEmer->layout;
-    if (!hbox) return false;
-
-    for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
-      combo1->addItem(taMisc::cluster_names[idx].chars());
-    }
-    hbox->addWidget(combo1);
-  }
-  int idx1 = combo1->findText(m_cluster_run.cluster.toQString());
-  if (idx1 >= 0) combo1->setCurrentIndex(idx1);
-  dlg.AddStretch(row);
-
-  row = "repoRow";
-  dlg.AddSpace(10, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("repoLbl", widget, row, "label=* Repository: ;");
-
-  QComboBox *combo2 = new QComboBox;
-  {
-    // Get the hbox for this row so we can add our combobox to it.
-    taGuiLayout *hboxEmer = dlg.FindLayout(row);
-    if (!hboxEmer) return false;
-    QBoxLayout *hbox = hboxEmer->layout;
-    if (!hbox) return false;
-
-    for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
-      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
-                      static_cast<QString>(taMisc::svn_repos[idx].value));
-    }
-    hbox->addWidget(combo2);
-  }
-  int idx2 = combo2->findData(m_cluster_run.repo_url.toQString());
-  if (idx2 >= 0) combo2->setCurrentIndex(idx2);
-  dlg.AddStretch(row);
-
-  row = "notesRow";
-  dlg.AddSpace(10, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
-  dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
-    "tooltip=notes about this run, used as a checkin comment;");
-
-  row = "mpi";
-  dlg.AddSpace(10, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
-  dlg.AddBoolCheckbox(&m_cluster_run.use_mpi, "usempi", widget, row,
-    "tooltip=use MPI on the cluster;");
-  dlg.AddStretch(row);
-  dlg.AddLabel("nodesLbl", widget, row, "label=Number of nodes: ;");
-  dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row,
-    "tooltip=the number of MPI nodes to use;");
-
-  bool modal = true;
-  int drval = dlg.PostDialog(modal);
-  if (drval == 0) {
-    taMisc::Info("Running on cluster cancelled by user.");
-    return false;
-  }
-
-  m_cluster_run.cluster = combo1->itemText(combo1->currentIndex());
-  m_cluster_run.repo_url =
-    combo2->itemData(combo2->currentIndex()).toString();
-  return true;
-}
-
 void
 ClusterManager::setPaths()
 {
@@ -495,8 +390,8 @@ ClusterManager::runSearchAlgo()
 
   // Tell the chosen search algorithm to populate the jobs_submit table
   // for the first batch of jobs.
-  m_cluster_run.cur_search_algo->Reset(m_cluster_run);
-  bool created = m_cluster_run.cur_search_algo->CreateJobs(m_cluster_run);
+  m_cluster_run.cur_search_algo->Reset();
+  bool created = m_cluster_run.cur_search_algo->CreateJobs();
 
   if (!created || m_cluster_run.jobs_submit.rows == 0) {
     throw Exception("Search algorithm did not produce any jobs.");
@@ -540,68 +435,6 @@ ClusterManager::saveCopyOfProject()
 }
 
 void
-ClusterManager::createParamFile()
-{
-  // TODO:
-  // There should be no need to associate version numbers with any of these
-  // files, since our commit will be atomic, and the cluster-side script's
-  // svn update will be atomic.  On the other hand, if the user kicks off
-  // another cluster run before the first has finished, the cluster-side
-  // script will blow away the currently running model file in the cluster's
-  // working copy.
-
-  // Generate a text file containing the model parameters from the ClusterRun.
-  QString param_filename(m_wc_submit_path.chars());
-  param_filename.append("/submit.txt");
-
-  // If the param file already exists in the wc, delete it first.
-  deleteFile(param_filename);
-
-  // Open a stream to write to the file.
-  QFile file(param_filename);
-  file.open(QIODevice::WriteOnly | QIODevice::Text);
-  QTextStream out(&file);
-
-  // For each parameter to be searched, make a section with its range.
-  String all_params;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run.mbrs) {
-    const EditParamSearch &ps = mbr->param_search;
-    if (ps.search) {
-      String name = mbr->GetName();
-      all_params.cat(name).cat(',');
-      out << "[" << name.chars() << "]";
-      out << "\nmin_val = " << ps.min_val;
-      out << "\nmax_val = " << ps.max_val;
-      out << "\nnext_val = " << ps.next_val;
-      out << "\nincr = " << ps.incr << "\n\n";
-    }
-  }
-
-  // Strip trailing comma.
-  if (!all_params.empty()) {
-    all_params.truncate(all_params.length() - 1);
-  }
-
-  // Write a timestamp to ensure the file is modified and will get
-  // checked in.  Also write the list of parameter names.
-  out << "[GENERAL_PARAMS]";
-  out << "\norig_filename = " << m_proj->file_name.chars();
-  out << "\ncluster_run_name = " << m_cluster_run.name.chars();
-  out << "\nrelative_filename = ../models/"
-      << qPrintable(QFileInfo(m_proj->file_name).fileName());
-  out << "\ntimestamp = "
-      << qPrintable(QDateTime::currentDateTime().toString());
-  out << "\ndescription = " << m_cluster_run.notes.chars();
-  out << "\nnum_mpi_nodes = " << m_cluster_run.mpi_nodes;
-  out << "\nparameters = " << all_params.chars();
-  out << "\n\n";
-
-  // Add the parameters file to the wc.
-  file.close(); // close manually before adding
-  m_svn_client->Add(qPrintable(param_filename));
-}
-
-void
 ClusterManager::commitFiles(const String &commit_msg)
 {
   // Ensure the working copy has been set.
@@ -619,4 +452,141 @@ ClusterManager::deleteFile(const String &filename)
   if (QFile::exists(q_filename)) {
     QFile::remove(q_filename);
   }
+}
+
+bool
+ClusterManager::showRepoDialog()
+{
+  // Make sure there's at least one repository defined.
+  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
+    taMisc::Error(
+      "Please define at least one cluster and repository in "
+      "preferences/options");
+    return false;
+  }
+
+  taGuiDialog dlg;
+  dlg.win_title = "Run on cluster";
+  dlg.prompt = "Enter parameters";
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row = "instrRow";
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("Instructions", widget, row,
+    "wrap=on;"
+    "label=Please choose a cluster and repository, enter notes for this run, "
+    "and set other parameters. The notes will be used as a checkin comment. "
+    "Required fields are indicated with an * (asterisk). Additional clusters "
+    "and repositories may be defined in emergent's options/preferences.;");
+
+  row = "clustRow";
+  int space = 5;
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("clustLbl", widget, row, "label=* Cluster: ;");
+
+  QComboBox *combo1 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+
+    for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
+      combo1->addItem(taMisc::cluster_names[idx].chars());
+    }
+    hbox->addWidget(combo1);
+  }
+  int idx1 = combo1->findText(m_cluster_run.cluster.toQString());
+  if (idx1 >= 0) combo1->setCurrentIndex(idx1);
+  dlg.AddStretch(row);
+
+  row = "repoRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("repoLbl", widget, row, "label=* Repository: ;");
+
+  QComboBox *combo2 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+
+    for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
+      combo2->addItem(taMisc::svn_repos[idx].name.chars(),
+                      static_cast<QString>(taMisc::svn_repos[idx].value));
+    }
+    hbox->addWidget(combo2);
+  }
+  int idx2 = combo2->findData(m_cluster_run.repo_url.toQString());
+  if (idx2 >= 0) combo2->setCurrentIndex(idx2);
+  dlg.AddStretch(row);
+
+  row = "notesRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
+  dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
+    "tooltip=Notes about this run, used as a checkin comment.;");
+
+  row = "queueRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("queueLbl", widget, row, "label=Queue: ;");
+  dlg.AddStringField(&m_cluster_run.queue, "queue", widget, row,
+    "tooltip=Choose a queue on the computing resource (optional).;");
+
+  row = "runtimeRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("runtimeLbl", widget, row, "label=Run time: ;");
+  dlg.AddStringField(&m_cluster_run.run_time, "runtime", widget, row,
+    "tooltip=How long each job will take to run, e.g., 30m, 12h, or 2d. "
+    "Do not underestimate!;");
+
+  row = "ramRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("ramLbl", widget, row, "label=RAM (in GB): ;");
+  dlg.AddIntField(&m_cluster_run.ram_gb, "ram", widget, row,
+    "tooltip=Required RAM, in gigabytes, or -1 for unspecified.;");
+  dlg.AddStretch(row);
+
+  row = "threadsRow";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("threadsLbl", widget, row, "label=Number of hreads: ;");
+  dlg.AddIntField(&m_cluster_run.n_threads, "threads", widget, row,
+    "tooltip=Number of parallel threads to use for running.;");
+  dlg.AddStretch(row);
+
+  row = "mpi";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
+  dlg.AddBoolCheckbox(&m_cluster_run.use_mpi, "usempi", widget, row,
+    "tooltip=Use MPI on the cluster.;");
+  dlg.AddStretch(row);
+  dlg.AddLabel("nodesLbl", widget, row, "label=Number of nodes: ;");
+  dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row,
+    "tooltip=The number of MPI nodes to use.;");
+
+  bool modal = true;
+  int drval = dlg.PostDialog(modal);
+  if (drval == 0) {
+    taMisc::Info("Running on cluster cancelled by user.");
+    return false;
+  }
+
+  m_cluster_run.cluster = combo1->itemText(combo1->currentIndex());
+  m_cluster_run.repo_url =
+    combo2->itemData(combo2->currentIndex()).toString();
+  return true;
 }

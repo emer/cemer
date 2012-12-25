@@ -971,43 +971,54 @@ void SelectEdit::ConvertLegacy() {
 /////////////////////////////////////////////////////
 //      ParamSearchAlgo, GridSearch, etc.
 
-// TODO: Make ParamSearchAlgo::Initialize() call GET_OWNER to find
-// its parent ClusterRun object, and set a protected member pointer
-// ParamSearchAlgo::m_cluster_run so we don't need to pass args to
-// all of these functions!
 void
-ParamSearchAlgo::Reset(ClusterRun &cluster_run)
+ParamSearchAlgo::Initialize()
+{
+  m_cluster_run = GET_MY_OWNER(ClusterRun);
+}
+
+void
+ParamSearchAlgo::Reset()
 {
 }
 
 bool
-ParamSearchAlgo::CreateJobs(ClusterRun &cluster_run)
+ParamSearchAlgo::CreateJobs()
 {
   return false;
 }
 
 void
-ParamSearchAlgo::ProcessResults(ClusterRun &cluster_run)
+ParamSearchAlgo::ProcessResults()
 {
 }
 
 String
-ParamSearchAlgo::BuildCommand(const ClusterRun &cluster_run, const String &proj_path)
+ParamSearchAlgo::BuildCommand()
 {
-  String cmd(cluster_run.use_mpi ? "emergent_mpi" : "emergent");
-  cmd.cat(" -nogui -ni -p ").cat(proj_path);
-
-  if (cluster_run.use_mpi) {
-    // TODO: What's the right switch(es) for MPI settings?
-    cmd.cat(" --mpi_nodes ").cat(String(cluster_run.mpi_nodes));
+  // Start command with either "emergent" or "emergent_mpi".
+  String cmd(taMisc::app_name);
+  if (m_cluster_run->use_mpi) {
+    cmd.cat("_mpi");
   }
 
-  if (cluster_run.n_threads > 0) {
-    cmd.cat(" --n_threads ").cat(String(cluster_run.n_threads));
+  // The cluster script needs to substitute the correct relative
+  // filename for the project file in its working copy.  It also
+  // needs to substitute the tag, which is based on the revision
+  // and row number.
+  cmd.cat(" -nogui -ni -p <PROJ_FILENAME> tag=<TAG>");
+
+  if (m_cluster_run->use_mpi) {
+    // TODO: What's the right switch(es) for MPI settings?
+    cmd.cat(" --mpi_nodes ").cat(String(m_cluster_run->mpi_nodes));
+  }
+
+  if (m_cluster_run->n_threads > 0) {
+    cmd.cat(" --n_threads ").cat(String(m_cluster_run->n_threads));
   }
 
   // Add a name=val term for each parameter in the search.
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
     const EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
       cmd.cat(" ").cat(mbr->GetName()).cat("=").cat(String(ps.next_val));
@@ -1015,15 +1026,6 @@ ParamSearchAlgo::BuildCommand(const ClusterRun &cluster_run, const String &proj_
   }
 
   return cmd;
-}
-
-void
-ParamSearchAlgo::AddJobRow(DataTable &table, const String &cmd, int cmd_id)
-{
-  int row = table.AddBlankRow();
-  table.SetVal("REQUESTED", "status", row);
-  table.SetVal(cmd_id, "command_id", row);
-  table.SetVal(cmd, "command", row);
 }
 
 
@@ -1034,13 +1036,13 @@ GridSearch::Initialize()
 }
 
 void
-GridSearch::Reset(ClusterRun &cluster_run)
+GridSearch::Reset()
 {
   // Build the m_counts and m_names arrays.
   m_names.Reset();
   m_counts.Reset();
   int total_jobs = 1;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
     EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
       // Keep track of names to make sure they haven't changed by the time
@@ -1074,20 +1076,8 @@ GridSearch::Reset(ClusterRun &cluster_run)
 }
 
 bool
-GridSearch::CreateJobs(ClusterRun &cluster_run)
+GridSearch::CreateJobs()
 {
-  // Need to add rows to the jobs_submit DataTable.
-  // * For each new job to be submitted, this function must populate
-  // two columns: status and command.  The status column will be set
-  // to "REQUESTED"; the command column is what will be executed on
-  // the cluster (TODO: with or without 'emergent' / 'emergent_mpi'?)
-  // * For any jobs to be cancelled, this function must populate two
-  // columns: status and job_no.  The status column will be set to
-  // "CANCELLED"; the job_no to the job which should be cancelled.
-  // (TODO: use job_no or tag?)
-  // TODO: move/copy code from ClusterRun::Kill() to a new function
-  // ParamSearchAlgo::CancelJob(), for the search algos to use.
-
   // If we've already created all jobs for this search, don't create any more.
   if (m_all_jobs_created) return false;
 
@@ -1098,7 +1088,9 @@ GridSearch::CreateJobs(ClusterRun &cluster_run)
   // we can create.
   int num_jobs = max_jobs;
   if (!create_all) {
-    int running_jobs = 0; // TODO: calculate correctly.
+    int running_jobs = m_cluster_run->CountJobs(
+      m_cluster_run->jobs_running,
+      "SUBMITTED|QUEUED|RUNNING");
     num_jobs -= running_jobs;
 
     // Check if we can't create any more jobs because the maximum number
@@ -1109,14 +1101,14 @@ GridSearch::CreateJobs(ClusterRun &cluster_run)
   }
 
   // Create num_jobs jobs (or all jobs if create_all set).
-  cluster_run.jobs_submit.ResetData();
+  m_cluster_run->jobs_submit.ResetData();
   for (int idx = 0; idx < num_jobs || create_all; ++idx, ++m_cmd_id) {
     // Add the current job.
-    String cmd = BuildCommand(cluster_run, "TODO_proj_path");
-    AddJobRow(cluster_run.jobs_submit, cmd, m_cmd_id);
+    String cmd = BuildCommand();
+    m_cluster_run->AddJobRow(cmd, m_cmd_id);
 
     // Cycle parameters for the next job.
-    if (!nextParamCombo(cluster_run)) {
+    if (!nextParamCombo()) {
       // No next combo means all jobs have been created.
       m_all_jobs_created = true;
       break;
@@ -1128,12 +1120,12 @@ GridSearch::CreateJobs(ClusterRun &cluster_run)
 }
 
 bool
-GridSearch::nextParamCombo(ClusterRun &cluster_run)
+GridSearch::nextParamCombo()
 {
   // Cycle parameters for the next job by adding 1 to the least-significant
   // element in the iterator array, and carrying if needed.
   int idx = 0;
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, cluster_run.mbrs) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, m_cluster_run->mbrs) {
     EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
       // Sanity check that the parameters to search haven't changed.
@@ -1168,7 +1160,7 @@ GridSearch::nextParamCombo(ClusterRun &cluster_run)
 }
 
 void
-GridSearch::ProcessResults(ClusterRun &cluster_run)
+GridSearch::ProcessResults()
 {
   // TODO: load result files??
 }
@@ -1232,7 +1224,7 @@ bool ClusterRun::Update() {
   // Update the working copy and load the running/done tables.
   bool has_updates = m_cm->UpdateTables();
   if (has_updates && cur_search_algo) {
-    cur_search_algo->ProcessResults(*this);
+    cur_search_algo->ProcessResults();
   }
   return has_updates;
 }
@@ -1241,7 +1233,7 @@ void ClusterRun::Cont() {
   initClusterManager(); // ensure it has been created.
 
   // Create the next batch of jobs.
-  if (cur_search_algo && cur_search_algo->CreateJobs(*this)) {
+  if (cur_search_algo && cur_search_algo->CreateJobs()) {
     // Commit the table to submit the jobs.
     m_cm->CommitJobSubmissionTable();
   }
@@ -1255,11 +1247,8 @@ void ClusterRun::Kill() {
   if (SelectedRows(jobs_running, st_row, end_row)) {
     // Populate the jobs_submit table with CANCEL requests for the selected jobs.
     jobs_submit.ResetData();
-    for (int src_row = st_row; src_row <= end_row; ++src_row) {
-      int dst_row = jobs_submit.AddBlankRow();
-      jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", src_row);
-      jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", src_row);
-      jobs_submit.SetVal("CANCELLED", "status", dst_row);
+    for (int row = st_row; row <= end_row; ++row) {
+      CancelJob(row);
     }
 
     // Commit the table.
@@ -1343,8 +1332,44 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc->desc = "number of parallel threads to use for running";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);
   dc->desc = "number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+}
 
-  // TODO: now add the specific parameters in the control
+void
+ClusterRun::AddJobRow(const String &cmd, int cmd_id)
+{
+  int row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("REQUESTED", "status",     row);
+  jobs_submit.SetVal(cmd_id,      "command_id", row);
+  jobs_submit.SetVal(cmd,         "command",    row);
+
+  jobs_submit.SetVal(repo_url,    "repo_url",   row);
+  jobs_submit.SetVal(cluster,     "cluster",    row);
+  jobs_submit.SetVal(queue,       "queue",      row);
+  jobs_submit.SetVal(run_time,    "run_time",   row);
+  jobs_submit.SetVal(ram_gb,      "ram_gb",     row);
+  jobs_submit.SetVal(n_threads,   "n_threads",  row);
+  jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
+}
+
+void
+ClusterRun::CancelJob(int running_row)
+{
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("CANCELLED", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", running_row);
+  jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", running_row);
+}
+
+int
+ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
+{
+  int count = 0;
+  QRegExp re(status_regexp.toQString());
+  for (int row = 0; row < table.rows; ++row) {
+    QString status = table.GetValAsString("status", row).toQString();
+    if (status.contains(re)) ++count;
+  }
+  return count;
 }
 
 iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
