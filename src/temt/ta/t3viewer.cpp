@@ -1296,11 +1296,24 @@ ISelectableHost* T3DataView::host() const {
 }
 
 bool T3DataView::isMapped() const {
-  if(!m_node_so) return false;
+  if(!m_node_so) {
+    // taMisc::Info("view:",name,"not mapped because no node_so");
+    return false;
+  }
+  if(taMisc::gui_no_win) return true; // bypass these further checks for no_win case
   T3ExaminerViewer* vw = GetViewer();
-  if(!vw) return false;
-  if(!vw->quarter) return false;
-  if(!vw->quarter->isValid()) return false;
+  if(!vw) {
+    // taMisc::Info("view:",name,"not mapped because no GetViewer");
+    return false;
+  }
+  if(!vw->quarter) {
+    // taMisc::Info("view:",name,"not mapped because no quarter");
+    return false;
+  }
+  if(!vw->quarter->isValid()) {
+    // taMisc::Info("view:",name,"not mapped because no quarter->isValid()");
+    return false;
+  }
   return true;
 }
 

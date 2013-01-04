@@ -317,7 +317,7 @@ private:
 class xxx_API T ## _SPtr : public SpecPtr<T> { \
 private: \
   typedef SpecPtr<T> inherited;\
-  void Copy_(const T ## _SPtr&) {} \
+  void  Copy_(const T ## _SPtr&) {} \
   void 	Initialize() { }; \
   void	Destroy() { }; \
 public: \

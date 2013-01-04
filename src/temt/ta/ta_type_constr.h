@@ -91,8 +91,10 @@ public:
   int		val;
 };
 
-extern TA_API void tac_AddEnum(TypeDef& tp, const char* name, const char* desc, const char* inh_opts,
-			const char* opts, const char* lists, EnumDef_data* dt);
+extern TA_API void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
+			       const char* inh_opts, const char* opts, const char* lists,
+			       const char* src_file, int src_st, int src_ed,
+			       EnumDef_data* dt);
 extern TA_API void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt);
 extern TA_API void tac_AddMembers(TypeDef& tp, MemberDef_data* dt);
 extern TA_API void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt);

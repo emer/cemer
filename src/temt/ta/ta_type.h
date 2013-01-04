@@ -2228,7 +2228,8 @@ class taBase_List;
   #undef SC_DEFAULT
 #endif
 
-class TA_API TypeDef : public TypeItem {// defines a type itself
+class TA_API TypeDef : public TypeItem {
+  // defines a type -- everything from int to classes, enums, typedefs, etc
 INHERITED(TypeItem)
 public:
   enum StrContext { // context for getting or setting a string value
@@ -2271,9 +2272,9 @@ public:
   TokenSpace    tokens;         // tokens of this type (if kept)
 
 #ifdef TA_GUI
-  taiType*      it;             // single glyph representation of type (was 'iv')
-  taiEdit*      ie;             // editing window rep. of type (was 'ive')
-  taiViewType*  iv;             // browser representation of type
+  taiType*      it;             // single widget gui representation of type
+  taiEdit*      ie;             // gui editing window rep. of type
+  taiViewType*  iv;             // gui browser representation of type
 #endif
 
   // the following only apply to enums or classes
@@ -2285,6 +2286,10 @@ public:
   String_PArray ignore_meths;   // methods to be ignored
   TypeSpace     templ_pars;     // template parameters
   String        c_name;         // C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
+  
+  String	source_file;	// source file name where defined -- no path information, just file name
+  int		source_start;	// starting source code line number
+  int		source_end;	// ending source code line number
 
   bool          is_enum() const; // true if an enum
   bool          is_class() const; // true if it is a class
@@ -2292,17 +2297,22 @@ public:
   bool          isVarCompat() const; // true if read/write compatible with Variant
   taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_TYPE;}
 
+  /////////////////////////////////////////////////////////////
+  //		Constructors and misc industrial
+
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
   TypeDef();
   TypeDef(const char* nm);
 #ifdef NO_TA_BASE
-  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
+  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
+	  const char* lis,
           uint siz, int ptrs=0, bool refnc=false,
           bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
 #else
-  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
+  TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
+	  const char* lis, const char* src_file, int src_st, int src_ed,
           uint siz, void** inst, bool toks=false, int ptrs=0, bool refnc=false,
           bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
 #endif
@@ -2324,6 +2334,9 @@ public:
 
   bool                  CheckList(const String_PArray& lst) const;
   // check if have a list in common
+
+  /////////////////////////////////////////////////////////////
+  //		Parents, Inheritance
 
   override TypeDef*     GetOwnerType() const
     { if (owner) return owner->owner; else return NULL; }
@@ -2447,10 +2460,15 @@ public:
   void          SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
   // set type of a template class
 
+  /////////////////////////////////////////////////////////////
+  //		Finding stuff within type
+
   static MemberDef* FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
                                          ta_memb_ptr& net_mbr_off,
                                          const String& path, bool warn = true);
   // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net offsets provide overall offset from original own_td obj
+  TypeDef*      FindTypeWithMember(const char* nm, MemberDef** md);
+  // returns the type or child type with memberdef md
 
   EnumDef*      FindEnum(const String& enum_nm) const;
   // find an enum and return its definition (or NULL if not found).  searches in enum_vals, then subtypes
@@ -2530,6 +2548,9 @@ public:
   bool          ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
   // true only if value is empty, ex 0 or ""
 
+  /////////////////////////////////////////////////////////////
+  //		Copying, Comparing
+
   void          CopyFromSameType(void* trg_base, void* src_base,
                                          MemberDef* memb_def = NULL);
   // copy all mmbers from same type
@@ -2545,28 +2566,6 @@ public:
                                 int show_allowed = taMisc::SHOW_CHECK_MASK,
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
-
-  // value printing
-  String&       Print(String& strm, void* base, int indent=0) const;
-  // output value information for display purposes
-
-  String&       PrintType(String& strm, int indent = 0) const;
-  // output type information only
-  String&       PrintInherit(String& strm) const;
-  String&       PrintInherit_impl(String& strm) const;
-  String&       PrintTokens(String& strm, int indent=0) const;
-
-  String        GetHTML(bool gendoc=false) const;
-  // gets an HTML representation of this type -- for help view etc -- gendoc = external html file rendering instead of internal help browser
-  String        GetHTMLLink(bool gendoc=false) const;
-  // get HTML code for a link to this type -- only generates a link if InheritsNonAtomicClass -- otherwise it just returns the Get_C_Name representation
-  String        GetHTMLSubType(bool gendoc=false, bool short_fmt=false) const;
-  // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
-
-  String        GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
-                const String& label_prefix, const String& link_prefix, bool gendoc=false) const;
-  // render the members and methods for given lists of items -- can pre-filter the lists and render them separately (e.g., to separate regular from EXPERT items)
-
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                         MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
                         taObjDiffRec* par_od=NULL) const;
@@ -2576,7 +2575,35 @@ public:
                     taObjDiffRec* par_od=NULL) const;
   // just add members of a class object to the diff list
 
-  // saving and loading of type instances to/from streams
+
+  /////////////////////////////////////////////////////////////
+  // 		Value printing
+
+  String&       Print(String& strm, void* base, int indent=0) const;
+  // output value information for display purposes
+
+  String&       PrintType(String& strm, int indent = 0) const;
+  // output type information only
+  String&       PrintInherit(String& strm) const;
+  String&       PrintInherit_impl(String& strm) const;
+  String&       PrintTokens(String& strm, int indent=0) const;
+
+  /////////////////////////////////////////////////////////////
+  //		HTML docs
+
+  String        GetHTML(bool gendoc=false) const;
+  // gets an HTML representation of this type -- for help view etc -- gendoc = external html file rendering instead of internal help browser
+  String        GetHTMLLink(bool gendoc=false) const;
+  // get HTML code for a link to this type -- only generates a link if InheritsNonAtomicClass -- otherwise it just returns the Get_C_Name representation
+  String        GetHTMLSubType(bool gendoc=false, bool short_fmt=false) const;
+  // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
+  String        GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
+                const String& label_prefix, const String& link_prefix, bool gendoc=false) const;
+  // render the members and methods for given lists of items -- can pre-filter the lists and render them separately (e.g., to separate regular from EXPERT items)
+
+  /////////////////////////////////////////////////////////////
+  // 		Dump: Saving and loading of type instances to/from streams
+
   int           Dump_Save(ostream& strm, void* base, void* par=NULL, int indent=0);
   // called by the user to save an object
   int           Dump_Save_impl(ostream& strm, void* base, void* par=NULL, int indent=0);
@@ -2602,7 +2629,14 @@ public:
   int           Dump_Load_Value(istream& strm, void* base, void* par=NULL);
   // loads the actual member values of the object (false if error)
 
-  TypeDef*      FindTypeWithMember(const char* nm, MemberDef** md); // returns the type or child type with memberdef md
+  /////////////////////////////////////////////////////////////
+  //		Generate source code stubs in standard format -- timesaver
+  static bool	Src_CreateFilesNew(const String& type_nm, const String& top_path,
+				   const String& src_dir);
+  // create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
+  bool		Src_CreateFiles(const String& top_path, const String& src_dir);
+  // create files for this class type in given location (top_path/src_dir and top_path/include) -- see Src_CreateFilesNew for details -- also automatically adds proper set of includes and declarations based on inheritance and members
+
 protected:
   mutable signed char    m_cacheInheritsNonAtomicClass;
 private:

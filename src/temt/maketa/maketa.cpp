@@ -192,6 +192,7 @@ MTA::MTA() {
   line = 0;
   col = 0;
   anon_no = 0;
+  defn_st_line = 0;
 
   state = Find_Item;
   yy_state = YYRet_Ok;
@@ -441,6 +442,13 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 }
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
+  String typstr = typ;
+  if(typstr != "class" && typstr != "enum") {
+    td->source_file = mta->cur_fname;
+    td->source_start = mta->line-1;
+    td->source_end = mta->line-1;
+  }
+
   if(verbose <= 2)      return;
   cerr << "M!!: " << typ << " added: " << td->name << " to: "
        << sp->name << " idx: " << td->idx << endl;

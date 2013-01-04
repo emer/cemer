@@ -455,6 +455,7 @@ void VEBodyView::Render_impl() {
       }
     }
   }
+  // taMisc::Info("VEBody", ob->name, "Render_impl complete");
 }
 
 // callback for transformer dragger
@@ -1384,6 +1385,7 @@ void VEWorldView::Initialize() {
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
   cam_renderer = NULL;
+  nowin_rebuild_done = false;
 }
 
 void VEWorldView::InitLinks() {
@@ -1501,6 +1503,7 @@ void VEWorldView::BuildAll() {
     children.Add(ov);
     ov->BuildAll();
   }
+  // taMisc::Info("WorldView", name, "BuildAll complete");
 }
 
 void VEWorldView::Render_pre() {
@@ -1519,6 +1522,7 @@ void VEWorldView::Render_pre() {
   CreateTextures();
 
   inherited::Render_pre();
+  // taMisc::Info("WorldView", name, "Render_pre complete");
 }
 
 void VEWorldView::CreateLights() {
@@ -1578,6 +1582,7 @@ void VEWorldView::Render_impl() {
   SetupLights();
 
   UpdatePanel();
+  // taMisc::Info("WorldView", name, "Render_impl complete");
 }
 
 void VEWorldView::SetupCameras() {
@@ -1700,21 +1705,26 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   if(!wl) return img;
 
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
-  if(!obv) {
-    if(taMisc::gui_no_win) {    // offscreen rendering mode -- need to build a new worldview
-      BuildAll();
+  if(taMisc::gui_no_win) {    // offscreen rendering mode -- need to build a new worldview
+    if(!obv || !nowin_rebuild_done) {
+      taMisc::Info("GetCameraImage", String(cam_no), "offscreen building");
+      //      BuildAll();
       Render_pre();
       Render_impl();
       Render_post();
       obv = (T3VEWorld*)this->node_so(); // cache
+      nowin_rebuild_done = true;
     }
-    if(!obv) {          // still didn't work
-      return img;
-    }
+  }
+  if(TestError(!obv, "GetCameraImage", "no node_so for VEworld view -- need to run with no_win, not nogui!")) {
+    return img;
   }
 
   SoSwitch* cam_switch = obv->getCameraSwitch();
-  if(cam_switch->getNumChildren() <= cam_no) return img; // not ready yet
+  if(TestWarning(cam_switch->getNumChildren() <= cam_no, "GetCameraImage",
+		 "cam_switch not avail")) {
+    return img; 
+  }
 
   VECamera* vecam = NULL;
   if(cam_no == 0) {
@@ -1740,6 +1750,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   static taVector2i last_img_size;
 
   if(!cam_renderer) {
+    taMisc::Info("GetCameraImage", String(cam_no), "cam_renderer building");
     cam_renderer = new SoOffscreenRendererQt(vpreg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();
     action->setSmoothing(true);
@@ -1749,6 +1760,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   }
 
   if(cur_img_size != last_img_size) {
+    taMisc::Info("GetCameraImage", String(cam_no), "new image size");
     cam_renderer->setViewportRegion(vpreg);
     last_img_size = cur_img_size;
   }

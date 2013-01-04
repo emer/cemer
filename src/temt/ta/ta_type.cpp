@@ -5020,6 +5020,8 @@ void TypeDef::Initialize() {
   ref = false;
   internal = false;
   formal = false;
+  source_start = -1;
+  source_end = -1;
 
 #ifdef TA_GUI
   it = NULL;
@@ -5079,11 +5081,13 @@ TypeDef::TypeDef(const char* nm)
 }
 
 #ifdef NO_TA_BASE
-TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
-  uint siz, int ptrs, bool refnc, bool global_obj)
+TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
+		 const char* lis,
+		 uint siz, int ptrs, bool refnc, bool global_obj)
 #else
-TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op, const char* lis,
-  uint siz, void** inst, bool toks, int ptrs, bool refnc, bool global_obj)
+TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
+		 const char* lis, const char* src_file, int src_st, int src_ed,
+		 uint siz, void** inst, bool toks, int ptrs, bool refnc, bool global_obj)
 #endif
 :inherited()
 {
@@ -5091,6 +5095,9 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 #ifndef NO_TA_BASE
   instance = inst;
   tokens.keep = toks;
+  source_file = src_file;
+  source_start = src_st;
+  source_end = src_ed;
 #endif
   name = nm; desc = dsc;
   c_name = nm;
@@ -8030,6 +8037,16 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
   }
   return rval;
 }
+
+bool TypeDef::Src_CreateFilesNew(const String& type_nm, const String& top_path,
+				 const String& src_dir) {
+  return true;
+}
+
+bool TypeDef::Src_CreateFiles(const String& top_path, const String& src_dir) {
+  return true;
+}
+
 
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,

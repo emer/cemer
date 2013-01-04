@@ -239,6 +239,7 @@ protected:
   QPointer<VEWorldViewPanel> m_wvp;
   SoOffscreenRendererQt*	cam_renderer;
 #endif
+  bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
 
   override void		DataUpdateAfterEdit_impl();
   override void		DataUpdateView_impl();

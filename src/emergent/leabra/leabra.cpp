@@ -3203,6 +3203,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_netin_n = 0;
 
   lay->norm_err = 0.0f;
+  lay->cos_err = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -4719,6 +4720,7 @@ float LeabraLayerSpec::Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net,
 
 float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
 				     int& n_vals) {
+  lay->cos_err = 0.0f;
   n_vals = 0;
   float cosv = 0.0f;
   if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
@@ -4740,6 +4742,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   float dist = sqrtf(ssm * sst);
   if(dist != 0.0f)
     cosv /= dist;
+  lay->cos_err = cosv;
   return cosv;
 }
 
@@ -5183,6 +5186,7 @@ void LeabraLayer::Initialize() {
   hard_clamped = false;
   dav = 0.0f;
   norm_err = 0.0f;
+  cos_err = 0.0f;
   da_updt = false;
 
   avg_netin_n = 0;
@@ -5260,6 +5264,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   hard_clamped = cp.hard_clamped;
   dav = cp.dav;
   norm_err = cp.norm_err;
+  cos_err = cp.cos_err;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
@@ -5549,6 +5554,12 @@ void LeabraNetwork::Initialize() {
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
 
+  cos_err_lrn_thr = -1.0f;
+  cos_err = 0.0f;
+  avg_cos_err = 1.0f;
+  avg_cos_err_sum = 0.0f;
+  avg_cos_err_n = 0;
+
   inhib_cons_used = false;
   init_netins_cycle_stat = false;
 }
@@ -5650,6 +5661,11 @@ void LeabraNetwork::Init_Stats() {
   avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
+
+  cos_err = 0.0f;
+  avg_cos_err = 1.0f;
+  avg_cos_err_sum = 0.0f;
+  avg_cos_err_n = 0;
 
   lrn_trig.Init_Stats();
 }
@@ -6500,6 +6516,7 @@ void LeabraNetwork::Compute_dWt_FirstMinus() {
   if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
     return; // no learning while gathering data!
   }
+
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstMinus);
   if(thread_flags & DWT)
     threads.Run(&un_call, 0.6f);
@@ -6513,6 +6530,11 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
   if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
     return; // no learning while gathering data!
   }
+
+  if(cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
+    if(cos_err < cos_err_lrn_thr) return; // didn't make threshold
+  }
+
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
   if(thread_flags & DWT)
@@ -6583,6 +6605,9 @@ void LeabraNetwork::Compute_NormErr() {
   if(nerr_avail > 0.0f) {
     norm_err = nerr_sum / nerr_avail; // normalize contribution across layers
 
+    if(cos_err_lrn_thr > -1.0f) {
+      if(cos_err < cos_err_lrn_thr) return; // didn't make threshold - don't add to global
+    }
     avg_norm_err_sum += norm_err;
     avg_norm_err_n++;
   }
@@ -6633,8 +6658,16 @@ float LeabraNetwork::Compute_CosErr() {
     if(lay_vals > 0)
       n_lays++;
   }
-  if(n_lays > 0)
+  if(n_lays > 0) {
     cosv /= (float)n_lays;
+    cos_err = cosv;
+
+    avg_cos_err_sum += cos_err;
+    avg_cos_err_n++;
+  }
+  else {
+    cos_err = 0.0f;
+  }
   return cosv;
 }
 
@@ -6742,6 +6775,7 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
 void LeabraNetwork::Compute_TrialStats() {
   inherited::Compute_TrialStats();
   Compute_NormErr();
+  Compute_CosErr();
   Compute_MinusCycles();
   minus_output_name = output_name; // grab and hold..
 }
@@ -6813,6 +6847,14 @@ void LeabraNetwork::Compute_AvgNormErr() {
   avg_norm_err_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgCosErr() {
+  if(avg_cos_err_n > 0) {
+    avg_cos_err = avg_cos_err_sum / (float)avg_cos_err_n;
+  }
+  avg_cos_err_sum = 0.0f;
+  avg_cos_err_n = 0;
+}
+
 void LeabraNetwork::Compute_CtLrnTrigAvgs() {
   if(lrn_trig.lrn_stats_n > 0) {
     float ltrign = (float)lrn_trig.lrn_stats_n;
@@ -6853,6 +6895,7 @@ void LeabraNetwork::Compute_EpochStats() {
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
   Compute_AvgNormErr();
+  Compute_AvgCosErr();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
   Compute_CtLrnTrigAvgs();

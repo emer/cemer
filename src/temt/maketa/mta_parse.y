@@ -210,7 +210,7 @@ defn:     type tyname term		{
 enumdefn: enumdsub			{
             TypeSpace* sp = mta->GetTypeSpace($1);
             $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) mta->TypeAdded("enum", sp, $$); }
+	    if($$ == $1) { mta->TypeAdded("enum", sp, $$); $$->source_end = mta->line-1; } }
         ;
 
 enumdsub: enumname enums '}' term
@@ -224,10 +224,12 @@ enumname: enumnm '{'
 enumnm:   ENUM tyname			{
   	    $$ = $2;
 	    $2->AddParFormal(&TA_enum); mta->cur_enum = $2;
+	    $$->source_file = mta->cur_fname;  $$->source_start = mta->line-1;
 	    mta->type_stack.Pop(); }
         | ENUM 				{
 	    String nm = "enum_"; nm += (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); mta->cur_enum = $$;
+	    $$->source_file = mta->cur_fname;  $$->source_start = mta->line-1;
 	    $$->AddParFormal(&TA_enum); $$->internal = true; }
         ;
 
@@ -248,7 +250,7 @@ classdefn:
           classdefns			{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) mta->TypeAdded("class", sp, $$);
+	    if($$ == $1) { mta->TypeAdded("class", sp, $$); $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
 
@@ -265,12 +267,15 @@ classdsub:
 
 classname:
           classhead '{'			{
-	    $1->tokens.keep = true;
-	    mta->Class_ResetCurPtrs(); }
+	    $1->tokens.keep = true; mta->Class_ResetCurPtrs();
+	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; }
         | classhead COMMENT '{'			{
-	    SETDESC($1,$2); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs(); }
+	    SETDESC($1,$2); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
+	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; }
         | classhead '{' COMMENT 		{
-	    SETDESC($1,$3); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs(); }
+	    SETDESC($1,$3); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
+	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; 
+	  }
         ;
 
 classhead:
@@ -704,7 +709,9 @@ ftype:	  type
         | FUNTYPE type		{ $$ = $2; }
         ;
 
-tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$); }
+tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$);
+	                          $$->source_file = mta->cur_fname;
+				  $$->source_start = mta->line-1; }
         ;
 
 type:	  noreftype
@@ -737,7 +744,7 @@ constype: subtype
 	    TypeSpace* sp = mta->GetTypeSpace($2);
 	    $$ = sp->AddUniqNameOld(nty);
 	    if($$ == nty) { mta->TypeAdded("const", sp, $$);
-	      nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
+	                    nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
 	    else { mta->TypeNotAdded("const", sp, $$, nty); delete nty; }
 	  }
         ;
@@ -822,12 +829,12 @@ access:   PUBLIC
         ;
 
 structunion:
-          STRUCT
-        | UNION
+          STRUCT		{ mta->defn_st_line = mta->line-1; }
+        | UNION			{ mta->defn_st_line = mta->line-1; }
 	;
 
 classkeyword:
-          CLASS
+          CLASS			{ mta->defn_st_line = mta->line-1; }
         ;
 
 %%

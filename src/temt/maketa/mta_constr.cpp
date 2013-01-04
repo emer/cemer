@@ -351,6 +351,9 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     strm << "(\"" << ths->name << "\", \"" << ths->desc << "\", ";
     strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \""
          << str_lists << "\", ";
+    strm << "\"" << ths->source_file << "\", " << String(ths->source_start)
+	 << ", " << String(ths->source_end) << ", ";
+
     if(ths->InheritsFormal(TA_enum))
       strm << "sizeof(int), ";
     else
@@ -368,7 +371,7 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     strm << ", " << ths->ptr;
     if(ths->ref)        strm << ", 1";
     else                strm << ", 0";
-    strm << ",1);\n";           // last true makes it global object
+    strm << ", 1);\n";           // last true makes it global object
   }
 }
 
@@ -1004,6 +1007,8 @@ void TypeDef_Init_EnumData(TypeDef* ths, ostream& strm) {
       strm << "    tac_AddEnum(TA_" << ths->name << ", \"" << enm->name << "\", \""
            << enm->desc  << "\", \"" << str_opts << "\", \"" << str_inh_opts
            << "\", \"" << str_lists << "\", ";
+      strm << "\"" << enm->source_file << "\", " << String(enm->source_start)
+	   << ", " << String(enm->source_end) << ", ";
       strm << "TA_" << ths->name << "_" << enm->name << ");\n";
     }
   }
@@ -1544,6 +1549,8 @@ void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
       strm << "    sbt = new TypeDef(\"" << sbt->name << "\", \"" << sbt->desc << "\", ";
       strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \"";
       strm << str_lists << "\", ";
+      strm << "\"" << sbt->source_file << "\", " << String(sbt->source_start)
+	   << ", " << String(sbt->source_end) << ", ";
       strm << "sizeof(int), (void**)0);\n";
       // todo: not putting out ptrs or ref stuff
     }

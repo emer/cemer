@@ -228,36 +228,6 @@ bool DataViewer::PrintImage() {
   return rval;
 }
 
-/* TBD
-void DataViewer::GetPrintFileDlg(PrintFmt fmt) {
-  static PrintFmt last_fmt = POSTSCRIPT;
-  if(!taMisc::gui_active) return;
-  if((print_file != NULL) && (last_fmt == fmt))  return;
-  if(print_file != NULL) {
-    taRefN::unRefDone(print_file);
-    print_file = NULL;
-  }
-
-  String ext = GetPrintFileExt(fmt);
-
-  print_file = taFiler::New("Print", ext);
-  taRefN::Ref(print_file);
-  last_fmt = fmt;
-}
-
-String DataViewer::GetPrintFileExt(PrintFmt fmt) {
-  String ext;
-  if(fmt == POSTSCRIPT)
-    ext = ".ps";
-  else if(fmt == JPEG)
-    ext = ".jpg";
-  else if(fmt == TIFF)
-    ext = ".tiff";
-  else if(fmt == PDF)
-    ext = ".pdf";
-  return ext;
-} */
-
 bool DataViewer::isMapped() const {
 //NOTE: do NOT put gui_active into this!!!
   return (m_dvwidget);
@@ -269,17 +239,6 @@ MainWindowViewer* DataViewer::parent() const {
   }
   return dynamic_cast<MainWindowViewer*>(m_parent); // dyn for safety
 }
-
-/*obs void DataViewer::ReSize(float width, float height) {
-  if (!taMisc::gui_active || (dvwidget() == NULL)) return;
-  if ((width > 0.0f) && (height > 0.0f)) {
-    win_state.wd = width;
-    win_state.ht = height;
-    win_state.SetWinState();
-  } else {
-    GetWinState();
-  }
-} */
 
 iMainWindowViewer* DataViewer::viewerWindow() const {
   if (m_dvwidget) return m_dvwidget->viewerWindow();

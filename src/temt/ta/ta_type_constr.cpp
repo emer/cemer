@@ -48,9 +48,12 @@ static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, const char* nm) {
 }
 
 void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
- const char* opts, const char* inh_opts, const char* lists, EnumDef_data* dt) {
+		 const char* opts, const char* inh_opts, const char* lists,
+		 const char* src_file, int src_st, int src_ed,
+		 EnumDef_data* dt) {
   if(dt == NULL) return;
-  TypeDef* enm = new TypeDef(name, desc, inh_opts, opts, lists, sizeof(int), (void**)0);
+  TypeDef* enm = new TypeDef(name, desc, inh_opts, opts, lists,
+			     src_file, src_st, src_ed, sizeof(int), (void**)0);
   enm->AddParFormal(&TA_enum);
   while(dt->name != NULL) {
     enm->enum_vals.Add(dt->name, dt->desc, dt->opts, dt->val);

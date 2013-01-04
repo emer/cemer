@@ -151,10 +151,11 @@ public:
   streampos	strm_pos;	// current stream position (don't use tellg!!)
   streampos	st_pos;		// starting (of parse) stream position
   streampos	st_line_pos;	// start of line position
-  int		line;
-  int		col;
+  int		line;		// current parsing line
+  int		col;		// current parsing column
   String	cur_fname;	// current file name being processed
   int		anon_no;	// anonymous type number
+  int		defn_st_line;	// starting line of current definition, possibly..
 
   fstream	fh;
   States	state;
