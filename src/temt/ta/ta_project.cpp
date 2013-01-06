@@ -431,8 +431,9 @@ void Wizard_Group::AutoEdit() {
 
 void SelectEdit_Group::AutoEdit() {
   FOREACH_ELEM_IN_GROUP(SelectEdit, se, *this) {
-    if(se->autoEdit())
+    if(se->autoEdit()) {
       se->EditPanel(true, true);        // true,true = new tab, pinned in place
+    }
   }
 }
 
@@ -1720,10 +1721,13 @@ void taProject::Dump_Load_post() {
 void taProject::DoView() {
   if (!taMisc::gui_active || taMisc::is_undo_loading) return;
   MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
-#ifdef TA_OS_WIN
-  taMisc::ProcessEvents(); // needed for Windows
-#endif
+  // allow to process new window before asserting default items
+  // debug mode still doesn't work here tho.. 
+  taMisc::ProcessEvents();
   // note: we want a doc to be the default item, if possible
+  if(vwr && vwr->widget()) {
+    vwr->widget()->GetMainTreeView()->ExpandDefault();
+  }
   docs.AutoEdit();
   wizards.AutoEdit();
   edits.AutoEdit();
@@ -4026,9 +4030,8 @@ bool taRootBase::Startup_MakeMainWin() {
   }
   vwr->SetUserData("view_win_ht", ht);
   vwr->ViewWindow();
-#ifdef TA_OS_WIN
-  taMisc::ProcessEvents(); // may be needed for Windows (see taProject::DoView)
-#endif
+  // needs extra time to process window opening
+  taMisc::ProcessEvents();
   tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 

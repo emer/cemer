@@ -5327,11 +5327,18 @@ void taiTokenPtrButton::EditDialog() {
 }
 
 void taiTokenPtrButton::EditPanel() {
-  iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
-  if (!imw) return; // no viewer!
-
   taBase* cur_base = GetValue();
   if (!cur_base) return;
+
+  iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
+  if (!imw) return; // no viewer!
+  // get a better viewer if possible
+  taProject* proj = GET_OWNER(cur_base, taProject);
+  if(proj) {
+    MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
+    if(vwr && vwr->widget())
+      imw = vwr->widget();
+  }
 
   taiDataLink* dl = (taiDataLink*)cur_base->GetDataLink();
   if (dl) {
@@ -5528,11 +5535,18 @@ void taiTokenPtrMultiTypeButton::EditDialog() {
 }
 
 void taiTokenPtrMultiTypeButton::EditPanel() {
-  iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
-  if (!imw) return; // no viewer!
-
   taBase* cur_base = GetValue();
   if (!cur_base) return;
+
+  iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
+  if (!imw) return; // no viewer!
+  // get a better viewer if possible
+  taProject* proj = GET_OWNER(cur_base, taProject);
+  if(proj) {
+    MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
+    if(vwr && vwr->widget())
+      imw = vwr->widget();
+  }
 
   taiDataLink* dl = (taiDataLink*)cur_base->GetDataLink();
   if (dl) {

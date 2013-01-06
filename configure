@@ -60,6 +60,7 @@ do
     --enable-mpi | --mpi | mpi | enable-mpi | -mpi | -enable-mpi)
       mpi=true
       cmake_cmd="$cmake_cmd -DMPI_BUILD=true"
+      build_dir="${build_dir}_mpi"
       shift 1
     ;;
 

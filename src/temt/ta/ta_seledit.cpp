@@ -33,9 +33,10 @@ void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
 {
   if (xtra_lbl.empty())
     xtra_lbl = GetName().elidedTo(16);
-  full_lbl = xtra_lbl;
-  if (full_lbl.nonempty()) full_lbl += " ";
-  full_lbl += mbr->GetLabel();
+  String lbl = xtra_lbl;
+  if (lbl.nonempty()) lbl += "_";
+  lbl += mbr->GetLabel();
+  full_lbl = taMisc::StringCVar(lbl);
   // desc is the member description
 //   if (desc.empty())
 //     MemberDef::GetMembDesc(mbr, desc, "");
@@ -112,6 +113,7 @@ void SelectEditItem::UpdateAfterEdit_impl() {
     cust_desc = true;
   }
   prv_desc = desc;
+  label = taMisc::StringCVar(label); // keep as safe c variables at all times..
 }
 
 String SelectEditItem::caption() const {

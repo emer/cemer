@@ -5223,7 +5223,8 @@ int iTabBar::addTab(iDataPanel* pan) {
   int idx = 0;
   if (pan && pan->lockInPlace()) {
     idx = inherited::addTab("");
-  } else {
+  }
+  else {
     while (idx < count()) {
       iDataPanel* tpan = panel(idx);
       if (tpan && tpan->lockInPlace()) break; // found 1st guy
@@ -5415,7 +5416,9 @@ bool iTabView::AddPanel(iDataPanel* panel) {
 void iTabView::AddPanelNewTab(iDataPanel* panel, bool lock) {
   AddPanel(panel); //noop if already added
   if (lock) panel->Pin();
-  int tab_idx = tbPanels->addTab(panel);
+  int tab_idx = TabIndexOfPanel(panel);
+  if(tab_idx < 0)
+    tab_idx = tbPanels->addTab(panel);
   SetCurrentTab(tab_idx);
 }
 
@@ -5424,8 +5427,8 @@ void iTabView::AddTab(int tab_idx) {
   if (tab_idx >= 0)
     pan = tbPanels->panel(tab_idx);
   // "AddTab" on a view guy just makes a blank tab
-  if (pan && pan->lockInPlace())
-    pan = NULL;
+  // if (pan && pan->lockInPlace())
+  //   pan = NULL;
   int new_tab_idx = tbPanels->addTab(pan);
   SetCurrentTab(new_tab_idx);
 }
@@ -9840,10 +9843,18 @@ void iSearchDialog::closeEvent(QCloseEvent * e) {
 
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   if(!taMisc::gui_active) return false;
-  iMainWindowViewer* inst = taiMisc::active_wins.Peek_MainWindow();
-  if (!inst) return false; // shouldn't happen!
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;	// shouldn't happen
   taiDataLink* link = (taiDataLink*)GetDataLink();
-  if (!link) return false; // shouldn't happen!
+  if (!link) return false;	// shouldn't happen
+
+  MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
+  if(!vwr) return false;	// shouldn't happen
+
+  iMainWindowViewer* inst = vwr->widget();
+  if (!inst) return false; // shouldn't happen!
+
   bool rval = false;
   // for new_tab, we open new locked panels,
   // for existing, we do a browse to the item

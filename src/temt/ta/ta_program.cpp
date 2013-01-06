@@ -950,7 +950,7 @@ void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void ProgVar::GetSelectText(MemberDef* mbr, String xtra_lbl,
-    String& full_lbl, String& desc) const
+    String& full_lbl, String& eff_desc) const
 {
   // when do seledit of the data member, use our var name, and desc
   const String& mn = mbr->name;
@@ -962,13 +962,14 @@ void ProgVar::GetSelectText(MemberDef* mbr, String xtra_lbl,
       if (prog)
         xtra_lbl = prog->GetName().elidedTo(16);
     }
-    full_lbl = xtra_lbl;
-    if (full_lbl.nonempty()) full_lbl += " ";
-    full_lbl += GetName().elidedTo(16); // var name, not the member name
-    if (desc.empty())
-      desc = GetDesc(); // leave empty if empty
-  } else { // something else, just do default
-    inherited::GetSelectText(mbr,xtra_lbl, full_lbl, desc );
+    String lbl = xtra_lbl;
+    if (lbl.nonempty()) lbl += "_";
+    lbl += GetName().elidedTo(16); 	// var name, not the member name
+    full_lbl = taMisc::StringCVar(lbl);
+    eff_desc = GetDesc();		// always use our desc, not default
+  }
+  else { // something else, just do default
+    inherited::GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
   }
 }
 
@@ -5785,8 +5786,6 @@ void Program::SaveListing(ostream& strm) {
 #ifdef TA_GUI
 void Program::ViewListing() {
   taiStringDataHost* host_ = NULL;
-//   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  //  host_ = taiMisc::FindEdit(base, cur_win);
   view_listing = ProgramListing();
   if(!host_) {
     TypeDef* td = GetTypeDef();
@@ -5796,10 +5795,6 @@ void Program::ViewListing() {
     host_->Constr("Listing of program elements for program: " + name);
     host_->Edit(false);
   }
-
-//   iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
-//   dlg->setText(ProgramListing());
-//   dlg->exec();
 }
 
 void Program::ViewListing_Editor() {
