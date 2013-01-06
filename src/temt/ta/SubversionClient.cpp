@@ -434,7 +434,9 @@ SubversionClient::SubversionClient()
 
   // Set the error handler to one that doesn't abort!
   // We'll check for these errors and convert to exceptions.
+#if SVN_VER_MINOR >= 6
   svn_error_set_malfunction_handler(svn_error_raise_on_malfunction);
+#endif
 
   // Create a context object.  Throws on failure.
   m_ctx = createContext();
