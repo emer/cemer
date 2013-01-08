@@ -86,7 +86,7 @@ int yylex();
 /* class stuff */
 %type 	<typ>	classdsub classname classhead classnm classinh
 %type 	<typ>	classpar classptyp classpmod
-%type   <typ>	access classkeyword structunion
+%type   <typ>	access classkeyword structunion templatekeyword
 %type	<typ>	membs membline membtype
 %type   <memb>  membdefn basicmemb nostatmemb membname membnames membfunp
 %type 	<meth>	methdefn basicmeth nostatmeth methname mbfundefn
@@ -334,7 +334,8 @@ templdefn:
           templdefns			{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) mta->TypeAdded("template", sp, $$);
+	    if($$ == $1) { mta->TypeAdded("template", sp, $$);
+	      $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
 
@@ -360,11 +361,12 @@ templname:
         ;
 
 templhead:
-          TEMPLATE templopen templpars '>' classhead	{
+          templatekeyword templopen templpars '>' classhead	{
 	    $5->templ_pars.Reset();
 	    $5->templ_pars.Duplicate(mta->cur_templ_pars);
 	    $5->internal = true;
-	    $5->AddParFormal(&TA_template); $$ = $5; }
+	    $5->AddParFormal(&TA_template); $$ = $5;
+	    $$->source_file = mta->cur_fname; $$->source_start = mta->defn_st_line-1; }
         ;
 
 templopen: '<'				{ mta->cur_templ_pars.Reset(); }
@@ -835,6 +837,10 @@ structunion:
 
 classkeyword:
           CLASS			{ mta->defn_st_line = mta->line-1; }
+        ;
+
+templatekeyword:
+          TEMPLATE		{ mta->defn_st_line = mta->line-1; }
         ;
 
 %%

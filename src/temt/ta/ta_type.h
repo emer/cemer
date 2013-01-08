@@ -1207,6 +1207,13 @@ public:
   static int    ExecuteCommand(const String& cmd);
   // #CAT_File execute given command -- currently just uses the "system" function call on all platforms, which seems to work well
 
+  static bool	CreateNewSrcFiles(const String& type_nm, const String& top_path,
+				   const String& src_dir);
+  // #CAT_File create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
+
+  static void	CreateAllNewSrcFiles();
+  // #CAT_File create all new source files!!  this is a one-time function that will be removed!
+
   /////////////////////////////////////////////////
   //    Recording GUI actions to css script
 
@@ -2291,10 +2298,10 @@ public:
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
 
-  bool          is_enum() const; // true if an enum
-  bool          is_class() const; // true if it is a class
-  bool          is_anchor() const; // true if this is the non-ptr, non-ref, non-const type
-  bool          isVarCompat() const; // true if read/write compatible with Variant
+  bool          IsEnum() const; // true if an enum
+  bool          IsClass() const; // true if it is a class
+  bool          IsAnchor() const; // true if this is the non-ptr, non-ref, non-const type
+  bool          IsVarCompat() const; // true if read/write compatible with Variant
   taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_TYPE;}
 
   /////////////////////////////////////////////////////////////
@@ -2430,6 +2437,9 @@ public:
                             TypeDef* p3=NULL, int p3_off=0, TypeDef* p4=NULL, int p4_off=0,
                             TypeDef* p5=NULL, int p5_off=0, TypeDef* p6=NULL, int p6_off=0);
   void          AddParFormal(TypeDef* p1=NULL, TypeDef* p2=NULL,
+                             TypeDef* p3=NULL, TypeDef* p4=NULL,
+                             TypeDef* p5=NULL, TypeDef* p6=NULL);
+  void          AddTemplPars(TypeDef* p1=NULL, TypeDef* p2=NULL,
                              TypeDef* p3=NULL, TypeDef* p4=NULL,
                              TypeDef* p5=NULL, TypeDef* p6=NULL);
 
@@ -2631,11 +2641,11 @@ public:
 
   /////////////////////////////////////////////////////////////
   //		Generate source code stubs in standard format -- timesaver
-  static bool	Src_CreateFilesNew(const String& type_nm, const String& top_path,
-				   const String& src_dir);
-  // create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
-  bool		Src_CreateFiles(const String& top_path, const String& src_dir);
-  // create files for this class type in given location (top_path/src_dir and top_path/include) -- see Src_CreateFilesNew for details -- also automatically adds proper set of includes and declarations based on inheritance and members
+
+  bool		CreateNewSrcFiles(const String& top_path, const String& src_dir);
+  // #CAT_File create files for this class type in given location (top_path/src_dir and top_path/include) -- see taMisc::CreateNewSrcFiles for details -- also automatically adds proper set of includes and declarations based on inheritance and members
+  String	Includes();
+  // #CAT_File generate list of includes for this type = parents and full class members
 
 protected:
   mutable signed char    m_cacheInheritsNonAtomicClass;

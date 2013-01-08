@@ -317,13 +317,13 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
   if(ths->pre_parsed)    return;
 
 #ifdef TA_OS_WIN
-    if (win_dll)
-      strm << win_dll_str << " TypeDef TA_" << ths->name;
-    else
+  if (win_dll)
+    strm << win_dll_str << " TypeDef TA_" << ths->name;
+  else
 #endif
-      strm << "TypeDef TA_" << ths->name;
+    strm << "TypeDef TA_" << ths->name;
 
- if (ths->internal) {
+  if (ths->internal && !ths->InheritsFormal(&TA_template)) {
     strm <<  "(\"" << ths->name << "\", 1, " << ths->ptr;
     if(ths->ref)        strm << ", 1";
     else                strm << ", 0";
@@ -336,7 +336,8 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     else
       strm << ", " << 0;
     strm << ");\n";
-  } else {
+  }
+  else {
     // non-internals, includes, ex. taString and all parsed classes
     String_PArray act_opts = ths->opts;
     String_PArray act_inh_opts = ths->inh_opts;
@@ -354,17 +355,22 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
     strm << "\"" << ths->source_file << "\", " << String(ths->source_start)
 	 << ", " << String(ths->source_end) << ", ";
 
-    if(ths->InheritsFormal(TA_enum))
-      strm << "sizeof(int), ";
-    else
-      strm << "sizeof(" << ths->Get_C_Name() << "), ";
+    if(ths->InheritsFormal(TA_template)) {
+      strm << "0, 0";
+    }
+    else {
+      if(ths->InheritsFormal(TA_enum))
+	strm << "sizeof(int), ";
+      else
+	strm << "sizeof(" << ths->Get_C_Name() << "), ";
 
-    strm << "(void**)";
-    if((mta->gen_instances || ths->HasOption("INSTANCE"))
-       && !ths->HasOption("NO_INSTANCE"))
-      strm << "&TAI_" << ths->name;
-    else
-      strm << "0";
+      strm << "(void**)";
+      if((mta->gen_instances || ths->HasOption("INSTANCE"))
+	 && !ths->HasOption("NO_INSTANCE"))
+	strm << "&TAI_" << ths->name;
+      else
+	strm << "0";
+    }
 
     if(ths->tokens.keep)        strm << ", 1";
     else                        strm << ", 0";
@@ -1500,6 +1506,21 @@ void TypeDef_Generate_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm
         strm << ", ";
     }
     strm << ");\n";
+  }
+  
+  // and add template parameters too!
+  if(ths->InheritsFormal(&TA_templ_inst) && !ths->HasOption("NO_CSS")) {
+    if(ths->templ_pars.size > 0) {
+      strm << "    " << typ_ref << "AddTemplPars(";
+      for(i=0; i < ths->templ_pars.size; i++) {
+	TypeDef* ptd = ths->templ_pars.FastEl(i);
+	if(ptd->HasOption("NO_CSS")) continue;
+	strm << "&TA_" << ptd->name;
+	if(i < ths->templ_pars.size-1)
+	  strm << ", ";
+      }
+      strm << ");\n";
+    }
   }
 }
 

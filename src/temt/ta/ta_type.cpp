@@ -2362,6 +2362,167 @@ int taMisc::ExecuteCommand(const String& cmd) {
   return system(cmd);
 }
 
+bool taMisc::CreateNewSrcFiles(const String& type_nm, const String& top_path,
+			       const String& src_dir) {
+  String src_path = top_path + "/" + src_dir + "/";
+  String crfile = src_path + "COPYRIGHT.txt";
+  String cmfile = src_path + "CMakeFiles.txt";
+  String hfile = src_path + type_nm + ".h";
+  String cppfile = src_path + type_nm + ".cpp";
+  String incfile = top_path + "/include/" + type_nm;
+  String incfileh = incfile + ".h";
+
+  if(!FileExists(crfile)) {
+    taMisc::Error("CreateNewSrcFiles: copyright file:", crfile, "not found -- paths must be wrong -- aborting");
+    return false;
+  }
+
+  fstream crstrm;
+  crstrm.open(crfile, ios::in);
+  String crstr;
+  crstr.Load_str(crstrm);
+  crstrm.close();
+
+  bool got_one = false;
+
+  if(FileExists(hfile)) {
+    taMisc::Warning("header file:", hfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#ifndef " << type_nm << "_h\n"
+	 << "#define " << type_nm << "_h 1\n\n"
+	 << "#endif // " << type_nm << "_h\n";
+    fstream strm;
+    strm.open(hfile, ios::out);
+    str.Save_str(strm);
+    strm.close();
+    ExecuteCommand("svn add " + hfile);
+    got_one = true;
+  }
+
+  if(FileExists(cppfile)) {
+    taMisc::Warning("cpp file:", cppfile, "already exists, not changing");
+  }
+  else {
+    String str = crstr;
+    str << "\n#include \"" << type_nm << ".h\"\n\n";
+    fstream strm;
+    strm.open(cppfile, ios::out);
+    str.Save_str(strm);
+    strm.close();
+    ExecuteCommand("svn add " + cppfile);
+    got_one = true;
+  }
+
+  if(FileExists(incfile)) {
+    taMisc::Warning("include file:", incfile, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
+    fstream strm;
+    strm.open(incfile, ios::out);
+    str.Save_str(strm);
+    strm.close();
+    ExecuteCommand("svn add " + incfile);
+    got_one = true;
+  }
+
+  if(FileExists(incfileh)) {
+    taMisc::Warning("include file:", incfileh, "already exists, not changing");
+  }
+  else {
+    String str;
+    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
+    fstream strm;
+    strm.open(incfileh, ios::out);
+    str.Save_str(strm);
+    strm.close();
+    ExecuteCommand("svn add " + incfileh);
+    got_one = true;
+  }
+
+  fstream cmstrm;
+  cmstrm.open(cmfile, ios::in);
+  String cmstr;
+  cmstr.Load_str(cmstrm);
+  cmstrm.close();
+  bool changed = false;
+
+  if(!cmstr.contains(type_nm + ".h")) {
+    String cmrest = cmstr.after(".h\n)");
+    cmstr = cmstr.before(".h\n)");
+    cmstr << ".h\n  " << type_nm << ".h\n)" << cmrest;
+    changed = true;
+  }
+  if(!cmstr.contains(type_nm + ".cpp")) {
+    String cmrest = cmstr.after(".cpp\n)");
+    cmstr = cmstr.before(".cpp\n)");
+    cmstr << ".cpp\n  " << type_nm << ".cpp\n)" << cmrest;
+    changed = true;
+  }
+
+  if(changed) {
+    fstream cmostrm;
+    cmostrm.open(cmfile, ios::out);
+    cmstr.Save_str(cmostrm);
+  }
+
+  return got_one;
+}
+
+void taMisc::CreateAllNewSrcFiles() {
+#ifndef NO_TA_BASE
+  //  TA_TimeUsed.CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
+  // TA_DataView_List.CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
+
+  int_Array iary;
+  int i=0;
+  while(i < types.size) {
+    TypeDef* typ = types.FastEl(i);
+    bool dbg = false;
+    if(typ->InheritsFormal(&TA_template)) {
+      taMisc::Info("template: ", typ->name);
+      dbg = true;
+    }
+    if(!typ->IsClass() || !typ->IsAnchor()) {
+      if(dbg) taMisc::Info("fail class, anchor");
+      i++;
+      continue;
+    }
+    if(!typ->source_file.startsWith("ta_")) {
+      if(dbg) taMisc::Info("fail src file");
+      i++;
+      continue;
+    }
+    if(typ->InheritsFormal(TA_templ_inst)) {
+      if(dbg) taMisc::Info("fail templ inst");
+      i++;
+      continue;
+    }
+    int chs = taMisc::Choice("Create new source file for: " + typ->name,
+			     "Yes", "No", "Back", "Cancel");
+    if(chs == 3) break;
+    if(chs == 2) {
+      if(iary.size > 0) {
+	i = iary.Pop();
+      }
+      continue;
+    }
+    iary.Add(i);
+    if(chs == 1) {
+      i++;
+      continue;
+    }
+    if(chs == 0) {
+      typ->CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
+      i++;
+    }
+  }
+#endif
+}
+
 /////////////////////////////////////////////////
 //      Recording GUI actions to css script
 
@@ -5604,6 +5765,16 @@ void TypeDef::AddParFormal(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p6 != NULL)    par_formal.LinkUnique(p6);
 }
 
+void TypeDef::AddTemplPars(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
+                           TypeDef* p5, TypeDef* p6) {
+  if(p1 != NULL)    templ_pars.Link(p1);
+  if(p2 != NULL)    templ_pars.Link(p2);
+  if(p3 != NULL)    templ_pars.Link(p3);
+  if(p4 != NULL)    templ_pars.Link(p4);
+  if(p5 != NULL)    templ_pars.Link(p5);
+  if(p6 != NULL)    templ_pars.Link(p6);
+}
+
 void TypeDef::CacheParents() {
   par_cache.Reset();            // justin case
   for(int i=0; i<parents.size; i++) {
@@ -5767,16 +5938,16 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
   return false;
 }
 
-bool TypeDef::is_anchor() const {
+bool TypeDef::IsAnchor() const {
   return ((ptr == 0) && !ref && !DerivesFrom(TA_const)
     && (enum_vals.size == 0));
 }
 
-bool TypeDef::is_class() const {
+bool TypeDef::IsClass() const {
   return InheritsFormal(TA_class);
 }
 
-bool TypeDef::is_enum() const {
+bool TypeDef::IsEnum() const {
   return (enum_vals.size > 0);
 }
 
@@ -6791,7 +6962,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   return rval;
 }
 
-bool TypeDef::isVarCompat() const {
+bool TypeDef::IsVarCompat() const {
   // a few "blockers"
   if (ref || (ptr > 1) || InheritsFrom(TA_void)) return false;
 #ifndef NO_TA_BASE
@@ -8038,15 +8209,133 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
   return rval;
 }
 
-bool TypeDef::Src_CreateFilesNew(const String& type_nm, const String& top_path,
-				 const String& src_dir) {
-  return true;
+String TypeDef::Includes() {
+  String inc_str;
+  TypeSpace inc_list;
+
+  inc_list.Link(this);		// don't redo ourselves!
+  inc_list.Link(&TA_Variant);	// exclude common things
+  inc_list.Link(&TA_taString);	
+
+  inc_str << "\n// parent includes:";
+  for(int i=0; i< parents.size; i++) {
+    TypeDef* par = parents[i];
+    if(par->InheritsFormal(TA_templ_inst)) {
+      for(int j=0; j<par->templ_pars.size; j++) {
+	TypeDef* tp = par->templ_pars[j];
+	if(tp->IsClass() && tp->IsAnchor()) {
+	  inc_str << "\n#include <" << tp->name << ">";
+	  inc_list.Link(tp);
+	}
+      }
+      par = par->parents[0];	// now go to template itself
+    }
+    inc_str << "\n#include <" << par->name << ">";
+    inc_list.Link(par);
+  }
+
+  inc_str << "\n\n// member includes:";
+  for(int i=0; i< members.size; i++) {
+    MemberDef* md = members[i];
+    if(md->GetOwnerType() != this) continue;
+    TypeDef* mtyp = md->type;
+    if(mtyp->IsClass() && mtyp->IsAnchor() && mtyp->name != "taBasePtr") {
+      if(inc_list.FindEl(mtyp) < 0) {
+	inc_str << "\n#include <" << mtyp->name << ">";
+	inc_list.Link(mtyp);
+      }
+    }
+  }
+
+  inc_str << "\n\n// declare all other types mentioned but not required to include:";
+  for(int i=0; i< members.size; i++) {
+    MemberDef* md = members[i];
+    if(md->GetOwnerType() != this) continue;
+    TypeDef* cltyp = md->type->GetClassType();
+    if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+      if(inc_list.FindEl(cltyp) < 0) {
+	inc_str << "\nclass " << cltyp->name << "; // ";
+	inc_list.Link(cltyp);
+      }
+    }
+  }
+  for(int i=0; i< methods.size; i++) {
+    MethodDef* md = methods[i];
+    if(md->GetOwnerType() != this) continue;
+    { // return type
+      TypeDef* argt = md->type;
+      TypeDef* cltyp = argt->GetClassType();
+      if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+	if(inc_list.FindEl(cltyp) < 0) {
+	  inc_str << "\nclass " << cltyp->name << "; // ";
+	  inc_list.Link(cltyp);
+	}
+      }
+    }
+    for(int j=0; j< md->arg_types.size; j++) {
+      TypeDef* argt = md->arg_types[j];
+      TypeDef* cltyp = argt->GetClassType();
+      if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+	if(inc_list.FindEl(cltyp) < 0) {
+	  inc_str << "\nclass " << cltyp->name << "; // ";
+	  inc_list.Link(cltyp);
+	}
+      }
+    }
+  }
+  inc_str << "\n\n\n";
+  return inc_str;
 }
 
-bool TypeDef::Src_CreateFiles(const String& top_path, const String& src_dir) {
-  return true;
-}
 
+bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
+  bool new_file = taMisc::CreateNewSrcFiles(name, top_path, src_dir);
+  String fname = name;
+  if(!new_file)
+    fname += "_new";		// create a new guy..
+
+  String src_path = top_path + "/" + src_dir + "/";
+  String hfile = src_path + name + ".h";
+
+  fstream hstrm;
+  hstrm.open(hfile, ios::in);
+  String hstr;
+  hstr.Load_str(hstrm);
+  hstrm.close();
+
+  if(hstr.contains("\n// parent includes:"))
+    hstr = hstr.before("\n// parent includes:");
+  else if(hstr.contains("\n#include"))
+    hstr = hstr.before("\n#include");
+  else
+    hstr = hstr.before("\n#endif");
+
+  String incs = Includes();
+
+  hstr << incs;
+  
+  String cmd;
+  cmd << "sed -n " << source_start << "," << source_end << "p "
+      << src_path << source_file << " > " << src_path << "create_new_src_src";
+  taMisc::ExecuteCommand(cmd);
+  
+  fstream srcstrm;
+  srcstrm.open(src_path + "create_new_src_src", ios::in);
+  String srcstr;
+  srcstr.Load_str(srcstrm);
+  srcstrm.close();
+
+  hstr << srcstr << "\n";
+
+  hstr << "#endif // " << name << "_h\n";
+
+  fstream strm;
+  strm.open(src_path + fname + ".h", ios::out);
+  hstr.Save_str(strm);
+  strm.close();
+
+  return new_file;
+}
 
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,

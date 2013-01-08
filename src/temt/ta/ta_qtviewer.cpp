@@ -10244,7 +10244,7 @@ void iHelpBrowser::find_prev_clicked() {
 void iHelpBrowser::AddTypesR(TypeSpace* ts) {
   for (int i = 0; i < ts->size; ++i) {
     TypeDef* typ = ts->FastEl(i);
-    if (!(typ->is_class() && typ->is_anchor()))
+    if (!(typ->IsClass() && typ->IsAnchor()))
       continue;
     if (typ->InheritsFormal(TA_templ_inst) ||
       typ->HasOption("VIRT_BASE") ||

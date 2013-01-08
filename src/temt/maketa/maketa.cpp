@@ -443,7 +443,7 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
   String typstr = typ;
-  if(typstr != "class" && typstr != "enum") {
+  if(typstr != "class" && typstr != "enum" && typstr != "template") {
     td->source_file = mta->cur_fname;
     td->source_start = mta->line-1;
     td->source_end = mta->line-1;

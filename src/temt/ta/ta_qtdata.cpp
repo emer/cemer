@@ -5257,7 +5257,7 @@ int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
   // add Enums of this type
   for (int i = 0; i < top_typ->sub_types.size; ++i) {
     TypeDef* chld = top_typ->sub_types.FastEl(i);
-    if (!chld->is_enum()) continue;
+    if (!chld->IsEnum()) continue;
     if (AddType_Enum(chld, top_typ)) {
       QTreeWidgetItem* item = ic->AddItem(top_typ->name, top_item, (void*)chld);
       item->setData(1, Qt::DisplayRole, chld->name);
@@ -5268,7 +5268,7 @@ int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
   // add entries for the subclasses (but only full class types)
   for (int i = 0; i < top_typ->children.size; ++i) {
     TypeDef* chld = top_typ->children.FastEl(i);
-    if ((chld->ptr != 0) || !chld->is_class())
+    if ((chld->ptr != 0) || !chld->IsClass())
       continue;
     //note: we are recursive, but aren't making a tree
     int num = BuildChooser_0(ic, chld, top_item);

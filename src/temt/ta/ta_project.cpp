@@ -3241,6 +3241,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("EnableAllPlugins", "\
  -- mark all the available plugins as enabled -- useful for batch run environments where you cannot enable them via the gui.");
 
+  taMisc::AddArgName("--create_new_src", "CreateNewSrc");
+  taMisc::AddArgName("create_new_src=", "CreateNewSrc");
+  taMisc::AddArgNameDesc("CreateNewSrc", "\
+ -- create new source code files for given type name -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
+
   taMisc::Init_Args(argc, argv);
   return true;
 }
@@ -3270,7 +3275,9 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("CleanAllSystemPlugins")
      || taMisc::CheckArgByName("CleanAllPlugins")
      || taMisc::CheckArgByName("MakeUserPlugin")
-     || taMisc::CheckArgByName("MakeSystemPlugin")) { // auto nogui by default
+     || taMisc::CheckArgByName("MakeSystemPlugin")
+     || taMisc::CheckArgByName("CreateNewSrc")
+     ) { // auto nogui by default
     taMisc::use_plugins = false;                      // don't use if making
     taMisc::use_gui = false;
     taMisc::interactive = false;
@@ -4174,7 +4181,16 @@ bool taRootBase::Startup_ProcessArgs() {
     taPlugins::CleanAllSystemPlugins();
     run_startup = false;
   }
-  if(taMisc::CheckArgByName("ListAllPlugins") || taMisc::CheckArgByName("EnableAllPlugins")) {
+  if(taMisc::CheckArgByName("CreateNewSrc")) {
+    String srcnm = taMisc::FindArgByName("CreateNewSrc");
+    String curpath = QDir::currentPath();
+    String top_path = curpath.through("emergent",-1);
+    String src_path = curpath.after("emergent",-1);
+    top_path += src_path.before("/");
+    src_path = src_path.after("/");
+    taMisc::Info("creating new source files for type:", srcnm, "in top path:", top_path,
+		 "src_path:", src_path);
+    taMisc::CreateNewSrcFiles(srcnm, top_path, src_path);
     run_startup = false;
   }
 

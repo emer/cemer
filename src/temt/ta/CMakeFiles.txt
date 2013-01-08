@@ -78,6 +78,26 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ta_data_extras.h
   colorbar_qt.h
   ta_gui.h
+  taBase.h
+  taString.h
+  Variant.h
+  taAtomicInt.h
+  taBasicAtomicInt.h
+  taPtrList.h
+  taOBase.h
+  taOABase.h
+  taNBase.h
+  taDataView.h
+  taDoc.h
+  taMatrix.h
+  taList_impl.h
+  taBase_List.h
+  DataView_List.h
+  taArray_base.h
+  int_Array.h
+  taGroup_impl.h
+  taTime.h
+  TimeUsed.h
 )
 
 set(ta_HEADS_MAKETA_LOCAL_2
@@ -174,6 +194,26 @@ set(ta_SRCS_GUI
   ta_virtenv_qtso.cpp
   ta_virtenv_so.cpp
   ta_gui.cpp
+  taBase.cpp
+  taString.cpp
+  Variant.cpp
+  taAtomicInt.cpp
+  taBasicAtomicInt.cpp
+  taPtrList.cpp
+  taOBase.cpp
+  taOABase.cpp
+  taNBase.cpp
+  taDataView.cpp
+  taDoc.cpp
+  taMatrix.cpp
+  taList_impl.cpp
+  taBase_List.cpp
+  DataView_List.cpp
+  taArray_base.cpp
+  int_Array.cpp
+  taGroup_impl.cpp
+  taTime.cpp
+  TimeUsed.cpp
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated

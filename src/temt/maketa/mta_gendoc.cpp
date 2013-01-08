@@ -122,8 +122,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
     strm << " <TypeDef>\n";
     strm << "  <Name>" << td->name.xml_esc() << "</Name>\n";
-    strm << (td->is_enum() ? "  <Type>enum</Type>\n":"");
-    strm << (td->is_class() ? "  <Type>class</Type>\n":"");
+    strm << (td->IsEnum() ? "  <Type>enum</Type>\n":"");
+    strm << (td->IsClass() ? "  <Type>class</Type>\n":"");
     strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc).xml_esc()+"</Desc>\n":"");
 
     if (td->opts.size) {  // Options of this TypeDef
@@ -163,7 +163,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       for(int q=0;q<subs->size;q++) {
 	TypeDef* st = subs->FastEl(q);
 	if(st->GetOwnerType() != td) continue;
-	if(st->is_enum()) {
+	if(st->IsEnum()) {
 	  if(first_one) {
 	    strm << "  <SubTypes>\n";
 	    first_one = false;

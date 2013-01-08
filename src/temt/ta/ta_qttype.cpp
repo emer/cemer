@@ -3632,7 +3632,7 @@ void taiTypeBase::InitializeTypes(bool gui) {
       MemberDefBase* pd = td->properties.FindName(md->name);
       if (pd) continue; // already exists
       // ok, see if it is "compatible"
-      if (!md->type->isVarCompat()) continue; // can't read/write by Variant
+      if (!md->type->IsVarCompat()) continue; // can't read/write by Variant
       // TODO: anything????
       td->properties.Link(md);
     }

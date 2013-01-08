@@ -58,6 +58,7 @@ class UserDataItem_List;
 class NameVar_Array;
 class taBase_FunCallList; //
 
+
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
 friend class taBase;

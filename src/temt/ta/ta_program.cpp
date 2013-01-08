@@ -2330,7 +2330,7 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
     if (!pa->required) { // do default processing
       // get default value if available
       String def_val = md->arg_defs.SafeEl(ti);
-      if (def_val.nonempty() && arg_typ->is_enum() && !def_val.contains("::")) {
+      if (def_val.nonempty() && arg_typ->IsEnum() && !def_val.contains("::")) {
         TypeDef* ot = arg_typ->GetOwnerType();
         if(ot)
           def_val = ot->name + "::" + def_val;
