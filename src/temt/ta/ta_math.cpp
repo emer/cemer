@@ -21,7 +21,6 @@
 #endif
 
 #include "ta_math.h"
-#include "ta_platform.h"
 
 #ifdef HAVE_LIBGSL
 # include <gsl/gsl_blas.h>

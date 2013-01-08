@@ -15,3 +15,62 @@
 
 #include "EnumDef.h"
 
+EnumDef::EnumDef()
+:inherited()
+{
+  Initialize();
+}
+
+EnumDef::EnumDef(const char* nm)
+:inherited()
+{
+  Initialize();
+  name = nm;
+}
+
+EnumDef::EnumDef(const char* nm, const char* dsc, int eno, const char* op, const char* lis)
+:inherited()
+{
+  name = nm;
+  desc = dsc;
+  enum_no = eno;
+  taMisc::CharToStrArray(opts, op);
+  taMisc::CharToStrArray(lists,lis);
+}
+
+EnumDef::EnumDef(const EnumDef& cp)
+:inherited(cp)
+{
+  Initialize();
+  Copy_(cp);
+}
+
+void EnumDef::Initialize() {
+  owner = NULL;
+  enum_no = 0;
+}
+
+void EnumDef::Copy(const EnumDef& cp) {
+  inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void EnumDef::Copy_(const EnumDef& cp) {
+  enum_no = cp.enum_no;
+}
+
+bool EnumDef::CheckList(const String_PArray& lst) const {
+  int i;
+  for(i=0; i<lists.size; i++) {
+    if(lst.FindEl(lists.FastEl(i)) >= 0)
+      return true;
+  }
+  return false;
+}
+
+TypeDef* EnumDef::GetOwnerType() const {
+  TypeDef* rval=NULL;
+  if((owner) && (owner->owner))
+    rval=owner->owner;
+  return rval;
+}

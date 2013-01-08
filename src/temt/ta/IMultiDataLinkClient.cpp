@@ -15,3 +15,18 @@
 
 #include "IMultiDataLinkClient.h"
 
+IMultiDataLinkClient::~IMultiDataLinkClient() {
+  while (dls.size > 0) {
+    taDataLink* dl = dls.Pop();
+    dl->RemoveDataClient(this);
+  }
+}
+
+bool IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
+  return dls.AddUnique(dl);
+}
+
+bool IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
+  return dls.RemoveEl(dl);
+}
+

@@ -22,7 +22,7 @@
 #include <QTextStream>
 
 #include "ta_gui.h"
-#include "ta_platform.h"
+#include <taMisc>
 #include "ta_project.h"
 #include "ta_seledit.h"
 #include "ta_string.h"

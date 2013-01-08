@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class MemberDefBase_List; //
+
 
 class TA_API MemberDefBase : public TypeItem { // #VIRT_BASE #NO_INSTANCE common subclass of MemberDef and PropertyDef
 INHERITED(TypeItem)
@@ -44,8 +46,7 @@ public:
 
   void          Copy(const MemberDefBase& cp);
   void          Copy(const MemberDefBase* cp); // this is a "pseudo-virtual" type guy, that will copy a like source (Member or Property)
-  override TypeDef*     GetOwnerType() const
-  { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override TypeDef*     GetOwnerType() const;
   MemberDefBase();
   MemberDefBase(const char* nm);
   MemberDefBase(TypeDef* ty, const char* nm, const char* dsc, const char* op,

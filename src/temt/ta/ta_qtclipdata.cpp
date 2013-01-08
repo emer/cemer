@@ -16,8 +16,6 @@
 
 #include "ta_qtclipdata.h"
 
-#include "ta_platform.h"
-
 #include "ta_type.h"
 #include "ta_matrix.h"
 #include "ta_datatable.h"
@@ -85,7 +83,7 @@ taiClipData::taiClipData(int src_edit_action_)
 
 const QString taiClipData::GetCommonDescHeader() const {
   QString rval =  QString::number(src_edit_action) + ';' +
-        QString::number(taPlatform::processId()) + ";";
+        QString::number(taMisc::ProcessId()) + ";";
   return rval;
 }
 
@@ -543,7 +541,7 @@ bool taiMimeSource::Decode_common(String arg) {
   str = arg.before(';');
   int process_id = str.toInt(&ok);
   if (!ok) return false;
-  m_this_proc = (process_id == taPlatform::processId());
+  m_this_proc = (process_id == taMisc::ProcessId());
   //note: we could add more fields, and still be compatible
   return true;
 }

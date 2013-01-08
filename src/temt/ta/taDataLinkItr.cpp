@@ -15,3 +15,20 @@
 
 #include "taDataLinkItr.h"
 
+void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
+  void* rval = NULL;
+  while (dl && (i < dl->clients.size)) {
+    IDataLinkClient* dlc = dl->clients.FastEl(i);
+    ++i;
+    TypeDef* dlc_typ = dlc->GetTypeDef();
+    if (dlc_typ) {
+      if (dlc_typ->InheritsFrom(typ)) {
+        rval = dlc->This();
+        break;
+      }
+    }
+  }
+  return rval;
+}
+
+

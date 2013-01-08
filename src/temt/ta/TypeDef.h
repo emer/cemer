@@ -20,14 +20,17 @@
 #include <TypeItem>
 
 // member includes:
+#include <EnumSpace>
+#include <TokenSpace>
+#include <MemberSpace>
+#include <Member_List>
+#include <PropertySpace>
+#include <MethodSpace>
+#include <TypeSpace>
 
 // declare all other types mentioned but not required to include:
 
 class taBase_List; //
-
-
-#define IF_ENUM_STRING(enm_var, enm_val) \
-((enm_var == enm_val) ? #enm_val : "")
 
 // Order of includes problem -- the Windows header file "WinUser.h" defines this
 // as a macro.  If some file indirectly includes that file and then this file,
@@ -151,7 +154,7 @@ public:
   //		Parents, Inheritance
 
   override TypeDef*     GetOwnerType() const
-    { if (owner) return owner->owner; else return NULL; }
+  { if (owner) return owner->owner; else return NULL; }
   TypeDef*              GetParent() const { return parents.SafeEl(0); }
   // gets (first) parent of this type (assumes no multiple inheritance)
 
@@ -381,6 +384,8 @@ public:
                                 int show_allowed = taMisc::SHOW_CHECK_MASK,
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
+
+#ifndef NO_TA_BASE
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                         MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
                         taObjDiffRec* par_od=NULL) const;
@@ -389,6 +394,7 @@ public:
                     MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
                     taObjDiffRec* par_od=NULL) const;
   // just add members of a class object to the diff list
+#endif
 
 
   /////////////////////////////////////////////////////////////

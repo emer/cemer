@@ -19,7 +19,6 @@
 
 #include "inetworkaccessmanager.h"
 #include "ta_datatable.h"
-#include "ta_platform.h"
 #include "ta_program.h"
 #include "ta_qt.h"
 
@@ -234,7 +233,7 @@ void SynchronousNetRequest::waitForReply()
   // http://doc.qt.digia.com/qq/qq27-responsive-guis.html#waitinginalocaleventloop
   while (m_reply && !m_isFinished && !m_isCancelled) {
     // Sleep to prevent 100% CPU usage.
-    taPlatform::msleep(50); // milliseconds
+    taMisc::SleepMs(50); // milliseconds
 
     // Allow other operations to continue -- specifically, process events such
     // as the user cancelling the operation.

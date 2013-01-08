@@ -15,3 +15,83 @@
 
 #include "TypeSpace.h"
 
+TypeSpace::~TypeSpace() {
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+String  TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
+taPtrList_impl*  TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
+void*   TypeSpace::El_SetOwner_(void* it_) {
+  if (!it_) return it_;
+  TypeDef* it = (TypeDef*)it_;
+  it->owner = this;
+  //if this type is being added to anything during a plugin init, then
+  // it is a plugin class, and we stamp it as such
+#ifndef NO_TA_BASE
+  if (taMisc::in_plugin_init) {
+    it->plugin = taMisc::plugin_loading;
+  }
+#endif
+  return it_;
+
+}
+void    TypeSpace::El_SetIndex_(void* it, int i){ ((TypeDef*)it)->idx = i; }
+
+void*   TypeSpace::El_Ref_(void* it)      { taRefN::Ref((TypeDef*)it); return it; }
+void*   TypeSpace::El_unRef_(void* it)    { taRefN::unRef((TypeDef*)it); return it; }
+void    TypeSpace::El_Done_(void* it)     { taRefN::Done((TypeDef*)it); }
+void*   TypeSpace::El_MakeToken_(void* it)  { return (void*)((TypeDef*)it)->MakeToken(); }
+void*   TypeSpace::El_Copy_(void* trg, void* src)
+{ ((TypeDef*)trg)->Copy(*((TypeDef*)src)); return trg; }
+
+TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
+  if (fqname.contains("::")) {
+    TypeDef* td = FindName(fqname.before("::"));
+    if (!td) return NULL;
+    return td->sub_types.FindTypeR(fqname.after("::"));
+  } else {
+    return FindName(fqname);
+  }
+}
+
+
+bool TypeSpace::ReplaceLinkAll(TypeDef* ol, TypeDef* nw) {
+  bool rval = false;
+  int i;
+  for(i=0; i<size; i++) {
+    if(FastEl(i) == ol) {
+      rval = true;
+      ReplaceLinkIdx(i, nw);
+    }
+  }
+  return rval;
+}
+
+bool TypeSpace::ReplaceParents(const TypeSpace& ol, const TypeSpace& nw) {
+  bool rval = false;
+  int i;
+  for(i=0; i<size; i++) {
+    int j;
+    for(j=0; j<ol.size; j++) {
+      TypeDef* old_st = ol.FastEl(j);
+      TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
+
+      if(FastEl(i)->ReplaceParent(old_st, new_st))
+        rval = true;
+    }
+  }
+  return rval;
+}
+
+String& TypeSpace::PrintAllTokens(String& strm) const {
+  for(int i=0; i<size; i++) {
+    TypeDef* td = FastEl(i);
+    if(!td->tokens.keep)
+      continue;
+    strm << td->name << ": \t" << td->tokens.size << " (sub: " << td->tokens.sub_tokens << ")\n";
+  }
+  return strm;
+}

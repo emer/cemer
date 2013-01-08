@@ -15,3 +15,16 @@
 
 #include "MTRndState.h"
 
+MTRndState::MTRndState()
+  : mti(N + 1)
+  , is_gauss_double_cached(false)
+  , cached_gauss_double(0.0)
+{
+}
+
+void
+MTRndState::reset()
+{
+  is_gauss_double_cached = false;
+}
+

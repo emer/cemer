@@ -20,7 +20,6 @@
 
 // documentation generation from scanned type information (maketa)
 
-#include "ta_platform.h"
 #include "ta_type.h"
 
 class TA_API taGenDoc  {

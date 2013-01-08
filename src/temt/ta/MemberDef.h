@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class Member_List; //
 
 class TA_API MemberDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)

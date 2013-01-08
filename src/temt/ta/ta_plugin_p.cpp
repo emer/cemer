@@ -18,7 +18,6 @@
 #include "ta_plugin_p.h"
 
 #include "ta_qtclipdata.h"
-#include "ta_platform.h"
 #include "ta_project.h"
 #include "ta_qtdialog.h"
 
@@ -682,7 +681,7 @@ bool taPlugin::InitPlugin() {
     }
     String filename = taMisc::prefs_dir + PATH_SEP + opt->name;
     opt->SetFileName(filename);
-    if (taPlatform::fileExists(filename)) {
+    if (taMisc::FileExists(filename)) {
       int res = opt->Load(filename);
       // note: we don't fail the plugin just because state didn't load...
       if (!res) {
@@ -1090,7 +1089,7 @@ void PluginWizard::UpdateAfterEdit_impl() {
 #ifdef TA_OS_WIN
   plugin_location.gsub("/", "\\");
 #endif
-  plugin_location = taPlatform::noFinalSep(plugin_location);
+  plugin_location = taMisc::NoFinalSep(plugin_location);
 }
 
 void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
@@ -1246,16 +1245,16 @@ bool PluginWizard::Create() {
   }
 
   // make the dest dir
-  if (TestError(!taPlatform::mkdir(plugin_location),
+  if (TestError(!taMisc::MakeDir(plugin_location),
     "PluginWizard::Create",
     "Could not make folder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   // std build dirs
-  if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build"),
+  if (TestError(!taMisc::MakeDir(plugin_location + PATH_SEP + "build"),
     "PluginWizard::Create",
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
-  if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build_dbg"),
+  if (TestError(!taMisc::MakeDir(plugin_location + PATH_SEP + "build_dbg"),
     "PluginWizard::Create",
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;

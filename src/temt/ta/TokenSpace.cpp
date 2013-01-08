@@ -15,3 +15,50 @@
 
 #include "TokenSpace.h"
 
+String TokenSpace::tmp_el_name;
+
+void TokenSpace::Initialize() {
+  owner = NULL;
+  keep = false;
+  sub_tokens = 0;
+  data_link = NULL;
+}
+
+TokenSpace::~TokenSpace() {
+//  Reset(); //note: TokenSpace never had a Reset, but maybe it should...
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+String TokenSpace::El_GetName_(void* it) const {
+#ifndef NO_TA_BASE
+  if((owner == NULL) || !(owner->InheritsFrom(TA_taBase))) {
+#else
+  if(owner == NULL) {
+#endif
+    tmp_el_name = String((ta_intptr_t)it);
+    return tmp_el_name;
+  }
+#ifndef NO_TA_BASE
+  taBase* tmp = (taBase*)it;
+  return tmp->GetName();
+#else
+  return _nilString;
+#endif
+}
+
+String& TokenSpace::Print(String& strm, int indent) const {
+  if(owner == NULL) return strm;
+
+  taMisc::IndentString(strm, indent);
+  strm << "Tokens of type: " << owner->name << " (" << size
+       << "), sub-tokens: " << sub_tokens;
+  if(keep)
+    strm << "\n";
+  else
+    strm << " (not keeping tokens)\n";
+
+  return taPtrList<void>::Print(strm, indent);
+}
+

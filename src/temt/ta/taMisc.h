@@ -62,6 +62,8 @@ private:
   InitProcRegistrar& operator =(const InitProcRegistrar&);
 };
 
+#define PATH_SEP taMisc::path_sep
+
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE global parameters and functions for the application
 friend class InitProcRegistrar;
@@ -613,6 +615,8 @@ public:
   /////////////////////////////////////////////////
   //    Global state management
 
+  static TypeDef* FindTypeName(const String& typ_nm);
+  // #CAT_GlobalState looks up typedef by name on global list of types, using AKA to find replacement types if original name not found
   static void   FlushConsole();
   // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output (NOTE: output to cout, cerr is deprecated and should be avoided -- use ConsoleOutput instead)
   static bool   ConsoleOutput(const String& str, bool err = false, bool pager = true);
@@ -761,21 +765,29 @@ public:
   /////////////////////////////////////////////////
   //    File Paths etc
 
-  static TypeDef* FindTypeName(const String& typ_nm);
-  // #CAT_File looks up typedef by name on global list of types, using AKA to find replacement types if original name not found
+  static const String   path_sep;
+  // #CAT_File normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
+  static String FinalPathSep(const String& in);
+  // #CAT_File return string that has a valid final path separator
+  static String NoFinalPathSep(const String& in);
+  // #CAT_File return string that has no final path separator
+  static int	PosFinalSep(const String& in);
+  // #CAT_File position of final path separator, -1 if not found
+  static String UnescapeBackslash(const String& in);
+  // #CAT_File change \\ to a \ in string
+
   static String GetFileFmPath(const String& path);
   // #CAT_File get file name component from full path
   static String GetDirFmPath(const String& path, int n_up = 0);
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
-  static String GetHomePath();
-  // #CAT_File get user's home directory path
-  static String GetUserPluginDir();
-  // #CAT_File get the directory where user plugins are stored (just the dir name, not full path)
-  static String GetSysPluginDir();
-  // #CAT_File get the directory where system plugins are stored (just the dir name, not full path)
+  static bool	IsQualifiedPath(const String& fname);
+  // #CAT_File true if the fname is already an absolute or qualified relative path
+
   static bool   FileExists(const String& filename);
   // #CAT_File returns true if the file exists in current working directory (or absolute path)
-#ifndef NO_TA_BASE
+
+#ifndef NO_TA_BASE		// all of these are not for maketa
+
   static int64_t FileSize(const String& filename);
   // #CAT_File returns size of given file (0 if it does not exist -- see also FileExists)
   static bool   FileWritable(const String& filename);
@@ -784,18 +796,14 @@ public:
   // #CAT_File returns true if file is readable according to file system permissions
   static bool   FileExecutable(const String& filename);
   // #CAT_File returns true if file is executable according to file system permissions
-  static bool   SetFilePermissions(const String& filename, bool user=true, bool group=false,
-                                   bool other=false, bool readable=true, bool writable=true,
-                                   bool executable=false);
+  static bool   SetFilePermissions(const String& filename, bool user=true,
+                   bool group=false, bool other=false, bool readable=true,
+                   bool writable=true, bool executable=false);
   // #CAT_File set file permissions for different classes of users
   static bool   RenameFile(const String& old_filename, const String& new_filename);
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
   static bool   RemoveFile(const String& filename);
   // #CAT_File remove file with given name in current working directory (or absolute path) -- returns success
-  static String GetCurrentPath();
-  // #CAT_File get current working directory path
-  static bool   SetCurrentPath(const String& path);
-  // #CAT_File set current working directory to given path -- returns success
   static bool   MakeDir(const String& dir);
   // #CAT_File make new subdirectory in current working directory -- returns success
   static bool   MakePath(const String& path);
@@ -804,18 +812,34 @@ public:
   // #CAT_File remove subdirectory in current working directory -- must be empty -- returns success
   static bool   RemovePath(const String& path);
   // #CAT_File remove full path relative to current working directory (or absolute path) including all *empty* intermediate directories along the way -- only removes directories that are empty -- returns success
+
+  static String GetCurrentPath();
+  // #CAT_File get current working directory path
+  static bool   SetCurrentPath(const String& path);
+  // #CAT_File set current working directory to given path -- returns success
   static String GetTemporaryPath();
-  // #CAT_File return path to system temporary file directory (e.g., /tmp)
-#endif
+  // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
+  static String GetHomePath();
+  // #CAT_File get user's home directory path
+  static String GetUserPluginDir();
+  // #CAT_File get the directory where user plugins are stored (just the dir name, not full path)
+  static String GetSysPluginDir();
+  // #CAT_File get the directory where system plugins are stored (just the dir name, not full path)
+  static String GetDocPath();
+  // #CAT_File the user's Documents path, (or home, if none defined)
+  static String GetAppDataPath(const String& appname);
+  // #CAT_File root for preference data, typically hidden from user
+  static String GetAppDocPath(const String& appname);
+  // #CAT_File root for user-visible application files
+
+#endif	// NO_TA_BASE
+
   static String FindFileOnPath(String_PArray& paths, const char* fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
-
   static String FindFileOnLoadPath(const char* fname);
   // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
-
   static int    GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
   // #CAT_File get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
-
   static String FileDiff(const String& fname_a, const String& fname_b,
                          bool trimSpace = false, bool ignoreSpace = false,
                          bool ignoreCase = false);
@@ -830,8 +854,6 @@ public:
 
   static bool   InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?
-  static int    ExecuteCommand(const String& cmd);
-  // #CAT_File execute given command -- currently just uses the "system" function call on all platforms, which seems to work well
 
   static bool	CreateNewSrcFiles(const String& type_nm, const String& top_path,
 				   const String& src_dir);
@@ -839,6 +861,30 @@ public:
 
   static void	CreateAllNewSrcFiles();
   // #CAT_File create all new source files!!  this is a one-time function that will be removed!
+  static bool	CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
+					  const String& src_dir);
+  // #CAT_File create all new source files for an existing type -- just calls TypeDef version of this
+
+  /////////////////////////////////////////////////
+  // Computer system info, and timing
+
+  static int	CpuCount();
+  // #CAT_System number of physical cpus
+  static String	HostName();
+  // #CAT_System name of the computer
+  static String	UserName();
+  // #CAT_System name of user of the computer
+  static int	ProcessId();
+  // #CAT_System returns a process-specific Id
+  static int	TickCount();
+  // #CAT_System ticks since system started -- def of a 'tick' is system dependent
+  static void	SleepS(int sec);
+  // #CAT_System sleep the specified number of seconds
+  static void	SleepMs(int msec);
+  // #CAT_System sleep the specified number of milliseconds
+  static int    ExecuteCommand(const String& cmd);
+  // #CAT_System execute given command -- currently just uses the "system" function call on all platforms, which seems to work well
+
 
   /////////////////////////////////////////////////
   //    Recording GUI actions to css script

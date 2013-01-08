@@ -15,11 +15,39 @@
 
 #include "taMisc.h"
 
-#include "ViewColor_List" 
-#include "TypeDef" 
-#include "taBase" 
-#include "UserDataItemBase" 
-#include "MemberDef" 
+#include <ViewColor_List> 
+#include <TypeDef> 
+#include <taBase> 
+#include <UserDataItemBase> 
+#include <MemberDef> 
+
+#ifndef NO_TA_BASE
+# include <QDir>
+#endif
+
+#ifdef TA_OS_WIN
+
+#include "windows.h"
+#include <errno.h>
+#ifndef NO_TA_BASE
+# include "shlobj.h"
+#endif
+
+#elif defined(TA_OS_UNIX)
+
+#include <unistd.h>
+#include <time.h>
+
+#ifdef TA_OS_MAC
+# include <sys/types.h>
+# include <sys/sysctl.h>
+#endif
+
+#endif
+
+InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
+  taMisc::AddInitHook(init_proc);
+}
 
 String  taMisc::app_name = "temt"; // must be set in main.cpp
 String  taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
@@ -733,11 +761,25 @@ void taMisc::SetLogFile(const String& log_fn) {
 void taMisc::EditFile(const String& filename) {
   String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
   edtr.gsub("%s", filename);
-  taPlatform::exec(edtr);
+  taMisc::ExecuteCommand(edtr);
 }
 
 /////////////////////////////////////////////////
 //      Global state management
+
+TypeDef* taMisc::FindTypeName(const String& typ_nm) {
+  TypeDef* td = taMisc::types.FindName(typ_nm);
+  if(td != NULL) return td;
+  for(int i=0; i<taMisc::aka_types.size; i++) {
+    TypeDef* aka = taMisc::aka_types.FastEl(i);
+    String aka_nm = aka->OptionAfter("AKA_");
+    if(aka_nm == typ_nm) {
+      return aka;
+    }
+  }
+  taMisc::Warning("Unknown type:",typ_nm);
+  return NULL;
+}
 
 void taMisc::FlushConsole() {
 #ifndef NO_TA_BASE
@@ -1031,7 +1073,7 @@ void taMisc::Init_Hooks() {
 }
 
 void taMisc::Init_Defaults_PreLoadConfig() {
-  thread_defaults.cpus = taPlatform::cpuCount();
+  thread_defaults.cpus = taMisc::CpuCount();
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
@@ -1060,13 +1102,13 @@ void taMisc::Init_Defaults_PostLoadConfig() {
 
   // max_cpu
   int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
-  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount())) {
+  if ((max_cpus > 0) && (max_cpus <= taMisc::CpuCount())) {
     thread_defaults.cpus = max_cpus;
     taMisc::Info("Set threads cpus:", String(max_cpus));
   }
 
-  if(thread_defaults.cpus > taPlatform::cpuCount())
-    thread_defaults.cpus = taPlatform::cpuCount();
+  if(thread_defaults.cpus > taMisc::CpuCount())
+    thread_defaults.cpus = taMisc::CpuCount();
 
   if(thread_defaults.n_threads == -1)
     thread_defaults.n_threads = thread_defaults.cpus;
@@ -1598,23 +1640,65 @@ String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
 /////////////////////////////////////////////////
 //      File Paths etc
 
-TypeDef* taMisc::FindTypeName(const String& typ_nm) {
-  TypeDef* td = taMisc::types.FindName(typ_nm);
-  if(td != NULL) return td;
-  for(int i=0; i<taMisc::aka_types.size; i++) {
-    TypeDef* aka = taMisc::aka_types.FastEl(i);
-    String aka_nm = aka->OptionAfter("AKA_");
-    if(aka_nm == typ_nm) {
-      return aka;
-    }
+#ifdef TA_OS_WIN
+const String taMisc::path_sep('\\'); 
+#else 
+const String taMisc::path_sep('/'); 
+#endif
+
+String taMisc::FinalPathSep(const String& in) {
+  if (in.length() == 0)
+    return String();
+  else {
+    //NOTE: don't use [] below, because of insane MS VC++ ambiguity
+    char c = in.elem(in.length() - 1);
+    // note: need to check both seps, because of whacky Win/Cygwin mixtures
+    if (( c == '\\') || (c == '/'))
+      return in;
+  } 
+  return in + pathSep;
+}
+
+String taMisc::NoFinalPathSep(const String& in) {
+  String rval = in;
+  char c;
+  while ((c = rval.lastchar()) && 
+    ( (c == '/') || (c == '\\')))
+    rval.truncate(rval.length() - 1);
+  return rval;
+}
+
+int taMisc::PosFinalPathSep(const String& in) {
+  int rval = in.length() - 1;
+  char c;
+  while (rval >= 0) {
+    c = in.elem(rval);
+    if ((c == '/') || (c == '\\')  || (c == ':'))
+      break;
+    --rval;
   }
-  taMisc::Warning("Unknown type:",typ_nm);
-  return NULL;
+  return rval;
+}
+
+String taMisc::UnescapeBackslash(const String& in) {
+  // convert lexical double backslash to actual single backslash
+  // i.e. you are reading C source, and want to convert to the string 
+  String rval = in;
+  rval.gsub("\\\\", "\\");
+  return rval;
 }
 
 String taMisc::GetFileFmPath(const String& path) {
-  return taPlatform::getFileName(path);
+  int pfs = PosFinalSep(path);
+  if (pfs < 0) return path;
+  else return path.after(pfs);
 }
+
+// String taPlatform::getFilePath(const String& in) {
+//   int pfs = posFinalSep(in);
+//   if (pfs < 0) return _nilString;
+//   else return in.before(pfs + 1); // we include the finalpos
+// }
 
 String taMisc::GetDirFmPath(const String& path, int n_up) {
 #ifdef NO_TA_BASE
@@ -1635,43 +1719,36 @@ String taMisc::GetDirFmPath(const String& path, int n_up) {
 #endif
 }
 
-String taMisc::GetHomePath() {
-  return taPlatform::getHomePath();
-}
-
-String taMisc::GetUserPluginDir() {
+bool taMisc::IsQualifiedPath(const String& fname) {
+  //NOTE: we just check the union of Unix and Win -- we aren't asked if it 
+  // is valid for the platform, so ok to check all cases here
+  if (fname.empty()) return false;
+  char c = fname.elem(0);
+  // handles all relative, and Unix absolute, and Win share paths
+  if ((c == '.') || (c == '\\') || (c == '/')) return true; 
 #ifdef TA_OS_WIN
-  // Use a separate directory for 64-bit plugins.  Otherwise, if the user has
-  // both 32-bit emergent and 64-bit emergent installed, it can cause problems
-  // with the Qt Plugin Cache, see:
-  //   http://doc.qt.nokia.com/stable/deployment-plugins.html#the-plugin-cache
-  // The problem is that the 32-bit version of emergent might mark a 64-bit
-  // plugin DLL as "bad" in the cache, thus preventing it from working with
-  // the 64-bit version of emergent (and vice versa).  Separating the DLLs
-  // prevents 32-bit emergent from ever seeing a 64-bit DLL, so this can't
-  // happen.
-  if (sizeof(void *) >= 8) {
-    return "plugins64";
-  }
+  // Win x: drive letter path
+  if ((fname.length() >= 2) && (fname.elem(1) == ':')) return true;
 #endif
-
-  return "plugins";
-}
-
-String taMisc::GetSysPluginDir() {
-  // Not necessary to separate 32/64 here, since this directory only exists
-  // within the directory emergent was installed to, which is already distinct
-  // for 32-bit and 64-bit installations.  Also, this directory is created by
-  // the installer/CMake/CPack system, and would be more difficult to name
-  // differently on Windows for 32 vs. 64.
-  return "plugins";
+  return false;
 }
 
 bool taMisc::FileExists(const String& fname) {
-  return taPlatform::fileExists(fname);
+  bool rval = false;
+  fstream fin;
+  fin.open(fname, ios::in);
+  if (fin.is_open()) {
+    rval = true;
+  }
+  fin.close();
+  return rval;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//		Start of TA_BASE-only section
+
 #ifndef NO_TA_BASE
+
 int64_t taMisc::FileSize(const String& fname) {
   QFileInfo fi(fname);
   return fi.size();
@@ -1719,24 +1796,6 @@ bool taMisc::RemoveFile(const String& fn) {
   return d.remove(fn);
 }
 
-String taMisc::GetCurrentPath() {
-#ifndef NO_TA_BASE
-  // before any projects have been opened, the current path is not really valid per QDir
-  // so we use the first of the recent paths -- this works well for the file chooser for
-  // example.
-  if(tabMisc::root->projects.size == 0) {
-    String_Array& rpth = tabMisc::root->recent_paths;
-    if(rpth.size > 0)
-      return rpth.SafeEl(0);
-  }
-#endif
-  return QDir::currentPath();
-}
-
-bool taMisc::SetCurrentPath(const String& path) {
-  return QDir::setCurrent(path);
-}
-
 bool taMisc::MakeDir(const String& fn) {
   QDir d;
   return d.mkdir(fn);
@@ -1757,12 +1816,118 @@ bool taMisc::RemovePath(const String& fn) {
   return d.rmpath(fn);
 }
 
-String taMisc::GetTemporaryPath() {
-  return QDir::tempPath();
+/////////////////////////////////////////
+//		Various standard paths		
+
+String taMisc::GetCurrentPath() {
+  // before any projects have been opened, the current path is not really valid per QDir
+  // so we use the first of the recent paths -- this works well for the file chooser for
+  // example.
+  if(tabMisc::root->projects.size == 0) {
+    String_Array& rpth = tabMisc::root->recent_paths;
+    if(rpth.size > 0)
+      return rpth.SafeEl(0);
+  }
+  return QDir::currentPath();
 }
 
+bool taMisc::SetCurrentPath(const String& path) {
+  return QDir::setCurrent(path);
+}
 
+String taMisc::GetTemporaryPath() {
+  return QDir::tempPath();
+// #ifdef TA_OS_WIN
+//   String rval;
+//   DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
+//   if (retVal != 0)
+//     rval = String(tmpbuf);
+//   return rval;
+// #else
+//   String rval = "/tmp";
+//   return rval;
+// #endif
+}
+
+String taMisc::GetHomePath() {
+#ifdef TA_OS_WIN
+  return String(getenv("USERPROFILE"));
+#else
+ // return getenv("HOME");
+ return QDir::homePath();
 #endif
+}
+
+String taMisc::GetUserPluginDir() {
+#ifdef TA_OS_WIN
+  // Use a separate directory for 64-bit plugins.  Otherwise, if the user has
+  // both 32-bit emergent and 64-bit emergent installed, it can cause problems
+  // with the Qt Plugin Cache, see:
+  //   http://doc.qt.nokia.com/stable/deployment-plugins.html#the-plugin-cache
+  // The problem is that the 32-bit version of emergent might mark a 64-bit
+  // plugin DLL as "bad" in the cache, thus preventing it from working with
+  // the 64-bit version of emergent (and vice versa).  Separating the DLLs
+  // prevents 32-bit emergent from ever seeing a 64-bit DLL, so this can't
+  // happen.
+  if (sizeof(void *) >= 8) {
+    return "plugins64";
+  }
+#endif
+
+  return "plugins";
+}
+
+String taMisc::GetSysPluginDir() {
+  // Not necessary to separate 32/64 here, since this directory only exists
+  // within the directory emergent was installed to, which is already distinct
+  // for 32-bit and 64-bit installations.  Also, this directory is created by
+  // the installer/CMake/CPack system, and would be more difficult to name
+  // differently on Windows for 32 vs. 64.
+  return "plugins";
+}
+
+String taMisc::GetDocPath() {
+#ifdef TA_OS_WIN
+  //NOTE: we don't want the "home" folder, we really want the user's My Documents folder
+  // since this can be moved from its default place, and/or renamed, we have to do this:
+  TCHAR szPath[MAX_PATH];
+  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath))) {
+    return String(szPath);
+  }
+  else {
+    taMisc::Warning("taMisc::GetDocPath(): SHGetFolderPath() failed unexpectedly, guessing at user's home folder...");
+    return const_cast<const char*>(getenv("USERPROFILE")) + PATH_SEP + "My Documents";
+  }
+#else
+  return GetHomePath() + "/Documents";
+#endif
+}
+
+String taMisc::GetAppDataPath(const String& appname) {
+#ifdef TA_OS_WIN
+  // note: sleazy, we should use the complicated way, but this seems to be correct...
+  // note: for Windows, we add the orgname, to keep it compliant
+  return getenv("APPDATA") + PATH_SEP + taMisc::org_name + PATH_SEP + appname;
+#else
+  return GetHomePath() + "/." + appname;
+#endif
+}
+
+String taMisc::GetAppDocPath(const String& appname) {
+#ifdef TA_OS_WIN
+  return GetHomePath() + "\\" + capitalize(appname);
+#elif TA_OS_MAC
+  return GetHomePath() + "/Library/" + capitalize(appname);
+#else
+  return GetHomePath() + "/lib/" + capitalize(appname);
+#endif
+}
+
+#endif // NO_TA_BASE
+
+// 		End of TA_BASE only 
+///////////////////////////////////////////////////////////////////////
+
 
 // try to find file fnm in one of the include paths -- returns complete path to file
 String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
@@ -1892,10 +2057,6 @@ bool taMisc::InternetConnected() {
   }
 #endif
   return any_valid;
-}
-
-int taMisc::ExecuteCommand(const String& cmd) {
-  return system(cmd);
 }
 
 bool taMisc::CreateNewSrcFiles(const String& type_nm, const String& top_path,
@@ -2058,6 +2219,99 @@ void taMisc::CreateAllNewSrcFiles() {
   }
 #endif
 }
+
+bool taMisc::CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
+				       const String& src_dir) {
+  TypeDef* td = types.FindName(type_nm);
+  if(!td) {
+    taMisc::Error("type not found:", type_nm);
+    return false;
+  }
+  return td->CreateNewSrcFiles(top_path, src_dir);
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//     System info etc
+
+int taMisc::CpuCount() {
+#ifdef TA_OS_WIN
+  SYSTEM_INFO info;
+  info.dwNumberOfProcessors = 0;
+  GetSystemInfo(&info);
+  return info.dwNumberOfProcessors;
+#elif TA_OS_MAC
+  int mib[2] = {CTL_HW, HW_NCPU};
+  int ncpu;
+  size_t len = sizeof(ncpu);
+  sysctl(mib, 2, &ncpu, &len, NULL, 0);
+  return ncpu;
+#else
+  return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
+}
+
+String taMisc::HostName() {
+#ifdef TA_OS_WIN
+  return String(getenv("COMPUTERNAME"));
+#else
+  return String(getenv("HOSTNAME"));
+#endif
+}
+
+String taMisc::UserName() {
+#ifdef TA_OS_WIN
+  return String(getenv("USERNAME"));
+#else
+  return String(getenv("USER"));
+#endif
+}
+
+int taMisc::ProcessId() {
+#ifdef TA_OS_WIN
+  return (int)GetCurrentProcessId();
+#else
+  return (int)getpid();
+#enidf
+}
+
+int taMisc::TickCount() {
+#ifdef TA_OS_WIN
+  return (int)GetTickCount(); // is in ms
+#else
+  return (int)clock();
+#endif
+}
+
+void taMisc::SleepS(int sec) {
+  msleep(sec * 1000);
+}
+
+void taMisc::SleepMs(int msec) {
+#ifdef TA_OS_WIN
+  Sleep(msec);
+#else
+  //note: specs say max usleep value is 1s, so we loop if necessary
+  while (msec > 1000) {
+    usleep(1000000);
+    msec -= 1000;
+  }
+  usleep(msec * 1000);
+#endif
+}
+
+int taMisc::ExecuteCommand(const String& cmd) {
+  int rval = system(cmd.chars());
+  // if allegedly successful, still need to test for error
+#ifdef TA_OS_WIN
+  if (rval == 0) { 
+    if (errno == ENOENT)
+      rval = -1;
+  }
+#endif
+  return rval;
+}
+
 
 /////////////////////////////////////////////////
 //      Recording GUI actions to css script

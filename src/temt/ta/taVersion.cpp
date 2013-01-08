@@ -15,3 +15,29 @@
 
 #include "taVersion.h"
 
+void taVersion::setFromString(String ver) {
+  Clear();
+  // parse, mj.mn.st-build -- just blindly go through, harmless if missings
+  major = BeforeOrOf('.', ver);
+  minor = BeforeOrOf('.', ver);
+  step = BeforeOrOf('-', ver);
+  build = BeforeOrOf(' ', ver); //dummy
+}
+
+int taVersion::BeforeOrOf(char sep, String& in) {
+  String s = in.before(sep);
+  if (s.nonempty()) {
+    in = in.after(sep);
+  } else {
+    s = in;
+    in = _nilString;
+  }
+  // strip any gunk, which may be at end, ex "b1" etc.
+  int i = 0;
+  while (i < s.length()) {
+    char c = s[i];
+    if (!isdigit(c)) break;
+    ++i;
+  }
+  return s.left(i).toInt();
+}

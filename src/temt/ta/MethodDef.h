@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class MethodSpace; //
 
 
 class TA_API MethodDef : public TypeItem {// defines a class method
@@ -68,8 +69,7 @@ public:
 
   MethodDef*            Clone()         { return new MethodDef(*this); }
   MethodDef*            MakeToken()     { return new MethodDef(); }
-  override TypeDef*     GetOwnerType() const
-    { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override TypeDef*     GetOwnerType() const;
   override const String GetPathName() const;
   bool                  CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one

@@ -15,3 +15,8 @@
 
 #include "IDataLinkProxy.h"
 
+TypeDef* IDataLinkProxy::GetDataTypeDef() const {
+  taDataLink* link_ = (taDataLink*)link();
+  return (link_) ? link_->GetDataTypeDef() : NULL;
+}
+

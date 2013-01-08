@@ -20,7 +20,6 @@
 #define ICOLOR_H
 
 #include "ta_def.h"
-#include "ta_global.h"
 #include "ta_string.h"
 
 #ifdef TA_GUI

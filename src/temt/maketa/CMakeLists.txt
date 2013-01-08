@@ -2,11 +2,10 @@
 
 set(maketa_HEADS
   ../ta/ta_stdef.h
-  ../ta/ta_platform.h
   ../ta/taString.h
   ../ta/Variant.h
   ../ta/NameVar.h
-  ../ta/ta_mtrnd.h
+  ../ta/MTRnd.h
   ../ta/taPtrList_impl.h
   ../ta/taPtrList.h
   ../ta/taPtrList_base.h
@@ -19,19 +18,24 @@ set(maketa_HEADS
   ../ta/String_PArray.h
   ../ta/int_PArray.h
   ../ta/voidptr_PArray.h
-  ../ta/ta_type.h
+  ../ta/EnumDef.h
+  ../ta/MemberDefBase.h
+  ../ta/MemberDef.h
+  ../ta/PropertyDef.h
+  ../ta/MethodDef.h
+  ../ta/TypeDef.h
   mta_parse.h
   mta_constr.h
   maketa.h
 )
 
 set(maketa_SRCS
-  ../ta/ta_ti.cpp
-  ../ta/ta_platform.cpp
+#  ../ta/ta_ti.cpp
   ../ta/taString.cpp
   ../ta/Variant.cpp
   ../ta/NameVar.cpp
-  ../ta/ta_mtrnd.cpp
+  ../ta/MTRndState.cpp
+  ../ta/MTRnd.cpp
   ../ta/taPtrList_impl.cpp
   ../ta/taPtrList.cpp
   ../ta/taPtrList_base.cpp
@@ -44,7 +48,21 @@ set(maketa_SRCS
   ../ta/String_PArray.cpp
   ../ta/int_PArray.cpp
   ../ta/voidptr_PArray.cpp
-  ../ta/ta_type.cpp
+  ../ta/TypeItem.cpp
+  ../ta/EnumSpace.cpp
+  ../ta/TokenSpace.cpp
+  ../ta/MemberDefBase_List.cpp
+  ../ta/MemberSpace.cpp
+  ../ta/Member_List.cpp
+  ../ta/PropertySpace.cpp
+  ../ta/MethodSpace.cpp
+  ../ta/TypeSpace.cpp
+  ../ta/EnumDef.cpp
+  ../ta/MemberDefBase.cpp
+  ../ta/MemberDef.cpp
+  ../ta/PropertyDef.cpp
+  ../ta/MethodDef.cpp
+  ../ta/TypeDef.cpp
   mta_parse.cpp
   mta_lex.cpp
   mta_constr.cpp
@@ -54,7 +72,7 @@ set(maketa_SRCS
 
 set(maketa_FILES ${maketa_HEADS} ${maketa_SRCS})
 
- add_definitions(-DNO_TA_BASE)
+add_definitions(-DNO_TA_BASE)
 # note: special definitions for compiling maketa: always optimized
 if (WIN32)
 # :( /O2 is incompatible with /RTC1 that gets set automatically

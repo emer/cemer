@@ -16,7 +16,6 @@
 #include "ta_virtenv_qtso.h"
 
 #include "ta_imgproc.h"
-#include "ta_platform.h"
 #include "NewNetViewHelper.h"
 
 #include <QImage>

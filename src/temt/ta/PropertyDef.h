@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+typedef Variant (*ta_prop_get_fun)(const void*);
+typedef void (*ta_prop_set_fun)(void*, const Variant&);
 
 class TA_API PropertyDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)

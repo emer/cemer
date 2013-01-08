@@ -15,3 +15,66 @@
 
 #include "EnumSpace.h"
 
+String  EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }
+taPtrList_impl*  EnumSpace::El_GetOwnerList_(void* it) const { return ((EnumDef*)it)->owner; }
+void*   EnumSpace::El_SetOwner_(void* it) { return ((EnumDef*)it)->owner = this; }
+void    EnumSpace::El_SetIndex_(void* it, int i){ ((EnumDef*)it)->idx = i; }
+
+void*   EnumSpace::El_Ref_(void* it)      { taRefN::Ref((EnumDef*)it); return it; }
+void*   EnumSpace::El_unRef_(void* it)    { taRefN::unRef((EnumDef*)it); return it; }
+void    EnumSpace::El_Done_(void* it)     { taRefN::Done((EnumDef*)it); }
+void*   EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->MakeToken(); }
+void*   EnumSpace::El_Copy_(void* trg, void* src)
+{ ((EnumDef*)trg)->Copy(*((EnumDef*)src)); return trg; }
+
+EnumSpace::~EnumSpace() {
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+// default enum no is last + 1
+void  EnumSpace::Add(EnumDef* it) {
+  taPtrList<EnumDef>::Add(it);
+  if((it->idx == 0) || (it->idx > size+1))
+    it->enum_no = 0;
+  else
+    it->enum_no = FastEl(it->idx - 1)->enum_no + 1;
+}
+
+EnumDef*  EnumSpace::Add(const char* nm, const char* dsc, const char* op, int eno) {
+  EnumDef* rval = new EnumDef(nm);
+  Add(rval);
+  rval->desc = dsc;
+  taMisc::CharToStrArray(rval->opts, op);
+  rval->enum_no = eno;
+  return rval;
+}
+
+EnumDef* EnumSpace::FindNo(int eno) const {
+  int i;
+  for(i=0; i < size; i++) {
+    if(FastEl(i)->enum_no == eno)
+      return FastEl(i);
+  }
+  return NULL;
+}
+
+
+String& EnumSpace::PrintType(String& strm, int indent) const {
+  EnumDef* enm;
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<size; i++) {
+    enm = FastEl(i);
+    col1.Add(enm->name);
+    String c2;
+    c2 << "= " << enm->enum_no << ";";
+    if(!enm->desc.empty())
+      c2 << "\t//" << enm->desc;
+    enm->PrintType_OptsLists(c2);
+    col2.Add(c2);
+  }
+  return taMisc::FancyPrintTwoCol(strm, col1, col2, indent);
+}

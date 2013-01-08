@@ -17,7 +17,6 @@
 // #define QANDD_CONSOLE 1
 
 #include "ta_project.h"
-#include "ta_platform.h"
 #include "ta_dump.h"
 #include "ta_plugin.h"
 #include "ta_gendoc.h"
@@ -2148,8 +2147,8 @@ void taProject::UpdateChangeLog() {
 
     String vers = version.GetString();
 
-    String user = taPlatform::userName();
-    String host = taPlatform::hostName();
+    String user = taMisc::UserName();
+    String host = taMisc::HostName();
     if (host.nonempty()) user += String("@") + host;
 
     String cur_fname = taMisc::GetFileFmPath(file_name);
@@ -3418,7 +3417,7 @@ namespace { // anon
 
     taMisc::exe_path = QCoreApplication::applicationDirPath();
 
-    String full_exe = taMisc::exe_path + taPlatform::pathSep + taMisc::exe_cmd;
+    String full_exe = taMisc::exe_path + PATH_SEP + taMisc::exe_cmd;
 
     QFileInfo fi(full_exe);
     if(!fi.exists()) {
@@ -3724,7 +3723,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // cmd line override of UserDir takes preference
   taMisc::user_dir = taMisc::FindArgByName("UserDir");
   if (taMisc::user_dir.empty()) {
-    taMisc::user_dir = taPlatform::getHomePath();
+    taMisc::user_dir = taMisc::GetHomePath();
   }
 
   // Application folder
@@ -3732,7 +3731,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   String user_app_dir_env_var = upcase(taMisc::app_prefs_key) + "_USER_APP_DIR";
   String user_app_dir = getenv(user_app_dir_env_var);
   if (user_app_dir.empty()) {
-    user_app_dir = taPlatform::getAppDocPath(taMisc::app_prefs_key);
+    user_app_dir = taMisc::GetAppDocPath(taMisc::app_prefs_key);
   }
   taMisc::user_app_dir = user_app_dir;
   if (!Startup_InitTA_InitUserAppDir()) return false;
@@ -4298,13 +4297,13 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
     }
 #endif
     volatile int i = 0;
-    printf("PID %d on %s ready for attach\n", taPlatform::processId(),
-           taPlatform::hostName().chars());
+    printf("PID %d on %s ready for attach\n", taMisc::ProcessId(),
+           taMisc::HostName().chars());
     fflush(stdout);
     // NOTE to programmer: in gdb debugger, do: set var i = 1  then continue -- this will break out of
     // following infinite loop and allow code to continue execution
     while (0 == i) {
-      taPlatform::sleep(5);
+      taMisc::SleepS(5);
     }
   }
 

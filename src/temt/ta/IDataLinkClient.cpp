@@ -15,3 +15,26 @@
 
 #include "IDataLinkClient.h"
 
+IDataLinkClient::~IDataLinkClient() {
+  if (m_link) {
+    //NOTE: since this is destructor, the 'this' we pass is our *own* virtual v-table
+    // version, therefore, RemoveDataClient may NOT use any of our virtual or pure-virtual methods
+    m_link->RemoveDataClient(this); //nulls our ref
+  }
+}
+
+bool IDataLinkClient::AddDataLink(taDataLink* dl) {
+  if (m_link && (m_link != dl)) {
+    taMisc::DebugInfo("IDataLinkClient::AddDataLink: a link has already been set!");
+  }
+  bool r = (0 == m_link);
+  m_link = dl;
+  return r;
+}
+
+bool IDataLinkClient::RemoveDataLink(taDataLink* dl) {
+  bool r = (0 != m_link);
+  m_link = NULL;
+  return r;
+}
+

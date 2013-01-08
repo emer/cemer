@@ -16,11 +16,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
   maketa_iostream.h
   maketa_fstream.h
   maketa_sstream.h
+  ta_stdef.h
   ta_def.h
   ta_atomic.h
   # ta_string.h
-  # ta_platform.h
-  # ta_stdef.h
   # ta_variant.h
   ifont.h
   # ta_mtrnd.h
@@ -1536,19 +1535,18 @@ set(ta_SRCS_GUI
 set(ta_SRCS
   NewNetViewHelper.cpp
   ta_TA.cpp
-  ta_atomic.cpp
+  # ta_atomic.cpp
   ta_string.cpp
-  ta_platform.cpp
   ta_thread.cpp
   ta_variant.cpp
   ifont.cpp
   icolor.cpp
-  ta_mtrnd.cpp
-  ta_list.cpp
+  # ta_mtrnd.cpp
+  # ta_list.cpp
   ta_filer.cpp
-  ta_type.cpp
+  # ta_type.cpp
   ta_type_constr.cpp
-  ta_base.cpp
+  # ta_base.cpp
   ta_dmem.cpp
   ta_fontspec.cpp
   minmax.cpp

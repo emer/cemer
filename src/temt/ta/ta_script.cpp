@@ -19,7 +19,6 @@
 #include "ta_script.h"
 
 #include "css_ta.h"
-#include "ta_platform.h"
 #include "css_basic_types.h"
 
 #ifdef TA_GUI

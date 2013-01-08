@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class EnumSpace; //
 
 class TA_API EnumDef : public TypeItem { //  defines an enum member
 INHERITED(TypeItem)
@@ -45,8 +45,7 @@ public:
   EnumDef*      Clone()         { return new EnumDef(*this); }
   EnumDef*      MakeToken()     { return new EnumDef(); }
 
-  TypeDef*      GetOwnerType() const
-  { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override TypeDef*  GetOwnerType() const;
   bool          CheckList(const String_PArray& lst) const;
   // check if enum has a list in common with given one
 private:
