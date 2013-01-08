@@ -42,12 +42,13 @@ public:
   override bool         isReadOnly() const;
   override bool         isGuiReadOnly() const;
   void                  setType(TypeDef* typ); // use this, to check for consistency between the various source -- should NOT be null!
-  taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_PROPERTY;}
+  override TypeInfoKinds TypeInfoKind() const {return TIK_PROPERTY;}
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_PropertyDef;}
   override bool         ValIsDefault(const void* base,
-    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+                                     int for_show) const; // = taMisc::IS_EXPERT
+  // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void                  Copy(const PropertyDef& cp);
   PropertyDef();

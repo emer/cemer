@@ -23,6 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class Member_List; //
+class TypeSpace; //
+class voidptr_PArray; //
+
 
 class TA_API MemberDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)
@@ -48,10 +51,11 @@ public:
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MemberDef;}
-  taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_MEMBER;}
+  override TypeInfoKinds TypeInfoKind() const {return TIK_MEMBER;}
 
   override bool ValIsDefault(const void* base,
-    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+                             int for_show) const; // = taMisc::IS_EXPERT)
+  // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void          Copy(const MemberDef& cp);
   MemberDef();
@@ -84,8 +88,8 @@ public:
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                                 TypeDef* base_typ, void* trg_base, void* src_base,
-                                int show_forbidden = taMisc::NO_HIDDEN,
-                                int show_allowed = taMisc::SHOW_CHECK_MASK,
+                                int show_forbidden, // = taMisc::NO_HIDDEN
+                                int show_allowed, // = taMisc::SHOW_CHECK_MASK
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 

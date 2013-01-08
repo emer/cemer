@@ -22,7 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+#ifndef NO_TA_BASE
+class taDataLink; //
+#endif
 
 class TA_API TokenSpace : public taPtrList<void> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
@@ -37,7 +39,9 @@ public:
   TypeDef*      owner;          // owner is a typedef
   bool          keep;           // true if tokens are kept
   taAtomicInt   sub_tokens;     // number of tokens in sub-types
+#ifndef NO_TA_BASE
   taDataLink*   data_link;
+#endif
 
   virtual void  Initialize();
   TokenSpace()                          { Initialize(); }

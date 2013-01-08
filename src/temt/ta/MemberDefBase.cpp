@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "MemberDefBase.h"
+#include <MemberDef>
+#include <PropertyDef>
+#include <TypeDef>
+#include <MemberDefBase_List>
+#include <taMisc>
+
 
 void MemberDefBase::Initialize() {
   owner = NULL;
@@ -64,12 +70,12 @@ void MemberDefBase::Copy(const MemberDefBase& cp) {
 }
 
 void MemberDefBase::Copy(const MemberDefBase* cp) {
-  if (typeInfoKind() == cp->typeInfoKind())
-  switch (typeInfoKind()) {
-  case taMisc::TIK_MEMBER:
+  if (TypeInfoKind() == cp->TypeInfoKind())
+  switch (TypeInfoKind()) {
+  case TIK_MEMBER:
     ((MemberDef*)this)->Copy(*(const MemberDef*)cp);
     return;
-  case taMisc::TIK_PROPERTY:
+  case TIK_PROPERTY:
     ((PropertyDef*)this)->Copy(*(const PropertyDef*)cp);
     return;
   default: break; // compiler food

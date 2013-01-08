@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "TokenSpace.h"
+#include <TypeDef>
+#include <taMisc>
+
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 String TokenSpace::tmp_el_name;
 
@@ -21,14 +27,18 @@ void TokenSpace::Initialize() {
   owner = NULL;
   keep = false;
   sub_tokens = 0;
+#ifndef NO_TA_BASE
   data_link = NULL;
+#endif
 }
 
 TokenSpace::~TokenSpace() {
 //  Reset(); //note: TokenSpace never had a Reset, but maybe it should...
+#ifndef NO_TA_BASE
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+#endif
 }
 
 String TokenSpace::El_GetName_(void* it) const {

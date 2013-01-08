@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "TypeItem.h"
+#include <Variant>
+#include <taMisc>
+#include <TypeDef>
+#include <MemberDef>
+
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 const String TypeItem::opt_show("SHOW");
 const String TypeItem::opt_no_show("NO_SHOW");
@@ -53,9 +61,11 @@ void TypeItem::init()
 }
 
 TypeItem::~TypeItem() {
+#ifndef NO_TA_BASE
   if (data_link != NULL) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+#endif
 }
 
 void TypeItem::Copy(const TypeItem& cp) {
@@ -257,7 +267,7 @@ bool TypeItem::GetCondOptTest(const String condkey, const TypeDef* base_td, cons
   return ((is_on && val_is_eq) || (!is_on && !val_is_eq));
 }
 
-void TypeItem::PrintType_OptsLists(String& strm) {
+void TypeItem::PrintType_OptsLists(String& strm) const {
   if((opts.size > 0) && ((taMisc::type_info_ == taMisc::ALL_INFO) ||
                          (taMisc::type_info_ == taMisc::NO_LISTS))) {
     for(int i=0; i<opts.size; i++)

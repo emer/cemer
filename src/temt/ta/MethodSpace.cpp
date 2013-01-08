@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "MethodSpace.h"
+#include <MethodDef>
+#include <taMisc>
+
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 String  MethodSpace::El_GetName_(void* it) const { return ((MethodDef*)it)->name; }
 taPtrList_impl*  MethodSpace::El_GetOwnerList_(void* it) const { return ((MethodDef*)it)->owner; }
@@ -27,11 +33,20 @@ void*   MethodSpace::El_MakeToken_(void* it)  { return (void*)((MethodDef*)it)->
 void*   MethodSpace::El_Copy_(void* trg, void* src)
 { ((MethodDef*)trg)->Copy(*((MethodDef*)src)); return trg; }
 
+void MethodSpace::Initialize() {
+  owner = NULL;
+#ifndef NO_TA_BASE
+  data_link = NULL;
+#endif
+}
+
 MethodSpace::~MethodSpace() {
   Reset();
+#ifndef NO_TA_BASE
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+#endif
 }
 
 bool MethodSpace::AddUniqNameNew(MethodDef *it) {

@@ -977,25 +977,25 @@ String& taMisc::PrintAllTokens(String& strm) {
   return types.PrintAllTokens(strm);
 }
 
-taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
-  if (!td) return TIK_UNKNOWN;
+TypeItem::TypeInfoKinds taMisc::TypeToTypeInfoKind(TypeDef* td) {
+  if (!td) return TypeItem::TIK_UNKNOWN;
 
-  TypeInfoKind tik;
+  TypeItem::TypeInfoKinds tik;
 #ifndef NO_TA_BASE
-  if (td->InheritsFrom(&TA_TypeDef)) tik = TIK_TYPE;
-  else if (td->InheritsFrom(&TA_MemberDef)) tik = TIK_MEMBER;
-  else if (td->InheritsFrom(&TA_PropertyDef)) tik = TIK_PROPERTY;
-  else if (td->InheritsFrom(&TA_MethodDef)) tik = TIK_METHOD;
-  else if (td->InheritsFrom(&TA_MemberSpace)) tik = TIK_MEMBERSPACE;
-  else if (td->InheritsFrom(&TA_MethodSpace)) tik = TIK_METHODSPACE;
-  else if (td->InheritsFrom(&TA_PropertySpace)) tik = TIK_PROPERTYSPACE;
-  else if (td->InheritsFrom(&TA_TypeSpace)) tik = TIK_TYPESPACE;
-  else if (td->InheritsFrom(&TA_EnumDef)) tik = TIK_ENUM;
-  else if (td->InheritsFrom(&TA_EnumSpace)) tik = TIK_ENUMSPACE;
-  else if (td->InheritsFrom(&TA_TokenSpace)) tik = TIK_TOKENSPACE;
+  if (td->InheritsFrom(&TA_TypeDef)) tik = TypeItem::TIK_TYPE;
+  else if (td->InheritsFrom(&TA_MemberDef)) tik = TypeItem::TIK_MEMBER;
+  else if (td->InheritsFrom(&TA_PropertyDef)) tik = TypeItem::TIK_PROPERTY;
+  else if (td->InheritsFrom(&TA_MethodDef)) tik = TypeItem::TIK_METHOD;
+  else if (td->InheritsFrom(&TA_MemberSpace)) tik = TypeItem::TIK_MEMBERSPACE;
+  else if (td->InheritsFrom(&TA_MethodSpace)) tik = TypeItem::TIK_METHODSPACE;
+  else if (td->InheritsFrom(&TA_PropertySpace)) tik = TypeItem::TIK_PROPERTYSPACE;
+  else if (td->InheritsFrom(&TA_TypeSpace)) tik = TypeItem::TIK_TYPESPACE;
+  else if (td->InheritsFrom(&TA_EnumDef)) tik = TypeItem::TIK_ENUM;
+  else if (td->InheritsFrom(&TA_EnumSpace)) tik = TypeItem::TIK_ENUMSPACE;
+  else if (td->InheritsFrom(&TA_TokenSpace)) tik = TypeItem::TIK_TOKENSPACE;
   else
 #endif
-    tik = TIK_UNKNOWN; // shouldn't happen
+    tik = TypeItem::TIK_UNKNOWN; // shouldn't happen
   return tik;
 }
 

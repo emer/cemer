@@ -31,58 +31,43 @@
 #include <QTreeWidget>
 #include <qpushbutton.h>
 
-/*
-  switch(tik) {
-  case taMisc::TIK_ENUM:
-    break;
-  case taMisc::TIK_MEMBER:
-    break;
-  case taMisc::TIK_METHOD:
-    break;
-  case taMisc::TIK_TYPE:
-    break;
-  case taMisc::TIK_TOKEN:
-    break;
-  }
-  
-*/
 
 //////////////////////////
 //  taClassDataLink	//
 //////////////////////////
 
-taClassDataLink::taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataLink* &link_ref_)
+taClassDataLink::taClassDataLink(taMisc::TypeInfoKinds tik_, void* data_, taDataLink* &link_ref_)
 :inherited(data_, link_ref_), tik(tik_)
 {
   switch (tik) {
-  case taMisc::TIK_ENUM: m_type = &TA_EnumDef; break;
-  case taMisc::TIK_MEMBER: m_type = &TA_MemberDef; break;
-  case taMisc::TIK_PROPERTY: m_type = &TA_PropertyDef; break;
-  case taMisc::TIK_METHOD: m_type = &TA_MethodDef; break;
-  case taMisc::TIK_TYPE: m_type = &TA_TypeDef; break;
-  case taMisc::TIK_ENUMSPACE: m_type = &TA_EnumSpace; break;
-  case taMisc::TIK_TOKENSPACE: m_type = &TA_TokenSpace; break;
-  case taMisc::TIK_MEMBERSPACE: m_type = &TA_MemberSpace; break;
-  case taMisc::TIK_PROPERTYSPACE: m_type = &TA_PropertySpace; break;
-  case taMisc::TIK_METHODSPACE: m_type = &TA_MethodSpace; break;
-  case taMisc::TIK_TYPESPACE: m_type = &TA_TypeSpace; break;
+  case TypeItem::TIK_ENUM: m_type = &TA_EnumDef; break;
+  case TypeItem::TIK_MEMBER: m_type = &TA_MemberDef; break;
+  case TypeItem::TIK_PROPERTY: m_type = &TA_PropertyDef; break;
+  case TypeItem::TIK_METHOD: m_type = &TA_MethodDef; break;
+  case TypeItem::TIK_TYPE: m_type = &TA_TypeDef; break;
+  case TypeItem::TIK_ENUMSPACE: m_type = &TA_EnumSpace; break;
+  case TypeItem::TIK_TOKENSPACE: m_type = &TA_TokenSpace; break;
+  case TypeItem::TIK_MEMBERSPACE: m_type = &TA_MemberSpace; break;
+  case TypeItem::TIK_PROPERTYSPACE: m_type = &TA_PropertySpace; break;
+  case TypeItem::TIK_METHODSPACE: m_type = &TA_MethodSpace; break;
+  case TypeItem::TIK_TYPESPACE: m_type = &TA_TypeSpace; break;
   default: m_type = NULL; // compiler food
   }
 }
 
 TypeDef* taClassDataLink::GetDataTypeDef() const {
   switch (tik) {
-  case taMisc::TIK_ENUM: return &TA_EnumDef;
-  case taMisc::TIK_MEMBER: return &TA_MemberDef;
-  case taMisc::TIK_PROPERTY: return &TA_PropertyDef;
-  case taMisc::TIK_METHOD: return &TA_MethodDef;
-  case taMisc::TIK_TYPE: return &TA_TypeDef;
-  case taMisc::TIK_ENUMSPACE: return &TA_EnumSpace;
-  case taMisc::TIK_TOKENSPACE: return &TA_TokenSpace;
-  case taMisc::TIK_MEMBERSPACE: return &TA_MemberSpace;
-  case taMisc::TIK_PROPERTYSPACE: return &TA_PropertySpace;
-  case taMisc::TIK_METHODSPACE: return &TA_MethodSpace;
-  case taMisc::TIK_TYPESPACE: return &TA_TypeSpace;
+  case TypeItem::TIK_ENUM: return &TA_EnumDef;
+  case TypeItem::TIK_MEMBER: return &TA_MemberDef;
+  case TypeItem::TIK_PROPERTY: return &TA_PropertyDef;
+  case TypeItem::TIK_METHOD: return &TA_MethodDef;
+  case TypeItem::TIK_TYPE: return &TA_TypeDef;
+  case TypeItem::TIK_ENUMSPACE: return &TA_EnumSpace;
+  case TypeItem::TIK_TOKENSPACE: return &TA_TokenSpace;
+  case TypeItem::TIK_MEMBERSPACE: return &TA_MemberSpace;
+  case TypeItem::TIK_PROPERTYSPACE: return &TA_PropertySpace;
+  case TypeItem::TIK_METHODSPACE: return &TA_MethodSpace;
+  case TypeItem::TIK_TYPESPACE: return &TA_TypeSpace;
   default: return &TA_void; // compiler food; anything but NULL!!!
   }
 }
@@ -92,7 +77,7 @@ TypeDef* taClassDataLink::GetDataTypeDef() const {
 //  taTypeInfoDataLink	//
 //////////////////////////
 
-taTypeInfoDataLink::taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_)
+taTypeInfoDataLink::taTypeInfoDataLink(TypeItem::TypeInfoKinds tik_, TypeItem* data_)
 :inherited(tik_, data_, data_->data_link)
 {
 }
@@ -111,11 +96,11 @@ taiTreeDataNode* taTypeInfoDataLink::CreateTreeDataNode_impl(MemberDef* md, taiT
 bool taTypeInfoDataLink::HasChildItems() {
   bool rval = false;
   switch(tik) {
-  case taMisc::TIK_ENUM: break;
-  case taMisc::TIK_MEMBER: break;
-  case taMisc::TIK_PROPERTY: break;
-  case taMisc::TIK_METHOD: break;
-  case taMisc::TIK_TYPE: {
+  case TypeItem::TIK_ENUM: break;
+  case TypeItem::TIK_MEMBER: break;
+  case TypeItem::TIK_PROPERTY: break;
+  case TypeItem::TIK_METHOD: break;
+  case TypeItem::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
     if (td->internal && !td->InheritsFormal(TA_template)) {
       break;
@@ -153,7 +138,7 @@ bool taTypeInfoDataLink::ShowMember(MemberDef* md) {
 //  taTypeSpaceDataLink_Base//
 //////////////////////////
 
-taTypeSpaceDataLink_Base::taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, 
+taTypeSpaceDataLink_Base::taTypeSpaceDataLink_Base(TypeItem::TypeInfoKinds tik_, 
   taPtrList_impl* data_, taDataLink* &link_ref_)
 :inherited(tik_, data_, link_ref_)
 {
@@ -177,7 +162,7 @@ taiTreeDataNode* taTypeSpaceDataLink_Base::CreateTreeDataNode_impl(MemberDef* md
 //////////////////////////
 
 taTypeSpaceDataLink::taTypeSpaceDataLink(TypeSpace* data_)
-:inherited(taMisc::TIK_TYPESPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_TYPESPACE, data_, data_->data_link)
 {
   dm = DM_DefaultRoot; // default for root, generally we override for other cases
 }
@@ -247,7 +232,7 @@ bool taTypeSpaceDataLink::ShowChild(TypeDef* td) const {
 //////////////////////////
 
 taMethodSpaceDataLink::taMethodSpaceDataLink(MethodSpace* data_)
-:inherited(taMisc::TIK_METHODSPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_METHODSPACE, data_, data_->data_link)
 {
 }
 
@@ -307,7 +292,7 @@ String taMethodSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString
 //////////////////////////
 
 taMemberSpaceDataLink::taMemberSpaceDataLink(MemberSpace* data_)
-:inherited(taMisc::TIK_MEMBERSPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_MEMBERSPACE, data_, data_->data_link)
 {
 }
 
@@ -360,7 +345,7 @@ String taMemberSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString
 //////////////////////////
 
 taPropertySpaceDataLink::taPropertySpaceDataLink(PropertySpace* data_)
-:inherited(taMisc::TIK_PROPERTYSPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_PROPERTYSPACE, data_, data_->data_link)
 {
 }
 
@@ -439,22 +424,22 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
   // following is default for most items
   int flags = iTreeViewItem::DNF_IS_FOLDER | iTreeViewItem::DNF_NO_CAN_DROP;
   switch (tik) {
-  case taMisc::TIK_ENUM: {
+  case TypeItem::TIK_ENUM: {
     }
     break;
-  case taMisc::TIK_MEMBER: {
+  case TypeItem::TIK_MEMBER: {
     }
     break;
-  case taMisc::TIK_PROPERTY: {
+  case TypeItem::TIK_PROPERTY: {
     }
     break;
-  case taMisc::TIK_METHOD: {
+  case TypeItem::TIK_METHOD: {
     // /*MethodDef* md */ static_cast<MethodDef*>(data());
     //TODO: enumerate params
     //taiDataLink* dl = NULL;
     }
     break;
-  case taMisc::TIK_TYPE: {
+  case TypeItem::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
     if (td->internal && !td->InheritsFormal(TA_template)) {
       break;
@@ -588,13 +573,13 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
   taiTreeDataNode* last_child_node = NULL;
   int flags = 0;
     switch (tik) {
-    case taMisc::TIK_MEMBERSPACE:
+    case TypeItem::TIK_MEMBERSPACE:
       flags = iTreeViewItem::DNF_NO_CAN_DROP;
       break;
-    case taMisc::TIK_METHODSPACE:
+    case TypeItem::TIK_METHODSPACE:
       flags = iTreeViewItem::DNF_NO_CAN_DROP;
       break;
-    case taMisc::TIK_TYPESPACE: 
+    case TypeItem::TIK_TYPESPACE: 
       flags = iTreeViewItem::DNF_CAN_BROWSE | iTreeViewItem::DNF_NO_CAN_DROP;
       break;
     default: break;
@@ -604,15 +589,15 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
 //none    
     // do any modal type-specific processing for the item
     switch (tik) {
-    case taMisc::TIK_MEMBERSPACE: {
+    case TypeItem::TIK_MEMBERSPACE: {
       MemberDef* md = static_cast<MemberDef*>(data()->SafeEl_(i));
       if (!ShowMember(md)) continue;
     } break;
-    case taMisc::TIK_METHODSPACE: {
+    case TypeItem::TIK_METHODSPACE: {
       MethodDef* md = static_cast<MethodDef*>(data()->SafeEl_(i));
       if (!ShowMethod(md)) continue;
     } break;
-    case taMisc::TIK_TYPESPACE: {
+    case TypeItem::TIK_TYPESPACE: {
       TypeDef* td = static_cast<TypeDef*>(data()->SafeEl_(i));
       if (!ShowType(td)) continue;
     } break;
@@ -705,7 +690,7 @@ void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
 //   taiTypeItemDataHost	//
 //////////////////////////////////
 
-taiTypeItemDataHost::taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik_, 
+taiTypeItemDataHost::taiTypeItemDataHost(TypeItem* ti_, TypeItem::TypeInfoKinds tik_, 
   bool read_only_, bool modal_, QObject* parent)
 :inherited(NULL, NULL, read_only, modal_, parent)
 {
@@ -881,7 +866,7 @@ int taTypeInfoViewType::BidForView(TypeDef* td) {
 taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
   if (!el) return NULL; 
 
-  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(td);
+  taMisc::TypeInfoKinds tik = taMisc::TypeToTypeInfoKind(td);
 
   switch (tik) {
   case taMisc::TIK_ENUM:

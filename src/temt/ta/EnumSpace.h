@@ -23,6 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class EnumDef; //
+#ifndef NO_TA_BASE
+class taDataLink; //
+#endif
 
 class TA_API EnumSpace : public taPtrList<EnumDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of enums
@@ -42,9 +45,11 @@ protected:
 public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
+#ifndef NO_TA_BASE
   taDataLink*   data_link;
+#endif
 
-  void          Initialize()    { owner = NULL; data_link = NULL;}
+  void          Initialize();
   EnumSpace()                   { Initialize(); }
   EnumSpace(const EnumSpace& cp) { Initialize(); Borrow(cp); }
   ~EnumSpace();

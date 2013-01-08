@@ -14,13 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "TypeSpace.h"
+#include <TypeDef>
+#include <taMisc>
 
-TypeSpace::~TypeSpace() {
-  Reset();
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
-  }
-}
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 String  TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
 taPtrList_impl*  TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
@@ -46,6 +45,22 @@ void    TypeSpace::El_Done_(void* it)     { taRefN::Done((TypeDef*)it); }
 void*   TypeSpace::El_MakeToken_(void* it)  { return (void*)((TypeDef*)it)->MakeToken(); }
 void*   TypeSpace::El_Copy_(void* trg, void* src)
 { ((TypeDef*)trg)->Copy(*((TypeDef*)src)); return trg; }
+
+void TypeSpace::Initialize() {
+  owner = NULL;
+#ifndef NO_TA_BASE
+  data_link = NULL;
+#endif
+}
+
+TypeSpace::~TypeSpace() {
+  Reset();
+#ifndef NO_TA_BASE
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+#endif
+}
 
 TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
   if (fqname.contains("::")) {

@@ -2422,12 +2422,12 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       }
       if(lookup_md) {
         rval = path_prepend_before + lookup_md->name;
-        if(lookup_md->typeInfoKind() == taMisc::TIK_METHOD)
+        if(lookup_md->TypeInfoKind() == TypeItem::TIK_METHOD)
           rval += "()";
         new_pos = rval.length();
         rval += append_at_end;
         path_own_typ = lookup_td;
-        if(lookup_md->typeInfoKind() == taMisc::TIK_MEMBER) {
+        if(lookup_md->TypeInfoKind() == TypeItem::TIK_MEMBER) {
           path_md = (MemberDef*)lookup_md;
         }
       }
@@ -2443,7 +2443,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       bool okc = eslkup->OpenChooser();
       if(okc && eslkup->md()) {
         rval = path_prepend_before + eslkup->md()->name;
-        if(eslkup->md()->typeInfoKind() == taMisc::TIK_METHOD)
+        if(eslkup->md()->TypeInfoKind() == TypeItem::TIK_METHOD)
           rval += "()";
         new_pos = rval.length();
         rval += append_at_end;

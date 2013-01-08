@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "PropertySpace.h"
+#include <PropertyDef>
+#include <MemberDef>
+#include <MethodDef>
+#include <TypeDef>
+#include <taMisc>
 
 void PropertyDef::setType(TypeDef* typ) {
   if (!typ) {

@@ -42,7 +42,8 @@ public:
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MemberDefBase;}
   virtual bool          ValIsDefault(const void* base,
-    int for_show = taMisc::IS_EXPERT) const = 0; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+                                     int for_show) const = 0; // = taMisc::IS_EXPERT);
+    // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void          Copy(const MemberDefBase& cp);
   void          Copy(const MemberDefBase* cp); // this is a "pseudo-virtual" type guy, that will copy a like source (Member or Property)
@@ -61,9 +62,9 @@ public:
   bool          CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool          ShowMember(int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
-    TypeItem::ShowContext show_context = TypeItem::SC_ANY,
-    int show_allowed = taMisc::SHOW_CHECK_MASK) const;
+  bool          ShowMember(int show_forbidden, // = taMisc::USE_SHOW_GUI_DEF,
+                           TypeItem::ShowContext show_context, // = TypeItem::SC_ANY
+                           int show_allowed) const; //= taMisc::SHOW_CHECK_MASK
   // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
 protected:

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "MethodDef.h"
+#include <MethodSpace>
+#include <TypeDef>
+#include <taMisc>
 
 void MethodDef::Initialize() {
   owner = NULL;
@@ -203,8 +206,7 @@ const String MethodDef::prototype() const {
   return rval;
 }
 
-bool MethodDef::ShowMethod(taMisc::ShowMembs show) const
-{
+bool MethodDef::ShowMethod(int show) const {
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
 

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "PropertyDef.h"
+#include <Variant>
+#include <TypeDef>
+#include <taMisc>
 
 void PropertyDef::Initialize() {
 #ifdef NO_TA_BASE

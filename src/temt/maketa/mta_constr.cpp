@@ -18,7 +18,6 @@
 
 #include "mta_constr.h"
 
-#include "ta_platform.h"
 #include "ta_type.h"
 
 // this is the offset of arg indexes into css-passed arg strings relative to the actual
@@ -1367,7 +1366,7 @@ void MTA::TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PA
   // call the pre-processed files..
   int i;
   for(i=0; i<ppfiles.size; i++) {
-    String tmp = taPlatform::getFileName(ppfiles.FastEl(i)).before("_TA_type.h");
+    String tmp = taMisc::GetFileFmPath(ppfiles.FastEl(i)).before("_TA_type.h");
     strm << "  ta_Init_" << tmp << "();\n";
   }
 

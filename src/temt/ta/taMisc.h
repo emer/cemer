@@ -26,6 +26,7 @@
 #include <String_PArray>
 #include <DumpFileCvtList>
 #include <TypeSpace>
+#include <TypeItem>
 
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
@@ -124,21 +125,6 @@ public:
     AUTO_APPLY,                 // automatically apply changes before auto-reverting
     AUTO_REVERT,                // automatically revert, losing changes
     CONFIRM_REVERT              // put up a confirmatory message before reverting
-  };
-
-  enum TypeInfoKind { // used in switch statements to particularize instances
-    TIK_ENUM,
-    TIK_MEMBER,
-    TIK_METHOD,
-    TIK_PROPERTY,
-    TIK_TYPE,
-    TIK_ENUMSPACE,
-    TIK_TOKENSPACE,
-    TIK_MEMBERSPACE,
-    TIK_METHODSPACE,
-    TIK_PROPERTYSPACE, // note: holds mix of PropertyDef and MemberDef
-    TIK_TYPESPACE,
-    TIK_UNKNOWN
   };
 
   enum QuitFlag { // helps during shutdown to know whether we can cancel
@@ -643,8 +629,8 @@ public:
   // #CAT_GlobalState generate malloc memory statistic information to given stream
   static String& PrintAllTokens(String& strm);
   // #CAT_GlobalState generate a list and count of all types that keep tokens, with a count of tokens
-  static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
-  // #CAT_GlobalState
+  static TypeItem::TypeInfoKinds TypeToTypeInfoKind(TypeDef* typ);
+  // #CAT_GlobalState translate typedef to internal type info kind
 
 #ifndef __MAKETA__
   static void   Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));

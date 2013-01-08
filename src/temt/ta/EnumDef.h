@@ -34,7 +34,7 @@ public:
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_EnumDef;}
-  taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_ENUM;}
+  override TypeInfoKinds TypeInfoKind() const {return TIK_ENUM;}
 
   void          Copy(const EnumDef& cp);
 

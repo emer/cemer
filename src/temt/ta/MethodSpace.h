@@ -22,6 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class MethodDef; //
+class String_PArray; //
+class TypeDef; //
+
+#ifndef NO_TA_BASE
+class taDataLink; //
+#endif
 
 
 class TA_API MethodSpace: public Method_List {
@@ -43,9 +50,11 @@ protected:
 public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
+#ifndef NO_TA_BASE
   taDataLink*   data_link;
+#endif
 
-  void          Initialize()            { owner = NULL; data_link = NULL;}
+  void          Initialize();
   MethodSpace()                         { Initialize(); }
   MethodSpace(const MethodSpace& cp)    { Initialize(); Borrow(cp); }
   ~MethodSpace();

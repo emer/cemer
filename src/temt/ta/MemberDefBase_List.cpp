@@ -14,8 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "MemberDefBase_List.h"
+#include <MemberDefBase>
+#include <MemberDef>
+#include <PropertyDef>
+#include <taMisc>
 
-
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 String  MemberDefBase_List::El_GetName_(void* it) const
   { return ((MemberDefBase*)it)->name; }
@@ -35,10 +41,10 @@ void    MemberDefBase_List::El_Done_(void* it)
 
 
 void*   MemberDefBase_List::El_MakeToken_(void* it) {
-  switch (((MemberDefBase*)it)->typeInfoKind()) {
-  case taMisc::TIK_MEMBER:
+  switch (((MemberDefBase*)it)->TypeInfoKind()) {
+  case TypeItem::TIK_MEMBER:
     return (void*)((MemberDef*)it)->MakeToken();
-  case taMisc::TIK_PROPERTY:
+  case TypeItem::TIK_PROPERTY:
     return (void*)((PropertyDef*)it)->MakeToken();
   default: return NULL; // shouldn't happen!
   }
@@ -51,9 +57,18 @@ void*   MemberDefBase_List::El_Copy_(void* trg, void* src)
   return trg;
 }
 
+void MemberDefBase_List::Initialize() {
+  owner = NULL;
+#ifndef NO_TA_BASE
+  data_link = NULL;
+#endif
+}
+
 MemberDefBase_List::~MemberDefBase_List() {
   Reset();
+#ifndef NO_TA_BASE
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+#endif
 }

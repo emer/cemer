@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class PropertyDef; //
 
 
 class TA_API PropertySpace: public MemberDefBase_List {

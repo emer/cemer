@@ -37,7 +37,23 @@ public:
     SC_TREE             // in tree views (browsing) -- directives like "SHOW_TREE"
   }; //
 
-// const guys help speed up oft-looked up values by avoiding String churning
+  enum TypeInfoKinds { // used in switch statements to particularize instances
+    TIK_ENUM,
+    TIK_MEMBER,
+    TIK_METHOD,
+    TIK_PROPERTY,
+    TIK_TYPE,
+    TIK_ENUMSPACE,
+    TIK_TOKENSPACE,
+    TIK_MEMBERSPACE,
+    TIK_METHODSPACE,
+    TIK_PROPERTYSPACE, // note: holds mix of PropertyDef and MemberDef
+    TIK_TYPESPACE,
+    TIK_UNKNOWN
+  };
+
+
+  // const guys help speed up oft-looked up values by avoiding String churning
   static const String opt_show; // "SHOW"
   static const String opt_no_show; // "NO_SHOW"
   static const String opt_hidden; // "HIDDEN"
@@ -67,11 +83,11 @@ public:
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_void;}
-  virtual taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_UNKNOWN;}
+  virtual TypeInfoKinds TypeInfoKind() const {return TIK_UNKNOWN;}
   virtual TypeDef*      GetOwnerType() const {return NULL;}
   virtual const String  GetPathName() const {return name;}
-    // name used for saving a reference in stream files, can be used to lookup again
-
+  // name used for saving a reference in stream files, can be used to lookup again
+  
   void          Copy(const TypeItem& cp);
   bool          HasOption(const String& op) const { return (opts.FindEl(op) >= 0); }
     // check if option is set
@@ -93,7 +109,7 @@ public:
   // return true if item has the condkey (e.g., CONDEDIT, CONDSHOW, GHOST), and if so, sets is_on if the cond type is ON (else OFF) and if the match value was in the list (val_is_eq) -- format: condkey_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic -- base and base_td refer to the the parent object that owns this one -- used for searching for the member to conditionalize on
   virtual bool          GetCondOptTest(const String condkey, const TypeDef* base_td, const void* base) const;
   // returns true if item does NOT have condkey (e.g., CONDEDIT, CONDSHOW, GHOST), or the condition evaluates to true, otherwise false -- this is a simpler interface than GetCondOpt, suitable for most uses -- format: condkey_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic  -- base and base_td refer to the the parent object that owns this one -- used for searching for the member to conditionalize on
-  virtual void		PrintType_OptsLists(String& strm);
+  virtual void		PrintType_OptsLists(String& strm) const;
   // for printing type information -- renders opts and lists into a formatted string
 
   TypeItem();

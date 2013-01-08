@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "EnumSpace.h"
+#include <EnumDef>
+#include <taMisc>
+
+#ifndef NO_TA_BASE
+#include <taDataLink>
+#endif
 
 String  EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }
 taPtrList_impl*  EnumSpace::El_GetOwnerList_(void* it) const { return ((EnumDef*)it)->owner; }
@@ -27,11 +33,20 @@ void*   EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->Make
 void*   EnumSpace::El_Copy_(void* trg, void* src)
 { ((EnumDef*)trg)->Copy(*((EnumDef*)src)); return trg; }
 
+void EnumSpace::Initialize() {
+  owner = NULL;
+#ifndef NO_TA_BASE
+  data_link = NULL;
+#endif
+}
+
 EnumSpace::~EnumSpace() {
   Reset();
+#ifndef NO_TA_BASE
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+#endif
 }
 
 // default enum no is last + 1

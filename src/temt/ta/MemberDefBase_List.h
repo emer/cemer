@@ -23,14 +23,18 @@
 
 // declare all other types mentioned but not required to include:
 class MemberDefBase; //
-
+#ifndef NO_TA_BASE
+class taDataLink; //
+#endif
 
 class TA_API MemberDefBase_List: public taPtrList<MemberDefBase> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS common subtype for Member and PropertySpace
 public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
+#ifndef NO_TA_BASE
   taDataLink*   data_link;
+#endif
 
   MemberDefBase_List() {Initialize();}
   ~MemberDefBase_List();
@@ -48,7 +52,7 @@ protected:
   void*         El_Copy_(void* trg, void* src); // note: copies like guys correctly
 
 private:
-  void          Initialize()            { owner = NULL; data_link = NULL;}
+  void          Initialize();
 };
 
 #endif // MemberDefBase_List_h

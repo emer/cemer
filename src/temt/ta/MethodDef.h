@@ -20,6 +20,8 @@
 #include <TypeItem>
 
 // member includes:
+#include <String_PArray>
+#include <TypeSpace>
 
 // declare all other types mentioned but not required to include:
 class MethodSpace; //
@@ -52,7 +54,7 @@ public:
 
   css_fun_stub_ptr stubp;       // css function stub pointer
 
-  taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_METHOD;}
+  override TypeInfoKinds TypeInfoKind() const {return TIK_METHOD;}
 
   const String          prototype() const; // text depiction of fun, ex "void MyFun(int p)"
   override void*        This() {return this;}
@@ -78,7 +80,7 @@ public:
   void                  CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String          ParamsAsString() const; // returns what would be in () for a definition
-  bool                  ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF) const;
+  bool                  ShowMethod(int show) const; // = taMisc::USE_SHOW_GUI_DEF
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys

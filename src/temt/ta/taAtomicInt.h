@@ -17,6 +17,7 @@
 #define taAtomicInt_h 1
 
 #include "ta_def.h"
+#include <taBasicAtomicInt>
 
 #if !defined(__MAKETA__) && defined(TA_USE_QT)
 # if (QT_VERSION >= 0x040400)

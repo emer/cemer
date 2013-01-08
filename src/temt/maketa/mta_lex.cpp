@@ -17,7 +17,6 @@
 // the lexical analyzer
 
 #include "maketa.h"
-#include "ta_platform.h"
 #include <ctype.h>
 
 /* note: we handle the following line end types:
@@ -172,6 +171,41 @@ int yylex()
   return mta->lex();
 }
 
+static String lexCanonical(const String& in) {
+#ifdef TA_OS_WIN
+  //NOTE: this routine will probably fail if server shares are used -- use mapped drive letters instead
+  // ex. \\myserver\myshare\myfile.xx --> map \\myserver\myshare to Z: -> Z:\myfile
+  // first, remove any double backslashes
+  String rval = unescapeBackslash(in);
+  // then, convert all forward slashes to Windows backslashes
+  //  (this is the safest common-denominator)
+  rval.gsub("/", "\\");
+  // remove any double backslashes AGAIN -- this happens with gcc/maketa/mingw funky: dir\\/file
+  rval = unescapeBackslash(rval);
+  // note: we assume that pathing is case-exact (even though win filenames are case-insensitive)
+  // but we do convert drive letter to upper case
+  String drv = rval.before(":");
+  if (drv.nonempty()) {
+    drv.upcase();
+    rval = drv + rval.from(":");
+  }
+  //TODO: maybe we should do a case conversion here, but possibly only to drive letter
+  return rval;
+#else
+  // in Unix, we don't use backslashes, and all filename 
+  // components are strictly case sensitive, so we are already
+  // lexically canonical
+/*note: we could do this... but note, not avail on win32/msvc
+  char resolved_path[PATH_MAX];
+  char* r = realpath(in, resolved_path);
+  if (r) {
+    return r; // same as our buff
+  } */
+  return in;
+#endif
+}
+
+
 int MTA::lex() {
   int c, nxt, prv;
   TypeDef *itm;
@@ -282,13 +316,13 @@ int MTA::lex() {
           skipline();
         continue;
       }
-      cur_fname = taPlatform::lexCanonical(LexBuf);
+      cur_fname = lexCanonical(LexBuf);
       if ((c != '\n') && (c != '\r'))
 	skipline();		// might be training stuff to skip here
       if (state == Skip_File) // if previously skipping, default is to find
 	state = Find_Item;
 
-      String cur_fname_only = taPlatform::getFileName(cur_fname);
+      String cur_fname_only = taMisc::GetFileFmPath(cur_fname);
 
       // don't include the base_TA.h file for this one
       if((cur_fname.contains(ta_type_h)) ||
@@ -316,7 +350,7 @@ int MTA::lex() {
 	  cout << "\nSkipping: " << cur_fname << " because prev included\n";
 	state = Skip_File;
       }
-      String fname_only = taPlatform::getFileName(fname);
+      String fname_only = taMisc::GetFileFmPath(fname);
 
       if(cur_fname_only != fname_only) {
 	spc = &(spc_other); // add to other space when not in cur space

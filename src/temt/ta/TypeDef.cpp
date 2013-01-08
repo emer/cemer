@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "TypeDef.h"
+#include <MemberDef>
+#include <MethodDef>
+#include <EnumDef>
+#include <taHashTable>
+#include <taMisc>
 
 TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
   // search up typ1's tree until a common subtype is found
@@ -1161,7 +1166,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       if (!md->DumpMember(base))
         continue;
     } else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT))
+      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT, taMisc::SHOW_CHECK_MASK))
         continue;
     } else {
       if(md->HasOption("NO_SAVE"))
@@ -1736,10 +1741,12 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
     if (sc == SC_STREAMING) {
       if (!md->DumpMember(base))
         continue;
-    } else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT))
+    }
+    else if (sc == SC_DISPLAY) {
+      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT, taMisc::SHOW_CHECK_MASK))
         continue;
-    } else {
+    }
+    else {
       if(md->HasOption("NO_SAVE"))
         continue;
     }
@@ -2964,7 +2971,6 @@ bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,
                             TypeDef* par_typ, taObjDiffRec* par_od) const {
-#ifndef NO_TA_BASE
   if(InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
     if(rbase) {
@@ -2972,9 +2978,9 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
     }
     return;
   }
-#endif
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, const_cast<TypeDef*>(this), memb_def, (void*)base,
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, const_cast<TypeDef*>(this),
+                                       memb_def, (void*)base,
                                        (void*)par, par_typ, par_od);
   odl.Add(odr);
 //   if(ptr > 0) {
@@ -2993,7 +2999,8 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
   MemberDef* last_md = NULL;
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") || md->HasOption("GUI_READ_ONLY")
+    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") ||
+       md->HasOption("GUI_READ_ONLY")
        || md->HasOption("HIDDEN"))
       continue;
     if(par_od && par_od->mdef) {
@@ -3017,6 +3024,8 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
                                  const_cast<TypeDef*>(this), par_od);
   }
 }
+
+#endif // NO_TA_BASE
 
 #ifdef NO_TA_BASE
 

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "MemberSpace.h"
+#include <MemberDef>
+#include <TypeDef>
+#include <taMisc>
 
 int MemberSpace::FindNameOrType(const char *nm) const { // lookup by name
   int rval = FindNameIdx(nm);
@@ -205,7 +208,8 @@ String& MemberSpace::Print(String& strm, void* base, int indent) const {
   String_PArray col2;
   for(int i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
-    if(!md->ShowMember()) continue;
+    if(!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
+                       taMisc::SHOW_CHECK_MASK)) continue;
     String c1; String c2;
     md->Print(c1, c2, base, indent);
     col1.Add(c1); col2.Add(c2);

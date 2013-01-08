@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "MemberDef.h"
+#include <TypeDef>
+#include <EnumDef>
+#include <taMisc>
+#include <voidptr_PArray>
 
 void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
   String desc = md->desc;
@@ -32,8 +36,8 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
       MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT) ||
-        smd->HasOption("HIDDEN_INLINE"))
+      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, taMisc::SHOW_CHECK_MASK) ||
+          smd->HasOption("HIDDEN_INLINE"))
         continue;
       GetMembDesc(smd, dsc_str, indent);
     }
@@ -329,3 +333,5 @@ int MemberDef::Dump_Save_PathR(ostream&, void*, void*, int) {
 int MemberDef::Dump_Load(istream&, void*, void*) {
   return false;
 }
+
+#endif // NO_TA_BASE

@@ -38,7 +38,7 @@ class iClassBrowseViewer; //
 class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
 INHERITED(taiDataLink)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
   TypeDef*              type() const {return m_type;}
 
   override TypeDef*     GetDataTypeDef() const;
@@ -47,7 +47,7 @@ public:
 
 protected:
   TypeDef*              m_type;
-  taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataLink* &link_ref_);  //
+  taClassDataLink(TypeItem::TypeInfoKinds tik_, void* data_, taDataLink* &link_ref_);  //
 };
 
 
@@ -63,7 +63,7 @@ public:
   USING(inherited::ShowMember)
   override bool         ShowMember(MemberDef* md); // asks this type if we should show the md member
 
-  taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_);  //
+  taTypeInfoDataLink(TypeItem::TypeInfoKinds tik_, TypeItem* data_);  //
   DL_FUNS(taTypeInfoDataLink); //
 
 protected:
@@ -80,7 +80,7 @@ public:
   taPtrList_impl*       data() {return (taPtrList_impl*)m_data;}
   override bool         HasChildItems() {return true;}
 
-  taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, taPtrList_impl* data_,
+  taTypeSpaceDataLink_Base(TypeItem::TypeInfoKinds tik_, taPtrList_impl* data_,
     taDataLink* &link_ref_);
   DL_FUNS(taTypeSpaceDataLink_Base) //
 protected:
@@ -184,7 +184,7 @@ public:
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
   TypeItem*             data() {return ((taTypeInfoDataLink*)m_link)->data();}
@@ -211,7 +211,7 @@ private:
 class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
   taPtrList_impl*       data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
@@ -260,9 +260,9 @@ class TA_API taiTypeItemDataHost: public taiEditDataHost { // #IGNORE displays d
 INHERITED(taiEditDataHost)
 public:
   TypeItem*             ti; // #IGNORE
-  taMisc::TypeInfoKind          tik;
+  TypeItem::TypeInfoKinds          tik;
 
-  taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik, bool read_only_ = false,
+  taiTypeItemDataHost(TypeItem* ti_, TypeItem::TypeInfoKinds tik, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);
 protected:
   override void         Constr_Data_Labels();

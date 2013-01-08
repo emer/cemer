@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "EnumDef.h"
+#include <EnumSpace>
+#include <taMisc>
 
 EnumDef::EnumDef()
 :inherited()

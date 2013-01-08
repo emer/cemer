@@ -29,8 +29,8 @@
 #include <TypeSpace>
 
 // declare all other types mentioned but not required to include:
-
 class taBase_List; //
+
 
 // Order of includes problem -- the Windows header file "WinUser.h" defines this
 // as a macro.  If some file indirectly includes that file and then this file,
@@ -110,10 +110,10 @@ public:
   bool          IsClass() const; // true if it is a class
   bool          IsAnchor() const; // true if this is the non-ptr, non-ref, non-const type
   bool          IsVarCompat() const; // true if read/write compatible with Variant
-  taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_TYPE;}
+  override      TypeInfoKinds TypeInfoKind() const {return TIK_TYPE;}
 
   /////////////////////////////////////////////////////////////
-  //		Constructors and misc industrial
+  //            Constructors and misc industrial
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeDef;}
@@ -361,7 +361,7 @@ public:
                           MemberDef* memb_def = NULL);
   // sets value from a Variant representation; primarily for value types (int, etc.);
   bool          ValIsDefault(const void* base, const MemberDef* memb_def,
-                             int for_show = taMisc::IS_EXPERT) const;
+                             int for_show) const; // = taMisc::IS_EXPERT
   // true if the type contains its defaults
   bool          ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
   // true only if value is empty, ex 0 or ""
@@ -380,8 +380,8 @@ public:
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                                 void* trg_base, void* src_base,
-                                int show_forbidden = taMisc::NO_HIDDEN,
-                                int show_allowed = taMisc::SHOW_CHECK_MASK,
+                                int show_forbidden, //= taMisc::NO_HIDDEN
+                                int show_allowed, // = taMisc::SHOW_CHECK_MASK
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 

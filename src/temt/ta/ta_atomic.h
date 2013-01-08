@@ -19,7 +19,6 @@
 #ifndef TA_ATOMIC_H
 #define TA_ATOMIC_H
 
-#include <taBasicAtomicInt>
 #include <taAtomicInt>
 
 #endif

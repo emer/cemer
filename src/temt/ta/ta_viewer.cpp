@@ -420,8 +420,8 @@ void ClassBrowseViewer::setRoot(void* root_, TypeDef* root_typ_, MemberDef* root
 void ClassBrowseViewer::StrToRoot() {
   //TODO: full description of type, requires support from ta_type for searching/converting
   // for now, we only support the root typespace
-  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(root_typ);
-  if ((tik == taMisc::TIK_TYPESPACE) && (root_str == ".types")) {
+  TypeItem::TypeInfoKinds tik = taMisc::TypeToTypeInfoKind(root_typ);
+  if ((tik == TypeItem::TIK_TYPESPACE) && (root_str == ".types")) {
     m_root = &taMisc::types;
     root_md = TA_taMisc.members.FindName("types");
   } else {
