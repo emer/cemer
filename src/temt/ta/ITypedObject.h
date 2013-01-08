@@ -17,14 +17,15 @@
 #define ITypedObject_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-class TA_API ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
+class TA_API ITypedObject {
+  //#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE this is the interface available to the host data object
 public:
   virtual void*         This() = 0; // reference to the 'this' pointer of the client object
   virtual TypeDef*      GetTypeDef() const = 0; // typedef of the dlc

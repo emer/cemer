@@ -18,41 +18,12 @@
 
 #ifndef maketa_h
 #define maketa_h 1
-/*TENT: moved to head of ta_type, particularly to compile variant in maketa
-class TypeDef;
 
-extern TypeDef TA_void;
-extern TypeDef TA_int;
-extern TypeDef TA_long;
-extern TypeDef TA_unsigned_long;
-extern TypeDef TA_short;
-extern TypeDef TA_char;
-extern TypeDef TA_unsigned;
-extern TypeDef TA_signed;
-extern TypeDef TA_float;
-extern TypeDef TA_double;
-extern TypeDef TA_int64_t;
-extern TypeDef TA_uint64_t;
-extern TypeDef TA_intptr_t;
-extern TypeDef TA_bool;
-extern TypeDef TA_const;	// const is not formal...
-extern TypeDef TA_enum;		// par_formal
-extern TypeDef TA_struct;	// par_formal
-extern TypeDef TA_union;	// par_formal
-extern TypeDef TA_class;	// par_formal
-extern TypeDef TA_template;	// par_formal
-extern TypeDef TA_templ_inst;	// par_formal template instantiation
-extern TypeDef TA_ta_array;	// par_formal (indicates "arrayness")
-extern TypeDef TA_taBase;
-extern TypeDef TA_taRegFun;	// registered functions
-extern TypeDef TA_TypeDef;	// give these to the user...
-extern TypeDef TA_MemberDef;
-extern TypeDef TA_MethodDef;
-extern TypeDef TA_ta_Globals;
-extern TypeDef TA_taString;
-extern TypeDef TA_void_ptr;
-*/
-#include "ta_type.h"
+#include <TypeDef>
+#include <MethodDef>
+#include <MemberDef>
+#include <PropertyDef>
+#include <EnumDef>
 
 #ifndef TYPE
 #include "mta_parse.h"
@@ -212,6 +183,9 @@ public:
   int	readfilename(int c); // read an optionally quoted filename, pass first char (ex ") in c; returns fname without quotes; quotes enables spaces, else ws terminates
   int	follow(int expect, int ifyes, int ifno);
   int	lex();
+  static String  lexCanonical(const String& in);
+  // canonicalize the path for lexing
+
 protected:
   void 		AddBuiltIn(TypeSpace& ts);
   void 		InitBuiltIn(); // do once
@@ -273,3 +247,4 @@ public: // these used to be standalone functions
 extern MTA* mta;
 
 #endif // maketa_h
+ 

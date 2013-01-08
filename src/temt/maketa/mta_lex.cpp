@@ -17,6 +17,8 @@
 // the lexical analyzer
 
 #include "maketa.h"
+#include <taMisc>
+
 #include <ctype.h>
 
 /* note: we handle the following line end types:
@@ -27,6 +29,7 @@
   NOTE: crlf is treated as a single character -- last_char will be the char
     before the cr, not cr
 */
+
 int MTA::Getc() {
   char c = fh.get();
   //  strm_pos++;
@@ -171,7 +174,7 @@ int yylex()
   return mta->lex();
 }
 
-static String lexCanonical(const String& in) {
+String MTA::lexCanonical(const String& in) {
 #ifdef TA_OS_WIN
   //NOTE: this routine will probably fail if server shares are used -- use mapped drive letters instead
   // ex. \\myserver\myshare\myfile.xx --> map \\myserver\myshare to Z: -> Z:\myfile

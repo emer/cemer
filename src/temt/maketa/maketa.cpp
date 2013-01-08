@@ -18,17 +18,16 @@
 
 #include "maketa.h"
 #include "mta_constr.h"
-#include "ta_platform.h"
-#include "ta_variant.h"
+#include <taMisc>
+#include <taHashTable>
+#include <Variant>
 
 #include <signal.h>
-//nn #include <malloc.h>
-#ifdef TA_OS_WIN
-//#include "stdafx.h"
-#endif
-//NOTE on TypeDef.size -- size is irrelevant when building maketa, and is basically inaccessible
-// when running maketa -- therefore, the only thing we use sz for in building maketa is to
-// control how we want size information generated -- the following are the codes:
+
+//NOTE on TypeDef.size -- size is irrelevant when building maketa, and is basically
+// inaccessible when running maketa -- therefore, the only thing we use sz for
+// in building maketa is to control how we want size information generated -- the
+// following are the codes:
 // sz=0: don't generate sizeof info, unless a real class
 // sz=1: generate sizeof info, ex. "sizeof(int)"
 
@@ -402,14 +401,14 @@ void MTA::Class_UpdateLastPtrs() {
 String MTA::FindFile(const String& fname, bool& ok) {
   //NOTE: ok only cleared on error
   // first just check the basic name, may be abs, or in current
-  if (taPlatform::fileExists(fname)) {
+  if (taMisc::FileExists(fname)) {
     return fname;
   }
   // otherwise, search paths, unless it is already qualified
-  if (!taPlatform::isQualifiedPath(fname)) {
+  if (!taMisc::IsQualifiedPath(fname)) {
     for (int i = 0; i < paths.size; ++i) {
       String fqfname = paths.FastEl(i) + fname;
-      if (taPlatform::fileExists(fqfname)) {
+      if (taMisc::FileExists(fqfname)) {
         return fqfname;
       }
     }
@@ -602,7 +601,7 @@ int main(int argc, char* argv[])
   int i;
   String tmp;
   // always search in current directory first...
-  mta->paths.Add(taPlatform::finalSep("."));
+  mta->paths.Add(taMisc::FinalPathSep("."));
   for(i=1; i<argc; i++) {
     tmp = argv[i];
     if( (tmp == "-help") || (tmp == "--help")
@@ -660,12 +659,12 @@ int main(int argc, char* argv[])
 #else
       incs += tmp + " ";
 #endif
-      mta->paths.AddUnique(taPlatform::finalSep(tmp.from(2)));
+      mta->paths.AddUnique(taMisc::FinalPathSep(tmp.from(2)));
     } else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
         i++; // get filename, put in quotes in case of spaces
         incs += String("/I \"") + (const char*)argv[i] + "\" ";
-        mta->paths.AddUnique(taPlatform::finalSep(argv[i]));
+        mta->paths.AddUnique(taMisc::FinalPathSep(argv[i]));
       }
     } else if(tmp(0,2) == "-D")
       incs += tmp + " ";
@@ -700,7 +699,7 @@ int main(int argc, char* argv[])
           bool ok = true;
           String tfl = mta->FindFile(fl, ok);
           if (!ok) continue; // warning was printed
-          if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
+          if (!mta->headv.AddUnique(MTA::lexCanonical(tfl))) {
             cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
           }
         }
@@ -719,7 +718,7 @@ int main(int argc, char* argv[])
       bool ok = true;
       String tfl = mta->FindFile(tmp, ok);
       if (!ok) continue; // warning was printed
-      if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
+      if (!mta->headv.AddUnique(MTA::lexCanonical(tfl))) {
         cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
       }
     }
@@ -740,7 +739,7 @@ int main(int argc, char* argv[])
   // parse the file names a bit
 
   for(i=0; i<mta->headv.size; i++) {
-    String nstr = taPlatform::getFileName(mta->headv.FastEl(i));
+    String nstr = taMisc::GetFileFmPath(mta->headv.FastEl(i));
     mta->head_fn_only.Add(nstr);
   }
 
@@ -782,8 +781,8 @@ int main(int argc, char* argv[])
 
   String comnd;
   for(i=0; i<mta->headv.size; i++) {
-    String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) +
-      taPlatform::getFileName(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
+    String tmp_file = taMisc::FinalPathSep(taMisc::GetTemporaryPath()) +
+      taMisc::GetFileFmPath(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
     mta->fname = mta->headv.FastEl(i);
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
 //    mta->fname.makeUnique();

@@ -17,8 +17,7 @@
 // mta_constr.cpp
 
 #include "mta_constr.h"
-
-#include "ta_type.h"
+#include <taMisc>
 
 // this is the offset of arg indexes into css-passed arg strings relative to the actual
 // type scanned arg values, which start at 0

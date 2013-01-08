@@ -17,7 +17,6 @@
 
 #include "mta_constr.h"
 
-#include "ta_platform.h"
 #include "ta_type.h"
 
 // The logical ordering is: enum, subtypes, members, methods

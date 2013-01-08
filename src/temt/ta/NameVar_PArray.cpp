@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "NameVar_PArray.h"
+#include <String_PArray>
 
 const String NameVar_PArray::def_sep(", ");
 

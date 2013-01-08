@@ -18,15 +18,54 @@ set(ta_HEADS_MAKETA_LOCAL_1
   maketa_sstream.h
   ta_stdef.h
   ta_def.h
-  ta_atomic.h
-  # ta_string.h
-  # ta_variant.h
+  taBasicAtomicInt.h
+  taAtomicInt.h
+  taString.h
+  Variant.h
+  taRefN.h
+
+  NameVar.h
+  MTRndState.h
+  MTRnd.h
+  taPtrList_impl.h
+  taPtrList.h
+  taPtrList_base.h
+  taHashEl.h
+  taHashBucket.h
+  taHashTable.h
+  taArray_impl.h
+  taPlainArray.h
+  taFixedArray_impl.h
+  taFixedArray.h
+  int_FixedArray.h
+  String_PArray.h
+  int_PArray.h
+  voidptr_PArray.h
+  NameVar_PArray.h
+
+  ITypedObject.h
+  TypeItem.h
+  EnumSpace.h
+  TokenSpace.h
+  MemberDefBase_List.h
+  MemberSpace.h
+  Member_List.h
+  PropertySpace.h
+  MethodSpace.h
+  TypeSpace.h
+  EnumDef.h
+  MemberDefBase.h
+  MemberDef.h
+  PropertyDef.h
+  MethodDef.h
+  TypeDef.h
+
+  taVersion.h
+  taMisc.h
+
   ifont.h
-  # ta_mtrnd.h
-  # ta_list.h
   # ta_filer.h
   # icolor.h
-  # ta_type.h
   # ta_base.h
   minmax.h
   # ta_group.h
@@ -78,23 +117,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   colorbar_qt.h
   # ta_gui.h
   taBase.h
-  NameVar.h
-  MTRndState.h
   taDataLink.h
-  taPtrList_impl.h
-  taPtrList.h
-  taPtrList_base.h
-  taHashEl.h
-  taHashBucket.h
-  taHashTable.h
-  taArray_impl.h
-  taPlainArray.h
-  taFixedArray_impl.h
-  taFixedArray.h
-  int_FixedArray.h
-  String_PArray.h
-  int_PArray.h
-  voidptr_PArray.h
   taStringDiffItem.h
   taStringDiffItem_PArray.h
   taStringDiffEdits.h
@@ -103,29 +126,18 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taDataLinkItr.h
   taiDataLink.h
   NamedURL.h
-  NameVar_PArray.h
   DumpFileCvt.h
   DumpFileCvtList.h
   taiMiscCore.h
-  taVersion.h
   taThreadDefaults.h
-  taMisc.h
-  taRefN.h
-  ITypedObject.h
+
   taObjDiffRec.h
   IDataLinkProxy.h
   IDataLinkClient.h
   IMultiDataLinkClient.h
   IDataLinkClient_PtrList.h
-  EnumSpace.h
-  TokenSpace.h
-  Member_List.h
-  MemberDefBase_List.h
-  MemberSpace.h
-  PropertySpace.h
   Method_List.h
-  MethodSpace.h
-  TypeSpace.h
+
   taObjDiff_List.h
   taiMimeSource.h
   taBaseItr.h
@@ -746,14 +758,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   T3VESpace.h
   T3VEStatic.h
   taBase_RefList.h
-  TypeDef.h
-  EnumDef.h
-  MemberDef.h
-  MethodDef.h
-  TypeItem.h
-  MemberDefBase.h
-  PropertyDef.h
-  MTRnd.h
   DataChangedReason.h
 )
 
@@ -825,7 +829,99 @@ set(ta_HEADS_MOC
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
-set(ta_SRCS_GUI
+set(ta_SRCS
+#  ta_TA.cpp
+  taBasicAtomicInt.cpp
+  taAtomicInt.cpp
+  taString.cpp
+  Variant.cpp
+  taRefN.cpp
+
+  NameVar.cpp
+  MTRndState.cpp
+  MTRnd.cpp
+  taPtrList_impl.cpp
+  taPtrList.cpp
+  taPtrList_base.cpp
+  taHashTable.cpp
+  taArray_impl.cpp
+  taPlainArray.cpp
+  taFixedArray_impl.cpp
+  taFixedArray.cpp
+  int_FixedArray.cpp
+  String_PArray.cpp
+  int_PArray.cpp
+  voidptr_PArray.cpp
+  NameVar_PArray.cpp
+
+  ITypedObject.cpp
+  TypeItem.cpp
+  EnumSpace.cpp
+  TokenSpace.cpp
+  MemberDefBase_List.cpp
+  MemberSpace.cpp
+  Member_List.cpp
+  PropertySpace.cpp
+  MethodSpace.cpp
+  TypeSpace.cpp
+  EnumDef.cpp
+  MemberDefBase.cpp
+  MemberDef.cpp
+  PropertyDef.cpp
+  MethodDef.cpp
+  TypeDef.cpp
+
+  taVersion.cpp
+  taMisc.cpp
+
+  DataChangedReason.cpp
+
+  ta_thread.cpp
+  ifont.cpp
+  icolor.cpp
+  # ta_mtrnd.cpp
+  # ta_list.cpp
+  ta_filer.cpp
+  # ta_type.cpp
+  ta_type_constr.cpp
+  # ta_base.cpp
+  ta_dmem.cpp
+  ta_fontspec.cpp
+  minmax.cpp
+  ta_group.cpp
+  ta_audioproc.cpp
+  ta_qtclipdata.cpp
+  colorscale.cpp
+  ta_script.cpp
+  ta_viewspec.cpp
+  ta_viewer.cpp
+  ta_program.cpp
+  ta_program_els.cpp
+  ta_matrix.cpp
+  ta_math.cpp
+  ta_geometry.cpp
+  ta_data.cpp
+  ta_datatable.cpp
+  ta_dataproc.cpp
+  ta_dataanal.cpp
+  ta_datagen.cpp
+  ta_imgproc.cpp
+  ta_virtenv.cpp
+  ta_dump.cpp
+  ta_defaults.cpp
+  ta_plugin_p.cpp
+  ta_seledit.cpp
+  ta_project.cpp
+  ta_server.cpp
+  ta_gendoc.cpp
+  ta_time.cpp
+  fun_lookup.cpp
+  ta_data_extras.cpp 
+  ta_qrc.cpp
+  ta_ti.cpp
+  ClusterManager.cpp
+  Subversion.cpp
+  SubversionClient.cpp
   ta_qt.cpp
   ta_mediawiki.cpp
   ta_type_qt.cpp
@@ -882,9 +978,6 @@ set(ta_SRCS_GUI
   taiMiscCore.cpp
   taVersion.cpp
   taThreadDefaults.cpp
-  taMisc.cpp
-  taRefN.cpp
-  ITypedObject.cpp
   taObjDiffRec.cpp
   IDataLinkProxy.cpp
   IDataLinkClient.cpp
@@ -1519,72 +1612,7 @@ set(ta_SRCS_GUI
   T3VESpace.cpp
   T3VEStatic.cpp
   taBase_RefList.cpp
-  TypeDef.cpp
-  EnumDef.cpp
-  MemberDef.cpp
-  MethodDef.cpp
-  TypeItem.cpp
-  MemberDefBase.cpp
-  PropertyDef.cpp
-  MTRnd.cpp
-  DataChangedReason.cpp
-)
-
-# all source files to compile: NOTE: do NOT include .moc files -- auto generated
-# but DO include _TA.cpp files
-set(ta_SRCS
   NewNetViewHelper.cpp
-  ta_TA.cpp
-  # ta_atomic.cpp
-  ta_string.cpp
-  ta_thread.cpp
-  ta_variant.cpp
-  ifont.cpp
-  icolor.cpp
-  # ta_mtrnd.cpp
-  # ta_list.cpp
-  ta_filer.cpp
-  # ta_type.cpp
-  ta_type_constr.cpp
-  # ta_base.cpp
-  ta_dmem.cpp
-  ta_fontspec.cpp
-  minmax.cpp
-  ta_group.cpp
-  ta_audioproc.cpp
-  ta_qtclipdata.cpp
-  colorscale.cpp
-  ta_script.cpp
-  ta_viewspec.cpp
-  ta_viewer.cpp
-  ta_program.cpp
-  ta_program_els.cpp
-  ta_matrix.cpp
-  ta_math.cpp
-  ta_geometry.cpp
-  ta_data.cpp
-  ta_datatable.cpp
-  ta_dataproc.cpp
-  ta_dataanal.cpp
-  ta_datagen.cpp
-  ta_imgproc.cpp
-  ta_virtenv.cpp
-  ta_dump.cpp
-  ta_defaults.cpp
-  ta_plugin_p.cpp
-  ta_seledit.cpp
-  ta_project.cpp
-  ta_server.cpp
-  ta_gendoc.cpp
-  ta_time.cpp
-  fun_lookup.cpp
-  ta_data_extras.cpp 
-  ${ta_SRCS_GUI}
-  ta_qrc.cpp
-  ta_ti.cpp
-  ClusterManager.cpp
-  Subversion.cpp
-  SubversionClient.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

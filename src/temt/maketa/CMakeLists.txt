@@ -2,13 +2,19 @@
 
 set(maketa_HEADS
   ../ta/ta_stdef.h
+  ../ta/taBasicAtomicInt.h
+  ../ta/taAtomicInt.h
   ../ta/taString.h
   ../ta/Variant.h
+  ../ta/taRefN.h
+
   ../ta/NameVar.h
   ../ta/MTRnd.h
   ../ta/taPtrList_impl.h
   ../ta/taPtrList.h
   ../ta/taPtrList_base.h
+  ../ta/taHashEl.h
+  ../ta/taHashBucket.h
   ../ta/taHashTable.h
   ../ta/taArray_impl.h
   ../ta/taPlainArray.h
@@ -18,12 +24,28 @@ set(maketa_HEADS
   ../ta/String_PArray.h
   ../ta/int_PArray.h
   ../ta/voidptr_PArray.h
+  ../ta/NameVar_PArray.h
+
+  ../ta/ITypedObject.h
+  ../ta/TypeItem.h
+  ../ta/EnumSpace.h
+  ../ta/TokenSpace.h
+  ../ta/MemberDefBase_List.h
+  ../ta/MemberSpace.h
+  ../ta/Member_List.h
+  ../ta/PropertySpace.h
+  ../ta/MethodSpace.h
+  ../ta/TypeSpace.h
   ../ta/EnumDef.h
   ../ta/MemberDefBase.h
   ../ta/MemberDef.h
   ../ta/PropertyDef.h
   ../ta/MethodDef.h
   ../ta/TypeDef.h
+
+  ../ta/taVersion.h
+  ../ta/taMisc.h
+
   mta_parse.h
   mta_constr.h
   maketa.h
@@ -31,8 +53,12 @@ set(maketa_HEADS
 
 set(maketa_SRCS
 #  ../ta/ta_ti.cpp
+  ../ta/taBasicAtomicInt.cpp
+  ../ta/taAtomicInt.cpp
   ../ta/taString.cpp
   ../ta/Variant.cpp
+  ../ta/taRefN.cpp
+
   ../ta/NameVar.cpp
   ../ta/MTRndState.cpp
   ../ta/MTRnd.cpp
@@ -48,6 +74,9 @@ set(maketa_SRCS
   ../ta/String_PArray.cpp
   ../ta/int_PArray.cpp
   ../ta/voidptr_PArray.cpp
+  ../ta/NameVar_PArray.cpp
+
+  ../ta/ITypedObject.cpp
   ../ta/TypeItem.cpp
   ../ta/EnumSpace.cpp
   ../ta/TokenSpace.cpp
@@ -63,6 +92,8 @@ set(maketa_SRCS
   ../ta/PropertyDef.cpp
   ../ta/MethodDef.cpp
   ../ta/TypeDef.cpp
+  ../ta/taVersion.cpp
+  ../ta/taMisc.cpp
   mta_parse.cpp
   mta_lex.cpp
   mta_constr.cpp

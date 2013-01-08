@@ -15,14 +15,14 @@
 
 #include "taMisc.h"
 
-#include <ViewColor_List> 
 #include <TypeDef> 
-#include <taBase> 
-#include <UserDataItemBase> 
 #include <MemberDef> 
 
 #ifndef NO_TA_BASE
-# include <QDir>
+#include <taBase> 
+#include <UserDataItemBase> 
+#include <ViewColor_List> 
+#include <QDir>
 #endif
 
 #ifdef TA_OS_WIN
@@ -44,6 +44,8 @@
 #endif
 
 #endif
+
+#include <sstream>              // for FormatValue
 
 InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
   taMisc::AddInitHook(init_proc);
@@ -1656,7 +1658,7 @@ String taMisc::FinalPathSep(const String& in) {
     if (( c == '\\') || (c == '/'))
       return in;
   } 
-  return in + pathSep;
+  return in + path_sep;
 }
 
 String taMisc::NoFinalPathSep(const String& in) {
@@ -1689,16 +1691,10 @@ String taMisc::UnescapeBackslash(const String& in) {
 }
 
 String taMisc::GetFileFmPath(const String& path) {
-  int pfs = PosFinalSep(path);
+  int pfs = PosFinalPathSep(path);
   if (pfs < 0) return path;
   else return path.after(pfs);
 }
-
-// String taPlatform::getFilePath(const String& in) {
-//   int pfs = posFinalSep(in);
-//   if (pfs < 0) return _nilString;
-//   else return in.before(pfs + 1); // we include the finalpos
-// }
 
 String taMisc::GetDirFmPath(const String& path, int n_up) {
 #ifdef NO_TA_BASE
@@ -1742,6 +1738,26 @@ bool taMisc::FileExists(const String& fname) {
   }
   fin.close();
   return rval;
+}
+
+String taMisc::GetTemporaryPath() {
+#ifndef NO_TA_BASE
+  return QDir::tempPath();
+#else
+
+  static char tmpbuf[1024];
+#ifdef TA_OS_WIN
+  String rval;
+  DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
+  if (retVal != 0)
+    rval = String(tmpbuf);
+  return rval;
+#else
+  String rval = "/tmp";
+  return rval;
+#endif
+
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -1835,20 +1851,6 @@ bool taMisc::SetCurrentPath(const String& path) {
   return QDir::setCurrent(path);
 }
 
-String taMisc::GetTemporaryPath() {
-  return QDir::tempPath();
-// #ifdef TA_OS_WIN
-//   String rval;
-//   DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
-//   if (retVal != 0)
-//     rval = String(tmpbuf);
-//   return rval;
-// #else
-//   String rval = "/tmp";
-//   return rval;
-// #endif
-}
-
 String taMisc::GetHomePath() {
 #ifdef TA_OS_WIN
   return String(getenv("USERPROFILE"));
@@ -1923,6 +1925,14 @@ String taMisc::GetAppDocPath(const String& appname) {
 #endif
 }
 
+String taMisc::FileDiff(const String& fname_a, const String& fname_b,
+                        bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+  String str_a, str_b;
+  taStringDiff diff;
+  diff.DiffFiles(fname_a, fname_b, str_a, str_b, trimSpace, ignoreSpace, ignoreCase);
+  return diff.GetDiffStr(str_a, str_b);
+}
+
 #endif // NO_TA_BASE
 
 // 		End of TA_BASE only 
@@ -1963,14 +1973,6 @@ int taMisc::GetUniqueFileNumber(int st_no, const String& prefix, const String& s
   strm.open(fname, ios::out);   // this should hold the place for the file
   strm.close(); strm.clear();           // while it is being saved, etc..
   return i;
-}
-
-String taMisc::FileDiff(const String& fname_a, const String& fname_b,
-                        bool trimSpace, bool ignoreSpace, bool ignoreCase) {
-  String str_a, str_b;
-  taStringDiff diff;
-  diff.DiffFiles(fname_a, fname_b, str_a, str_b, trimSpace, ignoreSpace, ignoreCase);
-  return diff.GetDiffStr(str_a, str_b);
 }
 
 String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {
@@ -2240,7 +2242,7 @@ int taMisc::CpuCount() {
   info.dwNumberOfProcessors = 0;
   GetSystemInfo(&info);
   return info.dwNumberOfProcessors;
-#elif TA_OS_MAC
+#elif defined(TA_OS_MAC)
   int mib[2] = {CTL_HW, HW_NCPU};
   int ncpu;
   size_t len = sizeof(ncpu);
@@ -2272,7 +2274,7 @@ int taMisc::ProcessId() {
   return (int)GetCurrentProcessId();
 #else
   return (int)getpid();
-#enidf
+#endif
 }
 
 int taMisc::TickCount() {
@@ -2284,7 +2286,7 @@ int taMisc::TickCount() {
 }
 
 void taMisc::SleepS(int sec) {
-  msleep(sec * 1000);
+  SleepMs(sec * 1000);
 }
 
 void taMisc::SleepMs(int msec) {

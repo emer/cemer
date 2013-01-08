@@ -757,7 +757,7 @@ public:
   // #CAT_File return string that has a valid final path separator
   static String NoFinalPathSep(const String& in);
   // #CAT_File return string that has no final path separator
-  static int	PosFinalSep(const String& in);
+  static int	PosFinalPathSep(const String& in);
   // #CAT_File position of final path separator, -1 if not found
   static String UnescapeBackslash(const String& in);
   // #CAT_File change \\ to a \ in string
@@ -771,6 +771,8 @@ public:
 
   static bool   FileExists(const String& filename);
   // #CAT_File returns true if the file exists in current working directory (or absolute path)
+  static String GetTemporaryPath();
+  // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
 
 #ifndef NO_TA_BASE		// all of these are not for maketa
 
@@ -803,8 +805,6 @@ public:
   // #CAT_File get current working directory path
   static bool   SetCurrentPath(const String& path);
   // #CAT_File set current working directory to given path -- returns success
-  static String GetTemporaryPath();
-  // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
   static String GetHomePath();
   // #CAT_File get user's home directory path
   static String GetUserPluginDir();
@@ -817,6 +817,10 @@ public:
   // #CAT_File root for preference data, typically hidden from user
   static String GetAppDocPath(const String& appname);
   // #CAT_File root for user-visible application files
+  static String FileDiff(const String& fname_a, const String& fname_b,
+                         bool trimSpace = false, bool ignoreSpace = false,
+                         bool ignoreCase = false);
+  // #CAT_File return a string showing the differences between two files -- uses taStringDiff
 
 #endif	// NO_TA_BASE
 
@@ -826,10 +830,6 @@ public:
   // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
   static int    GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
   // #CAT_File get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
-  static String FileDiff(const String& fname_a, const String& fname_b,
-                         bool trimSpace = false, bool ignoreSpace = false,
-                         bool ignoreCase = false);
-  // #CAT_File return a string showing the differences between two files -- uses taStringDiff
 
   static String GetWikiURL(const String& wiki_name, bool add_index=true);
   // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
