@@ -56,4 +56,6 @@ protected:
   { int tmp = (int)val; *((int*)it) = tmp; }
 };
 
+TA_ARRAY_OPS(int_Array)
+
 #endif // int_Array_h

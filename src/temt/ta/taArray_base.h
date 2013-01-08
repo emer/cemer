@@ -96,4 +96,17 @@ private:
   void  Destroy()       { CutLinks(); }
 };
 
+#define TA_ARRAY_FUNS(y,T) \
+public: \
+  explicit y(int init_size) {Initialize(); SetSize(init_size); } \
+  T&            operator[](int i) { return el[i]; } \
+  const T&      operator[](int i) const { return el[i]; } \
+protected: \
+  override const void*  El_GetBlank_() const    { return (const void*)&blank; }
+
+#define TA_ARRAY_OPS(y) \
+  inline bool operator ==(const y& a, const y& b) {return a.Equal_(b);} \
+  inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));} \
+  TA_SMART_PTRS(y)
+
 #endif // taArray_base_h

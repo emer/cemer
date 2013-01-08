@@ -41,6 +41,20 @@ class UserDataItem; //
 class taiDataLink; // 
 class taDataLink; // 
 
+/* taDataView -- exemplar base class of a view of an object, of class taOBase or later
+
+   A view is a high-level depiction of an object, ex. "Network", "Graph", etc.
+
+  The IDataViews list object does not own the view object -- some outer controller is
+  responsible for lifetime management of dataview objects.
+
+  However, if a dataobject is destroying, it will destroy all its views
+
+  Most DataView objs are strictly managed by a parent, and so user should not
+  be able to cut/paste/del them -- this is overridden for top-level view objs
+  by overidding canCutPasteDel()
+
+*/
 
 class TA_API taDataView: public taNBase, public virtual IDataLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object
@@ -198,5 +212,24 @@ private:
   void  Initialize();
   void  Destroy() {CutLinks();}
 };
+
+
+TA_SMART_PTRS(taDataView);
+
+// for explicit lifetime management
+#define TA_DATAVIEWFUNS(b,i) \
+  TA_BASEFUNS(b)
+
+// convenience, for declaring the safe strong-typed parent
+#define DATAVIEW_PARENT(T) \
+  T* parent() const {return (T*)m_parent;} \
+  TypeDef* parentType() const {return &TA_ ## T;}
+
+// for strongly-typed lists
+#define TA_DATAVIEWLISTFUNS(B,I,T) \
+  T* SafeEl(int i) const {return (T*)SafeEl_(i);} \
+  T* FastEl(int i) const {return (T*)FastEl_(i);} \
+  TA_BASEFUNS(B);
+
 
 #endif // taDataView_h

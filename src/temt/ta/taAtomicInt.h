@@ -16,13 +16,76 @@
 #ifndef taAtomicInt_h
 #define taAtomicInt_h 1
 
-// parent includes:
-#include <QAtomicInt>
+#include "ta_def.h"
 
-// member includes:
+#if !defined(__MAKETA__) && defined(TA_USE_QT)
+# if (QT_VERSION >= 0x040400)
+#   include <QAtomicInt>
+# else
+#   include <qatomic.h>
+# endif
+#endif
 
-// declare all other types mentioned but not required to include:
+#if defined(__MAKETA__)
+class QAtomicInt;
+#else
 
+class TA_API QAtomicInt: public QBasicAtomicInt { // this copies the barest API of QAtomicInt
+public:
+  QAtomicInt& operator=(int value)
+    {_q_value = value; return *this;}
+
+  QAtomicInt& operator=(const QAtomicInt &other)
+    {_q_value = other._q_value; return *this;}
+  
+  QAtomicInt(int value = 0) {_q_value = value;}
+  QAtomicInt(const QAtomicInt & other) {_q_value = other._q_value;}
+};
+
+# ifdef TA_USE_QT
+  inline bool QBasicAtomicInt::ref();
+    {return q_atomic_increment(&_q_value) != 0;}
+  
+  inline bool QBasicAtomicInt::deref()
+    {return q_atomic_decrement(&_q_value) != 0;}
+  
+  inline bool QBasicAtomicInt::testAndSetOrdered(int expectedValue, int newValue)
+    {return q_atomic_test_and_set_int(&_q_value, expectedValue, newValue) != 0;}
+  
+  inline int QBasicAtomicInt::fetchAndStoreOrdered(int newValue)
+    {return q_atomic_set_int(&_q_value, newValue);}
+  
+  inline int QBasicAtomicInt::fetchAndAddOrdered(int valueToAdd)
+    {return q_atomic_fetch_and_add_int(&_q_value, valueToAdd);}
+# else // dummies for maketa
+  inline bool QBasicAtomicInt::ref()
+    {return ++_q_value != 0;}
+  
+  inline bool QBasicAtomicInt::deref()
+    {return --_q_value != 0;}
+  
+  inline bool QBasicAtomicInt::testAndSetOrdered(int expectedValue, int newValue)
+    {if (_q_value == expectedValue) {
+     _q_value = newValue;
+     return true;
+     }
+     return false;
+    }
+  
+  inline int QBasicAtomicInt::fetchAndStoreOrdered(int newValue)
+    {int originalValue = _q_value;
+     _q_value = newValue;
+     return originalValue;
+    }
+  
+  inline int QBasicAtomicInt::fetchAndAddOrdered(int valueToAdd)
+    {int originalValue = _q_value;
+     _q_value += valueToAdd;
+     return originalValue;
+    }
+# endif
+
+# endif
 
 class taAtomicInt : public QAtomicInt {
 public:

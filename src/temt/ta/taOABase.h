@@ -44,4 +44,33 @@ private:
   void  Destroy() {CutLinks();}
 };
 
+#ifdef TA_USE_QT
+/*
+ * taBaseAdapter enables a taOBase object to handle Qt events, via a
+ * proxy(taBaseAdapter)/stub(taBase) approach. Note that dual-parenting a taBase object
+ * with QObject is not workable, because QObject must come first, and then all the (taBase*)(void*)
+ * casts in the system break...
+
+ * To use, subclass taBaseAdapter when events need to be handled. Create the instance in
+ * the Initialize() call and set with SetAdapter. The adapter object does not participate
+ * in copying/cloning/etc. (it has no state information).
+
+ * Since classes can have subclasses, there may be successive calls to Initialize with subclasses
+ * of an adapter. The adapters will be chained, with the new adapter becoming the QObject parent of
+ * the previous adapter. Therefore, when the current adapter is destroyed, child adapters will also
+ * get destroyed. It will not matter whether a base class hooks to its own adapter, or to a subclass
+ * or to a combination.
+*/
+
+class TA_API taBaseAdapter: public QObject {
+  // ##IGNORE QObject for attaching events/signals for its taBase owner
+friend class taOABase;
+public:
+  taBaseAdapter(taOABase* owner_): QObject(NULL) {owner = owner_;}
+  ~taBaseAdapter();
+protected:
+  taOABase* owner; // #IGNORE
+};
+#endif // TA_USE_QT
+
 #endif // taOABase_h

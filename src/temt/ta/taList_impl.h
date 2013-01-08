@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <taNBase>
-#include <taPtrList_base_taBase_>
+#include <taPtrList_base>
 
 // member includes:
 
@@ -214,14 +214,14 @@ protected:
   void          El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST
   String        El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
   void          El_SetName_(void* it, const String& nm)  {((taBase*)it)->SetName(nm);}
-  TALPtr        El_GetOwnerList_(void* it) const
+  taPtrList_impl*        El_GetOwnerList_(void* it) const
   { return dynamic_cast<taList_impl*>(((taBase*)it)->GetOwner()); }
   void*         El_GetOwnerObj_(void* it) const { return ((taBase*)it)->GetOwner(); }
   void*         El_SetOwner_(void* it)  { ((taBase*)it)->SetOwner(this); return it; }
   bool          El_FindCheck_(void* it, const String& nm) const
   {  if (((taBase*)it)->FindCheck(nm)) {
-      TALPtr own = El_GetOwnerList_(it);
-      return ((!own) || (own == (TALPtr)this));  }
+      taPtrList_impl* own = El_GetOwnerList_(it);
+      return ((!own) || (own == (taPtrList_impl*)this));  }
     return false; }
 
   void*         El_Ref_(void* it)       { taBase::Ref((taBase*)it); return it; }
@@ -249,5 +249,132 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+#ifndef __MAKETA__
+template<typename T, typename Ref, typename Ptr>
+class IteratorTaPtrListImpl
+{
+public:
+  typedef IteratorTaPtrListImpl             Self;
+  typedef std::random_access_iterator_tag   iterator_category;
+  typedef T                                 value_type;
+  typedef std::size_t                       difference_type;
+  typedef Ptr                               pointer;
+  typedef Ref                               reference;
+
+  IteratorTaPtrListImpl(const taPtrList_impl *list, int idx)
+    : list_(list)
+    , idx_(idx)
+  {
+  }
+  IteratorTaPtrListImpl()
+    : list_(0)
+    , idx_(0)
+  {
+  }
+  bool operator==(const Self &it) const
+  {
+    // Default constructed iterators are singular, not equal to any
+    // other iterator.
+    return list_ && list_ == it.list_ && idx_ == it.idx_;
+  }
+  bool operator!=(const Self &it) const
+  {
+    return !(*this == it);
+  }
+  reference operator*() const
+  {
+    return *ptr();
+  }
+  pointer operator->() const
+  {
+    return ptr();
+  }
+  Self & operator++() // prefix
+  {
+    assert(list_);
+    ++idx_;
+    return *this;
+  }
+  Self operator++(int) // postfix
+  {
+    Self ret(*this);
+    operator++();
+    return ret;
+  }
+  Self & operator--() // prefix
+  {
+    assert(list_);
+    --idx_;
+    return *this;
+  }
+  Self operator--(int) // postfix
+  {
+    Self ret(*this);
+    operator--();
+    return ret;
+  }
+  Self & operator+=(difference_type n)
+  {
+    assert(list_);
+    idx_ += n;
+    return *this;
+  }
+  Self & operator-=(difference_type n)
+  {
+    assert(list_);
+    idx_ -= n;
+    return *this;
+  }
+  Self operator+(difference_type n) const
+  {
+    Self ret(*this);
+    ret += n;
+    return ret;
+  }
+  Self operator-(difference_type n) const
+  {
+    Self ret(*this);
+    ret -= n;
+    return ret;
+  }
+  friend Self operator+(difference_type n, const Self &it)
+  {
+    return it + n;
+  }
+  difference_type operator-(const Self &it) const
+  {
+    assert(list_);
+    assert(list_ == it.list_);
+    return idx_ - it.idx_;
+  }
+  reference operator[](difference_type n) const
+  {
+    return *(*this + n);
+  }
+  bool operator<(const Self &it) const
+  {
+    assert(list_);
+    assert(list_ == it.list_);
+    return idx_ < it.idx_;
+  }
+
+private:
+  pointer ptr() const
+  {
+    assert(list_);
+    // Cast from void* returned by SafeEl_().
+    pointer item = (pointer) list_->SafeEl_(idx_);
+    assert(item);
+    return item;
+  }
+
+  // The list this iterator indexes into.  If null, the iterator is singular.
+  const taPtrList_impl *list_;
+  // The index into the list; only valid if list_ non-null.
+  int idx_;
+};
+#endif // __MAKETA__
+
 
 #endif // taList_impl_h

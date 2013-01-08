@@ -3,10 +3,22 @@
 set(maketa_HEADS
   ../ta/ta_stdef.h
   ../ta/ta_platform.h
-  ../ta/ta_string.h
-  ../ta/ta_variant.h
+  ../ta/taString.h
+  ../ta/Variant.h
+  ../ta/NameVar.h
   ../ta/ta_mtrnd.h
-  ../ta/ta_list.h
+  ../ta/taPtrList_impl.h
+  ../ta/taPtrList.h
+  ../ta/taPtrList_base.h
+  ../ta/taHashTable.h
+  ../ta/taArray_impl.h
+  ../ta/taPlainArray.h
+  ../ta/taFixedArray_impl.h
+  ../ta/taFixedArray.h
+  ../ta/int_FixedArray.h
+  ../ta/String_PArray.h
+  ../ta/int_PArray.h
+  ../ta/voidptr_PArray.h
   ../ta/ta_type.h
   mta_parse.h
   mta_constr.h
@@ -16,10 +28,22 @@ set(maketa_HEADS
 set(maketa_SRCS
   ../ta/ta_ti.cpp
   ../ta/ta_platform.cpp
-  ../ta/ta_string.cpp
-  ../ta/ta_variant.cpp
+  ../ta/taString.cpp
+  ../ta/Variant.cpp
+  ../ta/NameVar.cpp
   ../ta/ta_mtrnd.cpp
-  ../ta/ta_list.cpp
+  ../ta/taPtrList_impl.cpp
+  ../ta/taPtrList.cpp
+  ../ta/taPtrList_base.cpp
+  ../ta/taHashTable.cpp
+  ../ta/taArray_impl.cpp
+  ../ta/taPlainArray.cpp
+  ../ta/taFixedArray_impl.cpp
+  ../ta/taFixedArray.cpp
+  ../ta/int_FixedArray.cpp
+  ../ta/String_PArray.cpp
+  ../ta/int_PArray.cpp
+  ../ta/voidptr_PArray.cpp
   ../ta/ta_type.cpp
   mta_parse.cpp
   mta_lex.cpp

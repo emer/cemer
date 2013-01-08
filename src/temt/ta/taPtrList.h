@@ -124,4 +124,12 @@ public:
   // #CAT_Modify move item so that it appears just after the target item trg in the list
 };
 
+#define taPtrList_of(T)                                               \
+class TA_API T ## _List : public taPtrList<T> {                               \
+protected:                                                                    \
+  void  El_Done_(void* item)    { delete (T*)item; }                          \
+public:                                                                       \
+  ~ ## T ## _List()             { Reset(); }                                  \
+}
+
 #endif // taPtrList_h

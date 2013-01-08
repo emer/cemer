@@ -16,13 +16,50 @@
 #ifndef taBasicAtomicInt_h
 #define taBasicAtomicInt_h 1
 
-// parent includes:
-#include <QBasicAtomicInt>
+#include "ta_def.h"
 
-// member includes:
+#if !defined(__MAKETA__) && defined(TA_USE_QT)
+# if (QT_VERSION >= 0x040400)
+#   include <QAtomicInt>
+# else
+#   include <qatomic.h>
+# endif
+#endif
 
-// declare all other types mentioned but not required to include:
+#if defined(__MAKETA__)
+class QBasicAtomicInt;
+#else
 
+# if (QT_VERSION < 0x040400) || !defined(TA_USE_QT)
+class TA_API QBasicAtomicInt { // this copies the barest API of QBasicAtomicInt, which is a Plain Old Data type
+public:
+  volatile int _q_value;
+  
+  bool ref();
+  bool deref();
+  bool testAndSetOrdered(int expectedValue, int newValue);
+  int fetchAndStoreOrdered(int newValue);
+  int fetchAndAddOrdered(int valueToAdd);
+
+  // Non-atomic API
+  inline bool operator==(int value) const
+    {return _q_value == value;}
+
+  inline bool operator!=(int value) const
+    {return _q_value != value;}
+
+  inline bool operator!() const
+    {return _q_value == 0;}
+
+  inline operator int() const
+    {return _q_value;}
+    
+  QBasicAtomicInt& operator=(int value)
+    {_q_value = value; return *this;}
+};
+#endif
+
+#endif
 
 class taBasicAtomicInt : public QBasicAtomicInt {
 public:

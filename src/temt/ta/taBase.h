@@ -16,6 +16,19 @@
 #ifndef taBase_h
 #define taBase_h 1
 
+#include <taString>
+#include <Variant>
+#include "ta_type.h"
+
+#include "ta_TA_type_WRAPPER.h"
+
+#ifndef __MAKETA__
+#ifdef TA_GUI
+# include <qobject.h>
+#endif
+#include <cassert>
+#endif
+
 // parent includes:
 
 // member includes:
@@ -25,8 +38,6 @@ class TypeDef; //
 class taMatrix; // 
 class taBaseItr; // 
 class MemberDef; // 
-class istream; // 
-class ostream; // 
 class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
@@ -35,7 +46,364 @@ class MethodDef; //
 class UserDataItem_List; // 
 class UserDataItemBase; // 
 class UserDataItem; // 
+class taSmartRef; //
+class taSmartPtr; //
+class taList_impl; //
+class taFiler; //
+class taiMimeSource; //
 
+
+//////////////////////////////////////////////////////////////////////////////////
+// Copy logic (this is complicated for dealing with constructors and = assignment
+//
+// void Copy_(const type& cp)   non-virtual private method that only copies data
+//                              for THIS type does NOT call parent, nor copy parent data
+// void Copy__(const type& cp)  simple COPYING flag wrapper around Copy_
+// copy constructor             calls Copy__ to just copy stuff for this type
+// void Copy_impl(const type& cp) non-virtual protected method defined in BASEFUNS
+//                              that calls parent copy_impl, and then this copy -- this
+//                              is the master copy function for assignment =
+// void Copy(const type& cp)    public interface to call Copy_impl for a given guy
+//
+// then there is, confusingly, an entirely separate set of copy mechanisms that
+// use the TA system to do more flexible copying using generic taBase* objects
+// these all take pointer args * instead of reference args
+//
+// void UnSafeCopy(const taBase* cp) virtual protected defined in BASEFUNS,
+//                              calls Copy_impl if source inherits from us, and
+//                              CastCopyTo if we inherit from source, so we get
+//                              common elements of subclass copied
+// void CastCopyTo(taBase* cp)  virtual protected defined in BASEFUNS,
+//                              casts source to our type, and calls Copy_impl on
+//                              that guy from us
+// bool Copy(const taBase* cp)  virtual public function that is master interface
+//                              to this generic interface
+// bool CanDoCopy_impl          master routine called by Copy that checks if it is
+//                              OK to copy (Can = CanCopy_impl), and if it is ok, then it
+//                              actually does the copy (Do = UnSafeCopy) -- this provides
+//                              the high level of safe checking and flexibility
+// CopyFromCustom_impl          for special cases where objects of divergent inheritence
+//                              branches can still copy -- example is Matrix objects
+//                              that can still copy from different types using Variant
+//                              conversion interface (e.g. float from string etc)
+//
+// The bottom line is: define Copy_ in each class to copy just that class's members
+// and use ->Copy(cp) to copy a generic taBase* guy -- only use = when the types are
+// known and correct
+
+
+// common defs used by ALL taBase types: Type and Copy guys
+#define TA_BASEFUNS_MAIN_(y) \
+private: \
+  inline void Copy__(const y& cp) { \
+    SetBaseFlag(COPYING); \
+      Copy_(cp); \
+    ClearBaseFlag(COPYING);} \
+protected: \
+  void Copy_impl(const y& cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);} \
+  void  CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
+  void Copy(const y& cp) { Copy_impl(cp);} \
+  y& operator=(const y& cp) { Copy(cp); return *this;}
+
+#define TA_TMPLT_BASEFUNS_MAIN_(y,T) \
+private: \
+  inline void Copy__(const y<T>& cp) { \
+    SetBaseFlag(COPYING); \
+      Copy_(cp); \
+    ClearBaseFlag(COPYING);} \
+protected: \
+  void Copy_impl(const y<T>& cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
+  void  CastCopyTo(taBase* cp) const { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
+  void Copy(const y<T>& cp) { Copy_impl(cp);} \
+  y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
+
+// common defs used to make instances: Cloning and Tokens
+#define TA_BASEFUNS_INST_(y) \
+  taBase* Clone() const { return new y(*this); }  \
+  taBase* MakeToken() const { return (taBase*)(new y); } \
+  taBase* MakeTokenAry(int n) const { return (taBase*)(new y[n]); }
+
+#define TA_TMPLT_BASEFUNS_INST_(y,T) \
+  taBase* Clone() const { return new y<T>(*this); } \
+  taBase* MakeToken() const { return (taBase*)(new y<T>); }  \
+  taBase* MakeTokenAry(int n) const { return (taBase*)(new y<T>[n]); }
+
+// ctors -- one size fits all (where used) thanks to Initialize__
+
+#ifdef __MAKETA__ // simplified versions for maketa
+#define TA_BASEFUNS_CTORS_(y) \
+  y (bool reg = true); \
+  y (const y& cp);
+
+#define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  y (); \
+  y (const y<T>& cp);
+
+#else
+
+#define TA_BASEFUNS_CTORS_(y) \
+  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
+  y (const y& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
+
+#define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
+  y (const y<T>& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
+
+#endif
+
+// common dtor/init, when using tokens (same for TMPLT)
+#define TA_BASEFUNS_TOK_(y) \
+  private: \
+  inline void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
+    if (reg && !(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
+  public: \
+  ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
+
+#define TA_TMPLT_BASEFUNS_TOK_(y,T) TA_BASEFUNS_TOK_(y)
+
+// common dtor/init when not using tokens (the LITE guys)
+#define TA_BASEFUNS_NTOK_(y) \
+  private: \
+  inline void Initialize__(bool) {Initialize();}  \
+  public: \
+  ~y () { CheckDestroyed(); Destroying(); Destroy(); }
+
+#define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
+
+// normal set of funs, for tokens, except ctors; you can use this yourself
+// when you have consts in your class and can't use the generic ctors
+#define TA_BASEFUNS_TOK_NCTORS(y) \
+  TA_BASEFUNS_TOK_(y) \
+  TA_BASEFUNS_MAIN_(y) \
+  TA_BASEFUNS_INST_(y)
+
+#define TA_TMPLT_BASEFUNS_TOK_NCTORS(y,T) \
+  TA_TMPLT_BASEFUNS_TOK_(y,T) \
+  TA_TMPLT_BASEFUNS_MAIN_(y,T) \
+  TA_TMPLT_BASEFUNS_INST_(y,T)
+
+// dummy, for when nothing to copy in this class
+#define NOCOPY(y) \
+  void Copy_(const y& cp){}
+
+#define TMPLT_NOCOPY(y,T) \
+  void Copy_(const y<T>& cp){}
+
+// this is the typical guy to use for most classes, esp if they keep Tokens
+// the 2 versions bake in the inherited guy, so you don't need to do that
+// the ncopy version includes a dummy Copy_ func (typical for template instances)
+#define TA_BASEFUNS(y) \
+  TA_BASEFUNS_CTORS_(y) \
+  TA_BASEFUNS_TOK_NCTORS(y)
+
+#define TA_BASEFUNS_NOCOPY(y) \
+  private: NOCOPY(y) public: \
+  TA_BASEFUNS(y)
+
+#define TA_BASEFUNS2(y,x) \
+  private: INHERITED(x) public: \
+  TA_BASEFUNS(y)
+
+#define TA_BASEFUNS2_NOCOPY(y,x) \
+  private: INHERITED(x) NOCOPY(y) public: \
+  TA_BASEFUNS(y)
+
+
+// for templates (single parameter)
+#define TA_TMPLT_BASEFUNS(y,T) \
+  TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  TA_TMPLT_BASEFUNS_TOK_NCTORS(y,T)
+
+#define TA_TMPLT_BASEFUNS_NOCOPY(y,T) \
+  private: TMPLT_NOCOPY(y,T) public: \
+  TA_TMPLT_BASEFUNS(y,T)
+
+#define TA_TMPLT_BASEFUNS2(y,T,x) \
+  private: INHERITED(x) public: \
+  private: TMPLT_NOCOPY(y,T) public: \
+  TA_TMPLT_BASEFUNS(y,T)
+
+#define TA_TMPLT_BASEFUNS2_NOCOPY(y,T,x) \
+  private: INHERITED(x) TMPLT_NOCOPY(y,T) public: \
+  TA_TMPLT_BASEFUNS(y,T)
+
+
+// this is the typical guy to use for "helper" or "value" classes
+// that do not keep Tokens -- it avoids registration overhead
+#define TA_BASEFUNS_LITE(y) \
+  TA_BASEFUNS_CTORS_(y) \
+  TA_BASEFUNS_MAIN_(y) \
+  TA_BASEFUNS_INST_(y) \
+  TA_BASEFUNS_NTOK_(y)
+
+#define TA_BASEFUNS_LITE_NOCOPY(y) \
+  private: NOCOPY(y) public: \
+  TA_BASEFUNS_LITE(y)
+
+#define TA_BASEFUNS2_LITE(y,x) \
+  private: INHERITED(x) public: \
+  TA_BASEFUNS_LITE(y)
+
+#define TA_BASEFUNS2_LITE_NOCOPY(y,x) \
+  private: INHERITED(x) NOCOPY(y) public: \
+  TA_BASEFUNS_LITE(y)
+
+// template versions, ex. for smart ptrs, and similar class with no reg
+#define TA_TMPLT_BASEFUNS_LITE(y,T) \
+  TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  TA_TMPLT_BASEFUNS_MAIN_(y,T) \
+  TA_TMPLT_BASEFUNS_INST_(y,T) \
+  TA_TMPLT_BASEFUNS_NTOK_(y,T)
+
+// macro for abstract base classes (with pure virtual methods, and no instance)
+#define TA_ABSTRACT_BASEFUNS(y) \
+  TA_BASEFUNS_CTORS_(y) \
+  TA_BASEFUNS_MAIN_(y) \
+  TA_BASEFUNS_TOK_(y)
+
+#define TA_ABSTRACT_BASEFUNS_NOCOPY(y) \
+  private: NOCOPY(y) public: \
+  TA_ABSTRACT_BASEFUNS(y)
+
+
+#define TA_TMPLT_ABSTRACT_BASEFUNS(y,T) \
+  TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  TA_TMPLT_BASEFUNS_MAIN_(y,T) \
+  TA_TMPLT_BASEFUNS_TOK_(y,T)
+
+// for use with templates
+#define TA_TMPLT_TYPEFUNS(y,T) \
+  static TypeDef* StatTypeDef(int) {  return &TA_##y##_##T; } \
+  TypeDef* GetTypeDef() const { return &TA_##y##_##T; }
+
+// this guy is your friend for most simple classes! esp good in plugins
+#define SIMPLE_COPY(T) \
+  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
+
+// for when you need to give it a diff name
+#define SIMPLE_COPY_EX(T,NAME) \
+  void NAME(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
+
+// this calls UpdatePointers_NewPar based on a major scoping owning parent, only if that
+// parent is not already copying, and the parent is different than the copy parent
+#define SIMPLE_COPY_UPDT_PTR_PAR(T,P) \
+  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); \
+    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_##P); }
+
+// automated Init/Cut links guys -- esp good for code in Plugins
+#define SIMPLE_INITLINKS(T) \
+  void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(&TA_##T); }
+
+#define SIMPLE_CUTLINKS(T) \
+  void CutLinks() { CutLinks_taAuto(&TA_##T); inherited::CutLinks(); }
+
+#define SIMPLE_LINKS(T) \
+  SIMPLE_INITLINKS(T); \
+  SIMPLE_CUTLINKS(T)
+
+// this is Sweetness and Light1(TM) -- everything is automatic and simple!
+#define TA_BASEFUNS_SC(T) \
+  SIMPLE_COPY(T); \
+  TA_BASEFUNS(T)
+
+// this is Sweetness and Light2(TM) -- everything is automatic and simple!
+#define TA_SIMPLE_BASEFUNS(T) \
+  SIMPLE_COPY(T); \
+  SIMPLE_LINKS(T); \
+  TA_BASEFUNS(T)
+
+// for guys that have pointers to outside objects -- need to update if
+// not within PAR scope
+#define TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(T,P) \
+  SIMPLE_COPY_UPDT_PTR_PAR(T,P); \
+  SIMPLE_LINKS(T); \
+  TA_BASEFUNS(T)
+
+#define TA_SIMPLE_BASEFUNS2(y,x) \
+  SIMPLE_COPY(y); \
+  SIMPLE_LINKS(y); \
+  TA_BASEFUNS2(y,x)
+
+#define TA_SIMPLE_BASEFUNS_LITE(y) \
+  SIMPLE_COPY(y); \
+  SIMPLE_LINKS(y); \
+  TA_BASEFUNS_LITE(y)
+
+#define TA_SIMPLE_BASEFUNS2_LITE(y,x) \
+  SIMPLE_COPY(y); \
+  SIMPLE_LINKS(y); \
+  TA_BASEFUNS2_LITE(y,x)
+
+// simplified Get owner functions B = ta_base object, T = class name
+#define GET_MY_OWNER(T) ((T *) GetOwner(&TA_##T))
+#define GET_OWNER(B,T)  ((T *) ((B)->GetOwner(T::StatTypeDef(0))))
+
+#define SET_POINTER(var,obj) (taBase::SetPointer((taBase**)&(var), (taBase*)(obj)))
+#define DEL_POINTER(var) (taBase::DelPointer((taBase**)&(var)))
+
+// standard smart refs and ptrs -- you should use this for every class
+#define TA_SMART_PTRS(y) \
+  SmartPtr_Of(y) \
+  SmartRef_Of(y, TA_ ## y);
+
+// generic iterator over items in taBase containers
+#define TA_FOREACH(ELEM_VAR_NAME, LIST)                        \
+  if(taBaseItr* FOREACH_itr = NULL) { } else                   \
+    for(Variant ELEM_VAR_NAME = (LIST).IterBegin(FOREACH_itr); \
+        (bool)FOREACH_itr;                                     \
+        ELEM_VAR_NAME = (LIST).IterNext(FOREACH_itr))
+
+// generic iterator over items in taBase containers, index version
+#define TA_FOREACH_INDEX(IDX_VAR_NAME, LIST)                   \
+  if(taBaseItr* FOREACH_itr = NULL) { } else                   \
+    for(int IDX_VAR_NAME = (LIST).IterBeginIndex(FOREACH_itr); \
+        (bool)FOREACH_itr;                                     \
+        IDX_VAR_NAME = (LIST).IterNextIndex(FOREACH_itr))
+
+/* Clipboard (Edit) operation summary
+
+   Clipboard operations are of two basic types:
+     Src -- source operations: Cut, Copy, Delete
+     Dst -- destination ops: Paste, Link, etc.
+
+   Clipboard API calls are of two types, and several subtypes:
+     Query -- determines allowed operations (ex., to control UI enabling of Cut, Copy, etc.)
+     Action -- perform the indicated action
+
+   Src ops support both single and multi selected items.
+   Dst ops support a single selected item, and single or multi items on the clipboard.
+
+   There must always be at least one item selected in the UI to allow calling of clipboard functions.
+
+   Data that is already on the clipboard is passed using a taiMimeSource iterator object
+   defined in ta_qtclipdata.h -- this object supports both single and multi-item data.
+
+   For all ops below, ms=NULL indicates a Src-op (CUT, COPY, etc.).
+
+*/
+
+////////////////////////////////////////////////////////////////////////////////////
+//              ta Base   ---   The Base of all type-aware classes
 
 class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes
@@ -1116,5 +1484,14 @@ private:
   // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc. -- set to null and check for null!
 
 };
+
+
+/////////////////////////////////////////////
+//	Operators
+
+inline istream& operator>>(istream &strm, taBase &obj)
+{ obj.Load_strm(strm); return strm; }
+inline ostream& operator<<(ostream &strm, taBase &obj)
+{ obj.Save_strm(strm); return strm; }
 
 #endif // taBase_h
