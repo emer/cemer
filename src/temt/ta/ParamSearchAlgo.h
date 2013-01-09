@@ -19,10 +19,14 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class ClusterRun; //
 
 class TA_API ParamSearchAlgo : public taNBase {
   // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.
@@ -43,5 +47,7 @@ private:
   void Initialize();
   void Destroy() { }
 };
+
+TA_SMART_PTRS(ParamSearchAlgo);
 
 #endif // ParamSearchAlgo_h

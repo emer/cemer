@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taQuaternion; //
 
 
 class TA_API taAxisAngle: public taVector3f {

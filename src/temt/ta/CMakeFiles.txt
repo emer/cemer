@@ -131,6 +131,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taStringDiffEdits.h
   taStringDiff.h
 
+  TypeDefault.h
+
   taFiler.h
   taiMiscCore.h
 
@@ -176,18 +178,25 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DMemShare.h
   DMemAggVars.h
 
-  taAudioProc.h
-  iFont.h
-  taFontSpec.h
-  taiAction.h
-
-  AbstractScriptBase.h
-  ScriptBase_List.h
-
+  NameValue.h
+  taColor.h
+  RGBA.h
+  RGBA_List.h
+  ColorScaleColor.h
+  ColorScaleColor_List.h
+  ColorScaleSpec.h
+  ColorScaleSpec_Group.h
+  ColorScale.h
   ViewColor.h
   ViewColor_List.h
   ViewSpec.h
   ViewSpec_Group.h
+
+  iFont.h
+  taFontSpec.h
+
+  ScriptBase_List.h
+  AbstractScriptBase.h
 
   ISelectable.h
 
@@ -210,11 +219,11 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ProgLine.h
   ProgLine_List.h
   ProgType.h
-  DynEnumType.h
-  ProgType_List.h
   DynEnumItem.h
   DynEnumItem_List.h
+  DynEnumType.h
   DynEnum.h
+  ProgType_List.h
   ProgVar.h
   ProgVar_List.h
   ProgVarRef_List.h
@@ -228,8 +237,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
   Function.h
   Function_List.h
   ProgObjList.h
-  Program.h
   Program_List.h
+  Program.h
 
   ProgLibEl.h
   ProgLibEl_List.h
@@ -323,16 +332,15 @@ set(ta_HEADS_MAKETA_LOCAL_1
   MatrixChannelSpec.h
   ChannelSpec_List.h
   DataBlock_Idx.h
-  DataTableModel.h
-  DataTable.h
-  DataCol.h
   ColCalcExpr.h
+  DataCol.h
+  DataColTp.h
   DataTableCols.h
+  DataTable.h
+  DataTable_Group.h
   FixedWidthColSpec.h
   FixedWidthColSpec_List.h
   FixedWidthSpec.h
-  DataTable_Group.h
-  DataColTp.h
   String_Data.h
   Variant_Data.h
   double_Data.h
@@ -380,55 +388,44 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taDataGen.h
   DataGenCall.h
 
-  dumpMisc.h
-  VPUnref.h
-  DumpPathSub.h
-  VPUList.h
-  DumpPathToken.h
-  DumpPathSubList.h
-  DumpPathTokenList.h
-  NameValue.h
-  TypeDefault.h
-
-  IPlugin.h
-  iPluginEditor.h
-  taPluginInst.h
-  taPluginInst_PList.h
   PluginMakeThreadMgr.h
   PluginMakeTask.h
-  taPlugins.h
   taPluginBase.h
   taPlugin.h
   taPluginDep.h
   taPluginBase_List.h
   taPlugin_List.h
+  taPluginInst.h
+  taPluginInst_PList.h
+  taPlugins.h
 
   SelectEditItem.h
+  EditParamSearch.h
   EditMbrItem.h
   EditMthItem.h
-  EditParamSearch.h
   EditMbrItem_Group.h
   EditMthItem_Group.h
-  SelectEdit.h
   SelectEditConfig.h
-  ClusterRun.h
+  SelectEdit.h
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
+  ClusterRun.h
   GridSearch.h
 
   taWizard.h
+  taDoc.h
   UserData_DocLink.h
   Doc_Group.h
   Wizard_Group.h
   SelectEdit_Group.h
 
-  taUndoRec.h
   taUndoDiffSrc.h
-  taUndoMgr.h
   taUndoDiffSrc_List.h
+  taUndoRec.h
   taUndoRec_List.h
   UndoDiffThreadMgr.h
   UndoDiffTask.h
+  taUndoMgr.h
 
   taiMimeItem.h
   taiMimeItem_List.h
@@ -444,15 +441,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiTabularDataMimeItem.h
   taiMatrixDataMimeItem.h
   taiTsvMimeItem.h
-
-  taColor.h
-  RGBA.h
-  RGBA_List.h
-  ColorScaleColor.h
-  ColorScaleColor_List.h
-  ColorScaleSpec.h
-  ColorScaleSpec_Group.h
-  ColorScale.h
 
   taProjVersion.h
   taLicense.h
@@ -476,6 +464,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   taRootBase.h
   tabMisc.h
+
+  taAudioProc.h
 
   taImage.h
   taCanvas.h
@@ -544,6 +534,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiMisc.h
   taMediaWiki.h
 
+  taiAction.h
   taiData.h
   taiDataList.h
   taiTypeBase.h
@@ -717,6 +708,20 @@ set(ta_HEADS_MAKETA_LOCAL_1
 # todo: further subdivide following into those that need moc and not..
 
 set(ta_HEADS_NOMAKETA
+  VPUnref.h
+  VPUList.h
+  DumpPathSub.h
+  DumpPathSubList.h
+  DumpPathToken.h
+  DumpPathTokenList.h
+  dumpMisc.h
+
+  IPlugin.h
+)
+
+set(ta_HEADS_NOMAKETA_MOC
+  iPluginEditor.h
+
   iTopLevelWindow_List.h
 
   IDataHost.h
@@ -832,6 +837,7 @@ set(ta_HEADS_NOMAKETA
   DirectoryCatalog.h
   ImageReader.h
 
+  DataTableModel.h
   iDataTableView_Panel.h
   iGridTableView_Panel.h
   iGraphTableView_Panel.h
@@ -910,6 +916,7 @@ set(ta_HEADS
   ClusterManager.h
   SubversionClient.h
   ${ta_HEADS_NOMAKETA}
+  ${ta_HEADS_NOMAKETA_MOC}
 )
 
 # headers that need Qt moc run

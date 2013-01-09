@@ -17,9 +17,15 @@
 #define DataTableModel_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QAbstractTableModel>
+#else
+class QAbstractTableModel; // #IGNORE
+#endif
 #include <IDataLinkClient>
 
 // member includes:
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 

@@ -25,7 +25,7 @@
 class MatrixGeom; // 
 class MatrixIndex; // 
 class taMatrix; // 
-
+class taVector3f; //
 
 class TA_API taVector3i : public taVector2i {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space
@@ -187,6 +187,6 @@ inline taVector3i operator / (int td, const taVector3i& v) {
   taVector3i rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
 }
 
-typedef Vector3i TDCoord;		// #INSTANCE obsolete version of Vector3i
+typedef taVector3i TDCoord;		// #INSTANCE obsolete version of Vector3i
 
 #endif // taVector3i_h

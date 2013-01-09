@@ -23,11 +23,10 @@
 #include <taSmartRefT>
 
 // member includes:
-#include <DynEnum>
 #include <ProgramRef>
+#include <DynEnum>
 
 // declare all other types mentioned but not required to include:
-class TypeDef; // 
 
 
 class TA_API ProgVar: public taNBase {

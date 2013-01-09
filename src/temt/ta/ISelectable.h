@@ -20,14 +20,15 @@
 #include <IDataLinkProxy>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 class MemberDef; // 
 class taiDataLink; // 
 class ISelectableHost; // 
 class taBase; // 
-class QWidget; // 
-class QObject; // 
+class QWidget; // #IGNORE
+class QObject; // #IGNORE
 class TypeDef; // 
 class ISelectable_PtrList; // 
 class taiClipData; // 

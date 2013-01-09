@@ -17,11 +17,15 @@
 #define dumpMisc_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
+#include <taBase_PtrList>
+#include <DumpPathSubList>
+#include <DumpPathTokenList>
+#include <VPUList>
 
 // declare all other types mentioned but not required to include:
-
 
 class TA_API dumpMisc {
   // #NO_TOKENS ##NO_CSS ##NO_MEMBERS miscellaneous stuff for dump files

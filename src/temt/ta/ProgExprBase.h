@@ -24,11 +24,11 @@
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
-class cssElPtr; // 
-class MemberDef; // 
-class Program; // 
-class Function; // 
-
+class cssElPtr; //
+class MemberDef; //
+class Program; //
+class Function; //
+class cssSpace; //
 
 class TA_API ProgExprBase : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- base doesn't have any lookup functionality

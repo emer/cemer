@@ -25,7 +25,7 @@
 class MatrixGeom; // 
 class MatrixIndex; // 
 class taMatrix; // 
-
+class taVector2f; //
 
 class TA_API taVector2i : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space

@@ -17,13 +17,12 @@
 #define Program_List_h 1
 
 // parent includes:
-#include <Program>
 #include <taList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class Program; //
 
 class TA_API Program_List : public taList<Program> {
   // ##CAT_Program a list of programs

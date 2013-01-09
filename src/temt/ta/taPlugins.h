@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class PluginMakeThreadMgr; // 
-
+class taPluginInst; //
 
 class TA_API taPlugins { // #NO_INSTANCE global object to manage plugins
 public:

@@ -24,7 +24,11 @@
 
 // declare all other types mentioned but not required to include:
 
-class Program;
+class Program; //
 TA_SMART_PTRS(Program); // ProgramRef
+
+#ifdef __MAKETA__
+class ProgramRef;
+#endif
 
 #endif // ProgramRef_h

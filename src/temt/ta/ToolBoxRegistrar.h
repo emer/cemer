@@ -17,12 +17,13 @@
 #define ToolBoxRegistrar_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class ToolBoxRegistrar_PtrList; // 
-
+class ToolBoxProc; // #IGNORE
 
 class TA_API ToolBoxRegistrar {
   // static class used to manage toolbar procs; instances used as static globals to register

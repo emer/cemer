@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
+class taPluginInst; //
 
 
 class TA_API taPlugin: public taPluginBase {

@@ -17,6 +17,7 @@
 #define AbstractScriptBase_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
 #include <ScriptBase_List>
