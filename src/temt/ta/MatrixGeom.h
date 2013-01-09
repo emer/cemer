@@ -125,9 +125,8 @@ public:
   // #CAT_TwoDRep get geometry collapsed down/up to two dimensions
   void          Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const;
   // #CAT_TwoDRep for rendering routines, provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
-  int           IndexFmDims2D(int col, int row, bool pat_4d = true,
-                              taMisc::MatrixView mat_view = taMisc::DEF_ZERO) const;
-  // #IGNORE get index from dimension values for 2d display (MatEditor and GridView)
+  int           IndexFmDims2D(int col, int row, bool pat_4d, int mat_view) const;
+  // #IGNORE get index from dimension values for 2d display (MatEditor and GridView) -- mat_view is taMisc::MatrixView def arg = taMisc::DEF_ZERO
 
   int           colCount(bool pat_4d = false) const;
   // #IGNORE for matrix view display, get column count (modulo 4d mode flag)

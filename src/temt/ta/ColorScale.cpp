@@ -27,7 +27,7 @@ void ColorScale::Initialize() {
   range = 0.0f;
   zero = 0.0f;
   auto_scale = true;
-  colors.SetBaseType(&TA_TAColor);
+  colors.SetBaseType(&TA_ColorScaleColor);
 }
 
 void ColorScale::Destroy() {
@@ -140,7 +140,7 @@ const iColor ColorScale::Get_Background(){
 const iColor ColorScale::GetColor(int idx, bool* ok) {
   if((idx >= 0) && (idx < colors.size)) {
     if (ok) *ok = true;
-    return ((TAColor *) colors[idx])->color();
+    return ((ColorScaleColor *) colors[idx])->color();
   }
   if (ok) *ok = false;
   return def_color;
@@ -149,7 +149,7 @@ const iColor ColorScale::GetColor(int idx, bool* ok) {
 const iColor ColorScale::GetContrastColor(int idx, bool* ok) {
   if((idx >= 0) && (idx < colors.size)) {
     if (ok) *ok = true;
-    return ((TAColor *) colors[idx])->contrastcolor();
+    return ((ColorScaleColor *) colors[idx])->contrastcolor();
   }
   if (ok) *ok = false;
   return def_color;

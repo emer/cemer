@@ -17,12 +17,15 @@
 #define taManagedThread_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QThread>
+#endif
 
 // member includes:
+#include <taTask>
 
 // declare all other types mentioned but not required to include:
 class taThreadMgr; // 
-class taTask; // 
 
 
 class TA_API taManagedThread: public QThread {

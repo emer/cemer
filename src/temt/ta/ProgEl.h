@@ -25,7 +25,7 @@
 class Program; // 
 class ProgVar; // 
 class LocalVars; // 
-
+class taiItemPtrBase; //
 
 /////////////////////////////////////////////////////////////////////
 //              IMPORTANT CODING NOTES:

@@ -25,7 +25,10 @@ if (WIN32)
 else (WIN32)
 
   # TODO: add a find cpp thing
-  set(MAKETA_FLAGS -autohx -css -cpp=\"g++ -E\")
+  set(MAKETA_FLAGS -autohx -css -cpp=\"clang++ -x c++-header -E\")
+# 34.0 sec for full ta -- much faster than g++
+#  set(MAKETA_FLAGS -autohx -css -cpp=\"g++ -E\")
+# 43.5 sec for full ta
   
   macro(SET_TA_PROPS _ta_name _path)
     SET_SOURCE_FILES_PROPERTIES(${_path}/${_ta_name}_TA.cpp

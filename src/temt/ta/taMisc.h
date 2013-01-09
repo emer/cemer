@@ -27,6 +27,7 @@
 #include <NameVar_PArray>
 #include <String_PArray>
 #include <DumpFileCvtList>
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
@@ -36,22 +37,6 @@ class UserDataItemBase; //
 class MemberDef; // 
 class UserDataItem_List; //
 
-#ifdef __MAKETA__
-#define ContextFlag unsigned char
-#else
-class TA_API ContextFlag { // replacement for is_xxx flags that retains bool test semantics, but does proper enter/exit counting; use in ++ ... -- pairs
-public:
-  operator bool() {return (cnt != 0);}
-  signed char   operator++() {return ++cnt;}
-  signed char   operator++(int) {return cnt++;} // post
-  signed char   operator--() {return --cnt;}
-  signed char   operator--(int)  {return cnt--;} // post
-
-  ContextFlag() {cnt = 0;} // NOTE: default binary copy constructor and copy operator are fine
-private:
-  signed char   cnt; // keep same size as bool -- should never be nesting this deep
-};
-#endif // __MAKETA__
 
 typedef  void (*init_proc_t)() ;        // initialization proc
 

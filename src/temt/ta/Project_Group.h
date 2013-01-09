@@ -24,10 +24,7 @@
 #include <ProjTemplates>
 
 // declare all other types mentioned but not required to include:
-class istream; // 
-class taBase; // 
 class ProjTemplateEl; // 
-
 
 class TA_API Project_Group : public taGroup<taProject> {
   //  ##CAT_Project group of projects

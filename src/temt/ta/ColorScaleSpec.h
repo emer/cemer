@@ -24,6 +24,7 @@
 #include <RGBA_List>
 
 // declare all other types mentioned but not required to include:
+class ColorScaleColor_List; //
 
 class TA_API ColorScaleSpec : public taNBase {
   // ##CAT_Display Color Spectrum Data
@@ -32,7 +33,7 @@ public:
   RGBA          background;     // background color
   RGBA_List     clr;            // #SHOW_TREE group of colors
 
-  virtual void  GenRanges(TAColor_List* cl, int chunks);
+  virtual void  GenRanges(ColorScaleColor_List* cl, int chunks);
 
   static const KeyString key_bkclr;
   static const KeyString key_clr0;

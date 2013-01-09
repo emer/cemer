@@ -31,6 +31,7 @@
 #include <Program_Group>
 #include <DataViewer_List>
 #include <taUndoMgr>
+#include <TimeUsed>
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 

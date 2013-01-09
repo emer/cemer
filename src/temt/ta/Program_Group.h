@@ -17,17 +17,15 @@
 #define Program_Group_h 1
 
 // parent includes:
-#include <Program>
 #include <taGroup>
 
 // member includes:
-#include <Program>
 #include <ProgLib>
+#include <Program>
 
 // declare all other types mentioned but not required to include:
 class taBase; // 
 class ProgLibEl; // 
-
 
 class TA_API Program_Group : public taGroup<Program> {
   // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program ##EXPAND_DEF_2 a collection of programs sharing common global variables and a control panel interface

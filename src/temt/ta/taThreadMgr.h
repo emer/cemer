@@ -24,6 +24,10 @@
 #include <taTask_List>
 #include <taManagedThread_PList>
 #include <TimeUsedHR>
+#ifndef __MAKETA__
+#include <QMutex>
+#include <QWaitCondition>
+#endif
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
@@ -113,5 +117,52 @@ private:
   void	Initialize();
   void	Destroy();
 };
+
+
+///////////////////////////////////////////////////////////////
+// 	Helpful code for tasks that call methods on objects
+
+// this was modified from http://www.partow.net/programming/templatecallback/index.html
+// by Arash Partow, available for free use under simple common license
+
+#ifndef __MAKETA__
+
+template <class Class, typename ReturnType, typename Parameter>
+class taTaskMethCall1 {
+  // useful template for creating tasks that call the same method on a list of same objs
+public:
+  typedef ReturnType (Class::*Method)(Parameter);
+
+  taTaskMethCall1(Method _method) {
+    method        = _method;
+  }
+
+  ReturnType call(Class* base, Parameter parameter) {
+    return (base->*method)(parameter);
+  }
+private:
+  Method  method;
+};
+
+template <class Class, typename ReturnType, typename Parameter1, typename Parameter2>
+class taTaskMethCall2 {
+  // useful template for creating tasks that call the same method on a list of same objs
+public:
+  typedef ReturnType (Class::*Method) (Parameter1, Parameter2);
+
+  taTaskMethCall2(Method _method) {
+    method        = _method;
+  }
+
+  ReturnType call(Class* base, Parameter1 parameter1, Parameter2 parameter2) {
+    return (base->*method)(parameter1, parameter2);
+  }
+private:
+  Method  method;
+};
+
+// note: can define as many of these as you need..
+
+#endif // __MAKETA__
 
 #endif // taThreadMgr_h

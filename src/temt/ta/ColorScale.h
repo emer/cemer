@@ -19,10 +19,16 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
+#include <ColorScaleColor_List>
 
 // declare all other types mentioned but not required to include:
 class iColor; //
+class ColorScaleSpec; //
 
 // typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
 // typedef ptr_iColor const_iColor;
@@ -41,13 +47,12 @@ public:
   ColorScaleSpec*       spec;           // specifies the color ranges
   bool                  auto_scale;     // #DEF_true
 
-  TAColor_List          colors;         // #IGNORE the actual colors
-//  TAColor             background;     // #IGNORE background color
+  ColorScaleColor_List  colors;         // #IGNORE the actual colors
   iColor                background;     // #IGNORE background color
 
-  TAColor               maxout;         // #IGNORE
-  TAColor               minout;         // #IGNORE
-  TAColor               nocolor;        // #IGNORE
+  ColorScaleColor       maxout;         // #IGNORE
+  ColorScaleColor       minout;         // #IGNORE
+  ColorScaleColor       nocolor;        // #IGNORE
 
   virtual void          SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON #INIT_ARGVAL_ON_spec set the color scale spec to determine the palette of colors representing values

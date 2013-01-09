@@ -19,6 +19,10 @@
 // parent includes:
 #include <taOBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -40,5 +44,7 @@ private:
   void	Initialize();
   void	Destroy() {}
 };
+
+TA_SMART_PTRS(taTask);
 
 #endif // taTask_h

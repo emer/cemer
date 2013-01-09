@@ -20,6 +20,9 @@
 #include <MemberDefBase_List>
 #include <taMisc>
 
+#ifndef NO_TA_BASE
+#include <taiMember>
+#endif
 
 void MemberDefBase::Initialize() {
   owner = NULL;

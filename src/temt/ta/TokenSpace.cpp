@@ -18,6 +18,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
+#include <taBase>
 #include <taDataLink>
 #endif
 

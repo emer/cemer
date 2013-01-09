@@ -472,4 +472,7 @@ private:
   void          Copy_(const TypeDef& cp);
 };
 
+// include all the ta base types
+#include "ta_TA_type_WRAPPER.h"
+
 #endif // TypeDef_h

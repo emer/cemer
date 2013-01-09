@@ -257,6 +257,24 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   }
 }
 
+void taBase::Register() {
+  if(!taMisc::not_constr)
+    GetTypeDef()->RegisterFinal((void*)this);
+  SetBaseFlag(REGISTERED);
+}
+
+void taBase::unRegister() {
+  CheckDestroyed();
+  if(!taMisc::not_constr && HasBaseFlag(REGISTERED)) {
+    GetTypeDef()->unRegisterFinal((void*)this); ClearBaseFlag(REGISTERED);
+  }
+}
+
+void taBase::InitSetDefaultName() {
+  if(taMisc::is_loading || taMisc::is_duplicating) return;
+  SetDefaultName();
+}
+
 void taBase::Destroy() {
 #ifdef DEBUG
   SetBaseFlag(DESTROYED);
@@ -1782,6 +1800,22 @@ String& taBase::ListDataClients(String& strm, int indent) {
 ///////////////////////////////////////////////////////////////////////////
 //      Checking the configuration of objects prior to using them
 
+
+bool taBase::TestError(bool test, const char* fun_name,
+                       const char* a, const char* b=0, const char* c=0,
+                       const char* d=0, const char* e=0, const char* f=0,
+                       const char* g=0, const char* h=0) const {
+  if(!test) return false;
+  return taMisc::TestError(this, test, fun_name, a, b, c, d, e, f, g, h);
+}
+
+bool taBase::TestWarning(bool test, const char* fun_name,
+                         const char* a, const char* b=0, const char* c=0,
+                         const char* d=0, const char* e=0, const char* f=0,
+                         const char* g=0, const char* h=0) const {
+  if(!test) return false;
+  return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
+}
 
 void taBase::DebugInfo(const char* fun_name,
                        const char* a, const char* b, const char* c,

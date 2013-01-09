@@ -15,3 +15,6 @@
 
 #include "taTask.h"
 
+void taTask::Initialize() {
+  task_id = -1; 
+}

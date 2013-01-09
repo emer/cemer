@@ -19,12 +19,10 @@
 // parent includes:
 
 // member includes:
-#include <Program>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
 class TemtClient; // 
-class Program; // 
-
 
 class TA_API TemtClientAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner

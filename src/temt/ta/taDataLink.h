@@ -79,8 +79,6 @@ public:
   virtual String        GetDisplayName() const; // default return Member name if has MemberDef, else GetName
   void                  DataDestroying(); // called by host when destroying, but it is still responsible for deleting us
   virtual void          DataDataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-//na  virtual void              FillContextMenu(BrListViewItem* sender, taiMenu* menu);
-//na  virtual void              FillContextMenu_EditItems(BrListViewItem* sender, taiMenu* menu, int allowed) {}
   virtual bool          HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
 
   virtual int           NumListCols() const {return 1;} // number of columns in a list view for this item type

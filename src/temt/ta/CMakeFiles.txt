@@ -67,6 +67,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   NamedURL.h
   DumpFileCvt.h
   DumpFileCvtList.h
+  ContextFlag.h
   taMisc.h
 
   taBase.h
@@ -121,22 +122,21 @@ set(ta_HEADS_MAKETA_LOCAL_1
   IMultiDataLinkClient.h
   IDataLinkClient_PtrList.h
   taDataLink.h
+  taDataLinkItr.h
+  taiDataLink.h
 
+  taStringDiffData.h
   taStringDiffItem.h
   taStringDiffItem_PArray.h
   taStringDiffEdits.h
   taStringDiff.h
 
   taFiler.h
-  taDataLinkItr.h
-  taiDataLink.h
   taiMiscCore.h
 
   taObjDiffRec.h
   taObjDiff_List.h
-  taiMimeSource.h
   IRefListClient.h
-  SelectEdit.h
   taBase_List.h
   DataView_List.h
   taArray_base.h
@@ -164,12 +164,12 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taTask.h
   taTask_List.h
 
-  taThreadMgr.h
-  taTaskThread.h
-  taTaskThread_PList.h
   taManagedThread.h
   taManagedThread_PList.h
   taThreadMgr_PList.h
+  taThreadMgr.h
+  taTaskThread.h
+  taTaskThread_PList.h
 
   DMemComm.h
   DMemShareVar.h
@@ -189,7 +189,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ViewSpec.h
   ViewSpec_Group.h
 
-  taProject.h
   ISelectable.h
 
   DataViewer.h
@@ -207,7 +206,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TreeDecorationSpec.h
   TreeDecorationSpec_List.h
 
-  Program.h
+  ProgramRef.h
   ProgLine.h
   ProgLine_List.h
   ProgType.h
@@ -225,24 +224,27 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ProgArg.h
   ProgArg_List.h
   ProgEl.h
-  ProgramCallBase.h
-  ProgramCall.h
-  ProgramCallVar.h
-  ProgCode.h
-  LocalVars.h
-  Function.h
   ProgEl_List.h
-  Loop.h
-  StaticMethodCall.h
+  Function.h
   Function_List.h
-  FunctionCall.h
   ProgObjList.h
+  Program.h
   Program_List.h
+
   ProgLibEl.h
   ProgLibEl_List.h
   ProgLib.h
   Program_Group.h
   ProgramToolBar.h
+
+  ProgramCallBase.h
+  ProgramCall.h
+  ProgramCallVar.h
+  ProgCode.h
+  LocalVars.h
+  Loop.h
+  StaticMethodCall.h
+  FunctionCall.h
   CodeBlock.h
   UserScript.h
   WhileLoop.h
@@ -407,6 +409,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   EditParamSearch.h
   EditMbrItem_Group.h
   EditMthItem_Group.h
+  SelectEdit.h
   SelectEditConfig.h
   ClusterRun.h
   ParamSearchAlgo.h
@@ -427,16 +430,42 @@ set(ta_HEADS_MAKETA_LOCAL_1
   UndoDiffThreadMgr.h
   UndoDiffTask.h
 
+  taiMimeItem.h
+  taiMimeItem_List.h
+  taiMultiMimeItem.h
+  taiObjectMimeItem.h
+  taiObjectsMimeItem.h
+  taiMimeSource.h
+  taiMimeFactory.h
+  taiMimeFactory_List.h
+  taiObjectMimeFactory.h
+
+  taiTabularDataMimeFactory.h
+  taiTabularDataMimeItem.h
+  taiMatrixDataMimeItem.h
+  taiTsvMimeItem.h
+
+  taColor.h
+  RGBA.h
+  RGBA_List.h
+  ColorScaleColor.h
+  ColorScaleColor_List.h
+  ColorScaleSpec.h
+  ColorScaleSpec_Group.h
+  ColorScale.h
+
   taProjVersion.h
   taLicense.h
-  CssProject.h
 
   ProjTemplateEl.h
   ProjTemplateEl_List.h
   ProjTemplates.h
-  Project_Group.h
-  PluginWizard.h
+  taProject.h
 
+  Project_Group.h
+  CssProject.h
+
+  PluginWizard.h
   TestWizard.h
 
   TemtClient.h
@@ -445,21 +474,12 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TemtServerAdapter.h
   TemtClient_List.h
 
-  taColor.h
-  RGBA.h
-  RGBA_List.h
-  ColorScale.h
-  ColorScaleColor.h
-  ColorScaleColor_List.h
-  ColorScaleSpec.h
-  ColorScaleSpec_Group.h
   taRootBase.h
   tabMisc.h
 
   taImage.h
   taCanvas.h
   ImgProcThreadBase.h
-  ImgProcCallThreadMgr.h
   ImgProcCallTask.h
   DoGFilter.h
   GaborFilter.h
@@ -486,42 +506,46 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DoGRetinaProc.h
   ImageProcCall.h
 
-  VEBody.h
-  VEJoint.h
-  VEObject.h
-  VEStatic.h
-  VESpace.h
-  VEWorld.h
-  VEArm.h
-  VELinearMuscle.h
   ODEIntParams.h
   ODEDamping.h
   ODEFiniteRotation.h
   VESurface.h
   VETexture.h
   VETexture_List.h
+
+  VEBody.h
   VEBody_Group.h
+  VEJointStops.h
+  VEJointMotor.h
+  ODEJointParams.h
+  VEJoint.h
+  VEJoint_Group.h
+  VEObject.h
+  VEObject_Group.h
+  VEStatic.h
+  VEStatic_Group.h
+  VESpace.h
+  VESpace_Group.h
   VELightParams.h
   VECameraDists.h
   VECamera.h
   VELight.h
+  ODEWorldParams.h
+  VEWorld.h
+
+  VEArm.h
+  VELinearMuscle.h
   VEObjCarousel.h
-  VEJointStops.h
-  VEJointMotor.h
-  ODEJointParams.h
-  VEJoint_Group.h
   VELambdaMuscle.h
   VEMuscleJoint.h
-  VEObject_Group.h
   VELinMuscle_List.h
-  VEStatic_Group.h
   VEHeightField.h
-  VESpace_Group.h
-  ODEWorldParams.h
 
   taiMisc.h
   taMediaWiki.h
 
+  taiData.h
+  taiDataList.h
   taiTypeBase.h
   taiViewType.h
   taiType.h
@@ -701,7 +725,6 @@ set(ta_HEADS_NOMAKETA
   taiDataHost.h
 
   taiMenuAction.h
-  taiDataList.h
   iRegexpDialogPopulator.h
   taiRegexpField.h
   taiToggle.h
@@ -817,20 +840,6 @@ set(ta_HEADS_NOMAKETA
   iDataTableView.h
   DataTableDelegate.h
   iDataTablePanel_Mbr.h
-
-  taiMimeItem.h
-  taiMultiMimeItem.h
-  taiObjectMimeItem.h
-  taiObjectsMimeItem.h
-  taiMimeFactory.h
-  taiMimeFactory_List.h
-  taiObjectMimeFactory.h
-  taiMimeItem_List.h
-
-  taiTabularDataMimeFactory.h
-  taiTabularDataMimeItem.h
-  taiMatrixDataMimeItem.h
-  taiTsvMimeItem.h
 
   T3Node.h
   T3NodeLeaf.h
@@ -1177,13 +1186,13 @@ set(ta_SRCS
   DMemAggVars.cpp
 
   taiMimeItem.cpp
+  taiMimeItem_List.cpp
   taiMultiMimeItem.cpp
   taiObjectMimeItem.cpp
   taiObjectsMimeItem.cpp
   taiMimeFactory.cpp
   taiMimeFactory_List.cpp
   taiObjectMimeFactory.cpp
-  taiMimeItem_List.cpp
 
   taAudioProc.cpp
 
@@ -1757,6 +1766,10 @@ set(ta_SRCS
   T3Translate2Translator.cpp
   SoScrollBar.cpp
   T3Color.cpp
+  ProgramRef.cpp
+  taStringDiffData.cpp
+  taiData.cpp
+  ContextFlag.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

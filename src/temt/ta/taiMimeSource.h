@@ -17,11 +17,20 @@
 #define taiMimeSource_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QObject>
+#endif
 
 // member includes:
+#include <taString>
+#include <taiMimeItem_List>
 
 // declare all other types mentioned but not required to include:
-
+class QMimeData; // #IGNORE
+class QString; // #IGNORE
+class QByteArray; // #IGNORE
+class taiObjectsMimeItem; //
 
 class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
 INHERITED(QObject)

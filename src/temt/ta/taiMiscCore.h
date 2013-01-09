@@ -17,11 +17,15 @@
 #define taiMiscCore_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QObject>
+#endif
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
-class QObject; // 
 
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing
   CO_PROCEED,           // tells caller to proceed with operation (typical default)

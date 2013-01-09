@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taList>
+#include <taiMimeItem>
 
 // member includes:
 

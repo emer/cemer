@@ -2485,7 +2485,11 @@ void Variant::setQVariant(const QVariant& cp) {
     setDouble(cp.toDouble(), cp.isNull()); break;
   case QVariant::Char:
     setChar(cp.toChar().toLatin1(), cp.isNull()); break;
+#ifdef String
+#undef String
+#endif
   case QVariant::String:
+#define String taString
     setString(cp.toString(), cp.isNull()); break;
   default:
 #ifdef DEBUG                    // expensive

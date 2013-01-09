@@ -17,6 +17,7 @@
 #define taDataLinkItr_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
 

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taPtrList>
+#include <taiData>
 
 // member includes:
 

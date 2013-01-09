@@ -20,8 +20,11 @@
 #include <taNBase>
 
 // member includes:
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
+class Program_Group; //
+class Program; //
 
 class TA_API ProgLibEl: public taNBase {
   // #INSTANCE #INLINE #CAT_Program an element in the program library

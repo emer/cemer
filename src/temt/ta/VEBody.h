@@ -19,6 +19,10 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <taVector3f>
 #include <taAxisAngle>
@@ -230,5 +234,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+TA_SMART_PTRS(VEBody);
 
 #endif // VEBody_h

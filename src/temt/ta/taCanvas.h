@@ -20,9 +20,16 @@
 #include <taImage>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPainter>
+#include <QBrush>
+#else
+class QPainter; // #IGNORE
+class QBrush; // #IGNORE
+#endif
 
 // declare all other types mentioned but not required to include:
-
+class QPainterPath; // #IGNORE
 
 class TA_API taCanvas : public taImage {
   // ##CAT_Data provides a mechanism for drawing onto an image buffer

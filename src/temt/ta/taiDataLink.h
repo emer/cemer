@@ -20,11 +20,19 @@
 #include <taDataLink>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class taiActions; //
+class iSearchDialog; //
+class iDataPanel; //
+class taiTreeDataNode; //
+class MemberDef; //
+class iTreeView; //
+class DataLink_QObj; //
 
-
-class TA_API taiDataLink: public taDataLink { // interface for viewing system
+class TA_API taiDataLink: public taDataLink {
+  // interface for viewing system
 INHERITED(taDataLink)
 public:
   static String         AnonymousItemName(const String& type_name, int index); // [index]:Typename

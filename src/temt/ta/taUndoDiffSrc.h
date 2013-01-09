@@ -19,11 +19,12 @@
 // parent includes:
 #include <taOBase>
 
-// member includes:
-#include <taDateTime>
-
 // for smart ptrs need these:
 #include <taSmartRefT>
+#include <taSmartPtrT>
+
+// member includes:
+#include <taDateTime>
 #include <taStringDiff>
 
 // declare all other types mentioned but not required to include:
@@ -54,5 +55,7 @@ private:
   void  Initialize();
   void  Destroy()       { CutLinks(); }
 };
+
+TA_SMART_PTRS(taUndoDiffSrc);
 
 #endif // taUndoDiffSrc_h

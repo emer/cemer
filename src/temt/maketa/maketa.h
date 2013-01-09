@@ -173,7 +173,7 @@ public:
   String	last_word;
 
   int	Getc();
-  int	Peekc() { return fh.peek(); }
+  int	Peekc();
   void	unGetc(int c);
   int	skipwhite();
   int	skipwhite_peek();

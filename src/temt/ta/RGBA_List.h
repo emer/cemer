@@ -16,6 +16,14 @@
 #ifndef RGBA_List_h
 #define RGBA_List_h 1
 
+// parent includes:
+#include <taList>
+#include <RGBA>
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+
 class TA_API RGBA_List : public taList<RGBA> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of RGBA objects
 INHERITED(taList<RGBA>)

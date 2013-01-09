@@ -20,11 +20,10 @@
 #include <ProgEl>
 
 // member includes:
-#include <Program>
+#include <ProgramRef>
 #include <ProgVar>
 
 // declare all other types mentioned but not required to include:
-class Program; // 
 
 
 class TA_API OtherProgramVar : public ProgEl { 

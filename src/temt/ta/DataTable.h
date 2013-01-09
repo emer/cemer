@@ -19,6 +19,10 @@
 // parent includes:
 #include <DataBlock_Idx>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <DataTableCols>
 #include <int_Array>
@@ -911,5 +915,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+TA_SMART_PTRS(DataTable);
 
 #endif // DataTable_h

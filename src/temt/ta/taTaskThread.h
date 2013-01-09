@@ -17,13 +17,33 @@
 #define taTaskThread_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QThread>
+#endif
 
 // member includes:
 #include <TimeUsedHR>
+#include <taTask>
 
 // declare all other types mentioned but not required to include:
 class taTask; // 
 
+/* TaskThread
+  A task thread is a worker thread that remains persistent over a long
+  period of time (i.e., is constantly re-used), and designed for
+  running a task (without further interruption) until completion, followed
+  by synchronization.  it is up to the taTask guy to do any and all
+  coordination with other threads, etc
+  
+  The usage is as follows:
+  
+  - create/start -- this puts the thread in the Blocked condition
+  - assign a task
+  - runTask -- release thread to run given task
+  - thread is now running
+  - 'sync' -- this waits for the thread to finish the task -- the main thread
+      will block until the thread is finished
+*/
 
 class TA_API taTaskThread: public QThread {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread a stand-alone persisent worker thread that can be started and stopped without having to create and destroy the thread object itself.  see taManagedThread for a similar thread object designed to work in concert with other threads more efficiently

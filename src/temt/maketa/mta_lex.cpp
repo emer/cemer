@@ -31,7 +31,10 @@
 */
 
 int MTA::Getc() {
-  char c = fh.get();
+  // char c = fh.get();
+  if(strm_pos >= file_str.length())
+    return EOF;
+  char c = file_str[strm_pos];
   //  strm_pos++;
   strm_pos = strm_pos + streampos(1);
   // now, detect for CRLF and skip to the lf
@@ -39,7 +42,8 @@ int MTA::Getc() {
     cerr << "C!!: => " << line << " :\t" << c << "\n";
   if (c == '\r') {
     if (Peekc() == '\n')
-      c = fh.get();
+      // c = fh.get();
+      c = file_str[strm_pos];
       strm_pos = strm_pos + streampos(1);
   }
   if ((c == '\n') || (c == '\r')) {
@@ -60,11 +64,18 @@ int MTA::Getc() {
   return c;
 }
 
+int MTA::Peekc() {
+  // return fh.peek();
+  if(strm_pos >= file_str.length())
+    return EOF;
+  return file_str[strm_pos];
+}
+
 void MTA::unGetc(int c) {
   col--;
   //  strm_pos--;
   strm_pos = strm_pos - streampos(1);
-  fh.putback(c);
+  // fh.putback(c);
 }
 
 int MTA::skipwhite() {

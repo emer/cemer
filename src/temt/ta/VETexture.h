@@ -19,6 +19,10 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <taVector2f>
 #include <taColor>
@@ -77,5 +81,7 @@ public:
 // protected:
 //   void       UpdateAfterEdit_impl();
 };
+
+TA_SMART_PTRS(VETexture);
 
 #endif // VETexture_h

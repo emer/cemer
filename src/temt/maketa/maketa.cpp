@@ -383,7 +383,7 @@ void MTA::BuildHashTables() {
 void MTA::Burp() {
   line = st_line;
   col = st_col;
-  fh.seekg(st_pos);
+  // fh.seekg(st_pos);
   strm_pos = st_pos;
 }
 
@@ -815,6 +815,7 @@ int main(int argc, char* argv[])
 #else
     mta->fh.open(tmp_file, ios::in | ios::binary); // binary critical when using windows
 #endif
+    mta->file_str.Load_str(mta->fh); // just suck it all up at once into string and go from there
     mta->state = MTA::Find_Item;
     mta->yy_state = MTA::YYRet_Ok;
     mta->line = 1;

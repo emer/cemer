@@ -17,13 +17,12 @@
 #define taThreadMgr_PList_h 1
 
 // parent includes:
-#include <taThreadMgr>
 #include <taPtrList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taThreadMgr; //
 
 class TA_API taThreadMgr_PList : public taPtrList<taThreadMgr> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of thread managers

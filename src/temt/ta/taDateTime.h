@@ -20,6 +20,13 @@
 #include <taNBase>
 
 // member includes:
+#if !defined(__MAKETA__)
+# include <QDateTime>
+# include <QTime>
+#else
+class QDateTime; // #IGNORE
+class QTime; // #IGNORE
+#endif
 
 // declare all other types mentioned but not required to include:
 

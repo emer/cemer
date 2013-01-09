@@ -19,6 +19,7 @@
 // parent includes:
 #include <taRefN>
 #include <taString>
+#include <ContextFlag>
 
 // member includes:
 

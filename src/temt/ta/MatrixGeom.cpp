@@ -118,7 +118,7 @@ int MatrixGeom::SafeIndexFmDims_(const int* d) const {
 }
 
 int MatrixGeom::IndexFmDims2D(int col, int row, bool pat_4d,
-    taMisc::MatrixView mat_view) const
+                              int mat_view) const
 {
   if (n_dims < 4) pat_4d = false;
   if (mat_view == taMisc::DEF_ZERO)

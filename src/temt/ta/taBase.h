@@ -18,15 +18,12 @@
 
 #include <taString>
 #include <Variant>
-#include "ta_type.h"
-
-#include "ta_TA_type_WRAPPER.h"
+#include <TypeDef>
 
 #ifndef __MAKETA__
 #ifdef TA_GUI
-# include <qobject.h>
+#include <QObject>
 #endif
-#include <cassert>
 #endif
 
 // parent includes:
@@ -34,7 +31,6 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class TypeDef; // 
 class taMatrix; // 
 class taBaseItr; // 
 class MemberDef; // 
@@ -52,6 +48,7 @@ class taList_impl; //
 class taFiler; //
 class taiMimeSource; //
 class IDataLinkClient; //
+class QVariant; // #IGNORE
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +173,7 @@ public: \
 #define TA_BASEFUNS_TOK_(y) \
   private: \
   inline void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
-    if (reg && !(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
+    if (reg) InitSetDefaultName(); } \
   public: \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
@@ -538,12 +535,9 @@ public:
   virtual void          CutLinks_taAuto(TypeDef* td);
   // #IGNORE automatic TA-based cutlinks: goes through only my members & calls cutlinks and calls inherited
 
-  void                  Register()
-  { if(!taMisc::not_constr) GetTypeDef()->RegisterFinal((void*)this);
-    SetBaseFlag(REGISTERED); }
+  void                  Register();
   // #IGNORE non-virtual, called in constructors to register token in token list
-  void                  unRegister()
-  { CheckDestroyed(); if(!taMisc::not_constr && HasBaseFlag(REGISTERED)) { GetTypeDef()->unRegisterFinal((void*)this); ClearBaseFlag(REGISTERED);}}
+  void                  unRegister();
   // #IGNORE non-virtual, called in destructors to unregister token in token list
   virtual void          SetTypeDefaults();
   // #IGNORE initialize modifiable default initial values stored with the typedef -- see TypeDefault object in ta_defaults.  currently not used; was called in taBase::Own
@@ -552,6 +546,8 @@ public:
 
 
 protected:  // Impl
+  void                  InitSetDefaultName();
+  // #IGNORE called only in Initialize__ -- checks for NOT is_loading and is_duplicating and then calls SetDefaultName()
 #ifdef DEBUG
   void                  CheckDestroyed();// issues error msg or assertion if destroyed
 #else
@@ -953,21 +949,15 @@ protected:      // Impl
   //    Checking the configuration of objects prior to using them
 public:
 
-  inline bool   TestError(bool test, const char* fun_name,
+  bool   TestError(bool test, const char* fun_name,
                           const char* a, const char* b=0, const char* c=0,
                           const char* d=0, const char* e=0, const char* f=0,
-                          const char* g=0, const char* h=0) const {
-    if(!test) return false;
-    return taMisc::TestError(this, test, fun_name, a, b, c, d, e, f, g, h);
-  }
-  // #CAT_ObjectMgmt if test, then report error, including object name, type, and path information; returns test -- use e.g. if(TestError((condition), "fun", "msg")) return false;
-  inline bool   TestWarning(bool test, const char* fun_name,
-                            const char* a, const char* b=0, const char* c=0,
-                            const char* d=0, const char* e=0, const char* f=0,
-                            const char* g=0, const char* h=0) const {
-    if(!test) return false;
-    return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
-  }
+                   const char* g=0, const char* h=0) const;
+  // #CAT_ObjectMgmt if test, then report error, including object name, type, and path information; returns test -- use e.g. if(TestError((condition), "fun", "msg")) return    false;
+  bool   TestWarning(bool test, const char* fun_name,
+                     const char* a, const char* b=0, const char* c=0,
+                     const char* d=0, const char* e=0, const char* f=0,
+                     const char* g=0, const char* h=0) const;
   // #CAT_ObjectMgmt if test, then report warning, including object name, type, and path information; returns test -- use e.g. if(TestWarning((condition), "fun", "msg")) return false;
   virtual void  DebugInfo(const char* fun_name,
                           const char* a, const char* b=0, const char* c=0,
@@ -1243,12 +1233,10 @@ public:
   // #IGNORE Search test for just this one taBase item according to criteria
 
   virtual void          CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                                         voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                         taBase* cp_base,
-                                         int show_forbidden = taMisc::NO_HIDDEN,
-                                         int show_allowed = taMisc::SHOW_CHECK_MASK,
-                                         bool no_ptrs = true);
-  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own
+                               voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                               taBase* cp_base, int show_forbidden, int show_allowed, 
+                               bool no_ptrs = true);
+  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own -- def show args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
 
   virtual String        GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }

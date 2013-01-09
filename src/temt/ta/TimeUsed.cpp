@@ -15,3 +15,37 @@
 
 #include "TimeUsed.h"
 
+void TimeUsed::Initialize() {
+  s_used = 0.0;
+  n_used = 0;
+}
+
+void TimeUsed::StartTimer(bool reset_used) {
+  if(reset_used) ResetUsed();
+  start.GetTime();
+}
+
+void TimeUsed::EndTimer() {
+  end.GetTime();
+  used += end - start;
+  s_used = used.TicksToSecs(used.tot);
+  n_used++;
+}
+
+void TimeUsed::ResetUsed() {
+  used.ZeroTime();
+  s_used = 0.0;
+  n_used = 0;
+}
+
+String TimeUsed::GetString() {
+  String rval = used.GetString();
+  rval += " n: " + (String)n_used;
+  if(n_used > 1) {
+    taTime avgdiv;
+    avgdiv.usr = n_used;  avgdiv.sys = n_used; avgdiv.tot = n_used;
+    taTime avg = used / avgdiv;
+    rval += " avg: " + avg.GetString();
+  }
+  return rval;
+}

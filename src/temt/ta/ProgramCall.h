@@ -20,11 +20,10 @@
 #include <ProgramCallBase>
 
 // member includes:
-#include <Program>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
 class ProgEl; // 
-class Program; // 
 
 
 class TA_API ProgramCall: public ProgramCallBase {

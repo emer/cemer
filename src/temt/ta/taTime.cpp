@@ -15,3 +15,79 @@
 
 #include "taTime.h"
 
+#if (defined(TA_OS_WIN))
+# include <time.h>
+# include <windows.h>
+#else
+# include <sys/time.h>
+# include <sys/times.h>
+# include <unistd.h>
+#endif
+
+void taTime::Initialize() {
+  ZeroTime();
+}
+
+void taTime::ZeroTime() {
+  usr = 0; sys = 0; tot = 0;
+}
+
+taTime taTime::operator+(const taTime& td) const {
+  taTime rv;
+  rv.usr = usr + td.usr; rv.sys = sys + td.sys; rv.tot = tot + td.tot;
+  return rv;
+}
+taTime taTime::operator-(const taTime& td) const {
+  taTime rv;
+  rv.usr = usr - td.usr; rv.sys = sys - td.sys; rv.tot = tot - td.tot;
+  return rv;
+}
+taTime taTime::operator*(const taTime& td) const {
+  taTime rv;
+  rv.usr = usr * td.usr; rv.sys = sys * td.sys; rv.tot = tot * td.tot;
+  return rv;
+}
+taTime taTime::operator/(const taTime& td) const {
+  taTime rv;
+  rv.usr = usr / td.usr; rv.sys = sys / td.sys; rv.tot = tot / td.tot;
+  return rv;
+}
+
+String taTime::GetString(int len, int prec) {
+  String rval = "usr: " + taMisc::FormatValue(GetUsrSecs(), len, prec)
+    + " sys: " + taMisc::FormatValue(GetSysSecs(), len, prec)
+    + " tot: " + taMisc::FormatValue(GetTotSecs(), len, prec);
+  return rval;
+}
+
+#if defined(TA_OS_WIN)
+
+double taTime::TicksToSecs(double ticks) {
+  double ticks_per = (double)CLOCKS_PER_SEC;
+  return ticks / ticks_per;
+}
+
+void taTime::GetTime() {
+  clock_t tottime = clock();
+  tot = tottime;
+  //NOTE: just allocate all to usr
+  usr = tot;
+  sys = 0.0;
+}
+
+#else
+
+double taTime::TicksToSecs(double ticks) {
+  double ticks_per = (double)sysconf(_SC_CLK_TCK);
+  return ticks / ticks_per;
+}
+
+void taTime::GetTime() {
+  struct tms t;
+  clock_t tottime = times(&t);
+  tot = tottime;
+  usr = t.tms_utime;
+  sys = t.tms_stime;
+}
+
+#endif // TA_OS_WIN

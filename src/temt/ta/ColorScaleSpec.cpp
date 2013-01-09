@@ -30,7 +30,7 @@ void ColorScaleSpec::Copy_(const ColorScaleSpec& cp) {
   clr = cp.clr;
 }
 
-void ColorScaleSpec::GenRanges(TAColor_List* cl, int chunks) {
+void ColorScaleSpec::GenRanges(ColorScaleColor_List* cl, int chunks) {
   // for odd colors, assuming 5 clrs and 16 chunks:
   // chunk: 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15
   // color: 0        1           2           3           4
@@ -59,7 +59,7 @@ void ColorScaleSpec::GenRanges(TAColor_List* cl, int chunks) {
 
     int j;
     for(j=0; j<n_per; j++) {
-      TAColor* pc = (TAColor *) cl->New(1,&TA_TAColor);
+      ColorScaleColor* pc = (ColorScaleColor *) cl->New(1,&TA_ColorScaleColor);
       float pcr = low_color->r + (dr * (float)j);
       float pcg = low_color->g + (dg * (float)j);
       float pcb = low_color->b + (db * (float)j);
@@ -67,7 +67,7 @@ void ColorScaleSpec::GenRanges(TAColor_List* cl, int chunks) {
       pc->SetColor(pcr,pcg,pcb,pca,&background);
     }
   }
-  TAColor* pc = (TAColor*)cl->New(1,&TA_TAColor);
+  ColorScaleColor* pc = (ColorScaleColor*)cl->New(1,&TA_ColorScaleColor);
   RGBA* hi_color = clr.Peek();
   pc->SetColor(hi_color, &background);
 }
