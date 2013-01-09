@@ -59,7 +59,7 @@
 #include <slice_Matrix>
 #include <rgb_Matrix>
 #include <voidptr_Matrix>
-#include <Circ_Matrix>
+#include <CircMatrix>
 
 #ifdef _WIN32
   #pragma warning(pop)

@@ -17,13 +17,12 @@
 #define ScriptBase_List_h 1
 
 // parent includes:
-#include <AbstractScriptBase>
 #include <taPtrList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class AbstractScriptBase; //
 
 class TA_API ScriptBase_List : public taPtrList<AbstractScriptBase> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER list of script base objects (doesn't own anything)

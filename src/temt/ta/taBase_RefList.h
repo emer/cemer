@@ -18,13 +18,12 @@
 
 // parent includes:
 #include <taBase_PtrList>
+#include <IMultiDataLinkClient>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class IRefListClient; //
-
-// todo: is the following used??   why #IGNORE?
 
 class TA_API taBase_RefList: public taPtrList<taBase>,
    virtual public IMultiDataLinkClient { // #IGNORE a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes

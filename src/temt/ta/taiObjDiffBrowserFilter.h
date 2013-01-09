@@ -17,7 +17,9 @@
 #define taiObjDiffBrowserFilter_h 1
 
 // parent includes:
-#include <class>
+#ifndef __MAKETA__
+#include <idialog.h>
+#endif
 
 // member includes:
 

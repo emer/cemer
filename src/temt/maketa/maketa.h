@@ -128,6 +128,7 @@ public:
   int		anon_no;	// anonymous type number
   int		defn_st_line;	// starting line of current definition, possibly..
 
+  String        file_str;       // load entire file in at once as a string and process from there
   fstream	fh;
   States	state;
   YY_Flags	yy_state;	// parser state

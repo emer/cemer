@@ -26,7 +26,6 @@
 #endif
 
 #ifdef TA_OS_WIN
-
 #include "windows.h"
 #include <errno.h>
 #ifndef NO_TA_BASE
@@ -46,6 +45,7 @@
 #endif
 
 #include <sstream>              // for FormatValue
+#include <math.h>               // for NiceRoundNumber
 
 InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
   taMisc::AddInitHook(init_proc);

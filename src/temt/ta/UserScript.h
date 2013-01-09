@@ -23,9 +23,6 @@
 #include <ProgExpr>
 
 // declare all other types mentioned but not required to include:
-class istream; // 
-class ostream; // 
-
 
 class TA_API UserScript: public ProgEl { 
   // a user-defined css script (can access all program variables, etc)

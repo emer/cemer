@@ -472,6 +472,11 @@ class MethodDef; //
 # endif
 #endif
 
+// fake version of mpi comm to allow functions to not be conditionalized
+#ifndef DMEM_COMPILE
+typedef int MPI_Comm;		// mpi communicator
+#endif
+
 #ifdef TA_USE_QT
 # ifndef __MAKETA__
 #   include <QObject>

@@ -28,20 +28,6 @@
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class TypeDef; // 
-class taMatrix; // 
-class taBaseItr; // 
-class MemberDef; // 
-class istream; // 
-class ostream; // 
-class taBase_PtrList; // 
-class taObjDiff_List; // 
-class taDoc; // 
-class MethodDef; // 
-class UserDataItem_List; // 
-class UserDataItemBase; // 
-class UserDataItem; // 
 class taGroup_impl; // 
 class EditMbrItem; // 
 class EditMthItem; // 

@@ -14,11 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "Variant.h"
+#include <taMisc>
+#include <TypeDef>
+#include <EnumDef>
+#include <MemberDef>
+#include <PropertyDef>
+#include <MethodDef>
 
-#include "ta_type.h"
 #ifndef NO_TA_BASE
-#include "ta_matrix.h"
-#include "ta_project.h"
+#include <taMatrix>
+#include <tabMisc>
+#include <taRootBase>
 #endif
 
 #ifdef TA_USE_QT

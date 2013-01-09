@@ -19,6 +19,8 @@
 // parent includes:
 #include <taNBase>
 #include <AbstractScriptBase>
+#include <taSmartPtrT>
+#include <taSmartRefT>
 
 // member includes:
 #include <ScriptBase_List>

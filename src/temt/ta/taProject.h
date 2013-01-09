@@ -33,8 +33,6 @@
 #include <taUndoMgr>
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class ostream; // 
 class MainWindowViewer; // 
 class DataTable; // 
 class TypeDef; // 

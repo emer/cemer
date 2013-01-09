@@ -23,22 +23,6 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
-class TypeDef; // 
-class taMatrix; // 
-class taBaseItr; // 
-class MemberDef; // 
-class istream; // 
-class ostream; // 
-class taBase_PtrList; // 
-class taObjDiff_List; // 
-class taDoc; // 
-class SelectEdit; // 
-class MethodDef; // 
-class UserDataItem_List; // 
-class UserDataItemBase; // 
-class UserDataItem; // 
-
 
 class TA_API taFontSpec : public taOBase, public iFont {
  // #INLINE #INLINE_DUMP ##CAT_Display a specification of a font (for Unix - X logical font description)

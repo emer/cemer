@@ -21,13 +21,12 @@
 
 // member includes:
 #include <DataTableCols>
+#include <int_Array>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
 class taFiler; // 
 class ChannelSpec; // 
-class ostream; // 
-class istream; // 
 class FixedWidthSpec; // 
 class DataCol; // 
 class MatrixGeom; // 
@@ -39,7 +38,7 @@ class String_Data; //
 class GridTableView; // 
 class T3DataViewFrame; // 
 class GraphTableView; // 
-
+class DataTableModel; //
 
 class TA_API DataTable : public DataBlock_Idx {
   // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row

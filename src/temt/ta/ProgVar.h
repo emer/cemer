@@ -28,7 +28,6 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class Program; // 
 
 
 class TA_API ProgVar: public taNBase {

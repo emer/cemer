@@ -331,24 +331,6 @@ private:
 //   TA_BASEFUNS(T ## _Group);
 // }
 
-// use the following as a template instead..
-
-// define default base group to not keep tokens
-class TA_API taBase_Group : public taGroup<taBase> {
-  // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_0 group of objects
-INHERITED(taGroup<taBase>)
-public:
-  void  Initialize()            { SetBaseType(&TA_taBase); }
-  void  Destroy()               { };
-  TA_BASEFUNS_NOCOPY(taBase_Group);
-};
-
-#define BaseGroup_of(T)                                                       \
-class T ## _Group : public taBase_Group {                                     \
-public:                                                                       \
-  void  Initialize()            { SetBaseType(T::StatTypeDef(0)); }                   \
-  void  Destroy()               { };                                          \
-  TA_BASEFUNS(T ## _Group);                                           \
-}
+// use taBase_Group.h as a template instead
 
 #endif // taGroup_h

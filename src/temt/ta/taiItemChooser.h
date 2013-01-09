@@ -17,12 +17,15 @@
 #define taiItemChooser_h 1
 
 // parent includes:
-#include <class>
+#include "ta_def.h"
+
+#ifndef __MAKETA__
+#include <idialog.h>
+#endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
 
 class TA_API taiItemChooser: iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list

@@ -17,6 +17,7 @@
 #define taiDataHost_h 1
 
 // parent includes:
+#include <taiDataHost_impl>
 
 // member includes:
 
@@ -86,5 +87,30 @@ protected:
 protected:
   override void InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 };
+
+class TA_API taiHostDialog_List : public taPtrList<taiDataHost> {
+  // #IGNORE list of DataHosts that have been dialoged
+protected:
+  void  El_Done_(void* it)      { delete (taiDataHost*)it; }
+
+public:
+  ~taiHostDialog_List()            { Reset(); }
+};
+
+class TA_API MembSet { // #IGNORE
+public:
+  Member_List           memb_el; // member elements (1:1 with data_el), empty in inline mode
+  taiDataList           data_el; // data elements (1:1 with memb_el WHEN section shown)
+  String                text; // for non-default guys, the text in the label or checkbox
+  String                desc; // for non-default guys, the tooltip text
+  bool                  show; // flag to help by indicating whether to show or not
+  bool                  modal; // flag to indicate that section is modal (checkbox, or default closed tree)
+
+  MembSet() {show = false; modal = false;}
+private:
+  MembSet(const MembSet& cp); // value semantics not allowed
+  MembSet& operator=(const MembSet& cp);
+};
+
 
 #endif // taiDataHost_h
