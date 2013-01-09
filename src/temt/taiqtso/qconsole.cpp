@@ -16,8 +16,7 @@
  ***************************************************************************/
 
 #include "qconsole.h"
-#include "ta_platform.h"
-#include "ta_qt.h" // for taiMisc::KeyEventCtrlPressed(e)
+#include <taMisc>
 
 #include <qfile.h>
 
@@ -151,7 +150,7 @@ void QConsole::flushOutput() {
     }
     if(waiting) {
       QCoreApplication::processEvents();
-      taPlatform::msleep(1); //note: 1ms is fine, shorter values result in cpu thrashing
+      taMisc::SleepMs(1); //note: 1ms is fine, shorter values result in cpu thrashing
     }
   } while(waiting);
 #endif
@@ -166,7 +165,7 @@ int QConsole::queryForKeyResponse(QString query) {
   key_response = 0;
   while (waiting_for_key && !applicationIsQuitting) {
     QCoreApplication::processEvents();
-    taPlatform::msleep(10); //note: 1ms is fine, shorter values result in cpu thrashing
+    taMisc::SleepMs(10); //note: 1ms is fine, shorter values result in cpu thrashing
     // keypress event turns off waiting_for_key and sets key_response
   }
   // get rid of prompt
@@ -305,12 +304,37 @@ void QConsole::resizeEvent(QResizeEvent* e) {
   QTextEdit::resizeEvent(e);
 }
 
+static bool KeyEventCtrlPressed(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if (e->modifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+
+#ifdef TA_OS_MAC
+  // actual ctrl = meta on apple -- enable this
+  if (e->modifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+
+  // TODO: Why is this the only key checked?  What about Command+C for Copy?
+  // Maybe this check isn't needed anymore.  If not, this function should take
+  // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
+
+  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
+  if ((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+    ctrl_pressed = false;
+  }
+#endif
+
+  return ctrl_pressed;
+}
+
 // Reimplemented key press event
 void QConsole::keyPressEvent(QKeyEvent* e)
 {
   QTextCursor cursor(textCursor());
 
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
   bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
 
   if (curOutputLn >= maxLines) {

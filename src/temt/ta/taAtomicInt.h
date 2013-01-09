@@ -31,6 +31,7 @@
 class QAtomicInt;
 #else
 
+# if (QT_VERSION < 0x040400) || !defined(TA_USE_QT)
 class TA_API QAtomicInt: public QBasicAtomicInt { // this copies the barest API of QAtomicInt
 public:
   QAtomicInt& operator=(int value)
@@ -86,7 +87,8 @@ public:
     }
 # endif
 
-# endif
+# endif  // QT_VERSION
+#endif   // __MAKETA__
 
 class taAtomicInt : public QAtomicInt {
 public:

@@ -27,7 +27,7 @@ class UserDataItem; //
 
 
 class TA_API UserDataItem_List: public taGroup<UserDataItemBase> {
-  // #CHILDREN_INLINE
+  // #CHILDREN_INLINE list of user data items
 INHERITED(taGroup<UserDataItemBase>)
 public:
   bool                  hasVisibleItems() const; // #IGNORE lets gui avoid putting up panel unless any user-visible items are present
@@ -42,5 +42,7 @@ private:
   void Initialize() {SetBaseType(&TA_UserDataItemBase);}
   void Destroy() {}
 };
+
+TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
 
 #endif // UserDataItem_List_h

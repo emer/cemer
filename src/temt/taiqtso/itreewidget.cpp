@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "itreewidget.h"
-#include "ta_qt.h"
+//#include "ta_qt.h"
 // ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 
 #include <QMap>
@@ -329,9 +329,33 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
   doItemExpanded(item, true);
 }
 
+static bool KeyEventCtrlPressed(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if (e->modifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+
+#ifdef TA_OS_MAC
+  // actual ctrl = meta on apple -- enable this
+  if (e->modifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+
+  // TODO: Why is this the only key checked?  What about Command+C for Copy?
+  // Maybe this check isn't needed anymore.  If not, this function should take
+  // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
+
+  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
+  if ((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+    ctrl_pressed = false;
+  }
+#endif
+
+  return ctrl_pressed;
+}
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
 
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent = currentIndex();
@@ -366,13 +390,13 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       e->accept();
       break;
     case Qt::Key_V:
-      if(taMisc::emacs_mode) {
+      // if(taMisc::emacs_mode) {
 	newCurrent = moveCursor(MovePageDown, e->modifiers());
 	e->accept();
-      }
-      else {
-	e->ignore();		// save for paste elsewhere
-      }
+      // }
+      // else {
+      //   e->ignore();		// save for paste elsewhere
+      // }
       break;
     case Qt::Key_F:
       newCurrent = moveCursor(MoveRight, e->modifiers());

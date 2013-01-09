@@ -15,3 +15,14 @@
 
 #include "CircMatrix.h"
 
+void CircMatrix::Initialize() {
+  st_idx = 0;
+  length = 0;
+}
+
+void CircMatrix::Reset() {
+  st_idx = 0;
+  length = 0;
+}
+
+

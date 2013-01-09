@@ -55,4 +55,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
+TA_SMART_PTRS(Variant_Matrix);
+
 #endif // Variant_Matrix_h

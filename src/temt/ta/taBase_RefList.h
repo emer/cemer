@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class IRefListClient; //
 
 // todo: is the following used??   why #IGNORE?
 

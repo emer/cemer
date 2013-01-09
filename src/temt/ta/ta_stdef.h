@@ -478,4 +478,7 @@ class MethodDef; //
 # endif
 #endif
 
+// maximum number of dimensions in a matrix
+#define TA_MATRIX_DIMS_MAX 8
+
 #endif // ta_stdef_h

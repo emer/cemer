@@ -19,24 +19,147 @@
 // parent includes:
 #include <taNBase>
 
+// for smart ptrs need these:
+#include <taSmartPtrT>
+#include <taSmartRefT>
+
 // member includes:
 #include <MatrixGeom>
 
 // declare all other types mentioned but not required to include:
-class taBasePtr; // 
-class taBase; // 
 class int_Matrix; // 
 class MatrixIndex; // 
-class TypeDef; // 
-class ostream; // 
-class istream; // 
 class MatrixTableModel; // 
+class CellRange; //
+class taMatrix_PList; //
+
+/* Matrix -- a specialized, richer implementation of Array
+
+   Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS.
+
+   End-user mats should only use up to N-1 dims, since 1 is reserved for
+   DataTable rows. Explicit accessors are only provided for 1:N-2
+
+   Each concrete class holds one specific type of data, ex. byte or float.
+   The number of dimensions is set at create time, and is lifetime-invariant.
+   The number of elements in each dimension (except the highest) is fixed.
+   Data is stored in row-major order, ex:
+     [2][3]: 00, 01, 02, 10, 11, 12
+   The value for the highest dimension (geom[n-1]) is special:
+     if geom[N-1]=0 then no allocation is made, and the data will resize
+     if geom[N-1]!=0, then data is allocated at creation -- note
+       that the allocated data is uninitialized
+   Space is allocated in full units of the highest dimension, called a *Frame*;
+
+   The object does NOT supports partially filled arrays.
+   Strongly-typed instances support external fixed data, via setFixedData() call.
+   If fixed data is used, the matrix is NOT resizable.
+
+   Frames
+     a "frame" is a set of data comprising the outermost dimension;
+     for example, for a 2-d matrix, each frame is one row (for 1-d, a frame
+     is the same as a cell.)
+
+   Accessors
+     most routines provide three accessor variants:
+
+     Xxx(d0, d1, d2, d3, d4, d5, d6) this is the most common way to access the data --
+       d's higher than the actual dimension of the matrix are ignored
+
+     XxxN(const MatrixIndex&) -- for any dimensionality -- it is unspecified whether
+       the dims may be higher, but there must be at least the correct amount
+
+     Xxx_Flat(int idx) -- treats the elements as a flat 1-d array -- storage is
+       in *row-major order*, i.e., the innermost dimension changes most rapidly
+
+     "Safe" accessors do bounds checks on the individual indices, as well
+        as the final flat index -- a blank value is returned for out-of-bound
+        values -- it is acceptable (and expected) for out-of-bounds indexes
+        to occur
+     "Fast" accessors do not check bounds and may not check flat indexes -- they
+        must only be used in "guaranteed" index-safe code (i.e., where
+        index values are being driven directly from the matrix itself.)
+
+   Slicing
+     A "slice" is a reference to one frame of a matrix. Slices are used for
+     things like viewing the cell content of a Matrix Column in a DataTable,
+     passing a single data pattern as an event to a network, and so on. A slice
+     is created by making a new instance of the parent matrix type, and initializing
+     it with a fixed data pointer to the parent data, and the appropriate
+     geometry (which is always 1-d less than the parent.) Each slice adds one
+     to the ref count of its parent, so as long as correct ref semantics are
+     used, it is not possible to delete a parent prior to its slice children.
+
+     Slices are updated when a parent matrix is resized or redimensioned.
+     HOWEVER it is important that slice clients are aware of when parent
+     resizing may occur, and insure they are not in the process of iterating
+     the data that is being replaced.
+
+   Resizing
+     A matrix can be expanded or shrunk in units of frames.
+
+     A matrix object can be redimensioned, however this is discouraged -- the
+     supported paradigm is that a matrix should retain a specific geometry for
+     its lifetime. If a matrix is redimensioned, all slices will be "collapsed",
+     meaning the will be set to 0 size.
+
+   Generic vs. Strongly Typed Access
+     Matrix objects are always strongly typed, and can be accessed using
+     strongly typed accessor functions -- the "Fast" versions of these are
+     particularly fast, and "_Flat" can be extremely efficient.
+
+     All matrix objects can also use Variant and String accessors to access
+     values generically, or polymorphically. Variant values will use the
+     underlying type, where possible (ex int_Matrix::GetVar return int Variant).
+
+     The String value is used for streaming and file save/load.
+
+   Notifications
+     Matrix objects maintain two parallel notification mechanisms:
+       * the standard taBase datalink-based notification
+       * Qt AbstractItemModel notifications
+
+     Changes to data do *not* automatically cause data notifications (this would
+     add an unacceptable penalty to most code.) However, data changes that
+     are mediated by the Qt model do, so other grid views will automatically stay
+     updated.
+
+     We also use Struct/Data Begin/End to communicate changes. When a mat has
+     slices, we recursively propogate those notifies to the slices. Note that
+     this are almost invariably gui-driven, so don't entail overhead for low-level
+     data processing. But if you want your low-level updates to cause gui changes,
+     then you must wrap them in a Begin/End block.
+
+   Matrix vs. Array
+     'Array' classes are typically 1-d vectors or interpreted as 2-d arrays.
+     Array supports dynamic operations, like inserting, sorting, etc.
+     Matrix is ref-counted, and intended for sharing/moving raw data around.
+     Matrix explicitly supports dimensionality and dimensional access.
+     Matrix supports advanced tabular editing operations.
+     Matrix forms the basis for most pdp4 data processing constructs.
+
+*/
+
+/* XxxData
+
+   XxxData is an N-dimension array of data.
+   Each concrete class holds one specific type of data, ex. byte or float.
+   The number of dimensions is set at create time, and is lifetime-invariant.
+   The number of elements in each dimension is usually fixed.
+   Data is stored such that the highest dimension items are adjacent, ex:
+     [2][3]: 00, 01, 02, 10, 11, 12
+   The first dimension may be unspecified (0) -- the data will automatically grow.
+
+   The object supports partially filled arrays, but not ragged arrays.
+
+*/
+
+typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed data
 
 
 class TA_API taMatrix: public taNBase {
   // #VIRT_BASE #STEM_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
 INHERITED(taNBase)
-//nn friend class MatrixTableModel;
 
 public:
   ///////////////////////////////////////////////////////////////////
@@ -154,9 +277,9 @@ public:
   // Clipboard Support (note: works well unless you have tabs/newlines in your data)
 
   const String          FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to);
-    // returns a tab-sep cols, newline-sep rows, well suited to clipboard; the coords are in flat 2-d form, as in the table editors
-  const String          FlatRangeToTSV(const CellRange& cr) // #IGNORE
-    {return FlatRangeToTSV(cr.row_fr, cr.col_fr, cr.row_to, cr.col_to);}
+  // returns a tab-sep cols, newline-sep rows, well suited to clipboard; the coords are in flat 2-d form, as in the table editors
+  const String          FlatRangeToTSV(const CellRange& cr);
+  // #IGNORE returns a tab-sep cols, newline-sep rows, well suited to clipboard; the coords are in flat 2-d form, as in the table editors
 
   ///////////////////////////////////////
   // Variant
@@ -629,5 +752,7 @@ private:
   void                  Initialize();
   void                  Destroy();
 };
+
+TA_SMART_PTRS(taMatrix);
 
 #endif // taMatrix_h

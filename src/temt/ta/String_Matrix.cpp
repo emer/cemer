@@ -15,3 +15,68 @@
 
 #include "String_Matrix.h"
 
+const String String_Matrix::blank;
+
+int String_Matrix::defAlignment() const {
+  return Qt::AlignLeft;
+}
+
+int String_Matrix::Dump_Load_Item(istream& strm, int idx) {
+  int c = taMisc::skip_till_start_quote_or_semi(strm);
+  if (c == '\"') {
+    c = taMisc::read_till_end_quote_semi(strm);
+  }
+  if (c != EOF) {
+    FastEl_Flat(idx) = taMisc::LexBuf;
+  }
+  return c;
+}
+
+void String_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+// note: we don't write "" for empty
+  taMisc::write_quoted_string(strm, FastEl_Flat(idx));
+}
+
+void String_Matrix::ReclaimOrphans_(int from, int to) {
+  for (int i = from; i <= to; ++i) {
+    el[i] = _nilString;
+  }
+}
+
+String String_Matrix::ToDelimString(const String& delim) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    rval += FastEl_Flat(i);
+    if(i < size-1) rval += delim;
+  }
+  return rval;
+}
+
+void String_Matrix::FmDelimString(const String& str, const String& delim) {
+  Reset();
+  String_Array ar;
+  ar.FmDelimString(str, delim);
+  if(dims() == 0) {
+    SetGeom(1, ar.size);
+  }
+  else {
+    if(size < ar.size) {
+      int extra = ((ar.size - size) / frameSize());
+      AddFrames(extra);
+      while(size < ar.size)
+        AddFrames(1);
+    }
+  }
+  int idx = 0;
+  String remainder = str;
+  while(remainder.nonempty()) {
+    if(remainder.contains(delim)) {
+      Set_Flat(remainder.before(delim), idx++);
+      remainder = remainder.after(delim);
+    }
+    else {
+      Set_Flat(remainder, idx++);
+      remainder = _nilString;
+    }
+  }
+}

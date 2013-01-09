@@ -31,10 +31,11 @@ public:
 
   int           enum_no;        // number (value) of the enum
 
-
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_EnumDef;}
+#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_ENUM;}
+#endif
 
   void          Copy(const EnumDef& cp);
 

@@ -17,7 +17,6 @@
 #define rgb_Matrix_h 1
 
 // parent includes:
-#include <rgb_t>
 #include <taMatrixT>
 
 // member includes:
@@ -56,5 +55,7 @@ private:
   void          Initialize() {}
   void          Destroy() { CutLinks(); }
 };
+
+TA_SMART_PTRS(rgb_Matrix);
 
 #endif // rgb_Matrix_h

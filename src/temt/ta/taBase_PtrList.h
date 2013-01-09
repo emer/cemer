@@ -37,6 +37,4 @@ protected:
   void          El_Done_(void* it)      { taBase::Done((taBase*)it); }
 };
 
-typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
-
 #endif // taBase_PtrList_h

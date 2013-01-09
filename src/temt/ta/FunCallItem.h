@@ -17,6 +17,8 @@
 #define FunCallItem_h 1
 
 // parent includes:
+#include "ta_def.h"
+#include <taString>
 
 // member includes:
 

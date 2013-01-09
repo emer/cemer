@@ -66,7 +66,6 @@ private:
 #define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
 
 SmartRef_Of(taBase,);           // basic ref if you don't know the type
-SmartPtr_Of(taBase);            // basic ptr if you don't know the type
 
 
 #endif // taSmartRefT_h

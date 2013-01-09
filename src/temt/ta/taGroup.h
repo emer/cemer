@@ -24,6 +24,114 @@
 // declare all other types mentioned but not required to include:
 
 
+#ifndef __MAKETA__
+
+template<typename T, typename Ref, typename Ptr, typename GpPtr, typename GpIt>
+class IteratorTaGroupLeaf
+{
+public:
+  typedef IteratorTaGroupLeaf               Self;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+  typedef T                                 value_type;
+  typedef std::size_t                       difference_type;
+  typedef Ptr                               pointer;
+  typedef Ref                               reference;
+
+  IteratorTaGroupLeaf(GpPtr group, const GpIt &gp_it)
+    : group_(group)
+    , gp_it_(gp_it)
+    , el_idx_(0)
+  {
+  }
+  IteratorTaGroupLeaf()
+    : group_(0)
+    , gp_it_(0)
+    , el_idx_(0)
+  {
+  }
+  bool operator==(const Self &it) const
+  {
+    // Default constructed iterators are singular, not equal to any
+    // other iterator.
+    return group_ && group_ == it.group_ && gp_it_ == it.gp_it_ && el_idx_ == it.el_idx_;
+  }
+  bool operator!=(const Self &it) const
+  {
+    return !(*this == it);
+  }
+  reference operator*() const
+  {
+    return *ptr();
+  }
+  pointer operator->() const
+  {
+    return ptr();
+  }
+  Self & operator++() // prefix
+  {
+    assert(group_);
+    GpIt gp_end = group_->leaf_gp_end();
+    // If already past-the-end, don't increment anything.
+    // Otherwise, increment the element index.
+    if (gp_it_ != gp_end && ++el_idx_ >= gp_it_->size) {
+      // We incremented past the last element in the subgroup,
+      // so move on to the next non-empty subgroup.  This could
+      // end up iterating all the way to the end.
+      while (++gp_it_ != gp_end && gp_it_->size == 0) {}
+      el_idx_ = 0;
+    }
+    return *this;
+  }
+  Self operator++(int) // postfix
+  {
+    Self ret(*this);
+    operator++();
+    return ret;
+  }
+  Self & operator--() // prefix
+  {
+    assert(group_);
+    GpIt gp_begin = group_->leaf_gp_begin();
+    // Decrement the element index, unless we're already "past-the-begin".
+    if (!(gp_it_ == gp_begin && el_idx_ < 0) && --el_idx_ < 0) {
+      // We decremented past the first element in the subgroup, so move back
+      // to the previous non-empty subgroup.  This could iterate all the way
+      // back to the beginning (but not beyond).
+      while (gp_it_ != gp_begin && (--gp_it_)->size == 0) {}
+      // Now, either gp_it_ == begin, or gp_it_ has elements, or both.  Set
+      // the index to the last element in the group, or -1 if no elements.
+      // Allow decrementing to "past-the-begin" so --i; ++i; is a null op.
+      el_idx_ = gp_it_->size - 1;
+    }
+    return *this;
+  }
+  Self operator--(int) // postfix
+  {
+    Self ret(*this);
+    operator--();
+    return ret;
+  }
+
+private:
+  pointer ptr() const
+  {
+    assert(group_);
+    // Cast from void* returned by SafeEl_().
+    pointer item = (pointer) gp_it_->SafeEl_(el_idx_);
+    assert(item);
+    return item;
+  }
+
+  // A pointer to the taGroup<> object this leaf-iterator was created on.
+  GpPtr group_;
+  // An iterator into group_.leaf_gp indicating the current group position.
+  GpIt gp_it_;
+  // The index into the leaf group.
+  int el_idx_;
+};
+
+#endif // __MAKETA__
+
 
 template<class T> class taGroup : public taGroup_impl {
   // #INSTANCE #NO_UPDATE_AFTER
@@ -211,5 +319,36 @@ private:
   void Initialize()     { SetBaseType(T::StatTypeDef(1));}
   void  Destroy () {}
 };
+
+// do not use this macro, since you typically will want ##NO_TOKENS, #NO_UPDATE_AFTER
+// which cannot be put inside the macro!
+//
+// #define taGroup_of(T)
+// class T ## _Group : public taGroup<T> {
+// public:
+//   void Initialize()  { };
+//   void Destroy()     { };
+//   TA_BASEFUNS(T ## _Group);
+// }
+
+// use the following as a template instead..
+
+// define default base group to not keep tokens
+class TA_API taBase_Group : public taGroup<taBase> {
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_0 group of objects
+INHERITED(taGroup<taBase>)
+public:
+  void  Initialize()            { SetBaseType(&TA_taBase); }
+  void  Destroy()               { };
+  TA_BASEFUNS_NOCOPY(taBase_Group);
+};
+
+#define BaseGroup_of(T)                                                       \
+class T ## _Group : public taBase_Group {                                     \
+public:                                                                       \
+  void  Initialize()            { SetBaseType(T::StatTypeDef(0)); }                   \
+  void  Destroy()               { };                                          \
+  TA_BASEFUNS(T ## _Group);                                           \
+}
 
 #endif // taGroup_h

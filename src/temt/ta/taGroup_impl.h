@@ -27,8 +27,6 @@ class MemberDef; //
 class SelectEdit; // 
 class taBase; // 
 class TypeDef; // 
-class TALOG; // 
-
 
 class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #STEM_BASE implementation of a group
@@ -197,7 +195,7 @@ public:
 
   virtual void  InitLeafGp() const;
   // #CAT_Access Initialize the leaf group iter list, always ok to call
-  virtual void  InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
+  virtual void  InitLeafGp_impl(taGroup_List* lg) const; // #IGNORE impl of init leaf gp
   virtual void  AddOnly_(void* it);             // #IGNORE update leaf count
 
   virtual bool  RemoveLeafEl(taBase* item);
@@ -215,7 +213,7 @@ public:
   virtual bool  RemoveGpEl(taGroup_impl* group)
   { return gp.RemoveEl(group); }
   // #MENU #FROM_GROUP_gp #MENU_ON_Edit #CAT_Modify remove given group
-  virtual TALOG* EditSubGps()
+  virtual taGroup_List* EditSubGps()
   { return &gp; }
   // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
 
@@ -300,7 +298,7 @@ private:
   void  Destroy();
   void  Copy_(const taGroup_impl& cp);
 protected:
-  mutable TALOG*        leaf_gp;        // #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
+  mutable taGroup_List*  leaf_gp; // #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
   override void         CanCopy_impl(const taBase* cp_fm, bool quiet,
     bool& ok, bool virt) const;
   override void         CheckChildConfig_impl(bool quiet, bool& rval);

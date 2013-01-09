@@ -137,4 +137,60 @@ private:
   void                  Destroy() { }
 };
 
+#define TA_MATRIX_FUNS(y,T) \
+  y* GetSlice(const MatrixIndex& base, int sfd = -1, int nsf = 1) \
+   {return (y*)GetSlice_(base, sfd, nsf);} \
+  y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
+  y* GetFrameRangeSlice(int frame, int n_frames) {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
+  y(int dims_,int d0,int d1=0,int d2=0,int d3=0,int d4=0,int d5=0,int d6=0) \
+    {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
+  explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
+  y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
+  void CutLinks() { SetArray_(NULL); taMatrix::CutLinks(); } \
+  USING(taMatrix::operator=) \
+  TA_BASEFUNS(y) \
+protected: \
+  override const void*  El_GetBlank_() const    { return (const void*)&blank; }
+
+#define MAT_COPY_SAME_SLOW(y,T) \
+  void  Copy_(const y& cp) { if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom); \
+    for (int i = 0; i < size; ++i) { \
+      El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i)); \
+    }}
+
+#define MAT_COPY_SAME_FAST(y,T) \
+  void  Copy_(const y& cp) {  if(ElView() || cp.ElView()) { \
+      Copy_Matrix_impl(&cp); return; } \
+    SetGeomN(cp.geom);				 \
+    memcpy(data(), cp.data(), size * sizeof(T)); \
+    }
+
+#define TA_MATRIX_FUNS_FAST(y,T) \
+private: \
+  MAT_COPY_SAME_FAST(y,T) \
+protected: \
+  override bool fastAlloc() const {return true;} \
+public: \
+  TA_MATRIX_FUNS(y,T)
+
+#define TA_MATRIX_FUNS_SLOW(y,T) \
+private: \
+  MAT_COPY_SAME_SLOW(y,T) \
+protected: \
+  override bool fastAlloc() const {return false;} \
+public: \
+  TA_MATRIX_FUNS(y,T)
+
+// use this for a derived class of an instantiated matrix type
+#define TA_MATRIX_FUNS_DERIVED(y,T) \
+  y(int dims_,int d0,int d1=0,int d2=0,int d3=0,int d4=0,int d5=0,int d6=0) \
+    {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
+  explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
+  y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
+  USING(taMatrix::operator=) \
+  TA_BASEFUNS_NOCOPY(y)
+
+
 #endif // taMatrixT_h

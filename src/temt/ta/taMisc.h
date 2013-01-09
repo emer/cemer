@@ -19,14 +19,14 @@
 // parent includes:
 
 // member includes:
+#include <TypeSpace>
+#include <TypeItem>
 #include <taVersion>
 #include <taThreadDefaults>
 #include <NamedURL>
 #include <NameVar_PArray>
 #include <String_PArray>
 #include <DumpFileCvtList>
-#include <TypeSpace>
-#include <TypeItem>
 
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
@@ -34,6 +34,7 @@ class TypeDef; //
 class taBase; // 
 class UserDataItemBase; // 
 class MemberDef; // 
+class UserDataItem_List; //
 
 #ifdef __MAKETA__
 #define ContextFlag unsigned char

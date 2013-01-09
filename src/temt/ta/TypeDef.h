@@ -30,7 +30,13 @@
 
 // declare all other types mentioned but not required to include:
 class taBase_List; //
-
+class taiType; //
+class taiEdit; //
+class taiViewType; //
+class taObjDiff_List; //
+class taObjDiffRec; //
+class UserDataItemBase; //
+class UserDataItem_List; //
 
 // Order of includes problem -- the Windows header file "WinUser.h" defines this
 // as a macro.  If some file indirectly includes that file and then this file,
@@ -106,15 +112,17 @@ public:
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
 
+  /////////////////////////////////////////////////////////////
+  //            Constructors and misc industrial
+
   bool          IsEnum() const; // true if an enum
   bool          IsClass() const; // true if it is a class
   bool          IsAnchor() const; // true if this is the non-ptr, non-ref, non-const type
   bool          IsVarCompat() const; // true if read/write compatible with Variant
+
+#ifndef __MAKETA__
   override      TypeInfoKinds TypeInfoKind() const {return TIK_TYPE;}
-
-  /////////////////////////////////////////////////////////////
-  //            Constructors and misc industrial
-
+#endif
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
@@ -380,10 +388,9 @@ public:
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                                 void* trg_base, void* src_base,
-                                int show_forbidden, //= taMisc::NO_HIDDEN
-                                int show_allowed, // = taMisc::SHOW_CHECK_MASK
+                                int show_forbidden, int show_allowed,
                                 bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects), show def args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
 
 #ifndef NO_TA_BASE
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,

@@ -15,3 +15,15 @@
 
 #include "voidptr_Matrix.h"
 
+const void* voidptr_Matrix::blank = 0;
+
+bool voidptr_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+#ifdef TA_USE_QT
+  str.toInt(&rval, 0); //auto-base sensing; discard result
+#endif
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid integer number";
+  return rval;
+}
+

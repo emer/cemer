@@ -59,4 +59,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
+TA_SMART_PTRS(voidptr_Matrix);
+
 #endif // voidptr_Matrix_h

@@ -15,3 +15,27 @@
 
 #include "taSubGroup.h"
 
+void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
+  if (owner == NULL) return;
+  // send LIST events to the owning group as a GROUP_ITEM event
+  if ((dcr >= DCR_LIST_ITEM_TO_GROUP_MIN) && (dcr <= DCR_LIST_ITEM_TO_GROUP_MAX))
+    ((taGroup_impl*)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
+}
+
+bool taSubGroup::Transfer(taBase* it) {
+  // need to leaf count on parent group
+  taGroup_impl* myown = (taGroup_impl*)owner;
+  taGroup_impl* git = (taGroup_impl*)it;
+  if((git->super_gp == myown) || (git->super_gp == NULL))
+    return false;
+  taGroup_impl* old_own = git->super_gp;
+  bool rval = TALOG::Transfer(git);
+  //TODO: notification is not right, because counts are not rejigged yet!
+  if (rval) {
+    old_own->UpdateLeafCount_(-git->leaves);
+    if(myown != NULL) {
+      myown->UpdateLeafCount_(git->leaves);
+    }
+  }
+  return rval;
+}

@@ -53,7 +53,6 @@ private:
 
 #define SmartPtr_Of(T)  typedef taSmartPtrT<T> T ## Ptr;
 
-// compatibility macro
-#define taPtr_Of(T)  SmartPtr_Of(T)
+SmartPtr_Of(taBase);            // basic ptr if you don't know the type
 
 #endif // taSmartPtrT_h

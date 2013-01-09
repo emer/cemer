@@ -35,9 +35,9 @@ public:
     SC_ANY,             // any context -- directives like "SHOW"
     SC_EDIT,            // for in edit dialogs -- directives like "SHOW_EDIT"
     SC_TREE             // in tree views (browsing) -- directives like "SHOW_TREE"
-  }; //
+  }; 
 
-  enum TypeInfoKinds { // used in switch statements to particularize instances
+  enum TypeInfoKinds {
     TIK_ENUM,
     TIK_MEMBER,
     TIK_METHOD,
@@ -51,7 +51,6 @@ public:
     TIK_TYPESPACE,
     TIK_UNKNOWN
   };
-
 
   // const guys help speed up oft-looked up values by avoiding String churning
   static const String opt_show; // "SHOW"

@@ -22,7 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class MatrixIndex; // 
+class MatrixIndex; //
+class int_Matrix; //
 
 
 class TA_API MatrixGeom: public taBase  {
@@ -48,8 +49,7 @@ public:
   // #CAT_Access return geometry size along given dimension
   int           Product() const;
   // #CAT_Access returns product of all dimension values (i.e., total size of geometry)
-  inline int    IndexFmDimsN(const MatrixIndex& dims) const
-  { return IndexFmDims_(dims.el); }
+  int           IndexFmDimsN(const MatrixIndex& dims) const;
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
   inline int    IndexFmDims(int d0, int d1=0, int d2=0,
                             int d3=0, int d4=0, int d5=0, int d6=0) const

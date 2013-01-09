@@ -74,10 +74,9 @@ public:
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                                 TypeDef* base_typ, void* trg_base, void* src_base,
-                                int show_forbidden, // = taMisc::NO_HIDDEN,
-                                int show_allowed, // = taMisc::SHOW_CHECK_MASK,
+                                int show_forbidden, int show_allowed, 
                                 bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects) -- default args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
 
   // IO
   String&       PrintType(String& strm, int indent = 0) const;

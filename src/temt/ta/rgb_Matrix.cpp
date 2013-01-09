@@ -15,3 +15,17 @@
 
 #include "rgb_Matrix.h"
 
+const rgb_t rgb_Matrix::blank;
+
+bool rgb_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+  ushort val = 0;
+#ifdef TA_USE_QT
+  val = str.toUShort(&rval, 0); //auto-base sensing
+#endif
+  // check for overflow
+  if (rval && (val > 255)) rval = false;
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid byte value (0-255)";
+  return rval;
+}

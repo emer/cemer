@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class MemberDefBase_List; //
+class taiMember; //
 
 
 class TA_API MemberDefBase : public TypeItem { // #VIRT_BASE #NO_INSTANCE common subclass of MemberDef and PropertyDef
@@ -62,10 +63,10 @@ public:
   bool          CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool          ShowMember(int show_forbidden, // = taMisc::USE_SHOW_GUI_DEF,
-                           TypeItem::ShowContext show_context, // = TypeItem::SC_ANY
-                           int show_allowed) const; //= taMisc::SHOW_CHECK_MASK
-  // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
+  bool          ShowMember(int show_forbidden, 
+                           TypeItem::ShowContext show_context, 
+                           int show_allowed) const; 
+  // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc) -- def args are: taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY, taMisc::SHOW_CHECK_MASK
 
 protected:
   // note: bits in the show* vars are set to indicate the value, ie READ_ONLY has that bit set

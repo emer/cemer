@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiDataLink; //
+class taDataLink;  //
 
 /* ****WARNING****
   Do NOT put logging (ie calls to taMisc::Warning, etc.) in any data link mgt
@@ -31,8 +33,9 @@
 
 // Mixin interface for Node that uses datalinks, ex. tree node or Inventor node
 
-class TA_API IDataLinkClient : public virtual IDataLinkProxy {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
-  // this is the interface available to the host data object
+
+class TA_API IDataLinkClient : public virtual IDataLinkProxy {
+  //#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE this is the interface available to the host data object
 friend class taDataLink;
 public:
 #ifndef TA_NO_GUI

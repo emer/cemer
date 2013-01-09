@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "itextedit.h"
-#include "ta_qt.h"
+//#include "ta_qt.h"
 // ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 
 #include <QKeyEvent>
@@ -45,10 +45,35 @@ void iTextEdit::clearExtSelection() {
   setTextCursor(cursor);
 }
 
+static bool KeyEventCtrlPressed(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if (e->modifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+
+#ifdef TA_OS_MAC
+  // actual ctrl = meta on apple -- enable this
+  if (e->modifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+
+  // TODO: Why is this the only key checked?  What about Command+C for Copy?
+  // Maybe this check isn't needed anymore.  If not, this function should take
+  // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
+
+  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
+  if ((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+    ctrl_pressed = false;
+  }
+#endif
+
+  return ctrl_pressed;
+}
+
 void iTextEdit::keyPressEvent(QKeyEvent* e) {
   QTextCursor cursor(textCursor());
 
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
 
   QCoreApplication* app = QCoreApplication::instance();
 
@@ -140,13 +165,13 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       return;
     case Qt::Key_V:
       e->accept();
-      if(taMisc::emacs_mode) {
+      // if(taMisc::emacs_mode) {
 	app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      }
-      else {
-	paste();
-	clearExtSelection();
-      }
+      // }
+      // else {
+      //   paste();
+      //   clearExtSelection();
+      // }
       return;
     case Qt::Key_S:
       findPrompt();

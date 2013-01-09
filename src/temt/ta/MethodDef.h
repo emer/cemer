@@ -25,6 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class MethodSpace; //
+class taiMethod; //
 
 
 class TA_API MethodDef : public TypeItem {// defines a class method
@@ -54,11 +55,12 @@ public:
 
   css_fun_stub_ptr stubp;       // css function stub pointer
 
+#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_METHOD;}
-
-  const String          prototype() const; // text depiction of fun, ex "void MyFun(int p)"
+#endif
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MethodDef;}
+
   void          Initialize();
   void          Copy(const MethodDef& cp);
   MethodDef();
@@ -68,6 +70,8 @@ public:
             css_fun_stub_ptr stb = NULL, bool is_virt = false);
   MethodDef(const MethodDef& md);       // copy constructor
   ~MethodDef();
+
+  const String          prototype() const; // text depiction of fun, ex "void MyFun(int p)"
 
   MethodDef*            Clone()         { return new MethodDef(*this); }
   MethodDef*            MakeToken()     { return new MethodDef(); }

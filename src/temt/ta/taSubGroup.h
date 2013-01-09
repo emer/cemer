@@ -17,19 +17,30 @@
 #define taSubGroup_h 1
 
 // parent includes:
-#include <taList_taGroup_impl_>
+#include "ta_def.h"
+#include <taList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
+class taGroup_impl; //
 
-
-class   TA_API taSubGroup : public TALOG {
-  // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
-INHERITED(TALOG)
+class TA_API taGroup_List : public taList<taGroup_impl> {
+  // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER a list of groups
+  INHERITED(taList<taGroup_impl>)
 public:
-  override  void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // forward LIST events as GROUP events to owner
+  TA_BASEFUNS_NOCOPY(taGroup_List);
+private:
+  void  Initialize()    { };
+  void  Destroy()       { };
+};
+
+class TA_API taSubGroup : public taGroup_List {
+  // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
+  INHERITED(taGroup_List)
+public:
+  override  void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  // forward LIST events as GROUP events to owner
 
   bool  Transfer(taBase* item);
 

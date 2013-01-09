@@ -66,4 +66,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
+TA_SMART_PTRS(float_Matrix);
+
 #endif // float_Matrix_h

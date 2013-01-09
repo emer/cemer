@@ -51,7 +51,9 @@ public:
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MemberDef;}
+#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_MEMBER;}
+#endif
 
   override bool ValIsDefault(const void* base,
                              int for_show) const; // = taMisc::IS_EXPERT)
@@ -88,10 +90,9 @@ public:
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                                 TypeDef* base_typ, void* trg_base, void* src_base,
-                                int show_forbidden, // = taMisc::NO_HIDDEN
-                                int show_allowed, // = taMisc::SHOW_CHECK_MASK
+                                int show_forbidden, int show_allowed,
                                 bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects) -- def show args:  taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
 
   void          PrintType(String& col1, String& col2) const;
   void          Print(String& col1, String& col2, void* base, int indent=0) const;

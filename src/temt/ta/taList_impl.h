@@ -20,36 +20,34 @@
 #include <taNBase>
 #include <taPtrList_base>
 
+// for smart ptrs need these:
+#include <taSmartPtrT>
+#include <taSmartRefT>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taHashTable; // 
 class TypeDef; // 
-class taBasePtr; // 
-class taBase; // 
 class taMatrix; // 
 class taBaseItr; // 
 class MemberDef; // 
-class istream; // 
-class ostream; // 
-class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
 class SelectEdit; // 
 class MethodDef; // 
+class UserDataItem; // 
 class UserDataItem_List; // 
 class UserDataItemBase; // 
-class UserDataItem; // 
-class taPtrList_impl; // 
 
 
-class TA_API taList_impl : public taNBase, public taPtrList_ta_base {
+class TA_API taList_impl : public taNBase, public taPtrList_base<taBase> {
   // #INSTANCE #NO_TOKENS #STEM_BASE ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 private:
 typedef taNBase inherited; // for the boilerplate code
 typedef taNBase inherited_taBase;
-typedef taPtrList_ta_base inherited_taPtrList;
+typedef taPtrList_base<taBase> inherited_taPtrList;
 #endif
 public:
   TypeDef*      el_base;        // #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group

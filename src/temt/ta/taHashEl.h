@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 //typedef uintptr_t taHashVal;
-typedef unsigned long taHashVal;
+typedef unsigned long taHashVal; // this is a hash value
 
 class TA_API  taHashEl {
   // ##NO_TOKENS holds information for one entry of the hash table

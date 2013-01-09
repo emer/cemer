@@ -48,8 +48,8 @@ using namespace std;
 
 
 #ifndef NO_TA_BASE
-#include "ta_variant.h"
-#include "ta_matrix.h"
+#include <Variant>
+#include <int_Matrix.h>
 
 String  String::operator [] (const Variant& i) const {
   String rval;

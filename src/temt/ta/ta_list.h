@@ -35,11 +35,4 @@
 #include <int_PArray>
 #include <voidptr_PArray>
 
-// todo: eliminate these:
-
-//#include <taStringDiffItem>
-//#include <taStringDiffItem_PArray>
-// #include <taStringDiffEdits>
-// #include <taStringDiff>
-
 #endif // ta_list_h
