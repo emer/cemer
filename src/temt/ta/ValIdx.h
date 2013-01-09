@@ -117,4 +117,17 @@ public:
   inline String GetStr() const { return String(val) + ":" + String(idx); }
 };
 
+inline ValIdx operator + (float td, const ValIdx& v) {
+  ValIdx rv; rv.val = td + v.val; rv.idx = v.idx; return rv;
+}
+inline ValIdx operator - (float td, const ValIdx& v) {
+  ValIdx rv; rv.val = td - v.val; rv.idx = v.idx; return rv;
+}
+inline ValIdx operator * (float td, const ValIdx& v) {
+  ValIdx rv; rv.val = td * v.val; rv.idx = v.idx; return rv;
+}
+inline ValIdx operator / (float td, const ValIdx& v) {
+  ValIdx rv; rv.val = td / v.val; rv.idx = v.idx; return rv;
+}
+
 #endif // ValIdx_h

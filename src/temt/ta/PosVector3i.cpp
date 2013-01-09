@@ -15,3 +15,9 @@
 
 #include "PosVector3i.h"
 
+void PosVector3i::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  SetGtEq(0);
+}
+
+

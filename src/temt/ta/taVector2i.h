@@ -198,4 +198,19 @@ private:
   inline void   Destroy()               { };
 };
 
+inline taVector2i operator + (int td, const taVector2i& v) {
+  taVector2i rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+}
+inline taVector2i operator - (int td, const taVector2i& v) {
+  taVector2i rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+}
+inline taVector2i operator * (int td, const taVector2i& v) {
+  taVector2i rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+}
+inline taVector2i operator / (int td, const taVector2i& v) {
+  taVector2i rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+}
+
+typedef taVector2i TwoDCoord;		// #INSTANCE obsolete version of taVector2i
+
 #endif // taVector2i_h

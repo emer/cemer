@@ -174,4 +174,19 @@ private:
   inline void   Destroy()               { };
 };
 
+inline taVector3i operator + (int td, const taVector3i& v) {
+  taVector3i rv; rv.x = td + v.x; rv.y = td + v.y; rv.z = td + v.z; return rv;
+}
+inline taVector3i operator - (int td, const taVector3i& v) {
+  taVector3i rv; rv.x = td - v.x; rv.y = td - v.y; rv.z = td - v.z; return rv;
+}
+inline taVector3i operator * (int td, const taVector3i& v) {
+  taVector3i rv; rv.x = td * v.x; rv.y = td * v.y; rv.z = td * v.z; return rv;
+}
+inline taVector3i operator / (int td, const taVector3i& v) {
+  taVector3i rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
+}
+
+typedef Vector3i TDCoord;		// #INSTANCE obsolete version of Vector3i
+
 #endif // taVector3i_h

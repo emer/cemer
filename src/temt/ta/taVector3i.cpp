@@ -15,3 +15,31 @@
 
 #include "taVector3i.h"
 
+taVector3i::taVector3i(const taVector3f& cp) {
+  Register(); Initialize();
+  x = (int)cp.x; y = (int)cp.y; z = (int)cp.z;
+}
+
+taVector3i& taVector3i::operator=(const taVector3f& cp) {
+  x = (int)cp.x; y = (int)cp.y;	z = (int)cp.z;
+  return *this;
+}
+
+void taVector3i::CopyToMatrixGeom(MatrixGeom& geom) {
+  geom.SetDims(3);
+  geom.Set(0, x);
+  geom.Set(1, y);
+  geom.Set(2, z);
+}
+
+void taVector3i::CopyToMatrixIndex(MatrixIndex& idx) {
+  idx.SetDims(3);
+  idx.Set(0, x);
+  idx.Set(1, y);
+  idx.Set(2, z);
+}
+
+bool taVector3i::FitNinXY(int n) {
+  return FitN(n);
+}
+

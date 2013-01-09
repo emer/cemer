@@ -15,3 +15,28 @@
 
 #include "XYNGeom.h"
 
+void XYNGeom::Initialize() {
+  x = 1;
+  y = 1;
+  n_not_xy = false;
+  n = 1;
+  z = 0;
+}
+
+void XYNGeom::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(n_not_xy && n > x*y) { // only if not fitting, expand
+    FitN(n);
+  }
+  if(n_not_xy) {
+    if(x * y == n) n_not_xy = false; // no need for flag
+  }
+  else {
+    n = x * y;			// always keep n up-to-date
+  }
+}
+
+void XYNGeom::operator=(const taVector2i& cp) {
+  x = cp.x; y = cp.y; UpdateAfterEdit_NoGui();
+}
+

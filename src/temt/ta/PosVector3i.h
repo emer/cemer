@@ -42,4 +42,6 @@ private:
   void  Destroy()       { };
 };
 
+typedef PosVector3i PosTDCoord;		// #INSTANCE obsolete version of PosVector3i
+
 #endif // PosVector3i_h

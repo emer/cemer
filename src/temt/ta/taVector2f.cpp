@@ -15,3 +15,12 @@
 
 #include "taVector2f.h"
 
+taVector2f::taVector2f(const taVector2i& cp) {
+  Register(); Initialize(); x = (float)cp.x; y = (float)cp.y;
+}
+
+taVector2f& taVector2f::operator=(const taVector2i& cp) {
+  x = (float)cp.x; y = (float)cp.y;
+  return *this;
+}
+

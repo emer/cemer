@@ -49,9 +49,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
   EnumSpace.h
   TokenSpace.h
   MemberDefBase_List.h
-  MemberSpace.h
   Member_List.h
+  MemberSpace.h
   PropertySpace.h
+  Method_List.h
   MethodSpace.h
   TypeSpace.h
   EnumDef.h
@@ -115,26 +116,23 @@ set(ta_HEADS_MAKETA_LOCAL_1
   FunCallItem.h
   taBase_FunCallList.h
 
-  tabMisc.h
-  taRootBase.h
-
+  IDataLinkProxy.h
+  IDataLinkClient.h
+  IMultiDataLinkClient.h
+  IDataLinkClient_PtrList.h
   taDataLink.h
+
   taStringDiffItem.h
   taStringDiffItem_PArray.h
   taStringDiffEdits.h
   taStringDiff.h
+
   taFiler.h
   taDataLinkItr.h
   taiDataLink.h
   taiMiscCore.h
 
   taObjDiffRec.h
-  IDataLinkProxy.h
-  IDataLinkClient.h
-  IMultiDataLinkClient.h
-  IDataLinkClient_PtrList.h
-  Method_List.h
-
   taObjDiff_List.h
   taiMimeSource.h
   IRefListClient.h
@@ -152,26 +150,32 @@ set(ta_HEADS_MAKETA_LOCAL_1
   Variant_Array.h
   voidptr_Array.h
   NameVar_Array.h
+  float_CircBuffer.h
+
   taWikiURL.h
 
   UserDataItem_List.h
-  float_CircBuffer.h
+
   taTime.h
   TimeUsed.h
   TimeUsedHR.h
   taDateTime.h
+
   taTask.h
   taTask_List.h
+
   taThreadMgr.h
   taTaskThread.h
   taTaskThread_PList.h
   taManagedThread.h
   taManagedThread_PList.h
   taThreadMgr_PList.h
+
   DMemComm.h
   DMemShareVar.h
   DMemShare.h
   DMemAggVars.h
+
   taiMimeItem.h
   taiMultiMimeItem.h
   taiObjectMimeItem.h
@@ -180,15 +184,20 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiMimeFactory_List.h
   taiObjectMimeFactory.h
   taiMimeItem_List.h
+
   taAudioProc.h
   taFontSpec.h
   taiAction.h
+
   AbstractScriptBase.h
   ScriptBase_List.h
+
   ViewSpec.h
   ViewSpec_Group.h
+
   taProject.h
   ISelectable.h
+
   IDataViewWidget.h
   iFrameViewer.h
   iBrowseViewer.h
@@ -201,6 +210,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   iTabView.h
   iDataPanel.h
   iToolBar.h
+
   DataViewer.h
   TopLevelViewer.h
   tabBrowseViewer.h
@@ -215,6 +225,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ToolBoxRegistrar_PtrList.h
   TreeDecorationSpec.h
   TreeDecorationSpec_List.h
+
   Program.h
   ProgLine.h
   ProgLine_List.h
@@ -283,13 +294,16 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DataColsFmArgs.h
   SelectEditsFmArgs.h
   RegisterArgs.h
+
   MatrixTableModel.h
+
   Relation.h
   RelationSpec.h
   RelationFloat.h
   Aggregate.h
   AggregateSpec.h
   SimpleMathSpec.h
+
   taMath.h
   taMath_double.h
   taMath_float.h
@@ -297,7 +311,9 @@ set(ta_HEADS_MAKETA_LOCAL_1
   RndSeed_List.h
   Random.h
   RandomSpec.h
+
   cssMath.h
+
   taVector2i.h
   PosVector2i.h
   taVector3i.h
@@ -307,17 +323,11 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taAxisAngle.h
   taQuaternion.h
   taTransform.h
-  TwoDCoord.h
-  PosTwoDCoord.h
-  TDCoord.h
-  PosTDCoord.h
-  FloatTwoDCoord.h
-  FloatTDCoord.h
-  FloatRotation.h
-  FloatTransform.h
+
   XYNGeom.h
   ValIdx.h
   ValIdx_Array.h
+
   DataBlock.h
   ChannelSpec.h
   MatrixChannelSpec.h
@@ -339,6 +349,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   float_Data.h
   int_Data.h
   byte_Data.h
+
   DataTableEditorOptions.h
   DataOpEl.h
   DataOpList.h
@@ -378,6 +389,85 @@ set(ta_HEADS_MAKETA_LOCAL_1
   SubMatrixOpSpec.h
   taDataGen.h
   DataGenCall.h
+
+  dumpMisc.h
+  VPUnref.h
+  DumpPathSub.h
+  VPUList.h
+  DumpPathToken.h
+  DumpPathSubList.h
+  DumpPathTokenList.h
+  NameValue.h
+  TypeDefault.h
+
+  IPlugin.h
+  iPluginEditor.h
+  taPluginInst.h
+  taPluginInst_PList.h
+  PluginMakeThreadMgr.h
+  PluginMakeTask.h
+  taPlugins.h
+  taPluginBase.h
+  taPlugin.h
+  taPluginDep.h
+  taPluginBase_List.h
+  taPlugin_List.h
+
+  SelectEditItem.h
+  EditMbrItem.h
+  EditMthItem.h
+  EditParamSearch.h
+  EditMbrItem_Group.h
+  EditMthItem_Group.h
+  SelectEditConfig.h
+  ClusterRun.h
+  ParamSearchAlgo.h
+  ParamSearchAlgo_List.h
+  GridSearch.h
+
+  taWizard.h
+  UserData_DocLink.h
+  Doc_Group.h
+  Wizard_Group.h
+  SelectEdit_Group.h
+
+  taUndoRec.h
+  taUndoDiffSrc.h
+  taUndoMgr.h
+  taUndoDiffSrc_List.h
+  taUndoRec_List.h
+  UndoDiffThreadMgr.h
+  UndoDiffTask.h
+
+  taProjVersion.h
+  taLicense.h
+  CssProject.h
+
+  ProjTemplateEl.h
+  ProjTemplateEl_List.h
+  ProjTemplates.h
+  Project_Group.h
+  PluginWizard.h
+
+  TestWizard.h
+
+  TemtClient.h
+  TemtClientAdapter.h
+  TemtServer.h
+  TemtServerAdapter.h
+  TemtClient_List.h
+
+  taColor.h
+  RGBA.h
+  RGBA_List.h
+  ColorScale.h
+  ColorScaleColor.h
+  ColorScaleColor_List.h
+  ColorScaleSpec.h
+  ColorScaleSpec_Group.h
+  taRootBase.h
+  tabMisc.h
+
   taImage.h
   taCanvas.h
   ImgProcThreadBase.h
@@ -407,6 +497,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   V1RetinaProc.h
   DoGRetinaProc.h
   ImageProcCall.h
+
   VEBody.h
   VEJoint.h
   VEObject.h
@@ -439,64 +530,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VEHeightField.h
   VESpace_Group.h
   ODEWorldParams.h
-  dumpMisc.h
-  VPUnref.h
-  DumpPathSub.h
-  VPUList.h
-  DumpPathToken.h
-  DumpPathSubList.h
-  DumpPathTokenList.h
-  NameValue.h
-  TypeDefault.h
-  IPlugin.h
-  iPluginEditor.h
-  taPluginInst.h
-  taPluginInst_PList.h
-  PluginMakeThreadMgr.h
-  PluginMakeTask.h
-  taPlugins.h
-  taPluginBase.h
-  taPlugin.h
-  taPluginDep.h
-  taPluginBase_List.h
-  taPlugin_List.h
-  SelectEditItem.h
-  EditMbrItem.h
-  EditMthItem.h
-  EditParamSearch.h
-  EditMbrItem_Group.h
-  EditMthItem_Group.h
-  SelectEditConfig.h
-  ClusterRun.h
-  ParamSearchAlgo.h
-  ParamSearchAlgo_List.h
-  GridSearch.h
-  taWizard.h
-  UserData_DocLink.h
-  Doc_Group.h
-  Wizard_Group.h
-  SelectEdit_Group.h
-  taUndoRec.h
-  taUndoDiffSrc.h
-  taUndoMgr.h
-  taUndoDiffSrc_List.h
-  taUndoRec_List.h
-  UndoDiffThreadMgr.h
-  UndoDiffTask.h
-  taProjVersion.h
-  taLicense.h
-  CssProject.h
-  ProjTemplateEl.h
-  ProjTemplateEl_List.h
-  ProjTemplates.h
-  Project_Group.h
-  PluginWizard.h
-  TestWizard.h
-  TemtClient.h
-  TemtClientAdapter.h
-  TemtServer.h
-  TemtServerAdapter.h
-  TemtClient_List.h
+
   iTopLevelWindow_List.h
   taiMisc.h
   taMediaWiki.h
@@ -522,6 +556,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   iMethodButtonMgr.h
   iDataPanelFrame.h
   iDocDataPanel.h
+
   taiTypeBase.h
   taiViewType.h
   taiType.h
@@ -585,6 +620,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ISelectableHost.h
   iBaseClipWidgetAction.h
   iDataTableEditor.h
+
   iTreeView.h
   iTreeSearch.h
   iListDataPanel.h
@@ -639,6 +675,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   iDocEditDataPanel.h
   tabDocViewType.h
   tabWizardViewType.h
+
   taiProjTemplateElArgType.h
   taiDynEnumMember.h
   taiProgVarIntValMember.h
@@ -653,11 +690,14 @@ set(ta_HEADS_MAKETA_LOCAL_1
   iProgramCtrlPanel.h
   taiProgLibElArgType.h
   taiStepButtonMethod.h
+
   tabSelectEditViewType.h
   taiEditTableWidget.h
   iSelectEditPanel.h
+
   taiObjDiffBrowserFilter.h
   taiObjDiffBrowser.h
+
   iUserDataDataHost.h
   iUserDataPanel.h
   DirectoryCatalog.h
@@ -672,7 +712,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taGuiDataHost.h
   SoBase.h
   SoGroup.h
-  VEWorldView.h
+
   DataColView.h
   DataTableView.h
   iDataTableView_Panel.h
@@ -702,6 +742,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiTableColDesc.h
   taiTableColDesc_PArray.h
   taiTableDataMimeItem.h
+
+  VEWorldView.h
   VEBodyView.h
   VEStaticView.h
   VEWorldViewPanel.h
@@ -727,7 +769,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   # ta_dmem.h
   # ta_qtclipdata.h
   # ta_audioproc.h
-  # colorscale.h
   # ta_fontspec.h
   # ta_script.h
   # ta_viewspec.h
@@ -769,14 +810,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   # colorbar_qt.h
   # ta_gui.h
   ProgLibEl.h
-  taColor.h
-  RGBA.h
-  RGBA_List.h
-  ColorScaleColor.h
-  ColorScaleColor_List.h
-  ColorScaleSpec.h
-  ColorScaleSpec_Group.h
-  ColorScale.h
   ViewColor.h
   ViewColor_List.h
 )
@@ -930,67 +963,67 @@ set(ta_SRCS
   # ta_type.cpp
   ta_type_constr.cpp
   # ta_base.cpp
-  ta_dmem.cpp
-  ta_fontspec.cpp
-  minmax.cpp
-  ta_group.cpp
-  ta_audioproc.cpp
-  ta_qtclipdata.cpp
-  colorscale.cpp
-  ta_script.cpp
-  ta_viewspec.cpp
-  ta_viewer.cpp
-  ta_program.cpp
-  ta_program_els.cpp
-  ta_math.cpp
-  ta_geometry.cpp
-  ta_data.cpp
-  ta_datatable.cpp
-  ta_dataproc.cpp
-  ta_dataanal.cpp
-  ta_datagen.cpp
-  ta_imgproc.cpp
-  ta_virtenv.cpp
-  ta_dump.cpp
-  ta_defaults.cpp
-  ta_plugin_p.cpp
-  ta_seledit.cpp
-  ta_project.cpp
-  ta_server.cpp
-  ta_gendoc.cpp
-  ta_time.cpp
-  fun_lookup.cpp
-  ta_data_extras.cpp 
-  ta_qrc.cpp
-  ta_ti.cpp
+  # ta_dmem.cpp
+  # ta_fontspec.cpp
+  # minmax.cpp
+  # ta_group.cpp
+  # ta_audioproc.cpp
+  # ta_qtclipdata.cpp
+  # ta_script.cpp
+  # ta_viewspec.cpp
+  # ta_viewer.cpp
+  # ta_program.cpp
+  # ta_program_els.cpp
+  # ta_math.cpp
+  # ta_geometry.cpp
+  # ta_data.cpp
+  # ta_datatable.cpp
+  # ta_dataproc.cpp
+  # ta_dataanal.cpp
+  # ta_datagen.cpp
+  # ta_imgproc.cpp
+  # ta_virtenv.cpp
+  # ta_dump.cpp
+  # ta_defaults.cpp
+  # ta_plugin_p.cpp
+  # ta_seledit.cpp
+  # ta_project.cpp
+  # ta_server.cpp
+  # ta_gendoc.cpp
+  # ta_time.cpp
+  # fun_lookup.cpp
+  # ta_data_extras.cpp 
+  # ta_qrc.cpp
+  # ta_ti.cpp
   ClusterManager.cpp
   Subversion.cpp
   SubversionClient.cpp
-  ta_qt.cpp
-  ta_mediawiki.cpp
-  ta_type_qt.cpp
-  ta_qtdata.cpp
-  ta_qtdialog.cpp
+  # ta_qt.cpp
+  # ta_mediawiki.cpp
+  # ta_type_qt.cpp
+  # ta_qtdata.cpp
+  # ta_qtdialog.cpp
   PublishDocsDialog.cpp
-  ta_qtgroup.cpp
-  ta_qtviewer.cpp
-  ta_matrix_qt.cpp
-  ta_qtclassbrowse.cpp
-  ta_qttype.cpp
-  ta_seledit_qt.cpp
-  ta_userdata_qt.cpp
-  ta_program_qt.cpp 
-  ta_filer_qt.cpp
+  # ta_qtgroup.cpp
+  # ta_qtviewer.cpp
+  # ta_matrix_qt.cpp
+  # ta_qtclassbrowse.cpp
+  # ta_qttype.cpp
+  # ta_seledit_qt.cpp
+  # ta_userdata_qt.cpp
+  # ta_program_qt.cpp 
+  # ta_filer_qt.cpp
   t3node_so.cpp
   SoCapsule.cpp
-  t3viewer.cpp
-  colorbar_qt.cpp
-  colorbar_so.cpp
-  ta_datatable_qtso.cpp
-  ta_datatable_so.cpp
-  ta_virtenv_qtso.cpp
-  ta_virtenv_so.cpp
-  ta_gui.cpp
+  # t3viewer.cpp
+  # colorbar_qt.cpp
+  # colorbar_so.cpp
+  # ta_datatable_qtso.cpp
+  # ta_datatable_so.cpp
+  # ta_virtenv_qtso.cpp
+  # ta_virtenv_so.cpp
+  # ta_gui.cpp
+
   NameVar.cpp
   MTRndState.cpp
   taDataLink.cpp
@@ -1073,10 +1106,12 @@ set(ta_SRCS
   taWikiURL.cpp
   UserDataItem_List.cpp
   float_CircBuffer.cpp
+
   taTime.cpp
   TimeUsed.cpp
   TimeUsedHR.cpp
   taDateTime.cpp
+
   taTask.cpp
   taTask_List.cpp
   taThreadMgr.cpp
@@ -1085,10 +1120,12 @@ set(ta_SRCS
   taManagedThread.cpp
   taManagedThread_PList.cpp
   taThreadMgr_PList.cpp
+
   DMemComm.cpp
   DMemShareVar.cpp
   DMemShare.cpp
   DMemAggVars.cpp
+
   taiMimeItem.cpp
   taiMultiMimeItem.cpp
   taiObjectMimeItem.cpp
@@ -1132,6 +1169,7 @@ set(ta_SRCS
   ToolBoxRegistrar_PtrList.cpp
   TreeDecorationSpec.cpp
   TreeDecorationSpec_List.cpp
+
   Program.cpp
   ProgLine.cpp
   ProgLine_List.cpp
@@ -1215,6 +1253,7 @@ set(ta_SRCS
   Random.cpp
   RandomSpec.cpp
   cssMath.cpp
+
   taVector2i.cpp
   PosVector2i.cpp
   taVector3i.cpp
@@ -1224,14 +1263,7 @@ set(ta_SRCS
   taAxisAngle.cpp
   taQuaternion.cpp
   taTransform.cpp
-  TwoDCoord.cpp
-  PosTwoDCoord.cpp
-  TDCoord.cpp
-  PosTDCoord.cpp
-  FloatTwoDCoord.cpp
-  FloatTDCoord.cpp
-  FloatRotation.cpp
-  FloatTransform.cpp
+
   XYNGeom.cpp
   ValIdx.cpp
   ValIdx_Array.cpp

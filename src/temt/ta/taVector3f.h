@@ -150,4 +150,19 @@ private:
   inline void   Copy_(const taVector3f& cp)   { z = cp.z; }
 };
 
+inline taVector3f operator + (float td, const taVector3f& v) {
+  taVector3f rv; rv.x = td + v.x; rv.y = td + v.y; rv.z = td + v.z; return rv;
+}
+inline taVector3f operator - (float td, const taVector3f& v) {
+  taVector3f rv; rv.x = td - v.x; rv.y = td - v.y; rv.z = td - v.z; return rv;
+}
+inline taVector3f operator * (float td, const taVector3f& v) {
+  taVector3f rv; rv.x = td * v.x; rv.y = td * v.y; rv.z = td * v.z; return rv;
+}
+inline taVector3f operator / (float td, const taVector3f& v) {
+  taVector3f rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
+}
+
+typedef taVector3f FloatTDCoord;	// #INSTANCE obsolete version of taVector3f
+
 #endif // taVector3f_h

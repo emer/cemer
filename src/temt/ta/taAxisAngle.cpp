@@ -15,3 +15,35 @@
 
 #include "taAxisAngle.h"
 
+taAxisAngle& taAxisAngle::operator=(const taQuaternion& cp) {
+  cp.ToAxisAngle(*this);
+  return *this;
+}
+
+void taAxisAngle::FromEuler(float theta_x, float theta_y, float theta_z) {
+  taQuaternion q(theta_x, theta_y, theta_z);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
+  taQuaternion q(*this);
+  q.RotateAxis(x_axis, y_axis, z_axis, rot_ang);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateEuler(float theta_x, float theta_y, float theta_z) {
+  taQuaternion q(*this);
+  q.RotateEuler(theta_x, theta_y, theta_z);
+  q.ToAxisAngle(*this);
+}
+
+void taAxisAngle::RotateXYZ(float& x, float& y, float& z) {
+  taQuaternion q(*this);
+  q.RotateXYZ(x, y, z);
+}
+
+void taAxisAngle::RotateVec(taVector3f& vec) {
+  taQuaternion q(*this);
+  q.RotateVec(vec);
+}
+

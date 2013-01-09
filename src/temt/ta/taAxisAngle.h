@@ -63,4 +63,6 @@ private:
   void                  Destroy() {}
 };
 
+typedef taAxisAngle FloatRotation;	// #INSTANCE obsolete version of taAxisAngle
+
 #endif // taAxisAngle_h

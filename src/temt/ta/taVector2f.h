@@ -133,4 +133,20 @@ private:
   inline void   Destroy()                       { };
 };
 
+
+inline taVector2f operator + (float td, const taVector2f& v) {
+  taVector2f rv; rv.x = td + v.x; rv.y = td + v.y; return rv;
+}
+inline taVector2f operator - (float td, const taVector2f& v) {
+  taVector2f rv; rv.x = td - v.x; rv.y = td - v.y; return rv;
+}
+inline taVector2f operator * (float td, const taVector2f& v) {
+  taVector2f rv; rv.x = td * v.x; rv.y = td * v.y; return rv;
+}
+inline taVector2f operator / (float td, const taVector2f& v) {
+  taVector2f rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
+}
+
+typedef taVector2f FloatTwoDCoord;	// #INSTANCE obsolete version of taVector2f
+
 #endif // taVector2f_h

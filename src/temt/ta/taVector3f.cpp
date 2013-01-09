@@ -15,3 +15,12 @@
 
 #include "taVector3f.h"
 
+taVector3f::taVector3f(const taVector3i& cp) {
+  Register(); Initialize();
+  x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
+}
+
+taVector3f& taVector3f::operator=(const taVector3i& cp) {
+  x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
+  return *this;
+}

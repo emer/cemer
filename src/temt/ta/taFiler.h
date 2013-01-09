@@ -17,14 +17,36 @@
 #define taFiler_h 1
 
 // parent includes:
-#include <class>
+#include <taRefN>
+#include <taString>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class istream; // 
-class ostream; // 
 
+// NOTE: taFiler replaces the duo of taiGetFile and taFile from 3.x
+//      the ui portion of taiGetFile has been transferred to taFiler_impl subclass
+//      in ta_filer.cc for no gui, and ta_xxdialog.cc for gui
+
+/*
+  compression
+  Compression is controlled by 3 factors:
+    comp_req flag -- when set, it acts as follows:
+      Load: shows .gz files
+      Save: shows the compression checkbox in file dialog
+        shows .gz files in the file dialog
+      SaveAs: shows the compression checkbox in file dialog
+        if proposed filename has gz suffix, 'compress' check is on
+    compression flag -- this is readonly and always indicate that the current
+      stream is compressed
+    .gz file suffix -- when present, we assume the file is compressed
+
+    On Load, compression is SOLELY determined by the suffix of the file.
+    On Save, compression is determined as follows:
+      a .gz file name on the file
+      the 'compress' checkbox is selected
+
+*/
 
 class TA_API taFiler : public taRefN {
   // ##NO_TOKENS #EDIT_INLINE associate this with each file that is managed
@@ -152,5 +174,15 @@ protected:
 private:
   taFiler(const taFiler& cp); // #IGNORE copy construction not allowed
 };
+
+namespace taFilerUtil
+{
+  String DottedExtension(const String &extension);
+  String UndottedExtension(const String &extension);
+  String GetFiletype(int idx, const String_PArray &filetypes);
+  String GetDottedExtension(int idx, const String_PArray &extensions);
+  String MakeFilter(const String &filetype, const String &extension, bool is_compress_enabled);
+  void   AddFilter(const String &new_filter, String &filters, QStringList *list);
+}
 
 #endif // taFiler_h

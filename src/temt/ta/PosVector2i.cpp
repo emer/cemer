@@ -15,3 +15,8 @@
 
 #include "PosVector2i.h"
 
+void PosVector2i::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  SetGtEq(0);
+}
+

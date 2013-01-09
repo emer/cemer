@@ -15,3 +15,15 @@
 
 #include "taTransform.h"
 
+#ifdef TA_USE_INVENTOR
+#include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoTransform.h>
+
+void taTransform::CopyTo(SoTransform* txfm) {
+  if (!txfm) return;
+  txfm->translation.setValue(SbVec3f(translate.x, translate.y, translate.z));
+  txfm->rotation.setValue(SbVec3f(rotate.x, rotate.y, rotate.z), rotate.rot);
+  txfm->scaleFactor.setValue(SbVec3f(scale.x, scale.y, scale.z));
+}
+
+#endif

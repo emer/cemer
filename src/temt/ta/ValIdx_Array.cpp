@@ -15,3 +15,4 @@
 
 #include "ValIdx_Array.h"
 
+const ValIdx ValIdx_Array::blank;
