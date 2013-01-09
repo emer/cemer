@@ -186,6 +186,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiMimeItem_List.h
 
   taAudioProc.h
+  iFont.h
   taFontSpec.h
   taiAction.h
 
@@ -758,7 +759,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   T3VESpace.h
   T3VEStatic.h
 
-  # ifont.h
   # ta_filer.h
   # icolor.h
   # ta_base.h
@@ -812,6 +812,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ProgLibEl.h
   ViewColor.h
   ViewColor_List.h
+  Modulo.h
+  MinMaxInt.h
+  FixedMinMax.h
+  MinMaxRange.h
 )
 
 set(ta_HEADS_MAKETA_LOCAL_2
@@ -1134,7 +1138,10 @@ set(ta_SRCS
   taiMimeFactory_List.cpp
   taiObjectMimeFactory.cpp
   taiMimeItem_List.cpp
+
   taAudioProc.cpp
+
+  iFont.cpp
   taFontSpec.cpp
   taiAction.cpp
   AbstractScriptBase.cpp
@@ -1677,6 +1684,10 @@ set(ta_SRCS
   ColorScale.cpp
   ViewColor.cpp
   ViewColor_List.cpp
+  Modulo.cpp
+  MinMaxInt.cpp
+  FixedMinMax.cpp
+  MinMaxRange.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

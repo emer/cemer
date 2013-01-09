@@ -20,7 +20,8 @@
 #include <taNBase>
 
 // member includes:
-#include <taList_RndSeed_>
+#include <taList>
+#include <RndSeed>
 
 // declare all other types mentioned but not required to include:
 

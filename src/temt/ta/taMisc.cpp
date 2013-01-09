@@ -1484,6 +1484,37 @@ String taMisc::FormatValue(float val, int width, int precision) {
 //    return sval;
 }
 
+/* from xmgr, graphutils.c, copyright P. Turner
+ * nicenum: find a "nice" number approximately equal to x
+ * round if round=true, ceil if round=false
+ */
+
+double taMisc::NiceRoundNumber(double x, bool round) {
+  double y;
+  if(x <= 0.0)
+     return 0.0;
+  int exp = (int)floor(log10(x));
+  double f = x / pow(10.0, (double) exp);	/* fraction between 1 and 10 */
+  if (round)
+    if (f < 1.5)
+      y = 1.;
+    else if (f < 3.)
+      y = 2.;
+    else if (f < 7.)
+      y = 5.;
+    else
+      y = 10.;
+  else if (f <= 1.)
+    y = 1.;
+  else if (f <= 2.)
+    y = 2.;
+  else if (f <= 5.)
+    y = 5.;
+  else
+    y = 10.;
+  return y * pow(10.0, (double)exp);
+}
+
 String taMisc::StringMaxLen(const String& str, int len) {
   if((int)str.length() <= len) return str;
   String rval = ((String)str).before(len);

@@ -724,6 +724,9 @@ public:
   static String FormatValue(float val, int width, int precision);
   // #CAT_Utility format output of value according to width and precision
 
+  static double NiceRoundNumber(double x, bool round);
+  // #CAT_Utility returns a nice round number close to x -- useful for graphing axes, etc -- rounds if round is true, otherwise does ceil(ing)
+
   static String StringMaxLen(const String& str, int len);
   // #CAT_Utility returns string up to maximum length given (enforces string to be len or less in length)
   static String StringEnforceLen(const String& str, int len);
