@@ -15,3 +15,12 @@
 
 #include "UserDataItemBase.h"
 
+
+UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_)
+:inherited()
+{
+  Initialize();
+  name = key_;
+  taMisc::AddUserDataSchema(type_name, this);
+}
+

@@ -15,3 +15,34 @@
 
 #include "taOABase.h"
 
+void taOABase::CutLinks() {
+#ifdef TA_GUI
+  SetAdapter(NULL);
+#endif
+  inherited::CutLinks();
+}
+
+
+#ifdef TA_USE_QT
+taBaseAdapter::~taBaseAdapter() {
+  if (owner && (owner->adapter == this)) owner->adapter = NULL;
+  owner = NULL;
+}
+
+void taOABase::SetAdapter(taBaseAdapter* adapter_) {
+  if (adapter == adapter_) return;
+  if (adapter_) { // setting adapter
+    if (adapter) { // chaining
+      adapter->setParent(adapter_);
+    }
+    adapter = adapter_;
+  } else { // deleting adapter
+    if (adapter) {
+      adapter->owner = NULL; // prevents callback delete
+      delete adapter; // will delete chained adapters
+      adapter = NULL;
+    }
+  }
+}
+#endif
+

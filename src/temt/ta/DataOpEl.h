@@ -20,8 +20,8 @@
 #include <taOBase>
 
 // member includes:
-#include <DataTableRef>
-#include <DataTableColsRef>
+#include <DataTable>
+#include <DataTableCols>
 
 // declare all other types mentioned but not required to include:
 class DataCol; // 

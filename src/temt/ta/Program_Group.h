@@ -21,7 +21,7 @@
 #include <taGroup>
 
 // member includes:
-#include <ProgramRef>
+#include <Program>
 #include <ProgLib>
 
 // declare all other types mentioned but not required to include:
@@ -72,5 +72,7 @@ private:
   void  Initialize();
   void  Destroy()               {Reset(); };
 };
+
+TA_SMART_PTRS(Program_Group); // Program_GroupRef
 
 #endif // Program_Group_h

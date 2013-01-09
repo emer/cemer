@@ -14,4 +14,28 @@
 //   Lesser General Public License for more details.
 
 #include "taSmartRef.h"
+#include <taDataLink>
+
+void taSmartRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
+  if (m_own) {
+    m_own->SmartRef_DataChanged(this, m_ptr, dcr, op1, op2);
+  }
+}
+void taSmartRef::DataLinkDestroying(taDataLink* dl) {
+  if (m_own) {
+    taBase* tmp_ptr = m_ptr;
+    m_ptr = NULL;
+    //send a changing ref, in case it only monitors for setting/clearing (not destroying)
+    m_own->SmartRef_DataRefChanging(this, NULL, false);
+    m_own->SmartRef_DataDestroying(this, tmp_ptr);
+    //NO MORE CODE HERE -- object may have destroyed itself
+  } else
+    m_ptr = NULL;
+}
+
+void taSmartRef::DataRefChanging(taBase* obj, bool setting) {
+  if (m_own) {
+    m_own->SmartRef_DataRefChanging(this, obj, setting);
+  }
+}
 

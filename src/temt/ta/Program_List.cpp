@@ -15,3 +15,7 @@
 
 #include "Program_List.h"
 
+void Program_List::Initialize() {
+  SetBaseType(&TA_Program);
+}
+

@@ -15,3 +15,70 @@
 
 #include "taBase_RefList.h"
 
+void taBase_RefList::Initialize() {
+  m_own = NULL;
+}
+
+taBase_RefList::~taBase_RefList() {
+  m_own = NULL; // conservative, even though removing items shouldn't trigger anything
+  Reset();
+}
+
+void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
+  // note: dl has already done a RemoveDataLink on us
+  taBase* tab = dl->taData();
+  if (tab) { // should exist!
+    // note: we need to remove all instances, in case multiply-added
+    while (RemoveEl(tab)) {;}
+    if (m_own) {
+      m_own->DataDestroying_Ref(this, tab);
+    }
+  }
+  else {
+    taMisc::DebugInfo("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
+  }
+}
+
+void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  if (!m_own) return;
+  taBase* tab = dl->taData();
+  m_own->DataChanged_Ref(this, tab, dcr, op1, op2);
+}
+
+void* taBase_RefList::El_Ref_(void* it_) {
+  taBase* it = (taBase*)it_;
+  it->AddDataClient(this);
+  return it_;
+}
+
+void* taBase_RefList::El_unRef_(void* it_) {
+  taBase* it = (taBase*)it_;
+  it->RemoveDataClient(this);
+  return it_;
+}
+
+void taBase_RefList::setOwner(IRefListClient* own_) {
+  m_own = own_;
+}
+
+int taBase_RefList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+    if(old_own != old_par) continue;
+    String old_path = itm->GetPath(NULL, old_par);
+    MemberDef* md;
+    taBase* nitm = new_par->FindFromPath(old_path, md);
+    if(nitm) {
+      ReplaceIdx(i, nitm);
+      nchg++;
+    }
+    else {
+      RemoveIdx(i);
+    }
+  }
+  return nchg;
+}
+

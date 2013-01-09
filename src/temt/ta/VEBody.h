@@ -25,7 +25,7 @@
 #include <taQuaternion>
 #include <taTransform>
 #include <taColor>
-#include <VETextureRef>
+#include <VETexture>
 #include <VESurface>
 #include <ODEIntParams>
 #include <ODEDamping>

@@ -22,7 +22,7 @@
 // member includes:
 #include <MinMaxRange>
 #include <float_CircBuffer>
-#include <VEBodyRef>
+#include <VEBody>
 
 // declare all other types mentioned but not required to include:
 

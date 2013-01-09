@@ -20,7 +20,7 @@
 #include <taNBase>
 
 // member includes:
-#include <ProgVarRef>
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 

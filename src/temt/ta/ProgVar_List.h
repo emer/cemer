@@ -26,7 +26,6 @@
 class Program; // 
 class taNBase; // 
 class DataTable; // 
-class TypeDef; // 
 
 
 class TA_API ProgVar_List : public taList<ProgVar> {

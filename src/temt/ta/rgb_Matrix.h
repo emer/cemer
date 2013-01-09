@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taMatrixT>
+#include <iColor>
 
 // member includes:
 

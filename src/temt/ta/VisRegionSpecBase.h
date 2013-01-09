@@ -20,7 +20,7 @@
 #include <ImgProcThreadBase>
 
 // member includes:
-#include <DataTableRef>
+#include <DataTable>
 #include <VisRegionParams>
 #include <VisRegionSizes>
 

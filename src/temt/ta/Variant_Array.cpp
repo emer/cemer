@@ -15,3 +15,4 @@
 
 #include "Variant_Array.h"
 
+const Variant Variant_Array::blank;

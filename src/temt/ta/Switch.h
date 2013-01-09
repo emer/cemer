@@ -20,7 +20,7 @@
 #include <ProgEl>
 
 // member includes:
-#include <ProgVarRef>
+#include <ProgVar>
 #include <ProgEl_List>
 
 // declare all other types mentioned but not required to include:

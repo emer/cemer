@@ -15,3 +15,11 @@
 
 #include "UserDataItem.h"
 
+UserDataItem::UserDataItem(const String& type_name, const String& key_,
+  const Variant& value_,  const String& desc_)
+:inherited(type_name, key_)
+{
+  value = value_;
+  desc = desc_;
+}
+

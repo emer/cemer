@@ -19,8 +19,10 @@
 // parent includes:
 #include <taOBase>
 
+// for smart ptrs need these:
+#include <taSmartRefT>
+
 // member includes:
-#include <taBaseRef>
 
 // declare all other types mentioned but not required to include:
 

@@ -15,3 +15,23 @@
 
 #include "Loop.h"
 
+void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  loop_code.CheckConfig(quiet, rval);
+}
+
+void Loop::GenCssBody_impl(Program* prog) {
+  loop_code.GenCss(prog);
+}
+
+const String Loop::GenListing_children(int indent_level) {
+  return loop_code.GenListing(indent_level + 1);
+}
+
+void Loop::PreGenChildren_impl(int& item_id) {
+  loop_code.PreGen(item_id);
+}
+ProgVar* Loop::FindVarName(const String& var_nm) const {
+  return loop_code.FindVarName(var_nm);
+}
+

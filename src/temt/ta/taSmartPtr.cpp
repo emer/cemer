@@ -15,3 +15,18 @@
 
 #include "taSmartPtr.h"
 
+TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
+  TypeDef* targ = this_typ;
+  String act_name;
+  while (targ) {
+    act_name = targ->name.after("taSmartPtrT_");
+    if (act_name.nonempty()) {
+      TypeDef* rval = taMisc::FindTypeName(act_name);
+      if (rval && rval->InheritsFrom(&TA_taBase))
+        return rval;
+    }
+    targ = targ->GetParent();
+  }
+  return &TA_taBase; // default
+}
+

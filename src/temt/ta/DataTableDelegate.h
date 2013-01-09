@@ -19,7 +19,7 @@
 // parent includes:
 
 // member includes:
-#include <DataTableRef>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 

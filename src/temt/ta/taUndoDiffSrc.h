@@ -21,7 +21,9 @@
 
 // member includes:
 #include <taDateTime>
-#include <taBaseRef>
+
+// for smart ptrs need these:
+#include <taSmartRefT>
 #include <taStringDiff>
 
 // declare all other types mentioned but not required to include:

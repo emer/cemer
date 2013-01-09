@@ -20,7 +20,7 @@
 #include <VEObject>
 
 // member includes:
-#include <VEBodyRef>
+#include <VEBody>
 #include <float_Matrix>
 #include <VELinMuscle_List>
 

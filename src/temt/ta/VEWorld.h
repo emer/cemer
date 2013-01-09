@@ -26,10 +26,10 @@
 #include <VEObject_Group>
 #include <VESpace_Group>
 #include <VETexture_List>
-#include <VECameraRef>
+#include <VECamera>
 #include <taColor>
 #include <VELightParams>
-#include <VELightRef>
+#include <VELight>
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 

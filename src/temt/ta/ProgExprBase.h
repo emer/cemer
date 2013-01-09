@@ -25,8 +25,6 @@
 
 // declare all other types mentioned but not required to include:
 class cssElPtr; // 
-class taBase; // 
-class TypeDef; // 
 class MemberDef; // 
 class Program; // 
 class Function; // 

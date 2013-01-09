@@ -20,7 +20,7 @@
 #include <UserDataItemBase>
 
 // member includes:
-#include <taDocRef>
+#include <taDoc>
 
 // declare all other types mentioned but not required to include:
 

@@ -58,4 +58,6 @@ private:
   void  Destroy();
 };
 
+SmartRef_Of(ProgType,TA_ProgType); // ProgTypeRef
+
 #endif // ProgType_h

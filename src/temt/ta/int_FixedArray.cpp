@@ -15,3 +15,4 @@
 
 #include "int_FixedArray.h"
 
+const int int_FixedArray::blank = 0;

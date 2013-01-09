@@ -22,7 +22,7 @@
 // member includes:
 #include <DataTable>
 #include <ParamSearchAlgo_List>
-#include <ParamSearchAlgoRef>
+#include <ParamSearchAlgo>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 

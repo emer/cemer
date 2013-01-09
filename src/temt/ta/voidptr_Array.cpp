@@ -15,3 +15,4 @@
 
 #include "voidptr_Array.h"
 
+const voidptr voidptr_Array::blank = NULL;

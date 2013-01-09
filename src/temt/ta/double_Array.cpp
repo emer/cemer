@@ -15,3 +15,4 @@
 
 #include "double_Array.h"
 
+const double double_Array::blank = 0.0;

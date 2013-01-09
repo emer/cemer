@@ -15,3 +15,37 @@
 
 #include "ProgLib.h"
 
+void ProgLib::Initialize() {
+  not_init = true;
+}
+
+void ProgLib::FindPrograms() {
+  Reset();                      // clear existing
+  for(int pi=0; pi< taMisc::prog_lib_paths.size; pi++) {
+    NameVar pathvar = taMisc::prog_lib_paths[pi];
+    String path = pathvar.value.toString();
+    String lib_name = pathvar.name;
+    QDir dir(path);
+    QStringList files = dir.entryList();
+    for(int i=0;i<files.size();i++) {
+      String fl = files[i];
+      if(!fl.contains(".prog")) continue;
+      ProgLibEl* pe = new ProgLibEl;
+      pe->lib_name = lib_name;
+      if(pe->ParseProgFile(fl, path))
+        Add(pe);
+      else
+        delete pe;
+    }
+  }
+  not_init = false;
+}
+
+taBase* ProgLib::NewProgram(ProgLibEl* prog_type, Program_Group* new_owner) {
+  if(prog_type == NULL) return NULL;
+  return prog_type->NewProgram(new_owner);
+}
+
+taBase* ProgLib::NewProgramFmName(const String& prog_nm, Program_Group* new_owner) {
+  return NewProgram(FindName(prog_nm), new_owner);
+}

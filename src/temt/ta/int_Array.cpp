@@ -15,3 +15,10 @@
 
 #include "int_Array.h"
 
+void int_Array::FillSeq(int start, int inc) {
+  int i, v;
+  for(i=0,v=start; i<size; i++, v += inc)
+    FastEl(i) = v;
+}
+
+const int int_Array::blank = 0;

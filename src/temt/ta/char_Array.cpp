@@ -15,3 +15,4 @@
 
 #include "char_Array.h"
 
+const char char_Array::blank = '\0';

@@ -17,11 +17,11 @@
 #define CellRange_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
 
 class TA_API CellRange { // specifies a range of cells
 public:

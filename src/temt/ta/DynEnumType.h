@@ -23,9 +23,7 @@
 #include <DynEnumItem_List>
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
 class DynEnumItem; // 
-class ostream; // 
 class DataTable; // 
 
 
@@ -80,5 +78,7 @@ private:
   void  Initialize();
   void  Destroy()       {}
 };
+
+SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
 
 #endif // DynEnumType_h

@@ -15,3 +15,7 @@
 
 #include "ProgLibEl_List.h"
 
+
+void ProgLibEl_List::Initialize() {
+}
+

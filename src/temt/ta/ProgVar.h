@@ -19,15 +19,16 @@
 // parent includes:
 #include <taNBase>
 
+// for smart ptrs need these:
+#include <taSmartRefT>
+
 // member includes:
-#include <taBaseRef>
 #include <DynEnum>
-#include <ProgramRef>
+#include <Program>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class Program; // 
-class taBase; // 
 
 
 class TA_API ProgVar: public taNBase {
@@ -184,5 +185,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(ProgVar,TA_ProgVar); // ProgVarRef
 
 #endif // ProgVar_h

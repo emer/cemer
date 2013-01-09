@@ -15,3 +15,41 @@
 
 #include "taOBase.h"
 
+void taOBase::Destroy() {
+  CutLinks();
+}
+
+void taOBase::CutLinks() {
+  if (m_data_link) {
+    m_data_link->DataDestroying(); // link NULLs our pointer
+    delete m_data_link; // NULLS the ref
+  }
+  owner = NULL;
+  if (user_data_) {
+    delete user_data_;
+    user_data_ = NULL;
+  }
+  inherited::CutLinks();
+}
+
+void taOBase::Copy_(const taOBase& cp) {
+  if (user_data_) {
+    user_data_->Reset(); // note: we just leave an empty list if no cp.userdata
+    if (cp.user_data_)
+      user_data_->Copy(*cp.user_data_);
+  } else if (cp.user_data_ && (cp.user_data_->size > 0)) {
+    GetUserDataList(true)->Copy(*cp.user_data_);
+  }
+}
+
+UserDataItem_List* taOBase::GetUserDataList(bool force) const {
+  if (!user_data_ && force) {
+    user_data_ = new UserDataItem_List;
+    taOBase* ths =  const_cast<taOBase*>(this); // note: harmless const casts
+    taBase::Own(user_data_, ths);
+    user_data_->el_typ = &TA_UserDataItem; // set default type to create
+    ths->DataChanged(DCR_USER_DATA_UPDATED);
+  }
+  return user_data_;
+}
+

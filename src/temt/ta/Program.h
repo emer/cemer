@@ -22,7 +22,6 @@
 
 // member includes:
 #include <ScriptBase_List>
-#include <ProgramRef>
 #include <ProgObjList>
 #include <ProgType_List>
 #include <ProgVar_List>
@@ -36,13 +35,8 @@ class cssProgSpace; //
 class cssTA_Base; // 
 class ProgLib; // 
 class Program_Group; // 
-class taBase; // 
-class TypeDef; // 
 class taMatrix; // 
-class taBaseItr; // 
 class MemberDef; // 
-class istream; // 
-class ostream; // 
 class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
@@ -464,5 +458,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+TA_SMART_PTRS(Program);         // ProgramRef
 
 #endif // Program_h

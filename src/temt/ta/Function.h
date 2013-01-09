@@ -76,4 +76,6 @@ private:
   void  Destroy()       {CutLinks();}
 };
 
+SmartRef_Of(Function,TA_Function);
+
 #endif // Function_h

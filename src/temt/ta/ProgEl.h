@@ -22,10 +22,30 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBase; // 
 class Program; // 
 class ProgVar; // 
 class LocalVars; // 
+
+
+/////////////////////////////////////////////////////////////////////
+//              IMPORTANT CODING NOTES:
+
+// you must use PROGEL_SIMPLE_BASEFUNS macro instead of TA_SIMPLE_BASEFUNS
+// for all ProgEl types that contain a ProgVarRef or a ProgExpr
+// or, use PROGEL_SIMPLE_COPY or directly call UpdateAfterCopy if defining
+// custom copy functions.
+
+// Note: ProgEl now automatically does update stuff in UpdateAfterMove_impl
+// and does CheckProgVarRef in CheckThisConfig, so these calls are not necc
+
+#define PROGEL_SIMPLE_COPY(T) \
+  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); \
+    UpdateAfterCopy(cp); }
+
+#define PROGEL_SIMPLE_BASEFUNS(T) \
+  PROGEL_SIMPLE_COPY(T);  \
+  SIMPLE_LINKS(T); \
+  TA_BASEFUNS(T)
 
 
 class TA_API ProgEl: public taOBase {
@@ -186,5 +206,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(ProgEl,TA_ProgEl);
 
 #endif // ProgEl_h

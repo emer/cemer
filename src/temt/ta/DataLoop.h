@@ -20,7 +20,7 @@
 #include <Loop>
 
 // member includes:
-#include <ProgVarRef>
+#include <ProgVar>
 #include <int_Array>
 
 // declare all other types mentioned but not required to include:

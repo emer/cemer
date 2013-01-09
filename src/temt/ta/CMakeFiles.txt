@@ -102,6 +102,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   slice_Matrix.h
   byte_Matrix.h
   Variant_Matrix.h
+  iColor.h
   rgb_Matrix.h
   voidptr_Matrix.h
   CircMatrix.h
@@ -767,6 +768,17 @@ set(ta_HEADS_MAKETA_LOCAL_1
   # ta_data_extras.h
   # colorbar_qt.h
   # ta_gui.h
+  ProgLibEl.h
+  taColor.h
+  RGBA.h
+  RGBA_List.h
+  ColorScaleColor.h
+  ColorScaleColor_List.h
+  ColorScaleSpec.h
+  ColorScaleSpec_Group.h
+  ColorScale.h
+  ViewColor.h
+  ViewColor_List.h
 )
 
 set(ta_HEADS_MAKETA_LOCAL_2
@@ -903,6 +915,7 @@ set(ta_SRCS
   slice_Matrix.cpp
   byte_Matrix.cpp
   Variant_Matrix.cpp
+  iColor.cpp
   rgb_Matrix.cpp
   voidptr_Matrix.cpp
   CircMatrix.cpp
@@ -911,7 +924,6 @@ set(ta_SRCS
 
   ta_thread.cpp
   ifont.cpp
-  icolor.cpp
   # ta_mtrnd.cpp
   # ta_list.cpp
   ta_filer.cpp
@@ -1622,6 +1634,17 @@ set(ta_SRCS
   T3VEStatic.cpp
   taBase_RefList.cpp
   NewNetViewHelper.cpp
+  ProgLibEl.cpp
+  taColor.cpp
+  RGBA.cpp
+  RGBA_List.cpp
+  ColorScaleColor.cpp
+  ColorScaleColor_List.cpp
+  ColorScaleSpec.cpp
+  ColorScaleSpec_Group.cpp
+  ColorScale.cpp
+  ViewColor.cpp
+  ViewColor_List.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

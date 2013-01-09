@@ -20,7 +20,7 @@
 #include <Loop>
 
 // member includes:
-#include <ProgVarRef>
+#include <ProgVar>
 #include <ProgExprBase>
 
 // declare all other types mentioned but not required to include:

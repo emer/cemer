@@ -20,7 +20,7 @@
 #include <taNBase>
 
 // member includes:
-#include <taMatrixRef>
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
 

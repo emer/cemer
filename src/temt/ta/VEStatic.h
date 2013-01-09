@@ -26,7 +26,7 @@
 #include <taVector2f>
 #include <taTransform>
 #include <taColor>
-#include <VETextureRef>
+#include <VETexture>
 #include <VESurface>
 #include <ODEIntParams>
 

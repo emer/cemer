@@ -20,10 +20,14 @@
 #include <taOBase>
 
 // member includes:
-#include <DynEnumTypeRef>
+#include <DynEnumType>
 
 // declare all other types mentioned but not required to include:
 
+// NOTE: prior to 12/11 the value for a non-bits enum was encoded as the index into
+// the list of enums.  this is typically the same as the actual int value, but
+// not always.  it has now been changed to the more conventional storage of the
+// actual numerical value in all cases..
 
 class TA_API DynEnum : public taOBase {
   // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values

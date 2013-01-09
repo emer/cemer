@@ -15,3 +15,46 @@
 
 #include "DataView_List.h"
 
+void DataView_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  taDataView* own = GET_MY_OWNER(taDataView);
+  if (own)
+    own->DataChanged_Child(this, dcr, op1, op2);
+}
+
+void DataView_List::El_disOwn_(void* it) {
+  if (data_view) {
+    data_view->ChildRemoving((taDataView*)it);
+  }
+  inherited::El_disOwn_(it);
+}
+
+void* DataView_List::El_Own_(void* it) {
+  inherited::El_Own_(it);
+  if (data_view)
+    data_view->ChildAdding((taDataView*)it);
+  return it;
+}
+
+taBase* DataView_List::SetOwner(taBase* own) {
+  if (own && own->GetTypeDef()->InheritsFrom(&TA_taDataView))
+    data_view = (taDataView*)own;
+  else data_view = NULL;
+  return inherited::SetOwner(own);
+}
+
+void DataView_List::DoAction(taDataView::DataViewAction acts) {
+  if (acts & taDataView::CONSTR_MASK) {
+    for (int i = 0; i < size; ++i) {
+      taDataView* dv = FastEl(i);
+      dv->DoActions(acts);
+    }
+  } else { // DESTR_MASK
+    for (int i = size - 1; i >= 0 ; --i) {
+      taDataView* dv = FastEl(i);
+      dv->DoActions(acts);
+    }
+    if (acts & taDataView::RESET_IMPL)
+      Reset();
+  }
+}

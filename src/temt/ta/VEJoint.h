@@ -20,7 +20,7 @@
 #include <taNBase>
 
 // member includes:
-#include <VEBodyRef>
+#include <VEBody>
 #include <taVector3f>
 #include <VEJointStops>
 #include <VEJointMotor>

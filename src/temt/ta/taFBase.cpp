@@ -15,3 +15,14 @@
 
 #include "taFBase.h"
 
+bool taFBase::SetFileName(const String& val) {
+  QFileInfo fi(val);
+  //note: canonical paths only available if file actually exists...
+  if (fi.exists()) {
+    // we get the canonical path, so we insure we can do exact filename compares later
+    file_name = fi.canonicalFilePath();
+  } else
+    file_name = val;
+  return true;
+}
+

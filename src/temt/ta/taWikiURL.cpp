@@ -15,3 +15,18 @@
 
 #include "taWikiURL.h"
 
+void taWikiURL::Initialize() {
+  sync = false;
+}
+
+String taWikiURL::GetURL() {
+  if(!sync) return _nilString;
+  if(wiki.nonempty()) {
+    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php/
+    if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
+                 "not found in global preferences/options under wiki_url settings"))
+      return _nilString;
+    return wiki_url + url;
+  }
+  return url;
+}

@@ -24,6 +24,9 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
+// Note: object operations per se don't affect Program::stale, but
+// they will indirectly to the extent that adding/removing them
+// causes a corresponding var to get created
 
 class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)

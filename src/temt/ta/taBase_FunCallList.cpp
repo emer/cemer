@@ -15,3 +15,32 @@
 
 #include "taBase_FunCallList.h"
 
+void taBase_FunCallList::El_Done_(void* it_) {
+  FunCallItem* it = (FunCallItem*)it_;
+  it->it->RemoveDataClient(this);
+  delete it;
+}
+
+bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
+  FunCallItem* fci = new FunCallItem(obj, fun_name);
+  Add(fci);
+  obj->AddDataClient(this);
+  return true;
+}
+
+void taBase_FunCallList::DataLinkDestroying(taDataLink* dl) {
+  taBase* obj = dl->taData();
+  if (!obj) return; // shouldn't happen;
+  bool got_one = false;
+  for(int i = size-1; i>=0; i--) {
+    FunCallItem* fci = FastEl(i);
+    if(fci->it == obj) {
+      RemoveIdx(i);
+      got_one = true;
+    }
+  }
+
+  if(!got_one) {
+    taMisc::Error("Internal error -- taBase_FunCallList DataDestroying_Ref didn't find base in base_funs!");
+  }
+}

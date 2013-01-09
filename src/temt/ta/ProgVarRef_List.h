@@ -17,16 +17,12 @@
 #define ProgVarRef_List_h 1
 
 // parent includes:
-#include <ProgVarRef>
+#include <ProgVar>
 #include <taPtrList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class ProgVar; // 
-class taBase; // 
-class TypeDef; // 
-
 
 class TA_API ProgVarRef_List: public taPtrList<ProgVarRef> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program variable references

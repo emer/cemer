@@ -20,8 +20,8 @@
 #include <ProgramCallBase>
 
 // member includes:
-#include <Program_GroupRef>
-#include <ProgVarRef>
+#include <Program_Group>
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 class Program; // 

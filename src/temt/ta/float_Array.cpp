@@ -15,3 +15,4 @@
 
 #include "float_Array.h"
 
+const float float_Array::blank = 0.0f;
