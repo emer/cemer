@@ -20,6 +20,7 @@
 #include <taiType>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 
@@ -69,5 +70,31 @@ private:
   void          Initialize() {}
   void          Destroy() {}
 };
+
+#define TAI_ARGTYPE_SUBCLASS(x, y)       \
+    INHERITED(y)                         \
+  public:                                \
+    x(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) \
+      : y(aidx, argt, md, td)            \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    x()                                  \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    ~x()                                 \
+    {                                    \
+      Destroy();                         \
+    }                                    \
+    override TypeDef* GetTypeDef() const \
+    {                                    \
+      return &TA_##x;                    \
+    }                                    \
+    override x* ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) const \
+    {                                    \
+      return new x(aidx, argt, md, td);  \
+    }
+
 
 #endif // taiArgType_h

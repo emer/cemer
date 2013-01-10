@@ -66,4 +66,33 @@ public:
   bool                  no_setpointer;  // don't use SetPointer for taBase pointers (ie., for css or other secondary pointers)
 };
 
+// Implement common routines for taiTypeBase subclasses.
+// The overridden TypeInst() function has a covariant return type.
+// See also TAI_MEMBER_SUBCLASS, TAI_ARGTYPE_SUBCLASS, TAI_METHOD_SUBCLASS.
+#define TAI_TYPEBASE_SUBCLASS(x, y)         \
+    INHERITED(y)                            \
+  public:                                   \
+    x(TypeDef* td)                          \
+      : y(td)                               \
+    {                                       \
+      Initialize();                         \
+    }                                       \
+    x()                                     \
+    {                                       \
+      Initialize();                         \
+    }                                       \
+    ~x()                                    \
+    {                                       \
+      Destroy();                            \
+    }                                       \
+    override TypeDef* GetTypeDef() const    \
+    {                                       \
+      return &TA_##x;                       \
+    }                                       \
+    override x* TypeInst(TypeDef* td) const \
+    {                                       \
+      return new x(td);                     \
+    }
+
+
 #endif // taiTypeBase_h

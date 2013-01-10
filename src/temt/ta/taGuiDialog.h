@@ -33,6 +33,7 @@ class DataTable; //
 class taGuiWidget; // 
 class taGuiLayout; // 
 class taGuiAction; // 
+class taGuiDataHost; //
 
 
 class TA_API taGuiDialog : public taNBase {

@@ -30,6 +30,7 @@
 #include <taiMimeFactory_List>
 #include <ColorScaleSpec_Group>
 #include <String_Array>
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 

@@ -15,3 +15,25 @@
 
 #include "gpiListEdit.h"
 
+int gpiListEdit::BidForEdit(TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl))
+    return taiEdit::BidForEdit(td)+1;
+  return 0;
+}
+
+taiEditDataHost* gpiListEdit::CreateDataHost(void* base, bool readonly) {
+  // compact is either specified explicitly,
+  // or we must use it if the base_type of the list requires inline
+  bool use_compact = false;
+  if (!typ->HasOption("NO_CHILDREN_INLINE")) {
+    use_compact = typ->HasOption("CHILDREN_INLINE");
+    if (!use_compact && base) { // try checking base type
+      taList_impl* lst = (taList_impl*)base;
+      use_compact = lst->el_typ->it->requiresInline();
+    }
+  }
+  if (use_compact)
+    return new gpiCompactListDataHost(base, typ, readonly);
+  else
+    return new gpiListDataHost(base, typ, readonly);
+}

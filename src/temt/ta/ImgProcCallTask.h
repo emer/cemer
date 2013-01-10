@@ -24,6 +24,14 @@
 // declare all other types mentioned but not required to include:
 class ImgProcCallThreadMgr; // 
 
+// this is the standard function call taking the thread number int value
+// all threaded functions MUST use this call signature!
+#ifdef __MAKETA__
+typedef void* ThreadImgProcCall;
+#else
+typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
+typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
+#endif
 
 class TA_API ImgProcCallTask : public taTask {
 INHERITED(taTask)

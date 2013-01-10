@@ -20,16 +20,8 @@
 #include <VisRegionSpecBase>
 
 // member includes:
-#include <V1GaborSpec>
 #include <V1KwtaSpec>
-#include <V1sNeighInhib>
 #include <XYNGeom>
-#include <V1MotionSpec>
-#include <V1BinocularSpec>
-#include <V1ComplexSpec>
-#include <V2BordOwnSpec>
-#include <V2BordOwnStencilSpec>
-#include <VisSpatIntegSpec>
 #include <float_Matrix>
 #include <int_Matrix>
 #include <CircMatrix>
@@ -38,6 +30,190 @@
 class DataTable; // 
 class V1RetinaProc; // 
 
+class TA_API V1GaborSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
+INHERITED(taOBase)
+public:
+  float		gain;		// #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
+  int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
+  int		filter_size;	// #DEF_6;12;18;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square
+  int		spacing;	// how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1, lower res can be increments therefrom
+  float		wvlen;		// #DEF_6;12;18;24 (values = filter_size work well) wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
+  float		gauss_sig_len;	// #DEF_0.25:0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
+  float		gauss_sig_wd;	// #DEF_0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
+  float		phase_off;	// #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
+  bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
+
+  virtual void	RenderFilters(float_Matrix& fltrs);
+  // generate filters into the given matrix, which is formatted as: [filter_size][filter_size][n_angles]
+
+  virtual void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1GaborSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1sNeighInhib : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
+INHERITED(taOBase)
+public:
+  bool		on;		// whether to use neighborhood inhibition
+  int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning
+  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8:1 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
+
+  int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1sNeighInhib);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1MotionSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
+INHERITED(taOBase)
+public:
+  bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
+  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
+  int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
+  int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
+  float		opt_thr;	// #DEF_0.01 optimization threshold -- skip if current value is below this value
+
+  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1MotionSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1BinocularSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
+INHERITED(taOBase)
+public:
+  bool		mot_in;		// use motion v1m_maxout signals as the input to disparity computation -- only moving objects will have depth mapping -- a quick and dirty way to drive saccade control, for example -- only valid if motion_frames > 1, and must not set r_only in v1s_motion specs (all these conditions are enforced!)
+  int		n_disps;	// #DEF_0:2 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
+  float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
+  float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
+  int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
+  bool		fix_horiz;	// #DEF_true fix horizontal disparities by anchoring to values at the ends of horizontal line segments, which are the only places that have reliable disparity signals in this case
+  float		horiz_thr;	// #DEF_0.2 threshold activity level for counting a horizontal line
+
+  int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  int		disp_spc;	// #READ_ONLY #SHOW integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
+  int		end_ext;	// #READ_ONLY #SHOW integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
+
+  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
+  int		max_width;	// #READ_ONLY maximum total width (1 + 2 * disp_range + end_ext)
+  int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
+  int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
+  float		ambig_wt;	// #READ_ONLY disparity activation weight for ambiguous locations
+
+  virtual void	UpdateFmV1sSize(int v1s_img_x) {
+    disp_range = (int)((disp_range_pct * (float)v1s_img_x) + 0.5f);
+    disp_spc = (int)(disp_spacing * (float)disp_range);
+    end_ext = end_extra * disp_range;
+    max_width = 1 + 2*disp_range + end_ext;
+    max_off = n_disps * disp_spc + disp_range + end_ext;
+    tot_offs = 1 + 2 * max_off;
+  }
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1BinocularSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1ComplexSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
+INHERITED(taOBase)
+public:
+  bool		sg4;		// #DEF_false #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
+  bool		spc4;		// #DEF_true #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
+  int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
+
+  int		sg_rf;		// #READ_ONLY size of sg-grouping -- always 4 for now, as it is the only thing that makes sense
+  int		sg_half;	// #READ_ONLY sg_rf / 2
+  int		sg_spacing;	// #READ_ONLY either 4 or 2 depending on spc4
+  int		sg_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
+  float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1ComplexSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V2BordOwnSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
+INHERITED(taOBase)
+public:
+  int		lat_itrs;	// #DEF_10 how many iterations of lateral propagation to perform?
+  float		lat_dt;		// #DEF_0.5 integration rate for lateral propagation
+  float		act_thr;	// #DEF_0.1 general activity threshold for doing V2 BO computations -- if below this value, just set ambiguously -- also threshold for using T,L junction output to drive BO
+  float		ambig_gain;	// #DEF_0.2 gain multiplier for ambiguous length sum activation -- also serves as a threshold for communicating ambiguity
+  float		l_t_inhib_thr;	// #DEF_0.2 threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's
+  int		depths_out;	// #MIN_1 number of depth replications of the V2 BO output -- just replicates the output this many times in the y dimension of the unit group output
+  int		depth_idx;	// output only this specific depth index -- -1 = all
+
+  float		ffbo_gain;	// #READ_ONLY 1-ambig_gain
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V2BordOwnSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V2BordOwnStencilSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership stencils for neighborhood connectivity
+INHERITED(taOBase)
+public:
+  float		gain;		// #DEF_4 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
+  int		radius;		// #DEF_3:8 for all curved angles, how far to connect in any one direction (in unit group units)
+  bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
+  bool		opp_on;		// #DEF_false make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements
+  float		ang_sig;	// #DEF_0.5 sigma for gaussian around target angle -- same for all
+  float		dist_sig;	// #DEF_0.8 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
+  float		weak_mag;	// #DEF_0.5 weaker magnitude -- applies to acute angle intersections
+  float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V2BordOwnStencilSpec);
+};
+
+class TA_API VisSpatIntegSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
+INHERITED(taOBase)
+public:
+  taVector2i	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
+
+  taVector2i	spat_half;	// #READ_ONLY half rf
+  taVector2i	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
+  taVector2i	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisSpatIntegSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
 
 class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution

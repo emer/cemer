@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class GridTableView; // 
 class TypeDef; // 
-
+class T3GridColViewNode; // #IGNORE
 
 class TA_API GridColView : public DataColView {
   // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)

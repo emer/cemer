@@ -15,3 +15,29 @@
 
 #include "taiDefaultToken.h"
 
+int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
+  TypeDef* mtd = md->type;
+  if (((mtd->ptr == 1) && mtd->DerivesFrom(TA_taBase)) &&
+     md->HasOption("DEFAULT_EDIT"))
+    return taiTokenPtrMember::BidForMember(md,td)+10;
+  return 0;
+}
+
+taiData* taiDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  taiDefaultEdit* tde = new taiDefaultEdit(mbr->type->GetNonPtrType());
+  taiEditButton *rval = taiEditButton::New(NULL, tde, mbr->type->GetNonPtrType(),
+     host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiDefaultToken::GetImage_impl(taiData* dat, const void* base) {
+  taiEditButton* rval = (taiEditButton*)dat;
+  taBase* token_ptr = GetTokenPtr(base);
+  rval->GetImage_(token_ptr);
+  if (token_ptr) {
+    rval->typ = token_ptr->GetTypeDef();
+  }
+}
+
+void taiDefaultToken::GetMbrValue_impl(taiData*, void*) {
+}

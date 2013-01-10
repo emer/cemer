@@ -23,6 +23,8 @@
 #include <TemtClient_List>
 
 // declare all other types mentioned but not required to include:
+class TemtServerAdapter; // #IGNORE
+class QTcpServer;        // #IGNORE
 
 
 class TA_API TemtServer: public taOABase { 

@@ -17,6 +17,7 @@
 #define TemtClientAdapter_h 1
 
 // parent includes:
+#include <taBaseAdapter>
 
 // member includes:
 #include <ProgramRef>

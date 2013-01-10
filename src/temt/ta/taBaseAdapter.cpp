@@ -13,5 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "V2BordOwnStencilSpec.h"
+#include "taBaseAdapter.h"
+
+taBaseAdapter::~taBaseAdapter() {
+  if (owner && (owner->adapter == this)) owner->adapter = NULL;
+  owner = NULL;
+}
 

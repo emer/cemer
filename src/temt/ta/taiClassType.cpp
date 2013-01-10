@@ -15,3 +15,39 @@
 
 #include "taiClassType.h"
 
+int taiClassType::BidForType(TypeDef* td) {
+  if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                  taiType* parent_type_, int flags_, MemberDef* mbr)
+{
+  if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
+    flags_ |= taiData::flgInline;
+  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_, mbr);
+}
+
+taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  taiEditButton* rval = taiEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+taiData* taiClassType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  taiPolyData* rval = taiPolyData::New(true, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiClassType::GetImage_impl(taiData* dat, const void* base) {
+  dat->GetImage_(base);
+}
+
+void taiClassType::GetValue_impl(taiData* dat, void* base) {
+  dat->GetValue_(base); //noop for taiEditButton
+}
+
+bool taiClassType::CanBrowse() const {
+  //TODO: add additionally supported base types
+  return (typ->InheritsFrom(TA_taBase)  && !typ->HasOption("HIDDEN"));
+}

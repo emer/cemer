@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iDataPanelSet; // #IGNORE
+class iDataPanelFrame; // #IGNORE
 
 
 class TA_API taiViewType: public taiTypeBase {

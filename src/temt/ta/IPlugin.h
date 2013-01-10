@@ -25,7 +25,8 @@
 class taVersion; // 
 
 
-class IPlugin: public virtual ITypedObject  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
+class IPlugin: public virtual ITypedObject  {
+  // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
 public:
 // the following interfaces are used in the plugin enumeration stage
   virtual const char*	desc() {return "(no description provided)";}
@@ -46,5 +47,11 @@ public:
     
   virtual ~IPlugin() {}
 };
+
+
+#ifndef __MAKETA__
+// IMPORTANT: do NOT update these names, even though they are stale -- breaks plugins
+Q_DECLARE_INTERFACE(IPlugin, "pdp.IPlugin/1.0")
+#endif
 
 #endif // IPlugin_h

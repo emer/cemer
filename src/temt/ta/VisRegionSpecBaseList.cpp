@@ -15,3 +15,35 @@
 
 #include "VisRegionSpecBaseList.h"
 
+VisRegionSpecBase* VisRegionSpecBaseList::FindRetinalRegion(VisRegionParams::Region reg) {
+  for(int i=0;i<size;i++) {
+    VisRegionSpecBase* fs = (VisRegionSpecBase*)FastEl(i);
+    if(fs->region.region == reg)
+      return fs;
+  }
+  return NULL;
+}
+
+VisRegionSpecBase* VisRegionSpecBaseList::FindRetinalRes(VisRegionParams::Resolution res) {
+  for(int i=0;i<size;i++) {
+    VisRegionSpecBase* fs = (VisRegionSpecBase*)FastEl(i);
+    if(fs->region.res == res)
+      return fs;
+  }
+  return NULL;
+}
+
+VisRegionSpecBase* VisRegionSpecBaseList::FindRetinalRegionRes(VisRegionParams::Region reg,
+                                                       VisRegionParams::Resolution res) {
+  for(int i=0;i<size;i++) {
+    VisRegionSpecBase* fs = (VisRegionSpecBase*)FastEl(i);
+    if((fs->region.region == reg) && (fs->region.res == res))
+      return fs;
+  }
+  VisRegionSpecBase* rval = FindRetinalRes(res);
+  if(rval) return rval;
+  rval = FindRetinalRegion(reg);
+  if(rval) return rval;
+  return NULL;
+}
+

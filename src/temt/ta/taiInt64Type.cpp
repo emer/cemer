@@ -15,3 +15,12 @@
 
 #include "taiInt64Type.h"
 
+int taiInt64Type::BidForType(TypeDef* td){
+  // we handle all 64-bit types
+  if (td->DerivesFrom(&TA_int64_t) || td->DerivesFrom(&TA_uint64_t))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+//TODO: we really are still just using the taiType defaults
+// need to create a 64-bit spin, or at least a customized edit

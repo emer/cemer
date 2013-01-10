@@ -15,3 +15,25 @@
 
 #include "taPluginBase_List.h"
 
+taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
+  for (int i = 0; i < size; ++i) {
+    taPluginBase* rval = FastEl(i);
+    if (!rval) continue;
+    if (rval->unique_id == value) return rval;
+  }
+  return NULL;
+}
+
+void taPluginBase_List::QueryEditActions_impl(const taiMimeSource* ms,
+  int& allowed, int& forbidden)
+{
+  allowed = taiClipData::EA_COPY;
+  forbidden = ~taiClipData::EA_COPY;
+}
+
+void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+    const taiMimeSource* ms, int& allowed, int& forbidden)
+{
+  allowed = taiClipData::EA_COPY;
+  forbidden = ~taiClipData::EA_COPY;
+}

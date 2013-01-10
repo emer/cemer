@@ -22,7 +22,11 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiMethodData; // #IGNORE
 
+// the default method handles requests for Menu or Button instances
+// the client needs to check the MethodDef directives to decide if
+// the type is supposed to have buttons and/or menus in a given context
 
 class TA_API taiMethod : public taiType {
 INHERITED(taiType)
@@ -58,5 +62,30 @@ protected:
   virtual taiMethodData* GetMenuMethodRep_impl(void* base, IDataHost* host_,
     taiData* par, QWidget* gui_parent_, int flags_) {return NULL;}
 };
+
+#define TAI_METHOD_SUBCLASS(x, y)        \
+    INHERITED(y)                         \
+  public:                                \
+    x(MethodDef* md, TypeDef* td)        \
+      : y(md, td)                        \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    x()                                  \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    ~x()                                 \
+    {                                    \
+      Destroy();                         \
+    }                                    \
+    override TypeDef* GetTypeDef() const \
+    {                                    \
+      return &TA_##x;                    \
+    }                                    \
+    override x* MethInst(MethodDef* md, TypeDef* td) const \
+    {                                    \
+      return new x(md, td);              \
+    }
 
 #endif // taiMethod_h

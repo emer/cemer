@@ -15,3 +15,96 @@
 
 #include "TemtServer.h"
 
+void TemtServer::Initialize() {
+  port = 5360;
+  open = false;
+  server = NULL;
+  SetAdapter(new TemtServerAdapter(this));
+}
+
+void TemtServer::Destroy() {
+  CloseServer(false);
+}
+
+void TemtServer::Copy_(const TemtServer& cp) {
+  CloseServer();
+  port = cp.port;
+//NOTE: don't copy the clients -- always flushed
+}
+
+void TemtServer::ClientDisconnected(TemtClient* client) {
+  // only called for asynchronous disconnects (not ones we force)
+  clients.RemoveEl(client);
+}
+
+void TemtServer::CloseServer(bool notify) {
+  if (!open) return;
+  while (clients.size > 0) {
+    TemtClient* cl = clients.FastEl(clients.size - 1);
+    cl->server = NULL; // prevents callback
+    cl->CloseClient();
+    clients.RemoveEl(cl);
+  }
+  if (server) {
+    delete server;
+    server = NULL;
+  }
+  open = false;
+  taMisc::server_active = false;
+  if (notify) DataChanged(DCR_ITEM_UPDATED);
+}
+
+void TemtServer::InitServer_impl(bool& ok) {
+  // nothing
+}
+
+bool TemtServer::OpenServer() {
+  if (open) return true;
+  if (taMisc::server_active) {
+    taMisc::Error("A server is already open");
+    return false;
+  }
+  server = new QTcpServer();
+  if (!server->listen(QHostAddress::Any, port)) {
+    taMisc::Error("Could not open the server: ",
+      server->errorString().toLatin1());
+    delete server;
+    server = NULL;
+    return false;
+  }
+  
+  QObject::connect(server, SIGNAL(newConnection()), adapter(), SLOT(server_newConnection()));
+
+  open = true;
+  DataChanged(DCR_ITEM_UPDATED);
+  taMisc::server_active = true;
+  return true;
+}
+
+void  TemtServer::server_newConnection() {
+  // setup data writing for hello or error block
+  QByteArray block;
+  QDataStream out(&block, (QIODevice::OpenMode)QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_4_0);
+  
+  // get the latest connection, and always set it to self-destruct on close
+  QTcpSocket* ts = server->nextPendingConnection();
+  QObject::connect(ts, SIGNAL(disconnected()),
+    ts, SLOT(deleteLater()));
+  // we only allow 1 client (in this version of pdp), so refuse others
+  if (clients.size >= 1) {
+    out << "ERROR 1 : too many connections already, closing...\n";
+    ts->write(block);
+    ts->disconnectFromHost();
+    return;
+  }
+  TemtClient* cl = (TemtClient*)clients.New(1);
+  cl->server = this;
+  cl->SetSocket(ts);
+    
+  String banner = "Emergent Server v" + taMisc::version + "\n";
+  out << banner.chars(); 
+  ts->write(block);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+

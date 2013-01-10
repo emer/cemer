@@ -15,3 +15,20 @@
 
 #include "tabListViewType.h"
 
+int tabListViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taList_impl))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+taiDataLink* tabListViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabListDataLink((taList_impl*)data_);
+}
+
+void tabListViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // we create ours first, because it should be the default
+  iListDataPanel* bldp = new iListDataPanel(dl_);
+  DataPanelCreated(bldp);
+  inherited::CreateDataPanel_impl(dl_);
+}

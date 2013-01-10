@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class T3DataViewFrame_List; //
+class iT3DataViewer; //
 
 class TA_API T3DataViewer : public FrameViewer {
   // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 top-level taDataViewer object that contains one 3D data view of multiple objects

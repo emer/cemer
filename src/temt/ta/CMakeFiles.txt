@@ -109,6 +109,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   voidptr_Matrix.h
   CircMatrix.h
 
+  taiMiscCore.h
   taDataView.h
   UserDataItemBase.h
   UserDataItem.h
@@ -134,7 +135,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TypeDefault.h
 
   taFiler.h
-  taiMiscCore.h
 
   taObjDiffRec.h
   taObjDiff_List.h
@@ -199,16 +199,18 @@ set(ta_HEADS_MAKETA_LOCAL_1
   AbstractScriptBase.h
 
   ISelectable.h
+  IObjectSelectable.h
 
   DataViewer.h
+  DataViewer_List.h
+  FrameViewer.h
+  FrameViewer_List.h
   TopLevelViewer.h
   tabBrowseViewer.h
   ClassBrowseViewer.h
   PanelViewer.h
   ToolBoxRegistrar.h
-  DataViewer_List.h
   ToolBar_List.h
-  FrameViewer_List.h
   DockViewer_List.h
   ConsoleDockViewer.h
   ToolBoxRegistrar_PtrList.h
@@ -395,9 +397,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taPluginDep.h
   taPluginBase_List.h
   taPlugin_List.h
-  taPluginInst.h
-  taPluginInst_PList.h
-  taPlugins.h
 
   SelectEditItem.h
   EditParamSearch.h
@@ -441,6 +440,9 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiTabularDataMimeItem.h
   taiMatrixDataMimeItem.h
   taiTsvMimeItem.h
+  taiTableColDesc.h
+  taiTableColDesc_PArray.h
+  taiTableDataMimeItem.h
 
   taProjVersion.h
   taLicense.h
@@ -457,10 +459,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TestWizard.h
 
   TemtClient.h
-  TemtClientAdapter.h
-  TemtServer.h
-  TemtServerAdapter.h
   TemtClient_List.h
+  TemtServer.h
 
   taRootBase.h
   tabMisc.h
@@ -469,32 +469,22 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   taImage.h
   taCanvas.h
+
+  ImageProcCall.h
   ImgProcThreadBase.h
   ImgProcCallTask.h
+
   DoGFilter.h
   GaborFilter.h
   MotionGaborFilter.h
   GaborFitter.h
   taImageProc.h
-  VisRegionParams.h
-  VisRegionSizes.h
   VisRegionSpecBase.h
   VisRegionSpecBaseList.h
   DoGRegionSpec.h
   V1KwtaSpec.h
-  V1GaborSpec.h
-  V1sNeighInhib.h
-  V1MotionSpec.h
-  V1BinocularSpec.h
-  V1ComplexSpec.h
-  V2BordOwnSpec.h
-  V2BordOwnStencilSpec.h
-  VisSpatIntegSpec.h
   V1RegionSpec.h
   RetinaProc.h
-  V1RetinaProc.h
-  DoGRetinaProc.h
-  ImageProcCall.h
 
   ODEIntParams.h
   ODEDamping.h
@@ -523,15 +513,15 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ODEWorldParams.h
   VEWorld.h
 
-  VEArm.h
   VELinearMuscle.h
-  VEObjCarousel.h
+  VELinMuscle_List.h
   VELambdaMuscle.h
   VEMuscleJoint.h
-  VELinMuscle_List.h
+  VEArm.h
+
+  VEObjCarousel.h
   VEHeightField.h
 
-  taiMisc.h
   taMediaWiki.h
 
   taiAction.h
@@ -612,16 +602,14 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiStepButtonMethod.h
 
   tabSelectEditViewType.h
-  taiEditTableWidget.h
 
-  taGuiDialog.h
   taGuiWidget.h
   taGuiWidget_List.h
   taGuiLayout.h
   taGuiLayout_List.h
   taGuiAction.h
   taGuiAction_List.h
-  taGuiDataHost.h
+  taGuiDialog.h
   # SoBase.h
   # SoGroup.h
 
@@ -633,23 +621,19 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   DataColView.h
   DataTableView.h
-  GraphTableView.h
-  GridTableView.h
-  GridColView.h
-  GraphColView.h
 
+  GridColView.h
+  GridTableView.h
+
+  GraphColView.h
   GraphAxisBase.h
   GraphAxisView.h
   GraphPlotView.h
-
-  taiTableColDesc.h
-  taiTableColDesc_PArray.h
-  taiTableDataMimeItem.h
+  GraphTableView.h
 
   VEWorldView.h
   VEBodyView.h
   VEStaticView.h
-  VEWorldViewPanel.h
   VEObjCarouselView.h
   VEJointView.h
   VEObjectView.h
@@ -717,10 +701,19 @@ set(ta_HEADS_NOMAKETA
   dumpMisc.h
 
   IPlugin.h
+  taPluginInst_PList.h
+  taPlugins.h
 )
 
 set(ta_HEADS_NOMAKETA_MOC
+  taPluginInst.h
   iPluginEditor.h
+
+  taBaseAdapter.h
+  TemtClientAdapter.h
+  TemtServerAdapter.h
+
+  taiMisc.h
 
   iTopLevelWindow_List.h
 
@@ -728,6 +721,10 @@ set(ta_HEADS_NOMAKETA_MOC
   taiDataHost_impl.h
   taiDataHostBase.h
   taiDataHost.h
+
+  taGuiDataHost.h
+  taGuiWidgetHelper.h
+  taGuiActionHelper.h
 
   taiMenuAction.h
   iRegexpDialogPopulator.h
@@ -753,6 +750,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iBaseClipWidgetAction.h
   iDataTableEditor.h
 
+  taiEditTableWidget.h
   IDataViewWidget.h
   iFrameViewer.h
   iBrowseViewer.h
@@ -773,7 +771,6 @@ set(ta_HEADS_NOMAKETA_MOC
   tabODataLink.h
   tabListDataLink.h
   tabGroupDataLink.h
-  IObjectSelectable.h
   iTreeViewItem.h
   taiTreeDataNode.h
   taiListDataNode.h
@@ -863,6 +860,7 @@ set(ta_HEADS_NOMAKETA_MOC
   T3VEJoint.h
   T3VESpace.h
   T3VEStatic.h
+  VEWorldViewPanel.h
 
   SoFrame.h
   SoRect.h
@@ -1232,6 +1230,7 @@ set(ta_SRCS
   ToolBoxRegistrar.cpp
   DataViewer_List.cpp
   ToolBar_List.cpp
+  FrameViewer.cpp
   FrameViewer_List.cpp
   DockViewer_List.cpp
   ConsoleDockViewer.cpp
@@ -1396,41 +1395,32 @@ set(ta_SRCS
   SubMatrixOpSpec.cpp
   taDataGen.cpp
   DataGenCall.cpp
+
   taImage.cpp
   taCanvas.cpp
+
+  ImageProcCall.cpp
   ImgProcThreadBase.cpp
   ImgProcCallThreadMgr.cpp
   ImgProcCallTask.cpp
+
   DoGFilter.cpp
   GaborFilter.cpp
   MotionGaborFilter.cpp
   GaborFitter.cpp
   taImageProc.cpp
-  VisRegionParams.cpp
-  VisRegionSizes.cpp
   VisRegionSpecBase.cpp
   VisRegionSpecBaseList.cpp
   DoGRegionSpec.cpp
   V1KwtaSpec.cpp
-  V1GaborSpec.cpp
-  V1sNeighInhib.cpp
-  V1MotionSpec.cpp
-  V1BinocularSpec.cpp
-  V1ComplexSpec.cpp
-  V2BordOwnSpec.cpp
-  V2BordOwnStencilSpec.cpp
-  VisSpatIntegSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
-  V1RetinaProc.cpp
-  DoGRetinaProc.cpp
-  ImageProcCall.cpp
+
   VEBody.cpp
   VEJoint.cpp
   VEObject.cpp
   VEStatic.cpp
   VESpace.cpp
-  VEWorld.cpp
   VEArm.cpp
   VELinearMuscle.cpp
   ODEIntParams.cpp
@@ -1444,6 +1434,8 @@ set(ta_SRCS
   VECameraDists.cpp
   VECamera.cpp
   VELight.cpp
+  VEWorld.cpp
+
   VEObjCarousel.cpp
   VEJointStops.cpp
   VEJointMotor.cpp
@@ -1777,6 +1769,9 @@ set(ta_SRCS
   taStringDiffData.cpp
   taiData.cpp
   ContextFlag.cpp
+  taBaseAdapter.cpp
+  taGuiWidgetHelper.cpp
+  taGuiActionHelper.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

@@ -20,9 +20,10 @@
 #include <taiType>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
-
+class taiEnumType; //
 
 class TA_API taiMember : public taiType {
 public:
@@ -101,5 +102,31 @@ protected:
   override bool         isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
   void                  CheckProcessCondEnum(taiEnumType* et, taiData* dat, const void* base);
 };
+
+
+#define TAI_MEMBER_SUBCLASS(x, y)        \
+    INHERITED(y)                         \
+  public:                                \
+    x(MemberDef* md, TypeDef* td)        \
+      : y(md, td)                        \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    x()                                  \
+    {                                    \
+      Initialize();                      \
+    }                                    \
+    ~x()                                 \
+    {                                    \
+      Destroy();                         \
+    }                                    \
+    override TypeDef* GetTypeDef() const \
+    {                                    \
+      return &TA_##x;                    \
+    }                                    \
+    override x* MembInst(MemberDef* md, TypeDef* td) const \
+    {                                    \
+      return new x(md, td);              \
+    }
 
 #endif // taiMember_h

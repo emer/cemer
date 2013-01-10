@@ -26,6 +26,11 @@ class QImage; //
 class float_Matrix; // 
 class DataTable; // 
 
+#ifdef TA_OS_WIN
+# ifdef LoadImage
+#   undef LoadImage
+# endif
+#endif
 
 class TA_API taImage : public taNBase {
   // #STEM_BASE ##CAT_Image represents an image in TA accessible way (wrapper for QT's QImage)

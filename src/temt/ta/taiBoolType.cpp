@@ -15,3 +15,26 @@
 
 #include "taiBoolType.h"
 
+int taiBoolType::BidForType(TypeDef* td){
+  if(td->InheritsFrom(TA_bool))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiBoolType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+  taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiBoolType::GetImage_impl(taiData* dat, const void* base) {
+  bool val = *((bool*)base);
+  taiToggle* rval = (taiToggle*)dat;
+  rval->GetImage(val);
+}
+
+void taiBoolType::GetValue_impl(taiData* dat, void* base) {
+  taiToggle* rval = (taiToggle*)dat;
+  *((bool*)base) = rval->GetValue();
+}

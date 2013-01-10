@@ -15,3 +15,13 @@
 
 #include "taiMatrixGeomType.h"
 
+int taiMatrixGeomType::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_MatrixGeom))
+    return (taiClassType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiMatrixGeomType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  taiDimEdit *rval = new taiDimEdit(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}

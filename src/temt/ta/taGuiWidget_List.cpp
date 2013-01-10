@@ -15,3 +15,27 @@
 
 #include "taGuiWidget_List.h"
 
+void taGuiWidget_List::Initialize() {
+  SetBaseType(&TA_taGuiWidget);
+}
+
+void taGuiWidget_List::GetImage() {
+  for(int i=0; i<size; i++) {
+    taGuiWidget* w = FastEl(i);
+    w->GetImage();
+  }
+}
+
+void taGuiWidget_List::GetValue() {
+  for(int i=0; i<size; i++) {
+    taGuiWidget* w = FastEl(i);
+    w->GetValue();
+  }
+}
+
+void taGuiWidget_List::FixAllUrl(const String& url_tag, const String& path) {
+  for(int i=0; i<size; i++) {
+    taGuiWidget* w = FastEl(i);
+    w->FixUrl(url_tag, path);
+  }
+}

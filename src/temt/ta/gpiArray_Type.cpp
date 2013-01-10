@@ -15,3 +15,15 @@
 
 #include "gpiArray_Type.h"
 
+int gpiArray_Type::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_taArray)) { // bid higher than the class  type
+    return (taiClassType::BidForType(td) +1);
+  }
+  return 0;
+}
+
+taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  gpiArrayEditButton *rval =
+    new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}

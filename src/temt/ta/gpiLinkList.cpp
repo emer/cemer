@@ -15,3 +15,22 @@
 
 #include "gpiLinkList.h"
 
+int gpiLinkList::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->InheritsFrom(TA_taList_impl)) &&
+     (md->HasOption("LINK_GROUP")))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* gpiLinkList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  gpiListLinkEditButton* rval = new gpiListLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void gpiLinkList::GetImage_impl(taiData* dat, const void* base) {
+  gpiListLinkEditButton* rval = (gpiListLinkEditButton*)dat;
+  rval->GetImage_(mbr->GetOff(base));
+}
+
+void gpiLinkList::GetMbrValue(taiData*, void*, bool&) {
+}

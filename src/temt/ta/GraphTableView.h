@@ -27,10 +27,11 @@
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
-class T3DataViewFrame; // 
-class T3GraphViewNode; // 
 class ColorScaleSpec; // 
 class iGraphTableView_Panel; // 
+class T3DataViewFrame; // #IGNORE
+class T3GraphViewNode; // #IGNORE
+class T3GraphLine; // #IGNORE
 
 
 class TA_API GraphTableView: public DataTableView {

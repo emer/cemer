@@ -15,3 +15,43 @@
 
 #include "taiSubTokenPtrMember.h"
 
+int taiSubTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if((md->type->ptr == 1) && (md->OptionAfter("SUBTYPE_") != ""))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiSubTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  TypeDef* td = NULL;
+  String typ_nm = mbr->OptionAfter("SUBTYPE_");
+  if (!typ_nm.empty())
+    td = taMisc::types.FindName((char*)typ_nm);
+  if (td == NULL)
+    td = mbr->type;
+  if (mbr->HasOption("NULL_OK"))
+    flags_ |= taiData::flgNullOk;
+  if (!mbr->HasOption("NO_EDIT"))
+    flags_ |= taiData::flgEditOk;
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+  taiSubToken* rval =
+    new taiSubToken( taiMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiSubTokenPtrMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiSubToken* rval = (taiSubToken*)dat;
+//nn, done in GetImage  rval->UpdateMenu();
+  rval->GetImage(base,*((void **)new_base));
+  GetOrigVal(dat, base);
+}
+
+void taiSubTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+  taiSubToken* rval = (taiSubToken*)dat;
+  if (!no_setpointer && mbr->type->DerivesFrom(TA_taBase))
+    taBase::SetPointer((taBase**)new_base, (taBase*)rval->GetValue());
+  else
+    *((void**)new_base) = rval->GetValue();
+}

@@ -15,3 +15,12 @@
 
 #include "gpiArrayEdit.h"
 
+int gpiArrayEdit::BidForEdit(TypeDef* td){
+  if (td->InheritsFrom(TA_taArray))
+    return (taiEdit::BidForType(td) +1);
+  return 0;
+}
+
+taiEditDataHost* gpiArrayEdit::CreateDataHost(void* base, bool readonly) {
+  return new gpiArrayEditDataHost(base, typ, readonly);
+}

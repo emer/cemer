@@ -15,3 +15,7 @@
 
 #include "TemtServerAdapter.h"
 
+void TemtServerAdapter::server_newConnection() {
+  owner()->server_newConnection();
+}
+

@@ -15,3 +15,14 @@
 
 #include "gpiGroupType.h"
 
+int gpiGroupType::BidForType(TypeDef* td) {
+  if(td->InheritsFrom(TA_taGroup_impl))
+    return (gpiListType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* gpiGroupType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+

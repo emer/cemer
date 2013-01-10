@@ -19,6 +19,9 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <VisRegionSpecBaseList>
 #include <float_Matrix>
@@ -141,6 +144,32 @@ protected:
 				     float scale = 1.0f, float rotate = 0.0f);
   // implementation function that processes an eye input image into an xform output image
 
+};
+
+SmartRef_Of(RetinaProc,TA_RetinaProc); // RetinaProcRef
+
+class TA_API DoGRetinaProc : public RetinaProc {
+  // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
+INHERITED(RetinaProc)
+public:
+  virtual VisRegionSpecBase* AddRegion()
+  { return (VisRegionSpecBase*)regions.New(1, &TA_DoGRegionSpec); }
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_BASEFUNS_NOCOPY(DoGRetinaProc);
+};
+
+class TA_API V1RetinaProc : public RetinaProc {
+  // V1 version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
+INHERITED(RetinaProc)
+public:
+  virtual VisRegionSpecBase* AddRegion()
+  { return (VisRegionSpecBase*)regions.New(1, &TA_V1RegionSpec); }
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_BASEFUNS_NOCOPY(V1RetinaProc);
 };
 
 #endif // RetinaProc_h

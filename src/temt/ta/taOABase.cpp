@@ -14,19 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taOABase.h"
+#include <taBaseAdapter>
 
 void taOABase::CutLinks() {
 #ifdef TA_GUI
   SetAdapter(NULL);
 #endif
   inherited::CutLinks();
-}
-
-
-#ifdef TA_USE_QT
-taBaseAdapter::~taBaseAdapter() {
-  if (owner && (owner->adapter == this)) owner->adapter = NULL;
-  owner = NULL;
 }
 
 void taOABase::SetAdapter(taBaseAdapter* adapter_) {
@@ -44,5 +38,5 @@ void taOABase::SetAdapter(taBaseAdapter* adapter_) {
     }
   }
 }
-#endif
+
 

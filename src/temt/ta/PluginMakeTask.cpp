@@ -14,4 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "PluginMakeTask.h"
+#include <PluginMakeThreadMgr>
 
+void PluginMakeTask::Initialize() {
+}
+
+void PluginMakeTask::Destroy() {
+}
+
+void PluginMakeTask::run() {
+  PluginMakeThreadMgr* mkmg = mgr();
+  if(!mkmg) return;
+  if(mkmg->isDestroying()) return; // checks owner..
+  if(!mkmg->make_pending) return;
+
+  taPlugins::MakePlugin_impl(mkmg->plugin_path, mkmg->plugin_name, mkmg->system_plugin,
+                             mkmg->full_rebuild);
+  mkmg->make_pending = false;
+}

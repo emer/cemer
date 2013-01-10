@@ -15,3 +15,49 @@
 
 #include "taiTypePtr.h"
 
+void taiTypePtr::Initialize() {
+  orig_typ = NULL;
+}
+
+int taiTypePtr::BidForType(TypeDef* td) {
+  if(td->DerivesFrom(TA_TypeDef) && (td->ptr == 1))
+    return taiType::BidForType(td) + 1;
+  return 0;
+}
+
+// todo: the problem is that it doesn't know at this point what the base is
+// and can't therefore figure out what kind of datarep to use..
+// need to have a datarep that is a "string or type menu" kind of thing..
+
+taiData* taiTypePtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+
+  if (orig_typ == NULL)
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
+
+  taiTypeDefButton* rval =
+    new taiTypeDefButton(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiTypePtr::GetImage_impl(taiData* dat, const void* base) {
+  if (orig_typ == NULL) {
+    taiType::GetImage_impl(dat, base);
+    return;
+  }
+
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  TypeDef* typ_ = (TypeDef*)*((void**)base);
+  rval->GetImage((TypeDef*)*((void**)base), typ_);
+}
+
+void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
+  if (orig_typ == NULL) {
+    taiType::GetValue_impl(dat, base);
+    return;
+  }
+
+  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  *((void**)base) = rval->GetValue();
+}

@@ -27,6 +27,8 @@
 
 // declare all other types mentioned but not required to include:
 
+// note: because this defines CancelOp, it must be TA parsed -- otherwise it would not be
+
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing
   CO_PROCEED,           // tells caller to proceed with operation (typical default)
   CO_CANCEL,            // client can set this to tell caller to cancel the operation

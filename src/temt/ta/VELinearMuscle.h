@@ -23,7 +23,7 @@
 #include <taVector3f>
 
 // declare all other types mentioned but not required to include:
-
+class VEArm; //
 
 class TA_API VELinearMuscle : public taNBase {
   // A muscle that exerts force proportional to its input

@@ -15,3 +15,28 @@
 
 #include "taPluginDep.h"
 
+void taPluginDep::Initialize() {
+  dep_check = DC_OK;
+}
+
+void taPluginDep::Copy_(const taPluginDep& cp) {
+  dep_check = cp.dep_check; // not really used for copies
+}
+
+void taPluginDep::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if (dep_check != DC_OK) {
+    if (!quiet) {
+      String msg;
+      switch (dep_check) {
+      case DC_MISSING: msg = " is missing"; break;
+      case DC_NOT_LOADED: msg = " is not loaded"; break;
+      default: break; // compiler food
+      }
+      taMisc::CheckError("Required plugin: ",
+        GetDisplayName(), msg);
+    }
+    rval = false;
+  }
+}
+

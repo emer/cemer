@@ -15,3 +15,31 @@
 
 #include "taiMemberDefPtrMember.h"
 
+int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MemberDef)))
+    return (inherited::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_, MemberDef*)
+{
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+  taiMemberDefButton* rval =  new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+void taiMemberDefPtrMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  MemberDef* cur_sel = *((MemberDef**)(new_base));
+  rval->GetImage(cur_sel, GetTargetType(base));
+  GetOrigVal(dat, base);
+}
+
+void taiMemberDefPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  *((MemberDef**)new_base) = rval->GetValue();
+}

@@ -15,3 +15,6 @@
 
 #include "taGuiLayout_List.h"
 
+void taGuiLayout_List::Initialize() {
+  SetBaseType(&TA_taGuiLayout);
+}

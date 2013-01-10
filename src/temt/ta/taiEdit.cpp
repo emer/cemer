@@ -15,3 +15,114 @@
 
 #include "taiEdit.h"
 
+void taiEdit::AddEdit(TypeDef* td) {
+  InsertThisIntoBidList(td->ie);
+}
+
+taiEditDataHost* taiEdit::CreateDataHost(void* base, bool read_only) {
+  return new taiEditDataHost(base, typ, read_only);
+}
+
+int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
+  // get currently active win -- we will only look in any other window
+  iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
+  taiEditDataHost* host = taiMisc::FindEdit(base, cur_win);
+  if (!host) {
+    host = CreateDataHost(base, readonly);
+
+    if (typ->HasOption("NO_OK"))
+      host->no_ok_but = true;
+    if (typ->HasOption("NO_CANCEL"))
+      host->read_only = true;
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      if (&bgcol == &def_color) {
+        bool ok = false;
+        iColor bg = GetBackgroundColor(base, ok);
+        if (ok) host->setBgColor(bg);
+      }
+      else
+        host->setBgColor(bgcol);
+    }
+    host->Constr("", "");
+//TODO: no longer supported:    host->cancel_only = readonly;
+    return host->Edit(false);
+  }
+  else if (!host->modal) {
+    host->Raise();
+  }
+  return 2;
+}
+
+int taiEdit::EditDialog(void* base, bool read_only, bool modal,
+                        const iColor& bgcol, int min_width, int min_height)
+{
+  taiEditDataHost* host = NULL;
+  if (!modal) {
+    host = taiMisc::FindEditDialog(base, read_only);
+    if (host) {
+      host->Raise();
+      return 2;
+    }
+  }
+  host = CreateDataHost(base, read_only);
+  if (taMisc::color_hints & taMisc::CH_EDITS) {
+    if (&bgcol == &def_color) {
+      bool ok = false;
+      iColor bg = GetBackgroundColor(base, ok);
+      if (ok) host->setBgColor(bg);
+    }
+    else
+        host->setBgColor(bgcol);
+  }
+  else {
+    //TODO: maybe we always null out, or should we allow caller to specify?
+    //bgcol = NULL;
+  }
+  host->Constr("", "", taiDataHost::HT_DIALOG);
+  return host->Edit(modal, min_width, min_height);
+}
+
+EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
+   bool read_only, const iColor& bgcol)
+{
+  taiEditDataHost* host = CreateDataHost(base, read_only);
+  if (taMisc::color_hints & taMisc::CH_EDITS) {
+    if (&bgcol == &def_color) {
+      bool ok = false;
+      iColor bg = GetBackgroundColor(base, ok);
+      if (ok) host->setBgColor(bg);
+    }
+    else
+      host->setBgColor(bgcol);
+  }
+  else {
+    //TODO: maybe we always null out, or should we allow caller to specify?
+    //bgcol = NULL;
+  }
+
+  host->Constr("", "", taiDataHost::HT_PANEL, true);
+  EditDataPanel* rval = host->EditPanelDeferred(link);
+  return rval;
+}
+
+EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
+   bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol)
+{
+  taiEditDataHost* host = NULL;
+  host = taiMisc::FindEditPanel(base, read_only, not_in_win);
+  if (host) {
+    host->Raise();
+    return host->dataPanel();
+  }
+  else {
+    return EditNewPanel(link, base, read_only, bgcol);
+  }
+}
+
+const iColor taiEdit::GetBackgroundColor(void* base, bool& ok) {
+  if (typ->InheritsFrom(&TA_taBase) && base) {
+    return ((taBase*)base)->GetEditColorInherit(ok);
+  }
+  ok = false;
+  return def_color;
+}

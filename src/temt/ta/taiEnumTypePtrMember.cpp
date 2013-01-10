@@ -15,3 +15,18 @@
 
 #include "taiEnumTypePtrMember.h"
 
+int taiEnumTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->HasOption("ENUM_TYPE"))
+    return (inherited::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiEnumTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  int flags_, MemberDef*)
+{
+  if (mbr->HasOption("NULL_OK"))
+    flags_ |= taiData::flgNullOk;
+  taiEnumTypeDefButton* rval =
+    new taiEnumTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
+  return rval;
+}

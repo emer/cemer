@@ -25,8 +25,7 @@
 class DataTable; // 
 
 
-class TA_API taMediaWiki : public taNBase
-{
+class TA_API taMediaWiki : public taNBase {
   // ##INLINE ##NO_TOKENS media wiki api interface -- all static functions for performing functions we actually want to perform
   INHERITED(taNBase)
 

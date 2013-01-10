@@ -17,6 +17,12 @@
 #define taPluginInst_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QPluginLoader>
+#else
+class QPluginLoader; // #IGNORE
+#endif
 
 // member includes:
 

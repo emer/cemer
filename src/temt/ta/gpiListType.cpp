@@ -15,3 +15,13 @@
 
 #include "gpiListType.h"
 
+int gpiListType::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_taList_impl))
+    return (taiClassType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* gpiListType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}

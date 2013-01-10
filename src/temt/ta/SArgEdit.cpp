@@ -15,3 +15,12 @@
 
 #include "SArgEdit.h"
 
+int SArgEdit::BidForEdit(TypeDef* td){
+  if(td->InheritsFrom(TA_SArg_Array))
+    return (gpiArrayEdit::BidForType(td) +1);
+  return 0;
+}
+
+taiEditDataHost* SArgEdit::CreateDataHost(void* base, bool readonly) {
+  return new SArgEditDataHost(base, typ, readonly);
+}

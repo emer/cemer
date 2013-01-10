@@ -15,3 +15,34 @@
 
 #include "taiMethod.h"
 
+void taiMethod::AddMethod(MethodDef* md) {
+  InsertThisIntoBidList(md->im);
+  //TEST:
+  meth = md;
+}
+
+taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiData* par,
+  QWidget* gui_parent_)
+{
+  taiMethodData* rval = GetButtonMethodRep_impl(base, host_, par, gui_parent_, 0);
+  rval->SetBase((taBase*)base); // pray!
+  return rval;
+}
+
+taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
+  // this case is ONLY called by the CallFun() function, on methods, typically via
+  // a taBase->CallFun call
+//   taiMethodData* rval = new taiMethodData(base, meth, meth->type, NULL, par, NULL, 0);
+  // the above generic guy doesn't have all the right stuff -- use menu as default..
+  taiMethodData* rval = GetMenuMethodRep_impl(base, NULL, par, NULL, 0);
+  rval->SetBase((taBase*)base); // pray!
+  return rval;
+}
+
+taiMethodData* taiMethod::GetMenuMethodRep(void* base, IDataHost* host_, taiData* par,
+  QWidget* gui_parent_)
+{
+  taiMethodData* rval = GetMenuMethodRep_impl(base, host_, par, gui_parent_, 0);
+  rval->SetBase((taBase*)base); // pray!
+  return rval;
+}

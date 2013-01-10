@@ -13,28 +13,33 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef DoGRetinaProc_h
-#define DoGRetinaProc_h 1
+#ifndef taGuiActionHelper_h
+#define taGuiActionHelper_h 1
 
 // parent includes:
-#include <RetinaProc>
+#ifndef __MAKETA__
+#include <QObject>
+#endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class VisRegionSpecBase; // 
+class taGuiAction; //
 
 
-class TA_API DoGRetinaProc : public RetinaProc {
-  // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
-INHERITED(RetinaProc)
+class TA_API taGuiActionHelper : public QObject {
+ // #IGNORE this is a helper QObject that handles signals/slots
+Q_OBJECT
+friend class taGuiAction;
 public:
-  virtual VisRegionSpecBase* AddRegion()
-  { return (VisRegionSpecBase*)regions.New(1, &TA_DoGRegionSpec); }
 
-  void 	Initialize();
-  void	Destroy() { };
-  TA_BASEFUNS_NOCOPY(DoGRetinaProc);
+public slots:
+  void          UrlAction() { action->UrlAction(); }
+
+protected:
+  taGuiAction*  action;
+
+  taGuiActionHelper(taGuiAction* wid) { action = wid; }
 };
 
-#endif // DoGRetinaProc_h
+#endif // taGuiActionHelper_h

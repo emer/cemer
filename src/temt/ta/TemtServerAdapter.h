@@ -17,6 +17,7 @@
 #define TemtServerAdapter_h 1
 
 // parent includes:
+#include <taBaseAdapter>
 
 // member includes:
 

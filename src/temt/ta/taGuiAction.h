@@ -20,10 +20,14 @@
 #include <taNBase>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPointer>
+#include <QAction>
+#endif
 
 // declare all other types mentioned but not required to include:
 class QObject; // 
-
+class taGuiActionHelper; // #IGNORE
 
 class TA_API taGuiAction : public taNBase {
   // ##CAT_Gui manages a qt action for the taGui system

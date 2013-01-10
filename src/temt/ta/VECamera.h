@@ -19,6 +19,10 @@
 // parent includes:
 #include <VEBody>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <taVector3f>
 #include <taVector2i>
@@ -58,5 +62,7 @@ private:
   void  Initialize();
   void  Destroy() { };
 };
+
+TA_SMART_PTRS(VECamera);
 
 #endif // VECamera_h

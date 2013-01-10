@@ -15,3 +15,36 @@
 
 #include "taiFileDialogMember.h"
 
+int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->type->InheritsFrom(&TA_taString) && md->OptionAfter("FILE_DIALOG_").nonempty())
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* taiFileDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  String file_act = mbr->OptionAfter("FILE_DIALOG_");
+  taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
+  if(file_act == "SAVE")
+    fact = taiFileDialogField::FA_SAVE;
+  else if(file_act == "APPEND")
+    fact = taiFileDialogField::FA_APPEND;
+
+  String fext = String(".") + mbr->OptionAfter("EXT_");
+  String ftyp = mbr->OptionAfter("FILETYPE_");
+  int cmpr = mbr->HasOption("COMPRESS") ? 1 : -1;
+
+  return new taiFileDialogField(mbr->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
+}
+
+void taiFileDialogMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  rval->GetImage(*((String*)new_base));
+}
+
+void taiFileDialogMember::GetMbrValue_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  *((String*)new_base) = rval->GetValue();
+}
+

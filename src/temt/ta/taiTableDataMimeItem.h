@@ -20,6 +20,7 @@
 #include <taiTabularDataMimeItem>
 
 // member includes:
+#include <taiTableColDesc_PArray>
 
 // declare all other types mentioned but not required to include:
 

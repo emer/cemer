@@ -15,3 +15,33 @@
 
 #include "taGuiDataHost.h"
 
+taGuiDataHost::taGuiDataHost(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
+  : taiDataHostBase(&TA_taGuiDialog, read_only_, modal_, parent) {
+  gui_owner = own;
+}
+
+taGuiDataHost::~taGuiDataHost() {
+}
+
+void taGuiDataHost::Constr_Body() {
+  if(gui_owner->widgets.size > 0) {
+    taGuiWidget* fw = gui_owner->widgets.FastEl(0);
+    fw->widget->setParent(mwidget);
+    vblDialog->addWidget(fw->widget);
+  }
+}
+
+void taGuiDataHost::GetImage(bool force) {
+  ++updating;                   // prevents spurious changed flags from coming in
+  gui_owner->GetImage();
+  --updating;
+}
+
+void taGuiDataHost::GetValue() {
+  gui_owner->GetValue();
+  gui_owner->GetImage();
+}
+
+void taGuiDataHost::Ok_impl() {
+  GetValue();
+}

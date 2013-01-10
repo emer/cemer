@@ -15,3 +15,32 @@
 
 #include "taiStringType.h"
 
+int taiStringType::BidForType(TypeDef* td){
+  if (td->InheritsFrom(TA_taString))
+    return(taiType::BidForType(td) + 2); // outbid class
+  return 0;
+}
+
+taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
+  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+  rval->lookupfun_md = md;              // for lookup function
+  if(md) {
+    String ew = md->OptionAfter("EDIT_WIDTH_");
+    if(ew.nonempty()) {
+      int ewi = (int)ew;
+      if(ewi > 0) {
+        rval->setMinCharWidth(ewi);
+      }
+    }
+  }
+  return rval;
+}
+
+void taiStringType::GetImage_impl(taiData* dat, const void* base) {
+  ((taiField*)dat)->lookupfun_base = GetCurParObjBase(); // for lookup function
+  dat->GetImage_(base);
+}
+
+void taiStringType::GetValue_impl(taiData* dat, void* base) {
+  dat->GetValue_(base); //noop for taiEditButton
+}

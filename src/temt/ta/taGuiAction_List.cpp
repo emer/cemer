@@ -15,3 +15,13 @@
 
 #include "taGuiAction_List.h"
 
+void taGuiAction_List::Initialize() {
+  SetBaseType(&TA_taGuiAction);
+}
+
+void taGuiAction_List::FixAllUrl(const String& url_tag, const String& path) {
+  for(int i=0; i<size; i++) {
+    taGuiAction* w = FastEl(i);
+    w->FixUrl(url_tag, path);
+  }
+}

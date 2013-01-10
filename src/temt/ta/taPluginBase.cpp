@@ -15,3 +15,13 @@
 
 #include "taPluginBase.h"
 
+void taPluginBase::Initialize() {
+}
+
+void taPluginBase::Copy_(const taPluginBase& cp) {
+  name = cp.name;
+  desc = cp.desc;
+  unique_id = cp.unique_id;
+  version = cp.version;
+  url = cp.url;
+}

@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class TemtClientAdapter; //
 
 
 class TA_API TemtClient: public taOABase { 
@@ -39,7 +40,7 @@ public:
   
   bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
-  inline TemtClientAdapter* adapter() {return (TemtClientAdapter*)taOABase::adapter;} // #IGNORE
+  TemtClientAdapter* adapter(); // #IGNORE
   TA_BASEFUNS(TemtClient);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.

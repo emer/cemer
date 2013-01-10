@@ -23,7 +23,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class T3DataView; //
+class T3Node; // #IGNORE
+class T3DataViewRoot; //
+class T3ExaminerViewer; //
+class iT3DataViewFrame; //
+class T3NodePtr; //
 
 /*
   DataView objects that have 3D reps

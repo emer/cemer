@@ -19,6 +19,10 @@
 // parent includes:
 #include <VEBody>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <VELightParams>
 #include <taVector3f>
@@ -62,5 +66,7 @@ private:
   void  Initialize();
   void  Destroy() { };
 };
+
+TA_SMART_PTRS(VELight);
 
 #endif // VELight_h

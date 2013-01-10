@@ -15,3 +15,26 @@
 
 #include "taiFilePtrType.h"
 
+int taiFilePtrType::BidForType(TypeDef* td) {
+  if(td->DerivesFrom(TA_taFiler) && (td->ptr == 1))
+    return (taiType::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiFilePtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  return new taiFileButton(typ,  host_, par, gui_parent_, flags_);
+}
+
+void taiFilePtrType::GetImage_impl(taiData* dat, const void* base){
+  taiFileButton* fbut = (taiFileButton*) dat;
+  // note: we are a taFiler*
+  fbut->SetFiler(*((taFiler**)base));
+  fbut->GetImage();
+}
+
+void taiFilePtrType::GetValue_impl(taiData* dat, void* base) {
+  taiFileButton* rval = (taiFileButton*)dat;
+  // safely replace filer, using ref counting
+  taRefN::SetRefDone(*((taRefN**)base), rval->GetFiler());
+}
+

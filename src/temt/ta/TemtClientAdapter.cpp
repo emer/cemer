@@ -15,3 +15,36 @@
 
 #include "TemtClientAdapter.h"
 
+void TemtClientAdapter::init() {
+  prog_rval = Program::RV_OK;
+  pds = PDS_NONE;
+}
+
+void TemtClientAdapter::prog_Run() {
+  if (!prog) {
+    prog_rval = Program::RV_NO_PROGRAM;
+    return;
+  }
+  pds = PDS_RUNNING;
+  prog->Run();
+  prog_rval = (Program::ReturnVal)prog->ret_val;
+  pds = PDS_DONE;
+}
+
+void TemtClientAdapter::SetProg(Program* prog_) {
+  prog = prog_;
+  pds = PDS_SET;
+  prog_rval = Program::RV_OK;
+}
+
+void TemtClientAdapter::sock_disconnected() {
+  owner()->sock_disconnected();
+}
+
+void TemtClientAdapter::sock_readyRead() {
+  owner()->sock_readyRead();
+}
+
+void TemtClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketState) {
+  owner()->sock_stateChanged(socketState);
+}

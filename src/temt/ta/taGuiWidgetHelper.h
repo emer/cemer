@@ -13,5 +13,34 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "VisRegionParams.h"
+#ifndef taGuiWidgetHelper_h
+#define taGuiWidgetHelper_h 1
 
+// parent includes:
+#ifndef __MAKETA__
+#include <QObject>
+#endif
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+class taGuiWidget; //
+
+
+class TA_API taGuiWidgetHelper : public QObject {
+ // #IGNORE this is a helper QObject that handles signals/slots
+Q_OBJECT
+friend class taGuiWidget;
+public:
+
+public slots:
+  void          UrlAction() { widget->UrlAction(); }
+
+protected:
+  taGuiWidget*  widget;
+
+  taGuiWidgetHelper(taGuiWidget* wid) { widget = wid; }
+};
+
+
+#endif // taGuiWidgetHelper_h

@@ -15,3 +15,34 @@
 
 #include "taGuiAction.h"
 
+void taGuiAction::Initialize() {
+  m_helper = new taGuiActionHelper(this);
+}
+
+void taGuiAction::Destroy() {
+  delete m_helper;
+}
+
+void taGuiAction::Connect_UrlAction(QObject* src_obj, const char* src_signal) {
+  static const char* slot_nm = SLOT(UrlAction());
+  QObject::connect(src_obj, src_signal, m_helper, slot_nm);
+}
+
+void taGuiAction::UrlAction() {
+  if(action_url.empty()) return;
+  if(action_url.startsWith("ta:")) {
+    if(taiMisc::main_window)
+      taiMisc::main_window->taUrlHandler(QUrl(action_url));
+    // skip over middleman -- was not triggering in C++ dialogs for some reason..
+  }
+  else {
+    QDesktopServices::openUrl(QUrl(action_url));
+  }
+}
+
+void taGuiAction::FixUrl(const String& url_tag, const String& path) {
+  if(action_url.startsWith(url_tag)) {
+    action_url = "ta:" + path + "." + action_url.after(url_tag);
+  }
+}
+

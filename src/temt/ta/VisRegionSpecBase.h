@@ -21,12 +21,64 @@
 
 // member includes:
 #include <DataTable>
-#include <VisRegionParams>
-#include <VisRegionSizes>
 
 // declare all other types mentioned but not required to include:
 class float_Matrix; // 
 
+class TA_API VisRegionParams : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
+INHERITED(taOBase)
+public:
+  enum Ocularity {		// ocularity configuration
+    MONOCULAR,			// monocular -- only one eye
+    BINOCULAR,			// binocular -- both eyes
+  };
+  enum Region {			// retinal region
+    FOVEA,
+    PARAFOVEA,
+    PERIPHERY,
+  };
+  enum Resolution {		// level of resolution
+    HI_RES,
+    MED_RES,
+    LOW_RES,
+    VLOW_RES,
+  };
+  enum Color {			// color processing
+    MONOCHROME,			// just luminance on/off
+    COLOR,			// has luminance on/off plus 4 color contrasts: R, G, B, Y vs. other two colors
+  };
+  enum EdgeMode {		// how to deal with edges in the filter inputs
+    CLIP,			// hard clip edges -- attempts to ensure that no clipping is necessary by making filters fit within inputs, but image input is clipped
+    WRAP,			// wrap the image and any subsequent stages of filtering around the edges -- no edges!
+  };
+
+  Ocularity	ocularity;	// whether two eyes or only one is present
+  Region	region;		// retinal region represented by this filter 
+  Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
+  Color		color;		// what level of color information to process
+  EdgeMode	edge_mode;	// how to deal with edges throughout the processing cascade -- the edge_mode for the raw image transformations are in the overall RetinaProc, and are not automatically sync'd with this (they can be different)
+  float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisRegionParams);
+};
+
+class TA_API VisRegionSizes : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
+INHERITED(taOBase)
+public:
+  taVector2i	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
+  taVector2i	border;		// border around retina that we don't process -- for non-WRAP mode, typically a 1 pixel background color border is retained in the input image processing, so this should be subtracted -- also for non-WRAP mode, good to ensure that this is >= than 1/2 of the width of the filters being applied
+  taVector2i	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisRegionSizes);
+protected:
+  void	UpdateAfterEdit_impl();
+};
 
 class TA_API VisRegionSpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image base class for specifying a visual image region to be filtered according to a set of filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs

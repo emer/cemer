@@ -15,3 +15,31 @@
 
 #include "gpiDefaultEl.h"
 
+int gpiDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
+  if ((md->name == "el_def") && (td->InheritsFrom(TA_taList_impl)))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+taiData* gpiDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
+        NULL, typ, host_, par, gui_parent_, (flags_ | taiData::flgNullOk | taiData::flgNoList));
+  return rval;
+}
+
+void gpiDefaultEl::GetImage_impl(taiData* dat, const void* base) {
+  taList_impl* tl = (taList_impl*)base;
+  taBase* tmp_ptr = tl->DefaultEl_();
+  gpiListEls* rval = (gpiListEls*)dat;
+  rval->GetImage((taGroup_impl*)base, tmp_ptr);
+  GetOrigVal(dat, base);
+}
+
+void gpiDefaultEl::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  taList_impl* tl = (taList_impl*)base;
+  gpiListEls* rval = (gpiListEls*)dat;
+  taBase* tmp_ptr = rval->GetValue();
+  tl->SetDefaultEl(tmp_ptr);
+  CmpOrigVal(dat, base, first_diff);
+}
+

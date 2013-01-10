@@ -15,3 +15,19 @@
 
 #include "taiActuatorMethod.h"
 
+int taiActuatorMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if (md->HasOption("BUTTON") || (md->HasOption("MENU")) ||
+    (md->HasOption("MENU_BUTTON")))
+    return (inherited::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiActuatorMethod::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+taiMethodData* taiActuatorMethod::GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}

@@ -15,3 +15,116 @@
 
 #include "taGuiWidget.h"
 
+void taGuiWidget::Initialize() {
+  m_helper = new taGuiWidgetHelper(this);
+  tai_data = NULL;
+}
+
+void taGuiWidget::Destroy() {
+  delete m_helper;
+  if(tai_data)
+    delete tai_data;
+}
+
+void taGuiWidget::Connect_UrlAction(QObject* src_obj, const char* src_signal) {
+  static const char* slot_nm = SLOT(UrlAction());
+  QObject::connect(src_obj, src_signal, m_helper, slot_nm);
+}
+
+void taGuiWidget::UrlAction() {
+  if(action_url.empty()) return;
+  if(action_url.startsWith("ta:")) {
+    if(taiMisc::main_window)
+      taiMisc::main_window->taUrlHandler(QUrl(action_url));
+    // skip over middleman -- was not triggering in C++ dialogs for some reason..
+  }
+  else {
+    QDesktopServices::openUrl(QUrl(action_url));
+  }
+}
+
+void taGuiWidget::FixUrl(const String& url_tag, const String& path) {
+  if(action_url.startsWith(url_tag)) {
+    action_url = "ta:" + path + "." + action_url.after(url_tag);
+  }
+}
+
+void taGuiWidget::GetImage() {
+  if(widget_type == "DataTable") {
+    iDataTableEditor* edt = (iDataTableEditor*)widget.data();
+    edt->Refresh();
+  }
+  if(!tai_data || data.isNull()) return;
+  if(widget_type == "IntField") {
+    ((taiIncrField*)tai_data)->GetImage((String)*((int*)data.toPtr()));
+  }
+  if(widget_type == "DoubleField") {
+    ((taiField*)tai_data)->GetImage((String)*((double*)data.toPtr()));
+  }
+  if(widget_type == "FloatField") {
+    ((taiField*)tai_data)->GetImage((String)*((float*)data.toPtr()));
+  }
+  if(widget_type == "StringField") {
+    ((taiField*)tai_data)->GetImage(*((String*)data.toPtr()));
+  }
+  if(widget_type == "BoolCheckbox") {
+    ((taiToggle*)tai_data)->GetImage(*((bool*)data.toPtr()));
+  }
+  if(widget_type == "ObjectPtr") {
+    String typnm = taGuiDialog::GetAttribute("type=", attributes);
+    TypeDef* td;
+    if(typnm.nonempty()) td = taMisc::types.FindName(typnm);
+    if(!td) td = &TA_taOBase;
+    ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
+  }
+  if(widget_type == "HardEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+  }
+  if(widget_type == "HardEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+  }
+  if(widget_type == "DynEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+  }
+  if(widget_type == "DynEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+  }
+}
+
+void taGuiWidget::GetValue() {
+  if(!tai_data || data.isNull()) return;
+  if(widget_type == "IntField") {
+    *((int*)data.toPtr()) = (int)((taiIncrField*)tai_data)->GetValue();
+  }
+  if(widget_type == "DoubleField") {
+    *((double*)data.toPtr()) = (double)((taiField*)tai_data)->GetValue();
+  }
+  if(widget_type == "FloatField") {
+    *((float*)data.toPtr()) = (float)((taiField*)tai_data)->GetValue();
+  }
+  if(widget_type == "StringField") {
+    *((String*)data.toPtr()) = ((taiField*)tai_data)->GetValue();
+  }
+  if(widget_type == "BoolCheckbox") {
+    *((bool*)data.toPtr()) = ((taiToggle*)tai_data)->GetValue();
+  }
+  if(widget_type == "ObjectPtr") {
+    *((taBaseRef*)data.toPtr()) = ((taiTokenPtrButton*)tai_data)->GetValue();
+  }
+  if(widget_type == "HardEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+  }
+  if(widget_type == "HardEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+  }
+  if(widget_type == "DynEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
+  }
+  if(widget_type == "DynEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
+  }
+//   if(widget_type == "DataTable") {
+//     iDataTableEditor* edt = (iDataTableEditor*)widget;
+//     edt->Refresh();
+//   }
+}

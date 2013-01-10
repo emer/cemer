@@ -15,3 +15,16 @@
 
 #include "taiColorType.h"
 
+int taiColorType::BidForType(TypeDef* td) {
+//TODO: we can handle other color guys, just subclass
+  if (td->InheritsFrom(TA_taColor))
+    return (inherited::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiColorType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
+ QWidget* gui_parent_, int flags_, MemberDef*)
+{
+  taiColor *rval = new taiColor(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}

@@ -21,6 +21,7 @@
 // member includes:
 #include <taBase_RefList>
 #include <taBase_FunCallList>
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class taRootBase; // 

@@ -17,6 +17,9 @@
 #define taiEditTableWidget_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QTableWidget>
+#endif
 
 // member includes:
 
