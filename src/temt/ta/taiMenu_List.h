@@ -18,8 +18,10 @@
 
 // parent includes:
 #include <taPtrList>
+#include <taiActions>
 
 // member includes:
+#include <taiMenu>
 
 // declare all other types mentioned but not required to include:
 

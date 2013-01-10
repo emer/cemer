@@ -15,3 +15,11 @@
 
 #include "VEHeightField.h"
 
+void VEHeightField::Initialize() {
+  // todo: do this
+}
+
+void VEHeightField::Init() {
+  TestError(true, "Init", "Sorry, HeightField is not yet implemented");
+}
+

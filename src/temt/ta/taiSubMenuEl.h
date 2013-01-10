@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiMenu;
 
 
 class TA_API taiSubMenuEl: public taiAction { // an action used exclusively to hold a submenu

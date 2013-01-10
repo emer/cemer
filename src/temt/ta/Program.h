@@ -30,6 +30,7 @@
 #include <ProgEl_List>
 #include <Program_List>
 #include <ProgLine_List>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 

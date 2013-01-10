@@ -15,3 +15,5 @@
 
 #include "taGuiActionHelper.h"
 
+void taGuiActionHelper::UrlAction() { action->UrlAction(); }
+

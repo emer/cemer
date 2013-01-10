@@ -17,11 +17,17 @@
 #define iRegexpDialog_h 1
 
 // parent includes:
-#include <class>
+#include "ta_def.h"
+#include <idialog.h>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class taiRegexpField;
+class iRegexpDialogPopulator;
+class QStandardItem;
+class QDialogButtonBox;
 
 
 class TA_API iRegexpDialog : public iDialog {

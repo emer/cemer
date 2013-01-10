@@ -17,6 +17,7 @@
 #define taiTokenPtrButton_h 1
 
 // parent includes:
+#include <taiItemPtrBase>
 
 // member includes:
 

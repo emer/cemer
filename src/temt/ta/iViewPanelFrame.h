@@ -90,7 +90,7 @@ public: // IDataHost i/f -- some delegate up to mommy
   bool                  isConstructed() {return true;}
   bool                  isModal() {return false;} // never for us
   bool                  isReadOnly() {return read_only;}
-  taMisc::ShowMembs     show() const {return taMisc::show_gui;}
+  int                   show() const;
     // used by polydata
   iMainWindowViewer*    window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
   void*                 Root() const {return (void*)m_dv;} // (typical, could replace)

@@ -89,8 +89,8 @@ public:
   void                  setHeaderText(int col, const String& value); // convenience
   int                   maxColChars(int col); // value if set, -1 otherwise
   void                  setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
-  taMisc::ShowMembs     show() const {return m_show;}
-  virtual void          setShow(taMisc::ShowMembs value);
+  int                   show() const {return m_show;}
+  virtual void          setShow(int value);
   const String          showContext() const {return m_show_context;}
   virtual void          setShowContext(const String& value)
     {m_show_context = value;}
@@ -191,7 +191,7 @@ protected:
   int                   tv_flags;
   String_PArray*        m_filters; // only created if any added
   short                 m_def_exp_levels; // level of default expand, typically 2
-  taMisc::ShowMembs     m_show;
+  int                   m_show;
   bool                  m_decorate_enabled;
   String                m_show_context;
   int                   in_mouse_press; // ugly hack

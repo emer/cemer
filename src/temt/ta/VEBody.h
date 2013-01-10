@@ -21,7 +21,6 @@
 
 // smartptr, ref includes
 #include <taSmartRefT>
-#include <taSmartPtrT>
 
 // member includes:
 #include <taVector3f>
@@ -262,6 +261,6 @@ private:
   void  Destroy();
 };
 
-TA_SMART_PTRS(VEBody);
+SmartRef_Of(VEBody,TA_VEBody); // VEBodyRef
 
 #endif // VEBody_h

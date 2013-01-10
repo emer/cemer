@@ -17,6 +17,7 @@
 #define taGuiWidgetHelper_h 1
 
 // parent includes:
+#include "ta_def.h"
 #ifndef __MAKETA__
 #include <QObject>
 #endif
@@ -34,7 +35,7 @@ friend class taGuiWidget;
 public:
 
 public slots:
-  void          UrlAction() { widget->UrlAction(); }
+ void          UrlAction();
 
 protected:
   taGuiWidget*  widget;

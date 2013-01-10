@@ -15,3 +15,9 @@
 
 #include "VESurface.h"
 
+void VESurface::Initialize() {
+  friction = 1.0e22f;
+  bounce = 0.0f;
+  bounce_vel = .01f;
+}
+

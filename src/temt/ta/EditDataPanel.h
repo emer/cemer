@@ -17,11 +17,14 @@
 #define EditDataPanel_h 1
 
 // parent includes:
-#include <class>
+#include <iDataPanelFrame>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class iColor;
+class taiEditDataHost;
 
 
 class TA_API EditDataPanel: public iDataPanelFrame {

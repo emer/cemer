@@ -17,12 +17,13 @@
 #define iHostDialog_h 1
 
 // parent includes:
-#include <class>
+#include "ta_def.h"
+#include <idialog.h>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taiDataHostBase;
 
 class TA_API iHostDialog : public iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS dialog with taiDataHostBase owner

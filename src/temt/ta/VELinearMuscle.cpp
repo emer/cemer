@@ -15,3 +15,61 @@
 
 #include "VELinearMuscle.h"
 
+void VELinearMuscle::Initialize() {
+  gain = 1;
+  IPprox.SetXYZ(0.0f,0.0f,0.0f);
+  IPdist.SetXYZ(0.1f,0.1f,0.1f);
+  p3.SetXYZ(0.0f,0.0f,0.0f);
+  bend = false;
+  old_length2 = old_length1 = Length();
+}
+
+void VELinearMuscle::Init(taVector3f prox, taVector3f dist, float MrG) {
+  gain = MrG;
+  IPprox = prox;
+  IPdist = dist;
+  p3.SetXYZ(0.0f,0.0f,0.0f);
+  bend = false;
+  old_length2 = old_length1 = Length();
+}
+
+void VELinearMuscle::Init(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending) {
+  gain = MrG;
+  IPprox = prox;
+  IPdist = dist;
+  p3 = pp3;
+  bend = bending;
+  old_length2 = old_length1 = Length();
+}
+
+void VELinearMuscle::Destroy() { }
+
+VEArm* VELinearMuscle::GetArm() {
+  return GET_MY_OWNER(VEArm); // somehow Randy's macro does the trick
+}
+
+taVector3f VELinearMuscle::Contract(float stim) {
+  taVector3f force_vec;
+  if(bend)
+    force_vec = p3 - IPdist;
+  else
+    force_vec = IPprox - IPdist;  // vector points from distal to proximal
+
+  force_vec.MagNorm();  // force_vec has now magnitude = 1
+  return force_vec*gain*MAX(stim,0);
+}
+
+float VELinearMuscle::Length() {
+  if(bend) // if muscle wraps around bending line
+    return (IPprox - p3).Mag() + (p3 - IPdist).Mag();
+  else
+    return (IPprox - IPdist).Mag();
+}
+
+float VELinearMuscle::Speed() {
+  float length = Length();
+  VEArm* army = GetArm();
+  float step = army->WorldStep; // copy of VEWorld stepsize
+  return (length - old_length2)/(2*step);  // 3 point rule
+}
+

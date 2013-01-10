@@ -77,6 +77,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taSmartRef.h
   taSmartPtr.h
   taOBase.h
+  taOABase.h
   taNBase.h
   taFBase.h
 
@@ -165,6 +166,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taDataLink.h
   taDataLinkItr.h
   taiDataLink.h
+  tabDataLink.h
   IRefListClient.h
 
   taStringDiffData.h
@@ -453,6 +455,24 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TemtClient_List.h
   TemtServer.h
 
+  taiMimeItem.h
+  taiMimeItem_List.h
+  taiMultiMimeItem.h
+  taiObjectMimeItem.h
+  taiObjectsMimeItem.h
+  taiMimeSource.h
+  taiMimeFactory.h
+  taiMimeFactory_List.h
+  taiObjectMimeFactory.h
+
+  taiTabularDataMimeFactory.h
+  taiTabularDataMimeItem.h
+  taiMatrixDataMimeItem.h
+  taiTsvMimeItem.h
+  taiTableColDesc.h
+  taiTableColDesc_PArray.h
+  taiTableDataMimeItem.h
+
   taRootBase.h
   tabMisc.h
 
@@ -506,27 +526,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VEObjCarousel.h
   VEHeightField.h
 
-  taiMimeItem.h
-  taiMimeItem_List.h
-  taiMultiMimeItem.h
-  taiObjectMimeItem.h
-  taiObjectsMimeItem.h
-  taiMimeSource.h
-  taiMimeFactory.h
-  taiMimeFactory_List.h
-  taiObjectMimeFactory.h
-
-  taiTabularDataMimeFactory.h
-  taiTabularDataMimeItem.h
-  taiMatrixDataMimeItem.h
-  taiTsvMimeItem.h
-  taiTableColDesc.h
-  taiTableColDesc_PArray.h
-  taiTableDataMimeItem.h
-
   taiAction.h
   taiData.h
   taiDataList.h
+
   taiTypeBase.h
   taiViewType.h
   taiType.h
@@ -585,13 +588,12 @@ set(ta_HEADS_MAKETA_LOCAL_1
   tabOViewType.h
   tabListViewType.h
   tabGroupViewType.h
-  # DataLink_QObj.h
-  tabDataLink.h
 
   tabMatrixViewType.h
   taTypeInfoViewType.h
   tabDocViewType.h
   tabWizardViewType.h
+  tabSelectEditViewType.h
 
   taiProjTemplateElArgType.h
   taiDynEnumMember.h
@@ -600,8 +602,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   tabProgramGroupViewType.h
   taiProgLibElArgType.h
   taiStepButtonMethod.h
-
-  tabSelectEditViewType.h
 
   taGuiWidget.h
   taGuiWidget_List.h
@@ -638,55 +638,15 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VEJointView.h
   VEObjectView.h
   VESpaceView.h
+)
 
-  # ta_filer.h
-  # ta_base.h
-  # ta_group.h
-  # ta_time.h
-  # ta_thread.h
-  # ta_dmem.h
-  # ta_qtclipdata.h
-  # ta_audioproc.h
-  # ta_fontspec.h
-  # ta_script.h
-  # ta_viewspec.h
-  # ta_viewer.h
-  # ta_program.h
-  # ta_program_els.h
-  # ta_math.h
-  # ta_geometry.h
-  # ta_data.h
-  # ta_datatable.h
-  # ta_dataproc.h
-  # ta_dataanal.h
-  # ta_datagen.h
-  # ta_imgproc.h
-  # ta_virtenv.h
-  # ta_dump.h
-  # ta_defaults.h
-  # ta_plugin.h
-  # ta_plugin_p.h
-  # ta_seledit.h
-  # ta_project.h
-  # ta_server.h
-  # ta_qt.h
-  # ta_mediawiki.h
-  # ta_qtdata_def.h
-  # ta_qtdata.h
-  # ta_qtdialog.h
-  # ta_qttype_def.h
-  # ta_qttype.h
-  # ta_qtviewer.h
-  # ta_matrix_qt.h
-  # ta_qtclassbrowse.h
-  # ta_qtgroup.h
-  # ta_program_qt.h
-  # ta_seledit_qt.h
-  # ta_userdata_qt.h
-  # fun_lookup.h
-  # ta_data_extras.h
-  # colorbar_qt.h
-  # ta_gui.h
+# need both maketa and moc -- relatively rare
+set(ta_HEADS_MAKETA_MOC
+  taiDataHost_impl.h
+  taiDataHostBase.h
+  taiEditDataHost.h
+  iMethodButtonMgr.h
+  EditDataPanel.h
 )
 
 # todo: further subdivide following into those that need moc and not..
@@ -719,15 +679,56 @@ set(ta_HEADS_NOMAKETA_MOC
 
   ClusterManager.h
   SubversionClient.h
+  PublishDocsDialog.h
 
   IDataHost.h
-  taiDataHost_impl.h
-  taiDataHostBase.h
   taiDataHost.h
+  MembSet.h
 
   taGuiDataHost.h
   taGuiWidgetHelper.h
   taGuiActionHelper.h
+
+  DataLink_QObj.h
+
+  taiActions.h
+  taiCompData.h
+  taiText.h
+  taiFileDialogField.h
+  taiIncrField.h
+  taiField.h
+  taiPlusToggle.h
+  taiComboBox.h
+  taiBitBox.h
+  taiDimEdit.h
+  taiPolyData.h
+  taiColor.h
+  taiDataDeck.h
+  taiVariantBase.h
+  taiVariant.h
+  taiMenu.h
+  taiButtonMenu.h
+  taiMenuBar.h
+  taiToolBar.h
+  taiEditButton.h
+  taiItemPtrBase.h
+  taiMemberDefButton.h
+  taiMethodDefButton.h
+  taiMemberMethodDefButton.h
+  taiEnumStaticButton.h
+  taiEnumTypeDefButton.h
+  taiTokenPtrMultiTypeButton.h
+  taiFileButton.h
+  taiElBase.h
+  taiToken.h
+  taiSubToken.h
+  taiTypeInfoBase.h
+  taiMethodDefMenu.h
+  taiTypeHier.h
+  taiMethodData.h
+  taiMethMenu.h
+  taiMethButton.h
+  taiMethToggle.h
 
   taiMenuAction.h
   iRegexpDialogPopulator.h
@@ -743,17 +744,18 @@ set(ta_HEADS_NOMAKETA_MOC
   taiMenu_List.h
   taiObjChooser.h
   taiStringDataHost.h
+  taiWizardDataHost.h
   iHostDialog.h
-  EditDataPanel.h
-  iMethodButtonMgr.h
   iDataPanelFrame.h
   iDocDataPanel.h
+  taiChoiceDialog.h
+  HiLightButton.h
 
   ISelectableHost.h
   iBaseClipWidgetAction.h
   iDataTableEditor.h
-
   taiEditTableWidget.h
+
   IDataViewWidget.h
   iFrameViewer.h
   iBrowseViewer.h
@@ -881,22 +883,22 @@ set(ta_HEADS_NOMAKETA_MOC
   T3Color.h
 )
 
-set(ta_HEADS_MAKETA_LOCAL_2
-  t3node_so.h
-  SoCapsule.h
-  t3viewer.h
-  colorbar_so.h
-  ta_datatable_qtso.h
-  ta_datatable_so.h
-  ta_virtenv_qtso.h
-  ta_virtenv_so.h
-  Subversion.h
-)
+# set(ta_HEADS_MAKETA_LOCAL_2
+#   t3node_so.h
+#   SoCapsule.h
+#   t3viewer.h
+#   colorbar_so.h
+#   ta_datatable_qtso.h
+#   ta_datatable_so.h
+#   ta_virtenv_qtso.h
+#   ta_virtenv_so.h
+# )
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
   ../taiqtso/igeometry.h
   ${ta_HEADS_MAKETA_LOCAL_1}
+  ${ta_HEADS_MAKETA_MOC}
   # ../taiqtso/safeptr_so.h
   # ${ta_HEADS_MAKETA_LOCAL_2}
 )
@@ -921,6 +923,7 @@ set(ta_HEADS
 
 # headers that need Qt moc run
 set(ta_HEADS_MOC
+  ${ta_HEADS_MAKETA_MOC}
   ${ta_HEADS_NOMAKETA_MOC}
   # non-gui:
   # ta_type.h
@@ -934,7 +937,6 @@ set(ta_HEADS_MOC
   # ta_qtdata_def.h
   # ta_qtdata.h
   # ta_qtdialog.h
-  # PublishDocsDialog.h
   # ta_qtgroup.h
   # ta_qtviewer.h
   # ta_matrix_qt.h
@@ -949,9 +951,10 @@ set(ta_HEADS_MOC
   # ta_gui.h
 )
 
-# gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
-set(ta_SRCS
-#  ta_TA.cpp
+# NOTE: do NOT include .moc files -- auto generated
+# these should correspond directly to the files in the ta_HEADS_MAKETA files
+
+set(ta_SRCS_MAKETA
   taBasicAtomicInt.cpp
   taAtomicInt.cpp
   taString.cpp
@@ -1010,6 +1013,8 @@ set(ta_SRCS
   taSmartRef.cpp
   taSmartPtr.cpp
   taOBase.cpp
+  taOABase.cpp
+  taBaseAdapter.cpp
   taNBase.cpp
   taFBase.cpp
 
@@ -1098,6 +1103,8 @@ set(ta_SRCS
   taDataLink.cpp
   taDataLinkItr.cpp
   taiDataLink.cpp
+  tabDataLink.cpp
+  DataLink_QObj.cpp
   IRefListClient.cpp
 
   taStringDiffData.cpp
@@ -1337,6 +1344,12 @@ set(ta_SRCS
   taPlugin.cpp
   taPlugin_List.cpp
 
+  IPlugin.cpp
+  iPluginEditor.cpp
+  taPluginInst.cpp
+  taPluginInst_PList.cpp
+  taPlugins.cpp
+
   SelectEditItem.cpp
   EditParamSearch.cpp
   EditMbrItem.cpp
@@ -1354,6 +1367,7 @@ set(ta_SRCS
   ClusterManager.cpp
   Subversion.cpp
   SubversionClient.cpp
+  taMediaWiki.cpp
 
   taWizard.cpp
   Wizard_Group.cpp
@@ -1387,6 +1401,24 @@ set(ta_SRCS
   TemtServer.cpp
   TemtServerAdapter.cpp
   TemtClient_List.cpp
+
+  taiMimeItem.cpp
+  taiMimeItem_List.cpp
+  taiMultiMimeItem.cpp
+  taiObjectMimeItem.cpp
+  taiObjectsMimeItem.cpp
+  taiMimeSource.cpp
+  taiMimeFactory.cpp
+  taiMimeFactory_List.cpp
+  taiObjectMimeFactory.cpp
+
+  taiTabularDataMimeFactory.cpp
+  taiTabularDataMimeItem.cpp
+  taiMatrixDataMimeItem.cpp
+  taiTsvMimeItem.cpp
+  taiTableColDesc.cpp
+  taiTableColDesc_PArray.cpp
+  taiTableDataMimeItem.cpp
 
   taRootBase.cpp
   tabMisc.cpp
@@ -1443,75 +1475,10 @@ set(ta_SRCS
   VEObjCarousel.cpp
   VEHeightField.cpp
 
-  dumpMisc.cpp
-  VPUnref.cpp
-  DumpPathSub.cpp
-  VPUList.cpp
-  DumpPathToken.cpp
-  DumpPathSubList.cpp
-  DumpPathTokenList.cpp
-
-  IPlugin.cpp
-  iPluginEditor.cpp
-  taPluginInst.cpp
-  taPluginInst_PList.cpp
-  taPlugins.cpp
-
-  taiMimeItem.cpp
-  taiMimeItem_List.cpp
-  taiMultiMimeItem.cpp
-  taiObjectMimeItem.cpp
-  taiObjectsMimeItem.cpp
-  taiMimeSource.cpp
-  taiMimeFactory.cpp
-  taiMimeFactory_List.cpp
-  taiObjectMimeFactory.cpp
-
   taiAction.cpp
-
-  IDataViewWidget.cpp
-  iFrameViewer.cpp
-  iBrowseViewer.cpp
-  iTabViewer.cpp
-  iMainWindowViewer.cpp
-  iDockViewer.cpp
-  iToolBoxDockViewer.cpp
-  iTabBarBase.cpp
-  iTabBar.cpp
-  iTabView.cpp
-  iDataPanel.cpp
-  iToolBar.cpp
-
-
-  MatrixTableModel.cpp
-  DataTableModel.cpp
-
-
-  iTopLevelWindow_List.cpp
-  taiMisc.cpp
-  taMediaWiki.cpp
-  IDataHost.cpp
-  taiDataHost.cpp
-  taiMenuAction.cpp
+  taiData.cpp
   taiDataList.cpp
-  iRegexpDialogPopulator.cpp
-  taiRegexpField.cpp
-  taiToggle.cpp
-  taiItemChooser.cpp
-  taiTokenPtrButton.cpp
-  taiTypeDefButton.cpp
-  iFieldEditDialog.cpp
-  iRegexpDialog.cpp
-  taiSubMenuEl.cpp
-  taiAction_List.cpp
-  taiMenu_List.cpp
-  taiObjChooser.cpp
-  taiStringDataHost.cpp
-  iHostDialog.cpp
-  EditDataPanel.cpp
-  iMethodButtonMgr.cpp
-  iDataPanelFrame.cpp
-  iDocDataPanel.cpp
+
   taiTypeBase.cpp
   taiViewType.cpp
   taiType.cpp
@@ -1570,11 +1537,160 @@ set(ta_SRCS
   tabOViewType.cpp
   tabListViewType.cpp
   tabGroupViewType.cpp
-  DataLink_QObj.cpp
-  tabDataLink.cpp
+
+  tabMatrixViewType.cpp
+  taTypeInfoViewType.cpp
+  tabDocViewType.cpp
+  tabWizardViewType.cpp
+  tabSelectEditViewType.cpp
+
+  taiProjTemplateElArgType.cpp
+  taiDynEnumMember.cpp
+  taiProgVarIntValMember.cpp
+  tabProgramViewType.cpp
+  tabProgramGroupViewType.cpp
+  taiProgLibElArgType.cpp
+  taiStepButtonMethod.cpp
+
+  taGuiWidget.cpp
+  taGuiWidget_List.cpp
+  taGuiLayout.cpp
+  taGuiLayout_List.cpp
+  taGuiAction.cpp
+  taGuiAction_List.cpp
+  taGuiDataHost.cpp
+  taGuiDialog.cpp
+
+  T3DataView.cpp
+  T3DataViewPar.cpp
+  T3DataViewRoot.cpp
+  T3DataViewMain.cpp
+  T3DataViewer.cpp
+
+  DataColView.cpp
+  DataTableView.cpp
+
+  GridColView.cpp
+  GridTableView.cpp
+
+  GraphColView.cpp
+  GraphAxisBase.cpp
+  GraphAxisView.cpp
+  GraphPlotView.cpp
+  GraphTableView.cpp
+
+  VEWorldView.cpp
+  VEBodyView.cpp
+  VEStaticView.cpp
+  VEObjCarouselView.cpp
+  VEJointView.cpp
+  VEObjectView.cpp
+  VESpaceView.cpp
+)
+
+# these correspond to TA_HEADS_NOMAKETA
+set(ta_SRCS_NOMAKETA
+  VPUnref.cpp
+  VPUList.cpp
+  DumpPathSub.cpp
+  DumpPathSubList.cpp
+  DumpPathToken.cpp
+  DumpPathTokenList.cpp
+  dumpMisc.cpp
+
+  taiMisc.cpp
+  iTopLevelWindow_List.cpp
+
+  PublishDocsDialog.cpp
+
+  IDataHost.cpp
+  taiDataHost.cpp
+  taiDataHost_impl.cpp
+  taiDataHostBase.cpp
+
+  taiEditDataHost.cpp
+  taiChoiceDialog.cpp
+  HiLightButton.cpp
+  MembSet.cpp
+
+  taiActions.cpp
+  taiCompData.cpp
+  taiText.cpp
+  taiFileDialogField.cpp
+  taiIncrField.cpp
+  taiField.cpp
+  taiPlusToggle.cpp
+  taiComboBox.cpp
+  taiBitBox.cpp
+  taiDimEdit.cpp
+  taiPolyData.cpp
+  taiColor.cpp
+  taiDataDeck.cpp
+  taiVariantBase.cpp
+  taiVariant.cpp
+  taiMenu.cpp
+  taiButtonMenu.cpp
+  taiMenuBar.cpp
+  taiToolBar.cpp
+  taiEditButton.cpp
+  taiItemPtrBase.cpp
+  taiMemberDefButton.cpp
+  taiMethodDefButton.cpp
+  taiMemberMethodDefButton.cpp
+  taiEnumStaticButton.cpp
+  taiEnumTypeDefButton.cpp
+  taiTokenPtrMultiTypeButton.cpp
+  taiFileButton.cpp
+  taiElBase.cpp
+  taiToken.cpp
+  taiSubToken.cpp
+  taiTypeInfoBase.cpp
+  taiMethodDefMenu.cpp
+  taiTypeHier.cpp
+  taiMethodData.cpp
+  taiMethMenu.cpp
+  taiMethButton.cpp
+  taiMethToggle.cpp
+
+  taiMenuAction.cpp
+  iRegexpDialogPopulator.cpp
+  taiRegexpField.cpp
+  taiToggle.cpp
+  taiItemChooser.cpp
+  taiTokenPtrButton.cpp
+  taiTypeDefButton.cpp
+  iFieldEditDialog.cpp
+  iRegexpDialog.cpp
+  taiSubMenuEl.cpp
+  taiAction_List.cpp
+  taiMenu_List.cpp
+  taiObjChooser.cpp
+  taiStringDataHost.cpp
+  taiWizardDataHost.cpp
+  iHostDialog.cpp
+  EditDataPanel.cpp
+  iMethodButtonMgr.cpp
+  iDataPanelFrame.cpp
+  iDocDataPanel.cpp
+
   ISelectableHost.cpp
   iBaseClipWidgetAction.cpp
   iDataTableEditor.cpp
+  taiEditTableWidget.cpp
+
+  IDataViewWidget.cpp
+  iFrameViewer.cpp
+  iBrowseViewer.cpp
+  iTabViewer.cpp
+  iMainWindowViewer.cpp
+  iDockViewer.cpp
+  iToolBoxDockViewer.cpp
+  iTabBarBase.cpp
+  iTabBar.cpp
+  iTabView.cpp
+  iDataPanel.cpp
+  iToolBar.cpp
+
   iTreeView.cpp
   iTreeSearch.cpp
   iListDataPanel.cpp
@@ -1605,7 +1721,7 @@ set(ta_SRCS
   iTextDataPanel.cpp
   tabDefChildRef.cpp
   iHelpBrowser.cpp
-  tabMatrixViewType.cpp
+
   iTableView.cpp
   iMatrixTableView.cpp
   iMatrixEditor.cpp
@@ -1620,19 +1736,13 @@ set(ta_SRCS
   taMethodSpaceDataLink.cpp
   taMemberSpaceDataLink.cpp
   taPropertySpaceDataLink.cpp
-  taTypeInfoViewType.cpp
+
   gpiList_ElData.cpp
   gpiList_ElDataList.cpp
   gpiCompactList_ElData.cpp
   gpiCompactList_ElDataList.cpp
   iDocEditDataPanel.cpp
-  tabDocViewType.cpp
-  tabWizardViewType.cpp
-  taiProjTemplateElArgType.cpp
-  taiDynEnumMember.cpp
-  taiProgVarIntValMember.cpp
-  tabProgramViewType.cpp
-  tabProgramGroupViewType.cpp
+
   iProgramEditor.cpp
   iProgramViewScriptPanel.cpp
   iProgramPanelBase.cpp
@@ -1640,81 +1750,51 @@ set(ta_SRCS
   iProgramPanel.cpp
   iProgramToolBar.cpp
   iProgramCtrlPanel.cpp
-  taiProgLibElArgType.cpp
-  taiStepButtonMethod.cpp
-  tabSelectEditViewType.cpp
-  taiEditTableWidget.cpp
+
   iSelectEditPanel.cpp
+
   taiObjDiffBrowserFilter.cpp
   taiObjDiffBrowser.cpp
+
   iUserDataDataHost.cpp
   iUserDataPanel.cpp
   DirectoryCatalog.cpp
   ImageReader.cpp
-  taGuiDialog.cpp
-  taGuiWidget.cpp
-  taGuiWidget_List.cpp
-  taGuiLayout.cpp
-  taGuiLayout_List.cpp
-  taGuiAction.cpp
-  taGuiAction_List.cpp
-  taGuiDataHost.cpp
+
   SoBase.cpp
   SoGroup.cpp
-  VEWorldView.cpp
-  DataColView.cpp
-  DataTableView.cpp
+
+  MatrixTableModel.cpp
+  DataTableModel.cpp
   iDataTableView_Panel.cpp
-  GraphTableView.cpp
-  GridTableView.cpp
-  GridColView.cpp
   iGridTableView_Panel.cpp
-  GraphColView.cpp
   iGraphTableView_Panel.cpp
   tabDataTableViewType.cpp
   iDataTableView.cpp
   iDataTablePanel.cpp
+  DataTableDelegate.cpp
+  iDataTablePanel_Mbr.cpp
+
+  T3Node.cpp
+  T3NodeLeaf.cpp
+  T3NodeParent.cpp
+
   T3GridColViewNode.cpp
   T3GridViewNode.cpp
   T3Axis.cpp
   T3GraphLine.cpp
   T3GraphViewNode.cpp
-  GraphAxisBase.cpp
-  GraphAxisView.cpp
-  GraphPlotView.cpp
-  DataTableDelegate.cpp
-  iDataTablePanel_Mbr.cpp
-  taiTabularDataMimeFactory.cpp
-  taiTabularDataMimeItem.cpp
-  taiMatrixDataMimeItem.cpp
-  taiTsvMimeItem.cpp
-  taiTableColDesc.cpp
-  taiTableColDesc_PArray.cpp
-  taiTableDataMimeItem.cpp
-  VEBodyView.cpp
-  VEStaticView.cpp
-  VEWorldViewPanel.cpp
-  VEObjCarouselView.cpp
-  VEJointView.cpp
-  VEObjectView.cpp
-  VESpaceView.cpp
+
   T3VEWorld.cpp
   T3VEObject.cpp
   T3VEBody.cpp
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
+  VEWorldViewPanel.cpp
+
   NewNetViewHelper.cpp
-  taiDataHost_impl.cpp
-  taiDataHostBase.cpp
-  T3DataView.cpp
-  T3DataViewPar.cpp
-  T3DataViewRoot.cpp
-  T3DataViewMain.cpp
-  T3DataViewer.cpp
-  T3Node.cpp
-  T3NodeLeaf.cpp
-  T3NodeParent.cpp
+
   SoFrame.cpp
   SoRect.cpp
   SoLineBox3d.cpp
@@ -1728,11 +1808,115 @@ set(ta_SRCS
   T3Translate2Translator.cpp
   SoScrollBar.cpp
   T3Color.cpp
-  taiData.cpp
-  ContextFlag.cpp
-  taBaseAdapter.cpp
-  taGuiWidgetHelper.cpp
-  taGuiActionHelper.cpp
+  SoCapsule.cpp
+)
+
+set(ta_SRCS
+  # ta_TA.cpp
+  ${ta_SRCS_MAKTEA}
+  ${ta_SRCS_NOMAKTEA}
+)
+
+
+set(ta_FILES ${ta_HEADS} ${ta_SRCS})
+
+# old files
+  # ta_filer.h
+  # ta_base.h
+  # ta_group.h
+  # ta_time.h
+  # ta_thread.h
+  # ta_dmem.h
+  # ta_qtclipdata.h
+  # ta_audioproc.h
+  # ta_fontspec.h
+  # ta_script.h
+  # ta_viewspec.h
+  # ta_viewer.h
+  # ta_program.h
+  # ta_program_els.h
+  # ta_math.h
+  # ta_geometry.h
+  # ta_data.h
+  # ta_datatable.h
+  # ta_dataproc.h
+  # ta_dataanal.h
+  # ta_datagen.h
+  # ta_imgproc.h
+  # ta_virtenv.h
+  # ta_dump.h
+  # ta_defaults.h
+  # ta_plugin.h
+  # ta_plugin_p.h
+  # ta_seledit.h
+  # ta_project.h
+  # ta_server.h
+  # ta_qt.h
+  # ta_mediawiki.h
+  # ta_qtdata_def.h
+  # ta_qtdata.h
+  # ta_qtdialog.h
+  # ta_qttype_def.h
+  # ta_qttype.h
+  # ta_qtviewer.h
+  # ta_matrix_qt.h
+  # ta_qtclassbrowse.h
+  # ta_qtgroup.h
+  # ta_program_qt.h
+  # ta_seledit_qt.h
+  # ta_userdata_qt.h
+  # fun_lookup.h
+  # ta_data_extras.h
+  # colorbar_qt.h
+  # ta_gui.h
+  # ta_filer.h
+  # ta_base.h
+  # ta_group.h
+  # ta_time.h
+  # ta_thread.h
+  # ta_dmem.h
+  # ta_qtclipdata.h
+  # ta_audioproc.h
+  # ta_fontspec.h
+  # ta_script.h
+  # ta_viewspec.h
+  # ta_viewer.h
+  # ta_program.h
+  # ta_program_els.h
+  # ta_math.h
+  # ta_geometry.h
+  # ta_data.h
+  # ta_datatable.h
+  # ta_dataproc.h
+  # ta_dataanal.h
+  # ta_datagen.h
+  # ta_imgproc.h
+  # ta_virtenv.h
+  # ta_dump.h
+  # ta_defaults.h
+  # ta_plugin.h
+  # ta_plugin_p.h
+  # ta_seledit.h
+  # ta_project.h
+  # ta_server.h
+  # ta_qt.h
+  # ta_mediawiki.h
+  # ta_qtdata_def.h
+  # ta_qtdata.h
+  # ta_qtdialog.h
+  # ta_qttype_def.h
+  # ta_qttype.h
+  # ta_qtviewer.h
+  # ta_matrix_qt.h
+  # ta_qtclassbrowse.h
+  # ta_qtgroup.h
+  # ta_program_qt.h
+  # ta_seledit_qt.h
+  # ta_userdata_qt.h
+  # fun_lookup.h
+  # ta_data_extras.h
+  # colorbar_qt.h
+  # ta_gui.h
 
   # ta_thread.cpp
   # ifont.cpp
@@ -1778,7 +1962,6 @@ set(ta_SRCS
   # ta_type_qt.cpp
   # ta_qtdata.cpp
   # ta_qtdialog.cpp
-  PublishDocsDialog.cpp
   # ta_qtgroup.cpp
   # ta_qtviewer.cpp
   # ta_matrix_qt.cpp
@@ -1788,8 +1971,6 @@ set(ta_SRCS
   # ta_userdata_qt.cpp
   # ta_program_qt.cpp 
   # ta_filer_qt.cpp
-  t3node_so.cpp
-  SoCapsule.cpp
   # t3viewer.cpp
   # colorbar_qt.cpp
   # colorbar_so.cpp
@@ -1798,7 +1979,4 @@ set(ta_SRCS
   # ta_virtenv_qtso.cpp
   # ta_virtenv_so.cpp
   # ta_gui.cpp
-)
-
-set(ta_FILES ${ta_HEADS} ${ta_SRCS})
-
+  # t3node_so.cpp

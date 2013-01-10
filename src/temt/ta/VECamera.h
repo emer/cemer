@@ -21,7 +21,6 @@
 
 // smartptr, ref includes
 #include <taSmartRefT>
-#include <taSmartPtrT>
 
 // member includes:
 #include <taVector3f>
@@ -30,6 +29,20 @@
 
 // declare all other types mentioned but not required to include:
 class SoPerspectiveCamera; // #IGNORE
+
+#ifdef TA_OS_WIN
+// following for msvc
+# ifdef near
+#   undef near
+# endif
+# ifdef far
+#   undef far
+# endif
+// # ifdef GetObject
+// #   undef GetObject
+// # endif
+#endif
+
 
 class TA_API VECameraDists : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
@@ -76,6 +89,6 @@ private:
   void  Destroy() { };
 };
 
-TA_SMART_PTRS(VECamera);
+SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
 
 #endif // VECamera_h

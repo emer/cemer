@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiDataHost.h"
+#include <taMisc>
+#include <taGuiDialog>
+
+taBase* taGuiDataHost::Base() const {
+  return gui_owner;
+}
+
+int taGuiDataHost::show() const {
+  return taMisc::show_gui;
+}
 
 taGuiDataHost::taGuiDataHost(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
   : taiDataHostBase(&TA_taGuiDialog, read_only_, modal_, parent) {

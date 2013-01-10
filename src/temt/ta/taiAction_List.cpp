@@ -15,3 +15,19 @@
 
 #include "taiAction_List.h"
 
+void taiAction_List::El_Done_(void* it_) {
+  taiAction* it = (taiAction*)it_;
+  if (it->nref == 0)
+    delete it; //NB: don't deleteLater, because taiData->parent will be invalid by then
+//     it->deleteLater();
+}
+
+taiAction* taiAction_List::PeekNonSep() {
+  taiAction* rval;
+  for (int i = size - 1; i >= 0; --i) {
+    rval = FastEl(i);
+    if (!rval->isSeparator())
+      return rval;
+  }
+  return NULL;
+}

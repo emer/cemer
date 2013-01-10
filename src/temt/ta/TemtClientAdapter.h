@@ -20,7 +20,10 @@
 #include <taBaseAdapter>
 
 // member includes:
+#include <taBase>
 #include <ProgramRef>
+#include <Program>
+#include <QAbstractSocket>
 
 // declare all other types mentioned but not required to include:
 class TemtClient; // 

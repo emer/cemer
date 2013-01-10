@@ -97,20 +97,4 @@ public:
   ~taiHostDialog_List()            { Reset(); }
 };
 
-class TA_API MembSet { // #IGNORE
-public:
-  Member_List           memb_el; // member elements (1:1 with data_el), empty in inline mode
-  taiDataList           data_el; // data elements (1:1 with memb_el WHEN section shown)
-  String                text; // for non-default guys, the text in the label or checkbox
-  String                desc; // for non-default guys, the tooltip text
-  bool                  show; // flag to help by indicating whether to show or not
-  bool                  modal; // flag to indicate that section is modal (checkbox, or default closed tree)
-
-  MembSet() {show = false; modal = false;}
-private:
-  MembSet(const MembSet& cp); // value semantics not allowed
-  MembSet& operator=(const MembSet& cp);
-};
-
-
 #endif // taiDataHost_h

@@ -17,10 +17,13 @@
 #define taGuiDataHost_h 1
 
 // parent includes:
+#include <taiDataHostBase>
+#include <IDataHost>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taGuiDialog;
 
 
 class TA_API taGuiDataHost : public taiDataHostBase, virtual public IDataHost
@@ -48,14 +51,14 @@ public: // ITypedObject i/f (common to IDLC and IDH)
 
 public: // IDataHost i/f
   override const iColor  colorOfCurRow() const { return bgColor(); }
-  override taMisc::ShowMembs    show() const {return taMisc::show_gui; }
+  override int          show() const;
   override bool         HasChanged() {return modified;}
   override bool         isConstructed() {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}
   override bool         isModal() {return modal;}
   override bool         isReadOnly() {return read_only;} //
   override void*        Root() const {return gui_owner;} // root of the object
-  override taBase*      Base() const {return gui_owner;}
+  override taBase*      Base() const;;
   override TypeDef*     GetRootTypeDef() const {return &TA_taGuiDialog;} // TypeDef on the root, for casting
   override void         GetImage()      { GetImage(true); }
   override void         GetValue();

@@ -17,11 +17,12 @@
 #define taiRegexpField_h 1
 
 // parent includes:
+#include <taiText>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class iRegexpDialogPopulator;
 
 class TA_API taiRegexpField : public taiText {
   // A text field with a "..." button to bring up a context-specific regular expression editor.

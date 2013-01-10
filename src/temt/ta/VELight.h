@@ -21,7 +21,6 @@
 
 // smartptr, ref includes
 #include <taSmartRefT>
-#include <taSmartPtrT>
 
 // member includes:
 #include <taVector3f>
@@ -80,6 +79,6 @@ private:
   void  Destroy() { };
 };
 
-TA_SMART_PTRS(VELight);
+SmartRef_Of(VELight,TA_VELight); // VELightRef
 
 #endif // VELight_h

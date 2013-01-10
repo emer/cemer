@@ -19,6 +19,9 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <VEStatic_Group>
 #include <MinMaxInt>
@@ -81,5 +84,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(VESpace,TA_VESpace); // VESpaceRef
 
 #endif // VESpace_h

@@ -14,4 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "iViewPanelFrame.h"
+#include <taMisc>
 
+int iViewPanelFrame::show() const {
+  return taMisc::show_gui;
+}

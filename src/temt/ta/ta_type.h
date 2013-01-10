@@ -18,38 +18,38 @@
 #ifndef TA_TYPE_H
 #define TA_TYPE_H
 
-#include "ta_def.h"
-#include "ta_list.h"
-#include "ta_variant.h"
+// #include "ta_def.h"
+// #include "ta_list.h"
+// #include "ta_variant.h"
 
-//#include <NamedURL>
-#include <NameVar_PArray>
-#include <DumpFileCvtList>
+// //#include <NamedURL>
+// #include <NameVar_PArray>
+// #include <DumpFileCvtList>
 
-#ifndef NO_TA_BASE
-#include <taiMiscCore>
-#endif // NO_TA_BASE
+// #ifndef NO_TA_BASE
+// #include <taiMiscCore>
+// #endif // NO_TA_BASE
 
-#include <taVersion>
-#include <taThreadDefaults>
-#include <taMisc>
-#include <taRefN>
+// #include <taVersion>
+// #include <taThreadDefaults>
+// #include <taMisc>
+// #include <taRefN>
 
-#include <ITypedObject>
+// #include <ITypedObject>
 
-// #include <IDataLinkProxy>
-// #include <IDataLinkClient>
-// #include <IMultiDataLinkClient>
-// #include <taDataLink>
-// #include <taDataLinkItr>
+// // #include <IDataLinkProxy>
+// // #include <IDataLinkClient>
+// // #include <IMultiDataLinkClient>
+// // #include <taDataLink>
+// // #include <taDataLinkItr>
 
-// #include <TypeItem>
-#include <EnumDef>
-#include <MemberDefBase>
-#include <MemberDef>
-#include <PropertyDef>
-#include <MethodDef>
-#include <TypeDef>
+// // #include <TypeItem>
+// #include <EnumDef>
+// #include <MemberDefBase>
+// #include <MemberDef>
+// #include <PropertyDef>
+// #include <MethodDef>
+// #include <TypeDef>
 
 #endif // ta_type_h
 

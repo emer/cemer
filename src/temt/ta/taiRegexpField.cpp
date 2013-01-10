@@ -15,3 +15,35 @@
 
 #include "taiRegexpField.h"
 
+taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
+  : taiText(typ_, host_, par, gui_parent_, flags_,
+            (re_populator != 0), // Add a "..." button if populator provided.
+            "Edit this field using a Regular Expression dialog")
+  , m_populator(re_populator)
+  , m_fieldOwner(0)
+{
+  setMinCharWidth(40);
+}
+
+void taiRegexpField::SetFieldOwner(const void *fieldOwner)
+{
+  m_fieldOwner = fieldOwner;
+}
+
+void taiRegexpField::btnEdit_clicked(bool)
+{
+  iRegexpDialog edit_dialog(this, mbr == NULL ? "" : mbr->name, m_populator, m_fieldOwner, readOnly());
+  edit_dialog.exec();
+
+  // Unless explicitly overridden, do an autoapply.
+  if (edit_dialog.applyClicked() && !HasFlag(flgNoEditDialogAutoApply)) {
+    leText->emitReturnPressed();
+    applyNow();
+  }
+}
+
+void taiRegexpField::lookupKeyPressed()
+{
+  // Open the regexp editor if lookup key pressed.
+  btnEdit_clicked(true);
+}

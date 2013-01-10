@@ -17,13 +17,16 @@
 #define iFieldEditDialog_h 1
 
 // parent includes:
-#include <class>
+#include "ta_def.h"
+#include <idialog.h>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 class iTextEdit; // 
 class QPushButton; // 
+class taiField;
 
 
 class TA_API iFieldEditDialog : public iDialog {

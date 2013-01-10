@@ -21,11 +21,16 @@
 #include <IDataHost>
 
 // member includes:
+#include <TypeDef>
 
 // declare all other types mentioned but not required to include:
+class Qframe; // #IGNORE
+class iFlowLayout; // #IGNORE
+class iColor; //
+
 
 class TA_API taiDataHost_impl: public taiDataHostBase, virtual public IDataHost
-{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iHostDialog;
@@ -73,7 +78,7 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 
 public: // IDataHost i/f
   const iColor   colorOfCurRow() const {return colorOfRow(curRow());}
-  taMisc::ShowMembs     show() const; // legacy -- just returns the app value
+  int           show() const; // legacy -- just returns the app value
   bool          HasChanged() {return modified;}
   bool          isConstructed() {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}

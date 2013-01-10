@@ -68,7 +68,7 @@ public:
   // generate string with indent spacing
   const String          CodeIndented() { return Indent() + code; }
   // get the code with indentation
-  const String          CodeLineNo() { return taMisc::LeadingZeros(line_no, 5) + " " + Indent() + code; }
+  const String          CodeLineNo();
   // get the code with line numbers and indentation
 
   void                  SetBreakpoint();        // set breakpoint here and in associated prog_el

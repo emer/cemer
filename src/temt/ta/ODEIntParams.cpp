@@ -15,3 +15,18 @@
 
 #include "ODEIntParams.h"
 
+#include <ode/ode.h>
+
+void ODEIntParams::Initialize() {
+  erp = 0.2f;
+  cfm = 1.0e-5f;
+}
+
+void ODEIntParams::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(erp < .01f) erp = .01f;
+  if(erp > .99f) erp = .99f;
+  if(cfm < 1.0e-9f) cfm = 1.0e-9f;
+  if(cfm > 1.0f) cfm = 1.0f;
+}
+

@@ -21,7 +21,7 @@
 #include <taArray_impl>
 
 // member includes:
-#include <taSmartPtr>           // taBasePtr
+#include <taSmartPtrT>           // taBasePtr
 
 // declare all other types mentioned but not required to include:
 

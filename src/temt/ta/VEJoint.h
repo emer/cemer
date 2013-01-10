@@ -75,6 +75,20 @@ private:
   void  Destroy()       { };
 };
 
+class TA_API ODEJointParams : public ODEIntParams {
+  // ODE integration parameters for joints
+INHERITED(ODEIntParams)
+public:
+  float         no_stop_cfm;    // #DEF_1e-05 (0-1, 1e-9 - 1 useful range) constraint force mixing parameter when not at a stop: how "soft" is the constraint (0 = hard, 1 = soft)
+  float         fudge;          // #DEF_1 (0-1) fudge factor for reducing force when a motor is present -- reduce this value if there is excessive jumping at the joint
+
+  void  Initialize();
+  void  Destroy()       { };
+  SIMPLE_COPY(ODEJointParams);
+  TA_BASEFUNS(ODEJointParams);
+// protected:
+//   void       UpdateAfterEdit_impl();
+};
 
 class TA_API VEJoint : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies
@@ -197,5 +211,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(VEJoint,TA_VEJoint); // VEJointRef
 
 #endif // VEJoint_h

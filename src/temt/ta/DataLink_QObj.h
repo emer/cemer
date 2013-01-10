@@ -17,6 +17,10 @@
 #define DataLink_QObj_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QObject>
+#endif
 
 // member includes:
 

@@ -15,3 +15,27 @@
 
 #include "VETexture.h"
 
+void VETexture::Initialize() {
+  mode = MODULATE;
+  wrap_horiz = REPEAT;
+  wrap_vert = REPEAT;
+  offset = 0.0f;
+  scale = 1.0f;
+  rot = 0.0f;
+  center = 0.0f;
+  blend_color.r = 0.0f;
+  blend_color.g = 0.0f;
+  blend_color.b = 0.0f;
+  blend_color.no_a = true;
+  idx = -1;
+}
+
+// in ta_virtenv_qtso.cpp: void VETexture::SetTexture(SoTexture2* sotx)
+
+
+bool VETexture::NeedsTransform() {
+  if(offset == 0.0f && scale == 1.0f && rot == 0.0f) return false;
+  return true;
+}
+
+// in ta_virtenv_qtso.cpp:  void VETexture::SetTransform(SoTexture2Transform* sotx)

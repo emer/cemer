@@ -17,6 +17,7 @@
 #define taiToggle_h 1
 
 // parent includes:
+#include <taiData>
 
 // member includes:
 

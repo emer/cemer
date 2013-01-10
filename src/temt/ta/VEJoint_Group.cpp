@@ -15,3 +15,21 @@
 
 #include "VEJoint_Group.h"
 
+void VEJoint_Group::Init() {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
+    ob->Init();
+  }
+}
+
+void VEJoint_Group::CurFromODE(bool updt_disp) {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
+    ob->CurFromODE(updt_disp);
+  }
+}
+
+void VEJoint_Group::DestroyODE() {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
+    ob->DestroyODE();
+  }
+}
+

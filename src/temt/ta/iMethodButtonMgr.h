@@ -17,11 +17,24 @@
 #define iMethodButtonMgr_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QObject>
+#endif
 #include <IDataLinkClient>
 
 // member includes:
+#include <taString>
+#ifndef __MAKETA__
+#include <taiMenu_List>
+#include <taiDataList>
+#endif
 
 // declare all other types mentioned but not required to include:
+class taiMenu_List; // #IGNORE
+class taBase; //
+class IDataHost; //
+class taiMethodData; //
+class taiActions; //
 
 
 class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient

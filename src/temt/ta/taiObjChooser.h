@@ -17,11 +17,20 @@
 #define taiObjChooser_h 1
 
 // parent includes:
-#include <class>
+#include "ta_def.h"
+#include <idialog.h>
 
 // member includes:
+#include <taString>
+// smartptr, ref includes
+#include <taBase>
+#include <taSmartRefT>
+#include <taSmartPtrT>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
+class taList_impl;
+class taBase;
 
 
 class TA_API taiObjChooser: iDialog {

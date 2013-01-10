@@ -21,7 +21,6 @@
 
 // smartptr, ref includes
 #include <taSmartRefT>
-#include <taSmartPtrT>
 
 // member includes:
 #include <taVector2f>
@@ -82,6 +81,6 @@ public:
 //   void       UpdateAfterEdit_impl();
 };
 
-TA_SMART_PTRS(VETexture);
+SmartRef_Of(VETexture,TA_VETexture); // VETextureRef
 
 #endif // VETexture_h

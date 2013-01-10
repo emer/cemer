@@ -20,17 +20,22 @@
 #include <taiMiscCore>
 
 // member includes:
+#include <igeometry.h>
 #include <TypeSpace>
 #include <taBase_PtrList>
+#include <taiDataHost>
+#include <taiEditDataHost>
+#include <iTopLevelWindow_List>
+#include <iFont>
 
 // declare all other types mentioned but not required to include:
 class Widget_List; // 
 class iMainWindowViewer; // 
-class iFont; // 
 class QAbstractScrollArea; // 
 class QWidget; // 
 class QPoint; // 
 class QObject; // 
+class iNetworkAccessManager;
 
 
 class TA_API taiMisc: public taiMiscCore {

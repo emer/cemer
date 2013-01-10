@@ -19,6 +19,9 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <taVector3f>
 
@@ -53,5 +56,7 @@ private:
   void Destroy();
   virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 };
+
+SmartRef_Of(VELinearMuscle,TA_VELinearMuscle); // VELinearMuscleRef
 
 #endif // VELinearMuscle_h

@@ -15,3 +15,113 @@
 
 #include "taiAction.h"
 
+taiAction::taiAction(int sel_type_, const String& label_)
+: QAction(label_, NULL)
+{
+  init(sel_type_);
+}
+
+taiAction::taiAction(const QString& label_, const QKeySequence& accel, const char* name_)
+: QAction(label_, NULL)
+{
+  init(taiMenu::use_default);
+  setShortcut(accel);
+  setObjectName(name_);
+}
+
+taiAction::taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel)
+: QAction(label_, NULL)
+{
+  init(taiMenu::use_default);
+  setShortcut(accel);
+  connect(action, receiver, member);
+}
+
+taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel,
+  const char* name_)
+: QAction(label_, NULL)
+{
+  init(taiMenu::use_default);
+  usr_data = usr_data_;
+  setShortcut(accel);
+  setObjectName(name_);
+}
+
+taiAction::~taiAction() {
+}
+
+void taiAction::init(int sel_type_)
+{
+  sel_type = sel_type_;
+  //note: we do this here, but also at AddAction time in case we create default here,
+  // and it only gets its true sel_type when added
+  if (sel_type & (taiActions::radio | taiActions::toggle)) {
+    setCheckable(true);
+  }
+  nref = 0;
+  m_changing = 0;
+  QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(this_triggered_toggled(bool)) );
+//note: we don't want the toggled signal, because this causes us to signal twice in most cases
+// the only thing 'triggered' doesn't signal is programmatic changes, which is ok
+//  QObject::connect(this, SIGNAL(toggled(bool)), this, SLOT(this_triggered_toggled(bool)) );
+}
+
+bool taiAction::canSelect() {
+  // an item can be the curSel if it is a global radio item
+  return ((sel_type & taiMenu::radio) && (!isGrouped()) && !isSubMenu());
+}
+
+bool taiAction::isGrouped() {
+  return (actionGroup() != NULL);
+}
+
+void taiAction::connect(CallbackType ct_, const QObject *receiver, const char* member) {
+  // connect callback to given
+  if ((ct_ == none) || (receiver == NULL) || (member == NULL)) return;
+
+  switch (ct_) {
+  case none:
+    return;
+  case action:
+    QObject::connect(this, SIGNAL(Action()), receiver, member);
+    break;
+  case men_act:
+    QObject::connect(this, SIGNAL(MenuAction(taiAction*)), receiver, member);
+    break;
+  case int_act:
+    QObject::connect(this, SIGNAL(IntParamAction(int)), receiver, member);
+    break;
+  case ptr_act:
+    QObject::connect(this, SIGNAL(PtrParamAction(void*)), receiver, member);
+    break;
+  case var_act:
+    QObject::connect(this, SIGNAL(VarParamAction(const Variant&)), receiver, member);
+    break;
+  }
+}
+
+void taiAction::connect(const taiMenuAction* mact) {
+  if (mact == NULL) return;
+  connect(men_act, mact->receiver, mact->member);
+}
+
+void taiAction::emitActions() {
+// it is possible an action could end up deleting us, so we guard...
+  QPointer<taiAction> ths = this;
+  emit Action();
+  if (!ths) return;
+  emit MenuAction(ths);
+  if (!ths) return;
+  emit IntParamAction(ths->usr_data.toInt());
+  if (!ths) return;
+  emit PtrParamAction(ths->usr_data.toPtr());
+  if (!ths) return;
+  emit VarParamAction(ths->usr_data);
+}
+
+void taiAction::this_triggered_toggled(bool checked) {
+  if (m_changing > 0) return;
+  ++m_changing;
+  emitActions(); // will also cause curSel update, and datachanged
+  --m_changing;
+}

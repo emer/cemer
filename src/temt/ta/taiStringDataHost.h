@@ -17,6 +17,7 @@
 #define taiStringDataHost_h 1
 
 // parent includes:
+#include <taiDataHostBase>
 
 // member includes:
 

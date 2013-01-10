@@ -18,10 +18,16 @@
 
 // parent includes:
 #include "ta_def.h"
+#ifndef __MAKETA__
+#include <QMainWindow>
+#endif
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class iSplitter;
+class NumberedTextView;
 
 
 class TA_API iPluginEditor: public QMainWindow {

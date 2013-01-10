@@ -15,3 +15,36 @@
 
 #include "VEObjCarousel.h"
 
+void VEObjCarousel::Initialize() {
+  cur_obj_no = -1;
+  SetBodyFlag(FM_FILE);
+  obj_switch = NULL;
+}
+
+// Destroy, LoadObjs are in in ta_virtenv_qtso
+
+bool VEObjCarousel::ViewObjNo(int obj_no) {
+  if(TestError(!(bool)obj_table, "ViewObjNo", "no obj_table data table set -- must set this first -- falling back on basic body render for now!"))
+    return false;
+  if(TestError(obj_no >= obj_table->rows, "ViewObjNo", "obj_no out of range -- only:",
+               String(obj_table->rows), "rows in the obj_table data table"))
+    return false;
+  cur_obj_no = obj_no;
+  obj_fname = obj_table->GetVal("FileName", cur_obj_no);
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+  return true;
+}
+
+bool VEObjCarousel::ViewObjName(const String& obj_nm) {
+  if(TestError(!(bool)obj_table, "ViewObjName", "no obj_table data table set -- must set this first -- falling back on basic body render for now!"))
+    return false;
+  int obj_no = obj_table->FindVal(obj_nm, "FileName");
+  if(TestError(obj_no < 0, "ViewObjName", "object file named:", obj_nm,
+               "not found in the obj_table data table"))
+    return false;
+  cur_obj_no = obj_no;
+  obj_fname = obj_nm;
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+  return true;
+}
+

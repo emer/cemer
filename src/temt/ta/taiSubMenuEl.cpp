@@ -15,3 +15,16 @@
 
 #include "taiSubMenuEl.h"
 
+taiSubMenuEl::taiSubMenuEl(const String& label_, taiMenu* sub_menu_data_)
+:taiAction(taiMenu::st_none, label_)
+{
+  sub_menu_data = sub_menu_data_;
+  setMenu(sub_menu_data->menu());
+}
+
+taiSubMenuEl::~taiSubMenuEl() {
+  if (sub_menu_data != NULL) {
+    delete sub_menu_data;
+    sub_menu_data = NULL;
+  }
+}

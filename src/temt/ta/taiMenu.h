@@ -1,0 +1,49 @@
+// Copyright, 1995-2013, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
+#ifndef taiMenu_h
+#define taiMenu_h 1
+
+// parent includes:
+#include <taiActions>
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+
+class TA_API taiMenu : public taiActions {
+  // (possibly) hierarchical menu for selecting a single item
+  Q_OBJECT
+  INHERITED(taiActions)
+  friend class taiMenu_List; // hack because lists return refs to strings, not values
+  friend class taiActions;
+public:
+  taiMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+      taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
+//nbg  taiMenu(int rt, int st, int ft, QWidget* gui_parent_); // constructor for WinBase and other non-taiDialog uses
+  taiMenu(QWidget* gui_parent_, int sel_type_= normal, int font_spec_ = 0, QMenu* exist_menu = NULL);
+    // constructor for Browser and context menus ft=0 means default font size;
+  ~taiMenu();
+
+  void                  exec(const iPoint& pos);
+  taiAction*            insertItem(const char* val, const QObject *receiver = NULL, const char* member = NULL,
+    const QKeySequence* accel = NULL); // OBS compatability routine with QMenu
+  void                  insertSeparator() {AddSep();} // Qt-convenience
+
+private:
+  void                  init(); // #IGNORE
+};
+
+#endif // taiMenu_h

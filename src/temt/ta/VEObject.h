@@ -19,6 +19,9 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <VEBody_Group>
 #include <VEJoint_Group>
@@ -90,5 +93,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
 
 #endif // VEObject_h

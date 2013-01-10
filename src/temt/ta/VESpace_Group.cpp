@@ -15,3 +15,51 @@
 
 #include "VESpace_Group.h"
 
+void VESpace_Group::Init() {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->Init();
+  }
+}
+
+void VESpace_Group::DestroyODE() {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->DestroyODE();
+  }
+}
+
+void VESpace_Group::SnapPosToGrid(float grid_size) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->SnapPosToGrid(grid_size);
+  }
+}
+
+void VESpace_Group::Translate(float dx, float dy, float dz) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->Translate(dx, dy, dz);
+  }
+}
+
+void VESpace_Group::Scale(float sx, float sy, float sz) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->Scale(sx, sy, sz);
+  }
+}
+
+void VESpace_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->RotateAxis(x_ax, y_ax, z_ax, rot);
+  }
+}
+
+void VESpace_Group::RotateEuler(float euler_x, float euler_y, float euler_z) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->RotateEuler(euler_x, euler_y, euler_z);
+  }
+}
+
+void VESpace_Group::CopyColorFrom(VEStatic* cpy_fm) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
+    ob->CopyColorFrom(cpy_fm);
+  }
+}
+

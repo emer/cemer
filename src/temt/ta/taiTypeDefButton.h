@@ -17,7 +17,7 @@
 #define taiTypeDefButton_h 1
 
 // parent includes:
-#include "ta_def.h"
+#include <taiItemPtrBase>
 
 // member includes:
 

@@ -14,4 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiWidgetHelper.h"
+#include <taGuiWidget>
 
+void taGuiWidgetHelper::UrlAction() { widget->UrlAction(); }

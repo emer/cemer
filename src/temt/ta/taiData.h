@@ -31,6 +31,7 @@
 #endif
 #include <taString>
 #include <taBase>
+#include <taSmartRefT>
 
 // declare all other types mentioned but not required to include:
 class QLayout; // #IGNORE

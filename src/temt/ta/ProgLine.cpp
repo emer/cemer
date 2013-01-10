@@ -32,6 +32,11 @@ const String ProgLine::Indent() {
   return cssMisc::Indent(indent);
 }
 
+const String ProgLine::CodeLineNo() {
+  return taMisc::LeadingZeros(line_no, 5) + " " + Indent() + code;
+}
+
+
 void ProgLine::SetBreakpoint() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return;

@@ -19,6 +19,9 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <taVector3f>
 #include <taAxisAngle>
@@ -160,5 +163,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(VEStatic,TA_VEStatic); // VEStaticRef
 
 #endif // VEStatic_h

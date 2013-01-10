@@ -20,6 +20,9 @@
 #include <taNBase>
 #include <ODEIntParams>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <MinMaxInt>
 #include <taVector3f>
@@ -144,5 +147,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
 
 #endif // VEWorld_h

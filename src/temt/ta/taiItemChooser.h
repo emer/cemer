@@ -24,8 +24,11 @@
 #endif
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class taiItemPtrBase;
+
 
 class TA_API taiItemChooser: iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list

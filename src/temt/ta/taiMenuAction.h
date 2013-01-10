@@ -17,8 +17,10 @@
 #define taiMenuAction_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 class QObject; // 
