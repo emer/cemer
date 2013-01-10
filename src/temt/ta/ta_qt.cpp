@@ -614,7 +614,7 @@ void taiMisc::SetWinCursors() {
   bool is_rec = false;
   if((taiMisc::busy_count > 0) /*|| cssiSession::block_in_event*/)
     is_busy = true;
-  if (taMisc::record_script !=NULL)
+  if (taMisc::record_on)
     is_rec = true;
   // busy trumps recording...
   if (is_busy) {

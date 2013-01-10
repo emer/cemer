@@ -15,3 +15,10 @@
 
 #include "Doc_Group.h"
 
+void Doc_Group::AutoEdit() {
+  FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
+    if (doc->auto_open)
+      doc->EditPanel(true, true); // true,true = new tab, pinned in place
+  }
+}
+

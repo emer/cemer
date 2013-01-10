@@ -15,3 +15,34 @@
 
 #include "tabDefChildTreeDataNode.h"
 
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited(link_, md_, parent_, last_child_, tree_name,
+  dn_flags_ | DNF_LAZY_CHILDREN)
+{
+  init(link_, dn_flags_);
+}
+
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+  iTreeView* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabDefChildTreeDataNode::init(tabODataLink*, int) {
+  m_def_child.Init(this, list());
+}
+
+tabDefChildTreeDataNode::~tabDefChildTreeDataNode()
+{
+}
+
+void tabDefChildTreeDataNode::DefChild_DataChanged(int dcr, void* op1, void* op2) {
+  // we only pass on the List notifies
+  if ((!(dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))) return;
+  DataChanged(dcr, op1, op2);
+}
+

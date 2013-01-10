@@ -15,6 +15,8 @@
 
 #include "String_Matrix.h"
 
+using namespace std;
+
 const String String_Matrix::blank;
 
 int String_Matrix::defAlignment() const {

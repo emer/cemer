@@ -17,11 +17,21 @@
 #define iTabView_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QWidget>
+#endif
 
 // member includes:
+#include <taiDataLink>
+#include <iDataPanel_PtrList>
 
 // declare all other types mentioned but not required to include:
+class iTabBar;
+class iTabViewer;
 
+// NOTE: pan_idx is of panelCount and panel()
+//       tab_idx is of tabCount and tabPanel()
 
 class TA_API iTabView: public QWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS  control for managing tabbed data pages

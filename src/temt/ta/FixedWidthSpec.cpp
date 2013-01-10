@@ -15,3 +15,30 @@
 
 #include "FixedWidthSpec.h"
 
+void FixedWidthSpec::Load_Init(DataTable* dat_) {
+  dat = dat_;
+  for (int i = 0; i < col_specs.size; ++i) {
+    FixedWidthColSpec* fws = col_specs.FastEl(i);
+    fws->col = dat->FindColName(fws->name);
+    TestError(!fws->col, "Load_Init", "col name not in table:",
+      fws->name);
+  }
+}
+
+void FixedWidthSpec::Initialize() {
+  n_skip_lines = 0;
+  dat = NULL;
+}
+
+void FixedWidthSpec::AddRow(const String& ln) {
+  dat->AddBlankRow();
+  for (int i = 0; i < col_specs.size; ++i) {
+    FixedWidthColSpec* fws = col_specs.FastEl(i);
+    if (!fws) continue;
+    String s = ln.from(fws->start_col - 1);
+    if (fws->col_width >= 0)
+      s.truncate(fws->col_width);
+    fws->WriteData(s);
+  }
+}
+

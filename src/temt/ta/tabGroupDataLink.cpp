@@ -15,3 +15,20 @@
 
 #include "tabGroupDataLink.h"
 
+
+tabGroupDataLink::tabGroupDataLink(taGroup_impl* data_)
+  : inherited((taList_impl*)data_)
+{
+}
+
+taiTreeDataNode* tabGroupDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabGroupTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabGroupTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
+

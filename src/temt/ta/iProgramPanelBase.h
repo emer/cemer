@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class iProgramEditor;
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {
 // ##NO_CSS note: ProgramPanel and ProgramGroupPanel are almost identical
@@ -39,7 +39,7 @@ public:
 
 public: // IDataLinkClient interface
   override void*        This() {return (void*)this;}
-//  override TypeDef*   GetTypeDef() const {return &TA_iProgramPanel;}
+  override TypeDef*     GetTypeDef() const {return &TA_iProgramPanelBase;}
 
 protected:
   override void         DataChanged_impl(int dcr, void* op1, void* op2); //

@@ -37,6 +37,7 @@
 class taiDataHostBase; //
 class iHostDialog; //
 class taBase;      // 
+class HiLightButton; // #IGNORE
 
 class TA_API taiDataHostBase_List : public taPtrList<taiDataHostBase> {
   // #IGNORE list of data host base guys -- for async management -- no ownership of items

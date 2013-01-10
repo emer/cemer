@@ -15,3 +15,59 @@
 
 #include "iFrameViewer.h"
 
+iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
+  : inherited(parent), IDataViewWidget(viewer_)
+{
+  Init();
+  // note: caller will still do a virtual Constr() on us after new
+}
+
+iFrameViewer::~iFrameViewer()
+{
+}
+
+void iFrameViewer::Init() {
+  shn_changing = 0;
+}
+
+void iFrameViewer::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iFrameViewer::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iFrameViewer::Showing(bool showing) {
+  iMainWindowViewer* dv = viewerWindow();
+  if (!dv) return;
+  taiAction* me = dv->frameMenu->FindActionByData((void*)this);
+  if (!me) return;
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
+}
+
+void iFrameViewer::SelectableHostNotifySlot_Internal(ISelectableHost* src, int op) {
+  ++shn_changing;
+    emit SelectableHostNotifySignal(src, op);
+  --shn_changing;
+}
+
+void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int op) {
+  if (shn_changing > 0) return; // reflection back down, ignore it
+  switch (op) {
+  case ISelectableHost::OP_GOT_FOCUS:
+  case ISelectableHost::OP_SELECTION_CHANGED:
+    SelectionChanged_impl(src);
+    break;
+  case ISelectableHost::OP_DESTROYING: break;
+  default: break; // shouldn't happen
+  }
+}
+
+MainWindowViewer* iFrameViewer::mainWindowViewer() {
+  return (m_viewer) ? ((FrameViewer*)m_viewer)->mainWindowViewer() : NULL;
+}
+

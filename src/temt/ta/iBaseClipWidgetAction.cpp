@@ -15,3 +15,83 @@
 
 #include "iBaseClipWidgetAction.h"
 
+iBaseClipWidgetAction::iBaseClipWidgetAction(taBase* inst_, QObject* parent)
+  : inherited(parent)
+{
+  Init(inst_);
+}
+
+iBaseClipWidgetAction::iBaseClipWidgetAction(const QIcon & icon_, taBase* inst_,
+    QObject* parent)
+  : inherited(parent)
+{
+  Init(inst_);
+  setIcon(icon_);
+}
+
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const QIcon & icon_,
+    taBase* inst_, QObject* parent)
+  : inherited(parent)
+{
+  Init(inst_, tooltip_);
+  setIcon(icon_);
+}
+
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& text_,
+    taBase* inst_, QObject* parent)
+  : inherited(parent)
+{
+  Init(inst_);
+  setText(text_);
+}
+
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const String& text_,
+    taBase* inst_, QObject* parent)
+  : inherited(parent)
+{
+  Init(inst_, tooltip_);
+  setText(text_);
+}
+
+
+void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
+  m_inst = inst_;
+  if (tooltip_.empty() && inst_) {
+    tooltip_ = inst_->GetToolTip(taBase::key_type_desc);
+  }
+  if (tooltip_.nonempty()) {
+    setToolTip(tooltip_);
+  }
+  if (inst_) {
+    String statustip = inst_->statusTip(); // no key
+    if (statustip.nonempty())
+      setStatusTip(statustip);
+  }
+}
+
+QMimeData* iBaseClipWidgetAction::mimeData() const {
+  taiClipData* rval = NULL;
+  if (m_inst) {
+    taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
+    if (link) {
+      // get readonly clip data -- we don't know if dragging or not, so we always say we are
+      taBase* obj = link->taData();
+      if (obj) {
+        taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+        rval = new taiClipData(
+          (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
+        mf->AddSingleObject(rval, obj);
+      }
+    }
+  }
+  return rval;
+}
+
+QStringList iBaseClipWidgetAction::mimeTypes() const {
+ //NOTE: for dnd to work, we just permit our own special mime type!!!
+  QStringList rval;
+  rval.append(taiObjectMimeFactory::tacss_objectdesc);
+  return rval;
+}
+
+

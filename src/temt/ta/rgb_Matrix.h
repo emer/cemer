@@ -48,10 +48,12 @@ public: //
   override void         El_SetFmVar_(void* it, const Variant& var) {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
 protected:
   STATIC_CONST rgb_t    blank; // #IGNORE
-  override void         BinarySave_Item(ostream& strm, int idx)
+#ifndef __MAKETA__
+  override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); };
-  override void         BinaryLoad_Item(istream& strm, int idx)
+  override void         BinaryLoad_Item(std::istream& strm, int idx)
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); };
+#endif
 private:
   void          Initialize() {}
   void          Destroy() { CutLinks(); }

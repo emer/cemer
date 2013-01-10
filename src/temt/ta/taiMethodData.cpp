@@ -239,7 +239,7 @@ void taiMethodData::UpdateAfter() {
 }
 
 void taiMethodData::GenerateScript() {
-  if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
     return;
 
 #ifndef DMEM_COMPILE
@@ -257,7 +257,7 @@ void taiMethodData::GenerateScript() {
     if(taMisc::dmem_debug)
       taMisc::Info("proc:", String(taMisc::dmem_proc), "recording fun call:", rscr);
 #endif
-    *(taMisc::record_script) << rscr << endl;
+    taMisc::record_script << rscr << "\n";
     return;
   }
 
@@ -268,13 +268,13 @@ void taiMethodData::GenerateScript() {
       tmp_objs.Add(i+1);
   }
   if (tmp_objs.size > 0) {
-    *taMisc::record_script << "{ "; // put in context
+    taMisc::record_script << "{ "; // put in context
     for (int i = 0; i < tmp_objs.size; ++i) {
       taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(tmp_objs.FastEl(i) - 1);
       cssEl* argv = arg_dlg->obj->members->FastEl(tmp_objs.FastEl(i));
-      *taMisc::record_script << art->arg_typ->name << " tmp_" << i
-                               << " = new " << art->arg_typ->name << "; \t tmp_" << i
-                               << " = \"" << argv->GetStr() << "\";\n  ";
+      taMisc::record_script << art->arg_typ->name << " tmp_" << i
+                            << " = new " << art->arg_typ->name << "; \t tmp_" << i
+                            << " = \"" << argv->GetStr() << "\";\n  ";
     }
   }
 
@@ -311,17 +311,16 @@ void taiMethodData::GenerateScript() {
   }
 
   String rscr = tab->GetPathNames() + "." + meth->name + "(" + arg_str + ");\n";
-  *taMisc::record_script << rscr;
+  taMisc::record_script << rscr;
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_debug)
       taMisc::Info("proc:", String(taMisc::dmem_proc), "recording fun call:", rscr);
 #endif
   if (tmp_objs.size > 0) {
     for (int i = 0; i < tmp_objs.size; ++i) {
-      *taMisc::record_script << "  delete tmp_" << i << ";\n";
+      taMisc::record_script << "  delete tmp_" << i << ";\n";
     }
-    *taMisc::record_script << "}\n"; // put in context
+    taMisc::record_script << "}\n"; // put in context
   }
-  taMisc::record_script->flush();
 }
 

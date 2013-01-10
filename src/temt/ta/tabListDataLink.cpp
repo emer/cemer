@@ -15,3 +15,19 @@
 
 #include "tabListDataLink.h"
 
+tabListDataLink::tabListDataLink(taList_impl* data_)
+  : inherited((taOBase*)data_)
+{
+}
+
+taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabListTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabListTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
+

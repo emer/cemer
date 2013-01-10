@@ -15,3 +15,22 @@
 
 #include "UndoDiffTask.h"
 
+void UndoDiffTask::Initialize() {
+}
+
+void UndoDiffTask::Destroy() {
+}
+
+void UndoDiffTask::run() {
+  UndoDiffThreadMgr* udtmg = mgr();
+  if(!udtmg) return;
+  taUndoMgr* um = udtmg->undo_mgr();
+  if(!um) return;
+  if(!um->rec_to_diff) return;
+
+  if(um->isDestroying()) return; // checks owner..
+
+  um->rec_to_diff->EncodeMyDiff();
+  um->rec_to_diff = NULL;       // done, reset!
+}
+

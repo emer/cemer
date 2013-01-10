@@ -15,3 +15,54 @@
 
 #include "iViewPanelSet.h"
 
+iViewPanelSet::iViewPanelSet(taiDataLink* link_)
+:inherited(link_)
+{
+  layDetail->addWidget(wsSubPanels, 1);
+  tbSubPanels = new iTabBarBase(widg);
+  tbSubPanels->setShape(QTabBar::TriangularSouth);
+  layDetail->addWidget(tbSubPanels);
+
+  connect(tbSubPanels, SIGNAL(currentChanged(int)), this, SLOT(setCurrentPanelId(int)));
+}
+
+iViewPanelSet::~iViewPanelSet() {
+//  panels.Reset(); // don't need/want to find any when child panels deleting
+}
+
+void iViewPanelSet::AddSubPanel(iViewPanelFrame* pn) {
+  pn->m_dps = this;
+  panels.Add(pn);
+  wsSubPanels->addWidget(pn);
+  tbSubPanels->addTab(pn->TabText());
+
+  pn->AddedToPanelSet();
+  iTabViewer* itv = tabViewerWin();
+  if (itv) pn->OnWindowBind(itv);
+}
+
+void iViewPanelSet::PanelDestroying(iViewPanelFrame* pn) {
+  int id = panels.FindEl(pn);
+  if (id < 0) return;
+  panels.RemoveIdx(id); // do 1st in case the gui gets triggered by:
+  tbSubPanels->removeTab(id);
+  pn->m_dps = NULL; // cut the link
+}
+
+void iViewPanelSet::setCurrentPanelId_impl(int id) {
+  iDataPanel* pn = panels.PosSafeEl(id);
+  if (!pn) return; //shouldn't happen
+  wsSubPanels->setCurrentWidget(pn);
+  tbSubPanels->setCurrentIndex(id);
+}
+
+void iViewPanelSet::UpdatePanel() {
+  inherited::UpdatePanel();
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    tbSubPanels->setTabText(i, pn->TabText());
+    tbSubPanels->setTabToolTip(i, pn->TabText());
+  }
+}
+
+

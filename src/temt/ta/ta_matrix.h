@@ -30,39 +30,39 @@
 
 // #include <string.h>
 
-#ifdef _WIN32
-  // The USING(taMatrix::operator=) statements in this file prevent compiler
-  // warnings on Mac/Linux indicating that base-class operator=() functions
-  // are being hidden by derived class overloads.  However, on Windows, those
-  // lines cause many warnings: "multiple assignment operators specified".
-  // The USING statements seem warranted on all OSes, so the MS warnings have
-  // been suppressed.
-  #pragma warning(push)
-  #pragma warning(disable: 4522)
-#endif
+// #ifdef _WIN32
+//   // The USING(taMatrix::operator=) statements in this file prevent compiler
+//   // warnings on Mac/Linux indicating that base-class operator=() functions
+//   // are being hidden by derived class overloads.  However, on Windows, those
+//   // lines cause many warnings: "multiple assignment operators specified".
+//   // The USING statements seem warranted on all OSes, so the MS warnings have
+//   // been suppressed.
+//   #pragma warning(push)
+//   #pragma warning(disable: 4522)
+// #endif
 
-// #define IMatrix taMatrix
+// // #define IMatrix taMatrix
 
-#include <CellRange>
-#include <MatrixIndex>
-#include <MatrixGeom>
-#include <taMatrix>
-#include <taMatrixT>
-#include <taMatrix_PList>
-#include <taMatrix_Group>
-#include <String_Matrix>
-#include <float_Matrix>
-#include <double_Matrix>
-#include <int_Matrix>
-#include <byte_Matrix>
-#include <Variant_Matrix>
-#include <slice_Matrix>
-#include <rgb_Matrix>
-#include <voidptr_Matrix>
-#include <CircMatrix>
+// #include <CellRange>
+// #include <MatrixIndex>
+// #include <MatrixGeom>
+// #include <taMatrix>
+// #include <taMatrixT>
+// #include <taMatrix_PList>
+// #include <taMatrix_Group>
+// #include <String_Matrix>
+// #include <float_Matrix>
+// #include <double_Matrix>
+// #include <int_Matrix>
+// #include <byte_Matrix>
+// #include <Variant_Matrix>
+// #include <slice_Matrix>
+// #include <rgb_Matrix>
+// #include <voidptr_Matrix>
+// #include <CircMatrix>
 
-#ifdef _WIN32
-  #pragma warning(pop)
-#endif
+// #ifdef _WIN32
+//   #pragma warning(pop)
+// #endif
 
 #endif

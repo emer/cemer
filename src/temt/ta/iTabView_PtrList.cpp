@@ -15,3 +15,18 @@
 
 #include "iTabView_PtrList.h"
 
+iTabView_PtrList::~iTabView_PtrList()
+{
+  for (int i = 0; i < size; ++i) {
+    iTabView* tv = FastEl(i);
+    tv->m_viewer_win = NULL; // prevents callback during destruction
+  }
+}
+
+void iTabView_PtrList::DataPanelDestroying(iDataPanel* panel) {
+  for (int i = 0; i < size; ++i) {
+    iTabView* tv = FastEl(i);
+    tv->DataPanelDestroying(panel);
+  }
+}
+

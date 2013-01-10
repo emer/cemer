@@ -22,10 +22,14 @@
 
 #include "css_extern_support.h"
 
-#include "ta_string.h"
-#include "ta_variant.h"
-#include "ta_type.h"
-#include "ta_base.h"
+#include <taString>
+#include <Variant>
+#include <TypeDef>
+#include <MemberDef>
+#include <MethodDef>
+#include <String_Array>
+#include <int_Array>
+#include <Program>
 
 #ifdef TA_USE_QT
 # include <QObject>
@@ -110,7 +114,6 @@ class cssProgSpace;
 class cssProgSpaceStack;
 class cssCmdShell;
 
-class Program;
 
 class CSS_API cssMisc { // misc stuff for css
 public:
@@ -444,8 +447,8 @@ public:
   { return PrintType(fh); }
 
   // saving and loading objects to/from files (special format)
-  virtual void		Save(ostream& strm = cout);
-  virtual void		Load(istream& strm = cin);
+  virtual void		Save(std::ostream& strm = std::cout);
+  virtual void		Load(std::istream& strm = std::cin);
 
   // token information about a certain type
   virtual String&	PrintTokens(String& strm) const	{ return strm; }
@@ -557,17 +560,17 @@ public:
   virtual operator Variant**() const	{ CvtErr("(Variant**)"); return NULL; }
   virtual operator bool**() const	{ CvtErr("(bool**)"); return NULL; }
 
-  virtual operator ostream*() const	{ CvtErr("(ostream*)"); return NULL; }
-  virtual operator istream*() const	{ CvtErr("(istream*)"); return NULL; }
-  virtual operator iostream*() const	{ CvtErr("(iostream*)"); return NULL; }
-  virtual operator fstream*() const	{ CvtErr("(fstream*)"); return NULL; }
-  virtual operator stringstream*() const { CvtErr("(stringstream*)"); return NULL; }
+  virtual operator std::ostream*() const	{ CvtErr("(ostream*)"); return NULL; }
+  virtual operator std::istream*() const	{ CvtErr("(istream*)"); return NULL; }
+  virtual operator std::iostream*() const	{ CvtErr("(iostream*)"); return NULL; }
+  virtual operator std::fstream*() const	{ CvtErr("(fstream*)"); return NULL; }
+  virtual operator std::stringstream*() const { CvtErr("(stringstream*)"); return NULL; }
 
-  virtual operator ostream**() const	{ CvtErr("(ostream**)"); return NULL; }
-  virtual operator istream**() const	{ CvtErr("(istream**)"); return NULL; }
-  virtual operator iostream**()	const	{ CvtErr("(iostream**)"); return NULL; }
-  virtual operator fstream**() const	{ CvtErr("(fstream**)"); return NULL; }
-  virtual operator stringstream**() const { CvtErr("(stringstream**)"); return NULL; }
+  virtual operator std::ostream**() const	{ CvtErr("(ostream**)"); return NULL; }
+  virtual operator std::istream**() const	{ CvtErr("(istream**)"); return NULL; }
+  virtual operator std::iostream**()	const	{ CvtErr("(iostream**)"); return NULL; }
+  virtual operator std::fstream**() const	{ CvtErr("(fstream**)"); return NULL; }
+  virtual operator std::stringstream**() const { CvtErr("(stringstream**)"); return NULL; }
 
   // support for external types
   virtual operator taBase*() const	{ CvtErr("(taBase*)"); return NULL; }
@@ -1654,7 +1657,7 @@ public:
   cssWatchList	watchpoints;		// watch points
   String	exec_err_msg;		// error message for when run_stat == ExecError
 
-  istream*	src_fin;		// source input stream
+  std::istream*	src_fin;		// source input stream
   String	cur_fnm;		// current source file name
   int		cur_fnm_lno;		// line number within current file name
 
@@ -1759,10 +1762,10 @@ public:
   cssElPtr&	GetRefType(cssEl* base_type); // get reference type of base_type
 
   // compiling
-  static  int	GetFile(fstream& fh, const String& fname); // get the file
+  static  int	GetFile(std::fstream& fh, const String& fname); // get the file
 
-  int		CompileLn(istream& fh = cin, bool* err = NULL);	// parse next line of stream, set optional err if error
-  bool 		Compile(istream& fh = cin);	// parse a stream and produce a program, 'true' if successful
+  int		CompileLn(std::istream& fh = std::cin, bool* err = NULL);	// parse next line of stream, set optional err if error
+  bool 		Compile(std::istream& fh = std::cin);	// parse a stream and produce a program, 'true' if successful
   bool 		Compile(const String& fname);	// parse a file and produce a program, 'true' if successful
   bool 		CompileCode(const String& code);// parse a string and produce a program, 'true' if successful
   void		Include(const String& fname);	// include a file
@@ -1840,7 +1843,7 @@ public:
   String&	PrintWatchpoints(String& fh);
 
 protected:
-  int 		ReadLn(istream* fh);	// used in Getc -- read the line in from filein
+  int 		ReadLn(std::istream* fh);	// used in Getc -- read the line in from filein
   int		AddSrcList(const String& nw_lst=""); // usedin Getc -- add a new line to source code listing, returns line no
 
   int 		alloc_size;		// allocated number of prog_stacks
@@ -1880,11 +1883,11 @@ public:
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
-  taMisc::ConsoleType	console_type; 	// what kind of console are we running?
+  int           console_type; 	// what kind of console are we running? taMisc::ConsoleType
 
-  istream*	fin;			// input file (current)
-  ostream*	fout;			// output file
-  ostream*	ferr;			// error file
+  std::istream*	fin;			// input file (current)
+  std::ostream*	fout;			// output file
+  std::ostream*	ferr;			// error file
   
   bool		external_exit;		// set to true to break out of a shell...
   bool		pager_waiting;		// if waiting for input on pager, don't accept new lines
@@ -1904,9 +1907,8 @@ public:
   cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
   void		PopAllSrcProg(); // pop off all of the src progs
 
-  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout,
-    taMisc::ConsoleType cons_typ = taMisc::CT_NONE);
-  // do all the initialization stuff for a shell, but don't actually start a specific shell
+  void		StartupShellInit(std::istream& fhi, std::ostream& fho, int cons_typ);
+  // do all the initialization stuff for a shell, but don't actually start a specific shell -- cons_typ is taMisc::ConsoleType = taMisc::CT_NONE
 
   bool		RunStartupScript();
   // run any startup scripts that might have been specified by startup args

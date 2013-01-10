@@ -15,3 +15,72 @@
 
 #include "iDockViewer.h"
 
+iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
+  : inherited(parent), IDataViewWidget(viewer_)
+{
+  setAttribute(Qt::WA_DeleteOnClose, true);
+  Init();
+}
+
+iDockViewer::~iDockViewer()
+{
+}
+
+void iDockViewer::Init() {
+  // set the features
+  DockViewer::DockViewerFlags dock_flags = viewer()->dock_flags; // cache
+  DockWidgetFeatures dwf = 0;
+  if (dock_flags & DockViewer::DV_CLOSABLE)
+    dwf |= QDockWidget::DockWidgetClosable;
+  if (dock_flags & DockViewer::DV_MOVABLE)
+    dwf |= QDockWidget::DockWidgetMovable;
+  if (dock_flags & DockViewer::DV_FLOATABLE)
+    dwf |= QDockWidget::DockWidgetFloatable;
+  setFeatures(dwf);
+}
+
+void iDockViewer::closeEvent(QCloseEvent* e) {
+   // always closing if force-quitting, docked or we no longer have our mummy
+  CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) ||
+    !isFloating() || (!m_viewer)) ?
+    CO_NOT_CANCELLABLE : CO_PROCEED;
+  closeEvent_Handler(e, cancel_op);
+}
+
+bool iDockViewer::event(QEvent* ev) {
+  bool rval = inherited::event(ev);
+  if (ev->type() == QEvent::WindowActivate)
+    taiMisc::active_wins.GotFocus_DockWindow(this);
+  return rval;
+}
+
+void iDockViewer::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iDockViewer::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iDockViewer::Showing(bool showing) {
+  DockViewer* vw = viewer();
+  if (!vw) return; // shouldn't happen
+  MainWindowViewer* wvw = (MainWindowViewer*)vw->GetOwner(&TA_MainWindowViewer);
+  if (!wvw) return; // normally shouldn't happen for owned docks
+  iMainWindowViewer* dv = wvw->viewerWindow();
+  if (!dv) return;
+  taiAction* me = dv->dockMenu->FindActionByData((void*)this);
+  if (!me) return;
+  if(showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
+    if(taMisc::viewer_options & taMisc::VO_NO_TOOLBOX) {
+      me->setChecked(false);
+      hide();
+      return;
+    }
+  }
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
+}
+

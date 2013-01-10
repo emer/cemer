@@ -15,3 +15,10 @@
 
 #include "Wizard_Group.h"
 
+void Wizard_Group::AutoEdit() {
+  FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
+    if (wz->auto_open)
+      wz->EditPanel(true, true);// true,true = new tab, pinned in place
+  }
+}
+

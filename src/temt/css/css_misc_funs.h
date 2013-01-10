@@ -23,6 +23,6 @@
 #include "css_def.h"
 
 CSS_API String_Array& Dir(const char* dir_nm = NULL);
-CSS_API String_Array& ReadLine(istream& fh);
+CSS_API String_Array& ReadLine(std::istream& fh);
 
 #endif  // css_misc_funs_h

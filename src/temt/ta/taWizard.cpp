@@ -15,3 +15,41 @@
 
 #include "taWizard.h"
 
+void taWizard::Initialize() {
+  auto_open = true;
+  SetUserData("NO_CLIP", true);
+  SetBaseFlag(NAME_READONLY);
+}
+
+void taWizard::InitLinks() {
+  inherited::InitLinks();
+  wiz_doc.SetName(name);        // same name as us..
+  RenderWizDoc();
+}
+
+void taWizard::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  wiz_doc.SetName(name);        // same name as us..
+}
+
+void taWizard::RenderWizDoc() {
+  RenderWizDoc_header();
+  RenderWizDoc_impl();
+  RenderWizDoc_footer();
+  wiz_doc.UpdateText();
+}
+
+void taWizard::RenderWizDoc_header() {
+  wiz_doc.text = "<html>\n<head></head>\n<body>\n";
+}
+
+void taWizard::RenderWizDoc_footer() {
+  wiz_doc.text += "</body>\n</html>\n";
+}
+
+void taWizard::RenderWizDoc_impl() {
+  wiz_doc.text +=
+"= taWizard =\n\
+this is a virtual base wizard -- not the real thing -- shouldn't see this!\n";
+}
+

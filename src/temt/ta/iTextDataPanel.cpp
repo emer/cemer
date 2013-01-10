@@ -15,3 +15,66 @@
 
 #include "iTextDataPanel.h"
 
+iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  txtText = new iTextEdit(this);
+  setCentralWidget(txtText);
+  // default is ro
+  setReadOnly(true);
+  connect(txtText, SIGNAL(copyAvailable(bool)),
+      this, SLOT(textText_copyAvailable(bool)) );
+}
+
+iTextDataPanel::~iTextDataPanel() {
+}
+
+QWidget* iTextDataPanel::firstTabFocusWidget() {
+  return txtText;
+}
+
+void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+//TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
+  //get updated text
+}
+
+int iTextDataPanel::EditAction(int ea) {
+  int rval = 0;
+//todo
+  return rval;
+}
+
+
+int iTextDataPanel::GetEditActions() {
+  int rval = 0;
+  QTextCursor tc(txtText->textCursor());
+  if (tc.hasSelection())
+    rval |= taiClipData::EA_COPY;
+//TODO: more, if not readonly
+  return rval;
+}
+
+bool iTextDataPanel::readOnly() {
+  return txtText->isReadOnly();
+}
+
+void iTextDataPanel::setReadOnly(bool value) {
+  txtText->setReadOnly(value);
+}
+
+void iTextDataPanel::setText(const String& value) {
+  txtText->setPlainText(value);
+}
+
+
+void iTextDataPanel::textText_copyAvailable (bool) {
+  viewerWindow()->UpdateUi();
+}
+
+String iTextDataPanel::panel_type() const {
+  static String str("Text View");
+  return str;
+}
+
+

@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iTableView; //
 
 
 class TA_API iDataTablePanel: public iDataPanelFrame {

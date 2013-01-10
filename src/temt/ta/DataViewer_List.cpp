@@ -15,3 +15,15 @@
 
 #include "DataViewer_List.h"
 
+void DataViewer_List::GetWinState() {
+  for (int i = 0; i < size; ++i) {
+    FastEl(i)->GetWinState();
+  }
+}
+
+void DataViewer_List::SetWinState() {
+  for (int i = 0; i < size; ++i) {
+    FastEl(i)->SetWinState();
+  }
+}
+

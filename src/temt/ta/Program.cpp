@@ -15,6 +15,8 @@
 
 #include "Program.h"
 
+using namespace std;
+
 ProgLib* Program::prog_lib = NULL;
 String_Array Program::forbidden_names;
 bool Program::stop_req = false;

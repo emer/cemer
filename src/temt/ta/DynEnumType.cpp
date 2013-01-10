@@ -16,6 +16,8 @@
 #include "DynEnumType.h"
 #include <Program>
 
+using namespace std;
+
 void DynEnumType::Initialize() {
   SetDefaultName();
   bits = false;

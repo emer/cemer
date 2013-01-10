@@ -15,3 +15,55 @@
 
 #include "taiListDataNode.h"
 
+taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
+   taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
+:inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
+{
+  num = num_;
+  panel = panel_;
+  setData(0, Qt::TextAlignmentRole, Qt::AlignRight);
+}
+
+taiListDataNode::~taiListDataNode() {
+}
+
+
+bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
+{ //NOTE: it was tried to set display data as an int QVariant, but sorting was still lexographic
+  QTreeWidget* tw = treeWidget();
+  if (!tw) return false; // shouldn't happen
+  int col = tw->sortColumn();
+  if (col > 0)
+    return inherited::operator<(item);
+  else {
+    taiListDataNode* ldn = (taiListDataNode*)&item;
+    return (num < ldn->num);
+  }
+}
+
+void taiListDataNode::DecorateDataNode() {
+  inherited::DecorateDataNode();
+  setText(0, String(num)); // in case changed via renumber
+}
+
+taiDataLink* taiListDataNode::par_link() const {
+  // in case we decide to support trees in list views, check for an item parent:
+  taiDataLink* rval = inherited::par_link();
+  if (rval) return rval;
+  if (panel) return panel->link();
+  return NULL;
+}
+
+void taiListDataNode::setName(const String& value) {
+  if (columnCount() >= 2) // s/always be true!
+    this->setText(1, value);
+}
+
+QString taiListDataNode::text(int col) const {
+  if (col > 0)
+    return inherited::text(col);
+  else
+    return QString::number(num);
+}
+
+

@@ -20,6 +20,8 @@
 #include <taHashTable>
 #include <taMisc>
 
+using namespace std;
+
 TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
   // search up typ1's tree until a common subtype is found
   // note: doesn't matter which obj's tree we go up, so we just pick typ1

@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 
+// Note: for inheritance hierarchies, only the first parent is searched, as that is
+// always the primary class in cases where there is multiple inheritance
 
 class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
 INHERITED(taPtrList<ISelectable>)

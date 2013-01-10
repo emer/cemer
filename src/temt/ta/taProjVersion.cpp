@@ -15,3 +15,17 @@
 
 #include "taProjVersion.h"
 
+void taProjVersion::SetFromString(String ver) {
+  Clear();
+  // parse, mj.mn.st -- just blindly go through, harmless if missings
+  major = taVersion::BeforeOrOf('.', ver);
+  minor = taVersion::BeforeOrOf('.', ver);
+  step = taVersion::BeforeOrOf(' ', ver); // dummy
+}
+
+bool taProjVersion::GtEq(int mj, int mn, int st) {
+  return (major > mj) ||
+    ((major == mj) && (minor > mn)) ||
+     ((major == mj) && (minor == mn) && (step >= st));
+}
+

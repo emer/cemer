@@ -15,3 +15,22 @@
 
 #include "TreeDecorationSpec.h"
 
+void TreeDecorationSpec::Initialize() {
+}
+
+void TreeDecorationSpec::Destroy() {
+}
+
+void TreeDecorationSpec::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(&text_color, this);
+}
+
+void TreeDecorationSpec::CutLinks() {
+  text_color.CutLinks();
+  inherited::CutLinks();
+}
+
+void TreeDecorationSpec::Copy_(const TreeDecorationSpec& cp) {
+  text_color = cp.text_color;
+}

@@ -15,3 +15,39 @@
 
 #include "tabBrowseViewer.h"
 
+tabBrowseViewer* tabBrowseViewer::New(taBase* root, MemberDef* root_md) {
+  if (!root) return NULL; // nice try, buster
+  tabBrowseViewer* rval = new tabBrowseViewer;
+  rval->m_root = root;
+  rval->root_typ = root->GetTypeDef();
+  rval->root_md = root_md;
+  return rval;
+}
+
+void tabBrowseViewer::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(m_root, this);
+}
+
+void tabBrowseViewer::CutLinks() {
+  inherited::CutLinks();
+}
+
+void tabBrowseViewer::Copy_(const tabBrowseViewer& cp) {
+  m_root = cp.m_root;
+}
+
+IDataViewWidget* tabBrowseViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iBrowseViewer(this, gui_parent);
+}
+
+void tabBrowseViewer::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  // if root has vanished, window must die
+  //TODO: should prob propagate this up to the enclosing iMainWindowViewer???
+  if (!m_root && dvwidget()) {
+    CloseWindow();
+  }
+}
+
+

@@ -15,3 +15,48 @@
 
 #include "iToolBar.h"
 
+IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+  if (name == "Application")
+    return new iApplicationToolBar(this, gui_parent); // usually parented later
+  else
+    return new iToolBar(this, gui_parent); // usually parented later
+}
+
+iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
+  : inherited(parent), IDataViewWidget(viewer_)
+{
+  Init();
+}
+
+iToolBar::~iToolBar()
+{
+}
+
+void iToolBar::Init() {
+  setWindowTitle(viewer()->GetName());
+}
+
+void iToolBar::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  Showing(false);
+}
+
+void iToolBar::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  Showing(true);
+}
+
+void iToolBar::Showing(bool showing) {
+  iMainWindowViewer* dv = viewerWindow();
+  if (!dv) return;
+  taiAction* me = dv->toolBarMenu->FindActionByData((void*)this);
+  if (!me) return;
+  if(showing && taMisc::viewer_options & taMisc::VO_NO_TOOLBAR) {
+    me->setChecked(false); //note: triggers event
+    hide();
+    return;
+  }
+  if (showing == me->isChecked()) return;
+  me->setChecked(showing); //note: triggers event
+}
+

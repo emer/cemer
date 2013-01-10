@@ -24,10 +24,13 @@
 #include <MemberDef>
 #include <PropertyDef>
 #include <EnumDef>
+#include <taHashTable>
 
 #ifndef TYPE
 #include "mta_parse.h"
 #endif
+
+using namespace std;
 
 int yyparse(void);
 void yyerror(const char *s);
@@ -111,11 +114,13 @@ public:
 
   String_PArray	pre_parse_inits; // init commands to be called for pre-parsed files
   String_PArray	included;	// files already processed as includes, no need to rpt
-  String_PArray	tmp_include;	// temp holder
+  taHashTable   included_hash;  // hash table for faster checking
 
   String_PArray	paths;		// paths we check, in order (have final sep)
   String_PArray	headv;		// list of header files
   String_PArray	head_fn_only; 	// only the file names of the headers
+  taHashTable   headv_hash;     // hash table of headv for faster checking
+  taHashTable   head_fn_hash;   // hash table of head_fn_only for faster checking
 
   int		st_line;	// starting line
   int		st_col;		// column
@@ -128,8 +133,7 @@ public:
   int		anon_no;	// anonymous type number
   int		defn_st_line;	// starting line of current definition, possibly..
 
-  String        file_str;       // load entire file in at once as a string and process from there
-  fstream	fh;
+  String        file_str;       // loads entire file in at once as a string and process from there
   States	state;
   YY_Flags	yy_state;	// parser state
 
@@ -140,6 +144,8 @@ public:
   void		InitTypeSpace(TypeSpace& ts);
   void		BuildHashTables();
   void 		Burp();
+  void          SetSource(TypeDef* td, bool use_defn_st_line);
+  // set the source_file and source_start values in type to current vals, optionally using defn_st_line
   void		Class_ResetCurPtrs();
   // reset pointers
   void		Class_UpdateLastPtrs();
@@ -165,6 +171,8 @@ public:
   // set pre-parse flag for all types in spc that are on the pplist
   String	FindFile(const String& fname, bool& ok);
   // find the file, searching on .path if needed; returns full LexCanonical fname, clears ok if not found (fname can have full path)
+  bool          AddIncluded(const String& fnm);
+  // add new include file to included list
 
   // LEX functions (defined in mta_lex.cc)
   String	LexBuf;
@@ -179,6 +187,7 @@ public:
   int	skipwhite_peek();
   int	skipwhite_nocr();
   int	skipline();
+  int   skiplines(int n_lines);
   int	skiptocommarb();	// skip to comma or right bracket
   int	readword(int c);
   int	readfilename(int c); // read an optionally quoted filename, pass first char (ex ") in c; returns fname without quotes; quotes enables spaces, else ws terminates

@@ -120,7 +120,9 @@ public:
 
   static char           GetDelim(Delimiters delim);
   // #IGNORE get delimiter from enum
-  static int            ReadTillDelim(istream& strm, String& str, const char delim,
+  
+#ifndef __MAKETA__
+  static int            ReadTillDelim(std::istream& strm, String& str, const char delim,
                                       bool quote_str, bool& got_quote);
   // #IGNORE util function to read from stream into str until delim or newline or EOF
   static int            ReadTillDelim_Str(const String& istr, int& idx, String& str,
@@ -128,20 +130,21 @@ public:
   // #IGNORE util function to read from String into str until delim or newline or EOF -- idx is current index and is also updated to new index
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  virtual void          SaveData_strm(ostream& strm, Delimiters delim = TAB,
+  virtual void          SaveData_strm(std::ostream& strm, Delimiters delim = TAB,
                                       bool quote_str = true, bool save_headers=true);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
-  void                  SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
+  void                  SaveHeader_strm(std::ostream& strm, Delimiters delim = TAB,
         bool row_mark = true, int col_fr = 0, int col_to = -1)
     {SaveHeader_strm_impl(strm, delim, row_mark, col_fr, col_to, true, false);}
   // #EXPERT #CAT_File #EXT_dat,txt,log saves header information, with delimiter between columns, and optional row_mark _H:
-  virtual void          SaveDataRow_strm(ostream& strm, int row=-1,
+  virtual void          SaveDataRow_strm(std::ostream& strm, int row=-1,
                                  Delimiters delim = TAB, bool quote_str = true,
                                  bool row_mark = true, int col_fr = 0, int col_to = -1);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
-  virtual void          SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
+  virtual void          SaveDataRows_strm(std::ostream& strm, Delimiters delim = TAB,
                                           bool quote_str = true, bool row_mark=true);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+#endif
 
   virtual void          SaveData(const String& fname="", Delimiters delim = TAB,
     bool quote_str = true, bool save_headers=true);
@@ -172,16 +175,19 @@ public:
   virtual bool          WriteDataLogRow();
   // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose
 
-  virtual void          LoadData_strm(istream& strm, Delimiters delim = TAB,
+#ifndef __MAKETA__
+  virtual void          LoadData_strm(std::istream& strm, Delimiters delim = TAB,
                                  bool quote_str = true, int max_recs = -1);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  virtual int           LoadHeader_strm(istream& strm, Delimiters delim = TAB);
+  virtual int           LoadHeader_strm(std::istream& strm, Delimiters delim = TAB);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end) -- note: Emergent-native does not use quotes in header line and quote_str is ignore when native=true
-  virtual int           LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
+  virtual int           LoadDataRow_strm(std::istream& strm, Delimiters delim = TAB,
     bool quote_str = true);
   // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  int                   LoadDataRowEx_strm(istream& strm, Delimiters delim = TAB,
+  int                   LoadDataRowEx_strm(std::istream& strm, Delimiters delim = TAB,
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
+#endif
+
   virtual void          LoadData(const String& fname, Delimiters delim = TAB,
         bool quote_str = true, int max_recs = -1, bool reset_first=false);
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #FILE_DIALOG_LOAD #LABEL_Load_Data_Native #EXT_dat,tsv,csv,txt,log load Emergent native format data (ONLY) - has a special header to define columns, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading -- this is much faster than LoadAnyData, especially noticible for very large data files
@@ -190,8 +196,10 @@ public:
                     int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
 
-  virtual void    LoadAnyData_stream(istream &stream, bool append, bool has_header_line = true);
+#ifndef __MAKETA__
+  virtual void    LoadAnyData_stream(std::istream &stream, bool append, bool has_header_line = true);
   // #CAT_File Load any kind of data from an existing stream.  File format, delimitation, and quoting are auto-detected, but whether the file has a header line or not must be set explicitly.  Set append=false to overwrite any existing data.
+#endif
 
   virtual void          LoadAnyData_gui(const String& fname, bool headers = true)
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
@@ -209,13 +217,15 @@ public:
   // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   void                  ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
 
-  virtual void          ExportHeader_strm(ostream& strm, Delimiters delim = TAB,
+#ifndef __MAKETA__
+  virtual void          ExportHeader_strm(std::ostream& strm, Delimiters delim = TAB,
         bool quote_str = true, int col_fr = 0, int col_to = -1)
   { SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str); }
   // #EXPERT #CAT_File #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
-  void                  ExportData_strm(ostream& strm, Delimiters delim = COMMA,
+  void                  ExportData_strm(std::ostream& strm, Delimiters delim = COMMA,
                                         bool quote_str = true, bool headers = true);
   // #EXPERT #CAT_File #EXT_csv,tsv,txt,log exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
+#endif
 
   void                  ExportData(const String& fname="", Delimiters delim = COMMA,
                            bool quote_str = true, bool headers = true);
@@ -238,10 +248,24 @@ protected:
   virtual bool          CopyCell_impl(DataCol* dar, int dest_row,
                               const DataTable& src, DataCol* sar, int src_row); // #IGNORE
 
-  virtual void          DetermineLoadDataParams(istream& strm,
+#ifndef __MAKETA__
+  virtual void          DetermineLoadDataParams(std::istream& strm,
     bool headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native);
   // #IGNORE determine delimiters and other info from file for loading data -- for non-native files, will also decode headers and/or create data columns to fit the data -- the first line of actual data after the header (if any) is used to determine column type info
+  void                  ImportData_strm(std::istream& strm, bool headers = true,
+    Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
+  // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.) -- must be called AFTER ImportHeaderCols -- just skips headers
+
+  void                  SaveHeader_strm_impl(std::ostream& strm, Delimiters delim,
+        bool row_mark, int col_fr, int col_to, bool native, bool quote_str);
+  // #IGNORE
+  virtual int           LoadHeader_impl(std::istream& strm, Delimiters delim,
+                                        bool native, bool quote_str = false);
+  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  virtual int           LoadDataRow_impl(std::istream& strm, Delimiters delim = TAB,
+                                         bool quote_str = true);
+#endif
 
   virtual void          ImportHeaderCols(const String& hdr_line, const String& data_line,
                                           Delimiters delim, bool quote_str = false);
@@ -251,18 +275,6 @@ protected:
   virtual ValType       DecodeImportDataType(const String& dat_str);
   // decode header information for importing from text files -- if cell_idx >= 0 then we found an approprite mat col when nm was <Name>_<int>
 
-  void                  ImportData_strm(istream& strm, bool headers = true,
-    Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
-  // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.) -- must be called AFTER ImportHeaderCols -- just skips headers
-
-  void                  SaveHeader_strm_impl(ostream& strm, Delimiters delim,
-        bool row_mark, int col_fr, int col_to, bool native, bool quote_str);
-  // #IGNORE
-  virtual int           LoadHeader_impl(istream& strm, Delimiters delim,
-                                        bool native, bool quote_str = false);
-  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  virtual int           LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
-                                         bool quote_str = true);
   bool                  SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row,
                                             bool quiet = false);
 
@@ -828,7 +840,9 @@ public:
   // #IGNORE perform auto saving of data to file when project is saved
   override void         Dump_Load_post();
 
-  override int          Dump_Load_Value(istream& strm, taBase* par);
+#ifndef __MAKETA__
+  override int          Dump_Load_Value(std::istream& strm, taBase* par);
+#endif
   override void         Dump_Save_pre();
   override String       GetTypeDecoKey() const { return "DataTable"; }
   override int          GetSpecialState() const;
@@ -849,7 +863,9 @@ protected:
   bool                  NewColValid(const String& col_nm,
     const MatrixGeom* cell_geom = NULL);
   // returns true if valid new col spec; posts modal err dialog if in gui call; geom NULL if scalar col
-  int                   LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws);
+#ifndef __MAKETA__
+  int                   LoadDataFixed_impl(std::istream& strm, FixedWidthSpec* fws);
+#endif
 
 public:
   /////////////////////////////////////////////////////////

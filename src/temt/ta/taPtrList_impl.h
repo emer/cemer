@@ -55,11 +55,6 @@ public:
     KT_PTR,                     // use the item pointer
   };
 
-  static taHashVal      HashCode_String(const String& string);
-  // #EXPERT #CAT_Access get a hash code value from given string
-  static taHashVal      HashCode_Ptr(const void* ptr);
-  // #EXPERT #CAT_Access get a hash code value from given ptr
-
 protected:
   static taPtrList_impl scratch_list;   // a list for any temporary processing needs
 

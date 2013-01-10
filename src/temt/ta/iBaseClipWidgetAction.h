@@ -17,8 +17,11 @@
 #define iBaseClipWidgetAction_h 1
 
 // parent includes:
+#include "ta_def.h"
+#include <icliptoolwidget.h>
 
 // member includes:
+
 
 // declare all other types mentioned but not required to include:
 class taBase; // 

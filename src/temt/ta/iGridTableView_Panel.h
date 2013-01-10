@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiField; // #IGNORE
+class taiIncrField; // #IGNORE
+class ScaleBar; // #IGNORE
 
 
 class TA_API iGridTableView_Panel: public iDataTableView_Panel {

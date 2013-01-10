@@ -15,6 +15,8 @@
 
 #include "MatrixGeom.h"
 
+using namespace std;
+
 MatrixGeom::MatrixGeom(int init_n_dims) {
   Initialize();
   SetDims(init_n_dims);

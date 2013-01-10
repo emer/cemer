@@ -101,12 +101,15 @@ public:
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   // for dump files
+#ifndef __MAKETA__
   bool          DumpMember(void* par);          // decide whether to dump or not
-  int           Dump_Save(ostream& strm, void* base, void* par, int indent);
-  int           Dump_SaveR(ostream& strm, void* base, void* par, int indent);
-  int           Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
+  int           Dump_Save(std::ostream& strm, void* base, void* par, int indent);
+  int           Dump_SaveR(std::ostream& strm, void* base, void* par, int indent);
+  int           Dump_Save_PathR(std::ostream& strm, void* base, void* par, int indent);
 
-  int           Dump_Load(istream& strm, void* base, void* par); //
+  int           Dump_Load(std::istream& strm, void* base, void* par); //
+#endif
+
 private:
   void          Initialize();
   void          Copy_(const MemberDef& cp);

@@ -93,6 +93,7 @@ const QPixmap* folder_open_pixmap() {
 
 #endif // def TA_GUI
 
+using namespace std;
 
 void taList_impl::Initialize() {
   SetBaseType(&TA_taBase);

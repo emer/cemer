@@ -15,3 +15,20 @@
 
 #include "PanelViewer.h"
 
+void PanelViewer::Initialize() {
+}
+
+IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iTabViewer(this, gui_parent);
+}
+
+iTabBarBase* PanelViewer::tabBar() {
+  if(!widget()) return NULL;
+  return widget()->tabBar();
+}
+
+/*void PanelViewer::Clear_impl() {
+  if (!m_window) return;
+  browser_win()->Reset();
+}*/
+

@@ -15,3 +15,50 @@
 
 #include "ToolBar.h"
 
+void ToolBar::Initialize() {
+  lft = 0.0f;
+  top = 0.0f;
+  o = Horizontal;
+  visible = false; // overrides base
+}
+
+void ToolBar::Copy_(const ToolBar& cp) {
+  lft = cp.lft;
+  top = cp.top;
+  o = cp.o;
+}
+
+void ToolBar::Constr_impl(QWidget* gui_parent) {
+  inherited::Constr_impl(gui_parent);
+  widget()->setObjectName(name);
+}
+
+void ToolBar::GetWinState_impl() {
+  inherited::GetWinState_impl();
+  iRect r = widget()->frameGeometry();
+  // convert from screen coords to relative (note, allowed to be >1.0)
+  lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
+  top = (float)r.top() / (float)(taiM->scrn_s.h);
+  SetUserData("view_win_visible", widget()->isVisible());
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void ToolBar::SetWinState_impl() {
+  inherited::SetWinState_impl();
+  //TODO: docked, etc.
+  iToolBar* itb = widget(); //cache
+  bool vis = GetUserDataDef("view_win_visible", true).toBool();
+  itb->setVisible(vis);
+  itb->setOrientation((Qt::Orientation)o);
+  iRect r = itb->frameGeometry();
+  r.x = (int)(lft * taiM->scrn_s.w);
+  r.y = (int)(top * taiM->scrn_s.h);
+  itb->move(r.topLeft());
+  itb->resize(r.size());
+}
+
+void ToolBar::WidgetDeleting_impl() {
+  inherited::WidgetDeleting_impl();
+  visible = false;
+}
+

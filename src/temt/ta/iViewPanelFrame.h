@@ -21,9 +21,11 @@
 #include <IDataHost>
 
 // member includes:
+#include <taiDataList>
 
 // declare all other types mentioned but not required to include:
-
+class HiLightButton; // #IGNORE
+class iViewPanelSet; // #IGNORE
 
 class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
   // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls

@@ -19,6 +19,10 @@
 // parent includes:
 #include <taFBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <taProjVersion>
 #include <taLicense>
@@ -212,5 +216,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+TA_SMART_PTRS(taProject)
 
 #endif // taProject_h

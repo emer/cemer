@@ -47,6 +47,8 @@
 #include <sstream>              // for FormatValue
 #include <math.h>               // for NiceRoundNumber
 
+using namespace std;
+
 InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
   taMisc::AddInitHook(init_proc);
 }
@@ -267,8 +269,9 @@ NameVar_PArray  taMisc::named_paths;
 
 DumpFileCvtList taMisc::file_converters;
 
-String  taMisc::compress_sfx = ".gz";
-ostream*        taMisc::record_script = NULL;
+String          taMisc::compress_sfx = ".gz";
+bool            taMisc::record_on = false;
+String          taMisc::record_script;
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
@@ -2349,57 +2352,50 @@ int taMisc::ExecuteCommand(const String& cmd) {
 /////////////////////////////////////////////////
 //      Recording GUI actions to css script
 
-void taMisc::StartRecording(ostream* strm){
-  record_script = strm;
+void taMisc::StartRecording() {
+  record_on = true;
   if (ScriptRecordingGui_Hook)
     ScriptRecordingGui_Hook(true);
 }
 
 void taMisc::StopRecording(){
-  record_script = NULL;
+  record_on = false;
   if (ScriptRecordingGui_Hook)
     ScriptRecordingGui_Hook(false);
 }
 
 bool taMisc::RecordScript(const char* cmd) {
-  if (record_script == NULL)
-    return false;
-  if (record_script->bad() || record_script->eof()) {
-    taMisc::Warning("*** Error: recording script is bad or eof, no script command recorded!!",
-                  cmd);
-    return false;
-  }
-  *record_script << cmd;
+  if(!record_on) return false;
+  record_script << cmd;
   if(cmd[strlen(cmd)-1] != '\n') {
     taMisc::Warning("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
-                  cmd);
-    *record_script << '\n';
+                    cmd);
+    record_script << '\n';
   }
-  record_script->flush();
   return true;
 }
 
 #ifndef NO_TA_BASE
 // normal non quoted members
 void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = " <<
+  if(record_on)  {
+    record_script << tab->GetPathNames() << "." << md->name << " = " <<
       md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
   }
 }
 // Script Record Inline Assignment
 void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = \"" <<
+  if(record_on)  {
+    record_script << tab->GetPathNames() << "." << md->name << " = \"" <<
       md->type->GetValStr(md->GetOff(tab)) << "\";\n";
-    *taMisc::record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << endl;
+    record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << endl;
   }
 }
 
 // Script Record Enum Assignment
 void taMisc::SREAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = " <<
+  if(record_on)  {
+    record_script << tab->GetPathNames() << "." << md->name << " = " <<
       tab->GetTypeDef()->name << "::" <<
       md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
   }

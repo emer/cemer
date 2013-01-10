@@ -29,6 +29,7 @@ class T3DataViewRoot; //
 class T3ExaminerViewer; //
 class iT3DataViewFrame; //
 class T3NodePtr; //
+class SoPath; // #IGNORE
 
 /*
   DataView objects that have 3D reps

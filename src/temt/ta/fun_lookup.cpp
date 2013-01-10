@@ -13,14 +13,14 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-
 #include "fun_lookup.h"
 
 #include <math.h>
 #include <limits.h>
 #include <float.h>
 #include <ctype.h>
+
+using namespace std;
 
 //////////////////////////
 //  	FunLookup	//

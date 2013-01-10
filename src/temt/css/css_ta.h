@@ -64,8 +64,8 @@ public:
   String&	PrintType(String& fh) const;
   String&	PrintInherit(String& fh) const;
 
-  void		Save(ostream& fh = cout);
-  void		Load(istream& fh = cin);
+  void		Save(std::ostream& fh = std::cout);
+  void		Load(std::istream& fh = std::cin);
 
   String&	PrintTokens(String& fh) const;
   cssEl*	GetToken(int idx) const;
@@ -136,8 +136,8 @@ public:
   String&	PrintType(String& fh) const;
   String&	PrintInherit(String& fh) const;
 
-  void		Save(ostream& fh = cout);
-  void		Load(istream& fh = cin);
+  void		Save(std::ostream& fh = std::cout);
+  void		Load(std::istream& fh = std::cin);
 
   // constructors
   void 		Constr();
@@ -341,17 +341,17 @@ public:
   operator Real() const;
   operator Int() const;
 
-  operator iostream*() const;
-  operator istream*() const;
-  operator ostream*() const;
-  operator fstream*() const;
-  operator stringstream*() const;
+  operator std::iostream*() const;
+  operator std::istream*() const;
+  operator std::ostream*() const;
+  operator std::fstream*() const;
+  operator std::stringstream*() const;
 
-  operator iostream**() const;
-  operator istream**() const;
-  operator ostream**() const;
-  operator fstream**() const;
-  operator stringstream**() const;
+  operator std::iostream**() const;
+  operator std::istream**() const;
+  operator std::ostream**() const;
+  operator std::fstream**() const;
+  operator std::stringstream**() const;
 
   cssEl* operator<<(cssEl& s);	// for iostreams..
   cssEl* operator>>(cssEl& s);
@@ -364,12 +364,12 @@ public:
   uint		GetSize() const	{ return sizeof(*this); }
 
   // constructors
-  void		Constr()	{ ptr = new fstream; }
+  void		Constr()	{ ptr = new std::fstream; }
   cssFStream() 				: cssIOS(NULL, 1, TA_TypeDef())	   { Constr(); }
   cssFStream(const String& nm)			: cssIOS(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
   cssFStream(const cssFStream& cp)		: cssIOS(cp) 	{ Constr(); }
   cssFStream(const cssFStream& cp, const String&)	: cssIOS(cp)	{ Constr(); }
-  ~cssFStream()			{ fstream* str = (fstream*)ptr; delete str; }
+  ~cssFStream()			{ std::fstream* str = (std::fstream*)ptr; delete str; }
 
   cssCloneOnly(cssFStream);
   cssEl*	MakeToken_stub(int, cssEl *arg[])

@@ -15,3 +15,6 @@
 
 #include "ProjTemplateEl_List.h"
 
+void ProjTemplateEl_List::Initialize() {
+}
+

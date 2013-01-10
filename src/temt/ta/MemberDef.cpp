@@ -19,6 +19,8 @@
 #include <taMisc>
 #include <voidptr_PArray>
 
+using namespace std;
+
 void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
   String desc = md->desc;
   String defval = md->OptionAfter("DEF_");

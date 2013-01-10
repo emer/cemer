@@ -17,8 +17,10 @@
 #define SelectableHostHelper_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
+#include <ISelectableHost>
 
 // declare all other types mentioned but not required to include:
 class taiAction; // 

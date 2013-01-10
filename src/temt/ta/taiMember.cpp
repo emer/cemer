@@ -28,11 +28,11 @@
   }
 
 void taiMember::EndScript(const void* base) {
-  if(taMisc::record_script == NULL)
+  if(!taMisc::record_on)
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!
-  *taMisc::record_script << "}" << endl;
+  taMisc::record_script << "}" << endl;
 }
 
 bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {
@@ -234,18 +234,18 @@ bool taiMember::isCondShow() const {
 }
 
 void taiMember::StartScript(const void* base) {
-  if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
     return;
 
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!
   taBase* tab = (taBase*)base;
-  *taMisc::record_script << "{ " << typ->name << "* ths = "
-                           << tab->GetPathNames() << ";" << endl;
+  taMisc::record_script << "{ " << typ->name << "* ths = "
+                        << tab->GetPathNames() << ";" << "\n";
 }
 
 void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
-  if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!
@@ -256,8 +256,8 @@ void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
     StartScript(base);
   first_diff = false;
   new_val.gsub("\"", "\\\"");   // escape the quotes..
-  *taMisc::record_script << "  ths->" << mbr->name << " = \""
-                           << new_val << "\";" << endl;
+  taMisc::record_script << "  ths->" << mbr->name << " = \""
+                        << new_val << "\";" << "\n";
 }
 
 void taiMember::AddMember(MemberDef* md) {

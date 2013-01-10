@@ -15,3 +15,19 @@
 
 #include "ToolBoxDockViewer.h"
 
+ToolBoxDockViewer* ToolBoxDockViewer::New() {
+  ToolBoxDockViewer* tb = new ToolBoxDockViewer;
+  tb->SetName("Tools");
+  tb->dock_flags = DockViewer::DockViewerFlags(DV_MOVABLE | DV_FLOATABLE);
+  tb->dock_area = Qt::LeftDockWidgetArea;
+  return tb;
+}
+
+void ToolBoxDockViewer::Initialize() {
+}
+
+void ToolBoxDockViewer::MakeWinName_impl() {
+  //NOTE: descriptions for win and tabs need to be very short (not much space)
+  win_name = "Tools";
+}
+

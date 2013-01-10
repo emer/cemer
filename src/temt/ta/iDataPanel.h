@@ -18,14 +18,21 @@
 
 // parent includes:
 #include <IDataLinkClient>
+#ifndef __MAKETA__
 #include <QFrame>
+#endif
 
 // member includes:
 #include <taString>
 #include <taiMiscCore>
+#include <iColor>
+#ifndef __MAKETA__
 #include <iTabBar>
 #include <iTabView>
-#include <iColor>
+#else
+class iTabBar; // #IGNORE
+class iTabView; // #IGNORE
+#endif
 
 // declare all other types mentioned but not required to include:
 class iTabBarBase;
@@ -69,7 +76,9 @@ public:
   bool                  isShowUpdating() const { return m_show_updt; }
   // true if currently updating due to a show event
 //  DataViewer*         viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
+#ifndef __MAKETA__
   iTabBar::TabIcon      tabIcon() const;
+#endif
   iTabBarBase*          tabBar() {return NULL;}
   inline iTabView*      tabView() const {return m_tabView;} // tab view in which we are shown
   virtual void          setTabView(iTabView* value) {m_tabView = value;} // just set the value, no side effects

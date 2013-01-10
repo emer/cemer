@@ -432,30 +432,32 @@ public:
   /////////////////////////////////////////////////////////////
   // 		Dump: Saving and loading of type instances to/from streams
 
-  int           Dump_Save(ostream& strm, void* base, void* par=NULL, int indent=0);
+#ifndef __MAKETA__
+  int           Dump_Save(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // called by the user to save an object
-  int           Dump_Save_impl(ostream& strm, void* base, void* par=NULL, int indent=0);
-  int           Dump_Save_inline(ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_Save_impl(std::ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_Save_inline(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // for saving objects as members of other objects
-  int           Dump_Save_Path(ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_Save_Path(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // save the path of the object
-  int           Dump_Save_Value(ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_Save_Value(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // save the value of this object (i.e. the members)
-  int           Dump_SaveR(ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_SaveR(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // if there are sub-elements (i.e. groups), save them (return false if not)
-  int           Dump_Save_PathR(ostream& strm, void* base, void* par=NULL, int indent=0);
+  int           Dump_Save_PathR(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // if there are sub-elements, save the path to them (return false if not)
 
-  int           Dump_Load(istream& strm, void* base, void* par=NULL, void** el = NULL);
+  int           Dump_Load(std::istream& strm, void* base, void* par=NULL, void** el = NULL);
   // called by the user to load an object
-  int           Dump_Load_impl(istream& strm, void* base, void* par=NULL,
+  int           Dump_Load_impl(std::istream& strm, void* base, void* par=NULL,
                                const char* typnm=NULL);
-  int           Dump_Load_Path(istream& strm, void*& base, void* par, TypeDef*& td,
+  int           Dump_Load_Path(std::istream& strm, void*& base, void* par, TypeDef*& td,
                                String& path, const char* typnm=NULL);
   // loads a path (typename path) and fills in the base and td of object (false if err)
-  int           Dump_Load_Path_impl(istream& strm, void*& base, void* par, String path);
-  int           Dump_Load_Value(istream& strm, void* base, void* par=NULL);
+  int           Dump_Load_Path_impl(std::istream& strm, void*& base, void* par, String path);
+  int           Dump_Load_Value(std::istream& strm, void* base, void* par=NULL);
   // loads the actual member values of the object (false if error)
+#endif
 
   /////////////////////////////////////////////////////////////
   //		Generate source code stubs in standard format -- timesaver

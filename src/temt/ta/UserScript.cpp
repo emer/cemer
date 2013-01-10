@@ -15,3 +15,4 @@
 
 #include "UserScript.h"
 
+using namespace std;

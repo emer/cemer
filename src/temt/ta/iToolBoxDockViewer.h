@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+typedef void (*ToolBoxProc)(iToolBoxDockViewer* tb);
 
 class TA_API iToolBoxDockViewer: public iDockViewer {
   Q_OBJECT

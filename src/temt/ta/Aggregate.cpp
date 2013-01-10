@@ -15,3 +15,25 @@
 
 #include "Aggregate.h"
 
+void Aggregate::Initialize() {
+  op = MEAN;
+}
+
+void Aggregate::Destroy() {
+}
+
+String Aggregate::GetAggName() const {
+  return GetTypeDef()->GetEnumString("Operator", op);
+}
+
+Aggregate::ValType Aggregate::MinValType() const {
+  if(op == GROUP || op == FIRST || op == LAST || op == N) return VT_STRING;
+  return VT_INT;
+}
+
+Aggregate::ValType Aggregate::MinReturnType() const {
+  if(op == MEAN || op == VAR || op == SS || op == STDEV || op == SEM) return VT_FLOAT;
+  if(op == GROUP || op == FIRST || op == LAST) return VT_STRING;
+  return VT_INT;
+}
+

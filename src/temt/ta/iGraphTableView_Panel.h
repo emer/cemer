@@ -22,7 +22,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taiField; // #IGNORE
+class taiIncrField; // #IGNORE
+class ScaleBar; // #IGNORE
+class taiListElsButton; // #IGNORE
+class taiPolyData; // #IGNORE
+class iCheckBox; // #IGNORE
 
 class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT

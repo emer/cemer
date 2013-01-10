@@ -85,17 +85,17 @@ public:
   operator Variant**() const	{ return (Variant**)NullPtrCvt("(Variant**)"); }
   operator bool**() const	{ return (bool**)NullPtrCvt("(bool**)"); }
 
-  operator ostream*() const	{ return (ostream*)NullPtrCvt("(ostream*)"); }
-  operator istream*() const	{ return (istream*)NullPtrCvt("(istream*)"); }
-  operator iostream*() const	{ return (iostream*)NullPtrCvt("(iostream*)"); }
-  operator fstream*() const	{ return (fstream*)NullPtrCvt("(fstream*)"); }
-  operator stringstream*() const { return (stringstream*)NullPtrCvt("(stringstream*)"); }
+  operator std::ostream*() const	{ return (std::ostream*)NullPtrCvt("(ostream*)"); }
+  operator std::istream*() const	{ return (std::istream*)NullPtrCvt("(istream*)"); }
+  operator std::iostream*() const	{ return (std::iostream*)NullPtrCvt("(iostream*)"); }
+  operator std::fstream*() const	{ return (std::fstream*)NullPtrCvt("(fstream*)"); }
+  operator std::stringstream*() const { return (std::stringstream*)NullPtrCvt("(stringstream*)"); }
 
-  operator ostream**() const	{ return (ostream**)NullPtrCvt("(ostream**)"); }
-  operator istream**() const	{ return (istream**)NullPtrCvt("(istream**)"); }
-  operator iostream**()	const	{ return (iostream**)NullPtrCvt("(iostream**)"); }
-  operator fstream**() const	{ return (fstream**)NullPtrCvt("(fstream**)"); }
-  operator stringstream**() const { return (stringstream**)NullPtrCvt("(stringstream**)"); }
+  operator std::ostream**() const	{ return (std::ostream**)NullPtrCvt("(ostream**)"); }
+  operator std::istream**() const	{ return (std::istream**)NullPtrCvt("(istream**)"); }
+  operator std::iostream**()	const	{ return (std::iostream**)NullPtrCvt("(iostream**)"); }
+  operator std::fstream**() const	{ return (std::fstream**)NullPtrCvt("(fstream**)"); }
+  operator std::stringstream**() const { return (std::stringstream**)NullPtrCvt("(stringstream**)"); }
 
   operator taBase*() const	{ return (taBase*)NullPtrCvt("(taBase*)"); }
   operator taBase**() const 	{ return (taBase**)NullPtrCvt("(taBase**)"); }
@@ -497,8 +497,8 @@ public:
   String&	PrintType(String& fh) const;
   String&	PrintInherit(String& fh) const;
 
-  void		Save(ostream& strm = cout);
-  void		Load(istream& strm = cin);
+  void		Save(std::ostream& strm = std::cout);
+  void		Load(std::istream& strm = std::cin);
 
   // special functions
   virtual String GetVal() 	 { return val; }
@@ -821,8 +821,8 @@ public:
   String	PrintFStr() const;
   String&	PrintType(String& fh) const;
 
-  void		Save(ostream& fh = cout);
-  void		Load(istream& fh = cin);
+  void		Save(std::ostream& fh = std::cout);
+  void		Load(std::istream& fh = std::cin);
 
   void		Constr();
   void 		Constr(int no);
@@ -965,8 +965,8 @@ public:
   String&	PrintInherit(String& fh) const  { return ptr.El()->PrintInherit(fh); }
 
   // saving and loading objects to/from files (special format)
-  void		Save(ostream& fh = cout)	{ ptr.El()->Save(fh); }
-  void		Load(istream& fh = cin)		{ ptr.El()->Load(fh); }
+  void		Save(std::ostream& fh = std::cout)	{ ptr.El()->Save(fh); }
+  void		Load(std::istream& fh = std::cin)	{ ptr.El()->Load(fh); }
 
   // token information about a certain type
   String&	PrintTokens(String& fh) const	{ return ptr.El()->PrintTokens(fh); }
@@ -1017,17 +1017,17 @@ public:
   operator String**() const	{ return (String**)*(ptr.El()); }
   operator bool**() const	{ return (bool**)*(ptr.El()); }
 
-  operator ostream*() const	{ return (ostream*)*(ptr.El()); }
-  operator istream*() const	{ return (istream*)*(ptr.El()); }
-  operator iostream*() const	{ return (iostream*)*(ptr.El()); }
-  operator fstream*() const	{ return (fstream*)*(ptr.El()); }
-  operator stringstream*() const { return (stringstream*)*(ptr.El()); }
+  operator std::ostream*() const	{ return (std::ostream*)*(ptr.El()); }
+  operator std::istream*() const	{ return (std::istream*)*(ptr.El()); }
+  operator std::iostream*() const	{ return (std::iostream*)*(ptr.El()); }
+  operator std::fstream*() const	{ return (std::fstream*)*(ptr.El()); }
+  operator std::stringstream*() const { return (std::stringstream*)*(ptr.El()); }
 
-  operator ostream**() const	{ return (ostream**)*(ptr.El()); }
-  operator istream**() const	{ return (istream**)*(ptr.El()); }
-  operator iostream**() const	{ return (iostream**)*(ptr.El()); }
-  operator fstream**() const	{ return (fstream**)*(ptr.El()); }
-  operator stringstream**() const	{ return (stringstream**)*(ptr.El()); }
+  operator std::ostream**() const	{ return (std::ostream**)*(ptr.El()); }
+  operator std::istream**() const	{ return (std::istream**)*(ptr.El()); }
+  operator std::iostream**() const	{ return (std::iostream**)*(ptr.El()); }
+  operator std::fstream**() const	{ return (std::fstream**)*(ptr.El()); }
+  operator std::stringstream**() const	{ return (std::stringstream**)*(ptr.El()); }
 
   // support for external types
   operator taBase*() const	{ return (taBase*)*(ptr.El()); }
@@ -1361,8 +1361,8 @@ public:
   String&	PrintInherit(String& fh) const;
 
   // saving and loading objects to/from files (special format)
-  void		Save(ostream& fh = cout);
-  void		Load(istream& fh = cin);
+  void		Save(std::ostream& fh = std::cout);
+  void		Load(std::istream& fh = std::cin);
 
   // constructors
   void 		Constr();

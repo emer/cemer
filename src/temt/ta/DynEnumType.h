@@ -48,8 +48,10 @@ public:
   virtual int   FindNameIdx(const String& nm) const { return enums.FindNameIdx(nm); }
   // find index of given name value
 
-  virtual ostream& OutputType(ostream& fh) const;
+#ifndef __MAKETA__
+  virtual std::ostream& OutputType(std::ostream& fh) const;
   // output type information in C++ syntax
+#endif
 
   virtual bool  EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (can be number or name) -- WARNING: replaces any existing enums.  handy for providing chooser access to column values

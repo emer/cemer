@@ -149,8 +149,10 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
-  override int  Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  override int  Dump_Load_Value(istream& strm, taBase* par=NULL);
+#ifndef __MAKETA__
+  override int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
+  override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+#endif
   void          Copy_(const MatrixGeom& cp);
   explicit      MatrixGeom(int init_size);
 

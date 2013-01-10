@@ -15,6 +15,8 @@
 
 #include "Variant_Matrix.h"
 
+using namespace std;
+
 const Variant Variant_Matrix::blank;
 
 int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {

@@ -15,3 +15,39 @@
 
 #include "RndSeed_List.h"
 
+void RndSeed_List::MakeSeeds(int n_seeds) {
+  seeds.SetSize(n_seeds);
+}
+
+void RndSeed_List::NewSeeds() {
+  if(seeds.size == 0) return;
+  MTRnd::seed_time_pid();
+  int rnd = MTRnd::genrand_int31();
+  for(int i=0;i<seeds.size;i++) {
+    int seed = rnd + i;
+    seeds.FastEl(i)->Init(seed);
+  }
+}
+
+void RndSeed_List::UseSeed(int idx) {
+  if(seeds.size == 0) {
+    taMisc::Error("RndSeed_List: no seeds present in list!");
+    return;
+  }
+  int use_idx = idx % seeds.size;
+  TestWarning(idx != use_idx, "UseSeed", "requested seed beyond end of list, wrapping around!");
+  seeds.FastEl(use_idx)->OldSeed();
+}
+
+taBase::DumpQueryResult RndSeed_List::Dump_QuerySaveMember(MemberDef* md) {
+  if(md->name == "seeds") {
+    if(taMisc::is_undo_saving) {
+      if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
+        // no need to save b/c unaffected by changes elsewhere..
+        return DQR_NO_SAVE;
+      }
+    }
+  }
+  return inherited::Dump_QuerySaveMember(md);
+}
+

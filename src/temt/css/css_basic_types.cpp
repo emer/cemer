@@ -27,6 +27,9 @@
 #include "css_qtdialog.h"
 #endif
 
+using namespace std;
+
+
 //////////////////////////
 //      cssInt          //
 //////////////////////////

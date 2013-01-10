@@ -15,3 +15,16 @@
 
 #include "UndoDiffThreadMgr.h"
 
+void UndoDiffThreadMgr::Initialize() {
+  n_threads = 2;                // don't use 0, just 1..
+  task_type = &TA_UndoDiffTask;
+}
+
+void UndoDiffThreadMgr::Destroy() {
+}
+
+void UndoDiffThreadMgr::Run() {
+  n_threads = 2;                // don't use 0, just 1..
+  InitAll();
+  RunThreads();                 // just run the thread, not main guy
+}

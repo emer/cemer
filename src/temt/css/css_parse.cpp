@@ -3952,9 +3952,9 @@ yyreduce:
 	    while(((c = cssMisc::cur_top->Getc()) != '}') && (c != EOF)) inp += (char)c;
 	    cssSStream* ss = new cssSStream();
 	    cssMisc::cur_top->AddLiteral(ss);
- 	    stringstream* sss = (stringstream*)ss->GetVoidPtr();
+            std::stringstream* sss = (std::stringstream*)ss->GetVoidPtr();
 	    *sss << inp;
-	    sss->seekg(0, ios::beg);
+	    sss->seekg(0, std::ios::beg);
 	    Code3(ss, cssBI::arg_swap, cssBI::rshift);
  	    Code1(cssBI::sstream_rewind); /* rewind stream for next use.. */ }
     break;

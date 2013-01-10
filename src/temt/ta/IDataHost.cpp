@@ -15,3 +15,18 @@
 
 #include "IDataHost.h"
 
+void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
+  iMainWindowViewer* dv = viewerWindow();
+  if (!dv) return;
+  //TODO: we really should check to make sure our class expresses these,
+  // and not include the last two if not expressed
+  if (set_it) {
+    dv->SetClipboardHandler(item,
+      SLOT(this_GetEditActionsEnabled(int&)),
+      SLOT(this_EditAction(int)),
+      SLOT(this_SetActionsEnabled()),
+      SIGNAL(UpdateUi()) );
+  } else {
+    dv->SetClipboardHandler(NULL);
+  }
+}

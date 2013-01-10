@@ -481,9 +481,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taImage.h
   taCanvas.h
 
-  ImageProcCall.h
-  ImgProcThreadBase.h
   ImgProcCallTask.h
+  ImgProcCallThreadMgr.h
+  ImgProcThreadBase.h
+  ImageProcCall.h
 
   DoGFilter.h
   GaborFilter.h
@@ -646,7 +647,44 @@ set(ta_HEADS_MAKETA_MOC
   taiDataHostBase.h
   taiEditDataHost.h
   iMethodButtonMgr.h
+
+  iBrowseHistory.h
+
+  iDataPanel.h
+  iDataPanelFrame.h
   EditDataPanel.h
+  iViewPanelFrame.h
+  iDataPanelSetBase.h
+  iViewPanelSet.h
+  iDataPanelSet.h
+
+  iListDataPanel.h
+  iTreeViewItem.h
+  iUserDataPanel.h
+
+  iTextDataPanel.h
+
+  iProgramPanelBase.h
+  iProgramPanel.h
+  iProgramGroupPanel.h
+  iProgramCtrlPanel.h
+  iProgramEditor.h
+  iProgramViewScriptPanel.h
+
+  iSelectEditPanel.h
+
+  iDocEditDataPanel.cpp
+  iDocDataPanel.h
+
+  iSearchDialog.h
+
+  iMatrixPanel.h
+
+  iDataTablePanel.h
+  iDataTableView_Panel.h
+  iGridTableView_Panel.h
+  iGraphTableView_Panel.h
+  iDataTableEditor.h
 )
 
 # todo: further subdivide following into those that need moc and not..
@@ -663,6 +701,10 @@ set(ta_HEADS_NOMAKETA
   IPlugin.h
   taPluginInst_PList.h
   taPlugins.h
+
+  DynMethod_PtrList.h
+
+  ISelectableHost.h
 )
 
 set(ta_HEADS_NOMAKETA_MOC
@@ -672,10 +714,12 @@ set(ta_HEADS_NOMAKETA_MOC
   taBaseAdapter.h
   TemtClientAdapter.h
   TemtServerAdapter.h
+  taRootBaseAdapter.h
 
   taiMisc.h
 
   iTopLevelWindow_List.h
+  taApplication.h
 
   ClusterManager.h
   SubversionClient.h
@@ -746,14 +790,10 @@ set(ta_HEADS_NOMAKETA_MOC
   taiStringDataHost.h
   taiWizardDataHost.h
   iHostDialog.h
-  iDataPanelFrame.h
-  iDocDataPanel.h
   taiChoiceDialog.h
   HiLightButton.h
 
-  ISelectableHost.h
   iBaseClipWidgetAction.h
-  iDataTableEditor.h
   taiEditTableWidget.h
 
   IDataViewWidget.h
@@ -766,17 +806,15 @@ set(ta_HEADS_NOMAKETA_MOC
   iTabBarBase.h
   iTabBar.h
   iTabView.h
-  iDataPanel.h
   iToolBar.h
+
+  iWebView.h
 
   iTreeView.h
   iTreeSearch.h
-  iListDataPanel.h
-  iSearchDialog.h
   tabODataLink.h
   tabListDataLink.h
   tabGroupDataLink.h
-  iTreeViewItem.h
   taiTreeDataNode.h
   taiListDataNode.h
   tabTreeDataNode.h
@@ -788,22 +826,14 @@ set(ta_HEADS_NOMAKETA_MOC
   tabGroupTreeDataNode.h
   iApplicationToolBar.h
   iToolBar_List.h
-  iBrowseHistory.h
-  iDataPanel_PtrList.h
   iTabView_PtrList.h
-  iViewPanelFrame.h
-  iDataPanelSetBase.h
   iDataPanelSetButton.h
-  iViewPanelSet.h
-  iDataPanelSet.h
-  iTextDataPanel.h
   tabDefChildRef.h
   iHelpBrowser.h
 
   iTableView.h
   iMatrixTableView.h
   iMatrixEditor.h
-  iMatrixPanel.h
   taTypeInfoTreeDataNode.h
   taTypeSpaceTreeDataNode.h
   iClassBrowseViewer.h
@@ -821,31 +851,18 @@ set(ta_HEADS_NOMAKETA_MOC
   gpiCompactList_ElDataList.h
   iDocEditDataPanel.h
 
-  iProgramEditor.h
-  iProgramViewScriptPanel.h
-  iProgramPanelBase.h
-  iProgramGroupPanel.h
-  iProgramPanel.h
   iProgramToolBar.h
-  iProgramCtrlPanel.h
-
-  iSelectEditPanel.h
 
   taiObjDiffBrowserFilter.h
   taiObjDiffBrowser.h
 
   iUserDataDataHost.h
-  iUserDataPanel.h
   DirectoryCatalog.h
   ImageReader.h
 
   MatrixTableModel.h
   DataTableModel.h
-  iDataTableView_Panel.h
-  iGridTableView_Panel.h
-  iGraphTableView_Panel.h
   tabDataTableViewType.h
-  iDataTablePanel.h
   iDataTableView.h
   DataTableDelegate.h
   iDataTablePanel_Mbr.h
@@ -923,8 +940,8 @@ set(ta_HEADS
 
 # headers that need Qt moc run
 set(ta_HEADS_MOC
-  ${ta_HEADS_MAKETA_MOC}
-  ${ta_HEADS_NOMAKETA_MOC}
+  # ${ta_HEADS_MAKETA_MOC}
+  # ${ta_HEADS_NOMAKETA_MOC}
   # non-gui:
   # ta_type.h
   # ta_qtclipdata.h
@@ -1421,6 +1438,7 @@ set(ta_SRCS_MAKETA
   taiTableDataMimeItem.cpp
 
   taRootBase.cpp
+  taRootBaseAdapter.cpp
   tabMisc.cpp
 
   taAudioProc.cpp
@@ -1429,8 +1447,8 @@ set(ta_SRCS_MAKETA
   taCanvas.cpp
 
   ImageProcCall.cpp
-  ImgProcThreadBase.cpp
   ImgProcCallThreadMgr.cpp
+  ImgProcThreadBase.cpp
   ImgProcCallTask.cpp
 
   DoGFilter.cpp
@@ -1586,6 +1604,8 @@ set(ta_SRCS_MAKETA
   VEJointView.cpp
   VEObjectView.cpp
   VESpaceView.cpp
+
+  iDataPanel_PtrList.h
 )
 
 # these correspond to TA_HEADS_NOMAKETA
@@ -1598,10 +1618,13 @@ set(ta_SRCS_NOMAKETA
   DumpPathTokenList.cpp
   dumpMisc.cpp
 
+  DynMethod_PtrList.cpp
+
   taiMisc.cpp
   iTopLevelWindow_List.cpp
 
   PublishDocsDialog.cpp
+  taApplication.cpp
 
   IDataHost.cpp
   taiDataHost.cpp
@@ -1691,6 +1714,8 @@ set(ta_SRCS_NOMAKETA
   iDataPanel.cpp
   iToolBar.cpp
 
+  iWebView.cpp
+
   iTreeView.cpp
   iTreeSearch.cpp
   iListDataPanel.cpp
@@ -1741,7 +1766,6 @@ set(ta_SRCS_NOMAKETA
   gpiList_ElDataList.cpp
   gpiCompactList_ElData.cpp
   gpiCompactList_ElDataList.cpp
-  iDocEditDataPanel.cpp
 
   iProgramEditor.cpp
   iProgramViewScriptPanel.cpp

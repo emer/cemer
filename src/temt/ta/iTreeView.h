@@ -23,6 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifndef __MAKETA__
+typedef QMap<QString, QVariant> QMap_qstr_qvar; // the QMap type that QVariant supports
+// maps are always refcounted in Qt, similar to QString, so you pass them by value
+#endif
 
 class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems

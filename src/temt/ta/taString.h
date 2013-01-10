@@ -216,7 +216,7 @@ public:
                                  char terminator = '\n',
                                  int discard_terminator = 1);
   TA_API friend int     readline_auto(std::istream& strm, String& x);
-  int                   Load_str(istream& istrm); // load contents from a stream
+  int                   Load_str(std::istream& istrm); // load contents from a stream
   int                   Save_str(std::ostream& ostrm); // save contents to a stream
 #endif
 

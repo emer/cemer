@@ -98,8 +98,8 @@ void taiPolyData::GetImage_impl(const void* base_) {
 }
 
 void taiPolyData::GetValue_impl(void* base_) const {
-  ostream* rec_scrpt = taMisc::record_script; // don't record script stuff now
-  taMisc::record_script = NULL;
+  bool rec_on = taMisc::record_on; // don't record script stuff now
+  taMisc::record_on = false;
   bool first_diff = true;
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
@@ -112,6 +112,6 @@ void taiPolyData::GetValue_impl(void* base_) const {
   if (m_child_base && !HasFlag(flgNoUAE)) {
      m_child_base->UpdateAfterEdit();   // hook to update the contents after an edit..
   }
-  taMisc::record_script = rec_scrpt;
+  taMisc::record_on = rec_on;
 }
 

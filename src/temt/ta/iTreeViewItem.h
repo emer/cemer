@@ -17,7 +17,12 @@
 #define iTreeViewItem_h 1
 
 // parent includes:
-#include <class>
+#ifndef __MAKETA__
+#include "itreewidget.h"
+#else
+class iTreeWidgetItem; // #IGNORE
+#endif
+
 #include <IDataLinkClient>
 #include <IObjectSelectable>
 

@@ -26,6 +26,7 @@
 class TypeDef; // 
 class taBase; // 
 
+#define MAX_DFT_LONGS (int)((256 / (sizeof(long) * 8)) + 1)
 
 class TA_API TypeDefault : public taNBase {
   // ##EXT_def #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Project Contains a default object of a type
@@ -47,7 +48,9 @@ public:
   virtual void	SetTypeDefaults(taBase* tok);	   // set defaults for a given token
 
   void	Dump_Load_pre();
-  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+#ifndef __MAKETA__
+  int	Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+#endif
 
   void	InitLinks();
   TA_BASEFUNS(TypeDefault);

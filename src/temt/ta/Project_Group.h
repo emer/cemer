@@ -39,7 +39,9 @@ public:
   taProject*    NewFromTemplateByName(const String& proj_nm);
   // #CAT_Project create a new project from a library of existing project templates, looking up by name (NULL if name not found)
 
-  override int          Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
+#ifndef __MAKETA__
+  override int          Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
+#endif
   override int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
 
   void  InitLinks();

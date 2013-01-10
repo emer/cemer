@@ -15,3 +15,38 @@
 
 #include "Project_Group.h"
 
+using namespace std;
+
+void Project_Group::InitLinks() {
+  inherited::InitLinks();
+  if(proj_templates.not_init) {
+    taBase::Ref(proj_templates);
+    proj_templates.FindProjects();
+  }
+}
+
+
+int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
+  // chg working dir to that of project -- simplifies lots of stuff immensely
+  QFileInfo fi(fname);
+  QDir::setCurrent(fi.absolutePath());
+  int rval = inherited::Load(fname, loaded_obj_ptr);
+  return rval;
+}
+
+int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
+  int prj_sz = leaves;
+  int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
+  // note: used to do Dump_Load_post here but now it is done where it should be..
+  return rval;
+}
+
+ProjTemplates Project_Group::proj_templates;
+
+taProject* Project_Group::NewFromTemplate(ProjTemplateEl* proj_type) {
+  return proj_templates.NewProject(proj_type, this);
+}
+
+taProject* Project_Group::NewFromTemplateByName(const String& prog_nm) {
+  return proj_templates.NewProjectFmName(prog_nm, this);
+}

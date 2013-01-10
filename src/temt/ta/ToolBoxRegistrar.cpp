@@ -15,3 +15,9 @@
 
 #include "ToolBoxRegistrar.h"
 
+ToolBoxRegistrar::ToolBoxRegistrar(ToolBoxProc proc_)
+: proc(proc_)
+{
+  instances()->Add(this);
+}
+

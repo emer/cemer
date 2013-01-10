@@ -28,6 +28,8 @@
 #include "ta_qttype_def.h"
 #endif
 
+using namespace std;
+
 /////////////////////////
 //  cssTA	       //
 /////////////////////////

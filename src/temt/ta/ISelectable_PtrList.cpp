@@ -15,3 +15,69 @@
 
 #include "ISelectable_PtrList.h"
 
+taPtrList_impl* ISelectable_PtrList::insts;
+
+ISelectable_PtrList::ISelectable_PtrList(const ISelectable_PtrList& cp)
+  : taPtrList<ISelectable>(cp)
+{
+  Initialize();
+}
+
+void ISelectable_PtrList::Initialize() {
+  // add to managed list
+  if (!insts) {
+    insts = new taPtrList_impl;
+  }
+  insts->Add_(this);
+}
+
+ISelectable_PtrList::~ISelectable_PtrList() {
+  // remove from managed list
+  if (insts) {
+    insts->RemoveEl_(this);
+    if (insts->size == 0) {
+      delete insts;
+      insts = NULL;
+    }
+  }
+}
+
+// greatest common subtype of items 1-N
+TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ)
+{
+  if (size == 0) return NULL;
+  taiDataLink* link = FastEl(0)->effLink(gc_typ);
+  if (!link) return NULL; // gui-only object, no ref
+  TypeDef* rval = link->GetDataTypeDef();
+  for (int i = 1; (rval && (i < size)); ++i) {
+    link = FastEl(i)->effLink(gc_typ);
+    if (!link) return NULL; // gui-only, not commensurable
+    rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
+  }
+  return rval;
+}
+
+// greatest common subtype of items 2-N
+TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ)
+{
+  if (size <= 1) return NULL;
+  taiDataLink* link = FastEl(1)->effLink(gc_typ);
+  if (!link) return NULL; // gui-only object, no ref
+  TypeDef* rval = link->GetDataTypeDef();
+  for (int i = 2; (rval && (i < size)); ++i) {
+    link = FastEl(i)->effLink(gc_typ);
+    if (!link) return NULL; // gui-only, not commensurable
+    rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
+  }
+  return rval;
+}
+
+TypeDef* ISelectable_PtrList::Type1(ISelectable::GuiContext gc_typ) {
+  if (size == 0) return NULL;
+  else {
+    taiDataLink* link = FastEl(0)->effLink(gc_typ);
+    if (link) return link->GetDataTypeDef();
+    else      return NULL; // gui-only object, no ref
+  }
+}
+

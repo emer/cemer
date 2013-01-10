@@ -43,37 +43,37 @@ public:
   virtual int   FindHashVal(taHashVal hash, const String& str = _nilString) const;
   // find value associated with given hash code (-1 if not found)
   virtual int   FindHashValString(const String& str) const
-  { return FindHashVal(HashCode_String(str), str); }
+  { return FindHashVal(taHashEl::HashCode_String(str), str); }
   // find value associated with given string (-1 if not found)
   virtual int   FindHashValPtr(const void* ptr) const
-  { return FindHashVal(HashCode_Ptr(ptr)); }
+  { return FindHashVal(taHashEl::HashCode_Ptr(ptr)); }
   // find value associated with given pointer (-1 if not found)
 
   virtual void  AddHash(taHashVal hash, int val, const String& str = _nilString);
   // add a new item to the hash table
   virtual void  AddHashString(const String& str, int val)
-  { AddHash(HashCode_String(str), val, str); }
+  { AddHash(taHashEl::HashCode_String(str), val, str); }
   // add a new string item to the hash table
   virtual void  AddHashPtr(const void* ptr, int val)
-  { AddHash(HashCode_Ptr(ptr), val); }
+  { AddHash(taHashEl::HashCode_Ptr(ptr), val); }
   // add a new pointer item to the hash table
 
   virtual bool  RemoveHash(taHashVal hash, const String& str = _nilString);
   // remove given hash code from table
   virtual bool  RemoveHashString(const String& str)
-  { return RemoveHash(HashCode_String(str), str); }
+  { return RemoveHash(taHashEl::HashCode_String(str), str); }
   // remove given string from table
   virtual bool  RemoveHashPtr(const void* ptr)
-  { return RemoveHash(HashCode_Ptr(ptr)); }
+  { return RemoveHash(taHashEl::HashCode_Ptr(ptr)); }
   // remove given pointer from table
 
   virtual bool  UpdateHashVal(taHashVal hash, int val, const String& str = _nilString);
   // update value associated with hash item
   virtual bool  UpdateHashValString(const String& str, int val)
-  { return UpdateHashVal(HashCode_String(str), val, str); }
+  { return UpdateHashVal(taHashEl::HashCode_String(str), val, str); }
   // update value associated with string item
   virtual bool  UpdateHasValPtr(const void* ptr, int val)
-  { return UpdateHashVal(HashCode_Ptr(ptr), val); }
+  { return UpdateHashVal(taHashEl::HashCode_Ptr(ptr), val); }
   // update value associated with ptr item
 
   void          InitList_();

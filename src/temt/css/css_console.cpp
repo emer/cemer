@@ -92,14 +92,14 @@ void cssConsole::setPrompt(const QString& value) {
     if (thread->prompt == value) return; // test is threadsafe/threadcorrect
     //TODO: try to erase last prompt if any
     thread->prompt = value; // threadsafe
-    cout << value.toLatin1().data();
+    std::cout << value.toLatin1().data();
   }
 }
 
 void cssConsole::Start() {
-    if (!thread) return;
-    //TODO: maybe need to check not already started???
-    thread->start();
+  if (!thread) return;
+  //TODO: maybe need to check not already started???
+  thread->start();
 } 
 
 

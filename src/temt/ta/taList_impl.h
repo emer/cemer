@@ -111,13 +111,15 @@ public:
                                        MemberDef* memb_def=NULL, const void* par=NULL,
                                        TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
+#ifndef __MAKETA__
   override void Dump_Save_GetPluginDeps();
-  override int  Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
-  virtual int   Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent); // #IGNORE
+  override int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0);
+  virtual int   Dump_Save_PathR_impl(std::ostream& strm, taBase* par, int indent); // #IGNORE
   override void Dump_Load_pre();
   override taBase* Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ);
-  override int  Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+#endif
 
   override void Search_impl(const String& srch, taBase_PtrList& items,
                             taBase_PtrList* owners = NULL,

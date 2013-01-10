@@ -19,15 +19,19 @@
 // parent includes:
 
 // member includes:
+#include <ISelectable>
+#include <ISelectable_PtrList>
+#include <DynMethod_PtrList>
+#include <taiAction_List>
 
 // declare all other types mentioned but not required to include:
-class ISelectable; // 
 class QObject; // 
 class iMainWindowViewer; // 
 class taProject; // 
 class ISelectable_PtrList; // 
 class QWidget; // 
-
+class SelectableHostHelper; // #IGNORE
+class taiMimeSource; //
 
 class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
 friend class SelectableHostHelper;

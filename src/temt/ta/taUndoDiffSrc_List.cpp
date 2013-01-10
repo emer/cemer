@@ -15,3 +15,20 @@
 
 #include "taUndoDiffSrc_List.h"
 
+void taUndoDiffSrc_List::Initialize() {
+  SetBaseType(&TA_taUndoDiffSrc);
+  st_idx = 0;
+  length = 0;
+}
+
+void taUndoDiffSrc_List::Copy_(const taUndoDiffSrc_List& cp) {
+  st_idx = cp.st_idx;
+  length = cp.length;
+}
+
+void taUndoDiffSrc_List::Reset() {
+  inherited::Reset();
+  st_idx = 0;
+  length = 0;
+}
+

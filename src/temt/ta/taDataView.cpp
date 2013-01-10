@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taDataView.h"
+#include <taMisc>
 
 void taDataView::Initialize() {
   m_data = NULL;
@@ -55,6 +56,10 @@ void taDataView::ChildAdding(taDataView* child) {
 
 // arbitrary number, not likely to be higher than this
 #define MAX_VIS_CNT 6
+
+void taDataView::DataUpdateView_impl() {
+  if(taMisc::gui_active) Render_impl();
+} 
 
 void taDataView::SetVisible(bool showing) {
   DataViewAction act = (showing) ? SHOWING_IMPL : HIDING_IMPL;

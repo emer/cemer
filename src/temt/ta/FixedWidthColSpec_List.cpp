@@ -15,3 +15,6 @@
 
 #include "FixedWidthColSpec_List.h"
 
+void FixedWidthColSpec_List::Initialize() {
+  SetBaseType(&TA_FixedWidthColSpec);
+}

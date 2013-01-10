@@ -30,14 +30,14 @@
 // # include <ode/ode.h>
 // #endif
 
-#include <taVector2i>
-#include <PosVector2i>
-#include <taVector3i>
-#include <PosVector3i>
-#include <taVector2f>
-#include <taVector3f>
-#include <taAxisAngle>
-#include <taQuaternion>
-#include <taTransform>
+// #include <taVector2i>
+// #include <PosVector2i>
+// #include <taVector3i>
+// #include <PosVector3i>
+// #include <taVector2f>
+// #include <taVector3f>
+// #include <taAxisAngle>
+// #include <taQuaternion>
+// #include <taTransform>
 
 #endif // tdgeometry_h

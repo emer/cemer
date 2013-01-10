@@ -49,6 +49,7 @@ class taFiler; //
 class taiMimeSource; //
 class IDataLinkClient; //
 class QVariant; // #IGNORE
+class iColor;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -781,8 +782,12 @@ public:
     int compress=-1, const String& filetypes = _nilString);
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
-  virtual int           Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
+#ifndef __MAKETA__
+  virtual int           Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   // #EXPERT #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+  virtual int           Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0);
+  // #EXPERT #CAT_File Save object data to a file stream
+#endif
   taFiler*              GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -791,8 +796,6 @@ public:
   virtual int           Load_cvt(taFiler*& flr);
   // #IGNORE convert stream from old to new format (if needed)
 
-  virtual int           Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
-  // #EXPERT #CAT_File Save object data to a file stream
   taFiler*              GetSaveFiler(const String& fname, String ext = _nilString,
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -840,7 +843,9 @@ public:
   //////////////////////////////////////////////////////////////////////
   //    Low-level dump load/save
 public:
-  virtual int           Dump_Load_impl(istream& strm, taBase* par=NULL) // #IGNORE
+
+#ifndef __MAKETA__
+  virtual int           Dump_Load_impl(std::istream& strm, taBase* par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual taBase*       Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ);
   // #IGNORE load a new object that is an owned pointer that lives on 'this' object, of given type and path -- returns ptr to new obj or NULL if failure
@@ -848,7 +853,7 @@ public:
   // #IGNORE 'this' is the parent, and el_path specifies path to child -- create appropriate obj -- returns ptr to new obj or NULL if failure -- only really defined for taList..
   virtual void          Dump_Load_pre() {};
   // #IGNORE -- called just before single-object Load_strm -- use to reset stuff prior to loading
-  virtual int           Dump_Load_Value(istream& strm, taBase* par=NULL) // #IGNORE
+  virtual int           Dump_Load_Value(std::istream& strm, taBase* par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
   virtual void          Dump_Load_post() {}
   // #IGNORE called after load, in normal (non loading) context if has DUMP_LOAD_POST directive
@@ -858,25 +863,26 @@ public:
   // note: this routine (and overrides) is in ta_dump.cpp
   virtual void          Dump_Save_pre() {}
   // #IGNORE called before _Path, enables jit updating before save
-  virtual int           Dump_Save_impl(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0)
   { Dump_Save_pre();
     return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int           Dump_Save_inline(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_Save_inline(std::ostream& strm, taBase* par=NULL, int indent=0)
   { Dump_Save_pre();
     return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int           Dump_Save_Path(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_Save_Path(std::ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_Path(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int           Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_Value(strm, (void*)this, par, indent); } // #IGNORE
 
-  virtual int           Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); }  // #IGNORE
-  virtual int           Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0)
+  virtual int           Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
   virtual DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
   virtual bool          Dump_QuerySaveChildren()
   {return true;} // #IGNORE override to make save decision at runtime
+#endif
 
 
   ///////////////////////////////////////////////////////////////////////////
@@ -1478,9 +1484,11 @@ private:
 /////////////////////////////////////////////
 //	Operators
 
-inline istream& operator>>(istream &strm, taBase &obj)
+#ifndef __MAKETA__
+inline std::istream& operator>>(std::istream &strm, taBase &obj)
 { obj.Load_strm(strm); return strm; }
-inline ostream& operator<<(ostream &strm, taBase &obj)
+inline std::ostream& operator<<(std::ostream &strm, taBase &obj)
 { obj.Save_strm(strm); return strm; }
+#endif
 
 #endif // taBase_h

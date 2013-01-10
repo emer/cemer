@@ -29,6 +29,11 @@
 #include <DumpFileCvtList>
 #include <ContextFlag>
 
+#ifndef __MAKETA__
+#include <iostream>
+#include <fstream>
+#endif
+
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
 class TypeDef; // 
@@ -394,11 +399,12 @@ public:
 
   static String         compress_sfx;   // #SAVE #CAT_File #EXPERT suffix to use for compressing files
 
-  static ostream*       record_script;  // #IGNORE #CAT_File stream to use for recording a script of interface activity (NULL if no record)
+  static bool           record_on;      // #CAT_File #NO_SAVE are we recording?
+  static String         record_script;  // #CAT_File #NO_SAVE string to use for recording a script of interface activity (NULL if no record)
 
   static String         edit_cmd;       // #SAVE #CAT_File how to run editor
 #ifdef TA_OS_WIN
-  static String     plugin_make_env_cmd;
+  static String         plugin_make_env_cmd;
   // #SAVE #CAT_File command to set the environment for making (compiling) a plugin -- default is: call \"C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\vcvarsall.bat\" x86 -- change last arg to amd64 for a 64bit platform
 #endif
 
@@ -482,7 +488,9 @@ public:
   static int            err_cnt; //  #READ_ONLY #NO_SAVE cumulative error count; can be used/reset by Server to detect for errors after it calls a routine
   static int            CheckClearErrCnt(); // gets current value, and clears
 
-  static fstream        log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
+#ifndef __MAKETA__
+  static std::fstream        log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
+#endif
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
 
   static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
@@ -648,7 +656,7 @@ public:
   static void   Init_DMem(int& argc, const char* argv[]);
   // #IGNORE initialize distributed memory stuff
 
-  static void   HelpMsg(ostream& strm = cerr);
+  static void   HelpMsg(String& strm);
   // #CAT_Args generate a help message about program args, usage, etc
 
   static void   AddArgName(const String& flag, const String& name);
@@ -864,7 +872,7 @@ public:
   /////////////////////////////////////////////////
   //    Recording GUI actions to css script
 
-  static void   StartRecording(ostream* strm);
+  static void   StartRecording();
   // #CAT_Script sets record_strm and record_cursor
   static void   StopRecording();
   // #CAT_Script unsets record_strm and record_cursor
@@ -882,50 +890,51 @@ public:
   ////////////////////////////////////////////////////////////////////////
   //    File Parsing Stuff for Dump routines: Input
 
+#ifndef __MAKETA__
   static String LexBuf; // #NO_SAVE #HIDDEN a buffer, contains last thing read by read_ funs
 
   // return value is the next character in the stream
   // peek=true means that return value was not read, but was just peek'd
 
-  static int    skip_white(istream& strm, bool peek = false);
+  static int    skip_white(std::istream& strm, bool peek = false);
   // #CAT_Parse skip over all whitespace
-  static int    skip_white_noeol(istream& strm, bool peek = false);
+  static int    skip_white_noeol(std::istream& strm, bool peek = false);
   // #CAT_Parse don't skip end-of-line
-  static int    skip_till_start_quote_or_semi(istream& strm, bool peek = false);
+  static int    skip_till_start_quote_or_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse used to seek up to an opening " for a string; will terminate on a ;
-  static int    read_word(istream& strm, bool peek = false);
+  static int    read_word(std::istream& strm, bool peek = false);
   // #CAT_Parse reads only contiguous 'isalnum' and _ -- does skip_white first
-  static int    read_nonwhite(istream& strm, bool peek = false);
+  static int    read_nonwhite(std::istream& strm, bool peek = false);
   // #CAT_Parse read any contiguous non-whitespace string -- does skip_white first
-  static int    read_nonwhite_noeol(istream& strm, bool peek = false);
+  static int    read_nonwhite_noeol(std::istream& strm, bool peek = false);
   // #CAT_Parse read any contiguous non-whitespace string, does skip_white_noeol first (string must be on this line)
-  static int    read_till_eol(istream& strm, bool peek = false);
+  static int    read_till_eol(std::istream& strm, bool peek = false);
   // #CAT_Parse eol = end of line
-  static int    read_till_semi(istream& strm, bool peek = false);
+  static int    read_till_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse semi = ;
-  static int    read_till_lbracket(istream& strm, bool peek = false);
+  static int    read_till_lbracket(std::istream& strm, bool peek = false);
   // #CAT_Parse lbracket = {
-  static int    read_till_lb_or_semi(istream& strm, bool peek = false);
+  static int    read_till_lb_or_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse lb = { or ;
-  static int    read_till_rbracket(istream& strm, bool peek = false);
+  static int    read_till_rbracket(std::istream& strm, bool peek = false);
   // #CAT_Parse rbracket = } -- does depth counting to skip over intervening paired { }
-  static int    read_till_rb_or_semi(istream& strm, bool peek = false);
+  static int    read_till_rb_or_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse rbracket } or ; -- does depth counting to skip over intervening paired { }
-  static int    read_till_end_quote(istream& strm, bool peek = false); // #CAT_Parse
+  static int    read_till_end_quote(std::istream& strm, bool peek = false); // #CAT_Parse
   // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "
-  static int    read_till_end_quote_semi(istream& strm, bool peek = false);
+  static int    read_till_end_quote_semi(std::istream& strm, bool peek = false);
   // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
-  static int    skip_past_err(istream& strm, bool peek = false);
+  static int    skip_past_err(std::istream& strm, bool peek = false);
   // #CAT_Parse skips to next rb or semi (robust)
-  static int    skip_past_err_rb(istream& strm, bool peek = false);
+  static int    skip_past_err_rb(std::istream& strm, bool peek = false);
   // #CAT_Parse skips to next rbracket (
 
   static int    find_not_in_quotes(const String& str, char c, int start = 0);
   // #CAT_Parse find character c in the string, starting at given index (- = from end), making sure that the character is not contained within a quoted string within the overall string
 
-  static int    replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl_list);
+  static int    replace_strings(std::istream& istrm, std::ostream& ostrm, NameVar_PArray& repl_list);
   // #CAT_File replace a list of strings (no regexp) in input file istrm to output file ostrm (name -> value) -- reads one line at a time; returns number replaced
-  static int    find_strings(istream& istrm, String_PArray& strs);
+  static int    find_strings(std::istream& istrm, String_PArray& strs);
   // #CAT_File find first occurrence of any of the given strings in file (reading one line at a time); returns index of string or -1 if none found
 
 
@@ -939,19 +948,21 @@ public:
     TAG_EOF,                    // got an EOF
   };
 
-  static ReadTagStatus read_tag(istream& strm, String& tag, String& val);
+  static ReadTagStatus read_tag(std::istream& strm, String& tag, String& val);
   // #CAT_Parse read an html-style tag from the file: <XXX ...> tag = XXX, val = ... (optional)
-  static int    read_till_rangle(istream& strm, bool peek = false);
+  static int    read_till_rangle(std::istream& strm, bool peek = false);
   // #CAT_Parse rangle = >
 
   ////////////////////////////////////////////////////////////////////////
   //    File Parsing Stuff for Dump routines: Output
 
-  static ostream& indent(ostream& strm, int indent, int tsp=2);
+  static std::ostream& indent(std::ostream& strm, int indent, int tsp=2);
   // #CAT_File generate indentation
-  static ostream& write_quoted_string(ostream& strm, const String& str,
-                                      bool write_if_empty = false);
+  static std::ostream& write_quoted_string(std::ostream& strm, const String& str,
+                                           bool write_if_empty = false);
   // #CAT_File writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
+#endif
+
 };
 
 #endif // taMisc_h

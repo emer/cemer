@@ -20,8 +20,10 @@
 #include <iDataPanel>
 
 // member includes:
+#include <iDataPanel_PtrList>
 
 // declare all other types mentioned but not required to include:
+class iTabView; // #IGNORE
 
 
 class TA_API iDataPanelSetBase: public iDataPanel { //  common subclass for iDataPanelSet and iViewPanelSet

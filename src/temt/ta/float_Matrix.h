@@ -55,12 +55,14 @@ public:
   override void         El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
 protected:
   STATIC_CONST float    blank; // #IGNORE
-  override void         Dump_Save_Item(ostream& strm, int idx); // stream in full precision
-
-  override void         BinarySave_Item(ostream& strm, int idx)
+#ifndef __MAKETA__
+  override void         Dump_Save_Item(std::ostream& strm, int idx);
+  // stream in full precision
+  override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(float)); };
-  override void         BinaryLoad_Item(istream& strm, int idx)
+  override void         BinaryLoad_Item(std::istream& strm, int idx)
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(float)); };
+#endif
 private:
   void          Initialize() {}
   void          Destroy() { CutLinks(); }

@@ -18,11 +18,12 @@
 
 // parent includes:
 #include <iDataPanelFrame>
+#include <SelectEdit>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class iSelectEditDataHostBase; //
 
 class TA_API iSelectEditPanel: public iDataPanelFrame {
 // ##NO_CSS note: SelectEdit main panel (for users)

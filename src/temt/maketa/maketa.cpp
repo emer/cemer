@@ -181,7 +181,7 @@ MTA::MTA() {
 #ifdef TA_OS_WIN
   win_dll = false;
 #endif
-  hash_size = 2000;
+  hash_size = 10000;
 
   st_line = 0;
   st_col = 0;
@@ -388,14 +388,24 @@ void MTA::Burp() {
 }
 
 void MTA::Class_ResetCurPtrs() {
-  mta->cur_memb = NULL; mta->cur_memb_type = NULL; mta->cur_meth = NULL;
-  mta->last_memb = NULL; mta->last_meth = NULL;
+  cur_memb = NULL; cur_memb_type = NULL; cur_meth = NULL;
+  last_memb = NULL; last_meth = NULL;
 }
 
 void MTA::Class_UpdateLastPtrs() {
-  mta->last_memb = mta->cur_memb;
-  mta->last_meth = mta->cur_meth;
-  mta->cur_memb = NULL; mta->cur_memb_type = NULL; mta->cur_meth = NULL;
+  last_memb = cur_memb;
+  last_meth = cur_meth;
+  cur_memb = NULL; cur_memb_type = NULL; cur_meth = NULL;
+}
+
+void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
+  td->source_file = cur_fname;
+  if(use_defn_st_line) {
+    td->source_start = defn_st_line;
+  }
+  else {
+    td->source_start = line-1;
+  }
 }
 
 String MTA::FindFile(const String& fname, bool& ok) {
@@ -420,8 +430,19 @@ String MTA::FindFile(const String& fname, bool& ok) {
   return fname;
 }
 
+bool MTA::AddIncluded(const String& fnm) {
+  taHashVal hv = taHashEl::HashCode_String(fnm);
+  int idx = included_hash.FindHashVal(hv, fnm);
+  if(idx < 0) {
+    included.Add(fnm);
+    included_hash.AddHash(hv, included.size-1, fnm);
+    return true;
+  }
+  return false;
+}
+
 TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
-  TypeSpace* rval = mta->spc;
+  TypeSpace* rval = spc;
   TypeDef* partd;
   if(td->HasOption("IGNORE")) {
     rval = &(spc_ignore);
@@ -443,9 +464,9 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
   String typstr = typ;
   if(typstr != "class" && typstr != "enum" && typstr != "template") {
-    td->source_file = mta->cur_fname;
-    td->source_start = mta->line-1;
-    td->source_end = mta->line-1;
+    td->source_file = cur_fname;
+    td->source_start = line-1;
+    td->source_end = line-1;
   }
 
   if(verbose <= 2)      return;
@@ -702,6 +723,9 @@ int main(int argc, char* argv[])
           if (!mta->headv.AddUnique(MTA::lexCanonical(tfl))) {
             cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
           }
+          else {
+            
+          }
         }
       }
       fh.close(); fh.clear();
@@ -738,9 +762,19 @@ int main(int argc, char* argv[])
   mta->BuildHashTables();       // after getting any user-spec'd hash size
   // parse the file names a bit
 
+  mta->headv_hash.key_type = taHashTable::KT_NAME;
+  mta->headv_hash.Alloc(1000);
+  mta->head_fn_hash.key_type = taHashTable::KT_NAME;
+  mta->head_fn_hash.Alloc(1000);
+  mta->included_hash.key_type = taHashTable::KT_NAME;
+  mta->included_hash.Alloc(1000);
+
   for(i=0; i<mta->headv.size; i++) {
-    String nstr = taMisc::GetFileFmPath(mta->headv.FastEl(i));
+    String hv = mta->headv.FastEl(i);
+    String nstr = taMisc::GetFileFmPath(hv);
     mta->head_fn_only.Add(nstr);
+    mta->headv_hash.AddHash(taHashEl::HashCode_String(hv), i, hv);
+    mta->head_fn_hash.AddHash(taHashEl::HashCode_String(nstr), i, nstr);
   }
 
   if(mta->verbose > 0) {
@@ -803,31 +837,21 @@ int main(int argc, char* argv[])
       cout << "\n**maketa command was: " << comnd.chars() << "\n\n";
       return ret_code;
     }
-#if (defined(TA_OS_WIN) && !defined(CYGWIN))
-/*    String lef = "lef.exe " + String(tmp_file) + " " + String(tmp_file) + ".1";
-    if ((ret_code = system(lef)) != 0) {
-      cout << "**lef command did not succeed (err code  " << ret_code << ")\n";
-      return ret_code;
-    }
-    // hack to convert the crlf to lf's so the lexer works properly
-    mta->fh.open(String(tmp_file) + ".1", ios::in | ios::binary); // binary critical when using windows */
-    mta->fh.open(tmp_file, ios::in | ios::binary); // binary critical when using windows
-#else
-    mta->fh.open(tmp_file, ios::in | ios::binary); // binary critical when using windows
-#endif
-    mta->file_str.Load_str(mta->fh); // just suck it all up at once into string and go from there
+    fstream strm;
+    strm.open(tmp_file, ios::in | ios::binary); // binary critical when using windows
+    mta->file_str.Load_str(strm); // just suck it all up at once into string and go from there
+    strm.close();
+    strm.clear();
+    mta->strm_pos=0;
     mta->state = MTA::Find_Item;
     mta->yy_state = MTA::YYRet_Ok;
     mta->line = 1;
     mta->col = 0;
-    mta->strm_pos=0;
     cout << "Running maketa on: " << mta->fname << endl;
     // NOTE: we start by assuming target space --
     // mta_lex will modify this as/if #[line] xxx "..." directives are encountered in preprocessed file
     mta->spc = &(mta->spc_target);
     while(mta->yy_state != MTA::YYRet_Exit) yyparse();
-    mta->fh.close(); mta->fh.clear();
-    mta->included.DupeUnique(mta->tmp_include); // copy over
     if (!keep_tmp) {
       (void) system(rm + tmp_file);
     }

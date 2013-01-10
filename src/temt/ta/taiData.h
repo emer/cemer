@@ -38,6 +38,8 @@ class QLayout; // #IGNORE
 class TypeDef; //
 class MemberDef; //
 class IDataHost; //
+class iLabel; // #IGNORE
+
 
 // NOTE: see ta_qtviewer.h for clipboard handling details.
 /*

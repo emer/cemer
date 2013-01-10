@@ -21,33 +21,6 @@
 
 taPtrList_impl taPtrList_impl::scratch_list;
 
-taHashVal taPtrList_impl::HashCode_String(const String& string_) {
-  // now using the one that Qt uses, comment is:
-  // These functions are based on Peter J. Weinberger's hash function (from the
-  // Dragon Book). The constant 24 in the original function was replaced with 23
-  // to produce fewer collisions on input such as "a", "aa", "aaa", "aaaa", ...
-
-  taHashVal hash = 0;
-  const char* string = string_.chars();
-  taHashVal g;
-  while (1) {
-    unsigned int c = *string;
-    string++;
-    if (c == 0) {
-      break;
-    }
-    hash += (hash<<4) + c;
-    if ((g = (hash & 0xf0000000)) != 0)
-      hash ^= g >> 23;
-    hash &= ~g;
-  }
-  return hash;
-}
-
-taHashVal taPtrList_impl::HashCode_Ptr(const void* ptr) {
-  return (taHashVal)ptr;
-}
-
 void taPtrList_impl::InitList_() {
   hash_table = NULL;
 //   alloc_size = 2;
@@ -140,10 +113,10 @@ taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   if(hash_table) kt = hash_table->key_type;
   switch (kt) {
   case taHashTable::KT_PTR:
-    return HashCode_Ptr(it);
+    return taHashEl::HashCode_Ptr(it);
   case taHashTable::KT_NAME:
   default:
-    return HashCode_String(El_GetName_(it));
+    return taHashEl::HashCode_String(El_GetName_(it));
   }
 }
 

@@ -21,6 +21,8 @@
 #include <CellRange>
 #include <taMatrix_PList>
 
+using namespace std;
+
 bool taMatrix::GeomIsValid(int dims_, const int geom_[],
   String* err_msg, bool allow_flex)
 {

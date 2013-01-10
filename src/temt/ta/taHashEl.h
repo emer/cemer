@@ -34,6 +34,13 @@ public:
   int           value;          // value associated with hash code (e.g., index of item in list)
   String        hashed_str;     // source value for the hash code if a string -- this is necessary because the hash code is not guaranteed to be unique..
 
+  static taHashVal HashCode_String(const String& str);
+  // return a hashed version of the string
+
+  static taHashVal HashCode_Ptr(const void* ptr)
+  { return (taHashVal)ptr; }
+  // return a hashed version of the pointer (just the pointer itself!)
+
   void  Initialize()    { hash_code = 0; value = -1; }
   taHashEl()            { Initialize(); }
   taHashEl(taHashVal hash, int val, const String& str = _nilString)

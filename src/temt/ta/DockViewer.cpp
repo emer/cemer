@@ -15,3 +15,28 @@
 
 #include "DockViewer.h"
 
+void DockViewer::Initialize() {
+  dock_flags = DV_NONE;
+  dock_area = Qt::BottomDockWidgetArea;
+}
+
+IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+//TODO: maybe we don't even need a generic one, but it does enable us to
+// make a purely taBase guy that doesn't need its own special gui guy
+  return new iDockViewer(this, gui_parent);
+}
+
+void DockViewer::GetWinState_impl() {
+  inherited::GetWinState_impl();
+  QWidget* wid = widget(); //cache
+  bool vis = wid->isVisible();
+  SetUserData("view_visible", vis);
+}
+
+void DockViewer::SetWinState_impl() {
+  inherited::SetWinState_impl();
+  QWidget* wid = widget(); //cache
+  bool vis = GetUserDataDef("view_visible", true).toBool();
+  wid->setVisible(vis);
+}
+

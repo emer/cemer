@@ -59,10 +59,12 @@ public:
   override void         El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
 protected:
   STATIC_CONST int      blank; // #IGNORE
-  override void         BinarySave_Item(ostream& strm, int idx)
+#ifndef __MAKETA__
+  override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(int)); };
-  override void         BinaryLoad_Item(istream& strm, int idx)
+  override void         BinaryLoad_Item(std::istream& strm, int idx)
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(int)); };
+#endif
 private:
   void          Initialize() {}
   void          Destroy() { CutLinks(); }

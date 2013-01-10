@@ -15,3 +15,47 @@
 
 #include "Relation.h"
 
+void Relation::Initialize() {
+  rel = LESSTHANOREQUAL;
+  val = 0.0;
+  use_var = false;
+}
+
+bool Relation::CacheVar(Relation& tmp_rel) {
+  tmp_rel.rel = rel;
+  if(use_var && (bool)var) {
+    tmp_rel.val = var->GetVar().toDouble();
+    return true;
+  }
+  tmp_rel.val = val;
+  return false;
+}
+
+bool Relation::Evaluate(double cmp) const {
+  double eff_val = val;
+  if(use_var && (bool)var) {
+    eff_val = var->GetVar().toDouble();
+  }
+
+  switch(rel) {
+  case EQUAL:
+    if(cmp == eff_val)  return true;
+    break;
+  case NOTEQUAL:
+    if(cmp != eff_val)  return true;
+    break;
+  case LESSTHAN:
+    if(cmp < eff_val)   return true;
+    break;
+  case GREATERTHAN:
+    if(cmp > eff_val)   return true;
+    break;
+  case LESSTHANOREQUAL:
+    if(cmp <= eff_val)  return true;
+    break;
+  case GREATERTHANOREQUAL:
+    if(cmp >= eff_val)  return true;
+    break;
+  }
+  return false;
+}

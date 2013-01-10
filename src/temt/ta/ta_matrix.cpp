@@ -14,12 +14,12 @@
 //   Lesser General Public License for more details.
 
 
-#include "ta_matrix.h"
-#include "ta_thread.h"
+// #include "ta_matrix.h"
+// #include "ta_thread.h"
 
-#ifdef TA_GUI
-# include "ta_matrix_qt.h"
-# include <QMimeData>
-#endif
+// #ifdef TA_GUI
+// # include "ta_matrix_qt.h"
+// # include <QMimeData>
+// #endif
 
 

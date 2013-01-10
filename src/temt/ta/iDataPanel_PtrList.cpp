@@ -15,3 +15,18 @@
 
 #include "iDataPanel_PtrList.h"
 
+void* iDataPanel_PtrList::El_Own_(void* it) {
+  if (m_tabView)
+    ((iDataPanel*)it)->setTabView(m_tabView);
+  return it;
+}
+
+void iDataPanel_PtrList::El_disOwn_(void* it_) {
+  if (m_tabView) {
+    iDataPanel* it = (iDataPanel*)it_;
+    if (it->tabView() == m_tabView)
+      it->setTabView(NULL);
+  }
+}
+
+

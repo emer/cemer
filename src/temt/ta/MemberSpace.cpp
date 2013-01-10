@@ -18,6 +18,8 @@
 #include <TypeDef>
 #include <taMisc>
 
+using namespace std;
+
 int MemberSpace::FindNameOrType(const char *nm) const { // lookup by name
   int rval = FindNameIdx(nm);
   if(rval >= 0)

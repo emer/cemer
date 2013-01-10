@@ -15,6 +15,8 @@
 
 #include "SArg_Array.h"
 
+using namespace std;
+
 void SArg_Array::Initialize() {
 }
 

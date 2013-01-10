@@ -15,3 +15,46 @@
 
 #include "taUndoDiffSrc.h"
 
+void taUndoDiffSrc::Initialize() {
+  last_diff_n = 0;
+  last_diff_pct = 0.0f;
+}
+
+void taUndoDiffSrc::InitFmRec(taUndoRec* urec) {
+  mod_time = urec->mod_time;
+  save_top = urec->save_top;
+  save_top_path = urec->save_top_path;
+  save_data = urec->save_data;
+  diff.Reset();                 // just in case..
+}
+
+void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
+  if(diff.data_a.line_st.size > 0) { // already done
+    diff.ReDiffB(save_data, rec->save_data, false, false, false); // trim, no ignore case
+  }
+  else {                            // first time
+    diff.DiffStrings(save_data, rec->save_data, false, false, false); // trim, no ignore case
+  }
+  diff.GetEdits(rec->diff_edits);       // save to guy
+  last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
+  last_diff_pct = (.5f * (float)last_diff_n) / (float)diff.data_a.lines;
+  // lines changed tends to double-count..
+  taMisc::LogInfo("last_diff_n: ", String(last_diff_n), " pct: ", String(last_diff_pct));
+  // now nuke rec's saved data!!
+  rec->save_data = _nilString;
+  // if need to debug, turn this off and turn on comparison below..
+}
+
+int taUndoDiffSrc::UseCount() {
+  taDataLink* dl = data_link();
+  if(!dl) return 0;
+  int cnt = 0;
+  taDataLinkItr itr;
+  taSmartRef* el;
+  FOR_DLC_EL_OF_TYPE(taSmartRef, el, dl, itr) {
+    taBase* spo = el->GetOwner();
+    if(!spo) continue;
+    cnt++;
+  }
+  return cnt;
+}

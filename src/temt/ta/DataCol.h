@@ -19,6 +19,10 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <MatrixGeom>
 #include <ColCalcExpr>
@@ -32,6 +36,14 @@ class MinMax; //
 class DataTable; // 
 class MatrixIndex; // 
 
+/*
+  Display Options (subclasses add new ones -- see each class)
+
+  HIDDEN -- forces !visible by default
+  TEXT -- sets display_style to TEXT
+  NARROW -- sets display_style to TEXT; also, makes it !visible by default
+
+*/
 
 class TA_API DataCol : public taNBase {
   // #STEM_BASE #VIRT_BASE #NO_INSTANCE ##CAT_Data ##NO_UNDO_SELECT holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
@@ -405,5 +417,7 @@ private:
   void  Initialize();
   void  Destroy()       {CutLinks(); }; //
 };
+
+TA_SMART_PTRS(DataCol); //
 
 #endif // DataCol_h

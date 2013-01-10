@@ -27,7 +27,7 @@
 class Qframe; // #IGNORE
 class iFlowLayout; // #IGNORE
 class iColor; //
-
+class iLabel; // #IGNORE
 
 class TA_API taiDataHost_impl: public taiDataHostBase, virtual public IDataHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS

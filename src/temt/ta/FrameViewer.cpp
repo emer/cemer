@@ -15,3 +15,18 @@
 
 #include "FrameViewer.h"
 
+void FrameViewer::Initialize() {
+}
+
+void FrameViewer::GetWinState_impl() {
+  iFrameViewer* wid = widget();
+  if (!wid) return; // not supposed to happen
+  wid->GetWinState();
+}
+
+void FrameViewer::SetWinState_impl() {
+  iFrameViewer* wid = widget();
+  if (!wid) return; // not supposed to happen
+  wid->SetWinState();
+}
+

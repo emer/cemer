@@ -85,12 +85,14 @@ public:
   String&       Print(String& strm, void* base, int indent=0) const;
 
   // for dump files
-  int           Dump_Save(ostream& strm, void* base, void* par, int indent);
-  int           Dump_SaveR(ostream& strm, void* base, void* par, int indent);
-  int           Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
+#ifndef __MAKETA__
+  int           Dump_Save(std::ostream& strm, void* base, void* par, int indent);
+  int           Dump_SaveR(std::ostream& strm, void* base, void* par, int indent);
+  int           Dump_Save_PathR(std::ostream& strm, void* base, void* par, int indent);
 
-  int           Dump_Load(istream& strm, void* base, void* par,
+  int           Dump_Load(std::istream& strm, void* base, void* par,
                           const char* prv_read_nm = NULL, int prv_c = 0); //
+#endif
 
 public: // lexical hacks
   inline MemberDef*     operator[](int i) const {return (MemberDef*)inherited::FastEl(i);}

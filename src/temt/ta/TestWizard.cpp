@@ -15,3 +15,11 @@
 
 #include "TestWizard.h"
 
+void TestWizard::LaunchWizard() {
+
+  TypeDef* td = GetTypeDef();
+  taiWizardDataHost* dlg = new taiWizardDataHost(this, td, false); // false = not read only
+  dlg->Constr("Wizard");
+  if(dlg->Edit(true)) {
+  }
+}

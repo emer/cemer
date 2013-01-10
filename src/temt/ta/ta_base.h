@@ -58,40 +58,40 @@
 // class NameVar_Array;
 // class taBase_FunCallList; //
 
-#include <taBase>
-#include <tabMisc>
-#include <taBaseItr>
-#include <taSmartPtr>
-#include <taSmartPtrT>
-#include <taSmartRef>
-#include <taSmartRefT>
-#include <taOBase>
-#include <taOABase>
-#include <taNBase>
-#include <taFBase>
-#include <taBase_PtrList>
-#include <IRefListClient>
-#include <taBase_RefList>
-#include <taList_impl>
-#include <taList>
-#include <taBase_List>
-#include <taDataView>
-#include <DataView_List>
-#include <taArray_base>
-#include <taArray>
-#include <int_Array>
-#include <float_Array>
-#include <double_Array>
-#include <char_Array>
-#include <String_Array>
-#include <SArg_Array>
-#include <Variant_Array>
-#include <voidptr_Array>
-#include <NameVar_Array>
-#include <FunCallItem>
-#include <taBase_FunCallList>
-#include <UserDataItemBase>
-#include <UserDataItem>
-#include <taWikiURL>
+// #include <taBase>
+// #include <tabMisc>
+// #include <taBaseItr>
+// #include <taSmartPtr>
+// #include <taSmartPtrT>
+// #include <taSmartRef>
+// #include <taSmartRefT>
+// #include <taOBase>
+// #include <taOABase>
+// #include <taNBase>
+// #include <taFBase>
+// #include <taBase_PtrList>
+// #include <IRefListClient>
+// #include <taBase_RefList>
+// #include <taList_impl>
+// #include <taList>
+// #include <taBase_List>
+// #include <taDataView>
+// #include <DataView_List>
+// #include <taArray_base>
+// #include <taArray>
+// #include <int_Array>
+// #include <float_Array>
+// #include <double_Array>
+// #include <char_Array>
+// #include <String_Array>
+// #include <SArg_Array>
+// #include <Variant_Array>
+// #include <voidptr_Array>
+// #include <NameVar_Array>
+// #include <FunCallItem>
+// #include <taBase_FunCallList>
+// #include <UserDataItemBase>
+// #include <UserDataItem>
+// #include <taWikiURL>
 
 #endif // ta_base_h

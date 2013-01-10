@@ -30,9 +30,15 @@ INHERITED(ProgEl)
 public:
   ProgExpr		script;	// the css (C++ syntax) code to be executed
 
+#ifndef __MAKETA__
+ virtual void	    	ImportFromFile(std::istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
+ virtual void	    	ExportToFile(std::ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
+#else
   virtual void	    	ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
-  virtual void	    	ImportFromFileName(const String& fnm); // import script from file
   virtual void	    	ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
+#endif
+
+  virtual void	    	ImportFromFileName(const String& fnm); // import script from file
   virtual void	    	ExportToFileName(const String& fnm); // export script to file
   
   override void		SetProgExprFlags();

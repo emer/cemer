@@ -29,8 +29,8 @@
 #   define __restrict
 # endif
 # include <stdlib.h>
-# include <string.h>
-# include <limits.h>
+// # include <string.h>
+// # include <limits.h>
 #endif
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
@@ -224,7 +224,7 @@
 #ifdef TA_OS_WIN
 # define _USE_MATH_DEFINES
 #else
-# include <stdint.h>
+// # include <stdint.h>
 #endif
 
 // define useful types -- some will be defined by QT, so don't define them if using QT
@@ -348,78 +348,37 @@ typedef unsigned char   byte;
 #endif
 
 // Some OS-specific includes or types
-#ifdef TA_OS_WIN
-  #ifndef __MAKETA__
-    #include <io.h>
-  #endif
-  #ifdef _MSC_VER
-    #define F_OK 00 // Existence only
-    #define W_OK 02 // Write permission
-    #define R_OK 04 // Read permission
-  #endif
-  //#define F_OK 06 // Read and write permission
+// #ifdef TA_OS_WIN
+//   #ifndef __MAKETA__
+//     #include <io.h>
+//   #endif
+//   #ifdef _MSC_VER
+//     #define F_OK 00 // Existence only
+//     #define W_OK 02 // Write permission
+//     #define R_OK 04 // Read permission
+//   #endif
+//   //#define F_OK 06 // Read and write permission
 
-  typedef int pid_t; //
-#else
-  #include <unistd.h>
-#endif
-
-
-// Memory Management optimizers:
-// when about to malloc/calloc etc. a number of bytes, call tweak_alloc to optimally tweak the
-//  allocation request size -- especially useful where the allocator use 2^n blocks, or 16n blocks
-
-// Platform     bits    Overhead        Min/Gran Size           Allocator
-// Linux        32      8 bytes         16/8 bytes      Doug Lea's malloc
-// Linux        64      16 bytes        24/8 bytes      Doug Lea's malloc
-// Mac OS       32      0               16/16 bytes
-
-#if (defined(TA_OS_LINUX))
-// Linux uses Doug Lea's malloc, which has:
-// a 2-int(32/64) overhead; 2-int + 1-ptr min, and 8-byte granularity
-// strategy: round up to the amount that we will get allocated regardless
-inline size_t tweak_alloc(size_t n) {
-  return  (((n + (2 * sizeof(intptr_t))) + 7) & ~((size_t)0x7)) - (2 * sizeof(intptr_t));
-}
-
-#elif (defined(TA_OS_WIN))
-inline size_t tweak_alloc(size_t n) {
-#ifdef DEBUG
-  return  (((n + 16) + 15) & ~((size_t)0xF)) - 16;
-#else
-  return  n;
-#endif
-}
-
-#elif defined(TA_OS_MAC)
-// Mac OS uses an overhead-less allocator (alloc address determines size, based on maps)
-// Mac OS has 16-byte granularity
-inline size_t tweak_alloc(size_t n) {
-  return  (((n + 0) + 15) & ~((size_t)0xF)) - 0;
-}
-
-#else
- // don't know anything about this allocator
- //note: rem'ed out, to make sure we always have a definitive version while compiling
-//inline size_t tweak_alloc(size_t n) {return n;}
-
-#endif
+//   typedef int pid_t; //
+// #else
+//   #include <unistd.h>
+// #endif
 
 // Qt Event IDs in the PDP system should be allocated here:
-#ifdef TA_USE_QT
-enum CustomEventType {
-  FirstEvent            = 1000, //note: QT's custom events start at 1000
-  cssMisc_StartupShell_EventType, // css_machine.h
-  iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
-};
-#endif
+// #ifdef TA_USE_QT
+// enum CustomEventType {
+//   FirstEvent            = 1000, //note: QT's custom events start at 1000
+//   cssMisc_StartupShell_EventType, // css_machine.h
+//   iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
+// };
+// #endif
 
-#ifndef TA_GUI
-class VoidClass { // dummy class used as gui obj proxy in NO_GUI builds so all legal C++ class semantics apply
-public:
-  VoidClass() {} // #IGNORE
-};
-#endif
+// #ifndef TA_GUI
+// class VoidClass { // dummy class used as gui obj proxy in NO_GUI builds so all legal C++ class semantics apply
+// public:
+//   VoidClass() {} // #IGNORE
+// };
+// #endif
 
 #ifdef __MAKETA__
 //NOTE: must use "" for msvc
@@ -429,9 +388,6 @@ public:
 #else
 # include <iostream>
 # include <fstream>
-// note: usually considered bad practice to put 'using' in a header file, but we have no choice
-// because MAKETA will choke on std::item syntax
-using namespace std;
 #endif
 
 #ifdef List
@@ -439,7 +395,7 @@ using namespace std;
 #endif
 
 #if (defined(TA_OS_SOLARIS) && !(defined(__MAKETA__)))
-#include <sys/types.h>
+  #include <sys/types.h>
 #endif
 
 // Posix Signal function definitions
@@ -463,25 +419,25 @@ class TypeDef; //
 class MemberDef; //
 class MethodDef; //
 
-#if !defined(NO_TA_BASE) && !defined(__MAKETA__)
-# if defined(TA_GUI)
-#   include <QPointer> // guarded same pointers
-# endif
-# if defined(DMEM_COMPILE)
-#   include "mpi.h"
-# endif
-#endif
+// #if !defined(NO_TA_BASE) && !defined(__MAKETA__)
+// # if defined(TA_GUI)
+// #   include <QPointer> // guarded same pointers
+// # endif
+// # if defined(DMEM_COMPILE)
+// #   include "mpi.h"
+// # endif
+// #endif
 
 // fake version of mpi comm to allow functions to not be conditionalized
 #ifndef DMEM_COMPILE
 typedef int MPI_Comm;		// mpi communicator
 #endif
 
-#ifdef TA_USE_QT
-# ifndef __MAKETA__
-#   include <QObject>
-# endif
-#endif
+// #ifdef TA_USE_QT
+// # ifndef __MAKETA__
+// #   include <QObject>
+// # endif
+// #endif
 
 // maximum number of dimensions in a matrix
 #define TA_MATRIX_DIMS_MAX 8

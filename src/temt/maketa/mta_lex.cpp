@@ -106,6 +106,15 @@ int MTA::skipline() {
   return c;
 }
 
+int MTA::skiplines(int n_lines) {
+  int c;
+  for(int i=0; i<n_lines; i++) {
+    c = skipline();
+    if(c == EOF) break;
+  }
+  return c;
+}
+
 int MTA::skiptocommarb() {
   int c;
   while (((c=Peekc()) != EOF) && !((c == ',') || (c == '}'))) Getc();
@@ -348,28 +357,31 @@ int MTA::lex() {
 	continue;
       }
       // don't include any other files that will be included later...
-      int i;
-      for(i=0; i<headv.size; i++) {
-	if((fname != headv.FastEl(i)) &&
-	   (cur_fname_only == head_fn_only.FastEl(i))) {
-	  if(verbose > 1)
-	    cout << "\nSkipping: " << cur_fname << " because of: "
-		 << head_fn_only.FastEl(i) << "\n";
-	  state = Skip_File;
-	  break;
-	}
+      int hfoidx = head_fn_hash.FindHashValString(cur_fname_only);
+      if(hfoidx >= 0) {
+        int hidx = headv_hash.FindHashValString(fname);
+        if(hidx != hfoidx) {     // not current file!
+          if(verbose > 1) {
+            cout << "\nSkipping: " << cur_fname << " because of: "
+                 << cur_fname_only << "\n";
+          }
+          state = Skip_File;
+        }
       }
-      if((state != Skip_File) && (included.FindEl(cur_fname) >= 0)) {
-	if(verbose > 1)
-	  cout << "\nSkipping: " << cur_fname << " because prev included\n";
-	state = Skip_File;
+      if(state != Skip_File) {
+        if(included_hash.FindHashValString(cur_fname) >= 0) {
+          if(verbose > 1) {
+            cout << "\nSkipping: " << cur_fname << " because prev included\n";
+          }
+          state = Skip_File;
+        }
       }
       String fname_only = taMisc::GetFileFmPath(fname);
 
       if(cur_fname_only != fname_only) {
 	spc = &(spc_other); // add to other space when not in cur space
 	if(state != Skip_File) {
-	  tmp_include.AddUnique(cur_fname); // note: already lexcanonicalized
+	  AddIncluded(cur_fname); // note: already lexcanonicalized
 	}
       }
       else {

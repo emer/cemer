@@ -15,3 +15,23 @@
 
 #include "BrowseViewer.h"
 
+void BrowseViewer::Initialize() {
+  root_typ = NULL;
+  root_md = NULL;
+}
+
+void BrowseViewer::Copy_(const BrowseViewer& cp) {
+  root_typ = cp.root_typ;
+  root_md = cp.root_md;
+}
+
+void BrowseViewer::Render_pre() {
+  widget()->ApplyRoot();
+}
+
+/* nn void BrowseViewer::TreeNodeDestroying(taiTreeDataNode* item) {
+  if (!m_window) return;
+  browser_win()->TreeNodeDestroying(item);
+} */
+
+

@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iLineEdit; // #IGNORE
+class QProgressBar; // #IGNORE
 
 
 class TA_API iDocDataPanel: public iDataPanelFrame {

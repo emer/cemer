@@ -15,3 +15,38 @@
 
 #include "iTabBarBase.h"
 
+iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
+}
+
+void iTabBarBase::selectNextTab() {
+  int dx = 1;
+  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+    if (isTabEnabled(index)) {
+      setCurrentIndex(index);
+      break;
+    }
+  }
+}
+
+void iTabBarBase::selectPrevTab() {
+  int dx = -1;
+  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+    if (isTabEnabled(index)) {
+      setCurrentIndex(index);
+      break;
+    }
+  }
+}
+
+void iTabBarBase::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
+    if(e->key() == Qt::Key_F)
+      selectNextTab();
+    else
+      selectPrevTab();
+  }
+  else {
+    inherited::keyPressEvent(e);
+  }
+}

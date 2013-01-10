@@ -15,3 +15,30 @@
 
 #include "SelectableHostHelper.h"
 
+void SelectableHostHelper::customEvent(QEvent* ev) {
+  switch ((int)ev->type()) {
+  case iDataViewer_SelectionChanged_EventType:
+    emit NotifySignal(host, ISelectableHost::OP_SELECTION_CHANGED);
+    break;
+  default:
+    inherited::customEvent(ev);
+    break;
+  }
+}
+
+void SelectableHostHelper::EditAction(taiAction* act) {
+  int ea = act->usr_data.toInt();
+  ISelectable::GuiContext gc = (ISelectable::GuiContext)act->data().toInt();
+  host->EditAction(ea, gc);
+}
+
+void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
+  // selection ops need to go through the event loop or things get weird and nasty...
+  if (op == ISelectableHost::OP_SELECTION_CHANGED) {
+    QEvent* ev = new QEvent((QEvent::Type)iDataViewer_SelectionChanged_EventType);
+    QCoreApplication::postEvent(this, ev); // returns immediately
+  } else
+    emit NotifySignal(host, op);
+}
+
+

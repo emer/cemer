@@ -65,6 +65,8 @@ set(maketa_SRCS
   ../ta/taPtrList_impl.cpp
   ../ta/taPtrList.cpp
   ../ta/taPtrList_base.cpp
+  ../ta/taHashEl.cpp
+  ../ta/taHashBucket.cpp
   ../ta/taHashTable.cpp
   ../ta/taArray_impl.cpp
   ../ta/taPlainArray.cpp

@@ -224,13 +224,11 @@ enumname: enumnm '{'
 enumnm:   ENUM tyname			{
   	    $$ = $2;
 	    $2->AddParFormal(&TA_enum); mta->cur_enum = $2;
-	    $$->source_file = mta->cur_fname;  $$->source_start = mta->line-1;
-	    mta->type_stack.Pop(); }
+	    mta->SetSource($$, false); mta->type_stack.Pop(); }
         | ENUM 				{
 	    String nm = "enum_"; nm += (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); mta->cur_enum = $$;
-	    $$->source_file = mta->cur_fname;  $$->source_start = mta->line-1;
-	    $$->AddParFormal(&TA_enum); $$->internal = true; }
+	    mta->SetSource($$, false); $$->AddParFormal(&TA_enum); $$->internal = true; }
         ;
 
 classdecl:
@@ -268,13 +266,13 @@ classdsub:
 classname:
           classhead '{'			{
 	    $1->tokens.keep = true; mta->Class_ResetCurPtrs();
-	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; }
+	    mta->SetSource($1, true); }
         | classhead COMMENT '{'			{
 	    SETDESC($1,$2); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
-	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; }
+            mta->SetSource($1, true); }
         | classhead '{' COMMENT 		{
 	    SETDESC($1,$3); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
-	    $1->source_file = mta->cur_fname;  $1->source_start = mta->defn_st_line; 
+	    mta->SetSource($1, true); 
 	  }
         ;
 
@@ -366,7 +364,7 @@ templhead:
 	    $5->templ_pars.Duplicate(mta->cur_templ_pars);
 	    $5->internal = true;
 	    $5->AddParFormal(&TA_template); $$ = $5;
-	    $$->source_file = mta->cur_fname; $$->source_start = mta->defn_st_line-1; }
+	    mta->SetSource($$, true); }
         ;
 
 templopen: '<'				{ mta->cur_templ_pars.Reset(); }
@@ -712,8 +710,7 @@ ftype:	  type
         ;
 
 tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$);
-	                          $$->source_file = mta->cur_fname;
-				  $$->source_start = mta->line-1; }
+                                  mta->SetSource($$, false); }
         ;
 
 type:	  noreftype

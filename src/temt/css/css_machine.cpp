@@ -15,8 +15,6 @@
 
 
 #include "css_machine.h"
-
-#include "ta_platform.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_console.h"
@@ -25,16 +23,21 @@
 # include "css_parse.h"
 #endif
 
-
 #include "css_ta.h"
-#include "ta_base.h"            // for debugging alloc_list
-#include "ta_matrix.h"
-#include "ta_project.h"
-#include "ta_program.h"
+// #include "ta_base.h"            // for debugging alloc_list
+// #include "ta_matrix.h"
+// #include "ta_project.h"
+// #include "ta_program.h"
+
+#include <taMisc>
+#include <taBase>
+#include <taMatrix>
+#include <taProject>
 
 #ifdef TA_GUI
 # include "css_qt.h"
-# include "ta_qt.h" // for iApplication
+#include <taiMiscCore>
+// # include "ta_qt.h" // for iApplication
 # ifdef TA_USE_INVENTOR
 # endif
 #endif
@@ -48,6 +51,8 @@
 
 int yyparse(void);
 void yyerror(const char* s);
+
+using namespace std;
 
 //////////////////////////
 //      cssMisc         //
@@ -5480,9 +5485,7 @@ void cssCmdShell::PopAllSrcProg() {
   while(PopSrcProg());
 }
 
-void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
-  taMisc::ConsoleType cons_typ)
-{
+void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, int cons_typ) {
   console_type = cons_typ;
 
   fin = &fhi;

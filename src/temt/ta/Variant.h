@@ -20,7 +20,11 @@
 #include "ta_def.h"
 #include <taString>
 
+
 // member includes:
+#ifndef __MAKETA__
+#include <iostream>
+#endif
 
 // declare all other types mentioned but not required to include:
 #ifndef NO_TA_BASE
@@ -106,8 +110,10 @@ public:
   void			setType(VarType value); // force it to be given type, if changed, set to default value
   String		getTypeAsString() const; // for debugging, get variant type as a string
 
-  void			save(ostream& s) const; // streams out using << for the type
-  void			load(istream& s); // streams in as a string, use toXxx if it is of another type
+#ifndef __MAKETA__
+  void			save(std::ostream& s) const; // streams out using << for the type
+  void			load(std::istream& s); // streams in as a string, use toXxx if it is of another type
+#endif
   
 // following are ops to set to a specific type of value  
   void 			setInvalid(); // invalid/null
@@ -387,9 +393,15 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			UpdateAfterLoad(); // called after internal modifications, to reassert correctness of null etc.
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
+#ifdef __MAKETA__
   void			Dump_Save_Type(ostream& strm) const; // dumps type and null 
   bool			Dump_Load_Type(istream& strm, int& last_char); 
+    // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true'
+#else
+  void			Dump_Save_Type(std::ostream& strm) const; // dumps type and null 
+  bool			Dump_Load_Type(std::istream& strm, int& last_char); 
     // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true' if type loaded 
+#endif
   void			warn(const char* msg) const; // emit warning message
   void			error(const char* msg) const; // emit error message
 protected:

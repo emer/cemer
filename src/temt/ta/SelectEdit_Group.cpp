@@ -15,3 +15,10 @@
 
 #include "SelectEdit_Group.h"
 
+void SelectEdit_Group::AutoEdit() {
+  FOREACH_ELEM_IN_GROUP(SelectEdit, se, *this) {
+    if(se->autoEdit()) {
+      se->EditPanel(true, true);        // true,true = new tab, pinned in place
+    }
+  }
+}

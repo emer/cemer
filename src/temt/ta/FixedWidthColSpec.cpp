@@ -15,3 +15,14 @@
 
 #include "FixedWidthColSpec.h"
 
+void FixedWidthColSpec::Initialize() {
+  start_col = 1;
+  col_width = 0;
+  col = NULL;
+}
+
+void FixedWidthColSpec::WriteData(const String& val) {
+  if (col)
+    col->SetValAsString(val, -1);
+}
+

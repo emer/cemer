@@ -15,3 +15,63 @@
 
 #include "ColCalcExpr.h"
 
+void ColCalcExpr::Initialize() {
+  col_lookup = NULL;
+  data_cols = NULL;
+}
+
+void ColCalcExpr::Destroy() {
+  CutLinks();
+}
+
+void ColCalcExpr::InitLinks() {
+  inherited::InitLinks();
+  data_cols = GET_MY_OWNER(DataTableCols);
+}
+
+void ColCalcExpr::CutLinks() {
+  if(col_lookup) {
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+  data_cols = NULL;
+  inherited::CutLinks();
+}
+
+void ColCalcExpr::Copy_(const ColCalcExpr& cp) {
+  if(col_lookup) {
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+  expr = cp.expr;
+  UpdateAfterEdit_impl();       // gets everything
+}
+
+void ColCalcExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+//   Program* prg = GET_MY_OWNER(Program);
+//   if(!prg || isDestroying()) return;
+  if(col_lookup) {
+    if(expr.empty())
+      expr += col_lookup->name;
+    else
+      expr += " " + col_lookup->name;
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+}
+
+bool ColCalcExpr::SetExpr(const String& ex) {
+  taBase::SetPointer((taBase**)&col_lookup, NULL); // justin case
+  expr = ex;
+  UpdateAfterEdit();            // does parse
+  return true;
+}
+
+String ColCalcExpr::GetName() const {
+  if(owner) return owner->GetName();
+  return _nilString;
+}
+
+String ColCalcExpr::GetFullExpr() const {
+  return expr;
+}
+
+

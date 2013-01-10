@@ -506,12 +506,14 @@ public:
 
   virtual bool          BinaryFile_Supported() { return false; }
   // indicates if binary file format is supported (default no)
-  virtual int           BinarySave_strm(ostream& strm);
+#ifndef __MAKETA__
+  virtual int           BinarySave_strm(std::ostream& strm);
   // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  virtual int           BinaryLoad_strm(std::istream& strm);
+  // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+#endif
   virtual void          BinarySave(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_mat #FILE_DIALOG_SAVE saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
-  virtual int           BinaryLoad_strm(istream& strm);
-  // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
   virtual void          BinaryLoad(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
@@ -529,8 +531,10 @@ public:
   override void         SetDefaultName() { };
   override taBase*      GetOwner() const;
   USING(inherited::GetOwner)
-  override int          Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  override int          Dump_Load_Value(istream& strm, taBase* par=NULL);
+#ifndef __MAKETA__
+  override int          Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
+  override int          Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+#endif
   override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   override void         InitLinks();
   override void         CutLinks();

@@ -34,6 +34,27 @@ class ISelectable_PtrList; //
 class taiClipData; // 
 
 
+/*
+  this interface is for selectable items in the view, such as tree nodes in the browser, or
+ Inventor objects in T3Viewer
+
+ There are two major modes of clipboard handling: single selection, and multi-selection.
+ In the single selection case, the ISelectable item itself controls everything; in this case,
+   the sel_items list parameter can be null, or can be a list containing just the ISelectable
+   item itself.
+ In the multi-select case, the first selected item is the root (controlling) item. It must be
+   passed a list of all the items (including itself, in position 0).
+
+ NOTE: you must call viewer_win()->ItemRemoving(item) in the implementation when an object is
+ deleted or being removed from the viewing hierarchy.
+
+   "eff_data" is the concept of what the object refers to -- for things like Layers,
+     it is the object itself; but for graphs, it is NOT the table in the view, it
+     is the view itself -- so the various links etc. are modalized according to
+     this major distinction -- this is operationalized in T3 where a view guy can
+     override his effLink
+*/
+
 class TA_API ISelectable: public virtual IDataLinkProxy { //
 INHERITED(IDataLinkProxy)
 friend class ISelectableHost;

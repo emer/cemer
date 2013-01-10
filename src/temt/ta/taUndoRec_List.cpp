@@ -15,3 +15,19 @@
 
 #include "taUndoRec_List.h"
 
+void taUndoRec_List::Initialize() {
+  SetBaseType(&TA_taUndoRec);
+  st_idx = 0;
+  length = 0;
+}
+
+void taUndoRec_List::Copy_(const taUndoRec_List& cp) {
+  st_idx = cp.st_idx;
+  length = cp.length;
+}
+
+void taUndoRec_List::Reset() {
+  inherited::Reset();
+  st_idx = 0;
+  length = 0;
+}

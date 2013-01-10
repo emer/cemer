@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class iColor;
-class taiEditDataHost;
+class taiEditDataHost; // #IGNORE
 
 
 class TA_API EditDataPanel: public iDataPanelFrame {

@@ -51,8 +51,10 @@ public:
   override void         El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
   STATIC_CONST String   blank; // #IGNORE
-  override void         Dump_Save_Item(ostream& strm, int idx);
-  override int          Dump_Load_Item(istream& strm, int idx);
+#ifndef __MAKETA__
+  override void         Dump_Save_Item(std::ostream& strm, int idx);
+  override int          Dump_Load_Item(std::istream& strm, int idx);
+#endif
   override void         ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 
 private:

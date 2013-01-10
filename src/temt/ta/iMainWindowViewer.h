@@ -18,11 +18,16 @@
 
 // parent includes:
 #include <IDataViewWidget>
+#ifndef __MAKETA__
+#include <QMainWindow>
+#endif
 
 // member includes:
+#include <MainWindowViewer>
 
 // declare all other types mentioned but not required to include:
-
+class taiMenu;
+class taiAction;
 
 class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer

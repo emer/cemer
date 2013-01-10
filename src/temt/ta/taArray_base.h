@@ -22,6 +22,7 @@
 
 // member includes:
 #include <taSmartPtrT>           // taBasePtr
+#include <taSmartRefT>
 
 // declare all other types mentioned but not required to include:
 
@@ -62,8 +63,10 @@ public:
                               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
-  int           Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  int           Dump_Load_Value(istream& strm, taBase* par=NULL);
+#ifndef __MAKETA__
+  int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
+  int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+#endif
 
   override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 

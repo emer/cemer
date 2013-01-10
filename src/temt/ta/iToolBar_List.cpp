@@ -15,3 +15,8 @@
 
 #include "iToolBar_List.h"
 
+String iToolBar_List::El_GetName_(void* it) const {
+  return ((QWidget*)it)->objectName();
+}
+
+
