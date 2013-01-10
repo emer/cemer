@@ -26,11 +26,24 @@
 // member includes:
 #include <taVector3f>
 #include <taVector2i>
-#include <VECameraDists>
 #include <VELightParams>
 
 // declare all other types mentioned but not required to include:
-class SoPerspectiveCamera; // 
+class SoPerspectiveCamera; // #IGNORE
+
+class TA_API VECameraDists : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
+INHERITED(taOBase)
+public:
+  float         near;           // #DEF_0.1 near distance of camera -- closest things can be seen
+  float         focal;          // focal distance of camera -- where is it focused on in scene?
+  float         far;            // far distance of camera -- furthest things that can be seen
+
+  TA_SIMPLE_BASEFUNS(VECameraDists);
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
 
 
 class TA_API VECamera : public VEBody {

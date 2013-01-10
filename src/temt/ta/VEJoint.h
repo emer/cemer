@@ -22,13 +22,58 @@
 // member includes:
 #include <VEBody>
 #include <taVector3f>
-#include <VEJointStops>
-#include <VEJointMotor>
-#include <ODEJointParams>
 #include <ODEIntParams>
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
+
+class TA_API VEJointStops : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
+INHERITED(taOBase)
+public:
+  bool          stops_on;       // turn on stops -- otherwise not used
+  float         lo;             // #CONDSHOW_ON_stops_on stop for low angle or position value of joint
+  float         hi;             // #CONDSHOW_ON_stops_on stop for high angle or position value of joint
+  float         def;            // #CONDSHOW_ON_stops_on default angle or position value of joint -- where it likes to be
+  float         bounce;         // #CONDSHOW_ON_stops_on how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
+  float         def_force;      // #CONDSHOW_ON_stops_on how much force to apply to return joint to default position -- effectively adds springs to the joint that pull it back to the default position -- NOTE: must call ApplyForce to have this computed and updated
+
+  inline float  Range() const           { return (hi - lo); }
+  inline float  Scale() const
+  { float rval = Range(); if(rval != 0.0f) rval = 1.0f / rval; return rval; }
+
+  float Normalize(float val) const      { return (val - lo) * Scale(); }
+  // normalize given value to 0-1 range given current in hi
+
+  float Project(float val) const        { return lo + (val * Range()); }
+  // project a normalized value into the current lo-hi range
+
+  TA_SIMPLE_BASEFUNS(VEJointStops);
+// protected:
+//   void       UpdateAfterEdit_impl();
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
+
+class TA_API VEJointMotor : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
+INHERITED(taOBase)
+public:
+  bool          motor_on;       // turn on motor mechanism, defined by subsequent parameters
+  float         vel;            // #CONDSHOW_ON_motor_on target joint velocity to achieve (angular or linear) -- set to 0 to provide a resistive damping force
+  float         f_max;          // #CONDSHOW_ON_motor_on maximum force or torque to drive the joint to achieve desired velocity
+  bool          servo_on;       // #CONDSHOW_ON_motor_on turn on servo mechanism, defined by subsequent parameters
+  float         trg_pos;        // #CONDSHOW_ON_servo_on servo: target joint position to drive toward -- IMPORTANT: do not get too close to the stops with this, as it can cause numerical problems -- leave a .02 or so buffer
+  float         gain;           // #CONDSHOW_ON_servo_on servo: how high to set the velocity on each step to move toward the target position: vel = gain * (trg_pos - pos) -- this can be quite high in fact: 20 or 50 have worked in various models, depending on the stepsize, masses involved, etc
+
+  TA_SIMPLE_BASEFUNS(VEJointMotor);
+protected:
+  void  UpdateAfterEdit_impl();
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
 
 
 class TA_API VEJoint : public taNBase {

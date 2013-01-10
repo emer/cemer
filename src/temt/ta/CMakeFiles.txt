@@ -18,6 +18,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   maketa_sstream.h
   ta_stdef.h
   ta_def.h
+
   taBasicAtomicInt.h
   taAtomicInt.h
   taString.h
@@ -25,6 +26,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taRefN.h
 
   DataChangedReason.h
+
   NameVar.h
   MTRndState.h
   MTRnd.h
@@ -83,11 +85,28 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   taList_impl.h
   taList.h
+  taBase_List.h
+  taBase_PtrList.h
+  taBase_RefList.h
+
   taSubGroup.h
   taLeafItr.h
   taGroup_impl.h
   taGroup.h
   taBase_Group.h
+
+  taArray_base.h
+  taArray.h
+  int_Array.h
+  float_Array.h
+  double_Array.h
+  char_Array.h
+  String_Array.h
+  SArg_Array.h
+  Variant_Array.h
+  voidptr_Array.h
+  NameVar_Array.h
+  float_CircBuffer.h
 
   CellRange.h
   MatrixIndex.h
@@ -109,12 +128,33 @@ set(ta_HEADS_MAKETA_LOCAL_1
   voidptr_Matrix.h
   CircMatrix.h
 
+  taVector2i.h
+  PosVector2i.h
+  taVector3i.h
+  PosVector3i.h
+  taVector2f.h
+  taVector3f.h
+  taAxisAngle.h
+  taQuaternion.h
+  taTransform.h
+
+  MinMax.h
+  MinMaxRange.h
+  MinMaxInt.h
+  FixedMinMax.h
+  Modulo.h
+
+  XYNGeom.h
+  ValIdx.h
+  ValIdx_Array.h
+
   taiMiscCore.h
+
   taDataView.h
+  DataView_List.h
   UserDataItemBase.h
   UserDataItem.h
-  taBase_PtrList.h
-  taBase_RefList.h
+  UserDataItem_List.h
   FunCallItem.h
   taBase_FunCallList.h
 
@@ -125,6 +165,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taDataLink.h
   taDataLinkItr.h
   taiDataLink.h
+  IRefListClient.h
 
   taStringDiffData.h
   taStringDiffItem.h
@@ -132,31 +173,12 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taStringDiffEdits.h
   taStringDiff.h
 
-  TypeDefault.h
-
-  taFiler.h
-
   taObjDiffRec.h
   taObjDiff_List.h
-  IRefListClient.h
-  taBase_List.h
-  DataView_List.h
-  taArray_base.h
-  taArray.h
-  int_Array.h
-  float_Array.h
-  double_Array.h
-  char_Array.h
-  String_Array.h
-  SArg_Array.h
-  Variant_Array.h
-  voidptr_Array.h
-  NameVar_Array.h
-  float_CircBuffer.h
 
+  TypeDefault.h
+  taFiler.h
   taWikiURL.h
-
-  UserDataItem_List.h
 
   taTime.h
   TimeUsed.h
@@ -165,7 +187,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   taTask.h
   taTask_List.h
-
   taManagedThread.h
   taManagedThread_PList.h
   taThreadMgr_PList.h
@@ -253,15 +274,17 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ProgramCallVar.h
   ProgCode.h
   LocalVars.h
-  Loop.h
   StaticMethodCall.h
   FunctionCall.h
   CodeBlock.h
   UserScript.h
+
+  Loop.h
   WhileLoop.h
   DoLoop.h
   ForLoop.h
   ForeachLoop.h
+
   IfContinue.h
   IfBreak.h
   IfReturn.h
@@ -269,6 +292,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   IfGuiPrompt.h
   CaseBlock.h
   Switch.h
+
   CssExpr.h
   AssignExpr.h
   VarIncr.h
@@ -276,9 +300,11 @@ set(ta_HEADS_MAKETA_LOCAL_1
   MemberAssign.h
   MemberFmArg.h
   MemberMethodCall.h
+
   MathCall.h
   RandomCall.h
   MiscCall.h
+
   PrintVar.h
   PrintExpr.h
   Comment.h
@@ -289,8 +315,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DataColsFmArgs.h
   SelectEditsFmArgs.h
   RegisterArgs.h
-
-  MatrixTableModel.h
 
   Relation.h
   RelationSpec.h
@@ -308,26 +332,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   RandomSpec.h
 
   cssMath.h
-
-  taVector2i.h
-  PosVector2i.h
-  taVector3i.h
-  PosVector3i.h
-  taVector2f.h
-  taVector3f.h
-  taAxisAngle.h
-  taQuaternion.h
-  taTransform.h
-
-  MinMax.h
-  MinMaxRange.h
-  MinMaxInt.h
-  FixedMinMax.h
-  Modulo.h
-
-  XYNGeom.h
-  ValIdx.h
-  ValIdx_Array.h
 
   DataBlock.h
   ChannelSpec.h
@@ -381,10 +385,12 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DataCalcSetDestRow.h
   DataCalcSetSrcRow.h
   DataCalcCopyCommonCols.h
+
   ClustNode.h
   ClustLink.h
   taDataAnal.h
   DataAnalCall.h
+
   SubMatrixOpEl.h
   SubMatrixOpSpec.h
   taDataGen.h
@@ -393,9 +399,9 @@ set(ta_HEADS_MAKETA_LOCAL_1
   PluginMakeThreadMgr.h
   PluginMakeTask.h
   taPluginBase.h
-  taPlugin.h
-  taPluginDep.h
   taPluginBase_List.h
+  taPluginDep.h
+  taPlugin.h
   taPlugin_List.h
 
   SelectEditItem.h
@@ -406,17 +412,21 @@ set(ta_HEADS_MAKETA_LOCAL_1
   EditMthItem_Group.h
   SelectEditConfig.h
   SelectEdit.h
+  SelectEdit_Group.h
+
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
-  ClusterRun.h
   GridSearch.h
+  ClusterRun.h
+
+  Subversion.h
+  taMediaWiki.h
 
   taWizard.h
+  Wizard_Group.h
   taDoc.h
   UserData_DocLink.h
   Doc_Group.h
-  Wizard_Group.h
-  SelectEdit_Group.h
 
   taUndoDiffSrc.h
   taUndoDiffSrc_List.h
@@ -426,24 +436,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   UndoDiffTask.h
   taUndoMgr.h
 
-  taiMimeItem.h
-  taiMimeItem_List.h
-  taiMultiMimeItem.h
-  taiObjectMimeItem.h
-  taiObjectsMimeItem.h
-  taiMimeSource.h
-  taiMimeFactory.h
-  taiMimeFactory_List.h
-  taiObjectMimeFactory.h
-
-  taiTabularDataMimeFactory.h
-  taiTabularDataMimeItem.h
-  taiMatrixDataMimeItem.h
-  taiTsvMimeItem.h
-  taiTableColDesc.h
-  taiTableColDesc_PArray.h
-  taiTableDataMimeItem.h
-
   taProjVersion.h
   taLicense.h
 
@@ -451,7 +443,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ProjTemplateEl_List.h
   ProjTemplates.h
   taProject.h
-
   Project_Group.h
   CssProject.h
 
@@ -486,18 +477,13 @@ set(ta_HEADS_MAKETA_LOCAL_1
   V1RegionSpec.h
   RetinaProc.h
 
-  ODEIntParams.h
-  ODEDamping.h
-  ODEFiniteRotation.h
   VESurface.h
   VETexture.h
   VETexture_List.h
 
+  ODEIntParams.h
   VEBody.h
   VEBody_Group.h
-  VEJointStops.h
-  VEJointMotor.h
-  ODEJointParams.h
   VEJoint.h
   VEJoint_Group.h
   VEObject.h
@@ -507,10 +493,8 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VESpace.h
   VESpace_Group.h
   VELightParams.h
-  VECameraDists.h
   VECamera.h
   VELight.h
-  ODEWorldParams.h
   VEWorld.h
 
   VELinearMuscle.h
@@ -522,7 +506,23 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VEObjCarousel.h
   VEHeightField.h
 
-  taMediaWiki.h
+  taiMimeItem.h
+  taiMimeItem_List.h
+  taiMultiMimeItem.h
+  taiObjectMimeItem.h
+  taiObjectsMimeItem.h
+  taiMimeSource.h
+  taiMimeFactory.h
+  taiMimeFactory_List.h
+  taiObjectMimeFactory.h
+
+  taiTabularDataMimeFactory.h
+  taiTabularDataMimeItem.h
+  taiMatrixDataMimeItem.h
+  taiTsvMimeItem.h
+  taiTableColDesc.h
+  taiTableColDesc_PArray.h
+  taiTableDataMimeItem.h
 
   taiAction.h
   taiData.h
@@ -717,6 +717,9 @@ set(ta_HEADS_NOMAKETA_MOC
 
   iTopLevelWindow_List.h
 
+  ClusterManager.h
+  SubversionClient.h
+
   IDataHost.h
   taiDataHost_impl.h
   taiDataHostBase.h
@@ -834,6 +837,7 @@ set(ta_HEADS_NOMAKETA_MOC
   DirectoryCatalog.h
   ImageReader.h
 
+  MatrixTableModel.h
   DataTableModel.h
   iDataTableView_Panel.h
   iGridTableView_Panel.h
@@ -911,14 +915,13 @@ set(ta_HEADS
   ta_TA_type.h
   ta_TA_type_WRAPPER.h
   ta_TA_inst.h
-  ClusterManager.h
-  SubversionClient.h
   ${ta_HEADS_NOMAKETA}
   ${ta_HEADS_NOMAKETA_MOC}
 )
 
 # headers that need Qt moc run
 set(ta_HEADS_MOC
+  ${ta_HEADS_NOMAKETA_MOC}
   # non-gui:
   # ta_type.h
   # ta_qtclipdata.h
@@ -955,12 +958,16 @@ set(ta_SRCS
   Variant.cpp
   taRefN.cpp
 
+  DataChangedReason.cpp
+
   NameVar.cpp
   MTRndState.cpp
   MTRnd.cpp
+  taHashEl.cpp
   taPtrList_impl.cpp
   taPtrList.cpp
   taPtrList_base.cpp
+  taHashBucket.cpp
   taHashTable.cpp
   taArray_impl.cpp
   taPlainArray.cpp
@@ -977,9 +984,10 @@ set(ta_SRCS
   EnumSpace.cpp
   TokenSpace.cpp
   MemberDefBase_List.cpp
-  MemberSpace.cpp
   Member_List.cpp
+  MemberSpace.cpp
   PropertySpace.cpp
+  Method_List.cpp
   MethodSpace.cpp
   TypeSpace.cpp
   EnumDef.cpp
@@ -990,7 +998,29 @@ set(ta_SRCS
   TypeDef.cpp
 
   taVersion.cpp
+  taThreadDefaults.cpp
+  NamedURL.cpp
+  DumpFileCvt.cpp
+  DumpFileCvtList.cpp
+  ContextFlag.cpp
   taMisc.cpp
+
+  taBase.cpp
+  taBaseItr.cpp
+  taSmartRef.cpp
+  taSmartPtr.cpp
+  taOBase.cpp
+  taNBase.cpp
+  taFBase.cpp
+
+  taSmartPtrT.cpp
+  taSmartRefT.cpp
+
+  taList_impl.cpp
+  taList.cpp
+  taBase_List.cpp
+  taBase_PtrList.cpp
+  taBase_RefList.cpp
 
   taSubGroup.cpp
   taLeafItr.cpp
@@ -998,12 +1028,25 @@ set(ta_SRCS
   taGroup.cpp
   taBase_Group.cpp
 
+  taArray_base.cpp
+  taArray.cpp
+  int_Array.cpp
+  float_Array.cpp
+  double_Array.cpp
+  char_Array.cpp
+  String_Array.cpp
+  SArg_Array.cpp
+  Variant_Array.cpp
+  voidptr_Array.cpp
+  NameVar_Array.cpp
+  float_CircBuffer.cpp
+
   CellRange.cpp
   MatrixIndex.cpp
   MatrixGeom.cpp
+  taMatrix.cpp
   taMatrix_PList.cpp
   taMatrix_Group.cpp
-  taMatrix.cpp
   taMatrixT.cpp
   String_Matrix.cpp
   float_Matrix.cpp
@@ -1018,310 +1061,6 @@ set(ta_SRCS
   voidptr_Matrix.cpp
   CircMatrix.cpp
 
-  DataChangedReason.cpp
-
-  ta_thread.cpp
-  ifont.cpp
-  # ta_mtrnd.cpp
-  # ta_list.cpp
-  ta_filer.cpp
-  # ta_type.cpp
-  ta_type_constr.cpp
-  # ta_base.cpp
-  # ta_dmem.cpp
-  # ta_fontspec.cpp
-  # ta_group.cpp
-  # ta_audioproc.cpp
-  # ta_qtclipdata.cpp
-  # ta_script.cpp
-  # ta_viewspec.cpp
-  # ta_viewer.cpp
-  # ta_program.cpp
-  # ta_program_els.cpp
-  # ta_math.cpp
-  # ta_geometry.cpp
-  # ta_data.cpp
-  # ta_datatable.cpp
-  # ta_dataproc.cpp
-  # ta_dataanal.cpp
-  # ta_datagen.cpp
-  # ta_imgproc.cpp
-  # ta_virtenv.cpp
-  # ta_dump.cpp
-  # ta_defaults.cpp
-  # ta_plugin_p.cpp
-  # ta_seledit.cpp
-  # ta_project.cpp
-  # ta_server.cpp
-  # ta_gendoc.cpp
-  # ta_time.cpp
-  # fun_lookup.cpp
-  # ta_data_extras.cpp 
-  # ta_qrc.cpp
-  # ta_ti.cpp
-  ClusterManager.cpp
-  Subversion.cpp
-  SubversionClient.cpp
-  # ta_qt.cpp
-  # ta_mediawiki.cpp
-  # ta_type_qt.cpp
-  # ta_qtdata.cpp
-  # ta_qtdialog.cpp
-  PublishDocsDialog.cpp
-  # ta_qtgroup.cpp
-  # ta_qtviewer.cpp
-  # ta_matrix_qt.cpp
-  # ta_qtclassbrowse.cpp
-  # ta_qttype.cpp
-  # ta_seledit_qt.cpp
-  # ta_userdata_qt.cpp
-  # ta_program_qt.cpp 
-  # ta_filer_qt.cpp
-  t3node_so.cpp
-  SoCapsule.cpp
-  # t3viewer.cpp
-  # colorbar_qt.cpp
-  # colorbar_so.cpp
-  # ta_datatable_qtso.cpp
-  # ta_datatable_so.cpp
-  # ta_virtenv_qtso.cpp
-  # ta_virtenv_so.cpp
-  # ta_gui.cpp
-
-  NameVar.cpp
-  MTRndState.cpp
-  taDataLink.cpp
-  taPtrList_impl.cpp
-  taPtrList.cpp
-  taPtrList_base.cpp
-  taHashEl.cpp
-  taHashBucket.cpp
-  taHashTable.cpp
-  taArray_impl.cpp
-  taPlainArray.cpp
-  taFixedArray_impl.cpp
-  taFixedArray.cpp
-  int_FixedArray.cpp
-  String_PArray.cpp
-  int_PArray.cpp
-  voidptr_PArray.cpp
-  taStringDiffItem.cpp
-  taStringDiffItem_PArray.cpp
-  taStringDiffEdits.cpp
-  taStringDiff.cpp
-  taFiler.cpp
-  taDataLinkItr.cpp
-  taiDataLink.cpp
-  NamedURL.cpp
-  NameVar_PArray.cpp
-  DumpFileCvt.cpp
-  DumpFileCvtList.cpp
-  taiMiscCore.cpp
-  taVersion.cpp
-  taThreadDefaults.cpp
-  taObjDiffRec.cpp
-  IDataLinkProxy.cpp
-  IDataLinkClient.cpp
-  IMultiDataLinkClient.cpp
-  IDataLinkClient_PtrList.cpp
-  EnumSpace.cpp
-  TokenSpace.cpp
-  Member_List.cpp
-  MemberDefBase_List.cpp
-  MemberSpace.cpp
-  PropertySpace.cpp
-  Method_List.cpp
-  MethodSpace.cpp
-  TypeSpace.cpp
-  taObjDiff_List.cpp
-  taiMimeSource.cpp
-  taBaseItr.cpp
-  taSmartRef.cpp
-  taSmartPtr.cpp
-  taOBase.cpp
-  taDataView.cpp
-  UserDataItemBase.cpp
-  taBase_PtrList.cpp
-  UserDataItem.cpp
-  tabMisc.cpp
-  taSmartPtrT.cpp
-  taSmartRefT.cpp
-  taFBase.cpp
-  taRootBase.cpp
-  taList_impl.cpp
-  IRefListClient.cpp
-  SelectEdit.cpp
-  taList.cpp
-  taBase_List.cpp
-  DataView_List.cpp
-  taArray_base.cpp
-  taArray.cpp
-  int_Array.cpp
-  float_Array.cpp
-  double_Array.cpp
-  char_Array.cpp
-  String_Array.cpp
-  SArg_Array.cpp
-  Variant_Array.cpp
-  voidptr_Array.cpp
-  NameVar_Array.cpp
-  FunCallItem.cpp
-  taBase_FunCallList.cpp
-  taWikiURL.cpp
-  UserDataItem_List.cpp
-  float_CircBuffer.cpp
-
-  taTime.cpp
-  TimeUsed.cpp
-  TimeUsedHR.cpp
-  taDateTime.cpp
-
-  taTask.cpp
-  taTask_List.cpp
-  taThreadMgr.cpp
-  taTaskThread.cpp
-  taTaskThread_PList.cpp
-  taManagedThread.cpp
-  taManagedThread_PList.cpp
-  taThreadMgr_PList.cpp
-
-  DMemComm.cpp
-  DMemShareVar.cpp
-  DMemShare.cpp
-  DMemAggVars.cpp
-
-  taiMimeItem.cpp
-  taiMimeItem_List.cpp
-  taiMultiMimeItem.cpp
-  taiObjectMimeItem.cpp
-  taiObjectsMimeItem.cpp
-  taiMimeFactory.cpp
-  taiMimeFactory_List.cpp
-  taiObjectMimeFactory.cpp
-
-  taAudioProc.cpp
-
-  iFont.cpp
-  taFontSpec.cpp
-  taiAction.cpp
-  AbstractScriptBase.cpp
-  ScriptBase_List.cpp
-  ViewSpec.cpp
-  ViewSpec_Group.cpp
-  taProject.cpp
-  ISelectable.cpp
-  IDataViewWidget.cpp
-  iFrameViewer.cpp
-  iBrowseViewer.cpp
-  iTabViewer.cpp
-  iMainWindowViewer.cpp
-  iDockViewer.cpp
-  iToolBoxDockViewer.cpp
-  iTabBarBase.cpp
-  iTabBar.cpp
-  iTabView.cpp
-  iDataPanel.cpp
-  iToolBar.cpp
-  DataViewer.cpp
-  TopLevelViewer.cpp
-  tabBrowseViewer.cpp
-  ClassBrowseViewer.cpp
-  PanelViewer.cpp
-  ToolBoxRegistrar.cpp
-  DataViewer_List.cpp
-  ToolBar_List.cpp
-  FrameViewer.cpp
-  FrameViewer_List.cpp
-  DockViewer_List.cpp
-  ConsoleDockViewer.cpp
-  ToolBoxRegistrar_PtrList.cpp
-  TreeDecorationSpec.cpp
-  TreeDecorationSpec_List.cpp
-
-  Program.cpp
-  ProgLine.cpp
-  ProgLine_List.cpp
-  ProgType.cpp
-  DynEnumType.cpp
-  ProgType_List.cpp
-  DynEnumItem.cpp
-  DynEnumItem_List.cpp
-  DynEnum.cpp
-  ProgVar.cpp
-  ProgVar_List.cpp
-  ProgVarRef_List.cpp
-  ProgExprBase.cpp
-  ProgExpr.cpp
-  ProgExpr_List.cpp
-  ProgArg.cpp
-  ProgArg_List.cpp
-  ProgEl.cpp
-  ProgramCallBase.cpp
-  ProgramCall.cpp
-  ProgramCallVar.cpp
-  ProgCode.cpp
-  LocalVars.cpp
-  Function.cpp
-  ProgEl_List.cpp
-  Loop.cpp
-  StaticMethodCall.cpp
-  Function_List.cpp
-  FunctionCall.cpp
-  ProgObjList.cpp
-  Program_List.cpp
-  ProgLibEl_List.cpp
-  ProgLib.cpp
-  Program_Group.cpp
-  ProgramToolBar.cpp
-  CodeBlock.cpp
-  UserScript.cpp
-  WhileLoop.cpp
-  DoLoop.cpp
-  ForLoop.cpp
-  ForeachLoop.cpp
-  IfContinue.cpp
-  IfBreak.cpp
-  IfReturn.cpp
-  IfElse.cpp
-  IfGuiPrompt.cpp
-  CaseBlock.cpp
-  Switch.cpp
-  CssExpr.cpp
-  AssignExpr.cpp
-  VarIncr.cpp
-  MemberProgEl.cpp
-  MemberAssign.cpp
-  MemberFmArg.cpp
-  MemberMethodCall.cpp
-  MathCall.cpp
-  RandomCall.cpp
-  MiscCall.cpp
-  PrintVar.cpp
-  PrintExpr.cpp
-  Comment.cpp
-  StopStepPoint.cpp
-  ReturnExpr.cpp
-  OtherProgramVar.cpp
-  ProgVarFmArg.cpp
-  DataColsFmArgs.cpp
-  SelectEditsFmArgs.cpp
-  RegisterArgs.cpp
-  MatrixTableModel.cpp
-  Relation.cpp
-  RelationSpec.cpp
-  RelationFloat.cpp
-  Aggregate.cpp
-  AggregateSpec.cpp
-  SimpleMathSpec.cpp
-  taMath.cpp
-  taMath_double.cpp
-  taMath_float.cpp
-  RndSeed.cpp
-  RndSeed_List.cpp
-  Random.cpp
-  RandomSpec.cpp
-  cssMath.cpp
-
   taVector2i.cpp
   PosVector2i.cpp
   taVector3i.cpp
@@ -1332,30 +1071,222 @@ set(ta_SRCS
   taQuaternion.cpp
   taTransform.cpp
 
+  MinMax.cpp
+  MinMaxRange.cpp
+  MinMaxInt.cpp
+  FixedMinMax.cpp
+  Modulo.cpp
+
   XYNGeom.cpp
   ValIdx.cpp
   ValIdx_Array.cpp
+
+  taiMiscCore.cpp
+
+  taDataView.cpp
+  DataView_List.cpp
+  UserDataItemBase.cpp
+  UserDataItem.cpp
+  UserDataItem_List.cpp
+  FunCallItem.cpp
+  taBase_FunCallList.cpp
+
+  IDataLinkProxy.cpp
+  IDataLinkClient.cpp
+  IMultiDataLinkClient.cpp
+  IDataLinkClient_PtrList.cpp
+  taDataLink.cpp
+  taDataLinkItr.cpp
+  taiDataLink.cpp
+  IRefListClient.cpp
+
+  taStringDiffData.cpp
+  taStringDiffItem.cpp
+  taStringDiffItem_PArray.cpp
+  taStringDiffEdits.cpp
+  taStringDiff.cpp
+
+  taObjDiffRec.cpp
+  taObjDiff_List.cpp
+
+  TypeDefault.cpp
+  taFiler.cpp
+  taWikiURL.cpp
+
+  taTime.cpp
+  TimeUsed.cpp
+  TimeUsedHR.cpp
+  taDateTime.cpp
+
+  taTask.cpp
+  taTask_List.cpp
+  taManagedThread.cpp
+  taManagedThread_PList.cpp
+  taThreadMgr.cpp
+  taThreadMgr_PList.cpp
+  taTaskThread.cpp
+  taTaskThread_PList.cpp
+
+  DMemComm.cpp
+  DMemShareVar.cpp
+  DMemShare.cpp
+  DMemAggVars.cpp
+
+  NameValue.cpp
+  taColor.cpp
+  RGBA.cpp
+  RGBA_List.cpp
+  ColorScaleColor.cpp
+  ColorScaleColor_List.cpp
+  ColorScaleSpec.cpp
+  ColorScaleSpec_Group.cpp
+  ColorScale.cpp
+  ViewColor.cpp
+  ViewColor_List.cpp
+  ViewSpec.cpp
+  ViewSpec_Group.cpp
+
+  iFont.cpp
+  taFontSpec.cpp
+
+  ScriptBase_List.cpp
+  AbstractScriptBase.cpp
+
+  ISelectable.cpp
+  IObjectSelectable.cpp
+
+  DataViewer.cpp
+  DataViewer_List.cpp
+  FrameViewer.cpp
+  FrameViewer_List.cpp
+  TopLevelViewer.cpp
+  tabBrowseViewer.cpp
+  ClassBrowseViewer.cpp
+  PanelViewer.cpp
+  ToolBoxRegistrar.cpp
+  ToolBar_List.cpp
+  DockViewer_List.cpp
+  ConsoleDockViewer.cpp
+  ToolBoxRegistrar_PtrList.cpp
+  TreeDecorationSpec.cpp
+  TreeDecorationSpec_List.cpp
+
+  ProgramRef.cpp
+  ProgLine.cpp
+  ProgLine_List.cpp
+  ProgType.cpp
+  DynEnumItem.cpp
+  DynEnumItem_List.cpp
+  DynEnumType.cpp
+  DynEnum.cpp
+  ProgType_List.cpp
+  ProgVar.cpp
+  ProgVar_List.cpp
+  ProgVarRef_List.cpp
+  ProgExprBase.cpp
+  ProgExpr.cpp
+  ProgExpr_List.cpp
+  ProgArg.cpp
+  ProgArg_List.cpp
+  ProgEl.cpp
+  ProgEl_List.cpp
+  Function.cpp
+  Function_List.cpp
+  ProgObjList.cpp
+  Program_List.cpp
+  Program.cpp
+
+  ProgLibEl.cpp
+  ProgLibEl_List.cpp
+  ProgLib.cpp
+  Program_Group.cpp
+  ProgramToolBar.cpp
+
+  ProgramCallBase.cpp
+  ProgramCall.cpp
+  ProgramCallVar.cpp
+  ProgCode.cpp
+  LocalVars.cpp
+  StaticMethodCall.cpp
+  FunctionCall.cpp
+  CodeBlock.cpp
+  UserScript.cpp
+
+  Loop.cpp
+  WhileLoop.cpp
+  DoLoop.cpp
+  ForLoop.cpp
+  ForeachLoop.cpp
+
+  IfContinue.cpp
+  IfBreak.cpp
+  IfReturn.cpp
+  IfElse.cpp
+  IfGuiPrompt.cpp
+  CaseBlock.cpp
+  Switch.cpp
+
+  CssExpr.cpp
+  AssignExpr.cpp
+  VarIncr.cpp
+  MemberProgEl.cpp
+  MemberAssign.cpp
+  MemberFmArg.cpp
+  MemberMethodCall.cpp
+
+  MathCall.cpp
+  RandomCall.cpp
+  MiscCall.cpp
+
+  PrintVar.cpp
+  PrintExpr.cpp
+  Comment.cpp
+  StopStepPoint.cpp
+  ReturnExpr.cpp
+  OtherProgramVar.cpp
+  ProgVarFmArg.cpp
+  DataColsFmArgs.cpp
+  SelectEditsFmArgs.cpp
+  RegisterArgs.cpp
+
+  Relation.cpp
+  RelationSpec.cpp
+  RelationFloat.cpp
+  Aggregate.cpp
+  AggregateSpec.cpp
+  SimpleMathSpec.cpp
+
+  taMath.cpp
+  taMath_double.cpp
+  taMath_float.cpp
+  RndSeed.cpp
+  RndSeed_List.cpp
+  Random.cpp
+  RandomSpec.cpp
+
+  cssMath.cpp
+
   DataBlock.cpp
   ChannelSpec.cpp
   MatrixChannelSpec.cpp
   ChannelSpec_List.cpp
   DataBlock_Idx.cpp
-  DataTableModel.cpp
-  DataTable.cpp
-  DataCol.cpp
   ColCalcExpr.cpp
+  DataCol.cpp
+  DataColTp.cpp
   DataTableCols.cpp
+  DataTable.cpp
+  DataTable_Group.cpp
   FixedWidthColSpec.cpp
   FixedWidthColSpec_List.cpp
   FixedWidthSpec.cpp
-  DataTable_Group.cpp
-  DataColTp.cpp
   String_Data.cpp
   Variant_Data.cpp
   double_Data.cpp
   float_Data.cpp
   int_Data.cpp
   byte_Data.cpp
+
   DataTableEditorOptions.cpp
   DataOpEl.cpp
   DataOpList.cpp
@@ -1387,14 +1318,80 @@ set(ta_SRCS
   DataCalcSetDestRow.cpp
   DataCalcSetSrcRow.cpp
   DataCalcCopyCommonCols.cpp
+
   ClustNode.cpp
   ClustLink.cpp
   taDataAnal.cpp
   DataAnalCall.cpp
+
   SubMatrixOpEl.cpp
   SubMatrixOpSpec.cpp
   taDataGen.cpp
   DataGenCall.cpp
+
+  PluginMakeThreadMgr.cpp
+  PluginMakeTask.cpp
+  taPluginBase.cpp
+  taPluginBase_List.cpp
+  taPluginDep.cpp
+  taPlugin.cpp
+  taPlugin_List.cpp
+
+  SelectEditItem.cpp
+  EditParamSearch.cpp
+  EditMbrItem.cpp
+  EditMthItem.cpp
+  EditMbrItem_Group.cpp
+  EditMthItem_Group.cpp
+  SelectEditConfig.cpp
+  SelectEdit.cpp
+  SelectEdit_Group.cpp
+
+  ParamSearchAlgo.cpp
+  ParamSearchAlgo_List.cpp
+  GridSearch.cpp
+  ClusterRun.cpp
+  ClusterManager.cpp
+  Subversion.cpp
+  SubversionClient.cpp
+
+  taWizard.cpp
+  Wizard_Group.cpp
+  taDoc.cpp
+  UserData_DocLink.cpp
+  Doc_Group.cpp
+
+  taUndoDiffSrc.cpp
+  taUndoDiffSrc_List.cpp
+  taUndoRec.cpp
+  taUndoRec_List.cpp
+  UndoDiffThreadMgr.cpp
+  UndoDiffTask.cpp
+  taUndoMgr.cpp
+
+  taProjVersion.cpp
+  taLicense.cpp
+
+  ProjTemplateEl.cpp
+  ProjTemplateEl_List.cpp
+  ProjTemplates.cpp
+  taProject.cpp
+  Project_Group.cpp
+  CssProject.cpp
+
+  PluginWizard.cpp
+  TestWizard.cpp
+
+  TemtClient.cpp
+  TemtClientAdapter.cpp
+  TemtServer.cpp
+  TemtServerAdapter.cpp
+  TemtClient_List.cpp
+
+  taRootBase.cpp
+  tabMisc.cpp
+
+  taAudioProc.cpp
 
   taImage.cpp
   taCanvas.cpp
@@ -1416,39 +1413,36 @@ set(ta_SRCS
   V1RegionSpec.cpp
   RetinaProc.cpp
 
-  VEBody.cpp
-  VEJoint.cpp
-  VEObject.cpp
-  VEStatic.cpp
-  VESpace.cpp
-  VEArm.cpp
-  VELinearMuscle.cpp
-  ODEIntParams.cpp
-  ODEDamping.cpp
-  ODEFiniteRotation.cpp
   VESurface.cpp
   VETexture.cpp
   VETexture_List.cpp
+
+  ODEIntParams.cpp
+  VEBody.cpp
   VEBody_Group.cpp
+  VEJoint.cpp
+  VEJoint_Group.cpp
+  VEObject.cpp
+  VEObject_Group.cpp
+  VEStatic.cpp
+  VEStatic_Group.cpp
+  VESpace.cpp
+  VESpace_Group.cpp
   VELightParams.cpp
   VECameraDists.cpp
   VECamera.cpp
   VELight.cpp
   VEWorld.cpp
 
-  VEObjCarousel.cpp
-  VEJointStops.cpp
-  VEJointMotor.cpp
-  ODEJointParams.cpp
-  VEJoint_Group.cpp
+  VELinearMuscle.cpp
+  VELinMuscle_List.cpp
   VELambdaMuscle.cpp
   VEMuscleJoint.cpp
-  VEObject_Group.cpp
-  VELinMuscle_List.cpp
-  VEStatic_Group.cpp
+  VEArm.cpp
+
+  VEObjCarousel.cpp
   VEHeightField.cpp
-  VESpace_Group.cpp
-  ODEWorldParams.cpp
+
   dumpMisc.cpp
   VPUnref.cpp
   DumpPathSub.cpp
@@ -1456,57 +1450,43 @@ set(ta_SRCS
   DumpPathToken.cpp
   DumpPathSubList.cpp
   DumpPathTokenList.cpp
-  NameValue.cpp
-  TypeDefault.cpp
+
   IPlugin.cpp
   iPluginEditor.cpp
   taPluginInst.cpp
   taPluginInst_PList.cpp
-  PluginMakeThreadMgr.cpp
-  PluginMakeTask.cpp
   taPlugins.cpp
-  taPluginBase.cpp
-  taPlugin.cpp
-  taPluginDep.cpp
-  taPluginBase_List.cpp
-  taPlugin_List.cpp
-  SelectEditItem.cpp
-  EditMbrItem.cpp
-  EditMthItem.cpp
-  EditParamSearch.cpp
-  EditMbrItem_Group.cpp
-  EditMthItem_Group.cpp
-  SelectEditConfig.cpp
-  ClusterRun.cpp
-  ParamSearchAlgo.cpp
-  ParamSearchAlgo_List.cpp
-  GridSearch.cpp
-  taWizard.cpp
-  UserData_DocLink.cpp
-  Doc_Group.cpp
-  Wizard_Group.cpp
-  SelectEdit_Group.cpp
-  taUndoRec.cpp
-  taUndoDiffSrc.cpp
-  taUndoMgr.cpp
-  taUndoDiffSrc_List.cpp
-  taUndoRec_List.cpp
-  UndoDiffThreadMgr.cpp
-  UndoDiffTask.cpp
-  taProjVersion.cpp
-  taLicense.cpp
-  CssProject.cpp
-  ProjTemplateEl.cpp
-  ProjTemplateEl_List.cpp
-  ProjTemplates.cpp
-  Project_Group.cpp
-  PluginWizard.cpp
-  TestWizard.cpp
-  TemtClient.cpp
-  TemtClientAdapter.cpp
-  TemtServer.cpp
-  TemtServerAdapter.cpp
-  TemtClient_List.cpp
+
+  taiMimeItem.cpp
+  taiMimeItem_List.cpp
+  taiMultiMimeItem.cpp
+  taiObjectMimeItem.cpp
+  taiObjectsMimeItem.cpp
+  taiMimeSource.cpp
+  taiMimeFactory.cpp
+  taiMimeFactory_List.cpp
+  taiObjectMimeFactory.cpp
+
+  taiAction.cpp
+
+  IDataViewWidget.cpp
+  iFrameViewer.cpp
+  iBrowseViewer.cpp
+  iTabViewer.cpp
+  iMainWindowViewer.cpp
+  iDockViewer.cpp
+  iToolBoxDockViewer.cpp
+  iTabBarBase.cpp
+  iTabBar.cpp
+  iTabView.cpp
+  iDataPanel.cpp
+  iToolBar.cpp
+
+
+  MatrixTableModel.cpp
+  DataTableModel.cpp
+
+
   iTopLevelWindow_List.cpp
   taiMisc.cpp
   taMediaWiki.cpp
@@ -1602,7 +1582,6 @@ set(ta_SRCS
   tabODataLink.cpp
   tabListDataLink.cpp
   tabGroupDataLink.cpp
-  IObjectSelectable.cpp
   iTreeViewItem.cpp
   taiTreeDataNode.cpp
   taiListDataNode.cpp
@@ -1725,23 +1704,7 @@ set(ta_SRCS
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
-  taBase_RefList.cpp
   NewNetViewHelper.cpp
-  ProgLibEl.cpp
-  taColor.cpp
-  RGBA.cpp
-  RGBA_List.cpp
-  ColorScaleColor.cpp
-  ColorScaleColor_List.cpp
-  ColorScaleSpec.cpp
-  ColorScaleSpec_Group.cpp
-  ColorScale.cpp
-  ViewColor.cpp
-  ViewColor_List.cpp
-  Modulo.cpp
-  MinMaxInt.cpp
-  FixedMinMax.cpp
-  MinMaxRange.cpp
   taiDataHost_impl.cpp
   taiDataHostBase.cpp
   T3DataView.cpp
@@ -1765,13 +1728,76 @@ set(ta_SRCS
   T3Translate2Translator.cpp
   SoScrollBar.cpp
   T3Color.cpp
-  ProgramRef.cpp
-  taStringDiffData.cpp
   taiData.cpp
   ContextFlag.cpp
   taBaseAdapter.cpp
   taGuiWidgetHelper.cpp
   taGuiActionHelper.cpp
+
+  # ta_thread.cpp
+  # ifont.cpp
+  # ta_mtrnd.cpp
+  # ta_list.cpp
+  # ta_filer.cpp
+  # ta_type.cpp
+  # ta_type_constr.cpp
+  # ta_base.cpp
+  # ta_dmem.cpp
+  # ta_fontspec.cpp
+  # ta_group.cpp
+  # ta_audioproc.cpp
+  # ta_qtclipdata.cpp
+  # ta_script.cpp
+  # ta_viewspec.cpp
+  # ta_viewer.cpp
+  # ta_program.cpp
+  # ta_program_els.cpp
+  # ta_math.cpp
+  # ta_geometry.cpp
+  # ta_data.cpp
+  # ta_datatable.cpp
+  # ta_dataproc.cpp
+  # ta_dataanal.cpp
+  # ta_datagen.cpp
+  # ta_imgproc.cpp
+  # ta_virtenv.cpp
+  # ta_dump.cpp
+  # ta_defaults.cpp
+  # ta_plugin_p.cpp
+  # ta_seledit.cpp
+  # ta_project.cpp
+  # ta_server.cpp
+  # ta_gendoc.cpp
+  # ta_time.cpp
+  # fun_lookup.cpp
+  # ta_data_extras.cpp 
+  # ta_qrc.cpp
+  # ta_ti.cpp
+  # ta_qt.cpp
+  # ta_mediawiki.cpp
+  # ta_type_qt.cpp
+  # ta_qtdata.cpp
+  # ta_qtdialog.cpp
+  PublishDocsDialog.cpp
+  # ta_qtgroup.cpp
+  # ta_qtviewer.cpp
+  # ta_matrix_qt.cpp
+  # ta_qtclassbrowse.cpp
+  # ta_qttype.cpp
+  # ta_seledit_qt.cpp
+  # ta_userdata_qt.cpp
+  # ta_program_qt.cpp 
+  # ta_filer_qt.cpp
+  t3node_so.cpp
+  SoCapsule.cpp
+  # t3viewer.cpp
+  # colorbar_qt.cpp
+  # colorbar_so.cpp
+  # ta_datatable_qtso.cpp
+  # ta_datatable_so.cpp
+  # ta_virtenv_qtso.cpp
+  # ta_virtenv_so.cpp
+  # ta_gui.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

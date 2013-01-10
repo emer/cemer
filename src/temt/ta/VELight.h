@@ -24,11 +24,24 @@
 #include <taSmartPtrT>
 
 // member includes:
-#include <VELightParams>
 #include <taVector3f>
 
 // declare all other types mentioned but not required to include:
 class SoLight; // 
+
+class TA_API VELightParams : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
+INHERITED(taOBase)
+public:
+  bool          on;             // is the light turned on?
+  float         intensity;      // #CONDSHOW_ON_on (0-1) how bright is the light
+  taColor       color;          // #CONDSHOW_ON_on color of light
+
+  TA_SIMPLE_BASEFUNS(VELightParams);
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
 
 
 class TA_API VELight : public VEBody {

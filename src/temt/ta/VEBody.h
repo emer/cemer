@@ -32,13 +32,40 @@
 #include <VETexture>
 #include <VESurface>
 #include <ODEIntParams>
-#include <ODEDamping>
-#include <ODEFiniteRotation>
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
 class VEObject; // 
 
+class TA_API ODEDamping : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE damping parameters
+INHERITED(taOBase)
+public:
+  bool          on;             // #DEF_false whether to use any of these damping parameters
+  float         lin;            // #DEF_0 #CONDSHOW_ON_on The body's linear damping scale.
+  float         lin_thr;        // #DEF_0 #CONDSHOW_ON_on The body's linear damping threshold. Damping will be applied only if the linear speed is above the threshold limit
+  float         ang;            // #DEF_0 #CONDSHOW_ON_on The body's angular damping scale.
+  float         ang_thr;        // #DEF_0 #CONDSHOW_ON_on The body's angular damping threshold. Damping will be applied only if the angular speed is above the threshold limit
+  float         ang_speed;         // #DEF_0 #CONDSHOW_ON_on You can also limit the maximum angular speed. In contrast to the damping functions, the angular velocity is affected before the body is moved. This means that it will introduce errors in joints that are forcing the body to rotate too fast. Some bodies have naturally high angular velocities (like cars' wheels), so you may want to give them a very high (like the default, infinity) limit.
+
+  TA_SIMPLE_BASEFUNS(ODEDamping);
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
+
+class TA_API ODEFiniteRotation : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv finite rotation mode settings
+INHERITED(taOBase)
+public:
+  bool          on;             // #DEF_false whether to enable finite rotation mode -- False: An "infinitesimal" orientation update is used. This is fast to compute, but it can occasionally cause inaccuracies for bodies that are rotating at high speed, especially when those bodies are joined to other bodies. True: A finite orientation update is used. This is more costly to compute, but will be more accurate for high speed rotations. Note however that high speed rotations can result in many types of error in a simulation, and this mode will only fix one of those sources of error.
+  taVector3f  axis; // #CONDSHOW_ON_on This sets the finite rotation axis for a body, if finite rotation mode is being used. If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can set the wheel's hinge axis here to try and improve its behavior.
+
+  TA_SIMPLE_BASEFUNS(ODEFiniteRotation);
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
 
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics

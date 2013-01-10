@@ -18,11 +18,11 @@
 
 // parent includes:
 #include <taNBase>
+#include <ODEIntParams>
 
 // member includes:
 #include <MinMaxInt>
 #include <taVector3f>
-#include <ODEWorldParams>
 #include <VEObject_Group>
 #include <VESpace_Group>
 #include <VETexture_List>
@@ -37,6 +37,21 @@ class T3DataViewFrame; //
 class QImage; // 
 class taImage; // 
 
+class TA_API ODEWorldParams : public ODEIntParams {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
+  INHERITED(ODEIntParams)
+public:
+  float         max_cor_vel;    // #DEF_1e+06 maximum correcting velocity for contacts (how quickly they can pop things out of contact)
+  float         contact_depth;  // #DEF_0.001 depth of the surface layer arond all geometry objects -- allows things to go this deep into a surface before actual contact is made -- increased value can help prevent jittering
+  int           max_col_pts;    // #DEF_4 maximum number of collision points to get (must be less than 64, which is a hard maximum)
+
+  void  Initialize();
+  void  Destroy()       { };
+  SIMPLE_COPY(ODEWorldParams);
+  TA_BASEFUNS(ODEWorldParams);
+protected:
+  void  UpdateAfterEdit_impl();
+};
 
 class TA_API VEWorld : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world
