@@ -15,3 +15,49 @@
 
 #include "VESpaceView.h"
 
+
+void VESpaceView::Initialize(){
+  data_base = &TA_VESpace;
+}
+
+void VESpaceView::Destroy() {
+  CutLinks();
+}
+
+void VESpaceView::SetSpace(VESpace* ob) {
+  if (Space() == ob) return;
+  SetData(ob);
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
+    }
+  }
+}
+
+void VESpaceView::BuildAll() {
+  Reset();
+  VESpace* obj = Space();
+  if(!obj) return;
+
+  FOREACH_ELEM_IN_GROUP(VEStatic, bod, obj->static_els) {
+    if(bod->HasStaticFlag(VEStatic::OFF)) continue;
+    VEStaticView* ov = new VEStaticView();
+    ov->SetStatic(bod);
+    children.Add(ov);
+    ov->BuildAll();
+  }
+}
+
+void VESpaceView::Render_pre() {
+  setNode(new T3VESpace(this));
+  inherited::Render_pre();
+}
+
+void VESpaceView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VESpace* obv = (T3VESpace*)this->node_so(); // cache
+  if(!obv) return;
+  VESpace* ob = Space();
+  if(!ob) return;
+}

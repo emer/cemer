@@ -15,6 +15,21 @@
 
 #include "taList_impl.h"
 
+#include <taDataLink>
+#include <taMisc>
+#include <int_Matrix>
+#include <String_Matrix>
+#include <byte_Matrix>
+#include <Variant_Matrix>
+#include <taBaseItr>
+#include <tabMisc>
+#include <taRootBase>
+#include <taObjDiffRec>
+#include <taObjDiff_List>
+#include <dumpMisc>
+#include <MemberDef>
+#include <iTreeViewItem>
+
 #ifdef TA_GUI
 #include  <QPixmap>
 
@@ -1288,7 +1303,7 @@ bool taList_impl::RemoveIdx(int i) {
   // default could be out of range..
   if(el_def >= size-1)
     el_def = 0;
-  return taPtrList_ta_base::RemoveIdx(i);
+  return inherited_taPtrList::RemoveIdx(i);
 }
 
 bool taList_impl::Transfer(taBase* item) {

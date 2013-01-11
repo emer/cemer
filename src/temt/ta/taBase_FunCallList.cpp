@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taBase_FunCallList.h"
+#include <taBase>
+#include <taDataLink>
+#include <taMisc>
 
 void taBase_FunCallList::El_Done_(void* it_) {
   FunCallItem* it = (FunCallItem*)it_;

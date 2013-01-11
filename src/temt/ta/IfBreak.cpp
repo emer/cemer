@@ -15,3 +15,54 @@
 
 #include "IfBreak.h"
 
+
+void IfBreak::Initialize() {
+}
+
+void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+//   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
+}
+
+void IfBreak::GenCssBody_impl(Program* prog) {
+  cond.ParseExpr();             // re-parse just to be sure!
+  String fexp = cond.GetFullExpr();
+  if(fexp.nonempty()) {
+    prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
+    prog->AddLine(this, "break;");
+    prog->AddVerboseLine(this, true, "\"before if\"");
+    prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside if -- breaking\"");
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, "break;", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+  }
+}
+
+String IfBreak::GetDisplayName() const {
+  if(cond.expr.empty())
+    return "break;";
+  else
+    return "if(" + cond.expr + ") break;";
+}
+
+bool IfBreak::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.startsWith("if") && code.contains("break")) return true;
+  return false;
+}
+
+bool IfBreak::CvtFmCode(const String& code) {
+  String cd = trim(code.after("if"));
+  cd = trim(cd.before("break"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  cond.SetExpr(cd);
+  return true;
+}

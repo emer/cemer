@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taDataLink.h"
+#include <taMisc>
+#include <taTaskThread>
+#include <MemberDef>
+#include <String_PArray>
+#include <TypeDef>
 
 const KeyString taDataLink::key_name("name");
 

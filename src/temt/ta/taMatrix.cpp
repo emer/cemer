@@ -20,6 +20,16 @@
 #include <MatrixTableModel>
 #include <CellRange>
 #include <taMatrix_PList>
+#include <byte_Matrix>
+#include <int_Matrix>
+#include <String_Matrix>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <taBaseItr>
+#include <taMisc>
+#include <taFiler>
+
+#include <cmath>
 
 using namespace std;
 

@@ -15,3 +15,20 @@
 
 #include "DataSelectSpec.h"
 
+
+void DataSelectSpec::Initialize() {
+  ops.SetBaseType(&TA_DataSelectEl);
+  comb_op = AND;
+}
+
+String DataSelectSpec::GetDisplayName() const {
+  return inherited::GetDisplayName() + " " +
+    GetTypeDef()->GetEnumString("CombOp", comb_op);
+}
+
+void DataSelectSpec::UpdateEnabled() {
+  for(int i=0; i<ops.size; i++) {
+    DataSelectEl* el = (DataSelectEl*)ops[i];
+    el->UpdateEnabled();
+  }
+}

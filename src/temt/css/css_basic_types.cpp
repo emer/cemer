@@ -18,14 +18,17 @@
 
 #include "css_basic_types.h"
 
-#include "ta_filer.h"
-#include "ta_type.h" // explicitly needed when no TA_GUI
-#include "ta_project.h"
-#include "ta_TA_type.h"
-
 #ifdef TA_GUI
 #include "css_qtdialog.h"
 #endif
+
+//#include "ta_TA_type.h"
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <int_Matrix>
+
+#include <QPointer>
 
 using namespace std;
 

@@ -20,26 +20,27 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 
-#include "ta_qttype.h"
-#include "ta_type.h"
-#include "ta_qt.h"
-
 #include "css_ta.h"
 #include "css_qt.h"
 #include "css_qttype.h"
 #include "css_qtdata.h"
 
+#include <taMisc>
+#include <tabMisc>
+#include <int_Matrix>
+#include <taiMisc>
+#include <iHostDialog>
+#include <taiArgType>
+#include <taiStreamArgType>
+#include <taiTokenPtrButton>
+#include <HiLightButton>
+#include <taFiler>
 
-
-#include "ta_TA_type.h"
-
-//#include <stdlib.h>
-
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qobject.h>
-#include <qtooltip.h>
-#include <qwidget.h>
+#include <QLabel>
+#include <QLayout>
+#include <QObject>
+#include <QTooltip>
+#include <QWidget>
 
 //////////////////////////////////////////////////
 // 		cssiEditDialog			//

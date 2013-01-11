@@ -38,4 +38,6 @@ private:
   void  Destroy()               { };
 };
 
+TA_SMART_PTRS(DataTable_Group);
+
 #endif // DataTable_Group_h

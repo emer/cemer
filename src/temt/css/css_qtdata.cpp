@@ -15,24 +15,17 @@
 
 
 
-#include "ta_qtdialog.h"
 #include "css_qtdata.h"
 #include "css_qttype.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
-//#include "css_ta.h"
-//#include "ta_type.h"
 
-//#include <stdlib.h>
-
-#include <qobject.h>
-#include <qpushbutton.h>
-
-/* OBS:
-#ifndef CYGWIN
-#include <IV-X11/xevent.h>
-#endif
-*/
+#include <QObject>
+#include <QPushbutton>
+#include <taiMenu>
+#include <IDataHost>
+#include <taiChoiceDialog>
+#include <taMisc>
 
 //////////////////////////////////////////////////
 // 		cssiPolyData			//

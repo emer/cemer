@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taVector2i.h"
+#include <taMatrix>
+#include <taVector2f>
+#include <MatrixIndex>
 
 taVector2i::taVector2i(const taVector2f& cp) {
   Register(); Initialize(); x = (int)cp.x; y = (int)cp.y;
@@ -23,6 +26,14 @@ taVector2i::taVector2i(const taVector2f& cp) {
 taVector2i& taVector2i::operator=(const taVector2f& cp) {
   x = (int)cp.x; y = (int)cp.y;
   return *this;
+}
+
+void taVector2i::ToMatrix(taMatrix& mat) const {
+  mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1);
+}
+
+void taVector2i::FromMatrix(taMatrix& mat) {
+  x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt();
 }
 
 void taVector2i::CopyToMatrixGeom(MatrixGeom& geom) {

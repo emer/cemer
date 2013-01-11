@@ -29,7 +29,7 @@
 #include <MethodDef>
 #include <String_Array>
 #include <int_Array>
-#include <Program>
+class Program;
 
 #ifdef TA_USE_QT
 # include <QObject>
@@ -44,7 +44,7 @@
 #include <sstream>
 
 #include <signal.h>
-// #include <setjmp.h>
+
 
 typedef int Int;
 typedef double Real;

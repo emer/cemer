@@ -15,3 +15,8 @@
 
 #include "DataGroupSpec.h"
 
+
+void DataGroupSpec::Initialize() {
+  ops.SetBaseType(&TA_DataGroupEl);
+  append_agg_name = true;
+}

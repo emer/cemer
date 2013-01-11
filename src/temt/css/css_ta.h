@@ -21,7 +21,6 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
-#include "ta_type.h"
 
 ///////////////////////////////////////////////////////////////////////
 //		Assignment semantics

@@ -15,3 +15,20 @@
 
 #include "taiStepButtonMethod.h"
 
+
+int taiStepButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if (md->HasOption("STEP_BUTTON"))
+    return (inherited::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiStepButtonMethod::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiProgStepButton* rval = new taiProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+taiMethodData* taiStepButtonMethod::GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+

@@ -19,8 +19,8 @@
 #ifndef css_misc_funs_h
 #define css_misc_funs_h
 
-#include "ta_base.h"
 #include "css_def.h"
+#include <String_Array>
 
 CSS_API String_Array& Dir(const char* dir_nm = NULL);
 CSS_API String_Array& ReadLine(std::istream& fh);

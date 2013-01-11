@@ -20,9 +20,13 @@
 #include <taVector2f>
 
 // member includes:
+#ifdef TA_GUI
+#include "igeometry.h"
+#endif
 
 // declare all other types mentioned but not required to include:
 class taMatrix; // 
+class taVector3i; //
 
 
 class TA_API taVector3f : public taVector2f {
@@ -38,12 +42,9 @@ public:
     xx = x; yy = y; zz = z;
   }
 
-  inline void	ToMatrix(taMatrix& mat) const
-  { mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2); }
+  void	ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  inline void	FromMatrix(taMatrix& mat)
-  { x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat();
-    z = mat.SafeElAsVar(2).toFloat(); }
+  void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   TA_BASEFUNS_LITE(taVector3f)

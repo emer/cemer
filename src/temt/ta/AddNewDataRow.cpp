@@ -15,3 +15,22 @@
 
 #include "AddNewDataRow.h"
 
+
+void AddNewDataRow::Initialize() {
+}
+
+String AddNewDataRow::GetDisplayName() const {
+  String rval = "AddNewDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+void AddNewDataRow::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
+    return;
+  }
+  prog->AddLine(this, data_var->name + ".AddBlankRow();", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+}

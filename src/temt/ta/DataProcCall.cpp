@@ -15,3 +15,23 @@
 
 #include "DataProcCall.h"
 
+
+void DataProcCall::Initialize() {
+  min_type = &TA_taDataProc;
+  object_type = &TA_taDataProc;
+}
+
+bool DataProcCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm == "taDataProc") return true;
+  return false;
+}
+

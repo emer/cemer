@@ -20,12 +20,17 @@
 #include <taNBase>
 #include <IRefListClient>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <EditMbrItem_Group>
 #include <EditMthItem_Group>
 #include <SelectEditConfig>
 #include <taBase_List>
 #include <String_Array>
+#include <taBase_RefList>
 
 // declare all other types mentioned but not required to include:
 class taGroup_impl; // 
@@ -208,5 +213,7 @@ public: // legacy routines/members
   String_Array  meth_strs;      // #NO_SHOW #NO_SAVE #READ_ONLY string names of meths on bases -- used for saving
   void          ConvertLegacy();
 };
+
+TA_SMART_PTRS(SelectEdit); //
 
 #endif // SelectEdit_h

@@ -15,3 +15,24 @@
 
 #include "taiMatrixDataMimeItem.h"
 
+
+taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
+    const String& subkey)
+{
+  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_matrixdesc))
+    return NULL;
+  taiMatrixDataMimeItem* rval = new taiMatrixDataMimeItem;
+  rval->Constr(ms, subkey);
+  return rval;
+}
+
+void taiMatrixDataMimeItem::Constr_impl(const String&) {
+  String arg;
+  data(mimeData(), taiTabularDataMimeFactory::tacss_matrixdesc, arg);
+
+  return ExtractGeom(arg, m_flat_geom);
+}
+
+void  taiMatrixDataMimeItem::DecodeData_impl() {
+//note: maybe nothing!
+}

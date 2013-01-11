@@ -20,6 +20,7 @@
 #include <taPtrList>
 
 // member includes:
+#include <voidptr_PArray>
 
 // declare all other types mentioned but not required to include:
 

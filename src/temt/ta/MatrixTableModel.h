@@ -18,8 +18,12 @@
 
 // parent includes:
 #include <IDataLinkClient>
+#ifndef __MAKETA__
+#include <QAbstractTableModel>
+#endif
 
 // member includes:
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
@@ -28,6 +32,7 @@ class taDataLink; //
 class taMatrix; // 
 class DataCol; // 
 class String_Matrix; // 
+class QModelIndex;
 
 
 class TA_API MatrixTableModel: public QAbstractTableModel,
@@ -43,7 +48,7 @@ public:
   int                   matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
   override QMimeData*   mimeData (const QModelIndexList& indexes) const;
   override QStringList  mimeTypes () const;
-  taMisc::MatrixView    matView() const;
+  int                   matView() const; // taMisc::MatrixView
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*             mat() const {return m_mat;}
   inline bool           pat4D() const {return m_pat_4d;} // for dims>=4 whether to group d0/d1 in row (default is true)
@@ -89,7 +94,7 @@ protected:
   taMatrix*             m_mat;
   DataCol*		m_mat_col; // in case this guy is a delegate for a data column
   String_Matrix*        m_dim_names;
-  taMisc::MatrixView    m_view_layout; //#IGNORE #DEF_TOP_ZERO
+  int                   m_view_layout; //#IGNORE taMisc::MatrixView #DEF_TOP_ZERO
   ContextFlag           notifying; // to avoid responding when we sent notify
   bool                  m_pat_4d;
 

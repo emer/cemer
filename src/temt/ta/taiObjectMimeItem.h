@@ -34,8 +34,10 @@ public:
   TypeDef*		td() {return m_td;}
   taBase*		obj(); // note: only valid when in-process
   
-  int			GetObjectData(istringstream& result);
-    // #IGNORE gets the object data for the current item; returns number of bytes
+#ifndef __MAKETA__
+  int			GetObjectData(std::istringstream& result);
+  // #IGNORE gets the object data for the current item; returns number of bytes
+#endif
 
   TA_BASEFUNS_NOCOPY(taiObjectMimeItem);
 protected:

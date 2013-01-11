@@ -15,3 +15,88 @@
 
 #include "EditMbrItem.h"
 
+
+void EditMbrItem::Initialize() {
+  mbr = NULL;
+  is_numeric = false;
+}
+
+void EditMbrItem::Destroy() {
+}
+
+void EditMbrItem::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(param_search, this);
+}
+
+void EditMbrItem::Copy_(const EditMbrItem& cp) {
+  mbr = cp.mbr;
+}
+
+void EditMbrItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (!cust_desc && mbr) {
+    desc = _nilString;
+    MemberDef::GetMembDesc(mbr, desc, "");
+    prv_desc = desc;
+  }
+  is_numeric = false;
+  if(mbr && !mbr->type->InheritsNonAtomicClass()) {
+    if(mbr->type->InheritsFrom(&TA_float) || mbr->type->InheritsFrom(&TA_double)
+       || mbr->type->InheritsFrom(&TA_int) || mbr->type->InheritsFrom(&TA_int64_t)) {
+      if(!mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY"))
+        is_numeric = true;
+    }
+  }
+}
+
+String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == "mbr_type")
+    return (mbr) ? mbr->type->name : String("NULL");
+  else return inherited::GetColText(key, itm_idx);
+}
+
+bool EditMbrItem::PSearchValidTest() {
+  if(TestError(!mbr, "PSearchValidTest", "item does not have member def set -- not valide parameter search item"))
+    return false;
+  if(TestError(!is_numeric, "PSearchValidTest", "item is not numeric and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
+    return false;
+  return true;
+}
+
+Variant EditMbrItem::PSearchCurVal() {
+  if(!PSearchValidTest()) return 0.0;
+  return mbr->type->GetValVar(mbr->GetOff(base), mbr);
+}
+
+bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
+  if(!PSearchValidTest()) return false;
+  mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
+  return true;
+}
+
+bool EditMbrItem::PSearchMinToCur() {
+  if(!PSearchValidTest()) return false;
+  mbr->type->SetValVar(param_search.min_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
+  return true;
+}
+
+bool EditMbrItem::PSearchNextIncr() {
+  if(!PSearchValidTest()) return false;
+  double cur_val = PSearchCurVal().toDouble();
+  param_search.next_val = cur_val + param_search.incr;
+  if(param_search.next_val > param_search.max_val) {
+    param_search.next_val = param_search.min_val;
+    return false;
+  }
+  return true;
+}
+
+bool EditMbrItem::PSearchNextToCur() {
+  if(!PSearchValidTest()) return false;
+  mbr->type->SetValVar(param_search.next_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
+  return true;
+}

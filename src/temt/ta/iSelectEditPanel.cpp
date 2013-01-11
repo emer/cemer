@@ -15,3 +15,68 @@
 
 #include "iSelectEditPanel.h"
 
+
+iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  SelectEdit* se_ = sele();
+  se = NULL;
+  if (se_) {
+    switch (taMisc::select_edit_style) {
+    case taMisc::ES_ALL_CONTROLS:
+      se = new iSelectEditDataHost(se_, se_->GetTypeDef());
+      break;
+    case taMisc::ES_ACTIVE_CONTROL:
+      se = new iSelectEditDataHost2(se_, se_->GetTypeDef());
+      break;
+    }
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      bool ok;
+      iColor bgcol = se_->GetEditColorInherit(ok);
+      if (ok) se->setBgColor(bgcol);
+    }
+  }
+}
+
+iSelectEditPanel::~iSelectEditPanel() {
+  if (se) {
+    delete se;
+    se = NULL;
+  }
+}
+
+void iSelectEditPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+}
+
+bool iSelectEditPanel::HasChanged() {
+  return se->HasChanged();
+}
+
+bool iSelectEditPanel::ignoreDataChanged() const {
+  return !isVisible();
+}
+
+void iSelectEditPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  se->ConstrEditControl();
+  setCentralWidget(se->widget()); //sets parent
+  setButtonsWidget(se->widButtons);
+}
+
+void iSelectEditPanel::UpdatePanel_impl() {
+  if (se) se->ReShow_Async();
+}
+
+void iSelectEditPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (se && se->HasChanged()) {
+    se->Apply();
+  }
+}
+
+void iSelectEditPanel::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  m_dps->UpdateMethodButtons();
+}

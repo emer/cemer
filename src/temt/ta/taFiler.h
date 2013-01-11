@@ -91,8 +91,10 @@ public:
   String        filetype;       // the filetype, ex Project
   bool          select_only;    // file is to be selected only (not opened)
 
-  istream*      istrm;          // #READ_ONLY #NO_SAVE
-  ostream*      ostrm;          // #READ_ONLY #NO_SAVE
+#ifndef __MAKETA__
+  std::istream* istrm;          // #READ_ONLY #NO_SAVE
+  std::ostream*  ostrm;          // #READ_ONLY #NO_SAVE
+#endif
   bool          open_file;      // #READ_ONLY #NO_SAVE true if there is an open file somewhere
   bool          file_selected;  // #READ_ONLY #NO_SAVE true if a file was selected last time..
 
@@ -135,15 +137,27 @@ public:
   // get a temporary file name into m_tmp_fname
 
   // the low-level api functions work directly on the fname
-  virtual istream*      open_read();
+#ifndef __MAKETA__
+  virtual std::istream*      open_read();
   // #IGNORE
-  virtual ostream*      open_write();
+  virtual std::ostream*      open_write();
   // #IGNORE
-  virtual ostream*      open_append();
+  virtual std::ostream*      open_append();
   // #IGNORE
+#endif
   virtual bool          open_write_exist_check();
   // returns true if file already exists for writing
 
+#ifndef __MAKETA__
+  virtual std::istream*      Open();
+  // #MENU to open an existing file for reading; starts with curr filename if any
+  virtual std::ostream*      Save(bool tmp_fname_save = true);
+  // #MENU to save to an existing file; requests a new filename if doesn't exist  -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
+  virtual std::ostream*      SaveAs(bool tmp_fname_save = true);
+  // #MENU to save to a new file -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
+  virtual std::ostream*      Append();
+  // #MENU to open an existing file for appending
+#else
   virtual istream*      Open();
   // #MENU to open an existing file for reading; starts with curr filename if any
   virtual ostream*      Save(bool tmp_fname_save = true);
@@ -152,6 +166,8 @@ public:
   // #MENU to save to a new file -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
   virtual ostream*      Append();
   // #MENU to open an existing file for appending
+#endif
+
   virtual void          Close();
   // #MENU close the stream (will also manage temporary file renaming if necessary)
 
@@ -165,7 +181,9 @@ protected:
   String        m_tmp_fname;    // the name (no path) of the temporary file, if used
   String        exts;           // the default extensions (if any), including '.'; comma-sep
   FilerFlags    flags;
-  fstream*      fstrm;          // #READ_ONLY the underlying file
+#ifndef __MAKETA__
+  std::fstream*      fstrm;          // #READ_ONLY the underlying file
+#endif
   bool          compressed; // set when file has .gz suffix
   bool          file_exists; // set by GetFileName if the file actually exists
   bool          save_paths; // save path changes, but only on Close (*after* file save)

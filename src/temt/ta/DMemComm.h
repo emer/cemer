@@ -23,6 +23,47 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef DMEM_COMPILE
+#include <mpi.h>
+
+/////////////////////////////////////////////////////////////////
+//	communicator: use this to define groups of communicating units
+
+class TA_API DMemComm : public taBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication
+  INHERITED(taBase)
+public:
+  MPI_Comm	comm;		// #IGNORE the mpi communicator id
+  MPI_Group	group;		// #IGNORE the mpi group id
+  int		nprocs;		// #IGNORE number of processors in comm
+  int_Array	ranks;		// #IGNORE proc numbers of members of the group
+  int		this_proc;	// #IGNORE the rank of this processor within communicator
+
+  void	CommAll();
+  // #IGNORE use all the processors (world group)
+  void	CommSelf();
+  // #IGNORE we are a group of just our self
+  void	CommSubGpInner(int sub_gp_size);
+  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
+  void	CommSubGpOuter(int sub_gp_size);
+  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the outer group for this processor
+
+  int	GetThisProc();
+  // #IGNORE get the rank of this processor relative to communicator
+
+  void	MakeCommFmRanks();
+  // #IGNORE make the comm from the ranks
+  void	FreeComm();
+  // #IGNORE free the comm & group 
+
+  TA_BASEFUNS_LITE(DMemComm);
+private:
+  NOCOPY(DMemComm)
+  void 	Initialize();
+  void 	Destroy();
+};
+
+#else
 
 class TA_API DMemComm : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication
@@ -36,5 +77,7 @@ private:
   void 	Initialize() { };
   void 	Destroy() { };
 };
+
+#endif // DMEM_COMPILE
 
 #endif // DMemComm_h

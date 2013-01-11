@@ -25,6 +25,24 @@
 class float_Matrix; // 
 class double_Matrix; // 
 
+#ifndef __MAKETA__
+# include <cmath>
+#endif
+
+#if (defined(HAVE_LIBGSL) && !defined(__MAKETA__))
+# include "gsl/gsl_matrix_double.h"
+# include "gsl/gsl_matrix_float.h"
+#endif
+
+#ifdef TA_OS_WIN
+// following for msvc
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+#endif
 
 class TA_API taMath : public taNBase {
   // #STEM_BASE ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions

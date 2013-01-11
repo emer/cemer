@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taNBase.h"
+#include <taMisc>
+#include <taList_impl>
 
 void taNBase::SetDefaultName() {
   if(taMisc::not_constr || taMisc::in_init || GetTypeDef() == &TA_taNBase)

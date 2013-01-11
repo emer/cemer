@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "MatrixGeom.h"
+#include <taMisc>
+#include <int_Matrix>
+#include <MatrixIndex>
 
 using namespace std;
 

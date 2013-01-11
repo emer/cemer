@@ -15,3 +15,35 @@
 
 #include "taiMimeFactory_List.h"
 
+taiMimeFactory_List* taiMimeFactory_List::g_instance; 
+
+void taiMimeFactory_List::setInstance(taiMimeFactory_List* value)
+{
+  g_instance = value;
+}
+
+taiMimeFactory* taiMimeFactory_List::StatGetInstanceByType(TypeDef* td) {
+  taiMimeFactory_List* inst = instance();
+  if (inst) return inst->GetInstanceByType(td);
+  else return NULL;
+}
+
+void taiMimeFactory_List::Destroy() {
+  if (g_instance == this) g_instance = NULL;
+}
+
+taiMimeFactory* taiMimeFactory_List::GetInstanceByType(TypeDef* td) {
+  if (!td) return NULL;
+  if (!td->DerivesFrom(&TA_taiMimeFactory)) return NULL;
+  taiMimeFactory* rval = NULL;
+  for (int i = 0; i < size; ++i) {
+    rval = FastEl(i);
+    //NOTE: if comparing of objects fails for some reason, compare names
+    if (rval->GetTypeDef()->GetNonPtrType() == td)
+      return rval;
+  }
+  // not here yet, so make one
+  rval = (taiMimeFactory*)New(1, td);
+  return rval;
+}
+

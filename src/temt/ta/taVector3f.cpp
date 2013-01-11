@@ -15,6 +15,10 @@
 
 #include "taVector3f.h"
 
+#include <taMatrix>
+#include <taVector3i>
+#include <MatrixIndex>
+
 taVector3f::taVector3f(const taVector3i& cp) {
   Register(); Initialize();
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
@@ -23,4 +27,13 @@ taVector3f::taVector3f(const taVector3i& cp) {
 taVector3f& taVector3f::operator=(const taVector3i& cp) {
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
   return *this;
+}
+
+void taVector3f::ToMatrix(taMatrix& mat) const {
+  mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2);
+}
+
+void taVector3f::FromMatrix(taMatrix& mat) {
+  x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat();
+  z = mat.SafeElAsVar(2).toFloat();
 }

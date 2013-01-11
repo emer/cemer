@@ -15,3 +15,17 @@
 
 #include "taiMultiMimeItem.h"
 
+
+void taiMultiMimeItem::Initialize() {
+}
+
+void taiMultiMimeItem::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(&items, this);
+}
+
+void taiMultiMimeItem::CutLinks() {
+  items.CutLinks();
+  inherited::CutLinks();
+}
+

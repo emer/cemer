@@ -21,12 +21,18 @@
 #include "css_ta.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
-#include "ta_group.h"
-#include "ta_project.h"
 
-#ifdef TA_GUI
-#include "ta_qttype_def.h"
-#endif
+#include <taiEdit>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <Variant_Matrix>
+#include <int_Matrix>
+#include <byte_Matrix>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <taLeafItr>
+#include <taBaseItr>
 
 using namespace std;
 

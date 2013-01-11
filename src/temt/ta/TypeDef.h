@@ -16,6 +16,9 @@
 #ifndef TypeDef_h
 #define TypeDef_h 1
 
+// include all the ta base types
+#include "ta_TA_type_WRAPPER.h"
+
 // parent includes:
 #include <TypeItem>
 
@@ -473,8 +476,5 @@ private:
   void          Initialize();
   void          Copy_(const TypeDef& cp);
 };
-
-// include all the ta base types
-#include "ta_TA_type_WRAPPER.h"
 
 #endif // TypeDef_h

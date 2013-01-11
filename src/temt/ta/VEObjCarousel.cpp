@@ -48,3 +48,61 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
   return true;
 }
 
+
+void VEObjCarousel::Destroy() {
+  if(obj_switch) {
+    obj_switch->unref();
+    obj_switch = NULL;
+  }
+}
+
+void VEObjCarousel::MakeSwitch() {
+  if(!obj_switch) {
+    obj_switch = new SoSwitch;
+    obj_switch->ref();  // ref it so it hangs around
+  }
+}
+
+bool VEObjCarousel::LoadObjs(bool force) {
+  if(TestError(!(bool)obj_table, "LoadObjs", "obj_table is not set -- cannot load objs!"))
+    return false;
+
+  // this delay is deadly for viewing!
+  SoVRMLImageTexture::setDelayFetchURL(false);
+
+  MakeSwitch();
+  SoSwitch* sw = obj_switch;
+
+  if(!force && (sw->getNumChildren() == obj_table->rows))
+    return false;               // already good
+
+  sw->removeAllChildren();
+
+  DataCol* fpathcol = obj_table->FindColName("FilePath", true); // yes err msg
+  if(!fpathcol) return false;
+
+  String msg;
+  msg << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
+      << " -- can take a long time for a large number.";
+  taMisc::Info(msg);
+
+  sw->whichChild = -1;
+
+  for(int i=0; i< obj_table->rows; i++) {
+    String fpath = fpathcol->GetValAsString(i);
+
+    SoInput in;
+    QFileInfo qfi(fpath);
+    if(qfi.isFile() && qfi.isReadable() && in.openFile(fpath)) {
+      taMisc::Info("Loading", fpath, "...");
+      SoSeparator* root = SoDB::readAll(&in);
+      if (root) {
+        sw->addChild(root);
+        continue;
+      }
+    }
+    taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
+  }
+  return true;
+}
+

@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "SArg_Array.h"
+#include <taMisc>
 
 using namespace std;
 

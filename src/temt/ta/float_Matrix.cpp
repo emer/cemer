@@ -15,6 +15,8 @@
 
 #include "float_Matrix.h"
 
+using namespace std;
+
 const float float_Matrix::blank = 0.0f;
 
 void float_Matrix::Dump_Save_Item(ostream& strm, int idx) {

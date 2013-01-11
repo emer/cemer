@@ -16,6 +16,10 @@
 
 #include "css_misc_funs.h"
 
+#include <taMisc>
+
+using namespace std;
+
 #if (defined(WIN32) && (!defined(CYGWIN)))
 
 #include <windows.h>

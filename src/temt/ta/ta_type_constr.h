@@ -17,7 +17,8 @@
 #ifndef ta_type_constr_h
 #define ta_type_constr_h
 
-#include "ta_type.h"
+#include "ta_def.h"
+#include <PropertyDef>
 
 // new type information construction system
 // this includes the code to load the information from the _TA.cc file

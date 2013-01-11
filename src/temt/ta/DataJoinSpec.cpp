@@ -15,3 +15,32 @@
 
 #include "DataJoinSpec.h"
 
+
+void DataJoinSpec::Initialize() {
+  type = INNER;
+  nomatch_warn = true;
+}
+
+void DataJoinSpec::SetDataTable(DataTable* dt_a, DataTable* dt_b) {
+  col_a.SetDataTable(dt_a);
+  col_b.SetDataTable(dt_b);
+}
+
+void DataJoinSpec::GetColumns(DataTable* dt_a, DataTable* dt_b) {
+  col_a.GetColumns(dt_a);
+  col_b.GetColumns(dt_b);
+}
+
+void DataJoinSpec::ClearColumns() {
+  col_a.ClearColumns();
+  col_b.ClearColumns();
+}
+
+String DataJoinSpec::GetDisplayName() const {
+  return "join: col_a:" + col_a.GetDisplayName() + " to col_b: " + col_b.GetDisplayName();
+}
+
+void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  col_a.CheckConfig(quiet, rval);
+  col_b.CheckConfig(quiet, rval);
+}

@@ -20,14 +20,27 @@
 #include <IDataViewWidget>
 #ifndef __MAKETA__
 #include <QMainWindow>
+#include <QPointer>
 #endif
 
 // member includes:
 #include <MainWindowViewer>
+#include <taiAction_List>
 
 // declare all other types mentioned but not required to include:
-class taiMenu;
-class taiAction;
+class taiMenu; //
+class taiAction; //
+class iBrowseHistory; //
+class iToolBar; //
+class iFrameViewer; //
+class iDockViewer; //
+class iSearchDialog; //
+class iTreeView; //
+class ISelectable_PtrList; //
+class iTreeViewItem; //
+class iTabViewer; //
+class ISelectableHost; //
+
 
 class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer

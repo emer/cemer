@@ -49,8 +49,10 @@ protected:
   iSize                 m_flat_geom;
   bool                  ReadInt(String& arg, int& val); // read a ; terminated int
   bool                  ExtractGeom(String& arg, iSize& val); // get the cols/rows
-  bool                  ReadTsvValue(istringstream& strm, String& val,
+#ifndef __MAKETA__
+  bool                  ReadTsvValue(std::istringstream& strm, String& val,
      TsvSep& sep = no_sep); // reads value if possible, into val, returning true if a value read, and the separator encountered after the value in sep.
+#endif
   virtual void          WriteTable_Generic(DataTable* tab, const CellRange& sel);
 
 private:

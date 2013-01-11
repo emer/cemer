@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taPtrList>
+#include <DumpPathSub>
 
 // member includes:
 

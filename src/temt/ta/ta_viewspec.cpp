@@ -16,17 +16,5 @@
 #include "ta_viewspec.h"
 
 
-void ViewSpec::Initialize() {
-  visible = true;
-}
 
-void ViewSpec::Copy_(const ViewSpec& cp) {
-  display_name = cp.display_name;
-  visible = cp.visible;
-}
-
-String ViewSpec::GetDisplayName() const {
-  if (display_name.nonempty())
-    return display_name;
-  else return name;
-}
+////

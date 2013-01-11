@@ -21,7 +21,8 @@
 #include "css_qtdialog.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
-#include "ta_qt.h"
+
+#include <taiMisc>
 
 void cssiSession::CancelProgEdits(cssProgSpace* prsp) {
   int i;

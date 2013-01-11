@@ -39,4 +39,11 @@ private:
   void	Destroy() {}
 };
 
+#define TA_MFBASEFUNS(T) \
+  static T* instance() {static T* in = NULL; if (!in) \
+    in = (T*)(taiMimeFactory_List::StatGetInstanceByType(&TA_##T)); \
+    return in;} \
+  TA_BASEFUNS_NOCOPY(T)
+    
+
 #endif // taiMimeFactory_h

@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "FixedMinMax.h"
+#include <MinMax>
 
 void FixedMinMax::Initialize() {
   min = max = 0.0f;
@@ -25,3 +26,6 @@ void FixedMinMax::Copy_(const FixedMinMax& cp) {
   fix_min = cp.fix_min; fix_max = cp.fix_max;
 }
 
+void FixedMinMax::FixRange(MinMax& mm) {
+  if(fix_min) mm.min = min; if(fix_max) mm.max = max;
+}

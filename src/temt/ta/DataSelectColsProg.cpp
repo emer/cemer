@@ -15,3 +15,65 @@
 
 #include "DataSelectColsProg.h"
 
+
+void DataSelectColsProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  select_spec.name = "select_spec";
+  UpdateSpecDataTable();
+}
+
+void DataSelectColsProg::UpdateSpecDataTable() {
+  select_spec.SetDataTable(GetSrcData());
+}
+
+void DataSelectColsProg::Initialize() {
+}
+
+String DataSelectColsProg::GetDisplayName() const {
+  String rval = "SelectCols ";
+  if(src_data_var) {
+    rval += " from: " + src_data_var->name;
+  }
+  if(dest_data_var) {
+    rval += " to: " + dest_data_var->name;
+  }
+  return rval;
+}
+
+void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  if(GetSrcData()) {
+    select_spec.GetColumns(GetSrcData());
+    select_spec.CheckConfig(quiet, rval);
+    select_spec.ClearColumns();
+  }
+}
+
+void DataSelectColsProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!",
+                  ProgLine::MAIN_LINE);
+    return;
+  }
+  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";",
+                ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->IncIndent();
+  if(dest_data_var) {
+    prog->AddLine(this, "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
+                  + ", dsp->select_spec);");
+  }
+  else {
+    prog->AddLine(this, "taDataProc::SelectCols(NULL, " + src_data_var->name
+                  + ", dsp->select_spec);");
+  }
+  if(dest_data_var) {
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
+
+void DataSelectColsProg::AddAllColumns() {
+  select_spec.AddAllColumns(GetSrcData());
+}

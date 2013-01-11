@@ -18,6 +18,12 @@
 #include <TypeDef>
 #include <taMisc>
 
+#ifndef NO_TA_BASE
+#include <taiMethod>
+#include <taiMethodData>
+#include <css_machine.h>
+#endif
+
 void MethodDef::Initialize() {
   owner = NULL;
   type = NULL;

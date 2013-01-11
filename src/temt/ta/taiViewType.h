@@ -20,11 +20,12 @@
 #include <taiTypeBase>
 
 // member includes:
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
-class iDataPanelSet; // #IGNORE
-class iDataPanelFrame; // #IGNORE
-
+class iDataPanelSet; //
+class iDataPanelFrame; //
+class iDataPanel; //
 
 class TA_API taiViewType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS viewer services for the type

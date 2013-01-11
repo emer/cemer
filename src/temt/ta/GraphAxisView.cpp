@@ -15,3 +15,38 @@
 
 #include "GraphAxisView.h"
 
+
+void GraphAxisView::Initialize() {
+  row_num = false;
+}
+
+void GraphAxisView::CopyFromView(GraphAxisView* cp){
+  CopyFromView_base(cp);        // get the base
+  row_num = cp->row_num;
+}
+
+void GraphAxisView::UpdateOnFlag() {
+  if(on) {
+    if(!row_num && !GetColPtr())
+      on = false; // not actually on!
+  }
+}
+
+void GraphAxisView::ComputeRange() {
+  if(!row_num) {
+    inherited::ComputeRange();
+    return;
+  }
+  // ROW_NUM
+  GraphTableView* gv = GetGTV();
+  SetRange_impl(gv->view_range.min, gv->view_range.max);
+}
+
+bool GraphAxisView::UpdateRange() {
+  if(!row_num)
+    return inherited::UpdateRange();
+  // ROW_NUM
+  GraphTableView* gv = GetGTV();
+  return UpdateRange_impl(gv->view_range.min, gv->view_range.max);
+}
+

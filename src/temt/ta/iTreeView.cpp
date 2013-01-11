@@ -15,6 +15,10 @@
 
 #include "iTreeView.h"
 
+#include <iMainWindowViewer>
+#include <String_PArray>
+#include <iTreeViewItem>
+
 const String iTreeView::opt_treefilt("TREEFILT_");
 
 

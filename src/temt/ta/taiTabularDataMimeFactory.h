@@ -23,6 +23,38 @@
 
 // declare all other types mentioned but not required to include:
 
+/*
+  MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)
+
+    <flat_cols>;<flat_rows>;\n
+
+
+    The data itself (text/plain) is in TSV format.
+
+    flat_cols/rows (>=1) indicate the flattend 2D rep of the data
+
+    Note that this format is primarily to make decoding of the data faster
+    and more definite where tacss is the source of the data, compared with
+    just parsing the text/plain data (which the decoder can do, to import
+    spreadsheet data.)
+    .
+
+  MIME TYPE "tacss/tabledesc" -- description of table data (no content)
+
+    <flat_cols>;<flat_rows>;\n
+    <mat_cols>;<mat_rows>;\n
+    <col0_flat_cols>;<col0_flat_rows>;<is_image>;\n
+    ...
+    <colN-1-flat_cols>;<colN-1_flat_rows>;<is_image>;\n
+
+    for scalar cols: colx-cols=colx-rows=1
+
+    The data itself (text/plain) is in a TSV tabular form, of total
+    Sigma(colx-cols)x=0:N-1 by <rows> * Max(colx-rows) -- non-existent values
+    will just have blank entries.
+
+
+*/
 
 class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
 // this factory handles both Matrix and Table clipboard formats

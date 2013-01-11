@@ -15,3 +15,23 @@
 
 #include "DoneWritingDataRow.h"
 
+
+void DoneWritingDataRow::Initialize() {
+}
+
+String DoneWritingDataRow::GetDisplayName() const {
+  String rval = "DoneWritingDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
+    return;
+  }
+  prog->AddLine(this, data_var->name + ".WriteClose();");
+  prog->AddVerboseLine(this);
+}
+

@@ -23,9 +23,9 @@
 #endif
 
 // member includes:
+#include <taOABase>
 
 // declare all other types mentioned but not required to include:
-class taOABase; //
 
 /*
  * taBaseAdapter enables a taOBase object to handle Qt events, via a

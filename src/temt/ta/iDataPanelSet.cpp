@@ -190,3 +190,64 @@ QWidget* iDataPanelSet::firstTabFocusWidget() {
   return NULL;
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//      Program specific browser guys!
+
+
+iDataPanelSet* Program::FindMyDataPanelSet() {
+  if(!taMisc::gui_active) return NULL;
+  taDataLink* link = data_link();
+  if(!link) return NULL;
+  taDataLinkItr itr;
+  iDataPanelSet* el;
+  FOR_DLC_EL_OF_TYPE(iDataPanelSet, el, link, itr) {
+//     if (el->data() == this) {
+      return el;
+//     }
+  }
+  return NULL;
+}
+
+bool Program::ViewCtrlPanel() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(0);
+  return true;
+}
+
+bool Program::ViewProgEditor() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(1);
+  return true;
+}
+
+bool Program::ViewCssScript() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(2);
+  return true;
+}
+
+bool Program::ViewProperties() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(3);
+  return true;
+}
+
+bool Program::ViewScriptEl(taBase* pel) {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(2);
+  iProgramViewScriptPanel* pnl = dynamic_cast<iProgramViewScriptPanel*>(dps->panels.SafeEl(2));
+  if(!pnl || !pnl->vs) return false;
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return false;
+
+  pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1);
+  return true;
+}
+

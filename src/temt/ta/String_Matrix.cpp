@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "String_Matrix.h"
+#include <taMisc>
+#include <String_Array>
 
 using namespace std;
 

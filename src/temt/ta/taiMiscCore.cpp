@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiMiscCore.h"
+#include <QCoreApplication>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taThreadMgr>
+#include <QTimer>
+#include <dumpMisc>
+#include <taiTypeBase>
+
+#include <signal.h>
 
 extern "C" {
   extern int rl_done;
@@ -166,7 +176,8 @@ int taiMiscCore::Exec() {
   int rval = 0;
   try {
     rval = Exec_impl();
-  } catch(...) {
+  }
+  catch(...) {
     taMisc::in_event_loop = false;
     raise(SIGABRT);
   }

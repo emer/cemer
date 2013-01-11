@@ -21,7 +21,8 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
-#include "ta_program.h"
+
+#include <DynEnum>
 
 class CSS_API cssCPtr_int : public cssCPtr {
   // Points to a C integer

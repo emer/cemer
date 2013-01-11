@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "Variant_Matrix.h"
+#include <taMisc>
 
 using namespace std;
 

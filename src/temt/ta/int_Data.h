@@ -58,4 +58,6 @@ private:
   void  Destroy() {}
 };
 
+TA_SMART_PTRS(int_Data); //
+
 #endif // int_Data_h

@@ -15,3 +15,27 @@
 
 #include "StopStepPoint.h"
 
+
+void StopStepPoint::Initialize() {
+}
+
+void StopStepPoint::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "StopCheck(); // check for Stop or Step button", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+}
+
+String StopStepPoint::GetDisplayName() const {
+  return "Stop/Step Point";
+}
+
+void StopStepPoint::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_StopStepPoint);
+}
+
+void StopStepPoint::PreGenMe_impl(int item_id) {
+  // register as a subproc
+  Program* prog = program();
+  if (!prog) return; // shouldn't normally happen
+  prog->SetProgFlag(Program::SELF_STEP);
+}

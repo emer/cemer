@@ -29,7 +29,22 @@ class iTreeWidgetItem; // #IGNORE
 // member includes:
 
 // declare all other types mentioned but not required to include:
+#ifndef __MAKETA__
+#include <iTreeView>
+#include <taiActions>
+#endif
 
+/* Node Bitmap flags
+The icon client (ex. Browser) will query for an icon, passing the attributes such as Open, Linked, etc.
+The icon supplier (ex. taBase object) returns an icon bitmap, and an indication of what attribute flags it
+supports. The Browser can then add its own generic modifiers for attributes not supported by the supplier.
+ex. the browser can add a generic small arrow to indicate a link
+*/
+
+enum NodeBitmapFlags {
+  NBF_FOLDER_OPEN               = 0x01,
+  NBF_LINK_ITEM                 = 0x02
+};
 
 class TA_API iTreeViewItem: public iTreeWidgetItem,
   public virtual IDataLinkClient, public virtual IObjectSelectable {

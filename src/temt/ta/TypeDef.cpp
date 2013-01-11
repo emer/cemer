@@ -20,7 +20,28 @@
 #include <taHashTable>
 #include <taMisc>
 
+#ifndef NO_TA_BASE
+#include <taBase>
+#include <UserDataItem_List>
+#include <taiType>
+#include <taiEdit>
+#include <taiViewType>
+#include <DynEnum>
+#include <taSmartRef>
+#include <tabMisc>
+#include <taRootBase>
+#include <dumpMisc>
+#endif
+
+// what's this all about!?
+#ifndef NO_TA_BASE
+# define CMAKE_DEPENDENCY_HACK(a) #a
+#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
+# undef CMAKE_DEPENDENCY_HACK
+#endif
+
 using namespace std;
+
 
 TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
   // search up typ1's tree until a common subtype is found

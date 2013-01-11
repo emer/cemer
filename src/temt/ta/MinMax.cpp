@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "MinMax.h"
+#include <float_Matrix>
 
 void MinMax::SetRange(float_Matrix& mat) {
   if (mat.size == 0) {

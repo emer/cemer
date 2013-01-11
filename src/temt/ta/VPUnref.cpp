@@ -15,3 +15,71 @@
 
 #include "VPUnref.h"
 
+
+VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
+  base = base_; parent = par; path = p; memb_def = md;
+  name = String((intptr_t)base);
+}
+
+taBase* VPUnref::Resolve() {
+  MemberDef* md;
+  taBase* bs = tabMisc::root->FindFromPath(path, md);
+  if(!bs)
+    return NULL;
+  if(md) {
+    if(md->type->ptr == 1) {
+      bs = *((taBase**)bs);
+      if(!bs)
+	return NULL;
+    }
+    else if(md->type->ptr != 0) {
+      taMisc::Warning("ptr count != 0 in path:", path);
+      return NULL;
+    }
+  }
+
+  if (memb_def && memb_def->type->InheritsFrom(&TA_taSmartRef)) {
+    taSmartRef& ref = *((taSmartRef*)base);
+    ref = bs;
+  } else {// assume it is taBase_ptr or (binary-compat) taBasePtr
+    if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
+      if(parent == NULL)
+        taMisc::Warning("NULL parent for owned pointer:",path);
+      else
+        taBase::OwnPointer((taBase**)base, bs, parent);
+    } else 
+      taBase::SetPointer((taBase**)base, bs);
+  }
+
+  if(taMisc::verbose_load >= taMisc::MESSAGES)
+    taMisc::Warning("<== Resolved Reference:",path);
+  if(parent != NULL)
+    parent->UpdateAfterEdit();
+  return bs;
+}
+
+void VPUList::Resolve() {
+  if(size <= 0)
+    return;
+  int i=0;
+  do {
+    if(FastEl(i)->Resolve() != NULL)
+      RemoveIdx(i);		// take off the list if resolved!
+    else {
+      VPUnref* vp = (VPUnref*)FastEl(i);
+      String par_path;
+      if(vp->parent != NULL)
+	par_path = vp->parent->GetPathNames();
+      taMisc::Warning("Could not resolve following path:",vp->path,
+		    "in object:",par_path);
+      i++;
+    }
+  } while(i < size);
+}
+
+void VPUList::AddVPU(void* b, taBase* par, const String& p, MemberDef* md) {
+  AddUniqNameOld(new VPUnref(b,par,p,md));
+  if(taMisc::verbose_load >= taMisc::MESSAGES)
+    taMisc::Warning("==> Unresolved Reference:",p);
+}
+

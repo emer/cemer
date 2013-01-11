@@ -15,3 +15,21 @@
 
 #include "DataOneProg.h"
 
+
+void DataOneProg::Initialize() {
+}
+
+void DataOneProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(!data_var, quiet, rval, "data_var is NULL")) return; // fatal
+  // this should actually be done by the var, not us!
+  //  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
+  CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
+             "data_var variable does not point to a DataTable object");
+}
+
+DataTable* DataOneProg::GetData() const {
+  if(!data_var) return NULL;
+  if(data_var->object_type != &TA_DataTable) return NULL;
+  return (DataTable*)data_var->object_val.ptr();
+}

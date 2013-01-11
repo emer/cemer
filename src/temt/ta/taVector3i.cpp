@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taVector3i.h"
+#include <taMatrix>
+#include <taVector3f>
+#include <MatrixIndex>
 
 taVector3i::taVector3i(const taVector3f& cp) {
   Register(); Initialize();
@@ -37,6 +40,15 @@ void taVector3i::CopyToMatrixIndex(MatrixIndex& idx) {
   idx.Set(0, x);
   idx.Set(1, y);
   idx.Set(2, z);
+}
+
+void taVector3i::ToMatrix(taMatrix& mat) const {
+  mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2);
+}
+
+void taVector3i::FromMatrix(taMatrix& mat) {
+  x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt();
+  z = mat.SafeElAsVar(2).toInt();
 }
 
 bool taVector3i::FitNinXY(int n) {

@@ -15,3 +15,66 @@
 
 #include "iMatrixTableView.h"
 
+
+iMatrixTableView::iMatrixTableView(QWidget* parent)
+:inherited(parent)
+{
+}
+
+taMatrix* iMatrixTableView::mat() const {
+  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
+  if (mod) return mod->mat();
+  else return NULL; 
+}
+
+void iMatrixTableView::EditAction(int ea) {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return;
+  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+  CellRange sel;
+  GetSel(sel);
+  if (ea & taiClipData::EA_SRC_OPS) {
+    fact->Mat_EditActionS(mat, sel, ea);
+  } else {// dest op
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Mat_EditActionD(mat, sel, ms, ea);
+    delete ms;
+  }
+}
+
+void iMatrixTableView::GetEditActionsEnabled(int& ea) {
+  int allowed = 0;
+  int forbidden = 0;
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (mat) {
+    taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+    CellRange sel;
+    GetSel(sel);
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
+    delete ms;
+  }
+  ea = allowed & ~forbidden;
+}
+
+void iMatrixTableView::GetSel(CellRange& sel) {
+  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
+  if (!mod || !selectionModel()) return;
+  // first, get the sel assuming no BOT_0
+  sel.SetFromModel(selectionModel()->selectedIndexes());
+  // if BOT_0, need to flip the row around (and swap fr/to)
+  if (mod->matView() == taMisc::BOT_ZERO) {
+    int max_row = mod->rowCount() - 1;
+    if ((max_row) < 0) return; // row_xx s/already be 0
+    int row_to = max_row - sel.row_fr;
+    sel.row_fr = max_row - sel.row_to;
+    sel.row_to = row_to;
+  }
+}
+
+bool iMatrixTableView::isFixedRowCount() const {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return true;
+  return (!mat->canResize());
+}
+

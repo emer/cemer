@@ -15,3 +15,62 @@
 
 #include "VarIncr.h"
 
+
+void VarIncr::Initialize() {
+  expr.expr = "1";
+}
+
+void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!var, quiet, rval, "var is NULL");
+  expr.CheckConfig(quiet, rval);
+}
+
+void VarIncr::GenCssBody_impl(Program* prog) {
+  expr.ParseExpr();             // re-parse just to be sure!
+  if (!var) {
+    prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified", ProgLine::MAIN_LINE);
+    return;
+  }
+
+  prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + var->name + ")"); // moved above
+  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + var->name + ")"); // after
+}
+
+String VarIncr::GetDisplayName() const {
+  if(!var)
+    return "(var not selected)";
+
+  String rval;
+  rval += var->name + "+=" + expr.GetFullExpr();
+  return rval;
+}
+
+bool VarIncr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.freq("+=") == 1 || code.freq("-=") == 1) return true;
+  return false;
+}
+
+bool VarIncr::CvtFmCode(const String& code) {
+  String lhs, rhs;
+  bool neg = false;
+  if(code.contains("+=")) {
+    lhs = trim(code.before("+="));
+    rhs = trim(code.after("+="));
+  }
+  else {
+    lhs = trim(code.before("-="));
+    rhs = trim(code.after("-="));
+    neg = true;
+  }
+  if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
+
+  var = FindVarNameInScope(lhs, true); // option to make
+  if(neg)
+    expr.SetExpr("-" + rhs);
+  else
+    expr.SetExpr(rhs);
+
+  return true;
+}

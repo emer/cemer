@@ -47,12 +47,9 @@ public:
   override void CopyToMatrixGeom(MatrixGeom& geom);
   override void CopyToMatrixIndex(MatrixIndex& idx);
 
-  inline void	ToMatrix(taMatrix& mat) const
-  { mat.SetGeom(1,3); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); mat.SetFmVar(z,2); }
+  void	ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  inline void	FromMatrix(taMatrix& mat)
-  { x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt();
-    z = mat.SafeElAsVar(2).toInt(); }
+  void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector3i(int xx)                       { SetXYZ(xx, xx, xx); }

@@ -15,3 +15,61 @@
 
 #include "CaseBlock.h"
 
+
+void CaseBlock::Initialize() {
+}
+
+void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  //  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
+}
+
+void CaseBlock::GenCssPre_impl(Program* prog) {
+  case_val.ParseExpr();         // re-parse just to be sure!
+  if(prog_code.size == 0) return;
+  String expr = case_val.GetFullExpr();
+  if(expr.empty())
+    prog->AddLine(this, "default: {", ProgLine::MAIN_LINE);
+  else
+    prog->AddLine(this, "case " + case_val.GetFullExpr() + ": {", ProgLine::MAIN_LINE);
+  prog->IncIndent();
+  prog->AddVerboseLine(this, false, "\"inside case\"");
+}
+
+void CaseBlock::GenCssBody_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog_code.GenCss(prog);
+}
+
+void CaseBlock::GenCssPost_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog->AddLine(this, "break;"); // always break
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
+
+String CaseBlock::GetDisplayName() const {
+  if(case_val.expr.empty()) return "default: (" + String(prog_code.size) + " items)";
+  return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
+}
+
+bool CaseBlock::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.startsWith("case") || code.startsWith("default")) return true;
+  return false;
+}
+
+bool CaseBlock::CvtFmCode(const String& code) {
+  String cd;
+  if(code.startsWith("case")) cd = trim(code.after("case"));
+  else if(code.startsWith("default")) cd = trim(code.after("default"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  if(cd.endsWith(':'))
+    cd = cd.before(':', -1);
+  case_val.SetExpr(cd);
+  return true;
+}
+

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include "ta_def.h"
+#include "ta_TA_type_WRAPPER.h"
 
 // member includes:
 

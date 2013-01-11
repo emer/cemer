@@ -17,8 +17,11 @@
 #define gpiList_ElData_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
+#include <taiDataList>
+#include <Member_List>
 
 // declare all other types mentioned but not required to include:
 

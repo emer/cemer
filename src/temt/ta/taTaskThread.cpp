@@ -147,3 +147,4 @@ void taTaskThread::terminate() {
 //  QThread::terminate(); //WARNING: including this causes the dude to hang
 }
 
+

@@ -15,3 +15,38 @@
 
 #include "taiObjectMimeItem.h"
 
+using namespace std;
+
+void taiObjectMimeItem::Initialize() {
+  m_td = NULL;
+  m_obj = NULL;
+}
+
+bool taiObjectMimeItem::Constr_impl(const String&) {
+  m_td = taMisc::types.FindName(m_type_name); // note: could be NULL if, ex. decoding leabra object in instance of bp
+  return (m_td);
+}
+
+void taiObjectMimeItem::DecodeData_impl() {
+  MemberDef* md;
+  if (isThisProcess() && (!m_obj) && tabMisc::root) {
+    m_obj = tabMisc::root->FindFromPath(path(), md);
+  }
+}
+
+int taiObjectMimeItem::GetObjectData(istringstream& result) {
+  AssertData();
+  if (m_ms) {
+    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + String(GetIndex());
+    return m_ms->data(fmt, result);
+  } else {
+    return 0;
+  }
+}
+
+
+taBase* taiObjectMimeItem::obj() {  // note: only called when we are InProcess
+  AssertData();
+  return m_obj;
+}
+

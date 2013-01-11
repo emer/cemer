@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "UserDataItemBase.h"
-
+#include <taMisc>
 
 UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_)
 :inherited()

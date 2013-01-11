@@ -19,6 +19,8 @@
 // parent includes:
 #include <taBase>
 
+#include <cmath>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
@@ -41,11 +43,9 @@ public:
   virtual void  CopyToMatrixGeom(MatrixGeom& geom);
   virtual void  CopyToMatrixIndex(MatrixIndex& idx);
 
-  inline void	ToMatrix(taMatrix& mat) const
-  { mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); }
+  inline void	ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  inline void	FromMatrix(taMatrix& mat)
-  { x = mat.SafeElAsVar(0).toInt();  y = mat.SafeElAsVar(1).toInt(); }
+  inline void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector2i(int xx)                     { SetXY(xx, xx); }

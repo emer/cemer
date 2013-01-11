@@ -24,9 +24,13 @@
 // member includes:
 #include <TimeUsedHR>
 #include <taTask>
+#ifndef __MAKETA__
+#include <QMutex>
+#include <QWaitCondition>
+#endif
 
 // declare all other types mentioned but not required to include:
-class taTask; // 
+
 
 /* TaskThread
   A task thread is a worker thread that remains persistent over a long

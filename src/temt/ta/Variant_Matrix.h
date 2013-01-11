@@ -47,8 +47,8 @@ public:
 protected:
   STATIC_CONST Variant  blank; // #IGNORE
 #ifndef __MAKETA__
-  override void         Dump_Save_Item(ostream& strm, int idx);
-  override int          Dump_Load_Item(istream& strm, int idx); // ret is last char read, s/b ;
+  override void         Dump_Save_Item(std::ostream& strm, int idx);
+  override int          Dump_Load_Item(std::istream& strm, int idx); // ret is last char read, s/b ;
 #endif
   override void         ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
 

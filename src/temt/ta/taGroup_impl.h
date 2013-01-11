@@ -250,9 +250,11 @@ public:
                               TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
   override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
-  override int  Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
+#ifndef __MAKETA__
+  override int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_PathR_impl(std::ostream& strm, taBase* par=NULL, int indent=0);
+#endif
 
   override void Search_impl(const String& srch, taBase_PtrList& items,
                             taBase_PtrList* owners = NULL,
@@ -262,10 +264,8 @@ public:
                             bool mbr_name = true, bool type_desc = false);
   override void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
                                  voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                 taBase* cp_base,
-                                 int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
-                                 int show_allowed = taMisc::SHOW_CHECK_MASK,
-                                 bool no_ptrs = true);
+                                 taBase* cp_base, int show_forbidden,
+                                 int show_allowed, bool no_ptrs = true);
   override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);

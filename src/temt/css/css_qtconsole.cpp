@@ -18,8 +18,10 @@
 #include "css_basic_types.h"
 #include "css_builtin.h"
 #include "css_ta.h"
-#include "ta_program.h"
 
+#include <taMisc>
+#include <EnumDef>
+#include <Program>
 
 //////////////////////////////////////////////////////////////////////////
 //

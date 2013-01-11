@@ -36,6 +36,9 @@ class ToolBar; //
 class BrowseViewer; // 
 class PanelViewer; // 
 class T3DataViewer; // 
+class taiMenu_List; //
+class taiMenuBar; //
+class taiActions; //
 
 
 class TA_API MainWindowViewer : public TopLevelViewer {

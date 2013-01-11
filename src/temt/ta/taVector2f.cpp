@@ -15,6 +15,10 @@
 
 #include "taVector2f.h"
 
+#include <taMatrix>
+#include <taVector2i>
+#include <MatrixIndex>
+
 taVector2f::taVector2f(const taVector2i& cp) {
   Register(); Initialize(); x = (float)cp.x; y = (float)cp.y;
 }
@@ -24,3 +28,10 @@ taVector2f& taVector2f::operator=(const taVector2i& cp) {
   return *this;
 }
 
+void taVector2f::ToMatrix(taMatrix& mat) const {
+  mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1);
+}
+
+void taVector2f::FromMatrix(taMatrix& mat) {
+  x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat();
+}

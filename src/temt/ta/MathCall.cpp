@@ -15,3 +15,23 @@
 
 #include "MathCall.h"
 
+
+void MathCall::Initialize() {
+  min_type = &TA_taMath;
+  object_type = &TA_taMath_float;
+}
+
+bool MathCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm.contains("taMath")) return true;
+  return false;
+}
+

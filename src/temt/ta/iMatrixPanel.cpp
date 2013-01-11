@@ -15,3 +15,60 @@
 
 #include "iMatrixPanel.h"
 
+
+void iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  me = NULL;
+}
+
+iMatrixPanel::~iMatrixPanel() {
+}
+
+QWidget* iMatrixPanel::firstTabFocusWidget() {
+  if(!me) return NULL;
+  return me->tv;
+}
+
+void iMatrixPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+//TODO: maybe we should do something less crude???
+//  idt->updateConfig();
+}
+
+void iMatrixPanel::tv_hasFocus(iTableView* sender) {
+  iMainWindowViewer* vw = viewerWindow();
+  if(vw) {
+    vw->SetClipboardHandler(sender,
+			    SLOT(GetEditActionsEnabled(int&)),
+			    SLOT(EditAction(int)),
+			    NULL,
+			    SIGNAL(UpdateUi()) );
+  }
+}
+
+String iMatrixPanel::panel_type() const {
+  static String str("Edit Matrix");
+  return str;
+}
+
+void iMatrixPanel::UpdatePanel_impl() {
+  if (me) me->Refresh();
+  inherited::UpdatePanel_impl();
+}
+
+void iMatrixPanel::Render_impl() {
+  if (me) return; // shouldn't happen
+  me = new iMatrixEditor();
+  me->setObjectName("MatrixEditor"); // diagnostic
+  setCentralWidget(me); //sets parent
+  taMatrix* mat_ = mat();
+  me->setMatrix(mat_);
+  connect(me->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
+  iMainWindowViewer* vw = viewerWindow();
+  if (vw) {
+    me->installEventFilter(vw);
+    me->tv->m_window = vw;
+  }
+}

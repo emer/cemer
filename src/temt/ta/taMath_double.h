@@ -30,7 +30,6 @@ class taMatrix; //
 class Aggregate; // 
 class complex_Matrix; // 
 
-
 class TA_API taMath_double : public taMath {
   // double precision math computations
 INHERITED(taMath)

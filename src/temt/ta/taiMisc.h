@@ -297,4 +297,6 @@ protected:
 #endif
 };
 
+extern TA_API taiMisc* taiM_; // use taiM macro instead
+
 #endif // taiMisc_h

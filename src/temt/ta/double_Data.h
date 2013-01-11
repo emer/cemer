@@ -59,4 +59,6 @@ private:
   void  Destroy() {}
 };
 
+TA_SMART_PTRS(double_Data); //
+
 #endif // double_Data_h

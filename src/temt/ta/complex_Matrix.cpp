@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "complex_Matrix.h"
+#include <taMisc>
+
+#include <cmath>
 
 bool complex_Matrix::CheckComplexGeom(const MatrixGeom& gm, bool err) {
   if(gm.dims() < 2 || gm.dim(0) != 2) {

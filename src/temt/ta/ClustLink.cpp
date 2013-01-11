@@ -15,3 +15,19 @@
 
 #include "ClustLink.h"
 
+
+void ClustLink::Initialize() {
+  dist = 0.0f;
+  node = NULL;
+}
+
+void ClustLink::Copy_(const ClustLink& cp) {
+  dist = cp.dist;
+  taBase::SetPointer((taBase**)&node, cp.node);
+}
+
+void ClustLink::CutLinks() {
+  taBase::DelPointer((taBase**)&node);
+  taBase::CutLinks();
+}
+

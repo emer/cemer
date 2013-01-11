@@ -19,9 +19,9 @@
 #include "css_c_ptr_types.h"
 #include "css_ta.h"
 
-#include "ta_matrix.h"
-#include "ta_project.h"
-#include "ta_TA_type.h"
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 ///////////////////
 //     int       //

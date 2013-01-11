@@ -29,8 +29,6 @@
 #   define __restrict
 # endif
 # include <stdlib.h>
-// # include <string.h>
-// # include <limits.h>
 #endif
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
@@ -419,25 +417,10 @@ class TypeDef; //
 class MemberDef; //
 class MethodDef; //
 
-// #if !defined(NO_TA_BASE) && !defined(__MAKETA__)
-// # if defined(TA_GUI)
-// #   include <QPointer> // guarded same pointers
-// # endif
-// # if defined(DMEM_COMPILE)
-// #   include "mpi.h"
-// # endif
-// #endif
-
 // fake version of mpi comm to allow functions to not be conditionalized
 #ifndef DMEM_COMPILE
 typedef int MPI_Comm;		// mpi communicator
 #endif
-
-// #ifdef TA_USE_QT
-// # ifndef __MAKETA__
-// #   include <QObject>
-// # endif
-// #endif
 
 // maximum number of dimensions in a matrix
 #define TA_MATRIX_DIMS_MAX 8

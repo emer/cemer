@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taArray_base.h"
+#include <int_Matrix>
+#include <byte_Matrix>
+#include <taBaseItr>
+#include <taMisc>
+
+using namespace std;
 
 void taArray_base::Initialize() {
   el_view_mode = IDX_UNK;

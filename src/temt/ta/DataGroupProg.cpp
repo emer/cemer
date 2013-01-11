@@ -15,3 +15,64 @@
 
 #include "DataGroupProg.h"
 
+
+void DataGroupProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  group_spec.name = "group_spec";
+  UpdateSpecDataTable();
+}
+
+void DataGroupProg::UpdateSpecDataTable() {
+  group_spec.SetDataTable(GetSrcData());
+}
+
+void DataGroupProg::Initialize() {
+}
+
+String DataGroupProg::GetDisplayName() const {
+  String rval = "Group ";
+  if(src_data_var) {
+    rval += " from: " + src_data_var->name;
+  }
+  if(dest_data_var) {
+    rval += " to: " + dest_data_var->name;
+  }
+  return rval;
+}
+
+void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  if(GetSrcData()) {
+    group_spec.GetColumns(GetSrcData());
+    group_spec.CheckConfig(quiet, rval);
+    group_spec.ClearColumns();
+  }
+}
+
+void DataGroupProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataGroup: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
+    return;
+  }
+  prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";",
+                ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->IncIndent();
+  if(dest_data_var) {
+    prog->AddLine(this, "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
+                  + ", dsp->group_spec);");
+  }
+  else {
+    prog->AddLine(this, "taDataProc::Group(NULL, " + src_data_var->name
+                  + ", dsp->group_spec);");
+  }
+  if(dest_data_var) {
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
+
+void DataGroupProg::AddAllColumns() {
+  group_spec.AddAllColumns(GetSrcData());
+}

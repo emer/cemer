@@ -20,11 +20,9 @@
 #include <SelectEditItem>
 
 // member includes:
+#include <MethodDef>
 
 // declare all other types mentioned but not required to include:
-class MethodDef; // 
-class TypeItem; // 
-
 
 class TA_API EditMthItem: public SelectEditItem {
   // a method select edit item -- allows access via menu or button to just one method from a class

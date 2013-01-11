@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSubGroup.h"
+#include <taGroup_impl>
 
 void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
@@ -29,7 +30,7 @@ bool taSubGroup::Transfer(taBase* it) {
   if((git->super_gp == myown) || (git->super_gp == NULL))
     return false;
   taGroup_impl* old_own = git->super_gp;
-  bool rval = TALOG::Transfer(git);
+  bool rval = inherited::Transfer(git);
   //TODO: notification is not right, because counts are not rejigged yet!
   if (rval) {
     old_own->UpdateLeafCount_(-git->leaves);

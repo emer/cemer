@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class MinMax;
 
 class TA_API FixedMinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values with toggles for usage
@@ -37,7 +38,7 @@ public:
   void  Set(float mn, float mx) { min = mn; max = mx; }
   void  SetMin(float mn) { min = mn; fix_min = true; }
   void  SetMax(float mx) { max = mx; fix_max = true; }
-  void  FixRange(MinMax& mm) { if(fix_min) mm.min = min; if(fix_max) mm.max = max; }
+  void  FixRange(MinMax& mm);
 
   TA_BASEFUNS_LITE(FixedMinMax);
 private:

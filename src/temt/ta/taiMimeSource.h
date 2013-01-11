@@ -25,12 +25,31 @@
 // member includes:
 #include <taString>
 #include <taiMimeItem_List>
+#include <taiObjectsMimeItem>
 
 // declare all other types mentioned but not required to include:
 class QMimeData; // #IGNORE
 class QString; // #IGNORE
 class QByteArray; // #IGNORE
-class taiObjectsMimeItem; //
+
+
+/* taiMimeSource
+
+   This class is used for receive or query-type operations. It wraps an existing QMimeData,
+   and if that mime source is a tacss mime source, it decodes the object path information.
+   But this new class delegates the QMimeData virtuals to the source it wrapped, so it
+   behaves essentially identically to that source. Therefore, we pass nothing but taiMimeSource
+   objects around, so that we only need one version of every function, yet can have ready access
+   to the extra tacss information, that will constitute 95%+ of the actual use cases.
+*/
+
+/*
+  For taBase objects, taiMimeSource works like an iterator:
+    count: the number of items (0 if not tacss items), 1 if 'isMulti' is false
+    index: the current index; initialized to 0, except if count=0, then -1; -1=no value -- if set out of range, is saved in range
+    xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
+
+*/
 
 class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
 INHERITED(QObject)
@@ -41,7 +60,9 @@ public:
 public:
   QByteArray 		data(const QString& mimeType) const;
   int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
-  int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
+#ifndef __MAKETA__
+  int			data(const QString& mimeType, std::istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
+#endif
   QStringList 		formats() const; // override
   bool			hasFormat(const QString& mimeType) const;
   const QMimeData*	mimeData() const {return m_md;}
@@ -85,7 +106,9 @@ public: // compatability interface
   bool			isMulti() const  {return (mi) ? (mi->count() > 1) : false;}
   bool			isObject() const;
 
-  int			objectData(istringstream& istr);
+#ifndef __MAKETA__
+  int			objectData(std::istringstream& istr);
+#endif
   taBase*		tabObject() const; 
   
   int			index() const; // current index value; -1 if none

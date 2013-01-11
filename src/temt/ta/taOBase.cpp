@@ -15,6 +15,9 @@
 
 #include "taOBase.h"
 
+#include <taDataLink>
+#include <UserDataItem_List>
+
 void taOBase::Destroy() {
   CutLinks();
 }

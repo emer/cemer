@@ -15,3 +15,14 @@
 
 #include "SubMatrixOpSpec.h"
 
+
+void SubMatrixOpSpec::Initialize() {
+  ops.SetBaseType(&TA_SubMatrixOpEl);
+}
+
+void SubMatrixOpSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if((bool)sub_matrix_table) {
+    SetDataTable(sub_matrix_table);
+  }
+}

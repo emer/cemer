@@ -27,6 +27,24 @@
 class GraphTableView; // 
 class TypeDef; // 
 
+/*
+  User Data for Columns:
+
+  MIN=x (x: float) -- forces min range to be x
+  MAX=x (x: float) -- forces max range to be x
+
+  Axis options:
+  X_AXIS -- set as X Axis
+  Z_AXIS -- set as Z Axis
+  PLOT_1 -- set as plot_1 data (first data to be plotted)
+  PLOT_2 -- set as plot_2 data
+  PLOT_n -- set as plot_n data
+  ERR_1 -- set as err_1 data
+  ERR_2 -- set as err_2 data
+  ERR_n -- set as err_n data
+  COLOR_AXIS -- set as color_axis
+  RASTER_AXIS -- set as raster_axis
+*/
 
 class TA_API GraphColView : public DataColView {
   // information for graph display of a column: note that the axis handles all the key display, so not much happens with this guy

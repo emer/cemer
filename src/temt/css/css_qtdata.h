@@ -19,9 +19,12 @@
 #ifndef CSS_QTDATA_H
 #define CSS_QTDATA_H
 
-#include "ta_qttype.h"
-#include "ta_qtdata.h"
 #include "css_def.h"
+#include <taiData>
+#include <taiType_List>
+#include <taiDataList>
+#include <taiActions>
+#include <taiMethMenu>
 
 // forward declarations
 class cssClassInst;

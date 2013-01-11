@@ -24,27 +24,22 @@
 #endif
 
 #include "css_ta.h"
-// #include "ta_base.h"            // for debugging alloc_list
-// #include "ta_matrix.h"
-// #include "ta_project.h"
-// #include "ta_program.h"
 
 #include <taMisc>
 #include <taBase>
 #include <taMatrix>
-#include <taProject>
+#include <EnumDef>
+#include <taBaseItr>
+#include <Variant_Matrix>
+#include <tabMisc>
+#include <Program>
 
 #ifdef TA_GUI
 # include "css_qt.h"
 #include <taiMiscCore>
-// # include "ta_qt.h" // for iApplication
-# ifdef TA_USE_INVENTOR
-# endif
 #endif
 
-#include <QEvent>
-#include <QCoreApplication>
-#include <QFileInfo>
+#include <QPointer>
 
 #include <algorithm> // std::sort
 #include <sstream>
@@ -3505,7 +3500,7 @@ cssEl* cssProg::Cont() {
   }
 
   if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
-    taiM->RunPending();
+    taMisc::RunPending();
     cssMisc::proc_events_timer.restart();
   }
 
@@ -4425,7 +4420,7 @@ bool cssProgSpace::Compile(const String& fname) {
       return rval;
     }
     // make sure directory is in include path
-    String dir = taPlatform::getFilePath(fnm);
+    String dir = taMisc::GetFileFmPath(fnm);
     if(!dir.empty())
       taMisc::css_include_paths.AddUnique(dir);
     SetName(fname);

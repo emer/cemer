@@ -15,3 +15,22 @@
 
 #include "RandomCall.h"
 
+void RandomCall::Initialize() {
+  min_type = &TA_Random;
+  object_type = &TA_Random;
+}
+
+bool RandomCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm == "Random") return true;
+  return false;
+}
+

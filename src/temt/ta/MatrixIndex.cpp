@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "MatrixIndex.h"
+#include <int_Matrix>
+#include <taMisc>
 
 using namespace std;
 

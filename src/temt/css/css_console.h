@@ -19,11 +19,10 @@
 
 // css_console.h -- abstraction of console (and readline)
 
-#include "css_machine.h"
-
-#include "ta_string.h"
-
+#include <taString>
 #include <QObject>
+
+#include "css_def.h"
 
 class ConThread; // #IGNORE in .cpp
 

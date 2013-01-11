@@ -32,6 +32,7 @@ class QObject; // #IGNORE
 class TypeDef; // 
 class ISelectable_PtrList; // 
 class taiClipData; // 
+class taiActions; //
 
 
 /*

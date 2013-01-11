@@ -23,8 +23,12 @@
 #endif
 
 // member includes:
+#include <QWebPage>
 
 // declare all other types mentioned but not required to include:
+class QProgressBar; //
+class QWebView; //
+class QNetworkReply; //
 
 
 class TA_API iHelpBrowser: public QMainWindow {

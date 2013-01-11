@@ -18,8 +18,10 @@
 
 // parent includes:
 #include <taPtrList>
+#include <DumpPathToken>
 
 // member includes:
+#include <taHashTable>
 
 // declare all other types mentioned but not required to include:
 

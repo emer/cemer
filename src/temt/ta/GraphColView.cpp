@@ -15,3 +15,23 @@
 
 #include "GraphColView.h"
 
+
+void GraphColView::Initialize(){
+}
+
+void GraphColView::Destroy() {
+}
+
+void GraphColView::InitLinks() {
+  inherited::InitLinks();
+}
+
+void GraphColView::CopyFromView(GraphColView* cp){
+  fixed_range = cp->fixed_range;
+}
+
+String GraphColView::GetDisplayName() const {
+  DataCol* dc = dataCol(); //note: exists, because we were called
+  if(dc) return dc->GetDisplayName();
+  return inherited::GetDisplayName();
+}

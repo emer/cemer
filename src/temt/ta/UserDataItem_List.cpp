@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "UserDataItem_List.h"
+#include <UserDataItem>
 
 bool UserDataItem_List::hasVisibleItems() const {
   // iterate all items and return true on first isVisible found

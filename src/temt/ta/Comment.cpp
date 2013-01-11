@@ -15,3 +15,32 @@
 
 #include "Comment.h"
 
+
+void Comment::Initialize() {
+  static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
+  desc = _def_comment;
+}
+
+void Comment::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "/*******************************************************************",
+                ProgLine::MAIN_LINE);
+  prog->AddDescString(this, desc);
+  prog->AddLine(this, "*******************************************************************/");
+}
+
+String Comment::GetDisplayName() const {
+  return desc;
+}
+
+bool Comment::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.startsWith("//") || code.startsWith("/*")) return true;
+  return false;
+}
+
+bool Comment::CvtFmCode(const String& code) {
+  if(code.startsWith("//")) desc = trim(code.after("//"));
+  else if(code.startsWith("/*")) trim(desc = code.after("/*"));
+  if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
+  return true;
+}
+

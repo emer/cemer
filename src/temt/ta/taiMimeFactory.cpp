@@ -15,3 +15,12 @@
 
 #include "taiMimeFactory.h"
 
+const String taiMimeFactory::text_plain("text/plain");
+
+QByteArray taiMimeFactory::StrToByteArray(const String& str) {
+  return QByteArray(str.chars());
+}
+
+QByteArray taiMimeFactory::StrToByteArray(const QString& str) {
+  return str.toLatin1();
+}

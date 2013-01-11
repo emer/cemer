@@ -15,3 +15,52 @@
 
 #include "iMatrixEditor.h"
 
+
+iMatrixEditor::iMatrixEditor(QWidget* parent)
+:inherited(parent)
+{
+  init();
+}
+
+iMatrixEditor::~iMatrixEditor() {
+  m_mat = NULL;
+}
+
+void iMatrixEditor::init() {
+  m_mat = NULL;
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(2); layOuter->setSpacing(2);
+//  layDims = new QHBoxLayout(layOuter);
+  layDims = new QHBoxLayout; layOuter->addLayout(layDims);
+  tv = new iMatrixTableView(this);
+  layOuter->addWidget(tv);
+}
+
+/*taMatrix* iMatrixEditor::mat() const {
+  return m_mat;
+}
+
+MatrixTableModel* iMatrixEditor::model() const {
+  if (m_mat) 
+    return m_mat->GetTableModel();
+  return NULL;
+}*/
+
+void iMatrixEditor::Refresh() {
+ // MatrixTableModel* mod = q_objectcast<>(model();
+  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(tv->model());
+  if (mod)
+    mod->emit_layoutChanged(); // default values mean entire table
+}
+
+void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
+  tv->clearExtSelection();	// nuke any existing selection
+  QAbstractItemModel* mod = (mat_) ? mat_->GetTableModel() : NULL;
+  if(mod)
+    tv->setModel(mod);
+//   QItemSelectionModel* m = tv->selectionModel();
+  // why are we deleting the selection model!?  this is bad and likely bug-inducing
+//   if(m)
+//     delete m;
+}
+

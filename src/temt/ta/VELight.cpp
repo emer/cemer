@@ -46,3 +46,4 @@ void VELight::CurFromODE(bool updt_disp) {
   sbrot.multVec(dn, dn);
   dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
 }
+

@@ -19,10 +19,11 @@
 #ifndef CSS_QTTYPE_H
 #define CSS_QTTYPE_H
 
-#include "ta_qttype_def.h"
 #include "css_def.h"
 
 #include <QObject>
+#include <taiType>
+#include <taiMethMenu>
 
 // forward declarations
 class cssEl; //
@@ -37,7 +38,8 @@ class cssEnumType; //
 #define CSS_TYPE_FUNS(x,y)
 
 
-class CSS_API cssiType_QObj : public QObject { // #IGNORE delegate for cssitype
+class CSS_API cssiType_QObj : public QObject {
+  // #IGNORE delegate for cssitype
 friend class cssiType;
   Q_OBJECT
 public:

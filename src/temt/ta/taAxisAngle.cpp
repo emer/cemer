@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taAxisAngle.h"
+#include <taQuaternion>
 
 taAxisAngle& taAxisAngle::operator=(const taQuaternion& cp) {
   cp.ToAxisAngle(*this);

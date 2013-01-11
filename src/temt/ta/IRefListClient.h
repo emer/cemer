@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taBase; // 
-
+class taBase_RefList; //
 
 class TA_API IRefListClient: virtual public ITypedObject { // #NO_CSS
 // optional interface so disparate classes can use RefList to get notifies

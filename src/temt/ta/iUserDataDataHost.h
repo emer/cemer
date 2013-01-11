@@ -17,6 +17,7 @@
 #define iUserDataDataHost_h 1
 
 // parent includes:
+#include <taiEditDataHost>
 
 // member includes:
 

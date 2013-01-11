@@ -15,3 +15,23 @@
 
 #include "tabWizardViewType.h"
 
+
+int tabWizardViewType::BidForView(TypeDef* td) {
+  if(td->InheritsFrom(&TA_taWizard) && !td->InheritsFrom(&TA_PluginWizard))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+void tabWizardViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // doc view is default
+  iDocDataPanel* cp = new iDocDataPanel();
+  cp->setUpdateOnShow(false); // no way -- user must refresh
+  taWizard* wiz = (taWizard*)dl_->data();
+  cp->setDoc(&(wiz->wiz_doc));
+  DataPanelCreated(cp);
+
+  // then standard properties
+  inherited::CreateDataPanel_impl(dl_);
+}
+

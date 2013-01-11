@@ -30,7 +30,7 @@ void VETexture::Initialize() {
   idx = -1;
 }
 
-// in ta_virtenv_qtso.cpp: void VETexture::SetTexture(SoTexture2* sotx)
+// in VEWorldView.cpp: void VETexture::SetTexture(SoTexture2* sotx)
 
 
 bool VETexture::NeedsTransform() {
@@ -38,4 +38,36 @@ bool VETexture::NeedsTransform() {
   return true;
 }
 
-// in ta_virtenv_qtso.cpp:  void VETexture::SetTransform(SoTexture2Transform* sotx)
+// in VEWorldView.cpp:  void VETexture::SetTransform(SoTexture2Transform* sotx)
+
+void VETexture::SetTexture(SoTexture2* sotx) {
+  if(fname.empty()) return;
+  taMisc::TestError(this, !SoImageEx::SetTextureFile(sotx, fname),
+     "Could not set texture from fname:", fname);
+  if(wrap_horiz == REPEAT)
+    sotx->wrapS = SoTexture2::REPEAT;
+  else
+    sotx->wrapS = SoTexture2::CLAMP;
+  if(wrap_vert == REPEAT)
+    sotx->wrapT = SoTexture2::REPEAT;
+  else
+    sotx->wrapT = SoTexture2::CLAMP;
+  switch (mode) {
+  case MODULATE:
+    sotx->model = SoTexture2::MODULATE;
+    break;
+  case DECAL:
+    sotx->model = SoTexture2::DECAL;
+    break;
+  case BLEND:
+    sotx->model = SoTexture2::BLEND;
+    break;
+  case REPLACE:
+    sotx->model = SoTexture2::REPLACE;
+    break;
+  }
+  if(mode == BLEND) {
+    sotx->blendColor.setValue(blend_color.r, blend_color.g, blend_color.b);
+  }
+}
+

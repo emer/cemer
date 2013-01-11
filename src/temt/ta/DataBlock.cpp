@@ -15,3 +15,32 @@
 
 #include "DataBlock.h"
 
+
+const Variant DataBlock::GetData(int chan) { 
+  if (ReadAvailable() && SourceChannelInRange(chan)) 
+    return GetData_impl(chan);
+  else return _nilVariant;
+}
+
+void DataBlock::SetMatrixCellData(const Variant& data, int chan, int cell) 
+{ 
+  taMatrix* mat = GetSinkMatrix(chan); // mat is ref'ed!
+  if (mat) { 
+    mat->SetFmVar_Flat(data, cell);
+    taBase::unRefDone(mat);
+    return true; 
+  }
+  return false; 
+}
+
+bool DataBlock::SetMatrixCellDataByName(const Variant& data, const String& ch_nm,
+  int cell) 
+{ 
+  taMatrix* mat = GetSinkMatrixByName(ch_nm); // mat is ref'ed!
+  if(mat) {
+    mat->SetFmVar_Flat(data, cell);
+    taBase::unRefDone(mat);
+    return true; 
+  }
+  return false;
+}

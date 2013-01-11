@@ -18,33 +18,10 @@
 #ifndef TA_FONTSPEC_H
 #define TA_FONTSPEC_H
 
-#include "ta_base.h"
-#include "ifont.h"
+// #include "ta_base.h"
+// #include "ifont.h"
 
-#include "ta_TA_type_WRAPPER.h"
-
-class TA_API taFontSpec : public taOBase, public iFont {
- // #INLINE #INLINE_DUMP ##CAT_Display a specification of a font (for Unix - X logical font description)
-INHERITED(taOBase)
-public:
-  String                pattern; // #READ_ONLY #NO_SAVE DEPRECATED the name of the font
-
-  virtual void  SelectFont();
-  // #BUTTON opens font selection dialog
-  virtual void  SetFont(char* fn);
-  virtual void  SetFontSize(int point_size = 10);
-  // #BUTTON set font to given point size
-
-  bool  Equals(const taFontSpec& b);
-  void  UpdateAfterEdit();
-  void  CutLinks();
-  void  InitLinks();
-  void  Copy_(const taFontSpec& cp);
-  TA_BASEFUNS(taFontSpec);
-private:
-  void  Initialize();
-  void  Destroy() {CutLinks();}
-};
+// #include "ta_TA_type_WRAPPER.h"
 
 
 #endif // TA_FONTSPEC_H

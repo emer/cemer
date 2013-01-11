@@ -15,20 +15,51 @@
 
 #include "taBase.h"
 
-#include "TypeDef" 
-#include "taMatrix" 
-#include "taBaseItr" 
-#include "MemberDef" 
-#include "istream" 
-#include "ostream" 
-#include "taBase_PtrList" 
-#include "taObjDiff_List" 
-#include "taDoc" 
-#include "SelectEdit" 
-#include "MethodDef" 
-#include "UserDataItem_List" 
-#include "UserDataItemBase" 
-#include "UserDataItem" 
+#include <taMatrix>
+#include <taBaseItr>
+#include <MemberDef>
+#include <taBase_PtrList>
+#include <taObjDiff_List>
+#include <taDoc>
+#include <SelectEdit>
+#include <MethodDef>
+#include <UserDataItem_List>
+#include <UserDataItemBase>
+#include <UserDataItem>
+#include <taSmartRef>
+#include <taSmartPtr>
+#include <taList_impl>
+#include <taFiler>
+#include <taiMimeSource>
+#include <IDataLinkClient>
+#include <iColor>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taDataLink>
+#include <TypeDefault>
+#include <int_Matrix>
+#include <byte_Matrix>
+#include <MainWindowViewer>
+#include <taiEdit>
+#include <ViewColor_List>
+#include <dumpMisc>
+#include <taObjDiffRec>
+#include <taiViewType>
+#include <UserData_DocLink>
+#include <iMainWindowViewer>
+#include <taiMisc>
+#include <taiObjDiffBrowser>
+#include <iHelpBrowser>
+
+#include <QVariant>
+#include <QDir>
+
+#include <sstream>
+
+using namespace std;
+
 
 /*!
     \class taBase ta_base.h
@@ -1802,17 +1833,17 @@ String& taBase::ListDataClients(String& strm, int indent) {
 
 
 bool taBase::TestError(bool test, const char* fun_name,
-                       const char* a, const char* b=0, const char* c=0,
-                       const char* d=0, const char* e=0, const char* f=0,
-                       const char* g=0, const char* h=0) const {
+                       const char* a, const char* b, const char* c,
+                       const char* d, const char* e, const char* f,
+                       const char* g, const char* h) const {
   if(!test) return false;
   return taMisc::TestError(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
 bool taBase::TestWarning(bool test, const char* fun_name,
-                         const char* a, const char* b=0, const char* c=0,
-                         const char* d=0, const char* e=0, const char* f=0,
-                         const char* g=0, const char* h=0) const {
+                         const char* a, const char* b, const char* c,
+                         const char* d, const char* e, const char* f,
+                         const char* g, const char* h) const {
   if(!test) return false;
   return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
@@ -3124,6 +3155,19 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor,
     editor = (SelectEdit*)proj->edits.New(1);
   }
   return editor->SelectMethodNm(this, function, extra_label, desc, sub_gp_nm);
+}
+
+void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
+                           String& full_lbl, String& desc) const {
+  if (xtra_lbl.empty())
+    xtra_lbl = GetName().elidedTo(16);
+  String lbl = xtra_lbl;
+  if (lbl.nonempty()) lbl += "_";
+  lbl += mbr->GetLabel();
+  full_lbl = taMisc::StringCVar(lbl);
+  // desc is the member description
+//   if (desc.empty())
+//     MemberDef::GetMembDesc(mbr, desc, "");
 }
 
 ///////////////////////////////////////////////////////////////////////////

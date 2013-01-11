@@ -15,6 +15,8 @@
 
 #include "double_Matrix.h"
 
+using namespace std;
+
 const double double_Matrix::blank = 0.0;
 
 void double_Matrix::Dump_Save_Item(ostream& strm, int idx) {

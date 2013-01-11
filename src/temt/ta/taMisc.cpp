@@ -21,8 +21,25 @@
 #ifndef NO_TA_BASE
 #include <taBase> 
 #include <UserDataItemBase> 
+#include <taFiler>
+#include <css_machine.h>
+#include <Program>
+#include <taiMiscCore>
+#include <UserDataItem_List>
+#include <tabMisc>
+#include <taRootBase>
+#include <taStringDiff>
+#include <taiChoiceDialog>
+
 #include <ViewColor_List> 
 #include <QDir>
+#include <QPointer>
+#include <QMainWindow>
+#include <QDateTime>
+#include <QNetworkInterface>
+#include <QNetworkAddressEntry>
+#include <QHostAddress>
+#include <QList>
 #endif
 
 #ifdef TA_OS_WIN
@@ -1255,14 +1272,14 @@ void taMisc::Init_DMem(int& argc, const char* argv[]) {
 #endif
 }
 
-void taMisc::HelpMsg(ostream& strm) {
-  strm << "TA/CSS Help Info, version: " << version << endl;
-  strm << "Startup arguments: " << endl;
+void taMisc::HelpMsg(String& strm) {
+  strm << "TA/CSS Help Info, version: " << version << "\n";
+  strm << "Startup arguments: " << "\n";
   for(int i=0;i<arg_names.size; i++) {
     NameVar nv = arg_names.FastEl(i);
     Variant dvar = arg_name_descs.GetVal(nv.value.toString());
     String desc = dvar.toString();
-    strm << "  " << nv.name << desc << endl;
+    strm << "  " << nv.name << desc << "\n";
   }
 }
 
@@ -1952,7 +1969,7 @@ String taMisc::GetAppDataPath(const String& appname) {
 String taMisc::GetAppDocPath(const String& appname) {
 #ifdef TA_OS_WIN
   return GetHomePath() + "\\" + capitalize(appname);
-#elif TA_OS_MAC
+#elif defined(TA_OS_MAC)
   return GetHomePath() + "/Library/" + capitalize(appname);
 #else
   return GetHomePath() + "/lib/" + capitalize(appname);
@@ -2380,7 +2397,7 @@ bool taMisc::RecordScript(const char* cmd) {
 void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = " <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
+      md->type->GetValStr(md->GetOff(tab)) << ";" << "\n";
   }
 }
 // Script Record Inline Assignment
@@ -2388,7 +2405,7 @@ void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = \"" <<
       md->type->GetValStr(md->GetOff(tab)) << "\";\n";
-    record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << endl;
+    record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << "\n";
   }
 }
 
@@ -2397,7 +2414,7 @@ void taMisc::SREAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = " <<
       tab->GetTypeDef()->name << "::" <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
+      md->type->GetValStr(md->GetOff(tab)) << ";" << "\n";
   }
 }
 #endif
@@ -2923,3 +2940,118 @@ ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool writ
   strm << '\"';
   return strm;
 }
+
+
+/////////////////////////
+
+#ifndef NO_TA_BASE
+
+void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  ++err_cnt;
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  //TODO: should log errors on nodes > 0!!!
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  String fmsg = "***ERROR: " + taMisc::last_err_msg;
+  taMisc::LogEvent(fmsg);
+#if !defined(NO_TA_BASE)
+  if(taMisc::ErrorCancelCheck()) {
+    return;			// cancel!
+  }
+#endif
+  // we always output to console
+  // if (beep_on_error) cerr << '\a'; // BEL character
+#if !defined(NO_TA_BASE) 
+  if(cssMisc::cur_top && !taMisc::is_loading) {
+    taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+  }
+#endif
+  taMisc::ConsoleOutput(fmsg, true, false);
+#if !defined(NO_TA_BASE) 
+  if(cssMisc::cur_top && !taMisc::is_loading) {
+    if(cssMisc::cur_top->own_program) {
+      bool running = cssMisc::cur_top->state & cssProg::State_Run;
+      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
+					      taMisc::last_err_msg);
+    }
+    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+    cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
+  }
+  if (taMisc::gui_active && !taMisc::is_loading) {
+    bool cancel = taiChoiceDialog::ErrorDialog(NULL, taMisc::last_err_msg);
+    taMisc::ErrorCancelSet(cancel);
+  }
+#endif
+}
+
+int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,
+  const char* d, const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  int m=-1;
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return -1;
+#endif
+#if !defined(NO_TA_BASE)
+  if (taMisc::gui_active) {
+    String delimiter = taiChoiceDialog::delimiter;
+    int   chn = 0;
+    String chstr = delimiter;
+    if (a) { chstr += String(a) + delimiter; chn++; }
+    if (b) { chstr += String(b) + delimiter; chn++; }
+    if (c) { chstr += String(c) + delimiter; chn++; }
+    if (d) { chstr += String(d) + delimiter; chn++; }
+    if (e) { chstr += String(e) + delimiter; chn++; }
+    if (f) { chstr += String(f) + delimiter; chn++; }
+    if (g) { chstr += String(g) + delimiter; chn++; }
+    if (h) { chstr += String(h) + delimiter; chn++; }
+    if (i) { chstr += String(i) + delimiter; chn++; }
+    m = taiChoiceDialog::ChoiceDialog(NULL, text, chstr);
+  } else
+#endif
+  {
+    int   chn = 0;
+    String chstr = text;
+    chstr += "\n";
+    if (a) { chstr += String("0: ") + a + "\n"; chn++; }
+    if (b) { chstr += String("1: ") + b + "\n"; chn++; }
+    if (c) { chstr += String("2: ") + c + "\n"; chn++; }
+    if (d) { chstr += String("3: ") + d + "\n"; chn++; }
+    if (e) { chstr += String("4: ") + e + "\n"; chn++; }
+    if (f) { chstr += String("5: ") + f + "\n"; chn++; }
+    if (g) { chstr += String("6: ") + g + "\n"; chn++; }
+    if (h) { chstr += String("7: ") + h + "\n"; chn++; }
+    if (i) { chstr += String("8: ") + i + "\n"; chn++; }
+
+    int   choiceval = -1;
+    while((choiceval < 0) ||  (choiceval > chn) ) {
+      cout << chstr;
+      String choice;
+      cin >> choice;
+      choiceval = atoi(choice);
+    }
+    m = choiceval;
+  }
+  return m;
+}
+
+void taMisc::Confirm(const char* a, const char* b, const char* c,
+  const char* d, const char* e, const char* f, const char* g,
+  const char* h, const char* i)
+{
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if (taMisc::dmem_proc > 0) return;
+#endif
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  taMisc::LogEvent("***CONFIRM: " + msg);
+  taMisc::ConsoleOutput(msg, false, false);
+#if !defined(NO_TA_BASE)
+  if (taMisc::gui_active) {
+    taiChoiceDialog::ConfirmDialog(NULL, msg);
+  }
+#endif
+}
+
+#endif

@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taDataLink;
 
 class TA_API taDataLinkItr {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS iterator for datalink clients -- use as a value type

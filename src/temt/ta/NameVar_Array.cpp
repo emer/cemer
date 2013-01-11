@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "NameVar_Array.h"
+#include <String_Array>
 
 const String NameVar_Array::def_sep(", ");
 const NameVar NameVar_Array::blank;

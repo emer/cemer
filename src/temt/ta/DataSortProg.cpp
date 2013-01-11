@@ -15,3 +15,62 @@
 
 #include "DataSortProg.h"
 
+
+void DataSortProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sort_spec.name = "sort_spec";
+  UpdateSpecDataTable();
+}
+
+void DataSortProg::UpdateSpecDataTable() {
+  sort_spec.SetDataTable(GetSrcData());
+}
+
+void DataSortProg::Initialize() {
+}
+
+String DataSortProg::GetDisplayName() const {
+  String rval = "Sort ";
+  if(src_data_var) {
+    rval += " from: " + src_data_var->name;
+  }
+  if(dest_data_var) {
+    rval += " to: " + dest_data_var->name;
+  }
+  return rval;
+}
+
+void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  if(GetSrcData()) {
+    sort_spec.GetColumns(GetSrcData());
+    sort_spec.CheckConfig(quiet, rval);
+    sort_spec.ClearColumns();
+  }
+}
+
+void DataSortProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run", ProgLine::MAIN_LINE);
+    return;
+  }
+  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->IncIndent();
+  if(dest_data_var) {
+    prog->AddLine(this, String("taDataProc::Sort(") + dest_data_var->name + ", " + src_data_var->name
+                  + ", dsp->sort_spec);");
+  }
+  else {
+    prog->AddLine(this, String("taDataProc::Sort(NULL, ") + src_data_var->name + ", dsp->sort_spec);");
+  }
+  if(dest_data_var) {
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
+
+void DataSortProg::AddAllColumns() {
+  sort_spec.AddAllColumns(GetSrcData());
+}

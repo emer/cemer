@@ -18,10 +18,17 @@
 
 // parent includes:
 #include <ISelectableHost>
+#ifndef __MAKETA__
+#include "itreewidget.h"
+#endif
 
 // member includes:
+#include <QPointer>
 
 // declare all other types mentioned but not required to include:
+class iMainWindowViewer;
+class String_PArray;
+class iTreeViewItem;
 
 #ifndef __MAKETA__
 typedef QMap<QString, QVariant> QMap_qstr_qvar; // the QMap type that QVariant supports

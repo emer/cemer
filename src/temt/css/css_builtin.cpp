@@ -22,11 +22,20 @@
 #include "css_c_ptr_types.h"
 #include "css_builtin.h"
 #include "css_ta.h"
-#include "ta_base.h"
-#include "ta_group.h"
-#include "ta_math.h"
-#include "ta_mtrnd.h"
-#include "ta_platform.h"
+
+#include <int_Matrix>
+#include <slice_Matrix>
+#include <double_Matrix>
+#include <String_Matrix>
+#include <Variant_Matrix>
+
+#include <taMisc>
+#include <taBaseItr>
+#include <MTRnd>
+#include <cssMath>
+#include <EnumDef>
+#include <tabMisc>
+#include <taRootBase>
 
 #ifdef TA_GUI
 #include "css_qt.h"
@@ -2092,13 +2101,13 @@ static cssEl* cssElCFun_setuid_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_sleep_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  taPlatform::sleep((int)*arg[1]);
+  taMisc::SleepS((int)*arg[1]);
   rval->val = 0;
   return rval;
 }
 static cssEl* cssElCFun_sleepms_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  taPlatform::msleep((int)*arg[1]);
+  taMisc::SleepMs((int)*arg[1]);
   rval->val = 0;
   return rval;
 }

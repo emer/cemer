@@ -15,3 +15,64 @@
 
 #include "iUserDataPanel.h"
 
+
+void iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  UserDataItem_List* se_ = udil();
+  se = NULL;
+  if (se_) {
+    switch (taMisc::select_edit_style) { // NOTE: the two below look identical to me...
+    case taMisc::ES_ALL_CONTROLS:
+      se = new iUserDataDataHost(se_, se_->GetTypeDef());
+      break;
+    case taMisc::ES_ACTIVE_CONTROL:
+      se = new iUserDataDataHost(se_, se_->GetTypeDef());
+      break;
+    }
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      bool ok;
+      iColor bgcol = se_->GetEditColorInherit(ok);
+      if (ok) se->setBgColor(bgcol);
+    }
+  }
+}
+
+iUserDataPanel::~iUserDataPanel() {
+  if (se) {
+    delete se;
+    se = NULL;
+  }
+}
+
+void iUserDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+}
+
+bool iUserDataPanel::HasChanged() {
+  return se->HasChanged();
+}
+
+bool iUserDataPanel::ignoreDataChanged() const {
+  return !isVisible();
+}
+
+void iUserDataPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  se->ConstrEditControl();
+  setCentralWidget(se->widget()); //sets parent
+  setButtonsWidget(se->widButtons);
+}
+
+void iUserDataPanel::UpdatePanel_impl() {
+  if (se) se->ReShow_Async();
+}
+
+void iUserDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (se && se->HasChanged()) {
+    se->Apply();
+  }
+}
+

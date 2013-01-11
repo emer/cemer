@@ -21,7 +21,6 @@
 
 // smartptr, ref includes
 #include <taSmartRefT>
-#include <taSmartPtrT>
 
 // member includes:
 
@@ -48,6 +47,6 @@ private:
   void Destroy() { }
 };
 
-TA_SMART_PTRS(ParamSearchAlgo);
+SmartRef_Of(ParamSearchAlgo, TA_ParamSearchAlgo); // ParamSearchAlgoRef
 
 #endif // ParamSearchAlgo_h

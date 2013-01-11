@@ -15,6 +15,8 @@
 
 #include "String_Array.h"
 
+#include <QStringList>
+
 const String String_Array::blank = "";
 
 #ifdef TA_USE_QT

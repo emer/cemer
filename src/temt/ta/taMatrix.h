@@ -735,15 +735,17 @@ protected:
   void                  UpdateSlices_Realloc(ta_intptr_t base_delta);
   // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
 
-  virtual void          Dump_Save_Item(ostream& strm, int idx);
+#ifndef __MAKETA__
+  virtual void          Dump_Save_Item(std::ostream& strm, int idx);
   // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
-  virtual int           Dump_Load_Item(istream& strm, int idx);
+  virtual int           Dump_Load_Item(std::istream& strm, int idx);
   // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
 
-  virtual void          BinarySave_Item(ostream& strm, int idx) { };
+  virtual void          BinarySave_Item(std::ostream& strm, int idx) { };
   // binary dump the value -- just straight binary output -- must overload in specific classes
-  virtual void          BinaryLoad_Item(istream& strm, int idx) { };
+  virtual void          BinaryLoad_Item(std::istream& strm, int idx) { };
   // binary load the value -- just straight binary format -- must overload in specific classes
+#endif
 
   override void         CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
     bool& allowed, bool& forbidden) const;

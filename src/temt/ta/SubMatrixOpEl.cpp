@@ -15,3 +15,17 @@
 
 #include "SubMatrixOpEl.h"
 
+
+void SubMatrixOpEl::Initialize() {
+}
+
+String SubMatrixOpEl::GetDisplayName() const {
+  return col_name;
+}
+
+void SubMatrixOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(col_lookup) {
+    CheckError(!col_lookup->is_matrix, quiet, rval, "column must be a matrix column");
+  }
+}

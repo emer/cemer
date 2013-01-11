@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "IDataLinkClient.h"
+#include <taDataLink>
+#include <taMisc>
 
 IDataLinkClient::~IDataLinkClient() {
   if (m_link) {

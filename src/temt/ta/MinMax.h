@@ -19,6 +19,10 @@
 // parent includes:
 #include <taBase>
 
+#ifndef __MAKETA__
+# include <math.h>
+#endif
+
 // member includes:
 
 // declare all other types mentioned but not required to include:

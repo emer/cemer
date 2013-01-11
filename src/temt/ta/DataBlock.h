@@ -19,10 +19,13 @@
 // parent includes:
 #include <taFBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
-class taMatrix; // 
 class ChannelSpec; // 
 
 
@@ -265,5 +268,7 @@ private:
   void                  Initialize() {}
   void                  Destroy() {}
 };
+
+SmartRef_Of(DataBlock,TA_DataBlock); // DataBlockRef
 
 #endif // DataBlock_h

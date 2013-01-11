@@ -20,10 +20,10 @@
 #include "ta_def.h"
 
 // member includes:
+#include <taBase>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taBase; // 
 
 
 class TA_API taSmartPtr {

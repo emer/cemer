@@ -18,12 +18,16 @@
 
 // parent includes:
 #include <taBase>
+#include <taVector3f>
+
+#ifndef __MAKETA__
+#include <ode/ode.h>
+#endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taMatrix; // 
-class taVector3f; // 
 class taAxisAngle; // 
 class float_Matrix; // 
 
@@ -45,13 +49,9 @@ public:
   { ss = s; xx = x; yy = y; zz = z; }
   // #CAT_Quaternion get scalar and xyz imaginary values
 
-  inline void	ToMatrix(taMatrix& mat) const
-  { mat.SetGeom(1,4); mat.SetFmVar(s,0); mat.SetFmVar(x,1); mat.SetFmVar(y,2);
-    mat.SetFmVar(z,3); }
+  void	ToMatrix(taMatrix& mat) const;
   // set values to a 1x4 matrix object (can be any type of matrix object) -- in order: s,x,y,z
-  inline void	FromMatrix(taMatrix& mat) 
-  { s = mat.SafeElAsVar(0).toFloat(); x = mat.SafeElAsVar(1).toFloat();
-    y = mat.SafeElAsVar(2).toFloat(); z = mat.SafeElAsVar(3).toFloat(); }
+  void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object) -- in order: s,x,y,z
 
   inline void	FromEuler(float theta_x, float theta_y, float theta_z) {
@@ -96,47 +96,19 @@ public:
   }
   // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
 
-  inline void	FromAxisAngle(const taAxisAngle& axa) {
-    float ang2 = axa.rot*0.5f; float sinang2 = sinf(ang2);
-    s = cosf(ang2); x = axa.x * sinang2; y = axa.y * sinang2; z = axa.z * sinang2;
-  }
+  void	FromAxisAngle(const taAxisAngle& axa);
   // #CAT_Quaternion set quaternion from taAxisAngle (axis + angle) value
+
   inline void	FromAxisAngle(float x_axis, float y_axis, float z_axis, float rot_ang) {
     float ang2 = rot_ang*0.5f; float sinang2 = sinf(ang2);
     s = cosf(ang2); x = x_axis * sinang2; y = y_axis * sinang2; z = z_axis * sinang2;
   }
   // #CAT_Quaternion set quaternion from taAxisAngle (axis + angle) value
-  inline void	ToAxisAngle(taAxisAngle& axa) const {
-    axa.rot = acosf(s);
-    float sinangi = sinf(axa.rot);
-    if(sinangi == 0.0f) {	// can't convert
-      axa.rot = 0.0f;
-      axa.x = 0.0f; axa.y = 0.0f; axa.z = 1.0f;
-      return;
-    }
-    sinangi = 1.0f / sinangi;
-    axa.x = x * sinangi; axa.y = y * sinangi; axa.z = z * sinangi;  axa.rot *= 2.0f;
-  }
+
+  void	ToAxisAngle(taAxisAngle& axa) const;
   // #CAT_Quaternion set taAxisAngle from this quaternion
 
-  inline void	ToRotMatrix(float_Matrix& mat) const {
-    float mag = Mag();
-    if(mag < 0.9999 || mag > 1.0001) { taMisc::Error("taQuaternion::ToMatrix -- must be normalized (Mag == 1.0), mag is:", 
-						     String(mag)); return; }
-    mat.SetGeom(2,3,3);
-
-    mat.Set(1.0f - 2.0f*(y*y+z*z), 0,0);
-    mat.Set(2.0f*(x*y-s*z),1,0);
-    mat.Set(2.0f*(x*z+s*y),2,0);
-
-    mat.Set(2.0f*(x*y+s*z),0,1);
-    mat.Set(1.0f-2.0f*(x*x+z*z), 1,1);
-    mat.Set(2.0f*(y*z-s*x),2,1);
-    
-    mat.Set(2.0f*(x*z-s*y),0,2);
-    mat.Set(2.0f*(y*z+s*x),1,2);
-    mat.Set(1.0f-2.0f*(x*x+y*y),2,2);
-  }
+  inline void	ToRotMatrix(float_Matrix& mat) const;
   // #CAT_Quaternion create a 3x3 rotation matrix from quaternion
 
   void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
@@ -218,12 +190,7 @@ public:
   inline taQuaternion operator * (float scale) const {
     taQuaternion rv; rv.s = s * scale; rv.x = x * scale; rv.y = y * scale; rv.z = z * scale; return rv;
   }
-  inline taQuaternion operator / (float scale) const {
-    taQuaternion rv;
-    if(scale != 0.0f) { rv.s = s / scale; rv.x = x / scale; rv.y = y / scale; rv.z = z / scale; }
-    else	      { taMisc::Error("Quaternion -- division by 0 scalar"); }
-    return rv;
-  }
+  taQuaternion operator / (float scale) const;
 
   inline taQuaternion operator - () const {
     taQuaternion rv; rv.s = -s; rv.x = -x; rv.y = -y; rv.z = -z; return rv;
@@ -251,11 +218,7 @@ public:
   inline taQuaternion& operator *= (float scale) {
     s *= scale; x *= scale; y *= scale; z *= scale; return *this;
   }
-  inline taQuaternion& operator /= (float scale) {
-    if(scale != 0.0f) { s /= scale; x /= scale; y /= scale; z /= scale; }
-    else	      { taMisc::Error("Quaternion -- division by 0 scalar"); }
-    return *this;
-  }
+  inline taQuaternion& operator /= (float scale);
 
 #ifndef __MAKETA__
   void		ToODE(dQuaternion dq) const
@@ -273,8 +236,7 @@ public:
   taQuaternion(const taVector3f& euler)
   { FromEulerVec(euler); }
 
-  taQuaternion& operator=(const taAxisAngle& cp)
-  { FromAxisAngle(cp); return *this; }
+  taQuaternion& operator=(const taAxisAngle& cp);
   taQuaternion& operator=(const taVector3f& cp)
   { FromEulerVec(cp); return *this; }
 

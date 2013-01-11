@@ -15,3 +15,11 @@
 
 #include "ToolBoxRegistrar_PtrList.h"
 
+
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::m_instances;
+
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::instances() {
+  if (!m_instances)
+    m_instances = new ToolBoxRegistrar_PtrList;
+  return m_instances;
+}

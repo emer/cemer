@@ -18,20 +18,16 @@
 #include "css_qttype.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
-//#include "css_ta.h"
-//#include "ta_type.h"
 #include "css_qtdata.h"
 #include "css_qtdialog.h"
-#include "ta_qt.h"
-#include "ta_TA_type.h"
+
+#include <taiTokenPtrType>
+#include <taiField>
+#include <taiComboBox>
+#include <taiButtonMenu>
+#include <taiMisc>
 
 //#include <stdlib.h>
-
-/* OBS:
-#ifndef CYGWIN
-#include <IV-X11/xevent.h>
-#endif
-*/
 
 //////////////////////////////////////////////////
 //              cssiType                        //

@@ -14,4 +14,72 @@
 //   Lesser General Public License for more details.
 
 #include "taQuaternion.h"
+#include <taAxisAngle>
+#include <float_Matrix>
+#include <taMisc>
 
+void taQuaternion::ToMatrix(taMatrix& mat) const {
+  mat.SetGeom(1,4); mat.SetFmVar(s,0); mat.SetFmVar(x,1); mat.SetFmVar(y,2);
+  mat.SetFmVar(z,3);
+}
+
+void taQuaternion::FromMatrix(taMatrix& mat) {
+  s = mat.SafeElAsVar(0).toFloat(); x = mat.SafeElAsVar(1).toFloat();
+  y = mat.SafeElAsVar(2).toFloat(); z = mat.SafeElAsVar(3).toFloat();
+}
+
+void taQuaternion::FromAxisAngle(const taAxisAngle& axa) {
+  float ang2 = axa.rot*0.5f; float sinang2 = sinf(ang2);
+  s = cosf(ang2); x = axa.x * sinang2; y = axa.y * sinang2; z = axa.z * sinang2;
+}
+
+void taQuaternion::ToAxisAngle(taAxisAngle& axa) const {
+  axa.rot = acosf(s);
+  float sinangi = sinf(axa.rot);
+  if(sinangi == 0.0f) {	// can't convert
+    axa.rot = 0.0f;
+    axa.x = 0.0f; axa.y = 0.0f; axa.z = 1.0f;
+    return;
+  }
+  sinangi = 1.0f / sinangi;
+  axa.x = x * sinangi; axa.y = y * sinangi; axa.z = z * sinangi;  axa.rot *= 2.0f;
+}
+
+void taQuaternion::ToRotMatrix(float_Matrix& mat) const {
+  float mag = Mag();
+  if(mag < 0.9999 || mag > 1.0001) {
+    taMisc::Error("taQuaternion::ToMatrix -- must be normalized (Mag == 1.0), mag is:", 
+                  String(mag));
+    return;
+  }
+  mat.SetGeom(2,3,3);
+
+  mat.Set(1.0f - 2.0f*(y*y+z*z), 0,0);
+  mat.Set(2.0f*(x*y-s*z),1,0);
+  mat.Set(2.0f*(x*z+s*y),2,0);
+
+  mat.Set(2.0f*(x*y+s*z),0,1);
+  mat.Set(1.0f-2.0f*(x*x+z*z), 1,1);
+  mat.Set(2.0f*(y*z-s*x),2,1);
+    
+  mat.Set(2.0f*(x*z-s*y),0,2);
+  mat.Set(2.0f*(y*z+s*x),1,2);
+  mat.Set(1.0f-2.0f*(x*x+y*y),2,2);
+}
+
+taQuaternion& taQuaternion::operator=(const taAxisAngle& cp) {
+  FromAxisAngle(cp); return *this;
+}
+
+taQuaternion taQuaternion::operator / (float scale) const {
+  taQuaternion rv;
+   if(scale != 0.0f) { rv.s = s / scale; rv.x = x / scale; rv.y = y / scale; rv.z = z / scale; }
+   else	      { taMisc::Error("Quaternion -- division by 0 scalar"); }
+return rv;
+}
+
+taQuaternion& taQuaternion::operator /= (float scale) {
+  if(scale != 0.0f) { s /= scale; x /= scale; y /= scale; z /= scale; }
+  else	      { taMisc::Error("Quaternion -- division by 0 scalar"); }
+  return *this;
+}

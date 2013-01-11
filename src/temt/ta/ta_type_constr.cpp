@@ -18,6 +18,12 @@
 
 #include "ta_type_constr.h"
 #include "ta_TA_type.h"
+#include <taString>
+#include <TypeDef>
+#include <taMisc>
+#include <EnumDef>
+#include <MethodDef>
+#include <MemberDef>
 
 static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, const char* nm) {
   String full_nm = nm;

@@ -19,10 +19,10 @@
 #ifndef CSS_QTDIALOG_H
 #define CSS_QTDIALOG_H
 
-#include "ta_qttype.h"
-#include "ta_qtdialog.h"
 #include "css_qttype.h"
 
+#include <taiEditDataHost>
+#include <taiType_List>
 
 class cssClassInst;
 class cssMbrScriptFun;
@@ -31,6 +31,7 @@ class cssProgSpace;
 class cssClassType;
 class taiType_List;
 class cssClassInst;
+class taiArgType;
 
 class CSS_API cssiEditDialog : public taiEditDataHost {
   // edit dialog for editing css classes

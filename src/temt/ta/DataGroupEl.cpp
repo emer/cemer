@@ -15,3 +15,21 @@
 
 #include "DataGroupEl.h"
 
+
+void DataGroupEl::Initialize() {
+}
+
+String DataGroupEl::GetDisplayName() const {
+  return col_name + " " + agg.GetAggName();
+}
+
+void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(col_lookup) {
+    CheckError((agg.op == Aggregate::GROUP) && col_lookup->isMatrix(), quiet, rval,
+               "cannot use matrix column to GROUP");
+    ValType mvt = agg.MinValType();
+    CheckError((mvt == Aggregate::VT_INT) && !col_lookup->isNumeric(), quiet, rval,
+               "aggregation operator:", agg.GetAggName(), "requires numeric data to operate on, but column named:", col_name, "is not numeric");
+  }
+}

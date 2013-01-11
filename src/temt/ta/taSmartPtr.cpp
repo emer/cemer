@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSmartPtr.h"
+#include <taMisc>
 
 TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
   TypeDef* targ = this_typ;

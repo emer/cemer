@@ -18,14 +18,23 @@
 
 // parent includes:
 #include <taiDataHost_impl>
+#include <taPtrList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+#ifndef __MAKETA__
+#include <QPointer>
+#include <QWidget>
+#endif
+class iFormLayout; // #IGNORE
+class QVBoxLayout; // #IGNORE
+class iEditGrid;   // #IGNORE
+class QSplitter;   // #IGNORE
+class iLabel;      // #IGNORE
 
 class TA_API taiDataHost: public taiDataHost_impl {
-  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using a QGridLayout or iFormLayout (expensive and slow -- to be replaced)
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using a QGridLayout or iFormLayout (expensive and slow -- to be replaced)
 INHERITED(taiDataHost_impl)
   Q_OBJECT
 friend class iHostDialog;

@@ -22,6 +22,7 @@
 #include <IDataLinkClient_PtrList>
 
 // declare all other types mentioned but not required to include:
+class taBase;
 
 /*
  * taDataLink is the interface between data objects, and the object viewing system.

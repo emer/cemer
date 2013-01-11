@@ -20,11 +20,11 @@
 #include <IDataLinkClient>
 
 // member includes:
+#include <taBase>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class taDataLink; // 
-class taBase; // 
 
 
 class TA_API taSmartRef: protected IDataLinkClient {

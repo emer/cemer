@@ -26,7 +26,7 @@
 
 
 class TA_API VPUList : public taPtrList<VPUnref> {
-  // ##NO_CSS ##NO_MEMBERS
+  // ##NO_CSS ##NO_MEMBERS a list of unresolved variable pointers that are to be resolved later..
 protected:
   void		El_Done_(void* it)	{ delete (VPUnref*)it; }
   String El_GetName_(void* it) const { return ((VPUnref*)it)->name; }

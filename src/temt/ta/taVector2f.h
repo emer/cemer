@@ -19,11 +19,13 @@
 // parent includes:
 #include <taBase>
 
+#include <cmath>
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taMatrix; // 
-
+class taVector2i; //
 
 class TA_API taVector2f : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
@@ -35,11 +37,9 @@ public:
   inline void   SetXY(float xx, float yy)       { x = xx; y = yy; }
   inline void   GetXY(float& xx, float& yy)     { xx = x; yy = y; }
 
-  inline void	ToMatrix(taMatrix& mat) const
-  { mat.SetGeom(1,2); mat.SetFmVar(x,0);  mat.SetFmVar(y,1); }
+  void	ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  inline void	FromMatrix(taMatrix& mat)
-  { x = mat.SafeElAsVar(0).toFloat();  y = mat.SafeElAsVar(1).toFloat(); }
+  void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector2f(float xx)                      { SetXY(xx, xx); }

@@ -20,6 +20,7 @@
 #include <taiMultiMimeItem>
 
 // member includes:
+#include <taiObjectMimeItem>
 
 // declare all other types mentioned but not required to include:
 

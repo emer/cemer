@@ -16,22 +16,6 @@
 #ifndef TA_AUDIOPROC_H
 #define TA_AUDIOPROC_H
 
-#include "ta_base.h"
-
-class TA_API taAudioProc : public taNBase {
-  // #STEM_BASE ##CAT_Audio basic audio processing operations
-INHERITED(taNBase)
-public:	
-
-  static bool	SpeakText(const String& text);
-  // #CAT_SpeechOut #BUTTON generate an speech synthesis output of the given text string -- returns false if not successful
-
-  TA_SIMPLE_BASEFUNS(taAudioProc);
-private:
-  void 	Initialize();
-  void  Destroy();
-};
-TA_SMART_PTRS(taAudioProc)
 
 #endif
 

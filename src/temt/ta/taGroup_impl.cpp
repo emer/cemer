@@ -15,6 +15,14 @@
 
 #include "taGroup_impl.h"
 
+#include <taMisc>
+#include <taBase_PtrList>
+#include <taObjDiffRec>
+#include <tabMisc>
+#include <taRootBase>
+
+using namespace std;
+
 bool taGroup_impl::def_nw_item;
 
 void taGroup_impl::Initialize() {

@@ -19,6 +19,10 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+#include <taSmartPtrT>
+
 // member includes:
 #include <FixedWidthColSpec_List>
 
@@ -44,5 +48,7 @@ private:
   void  Initialize();
   void  Destroy() {CutLinks();}
 };
+
+TA_SMART_PTRS(FixedWidthSpec); //
 
 #endif // FixedWidthSpec_h

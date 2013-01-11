@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taDataLinkItr.h"
+#include <taDataLink>
+#include <TypeDef>
 
 void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
   void* rval = NULL;

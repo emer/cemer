@@ -15,3 +15,27 @@
 
 #include "tabDocViewType.h"
 
+
+int tabDocViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taDoc))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+void tabDocViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // doc view is default
+  iDocDataPanel* cp = new iDocDataPanel();
+  cp->setUpdateOnShow(false); // no way -- user must refresh
+  cp->setDoc((taDoc*)dl_->data());
+  DataPanelCreated(cp);
+
+  // then source editor
+  iDocEditDataPanel* dp = new iDocEditDataPanel(dl_);
+  dp->setUpdateOnShow(false); // no way -- leave where it is
+  DataPanelCreated(dp);
+
+  // then standard properties
+  inherited::CreateDataPanel_impl(dl_);
+}
+

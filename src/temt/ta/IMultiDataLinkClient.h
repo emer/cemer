@@ -20,6 +20,8 @@
 #include <IDataLinkClient>
 
 // member includes:
+#include <taPtrList>
+#include <taDataLink>
 
 // declare all other types mentioned but not required to include:
 

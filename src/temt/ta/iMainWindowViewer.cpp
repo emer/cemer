@@ -15,6 +15,19 @@
 
 #include "iMainWindowViewer.h"
 
+#include <taiMenu>
+#include <taiAction>
+#include <iBrowseHistory>
+#include <iToolBar>
+#include <iFrameViewer>
+#include <iDockViewer>
+#include <iSearchDialog>
+#include <iTreeView>
+#include <ISelectable_PtrList>
+#include <iTreeViewItem>
+#include <iTabViewer>
+#include <ISelectableHost>
+
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
 

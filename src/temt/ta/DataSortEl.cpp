@@ -15,3 +15,23 @@
 
 #include "DataSortEl.h"
 
+
+void DataSortEl::Initialize() {
+  order = ASCENDING;
+}
+
+String DataSortEl::GetDisplayName() const {
+  String rval = col_name + " ";
+  if(order == ASCENDING)
+    rval += "up";
+  else
+    rval += "dn";
+  return rval;
+}
+
+void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(col_lookup) {
+    CheckError(col_lookup->is_matrix, quiet, rval,"cannot use matrix column to sort");
+  }
+}

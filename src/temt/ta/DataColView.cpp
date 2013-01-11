@@ -15,3 +15,76 @@
 
 #include "DataColView.h"
 
+/*
+  The main DataColView operations are:
+  * initialize ("bind") a new guy from a DataCol
+  * update a bound guy (ex things change in the col)
+  * unlink a guy (ex. table unlinking)
+  * delete a guy (ex. col deletes in table (but table not deleting)
+  * bind a guy to a new col (ex., binding to a new table)
+  * calculate view-specific parameters based on current state
+    -- this is done in Render_impl
+*/
+
+void DataColView::Initialize(){
+  visible = true;
+//   sticky = false;
+  data_base = &TA_DataCol;
+}
+
+void DataColView::Copy_(const DataColView& cp) {
+  visible = cp.visible;
+//   sticky = cp.sticky;
+}
+
+void DataColView::Destroy() {
+  CutLinks();
+}
+
+void DataColView::Unbind_impl() {
+  if (m_data) setDataCol(NULL);
+  inherited::Unbind_impl();
+}
+
+void DataColView::DataDestroying() {
+  DataColUnlinked();
+  inherited::DataDestroying();
+}
+
+void DataColView::setDataCol(DataCol* value, bool first_time) {
+  if (dataCol() == value) return;
+  SetData(value);
+  if (value) {
+    UpdateFromDataCol(first_time);
+  } else {
+    DataColUnlinked();
+  }
+}
+
+void DataColView::UpdateFromDataCol(bool first) {
+  UpdateFromDataCol_impl(first);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void DataColView::UpdateFromDataCol_impl(bool first) {
+  DataCol* col = dataCol();
+  if (!name.contains(col->name)) {
+    SetName(col->name);
+  }
+  // only copy display options first time, since user may override in view
+  if (first) {
+    if (col->GetUserData(DataCol::udkey_hidden).toBool())
+      visible = false;
+  }
+}
+
+bool DataColView::isVisible() const {
+  return (visible && (bool)m_data);
+}
+
+void DataColView::Hide() {
+  visible = false;
+  DataTableView* par = parent();
+  //  par->InitDisplay();
+  par->UpdateDisplay();
+}

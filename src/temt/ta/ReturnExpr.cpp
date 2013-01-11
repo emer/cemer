@@ -15,3 +15,40 @@
 
 #include "ReturnExpr.h"
 
+
+void ReturnExpr::Initialize() {
+}
+
+void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  expr.CheckConfig(quiet, rval);
+}
+
+void ReturnExpr::GenCssBody_impl(Program* prog) {
+  expr.ParseExpr();             // re-parse just to be sure!
+  prog->AddLine(this, "return " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+}
+
+String ReturnExpr::GetDisplayName() const {
+  String rval;
+  rval += "return " + expr.expr;
+  return rval;
+}
+
+bool ReturnExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.startsWith("return")) return true;
+  return false;
+}
+
+bool ReturnExpr::CvtFmCode(const String& code) {
+  String cd = trim(code.after("return"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')')) cd = cd.before(')', -1);
+  }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
+  expr.SetExpr(cd);
+  return true;
+}
+

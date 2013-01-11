@@ -15,3 +15,12 @@
 
 #include "gpiList_ElData.h"
 
+
+gpiList_ElData::gpiList_ElData(TypeDef* tp, taBase* base) {
+  typ = tp; cur_base = base;
+}
+
+gpiList_ElData::~gpiList_ElData() {
+  data_el.Reset();
+}
+

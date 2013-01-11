@@ -27,7 +27,8 @@ class MemberDef; //
 class taBase; //
 
 
-class TA_API VPUnref {			// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API VPUnref {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS stores a Value that couldn't be cashed out only works with taBase elements because they have paths..
 public:
   String	name;		// just for looking up purposes
   MemberDef*	memb_def;	// memberdef of the pointer

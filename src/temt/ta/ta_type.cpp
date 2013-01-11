@@ -16,52 +16,48 @@
 
 // ta_type.cc: Type Access Main code
 
-#include "ta_type.h"
-#include "ta_variant.h"
-
-#ifndef NO_TA_BASE
-# define CMAKE_DEPENDENCY_HACK(a) #a
-#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
-# undef CMAKE_DEPENDENCY_HACK
-
-# include "ta_group.h"
-# include "ta_dump.h"
-# include "ta_project.h" // for taRootBase
-# include "ta_program.h"
-# include "colorscale.h"
-# include "ta_thread.h"
-# ifdef DMEM_COMPILE
-#   include "ta_dmem.h"
-# endif
-# include "ta_TA_type_WRAPPER.h"
-# include <QDir>
-# include <QFileInfo>
-# include <QCoreApplication>
-# include <QTimer>
-# include <QDateTime>
-# include <QNetworkInterface>
-# include <QNetworkAddressEntry>
-# include <QHostAddress>
-# include <QList>
-# include "css_machine.h"       // for setting error code in taMisc::Error
-# ifdef TA_GUI
-#   include "ta_qtdata.h"
-#   include "ta_qttype.h"
-#   include <QMainWindow>
-#   include "igeometry.h"
-# endif // TA_GUI
-#endif // NO_TA_BASE
+// #include "ta_type.h"
+// #include "ta_variant.h"
 
 
-#include <sstream>              // for FormatValue
-#include <ctime>
-#include <ctype.h>
-#include <stdio.h>
-#include <signal.h>
-#ifndef TA_OS_WIN
-# include <sys/time.h>
-# include <sys/times.h>
-#endif
+// # include "ta_group.h"
+// # include "ta_dump.h"
+// # include "ta_project.h" // for taRootBase
+// # include "ta_program.h"
+// # include "colorscale.h"
+// # include "ta_thread.h"
+// # ifdef DMEM_COMPILE
+// #   include "ta_dmem.h"
+// # endif
+// # include "ta_TA_type_WRAPPER.h"
+// # include <QDir>
+// # include <QFileInfo>
+// # include <QCoreApplication>
+// # include <QTimer>
+// # include <QDateTime>
+// # include <QNetworkInterface>
+// # include <QNetworkAddressEntry>
+// # include <QHostAddress>
+// # include <QList>
+// # include "css_machine.h"       // for setting error code in taMisc::Error
+// # ifdef TA_GUI
+// #   include "ta_qtdata.h"
+// #   include "ta_qttype.h"
+// #   include <QMainWindow>
+// #   include "igeometry.h"
+// # endif // TA_GUI
+// #endif // NO_TA_BASE
+
+
+// #include <sstream>              // for FormatValue
+// #include <ctime>
+// #include <ctype.h>
+// #include <stdio.h>
+// #include <signal.h>
+// #ifndef TA_OS_WIN
+// # include <sys/time.h>
+// # include <sys/times.h>
+// #endif
 
 
 

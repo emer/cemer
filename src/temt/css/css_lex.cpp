@@ -24,7 +24,9 @@
 #include "css_css_parse.h"
 #endif
 
-#include "ta_TA_type.h"
+#include <taMisc>
+
+using namespace std;
 
 static int follow(int expect, int ifyes, int ifno) {
   int c = cssMisc::cur_top->Getc();

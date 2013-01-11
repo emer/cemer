@@ -26,6 +26,21 @@ class GridTableView; //
 class TypeDef; // 
 class T3GridColViewNode; // #IGNORE
 
+/*
+  Additional Display Options
+    WIDTH=i (i: int) -- sets default column width to i chars
+    TOP_ZERO  -- override BOT_ZERO default
+    IMAGE     -- display as IMAGE (only for matrix columns)
+
+  For the overall Table:
+    N_ROWS = number of view rows
+    AUTO_SCALE = set colorscale.auto_scale on
+    WIDTH = width of display
+    SCALE_MIN = set colorscale.min (float)
+    SCALE_MAX = set colorscale.max (float)
+    BLOCK_HEIGHT = mat_block_height
+*/
+
 class TA_API GridColView : public DataColView {
   // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
 INHERITED(DataColView)

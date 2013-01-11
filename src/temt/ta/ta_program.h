@@ -31,12 +31,12 @@
 // // external refs
 // class DataTable; //
 
-#include <ProgLine>
-#include <ProgLine_List>
-#include <ProgType>
-#include <ProgType_List>
-#include <ProgVar>
-#include <ProgVar_List>
-#include <DynEnumType>
+// #include <ProgLine>
+// #include <ProgLine_List>
+// #include <ProgType>
+// #include <ProgType_List>
+// #include <ProgVar>
+// #include <ProgVar_List>
+// #include <DynEnumType>
 
 #endif

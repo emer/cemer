@@ -16,5 +16,33 @@
 #ifndef taRootBaseAdapter_h
 #define taRootBaseAdapter_h 1
 
+// parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QObject>
+#endif
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+
+class TA_API taRootBaseAdapter: public QObject {
+  // ##IGNORE QObject for dispatching startup routines in event loop
+INHERITED(QObject)
+friend class taRootBase;
+  Q_OBJECT
+public:
+  taRootBaseAdapter(): QObject(NULL) {}
+  ~taRootBaseAdapter() {}
+
+protected slots:
+  void  Startup_ProcessArgs();
+  void  Startup_RunStartupScript();
+  void  ConsoleNewStdin(int n_lines); // console got new standard input
+  void  FocusRootWinAtStartup();
+#ifdef DMEM_COMPILE
+  void  DMem_SubEventLoop();
+#endif
+};
 
 #endif // taRootBaseAdapter_h

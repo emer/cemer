@@ -15,3 +15,146 @@
 
 #include "iProgramPanel.h"
 
+iProgramPanel::iProgramPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  Program* prog_ = prog();
+  if (prog_) {
+    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    if (dl) {
+      dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
+    }
+  }
+  pe->items->setDefaultExpandLevels(12); // shouldn't generally be more than this
+  pe->items->setDecorateEnabled(true); //TODO: maybe make this an app option
+  connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
+    this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+}
+
+void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
+  int level, bool& expand)
+{
+  if (level < 1) return; // always expand root level
+  // by default, expand code guys throughout, plus top-level args, vars and objs
+  taiDataLink* dl = item->link();
+  TypeDef* typ = dl->GetDataTypeDef();
+  if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
+                      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
+  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList)
+     || typ->DerivesFrom(&TA_Function_List))
+    return;                     // expand
+  if(typ->InheritsFrom(&TA_ProgEl)) {
+    String mbr = typ->OptionAfter("DEF_CHILD_");
+    if(!mbr.empty()) {
+      MemberDef* md = typ->members.FindName(mbr);
+      if(md) {
+        if(md->type->InheritsFrom(&TA_ProgEl_List)) return; // expand
+      }
+      expand = false;           // don't expand any non-progel def childs
+    }
+    else {
+      return;                   // ok to expand
+    }
+  }
+  // otherwise, nada
+  expand = false;
+}
+
+void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  // make sure the Program toolbar is created
+  MainWindowViewer* mvw = itv->viewerWindow()->viewer();
+  ProgramToolBar* ptb =
+  (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
+    "Program");
+/*TODO: re-enable once the program toolbar is defined
+  if (!ptb)
+    ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
+    "Program");*/
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//      Program specific browser guys!
+
+iProgramPanel* Program::FindMyProgramPanel() {
+  if(!taMisc::gui_active) return NULL;
+  taDataLink* link = data_link();
+  if(!link) return NULL;
+  taDataLinkItr itr;
+  iProgramPanel* el;
+  FOR_DLC_EL_OF_TYPE(iProgramPanel, el, link, itr) {
+    if (el->prog() == this) {
+      // bad: this is what causes all the movement -- can't select program b/c that will do that
+      // in the program tree browser -- need to direct this to the other guy somehow and
+      // prevent program itself from selecting in prog editor!
+      BrowserSelectMe();        // select my program
+      iDataPanelSet* dps = el->data_panel_set();
+      if(dps) {
+        dps->setCurrentPanelId(1); // this is the editor
+      }
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->setFocus();
+    itv->clearExtSelection();
+    itv->scrollTo(iti);
+    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
+    // make sure our operations are finished
+    taiMiscCore::ProcessEvents();
+    // tab into ProgCode but not other ProgEls, and into all other items
+    if(itm->InheritsFrom(&TA_ProgCode) || !itm->InheritsFrom(&TA_ProgEl))
+      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+  }
+  return (bool)iti;
+}
+
+bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->ExpandAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}
+
+bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserCollapseAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->CollapseAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}

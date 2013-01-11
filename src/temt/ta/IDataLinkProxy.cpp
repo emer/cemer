@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "IDataLinkProxy.h"
+#include <taDataLink>
 
 TypeDef* IDataLinkProxy::GetDataTypeDef() const {
   taDataLink* link_ = (taDataLink*)link();

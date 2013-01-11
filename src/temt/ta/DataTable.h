@@ -44,6 +44,22 @@ class T3DataViewFrame; //
 class GraphTableView; // 
 class DataTableModel; //
 
+/*
+  DataTable Notifications
+
+  Structural Changes -- DCR_STRUCT_UPDATE_BEGIN..DCR_STRUCT_UPDATE_END
+    this includes adding and removing data columns
+  Row Adding/Removing -- DCR_DATA_UPDATE_BEGIN..DCR_DATA_UPDATE_END
+    this includes adding and removing whole rows, or individual items to a row -- if the client
+    code calls RowsAdding/RowsAdded
+
+  Row Numbers
+    - all fuctions using row numbers work properly for jagged tables, i.e. those to which
+      columns have been added after some rows already exist
+    - NOTE: functions with row numbers did NOT have this correct behavior in v3.2
+    - unless noted, row<0 means access from the end, ex. -1 is last row
+*/
+
 class TA_API DataTable : public DataBlock_Idx {
   // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row
 INHERITED(DataBlock_Idx)

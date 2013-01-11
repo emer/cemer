@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taFBase.h"
+#include <QFileInfo>
 
 bool taFBase::SetFileName(const String& val) {
   QFileInfo fi(val);

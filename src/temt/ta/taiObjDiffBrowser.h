@@ -17,12 +17,17 @@
 #define taiObjDiffBrowser_h 1
 
 // parent includes:
-#include <class>
+#include <idialog.h>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taiObjDiff_List; //
+class taiObjDiffBrowserFilter; //
+class QVBoxLayout; //
+class QTreeWidget; //
+class QPushButton; //
+class QBrush; //
 
 class TA_API taiObjDiffBrowser: iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list

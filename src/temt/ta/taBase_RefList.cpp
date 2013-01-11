@@ -15,6 +15,10 @@
 
 #include "taBase_RefList.h"
 
+#include <taDataLink>
+#include <IRefListClient>
+#include <taMisc>
+
 void taBase_RefList::Initialize() {
   m_own = NULL;
 }
