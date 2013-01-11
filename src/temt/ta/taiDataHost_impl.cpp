@@ -331,7 +331,7 @@ void taiDataHost_impl::Revert_force() {
   Revert();                     // use real revert to be sure..
 }
 
-taMisc::ShowMembs taiDataHost_impl::show() const {
+TypeItem::ShowMembs taiDataHost_impl::show() const {
   return taMisc::show_gui;
 }
 

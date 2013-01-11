@@ -16,7 +16,7 @@
 #include "iViewPanelFrame.h"
 #include <taMisc>
 
-int iViewPanelFrame::show() const {
+TypeItem::ShowMembs iViewPanelFrame::show() const {
   return taMisc::show_gui;
 }
 

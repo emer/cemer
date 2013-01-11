@@ -21,9 +21,11 @@
 
 // member includes:
 #include <taString>
+#include <taHashEl>
 
 // declare all other types mentioned but not required to include:
-
+class taObjDiff_List; //
+class taBase; //
 
 class TA_API taObjDiffRec : public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures

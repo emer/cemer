@@ -1239,10 +1239,12 @@ public:
   // #IGNORE Search test for just this one taBase item according to criteria
 
   virtual void          CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                               voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                               taBase* cp_base, int show_forbidden, int show_allowed, 
-                               bool no_ptrs = true);
-  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own -- def show args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
+                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                           taBase* cp_base,
+                           int show_forbidden=TypeItem::NO_HIDDEN,
+                           int show_allowed=TypeItem::SHOW_CHECK_MASK, 
+                           bool no_ptrs = true);
+  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own
 
   virtual String        GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }

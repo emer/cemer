@@ -16,6 +16,7 @@
 #include "taDataLinkItr.h"
 #include <taDataLink>
 #include <TypeDef>
+#include <IDataLinkClient>
 
 void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
   void* rval = NULL;

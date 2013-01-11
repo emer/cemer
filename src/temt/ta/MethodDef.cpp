@@ -213,30 +213,30 @@ const String MethodDef::prototype() const {
 }
 
 bool MethodDef::ShowMethod(int show) const {
-  if (show & taMisc::USE_SHOW_GUI_DEF)
+  if (show & TypeItem::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
 
   // check if cache has been done yet
   if (show_any == 0) ShowMethod_CalcCache();
-  byte show_eff = show_any;
+  int show_eff = show_any;
 
   // our show_eff is the positives (what it is) so if there is nothing there, then
   // we clearly can't show
   // if there is something (a positive) then bit-AND with the
   // show, which is negatives (what not to show), and if anything remains, don't show!
-  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
-  return (show_eff) && !(show_eff & (byte)show);
+  show_eff &= TypeItem::SHOW_CHECK_MASK;
+  return (show_eff) && !(show_eff & show);
 }
 
 void MethodDef::ShowMethod_CalcCache() const {
   // note that "normal" is a special case, which depends both on context and
   // on whether other bits are set, so we calc those individually
-  show_any = taMisc::IS_NORMAL; // the default for any
+  show_any = TypeItem::IS_NORMAL; // the default for any
   ShowMethod_CalcCache_impl(show_any);
 
 }
 
-void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
+void MethodDef::ShowMethod_CalcCache_impl(int& show) const {
   show |= 0x80; // set the "done" flag
 
   //note: keep in mind that these show bits are the opposite of the show flags,
@@ -256,30 +256,30 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
 
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
-    show |= (byte)taMisc::IS_HIDDEN;
+    show |= TypeItem::IS_HIDDEN;
   if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show)
-    show |= (byte)taMisc::IS_HIDDEN;
+    show |= TypeItem::IS_HIDDEN;
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
-    show |= (byte)taMisc::IS_EXPERT;
+    show |= TypeItem::IS_EXPERT;
 
 //   String cat = OptionAfter("CAT_");
 //   if(cat.contains("Xpert"))  // special code for expert -- no need for redundant #EXPERT flag
-//     show |= (byte)taMisc::IS_EXPERT;
+//     show |= TypeItem::IS_EXPERT;
 
   // if NO_SHOW and no SHOW or explicit other, then never shows
-  if (mth_no_show || (typ_no_show && (!mth_show || (show & (byte)taMisc::NORM_MEMBS)))) {
-    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
+  if (mth_no_show || (typ_no_show && (!mth_show || (show & TypeItem::NORM_MEMBS)))) {
+    show &= (0x80 | ~TypeItem::SHOW_CHECK_MASK);
     return;
   }
 
   // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
-  if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
-    show &= ~(byte)taMisc::IS_NORMAL;
+  if (show & TypeItem::NORM_MEMBS) // in "any" context, default is "normal"
+    show &= ~TypeItem::IS_NORMAL;
   else // no non-NORMAL set
     // SHOW is like an explicit NORMAL if nothing else applies
     if (mth_show || typ_show)
-      show |= (byte)taMisc::IS_NORMAL;
+      show |= TypeItem::IS_NORMAL;
 }
 
 String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {

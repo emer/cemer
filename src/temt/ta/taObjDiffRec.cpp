@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taObjDiffRec.h"
+#include <taObjDiff_List>
+#include <taBase>
+#include <taSmartRefT>
+#include <taSmartPtrT>
+#include <MemberDef>
+#include <tabMisc>
+#include <taRootBase>
+
 
 void taObjDiffRec::Initialize() {
   flags = DF_NONE;
@@ -141,7 +149,7 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
 
 void taObjDiffRec::ComputeHashCode() {
   // note: level is critical -- don't want to compare at diff levels
-  hash_code = taPtrList_impl::HashCode_String(name + "&" + value) + nest_level;
+  hash_code = taHashEl::HashCode_String(name + "&" + value) + nest_level;
 }
 
 String taObjDiffRec::GetDisplayName() {

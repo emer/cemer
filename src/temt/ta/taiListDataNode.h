@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iListDataPanel; //
+class iTreeView; //
 
 
 class TA_API taiListDataNode: public iTreeViewItem {

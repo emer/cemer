@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taObjDiff_List.h"
+#include <int_PArray>
+#include <taStringDiff>
+#include <TypeDef>
+#include <taBase>
+#include <taMisc>
+
 
 void taObjDiff_List::Initialize() {
 #ifndef NO_TA_BASE

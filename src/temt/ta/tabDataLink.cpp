@@ -14,6 +14,20 @@
 //   Lesser General Public License for more details.
 
 #include "tabDataLink.h"
+#include <taBase>
+#include <TypeDef>
+#include <MethodDef>
+#include <taiMethodData>
+#include <taiMethod>
+#include <taiMenu_List>
+#include <iTreeViewItem>
+#include <iTreeView>
+#include <tabTreeDataNode>
+#include <iSearchDialog>
+#include <taMisc>
+#include <taList_impl>
+#include <taGroup_impl>
+#include <taArray_impl>
 
 tabDataLink::tabDataLink(taBase* data_, taDataLink* &link_ref_)
   : inherited((void*)data_, link_ref_)
@@ -232,13 +246,6 @@ bool tabDataLink::GetIcon(int bmf, int& flags_supported, QIcon& ic) {
   } else return false;
 }
 
-MemberDef* tabODataLink::GetDataMemberDef() const {
-  if (!m_data) return NULL;
-  taBase* owner = data()->GetOwner();
-  if (owner) return owner->FindMember(data());
-  else return NULL;
-}
-
 String tabDataLink::GetName() const {
   return data()->GetName();
 }
@@ -418,8 +425,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
           // non-owned values can't be browsed, and must be handled inline, below
           if (own) {
             // if owned, could browsable child -- we do that as recursive
-            if (md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
-              TypeItem::SC_TREE)) continue;
+            if (md->ShowMember(TypeItem::USE_SHOW_GUI_DEF,
+                               TypeItem::SC_TREE)) continue;
           }
         }
         // have to force getting an inline value, since default is often the path
@@ -466,7 +473,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       continue;
     // if guy is not a list or greater, must be browsable taBase
     if (!md->type->InheritsFrom(TA_taList_impl)) {
-      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
+      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) &&            
+          !md->ShowMember(TypeItem::USE_SHOW_GUI_DEF,
           TypeItem::SC_TREE)) continue;
     }
 
@@ -517,11 +525,6 @@ bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) 
   if (td == NULL) return false; // shouldn't happen...
   // should just be able to completely delegate to the memberdef...
 
-  return md->ShowMember(taMisc::USE_SHOW_GUI_DEF, show_context);
-/*obs
-  // show: normally visible lists; items marked BROWSE
-  if (md->HasOption("NO_BROWSE")) return false;
-  return ((td->InheritsFrom(&TA_taList_impl) && md->ShowMember(taMisc::NORM_MEMBS))
-    || md->HasOption("BROWSE")); */
+  return md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, show_context);
 }
 

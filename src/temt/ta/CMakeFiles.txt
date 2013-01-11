@@ -65,6 +65,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   TypeDef.h
 
   taVersion.h
+  taLicense.h
   taThreadDefaults.h
   NamedURL.h
   DumpFileCvt.h
@@ -167,6 +168,9 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taDataLinkItr.h
   taiDataLink.h
   tabDataLink.h
+  tabODataLink.h
+  tabListDataLink.h
+  tabGroupDataLink.h
   IRefListClient.h
 
   taStringDiffData.h
@@ -439,7 +443,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taUndoMgr.h
 
   taProjVersion.h
-  taLicense.h
 
   ProjTemplateEl.h
   ProjTemplateEl_List.h
@@ -652,6 +655,12 @@ set(ta_HEADS_MAKETA_MOC
   taiEditDataHost.h
   iMethodButtonMgr.h
 
+  iTreeViewItem.h
+  taiTreeDataNode.h
+  taiListDataNode.h
+  tabTreeDataNode.h
+  tabParTreeDataNode.h
+
   iBrowseHistory.h
 
   iDataPanel.h
@@ -663,7 +672,6 @@ set(ta_HEADS_MAKETA_MOC
   iDataPanelSet.h
 
   iListDataPanel.h
-  iTreeViewItem.h
   iUserDataPanel.h
 
   iTextDataPanel.h
@@ -846,13 +854,6 @@ set(ta_HEADS_NOMAKETA_MOC
 
   iTreeView.h
   iTreeSearch.h
-  tabODataLink.h
-  tabListDataLink.h
-  tabGroupDataLink.h
-  taiTreeDataNode.h
-  taiListDataNode.h
-  tabTreeDataNode.h
-  tabParTreeDataNode.h
   ISelectable_PtrList.h
   tabDefChildTreeDataNode.h
   tabListTreeDataNode.h

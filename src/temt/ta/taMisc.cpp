@@ -213,7 +213,7 @@ taMisc::EditStyle       taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
 int     taMisc::antialiasing_level = 4;
 float   taMisc::text_complexity = .2f;
 
-taMisc::ShowMembs       taMisc::show_gui = taMisc::NORM_MEMBS;
+TypeItem::ShowMembs     taMisc::show_gui = TypeItem::NORM_MEMBS;
 taMisc::TypeInfo        taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens      taMisc::keep_tokens = taMisc::Tokens;
 bool                    taMisc::auto_edit = false;
@@ -229,7 +229,9 @@ short                   taMisc::num_browse_history = 20;
 
 int     taMisc::strm_ver = 2;
 bool            taMisc::save_compress = false; // compression not the default in v4
-taMisc::StdLicense taMisc::license_def = taMisc::NO_LIC;
+#ifndef NO_TA_BASE
+taLicense::StdLicense taMisc::license_def = taLicense::NO_LIC;
+#endif
 String          taMisc::license_owner;
 String          taMisc::license_org;
 taMisc::SaveFormat      taMisc::save_format = taMisc::PRETTY;

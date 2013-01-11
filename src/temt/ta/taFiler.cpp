@@ -14,13 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taFiler.h"
+#include <String_PArray>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
-// #ifdef TA_OS_WIN
+#include <gzstream>
 
-// #else
-// #include <sys/stat.h>
-// #include <sys/wait.h>
-// #endif
+#include <QFileInfo>
+#include <QStringList>
+#include <taiMisc>
 
 using namespace std;
 

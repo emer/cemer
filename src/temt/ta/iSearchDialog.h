@@ -18,13 +18,21 @@
 
 // parent includes:
 #include <IDataLinkClient>
+#ifndef __MAKETA__
+#include <QDialog>
+#endif
 
 // member includes:
+#ifndef __MAKETA__
+#include <QTime>
+#endif
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class taiDataLink; // 
 class taDataLink; // 
+class taiBitBox; //
 
 
 class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {

@@ -91,7 +91,7 @@ bool MemberDef::DumpMember(void* par) {
   else if (HasOption("NO_SAVE_DEF")) {
     // note: if no DEF then this will behave like NO_SAVE_EMPTY
 //    void* new_base = GetOff(par);
-    return !(ValIsDefault(par, taMisc::SHOW_CHECK_MASK));
+    return !(ValIsDefault(par, TypeItem::SHOW_CHECK_MASK));
   }
   // embedded types (simple or objects) get saved by default
   else if (type->ptr == 0)

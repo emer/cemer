@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taStringDiffEdits.h"
-
+#include <taStringDiff>
 
 
 String taStringDiffEdits::GenerateB(const String& str_a) {

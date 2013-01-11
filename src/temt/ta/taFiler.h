@@ -24,6 +24,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class String_PArray;
 
 // NOTE: taFiler replaces the duo of taiGetFile and taFile from 3.x
 //      the ui portion of taiGetFile has been transferred to taFiler_impl subclass

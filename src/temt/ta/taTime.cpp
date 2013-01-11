@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taTime.h"
+#include <taMisc>
 
 #if (defined(TA_OS_WIN))
 # include <time.h>

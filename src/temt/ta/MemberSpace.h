@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <MemberDefBase_List>
+#include <TypeItem>
 
 // member includes:
 #include <int_PArray>
@@ -72,11 +73,12 @@ public:
   // copy only those members in my type (no inherited ones)
 
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
-                                voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                TypeDef* base_typ, void* trg_base, void* src_base,
-                                int show_forbidden, int show_allowed, 
-                                bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects) -- default args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
+                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                           TypeDef* base_typ, void* trg_base, void* src_base,
+                           int show_forbidden=TypeItem::NO_HIDDEN,
+                           int show_allowed=TypeItem::SHOW_CHECK_MASK, 
+                           bool no_ptrs = true, bool test_only = false);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   // IO
   String&       PrintType(String& strm, int indent = 0) const;

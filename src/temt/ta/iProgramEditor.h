@@ -117,7 +117,7 @@ public: // IDataHost i/f -- some delegate up to mommy
   bool                  isConstructed() {return true;}
   bool                  isModal() {return false;} // never for us
   bool                  isReadOnly() {return read_only;}
-  int                   show() const {return m_show;}
+  TypeItem::ShowMembs   show() const {return m_show;}
     // used by polydata
   iMainWindowViewer*    window() const;
   void*                 Root() const {return (void*)base;} // base of the object
@@ -143,7 +143,7 @@ protected:
   MembSet_List          membs; // the member items, one set per line
 
   int                   row;
-  int                   m_show;
+  TypeItem::ShowMembs   m_show;
   MemberDef*            sel_item_mbr; // used (and only valid!) for context menus
   taBase*               sel_item_base; // used (and only valid!) for context menus
 

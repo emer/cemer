@@ -17,7 +17,7 @@
 
 int taRootBase::milestone;
 TypeDef* taRootBase::root_type;
-taMisc::ConsoleType taRootBase::console_type;
+int taRootBase::console_type;
 int taRootBase::console_options;
 ContextFlag taRootBase::in_init;
 

@@ -184,7 +184,7 @@ protected:
   };
 
   static int            milestone; // StartupMilestones
-  static taMisc::ConsoleType console_type; // #IGNORE
+  static int            console_type; // #IGNORE taMisc::ConsoleType
   static int            console_options; //#IGNORE taMisc::ConsoleOptions
   static ContextFlag    in_init; // suppresses spurious Saves
 

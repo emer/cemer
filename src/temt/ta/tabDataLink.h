@@ -20,6 +20,7 @@
 #include <taiDataLink>
 
 // member includes:
+#include <taBase>
 
 // declare all other types mentioned but not required to include:
 

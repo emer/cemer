@@ -63,19 +63,19 @@ public:
   bool          CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool          ShowMember(int show_forbidden, 
-                           TypeItem::ShowContext show_context, 
-                           int show_allowed) const; 
-  // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc) -- def args are: taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY, taMisc::SHOW_CHECK_MASK
+  bool          ShowMember(int show_forbidden = USE_SHOW_GUI_DEF, 
+                           TypeItem::ShowContext show_context = SC_ANY, 
+                           int show_allowed = SHOW_CHECK_MASK) const; 
+  // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
 protected:
   // note: bits in the show* vars are set to indicate the value, ie READ_ONLY has that bit set
-  mutable byte  show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
-  mutable byte  show_edit;
-  mutable byte  show_tree;
+  mutable int   show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  mutable int   show_edit;
+  mutable int   show_tree;
 
   void          ShowMember_CalcCache() const; // called when show_any=0, ie, not configured yet
-  void          ShowMember_CalcCache_impl(byte& show, const String& suff) const;
+  void          ShowMember_CalcCache_impl(int& show, const String& suff) const;
 private:
   void          Initialize();
   void          Copy_(const MemberDefBase& cp);

@@ -37,6 +37,30 @@ public:
     SC_TREE             // in tree views (browsing) -- directives like "SHOW_TREE"
   }; 
 
+  // note: don't rationalize the memb bits, because it breaks the user prefs file
+  // the NO_xxx guys are for use in 'forbidden' contexts (legacy 'show')
+  // the IS_xxx guys are for use in 'allowed' contexts, and/or categorizing guys
+  enum ShowMembs { // #BITS
+    NO_HIDDEN           = 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
+    NO_unused1          = 0x02, // #IGNORE
+    NO_unused2          = 0x04, // #IGNORE
+    NO_NORMAL           = 0x08, // #NO_SHOW don't show items normally shown (helps indicate, ex. EXPERT items)
+    NO_EXPERT           = 0x10, // don't show items marked EXPERT (often only for advanced sims)
+
+    ALL_MEMBS           = 0x00, // #NO_BIT
+    NORM_MEMBS          = 0x11, // #NO_BIT
+    EXPT_MEMBS          = 0x09, // #NO_BIT
+    HIDD_MEMBS          = 0x18, // #NO_BIT
+
+    IS_HIDDEN           = 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
+    IS_NORMAL           = 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
+    IS_EXPERT           = 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
+#ifndef __MAKETA__
+    SHOW_CHECK_MASK     = IS_HIDDEN | IS_NORMAL | IS_EXPERT, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks, default for "allowed" param
+#endif
+    USE_SHOW_GUI_DEF    = 0x40  // #NO_BIT use default from taMisc::show_gui, only applies to forbidden
+  };
+
   enum TypeInfoKinds {
     TIK_ENUM,
     TIK_MEMBER,

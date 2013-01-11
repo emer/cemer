@@ -51,7 +51,7 @@ public: // ITypedObject i/f (common to IDLC and IDH)
 
 public: // IDataHost i/f
   override const iColor  colorOfCurRow() const { return bgColor(); }
-  override int          show() const;
+  override TypeItem::ShowMembs  show() const;
   override bool         HasChanged() {return modified;}
   override bool         isConstructed() {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}

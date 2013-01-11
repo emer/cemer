@@ -263,9 +263,11 @@ public:
                             bool obj_desc = true, bool obj_val = true,
                             bool mbr_name = true, bool type_desc = false);
   override void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                 taBase* cp_base, int show_forbidden,
-                                 int show_allowed, bool no_ptrs = true);
+                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                           taBase* cp_base,
+                           int show_forbidden=TypeItem::NO_HIDDEN,
+                           int show_allowed=TypeItem::SHOW_CHECK_MASK, 
+                           bool no_ptrs = true);
   override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);

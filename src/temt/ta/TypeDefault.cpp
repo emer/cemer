@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "TypeDefault.h"
+#include <MemberDef>
+#include <taMisc>
+#include <NameValue>
 
 using namespace std;
 

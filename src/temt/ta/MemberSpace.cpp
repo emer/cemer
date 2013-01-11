@@ -210,8 +210,8 @@ String& MemberSpace::Print(String& strm, void* base, int indent) const {
   String_PArray col2;
   for(int i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
-    if(!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
-                       taMisc::SHOW_CHECK_MASK)) continue;
+    if(!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
+                       TypeItem::SHOW_CHECK_MASK)) continue;
     String c1; String c2;
     md->Print(c1, c2, base, indent);
     col1.Add(c1); col2.Add(c2);

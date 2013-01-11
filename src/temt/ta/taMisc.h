@@ -29,6 +29,10 @@
 #include <DumpFileCvtList>
 #include <ContextFlag>
 
+#ifndef NO_TA_BASE
+#include <taLicense>
+#endif
+
 #ifndef __MAKETA__
 #include <iostream>
 #include <fstream>
@@ -61,29 +65,6 @@ class TA_API taMisc {
 friend class InitProcRegistrar;
 public:
 
-  // note: don't rationalize the memb bits, because it breaks the user prefs file
-  // the NO_xxx guys are for use in 'forbidden' contexts (legacy 'show')
-  // the IS_xxx guys are for use in 'allowed' contexts, and/or categorizing guys
-  enum ShowMembs { // #BITS
-    NO_HIDDEN           = 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
-    NO_unused1          = 0x02, // #IGNORE
-    NO_unused2          = 0x04, // #IGNORE
-    NO_NORMAL           = 0x08, // #NO_SHOW don't show items normally shown (helps indicate, ex. EXPERT items)
-    NO_EXPERT           = 0x10, // don't show items marked EXPERT (often only for advanced sims)
-
-    ALL_MEMBS           = 0x00, // #NO_BIT
-    NORM_MEMBS          = 0x11, // #NO_BIT
-    EXPT_MEMBS          = 0x09, // #NO_BIT
-    HIDD_MEMBS          = 0x18, // #NO_BIT
-
-    IS_HIDDEN           = 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
-    IS_NORMAL           = 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
-    IS_EXPERT           = 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-#ifndef __MAKETA__
-    SHOW_CHECK_MASK     = IS_HIDDEN | IS_NORMAL | IS_EXPERT, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks, default for "allowed" param
-#endif
-    USE_SHOW_GUI_DEF    = 0x40  // #NO_BIT use default from taMisc::show_gui, only applies to forbidden
-  };
 
   enum TypeInfo {
     MEMB_OFFSETS,               // display all including member offsets
@@ -204,19 +185,6 @@ public:
     HD_DETAILS,         // full programming details -- offsets, comments, etc
   };
 
-  enum  StdLicense {          // standard licenses in wide use
-    NO_LIC,                     // no license granted -- All Rights Reserved
-    GPLv2,                      // GNU General Public License (GPL), version 2
-    GPLv3,                      // GNU General Public License (GPL), version 3 -- note that this has patent grant issues -- version 2 is probably safer
-    BSD,                        // Berkeley Software Distribution License
-    OSL3,                       // Open Software License, version 3
-    AFL3,                       // Academic Free License, version 3
-    MIT,                        // MIT License
-    APACHE,                     // Apache License, version 2.0
-    RESEARCH,                   // Research-Only License based on CU Boulder template
-    CUSTOM_LIC,                 // enter custom license text
-  };
-
   static String         app_name;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App the root name of the app, ex. "emergent" or "css"
   static String         app_prefs_key;
@@ -298,7 +266,7 @@ public:
 
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
-  static ShowMembs      show_gui;       // #SAVE #CAT_GUI #EXPERT what to show in the gui
+  static TypeItem::ShowMembs show_gui;       // #SAVE #CAT_GUI #EXPERT what to show in the gui
   static TypeInfo       type_info_;     // #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information
   //note: 'type_info' is a reserved word in C++, it is the type of rtti data
   static KeepTokens     keep_tokens;    // #SAVE #CAT_GUI #EXPERT default for keeping tokens
@@ -316,7 +284,9 @@ public:
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool           save_compress;  // #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
-  static StdLicense     license_def;       // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
+#ifndef NO_TA_BASE
+  static taLicense::StdLicense license_def;       // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
+#endif
   static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
 

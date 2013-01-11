@@ -1189,7 +1189,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       if (!md->DumpMember(base))
         continue;
     } else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT, taMisc::SHOW_CHECK_MASK))
+      if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, SC_EDIT, TypeItem::SHOW_CHECK_MASK))
         continue;
     } else {
       if(md->HasOption("NO_SAVE"))
@@ -1766,7 +1766,7 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
         continue;
     }
     else if (sc == SC_DISPLAY) {
-      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT, taMisc::SHOW_CHECK_MASK))
+      if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, SC_EDIT, TypeItem::SHOW_CHECK_MASK))
         continue;
     }
     else {
@@ -1976,7 +1976,7 @@ bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
     // just find all eligible guys, and return true if none fail
     for (int i = 0; i < members.size; ++i) {
       MemberDef* md = members.FastEl(i);
-      if (!md || !md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
+      if (!md || !md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
         for_show)) continue;
       if (!md->ValIsDefault(base, for_show))
         return false;

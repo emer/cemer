@@ -81,4 +81,10 @@ int tabODataLink::NumListCols() const {
   return list()->NumListCols();
 }
 
+MemberDef* tabODataLink::GetDataMemberDef() const {
+  if (!m_data) return NULL;
+  taBase* owner = data()->GetOwner();
+  if (owner) return owner->FindMember(data());
+  else return NULL;
+}
 

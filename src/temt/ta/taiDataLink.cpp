@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataLink.h"
+#include <DataLink_QObj>
+#include <TypeDef>
+#include <taiViewType>
+#include <iTreeViewItem>
+#include <iTreeView>
+#include <taiTreeDataNode>
 
 String taiDataLink::AnonymousItemName(const String& type_name, int index) {
   // makes name in form [index]:TypeName

@@ -129,7 +129,7 @@ bool MemberDefBase::ShowMember(
   int show_allowed) const
 {
   //note: require exact match to special flag, so boolean operations don't match it
-  if (show_forbidden == taMisc::USE_SHOW_GUI_DEF)
+  if (show_forbidden == TypeItem::USE_SHOW_GUI_DEF)
     show_forbidden = taMisc::show_gui;
 
   // check if cache has been done yet
@@ -147,9 +147,9 @@ bool MemberDefBase::ShowMember(
   // we clearly can't show
   // if there is something (a positive) then bit-AND with the
   // show, which is negatives (what not to show), and if anything remains, don't show!
-//  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
-//  return (show_eff) && !(show_eff & (byte)show);
-  return 0 != (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
+//  show_eff &= TypeItem::SHOW_CHECK_MASK;
+//  return (show_eff) && !(show_eff & show);
+  return 0 != (show_eff & show_allowed & ~show_forbidden);
 }
 
 void MemberDefBase::ShowMember_CalcCache() const {
@@ -171,7 +171,7 @@ void MemberDefBase::ShowMember_CalcCache() const {
 
   // note that "normal" is a special case, which depends both on context and
   // on whether other bits are set, so we calc those individually
-  show_any = taMisc::IS_NORMAL; // the default for any
+  show_any = TypeItem::IS_NORMAL; // the default for any
   ShowMember_CalcCache_impl(show_any, _nilString);
 
   show_edit = show_any; // start with the "any" settings
@@ -181,13 +181,13 @@ void MemberDefBase::ShowMember_CalcCache() const {
   show_tree = show_any;
   // for trees, we only browse lists/groups by default
   if (!type->DerivesFrom(&TA_taList_impl))
-    show_tree &= ~(byte)taMisc::NO_NORMAL;
+    show_tree &= ~TypeItem::NO_NORMAL;
 #endif
   ShowMember_CalcCache_impl(show_tree, "_TREE");
   //NOTE: lists/groups, we only show by default in lists/groups, embedded lists/groups
 }
 
-void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
+void MemberDefBase::ShowMember_CalcCache_impl(int& show, const String& suff) const {
   show |= 0x80; // set the "done" flag
 
   //note: keep in mind that these show bits are the opposite of the show flags,
@@ -202,27 +202,27 @@ void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) co
 
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN" + suff) || type->HasOption("MEMB_HIDDEN" + suff))
-    show |= (byte)taMisc::IS_HIDDEN;
+    show |= TypeItem::IS_HIDDEN;
   // RO are HIDDEN unless explicitly marked SHOW
   // note: no type-level, makes no sense
   if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW"))
-    show |= (byte)taMisc::IS_HIDDEN;
+    show |= TypeItem::IS_HIDDEN;
   if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
-    show |= (byte)taMisc::IS_EXPERT;
+    show |= TypeItem::IS_EXPERT;
 
   // if NO_SHOW and no SHOW or explicit other, then never shows
-  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
-    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
+  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & TypeItem::NORM_MEMBS)))) {
+    show &= (0x80 | ~TypeItem::SHOW_CHECK_MASK);
     return;
   }
 
   // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
-  if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
-    show &= ~(byte)taMisc::IS_NORMAL;
+  if (show & TypeItem::NORM_MEMBS) // in "any" context, default is "normal"
+    show &= ~TypeItem::IS_NORMAL;
   else // no non-NORMAL set
     // SHOW is like an explicit NORMAL if nothing else applies
     if (mbr_show || typ_show)
-      show |= (byte)taMisc::IS_NORMAL;
+      show |= TypeItem::IS_NORMAL;
 }
 

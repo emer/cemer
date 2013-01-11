@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taWikiURL.h"
+#include <taMisc>
 
 void taWikiURL::Initialize() {
   sync = false;

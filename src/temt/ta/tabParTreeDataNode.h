@@ -20,15 +20,16 @@
 #include <tabTreeDataNode>
 
 // member includes:
+#include <tabODataLink>
 
 // declare all other types mentioned but not required to include:
+class taiTreeDataNode; //
 
 
 class TA_API tabParTreeDataNode: public tabTreeDataNode {
 INHERITED(tabTreeDataNode)
 public:
   taList_impl*          list() const {return ((tabODataLink*)m_link)->list();}
-//nuke  tabParDataLink*         link() const {return (tabParDataLink*)m_link;}
 
   void                  AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
   override void         UpdateChildNames(); // #IGNORE update child names of the indicated node

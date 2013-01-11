@@ -84,15 +84,15 @@ public:
   void                  CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String          ParamsAsString() const; // returns what would be in () for a definition
-  bool                  ShowMethod(int show) const; // = taMisc::USE_SHOW_GUI_DEF
+  bool                  ShowMethod(int show = USE_SHOW_GUI_DEF) const;
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
 protected:
-  mutable byte  show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  mutable int  show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
   void          ShowMethod_CalcCache() const; // called when show_any=0, ie, not configured yet
-  void          ShowMethod_CalcCache_impl(byte& show) const;
+  void          ShowMethod_CalcCache_impl(int& show) const;
 };
 
 

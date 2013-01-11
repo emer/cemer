@@ -38,7 +38,7 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
       MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, taMisc::SHOW_CHECK_MASK) ||
+      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT, TypeItem::SHOW_CHECK_MASK) ||
           smd->HasOption("HIDDEN_INLINE"))
         continue;
       GetMembDesc(smd, dsc_str, indent);

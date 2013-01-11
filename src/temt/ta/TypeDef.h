@@ -389,11 +389,11 @@ public:
   void          MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
   bool          CompareSameType(Member_List& mds, TypeSpace& base_types,
-                                voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                void* trg_base, void* src_base,
-                                int show_forbidden, int show_allowed,
-                                bool no_ptrs = true, bool test_only = false);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects), show def args: taMisc::NO_HIDDEN, taMisc::SHOW_CHECK_MASK
+                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                           void* trg_base, void* src_base,
+                           int show_forbidden=NO_HIDDEN, int show_allowed=SHOW_CHECK_MASK, 
+                           bool no_ptrs = true, bool test_only = false);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
 #ifndef NO_TA_BASE
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,

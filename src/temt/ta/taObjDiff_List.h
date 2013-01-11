@@ -18,11 +18,14 @@
 
 // parent includes:
 #include <taPtrList>
+#include <taObjDiffRec>
 
 // member includes:
 #include <voidptr_PArray>
 
 // declare all other types mentioned but not required to include:
+class taBase; //
+class int_PArray;
 
 
 class TA_API taObjDiff_List: public taPtrList<taObjDiffRec> {

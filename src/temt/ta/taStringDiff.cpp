@@ -14,8 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taStringDiff.h"
+#include <taStringDiffEdits>
+#include <taMisc>
 
-
+using namespace std;
 
 
 ///////////////////////////////////////////////
@@ -226,7 +228,7 @@ void taStringDiff::DiffCodes(taStringDiffData& ddata, const String& str,
     }
     if(ignoreCase)
       cur_ln.downcase();
-    taHashVal hash = taPtrList_impl::HashCode_String(cur_ln);
+    taHashVal hash = taHashEl::HashCode_String(cur_ln);
     int val = hash_codes.FindHashVal(hash);
     if(val < 0) {
       val = cur_hash_idx++;

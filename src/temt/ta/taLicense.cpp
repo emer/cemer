@@ -33,7 +33,8 @@ void taLicense::ViewLicense() {
   host_->Edit(false);
 }
 
-String taLicense::GetLicenseText(taMisc::StdLicense lic, const String& ownr, const String& yr, const String& og) {
+String taLicense::GetLicenseText(StdLicense lic, const String& ownr,
+                                 const String& yr, const String& og) {
   String txt;
   String cpyright = "Copyright (c) " + yr + ", " + ownr + "\n\n";
   String eff_org = og;

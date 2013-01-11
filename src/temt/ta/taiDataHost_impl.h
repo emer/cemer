@@ -78,7 +78,7 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 
 public: // IDataHost i/f
   const iColor   colorOfCurRow() const {return colorOfRow(curRow());}
-  int           show() const; // legacy -- just returns the app value
+  TypeItem::ShowMembs  show() const; // legacy -- just returns the app value
   bool          HasChanged() {return modified;}
   bool          isConstructed() {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}

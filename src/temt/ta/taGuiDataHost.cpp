@@ -21,7 +21,7 @@ taBase* taGuiDataHost::Base() const {
   return gui_owner;
 }
 
-int taGuiDataHost::show() const {
+TypeItem::ShowMembs taGuiDataHost::show() const {
   return taMisc::show_gui;
 }
 
