@@ -34,6 +34,10 @@ set(taiqtso_HEADS
     inetworkaccessmanager.h
     qtthumbwheel.h
     irenderarea.h
+  iMenuButton.h
+  iContextMenuButton.h
+  iColorButton.h
+  iCheckBox.h
 )
 
 # headers that need Qt moc run
@@ -91,6 +95,10 @@ set(taiqtso_SRCS
     inetworkaccessmanager.cpp
     qtthumbwheel.cpp
     irenderarea.cpp
+  iMenuButton.cpp
+  iContextMenuButton.cpp
+  iColorButton.cpp
+  iCheckBox.cpp
 )
 
 # headers that need Qt ui compiler run
