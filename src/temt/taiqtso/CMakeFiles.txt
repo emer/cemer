@@ -38,6 +38,39 @@ set(taiqtso_HEADS
   iContextMenuButton.h
   iColorButton.h
   iCheckBox.h
+  iClipWidgetAction.h
+  iClipToolWidget.h
+  iComboBox.h
+  iCookieJar.h
+  AutoSaver.h
+  iDialog.h
+  iDimEdit.h
+  iStripeWidget.h
+  iEditGrid.h
+  iFlowLayout.h
+  iFormLayout.h
+  iPoint.h
+  iSize.h
+  iRect.h
+  iVec3i.h
+  iVec3f.h
+  iBox3f.h
+  iLabel.h
+  iLineEdit.h
+  iTextEditDialog.h
+  iNetworkAccessManager.h
+  Interceptor.h
+  SoOffscreenRendererQt.h
+  iScrollArea.h
+  iSplitter.h
+  iSplitterHandle.h
+  iSpinBox.h
+  iTextBrowser.h
+  iTextEdit.h
+  iTreeWidgetItem.h
+  iTreeWidget.h
+  NumberBar.h
+  NumberedTextView.h
 )
 
 # headers that need Qt moc run
@@ -99,6 +132,39 @@ set(taiqtso_SRCS
   iContextMenuButton.cpp
   iColorButton.cpp
   iCheckBox.cpp
+  iClipWidgetAction.cpp
+  iClipToolWidget.cpp
+  iComboBox.cpp
+  iCookieJar.cpp
+  AutoSaver.cpp
+  iDialog.cpp
+  iDimEdit.cpp
+  iStripeWidget.cpp
+  iEditGrid.cpp
+  iFlowLayout.cpp
+  iFormLayout.cpp
+  iPoint.cpp
+  iSize.cpp
+  iRect.cpp
+  iVec3i.cpp
+  iVec3f.cpp
+  iBox3f.cpp
+  iLabel.cpp
+  iLineEdit.cpp
+  iTextEditDialog.cpp
+  iNetworkAccessManager.cpp
+  Interceptor.cpp
+  SoOffscreenRendererQt.cpp
+  iScrollArea.cpp
+  iSplitter.cpp
+  iSplitterHandle.cpp
+  iSpinBox.cpp
+  iTextBrowser.cpp
+  iTextEdit.cpp
+  iTreeWidgetItem.cpp
+  iTreeWidget.cpp
+  NumberBar.cpp
+  NumberedTextView.cpp
 )
 
 # headers that need Qt ui compiler run
