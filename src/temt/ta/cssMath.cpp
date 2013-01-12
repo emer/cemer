@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "cssMath.h"
+#include <double_Matrix>
+#include <int_Matrix>
+#include <slice_Matrix>
+#include <complex_Matrix>
+#include <byte_Matrix>
+#include <MatrixIndex>
+#include <Random>
+#include <taMisc>
+
 
 int cssMath::ndims(const taMatrix* cr) {
   if(!cr) {

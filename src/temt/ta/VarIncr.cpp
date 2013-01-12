@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "VarIncr.h"
+#include <Program>
+#include <taMisc>
 
 
 void VarIncr::Initialize() {

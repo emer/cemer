@@ -30,6 +30,9 @@ class SbVec2s;          // #IGNORE
 class SbVec3s;          // #IGNORE
 #endif
 
+#include <iPoint>
+#include <iSize>
+
 class TAIQTSO_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int x;

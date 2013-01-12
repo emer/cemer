@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "LocalVars.h"
+#include <Program>
+#include <ProgVar>
+#include <taMisc>
+
 
 void LocalVars::Initialize() {
 }

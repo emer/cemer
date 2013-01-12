@@ -14,7 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "RGBA.h"
-#include <iColor>
+#include <taColor>
+#include <taMisc>
 
 
 RGBA::RGBA(float rd, float gr, float bl, float al) {

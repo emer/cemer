@@ -26,6 +26,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class DataCol;
 
 
 class TA_API FixedWidthColSpec : public taNBase {

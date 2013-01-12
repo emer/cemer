@@ -16,6 +16,8 @@
 #ifndef iClipWidgetAction_h
 #define iClipWidgetAction_h 1
 
+#include "taiqtso_def.h"
+
 #include <QWidgetAction>
 #include <QStringList>
 

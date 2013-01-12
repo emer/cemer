@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "ProgArg_List.h"
+#include <Program>
+#include <ProgVar_List>
+#include <MethodDef>
+
 
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);

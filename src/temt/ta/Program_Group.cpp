@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "Program_Group.h"
+#include <taMisc>
+
+#include <QFileInfo>
+
+
+using namespace std;
+
 
 void Program_Group::Initialize() {
   SetBaseType(&TA_Program);

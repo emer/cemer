@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "Loop.h"
+#include <Program>
+#include <taMisc>
+
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);

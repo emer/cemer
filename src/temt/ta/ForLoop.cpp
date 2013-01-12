@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ForLoop.h"
+#include <Program>
+#include <Function>
+#include <taMisc>
+#include <ProgExpr>
+#include <LocalVars>
 
 
 void ForLoop::SetProgExprFlags() {

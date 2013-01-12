@@ -20,10 +20,11 @@
 #include <taBase>
 
 // member includes:
+#include <iColor>
+#include <RGBA>
 
 // declare all other types mentioned but not required to include:
-class iColor; //
-class RGBA; //
+
 
 class TA_API ColorScaleColor : public taBase { // ##NO_TOKENS Color
 INHERITED(taBase)

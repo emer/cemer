@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "AbstractScriptBase.h"
+#include <css_machine.h>
+#include <css_ta.h>
+
+#include <taMisc>
+
 
 ScriptBase_List AbstractScriptBase::recompile_scripts;
 

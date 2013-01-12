@@ -20,9 +20,10 @@
 #include <taBase>
 
 // member includes:
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
-class iColor; //
+
 
 class TA_API taColor : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value

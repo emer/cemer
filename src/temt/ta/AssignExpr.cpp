@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "AssignExpr.h"
+#include <Program>
+#include <taMisc>
 
 
 void AssignExpr::Initialize() {

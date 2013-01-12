@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiAction;
 
 
 class TA_API iClassBrowseViewer: public iBrowseViewer { // viewer window used for class browsing

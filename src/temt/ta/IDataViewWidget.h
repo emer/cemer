@@ -19,6 +19,7 @@
 // parent includes:
 
 // member includes:
+#include <taiMiscCore>
 
 // declare all other types mentioned but not required to include:
 class QWidget; // 

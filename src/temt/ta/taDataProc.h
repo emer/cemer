@@ -20,6 +20,7 @@
 #include <taNBase>
 
 // member includes:
+#include <DataCol>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 

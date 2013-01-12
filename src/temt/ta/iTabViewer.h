@@ -20,8 +20,13 @@
 #include <iFrameViewer>
 
 // member includes:
+#include <ContextFlag>
+#include <ISelectable>
+
 
 // declare all other types mentioned but not required to include:
+class iTabView;
+class iDataPanel;
 
 
 class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed window

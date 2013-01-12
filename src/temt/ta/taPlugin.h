@@ -20,6 +20,11 @@
 #include <taPluginBase>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPointer>
+#endif
+class iPluginEditor;
+
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 

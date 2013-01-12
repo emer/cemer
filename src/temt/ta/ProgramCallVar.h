@@ -21,7 +21,7 @@
 
 // member includes:
 #include <Program_Group>
-#include <ProgVar>
+#include <ProgVarRef>
 
 // declare all other types mentioned but not required to include:
 class Program; // 

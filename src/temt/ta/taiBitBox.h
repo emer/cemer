@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <taiData>
-#include <icheckbox.h>
+#include <iCheckbox>
 
 // member includes:
 

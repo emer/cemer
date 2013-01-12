@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ChannelSpec.h"
+#include <MatrixGeom>
+#include <String_Matrix>
 
 
 void ChannelSpec::Initialize() {

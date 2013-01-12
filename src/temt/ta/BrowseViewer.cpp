@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "BrowseViewer.h"
+#include <iBrowseViewer>
+
 
 void BrowseViewer::Initialize() {
   root_typ = NULL;

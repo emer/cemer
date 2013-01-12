@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ProgramCallBase.h"
+#include <Program>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 void ProgramCallBase::Initialize() {
 }

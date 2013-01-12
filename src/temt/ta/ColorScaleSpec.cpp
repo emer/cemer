@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ColorScaleSpec.h"
+#include <ColorScaleColor>
+#include <ColorScaleColor_List>
+
 
 void ColorScaleSpec::Initialize() {
   clr.SetBaseType(&TA_RGBA);

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "MiscCall.h"
+#include <Program>
+#include <taMisc>
 
 void MiscCall::Initialize() {
   min_type = &TA_taMisc;

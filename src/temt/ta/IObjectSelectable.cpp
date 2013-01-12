@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "IObjectSelectable.h"
+#include <taiObjectMimeFactory>
+#include <taiClipData>
+#include <taBase_PtrList>
+#include <ISelectable_PtrList>
+#include <taiDataLink>
 
 taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
   bool for_drag, GuiContext sh_typ) const

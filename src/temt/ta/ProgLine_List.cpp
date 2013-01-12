@@ -14,8 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "ProgLine_List.h"
+#include <ViewColor_List>
+#include <iColor>
+#include <taMisc>
 
-#include <ViewColor>
 
 void ProgLine_List::Initialize() {
   SetBaseType(&TA_ProgLine);

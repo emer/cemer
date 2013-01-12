@@ -16,6 +16,8 @@
 #ifndef iSize_h
 #define iSize_h 1
 
+#include "taiqtso_def.h"
+
 class TAIQTSO_API iSize { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int w;

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ColorScaleSpec_Group.h"
+#include <taMisc>
+
 
 //////////////////////////////////
 // 	ColorScaleSpec_Group	//

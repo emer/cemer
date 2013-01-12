@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DockViewer.h"
+#include <iDockViewer>
 
 void DockViewer::Initialize() {
   dock_flags = DV_NONE;

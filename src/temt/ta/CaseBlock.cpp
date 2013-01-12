@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "CaseBlock.h"
+#include <Program>
+#include <taMisc>
 
 
 void CaseBlock::Initialize() {

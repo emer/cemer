@@ -14,9 +14,28 @@
 //   Lesser General Public License for more details.
 
 #include "ProgExprBase.h"
+#include <ProgEl>
+#include <Program>
+#include <Function>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <css_machine.h>
+#include <css_ta.h>
+#include <css_c_ptr_types.h>
+#include <taiTokenPtrMultiTypeButton>
+#include <LocalVars>
+#include <taiGroupElsButton>
+#include <taiListElsButton>
+#include <taiMemberDefButton>
+#include <taiMemberMethodDefButton>
+#include <taiEnumStaticButton>
+#include <taiTokenPtrButton>
+#include <MemberProgEl>
 
-cssProgSpace ProgExprBase::parse_prog;
-cssSpace ProgExprBase::parse_tmp;
+
+cssProgSpace* ProgExprBase::parse_prog = NULL;
+cssSpace* ProgExprBase::parse_tmp = NULL;
 
 static ProgExprBase* expr_lookup_cur_base = NULL;
 
@@ -203,20 +222,20 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
 
   if(vnm == "this") {
     cssEl* el = new cssTA_Base((void*)prog, 1, &TA_Program, "this");
-    pe->parse_tmp.Push(el);
+    pe->parse_tmp->Push(el);
     el_ptr.SetDirect(el);
     return el->GetParse();
   }
   if(vnm == "run_state") {
     cssEl* el = new cssCPtr_enum(&(prog->run_state), 1, "run_state",
                                  TA_Program.sub_types.FindName("RunState"));
-    pe->parse_tmp.Push(el);
+    pe->parse_tmp->Push(el);
     el_ptr.SetDirect(el);
     return el->GetParse();
   }
   if(vnm == "ret_val") {
     cssEl* el = new cssCPtr_int(&(prog->ret_val), 1, "ret_val");
-    pe->parse_tmp.Push(el);
+    pe->parse_tmp->Push(el);
     el_ptr.SetDirect(el);
     return el->GetParse();
   }
@@ -243,10 +262,10 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     el_ptr.SetDirect(var->parse_css_el);
     // update var_expr
     String subst = "$#" + (String)idx + "#$";
-    String add_chunk = pe->expr.at(pe->parse_ve_pos-pe->parse_ve_off, parse_prog.src_pos - pe->parse_ve_pos - vnm.length());
+    String add_chunk = pe->expr.at(pe->parse_ve_pos-pe->parse_ve_off, parse_prog->src_pos - pe->parse_ve_pos - vnm.length());
     pe->var_expr += add_chunk;
     pe->var_expr += subst;
-    pe->parse_ve_pos = parse_prog.src_pos;
+    pe->parse_ve_pos = parse_prog->src_pos;
 
     return var->parse_css_el->GetParse();
   }
@@ -256,14 +275,14 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     if(ptyp) {
       if(ptyp->InheritsFrom(&TA_DynEnumType)) {
         cssEnumType* etyp = new cssEnumType(ptyp->GetName());
-        pe->parse_tmp.Push(etyp);
+        pe->parse_tmp->Push(etyp);
         el_ptr.SetDirect(etyp);
         return CSS_TYPE;
       }
       else if(ptyp->InheritsFrom(&TA_DynEnumItem)) {
         DynEnumItem* eit = (DynEnumItem*)ptyp;
         cssEnum* eval = new cssEnum(eit->value, eit->name);
-        pe->parse_tmp.Push(eval);
+        pe->parse_tmp->Push(eval);
         el_ptr.SetDirect(eval);
         return CSS_VAR;
       }
@@ -272,7 +291,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
       Function* fun = prog->functions.FindName(vnm);
       if(fun && fun->name == vnm) { // findname will do crazy inherits thing on types, giving wrong match, so you need to make sure it is actually of the same name
         cssScriptFun* sfn = new cssScriptFun(vnm);
-        pe->parse_tmp.Push(sfn);
+        pe->parse_tmp->Push(sfn);
         sfn->argc = fun->args.size;
         el_ptr.SetDirect(sfn);
         return CSS_FUN;
@@ -327,15 +346,21 @@ bool ProgExprBase::ParseExpr() {
   parse_ve_pos = parse_ve_off;
   if(expr.empty() || expr == "<no_arg>") return true; // <no_arg> is a special flag..
 
-  parse_prog.SetName(pnm);
-  parse_prog.ClearAll();
-  parse_prog.ext_parse_fun_pre = &cssExtParseFun_pre;
-  parse_prog.ext_parse_fun_post = &cssExtParseFun_post;
-  parse_prog.ext_parse_user_data = (void*)this;
+  if(!parse_prog) {
+    parse_prog = new cssProgSpace;
+  }
+  if(!parse_tmp) {
+    parse_tmp = new cssSpace;
+  }
+  parse_prog->SetName(pnm);
+  parse_prog->ClearAll();
+  parse_prog->ext_parse_fun_pre = &cssExtParseFun_pre;
+  parse_prog->ext_parse_fun_post = &cssExtParseFun_post;
+  parse_prog->ext_parse_user_data = (void*)this;
   // use this for debugging exprs:
-  //  parse_prog.SetDebug(6);
+  //  parse_prog->SetDebug(6);
 
-  parse_prog.CompileCode(parse_expr);   // use css to do all the parsing!
+  parse_prog->CompileCode(parse_expr);   // use css to do all the parsing!
 
   for(int i=0;i<vars.size;i++)  {
     ProgVarRef* vrf = vars.FastEl(i);
@@ -350,8 +375,8 @@ bool ProgExprBase::ParseExpr() {
     var_expr += end_chunk;
   }
 
-  parse_tmp.Reset();
-  parse_prog.ClearAll();
+  parse_tmp->Reset();
+  parse_prog->ClearAll();
 
   return (bad_vars.size == 0);  // do we have any bad variables??
 }
@@ -373,7 +398,7 @@ String ProgExprBase::GetFullExpr() const {
 
 // StringFieldLookupFun is in ta_program_qt.cpp
 
-void ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
+bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   if(!base_) return true;
   Program* prog = dynamic_cast<Program*>(static_cast<taBase*>(base_));
   if(!prog) return true;

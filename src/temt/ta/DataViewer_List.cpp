@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataViewer_List.h"
+#include <DataViewer>
+
 
 void DataViewer_List::GetWinState() {
   for (int i = 0; i < size; ++i) {

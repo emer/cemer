@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "PrintExpr.h"
+#include <Program>
+#include <taMisc>
 
 
 void PrintExpr::Initialize() {

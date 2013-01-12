@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taManagedThread.h"
+#include <taThreadMgr>
 
 taManagedThread::taManagedThread(taThreadMgr* mg)
   : mgr(mg)

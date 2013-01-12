@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "CodeBlock.h"
+#include <Program>
+#include <taMisc>
+
 
 void CodeBlock::Initialize() {
 }

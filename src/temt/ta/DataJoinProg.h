@@ -20,7 +20,7 @@
 #include <DataSrcDestProg>
 
 // member includes:
-#include <ProgVar>
+#include <ProgVarRef>
 #include <DataJoinSpec>
 
 // declare all other types mentioned but not required to include:

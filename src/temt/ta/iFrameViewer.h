@@ -17,11 +17,16 @@
 #define iFrameViewer_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QWidget>
+#endif
+
 #include <IDataViewWidget>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class ISelectableHost; //
 
 
 class TA_API iFrameViewer: public QWidget, public IDataViewWidget {

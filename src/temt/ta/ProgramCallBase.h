@@ -24,6 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class Program; // 
+class Program_List; //
 
 
 class TA_API ProgramCallBase: public ProgEl {

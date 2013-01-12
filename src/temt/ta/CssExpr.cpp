@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "CssExpr.h"
+#include <Program>
+#include <taMisc>
 
 
 void CssExpr::Initialize() {

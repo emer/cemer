@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ReturnExpr.h"
+#include <Program>
+#include <taMisc>
 
 
 void ReturnExpr::Initialize() {

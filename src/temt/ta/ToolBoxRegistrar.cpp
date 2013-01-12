@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ToolBoxRegistrar.h"
+#include <ToolBoxRegistrar_PtrList>
+
 
 ToolBoxRegistrar::ToolBoxRegistrar(ToolBoxProc proc_)
 : proc(proc_)

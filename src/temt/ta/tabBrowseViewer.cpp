@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "tabBrowseViewer.h"
+#include <iBrowseViewer>
 
 tabBrowseViewer* tabBrowseViewer::New(taBase* root, MemberDef* root_md) {
   if (!root) return NULL; // nice try, buster

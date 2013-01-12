@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taThreadMgr.h"
+#include <taMisc>
+
+using namespace std;
+
 
 taThreadMgr_PList taThreadMgr::all_thread_mgrs;
 

@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taPlugin.h"
+#include <taPluginInst>
+#include <taFBase>
+#include <taPlugins>
+#include <PluginWizard>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QFileInfo>
+
+using namespace std;
+
 
 void taPlugin::Initialize() {
   enabled = false; // be conservative, and require user to enable

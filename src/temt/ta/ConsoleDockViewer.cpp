@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "ConsoleDockViewer.h"
+#include <iDockViewer>
+
+#include <QScrollArea>
+#include <css_qtconsole.h>
 
 void ConsoleDockViewer::Initialize() {
   dock_flags = (DockViewerFlags)(DV_MOVABLE | DV_FLOATABLE);

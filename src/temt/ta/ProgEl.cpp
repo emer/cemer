@@ -14,6 +14,25 @@
 //   Lesser General Public License for more details.
 
 #include "ProgEl.h"
+#include <Program>
+#include <Function>
+#include <taiItemPtrBase>
+#include <MemberDef>
+#include <ProgExprBase>
+#include <ProgArg_List>
+#include <ProgExpr_List>
+#include <LocalVars>
+#include <Program_Group>
+#include <taProject>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <ProgCode>
+
+#include <taMisc>
+
+#include <css_machine.h>
+
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!base_)

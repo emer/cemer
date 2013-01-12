@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DynEnumItem_List.h"
+#include <DynEnumType>
 #include <Program>
 
 void DynEnumItem_List::Initialize() {

@@ -21,8 +21,9 @@
 
 #include "config.h"
 #include "css_console.h"
-#include "qconsole.h"
 #include "css_machine.h"
+
+#include <QConsole>
 
 class CSS_API QcssConsole : public QConsole {
   INHERITED(QConsole)

@@ -14,6 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "ClustNode.h"
+#include <float_Matrix>
+#include <DataTable>
+#include <DataCol>
+#include <taMath_float>
+#include <taMath_double>
+#include <double_Matrix>
+#include <MinMax>
+#include <float_Data>
+#include <String_Data>
+
+#include <taMisc>
+
 
 void ClustNode::Initialize() {
   pat = NULL;

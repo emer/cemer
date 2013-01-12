@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "DataColsFmArgs.h"
+#include <Program>
+#include <ProgVar>
+#include <DataTable>
+#include <taMisc>
 
 
 void DataColsFmArgs::Initialize() {

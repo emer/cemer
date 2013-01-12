@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "IfContinue.h"
+#include <Program>
+#include <taMisc>
 
 
 void IfContinue::Initialize() {

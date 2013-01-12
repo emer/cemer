@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taPluginBase_List.h"
+#include <taiClipData>
+
 
 taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
   for (int i = 0; i < size; ++i) {

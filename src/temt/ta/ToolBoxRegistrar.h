@@ -20,10 +20,12 @@
 #include "ta_def.h"
 
 // member includes:
+#ifndef __MAKETA__
+#include <iToolBoxDockViewer> // ToolBoxProc
+#endif
 
 // declare all other types mentioned but not required to include:
 class ToolBoxRegistrar_PtrList; // 
-class ToolBoxProc; // #IGNORE
 
 class TA_API ToolBoxRegistrar {
   // static class used to manage toolbar procs; instances used as static globals to register
@@ -31,8 +33,8 @@ public:
   static ToolBoxRegistrar_PtrList* instances();
 #ifndef __MAKETA__
   ToolBoxProc           proc;
-#endif
   ToolBoxRegistrar(ToolBoxProc proc_);
+#endif
 
 protected:
   static ToolBoxRegistrar_PtrList* m_instances;

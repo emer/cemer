@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ProgObjList.h"
+#include <Program>
+#include <taMisc>
+#include <ProgVar>
 
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {

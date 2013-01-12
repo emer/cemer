@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "DataViewer.h"
+#include <IDataViewWidget>
+#include <taFiler>
+#include <taMisc>
+
+#include <QPixmap>
+#include <QWidget>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <MainWindowViewer>
+
 
 String_Array DataViewer::image_exts;
 

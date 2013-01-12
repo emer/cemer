@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DoLoop.h"
+#include <Program>
+#include <taMisc>
 
 
 void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {

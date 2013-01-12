@@ -17,8 +17,8 @@
 #define ProgVarRef_List_h 1
 
 // parent includes:
-#include <ProgVar>
 #include <taPtrList>
+#include <ProgVar>
 
 // member includes:
 

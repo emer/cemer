@@ -18,7 +18,7 @@
 
 // parent includes:
 #ifndef __MAKETA__
-#include "itreewidget.h"
+#include <iTreeWidgetItem>
 #else
 class iTreeWidgetItem; // #IGNORE
 #endif

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "DataOpList.h"
+#include <DataSrcDestProg>
+#include <DataOpBaseSpec>
+
+#include <taMisc>
+#include <tabMisc>
 
 
 void DataOpList::DataChanged(int dcr, void* op1, void* op2) {

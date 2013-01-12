@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iPluginEditor.h"
+#include <taiMisc>
+
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QAction>
+#include <iSplitter>
+#include <iMainWindowViewer>
+#include <NumberedTextView>
+#include <iDataPanel>
+#include <iTextEdit>
+
+using namespace std;
 
 iPluginEditor* iPluginEditor::New(const String& dir, const String& file_bse) {
   iPluginEditor* pe = new iPluginEditor();

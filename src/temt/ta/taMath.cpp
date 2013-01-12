@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taMath.h"
+#include <taMisc>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <double_Array>
+#include <MTRnd>
+
+#include <limits.h>
+#include <float.h>
 
 #ifdef HAVE_LIBGSL
 // gsl error handler -- needed to prevent default from raising abort!

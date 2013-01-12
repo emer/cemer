@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class ToolBoxDockViewer; //
+class iToolBoxDockViewer; //
 
 typedef void (*ToolBoxProc)(iToolBoxDockViewer* tb);
 

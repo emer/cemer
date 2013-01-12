@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "MathCall.h"
+#include <Program>
+#include <taMisc>
 
 
 void MathCall::Initialize() {

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ProgEl_List.h"
+#include <Program>
+
 
 void ProgEl_List::Initialize() {
   SetBaseType(&TA_ProgEl);

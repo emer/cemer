@@ -16,6 +16,7 @@
 #include "iColorButton.h"
 
 #include <QColorDialog>
+#include <QPainter>
 
 iColorButton::iColorButton(QWidget* parent)
 :inherited(parent)

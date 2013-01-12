@@ -19,7 +19,7 @@
 // parent includes:
 #include <ISelectableHost>
 #ifndef __MAKETA__
-#include "itreewidget.h"
+#include <iTreeWidget>
 #endif
 
 // member includes:

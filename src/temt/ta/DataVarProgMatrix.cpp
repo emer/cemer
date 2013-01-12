@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataVarProgMatrix.h"
+#include <DataCol>
+#include <DataTable>
+
 
 
 void DataVarProgMatrix::Initialize() {

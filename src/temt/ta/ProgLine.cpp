@@ -17,6 +17,9 @@
 
 #include <ProgEl>
 #include <Program>
+#include <taMisc>
+#include <css_machine.h>
+
 
 void ProgLine::Initialize() {
   flags = PL_NONE;

@@ -37,16 +37,7 @@ class cssProgSpace; //
 class cssTA_Base; // 
 class ProgLib; // 
 class Program_Group; // 
-class taMatrix; // 
 class MemberDef; // 
-class taBase_PtrList; // 
-class taObjDiff_List; // 
-class taDoc; // 
-class SelectEdit; // 
-class MethodDef; // 
-class UserDataItem_List; // 
-class UserDataItemBase; // 
-class UserDataItem; // 
 class ProgLibEl; // 
 class ProgVar; // 
 class ProgramCallBase; //

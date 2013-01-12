@@ -33,6 +33,7 @@ class TypeDef; //
 class ISelectable_PtrList; // 
 class taiClipData; // 
 class taiActions; //
+class taiMimeSource; //
 
 
 /*

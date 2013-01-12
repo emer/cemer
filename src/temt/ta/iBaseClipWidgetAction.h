@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "ta_def.h"
-#include <icliptoolwidget.h>
+#include <iClipToolWidget>
 
 // member includes:
 

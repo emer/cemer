@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "MemberAssign.h"
+#include <Program>
+#include <taMisc>
 
 
 void MemberAssign::Initialize() {

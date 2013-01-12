@@ -15,6 +15,8 @@
 
 #include "PluginMakeTask.h"
 #include <PluginMakeThreadMgr>
+#include <taPlugins>
+
 
 void PluginMakeTask::Initialize() {
 }

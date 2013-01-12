@@ -20,6 +20,7 @@
 #include <taiMimeItem>
 
 // member includes:
+#include <iSize>
 
 // declare all other types mentioned but not required to include:
 

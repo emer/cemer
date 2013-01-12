@@ -79,7 +79,7 @@
 
 #include <QDir>
 #include <QCoreApplication>
-#include <qmmetaobject.h>
+#include <qmetaobject.h>
 
 #include <qdebug.h>
 

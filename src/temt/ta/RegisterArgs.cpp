@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "RegisterArgs.h"
+#include <ProgVar>
+#include <Program>
+#include <taMisc>
+#include <ProgVarFmArg>
+#include <MemberFmArg>
+#include <DataColsFmArgs>
+#include <SelectEditsFmArgs>
+#include <MemberDef>
+
 
 void RegisterArgs::Initialize() {
 }

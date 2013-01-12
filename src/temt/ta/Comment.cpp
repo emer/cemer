@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "Comment.h"
+#include <Program>
+#include <taMisc>
 
 
 void Comment::Initialize() {

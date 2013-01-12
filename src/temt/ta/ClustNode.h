@@ -21,6 +21,8 @@
 
 // member includes:
 #include <taBase_List>
+#include <ClustLink>
+#include <taMath>
 
 // declare all other types mentioned but not required to include:
 class taMatrix; // 

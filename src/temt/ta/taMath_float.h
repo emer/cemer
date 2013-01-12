@@ -91,7 +91,7 @@ public:
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
   static float exp2(float x) { return pow(2.0f, x); }
   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
-  static float exp_fast(float x) { return (float)taMath_double::exp_fast(x); }
+  static float exp_fast(float x);
   // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
   static float log(float x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)

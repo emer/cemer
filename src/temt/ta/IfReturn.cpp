@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "IfReturn.h"
+#include <Program>
+#include <taMisc>
 
 
 void IfReturn::Initialize() {

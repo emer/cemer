@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DynEnumItem.h"
+#include <DynEnumType>
 #include <Program>
 
 void DynEnumItem::UpdateAfterEdit_impl() {

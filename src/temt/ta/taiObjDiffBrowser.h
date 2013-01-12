@@ -17,7 +17,7 @@
 #define taiObjDiffBrowser_h 1
 
 // parent includes:
-#include <idialog.h>
+#include <iDialog>
 
 // member includes:
 

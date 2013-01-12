@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taPlugin_List.h"
+#include <taPlugin>
+#include <taPluginInst>
+#include <taPlugins>
+#include <taVersion>
+#include <IPlugin>
+
+#include <taMisc>
+
+#include <QFileInfo>
+
+
+using namespace std;
+
 
 static void RootFilename(String& f) {
   QFileInfo fi(f);

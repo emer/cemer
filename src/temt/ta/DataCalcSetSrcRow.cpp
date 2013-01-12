@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataCalcSetSrcRow.h"
+#include <DataCalcLoop>
+
 
 
 void DataCalcSetSrcRow::Initialize() {

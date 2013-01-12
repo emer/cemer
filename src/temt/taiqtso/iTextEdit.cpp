@@ -15,6 +15,7 @@
 
 #include "iTextEdit.h"
 
+#include <taMisc>
 #include <taiMisc>
 // ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 

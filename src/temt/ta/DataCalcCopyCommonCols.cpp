@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataCalcCopyCommonCols.h"
+#include <DataCalcLoop>
+
 
 
 void DataCalcCopyCommonCols::Initialize() {

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taPluginDep.h"
+#include <taMisc>
+
 
 void taPluginDep::Initialize() {
   dep_check = DC_OK;

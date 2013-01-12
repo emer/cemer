@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "UserScript.h"
+#include <Program>
+#include <taMisc>
 
 using namespace std;
 

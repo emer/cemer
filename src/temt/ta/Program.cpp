@@ -14,6 +14,20 @@
 //   Lesser General Public License for more details.
 
 #include "Program.h"
+#include <Program_Group>
+#include <taMisc>
+#include <taProject>
+#include <ProgramCallBase>
+#include <taiStringDataHost>
+#include <taiMisc>
+#include <taiChoiceDialog>
+
+
+#include <css_machine.h>
+
+#include <QFileInfo>
+#include <QDir>
+
 
 using namespace std;
 

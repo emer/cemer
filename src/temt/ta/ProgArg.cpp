@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ProgArg.h"
+#include <Program>
+
 
 void ProgArg::Initialize() {
   arg_type = NULL;

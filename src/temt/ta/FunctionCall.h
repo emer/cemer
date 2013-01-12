@@ -20,7 +20,7 @@
 #include <ProgEl>
 
 // member includes:
-#include <ProgVar>
+#include <ProgVarRef>
 #include <Function>
 #include <ProgArg_List>
 

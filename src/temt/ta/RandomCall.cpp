@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "RandomCall.h"
+#include <Program>
+#include <taMisc>
 
 void RandomCall::Initialize() {
   min_type = &TA_Random;

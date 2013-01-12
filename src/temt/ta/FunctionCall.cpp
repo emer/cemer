@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "FunctionCall.h"
+#include <Program>
+#include <taMisc>
 
 void FunctionCall::Initialize() {
 }

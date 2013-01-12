@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "IfElse.h"
+#include <Program>
+#include <taMisc>
+
+#include <css_machine.h>
 
 
 void IfElse::Initialize() {

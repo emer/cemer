@@ -19,11 +19,9 @@
 // parent includes:
 #include <taNBase>
 
-// for smart ptrs need these:
-#include <taSmartRefT>
-
 // member includes:
-#include <ProgramRef>
+#include <ProgVarRef>
+#include <Program>
 #include <DynEnum>
 
 // declare all other types mentioned but not required to include:
@@ -183,7 +181,5 @@ private:
   void  Initialize();
   void  Destroy();
 };
-
-SmartRef_Of(ProgVar,TA_ProgVar); // ProgVarRef
 
 #endif // ProgVar_h

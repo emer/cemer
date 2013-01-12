@@ -14,8 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ColorScaleColor.h"
-#include <iColor>
 #include <QApplication>
+#include <RGBA>
+#include <taMisc>
+#include <QPalette>
+
 
 // set the color to a new color based on the values given
 void ColorScaleColor::SetColor(float r, float g, float b, float a, RGBA* background){

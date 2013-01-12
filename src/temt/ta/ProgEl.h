@@ -20,12 +20,13 @@
 #include <taOBase>
 
 // member includes:
+#include <ProgVarRef>
 
 // declare all other types mentioned but not required to include:
 class Program; // 
-class ProgVar; // 
 class LocalVars; // 
 class taiItemPtrBase; //
+
 
 /////////////////////////////////////////////////////////////////////
 //              IMPORTANT CODING NOTES:

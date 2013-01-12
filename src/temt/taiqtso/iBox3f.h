@@ -18,6 +18,8 @@
 
 #include "taiqtso_def.h"
 
+#include <iVec3f>
+
 #ifdef TA_OS_WIN
 // following for msvc
 # ifdef near
@@ -26,6 +28,10 @@
 # ifdef far
 #   undef far
 # endif
+#endif
+
+#ifdef TA_USE_INVENTOR
+class SbBox3f;          // #IGNORE
 #endif
 
 /* Notes:

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "FixedWidthColSpec.h"
+#include <DataCol>
+
+
 
 void FixedWidthColSpec::Initialize() {
   start_col = 1;

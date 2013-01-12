@@ -20,6 +20,7 @@
 #include <taNBase>
 
 // member includes:
+#include <taiMimeFactory_List>
 
 // declare all other types mentioned but not required to include:
 

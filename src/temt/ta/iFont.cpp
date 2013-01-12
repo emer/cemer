@@ -14,11 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iFont.h"
-
+#include <taMisc>
 #include <string.h>
 
+
 #ifdef TA_GUI
-#include <qfont.h>
+#include <QFont>
 #endif
 
 #ifdef TA_USE_INVENTOR

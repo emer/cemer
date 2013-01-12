@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataBlock.h"
+#include <MatrixGeom>
+#include <String_Matrix>
 
 
 const Variant DataBlock::GetData(int chan) { 
@@ -22,7 +24,7 @@ const Variant DataBlock::GetData(int chan) {
   else return _nilVariant;
 }
 
-void DataBlock::SetMatrixCellData(const Variant& data, int chan, int cell) 
+bool DataBlock::SetMatrixCellData(const Variant& data, int chan, int cell) 
 { 
   taMatrix* mat = GetSinkMatrix(chan); // mat is ref'ed!
   if (mat) { 

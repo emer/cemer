@@ -14,7 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "ProgVar_List.h"
+#include <Program>
+#include <ProgVar>
 #include <DataTable>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 void ProgVar_List::Initialize() {
   SetBaseType(&TA_ProgVar);
@@ -122,7 +128,8 @@ const String ProgVar_List::GenListing(int indent_level) const {
   return rval;
 }
 
-ProgVar* ProgVar_List::FindVarType(ProgVar::VarType vart, TypeDef* td) {
+ProgVar* ProgVar_List::FindVarType(int varttmp, TypeDef* td) {
+  ProgVar::VarType vart = (ProgVar::VarType)varttmp;
   for (int i = 0; i < size; ++i) {
     ProgVar* it = FastEl(i);
     if(it->var_type == vart) {

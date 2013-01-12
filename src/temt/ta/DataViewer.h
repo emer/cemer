@@ -22,6 +22,7 @@
 // member includes:
 #include <String_Array>
 #include <taiMiscCore>
+#include <iSize>
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 

@@ -18,7 +18,7 @@
 
 // Note: maketa does not run on this file.
 
-#include "idialog.h"
+#include <iDialog>
 #include "ta_def.h" // TA_API
 
 class QEvent;

@@ -14,4 +14,5 @@
 //   Lesser General Public License for more details.
 
 #include "AggregateSpec.h"
+#include <Program>
 

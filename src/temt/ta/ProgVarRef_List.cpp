@@ -13,7 +13,9 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include <Program>
 #include "ProgVarRef_List.h"
+
 
 void ProgVarRef_List::Initialize() {
 }

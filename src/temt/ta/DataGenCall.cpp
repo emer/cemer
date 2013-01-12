@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataGenCall.h"
+#include <taMisc>
+
 
 
 void DataGenCall::Initialize() {

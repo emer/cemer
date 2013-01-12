@@ -18,7 +18,7 @@
 
 // parent includes:
 #ifndef __MAKETA__
-#include <idialog.h>
+#include <iDialog>
 #endif
 
 // member includes:

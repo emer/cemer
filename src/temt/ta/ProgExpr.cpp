@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ProgExpr.h"
+#include <Function>
+#include <Program>
+
 
 bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
   if(!base_) return true;

@@ -17,7 +17,6 @@
 #define ProgVar_List_h 1
 
 // parent includes:
-#include <ProgVar>
 #include <taList>
 
 // member includes:
@@ -26,7 +25,7 @@
 class Program; // 
 class taNBase; // 
 class DataTable; // 
-
+class ProgVar; //
 
 class TA_API ProgVar_List : public taList<ProgVar> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
@@ -50,8 +49,8 @@ public:
   virtual void  CreateDataColVars(DataTable* src);
   // #DROP1 #BUTTON create column variables for given database object (only for scalar vals -- not matrix ones)
 
-  virtual ProgVar* FindVarType(ProgVar::VarType vart, TypeDef* td = NULL);
-  // find first variable of given type (if hard enum or object type, td specifies type of object to find if not null)
+  virtual ProgVar* FindVarType(int vart, TypeDef* td = NULL);
+  // find first variable of given type (ProgVar::VarType) (if hard enum or object type, td specifies type of object to find if not null)
 
   override String GetTypeDecoKey() const { return "ProgVar"; }
 

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataOpEl.h"
+#include <ProgEl>
+
 
 
 void DataOpEl::Initialize() {

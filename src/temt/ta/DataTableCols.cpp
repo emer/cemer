@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataTableCols.h"
+#include <DataTable>
+
 
 void DataTableCols::Initialize() {
   SetBaseType(&TA_DataColTp);

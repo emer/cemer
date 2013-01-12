@@ -20,8 +20,13 @@
 #include <iTabBarBase>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPalette>
+#endif
 
 // declare all other types mentioned but not required to include:
+class iDataPanel; //
+class iTabView; //
 
 
 class TA_API iTabBar: public iTabBarBase { //  encapsulates the TabBar for iTabView

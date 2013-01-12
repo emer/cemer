@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataCalcSetDestRow.h"
+#include <DataCalcLoop>
+
 
 
 void DataCalcSetDestRow::Initialize() {

@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taMath_double.h"
+#include <double_Array>
+#include <int_Array>
+#include <double_Matrix>
+#include <int_Matrix>
+#include <complex_Matrix>
+#include <MTRnd>
+#include <Random>
+#include <Aggregate>
+#include <Relation>
+#include <SimpleMathSpec>
+#include <taBaseItr>
+
+#include <taMisc>
 
 #ifdef _WINDOWS //note: have to use the raw ms switch, since our own file isn't loaded
 // note: MSVC requires the following on first read of math.h to enable defines
@@ -39,8 +52,9 @@
 #endif
 
 #include <math.h>
-
 #include <float.h>
+
+using namespace std;
 
 #ifdef _WINDOWS
 //# include <stdlib.h>

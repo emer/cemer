@@ -20,11 +20,13 @@
 #include <taNBase>
 
 // member includes:
+#include <taMath>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 class float_Matrix; // 
-
+class double_Matrix; //
+class DataCol; //
 
 class TA_API taDataAnal : public taNBase {
   // #STEM_BASE ##CAT_Data collection of data analysis functions

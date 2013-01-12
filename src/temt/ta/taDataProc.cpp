@@ -14,6 +14,27 @@
 //   Lesser General Public License for more details.
 
 #include "taDataProc.h"
+#include <DataTable>
+#include <taProject>
+#include <DataOpList>
+#include <DataOpEl>
+#include <DataSortSpec>
+#include <DataSortEl>
+#include <DataGroupSpec>
+#include <DataGroupEl>
+#include <float_Data>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <int_Data>
+#include <taMath_float>
+#include <taMath_double>
+#include <Variant_Array>
+#include <DataSelectSpec>
+#include <DataSelectEl>
+#include <DataJoinSpec>
+
+#include <taMisc>
+
 
 bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
                          bool& in_place_req) {

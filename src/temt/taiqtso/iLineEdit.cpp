@@ -20,7 +20,8 @@
 #include <taiMisc>
 #include <QDesktopWidget>
 #include <QPalette>
-
+#include <QApplication>
+#include <QTextEdit>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)

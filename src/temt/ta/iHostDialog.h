@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "ta_def.h"
-#include <idialog.h>
+#include <iDialog>
 
 // member includes:
 

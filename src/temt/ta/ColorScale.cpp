@@ -15,6 +15,13 @@
 
 #include "ColorScale.h"
 #include <iColor>
+#include <ColorScaleSpec>
+#include <ColorScaleSpec_Group>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <math.h>
 
 const iColor ColorScale::def_color;
 

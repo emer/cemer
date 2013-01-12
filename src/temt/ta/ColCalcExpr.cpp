@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ColCalcExpr.h"
+#include <DataCol>
+
 
 void ColCalcExpr::Initialize() {
   col_lookup = NULL;

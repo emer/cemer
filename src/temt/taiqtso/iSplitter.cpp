@@ -17,6 +17,9 @@
 
 #include <iSplitterHandle>
 
+#include <QTimer>
+
+
 iSplitter::iSplitter(QWidget *parent) : 
   QSplitter(parent)
 {

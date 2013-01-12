@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "Function_List.h"
+#include <Program>
+#include <Function>
+
 
 void Function_List::Initialize() {
   SetBaseType(&TA_Function);

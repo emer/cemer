@@ -14,6 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "taDataAnal.h"
+#include <taProject>
+#include <DataTable>
+#include <DataCol>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <taMath_double>
+#include <taMath_float>
+#include <DataSortSpec>
+#include <DataSelectSpec>
+#include <DataSelectEl>
+#include <taDataProc>
+#include <Relation>
+#include <int_Matrix>
+#include <ClustNode>
+
+
+#include <taMisc>
+
 
 bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
   if(dest) {

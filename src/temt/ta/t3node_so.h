@@ -17,7 +17,7 @@
 #define T3NODE_SO_H
 
 #include "icolor.h"
-#include "igeometry.h"
+//#include "igeometry.h"
 #include "ta_matrix.h"
 #include "colorscale.h"
 #include "minmax.h"

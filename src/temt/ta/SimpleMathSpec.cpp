@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "SimpleMathSpec.h"
+#include <taMath>
+
+#include <math.h>
+
 
 void SimpleMathSpec::Initialize() {
   opr = NONE;

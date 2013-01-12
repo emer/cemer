@@ -21,7 +21,7 @@
 
 // member includes:
 #ifdef TA_GUI
-#include "igeometry.h"
+#include <iVec3f>
 #endif
 
 // declare all other types mentioned but not required to include:

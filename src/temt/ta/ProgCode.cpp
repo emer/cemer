@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "ProgCode.h"
+#include <Program>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taProject>
+
 
 void ProgCode::Initialize() {
   SetProgExprFlags();

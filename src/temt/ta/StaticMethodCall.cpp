@@ -15,6 +15,10 @@
 
 #include "StaticMethodCall.h"
 #include <Program>
+#include <taMisc>
+#include <MethodDef>
+#include <tabMisc>
+
 
 void StaticMethodCall::Initialize() {
   method = NULL;

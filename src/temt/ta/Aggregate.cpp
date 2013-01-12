@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "Aggregate.h"
+#include <Program>
 
 void Aggregate::Initialize() {
   op = MEAN;

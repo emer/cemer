@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "Function.h"
+#include <Program>
+#include <taMisc>
+#include <taBase_PtrList>
+#include <FunctionCall>
+
 
 void Function::Initialize() {
   return_type = ProgVar::T_Int;

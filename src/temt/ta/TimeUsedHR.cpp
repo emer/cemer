@@ -15,6 +15,16 @@
 
 #include "TimeUsedHR.h"
 
+#if (defined(TA_OS_WIN))
+# include <time.h>
+# include <windows.h>
+#else
+# include <sys/time.h>
+# include <sys/times.h>
+# include <unistd.h>
+#endif
+
+
 #if defined(TA_OS_WIN)
 
 class TimeUsedHRd {

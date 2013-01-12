@@ -20,7 +20,7 @@
 #include "ta_def.h"
 
 #ifndef __MAKETA__
-#include <idialog.h>
+#include <iDialog>
 #endif
 
 // member includes:

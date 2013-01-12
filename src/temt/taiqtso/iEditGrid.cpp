@@ -15,6 +15,9 @@
 
 #include "iEditGrid.h"
 
+#include <iStripeWidget>
+#include <iScrollArea>
+
 #include <qlayout.h>
 #include <qobject.h>
 #include <qpainter.h>

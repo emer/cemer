@@ -40,6 +40,7 @@ class ISelectable_PtrList; //
 class iTreeViewItem; //
 class iTabViewer; //
 class ISelectableHost; //
+class iDataPanel; //
 
 
 class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ClustLink.h"
+#include <ClustNode>
+
 
 
 void ClustLink::Initialize() {

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "PanelViewer.h"
+#include <iTabViewer>
+
 
 void PanelViewer::Initialize() {
 }

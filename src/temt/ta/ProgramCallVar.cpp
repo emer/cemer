@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ProgramCallVar.h"
+#include <taMisc>
+
 
 void ProgramCallVar::Initialize() {
 }

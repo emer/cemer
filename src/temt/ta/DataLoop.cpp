@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DataLoop.h"
+#include <taMisc>
 
 
 void DataLoop::Initialize() {

@@ -17,7 +17,6 @@
 #define Function_List_h 1
 
 // parent includes:
-#include <Function>
 #include <taList>
 
 // member includes:
@@ -25,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class Program; // 
 class ProgVar; // 
+class Function; //
 
 
 class TA_API Function_List: public taList<Function> {

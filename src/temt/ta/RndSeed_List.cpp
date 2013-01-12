@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "RndSeed_List.h"
+#include <MTRnd>
+#include <taMisc>
+#include <MemberDef>
+#include <tabMisc>
+
 
 void RndSeed_List::MakeSeeds(int n_seeds) {
   seeds.SetSize(n_seeds);

@@ -15,6 +15,8 @@
 
 #include "ProgType.h"
 #include <Program>
+#include <css_machine.h>
+
 
 void ProgType::Initialize() {
   setUseStale(true);

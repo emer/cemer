@@ -23,6 +23,7 @@
 #include <ProgExpr>
 
 // declare all other types mentioned but not required to include:
+class ProgEl_List; //
 
 
 class TA_API ProgCode: public ProgEl {

@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "ProgLib.h"
+#include <NameVar>
+#include <taMisc>
+
+#include <QDir>
+#include <QStringList>
+
 
 void ProgLib::Initialize() {
   not_init = true;

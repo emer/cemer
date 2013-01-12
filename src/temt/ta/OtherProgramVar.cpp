@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "OtherProgramVar.h"
+#include <Program>
+#include <ProgVar>
+#include <taMisc>
 
 
 void OtherProgramVar::Initialize() {

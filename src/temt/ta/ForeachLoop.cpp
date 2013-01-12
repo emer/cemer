@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ForeachLoop.h"
+#include <Program>
+#include <taMisc>
 
 
 void ForeachLoop::SetProgExprFlags() {

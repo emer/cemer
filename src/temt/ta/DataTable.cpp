@@ -14,6 +14,25 @@
 //   Lesser General Public License for more details.
 
 #include "DataTable.h"
+#include <DataTableModel>
+#include <taFiler>
+#include <ChannelSpec>
+#include <CellRange>
+#include <MatrixIndex>
+#include <FixedWidthSpec>
+#include <DataSortSpec>
+#include <DataSortEl>
+#include <taDataProc>
+#include <DataGroupSpec>
+#include <DataGroupEl>
+
+#include <taMisc>
+#include <tabMisc>
+
+#include <QFileInfo>
+
+#include <css_machine.h>
+#include <css_ta.h>
 
 using namespace std;
 

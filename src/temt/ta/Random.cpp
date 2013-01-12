@@ -14,6 +14,35 @@
 //   Lesser General Public License for more details.
 
 #include "Random.h"
+#include <taMath_double>
+
+double Random::Binom(int n, double p) {
+  return taMath_double::binom_dev(n,p);
+}
+double Random::Poisson(double l) {
+  return taMath_double::poisson_dev(l);
+}
+double Random::Gamma(double var, int j)  {
+  return var * taMath_double::gamma_dev(j);
+}
+double Random::Gauss(double stdev) {
+  return stdev * taMath_double::gauss_dev();
+}
+
+double Random::BinomDen(int n, int j, double p) {
+  return taMath_double::binom_den(n,j,p);
+}
+
+double Random::PoissonDen(int j, double l) {
+  return taMath_double::poisson_den(j,l);
+}
+
+double Random::GammaDen(int j, double l, double t)  {
+  return taMath_double::gamma_den(j,l,t);
+}
+double Random::GaussDen(double x, double stdev) {
+  return taMath_double::gauss_den_sig(x, stdev);
+}
 
 double Random::Gen() const {
   if(var == 0.0f) return mean;

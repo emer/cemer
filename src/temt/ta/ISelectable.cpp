@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "ISelectable.h"
+#include <ISelectableHost>
+#include <taiMimeSource>
+#include <taiClipData>
+#include <SelectableHostHelper>
+#include <taiMenu>
+#include <itreewidget.h>
+#include <taiDataLink>
+#include <iMainWindowViewer>
+#include <taProject>
+#include <taMisc>
+#include <iTreeView>
+#include <iTreeWidgetItem>
+
+#include <QApplication>
+#include <QClipboard>
+
 
 ISelectable::~ISelectable() {
   ISelectableHost::ItemDeleting(this);

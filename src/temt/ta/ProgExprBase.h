@@ -23,12 +23,15 @@
 #include <ProgVarRef_List>
 #include <String_Array>
 
+
 // declare all other types mentioned but not required to include:
 class cssElPtr; //
 class MemberDef; //
 class Program; //
 class Function; //
-class cssSpace; //
+class cssProgSpace; // #IGNORE
+class cssSpace; // #IGNORE
+
 
 class TA_API ProgExprBase : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- base doesn't have any lookup functionality
@@ -51,8 +54,8 @@ public:
   String_Array  var_names;      // #READ_ONLY #HIDDEN #NO_SAVE original variable names associated with vars list -- useful for user info if a variable goes out of existence..
   String_Array  bad_vars;       // #READ_ONLY #HIDDEN #NO_SAVE list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
 
-  static cssProgSpace   parse_prog; // #IGNORE program space for parsing
-  static cssSpace       parse_tmp;  // #IGNORE temporary el's created during parsing (for types)
+  static cssProgSpace*  parse_prog; // #IGNORE program space for parsing
+  static cssSpace*      parse_tmp;  // #IGNORE temporary el's created during parsing (for types)
   int                   parse_ve_off; // #IGNORE offset to position information (for expressions = 10, otherwise 0)
   int                   parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
 

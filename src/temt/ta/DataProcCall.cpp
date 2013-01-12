@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "DataProcCall.h"
+#include <taMisc>
+
 
 
 void DataProcCall::Initialize() {

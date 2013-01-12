@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taFontSpec.h"
+#include <taMisc>
 
 #include <QFontDialog>
 
@@ -23,16 +24,6 @@ void taFontSpec::Initialize() {
 void taFontSpec::InitLinks() {
   inherited::InitLinks();
   if (!taMisc::gui_active) return;
-/*obs
-#ifndef WINDOWS
-  pattern = "*" + (String) fnt->name + "-*";
-//TODO???  if (fnt != (iFont*)iFont::lookup(pattern)) {
-//    pattern = "*-" + (String) fnt->name() + "-medium-r*";
-//  }
-#else
-  pattern = "*" + (String) fnt->name + "*medium*--10*";
-#endif
-  prv_pat = pattern; */
 }
 
 void taFontSpec::CutLinks() {
@@ -55,20 +46,6 @@ void taFontSpec::SetFont(char* fn) {
 
 void taFontSpec::SetFontSize(int sz) {
   pointSize = sz;
-/* obs
-  String szstr = String(sz);
-  int len = pattern.length();
-  int szpos;
-  for(szpos=0;szpos<len;szpos++) {
-    if(isdigit(pattern[szpos])) break;
-  }
-  if(szpos < len) {
-    pattern = pattern.before(szpos) + szstr + "*";
-  }
-  else {
-    pattern += szstr + "*";
-  }
-  UpdateAfterEdit(); */
 }
 
 void taFontSpec::UpdateAfterEdit(){
@@ -94,39 +71,6 @@ void taFontSpec::UpdateAfterEdit(){
       else pointSize = (int)nwsz;
     }
 #else
-  /*code was:  const iFont* f = iFont::lookup(pattern);
-    if((f==NULL) && pattern.contains("Arial*medium*")) {
-      String szs = pattern.after("Arial*medium*");
-      String nwsz;
-      int i;
-      for(i=0;i<(int)szs.length();i++) {
-        if(!isdigit(szs[i])) continue;
-        nwsz += szs[i];
-      }
-      if(nwsz.empty()) nwsz = "10";
-      else if((int)nwsz <= 9) nwsz = "8";
-      pattern = "*-Helvetica-medium-r*" + nwsz + "*";
-      f = iFont::lookup(pattern);
-    }
-    if(f==NULL){
-      f = iFont::lookup(String( "*-" + pattern + "-medium-r*"));
-    }
-    if(f==NULL){
-      f = iFont::lookup(String( "*-" + pattern + "-r*"));
-    }
-    if(f==NULL){
-      f = iFont::lookup(String( "*-" + pattern + "-*"));
-    }
-    if(f==NULL){
-      taMisc::Error("Cannot find font: ", pattern);
-      return;
-    }
-    prv_pat = pattern;
-    if(fnt == f) return;
-    ivResource::unref(fnt);
-    fnt = (iFont*)f;
-    ivResource::ref(fnt);
-  */
   //TODO: following is just a temporary hack:
     this->setRawName(pattern);
     pattern = _nilString;

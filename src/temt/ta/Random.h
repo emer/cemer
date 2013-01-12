@@ -20,9 +20,11 @@
 #include <taNBase>
 
 // member includes:
+#include <MTRnd>
+
+#include <math.h>
 
 // declare all other types mentioned but not required to include:
-
 
 class TA_API Random : public taNBase {
   // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Random Number Generation
@@ -69,25 +71,25 @@ public:
   { return mean + range * 2.0 * (ZeroOne() - 0.5); }
   // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range]
 
-  static double Binom(int n, double p)  { return taMath_double::binom_dev(n,p); }
+  static double Binom(int n, double p);
   // #CAT_Float binomial with n trials (par) each of probability p (var)
-  static double Poisson(double l)       { return taMath_double::poisson_dev(l); }
+  static double Poisson(double l);
   // #CAT_Float poisson with parameter l (var)
-  static double Gamma(double var, int j)  { return var * taMath_double::gamma_dev(j); }
+  static double Gamma(double var, int j);
   // #CAT_Float gamma with given variance, number of exponential stages (par)
-  static double Gauss(double stdev)     { return stdev * taMath_double::gauss_dev(); }
+  static double Gauss(double stdev);
   // #CAT_Float gaussian (normal) random number with given standard deviation
 
   static double UniformDen(double x, double range)
   { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
   // #CAT_Float uniform density at x with given range on either size of 0 (subtr mean from x before)
-  static double BinomDen(int n, int j, double p) { return taMath_double::binom_den(n,j,p); }
+  static double BinomDen(int n, int j, double p);
   // #CAT_Float binomial density at j with n trials (par) each of probability p (var)
-  static double PoissonDen(int j, double l) { return taMath_double::poisson_den(j,l); }
+  static double PoissonDen(int j, double l);
   // #CAT_Float poisson density with parameter l (var)
-  static double GammaDen(int j, double l, double t)  { return taMath_double::gamma_den(j,l,t); }
+  static double GammaDen(int j, double l, double t);
   // #CAT_Float gamma density at time t with given number of stages (par), lambda (var)
-  static double GaussDen(double x, double stdev)        { return taMath_double::gauss_den_sig(x, stdev); }
+  static double GaussDen(double x, double stdev);
   // #CAT_Float gaussian (normal) density for given standard deviation (0 mean)
 
 

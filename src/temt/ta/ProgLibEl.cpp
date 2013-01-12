@@ -14,6 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "ProgLibEl.h"
+#include <Program_Group>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+
+#include <QFileInfo>
+#include <QDateTime>
+
+
+using namespace std;
+
 
 void ProgLibEl::Initialize() {
   is_group = false;

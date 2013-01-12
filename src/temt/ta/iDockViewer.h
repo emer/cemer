@@ -18,10 +18,14 @@
 
 // parent includes:
 #include <IDataViewWidget>
+#ifndef __MAKETA__
+#include <QDockWidget>
+#endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class DockViewer; //
 
 
 class TA_API iDockViewer: public QDockWidget, public IDataViewWidget {

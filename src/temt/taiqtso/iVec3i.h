@@ -18,6 +18,8 @@
 
 #include "taiqtso_def.h"
 
+#include <iPoint>
+
 /* Notes:
    1. all classes below are value-semantics, and use the implicit copy and = operators.
    2. MAKETA cannot boggle the : class(): x(), y() {} form of constructor initialialization,

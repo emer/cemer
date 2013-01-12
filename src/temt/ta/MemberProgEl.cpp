@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "MemberProgEl.h"
+#include <Program>
+#include <ProgVar>
+#include <taMisc>
+#include <MemberDef>
 
 
 void MemberProgEl::Initialize() {

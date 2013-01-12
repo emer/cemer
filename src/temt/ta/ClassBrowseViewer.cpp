@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ClassBrowseViewer.h"
+#include <iClassBrowseViewer>
+#include <taMisc>
 
 ClassBrowseViewer* ClassBrowseViewer::New(void* root, TypeDef* root_typ, MemberDef* root_md) {
   ClassBrowseViewer* rval = new ClassBrowseViewer();

@@ -21,7 +21,7 @@
 
 // member includes:
 #include <ProgExpr>
-#include <ProgVar>
+#include <ProgVarRef>
 
 // declare all other types mentioned but not required to include:
 

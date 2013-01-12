@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "DataCol.h"
+#include <DataTable>
+#include <double_Matrix>
+#include <float_Matrix>
+#include <int_Matrix>
+#include <taHashTable>
+#include <taMath_float>
+#include <taMath_double>
+#include <MemberDef>
+#include <MinMax>
+#include <MatrixIndex>
+#include <taObjDiffRec>
+#include <taObjDiff_List>
+
+#include <tabMisc>
+#include <taMisc>
+
 
 const String DataCol::udkey_width("WIDTH");
 const String DataCol::udkey_narrow("NARROW");
@@ -272,7 +288,7 @@ void DataCol::BuildHashTable() {
   if(!hash_table->Alloc(rows() + 10)) return;
   for(int i=0; i<rows(); i++) {
     String strval = GetVal(i).toString();
-    hash_table->AddHash(taHashTable::HashCode_String(strval), i, strval);
+    hash_table->AddHash(taHashEl::HashCode_String(strval), i, strval);
   }
 }
 

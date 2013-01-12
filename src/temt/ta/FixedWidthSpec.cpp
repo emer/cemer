@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "FixedWidthSpec.h"
+#include <DataTable>
+
 
 void FixedWidthSpec::Load_Init(DataTable* dat_) {
   dat = dat_;

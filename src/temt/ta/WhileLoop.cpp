@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "WhileLoop.h"
+#include <Program>
+#include <taMisc>
 
 
 void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {

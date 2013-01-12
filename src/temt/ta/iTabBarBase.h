@@ -17,6 +17,10 @@
 #define iTabBarBase_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QTabBar>
+#endif
 
 // member includes:
 

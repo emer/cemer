@@ -233,18 +233,22 @@ set(ta_HEADS_MAKETA_LOCAL_1
   FrameViewer.h
   FrameViewer_List.h
   TopLevelViewer.h
+  BrowseViewer.h
   tabBrowseViewer.h
   ClassBrowseViewer.h
   PanelViewer.h
   ToolBoxRegistrar.h
   ToolBar_List.h
+  DockViewer.h
   DockViewer_List.h
+  ToolBoxDockViewer.h
   ConsoleDockViewer.h
   ToolBoxRegistrar_PtrList.h
   TreeDecorationSpec.h
   TreeDecorationSpec_List.h
 
   ProgramRef.h
+  ProgVarRef.h
   ProgLine.h
   ProgLine_List.h
   ProgType.h
@@ -955,7 +959,12 @@ set(ta_HEADS_NOMAKETA_MOC
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
-  ../taiqtso/igeometry.h
+  ../taiqtso/iPoint.h
+  ../taiqtso/iVec3i.h
+  ../taiqtso/iSize.h
+  ../taiqtso/iRect.h
+  ../taiqtso/iVec3f.h
+  ../taiqtso/iBox3f.h
   ${ta_HEADS_MAKETA_LOCAL_1}
   ${ta_HEADS_MAKETA_MOC}
   # ../taiqtso/safeptr_so.h
@@ -1010,6 +1019,10 @@ set(ta_HEADS_MOC
 
 # NOTE: do NOT include .moc files -- auto generated
 # these should correspond directly to the files in the ta_HEADS_MAKETA files
+
+#set(ta_SRCS_MAKETA
+set(good_files
+)
 
 set(ta_SRCS_MAKETA
   taBasicAtomicInt.cpp
@@ -1226,18 +1239,22 @@ set(ta_SRCS_MAKETA
   FrameViewer.cpp
   FrameViewer_List.cpp
   TopLevelViewer.cpp
+  BrowseViewer.cpp
   tabBrowseViewer.cpp
   ClassBrowseViewer.cpp
   PanelViewer.cpp
   ToolBoxRegistrar.cpp
   ToolBar_List.cpp
+  DockViewer.cpp
   DockViewer_List.cpp
   ConsoleDockViewer.cpp
+  ToolBoxDockViewer.cpp
   ToolBoxRegistrar_PtrList.cpp
   TreeDecorationSpec.cpp
   TreeDecorationSpec_List.cpp
 
   ProgramRef.cpp
+  ProgVarRef.cpp
   ProgLine.cpp
   ProgLine_List.cpp
   ProgType.cpp
@@ -1277,7 +1294,6 @@ set(ta_SRCS_MAKETA
   FunctionCall.cpp
   CodeBlock.cpp
   UserScript.cpp
-
   Loop.cpp
   WhileLoop.cpp
   DoLoop.cpp
@@ -1400,6 +1416,7 @@ set(ta_SRCS_MAKETA
   taPluginBase.cpp
   taPluginBase_List.cpp
   taPluginDep.cpp
+# here
   taPlugin.cpp
   taPlugin_List.cpp
 

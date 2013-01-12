@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "MemberMethodCall.h"
+#include <Program>
+#include <taMisc>
+#include <tabMisc>
+#include <MethodDef>
 
 
 void MemberMethodCall::Initialize() {

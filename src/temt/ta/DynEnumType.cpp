@@ -15,6 +15,9 @@
 
 #include "DynEnumType.h"
 #include <Program>
+#include <taProject>
+#include <DataTable>
+
 
 using namespace std;
 

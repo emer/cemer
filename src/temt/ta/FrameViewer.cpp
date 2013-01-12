@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "FrameViewer.h"
+#include <iFrameViewer>
+
 
 void FrameViewer::Initialize() {
 }

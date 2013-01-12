@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "ProgVar.h"
+#include <Program>
+#include <taMisc>
+#include <ProgVar_List>
+#include <taDataLinkItr>
+#include <css_machine.h>
+#include <css_ta.h>
+#include <css_c_ptr_types.h>
+#include <MemberDef>
+
 
 void ProgVar::Initialize() {
   var_type = T_UnDef;

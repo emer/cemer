@@ -20,7 +20,7 @@
 #include <taiMiscCore>
 
 // member includes:
-#include <igeometry.h>
+#include <iSize>
 #include <TypeSpace>
 #include <taBase_PtrList>
 #include <taiDataHost>

@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "TopLevelViewer.h"
+#include <taMisc>
+#include <taiMisc>
+#include <taProject>
+#include <tabMisc>
+#include <taRootBase>
+#include <iRect>
+
+#include <QWidget>
+#include <QCoreApplication>
+#include <QMainWindow>
+
 
 void TopLevelViewer::Initialize() {
 }

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "Relation.h"
+#include <Program>
+
 
 void Relation::Initialize() {
   rel = LESSTHANOREQUAL;

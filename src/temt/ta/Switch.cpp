@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "Switch.h"
+#include <Program>
+#include <taMisc>
+#include <tabMisc>
+#include <CaseBlock>
+#include <EnumDef>
 
 
 void Switch::Initialize() {

@@ -17,6 +17,18 @@
 
 #include <QDir>
 #include <taProject>
+#include <float_Matrix>
+#include <taMath_float>
+#include <Random>
+#include <MatrixIndex>
+#include <taVector2i>
+#include <float_Array>
+#include <SubMatrixOpSpec>
+#include <SubMatrixOpEl>
+#include <taDataProc>
+
+#include <taMisc>
+
 
 
 bool taDataGen::CheckDims(float_Matrix* mat, int dims) {

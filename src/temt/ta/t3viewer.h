@@ -28,7 +28,7 @@
 
 #include "ta_TA_type_WRAPPER.h"
 
-#include "igeometry.h"
+//#include "igeometry.h"
 #include "ta_geometry.h"
 #include "safeptr_so.h"
 

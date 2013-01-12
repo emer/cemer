@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "SelectEditsFmArgs.h"
+#include <Program>
+#include <ProgVar>
+#include <SelectEdit>
+#include <EditMbrItem>
+#include <taMisc>
 
 
 void SelectEditsFmArgs::Initialize() {

@@ -15,6 +15,22 @@
 
 #include "taMath_float.h"
 #include <taMath_double>
+#include <float_Array>
+#include <double_Array>
+#include <int_Array>
+#include <double_Matrix>
+#include <float_Matrix>
+#include <int_Matrix>
+#include <complex_Matrix>
+#include <MTRnd>
+#include <Random>
+#include <Aggregate>
+#include <Relation>
+#include <RelationFloat>
+#include <SimpleMathSpec>
+#include <taBaseItr>
+
+#include <taMisc>
 
 #ifdef _WINDOWS //note: have to use the raw ms switch, since our own file isn't loaded
 // note: MSVC requires the following on first read of math.h to enable defines
@@ -46,6 +62,10 @@
 // ExpLog: exponential and logarithmic functions
 
 float taMath_float::e = (float)M_E;
+
+float taMath_float::exp_fast(float x) {
+  return (float)taMath_double::exp_fast(x);
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // Trigonometry

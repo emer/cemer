@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataVarProg.h"
+#include <DataCol>
+#include <DataTable>
+
 
 
 void DataVarProg::Initialize() {

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ProgramCall.h"
+#include <Program>
+#include <taMisc>
+#include <Program_List>
+#include <taProject>
+
 
 void ProgramCall::Initialize() {
 }

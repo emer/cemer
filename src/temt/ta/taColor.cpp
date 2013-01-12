@@ -14,7 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taColor.h"
-#include <iColor>
+
+#include <taMisc>
 
 const iColor taColor::color() const {
   iColor rval(r,g,b,a);

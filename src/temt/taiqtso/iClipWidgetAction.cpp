@@ -15,6 +15,7 @@
 
 #include "iClipWidgetAction.h"
 
+#include <iClipToolWidget>
 #include <QApplication>
 #include <QClipboard>
 #include <QDrag>

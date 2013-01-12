@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ChannelSpec_List.h"
+#include <DataBlock>
 
 
 const KeyString ChannelSpec_List::GetListColKey(int col) const 

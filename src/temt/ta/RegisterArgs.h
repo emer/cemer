@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class ProgEl_List;
 
 
 class TA_API RegisterArgs: public ProgEl { 

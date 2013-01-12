@@ -22,6 +22,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iTreeView; //
+class iTreeSearch; //
+class ISelectable_PtrList; //
+class taiActions; //
 
 
 class TA_API iBrowseViewer : public iFrameViewer { // base of viewer window used for object and class browsing

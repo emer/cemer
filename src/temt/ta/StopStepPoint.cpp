@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "StopStepPoint.h"
+#include <Program>
+#include <taMisc>
 
 
 void StopStepPoint::Initialize() {

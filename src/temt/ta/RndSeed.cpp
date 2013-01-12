@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "RndSeed.h"
+#include <MTRnd>
+#include <taMisc>
 
 void RndSeed::Initialize() {
   GetCurrent();

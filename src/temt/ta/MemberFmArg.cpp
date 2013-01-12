@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "MemberFmArg.h"
+#include <Program>
+#include <ProgVar>
+#include <taMisc>
 
 
 void MemberFmArg::Initialize() {

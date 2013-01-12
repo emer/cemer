@@ -20,6 +20,8 @@
 #include <taNBase>
 
 // member includes:
+#include <taMath>
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
