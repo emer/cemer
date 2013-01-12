@@ -20,9 +20,21 @@
 #include <taOABase>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPointer>
+#include <QAbstractSocket>
+#endif
+
+#include <NameVar_PArray>
+#include <taProject>
+
 
 // declare all other types mentioned but not required to include:
 class TemtClientAdapter; //
+class TemtServer; //
+class DataTable; //
+class Program; //
+class QTcpSocket; //
 
 
 class TA_API TemtClient: public taOABase { 

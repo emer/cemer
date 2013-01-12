@@ -15,6 +15,11 @@
 
 #include "taiObjectMimeFactory.h"
 
+
+#include <sstream>
+
+using namespace std;
+
 const String taiObjectMimeFactory::tacss_objectdesc("tacss/objectdesc");
 const String taiObjectMimeFactory::tacss_objectdata("tacss/objectdata");
 

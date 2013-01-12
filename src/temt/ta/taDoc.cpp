@@ -15,6 +15,9 @@
 
 #include "taDoc.h"
 
+#include <taMisc>
+
+
 const String taDoc::init_text(
 "<html>\n"
 "<head></head>\n"

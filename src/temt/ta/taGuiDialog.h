@@ -19,14 +19,15 @@
 // parent includes:
 #include <taNBase>
 
+// smartptr, ref includes
+#include <taSmartRefT>
+
 // member includes:
 #include <taGuiWidget_List>
 #include <taGuiLayout_List>
 #include <taGuiAction_List>
 
 // declare all other types mentioned but not required to include:
-class taBaseRef; // 
-class TypeDef; // 
 class DynEnum; // 
 class ProgVar; // 
 class DataTable; // 

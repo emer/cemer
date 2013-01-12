@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "TemtClientAdapter.h"
+#include <TemtClient>
+
 
 void TemtClientAdapter::init() {
   prog_rval = Program::RV_OK;

@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "SubversionClient.h"
+#include <iNetworkAccessManager>
+
+#include <taMisc>
 
 #include <QDir>
 #include <QFile>
@@ -31,8 +34,7 @@
 #include <svn_path.h>
 #include <svn_pools.h>
 #include <svn_wc.h>
-#include "ta_type.h" // taMisc::Error, etc.
-#include "inetworkaccessmanager.h" // getUsernamePassword()
+
 
 namespace {
   template<typename T>

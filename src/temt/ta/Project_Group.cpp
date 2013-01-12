@@ -15,6 +15,11 @@
 
 #include "Project_Group.h"
 
+
+#include <QFileInfo>
+#include <QDir>
+
+
 using namespace std;
 
 void Project_Group::InitLinks() {

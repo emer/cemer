@@ -15,9 +15,12 @@
 
 #include "taMediaWiki.h"
 
-#include "inetworkaccessmanager.h"
+#include <iNetworkAccessManager>
 #include <DataTable>
 #include <Program>
+#include <SynchronousNetRequest>
+
+#include <taMisc>
 
 #include <QFile>
 #include <QNetworkReply>
@@ -25,6 +28,7 @@
 #include <QXmlStreamReader>
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
+
 #endif
 namespace { // anonymous
   // Find the next element in the XML stream, regardless of nesting level.

@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "TemtServer.h"
+#include <TemtServerAdapter>
+
+#include <taMisc>
+
+#include <QTcpServer>
+#include <QTcpSocket>
+
 
 void TemtServer::Initialize() {
   port = 5360;

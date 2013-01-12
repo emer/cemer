@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "EditMthItem_Group.h"
+#include <SelectEdit>
+
+#include <taMisc>
 
 
 void EditMthItem_Group::Initialize() {

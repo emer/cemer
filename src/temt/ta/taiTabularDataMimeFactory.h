@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class CellRange; //
+class DataTable; //
+class taMatrix; //
 
 /*
   MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)

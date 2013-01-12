@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "TemtClient.h"
+#include <TemtClientAdapter>
+#include <MainWindowViewer>
+#include <ProgVar>
+#include <TemtServer>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QTcpSocket>
+#include <QTimer>
+
+#include <sstream>
+
+using namespace std;
+
 
 TemtClientAdapter* TemtClient::adapter() {
   return (TemtClientAdapter*)taOABase::adapter;

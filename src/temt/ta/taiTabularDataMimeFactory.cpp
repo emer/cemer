@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiTabularDataMimeFactory.h"
+#include <CellRange>
+#include <DataTable>
+#include <taiClipData>
+#include <taiMatrixDataMimeItem>
+#include <taiTableDataMimeItem>
+
 
 /* Tabular Data semantics
 

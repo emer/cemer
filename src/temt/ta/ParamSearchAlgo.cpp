@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "ParamSearchAlgo.h"
+#include <ClusterRun>
+#include <GridSearch>
+
+#include <taMisc>
 
 
 void ParamSearchAlgo::Initialize()

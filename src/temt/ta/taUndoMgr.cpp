@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taUndoMgr.h"
+#include <taProject>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+using namespace std;
+
 
 void taUndoMgr::Initialize() {
   cur_undo_idx = 0;

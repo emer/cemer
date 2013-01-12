@@ -25,10 +25,11 @@
 // member includes:
 #include <taiDataLink>
 #include <iDataPanel_PtrList>
+#include <iTabViewer>
+#include <MemberDef>
 
 // declare all other types mentioned but not required to include:
 class iTabBar;
-class iTabViewer;
 
 // NOTE: pan_idx is of panelCount and panel()
 //       tab_idx is of tabCount and tabPanel()

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taPluginInst.h"
+#include <taMisc>
+#include <IPlugin>
+
 
 taPluginInst::taPluginInst(const String& fileName)
 :inherited(fileName)

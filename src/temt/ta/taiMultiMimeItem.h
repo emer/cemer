@@ -20,6 +20,7 @@
 #include <taiMimeItem>
 
 // member includes:
+#include <taiMimeItem_List>
 
 // declare all other types mentioned but not required to include:
 

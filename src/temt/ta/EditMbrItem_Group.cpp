@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "EditMbrItem_Group.h"
+#include <SelectEdit>
+#include <DataTable>
+
+#include <taMisc>
 
 
 void EditMbrItem_Group::DataChanged(int dcr, void* op1, void* op2)

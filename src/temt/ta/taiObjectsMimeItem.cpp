@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjectsMimeItem.h"
+#include <taiMimeSource>
+#include <taiObjectMimeFactory>
+
 
 
 void taiObjectsMimeItem::Initialize() {

@@ -14,6 +14,28 @@
 //   Lesser General Public License for more details.
 
 #include "taProject.h"
+#include <taiEditDataHost>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+#include <taiMiscCore>
+#include <iTreeView>
+#include <taFiler>
+#include <PublishDocsDialog>
+#include <taiStringDataHost>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QDir>
+#include <QFileInfo>
+
+#include <css_machine.h>
+#include <css_qtconsole.h>
+
+
+using namespace std;
+
 
 #ifdef TA_GUI
 class SimLogEditDialog: public taiEditDataHost {

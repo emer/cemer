@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "TemtServerAdapter.h"
+#include <TemtServer>
+
 
 void TemtServerAdapter::server_newConnection() {
   owner()->server_newConnection();

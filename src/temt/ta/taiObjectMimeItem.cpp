@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjectMimeItem.h"
+#include <taiMimeSource>
+#include <taiObjectMimeFactory>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 using namespace std;
 

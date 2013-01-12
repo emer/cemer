@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taProjVersion.h"
+#include <taVersion>
+
 
 void taProjVersion::SetFromString(String ver) {
   Clear();

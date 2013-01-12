@@ -1022,9 +1022,6 @@ set(ta_HEADS_MOC
 
 #set(ta_SRCS_MAKETA
 set(good_files
-)
-
-set(ta_SRCS_MAKETA
   taBasicAtomicInt.cpp
   taAtomicInt.cpp
   taString.cpp
@@ -1416,7 +1413,6 @@ set(ta_SRCS_MAKETA
   taPluginBase.cpp
   taPluginBase_List.cpp
   taPluginDep.cpp
-# here
   taPlugin.cpp
   taPlugin_List.cpp
 
@@ -1468,7 +1464,6 @@ set(ta_SRCS_MAKETA
   taProject.cpp
   Project_Group.cpp
   CssProject.cpp
-
   PluginWizard.cpp
   TestWizard.cpp
 
@@ -1478,6 +1473,9 @@ set(ta_SRCS_MAKETA
   TemtServerAdapter.cpp
   TemtClient_List.cpp
 
+)
+
+set(ta_SRCS_MAKETA
   taiMimeItem.cpp
   taiMimeItem_List.cpp
   taiMultiMimeItem.cpp

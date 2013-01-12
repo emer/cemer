@@ -21,8 +21,12 @@
 
 // member includes:
 #include <taVersion>
+#ifndef __MAKETA__
+#include <QPointer>
+#endif
 
 // declare all other types mentioned but not required to include:
+class iPluginEditor; //
 
 
 class TA_API PluginWizard : public taWizard {

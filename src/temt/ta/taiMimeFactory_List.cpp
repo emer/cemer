@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiMimeFactory_List.h"
+#include <taiMimeFactory>
+
 
 taiMimeFactory_List* taiMimeFactory_List::g_instance; 
 

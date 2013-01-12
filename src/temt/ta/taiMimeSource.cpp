@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "taiMimeSource.h"
+#include <taiClipData>
+#include <taiObjectMimeFactory>
+#include <taProject>
+#include <iMainWindowViewer>
+#include <MainWindowViewer>
+#include <iTreeView>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QStringList>
+#include <QApplication>
+#include <QClipboard>
+
+#include <sstream>
 
 using namespace std;
 

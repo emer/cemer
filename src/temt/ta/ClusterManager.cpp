@@ -14,6 +14,16 @@
 //   GNU General Public License for more details.
 
 #include "ClusterManager.h"
+#include <taDataView>
+#include <ClusterRun>
+#include <taProject>
+#include <DataTable>
+#include <taGuiDialog>
+#include <taGuiLayout>
+
+#include <SubversionClient>
+
+#include <taMisc>
 
 #include <QBoxLayout>
 #include <QComboBox>
@@ -21,12 +31,6 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-#include "ta_gui.h"
-#include <taMisc>
-#include "ta_project.h"
-#include "ta_seledit.h"
-#include "ta_string.h"
-#include "SubversionClient.h"
 
 ClusterManager::Exception::Exception(const char *msg)
   : std::runtime_error(msg)

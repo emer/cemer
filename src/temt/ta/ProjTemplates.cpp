@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "ProjTemplates.h"
+#include <NameVar>
+
+#include <taMisc>
+
+#include <QDir>
+#include <QStringList>
 
 void ProjTemplates::Initialize() {
   not_init = true;

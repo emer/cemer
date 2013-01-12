@@ -24,6 +24,7 @@
 #include <IDataViewWidget>
 
 // member includes:
+#include <FrameViewer>
 
 // declare all other types mentioned but not required to include:
 class ISelectableHost; //

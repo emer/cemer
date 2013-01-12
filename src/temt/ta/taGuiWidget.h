@@ -28,6 +28,7 @@
 // declare all other types mentioned but not required to include:
 class QObject; // 
 class taGuiWidgetHelper; // #IGNORE
+class taiData; //
 
 
 class TA_API taGuiWidget : public taNBase {

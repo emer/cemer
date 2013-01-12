@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiMimeItem.h"
+#include <taiMimeSource>
+
 
 
 int taiMimeItem::data(const QMimeData* md, const QString& mimeType,

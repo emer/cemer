@@ -16,9 +16,8 @@
 #ifndef SUBVERSION_H_
 #define SUBVERSION_H_
 
-#include "ta_def.h"
-#include "ta_base.h"
-#include "ta_string.h"
+#include <taNBase>
+
 
 // This class provides emergent programs with static functions that wrap
 // the SubversionClient API.

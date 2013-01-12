@@ -25,6 +25,9 @@
 #include <NumberedTextView>
 #include <iDataPanel>
 #include <iTextEdit>
+#include <taPlugins>
+
+#include <taMisc>
 
 using namespace std;
 

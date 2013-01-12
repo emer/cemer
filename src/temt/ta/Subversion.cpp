@@ -14,8 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "Subversion.h"
+#include <SubversionClient>
 
-#include "SubversionClient.h"
+#include <taMisc>
 
 String
 Subversion::GetUsername(const String &url, bool prompt)

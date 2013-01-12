@@ -14,7 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "ClusterRun.h"
+#include <ClusterManager>
+#include <taDataLinkItr>
+#include <iDataTableEditor>
+#include <iDataTablePanel>
+#include <iDataTableView>
 
+#include <taMisc>
+
+#include <QRegExp>
 
 void ClusterRun::InitLinks() {
   inherited::InitLinks();

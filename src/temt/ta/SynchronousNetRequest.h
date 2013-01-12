@@ -74,6 +74,5 @@ private:
   bool m_isCancelled;
   bool m_isFinished;
 };
-#endif
 
 #endif // SynchronousNetRequest_h

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "UndoDiffTask.h"
+#include <taUndoMgr>
+#include <UndoDiffThreadMgr>
+
 
 void UndoDiffTask::Initialize() {
 }

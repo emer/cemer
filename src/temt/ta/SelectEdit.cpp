@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "SelectEdit.h"
+#include <voidptr_PArray>
+
+#include <taMisc>
+
 
 
 void SelectEdit::StatDataChanged_Group(taGroup_impl* grp, int dcr,

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taUndoDiffSrc.h"
+#include <taUndoRec>
+#include <taDataLinkItr>
+
+#include <taMisc>
+
 
 void taUndoDiffSrc::Initialize() {
   last_diff_n = 0;

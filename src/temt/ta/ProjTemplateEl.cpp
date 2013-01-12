@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "ProjTemplateEl.h"
+#include <Project_Group>
+#include <taProject>
+
+#include <taMisc>
+
+#include <QFileInfo>
+
+using namespace std;
+
 
 void ProjTemplateEl::Initialize() {
 }

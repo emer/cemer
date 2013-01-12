@@ -15,6 +15,19 @@
 
 #include "PluginWizard.h"
 #include <taPlugins>
+#include <iPluginEditor>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QFileInfo>
+#include <QDir>
+
+using namespace std;
+
 
 void PluginWizard::Initialize() {
   plugin_name = "myplugin";
@@ -47,7 +60,7 @@ void PluginWizard::UpdateAfterEdit_impl() {
 #ifdef TA_OS_WIN
   plugin_location.gsub("/", "\\");
 #endif
-  plugin_location = taMisc::NoFinalSep(plugin_location);
+  plugin_location = taMisc::NoFinalPathSep(plugin_location);
 }
 
 void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {

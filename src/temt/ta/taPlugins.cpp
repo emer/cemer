@@ -15,6 +15,17 @@
 
 #include "taPlugins.h"
 #include <PluginMakeThreadMgr>
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QFileInfo>
+#include <QDateTime>
+#include <QStringList>
+#include <QDir>
+
+using namespace std;
+
 
 String_PArray taPlugins::plugin_folders;
 taPluginInst_PList taPlugins::plugins;

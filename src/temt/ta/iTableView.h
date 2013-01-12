@@ -17,12 +17,19 @@
 #define iTableView_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QTableView>
+#endif
 
 // member includes:
+#include <QPointer>
 
 // declare all other types mentioned but not required to include:
-class QWidget; // 
-class QPoint; // 
+class QWidget; //
+class QPoint; //
+class iMainWindowViewer; //
+class taiMenu; //
 
 
 class TA_API iTableView: public QTableView {

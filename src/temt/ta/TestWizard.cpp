@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "TestWizard.h"
+#include <taiWizardDataHost>
+
 
 void TestWizard::LaunchWizard() {
 

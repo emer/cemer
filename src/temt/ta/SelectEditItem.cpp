@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "SelectEditItem.h"
+#include <taGroup_impl>
+
+#include <taMisc>
 
 
 SelectEditItem* SelectEditItem::StatFindItemBase(const taGroup_impl* grp,

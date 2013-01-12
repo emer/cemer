@@ -21,6 +21,10 @@
 #include <IDataLinkClient>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QModelIndex>
+#endif
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
 class QVBoxLayout; // 

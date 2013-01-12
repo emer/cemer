@@ -27,6 +27,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class iDataTableEditor; //
+class ClusterManager; //
 
 
 class TA_API ClusterRun : public SelectEdit {
@@ -49,7 +50,7 @@ public:
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
 
-private:
+protected:
 #ifndef __MAKETA__
   void initClusterManager();
   ClusterManager *m_cm;
