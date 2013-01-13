@@ -15,6 +15,10 @@
 
 #include "taiFileDialogField.h"
 
+#include <iLineEdit>
+#include <taFiler>
+
+
 taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData* par,
                                        QWidget* gui_parent_, int flags_, FileActionType fact,
                                        const String& fext, const String& ftyp, int fcmprs)

@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataDeck.h"
+#include <IDataHost>
+#include <iColor>
+
+
+#include <QStackedLayout>
+
+#include "taiqtso_def.h"
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
   : taiCompData(typ_, host_, par, gui_parent_, flags)

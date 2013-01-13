@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiMenu.h"
+#include <iPoint>
+
 
 taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
                  QWidget* gui_parent_, int flags_, taiActions* par_menu_)

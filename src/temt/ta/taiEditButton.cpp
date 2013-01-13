@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditButton.h"
+#include <taiEdit>
+#include <MethodDef>
+#include <taiMethod>
+#include <taiMethodData>
+
+#include <taiMisc>
+
+#include <QAbstractButton>
+
 
 taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
   IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)

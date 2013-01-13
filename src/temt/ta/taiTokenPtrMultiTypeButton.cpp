@@ -14,6 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "taiTokenPtrMultiTypeButton.h"
+#include <taiEdit>
+#include <iMainWindowViewer>
+#include <taProject>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
+
 
 taiTokenPtrMultiTypeButton::taiTokenPtrMultiTypeButton(TypeDef* typ_, IDataHost* host,
                                      taiData* par, QWidget* gui_parent_, int flags_,

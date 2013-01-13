@@ -30,6 +30,7 @@ class QWidget; //
 class QPoint; //
 class iMainWindowViewer; //
 class taiMenu; //
+class CellRange; //
 
 
 class TA_API iTableView: public QTableView {

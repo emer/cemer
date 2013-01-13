@@ -24,6 +24,7 @@
 
 // member includes:
 #include <QWebPage>
+#include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class QProgressBar; //

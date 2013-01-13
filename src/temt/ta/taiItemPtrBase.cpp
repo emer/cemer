@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiItemPtrBase.h"
+#include <String_Array>
+#include <taiItemChooser>
+
+#include <QHBoxLayout>
+#include <QToolButton>
+#include <QTreeWidgetItem>
+
+#include <taiMisc>
+
+
 
 taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
                                IDataHost* host_, taiData* par,

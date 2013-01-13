@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "taiEnumStaticButton.h"
+#include <iHelpBrowser>
+#include <MethodDef>
+#include <EnumDef>
+#include <iTextBrowser>
+#include <String_Array>
+#include <MemberDef>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
+
 
 taiEnumStaticButton::taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
                                          taiData* par, QWidget* gui_parent_, int flags_,
@@ -231,7 +246,7 @@ const String taiEnumStaticButton::labelNameNonNull() const {
 
 bool taiEnumStaticButton::ShowEnum(EnumDef* enm) {
   if(enm->HasOption("EXPERT")) {
-    if(taMisc::show_gui & taMisc::NO_EXPERT) return false;
+    if(taMisc::show_gui & TypeItem::NO_EXPERT) return false;
   }
   return (ShowItemFilter(NULL, enm, enm->name));
 }

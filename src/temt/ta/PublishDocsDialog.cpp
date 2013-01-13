@@ -15,6 +15,8 @@
 
 #include "PublishDocsDialog.h"
 
+#include <taiMisc>
+
 #include <QDialogButtonBox>
 #include <QEvent>
 #include <QHBoxLayout>
@@ -28,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "ta_qt.h" // taiM, taiMisc
 
 namespace // anon
 {

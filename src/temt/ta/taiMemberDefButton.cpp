@@ -15,6 +15,20 @@
 
 #include "taiMemberDefButton.h"
 
+#include <iHelpBrowser>
+#include <String_Array>
+#include <MemberDef>
+#include <taiItemChooser>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+
+
 taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
                                        taiData* par, QWidget* gui_parent_, int flags_,
                                        const String& flt_start_txt)

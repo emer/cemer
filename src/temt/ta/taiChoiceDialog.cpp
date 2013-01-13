@@ -15,6 +15,16 @@
 
 #include "taiChoiceDialog.h"
 
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QApplication>
+#include <QButtonGroup>
+#include <QPushButton>
+#include <QClipboard>
+
+
 const String taiChoiceDialog::delimiter("!|");
 
 int taiChoiceDialog::ChoiceDialog(QWidget* parent_, const String& msg,

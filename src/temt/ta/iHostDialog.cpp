@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iHostDialog.h"
+#include <iScrollArea>
+
+#include <QVBoxLayout>
+#include <QApplication>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
 :iDialog(parent, (Qt::WindowFlags)wflags)

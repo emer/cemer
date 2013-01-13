@@ -23,6 +23,7 @@
 #endif
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 

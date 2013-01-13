@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiSubMenuEl.h"
+#include <taiMenu>
+
 
 taiSubMenuEl::taiSubMenuEl(const String& label_, taiMenu* sub_menu_data_)
 :taiAction(taiMenu::st_none, label_)

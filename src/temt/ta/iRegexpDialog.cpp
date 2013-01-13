@@ -14,6 +14,26 @@
 //   Lesser General Public License for more details.
 
 #include "iRegexpDialog.h"
+#include <iRegexpDialogPopulator>
+#include <iTableView>
+#include <CellRange>
+#include <taiRegexpField>
+#include <iLineEdit>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QListWidget>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QHeaderView>
+#include <QSCrollBar>
+#include <QDialogButtonBox>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 
 const QString iRegexpDialog::DOT_STAR(".*");
 

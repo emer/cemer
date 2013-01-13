@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiPlusToggle.h"
+#include <iCheckBox>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
   : taiCompData(typ_, host_, par, gui_parent_, flags_)

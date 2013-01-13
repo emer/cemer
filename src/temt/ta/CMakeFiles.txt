@@ -1038,8 +1038,7 @@ set(ta_HEADS_MOC
 # NOTE: do NOT include .moc files -- auto generated
 # these should correspond directly to the files in the ta_HEADS_MAKETA files
 
-#set(ta_SRCS_MAKETA
-set(good_files
+set(ta_SRCS_MAKETA
   taBasicAtomicInt.cpp
   taAtomicInt.cpp
   taString.cpp
@@ -1671,9 +1670,7 @@ set(good_files
   GraphAxisView.cpp
   GraphPlotView.cpp
   GraphTableView.cpp
-)
 
-set(ta_SRCS_MAKETA
   VEWorldView.cpp
   VEBodyView.cpp
   VEStaticView.cpp
@@ -1770,6 +1767,7 @@ set(ta_SRCS_NOMAKETA
   iHostDialog.cpp
   EditDataPanel.cpp
   iMethodButtonMgr.cpp
+#
   iDataPanelFrame.cpp
   iDocDataPanel.cpp
 
@@ -1959,7 +1957,7 @@ set(ta_SRCS_NOMAKETA
 )
 
 set(ta_SRCS
-  ${ta_SRCS_MAKETA}
+#  ${ta_SRCS_MAKETA}
   ${ta_SRCS_NOMAKETA}
   ta_TA.cpp
 )

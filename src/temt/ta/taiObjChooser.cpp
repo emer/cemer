@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjChooser.h"
+#include <iMainWindowViewer>
+#include <iLineEdit>
+#include <MemberDef>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QListWidget>
+#include <QLineEdit>
+#include <QGridLayout>
+#include <QPushButton>
 
 taiObjChooser* taiObjChooser::createInstance(taBase* parob, const char* captn, bool selonly, QWidget* par_window_) {
   if (par_window_ == NULL)

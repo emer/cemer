@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodData.h"
+#include <IdataHost>
+#include <taiActions>
+#include <taProject>
+#include <taiArgType>
+#include <taFiler>
+
+#include <css_machine.h>
+#include <css_qtdialog.h>
+#include <css_basic_types.h>
+#include <css_ta.h>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QToolButton>
+
 
 void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
   const String& meth_name)

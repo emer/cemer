@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiElBase.h"
+#include <taiActions>
+
 
 taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host_, taiData* par,
                      QWidget* gui_parent_, int flags_)

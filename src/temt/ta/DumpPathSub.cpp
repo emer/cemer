@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "DumpPathSub.h"
+#include <DumpPathSubList>
+#include <taBase>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 
 DumpPathSub::DumpPathSub(TypeDef* td, taBase* par, const String& o, const String& n) {

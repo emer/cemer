@@ -23,6 +23,8 @@
 #endif
 
 // member includes:
+#include <taString>
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
 

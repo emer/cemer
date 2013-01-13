@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiColor.h"
+#include <iColorButton>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags)

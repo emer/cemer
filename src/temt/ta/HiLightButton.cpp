@@ -15,6 +15,11 @@
 
 #include "HiLightButton.h"
 
+#include <taMisc>
+
+#include <QApplication>
+
+
 HiLightButton::HiLightButton(QWidget* parent, const char* script_)
 :QPushButton(parent)
 {

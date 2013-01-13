@@ -14,6 +14,20 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataHost.h"
+#include <iLabel>
+#include <taiData>
+#include <iFormLayout>
+#include <iEditGrid>
+#include <iScrollArea>
+#include <iStripeWidget>
+#include <iSplitter>
+
+#include <taiMisc>
+
+#include <QHBoxLayout>
+
+#define LAYBODY_MARGIN  1
+#define LAYBODY_SPACING 0
 
 iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
   int ctrl_size, const String& desc, taiData* buddy,

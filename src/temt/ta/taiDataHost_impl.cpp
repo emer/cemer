@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataHost_impl.h"
+#include <taProject>
+#include <iLabel>
+#include <taiData>
+#include <iFlowLayout>
+#include <iTextBrowser>
+#include <iHelpBrowser>
+#include <iHostDialog>
+#include <HiLightButton>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QMenu>
+#include <QFrame>
+#include <QVBoxLayout>
+
 
 void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,

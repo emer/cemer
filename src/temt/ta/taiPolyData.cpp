@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiPolyData.h"
+#include <MemberDef>
+#include <taiMember>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
   taiData* par, QWidget* gui_parent_, int flags)
@@ -31,7 +38,7 @@ bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
     )
     return false;
   else
-    return md->ShowMember((taMisc::ShowMembs)show);
+    return md->ShowMember((TypeItem::ShowMembs)show);
 }
 
 taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,

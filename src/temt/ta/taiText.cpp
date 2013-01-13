@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "taiText.h"
+#include <iLineEdit>
+#include <taiClipData>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+#include <QHBoxLayout>
+#include <QToolButton>
 
 taiText::taiText(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip)

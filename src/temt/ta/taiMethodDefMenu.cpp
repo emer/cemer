@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodDefMenu.h"
+#include <MethodDef>
+#include <taiMenu>
+
+
 
 /*
 //////////////////////////////////

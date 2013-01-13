@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "taiItemChooser.h"
+#include <taiItemPtrBase>
+#include <iLineEdit>
+#include <iTreeWidget>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QPushButton>
+#include <QLineEdit>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QTimer>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QComboBox>
+
 
 const String taiItemChooser::cat_none("(none)");
 int taiItemChooser::filt_delay = 500;

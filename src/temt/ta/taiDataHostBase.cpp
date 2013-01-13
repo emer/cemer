@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataHostBase.h"
+#include <iHostDialog>
+#include <HiLightButton>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QApplication>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+
 
 #define LAYBODY_MARGIN  1
 #define LAYBODY_SPACING 0

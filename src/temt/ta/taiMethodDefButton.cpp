@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodDefButton.h"
+#include <String_Array>
+#include <iHelpBrowser>
+#include <MethodDef>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
 
 taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
                                        taiData* par, QWidget* gui_parent_, int flags_,

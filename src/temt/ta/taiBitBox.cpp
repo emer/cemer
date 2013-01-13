@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiBitBox.h"
+#include <EnumDef>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QHBoxLayout>
+
 
 /* IMPORTANT NOTE:
   taiBitBox is designed so that it preserves the values of NO_SHOW or

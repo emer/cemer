@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiFileButton.h"
+#include <taiMenu>
+#include <taFiler>
+
+#include <taMisc>
+#include <taiMisc>
 
 taiFileButton::taiFileButton(TypeDef* typ_, IDataHost* host_, taiData* par,
                              QWidget* gui_parent_, int flags_, bool rd_only, bool wrt_only)

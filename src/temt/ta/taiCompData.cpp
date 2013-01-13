@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiCompData.h"
+#include <iFlowLayout>
+#include <iLabel>
+#include <MemberDef>
+#include <taiMember>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QHBoxLayout>
+#include <QStackedLayout>
 
 taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, parent_, gui_parent_, flags_)

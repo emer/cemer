@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiMenuBar.h"
+#include <QMenuBar>
+
+#include <taiMisc>
+
+
 
 taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IDataHost* host_,
                        taiData* par_, QWidget* gui_parent_, int flags_)

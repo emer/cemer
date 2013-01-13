@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "iFieldEditDialog.h"
+#include <iLabel>
+#include <iTextEdit>
+#include <taiField>
+#include <iLineEdit>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QPushButton>
+
 
 iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_,
   const String& desc, taiField* parent)

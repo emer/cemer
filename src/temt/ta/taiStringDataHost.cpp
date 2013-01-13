@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "taiStringDataHost.h"
+#include <iTextBrowser>
+#include <NumberedTextView>
+#include <MemberDef>
+#include <iTextEdit>
+#include <iDialog>
+#include <iHostDialog>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QTextEdit>
+#include <QDialog>
+
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
      bool read_only_, bool modal_, QObject* parent, bool line_nos_,

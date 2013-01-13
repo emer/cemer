@@ -15,6 +15,10 @@
 
 #include "taiField.h"
 #include <iFieldEditDialog>
+#include <iLineEdit>
+#include <MemberDef>
+#include <iTextEdit>
+
 
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
   : taiText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),

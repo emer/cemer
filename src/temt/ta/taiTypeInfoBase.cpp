@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeInfoBase.h"
+#include <taiMenu>
+#include <MemberDef>
+
+#include <taMisc>
+
+
 
 taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
                                  MemberDef* memb_md_, TypeDef* typ_,

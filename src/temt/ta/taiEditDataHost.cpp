@@ -14,6 +14,30 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditDataHost.h"
+#include <taiMethodData>
+#include <iCheckBox>
+#include <EditDataPanel>
+#include <taiType>
+#include <MethodDef>
+#include <taiMember>
+#include <taiMethod>
+#include <iFlowLayout>
+#include <taProject>
+#include <iHostDialog>
+#include <iFormLayout>
+#include <taiToolBar>
+#include <iMainWindowViewer>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QButtonGroup>
+#include <QAbstractButton>
+#include <QLineEdit>
+#include <QToolBar>
+#include <QApplication>
+
+
 
 
 taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
@@ -143,23 +167,23 @@ void taiEditDataHost::Enum_Members() {
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
-    if (md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
+    if (md->ShowMember(~TypeItem::IS_NORMAL, TypeItem::SC_EDIT, TypeItem::IS_NORMAL)) {
       memb_el(MS_NORM).Add(md);
       continue;
     }
     if (membs.def_size <= MS_EXPT) continue;
     // set the show_set guys at this point to default to app values
-    if (!(show() & taMisc::NO_EXPERT))
+    if (!(show() & TypeItem::NO_EXPERT))
       show_set(MS_EXPT) = true;
-    if (md->ShowMember(0, TypeItem::SC_EDIT, taMisc::IS_EXPERT)) {
+    if (md->ShowMember(0, TypeItem::SC_EDIT, TypeItem::IS_EXPERT)) {
       memb_el(MS_EXPT).Add(md);
       continue;
     }
     if (membs.def_size <= MS_HIDD) continue;
-    if (!(show() & taMisc::NO_HIDDEN))
+    if (!(show() & TypeItem::NO_HIDDEN))
       show_set(MS_HIDD) = true;
-    if (md->ShowMember(~taMisc::IS_HIDDEN & ~taMisc::IS_NORMAL,
-      TypeItem::SC_EDIT, taMisc::IS_HIDDEN)) {
+    if (md->ShowMember(~TypeItem::IS_HIDDEN & ~TypeItem::IS_NORMAL,
+      TypeItem::SC_EDIT, TypeItem::IS_HIDDEN)) {
       memb_el(MS_HIDD).Add(md);
       continue;
     }

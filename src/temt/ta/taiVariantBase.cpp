@@ -14,6 +14,25 @@
 //   Lesser General Public License for more details.
 
 #include "taiVariantBase.h"
+#include <IDataHost>
+#include <taiComboBox>
+#include <iLabel>
+#include <iComboBox>
+#include <taiToggle>
+#include <taiIncrField>
+#include <taiField>
+#include <iCheckBox>
+#include <taiTokenPtrButton>
+#include <iLineEdit>
+#include <iSpinBox>
+
+#include <QLabel>
+#include <QStackedWidget>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiVariantBase::taiVariantBase(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
   : taiCompData(typ_, host_, par, gui_parent_, flags)

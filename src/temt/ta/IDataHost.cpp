@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "IDataHost.h"
+#include <iMainWindowViewer>
+#include <taiData>
+
 
 void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
   iMainWindowViewer* dv = viewerWindow();

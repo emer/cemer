@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "EditDataPanel.h"
+#include <taiEditDataHost>
+
+#include <taiMisc>
+
 
 EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 :inherited(dl_)

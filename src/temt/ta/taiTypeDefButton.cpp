@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeDefButton.h"
+#include <iHelpBrowser>
+#include <iTextBrowser>
+#include <taiItemChooser>
+
+#include <String_Array>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidgetItem>
+
 
 taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
                                    taiData* par, QWidget* gui_parent_, int flags_,

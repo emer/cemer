@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiComboBox.h"
+#include <iComboBox>
+#include <EnumDef>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiComboBox::taiComboBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)

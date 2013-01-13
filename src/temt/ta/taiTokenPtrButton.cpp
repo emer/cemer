@@ -14,6 +14,20 @@
 //   Lesser General Public License for more details.
 
 #include "taiTokenPtrButton.h"
+#include <iHelpBrowser>
+#include <iTextBrowser>
+#include <taiEdit>
+#include <iMainWindowViewer>
+#include <taProject>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+
+#include <QTreeWidgetItem>
 
 taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
                                      taiData* par, QWidget* gui_parent_, int flags_,

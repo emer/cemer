@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "taiActions.h"
+#include <taiMenu>
+#include <taiButtonMenu>
+#include <taiSubMenuEl>
+#include <taiMenuAction>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QAbstractButton>
 
 taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
       taiData* par, QWidget* gui_parent_, int flags_, taiActions* par_menu_)

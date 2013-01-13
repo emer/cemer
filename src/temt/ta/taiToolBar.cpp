@@ -15,6 +15,9 @@
 
 #include "taiToolBar.h"
 
+#include <QToolBar>
+
+
 taiToolBar::taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar)
   : taiActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
 {

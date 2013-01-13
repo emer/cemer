@@ -17,11 +17,14 @@
 #define DumpPathSub_h 1
 
 // parent includes:
+#include "ta_def.h"
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
-
+class taBase; //
+class TypeDef; //
 
 class TA_API DumpPathSub {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Path element substitution

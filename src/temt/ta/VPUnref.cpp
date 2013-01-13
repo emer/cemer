@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "VPUnref.h"
+#include <MemberDef>
+#include <taSmartRef>
+#include <taBase>
+#include <VPUList>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 
 VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {

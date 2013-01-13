@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeHier.h"
+#include <taiMenu>
+
 
 taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_,
                          taiData* par, QWidget* gui_parent_, int flags_)

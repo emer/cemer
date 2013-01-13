@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiSubToken.h"
+#include <taiMenu>
+#include <MemberDef>
+#include <taiEdit>
+
 
 taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
                          QWidget* gui_parent_, int flags_)

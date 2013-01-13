@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiEnumTypeDefButton.h"
+#include <iHelpBrowser>
+#include <MethodDef>
+#include <iTextBrowser>
+#include <String_Array>
+#include <MemberDef>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
 
 taiEnumTypeDefButton::taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
                                            taiData* par, QWidget* gui_parent_, int flags_,

@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "DynMethod_PtrList.h"
+#include <ISelectable_PtrList>
+#include <TypeDef>
+#include <MethodDef>
+#include <taiDataLink>
+#include <taiObjectsMimeItem>
+#include <taiMimeSource>
+
+#include <taMisc>
+
 
 DynMethod_PtrList::~DynMethod_PtrList() {
   Reset();

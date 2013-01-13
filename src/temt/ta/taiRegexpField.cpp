@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiRegexpField.h"
+#include <iRegexpDialog>
+#include <iLineEdit>
+#include <MemberDef>
+
 
 taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
   : taiText(typ_, host_, par, gui_parent_, flags_,

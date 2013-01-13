@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "DumpPathToken.h"
+#include <DumpPathTokenList>
+#include <taBase>
+#include <dumpMisc>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 
 DumpPathToken::DumpPathToken(taBase* obj, const String& pat, const String& tok_id) {

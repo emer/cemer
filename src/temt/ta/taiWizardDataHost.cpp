@@ -14,6 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "taiWizardDataHost.h"
+#include <iTextBrowser>
+#include <NumberedTextView>
+#include <MemberDef>
+#include <iTextEdit>
+#include <iDialog>
+#include <iHostDialog>
+#include <iStripeWidget>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QTextEdit>
+#include <QDialog>
+#include <QTabWidget>
+
 
 taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
              bool read_only_, bool modal_, QObject* parent)
@@ -60,7 +78,7 @@ void taiWizardDataHost::Constr_Data_Labels()
       tabs->addTab(tab, page_names.SafeEl(i));
       SET_PALETTE_BACKGROUND_COLOR(tab, bg_color);
       tab->setHiLightColor(bg_color_dark);
-      tab->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
+      tab->setStripeHeight(row_height + (2 * 1));
     }
   }
 }
@@ -89,7 +107,7 @@ void taiWizardDataHost::Enum_Members() {
       continue;
 
     // we only show Normal guys in Wizards, sorry charlie!
-    if (!md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
+    if (!md->ShowMember(~TypeItem::IS_NORMAL, TypeItem::SC_EDIT, TypeItem::IS_NORMAL)) {
       continue;
     }
 

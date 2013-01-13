@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiIncrField.h"
+#include <iSpinBox>
+#include <taiClipData>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)

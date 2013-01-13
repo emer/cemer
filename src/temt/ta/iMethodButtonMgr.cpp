@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iMethodButtonMgr.h"
+#include <taiMethodData>
+#include <MethodDef>
+#include <taiMethod>
+
+#include <QAbstractButton>
+#include <QLayout>
+
+#include <taiMisc>
+
 
 iMethodButtonMgr::iMethodButtonMgr(QObject* parent)
 :inherited(parent)
