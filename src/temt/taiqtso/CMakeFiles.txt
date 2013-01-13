@@ -42,7 +42,7 @@ set(taiqtso_HEADS_MOC
 # all headers
 set(taiqtso_HEADS
   taiqtso_def.h
-  safeptr_so.h
+  SoPtr.h
   AutoSaver.h
   SoOffscreenRendererQt.h
   ${taiqtso_HEADS_MOC}
@@ -89,6 +89,7 @@ set(taiqtso_SRCS
   NumberedTextView.cpp
   QtThumbWheel.cpp
   QConsole.cpp
+  SoPtr.cpp
 )
 
 # headers that need Qt ui compiler run

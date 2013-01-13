@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -7,21 +7,21 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#ifndef SoPtr_h
+#define SoPtr_h 1
 
-// safeptr_so.h -- safe ptrs for ref counted inventor objects
-// NOTE: this file must be MAKETA scannable -- therefore, no concrete type info
-// should be required in this header file (ex. this is why all routines are in .cc file)
-
-#ifndef SAFEPTR_SO_H
-#define SAFEPTR_SO_H
-
+// parent includes:
 #include "taiqtso_def.h"
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
 
 #ifdef TA_USE_INVENTOR
 
@@ -97,4 +97,5 @@ public: \
   T* T::GetInstance() {if (T ## _inst) return T ## _inst; else return T ## _inst = new T();}
 
 #endif
-#endif
+
+#endif // SoPtr_h

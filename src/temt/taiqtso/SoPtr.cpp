@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -7,14 +7,14 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include "SoPtr.h"
 
-#include "safeptr_so.h"
 #ifdef TA_USE_INVENTOR
 
 #include <Inventor/misc/SoBase.h>
@@ -42,4 +42,3 @@ void SoPtr_impl::set(SoBase* src) {
 }
 
 #endif
-
