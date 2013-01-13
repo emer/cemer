@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodPtrArgType.h"
+#include <taiMethodDefMenu>
+#include <taiActions>
+#include <taiMenu>
+#include <taiMisc>
+
+#include <css_ta.h>
+
+
 
 int taiMethodPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if(argt->DerivesFrom(TA_MethodDef) && (argt->ptr == 1))

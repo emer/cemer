@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class SoScrollBar; // 
+class SoFrame; //
+class T3TransformBoxDragger; //
 
 
 class TA_API T3GraphViewNode: public T3NodeParent {

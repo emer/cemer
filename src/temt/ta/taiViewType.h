@@ -26,6 +26,7 @@
 class iDataPanelSet; //
 class iDataPanelFrame; //
 class iDataPanel; //
+class taiDataLink; //
 
 class TA_API taiViewType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS viewer services for the type

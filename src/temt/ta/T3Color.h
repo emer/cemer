@@ -20,7 +20,7 @@
 #include "ta_def.h"
 
 // member includes:
-#include <iColor>;
+#include <iColor>
 #include <Inventor/SbColor.h>
 
 // declare all other types mentioned but not required to include:

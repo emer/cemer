@@ -20,6 +20,8 @@
 #include <tabDataLink>
 
 // member includes:
+#include <taOBase>
+#include <taList_impl>
 
 // declare all other types mentioned but not required to include:
 

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taImage.h"
+#include <taFiler>
+#include <float_Matrix>
+#include <DataTable>
+
+#include <taMisc>
 
 void taImage::Initialize() {
 }

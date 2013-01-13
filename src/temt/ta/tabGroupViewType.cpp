@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "tabGroupViewType.h"
+#include <tabGroupDataLink>
+#include <taiType>
+#include <taiEdit>
+#include <taiMember>
+#include <taiMethod>
+
+#include <taMisc>
+#include <taiMisc>
+
 
 int tabGroupViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taGroup_impl))

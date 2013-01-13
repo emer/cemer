@@ -19,6 +19,12 @@
 #include <taiClipData>
 #include <taiMatrixDataMimeItem>
 #include <taiTableDataMimeItem>
+#include <taiMimeSource>
+#include <taiTsvMimeItem>
+#include <taProject>
+
+#include <QApplication>
+#include <QClipboard>
 
 
 /* Tabular Data semantics

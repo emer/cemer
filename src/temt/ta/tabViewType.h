@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taBase; //
+class EditDataPanel; //
 
 
 class TA_API tabViewType: public taiViewType { // for taBase and descendants

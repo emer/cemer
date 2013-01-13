@@ -14,6 +14,26 @@
 //   Lesser General Public License for more details.
 
 #include "T3DataViewer.h"
+#include <T3DataViewFrame>
+#include <T3DataViewFrame_List>
+#include <iT3DataViewer>
+#include <taProject>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+#include <taiMenu>
+#include <iTabBarBase>
+
+
+#include <taMisc>
+
+
+iT3DataViewer* T3DataViewer::widget() {
+  return (iT3DataViewer*)inherited::widget();
+}
+
+iTabBarBase* T3DataViewer::tabBar() {
+  if(!widget()) return NULL; return widget()->tabBar();
+}
 
 T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!obj) return NULL;

@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class taiComboBox; // #IGNORE
 class taiBitBox; // #IGNORE
+class DynEnum; //
 
 
 class TA_API taiDynEnumMember : public taiMember {

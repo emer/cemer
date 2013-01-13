@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "taImageProc.h"
+#include <float_Matrix>
+#include <taVector2i>
+#include <taVector2f>
+#include <taMath_float>
+#include <Random>
+#include <int_Matrix>
+
+#include <taMisc>
+
 
 void taImageProc::Initialize() {
 }
@@ -894,7 +903,7 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
       for(int xi=0; xi< img_size.x; xi++) {
 	float &mask_iv = mask.FastEl(xi, yi);
 	float mask_tmp_iv = mask_tmp.FastEl(xi, yi);
-	mask_iv = max(mask_iv, mask_tmp_iv);
+	mask_iv = MAX(mask_iv, mask_tmp_iv);
       }
     }
   }

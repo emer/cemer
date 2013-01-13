@@ -14,6 +14,31 @@
 //   Lesser General Public License for more details.
 
 #include "VEObjCarouselView.h"
+#include <VEObjCArousel>
+#include <T3VEBody>
+#include <T3ExaminerViewer>
+#include <VEWorldView>
+#include <T3VEWorld>
+#include <T3TransformBoxDragger>
+
+#include <taMisc>
+
+#include <QFileInfo>
+
+#include <SoCapsule>
+
+#include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoTexture2Transform.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+
 
 
 void VEObjCarouselView::Initialize(){

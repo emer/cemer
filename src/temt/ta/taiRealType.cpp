@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiRealType.h"
+#include <taiField>
+#include <iLineEdit>
+#include <MemberDef>
+
+#include <QDoubleValidator>
+
 
 int taiRealType::BidForType(TypeDef* td){
   if (td->DerivesFrom(&TA_float) || td->DerivesFrom(&TA_double))

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "VEArm.h"
+#include <VEWorld>
+#include <taMath_float>
+
+#include <taMisc>
+
 
 void VEArm::Initialize() {
   // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here

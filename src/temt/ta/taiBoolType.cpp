@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiBoolType.h"
+#include <taiData>
+#include <taiToggle>
+
+
 
 int taiBoolType::BidForType(TypeDef* td){
   if(td->InheritsFrom(TA_bool))

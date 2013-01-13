@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiMatrixGeomType.h"
+#include <taiDimEdit>
+
 
 int taiMatrixGeomType::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_MatrixGeom))

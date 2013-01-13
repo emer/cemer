@@ -21,6 +21,7 @@
 
 // member includes:
 #include <int_Array>
+#include <float_Array>
 #include <MinMaxInt>
 #include <ColorScale>
 #include <MinMax>
@@ -106,7 +107,7 @@ public:
   virtual void          ColFwdPg();
   virtual void          ColFwdAll();
 
-  iGridTableView_Panel* lvp(){return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
+  iGridTableView_Panel* lvp();
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
 
   virtual void          InitFromUserData();

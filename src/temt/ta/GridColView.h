@@ -20,6 +20,7 @@
 #include <DataColView>
 
 // member includes:
+#include <taMisc>
 
 // declare all other types mentioned but not required to include:
 class GridTableView; // 

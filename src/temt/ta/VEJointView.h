@@ -42,7 +42,7 @@ public:
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
 
-  bool			isVisible() const { return (taMisc::use_gui ); }
+  bool			isVisible() const;
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank

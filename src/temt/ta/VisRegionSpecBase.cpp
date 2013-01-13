@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "VisRegionSpecBase.h"
+#include <CircMatrix>
+#include <taMath_float>
+
+#include <taMisc>
+
 
 // for thread function calling:
 typedef void (VisRegionSpecBase::*VisRegionMethod)(int, int);

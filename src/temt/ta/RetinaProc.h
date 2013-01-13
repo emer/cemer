@@ -25,6 +25,8 @@
 // member includes:
 #include <VisRegionSpecBaseList>
 #include <float_Matrix>
+#include <taImageProc>
+
 
 // declare all other types mentioned but not required to include:
 class VisRegionSpecBase; // 

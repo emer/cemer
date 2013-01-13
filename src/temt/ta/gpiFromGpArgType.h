@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taList_impl; //
 
 
 class TA_API gpiFromGpArgType : public taiTokenPtrArgType {

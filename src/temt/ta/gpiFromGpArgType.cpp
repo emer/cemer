@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "gpiFromGpArgType.h"
+#include <taiGroupElsButton>
+#include <taiListElsButton>
+#include <taList_impl>
+
+#include <css_ta.h>
+
 
 int gpiFromGpArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if ((argt->ptr != 1) || !argt->DerivesFrom(TA_taBase))

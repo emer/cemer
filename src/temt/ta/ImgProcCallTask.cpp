@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "ImgProcCallTask.h"
+#include <ImgProcCallThreadMgr>
+
 
 void ImgProcCallTask::Initialize() {
   img_proc_call = NULL;

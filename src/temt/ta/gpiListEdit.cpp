@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "gpiListEdit.h"
+#include <taList_impl>
+#include <gpiCompactListDataHost>
+#include <gpiListDataHost>
+
+
 
 int gpiListEdit::BidForEdit(TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl))

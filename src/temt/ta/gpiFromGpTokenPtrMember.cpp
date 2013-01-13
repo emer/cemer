@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "gpiFromGpTokenPtrMember.h"
+#include <gpiSubGroups>
+#include <gpiGroupEls>
+#include <gpiListEls>
+#include <taiMenu>
+
+#include <taiMisc>
+
+
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType()

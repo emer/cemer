@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "DoGRegionSpec.h"
+#include <taProject>
+
+#include <taMisc>
+
 
 // for thread function calling:
 typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);

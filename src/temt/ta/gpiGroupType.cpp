@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "gpiGroupType.h"
+#include <gpiGroupEditButton>
+
 
 int gpiGroupType::BidForType(TypeDef* td) {
   if(td->InheritsFrom(TA_taGroup_impl))

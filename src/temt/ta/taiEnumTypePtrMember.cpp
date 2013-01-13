@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiEnumTypePtrMember.h"
+#include <taiData>
+#include <taiEnumTypeDefButton>
+
+
 
 int taiEnumTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (md->HasOption("ENUM_TYPE"))

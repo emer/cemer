@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "V1KwtaSpec.h"
+#include <float_Matrix>
+#include <taMath_float>
+
 
 void V1KwtaSpec::Initialize() {
   on = false;

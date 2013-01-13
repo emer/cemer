@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class iProgramCtrlDataHost; //
+class Program; //
+
 
 class TA_API iProgramCtrlPanel: public iDataPanelFrame {
 // ##NO_CSS panel for program control panel

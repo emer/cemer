@@ -39,7 +39,7 @@ public:
 
   override void		BuildAll();
   
-  bool			isVisible() const { return (taMisc::use_gui ); }
+  bool			isVisible() const;
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank

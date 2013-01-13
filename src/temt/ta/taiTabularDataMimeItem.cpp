@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiTabularDataMimeItem.h"
+#include <taiMimeFactory>
+#include <CellRange>
+#include <DataTable>
+#include <taMatrix>
+
+#include <sstream>
 
 using namespace std;
 

@@ -20,6 +20,9 @@
 #include <gpiMultiEditDataHost>
 
 // member includes:
+#include <gpiList_ElDataList>
+#include <String_PArray>
+
 
 // declare all other types mentioned but not required to include:
 

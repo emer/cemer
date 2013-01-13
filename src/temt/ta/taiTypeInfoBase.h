@@ -20,8 +20,11 @@
 #include <taiData>
 
 // member includes:
+#include <taiActions>
 
 // declare all other types mentioned but not required to include:
+
+
 
 class TA_API taiTypeInfoBase : public taiData {
   // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option

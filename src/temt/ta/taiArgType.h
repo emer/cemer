@@ -21,8 +21,10 @@
 
 // member includes:
 #include <taString>
+#include <MethodDef>
 
 // declare all other types mentioned but not required to include:
+class taBase; //
 
 
 class TA_API taiArgType : public taiType {

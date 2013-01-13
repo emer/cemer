@@ -20,6 +20,7 @@
 #include <taiType>
 
 // member includes:
+#include <MethodDef>
 
 // declare all other types mentioned but not required to include:
 class taiMethodData; // #IGNORE

@@ -28,6 +28,7 @@ class ScaleBar; // #IGNORE
 class taiListElsButton; // #IGNORE
 class taiPolyData; // #IGNORE
 class iCheckBox; // #IGNORE
+class taiComboBox; //
 
 class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT

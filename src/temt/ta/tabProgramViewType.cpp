@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "tabProgramViewType.h"
+#include <iProgramCtrlPanel>
+#include <iTreeView>
+#include <iProgramPanel>
+#include <iProgramViewScriptPanel>
+
 
 int tabProgramViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_Program))

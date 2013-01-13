@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiDefaultToken.h"
+#include <MemberDef>
+#include <taiDefaultEdit>
+#include <taiEditButton>
+
 
 int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
   TypeDef* mtd = md->type;

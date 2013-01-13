@@ -24,6 +24,8 @@
 #include <GraphPlotView>
 #include <ColorScale>
 #include <taVector3f>
+#include <taMisc>
+#include <int_Array>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 

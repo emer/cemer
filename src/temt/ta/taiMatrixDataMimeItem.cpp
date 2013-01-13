@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiMatrixDataMimeItem.h"
+#include <taiMimeSource>
+#include <taiTabularDataMimeFactory>
+#include <taiMatrixDataMimeItem>
 
 
 taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
@@ -26,7 +29,7 @@ taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
   return rval;
 }
 
-void taiMatrixDataMimeItem::Constr_impl(const String&) {
+bool taiMatrixDataMimeItem::Constr_impl(const String&) {
   String arg;
   data(mimeData(), taiTabularDataMimeFactory::tacss_matrixdesc, arg);
 

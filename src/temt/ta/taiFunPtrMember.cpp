@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiFunPtrMember.h"
+#include <taiData>
+#include <taiButtonMenu>
+#include <MethodDef>
+#include <taiMenu>
+
+#include <taiMisc>
+
 
 int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (md->fun_ptr)

@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiSubTokenPtrMember.h"
+#include <taiData>
+#include <taiSubToken>
+#include <taiMenu>
+
+#include <taMisc>
+#include <taiMisc>
+
 
 int taiSubTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if((md->type->ptr == 1) && (md->OptionAfter("SUBTYPE_") != ""))

@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiField; //
+class iMethodButtonMgr; //
+class VEWorldView; //
 
 
 class TA_API VEWorldViewPanel: public iViewPanelFrame {

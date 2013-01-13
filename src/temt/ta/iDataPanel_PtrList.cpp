@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iDataPanel_PtrList.h"
+#include <iDataPanel>
 
 void* iDataPanel_PtrList::El_Own_(void* it) {
   if (m_tabView)

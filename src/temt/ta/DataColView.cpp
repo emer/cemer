@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataColView.h"
+#include <DataCol>
+#include <DataTableView>
+
 
 /*
   The main DataColView operations are:

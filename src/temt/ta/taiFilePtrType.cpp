@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiFilePtrType.h"
+#include <taiFileButton>
+#include <taFiler>
+
 
 int taiFilePtrType::BidForType(TypeDef* td) {
   if(td->DerivesFrom(TA_taFiler) && (td->ptr == 1))

@@ -621,10 +621,14 @@ set(ta_HEADS_MAKETA_LOCAL_1
   # SoBase.h
   # SoGroup.h
 
+  T3SavedView.h
+  T3SavedView_List.h
   T3DataView.h
+  T3DataView_List.h
   T3DataViewPar.h
   T3DataViewRoot.h
   T3DataViewMain.h
+  T3DataViewFrame_List.h
   T3DataViewer.h
 
   DataColView.h
@@ -668,6 +672,7 @@ set(ta_HEADS_MAKETA_MOC
   iBrowseHistory.h
 
   iDataPanel.h
+  iDataPanel_PtrList.h
   iDataPanelFrame.h
   EditDataPanel.h
   iViewPanelFrame.h
@@ -689,7 +694,7 @@ set(ta_HEADS_MAKETA_MOC
 
   iSelectEditPanel.h
 
-  iDocEditDataPanel.cpp
+  iDocEditDataPanel.h
   iDocDataPanel.h
 
   iSearchDialog.h
@@ -724,6 +729,24 @@ set(ta_HEADS_NOMAKETA
   DynMethod_PtrList.h
 
   ISelectableHost.h
+
+  taGenDoc.h
+  T3Misc.h
+  iSoSelectionEvent.h
+
+  SoCapsule.h
+  SoFrame.h
+  SoRect.h
+  SoLineBox3d.h
+  SoImageEx.h
+  SoMatrixGrid.h
+  So3DHeightField.h
+  T3ScaleUniformScaler.h
+  T3TransformBoxRotatorRotator.h
+  T3TransformBoxDragger.h
+  T3Translate1Translator.h
+  T3Translate2Translator.h
+  SoScrollBar.h
 )
 
 set(ta_HEADS_NOMAKETA_MOC
@@ -888,7 +911,6 @@ set(ta_HEADS_NOMAKETA_MOC
   gpiList_ElDataList.h
   gpiCompactList_ElData.h
   gpiCompactList_ElDataList.h
-  iDocEditDataPanel.h
 
   iSelectEditDataHostBase.h
   taiDataDelegate.h
@@ -913,6 +935,14 @@ set(ta_HEADS_NOMAKETA_MOC
   DataTableDelegate.h
   iDataTablePanel_Mbr.h
 
+  T3QuarterWidget.h
+  T3ExaminerViewer.h
+  iT3ViewspaceWidget.h
+  iTabBarEx.h
+  iTabWidget.h
+  iT3DataViewer.h
+  iT3DataViewFrame.h
+
   T3Node.h
   T3NodeLeaf.h
   T3NodeParent.h
@@ -931,18 +961,6 @@ set(ta_HEADS_NOMAKETA_MOC
   T3VEStatic.h
   VEWorldViewPanel.h
 
-  SoFrame.h
-  SoRect.h
-  SoLineBox3d.h
-  SoImageEx.h
-  SoMatrixGrid.h
-  So3DHeightField.h
-  T3ScaleUniformScaler.h
-  T3TransformBoxRotatorRotator.h
-  T3TransformBoxDragger.h
-  T3Translate1Translator.h
-  T3Translate2Translator.h
-  SoScrollBar.h
   T3Color.h
 )
 
@@ -1473,9 +1491,6 @@ set(good_files
   TemtServerAdapter.cpp
   TemtClient_List.cpp
 
-)
-
-set(ta_SRCS_MAKETA
   taiMimeItem.cpp
   taiMimeItem_List.cpp
   taiMultiMimeItem.cpp
@@ -1502,7 +1517,6 @@ set(ta_SRCS_MAKETA
 
   taImage.cpp
   taCanvas.cpp
-
   ImageProcCall.cpp
   ImgProcCallThreadMgr.cpp
   ImgProcThreadBase.cpp
@@ -1516,6 +1530,7 @@ set(ta_SRCS_MAKETA
   VisRegionSpecBase.cpp
   VisRegionSpecBaseList.cpp
   DoGRegionSpec.cpp
+
   V1KwtaSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
@@ -1636,12 +1651,15 @@ set(ta_SRCS_MAKETA
   taGuiDataHost.cpp
   taGuiDialog.cpp
 
+  T3DataViewFrame_List.cpp
+  T3SavedView.cpp
+  T3SavedView_List.cpp
   T3DataView.cpp
+  T3DataView_List.cpp
   T3DataViewPar.cpp
   T3DataViewRoot.cpp
   T3DataViewMain.cpp
   T3DataViewer.cpp
-
   DataColView.cpp
   DataTableView.cpp
 
@@ -1653,7 +1671,9 @@ set(ta_SRCS_MAKETA
   GraphAxisView.cpp
   GraphPlotView.cpp
   GraphTableView.cpp
+)
 
+set(ta_SRCS_MAKETA
   VEWorldView.cpp
   VEBodyView.cpp
   VEStaticView.cpp
@@ -1662,7 +1682,7 @@ set(ta_SRCS_MAKETA
   VEObjectView.cpp
   VESpaceView.cpp
 
-  iDataPanel_PtrList.h
+  iDataPanel_PtrList.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA
@@ -1793,7 +1813,6 @@ set(ta_SRCS_NOMAKETA
   iApplicationToolBar.cpp
   iToolBar_List.cpp
   iBrowseHistory.cpp
-  iDataPanel_PtrList.cpp
   iTabView_PtrList.cpp
   iViewPanelFrame.cpp
   iDataPanelSetBase.cpp
@@ -1833,6 +1852,7 @@ set(ta_SRCS_NOMAKETA
   iProgramCtrlPanel.cpp
 
   iSelectEditPanel.cpp
+  iDocEditDataPanel.cpp
 
   taiObjDiffBrowserFilter.cpp
   taiObjDiffBrowser.cpp
@@ -1855,6 +1875,16 @@ set(ta_SRCS_NOMAKETA
   iDataTablePanel.cpp
   DataTableDelegate.cpp
   iDataTablePanel_Mbr.cpp
+
+  T3Misc.cpp
+  T3QuarterWidget.cpp
+  T3ExaminerViewer.cpp
+  iSoSelectionEvent.cpp
+  iT3ViewspaceWidget.cpp
+  iT3DataViewFrame.cpp
+  iTabBarEx.cpp
+  iTabWidget.cpp
+  iT3DataViewer.cpp
 
   T3Node.cpp
   T3NodeLeaf.cpp
@@ -1925,6 +1955,7 @@ set(ta_SRCS_NOMAKETA
   Tokenizer.cpp
   FunLookupND.cpp
   FunLookup.cpp
+  taGenDoc.cpp
 )
 
 set(ta_SRCS

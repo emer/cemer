@@ -16,6 +16,9 @@
 #include "VEStatic.h"
 
 #include <ode/ode.h>
+#include <VEWorld>
+#include <VESpace>
+
 
 void VEStatic::Initialize() {
   geom_id = NULL;
@@ -133,7 +136,7 @@ void VEStatic::DestroyODE() {
 }
 
 void VEStatic::Init() {
-  VE_last_ve_set_vals_to_ode = this;
+  VEWorld::last_to_set_ode = this;
 
   if(HasStaticFlag(VEStatic::OFF)) {
     DestroyODE();
@@ -209,9 +212,9 @@ void VEStatic::Init_PosRot() {
 }
 
 void VEStatic::SnapPosToGrid(float grid_size) {
-  pos.x = ve_snap_val(pos.x, grid_size);
-  pos.y = ve_snap_val(pos.y, grid_size);
-  pos.z = ve_snap_val(pos.z, grid_size);
+  pos.x = VEWorld::SnapVal(pos.x, grid_size);
+  pos.y = VEWorld::SnapVal(pos.y, grid_size);
+  pos.z = VEWorld::SnapVal(pos.z, grid_size);
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 

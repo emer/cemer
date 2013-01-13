@@ -20,6 +20,7 @@
 #include <taOBase>
 
 // member includes:
+#include <FunLookup>
 
 // declare all other types mentioned but not required to include:
 class float_Matrix; // 

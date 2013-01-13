@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "VEJoint.h"
+#include <VEWorld>
+
 
 void VEJointStops::Initialize() {
   stops_on = true;
@@ -136,7 +138,7 @@ void VEJoint::DestroyODE() {
 }
 
 void VEJoint::Init() {
-  VE_last_ve_set_vals_to_ode = this;
+  VEWorld::last_to_set_ode = this;
 
   if(!joint_id || joint_type != cur_type) CreateODE();
   if(!joint_id) return;
@@ -421,7 +423,7 @@ void VEJoint::Init_ODEParams() {
 }
 
 static inline float get_val_no_nan(float val) {
-  if (isnan(val)) return 0.0f;
+  if (std::isnan(val)) return 0.0f;
   return val;
 }
 

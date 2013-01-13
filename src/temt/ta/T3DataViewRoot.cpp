@@ -15,6 +15,7 @@
 
 #include "T3DataViewRoot.h"
 
+#include <T3NodeParent>
 
 void T3DataViewRoot::Initialize() {
   host = NULL;

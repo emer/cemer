@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiTokenPtrType.h"
+#include <taiData>
+#include <taiTokenPtrButton>
+#include <taSmartPtr>
+
+#include <taMisc>
 
 int taiTokenPtrType::BidForType(TypeDef* td) {
   if(td->IsBasePointerType())

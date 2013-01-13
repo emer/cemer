@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "VEMuscleJoint.h"
+#include <VEWorld>
+
+#include <taMisc>
+
 
 void VEMuscleJoint::Initialize() {
   joint_type = HINGE;

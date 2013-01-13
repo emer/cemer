@@ -20,10 +20,14 @@
 #include <FrameViewer>
 
 // member includes:
+#include <T3DataViewFrame_List>
 
 // declare all other types mentioned but not required to include:
-class T3DataViewFrame_List; //
+class T3DataViewFrame; //
 class iT3DataViewer; //
+class iTabBarBase; //
+class T3DataView; //
+
 
 class TA_API T3DataViewer : public FrameViewer {
   // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 top-level taDataViewer object that contains one 3D data view of multiple objects
@@ -36,9 +40,8 @@ public:
   T3DataViewFrame_List  frames; //
 
   override bool         isRootLevelView() const {return true;}
-  inline iT3DataViewer* widget() {return (iT3DataViewer*)inherited::widget();} // lex override
-
-  iTabBarBase*          tabBar() { if(!widget()) return NULL; return widget()->tabBar(); }
+  iT3DataViewer*        widget();
+  iTabBarBase*          tabBar();
 
   virtual T3DataView*   FindRootViewOfData(taBase* data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 

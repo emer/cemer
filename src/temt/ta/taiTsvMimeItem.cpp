@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiTsvMimeItem.h"
+#include <taiMimeSource>
+#include <taiTabularDataMimeItem>
+#include <taiTabularDataMimeFactory>
+
+#include <QTextStream>
 
 
 taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms,

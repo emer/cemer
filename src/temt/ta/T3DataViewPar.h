@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataView>
+#include <T3DataView_List>
 
 // member includes:
 

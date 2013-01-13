@@ -21,9 +21,11 @@
 
 // member includes:
 #include <DataTable>
+#include <taVector2i>
+#include <float_Matrix>
 
 // declare all other types mentioned but not required to include:
-class float_Matrix; // 
+class CircMatrix;
 
 class TA_API VisRegionParams : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region

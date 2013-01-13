@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiEnumType.h"
+#include <EnumDef>
+#include <taiData>
+#include <taiComboBox>
+#include <iComboBox>
+#include <taiBitBox>
+#include <taiField>
+
 
 void taiEnumType::Initialize() {
 }

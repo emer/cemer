@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "T3DataViewMain.h"
+#include <T3DataViewFrame>
+#include <T3ExaminerViewer>
+
 
 void T3DataViewMain::InitLinks() {
   inherited::InitLinks();

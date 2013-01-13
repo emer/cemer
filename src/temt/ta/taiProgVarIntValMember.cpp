@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "taiProgVarIntValMember.h"
+#include <ProgVar>
+
+#include <taiDataDeck>
+#include <taiIncrField>
+#include <taiComboBox>
+#include <taiBitBox>
+#include <iComboBox>
+#include <iSpinBox>
+
 
 
 void taiProgVarIntValMember::Initialize() {

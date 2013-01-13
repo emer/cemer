@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiTokenPtrArgType.h"
+#include <taiTokenPtrButton>
+#include <IDataHost>
+
+#include <taMisc>
+
+#include <css_ta.h>
+
 
 int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taBase) &&

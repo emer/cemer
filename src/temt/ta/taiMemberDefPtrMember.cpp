@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberDefPtrMember.h"
+#include <taiData>
+#include <taiMemberDefButton>
+
 
 int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MemberDef)))

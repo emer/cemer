@@ -17,6 +17,11 @@
 #include <taMisc>
 #include <QApplication>
 #include <QWidget>
+#include <taRootBase>
+#include <iMainWindowViewer>
+
+#include <taMisc>
+#include <taiMisc>
 
 void taRootBaseAdapter::Startup_ProcessArgs() {
   taRootBase::Startup_ProcessArgs();

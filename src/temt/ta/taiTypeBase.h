@@ -21,6 +21,7 @@
 #include "ta_TA_type_WRAPPER.h"
 
 // member includes:
+#include <TypeDef>
 
 // declare all other types mentioned but not required to include:
 

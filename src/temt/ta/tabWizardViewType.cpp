@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "tabWizardViewType.h"
+#include <iDocDataPanel>
+#include <taWizard>
+
 
 
 int tabWizardViewType::BidForView(TypeDef* td) {

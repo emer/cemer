@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "tabDocViewType.h"
+#include <iDocDataPanel>
+#include <iDocEditDataPanel>
+
 
 
 int tabDocViewType::BidForView(TypeDef* td) {

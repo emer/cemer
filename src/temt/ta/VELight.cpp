@@ -15,6 +15,8 @@
 
 #include "VELight.h"
 
+#include <Inventor/SbLinear.h>
+
 void VELight::Initialize() {
   light_type = SPOT_LIGHT;
   drop_off_rate = 0.0f;

@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiTokenPtrMember.h"
+#include <MethodDef>
+#include <taiData>
+#include <taiTokenPtrButton>
+#include <taSmartPtr>
+
+#include <taMisc>
+
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType())

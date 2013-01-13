@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "RetinaProc.h"
+#include <taVector2f>
+#include <taImage>
+
 
 void RetinaProc::Initialize() {
   edge_mode = taImageProc::WRAP;

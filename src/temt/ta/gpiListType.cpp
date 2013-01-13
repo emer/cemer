@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "gpiListType.h"
+#include <gpiListEditButton>
+
 
 int gpiListType::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl))

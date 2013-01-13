@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiTDefaultMember.h"
+#include <TypeDefault>
+#include <taiPlusToggle>
+#include <taiData>
+
+#include <taMisc>
+
 
 int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
   // TD_Default member does not bid, it is only applied in special cases.

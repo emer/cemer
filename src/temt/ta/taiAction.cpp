@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiAction.h"
+#include <taiMenu>
+#include <taiActions>
+#include <taiMenuAction>
 
 taiAction::taiAction(int sel_type_, const String& label_)
 : QAction(label_, NULL)

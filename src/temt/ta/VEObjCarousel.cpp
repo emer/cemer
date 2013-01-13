@@ -15,6 +15,14 @@
 
 #include "VEObjCarousel.h"
 
+#include <taMisc>
+
+#include <QFileInfo>
+
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+
 void VEObjCarousel::Initialize() {
   cur_obj_no = -1;
   SetBodyFlag(FM_FILE);

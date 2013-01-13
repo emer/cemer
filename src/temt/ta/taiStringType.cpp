@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiStringType.h"
+#include <taiField>
+#include <MemberDef>
+
 
 int taiStringType::BidForType(TypeDef* td){
   if (td->InheritsFrom(TA_taString))

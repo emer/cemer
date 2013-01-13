@@ -14,6 +14,42 @@
 //   Lesser General Public License for more details.
 
 #include "GraphAxisBase.h"
+#include <GraphTableView>
+#include <GraphColView>
+#include <DataCol>
+#include <DataTable>
+#include <T3Axis>
+#include <taMath_float>
+#include <iGraphTableView_Panel>
+
+#include <taMisc>
+
+#include <Inventor/SbLinear.h>
+#include <Inventor/fields/SoMFString.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoBaseColor.h>
+// #include <Inventor/nodes/SoCube.h>
+// #include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoFont.h>
+// #include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoMaterial.h>
+// #include <Inventor/nodes/SoPerspectiveCamera.h>
+// #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoSeparator.h>
+// #include <Inventor/nodes/SoTransform.h>
+// #include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoText2.h>
+// #include <Inventor/draggers/SoTransformBoxDragger.h>
+// #include <Inventor/nodes/SoEventCallback.h>
+// #include <Inventor/events/SoMouseButtonEvent.h>
+// #include <Inventor/actions/SoRayPickAction.h>
+// #include <Inventor/SoPickedPoint.h>
+// #include <Inventor/SoEventManager.h>
+
+
+#define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
+#define TICK_OFFSET 0.01f // gap between tick and label
 
 
 void GraphAxisBase::Initialize() {
@@ -178,10 +214,10 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
     }
   }
 
-  double rng = nicenum(last - first, false); // nicenum def'd in minmax
+  double rng = taMisc::NiceRoundNumber(last - first, false); // nicenum def'd in minmax
   rng = MAX(range_min_limit, rng);
 
-  double inc = nicenum((rng / (double)n_ticks), true);
+  double inc = taMisc::NiceRoundNumber((rng / (double)n_ticks), true);
   double newmin = floor(first / inc) * inc;
   double newmax = ceil(last / inc) * inc;
 
@@ -230,7 +266,7 @@ bool GraphAxisBase::UpdateRange() {
 void GraphAxisBase::ComputeTicks() {
   double min = range.min;
   double max = range.max;
-  double rng = nicenum(max-min, false);
+  double rng = taMisc::NiceRoundNumber(max-min, false);
   if(rng == 0.0) {
     double unitsval = fabs(min);
     if(unitsval == 0.0)
@@ -245,7 +281,7 @@ void GraphAxisBase::ComputeTicks() {
 
 //   if(rng < 1.0e-8) rng = 1.0e-8;
 
-  tick_incr = nicenum((rng / (double)n_ticks), true);
+  tick_incr = taMisc::NiceRoundNumber((rng / (double)n_ticks), true);
   double newmin = floor(min / tick_incr) * tick_incr;
 
   // make sure we start within range

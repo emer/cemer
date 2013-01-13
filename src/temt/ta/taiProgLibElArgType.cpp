@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiProgLibElArgType.h"
+#include <taiProgLibElsButton>
+
 
 
 int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {

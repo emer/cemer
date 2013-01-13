@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taitaColorType.h"
+#include <taiColor>
+#include <taColor>
+
 
 int taitaColorType::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taColor))

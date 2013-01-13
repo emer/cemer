@@ -17,6 +17,8 @@
 #include <taMisc>
 #include <taGuiDialog>
 
+#include <QVBoxLayout>
+
 taBase* taGuiDataHost::Base() const {
   return gui_owner;
 }

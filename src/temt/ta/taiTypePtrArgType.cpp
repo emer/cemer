@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypePtrArgType.h"
+#include <taBase>
+#include <MemberDef>
+#include <taiTypeDefButton>
+
+#include <css_ta.h>
+
+#include <taMisc>
 
 int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (argt->DerivesFrom(TA_TypeDef) && (argt->ptr == 1))

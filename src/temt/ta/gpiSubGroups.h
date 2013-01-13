@@ -20,8 +20,11 @@
 #include <taiElBase>
 
 // member includes:
+#include <taiActions>
 
 // declare all other types mentioned but not required to include:
+class taGroup_impl; //
+
 
 class TA_API gpiSubGroups : public taiElBase {
   // menu of sub-groups within a group

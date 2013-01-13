@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "tabOViewType.h"
+#include <iDataPanelSet>
+#include <UserDataItem_List>
+#include <iUserDataPanel>
+#include <iDocDataPanel>
+#include <taDoc>
+#include <tabODataLink>
+#include <iListDataPanel>
+
+
 
 int tabOViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taOBase))

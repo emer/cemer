@@ -15,6 +15,8 @@
 
 #include "ImgProcCallThreadMgr.h"
 #include <ImgProcCallTask>
+#include <taMisc>
+
 
 
 void ImgProcCallThreadMgr::Initialize() {

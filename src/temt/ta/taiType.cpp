@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiType.h"
+#include <taiData>
+#include <taiField>
+#include <IDataHost>
+
 
 void taiType::Initialize() {
   m_par_obj_base = NULL;

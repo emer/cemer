@@ -15,6 +15,8 @@
 
 #include "VECamera.h"
 
+#include <Inventor/SbLinear.h>
+
 void VECameraDists::Initialize() {
   near = 0.1f;
   focal = 1.0f;

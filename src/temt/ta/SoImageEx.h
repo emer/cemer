@@ -21,8 +21,16 @@
 #include <Inventor/nodes/SoSeparator.h>
 
 // member includes:
+#include <byte_Matrix>
+#include <iPoint>
 
 // declare all other types mentioned but not required to include:
+class SbImage; //
+class SoTexture2; //
+class QImage; //
+class taMatrix; //
+class SoRect; //
+
 
 #ifndef __MAKETA__
 class CoinImageReaderCB {

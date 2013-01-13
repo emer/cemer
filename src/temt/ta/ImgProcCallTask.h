@@ -18,11 +18,14 @@
 
 // parent includes:
 #include <taTask>
+#include <taThreadMgr>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class ImgProcCallThreadMgr; // 
+class ImgProcThreadBase; //
+
 
 // this is the standard function call taking the thread number int value
 // all threaded functions MUST use this call signature!

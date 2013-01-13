@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "tabSelectEditViewType.h"
+#include <iSelectEditPanel>
+#include <ClusterRun>
+#include <iDataTablePanel_Mbr>
+
 
 int tabSelectEditViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_SelectEdit))

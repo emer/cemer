@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "SArgEdit.h"
+#include <SArgEditDataHost>
+
 
 int SArgEdit::BidForEdit(TypeDef* td){
   if(td->InheritsFrom(TA_SArg_Array))

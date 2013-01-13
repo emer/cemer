@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "gpiLinkList.h"
+#include <gpiListLinkEditButton>
+
 
 int gpiLinkList::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->InheritsFrom(TA_taList_impl)) &&

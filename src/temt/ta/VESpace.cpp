@@ -14,8 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "VESpace.h"
+#include <VEWorld>
 
 #include <ode/ode.h>
+
+
 
 void VESpace::Initialize() {
   space_id = NULL;

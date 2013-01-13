@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewType.h"
+#include <iDataPanelSet>
+#include <iDataPanelFrame>
+
 
 taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
   if (!el || !el_typ) return NULL; // subclass will have to grok

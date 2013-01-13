@@ -20,11 +20,14 @@
 #include <iDataPanelFrame>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QWebView>
+#include <QWebPage>
+#endif
 
 // declare all other types mentioned but not required to include:
 class iLineEdit; // #IGNORE
 class QProgressBar; // #IGNORE
-
 
 class TA_API iDocDataPanel: public iDataPanelFrame {
   // a panel frame for displaying docs

@@ -14,7 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "DataTableView.h"
+#include <DataTable>
+#include <T3DataViewFrame>
+#include <iDataTableView_Panel>
+#include <DataColView>
+#include <T3Node>
 
+#include <taMisc>
+
+#include <Inventor/nodes/SoFont.h>
 
 void DataTableView::Initialize() {
   data_base = &TA_DataTable;

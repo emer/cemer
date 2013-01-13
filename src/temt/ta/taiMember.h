@@ -21,6 +21,8 @@
 
 // member includes:
 #include <taString>
+#include <MemberDef>
+
 
 // declare all other types mentioned but not required to include:
 class taiEnumType; //
@@ -129,4 +131,17 @@ protected:
       return new x(md, td);              \
     }
 
+// macro for doing safe casts of types -- helps to uncover errors
+// when the actual class is not the expected class
+// (of course this NEVER happens... uh, huh... ;) )
+#define QCAST_MBR_SAFE_EXIT(qtyp, rval, dat) \
+  qtyp rval = qobject_cast<qtyp>(dat); \
+  if (!rval) { \
+    taMisc::Error("QCAST_MBR_SAFE_EXIT: expect " #qtyp "for mbr", \
+    mbr->name, "but was:", \
+      dat->metaObject()->className()); \
+    return; \
+  }
+
 #endif // taiMember_h
+

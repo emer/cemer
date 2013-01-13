@@ -21,15 +21,20 @@
 #include <IObjectSelectable>
 
 // member includes:
+#include <taTransform>
+#include <iColor>
+#include <SoPtr>
 
 // declare all other types mentioned but not required to include:
-class T3DataView; //
 class T3Node; // #IGNORE
 class T3DataViewRoot; //
 class T3ExaminerViewer; //
 class iT3DataViewFrame; //
 class T3NodePtr; //
 class SoPath; // #IGNORE
+class T3DataViewFrame;
+
+SoPtr_Of(T3Node);
 
 /*
   DataView objects that have 3D reps
@@ -42,22 +47,6 @@ class SoPath; // #IGNORE
 
   subclasses may add additional steps or other ways of ordering these
 */
-
-class TA_API T3DataView_List: public DataView_List { // ##NO_TOKENS
-INHERITED(DataView_List)
-friend class T3DataView;
-public:
-
- virtual T3DataView*  FindData(taBase* dat, int& idx);
- // find DataView guy with data() == dat (fills in its index in list), returns NULL & idx=-1 for not found
-
-  TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView)
-private:
-  NOCOPY(T3DataView_List)
-  void                  Initialize() {SetBaseType(&TA_T3DataView);}
-  void                  Destroy() {}
-};
-
 
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // #NO_TOKENS #VIRT_BASE base class for 3d-based DataView objects

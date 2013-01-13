@@ -14,8 +14,49 @@
 //   Lesser General Public License for more details.
 
 #include "GraphTableView.h"
+#include <GraphColView>
+#include <DataTable>
+#include <iGraphTableView_Panel>
+#include <taDataLinkItr>
+#include <T3DataViewFrame>
+#include <MainWindowViewer>
+#include <NewNetViewHelper>
+#include <T3ExaminerViewer>
+#include <T3GraphLine>
+#include <T3GraphViewNode>
+#include <iT3DataViewFrame>
+#include <T3Axis>
+#include <T3Color>
+#include <SoLineBox3d>
+#include <taVector2i>
 
-#define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
+#include <SoScrollBar>
+#include <SoImageEx>
+
+#include <Inventor/SbLinear.h>
+#include <Inventor/fields/SoMFString.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoText2.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/actions/SoRayPickAction.h>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/SoEventManager.h>
+
+// #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
 #define TICK_OFFSET 0.01f // gap between tick and label
 
 float GraphTableView::tick_size = 0.05f;

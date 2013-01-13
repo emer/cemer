@@ -21,7 +21,8 @@
 #include <taVector3f>
 
 #ifndef __MAKETA__
-#include <ode/ode.h>
+// need dQuaternion
+#include <ode/common.h>
 #endif
 
 // member includes:
@@ -221,10 +222,8 @@ public:
   inline taQuaternion& operator /= (float scale);
 
 #ifndef __MAKETA__
-  void		ToODE(dQuaternion dq) const
-  { dq[0] = s; dq[1] = x; dq[2] = y; dq[3] = z; }
-  void		FromODE(const dQuaternion dq)
-  { s = dq[0]; x = dq[1]; y = dq[2]; z = dq[3]; }
+  void		ToODE(dQuaternion dq) const;
+  void		FromODE(const dQuaternion dq);
 #endif
 
   String        GetStr() const { return String(s) + ", " + String(x) + ", " + String(y) + ", " + String(z);  }

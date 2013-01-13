@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiStepButtonMethod.h"
+#include <taiProgStepButton>
+#include <taiMethMenu>
+
+
 
 
 int taiStepButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {

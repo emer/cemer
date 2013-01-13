@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "VEObject.h"
+#include <VEWorld>
+
 
 void VEObject::Initialize() {
   space_id = NULL;

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiData.h"
+#include <IDataHost>
+#include <iLabel>
+#include <taiDataDeck>
+#include <taiDataLink>
+#include <taiMisc>
 
 // NOTE: this is for ta_TA.cpp only
 taiData::taiData()
@@ -215,7 +220,7 @@ void taiData::SetRep(QWidget* val) {
   m_rep = val;
   if (m_rep) {
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300)
-    m_rep->setAttribute(WA_LayoutUsesWidgetRect, true);
+    m_rep->setAttribute(Qt::WA_LayoutUsesWidgetRect, true);
 #endif
     m_rep->installEventFilter(this);
   }

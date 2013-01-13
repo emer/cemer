@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "tabProgramGroupViewType.h"
+#include <iTreeView>
+#include <iProgramGroupPanel>
+
 
 int tabProgramGroupViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_Program_Group))

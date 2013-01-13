@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "tabListViewType.h"
+#include <tabListDataLink>
+#include <iListDataPanel>
+
+
 
 int tabListViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taList_impl))

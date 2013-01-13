@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "VELinearMuscle.h"
+#include <VEArm>
+
 
 void VELinearMuscle::Initialize() {
   gain = 1;

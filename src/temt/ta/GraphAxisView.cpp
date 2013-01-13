@@ -14,7 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "GraphAxisView.h"
+#include <GraphTableView>
+#include <iGraphTableView_Panel>
+#include <T3GraphLine>
 
+#include <Inventor/nodes/SoComplexity.h>
 
 void GraphAxisView::Initialize() {
   row_num = false;

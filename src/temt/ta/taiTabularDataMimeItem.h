@@ -23,6 +23,9 @@
 #include <iSize>
 
 // declare all other types mentioned but not required to include:
+class CellRange; //
+class DataTable; //
+class taMatrix; //
 
 
 class TA_API taiTabularDataMimeItem: public taiMimeItem {

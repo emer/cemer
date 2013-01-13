@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiDynEnumMember.h"
+#include <DynEnum>
+#include <taiDataDeck>
+#include <taiField>
+#include <taiComboBox>
+#include <taiBitBox>
+#include <iLineEdit>
+#include <iComboBox>
+
+
+#include <QHBoxLayout>
 
 
 void taiDynEnumMember::Initialize() {

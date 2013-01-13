@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeBase.h"
+#include <iColor>
+
 
 const iColor taiTypeBase::def_color;
 

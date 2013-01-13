@@ -16,6 +16,10 @@
 #include "GaborFitter.h"
 
 
+#include <math.h>
+
+
+
 void GaborFitter::Initialize() {
   fit_dist = 0.0f;
 }

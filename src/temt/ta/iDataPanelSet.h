@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taiEditDataHost; //
+class QStackedLayout; // #IGNORE
+class iDataPanelFrame; //
 
 
 class TA_API iDataPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels

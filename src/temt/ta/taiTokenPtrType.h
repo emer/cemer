@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class taBase; //
 
 class TA_API taiTokenPtrType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTokenPtrType, taiType);

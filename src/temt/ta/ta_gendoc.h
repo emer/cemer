@@ -18,17 +18,5 @@
 #ifndef ta_gendoc_h
 #define ta_gendoc_h
 
-// documentation generation from scanned type information (maketa)
-
-#include "ta_type.h"
-
-class TA_API taGenDoc  {
-  // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS collection of gendoc functions
-public:
-  static void 		GenDoc(TypeSpace* ths);
-  // main function -- output type info to stream -- saves .html files in current location -- detail level: 0,1 = basic user information, 2 = + full programming details (expert mode)
-
-  static bool 		TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts);
-};
 
 #endif // ta_gendoc_h

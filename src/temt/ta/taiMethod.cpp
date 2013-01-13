@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethod.h"
+#include <MethodDef>
+#include <taiMethodData>
+
 
 void taiMethod::AddMethod(MethodDef* md) {
   InsertThisIntoBidList(md->im);

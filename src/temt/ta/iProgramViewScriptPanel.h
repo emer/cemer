@@ -22,7 +22,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+#ifndef __MAKETA__
+class NumberedTextView;
+#endif
+class Program; 
 
 class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
   // a panel frame for viewing script code of program

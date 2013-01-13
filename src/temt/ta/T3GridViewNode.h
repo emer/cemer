@@ -26,6 +26,7 @@ class SoFrame; //
 class SoGroup; // 
 class SoMaterial; // 
 class SoScrollBar; // 
+class T3TransformBoxDragger; //
 
 
 class TA_API T3GridViewNode: public T3NodeLeaf {

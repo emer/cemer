@@ -14,8 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "VEBody.h"
+#include <VEWorld>
+#include <VEObject>
 
 #include <ode/ode.h>
+
+#include <taMisc>
 
 void ODEDamping::Initialize() {
   on = false;
@@ -158,7 +162,7 @@ void VEBody::DestroyODE() {
 }
 
 void VEBody::Init() {
-  VE_last_ve_set_vals_to_ode = this;
+  VEWorld::last_to_set_ode = this;
 
   if(HasBodyFlag(VEBody::OFF)) {
     DestroyODE();
@@ -179,7 +183,7 @@ void VEBody::Init() {
   Init_FiniteRotation();
   Init_Gravity();
   Init_Damping();
-
+  
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
@@ -362,7 +366,7 @@ void VEBody::CurToODE() {
   dWorldID wid = (dWorldID)GetWorldID();
   if(!wid) return;
 
-  VE_last_ve_set_vals_to_ode = this;
+  VEWorld::last_to_set_ode = this;
 
   CurToODE_Pos();
   CurToODE_Rotation();
@@ -554,21 +558,16 @@ void VEBody::CurToInit() {
   InitRotFromCur();
 }
 
-static float ve_snap_val(float val, float grid_size) {
-  int ival = (int)((val / grid_size) + .5f);
-  return (float)ival * grid_size;
-}
-
 void VEBody::SnapPosToGrid(float grid_size, bool do_init_pos) {
   if(do_init_pos) {
-    init_pos.x = ve_snap_val(init_pos.x, grid_size);
-    init_pos.y = ve_snap_val(init_pos.y, grid_size);
-    init_pos.z = ve_snap_val(init_pos.z, grid_size);
+    init_pos.x = VEWorld::SnapVal(init_pos.x, grid_size);
+    init_pos.y = VEWorld::SnapVal(init_pos.y, grid_size);
+    init_pos.z = VEWorld::SnapVal(init_pos.z, grid_size);
   }
   else {
-    cur_pos.x = ve_snap_val(cur_pos.x, grid_size);
-    cur_pos.y = ve_snap_val(cur_pos.y, grid_size);
-    cur_pos.z = ve_snap_val(cur_pos.z, grid_size);
+    cur_pos.x = VEWorld::SnapVal(cur_pos.x, grid_size);
+    cur_pos.y = VEWorld::SnapVal(cur_pos.y, grid_size);
+    cur_pos.z = VEWorld::SnapVal(cur_pos.z, grid_size);
   }
 }
 

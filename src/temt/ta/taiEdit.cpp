@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiEdit.h"
+#include <taiEditDataHost>
+
+#include <taiMisc>
+#include <taMisc>
+
 
 void taiEdit::AddEdit(TypeDef* td) {
   InsertThisIntoBidList(td->ie);

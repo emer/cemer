@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "V1RegionSpec.h"
+#include <taMath_float>
+#include <taProject>
+#include <RetinaProc>
+
+#include <taMisc>
+
 
 void V1BinocularSpec::Initialize() {
   mot_in = false;

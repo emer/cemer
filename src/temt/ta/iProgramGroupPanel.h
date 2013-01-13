@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class Program_Group; //
 
 
 class TA_API iProgramGroupPanel: public iProgramPanelBase {

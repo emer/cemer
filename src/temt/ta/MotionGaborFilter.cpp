@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "MotionGaborFilter.h"
+#include <taProject>
+#include <taMath_float>
+
+#include <math.h>
+
 
 void MotionGaborFilter::Initialize() {
 /*

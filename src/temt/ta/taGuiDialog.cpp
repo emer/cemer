@@ -14,6 +14,28 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiDialog.h"
+#include <taGuiDataHost>
+#include <Program>
+#include <ProgVar>
+#include <taiIncrField>
+#include <taiField>
+#include <taiToggle>
+#include <taiTokenPtrButton>
+#include <taiBitBox>
+#include <taiComboBox>
+#include <iComboBox>
+#include <taiDynEnumMember>
+#include <iDataTableEditor>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QBoxLayout>
+#include <QFrame>
+#include <QPushButton>
+#include <QToolButton>
+#include <QToolBar>
+
 
 void taGuiDialog::Initialize() {
   data_host = NULL;

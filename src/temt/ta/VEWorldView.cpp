@@ -14,7 +14,46 @@
 //   Lesser General Public License for more details.
 
 #include "VEWorldView.h"
+#include <VEWorld>
+#include <VEWorldViewPanel>
+#include <VESpaceView>
+#include <VESpace>
+#include <iT3DataViewFrame>
+#include <T3ExaminerViewer>
+#include <T3VEWorld>
+#include <taDataLinkItr>
+#include <taImage>
+#include <NewNetViewHelper>
+#include <T3DataViewFrame>
+#include <taMath_float>
 
+#include <VEObjectView>
+#include <VEObject>
+#include <SoOffscreenRendererQt>
+
+#include <taMisc>
+
+
+#include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoTexture2Transform.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoPointLight.h>
+#include <Inventor/nodes/SoSpotLight.h>
+#include <Inventor/SoInput.h>
+#include <Inventor/SoDB.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/SbViewportRegion.h>
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#include <Inventor/elements/SoGLCacheContextElement.h>
+
+
+
+bool VEWorldView::isVisible() const {
+  return (taMisc::use_gui );
+}
 
 void VEWorldView::Initialize() {
   display_on = true;
@@ -457,7 +496,7 @@ bool VEWorld::GetCameraTaImage(taImage& ta_img, int cam_no) {
 }
 
 
-void VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
+VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
   return VEWorldView::New(this, fr);
 }
 

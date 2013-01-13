@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "DoGFilter.h"
+#include <taMath_float>
+#include <taProject>
+#include <DataTable>
+
+
 
 void DoGFilter::Initialize() {
   filter_width = 4;

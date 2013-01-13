@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taiStreamArgType.h"
+#include <taFiler>
+#include <taBase>
+#include <taifileButton>
+
+#include <css_ta.h>
+
+using namespace std;
+
 
 void taiStreamArgType::Initialize() {
   gf = NULL;

@@ -40,6 +40,9 @@ class T3DataViewFrame; //
 class QImage; // 
 class taImage; // 
 
+class VEWorld; //
+SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
+
 class TA_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)
@@ -94,6 +97,9 @@ public:
   VELightRef    light_0;        // first light to add to scene -- must be set to point to a light in the set of objects for it to be used
   VELightRef    light_1;        // second light to add to scene -- must be set to point to a light in the set of objects for it to be used
 
+  static taBaseRef  last_to_set_ode; // #IGNORE last VE object to set values to ode -- useful for debugging errors
+  static VEWorldRef last_ve_stepped; // #IGNORE last VEWorld to run -- useful for debugging errors
+
   override String       GetDesc() const { return desc; }
   virtual bool  CreateODE();    // #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void  DestroyODE();   // #CAT_ODE destroy world in ode (if created)
@@ -129,6 +135,9 @@ public:
   virtual bool GetCameraTaImage(taImage& ta_img, int camera_no);
   // #CAT_ODE gets camera image from given camera number into given taImage object -- returns false if unsuccessful
 
+  static float SnapVal(float val, float grid_size);
+  // snap value to grid increment
+
   //////////////////////////////////////
   //    IMPL functions
 #ifndef __MAKETA__
@@ -148,6 +157,5 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
 
 #endif // VEWorld_h

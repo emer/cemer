@@ -25,7 +25,7 @@
 class SoFont; // 
 class iVec3f; // 
 class T3Color; // 
-
+class SoComplexity; //
 
 class TA_API T3GraphLine: public T3NodeLeaf {
   // a graph line -- data is GraphColView

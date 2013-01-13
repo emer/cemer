@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiAction.h"
+#include <taGuiActionHelper>
+#include <iMainWindowViewer>
+
+#include <taiMisc>
+
+#include <QUrl>
+#include <QDesktopServices>
+
 
 void taGuiAction::Initialize() {
   m_helper = new taGuiActionHelper(this);

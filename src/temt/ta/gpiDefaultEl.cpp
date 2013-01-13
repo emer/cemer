@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "gpiDefaultEl.h"
+#include <gpiListEls>
+#include <taList_impl>
+#include <taGroup_impl>
+
+#include <taiMisc>
+
+
 
 int gpiDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->name == "el_def") && (td->InheritsFrom(TA_taList_impl)))

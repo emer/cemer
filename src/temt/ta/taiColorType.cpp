@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiColorType.h"
+#include <taiColor>
+
 
 int taiColorType::BidForType(TypeDef* td) {
 //TODO: we can handle other color guys, just subclass

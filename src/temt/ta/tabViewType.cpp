@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "tabViewType.h"
+#include <taiEditDataHost>
+#include <EditDataPanel>
+#include <iDataPanelSet>
+#include <taiEdit>
+
 
 int tabViewType::BidForView(TypeDef* td) {
   return 0; //no taBase implementation for now

@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiDefaultEdit.h"
+#include <taiEditDataHost>
+#include <MemberDef>
+#include <taiMember>
+#include <taiTDefaultMember>
+#include <taBase_List>
+#include <TypeDefault>
+
 
 // this special edit is for defualt instances
 class taiDefaultEditDataHost : public taiEditDataHost {

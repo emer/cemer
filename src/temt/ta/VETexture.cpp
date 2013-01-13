@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "VETexture.h"
+#include <taMisc>
+
+#ifdef TA_USE_INVENTOR
+#include <SoImageEx.h>
+#include <Inventor/nodes/SoTexture2.h>
+#endif
 
 void VETexture::Initialize() {
   mode = MODULATE;

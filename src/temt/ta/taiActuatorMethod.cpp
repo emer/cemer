@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiActuatorMethod.h"
+#include <taiMethButton>
+#include <taiMethMenu>
+#include <iMenuButton>
+
+
 
 int taiActuatorMethod::BidForMethod(MethodDef* md, TypeDef* td) {
   if (md->HasOption("BUTTON") || (md->HasOption("MENU")) ||

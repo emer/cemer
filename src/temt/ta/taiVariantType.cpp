@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiVariantType.h"
+#include <taiVariant>
+#include <QVariant>
+
 
 int taiVariantType::BidForType(TypeDef* td){
   if(td->InheritsFrom(TA_Variant))

@@ -51,7 +51,11 @@ public:
 
   virtual void  AllocForRange(); // allocate values for given range and resolution
 
-  virtual void  Plot(ostream& strm); // generate file for plotting function
+#ifndef __MAKETA__
+  virtual void  Plot(std::ostream& strm); // #BUTTON generate file for plotting function
+#else
+  virtual void  Plot(ostream& strm); // #BUTTON generate file for plotting function
+#endif
 
   virtual void  Convolve(const FunLookup& src, const FunLookup& con);
   // convolve source array with convolve array and put result here

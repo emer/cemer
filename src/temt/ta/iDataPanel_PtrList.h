@@ -18,12 +18,12 @@
 
 // parent includes:
 #include <taPtrList>
-#include <iDataPanel>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iTabView; // #IGNORE
+class iTabView;  //
+class iDataPanel; //
 
 class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:

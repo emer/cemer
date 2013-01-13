@@ -15,9 +15,14 @@
 
 #include "VEWorld.h"
 
+#include <taMisc>
+
+#include <ode/ode.h>
 #include <ode/error.h>
 
-static VEWorld* VE_last_ve_stepped = NULL;
+VEWorldRef VEWorld::last_ve_stepped;
+taBaseRef  VEWorld::last_to_set_ode;
+
 
 // this is the default message guy from ODE
 static void VE_Err_printMessage (int num, const char *msg1, const char *msg2,
@@ -35,11 +40,11 @@ static void VE_Err_printMessage (int num, const char *msg1, const char *msg2,
 extern "C" void VE_ErrorHandler(int errnum, const char* msg, va_list ap) {
   String step_nm = "n/a";
   String set_vals_nm = "n/a";
-  if(VE_last_ve_stepped) {
-    step_nm = VE_last_ve_stepped->name;
+  if(VEWorld::last_ve_stepped) {
+    step_nm = VEWorld::last_ve_stepped->name;
   }
-  if(VE_last_ve_set_vals_to_ode) {
-    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  if(VEWorld::last_to_set_ode) {
+    set_vals_nm = VEWorld::last_to_set_ode->GetName();
   }
 
   VE_Err_printMessage(errnum, "ODE Error", msg, ap); // provide ap stuff
@@ -53,11 +58,11 @@ extern "C" void VE_ErrorHandler(int errnum, const char* msg, va_list ap) {
 extern "C" void VE_DebugHandler(int errnum, const char* msg, va_list ap) {
   String step_nm = "n/a";
   String set_vals_nm = "n/a";
-  if(VE_last_ve_stepped) {
-    step_nm = VE_last_ve_stepped->name;
+  if(VEWorld::last_ve_stepped) {
+    step_nm = VEWorld::last_ve_stepped->name;
   }
-  if(VE_last_ve_set_vals_to_ode) {
-    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  if(VEWorld::last_to_set_ode) {
+    set_vals_nm = VEWorld::last_to_set_ode->GetName();
   }
 
   VE_Err_printMessage(errnum, "ODE INTERNAL ERROR", msg, ap); // provide ap stuff
@@ -71,11 +76,11 @@ extern "C" void VE_DebugHandler(int errnum, const char* msg, va_list ap) {
 extern "C" void VE_MessageHandler(int errnum, const char* msg, va_list ap) {
   String step_nm = "n/a";
   String set_vals_nm = "n/a";
-  if(VE_last_ve_stepped) {
-    step_nm = VE_last_ve_stepped->name;
+  if(VEWorld::last_ve_stepped) {
+    step_nm = VEWorld::last_ve_stepped->name;
   }
-  if(VE_last_ve_set_vals_to_ode) {
-    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  if(VEWorld::last_to_set_ode) {
+    set_vals_nm = VEWorld::last_to_set_ode->GetName();
   }
 
   VE_Err_printMessage(errnum, "ODE Message", msg, ap); // provide ap stuff
@@ -181,7 +186,7 @@ void VEWorld::DestroyODE() {
 }
 
 void VEWorld::Init() {
-  VE_last_ve_set_vals_to_ode = this;
+  last_to_set_ode = this;
 
   if(!world_id || !space_id || space_type != cur_space_type || !cgp_id) CreateODE();
   if(!world_id || !space_id || !cgp_id) return;
@@ -203,7 +208,7 @@ void VEWorld::Init() {
   spaces.Init();
   StructUpdate(false);          // trigger full rebuild!
 
-  VE_last_ve_set_vals_to_ode = NULL; // turn off!
+  last_to_set_ode = NULL; // turn off!
 }
 
 void VEWorld::CurToODE() {
@@ -276,7 +281,7 @@ void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 void VEWorld::Step() {
   if(!world_id || !space_id || !cgp_id) return;
 
-  VE_last_ve_stepped = this;
+  last_ve_stepped = this;
 
   dWorldID wid = (dWorldID)world_id;
   dSpaceID sid = (dSpaceID)space_id;
@@ -295,8 +300,12 @@ void VEWorld::Step() {
 
   CurFromODE();
 
-  VE_last_ve_stepped = NULL;
+  last_ve_stepped = NULL;
 }
 
+float VEWorld::SnapVal(float val, float grid_size) {
+  int ival = (int)((val / grid_size) + .5f);
+  return (float)ival * grid_size;
+}
 
 // in ta_virtenv_qtso.cpp:  QImage VEWorld::GetCameraImage(int cam_no)

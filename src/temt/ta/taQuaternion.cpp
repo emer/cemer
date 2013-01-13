@@ -18,6 +18,8 @@
 #include <float_Matrix>
 #include <taMisc>
 
+#include <ode/ode.h>
+
 void taQuaternion::ToMatrix(taMatrix& mat) const {
   mat.SetGeom(1,4); mat.SetFmVar(s,0); mat.SetFmVar(x,1); mat.SetFmVar(y,2);
   mat.SetFmVar(z,3);
@@ -82,4 +84,12 @@ taQuaternion& taQuaternion::operator /= (float scale) {
   if(scale != 0.0f) { s /= scale; x /= scale; y /= scale; z /= scale; }
   else	      { taMisc::Error("Quaternion -- division by 0 scalar"); }
   return *this;
+}
+
+void taQuaternion::ToODE(dQuaternion dq) const{
+  dq[0] = s; dq[1] = x; dq[2] = y; dq[3] = z;
+}
+
+void taQuaternion::FromODE(const dQuaternion dq) {
+  s = dq[0]; x = dq[1]; y = dq[2]; z = dq[3];
 }

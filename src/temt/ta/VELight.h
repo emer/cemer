@@ -24,24 +24,10 @@
 
 // member includes:
 #include <taVector3f>
+#include <VELightParams>
 
 // declare all other types mentioned but not required to include:
 class SoLight; // 
-
-class TA_API VELightParams : public taOBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
-INHERITED(taOBase)
-public:
-  bool          on;             // is the light turned on?
-  float         intensity;      // #CONDSHOW_ON_on (0-1) how bright is the light
-  taColor       color;          // #CONDSHOW_ON_on color of light
-
-  TA_SIMPLE_BASEFUNS(VELightParams);
-private:
-  void  Initialize();
-  void  Destroy()       { };
-};
-
 
 class TA_API VELight : public VEBody {
   // virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!

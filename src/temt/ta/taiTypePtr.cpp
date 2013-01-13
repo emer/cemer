@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypePtr.h"
+#include <taiData>
+#include <taiTypeDefButton>
+
 
 void taiTypePtr::Initialize() {
   orig_typ = NULL;

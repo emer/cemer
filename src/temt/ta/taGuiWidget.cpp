@@ -14,6 +14,27 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiWidget.h"
+#include <taGuiWidgetHelper>
+#include <taiIncrField>
+#include <taiField>
+#include <taiBitBox>
+#include <taiComboBox>
+#include <taiToggle>
+#include <taGuiDialog>
+#include <taiTokenPtrButton>
+
+#include <iMainWindowViewer>
+#include <iDataTableEditor>
+#include <DataTable>
+#include <DynEnum>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QUrl>
+#include <QDesktopServices>
+
+
 
 void taGuiWidget::Initialize() {
   m_helper = new taGuiWidgetHelper(this);

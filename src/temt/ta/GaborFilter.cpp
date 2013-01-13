@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "GaborFilter.h"
+#include <taProject>
+#include <DataTable>
+#include <taMath_float>
+
+#include <math.h>
+
 
 void GaborFilter::Initialize() {
   x_size = 2;

@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiRegexpDialogMember.h"
+#include <iRegexpDialogPopulator>
+#include <taiRegexpField>
+
+#include <taMisc>
+
 
 int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (md->type->InheritsFrom(&TA_taString) && md->HasOption("REGEXP_DIALOG"))

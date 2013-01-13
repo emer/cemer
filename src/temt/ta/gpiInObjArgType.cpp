@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "gpiInObjArgType.h"
+#include <taList_impl>
+#include <taiGroupElsButton>
+#include <taiListElsButton>
+
+#include <css_ta.h>
 
 int gpiInObjArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&

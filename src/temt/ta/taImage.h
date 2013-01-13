@@ -20,9 +20,11 @@
 #include <taNBase>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QImage>
+#endif
 
 // declare all other types mentioned but not required to include:
-class QImage; // 
 class float_Matrix; // 
 class DataTable; // 
 

@@ -190,14 +190,14 @@
 //    DataTableDelegate //
 //////////////////////////
 
-DataTableDelegate::DataTableDelegate(DataTable* dt_)
-:inherited(NULL)
-{
-  dt = dt_;
-}
+// DataTableDelegate::DataTableDelegate(DataTable* dt_)
+// :inherited(NULL)
+// {
+//   dt = dt_;
+// }
 
-DataTableDelegate::~DataTableDelegate() {
-}
+// DataTableDelegate::~DataTableDelegate() {
+// }
 
 
 //////////////////////////

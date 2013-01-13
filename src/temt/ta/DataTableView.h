@@ -21,11 +21,15 @@
 
 // member includes:
 #include <MinMaxInt>
+#ifndef __MAKETA__
+#include <QPointer>
+#endif
 
 // declare all other types mentioned but not required to include:
 class taDataLink; // 
 class DataTable; // 
 class DataColView; // 
+class iDataTableView_Panel; //
 
 
 class TA_API DataTableView : public T3DataViewMain {

@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiClassType.h"
+#include <taiData>
+#include <taiPolyData>
+#include <taiEditButton>
+
 
 int taiClassType::BidForType(TypeDef* td) {
   if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system

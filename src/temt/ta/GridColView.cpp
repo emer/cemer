@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "GridColView.h"
+#include <DataCol>
+#include <GridTableView>
+#include <T3GridColViewNode>
 
 
 void GridColView::Initialize(){

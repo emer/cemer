@@ -14,6 +14,51 @@
 //   Lesser General Public License for more details.
 
 #include "GridTableView.h"
+#include <GridColView>
+#include <DataTable>
+#include <T3ExaminerViewer>
+#include <T3GridViewNode>
+#include <T3GridColViewNode>
+#include <T3DataViewFrame>
+#include <taDataLinkItr>
+#include <MainWindowViewer>
+#include <NewNetViewHelper>
+#include <T3Misc>
+#include <iGridTableView_Panel>
+#include <iT3DataViewFrame>
+#include <taMath_float>
+#include <taProject>
+
+#include <taMisc>
+
+
+#include <SoScrollBar>
+#include <SoImageEx>
+#include <SoMatrixGrid>
+
+#include <Inventor/SbLinear.h>
+#include <Inventor/fields/SoMFString.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoText2.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/actions/SoRayPickAction.h>
+#include <Inventor/SoPickedPoint.h>
+#include <Inventor/SoEventManager.h>
+
 
 GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
   return GridTableView::New(this, fr);
@@ -75,6 +120,10 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
 
   new_net_view.showFrame();
   return vw;
+}
+
+iGridTableView_Panel* GridTableView::lvp() {
+  return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;
 }
 
 void GridTableView::Initialize() {
@@ -413,7 +462,7 @@ void GridTableView::CalcViewMetrics() {
   // on row/col constraints (units are 1 char, so that should be easy):
   // note that scale is in units of height, so col width needs to be converted to height
 
-  float col_font_scale = t3Misc::char_ht_to_wd_pts / tot_wd_raw;
+  float col_font_scale = T3Misc::char_ht_to_wd_pts / tot_wd_raw;
   //  float row_font_scale = (row_height / row_height_raw);
   float row_font_scale = row_height;
 
@@ -671,7 +720,7 @@ void GridTableView::RenderHeader() {
   // margin and baseline adj
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
-  float base_adj = (head_height * t3Misc::char_base_fract);
+  float base_adj = (head_height * T3Misc::char_base_fract);
   tr->translation.setValue(0.0f, - (head_height - base_adj), -gr_mg_sz); // set back just a hair
 
   int col_idx = 0;
@@ -718,14 +767,14 @@ void GridTableView::RenderHeader() {
       SoText2* txt = new SoText2;
       txt->justification = SoText2::CENTER;
       colsep->addChild(txt);
-      int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
+      int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
       txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
     }
     else {
       SoAsciiText* txt = new SoAsciiText;
       txt->justification = SoAsciiText::CENTER;
       colsep->addChild(txt);
-      int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
+      int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
       txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
     }
     // light aqua transparent background
@@ -772,7 +821,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
   // following metrics will be adjusted for mat font scale, when necessary
-  float txt_base_adj = text_ht * t3Misc::char_base_fract;
+  float txt_base_adj = text_ht * T3Misc::char_base_fract;
 
   float row_ht = row_height - gr_mg_sz2;
   float mat_rot_rad = mat_rot * taMath_float::rad_per_deg;
@@ -916,7 +965,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         x_offs = col_wd - gr_mg_sz2;
         el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
       } else {
-        int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
+        int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
         el = dc->GetValAsString(act_idx).elidedTo(max_chars);
       }
       tr->translation.setValue(x_offs, -y_offs, 0.0f);

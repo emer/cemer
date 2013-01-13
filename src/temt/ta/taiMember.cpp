@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiMember.h"
+#include <taBase>
+#include <MemberDef>
+#include <taiData>
+#include <taiDataDeck>
+#include <taiDataLink>
+#include <taiBitBox>
+#include <EnumDef>
+#include <taiEnumType>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 // macro for doing safe casts of types -- helps to uncover errors
 // when the actual class is not the expected class
@@ -32,7 +45,7 @@ void taiMember::EndScript(const void* base) {
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!
-  taMisc::record_script << "}" << endl;
+  taMisc::record_script << "}" << "\n";
 }
 
 bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {

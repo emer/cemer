@@ -15,6 +15,12 @@
 
 #include "tabMisc.h"
 
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taiMisc>
+
+
 taRootBase* tabMisc::root = NULL;
 taBase*     tabMisc::cur_undo_save_top = NULL;
 taBase*     tabMisc::cur_undo_mod_obj = NULL;

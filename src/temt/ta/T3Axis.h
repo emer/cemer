@@ -20,12 +20,14 @@
 #include <T3NodeLeaf>
 
 // member includes:
+#include <iVec3f>
+
 
 // declare all other types mentioned but not required to include:
 class SoFont; // 
 class iVec3f; // 
 class SbRotation; // 
-
+class SoComplexity; //
 
 class TA_API T3Axis: public T3NodeLeaf {
   // dataview is the GraphAxisView

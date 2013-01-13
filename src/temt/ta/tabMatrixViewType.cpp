@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "tabMatrixViewType.h"
+#include <iMatrixPanel>
+
 
 
 int tabMatrixViewType::BidForView(TypeDef* td) {

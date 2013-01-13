@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiFileDialogMember.h"
+#include <taiFileDialogField>
+
 
 int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (md->type->InheritsFrom(&TA_taString) && md->OptionAfter("FILE_DIALOG_").nonempty())

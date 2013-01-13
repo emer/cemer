@@ -14,6 +14,52 @@
 //   Lesser General Public License for more details.
 
 #include "taRootBase.h"
+#include <taRootBaseAdapter>
+#include <taFiler>
+#include <taPlugin>
+#include <taPluginInst>
+#include <taPluginDep>
+#include <IPlugin>
+#include <taPlugins>
+#include <TemtServer>
+#include <taiEdit>
+#include <taApplication>
+#include <ViewColor_List>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+#include <ConsoleDockViewer>
+#include <iNetworkAccessManager>
+#include <taGenDoc>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+#include <taiMisc>
+
+#include <QPointer>
+#include <QFileInfo>
+#include <QApplication>
+#include <QDir>
+#include <QDesktopServices>
+#include <QPixmap>
+#include <QIcon>
+#include <QTimer>
+#include <QGLFormat>
+
+#include <css_machine.h>
+#include <css_qtconsole.h>
+
+#ifdef TA_USE_INVENTOR
+  #include <Quarter/Quarter.h>
+  #include <SoImageEx.h>
+  #include <Inventor/SbImage.h>
+  #include <Inventor/nodes/SoTexture2.h>
+  #include <Inventor/SbLinear.h>
+#endif
+#include <ode/ode.h>
+
+using namespace std;
+
 
 int taRootBase::milestone;
 TypeDef* taRootBase::root_type;
@@ -1579,7 +1625,9 @@ bool taRootBase::Startup_ProcessArgs() {
     run_startup = false;
   }
   if(taMisc::CheckArgByName("Help")) {
-    taMisc::HelpMsg();
+    String hmsg;
+    taMisc::HelpMsg(hmsg);
+    cout << hmsg << endl;
     run_startup = false;
   }
   if(taMisc::CheckArgByName("GenDoc")) {

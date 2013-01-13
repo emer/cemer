@@ -14,7 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "VEObjectView.h"
+#include <VEObject>
+#include <T3VEObject>
+#include <VEObjCarouselView>
+#include <VEBodyView>
+#include <VEJointView>
 
+#include <taMisc>
+
+
+
+bool VEObjectView::isVisible() const {
+  return (taMisc::use_gui );
+}
 
 void VEObjectView::Initialize(){
   data_base = &TA_VEObject;

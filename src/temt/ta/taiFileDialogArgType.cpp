@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiFileDialogArgType.h"
+#include <taiFileDialogField>
+
+#include <css_basic_types.h>
+
 
 void taiFileDialogArgType::Initialize() {
 }

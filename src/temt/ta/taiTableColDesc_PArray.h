@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taPlainArray>
+#include <taiTableColDesc>
 
 // member includes:
 

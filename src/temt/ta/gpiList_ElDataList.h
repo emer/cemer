@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taPtrList>
+#include <gpiList_ElData>
 
 // member includes:
 

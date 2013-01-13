@@ -20,8 +20,11 @@
 #include <taiElBase>
 
 // member includes:
+#include <taiActions>
 
 // declare all other types mentioned but not required to include:
+class taList_impl; //
+
 
 class TA_API gpiListEls : public taiElBase {
   // #OBSOLETE menu of elements in the list
@@ -36,7 +39,7 @@ public:
 
   QWidget*      GetRep();
   void          GetImage(taList_impl* base_lst, taBase* it);
-  taBase*               GetValue();
+  taBase*       GetValue();
 
   gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk

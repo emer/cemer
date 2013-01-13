@@ -17,7 +17,7 @@
 #define gpiListLinkEditButton_h 1
 
 // parent includes:
-#include <taiEditButton>
+#include <gpiListEditButton>
 
 // member includes:
 

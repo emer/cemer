@@ -84,6 +84,10 @@
 //#include <Inventor/nodes/SoCapsule.h>
 //#include <Inventor/nodes/SoSubNodeP.h>
 
+#ifdef _WINDOWS
+# define _USE_MATH_DEFINES
+#endif
+
 #include <Inventor/SbCylinder.h>
 #include <Inventor/SbPlane.h>
 #include <Inventor/SoPickedPoint.h>

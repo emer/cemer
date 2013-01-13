@@ -24,20 +24,22 @@
  *
 \**************************************************************************/
 
-#ifdef _WINDOWS
-# define _USE_MATH_DEFINES
-#endif
+
+// parent includes:
+#include "ta_def.h"
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoCylinder.h>
 #endif
 
-#include "ta_def.h"
-#include "ta_TA_type_WRAPPER.h"
+// member includes:
+
+// declare all other types mentioned but not required to include:
 
 class SoCylinder; // #IGNORE
 class SoGetPrimitiveCountAction; // #IGNORE
 class SoAction;  // #IGNORE
 class SoGLRenderAction; // #IGNORE
+
 
 class TA_API SoCapsule : public SoCylinder {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a cylinder with spheres at the ends

@@ -20,13 +20,17 @@
 #include <T3DataViewMain>
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPointer>
+#endif
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
 class T3DataViewFrame; // 
 class QImage; // 
 class iT3DataViewFrame; // 
-
+class VEWorldViewPanel; //
+class SoOffscreenRendererQt; //
 
 class TA_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
@@ -68,7 +72,7 @@ public:
   virtual QImage	GetCameraImage(int cam_no);
   // get the output of the given camera number (currently 0 or 1)
 
-  bool			isVisible() const { return (taMisc::use_gui ); }
+  bool			isVisible() const;
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   override void		BuildAll();

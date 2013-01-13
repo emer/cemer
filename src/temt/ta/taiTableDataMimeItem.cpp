@@ -14,6 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "taiTableDataMimeItem.h"
+#include <taiMimeSource>
+#include <taiTabularDataMimeItem>
+#include <taiTabularDataMimeFactory>
+#include <CellRange>
+#include <DataTable>
+
+#include <taMisc>
+
+#include <sstream>
+
+using namespace std;
+
 
 taiMimeItem* taiTableDataMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)

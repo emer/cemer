@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "VESpaceView.h"
+#include <VESpace>
+#include <T3VESpace>
+#include <VEStaticView>
+
+#include <taMisc>
+
+
+bool VESpaceView::isVisible() const {
+  return (taMisc::use_gui );
+}
 
 
 void VESpaceView::Initialize(){

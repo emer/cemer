@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "gpiTAPtrArgType.h"
+#include <taList_impl>
+
+#include <taMisc>
 
 int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&

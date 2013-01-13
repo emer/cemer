@@ -15,6 +15,9 @@
 
 #include "ImageProcCall.h"
 
+#include <taMisc>
+
+
 void ImageProcCall::Initialize() {
   min_type = &TA_taImageProc;
   object_type = &TA_taImageProc;

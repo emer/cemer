@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgType.h"
+#include <taBase>
+#include <Variant>
+#include <taiBoolType>
+
+#include <css_machine.h>
+#include <css_basic_types.h>
+#include <css_ta.h>
 
 taiArgType::taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td)
 : taiType(td) {

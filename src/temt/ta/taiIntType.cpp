@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiIntType.h"
+#include <taiIncrField>
+#include <MemberDef>
+
 
 int taiIntType::BidForType(TypeDef* td){
 //NOTE: we can't properly handle uints, so we don't bid for them

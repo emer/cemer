@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypePtrMember.h"
+#include <taiData>
+#include <taiTypeDefButton>
+
+#include <taMisc>
+
 
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) &&
