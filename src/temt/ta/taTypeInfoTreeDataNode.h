@@ -20,6 +20,8 @@
 #include <taiTreeDataNode>
 
 // member includes:
+#include <TypeItem>
+#include <taTypeInfoDataLink>
 
 // declare all other types mentioned but not required to include:
 
@@ -27,7 +29,7 @@
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
   TypeItem*             data() {return ((taTypeInfoDataLink*)m_link)->data();}

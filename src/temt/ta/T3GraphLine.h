@@ -20,6 +20,7 @@
 #include <T3NodeLeaf>
 
 // member includes:
+#include <iVec3f>
 
 // declare all other types mentioned but not required to include:
 class SoFont; // 

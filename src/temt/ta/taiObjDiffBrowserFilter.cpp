@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjDiffBrowserFilter.h"
+#include <iLineEdit>
+
+#include <taiMisc>
+
+#include <QCheckBox>
+#include <QVBoxLayout>
+#include <QPushButton>
+
 
 taiObjDiffBrowserFilter* taiObjDiffBrowserFilter::New(int font_type,
                                                       QWidget* par_window_) {

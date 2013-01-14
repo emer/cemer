@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiProgLibElsButton.h"
+#include <String_Array>
+#include <ProgLib>
+#include <taiItemChooser>
+
+#include <QTreeWidgetItem>
+
 
 taiProgLibElsButton::taiProgLibElsButton(TypeDef* typ_, IDataHost* host, taiData* par,
                                          QWidget* gui_parent_, int flags_)

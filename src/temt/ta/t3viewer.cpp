@@ -52,6 +52,7 @@
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
+#include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
 #include <Inventor/events/SoButtonEvent.h>
@@ -60,9 +61,10 @@
 //#include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoGroup.h>
 #include <Inventor/nodes/SoNode.h>
+#include <Inventor/SoOutput.h>
+#include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/SoEventManager.h>

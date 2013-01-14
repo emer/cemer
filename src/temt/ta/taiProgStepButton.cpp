@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiProgStepButton.h"
+#include <taProject>
+#include <MethodDef>
+#include <taiActions>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QRadioButton>
+#include <QStackedWidget>
+#include <QToolBar>
+#include <QGridLayout>
+#include <QToolButton>
+
 
 taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)

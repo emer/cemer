@@ -17,10 +17,15 @@
 #define iDataPanelSetButton_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QToolButton>
+#endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iDataPanelSet;
 
 
 class TA_API iDataPanelSetButton: public QToolButton {

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "iTabBarEx.h"
+#include <iTabBarBase>
+#include <iTabWidget>
+
 
 iTabBarEx::iTabBarEx(iTabWidget* parent)
 :inherited(parent)

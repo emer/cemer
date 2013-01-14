@@ -20,8 +20,10 @@
 #include <tabListTreeDataNode>
 
 // member includes:
+#include <tabGroupDataLink>
 
 // declare all other types mentioned but not required to include:
+class taGroup_impl; //
 
 
 class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {

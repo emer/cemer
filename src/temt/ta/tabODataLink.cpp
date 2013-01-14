@@ -15,6 +15,10 @@
 
 #include "tabODataLink.h"
 
+#include <tabDefChildTreeDataNode>
+#include <taiViewType>
+
+
 tabODataLink::tabODataLink(taOBase* data_)
   : inherited((taBase*)data_, *(data_->addr_data_link()))
 {

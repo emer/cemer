@@ -17,6 +17,7 @@
 #define gzstream_h 1
 
 // parent includes:
+#include "ta_def.h"
 #include <zlib.h>
 
 // member includes:

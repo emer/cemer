@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "tabGroupTreeDataNode.h"
+#include <taGroup_impl>
+#include <taiViewType>
+
+#include <taMisc>
+
 
 tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)

@@ -14,7 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjDiffBrowser.h"
+#include <taObjDiff_List>
+#include <taiObjDiffBrowserFilter>
+#include <taBase>
+#include <MemberDef>
+#include <ViewColor_List>
 
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QTreeWidget>
 
 taiObjDiffBrowser* taiObjDiffBrowser::New(taObjDiff_List* diffs,
                                           int font_type, QWidget* par_window_) {

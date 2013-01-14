@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ISelectable_PtrList.h"
+#include <taiDataLink>
+#include <TypeDef>
+
 
 taPtrList_impl* ISelectable_PtrList::insts;
 

@@ -14,9 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "iMatrixPanel.h"
+#include <iMatrixEditor>
+#include <iMatrixTableView>
+#include <iMainWindowViewer>
 
 
-void iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
+
+iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
   me = NULL;

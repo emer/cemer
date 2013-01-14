@@ -15,6 +15,9 @@
 
 #include "iTabBarBase.h"
 
+#include <taiMisc>
+
+
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
 }
 

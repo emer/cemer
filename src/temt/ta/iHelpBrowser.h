@@ -25,11 +25,14 @@
 // member includes:
 #include <QWebPage>
 #include <ContextFlag>
+#include <taString>
+
 
 // declare all other types mentioned but not required to include:
 class QProgressBar; //
 class QWebView; //
 class QNetworkReply; //
+class TypeSpace; //
 
 
 class TA_API iHelpBrowser: public QMainWindow {

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "gpiSubEditButton.h"
+#include <taGroup_impl>
+
 
 gpiSubEditButton::gpiSubEditButton
 (void* base, const char* nm, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)

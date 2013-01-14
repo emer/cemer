@@ -20,6 +20,7 @@
 #include <iFrameViewer>
 
 // member includes:
+#include <BrowseViewer>
 
 // declare all other types mentioned but not required to include:
 class iTreeView; //

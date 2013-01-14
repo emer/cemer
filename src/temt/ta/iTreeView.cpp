@@ -18,6 +18,27 @@
 #include <iMainWindowViewer>
 #include <String_PArray>
 #include <iTreeViewItem>
+#include <taDataLinkItr>
+#include <taiDataLink>
+#include <taiTypeDefButton>
+#include <taProject>
+#include <taiClipData>
+#include <taiObjectMimeFactory>
+#include <iBrowseHistory>
+#include <iPoint>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QHeaderView>
+#include <QTimer>
+#include <QApplication>
+#include <QScrollBar>
+
+
+
 
 const String iTreeView::opt_treefilt("TREEFILT_");
 
@@ -46,7 +67,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
-  m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+  m_show = (TypeItem::ShowMembs)(TypeItem::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
   italic_font = NULL;
   in_mouse_press = 0;
@@ -712,8 +733,9 @@ void iTreeView::setDecorateEnabled(bool value) {
   m_decorate_enabled = value;
 }
 
-void iTreeView::setShow(taMisc::ShowMembs value) {
+void iTreeView::setShow(TypeItem::ShowMembs value) {
   if (m_show == value) return;
+  m_show = value;
   Show_impl();
 }
 

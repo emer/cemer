@@ -14,12 +14,29 @@
 //   Lesser General Public License for more details.
 
 #include "T3ExaminerViewer.h"
+#include <iT3ViewspaceWidget>
+#include <T3QuarterWidget>
+#include <iT3DataViewFrame>
+#include <T3DataViewFrame>
+#include <iContextMenuButton>
 
 #include <QtThumbWheel>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QLabel>
+#include <QMenu>
+#include <QPrinter>
+#include <QPrintDialog>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <Inventor/SoEventManager.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
+
 
 #include "pick.xpm"
 #include "view.xpm"
@@ -29,6 +46,7 @@
 #include "view_all.xpm"
 #include "print.xpm"
 #include "snapshot.xpm"
+
 
 #define WHEEL_LENGTH 60         // long axis
 #define WHEEL_WIDTH 20          // short axis

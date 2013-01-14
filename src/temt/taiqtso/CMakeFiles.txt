@@ -16,10 +16,7 @@ set(taiqtso_HEADS_MOC
   iCookieJar.h
   iDialog.h
   iDimEdit.h
-  iStripeWidget.h
   iEditGrid.h
-  iFlowLayout.h
-  iFormLayout.h
   iLabel.h
   iLineEdit.h
   iTextEditDialog.h
@@ -31,7 +28,6 @@ set(taiqtso_HEADS_MOC
   iSpinBox.h
   iTextBrowser.h
   iTextEdit.h
-  iTreeWidgetItem.h
   iTreeWidget.h
   NumberBar.h
   NumberedTextView.h
@@ -39,12 +35,20 @@ set(taiqtso_HEADS_MOC
   QConsole.h
 )
 
-# all headers
-set(taiqtso_HEADS
+set(taiqtso_HEADS_NOMOC
   taiqtso_def.h
   SoPtr.h
   AutoSaver.h
   SoOffscreenRendererQt.h
+  iStripeWidget.h
+  iFlowLayout.h
+  iFormLayout.h
+  iTreeWidgetItem.h
+)
+
+# all headers
+set(taiqtso_HEADS
+  ${taiqtso_HEADS_NOMOC}
   ${taiqtso_HEADS_MOC}
 )
 

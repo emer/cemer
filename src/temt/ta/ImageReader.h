@@ -23,6 +23,7 @@
 #include <taVector2i>
 
 // declare all other types mentioned but not required to include:
+class rgb_Matrix; //
 
 
 class TA_API ImageReader: public DataBlock {

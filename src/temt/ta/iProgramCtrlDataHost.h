@@ -21,6 +21,7 @@
 #include <IRefListClient>
 
 // member includes:
+#include <taBase_RefList>
 
 // declare all other types mentioned but not required to include:
 class Program;

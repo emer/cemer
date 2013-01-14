@@ -14,6 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "ISelectableHost.h"
+#include <SelectableHostHelper>
+#include <taiActions>
+#include <taiMimeSource>
+#include <taiClipData>
+#include <taBase_RefList>
+#include <taProject>
+#include <taiDataLink>
+#include <iMainWindowViewer>
+
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <css_machine.h>
+#include <css_basic_types.h>
+#include <css_qtdialog.h>
+#include <css_ta.h>
+
 
 void ISelectableHost::ItemDeleting(ISelectable* item) {
   taPtrList_impl* insts = ISelectable_PtrList::insts; // cache for convenience

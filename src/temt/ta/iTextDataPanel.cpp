@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "iTextDataPanel.h"
+#include <iTextEdit>
+#include <taiClipData>
+#include <iMainWindowViewer>
+
+
 
 iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
 :inherited(dl_)

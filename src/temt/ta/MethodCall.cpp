@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "MethodCall.h"
+#include <MethodDef>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 
 void MethodCall::Initialize() {

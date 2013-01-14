@@ -17,11 +17,20 @@
 #define iTreeSearch_h 1
 
 // parent includes:
+#include "ta_def.h"
+#ifndef __MAKETA__
+#include <QWidget>
+#endif
 
 // member includes:
+#ifndef __MAKETA__
+#include <QList>
+#endif
 
 // declare all other types mentioned but not required to include:
-
+class iLineEdit;
+class iTreeView;
+class iTreeViewItem;
 
 class TA_API iTreeSearch: public QWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a tree view -- controls searching in this view

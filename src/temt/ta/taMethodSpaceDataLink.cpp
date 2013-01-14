@@ -14,4 +14,65 @@
 //   Lesser General Public License for more details.
 
 #include "taMethodSpaceDataLink.h"
+#include <MethodSpace>
+#include <MethodDef>
+#include <taiViewType>
+#include <taBase>
+#include <taTypeInfoDataLink>
+
+
+taMethodSpaceDataLink::taMethodSpaceDataLink(MethodSpace* data_)
+:inherited(TypeItem::TIK_METHODSPACE, data_, data_->data_link)
+{
+}
+
+taiDataLink* taMethodSpaceDataLink::GetListChild(int itm_idx) {
+  MethodDef* el = static_cast<MethodDef*>(data()->PosSafeEl(itm_idx)); 
+  if (el == NULL) return NULL;
+  
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_MethodDef);
+  return dl;
+}
+
+int taMethodSpaceDataLink::NumListCols() const {
+  return 3;
+}
+
+const KeyString taMethodSpaceDataLink::key_rval("rval");
+const KeyString taMethodSpaceDataLink::key_params("params");
+
+String taMethodSpaceDataLink::GetColHeading(const KeyString& key) const {
+  static String meth_name_("Method Name");
+  static String rval_("rval");
+  static String params_("Params");
+  if (key == taBase::key_name) return meth_name_;
+  else if (key == key_rval) return rval_;
+  else if (key == key_params) return params_;
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString taMethodSpaceDataLink::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return taBase::key_name;
+  case 1: return key_rval;
+  case 2: return key_params;
+  default: return _nilKeyString;
+  }
+}
+
+String taMethodSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& key,
+  int itm_idx) const 
+{
+  String rval;
+  if (child != NULL) {
+    MethodDef* el = static_cast<MethodDef*>(static_cast<taTypeInfoDataLink*>(child)->data());
+    if (key == taBase::key_name) {
+      if (el->is_static) rval = " static "; //note: sleazy leading space to sort before non-static
+      rval += el->name; 
+    } else if (key == key_rval) rval = el->type->Get_C_Name();
+    else if (key == key_params) rval = el->ParamsAsString();
+    else return inherited::ChildGetColText(child, key, itm_idx);
+  }
+  return rval;
+}
 

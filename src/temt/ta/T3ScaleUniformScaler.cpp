@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "T3ScaleUniformScaler.h"
+#include <T3Misc>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoTranslation.h>
+
 
 SO_NODE_SOURCE(T3ScaleUniformScaler);
 
@@ -27,14 +33,14 @@ T3ScaleUniformScaler::T3ScaleUniformScaler(bool active, float half_size, float c
 
   SoMaterial* mat = new SoMaterial;
   if(active) {
-    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-    mat->transparency.setValue(drag_activ_clr_tr);
+    mat->diffuseColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+    mat->emissiveColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+    mat->transparency.setValue(T3Misc::drag_activ_clr_tr);
   }
   else {
-    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-    mat->transparency.setValue(drag_inact_clr_tr);
+    mat->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    mat->transparency.setValue(T3Misc::drag_inact_clr_tr);
   }
   addChild(mat);
 

@@ -33,6 +33,7 @@ class TypeDef; //
 class taiDataLink; // 
 class taDataLink; // 
 class taiBitBox; //
+class iMainWindowViewer; //
 
 
 class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {

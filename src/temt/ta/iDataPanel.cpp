@@ -15,6 +15,14 @@
 
 #include "iDataPanel.h"
 
+#include <taiMisc>
+
+
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QSCrollBar>
+
+
 iDataPanel::iDataPanel(taiDataLink* dl_)
 :QFrame(NULL)
 {

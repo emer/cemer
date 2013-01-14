@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iUserDataDataHost.h"
+#include <UserDataDelegate>
+#include <UserDataItem>
+#include <UserDataItem_List>
+#include <MemberDef>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QVBoxLayout>
+
+
 
 iUserDataDataHost::iUserDataDataHost(void* base, TypeDef* td,
   bool read_only_, QObject* parent)
@@ -124,7 +137,7 @@ void iUserDataDataHost::Constr_Data_Labels() {
       int item_flags = 0;
       UserDataItemBase* item_ = grp->FastEl(i);
       // normally don't show invisible guys, unless HIDDEN is selected
-      if (!item_->isVisible() && (show() & taMisc::NO_HIDDEN)) continue;
+      if (!item_->isVisible() && (show() & TypeItem::NO_HIDDEN)) continue;
 
       tw->setRowCount(row + 1);
       QTableWidgetItem* twi = NULL;

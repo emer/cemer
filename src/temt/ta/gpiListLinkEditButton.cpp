@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "gpiListLinkEditButton.h"
+#include <taiMethod>
+#include <taiMethodData>
+
 
 gpiListLinkEditButton::gpiListLinkEditButton
 (void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)

@@ -17,13 +17,16 @@
 #define taiClipData_h 1
 
 // parent includes:
+#include "ta_def.h"
 #ifndef __MAKETA__
 #include <QMimeData>
 #endif
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+
 /*
   The clipboard/Drag-Drop model of PDP involves single or lists of data items that can be
   transferred to/from the clipboard, or transfered via drag/drop (dragdrop is mostly the

@@ -16,6 +16,9 @@
 #include "DirectoryCatalog.h"
 
 
+#include <QDir>
+
+
 void DirectoryCatalog::Initialize() {
   m_dir = NULL;
   options = CO_Files;

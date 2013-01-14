@@ -14,6 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "iTabViewer.h"
+#include <iTabView>
+#include <iFrameViewer>
+#include <PanelViewer>
+#include <FrameViewer>
+#include <iMainWindowViewer>
+#include <ISelectableHost>
+#include <MainWindowViewer>
+
+
+#include <QVBoxLayout>
+
+
 
 iTabViewer::iTabViewer(PanelViewer* viewer_, QWidget* parent)
   : inherited(viewer_, parent)

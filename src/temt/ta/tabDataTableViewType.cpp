@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "tabDataTableViewType.h"
+#include <iDataTablePanel>
+
 
 
 int tabDataTableViewType::BidForView(TypeDef* td) {

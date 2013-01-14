@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "DataTableModel.h"
+#include <DataTable>
+#include <taProject>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <taiqtso_def.h> // COLOR_RO_BACKGROUND
+#include <QColor>
 
 
 DataTableModel::DataTableModel(DataTable* dt_)

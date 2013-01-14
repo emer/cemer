@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iSelectEditDataHost2.h"
+#include <SelectEdit>
+#include <SelectEditDelegate>
+#include <taiEditTableWidget>
+#include <iFlowLayout>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QHeaderView>
 
 iSelectEditDataHost2::iSelectEditDataHost2(void* base, TypeDef* td,
   bool read_only_, QObject* parent)

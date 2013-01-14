@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "T3TransformBoxDragger.h"
+#include <T3Misc>
+#include <T3TransformBoxRotatorRotator>
+#include <T3Translate2Translator>
+#include <T3ScaleUniformScaler>
+
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/engines/SoCalculator.h>
+
 
 SO_NODE_SOURCE(T3TransformBoxDragger);
 

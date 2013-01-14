@@ -14,7 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iViewPanelFrame.h"
+#include <iViewPanelSet>
+#include <HiLightButton>
+
 #include <taMisc>
+#include <taiMisc>
+
+#include <QApplication>
+#include <QHBoxLayout>
+
 
 TypeItem::ShowMembs iViewPanelFrame::show() const {
   return taMisc::show_gui;

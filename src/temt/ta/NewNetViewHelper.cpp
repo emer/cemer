@@ -14,9 +14,14 @@
 //   GNU General Public License for more details.
 
 #include "NewNetViewHelper.h"
-#include "t3viewer.h" // T3DataViewFrame, T3DataView, T3DataViewer
-#include "ta_base.h" // taBase
-#include "ta_type.h" // taMisc::Error, Choice
+#include <T3DataViewFrame>
+#include <T3DataView>
+#include <T3DataViewer>
+#include <taBase>
+
+#include <taMisc>
+#include <taiMisc>
+
 
 // Ctor
 NewNetViewHelper::NewNetViewHelper(

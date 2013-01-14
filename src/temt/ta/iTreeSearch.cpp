@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iTreeSearch.h"
+#include <iLineEdit>
+#include <taString>
+#include <iTreeView>
+#include <iTreeViewItem>
+#include <taBase_PtrList>
+#include <taiDataLink>
+
+
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QToolBar>
+#include <QAction>
+
 
 void iTreeSearch::Constr() {
   QHBoxLayout* lay = new QHBoxLayout(this);

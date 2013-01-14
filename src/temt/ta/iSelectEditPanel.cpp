@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iSelectEditPanel.h"
+#include <iSelectEditDataHost>
+#include <iSelectEditDataHost2>
+#include <iDataPanelSet>
+
+#include <taMisc>
+#include <taiMisc>
 
 
 iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)

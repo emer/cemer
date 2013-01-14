@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiClipData.h"
+#include <taiMimeFactory>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 const String taiClipData::tacss_common("tacss/common");
 

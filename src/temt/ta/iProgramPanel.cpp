@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramPanel.h"
+#include <Program>
+#include <iProgramEditor>
+#include <iTreeView>
+#include <iTreeViewItem>
+#include <iMainWindowViewer>
+#include <ProgramToolBar>
+#include <taDataLinkItr>
+#include <iDataPanelSet>
+
+#include <taMisc>
+
+#include <QApplication>
+
 
 iProgramPanel::iProgramPanel(taiDataLink* dl_)
 :inherited(dl_)

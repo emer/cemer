@@ -14,7 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "FunLookupND.h"
+#include <Tokenizer>
 
+#include <taMisc>
+
+#include <math.h>
+
+using namespace std;
 
 void FunLookupND::Initialize() {
   n_dims = 0;

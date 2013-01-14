@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class MethodSpace;
 
 
 class TA_API taMethodSpaceDataLink: public taTypeSpaceDataLink_Base {

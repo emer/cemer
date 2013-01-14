@@ -14,8 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "iSelectEditDataHostBase.h"
+#include <SelectEdit>
+#include <taiMethod>
+#include <taiAction>
+#include <taiMethodData>
 
-void iSelectEditDataHostBase::iSelectEditDataHostBase(void* base, TypeDef* td,
+#include <taMisc>
+#include <taiMisc>
+
+#include <QPushButton>
+
+
+iSelectEditDataHostBase::iSelectEditDataHostBase(void* base, TypeDef* td,
   bool read_only_, QObject* parent)
 :inherited(base, td, read_only_, false, parent)
 {

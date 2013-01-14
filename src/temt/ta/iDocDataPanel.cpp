@@ -14,6 +14,25 @@
 //   Lesser General Public License for more details.
 
 #include "iDocDataPanel.h"
+#include <taDoc>
+#include <iLineEdit>
+#include <iNetworkAccessManager>
+#include <iHelpBrowser>
+#include <iTextBrowser>
+#include <iWebView>
+#include <iMainWindowViewer>
+#include <taProject>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QProgressBar>
+#include <QWebView>
+#include <QWebFrame>
+#include <QDesktopServices>
+
 
 iDocDataPanel::iDocDataPanel()
 :inherited(NULL) // usual case: we dynamically set the link, via setDoc

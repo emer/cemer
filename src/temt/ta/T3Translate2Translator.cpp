@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "T3Translate2Translator.h"
+#include <T3Misc>
+#include <taMath_float>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoCone.h>
+#include <Inventor/nodes/SoTransform.h>
+
 
 SO_NODE_SOURCE(T3Translate2Translator);
 
@@ -28,14 +37,14 @@ T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float
   // all this just for the material!
   SoMaterial* mat = new SoMaterial;
   if(active) {
-    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-    mat->transparency.setValue(drag_activ_clr_tr);
+    mat->diffuseColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+    mat->emissiveColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+    mat->transparency.setValue(T3Misc::drag_activ_clr_tr);
   }
   else {
-    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-    mat->transparency.setValue(drag_inact_clr_tr);
+    mat->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    mat->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+    mat->transparency.setValue(T3Misc::drag_inact_clr_tr);
   }
   addChild(mat);
 
@@ -83,7 +92,7 @@ T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float
   SoSeparator* yc2s = new SoSeparator;
   SoTransform* yc2t = new SoTransform;
   yc2t->translation.setValue(0.0f, -tr_val, 0.0f);
-  yc2t->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), (float)PI);
+  yc2t->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), taMath_float::pi);
   yc2s->addChild(yc2t);
   yc2s->addChild(cc);
   addChild(yc2s);

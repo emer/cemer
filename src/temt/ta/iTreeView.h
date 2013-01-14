@@ -23,7 +23,11 @@
 #endif
 
 // member includes:
+#ifndef __MAKETA__
 #include <QPointer>
+#endif
+#include <TypeItem>
+
 
 // declare all other types mentioned but not required to include:
 class iMainWindowViewer;
@@ -101,7 +105,7 @@ public:
   int                   maxColChars(int col); // value if set, -1 otherwise
   void                  setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
   TypeItem::ShowMembs   show() const {return m_show;}
-  virtual void          setShow(int value);
+  virtual void          setShow(TypeItem::ShowMembs value);
   const String          showContext() const {return m_show_context;}
   virtual void          setShowContext(const String& value)
     {m_show_context = value;}

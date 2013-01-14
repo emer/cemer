@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiTreeDataNode.h"
+#include <taiDataLink>
+#include <taiViewType>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
@@ -50,7 +57,7 @@ void taiTreeDataNode::CreateChildren_impl() {
     if (tree->HasFilter(md->type)) continue;
     if (tree->HasFilter(md)) continue; */
     // we make everything that isn't NO_SHOW, then hide if not visible now
-    if (!md->ShowMember(taMisc::ALL_MEMBS, TypeItem::SC_TREE)) continue;
+    if (!md->ShowMember(TypeItem::ALL_MEMBS, TypeItem::SC_TREE)) continue;
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
@@ -77,7 +84,7 @@ void taiTreeDataNode::willHaveChildren_impl(bool& will) const {
     //NOTE: this code is only valid for the **current** view state
     // lazy children would need to be rerun for all nodes if view state changed
     // we make everything that isn't NO_SHOW, then hide if not visible now
-    if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_TREE)) continue;
+    if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, TypeItem::SC_TREE)) continue;
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     will = true;
     break;

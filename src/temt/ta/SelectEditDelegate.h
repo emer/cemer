@@ -22,7 +22,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iSelectEDitDataHost2;
+class iSelectEditDataHost2;
+class SelectEdit;
+class EditMbrItem;
+
 
 class TA_API SelectEditDelegate: public taiDataDelegate {
 INHERITED(taiDataDelegate)

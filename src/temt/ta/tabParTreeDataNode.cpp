@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "tabParTreeDataNode.h"
+#include <taiViewType>
+
+#include <taMisc>
+
 
 tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,

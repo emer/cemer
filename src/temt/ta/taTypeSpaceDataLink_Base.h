@@ -31,7 +31,7 @@ public:
   taPtrList_impl*       data() {return (taPtrList_impl*)m_data;}
   override bool         HasChildItems() {return true;}
 
-  taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, taPtrList_impl* data_,
+  taTypeSpaceDataLink_Base(TypeItem::TypeInfoKinds tik_, taPtrList_impl* data_,
     taDataLink* &link_ref_);
   DL_FUNS(taTypeSpaceDataLink_Base) //
 protected:

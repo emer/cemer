@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "MatrixTableModel.h"
+#include <taMatrix>
+#include <String_Matrix>
+#include <MatrixIndex>
+#include <CellRange>
+#include <taProject>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+#include <taiqtso_def.h> // COLOR_RO_BACKGROUND
+#include <QColor>
+
 
 
 MatrixTableModel::MatrixTableModel(taMatrix* mat_) 

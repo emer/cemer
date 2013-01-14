@@ -20,11 +20,11 @@
 #include <IDataLinkClient>
 
 // member includes:
+#include <taList_impl>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class taDataLink; // 
-class taList_impl; // 
 class tabDefChildTreeDataNode; // 
 
 

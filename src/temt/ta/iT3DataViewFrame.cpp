@@ -19,8 +19,19 @@
 #include <T3ExaminerViewer>
 #include <iT3DataViewer>
 #include <T3DataViewFrame>
-
+#include <iContextMenuButton>
+#include <iViewPanelSet>
 #include <taiChoiceDialog>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QFileDialog>
+
+#include <Inventor/SoOutput.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/nodes/SoSelection.h>
 
 
 iT3DataViewFrame::iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent)

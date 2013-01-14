@@ -27,6 +27,35 @@
 #include <iTreeViewItem>
 #include <iTabViewer>
 #include <ISelectableHost>
+#include <taiMenuBar>
+#include <taiClipData>
+#include <DockViewer>
+#include <taGuiDialog>
+#include <BrowseViewer>
+#include <iBrowseViewer>
+#include <iDataPanel>
+#include <taFiler>
+#include <PanelViewer>
+#include <ToolBar>
+#include <taProject>
+#include <iSplitter>
+#include <iTabView>
+#include <T3DataViewer>
+#include <iHelpBrowser>
+#include <iTextBrowser>
+#include <Widget_List>
+#include <iRect>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QFileInfo>
+#include <QUrl>
+#include <QDesktopServices>
+
+
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -331,7 +360,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   show_menu = menu->AddSubMenu("&Show");
   ctrlMenu = menu->AddSubMenu("&Control");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
-  if (!(taMisc::show_gui & taMisc::NO_EXPERT))
+  if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
     toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()),
@@ -1720,21 +1749,21 @@ void iMainWindowViewer::ShowChange(taiAction* sender) {
   int show = taMisc::show_gui;
   int new_show;
   if (sender->usr_data == 0)
-    new_show = taMisc::NORM_MEMBS;
+    new_show = TypeItem::NORM_MEMBS;
   else if (sender->usr_data == 1)
-    new_show = taMisc::ALL_MEMBS;
+    new_show = TypeItem::ALL_MEMBS;
   else {
     int mask;
     switch (sender->usr_data.toInt()) {
-      case 2: mask = taMisc::NO_NORMAL; break;
-      case 3: mask = taMisc::NO_EXPERT; break;
-      case 4: mask = taMisc::NO_HIDDEN; break;
+      case 2: mask = TypeItem::NO_NORMAL; break;
+      case 3: mask = TypeItem::NO_EXPERT; break;
+      case 4: mask = TypeItem::NO_HIDDEN; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
   }
   if (new_show != taMisc::show_gui) {
-    taMisc::show_gui = (taMisc::ShowMembs)new_show;
+    taMisc::show_gui = (TypeItem::ShowMembs)new_show;
     viewRefresh();
   }
 }
@@ -1743,9 +1772,9 @@ void iMainWindowViewer::showMenu_aboutToShow() {
   int value = taMisc::show_gui;
   if (!show_menu) return;
   //note: nothing to do for the command items
-  (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_EXPERT));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
+  (*show_menu)[2]->setChecked(!(value & TypeItem::NO_NORMAL));
+  (*show_menu)[3]->setChecked(!(value & TypeItem::NO_EXPERT));
+  (*show_menu)[4]->setChecked(!(value & TypeItem::NO_HIDDEN));
 }
 
 void iMainWindowViewer::this_DockSelect(taiAction* me) {

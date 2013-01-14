@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "gpiArrayEditButton.h"
+#include <taArray_base>
+
 
 gpiArrayEditButton::gpiArrayEditButton
 (void* base, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)

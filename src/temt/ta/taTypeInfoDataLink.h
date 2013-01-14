@@ -20,6 +20,7 @@
 #include <taClassDataLink>
 
 // member includes:
+#include <TypeItem>
 
 // declare all other types mentioned but not required to include:
 
@@ -36,7 +37,7 @@ public:
   USING(inherited::ShowMember)
   override bool         ShowMember(MemberDef* md); // asks this type if we should show the md member
 
-  taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_);  //
+  taTypeInfoDataLink(TypeItem::TypeInfoKinds tik_, TypeItem* data_);  //
   DL_FUNS(taTypeInfoDataLink); //
 
 protected:

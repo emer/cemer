@@ -24,11 +24,12 @@
 // declare all other types mentioned but not required to include:
 class taiField; // #IGNORE
 class taiIncrField; // #IGNORE
-class ScaleBar; // #IGNORE
+class ColorScaleBar; // #IGNORE
 class taiListElsButton; // #IGNORE
 class taiPolyData; // #IGNORE
 class iCheckBox; // #IGNORE
 class taiComboBox; //
+class GraphTableView; //
 
 class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
@@ -101,7 +102,7 @@ public:
   taiField*                 fldThresh;
 
   QHBoxLayout*            layColorScale;
-  ScaleBar*                 cbar;             // colorbar
+  ColorScaleBar*            cbar;             // colorbar
   QPushButton*              butSetColor;
 
   QHBoxLayout*            layRAxis;

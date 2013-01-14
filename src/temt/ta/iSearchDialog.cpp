@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "iSearchDialog.h"
+#include <QTreeWidget>
+#include <taiBitBox>
+#include <iLineEdit>
+#include <iMainWindowViewer>
+//#include <iHelpBrowser>
+#include <iTextBrowser>
+#include <taiDataLink>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QToolButton>
+#include <QStatusBar>
+#include <QDesktopServices>
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
 public:
@@ -265,7 +281,7 @@ void iSearchDialog::Render()
       case 3: limit = 500; break;
       case 4: limit = num_rows_to_render; break;
     }
-    num_rows_to_render = min(num_rows_to_render, limit);
+    num_rows_to_render = std::min(num_rows_to_render, limit);
   }
 
   taMisc::Busy(true);

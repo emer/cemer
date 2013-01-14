@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "DocEditDataHost.h"
+#include <taDoc>
+#include <iTextEdit>
+#include <iMainWindowViewer>
+
+#include <taiMisc>
+
+
+#include <QVBoxLayout>
 
 DocEditDataHost::DocEditDataHost(void* base, TypeDef* typ_, bool read_only_,
       bool modal_, QObject* parent)

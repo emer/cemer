@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taiListElsButton.h"
+#include <taList_impl>
+#include <taiItemChooser>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QTreeWidgetItem>
+
 
 taiListElsButton::taiListElsButton(TypeDef* typ_, IDataHost* host,
 				   taiData* par, QWidget* gui_parent_, int flags_,

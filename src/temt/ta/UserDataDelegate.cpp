@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "UserDataDelegate.h"
+#include <UserDataItemBase>
+#include <iUserDataDataHost>
+#include <taiMember>
+#include <taiField>
+#include <taiPolyData>
+
+#include <QHBoxLayout>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+
 
 
 UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,

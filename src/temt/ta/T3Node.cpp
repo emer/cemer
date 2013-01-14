@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "T3Node.h"
+#include <T3DataView>
+#include <iColor>
+#include <T3DataViewFrame>
+
+#include <Inventor/errors/SoDebugError.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoFont.h>
+
 
 SO_NODE_ABSTRACT_SOURCE(T3Node);
 

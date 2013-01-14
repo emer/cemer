@@ -14,7 +14,18 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramViewScriptPanel.h"
+#include <Program>
+#include <NumberedTextView>
+#include <NumberBar>
+#include <iTextEdit>
+#include <iDataPanelSet>
 
+#include <tabMisc>
+
+#include <css_machine.h>
+
+#include <QScrollBar>
+#include <QToolTip>
 
 iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
 :inherited(dl_)

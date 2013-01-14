@@ -24,7 +24,7 @@
 #include <ISelectableHost>
 
 // member includes:
-#include <SoSelectionPtr>
+#include <SoPtr>
 #include <taDataView>
 
 // declare all other types mentioned but not required to include:
@@ -32,6 +32,7 @@ class SoSeparator;
 class T3ExaminerViewer;
 class iT3DataViewFrame;
 class SoNode;
+class iSoSelectionEvent;
 
 
 class TA_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars

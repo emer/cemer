@@ -23,6 +23,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoTransformBoxDragger;
+class SoTransform;
+class SoCalculator;
+
 class TA_API T3TransformBoxDragger: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS my custom transform box dragger kit for positioning T3 view guys
 #ifndef __MAKETA__

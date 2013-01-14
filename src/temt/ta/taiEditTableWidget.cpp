@@ -15,6 +15,9 @@
 
 #include "taiEditTableWidget.h"
 
+#include <taMisc>
+#include <taiMisc>
+
 
 taiEditTableWidget::taiEditTableWidget(QWidget* parent)
 :inherited(parent)

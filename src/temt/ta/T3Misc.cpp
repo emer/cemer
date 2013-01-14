@@ -19,3 +19,21 @@ const float T3Misc::pts_per_geom(72.0f);
 const float T3Misc::geoms_per_pt(1/pts_per_geom);
 const float T3Misc::char_ht_to_wd_pts(1.8f); // with proportional spacing, this is more accurate on average..
 const float T3Misc::char_base_fract(0.20f); //TODO: find correct val from coin src
+
+const float T3Misc::drag_inact_clr_r = .5f;
+const float T3Misc::drag_inact_clr_g = .3f;
+const float T3Misc::drag_inact_clr_b = .5f;
+const float T3Misc::drag_inact_clr_tr = 0.5f; // transparency
+
+// official defined colors for T3Misc::dragger controls: active = yellow
+// (set but diffuse and emissive)
+const float T3Misc::drag_activ_clr_r = .5f;
+const float T3Misc::drag_activ_clr_g = .5f;
+const float T3Misc::drag_activ_clr_b = .0f;
+const float T3Misc::drag_activ_clr_tr = 0.0f; // transparency
+
+// official defined colors for background frames: transparent emerald (only diffuse)
+const float T3Misc::frame_clr_r = .0f;
+const float T3Misc::frame_clr_g = .5f;
+const float T3Misc::frame_clr_b = .5f;
+const float T3Misc::frame_clr_tr = 0.8f; // transparency

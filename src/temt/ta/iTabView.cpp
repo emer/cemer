@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iTabView.h"
+#include <iDataPanel>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+
+#include <taiMisc>
+
+
+#include <QVBoxLayout>
+#include <QSTackedWidget>
+#include <QMenu>
 
 iTabView::iTabView(QWidget* parent)
 :QWidget(parent)
@@ -163,9 +173,9 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   if (!dp || dp->lockInPlace()) return;
   contextMenu->addSeparator();
   if (dp->pinned()) {
-    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+Key_P );
+    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), Qt::CTRL+Qt::Key_P );
   } else {
-    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+Key_P );
+    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), Qt::CTRL+Qt::Key_P );
   }//TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);

@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "SelectableHostHelper.h"
+#include <QCoreApplication>
+
 
 void SelectableHostHelper::customEvent(QEvent* ev) {
   switch ((int)ev->type()) {

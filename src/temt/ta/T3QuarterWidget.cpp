@@ -16,9 +16,12 @@
 #include "T3QuarterWidget.h"
 
 #include <T3ExaminerViewer>
-#include <T3ViewspaceWidget>
+#include <iT3ViewspaceWidget>
 #include <T3DataViewFrame>
+#include <iT3DataViewFrame>
 #include <T3DataViewer>
+#include <iT3DataViewer>
+
 
 
 T3QuarterWidget::T3QuarterWidget(const QGLFormat & format, QWidget * parent, const QGLWidget * sharewidget, Qt::WindowFlags f)

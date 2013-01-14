@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iMatrixTableView.h"
+#include <taMatrix>
+#include <MatrixTableModel>
+#include <taiTabularDataMimeFactory>
+#include <CellRange>
+#include <taiMimeSource>
+#include <taiClipData>
+
+#include <taMisc>
+#include <taiMisc>
+
 
 
 iMatrixTableView::iMatrixTableView(QWidget* parent)

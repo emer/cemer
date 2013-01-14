@@ -20,6 +20,7 @@
 #include <iBrowseViewer>
 
 // member includes:
+#include <ClassBrowseViewer>
 
 // declare all other types mentioned but not required to include:
 class taiAction;

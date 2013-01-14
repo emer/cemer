@@ -14,6 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "SelectEditDelegate.h"
+#include <SelectEdit>
+#include <taiField>
+#include <taiMember>
+#include <taiEditTableWidget>
+
+#include <iSelectEditDataHost2>
+#include <taiDataDelegate>
+
+#include <QTableWidget>
+#include <QHBoxLayout>
+
 
 
 QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,

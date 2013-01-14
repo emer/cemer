@@ -20,9 +20,9 @@
 #include <taiTreeDataNode>
 
 // member includes:
+#include <tabDataLink>
 
 // declare all other types mentioned but not required to include:
-
 
 class TA_API tabTreeDataNode: public taiTreeDataNode {
 INHERITED(taiTreeDataNode)

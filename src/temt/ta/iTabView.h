@@ -27,6 +27,8 @@
 #include <iDataPanel_PtrList>
 #include <iTabViewer>
 #include <MemberDef>
+#include <iTabBar>
+
 
 // declare all other types mentioned but not required to include:
 class iTabBar;

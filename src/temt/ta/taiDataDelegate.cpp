@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataDelegate.h"
+#include <taiData>
+#include <taiEditDataHost>
+#include <taiField>
+#include <taiMember>
+
+#include <QHBoxLayout>
+#include <QTableView>
+#include <QLineEdit>
+#include <QPainter>
+#include <QTextEdit>
 
 
 taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_)

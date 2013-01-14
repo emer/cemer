@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTablePanel_Mbr.h"
+#include <DataTable>
+
 
 String iDataTablePanel_Mbr::panel_type() const {
   DataTable* dat = dt();

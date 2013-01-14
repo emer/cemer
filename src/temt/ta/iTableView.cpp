@@ -14,7 +14,17 @@
 //   Lesser General Public License for more details.
 
 #include "iTableView.h"
+#include <iMainWindowViewer>
+#include <taiClipData>
+#include <CellRange>
+#include <iPoint>
 
+#include <taMisc>
+#include <taiMisc>
+
+#include <QHeaderView>
+#include <QCoreApplication>
+#include <QScrollBar>
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)

@@ -31,7 +31,8 @@
 #include <Inventor/nodes/SoEnvironment.h>
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoLightModel.h>
-#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/errors/SoDebugError.h>
+#include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoNormalBinding.h>
 #include <Inventor/nodes/SoPickStyle.h>
 #include <Inventor/nodes/SoRotation.h>
@@ -39,7 +40,6 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoTexture2Transform.h>
-#include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoVertexProperty.h>
@@ -47,7 +47,9 @@
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 
 #define PI 3.14159265

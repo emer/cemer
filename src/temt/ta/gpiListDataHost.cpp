@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "gpiListDataHost.h"
+#include <taList_impl>
+#include <taBase_List>
+#include <MemberDef>
+#include <iEditGrid>
+#include <taiMember>
+
+#include <taMisc>
+#include <taiMisc>
+
 
 gpiListDataHost::gpiListDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)

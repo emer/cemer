@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class tabListDataLink;
 
 
 class TA_API tabListTreeDataNode: public tabParTreeDataNode {

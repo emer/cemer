@@ -17,11 +17,14 @@
 #define taiObjDiffBrowserFilter_h 1
 
 // parent includes:
+#include "ta_def.h"
 #ifndef __MAKETA__
 #include <iDialog>
 #endif
 
 // member includes:
+#include <taString>
+
 
 // declare all other types mentioned but not required to include:
 

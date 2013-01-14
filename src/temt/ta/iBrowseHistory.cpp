@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "iBrowseHistory.h"
+#include <ISelectableHost>
+#include <iTreeView>
+#include <iTreeViewItem>
+
+#include <taMisc>
+
+
 
 iBrowseHistory::iBrowseHistory(QObject* parent)
   : inherited(parent)

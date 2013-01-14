@@ -15,6 +15,11 @@
 
 #include "iDataPanelSetBase.h"
 
+
+#include <QVBoxLayout>
+#include <QStackedWidget>
+
+
 iDataPanelSetBase::iDataPanelSetBase(taiDataLink* link_)
 :inherited(link_)
 {

@@ -23,13 +23,18 @@
 #endif
 
 // member includes:
+#ifndef __MAKETA__
+#include <QPointer>
+#endif
+
 
 // declare all other types mentioned but not required to include:
 class taiEditDataHost;
 class QAbstractItemModel;
 class QWidget;
 class QModelIndex;
-class QPointer;
+class taBase;
+class taiData;
 
 class TA_API taiDataDelegate: public QItemDelegate {
 INHERITED(QItemDelegate)

@@ -17,12 +17,15 @@
 #define taiObjDiffBrowser_h 1
 
 // parent includes:
+#include "ta_def.h"
 #include <iDialog>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
-class taiObjDiff_List; //
+class taObjDiffRec; //
+class taObjDiff_List; //
 class taiObjDiffBrowserFilter; //
 class QVBoxLayout; //
 class QTreeWidget; //

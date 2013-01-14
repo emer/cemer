@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "iDataPanelFrame.h"
+#include <iDataPanelSet>
+
+#include <QHBoxLayout>
+
 
 iDataPanelFrame::iDataPanelFrame(taiDataLink* dl_)
 :inherited(dl_)

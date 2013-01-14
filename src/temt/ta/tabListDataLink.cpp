@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "tabListDataLink.h"
+#include <tabListTreeDataNode>
+
 
 tabListDataLink::tabListDataLink(taList_impl* data_)
   : inherited((taOBase*)data_)

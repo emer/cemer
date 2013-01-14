@@ -15,6 +15,12 @@
 
 #include "T3NodeParent.h"
 
+#include <taMisc>
+
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoTransform.h>
+
+
 SO_NODE_SOURCE(T3NodeParent);
 
 void T3NodeParent::initClass()

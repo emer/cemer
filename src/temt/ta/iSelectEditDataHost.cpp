@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "iSelectEditDataHost.h"
+#include <SelectEdit>
+#include <iLabel>
+#include <iFlowLayout>
+#include <taiMember>
+
+#include <taMisc>
+#include <taiMisc>
 
 
 iSelectEditDataHost::iSelectEditDataHost(void* base, TypeDef* td,

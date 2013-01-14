@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "iTabWidget.h"
+#include <iTabBarEx>
+
 
 iTabWidget::iTabWidget(QWidget* parent)
 :inherited(parent)

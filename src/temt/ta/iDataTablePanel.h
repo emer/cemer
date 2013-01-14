@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class iTableView; //
+class iDataTableEditor; //
+class DataTable; //
 
 
 class TA_API iDataTablePanel: public iDataPanelFrame {

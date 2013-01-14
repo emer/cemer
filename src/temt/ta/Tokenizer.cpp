@@ -15,6 +15,9 @@
 
 #include "Tokenizer.h"
 
+#include <taMisc>
+
+
 using namespace std;
 
 Tokenizer::Tokenizer(std::istream &ifstrm) {

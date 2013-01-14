@@ -14,6 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "iBrowseViewer.h"
+#include <BrowseViewer>
+#include <iTreeView>
+#include <iTreeViewItem>
+#include <iTreeSearch>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+#include <taiViewType>
+#include <taiTreeDataNode>
+#include <taiDataLink>
+
+#include <tabMisc>
+#include <taRootBase>
+
+
+#include <QVBoxLayout>
+#include <QHeaderView>
+
+
 
 iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
   : inherited(browser_, parent)

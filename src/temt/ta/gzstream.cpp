@@ -17,6 +17,9 @@
 
 #include <string.h>  // for memcpy
 
+using namespace std;
+
+
 // ----------------------------------------------------------------------------
 // Internal classes to implement gzstream. See header file for user classes.
 // ----------------------------------------------------------------------------

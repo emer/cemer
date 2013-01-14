@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "iDockViewer.h"
+#include <DockViewer>
+#include <IDataViewWidget>
+#include <taiAction>
+#include <MainWindowViewer>
+#include <iMainWindowViewer>
+
+#include <taMisc>
+#include <taiMisc>
 
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
   : inherited(parent), IDataViewWidget(viewer_)

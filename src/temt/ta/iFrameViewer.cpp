@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "iFrameViewer.h"
+#include <taiAction>
+#include <taiMenu>
+#include <iMainWindowViewer>
+#include <ISelectableHost>
+
 
 iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
   : inherited(parent), IDataViewWidget(viewer_)

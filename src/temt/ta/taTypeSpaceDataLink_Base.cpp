@@ -14,4 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "taTypeSpaceDataLink_Base.h"
+#include <taTypeSpaceTreeDataNode>
+
+
+taTypeSpaceDataLink_Base::taTypeSpaceDataLink_Base(TypeItem::TypeInfoKinds tik_, 
+  taPtrList_impl* data_, taDataLink* &link_ref_)
+:inherited(tik_, data_, link_ref_)
+{
+}
+
+taiTreeDataNode* taTypeSpaceDataLink_Base::CreateTreeDataNode_impl(MemberDef* md, 
+  taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new taTypeSpaceTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new taTypeSpaceTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
 

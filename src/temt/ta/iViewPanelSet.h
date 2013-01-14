@@ -22,7 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iTabBarBase; 
+class iTabBarBase;  //
+class iViewPanelFrame; //
+
 
 class TA_API iViewPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
   Q_OBJECT

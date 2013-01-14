@@ -17,6 +17,8 @@
 #define SoGroup_h 1
 
 // parent includes:
+#include "ta_def.h"
+#include <Inventor/nodes/SoNode.h>
 
 // member includes:
 

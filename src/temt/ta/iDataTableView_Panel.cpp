@@ -14,9 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableView_Panel.h"
+#include <DataTable>
+#include <iViewPanelFrame>
+#include <DataTableView>
+#include <iFlowLayout>
+#include <iMethodButtonMgr>
 
+#include <QVBoxLayout>
 
-void iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
+iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
 :inherited(lv)
 {
   widg = new QWidget();

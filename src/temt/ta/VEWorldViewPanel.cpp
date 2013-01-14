@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "VEWorldViewPanel.h"
+#include <VEWorld>
+#include <VEWorldView>
+#include <taiField>
+#include <iFlowLayout>
+#include <iMethodButtonMgr>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+#include <QVBoxLayout>
+#include <QCheckBox>
+
 
 VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 :inherited(dv_)

@@ -15,6 +15,12 @@
 
 #include "T3NodeLeaf.h"
 
+#include <taMisc>
+
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoTransform.h>
+
+
 SO_NODE_SOURCE(T3NodeLeaf);
 
 void T3NodeLeaf::initClass()

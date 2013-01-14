@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "iListDataPanel.h"
+#include <iTreeView>
+#include <taiListDataNode>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
 :inherited(dl_)

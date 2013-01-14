@@ -28,6 +28,9 @@
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
+class iTreeViewItem; //
+class ISelectableHost; //
+
 
 typedef taPtrList<taiDataLink> taiDataLink_PList; // list of taiDataLink
 

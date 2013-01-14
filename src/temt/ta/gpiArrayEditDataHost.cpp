@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "gpiArrayEditDataHost.h"
+#include <taArray_base>
+#include <taiType>
+#include <MemberDef>
+#include <iLabel>
+
 
 
 gpiArrayEditDataHost::gpiArrayEditDataHost(void* base, TypeDef* typ_, bool read_only_,

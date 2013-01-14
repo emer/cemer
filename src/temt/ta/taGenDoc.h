@@ -16,12 +16,19 @@
 #ifndef taGenDoc_h
 #define taGenDoc_h 1
 
-// documentation generation from scanned type information (maketa)
+// parent includes:
+#include "ta_def.h"
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+class TypeSpace;
+
 
 #include "ta_type.h"
 
 class TA_API taGenDoc  {
-  // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS collection of gendoc functions
+  // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS collection of gendoc functions -- documentation generation from scanned type information (maketa)
 public:
   static void 		GenDoc(TypeSpace* ths);
   // main function -- output type info to stream -- saves .html files in current location -- detail level: 0,1 = basic user information, 2 = + full programming details (expert mode)

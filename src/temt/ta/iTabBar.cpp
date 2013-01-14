@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "iTabBar.h"
+#include <iTabView>
+#include <iDataPanel>
+
+#include <QIcon>
+#include <QMenu>
 
 QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1];
 

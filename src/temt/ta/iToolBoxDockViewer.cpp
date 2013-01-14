@@ -14,6 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iToolBoxDockViewer.h"
+#include <ToolBoxDockViewer>
+#include <ToolBoxRegistrar_PtrList>
+#include <iClipWidgetAction>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QToolBox>
+#include <QToolBar>
+
 
 IDataViewWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
     return new iToolBoxDockViewer(this, gui_parent); // usually parented later

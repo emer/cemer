@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iToolBar.h"
+#include <ToolBar>
+#include <iApplicationToolBar>
+#include <taiAction>
+#include <iMainWindowViewer>
+#include <taiMenu>
+
+#include <taMisc>
+
+
 
 IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
   if (name == "Application")

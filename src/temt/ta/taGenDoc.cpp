@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "taGenDoc.h"
+#include <TypeDef>
+
+using namespace std;
+
+
 
 bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////

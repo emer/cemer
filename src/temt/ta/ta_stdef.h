@@ -362,14 +362,14 @@ typedef unsigned char   byte;
 //   #include <unistd.h>
 // #endif
 
-// Qt Event IDs in the PDP system should be allocated here:
-// #ifdef TA_USE_QT
-// enum CustomEventType {
-//   FirstEvent            = 1000, //note: QT's custom events start at 1000
-//   cssMisc_StartupShell_EventType, // css_machine.h
-//   iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
-// };
-// #endif
+// Qt Event IDs in emergent should be allocated here:
+#ifdef TA_USE_QT
+enum CustomEventType {
+  FirstEvent            = 1000, //note: QT's custom events start at 1000
+  cssMisc_StartupShell_EventType, // css_machine.h
+  iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
+};
+#endif
 
 // #ifndef TA_GUI
 // class VoidClass { // dummy class used as gui obj proxy in NO_GUI builds so all legal C++ class semantics apply

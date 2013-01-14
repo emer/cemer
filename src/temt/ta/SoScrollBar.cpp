@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "SoScrollBar.h"
+#include <T3Misc>
+#include <taMath_float>
+
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoTransform.h>
+
+
+
 
 SO_NODE_SOURCE(SoScrollBar);
 
@@ -54,8 +67,8 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   fixValues();
 
   box_mat_ = new SoMaterial;
-  box_mat_->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b);
-  box_mat_->transparency.setValue(frame_clr_tr);
+  box_mat_->diffuseColor.setValue(T3Misc::frame_clr_r, T3Misc::frame_clr_g, T3Misc::frame_clr_b);
+  box_mat_->transparency.setValue(T3Misc::frame_clr_tr);
   addChild(box_mat_);
 
   box_ = new SoCube;
@@ -65,9 +78,9 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   addChild(box_);
 
   slide_mat_ = new SoMaterial;
-  slide_mat_->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  slide_mat_->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  slide_mat_->transparency.setValue(drag_inact_clr_tr);
+  slide_mat_->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+  slide_mat_->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
+  slide_mat_->transparency.setValue(T3Misc::drag_inact_clr_tr);
   addChild(slide_mat_);
 
   pos_ = new SoTranslation;
@@ -75,7 +88,7 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
 
   slider_sep_ = new SoSeparator;
   slider_tx_ = new SoTransform;
-  slider_tx_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), (float)(.5f * PI));
+  slider_tx_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), (float)(.5f * taMath_float::pi));
   slider_sep_->addChild(slider_tx_);
   slider_ = new SoCylinder;
   slider_->radius = .5f * width_;
@@ -85,9 +98,9 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   active_sep_ = new SoSeparator;
   
   active_mat_ = new SoMaterial;
-  active_mat_->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-  active_mat_->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
-  active_mat_->transparency.setValue(drag_activ_clr_tr);
+  active_mat_->diffuseColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+  active_mat_->emissiveColor.setValue(T3Misc::drag_activ_clr_r, T3Misc::drag_activ_clr_g, T3Misc::drag_activ_clr_b);
+  active_mat_->transparency.setValue(T3Misc::drag_activ_clr_tr);
   active_sep_->addChild(active_mat_);
   active_sep_->addChild(slider_sep_);
 

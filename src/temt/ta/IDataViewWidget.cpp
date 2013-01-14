@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "IDataViewWidget.h"
+#include <DataViewer>
+#include <iMainWindowViewer>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
 {

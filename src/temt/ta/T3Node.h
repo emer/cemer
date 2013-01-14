@@ -57,6 +57,8 @@ class SoTransformBoxDragger; // #IGNORE
 class SoCalculator; // #IGNORE
 class SoIndexedLineSet; // #IGNORE
 class SoDrawStyle; // #IGNORE
+class T3DataView;  //
+class iVec3f; //
 
 /*
   All Nodes are implemented using an approach that is similar to, but simpler than,

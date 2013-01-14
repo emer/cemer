@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "gpiSubGroups.h"
+#include <taGroup_impl>
+#include <taiObjChooser>
+#include <taiMenu>
+#include <MemberDef>
+#include <taMisc>
+
 
 gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IDataHost* host_, 
   taiData* par,	QWidget* gui_parent_, int flags_)

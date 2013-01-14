@@ -34,6 +34,9 @@ class iT3DataViewer;
 class T3DataViewFrame;
 class iViewPanelSet;
 class iViewPanelFrame;
+class T3DataViewRoot;
+class T3Node;
+class T3DataView;
 
 
 class TA_API iT3DataViewFrame : public QWidget, public IDataViewWidget {

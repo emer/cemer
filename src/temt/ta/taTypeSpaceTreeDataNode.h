@@ -20,14 +20,18 @@
 #include <taiTreeDataNode>
 
 // member includes:
+#include <TypeItem>
+#include <taTypeSpaceDataLink_Base>
+
 
 // declare all other types mentioned but not required to include:
+class taTypeInfoDataLink;
 
 
 class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeDataNode)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
   taPtrList_impl*       data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}

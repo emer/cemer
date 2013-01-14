@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "gpiMultiEditDataHost.h"
+#include <iEditGrid>
+#include <iSplitter>
+#include <iScrollArea>
+
+#include <QVBoxLayout>
+
 
 gpiMultiEditDataHost::gpiMultiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
       bool modal_, QObject* parent)

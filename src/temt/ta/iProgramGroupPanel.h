@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class Program_Group; //
+class iTreeViewItem; //
 
 
 class TA_API iProgramGroupPanel: public iProgramPanelBase {

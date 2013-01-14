@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramCtrlDataHost.h"
+#include <Program>
+#include <Program_Group>
+#include <ProgVar>
+#include <DynEnum>
+
+#include <iLabel>
+#include <taiField>
+#include <taiComboBox>
+#include <taiIncrField>
+#include <taiMember>
+#include <taiBitBox>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include "ta_TA_inst.h"         // to get TAI_DynEnum
 
 
 iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,

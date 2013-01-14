@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramCtrlPanel.h"
+#include <iProgramCtrlDataHost>
+#include <Program>
+#include <iDataPanelSet>
+
+#include <taMisc>
+#include <taiMisc>
+
+
 
 iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
 :inherited(dl_)

@@ -18,7 +18,19 @@
 #include <T3DataViewer>
 #include <iT3DataViewFrame>
 #include <T3DataViewFrame>
+#include <iT3ViewspaceWidget>
 #include <iTabBarBase>
+#include <taiMenu>
+#include <iMainWindowViewer>
+#include <MainWindowViewer>
+#include <iPoint>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+#include <QVBoxLayout>
+#include <QTimer>
 
 
 iT3DataViewer::iT3DataViewer(T3DataViewer* viewer_, QWidget* parent)

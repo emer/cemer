@@ -15,7 +15,7 @@
 
 #include "taiProjTemplateElArgType.h"
 #include <taiProjTemplateElsButton>
-
+#include <taTypeInfoDataLink>
 
 
 int taiProjTemplateElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {

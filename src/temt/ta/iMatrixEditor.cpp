@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iMatrixEditor.h"
+#include <taMatrix>
+#include <MatrixTableModel>
+#include <iMatrixTableView>
+
+#include <QVBoxLayout>
+
 
 
 iMatrixEditor::iMatrixEditor(QWidget* parent)

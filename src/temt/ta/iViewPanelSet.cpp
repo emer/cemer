@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iViewPanelSet.h"
+#include <iViewPanelFrame>
+
+
+#include <QVBoxLayout>
+#include <QStackedWidget>
+
 
 iViewPanelSet::iViewPanelSet(taiDataLink* link_)
 :inherited(link_)

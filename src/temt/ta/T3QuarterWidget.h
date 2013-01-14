@@ -17,8 +17,11 @@
 #define T3QuarterWidget_h 1
 
 // parent includes:
+#include "ta_def.h"
 #ifndef __MAKETA__
-#include <QuarterWidget>
+#include <Quarter/Quarter.h>
+#include <Quarter/QuarterWidget.h>
+using SIM::Coin3D::Quarter::QuarterWidget;
 #endif
 
 // member includes:

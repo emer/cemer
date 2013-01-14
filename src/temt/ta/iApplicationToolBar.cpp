@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iApplicationToolBar.h"
+#include <iMainWindowViewer>
+
+
+#include <taiMisc>
+
+#include <QToolButton>
 
 void iApplicationToolBar::Constr_post() {
   iMainWindowViewer* win = viewerWindow(); //cache

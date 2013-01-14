@@ -20,6 +20,7 @@
 #include <taiDataLink>
 
 // member includes:
+#include <TypeItem>
 
 // declare all other types mentioned but not required to include:
 
@@ -27,7 +28,7 @@
 class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
 INHERITED(taiDataLink)
 public:
-  const taMisc::TypeInfoKind    tik;
+  const TypeItem::TypeInfoKinds    tik;
   TypeDef*              type() const {return m_type;}
 
   override TypeDef*     GetDataTypeDef() const;
@@ -36,7 +37,7 @@ public:
 
 protected:
   TypeDef*              m_type;
-  taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataLink* &link_ref_);  //
+  taClassDataLink(TypeItem::TypeInfoKinds tik_, void* data_, taDataLink* &link_ref_);  //
 };
 
 #endif // taClassDataLink_h

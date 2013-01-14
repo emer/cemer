@@ -14,7 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableEditor.h"
+#include <iMatrixTableView>
+#include <iDataTableView>
+#include <iSplitter>
+#include <iMatrixEditor>
+#include <MatrixTableModel>
+#include <DataTableModel>
+#include <taDataLInk>
+#include <iMainWindowViewer>
 
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QSplitter>
+#include <QCoreApplication>
 
 iDataTableEditor::iDataTableEditor(QWidget* parent)
 :inherited(parent)

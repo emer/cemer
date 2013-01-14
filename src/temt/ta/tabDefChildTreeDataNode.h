@@ -20,6 +20,7 @@
 #include <tabParTreeDataNode>
 
 // member includes:
+#include <tabDefChildRef>
 
 // declare all other types mentioned but not required to include:
 

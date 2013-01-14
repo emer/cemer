@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableView.h"
+#include <DataTable>
+#include <DataTableModel>
+#include <taiTabularDataMimeFactory>
+#include <taiClipData>
+#include <CellRange>
+#include <taiMimeSource>
+#include <taProject>
+#include <taiDataLink>
+#include <taiMenu>
+
+#include <taMisc>
+
+
+#include <QHeaderView>
+
 
 
 iDataTableView::iDataTableView(QWidget* parent)

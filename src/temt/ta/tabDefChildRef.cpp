@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "tabDefChildRef.h"
+#include <tabDefChildTreeDataNode>
+
 
 void tabDefChildRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
   if (m_own) m_own->DefChild_DataChanged(dcr, op1, op2);

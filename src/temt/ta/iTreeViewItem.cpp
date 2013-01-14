@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iTreeViewItem.h"
+#include <taiDataLInk>
+#include <ViewColor_List>
+#include <iColor>
+#include <taiClipData>
+#include <taiMenu>
+
+#include <taMisc>
+
+
 
 class DataNodeDeleter: public QObject { // enables nodes to be put on deferredDelete list
 public:
@@ -331,7 +340,7 @@ bool iTreeViewItem::ShowNode_impl(int show, const String&) const
   // or standalone item whose visibility will be controlled by a parent member somewhere
   if (!m_md) return true;
   //TODO: note, context is ignored for now
-  return m_md->ShowMember((taMisc::ShowMembs)show, TypeItem::SC_TREE);
+  return m_md->ShowMember((TypeItem::ShowMembs)show, TypeItem::SC_TREE);
 }
 
 void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {

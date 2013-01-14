@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "SoMatrixGrid.h"
+#include <taMatrix>
+#include <T3Color>
+#include <taVector2i>
+#include <ColorScale>
+#include <String_Matrix>
+
+#include <taMisc>
+
+
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoVertexProperty.h>
+#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoAsciiText.h>
 
 SO_NODE_SOURCE(SoMatrixGrid);
 

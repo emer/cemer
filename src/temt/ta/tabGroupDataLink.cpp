@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "tabGroupDataLink.h"
+#include <tabGroupTreeDataNode>
 
 
 tabGroupDataLink::tabGroupDataLink(taGroup_impl* data_)

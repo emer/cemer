@@ -17,11 +17,16 @@
 #define iToolBar_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QToolBar>
+#endif
+
 #include <IDataViewWidget>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class ToolBar;
 
 
 class TA_API iToolBar: public QToolBar, public IDataViewWidget {

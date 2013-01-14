@@ -243,6 +243,8 @@ void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
   strm << "#include \"" << ths->name << "_TA_type.h\"\n";
   if(!instances)
     strm << "#include \"" << ths->name << "_TA_inst.h\"\n";
+  strm << "using namespace std;\n";
+
   strm << "\n\n";
 }
 

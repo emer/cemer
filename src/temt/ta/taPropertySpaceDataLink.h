@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class PropertySpace;
 
 class TA_API taPropertySpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for PropertySpace objects -- note that it also manages the ListView nodes

@@ -14,9 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "SArgEditDataHost.h"
+#include <SArg_Array>
+#include <MemberDef>
+#include <taiType>
 
 
-void SArgEditDataHost::SArgEditDataHost(void* base, TypeDef* tp,  bool read_only_,
+SArgEditDataHost::SArgEditDataHost(void* base, TypeDef* tp,  bool read_only_,
   bool modal_, QObject* parent)
 :inherited(base, tp, read_only_, modal_, parent) 
 {

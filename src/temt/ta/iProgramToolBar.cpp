@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramToolBar.h"
+#include <ProgramToolBar>
+#include <IDataViewWidget>
+#include <ViewColor_List>
+#include <iColor>
+#include <ProgEl>
+#include <iBaseClipWidgetAction>
+#include <iToolBoxDockViewer>
+#include <ForLoop>
+#include <MethodCall>
+#include <ToolBoxRegistrar>
+
+#include <taMisc>
+#include <tabMisc>
+#include <taRootBase>
+
 
 IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
   return new iProgramToolBar(this, gui_parent); // usually parented later
@@ -56,6 +71,25 @@ static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
 }
 
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
+  int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
+
+  ptbp_add_widget(tb, sec, &TA_ForLoop);
+  ptbp_add_widget(tb, sec, &TA_ForeachLoop);
+  ptbp_add_widget(tb, sec, &TA_DoLoop);
+  ptbp_add_widget(tb, sec, &TA_WhileLoop);
+
+  tb->AddSeparator(sec);
+  ptbp_add_widget(tb, sec, &TA_IfElse);
+  ptbp_add_widget(tb, sec, &TA_IfContinue);
+  ptbp_add_widget(tb, sec, &TA_IfBreak);
+  ptbp_add_widget(tb, sec, &TA_IfReturn);
+  ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
+  ptbp_add_widget(tb, sec, &TA_Switch);
+
+  tb->AddSeparator(sec);
+  ptbp_add_widget(tb, sec, &TA_CodeBlock);
+  ptbp_add_widget(tb, sec, &TA_UserScript);
+  ptbp_add_widget(tb, sec, &TA_StopStepPoint);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Var/Fun

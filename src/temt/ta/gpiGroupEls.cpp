@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "gpiGroupEls.h"
+#include <taGroup_impl>
+#include <taiObjChooser>
+#include <taiMenu>
+#include <MemberDef>
+
+#include <taMisc>
+
+
 
 
 gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_, 

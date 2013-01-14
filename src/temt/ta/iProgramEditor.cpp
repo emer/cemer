@@ -14,6 +14,31 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramEditor.h"
+#include <iBrowseHistory>
+#include <iStripeWidget>
+#include <iMethodButtonMgr>
+#include <HiLightButton>
+#include <iTreeView>
+#include <iTreeViewItem>
+#include <iTreeSearch>
+#include <iMainWindowViewer>
+#include <taiMember>
+#include <iLabel>
+#include <taiPolyData>
+#include <taProject>
+
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QToolBar>
+#include <QToolButton>
+#include <QApplication>
+#include <QLineEdit>
+
 
 iProgramEditor::iProgramEditor(QWidget* parent)
 :inherited(parent)
@@ -40,7 +65,7 @@ void iProgramEditor::Init() {
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   row = 0;
-  m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
+  m_show = (TypeItem::ShowMembs)(taMisc::show_gui & TypeItem::SHOW_CHECK_MASK);
   sel_item_mbr = NULL;
   sel_item_base = NULL;
 
@@ -656,9 +681,9 @@ void iProgramEditor::setEditNode(taBase* value, bool autosave) {
 }
 
 void iProgramEditor::setShow(int value) {
-  value = (value & taMisc::SHOW_CHECK_MASK);
+  value = (value & TypeItem::SHOW_CHECK_MASK);
   if (m_show == value) return;
-  m_show = value;
+  m_show = (TypeItem::ShowMembs)value;
   Refresh();
 }
 

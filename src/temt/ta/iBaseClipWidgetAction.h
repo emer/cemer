@@ -18,10 +18,11 @@
 
 // parent includes:
 #include "ta_def.h"
-#include <iClipToolWidget>
+#include <iClipWidgetAction>
 
 // member includes:
-
+#include <taString>
+#include <taSmartRef>
 
 // declare all other types mentioned but not required to include:
 class taBase; // 

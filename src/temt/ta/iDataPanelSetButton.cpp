@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "iDataPanelSetButton.h"
+#include <iDataPanelSet>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QButtonGroup>
 
 iDataPanelSetButton::iDataPanelSetButton(QWidget* parent) : QToolButton(parent) {
   m_datapanelset = NULL;

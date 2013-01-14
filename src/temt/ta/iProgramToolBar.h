@@ -17,11 +17,14 @@
 #define iProgramToolBar_h 1
 
 // parent includes:
+#include "ta_def.h"
 #include <iToolBar>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iToolBoxDockViewer; //
+
 
 TA_API void ProgramToolBoxProc(iToolBoxDockViewer* tb); // fills toolbox
 

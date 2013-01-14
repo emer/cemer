@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiListDataNode.h"
+#include <iListDataPanel>
+
 
 taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
    taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)

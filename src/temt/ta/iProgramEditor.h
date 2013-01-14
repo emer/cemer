@@ -22,6 +22,7 @@
 
 // member includes:
 #include <MembSet>
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
 class iBrowseHistory; // 
@@ -42,6 +43,7 @@ class taiDataLink; //
 class taDataLink; // 
 class iTreeViewItem; // 
 class QWidget; // 
+class ISelectableHost; //
 
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost,

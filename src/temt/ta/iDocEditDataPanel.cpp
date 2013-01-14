@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "iDocEditDataPanel.h"
+#include <taDoc>
+#include <DocEditDataHost>
+
+#include <taMisc>
+
 
 
 iDocEditDataPanel::iDocEditDataPanel(taiDataLink* dl_)

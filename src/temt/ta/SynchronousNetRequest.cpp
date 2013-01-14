@@ -15,6 +15,12 @@
 
 #include "SynchronousNetRequest.h"
 
+#include <taMisc>
+#include <taiMisc>
+#include <iNetworkAccessManager>
+#include <Program>
+
+
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
@@ -22,6 +28,8 @@
 #include <QUrlQuery>
 #endif
 #include <QFile>
+
+
 
 
 /////////////////////////////////////

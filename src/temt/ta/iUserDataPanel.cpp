@@ -14,9 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iUserDataPanel.h"
+#include <iUserDataDataHost>
+#include <UserDataItem_List>
+
+#include <taMisc>
+#include <taiMisc>
 
 
-void iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
+
+iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
   UserDataItem_List* se_ = udil();

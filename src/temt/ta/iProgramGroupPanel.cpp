@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramGroupPanel.h"
+#include <Program_Group>
+#include <iTreeViewItem>
+#include <iProgramEditor>
+
 
 
 void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,

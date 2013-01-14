@@ -21,8 +21,14 @@
 #include <Inventor/nodes/SoSeparator.h>
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
+class taMatrix;
+class ColorScale;
+class SoVertexProperty;
+class SoFont;
+class SoIndexedTriangleStripSet;
 
 
 class TA_API SoMatrixGrid: public SoSeparator {

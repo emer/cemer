@@ -30,6 +30,24 @@ public:
   static const float    geoms_per_pt; // number of geoms per point (1/72)
   static const float    char_ht_to_wd_pts; // ratio of ht to wd in metrics: 12/8
   static const float    char_base_fract; // fraction of total ht below baseline
+
+  static const float drag_inact_clr_r;
+  static const float drag_inact_clr_g;
+  static const float drag_inact_clr_b;
+  static const float drag_inact_clr_tr;
+
+  // official defined colors for dragger controls: active = yellow
+  // (set but diffuse and emissive)
+  static const float drag_activ_clr_r;
+  static const float drag_activ_clr_g;
+  static const float drag_activ_clr_b;
+  static const float drag_activ_clr_tr;
+
+  // official defined colors for background frames: transparent emerald (only diffuse)
+  static const float frame_clr_r;
+  static const float frame_clr_g;
+  static const float frame_clr_b;
+  static const float frame_clr_tr;
 };
 
 #endif // T3Misc_h

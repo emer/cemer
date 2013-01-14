@@ -27,6 +27,8 @@
 class iTabView;
 class iDataPanel;
 class PanelViewer;
+class iTabBarBase;
+
 
 class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed window
     Q_OBJECT

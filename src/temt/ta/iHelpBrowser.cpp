@@ -14,6 +14,36 @@
 //   Lesser General Public License for more details.
 
 #include "iHelpBrowser.h"
+#include <iSize>
+#include <NameVar>
+#include <iSplitter>
+#include <iMainWindowViewer>
+#include <iLineEdit>
+#include <iWebView>
+#include <iNetworkAccessManager>
+#include <MemberDef>
+#include <MethodDef>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QProgressBar>
+#include <QToolButton>
+#include <QTimer>
+#include <QScrollBar>
+#include <QStatusBar>
+#include <QDesktopServices>
+#include <QNetworkReply>
+#include <QCoreApplication>
+
+class QSleazyFakeTreeWidget: public QTreeWidget {
+public:
+    using QTreeWidget::sizeHintForColumn;
+};
 
 iHelpBrowser* iHelpBrowser::inst;
 

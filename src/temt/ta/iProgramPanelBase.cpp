@@ -14,6 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramPanelBase.h"
+#include <iProgramEditor>
+#include <iTreeView>
+#include <iMainWindowViewer>
+#include <iDataPanelSet>
+
+#include <taMisc>
+#include <taiMisc>
+
+
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
+
 
 iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 :inherited(dl_)
@@ -43,7 +56,7 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   but->setText("expert");
   but->setToolTip("whether to show items marked 'expert' in the program editor");
-  but->setChecked(!(taMisc::show_gui & taMisc::NO_EXPERT));
+  but->setChecked(!(taMisc::show_gui & TypeItem::NO_EXPERT));
   AddMinibarWidget(but);
   connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
 }
@@ -68,9 +81,9 @@ bool iProgramPanelBase::HasChanged_impl() {
 void iProgramPanelBase::mb_Expert(bool checked) {
   int show = pe->show();
   if (checked) {
-    show = show & ~taMisc::NO_EXPERT;
+    show = show & ~TypeItem::NO_EXPERT;
   } else {
-    show = show | taMisc::NO_EXPERT;
+    show = show | TypeItem::NO_EXPERT;
   }
   pe->setShow(show);
 }

@@ -14,6 +14,26 @@
 //   Lesser General Public License for more details.
 
 #include "So3DHeightField.h"
+#include <taMatrix>
+#include <taVector3i>
+#include <taVector3f>
+#include <MinMaxRange>
+#include <T3Color>
+#include <ColorScale>
+
+#include <taMisc>
+
+
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoVertexProperty.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 
 SO_NODE_SOURCE(So3DHeightField);
 

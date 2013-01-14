@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "iDataPanelSet.h"
+#include <iDataPanelFrame>
+#include <iDataPanelSetButton>
+#include <taiViewType>
+#include <Program>
+#include <taDataLinkItr>
+#include <iProgramViewScriptPanel>
+#include <NumberedTextView>
+
+#include <taMisc>
+#include <taiMisc>
+
+#include <QHBoxLayout>
+#include <QButtonGroup>
+#include <QStackedWidget>
+#include <QStackedLayout>
 
 iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 :inherited(link_)

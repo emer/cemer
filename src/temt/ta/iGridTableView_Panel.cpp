@@ -14,7 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "iGridTableView_Panel.h"
+#include <GridTableView>
+#include <taiField>
+#include <iLineEdit>
+#include <taiIncrField>
+#include <HColorScaleBar>
 
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QToolBar>
 
 String iGridTableView_Panel::panel_type() const {
   static String str("Grid Log");
@@ -157,7 +169,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layColorScale->addWidget(chkAutoScale);
   layColorScale->addSpacing(taiM->hsep_c);
 
-  cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
+  cbar = new HColorScaleBar(&tlv->colorscale, ColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space

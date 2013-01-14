@@ -14,7 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "iGraphTableView_Panel.h"
+#include <GraphTableView>
+#include <GraphColView>
+#include <HColorScaleBar>
+#include <taiComboBox>
+#include <taiIncrField>
+#include <taiField>
+#include <taiListElsButton>
+#include <taiPolyData>
+#include <iCheckBox>
 
+#include <taMisc>
+#include <taiMisc>
+
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QPushButton>
 
 String iGraphTableView_Panel::panel_type() const {
   static String str("Graph Log");
@@ -267,7 +282,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   // second row: color bar + button
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
-  cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
+  cbar = new HColorScaleBar(&tlv->colorscale, ColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space

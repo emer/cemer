@@ -14,13 +14,23 @@
 //   Lesser General Public License for more details.
 
 #include "SoImageEx.h"
+#include <SoRect>
+
+#include <taMisc>
 
 // special Coin 3.0 code to set the read image callback so we can nuke simage for good!!!
 
+#include <QImage>
+
 #include <Inventor/SbBasic.h>
+#include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoBaseColor.h>
+
 
 #if COIN_MAJOR_VERSION >= 3
 #include <Inventor/SbImage.h>
+
+
 
 // this code is essentially verbatim from Quarter
 // http://svn.coin3d.org/repos/Quarter/trunk/src/Quarter/ImageReader.cpp

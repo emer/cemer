@@ -17,6 +17,9 @@
 #define DataTableDelegate_h 1
 
 // parent includes:
+#ifndef __MAKETA__
+#include <QItemDelegate>
+#endif
 
 // member includes:
 #include <DataTable>

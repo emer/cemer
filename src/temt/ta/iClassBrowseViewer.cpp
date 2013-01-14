@@ -14,4 +14,27 @@
 //   Lesser General Public License for more details.
 
 #include "iClassBrowseViewer.h"
+#include <taiTreeDataNode>
+#include <taClassDataLink>
+#include <MainWindowViewer>
+
+
+
+iClassBrowseViewer::iClassBrowseViewer(ClassBrowseViewer* browser_, QWidget* parent)
+:inherited((BrowseViewer*)browser_, parent)
+{
+}
+
+iClassBrowseViewer::~iClassBrowseViewer()
+{
+}
+
+void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
+  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
+  taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
+  MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(dl->data(),
+     dl->GetDataTypeDef(), dl->GetDataMemberDef());
+  if (!brows) return;
+  brows->ViewWindow();
+}
 

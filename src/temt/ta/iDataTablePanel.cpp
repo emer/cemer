@@ -14,6 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTablePanel.h"
+#include <iDataTableEditor>
+#include <iMatrixEditor>
+#include <taiClipData>
+#include <iDataTableView>
+#include <iMainWindowViewer>
+#include <taDataLinkItr>
+#include <iMatrixTableView>
+
+#include <taMisc>
 
 
 iDataTablePanel::iDataTablePanel(taiDataLink* dl_)

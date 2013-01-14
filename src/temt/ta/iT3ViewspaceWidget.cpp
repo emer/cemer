@@ -15,9 +15,24 @@
 
 #include "iT3ViewspaceWidget.h"
 #include <iSoSelectionEvent>
+#include <T3ExaminerViewer>
+#include <iT3DataViewFrame>
+#include <iPoint>
+#include <T3DataView>
+#include <taiDataLink>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
 
 
 #include <QGLWidget>
+#include <QScrollBar>
+
+#include <Inventor/nodes/SoSelection.h>
+#include <Inventor/actions/SoBoxHighlightRenderAction.h>
+
 
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(true, path);

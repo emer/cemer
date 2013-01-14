@@ -14,6 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiProjTemplateElsButton.h"
+#include <ProjTemplates>
+#include <String_Array>
+#include <taiItemChooser>
+
+
+#include <QTreeWidgetItem>
+
 
 
 taiProjTemplateElsButton::taiProjTemplateElsButton(TypeDef* typ_, IDataHost* host, taiData* par,

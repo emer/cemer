@@ -18,49 +18,5 @@
 #ifndef COLORBAR_SO_H
 #define COLORBAR_SO_H
 
-#include "colorscale.h"
-#include "t3node_so.h"
-
-
-
-//////////////////////////
-//   T3CBar		//
-//////////////////////////
-
-/* 3D color bar -- the bar is oriented horizontally be default (use a transform if needed)
-   the 0,0 is at the centre of the rectangle
-*/
-
-class TA_API T3CBar : public T3NodeLeaf {
-#ifndef __MAKETA__
-typedef T3NodeLeaf inherited;
-
-  SO_NODE_HEADER(T3CBar);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-
-  float			height;
-  float			width;
-
-  ColorScaleRef		scale;
-
-  virtual int 		blocks();
-  override void		clear();
-
-  virtual void		SetColorScale(ColorScale* c);
-  void			SetDimensions(float wd, float ht);
-  T3CBar(ColorScale* c = NULL, T3DataView* dataView_ = NULL);
-
-protected:
-  SoTriangleStripSet*	bars_; // one rectangle per subbar
-
-  void			render();
-  ~T3CBar();
-};
-
-
-
-
 
 #endif // colorbar_h

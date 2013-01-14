@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "iBaseClipWidgetAction.h"
+#include <taiDataLink>
+#include <taiObjectMimeFactory>
+#include <taiClipData>
+
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(taBase* inst_, QObject* parent)
   : inherited(parent)

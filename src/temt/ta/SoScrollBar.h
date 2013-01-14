@@ -23,6 +23,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoMaterial;
+class SoTranslate1Dragger;
+class SoTranslation;
+
 // unfortunately you can't seem to do multiple inheritance for both QObject and So,
 // so we need to do our own callbacks..
 

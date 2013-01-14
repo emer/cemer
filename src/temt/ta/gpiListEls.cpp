@@ -14,6 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "gpiListEls.h"
+#include <taList_impl>
+#include <taiMenu>
+#include <taiObjChooser>
+
+#include <taMisc>
+
 
 gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)

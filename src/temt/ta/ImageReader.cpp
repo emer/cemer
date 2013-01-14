@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ImageReader.h"
+#include <rgb_Matrix>
+
+#include <taMisc>
 
 
 void ImageReader::Initialize() {

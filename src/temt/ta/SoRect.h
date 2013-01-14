@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "ta_def.h"
-#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoTriangleStripSet.h>
 
 // member includes:
 #include <Inventor/fields/SoMFVec3f.h>
