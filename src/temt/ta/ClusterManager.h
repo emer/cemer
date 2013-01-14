@@ -17,8 +17,8 @@
 #define CLUSTER_MANAGER_H_
 
 #include "ta_def.h"
-#include "ta_string.h"
-#include "SubversionClient.h"
+#include <taString>
+#include <SubversionClient>
 
 class ClusterRun;
 class DataTable;

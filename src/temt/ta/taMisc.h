@@ -727,7 +727,7 @@ public:
   static int	PosFinalPathSep(const String& in);
   // #CAT_File position of final path separator, -1 if not found
   static String UnescapeBackslash(const String& in);
-  // #CAT_File change \\ to a \ in string
+  // #CAT_File change double-backslash to a single-backslash in string
 
   static String GetFileFmPath(const String& path);
   // #CAT_File get file name component from full path

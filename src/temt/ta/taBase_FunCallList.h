@@ -31,7 +31,11 @@ class taDataLink; //
 class taBase; // 
 
 
-class TA_API taBase_FunCallList: public taPtrList<FunCallItem>, public IMultiDataLinkClient {
+class TA_API taBase_FunCallList: public taPtrList<FunCallItem>
+#ifndef __MAKETA__
+, public IMultiDataLinkClient
+#endif
+{
   // #INSTANCE function call list manager
 INHERITED(taPtrList<FunCallItem>)
 public:

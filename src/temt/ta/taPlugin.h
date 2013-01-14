@@ -23,12 +23,12 @@
 #ifndef __MAKETA__
 #include <QPointer>
 #endif
-class iPluginEditor;
+class iPluginEditor; // #IGNORE
 
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taPluginInst; //
+class taPluginInst; // #IGNORE
 
 
 class TA_API taPlugin: public taPluginBase {

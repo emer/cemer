@@ -27,7 +27,7 @@
 #include <VELightParams>
 
 // declare all other types mentioned but not required to include:
-class SoLight; // 
+class SoLight; // #IGNORE
 
 class TA_API VELight : public VEBody {
   // virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!

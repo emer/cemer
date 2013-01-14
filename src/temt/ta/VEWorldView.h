@@ -27,10 +27,10 @@
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
 class T3DataViewFrame; // 
-class QImage; // 
-class iT3DataViewFrame; // 
+class QImage; //  #IGNORE
+class iT3DataViewFrame; // #IGNORE
 class VEWorldViewPanel; //
-class SoOffscreenRendererQt; //
+class SoOffscreenRendererQt; // #IGNORE
 
 class TA_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer

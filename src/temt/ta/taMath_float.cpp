@@ -39,8 +39,6 @@
 # define _USE_MATH_DEFINES
 #endif
 
-#include "ta_math.h"
-
 #ifdef HAVE_LIBGSL
 # include <gsl/gsl_blas.h>
 # include <gsl/gsl_errno.h>

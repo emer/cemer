@@ -219,7 +219,7 @@ void MTA::TypeDef_Declare_Instances(TypeDef* ths, ostream& strm) {
 void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
                         bool instances)
 {
-  strm << "#include \"ta_type.h\"\n";
+  strm << "#include <TypeDef>\n";
   if(!instances) {
     strm << "#include \"ta_type_constr.h\"\n";
     if(mta->gen_css) {

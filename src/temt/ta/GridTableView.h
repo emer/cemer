@@ -29,7 +29,7 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 class T3DataViewFrame; // 
-class T3GridViewNode; // 
+class T3GridViewNode; //  #IGNORE
 class GridColView; // 
 class ColorScaleSpec; // 
 class iGridTableView_Panel; // 

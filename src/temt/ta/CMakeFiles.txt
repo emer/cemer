@@ -253,6 +253,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ToolBoxRegistrar_PtrList.h
   TreeDecorationSpec.h
   TreeDecorationSpec_List.h
+  MainWindowViewer.h
 
   ProgramRef.h
   ProgVarRef.h
@@ -686,6 +687,7 @@ set(ta_HEADS_MAKETA_MOC
   taiDataHostBase.h
   taiEditDataHost.h
   iMethodButtonMgr.h
+  taGuiDataHost.h
 
   iBrowseHistory.h
 
@@ -722,6 +724,8 @@ set(ta_HEADS_MAKETA_MOC
   iGridTableView_Panel.h
   iGraphTableView_Panel.h
   iDataTableEditor.h
+
+  VEWorldViewPanel.h
 )
 
 # this is no-moc
@@ -871,7 +875,6 @@ set(ta_HEADS_NOMAKETA_MOC
   taiClipData.h
   SynchronousNetRequest.h
 
-  taGuiDataHost.h
   taGuiWidgetHelper.h
   taGuiActionHelper.h
 
@@ -984,8 +987,6 @@ set(ta_HEADS_NOMAKETA_MOC
   iTabWidget.h
   iT3DataViewer.h
   iT3DataViewFrame.h
-
-  VEWorldViewPanel.h
 )
 
 # set(ta_HEADS_MAKETA_LOCAL_2
@@ -1257,6 +1258,7 @@ set(ta_SRCS_MAKETA
   tabBrowseViewer.cpp
   ClassBrowseViewer.cpp
   PanelViewer.cpp
+  MainWindowViewer.cpp
   ToolBoxRegistrar.cpp
   ToolBar_List.cpp
   DockViewer.cpp

@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiClipData; // 
+class taiClipData; // #IGNORE
 class ISelectable_PtrList; // 
 
 

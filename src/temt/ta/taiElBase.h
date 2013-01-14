@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taiActions; //
-class taiMenuAction; //
+class taiMenuAction; // #IGNORE
 
 // base class for sundry taiData items that use a menu, and have a taBase-derived current item
 class TA_API taiElBase: public taiData {

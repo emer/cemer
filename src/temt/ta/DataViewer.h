@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 
-class iMainWindowViewer; // 
+class iMainWindowViewer; // #IGNORE
 class TypeDef; // 
 class IDataViewWidget; // 
 class QWidget; // 

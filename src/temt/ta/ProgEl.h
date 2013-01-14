@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class Program; // 
 class LocalVars; // 
-class taiItemPtrBase; //
+class taiItemPtrBase; // #IGNORE
 
 
 /////////////////////////////////////////////////////////////////////

@@ -20,7 +20,7 @@
 #include <taString>
 
 #ifdef TA_GUI
-class QColor; // 
+class QColor; // #IGNORE
 #endif
 
 #ifdef TA_USE_INVENTOR
@@ -94,10 +94,10 @@ public:
 
 #ifdef TA_GUI
   iColor(const QColor& src); // conversion constructor
-  void	 	set(const QColor& src);
-  void	 	set(const QColor* src);
-  iColor& 	operator=(const QColor&  src); // conversion assignment operator
-  		operator QColor() const;
+  void	 	set(const QColor& src); // #IGNORE
+  void	 	set(const QColor* src); // #IGNORE
+  iColor& 	operator=(const QColor&  src); // #IGNORE conversion assignment operator
+  		operator QColor() const;       // #IGNORE
 #endif
 
 #ifdef TA_USE_INVENTOR

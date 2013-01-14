@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iProgramCtrlDataHost; //
+class iProgramCtrlDataHost; // #IGNORE
 class Program; //
 
 

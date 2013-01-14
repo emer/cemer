@@ -24,8 +24,8 @@
 
 // declare all other types mentioned but not required to include:
 class T3DataViewFrame; //
-class iT3DataViewer; //
-class iTabBarBase; //
+class iT3DataViewer; //  #IGNORE
+class iTabBarBase; //  #IGNORE
 class T3DataView; //
 
 

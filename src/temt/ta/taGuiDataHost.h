@@ -58,7 +58,7 @@ public: // IDataHost i/f
   override bool         isModal() {return modal;}
   override bool         isReadOnly() {return read_only;} //
   override void*        Root() const {return gui_owner;} // root of the object
-  override taBase*      Base() const;;
+  override taBase*      Base() const;
   override TypeDef*     GetRootTypeDef() const {return &TA_taGuiDialog;} // TypeDef on the root, for casting
   override void         GetImage()      { GetImage(true); }
   override void         GetValue();

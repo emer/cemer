@@ -31,7 +31,7 @@
 class SoSeparator;
 class T3ExaminerViewer;
 class iT3DataViewFrame;
-class SoNode;
+class SoNode; //  #IGNORE
 class iSoSelectionEvent;
 
 

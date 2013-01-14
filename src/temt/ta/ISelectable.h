@@ -31,7 +31,7 @@ class QWidget; // #IGNORE
 class QObject; // #IGNORE
 class TypeDef; // 
 class ISelectable_PtrList; // 
-class taiClipData; // 
+class taiClipData; // #IGNORE
 class taiActions; //
 class taiMimeSource; //
 

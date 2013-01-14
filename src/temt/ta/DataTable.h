@@ -42,7 +42,7 @@ class String_Data; //
 class GridTableView; // 
 class T3DataViewFrame; // 
 class GraphTableView; // 
-class DataTableModel; //
+class DataTableModel; // #IGNORE
 
 /*
   DataTable Notifications

@@ -30,7 +30,7 @@
 
 
 // declare all other types mentioned but not required to include:
-class TemtClientAdapter; //
+class TemtClientAdapter; // #IGNORE
 class TemtServer; //
 class DataTable; //
 class Program; //

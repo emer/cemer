@@ -25,11 +25,11 @@
 #include <iPoint>
 
 // declare all other types mentioned but not required to include:
-class SbImage; //
-class SoTexture2; //
-class QImage; //
+class SbImage; // #IGNORE
+class SoTexture2; // #IGNORE
+class QImage; // #IGNORE
 class taMatrix; //
-class SoRect; //
+class SoRect; // #IGNORE
 
 
 #ifndef __MAKETA__

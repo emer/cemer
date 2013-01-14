@@ -35,7 +35,7 @@
 
 // declare all other types mentioned but not required to include:
 class taiDataHostBase; //
-class iHostDialog; //
+class iHostDialog; //  #IGNORE
 class taBase;      // 
 class HiLightButton; // #IGNORE
 

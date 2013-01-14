@@ -27,8 +27,8 @@
 #include <taColor>
 
 // declare all other types mentioned but not required to include:
-class SoTexture2; // 
-class SoTexture2Transform; // 
+class SoTexture2; // #IGNORE
+class SoTexture2Transform; // #IGNORE
 
 
 class TA_API VETexture : public taNBase {

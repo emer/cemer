@@ -22,8 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iMatrixEditor; //
-class iTableView; //
+class iMatrixEditor; // #IGNORE
+class iTableView; // #IGNORE
 
 class TA_API iMatrixPanel: public iDataPanelFrame {
   Q_OBJECT

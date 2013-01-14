@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class iDataTableEditor; //
-class ClusterManager; //
+class ClusterManager; // #IGNORE
 
 
 class TA_API ClusterRun : public SelectEdit {

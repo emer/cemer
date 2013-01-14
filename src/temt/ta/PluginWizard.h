@@ -26,7 +26,7 @@
 #endif
 
 // declare all other types mentioned but not required to include:
-class iPluginEditor; //
+class iPluginEditor; // #IGNORE
 
 
 class TA_API PluginWizard : public taWizard {

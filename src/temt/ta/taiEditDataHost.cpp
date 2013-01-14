@@ -726,8 +726,6 @@ iMainWindowViewer* taiEditDataHost::viewerWindow() const {
   return dv;
 }
 
-#include "ta_program_qt.h"
-
 bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
   if(event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);

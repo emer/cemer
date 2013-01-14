@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class MemberDef; // 
-class iBrowseViewer; // 
+class iBrowseViewer; // #IGNORE
 class taiDataLink; // 
 
 

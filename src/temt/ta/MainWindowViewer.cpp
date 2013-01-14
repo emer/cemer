@@ -14,6 +14,25 @@
 //   Lesser General Public License for more details.
 
 #include "MainWindowViewer.h"
+#include <iMainWindowViewer>
+#include <taProject>
+#include <tabBrowseViewer>
+#include <PanelViewer>
+#include <ClassBrowseViewer>
+#include <ToolBoxDockViewer>
+#include <ToolBar>
+#include <iTabViewer>
+#include <T3DataViewer>
+#include <iTabView>
+#include <iT3DataViewer>
+
+#include <taMisc>
+#include <taiMisc>
+#include <tabMisc>
+#include <taRootBase>
+
+#include <QSplitter>
+#include <QApplication>
 
 void MainWindowViewer:: FileOptionsAction(){} //
 void MainWindowViewer:: FileCloseAction(){} // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)

@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class iMainWindowViewer; // 
+class iMainWindowViewer; // #IGNORE
 class taBase; // 
 class MemberDef; // 
 class taProject; // 
@@ -37,7 +37,7 @@ class BrowseViewer; //
 class PanelViewer; // 
 class T3DataViewer; // 
 class taiMenu_List; //
-class taiMenuBar; //
+class taiMenuBar; // #IGNORE
 class taiActions; //
 
 

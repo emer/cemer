@@ -23,9 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class TypeSpace;
+class TypeDef;
 
-
-#include "ta_type.h"
 
 class TA_API taGenDoc  {
   // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS collection of gendoc functions -- documentation generation from scanned type information (maketa)

@@ -56,7 +56,7 @@
   #endif
 #endif // __MAKETA__
 
-#include "ta_atomic.h"
+#include <taAtomicInt>
 
 class TA_API Variant;
 class TA_API taStrRep;

@@ -28,8 +28,8 @@
 // declare all other types mentioned but not required to include:
 class T3Node; // #IGNORE
 class T3DataViewRoot; //
-class T3ExaminerViewer; //
-class iT3DataViewFrame; //
+class T3ExaminerViewer; // #IGNORE
+class iT3DataViewFrame; // #IGNORE
 class T3NodePtr; //
 class SoPath; // #IGNORE
 class T3DataViewFrame;
@@ -93,7 +93,7 @@ public:
   // #IGNORE get the Viewer that contains us
 
   void                  AddRemoveChildNode(SoNode* node, bool adding);
-    // can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
+    // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
   override void         Close(); // usually delegates to parent->CloseChild
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
