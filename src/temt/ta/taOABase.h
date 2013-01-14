@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBaseAdapter; // 
+class taBaseAdapter; // #IGNORE
 
 
 class TA_API taOABase : public taOBase {

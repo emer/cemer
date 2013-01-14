@@ -29,7 +29,7 @@ class iSearchDialog; //
 class iDataPanel; //
 class taiTreeDataNode; //
 class iTreeView; //
-class DataLink_QObj; //
+class DataLink_QObj; // #IGNORE
 class taiMimeSource; //
 
 class TA_API taiDataLink: public taDataLink {

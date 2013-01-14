@@ -29,7 +29,7 @@
 // declare all other types mentioned but not required to include:
 class int_Matrix; // 
 class MatrixIndex; // 
-class MatrixTableModel; // 
+class MatrixTableModel; // #IGNORE
 class CellRange; //
 class taMatrix_PList; //
 
