@@ -20,6 +20,141 @@
 
 #include <taMisc>
 
+void V1GaborSpec::Initialize() {
+  gain = 2.0f;
+  n_angles = 4;
+  filter_size = 6;
+  spacing = 1;
+  wvlen = 6.0f;
+  gauss_sig_len = 0.3f;
+  gauss_sig_wd = 0.2f;
+  phase_off = 0.0f;
+  circle_edge = true;
+}
+
+void V1GaborSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void V1GaborSpec::RenderFilters(float_Matrix& fltrs) {
+  fltrs.SetGeom(3, filter_size, filter_size, n_angles);
+
+  float ctr = (float)(filter_size-1) / 2.0f;
+  float ang_inc = taMath_float::pi / (float)n_angles;
+
+  float circ_radius = (float)(filter_size) / 2.0f;
+
+  float gs_len_eff = gauss_sig_len * (float)filter_size;
+  float gs_wd_eff = gauss_sig_wd * (float)filter_size;
+
+  float len_norm = 1.0f / (2.0f * gs_len_eff * gs_len_eff);
+  float wd_norm = 1.0f / (2.0f * gs_wd_eff * gs_wd_eff);
+
+  float twopinorm = (2.0f * taMath_float::pi) / wvlen;
+
+  for(int ang = 0; ang < n_angles; ang++) {
+    float angf = -(float)ang * ang_inc;
+
+    float pos_sum = 0.0f;
+    float neg_sum = 0.0f;
+    for(int x = 0; x < filter_size; x++) {
+      for(int y = 0; y < filter_size; y++) {
+        float xf = (float)x - ctr;
+        float yf = (float)y - ctr;
+
+        float dist = taMath_float::hypot(xf, yf);
+        float val = 0.0f;
+        if(!(circle_edge && (dist > circ_radius))) {
+          float nx = xf * cosf(angf) - yf * sinf(angf);
+          float ny = yf * cosf(angf) + xf * sinf(angf);
+          float gauss = expf(-(len_norm * (nx * nx) + wd_norm * (ny * ny)));
+          float sin_val = sinf(twopinorm * ny + phase_off);
+          val = gauss * sin_val;
+          if(val > 0.0f)        { pos_sum += val; }
+          else if(val < 0.0f)   { neg_sum += val; }
+        }
+        fltrs.FastEl(x, y, ang) = val;
+      }
+    }
+    // renorm each half
+    float pos_norm = 1.0f / pos_sum;
+    float neg_norm = -1.0f / neg_sum;
+    for(int x = 0; x < filter_size; x++) {
+      for(int y = 0; y < filter_size; y++) {
+        float& val = fltrs.FastEl(x, y, ang);
+        if(val > 0.0f)          { val *= pos_norm; }
+        else if(val < 0.0f)     { val *= neg_norm; }
+      }
+    }
+  }
+}
+
+void V1GaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool reset) {
+  RenderFilters(fltrs);         // just to make sure
+
+  String name;
+  if(owner) name = owner->GetName();
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_V1Gabor_GridFilters", true);
+  }
+  graph_data->StructUpdate(true);
+  if(reset)
+    graph_data->ResetData();
+  int idx;
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+//   nmda->SetUserData("WIDTH", 10);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+
+  float maxv = taMath_float::vec_abs_max(&fltrs, idx);
+
+  graph_data->SetUserData("N_ROWS", 4);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+
+  int ang_inc = 180 / n_angles;
+
+  for(int ang=0; ang<n_angles; ang++) {
+    graph_data->AddBlankRow();
+    float_MatrixPtr frm; frm = (float_Matrix*)fltrs.GetFrameSlice(ang);
+    matda->SetValAsMatrix(frm, -1);
+    nmda->SetValAsString("Angle: " + String(ang * ang_inc), -1);
+  }
+
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
+}
+
+void V1sNeighInhib::Initialize() {
+  on = true;
+  inhib_d = 1;
+  inhib_g = 0.8f;
+
+  tot_ni_len = 2 * inhib_d + 1;
+}
+
+void V1sNeighInhib::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tot_ni_len = 2 * inhib_d + 1;
+}
+
+void V1MotionSpec::Initialize() {
+  r_only = true;
+  n_speeds = 1;
+  speed_inc = 1;
+  tuning_width = 1;
+  gauss_sig = 0.8f;
+  opt_thr = 0.01f;
+
+  tot_width = 1 + 2 * tuning_width;
+}
+
+void V1MotionSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tot_width = 1 + 2 * tuning_width;
+}
 
 void V1BinocularSpec::Initialize() {
   mot_in = false;

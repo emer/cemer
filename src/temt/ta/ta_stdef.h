@@ -413,6 +413,8 @@ enum CustomEventType {
 
 // Some global forward declarations
 
+#define TypeDef_Of(y) extern TypeDef TA_##T;
+
 class TypeDef; //
 class MemberDef; //
 class MethodDef; //

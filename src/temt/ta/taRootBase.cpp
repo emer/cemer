@@ -733,6 +733,10 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
 
   taMisc::AddArgName("--create_new_src", "CreateNewSrc");
   taMisc::AddArgName("create_new_src=", "CreateNewSrc");
+  taMisc::AddArgName("--make_new_src", "CreateNewSrc");
+  taMisc::AddArgName("make_new_src=", "CreateNewSrc");
+  taMisc::AddArgName("--new_src", "CreateNewSrc");
+  taMisc::AddArgName("new_src=", "CreateNewSrc");
   taMisc::AddArgNameDesc("CreateNewSrc", "\
  -- create new source code files for given type name -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
 

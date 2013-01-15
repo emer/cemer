@@ -15,3 +15,21 @@
 
 #include "T3VEObject.h"
 
+SO_NODE_SOURCE(T3VEObject);
+
+void T3VEObject::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VEObject, T3NodeParent, "T3NodeParent");
+}
+
+T3VEObject::T3VEObject(T3DataView* world)
+  : inherited(world)
+{
+  SO_NODE_CONSTRUCTOR(T3VEObject);
+}
+
+T3VEObject::~T3VEObject()
+{
+  
+}
+

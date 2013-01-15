@@ -15,3 +15,13 @@
 
 #include "DataTableDelegate.h"
 
+DataTableDelegate::DataTableDelegate(DataTable* dt_)
+:inherited(NULL)
+{
+  dt = dt_;
+}
+
+DataTableDelegate::~DataTableDelegate() {
+}
+
+

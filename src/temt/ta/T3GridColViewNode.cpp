@@ -15,3 +15,23 @@
 
 #include "T3GridColViewNode.h"
 
+// this guy is managed by the _qtso and is only for selecting the column spec!
+
+SO_NODE_SOURCE(T3GridColViewNode);
+
+void T3GridColViewNode::initClass()
+{
+  SO_NODE_INIT_CLASS(T3GridColViewNode, T3NodeLeaf, "T3NodeLeaf");
+}
+
+T3GridColViewNode::T3GridColViewNode(T3DataView* colspec)
+  : inherited(colspec)
+{
+  SO_NODE_CONSTRUCTOR(T3GridColViewNode);
+}
+
+T3GridColViewNode::~T3GridColViewNode()
+{
+}
+
+

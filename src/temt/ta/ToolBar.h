@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iToolBar; //
+class iToolBar; // #IGNORE 
 
 
 class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars

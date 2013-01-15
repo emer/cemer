@@ -72,6 +72,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   DumpFileCvtList.h
   ContextFlag.h
   taMisc.h
+  taiMiscCore.h
 
   taBase.h
   taBaseItr.h
@@ -149,8 +150,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   XYNGeom.h
   ValIdx.h
   ValIdx_Array.h
-
-  taiMiscCore.h
 
   taDataView.h
   DataView_List.h
@@ -245,6 +244,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   ClassBrowseViewer.h
   PanelViewer.h
   ToolBoxRegistrar.h
+  ToolBar.h
   ToolBar_List.h
   DockViewer.h
   DockViewer_List.h
@@ -478,7 +478,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   taiMultiMimeItem.h
   taiObjectMimeItem.h
   taiObjectsMimeItem.h
-  taiMimeSource.h
   taiMimeFactory.h
   taiMimeFactory_List.h
   taiObjectMimeFactory.h
@@ -545,8 +544,6 @@ set(ta_HEADS_MAKETA_LOCAL_1
   VEObjCarousel.h
   VEHeightField.h
 
-  taiAction.h
-  taiData.h
   taiDataList.h
 
   taiTypeBase.h
@@ -638,6 +635,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   T3DataViewPar.h
   T3DataViewRoot.h
   T3DataViewMain.h
+  T3DataViewFrame.h
   T3DataViewFrame_List.h
   T3DataViewer.h
 
@@ -682,6 +680,10 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
 # need both maketa and moc -- relatively rare
 set(ta_HEADS_MAKETA_MOC
+  taiMimeSource.h
+
+  taiAction.h
+  taiData.h
   taiDataHost_impl.h
   taiDataHost.h
   taiDataHostBase.h
@@ -1032,6 +1034,7 @@ set(ta_HEADS
 
 # headers that need Qt moc run
 set(ta_HEADS_MOC
+  taiMiscCore.h			# maketa order prevents listing in _MOC list
   ${ta_HEADS_MAKETA_MOC}
   ${ta_HEADS_NOMAKETA_MOC}
 )
@@ -1260,6 +1263,7 @@ set(ta_SRCS_MAKETA
   PanelViewer.cpp
   MainWindowViewer.cpp
   ToolBoxRegistrar.cpp
+  ToolBar.cpp
   ToolBar_List.cpp
   DockViewer.cpp
   DockViewer_List.cpp
@@ -1654,7 +1658,10 @@ set(ta_SRCS_MAKETA
   taGuiAction_List.cpp
   taGuiDataHost.cpp
   taGuiDialog.cpp
+  taGuiWidgetHelper.cpp
+  taGuiActionHelper.cpp
 
+  T3DataViewFrame.cpp
   T3DataViewFrame_List.cpp
   T3SavedView.cpp
   T3SavedView_List.cpp

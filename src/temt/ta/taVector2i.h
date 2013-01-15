@@ -43,9 +43,9 @@ public:
   virtual void  CopyToMatrixGeom(MatrixGeom& geom);
   virtual void  CopyToMatrixIndex(MatrixIndex& idx);
 
-  inline void	ToMatrix(taMatrix& mat) const;
+  void	        ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)
-  inline void	FromMatrix(taMatrix& mat);
+  void	        FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
   taVector2i(int xx)                     { SetXY(xx, xx); }

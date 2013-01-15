@@ -6,6 +6,7 @@
 
 # headers that need Qt moc run
 set(taiqtso_HEADS_MOC
+  AutoSaver.h
   iMenuButton.h
   iContextMenuButton.h
   iColorButton.h
@@ -38,7 +39,6 @@ set(taiqtso_HEADS_MOC
 set(taiqtso_HEADS_NOMOC
   taiqtso_def.h
   SoPtr.h
-  AutoSaver.h
   SoOffscreenRendererQt.h
   iStripeWidget.h
   iFlowLayout.h
@@ -54,6 +54,7 @@ set(taiqtso_HEADS
 
 # source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(taiqtso_SRCS
+  AutoSaver.cpp
   iMenuButton.cpp
   iContextMenuButton.cpp
   iColorButton.cpp
@@ -62,7 +63,6 @@ set(taiqtso_SRCS
   iClipToolWidget.cpp
   iComboBox.cpp
   iCookieJar.cpp
-  AutoSaver.cpp
   iDialog.cpp
   iDimEdit.cpp
   iStripeWidget.cpp

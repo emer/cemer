@@ -16,7 +16,7 @@
 #ifndef SoOffscreenRendererQt_h
 #define SoOffscreenRendererQt_h 1
 
-#ifdef TA_USE_INVENTOR
+#include "taiqtso_def.h"
 
 #include <QGLPixelBuffer>
 
@@ -69,7 +69,5 @@ protected:
   SoGLRenderAction * renderaction;
   SbBool didallocation;
 };
-
-#endif // TA_USE_INVENTOR
 
 #endif // SoOffscreenRendererQt_h

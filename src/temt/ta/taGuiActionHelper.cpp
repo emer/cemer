@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiActionHelper.h"
+#include <taGuiAction>
 
 void taGuiActionHelper::UrlAction() { action->UrlAction(); }
 

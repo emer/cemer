@@ -15,8 +15,6 @@
 
 #include "SoOffscreenRendererQt.h"
 
-#ifdef TA_USE_INVENTOR
-
 #include <Inventor/C/glue/gl.h>
 #include <Inventor/elements/SoGLCacheContextElement.h>
 #include <Inventor/nodes/SoNode.h>
@@ -280,6 +278,4 @@ SoOffscreenRendererQt::render(SoPath * scene)
 
 #undef PRIVATE
 #undef PUBLIC
-
-#endif // TA_USE_INVENTOR
 

@@ -109,7 +109,7 @@ public:
   void	ToAxisAngle(taAxisAngle& axa) const;
   // #CAT_Quaternion set taAxisAngle from this quaternion
 
-  inline void	ToRotMatrix(float_Matrix& mat) const;
+  void	ToRotMatrix(float_Matrix& mat) const;
   // #CAT_Quaternion create a 3x3 rotation matrix from quaternion
 
   void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
@@ -219,7 +219,7 @@ public:
   inline taQuaternion& operator *= (float scale) {
     s *= scale; x *= scale; y *= scale; z *= scale; return *this;
   }
-  inline taQuaternion& operator /= (float scale);
+  taQuaternion& operator /= (float scale);
 
 #ifndef __MAKETA__
   void		ToODE(dQuaternion dq) const;

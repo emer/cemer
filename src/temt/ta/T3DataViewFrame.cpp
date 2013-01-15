@@ -14,9 +14,24 @@
 //   Lesser General Public License for more details.
 
 #include "T3DataViewFrame.h"
-
-#include <T3DataView>
 #include <iT3DataViewFrame>
+#include <iT3ViewspaceWidget>
+#include <T3DataViewer>
+#include <T3DataViewMain>
+#include <iT3DataViewer>
+#include <T3ExaminerViewer>
+#include <T3DataView>
+#include <PanelViewer>
+#include <iTabViewer>
+#include <iViewPanelSet>
+#include <iMainWindowViewer>
+#include <T3Node>
+#include <taFiler>
+
+#include <taMisc>
+
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
 
 
 void T3DataViewFrame::Initialize() {

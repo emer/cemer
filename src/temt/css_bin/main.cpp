@@ -16,9 +16,12 @@
 
 // C^c C Super Script
 
-#include "ta_project.h"
-#include "css_machine.h"
+#include <taProject>
+#include <css_machine.h>
+#include <taMisc>
+#include <taRootBase>
 
+using namespace std;
 
 void css_cleanup(int err) {
   signal(err, SIG_DFL);

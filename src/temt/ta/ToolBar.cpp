@@ -14,6 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ToolBar.h"
+#include <iToolBar>
+#include <iRect>
+
+#include <taiMisc>
+
 
 void ToolBar::Initialize() {
   lft = 0.0f;

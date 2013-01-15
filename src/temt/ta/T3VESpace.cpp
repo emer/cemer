@@ -15,3 +15,21 @@
 
 #include "T3VESpace.h"
 
+SO_NODE_SOURCE(T3VESpace);
+
+void T3VESpace::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VESpace, T3NodeParent, "T3NodeParent");
+}
+
+T3VESpace::T3VESpace(T3DataView* world)
+  : inherited(world)
+{
+  SO_NODE_CONSTRUCTOR(T3VESpace);
+}
+
+T3VESpace::~T3VESpace()
+{
+  
+}
+
