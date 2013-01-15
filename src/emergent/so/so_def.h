@@ -17,7 +17,7 @@
 #ifndef SO_DEF_H
 #define SO_DEF_H
 
-#include "ta_global.h"
+#include "ta_stdef.h"
  
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS

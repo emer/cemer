@@ -7,24 +7,105 @@
 # local headers that need maketa run on them
 set(network_HEADS_MAKETA_LOCAL
     network_def.h
-    emergent_base.h
-    spec.h
-    netstru.h
-    netstru_extra.h
-    netdata.h
-    emergent_program.h
-    emergent_project.h
-    netstru_so.h
-    netstru_qtso.h
-    emergent_qtso.h
-    emergent_program_qtso.h
-    v3_compat.h
-    brainstru.h
-    brain_view.h
-    brain_view_panel.h
-    brain_volume_view.h
-    t3brain_node.h
+#    emergent_base.h
+#    spec.h
+#    netstru.h
+#    netstru_extra.h
+  EmergentMisc.h
+
+  SpecMemberBase.h
+  BaseSpec.h
+  BaseSpec_Group.h
+  BaseSubSpec.h
+  SpecPtr.h
+
+  SigmoidSpec.h
+  Schedule.h
+  PRerrVals.h
+
+  NetworkRef.h
+
+  Connection.h
+  ConSpec.h
+  BaseCons.h
+  RecvCons.h
+  RecvCons_List.h
+  SendCons.h
+  SendCons_List.h
+
+  UnitSpec.h
+  Voxel.h
+  Voxel_List.h
+  Unit.h
+  UnitPtrList.h
+  Unit_Group.h
+
+  ProjectionSpec.h
+  Projection.h
+  Projection_Group.h
+
+  LayerSpec.h
+  Layer.h
+  Layer_Group.h
+  UnitCallThreadMgr.h
+  Layer_PtrList.h
+
+  NetViewObj.h
+  NetViewObj_Group.h
+  taBrainAtlas.h
+  taBrainAtlas_List.h
+  BrainAtlasRegexpPopulator.h
+
+  Network.h
+  Network_Group.h
+
+  FullPrjnSpec.h
+  TesselPrjnSpec.h
+  OneToOnePrjnSpec.h
+  SmallWorldPrjnSpec.h
+  RandomPrjnSpec.h
+  UniformRndPrjnSpec.h
+  PolarRndPrjnSpec.h
+  SymmetricPrjnSpec.h
+  ScriptPrjnSpec.h
+  ProgramPrjnSpec.h
+  CustomPrjnSpec.h
+  GpOneToOnePrjnSpec.h
+  RndGpOneToOnePrjnSpec.h
+  GpOneToManyPrjnSpec.h
+  GpRndTesselPrjnSpec.h
+  TiledRFPrjnSpec.h
+  TiledGpRFPrjnSpec.h
+  TiledNovlpPrjnSpec.h
+  GpMapConvergePrjnSpec.h
+  GpMapDivergePrjnSpec.h
+  TiledGpMapConvergePrjnSpec.h
+  GaussRFPrjnSpec.h
+  GradientWtsPrjnSpec.h
+
+  LayerDataEl.h
+  LayerDataEl_List.h
+  LayerWriterEl.h
+  LayerWriter.h
+  NetMonItem.h
+  NetMonItem_List.h
+  NetMonitor.h
+  ActBasedRF.h
 )
+
+    # netdata.h
+    # emergent_program.h
+    # emergent_project.h
+    # netstru_so.h
+    # netstru_qtso.h
+    # emergent_qtso.h
+    # emergent_program_qtso.h
+    # v3_compat.h
+    # brainstru.h
+    # brain_view.h
+    # brain_view_panel.h
+    # brain_volume_view.h
+    # t3brain_node.h
 
 # all headers that need maketa run on them
 # The order of files passed to maketa is important since it appears not to
@@ -44,31 +125,114 @@ set(network_HEADS
     nifti1.h
     nifti1_io.h
     nifti_reader.h
+  ConSpec_inlines.h
+  Unit_inlines.h
 )
 
 # headers that need Qt moc run
 set(network_HEADS_MOC
-    netstru_qtso.h
-    brain_view_panel.h
+    # netstru_qtso.h
+    # brain_view_panel.h
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(network_SRCS_GUI
-    brainstru.cpp
-    brain_view.cpp
-    brain_view_panel.cpp
-    brain_volume_view.cpp
-    t3brain_node.cpp
-    netstru_so.cpp
-    emergent_qtso.cpp
-    netstru_qtso.cpp
-    emergent_program_qtso.cpp
+    # brainstru.cpp
+    # brain_view.cpp
+    # brain_view_panel.cpp
+    # brain_volume_view.cpp
+    # t3brain_node.cpp
+    # netstru_so.cpp
+    # emergent_qtso.cpp
+    # netstru_qtso.cpp
+    # emergent_program_qtso.cpp
+  EmergentMisc.cpp
+
+  SpecMemberBase.cpp
+  BaseSpec.cpp
+  BaseSpec_Group.cpp
+  BaseSubSpec.cpp
+  SpecPtr.cpp
+
+  SigmoidSpec.cpp
+  Schedule.cpp
+  PRerrVals.cpp
+
+  NetworkRef.cpp
+
+  Connection.cpp
+  ConSpec.cpp
+  BaseCons.cpp
+  RecvCons.cpp
+  RecvCons_List.cpp
+  SendCons.cpp
+  SendCons_List.cpp
+
+  Voxel.cpp
+  Voxel_List.cpp
+  UnitSpec.cpp
+  Unit.cpp
+  UnitPtrList.cpp
+  Unit_Group.cpp
+
+  ProjectionSpec.cpp
+  Projection.cpp
+  Projection_Group.cpp
+
+  LayerSpec.cpp
+  Layer.cpp
+  Layer_Group.cpp
+  Layer_PtrList.cpp
+
+  UnitCallThreadMgr.cpp
+  NetViewObj.cpp
+  NetViewObj_Group.cpp
+  taBrainAtlas.cpp
+  taBrainAtlas_List.cpp
+  BrainAtlasRegexpPopulator.cpp
+  Network.cpp
+  Network_Group.cpp
+
+  FullPrjnSpec.cpp
+  TesselPrjnSpec.cpp
+  OneToOnePrjnSpec.cpp
+  SmallWorldPrjnSpec.cpp
+  RandomPrjnSpec.cpp
+  UniformRndPrjnSpec.cpp
+  PolarRndPrjnSpec.cpp
+  SymmetricPrjnSpec.cpp
+  ScriptPrjnSpec.cpp
+  ProgramPrjnSpec.cpp
+  CustomPrjnSpec.cpp
+  GpOneToOnePrjnSpec.cpp
+  RndGpOneToOnePrjnSpec.cpp
+  GpOneToManyPrjnSpec.cpp
+  GpRndTesselPrjnSpec.cpp
+  TiledRFPrjnSpec.cpp
+  TiledGpRFPrjnSpec.cpp
+  TiledNovlpPrjnSpec.cpp
+  GpMapConvergePrjnSpec.cpp
+  GpMapDivergePrjnSpec.cpp
+  TiledGpMapConvergePrjnSpec.cpp
+  GaussRFPrjnSpec.cpp
+  GradientWtsPrjnSpec.cpp
+
+  LayerDataEl.cpp
+  LayerDataEl_List.cpp
+  LayerWriterEl.cpp
+  LayerWriter.cpp
+  NetMonItem.cpp
+  NetMonItem_List.cpp
+  NetMonitor.cpp
+  ActBasedRF.cpp
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(network_SRCS
     ${network_SRCS_GUI}
+  ConSpec_inlines.cpp
+  Unit_inlines.cpp
     emergent_base.cpp
     spec.cpp
     netstru.cpp

@@ -18,9 +18,7 @@
 #ifndef bp_h
 #define bp_h
 
-#include "emergent_base.h"
-#include "netstru.h"
-#include "emergent_project.h"
+#include <Network>
 
 #include "bp_def.h"
 #include "bp_TA_type.h"

@@ -17,7 +17,7 @@
 #ifndef EMERGENT_DEF_H
 #define EMERGENT_DEF_H
 
-#include "ta_global.h"
+#include "ta_stdef.h"
 
  
 // The following ifdef block is the standard way of creating macros which make exporting 

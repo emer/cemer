@@ -18,9 +18,7 @@
 #ifndef  cs_h
 #define cs_h
 
-#include "emergent_base.h"
-#include "netstru.h"
-#include "emergent_project.h"
+#include <Network>
 
 #include "cs_def.h"
 #include "cs_TA_type.h"

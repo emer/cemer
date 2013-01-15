@@ -18,9 +18,7 @@
 #ifndef so_h
 #define so_h
 
-#include "emergent_base.h"
-#include "netstru.h"
-#include "emergent_project.h"
+#include <Network>
 
 #include "so_def.h"
 #include "so_TA_type.h"

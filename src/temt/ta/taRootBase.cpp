@@ -1680,9 +1680,8 @@ bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("CreateNewSrc")) {
     String srcnm = taMisc::FindArgByName("CreateNewSrc");
     String curpath = QDir::currentPath();
-    String top_path = curpath.through("emergent",-1);
-    String src_path = curpath.after("emergent",-1);
-    top_path += src_path.before("/");
+    String top_path = curpath.before("/src/",-1);
+    String src_path = curpath.from("/src/",-1);
     src_path = src_path.after("/");
     taMisc::Info("creating new source files for type:", srcnm, "in top path:", top_path,
 		 "src_path:", src_path);

@@ -18,10 +18,8 @@
 #ifndef leabra_h
 #define leabra_h
 
-#include "netstru_extra.h"
-#include "emergent_project.h"
-
-#include "fun_lookup.h"
+#include <Network>
+#include <FunLookup>
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"
