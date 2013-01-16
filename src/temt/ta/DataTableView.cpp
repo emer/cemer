@@ -20,6 +20,7 @@
 #include <DataColView>
 #include <T3Node>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 #include <Inventor/nodes/SoFont.h>

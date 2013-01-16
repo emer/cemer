@@ -17,9 +17,11 @@
 #define Unit_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taBase>
 
 // member includes:
+#include <UnitRef>
 #include <UnitSpec>
 #include <Voxel_List>
 #include <RecvCons_List>
@@ -29,6 +31,7 @@
 class Projection; //
 class Layer; //
 class Network; //
+class Unit_Group; //
 
 
 TypeDef_Of(Unit);

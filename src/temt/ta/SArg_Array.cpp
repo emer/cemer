@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "SArg_Array.h"
+
 #include <taMisc>
 
 using namespace std;
@@ -75,6 +76,6 @@ void SArg_Array::SetValue(const String& key, const String& value) {
     Add(value);
   }
 #ifdef DEBUG // helpful when viewing stuff in gui
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 #endif
 }

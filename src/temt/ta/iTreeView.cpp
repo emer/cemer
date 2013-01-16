@@ -27,6 +27,7 @@
 #include <iBrowseHistory>
 #include <iPoint>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 #include <tabMisc>

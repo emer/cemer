@@ -16,10 +16,10 @@
 #include "ForLoop.h"
 #include <Program>
 #include <Function>
-#include <taMisc>
 #include <ProgExpr>
 #include <LocalVars>
 
+#include <taMisc>
 
 void ForLoop::SetProgExprFlags() {
   init.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
@@ -134,7 +134,7 @@ void ForLoop::MakeIndexVar(const String& var_nm) {
     var->name = var_nm;
     var->SetInt(0);
     var->ClearVarFlag(ProgVar::CTRL_PANEL);
-    var->DataChanged(DCR_ITEM_UPDATED);
+    var->DataItemUpdated();
     // get the var ptrs in case someone changes them later!
     init.ParseExpr();
     test.ParseExpr();

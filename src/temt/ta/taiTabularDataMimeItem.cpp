@@ -101,7 +101,7 @@ done:
   //NOTE: this is VERY hacky, but easiest way to update tables...
   DataCol* col = (DataCol*)mat->GetOwner(&TA_DataCol);
   if (col) {
-    col->DataChanged(DCR_ITEM_UPDATED);
+    col->DataItemUpdated();
   }
 }
 

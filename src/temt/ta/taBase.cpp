@@ -14,7 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "taBase.h"
-
 #include <taMatrix>
 #include <taBaseItr>
 #include <MemberDef>
@@ -34,6 +33,7 @@
 #include <IDataLinkClient>
 #include <iColor>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -1415,7 +1415,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   if (flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
     // don't notify! very dangerous in middle of save, and also marks Dirty
-   // DataChanged(DCR_ITEM_UPDATED);
+   // DataItemUpdated();
   }
   return flr;
 }
@@ -1688,7 +1688,7 @@ taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef
 void taBase::UpdateAfterEdit() {
   if (isDestroying()) return;
   UpdateAfterEdit_impl();
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   /*TEST */
   taBase* _owner = GetOwner();
   if (_owner ) {
@@ -1714,7 +1714,7 @@ void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
 
 void taBase::UpdateAfterMove(taBase* old_owner) {
   UpdateAfterMove_impl(old_owner);
-  //  DataChanged(DCR_ITEM_UPDATED);  no extra notify -- list takes care of it.  should
+  //  DataItemUpdated();  no extra notify -- list takes care of it.  should
   // just _impl doing updating of pointers etc -- just have _impl stuff because it always
   // ends up being needed eventually..
 }
@@ -1739,6 +1739,10 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
     setStale();
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
+}
+
+void taBase::DataItemUpdated() {
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 bool taBase::InStructUpdate() {
@@ -1889,14 +1893,14 @@ bool taBase::CheckConfig_impl(bool quiet) {
     SetBaseFlag(CHILD_INVALID);
   }
   if (cp_flags != base_flags)
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
   return (this_rval && child_rval);
 }
 
 void taBase::ClearCheckConfig() {
   if (base_flags & INVALID_MASK) {
     ClearBaseFlag(INVALID_MASK);
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
   }
 }
 
@@ -3096,7 +3100,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     editor->name = "Srch_" + memb_contains;
     editor->desc = "Search of members containing: " + memb_contains
       + " in object: " + GetDisplayName();
-    editor->DataChanged(DCR_ITEM_UPDATED); // so name updates in treee
+    editor->DataItemUpdated(); // so name updates in treee
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;

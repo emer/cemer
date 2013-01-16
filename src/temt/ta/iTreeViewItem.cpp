@@ -20,6 +20,7 @@
 #include <taiClipData>
 #include <taiMenu>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 

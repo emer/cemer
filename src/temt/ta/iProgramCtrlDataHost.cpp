@@ -26,6 +26,7 @@
 #include <taiMember>
 #include <taiBitBox>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

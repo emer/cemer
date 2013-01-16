@@ -17,6 +17,7 @@
 #define BaseSpec_Group_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taGroup>
 
 // member includes:

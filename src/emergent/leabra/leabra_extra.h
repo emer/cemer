@@ -19,8 +19,7 @@
 #define leabra_extra_h
 
 #include "leabra.h"
-#include "netstru_extra.h"
-#include "ta_imgproc.h"
+#include <DoGFilter>
 
 // extra specialized classes for variations on the Leabra algorithm
 
@@ -141,7 +140,10 @@ public:
 
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
   
+#ifndef __MAKETA__
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
+#endif
+
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
   
 protected:

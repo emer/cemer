@@ -18,6 +18,7 @@
 #include <taProject>
 #include <DataTable>
 
+#include <DataChangedReason>
 
 using namespace std;
 
@@ -35,7 +36,7 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
   it->name = nm;
   it->value = val;
   enums.OrderItems();
-  it->DataChanged(DCR_ITEM_UPDATED);
+  it->DataItemUpdated();
   return it;
 }
 
@@ -45,7 +46,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
     for(int i=0;i<enums.size;i++) {
       DynEnumItem* it = enums.FastEl(i);
       it->value = val;
-      it->DataChanged(DCR_ITEM_UPDATED);
+      it->DataItemUpdated();
       val = val << 1;
     }
   }
@@ -54,7 +55,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
     for(int i=0;i<enums.size;i++) {
       DynEnumItem* it = enums.FastEl(i);
       it->value = val;
-      it->DataChanged(DCR_ITEM_UPDATED);
+      it->DataItemUpdated();
       val++;
     }
   }
@@ -143,7 +144,7 @@ void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
   if (dcr == DCR_CHILD_ITEM_UPDATED) {
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
     return; // don't send any further
   }
   inherited::DataChanged(dcr, op1, op2);

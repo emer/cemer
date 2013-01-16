@@ -17,6 +17,7 @@
 #define BaseSubSpec_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taNBase>
 
 // member includes:

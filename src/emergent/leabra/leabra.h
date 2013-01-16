@@ -20,6 +20,11 @@
 
 #include <Network>
 #include <FunLookup>
+#include <float_CircBuffer>
+#include <voidptr_Matrix>
+#include <int_Array>
+#include <Schedule>
+#include <LayerSpec>
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"

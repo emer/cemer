@@ -22,6 +22,7 @@
 #include <iProgramViewScriptPanel>
 #include <NumberedTextView>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

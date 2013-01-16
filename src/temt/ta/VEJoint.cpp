@@ -487,7 +487,7 @@ void VEJoint::CurFromODE(bool updt_disp) {
   }
 
   if(updt_disp)
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
 }
 
 void VEJoint::ApplyForce(float force1, float force2) {

@@ -25,6 +25,7 @@
 #include <css_basic_types.h>
 #include <css_ta.h>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

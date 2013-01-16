@@ -17,8 +17,7 @@
 #ifndef EMERGENT_DEF_H
 #define EMERGENT_DEF_H
 
-#include "ta_stdef.h"
-
+#include <ta_def.h>
  
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
@@ -35,6 +34,5 @@
 #else 
 #define EMERGENT_API
 #endif
-#define NETWORK_API EMERGENT_API
 
 #endif // EMERGENT_DEF_H

@@ -17,6 +17,7 @@
 #include <DataTable>
 #include <taProject>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

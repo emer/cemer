@@ -15,6 +15,8 @@
 
 #include "tabTreeDataNode.h"
 
+#include <DataChangedReason>
+
 tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)

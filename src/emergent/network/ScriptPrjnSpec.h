@@ -21,6 +21,7 @@
 #include <ScriptBase>
 
 // member includes:
+#include <SArg_Array>
 
 // declare all other types mentioned but not required to include:
 

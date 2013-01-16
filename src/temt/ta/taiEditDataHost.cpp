@@ -28,6 +28,7 @@
 #include <taiToolBar>
 #include <iMainWindowViewer>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

@@ -20,6 +20,7 @@
 #include <CellRange>
 #include <taProject>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

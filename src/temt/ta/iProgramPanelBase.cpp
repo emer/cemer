@@ -19,9 +19,9 @@
 #include <iMainWindowViewer>
 #include <iDataPanelSet>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
-
 
 #include <QLabel>
 #include <QSpinBox>

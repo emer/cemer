@@ -430,15 +430,17 @@ String MTA::FindFile(const String& fname, bool& ok) {
   return fname;
 }
 
-bool MTA::AddIncluded(const String& fnm) {
-  taHashVal hv = taHashEl::HashCode_String(fnm);
-  int idx = included_hash.FindHashVal(hv, fnm);
-  if(idx < 0) {
-    included.Add(fnm);
-    included_hash.AddHash(hv, included.size-1, fnm);
-    return true;
+void MTA::AddIncluded() {
+  for(int i=0; i<tmp_include.size; i++) {
+    String fnm = tmp_include[i];
+    taHashVal hv = taHashEl::HashCode_String(fnm);
+    int idx = included_hash.FindHashVal(hv, fnm);
+    if(idx < 0) {
+      included.Add(fnm);
+      included_hash.AddHash(hv, included.size-1, fnm);
+    }
   }
-  return false;
+  tmp_include.Reset();
 }
 
 TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
@@ -851,6 +853,7 @@ int main(int argc, char* argv[])
     // NOTE: we start by assuming target space --
     // mta_lex will modify this as/if #[line] xxx "..." directives are encountered in preprocessed file
     mta->spc = &(mta->spc_target);
+    mta->AddIncluded();         // move tmp included over to included
     while(mta->yy_state != MTA::YYRet_Exit) yyparse();
     if (!keep_tmp) {
       (void) system(rm + tmp_file);

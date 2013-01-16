@@ -18,28 +18,12 @@
 #ifndef emergent_qt_h
 #define emergent_qt_h 1
 
-#include "emergent_base.h"
-#include "spec.h"
-#include "ta_qttype.h"
-#include "ta_qtdata.h"
-#include "ta_qtdialog.h"
-#include "ta_qtviewer.h"
-#include "t3viewer.h"
-
-class EMERGENT_API taiSpecMember : public taiMember {
-  // special for the spec type member (adds the unique box)
-  TAI_MEMBER_SUBCLASS(taiSpecMember, taiMember);
-public:
-  int           BidForMember(MemberDef* md, TypeDef* td);
-
-  void          CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
-
-  virtual bool  NoCheckBox(IDataHost* host_) const; // deterimine if check box should be used
-
-protected:
-  override taiData*     GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  override void         GetArbitrateImage(taiData* dat, const void* base);
-  override void         GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
-};
+// #include "emergent_base.h"
+// #include "spec.h"
+// #include "ta_qttype.h"
+// #include "ta_qtdata.h"
+// #include "ta_qtdialog.h"
+// #include "ta_qtviewer.h"
+// #include "t3viewer.h"
 
 #endif // emergent_qt_h

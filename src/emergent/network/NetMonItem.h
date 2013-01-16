@@ -17,6 +17,7 @@
 #define NetMonItem_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taNBase>
 
 // member includes:
@@ -30,9 +31,11 @@
 #include <MemberSpace>
 #include <voidptr_Array>
 #include <SimpleMathSpec>
-
+#include <float_Matrix>
+#include <double_Matrix>
 
 // declare all other types mentioned but not required to include:
+class MatrixChannelSpec; //
 
 TypeDef_Of(NetMonItem);
 

@@ -14,9 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taArray_impl.h"
-
-#include <taMisc>
 #include <MTRnd>
+
+#include <DataChangedReason>
+#include <taMisc>
 
 void taArray_impl::Clear_Tmp_() {
   String val;
@@ -82,6 +83,10 @@ bool taArray_impl::AllocExact(int sz) {
   }
   SetArray_(nw);
   return true;
+}
+
+void taArray_impl::Reset() {
+  Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::AddBlank(int n_els) {

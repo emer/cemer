@@ -58,7 +58,7 @@ void TemtServer::CloseServer(bool notify) {
   }
   open = false;
   taMisc::server_active = false;
-  if (notify) DataChanged(DCR_ITEM_UPDATED);
+  if (notify) DataItemUpdated();
 }
 
 void TemtServer::InitServer_impl(bool& ok) {
@@ -83,7 +83,7 @@ bool TemtServer::OpenServer() {
   QObject::connect(server, SIGNAL(newConnection()), adapter(), SLOT(server_newConnection()));
 
   open = true;
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   taMisc::server_active = true;
   return true;
 }
@@ -112,6 +112,6 @@ void  TemtServer::server_newConnection() {
   String banner = "Emergent Server v" + taMisc::version + "\n";
   out << banner.chars(); 
   ts->write(block);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 

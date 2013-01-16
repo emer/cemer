@@ -184,7 +184,7 @@ void VEBody::Init() {
   Init_Gravity();
   Init_Damping();
   
-  DataChanged(DCR_ITEM_UPDATED); // update displays..
+  DataItemUpdated(); // update displays..
 }
 
 void VEBody::Init_Shape() {
@@ -420,7 +420,7 @@ void VEBody::CurFromODE(bool updt_disp) {
   cur_ang_vel.x = oav[0]; cur_ang_vel.y = oav[1]; cur_ang_vel.z = oav[2];
 
   if(updt_disp)
-    DataChanged(DCR_ITEM_UPDATED); // update displays..
+    DataItemUpdated(); // update displays..
 }
 
 void VEBody::UpdateCurRotFmQuat() {

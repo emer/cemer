@@ -17,6 +17,7 @@
 #define UnitCallThreadMgr_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taTask>
 #include <taThreadMgr>
 

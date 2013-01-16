@@ -15,6 +15,7 @@
 
 #include "taGroup_impl.h"
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taBase_PtrList>
 #include <taObjDiffRec>

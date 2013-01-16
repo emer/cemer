@@ -15,13 +15,14 @@
 
 #include "Program.h"
 #include <Program_Group>
-#include <taMisc>
 #include <taProject>
 #include <ProgramCallBase>
 #include <taiStringDataHost>
-#include <taiMisc>
 #include <taiChoiceDialog>
 
+#include <DataChangedReason>
+#include <taMisc>
+#include <taiMisc>
 
 #include <css_machine.h>
 
@@ -515,7 +516,7 @@ void Program::Step(Program* step_prg) {
 
 void Program::ToggleTrace() {
   ToggleProgFlag(TRACE);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void Program::ProjDirToCurrent() {
@@ -741,7 +742,7 @@ void Program::setStale() {
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
 //obs    DataChanged(DCR_ITEM_UPDATED_ND); //note: doesn't recurse ud
-    DataChanged(DCR_ITEM_UPDATED); //note: doesn't recurse ud
+    DataItemUpdated(); //note: doesn't recurse ud
   }
 }
 

@@ -17,6 +17,7 @@
 #define LayerDataEl_List_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taList>
 #include <LayerDataEl>
 

@@ -17,11 +17,18 @@
 #define BaseCons_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:
+#include <Relation>
 
 // declare all other types mentioned but not required to include:
+class NetMonitor; //
+class float_Array; //
+class float_Matrix; //
+class SimpleMathSpec; //
+
 
 TypeDef_Of(BaseCons);
 

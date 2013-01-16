@@ -16,6 +16,8 @@
 #include "taSubGroup.h"
 #include <taGroup_impl>
 
+#include <DataChangedReason>
+
 void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event

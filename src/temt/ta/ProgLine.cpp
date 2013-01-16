@@ -14,10 +14,11 @@
 //   Lesser General Public License for more details.
 
 #include "ProgLine.h"
-
 #include <ProgEl>
 #include <Program>
+
 #include <taMisc>
+
 #include <css_machine.h>
 
 
@@ -47,7 +48,7 @@ void ProgLine::SetBreakpoint() {
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->SetProgFlag(ProgEl::BREAKPOINT);
-    pel->DataChanged(DCR_ITEM_UPDATED);
+    pel->DataItemUpdated();
     prog->SetBreakpoint_impl(pel);
   }
 }
@@ -59,7 +60,7 @@ void ProgLine::ClearBreakpoint() {
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->ClearProgFlag(ProgEl::BREAKPOINT);
-    pel->DataChanged(DCR_ITEM_UPDATED);
+    pel->DataItemUpdated();
     prog->ClearBreakpoint_impl(pel);
   }
 }
@@ -69,7 +70,7 @@ void ProgLine::SetError() {
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->SetProgFlag(ProgEl::PROG_ERROR);
-    pel->DataChanged(DCR_ITEM_UPDATED);
+    pel->DataItemUpdated();
     pel->BrowserSelectMe();
   }
 }
@@ -81,7 +82,7 @@ void ProgLine::ClearError() {
     bool was_set = pel->HasProgFlag(ProgEl::PROG_ERROR);
     if(was_set) {
       pel->ClearProgFlag(ProgEl::PROG_ERROR);
-      pel->DataChanged(DCR_ITEM_UPDATED);
+      pel->DataItemUpdated();
     }
   }
 }
@@ -91,7 +92,7 @@ void ProgLine::SetWarning() {
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->SetProgFlag(ProgEl::WARNING);
-    pel->DataChanged(DCR_ITEM_UPDATED);
+    pel->DataItemUpdated();
   }
 }
 
@@ -102,7 +103,7 @@ void ProgLine::ClearWarning() {
     bool was_set = pel->HasProgFlag(ProgEl::WARNING);
     if(was_set) {
       pel->ClearProgFlag(ProgEl::WARNING);
-      pel->DataChanged(DCR_ITEM_UPDATED);
+      pel->DataItemUpdated();
     }
   }
 }

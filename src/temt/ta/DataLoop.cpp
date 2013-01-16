@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DataLoop.h"
+
 #include <taMisc>
 
 
@@ -41,7 +42,7 @@ void DataLoop::GetOrderVar() {
     if (!order_var) {
       order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       order_var->name = "data_loop_order";
-      order_var->DataChanged(DCR_ITEM_UPDATED);
+      order_var->DataItemUpdated();
     }
   }
   order_var->var_type = ProgVar::T_HardEnum;
@@ -59,7 +60,7 @@ void DataLoop::GetIndexVar() {
       index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       index_var->name = "data_loop_index";
       index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
-      index_var->DataChanged(DCR_ITEM_UPDATED);
+      index_var->DataItemUpdated();
     }
   }
   index_var->var_type = ProgVar::T_Int;

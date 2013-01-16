@@ -17,6 +17,7 @@
 #include <taDoc>
 #include <DocEditDataHost>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 

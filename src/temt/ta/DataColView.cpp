@@ -17,7 +17,6 @@
 #include <DataCol>
 #include <DataTableView>
 
-
 /*
   The main DataColView operations are:
   * initialize ("bind") a new guy from a DataCol
@@ -66,7 +65,7 @@ void DataColView::setDataCol(DataCol* value, bool first_time) {
 
 void DataColView::UpdateFromDataCol(bool first) {
   UpdateFromDataCol_impl(first);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void DataColView::UpdateFromDataCol_impl(bool first) {

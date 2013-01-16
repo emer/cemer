@@ -27,6 +27,7 @@
 #include <taObjDiffRec>
 #include <taObjDiff_List>
 
+#include <DataChangedReason>
 #include <tabMisc>
 #include <taMisc>
 

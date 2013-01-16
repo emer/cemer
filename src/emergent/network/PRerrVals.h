@@ -17,6 +17,7 @@
 #define PRerrVals_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:

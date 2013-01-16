@@ -20,6 +20,7 @@
 #include <taNBase>
 
 // member includes:
+#include <LayerRef>
 #include <PosVector3i>
 #include <PosVector2i>
 #include <XYNGeom>
@@ -31,6 +32,8 @@
 // declare all other types mentioned but not required to include:
 class Network; //
 class ProjectBase; //
+class DataCol; //
+class DMemShare; //
 
 TypeDef_Of(LayerDistances);
 

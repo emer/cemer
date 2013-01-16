@@ -26,8 +26,9 @@
 #include <float_Matrix>
 #include <double_Matrix>
 #include <taBaseItr>
-#include <taMisc>
 #include <taFiler>
+
+#include <taMisc>
 
 #include <cmath>
 
@@ -1279,7 +1280,7 @@ void taMatrix::Slice_Collapse() {
   size = 0;
   // if we have collapsed, so have any of our slices...
   UpdateSlices_Collapse();
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void taMatrix::Slice_Realloc(ta_intptr_t base_delta) {
@@ -1291,7 +1292,7 @@ void taMatrix::Slice_Realloc(ta_intptr_t base_delta) {
     UpdateSlices_Realloc(base_delta);
   }
   // note: we recursively updated other slices before doing our own notify
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 int taMatrix::sliceCount() const {

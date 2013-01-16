@@ -17,7 +17,7 @@
 #define OneToOnePrjnSpec_h 1
 
 // parent includes:
-#include <taBase>
+#include <ProjectionSpec>
 
 // member includes:
 

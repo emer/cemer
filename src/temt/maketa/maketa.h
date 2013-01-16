@@ -115,6 +115,7 @@ public:
   String_PArray	pre_parse_inits; // init commands to be called for pre-parsed files
   String_PArray	included;	// files already processed as includes, no need to rpt
   taHashTable   included_hash;  // hash table for faster checking
+  String_PArray	tmp_include;	// temp holder for current file parse
 
   String_PArray	paths;		// paths we check, in order (have final sep)
   String_PArray	headv;		// list of header files
@@ -171,8 +172,8 @@ public:
   // set pre-parse flag for all types in spc that are on the pplist
   String	FindFile(const String& fname, bool& ok);
   // find the file, searching on .path if needed; returns full LexCanonical fname, clears ok if not found (fname can have full path)
-  bool          AddIncluded(const String& fnm);
-  // add new include file to included list
+  void          AddIncluded();
+  // add tmp_include files to overall included list
 
   // LEX functions (defined in mta_lex.cc)
   String	LexBuf;

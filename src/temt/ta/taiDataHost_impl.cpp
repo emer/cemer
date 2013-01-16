@@ -23,6 +23,7 @@
 #include <iHostDialog>
 #include <HiLightButton>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

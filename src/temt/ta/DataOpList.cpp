@@ -67,7 +67,7 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     if(dop) continue;
     dop = (DataOpEl*)New(1);
     dop->col_name = da->name;
-    dop->DataChanged(DCR_ITEM_UPDATED);
+    dop->DataItemUpdated();
   }
   SetDataTable(dt);
 }

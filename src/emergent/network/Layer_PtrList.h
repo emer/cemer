@@ -17,6 +17,7 @@
 #define Layer_PtrList_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taPtrList>
 
 // member includes:

@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taPtrList_impl.h"
+#include <DataChangedReason>
 
 #include <taHashTable>
 #include <taMisc>

@@ -15,8 +15,8 @@
 
 #include "iDataPanel.h"
 
+#include <DataChangedReason>
 #include <taiMisc>
-
 
 #include <QScrollArea>
 #include <QVBoxLayout>

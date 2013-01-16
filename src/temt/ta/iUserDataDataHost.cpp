@@ -19,6 +19,7 @@
 #include <UserDataItem_List>
 #include <MemberDef>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

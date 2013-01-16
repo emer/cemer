@@ -23,7 +23,6 @@
 #include <taiMenu>
 #include <iTabBarBase>
 
-
 #include <taMisc>
 
 
@@ -162,7 +161,7 @@ void T3DataViewer::GetWinState_impl() {
 //  iT3DataViewer* w = widget();
 //  int view_frame_selected = w->tw->currentIndex();
   SetUserData("view_frame_selected", widget()->isVisible());
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void T3DataViewer::SetWinState_impl() {

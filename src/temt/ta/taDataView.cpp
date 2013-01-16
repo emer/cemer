@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taDataView.h"
+
+#include <DataChangedReason>
 #include <taMisc>
 
 void taDataView::Initialize() {

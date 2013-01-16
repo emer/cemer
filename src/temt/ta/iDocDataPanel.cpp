@@ -23,6 +23,7 @@
 #include <iMainWindowViewer>
 #include <taProject>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

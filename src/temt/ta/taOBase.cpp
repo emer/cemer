@@ -14,9 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taOBase.h"
-
 #include <taDataLink>
 #include <UserDataItem_List>
+
+#include <DataChangedReason>
 
 void taOBase::Destroy() {
   CutLinks();

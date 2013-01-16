@@ -17,6 +17,7 @@
 #define UnitPtrList_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taBase>
 
 // member includes:

@@ -905,6 +905,8 @@ public:
   // #CAT_Display call after data changes, to rebuild views, typically when a child is added
   virtual void          DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   // #IGNORE sends the indicated notification to all datalink clients, if any; virtual so we can override to trap/monitor
+  void                  DataItemUpdated();
+  // #CAT_ObjectMgmt send the ITEM_UPDATED data changed signal to indicate to gui elements etc that this item has been updated
   void                  StructUpdate(bool begin) { BatchUpdate(begin, true); }
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void                  DataUpdate(bool begin) { BatchUpdate(begin, false); }

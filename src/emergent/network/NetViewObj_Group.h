@@ -17,6 +17,7 @@
 #define NetViewObj_Group_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taGroup>
 #include <NetViewObj>
 

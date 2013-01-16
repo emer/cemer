@@ -417,7 +417,7 @@ enum CustomEventType {
 // the TA_ TypeDef avail to any that include the class -- can also use in .cpp
 // of files that do not include the header but still need to access the TA info
 //#define TypeDef_Of(y) extern TypeDef TA_##T;
-#define TypeDef_Of(y)
+#define TypeDef_Of(y) extern int __tmp_dummy_for_now__
 
 class TypeDef; //
 class MemberDef; //

@@ -17,7 +17,7 @@ set(so_HEADS_MAKETA
     som.h
     cl.h
     zsh.h
-    so_v3_compat.h
+#    so_v3_compat.h
 )
 
 # all heads -- include maketa generated ones here
@@ -27,7 +27,7 @@ set(so_HEADS
     som.h
     cl.h
     zsh.h
-    so_v3_compat.h
+#    so_v3_compat.h
     so_TA_inst.h
     so_TA_type.h
 )
@@ -39,6 +39,6 @@ set(so_SRCS
     som.cpp
     cl.cpp
     zsh.cpp
-    so_v3_compat.cpp
+#    so_v3_compat.cpp
     so_TA.cpp
 )

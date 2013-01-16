@@ -294,7 +294,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     pv_own->Add(pv);
     pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
     pv->name = var_nm;          // just to be sure
-    pv->DataChanged(DCR_ITEM_UPDATED);
+    pv->DataItemUpdated();
     pvr.set(pv); // done!!
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from function:", ot_fun->name, "to function:",
@@ -346,7 +346,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
     pv->name = var_nm;          // just to be sure
     pvr.set(pv); // done!!
-    pv->DataChanged(DCR_ITEM_UPDATED);
+    pv->DataItemUpdated();
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from program:", ot_prg->name, "to program:",
                  my_prg->name, "because copied program element refers to it");
@@ -455,42 +455,42 @@ bool ProgEl::ScriptLines(int& start_ln, int& end_ln) {
 
 void ProgEl::SetOffFlag(bool off) {
   SetProgFlagState(OFF, off);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::ToggleOffFlag() {
   ToggleProgFlag(OFF);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::SetNonStdFlag(bool non_std) {
   SetProgFlagState(NON_STD, non_std);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::ToggleNonStdFlag() {
   ToggleProgFlag(NON_STD);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::SetNewElFlag(bool new_el) {
   SetProgFlagState(NEW_EL, new_el);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::ToggleNewElFlag() {
   ToggleProgFlag(NEW_EL);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::SetVerboseFlag(bool new_el) {
   SetProgFlagState(VERBOSE, new_el);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::ToggleVerboseFlag() {
   ToggleProgFlag(VERBOSE);
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ProgEl::ToggleBreakpoint() {
@@ -642,7 +642,7 @@ bool ProgEl::CvtFmCode(const String& code) {
 bool ProgEl::RevertToCode() {
   UpdateProgFlags();		// make sure
   if(!HasProgFlag(CAN_REVERT_TO_CODE)) {
-    DataChanged(DCR_ITEM_UPDATED); // trigger update of our gui -- obviously out of whack
+    DataItemUpdated(); // trigger update of our gui -- obviously out of whack
     return false;
   }
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);

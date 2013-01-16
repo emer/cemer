@@ -16,49 +16,16 @@
 #ifndef NETWORK_VOXEL_MAPPER_H
 #define NETWORK_VOXEL_MAPPER_H
 
-#include <QList>
-#include <QMultiHash>
-#include <QString>
+// #include <QList>
+// #include <QMultiHash>
+// #include <QString>
 
-#include "netstru.h"
-#include "nifti_reader.h" // TalairachAtlas
-#include "ta_geometry.h" // taVector3f
-class Network;
-class Layer;
-class Unit;
+// #include "netstru.h"
+// #include "nifti_reader.h" // TalairachAtlas
+// #include "ta_geometry.h" // taVector3f
+// class Network;
+// class Layer;
+// class Unit;
 
-class NetworkVoxelMapper
-{
-public:
-  NetworkVoxelMapper(Network *network);
-  ~NetworkVoxelMapper();
-  void AssignVoxels();
-
-private:
-  class LayerInfo;
-
-  void CreateLayerMap();
-  QList<taVector3f> GetVoxelsInArea(QString brain_area);
-  void AssignVoxelsInArea(QString brain_area, QList<taVector3f> voxels);
-  void AssignVoxelsToLayers(QList<taVector3f> voxels, QList<unsigned> subvoxel_idxs, unsigned voxel_divisions);
-  bool HandleEmptyBrainArea(unsigned num_voxels, QString brain_area, QList<Layer *> layers);
-  void ClearVoxelAssignmentForLayer(LayerInfo *li);
-  void MakeLayerInfos(QList<Layer *> layers);
-  void ClearLayerInfos();
-  double ComputeLayerPercentages();
-  void RemoveZeroFillLayers();
-  unsigned GetVoxelDivisions(unsigned num_voxels, unsigned &num_subvoxels);
-  unsigned GetNeededSubvoxelCount(unsigned num_subvoxels);
-  QList<unsigned> GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels);
-  taVector3f GetCoord(unsigned subvoxel_idx, const QList<taVector3f> &voxels, unsigned voxel_divisions);
-
-private:
-  QMultiHash<QString, Layer *> m_layer_map;
-  Network *m_network;
-  taBrainAtlas* m_atlas;
-
-  // Info on layers for the current iteration of AssignVoxelsInArea().
-  QList<LayerInfo *> m_layer_info;
-};
 
 #endif // NETWORK_VOXEL_MAPPER_H

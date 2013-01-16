@@ -17,6 +17,7 @@
 #define Voxel_List_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taBase>
 #include <Voxel>
 

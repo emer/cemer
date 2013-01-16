@@ -21,6 +21,7 @@
 #include <QAbstractButton>
 #include <QLayout>
 
+#include <DataChangedReason>
 #include <taiMisc>
 
 

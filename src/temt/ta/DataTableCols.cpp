@@ -16,6 +16,7 @@
 #include "DataTableCols.h"
 #include <DataTable>
 
+#include <DataChangedReason>
 
 void DataTableCols::Initialize() {
   SetBaseType(&TA_DataColTp);

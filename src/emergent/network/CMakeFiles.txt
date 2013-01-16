@@ -6,23 +6,23 @@
 
 # local headers that need maketa run on them
 set(network_HEADS_MAKETA_LOCAL
-    network_def.h
-#    emergent_base.h
-#    spec.h
-#    netstru.h
-#    netstru_extra.h
+  network_def.h
   EmergentMisc.h
 
   SpecMemberBase.h
-  BaseSpec.h
   BaseSpec_Group.h
+  BaseSpec.h
   BaseSubSpec.h
   SpecPtr.h
+  taiSpecMember.h
 
   SigmoidSpec.h
   Schedule.h
   PRerrVals.h
 
+  UnitRef.h
+  LayerRef.h
+  ProjectionRef.h
   NetworkRef.h
 
   Connection.h
@@ -54,7 +54,6 @@ set(network_HEADS_MAKETA_LOCAL
   NetViewObj_Group.h
   taBrainAtlas.h
   taBrainAtlas_List.h
-  BrainAtlasRegexpPopulator.h
 
   Network.h
   Network_Group.h
@@ -91,21 +90,77 @@ set(network_HEADS_MAKETA_LOCAL
   NetMonItem_List.h
   NetMonitor.h
   ActBasedRF.h
+
+  NetBaseProgEl.h
+  NetDataLoop.h
+  NetGroupedDataLoop.h
+  NetCounterBase.h
+  NetCounterInit.h
+  NetCounterIncr.h
+  NetUpdateView.h
+  InitNamedUnits.h
+  SetUnitsLit.h
+  SetUnitsVar.h
+  WtInitPrompt.h
+
+  StdNetWizDlg.h
+  Wizard.h
+  ProjectBase.h
+  EmergentRoot.h
+
+  ScaleRange.h
+  ScaleRange_List.h
+  nvDataView.h
+  UnitView.h
+  UnitGroupView.h
+  nvhDataView.h
+  LayerView.h
+  PrjnView.h
+  LayerGroupView.h
+  NetViewObjView.h
+  NetView.h
+  NetViewPanel.h
+
+  BrainView.h
+  BrainVolumeView.h
+  BrainViewPanel.h
 )
 
-    # netdata.h
-    # emergent_program.h
-    # emergent_project.h
-    # netstru_so.h
-    # netstru_qtso.h
-    # emergent_qtso.h
-    # emergent_program_qtso.h
-    # v3_compat.h
-    # brainstru.h
-    # brain_view.h
+set(network_HEADS_NOMAKETA
+  ConSpec_inlines.h
+  Unit_inlines.h
+
+  T3UnitNode.h
+  T3UnitNode_Cylinder.h
+  T3UnitNode_Block.h
+  T3UnitNode_Circle.h
+  T3UnitNode_Rect.h
+  T3UnitGroupNode.h
+  T3LayerNode.h
+  T3PrjnNode.h
+  T3LayerGroupNode.h
+  T3NetViewObj.h
+  T3NetNode.h
+
+  BrainAtlasRegexpPopulator.h
+  BrainAtlasFileParser.h
+  BrainAtlasInfo.h
+  BrainAtlasLabel.h
+  BrainAtlasUtils.h
+  BrainAtlasFactory.h
+  FSLBrainAtlas.h
+  BrainAtlasFileParserFactory.h
+  FSLBrainAtlasFileParser.h
+  BrainAtlasFileComposer.h
+  BrainAtlasFileComposerFactory.h
+  FSLBrainAtlasFileComposer.h
+  NetworkVoxelMapper.h
+  iBrainViewEditDialog.h
+
+  T3BrainNode.h
+)
+
     # brain_view_panel.h
-    # brain_volume_view.h
-    # t3brain_node.h
 
 # all headers that need maketa run on them
 # The order of files passed to maketa is important since it appears not to
@@ -118,34 +173,25 @@ set(network_HEADS_MAKETA
 # all heads -- include maketa generated ones here
 set(network_HEADS
     ${network_HEADS_MAKETA_LOCAL}
-    network_voxel_mapper.h
+    ${network_HEADS_NOMAKETA}
+    # network_voxel_mapper.h
     network_TA_type.h
     network_TA_inst.h
     znzlib.h
     nifti1.h
     nifti1_io.h
     nifti_reader.h
-  ConSpec_inlines.h
-  Unit_inlines.h
 )
 
 # headers that need Qt moc run
 set(network_HEADS_MOC
-    # netstru_qtso.h
-    # brain_view_panel.h
+  NetViewPanel.h
+  iBrainViewEditDialog.h
+  BrainViewPanel.h
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
-set(network_SRCS_GUI
-    # brainstru.cpp
-    # brain_view.cpp
-    # brain_view_panel.cpp
-    # brain_volume_view.cpp
-    # t3brain_node.cpp
-    # netstru_so.cpp
-    # emergent_qtso.cpp
-    # netstru_qtso.cpp
-    # emergent_program_qtso.cpp
+set(network_SRCS_LOCAL
   EmergentMisc.cpp
 
   SpecMemberBase.cpp
@@ -153,6 +199,7 @@ set(network_SRCS_GUI
   BaseSpec_Group.cpp
   BaseSubSpec.cpp
   SpecPtr.cpp
+  taiSpecMember.cpp
 
   SigmoidSpec.cpp
   Schedule.cpp
@@ -225,28 +272,77 @@ set(network_SRCS_GUI
   NetMonItem_List.cpp
   NetMonitor.cpp
   ActBasedRF.cpp
+  NetBaseProgEl.cpp
+  NetDataLoop.cpp
+  NetGroupedDataLoop.cpp
+  NetCounterBase.cpp
+  NetCounterInit.cpp
+  NetCounterIncr.cpp
+  NetUpdateView.cpp
+  InitNamedUnits.cpp
+  SetUnitsLit.cpp
+  SetUnitsVar.cpp
+  WtInitPrompt.cpp
+  StdNetWizDlg.cpp
+  Wizard.cpp
+  ProjectBase.cpp
+  EmergentRoot.cpp
+
+  T3UnitNode.cpp
+  T3UnitNode_Cylinder.cpp
+  T3UnitNode_Block.cpp
+  T3UnitNode_Circle.cpp
+  T3UnitNode_Rect.cpp
+  T3UnitGroupNode.cpp
+  T3LayerNode.cpp
+  T3PrjnNode.cpp
+  T3LayerGroupNode.cpp
+  T3NetViewObj.cpp
+  T3NetNode.cpp
+
+  ScaleRange.cpp
+  ScaleRange_List.cpp
+  nvDataView.cpp
+  UnitView.cpp
+  UnitGroupView.cpp
+  nvhDataView.cpp
+  LayerView.cpp
+  PrjnView.cpp
+  LayerGroupView.cpp
+  NetViewObjView.cpp
+  NetView.cpp
+  NetViewPanel.cpp
+
+  BrainAtlasFileParser.cpp
+  BrainAtlasInfo.cpp
+  BrainAtlasLabel.cpp
+  BrainAtlasUtils.cpp
+  BrainAtlasFactory.cpp
+  FSLBrainAtlas.cpp
+  BrainAtlasFileParserFactory.cpp
+  FSLBrainAtlasFileParser.cpp
+  BrainAtlasFileComposer.cpp
+  BrainAtlasFileComposerFactory.cpp
+  FSLBrainAtlasFileComposer.cpp
+  BrainView.cpp
+  UnitRef.cpp
+  BrainVolumeView.cpp
+  LayerRef.cpp
+  ProjectionRef.cpp
+  T3BrainNode.cpp
+  BrainViewPanel.cpp
+  iBrainViewEditDialog.cpp
+  NetworkVoxelMapper.cpp
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(network_SRCS
-    ${network_SRCS_GUI}
-  ConSpec_inlines.cpp
-  Unit_inlines.cpp
-    emergent_base.cpp
-    spec.cpp
-    netstru.cpp
-    netstru_extra.cpp
-    netdata.cpp
-    network_voxel_mapper.cpp
-    emergent_program.cpp
-    emergent_project.cpp
-    emergent_ti.cpp
-    v3_compat.cpp
-    network_TA.cpp
-    znzlib.c
-    nifti1_io.c
-    nifti_reader.cpp
+  ${network_SRCS_LOCAL}
+  network_TA.cpp
+  znzlib.c
+  nifti1_io.c
+  nifti_reader.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

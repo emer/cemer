@@ -15,14 +15,16 @@
 
 #include "ProgVar.h"
 #include <Program>
-#include <taMisc>
 #include <ProgVar_List>
 #include <taDataLinkItr>
+#include <MemberDef>
+
+#include <DataChangedReason>
+#include <taMisc>
+
 #include <css_machine.h>
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
-#include <MemberDef>
-
 
 void ProgVar::Initialize() {
   var_type = T_UnDef;
@@ -486,7 +488,7 @@ void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
   if ((dcr == DCR_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
     return; // don't send any further
   }
   inherited::DataChanged(dcr, op1, op2);

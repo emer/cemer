@@ -17,11 +17,13 @@
 #define LayerDataEl_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:
 #include <DataTable>
 #include <NetworkRef>
+#include <LayerRef>
 
 // declare all other types mentioned but not required to include:
 
@@ -39,7 +41,6 @@
 // The include chain, starting at t3viewer.h, is:
 //   t3viewer.h -> QuarterWidget.h -> QGLWidget -> qgl.h -> qt_windows.h
 //     -> windows.h -> nb30.h
-#include "t3viewer.h"
 #ifdef GROUP_NAME
   #pragma message("Warning: undefining GROUP_NAME macro")
   #undef GROUP_NAME

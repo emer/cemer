@@ -17,6 +17,7 @@
 #define taBrainAtlas_List_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taList>
 #include <taBrainAtlas>
 
@@ -34,7 +35,7 @@ public:
 
   virtual void	LoadAtlases();	// load the list
 
-  TA_BASEFUNS_SC(BrainAtlas_List);
+  TA_BASEFUNS_SC(taBrainAtlas_List);
 private:
   void  Initialize();
   void  Destroy()               { };

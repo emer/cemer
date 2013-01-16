@@ -17,6 +17,7 @@
 #include <iTreeView>
 #include <taiListDataNode>
 
+#include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 

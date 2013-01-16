@@ -45,7 +45,7 @@ void ToolBar::GetWinState_impl() {
   lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
   top = (float)r.top() / (float)(taiM->scrn_s.h);
   SetUserData("view_win_visible", widget()->isVisible());
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
 }
 
 void ToolBar::SetWinState_impl() {

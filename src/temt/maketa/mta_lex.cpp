@@ -381,7 +381,7 @@ int MTA::lex() {
       if(cur_fname_only != fname_only) {
 	spc = &(spc_other); // add to other space when not in cur space
 	if(state != Skip_File) {
-	  AddIncluded(cur_fname); // note: already lexcanonicalized
+	  tmp_include.AddUnique(cur_fname); // note: already lexcanonicalized
 	}
       }
       else {

@@ -20,6 +20,7 @@
 #include <taFBase>
 
 // member includes:
+#include <NetworkRef>
 #include <BaseSpec_Group>
 #include <Layer_Group>
 #include <NetViewObj_Group>
@@ -46,6 +47,9 @@
 
 // declare all other types mentioned but not required to include:
 class ProjectBase; //
+class NetView; //
+class BrainView; //
+class T3DataViewFrame; //
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by

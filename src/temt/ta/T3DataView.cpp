@@ -20,6 +20,7 @@
 #include <taiClipData>
 #include <T3ExaminerViewer>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 #include <Inventor/SoPath.h>

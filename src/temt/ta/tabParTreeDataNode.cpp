@@ -16,6 +16,7 @@
 #include "tabParTreeDataNode.h"
 #include <taiViewType>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 

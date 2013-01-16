@@ -15,9 +15,9 @@
 
 #include "ProgObjList.h"
 #include <Program>
-#include <taMisc>
 #include <ProgVar>
 
+#include <taMisc>
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {
   return (DataTable*)New_gui(n_tables, &TA_DataTable); // this is a gui op
@@ -39,7 +39,7 @@ void ProgObjList::GetVarsForObjs() {
       else {
         var->objs_ptr = true;   // make sure
         var->object_type = obj->GetTypeDef();
-        var->DataChanged(DCR_ITEM_UPDATED);
+        var->DataItemUpdated();
       }
     }
     else {
@@ -52,7 +52,7 @@ void ProgObjList::GetVarsForObjs() {
           tv->objs_ptr = true;  // make sure
           tv->object_type = obj->GetTypeDef();
           tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
-          //      tv->DataChanged(DCR_ITEM_UPDATED);
+          //      tv->DataItemUpdated();
           break;
         }
       }
@@ -64,7 +64,7 @@ void ProgObjList::GetVarsForObjs() {
         var->objs_ptr = true;
         var->object_type = obj->GetTypeDef();
         var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
-        var->DataChanged(DCR_ITEM_UPDATED);
+        var->DataItemUpdated();
       }
     }
   }

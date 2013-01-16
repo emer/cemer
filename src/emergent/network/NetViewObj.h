@@ -17,6 +17,7 @@
 #define NetViewObj_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taNBase>
 
 // smartptr, ref:

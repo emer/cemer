@@ -31,7 +31,6 @@
 
 #include <taMisc>
 
-
 #include <SoScrollBar>
 #include <SoImageEx>
 #include <SoMatrixGrid>
@@ -1240,7 +1239,7 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       if(tgv->click_vals) {
         // this causes a crash
 //      if(dcol)
-//        dcol->DataChanged(DCR_ITEM_UPDATED); // col drives updating
+//        dcol->DataItemUpdated(); // col drives updating
       }
       else {
         tgv->last_sel_got = true;

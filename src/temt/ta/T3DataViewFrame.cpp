@@ -28,6 +28,7 @@
 #include <T3Node>
 #include <taFiler>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 #include <Inventor/actions/SoWriteAction.h>

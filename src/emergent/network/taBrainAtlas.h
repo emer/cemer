@@ -17,7 +17,11 @@
 #define taBrainAtlas_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taBase>
+
+// smartptr, ref:
+#include <taSmartRefT>
 
 // member includes:
 #include <iColor>
@@ -27,7 +31,8 @@ class int_Matrix; //
 class String_Matrix; //
 class float_Matrix; //
 class ColorSpecColor_List; //
-class taBrainAtlasInfo; //
+class BrainAtlasInfo; // #IGNORE
+class ColorScale; //
 class BrainAtlas; // #IGNORE
 
 TypeDef_Of(taBrainAtlas);
@@ -91,5 +96,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
+
+TA_SMART_PTRS(taBrainAtlas);
 
 #endif // taBrainAtlas_h

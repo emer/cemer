@@ -20,10 +20,11 @@
 #include <taBase>
 
 // member includes:
+#include <ProjectionRef>
 #include <ProjectionSpec>
+#include <LayerRef>
 
 // declare all other types mentioned but not required to include:
-class Layer; //
 
 TypeDef_Of(Projection);
 

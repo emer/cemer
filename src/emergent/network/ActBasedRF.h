@@ -17,13 +17,14 @@
 #define ActBasedRF_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <taNBase>
 
 // member includes:
 #include <DataTable>
 #include <float_Matrix>
 #include <NetworkRef>
-#include <Layer>
+#include <LayerRef>
 
 // declare all other types mentioned but not required to include:
 

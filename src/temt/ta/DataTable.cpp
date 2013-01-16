@@ -1303,7 +1303,7 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   // DPF: Shouldn't need this line now that col_nm gets passed into New?
   // Name isn't made unique in New call since owner isn't set, and doesn't
   // happen here either.
-  rval->DataChanged(DCR_ITEM_UPDATED); // because we set name after creation
+  rval->DataItemUpdated(); // because we set name after creation
   return rval;
 }
 

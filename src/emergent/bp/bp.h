@@ -19,6 +19,9 @@
 #define bp_h
 
 #include <Network>
+#include <Schedule>
+#include <SigmoidSpec>
+#include <float_CircBuffer>
 
 #include "bp_def.h"
 #include "bp_TA_type.h"

@@ -21,7 +21,6 @@
 
 // member includes:
 #include <taString>
-#include <DataChangedReason>
 
 // declare all other types mentioned but not required to include:
 
@@ -45,7 +44,7 @@ public:
   // #EXPERT #CAT_Modify allocate storage for at least the given size (allocates extra to allow for future expansion -- see AllocExact for exact alloc)
   virtual bool          AllocExact(int n);
   // #EXPERT #CAT_Modify allocate storage for exactly the given size
-  virtual void          Reset() { Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
+  virtual void          Reset();
   // #CAT_Modify reset the list to zero size (does not free memory)
 
   ////////////////////////////////////////////////

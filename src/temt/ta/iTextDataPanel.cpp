@@ -18,6 +18,7 @@
 #include <taiClipData>
 #include <iMainWindowViewer>
 
+#include <DataChangedReason>
 
 
 iTextDataPanel::iTextDataPanel(taiDataLink* dl_)

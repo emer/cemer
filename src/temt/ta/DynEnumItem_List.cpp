@@ -17,6 +17,8 @@
 #include <DynEnumType>
 #include <Program>
 
+#include <DataChangedReason>
+
 void DynEnumItem_List::Initialize() {
   SetBaseType(&TA_DynEnumItem);
 }

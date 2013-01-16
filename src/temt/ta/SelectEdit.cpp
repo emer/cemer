@@ -16,6 +16,7 @@
 #include "SelectEdit.h"
 #include <voidptr_PArray>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 
@@ -102,7 +103,7 @@ void SelectEdit::DataChanged_Ref(taBase_RefList* src, taBase* ta,
 {
   // simplest, is to just issue our own DataChanged
   if(dcr < DCR_UPDATE_VIEWS)
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
 }
 
 void SelectEdit::DataChanged_Group(taGroup_impl* grp,
@@ -147,7 +148,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
     SelectMember_impl(itma, mds[i], nma, _nilString);
     SelectMember_impl(itmb, mds[i], nmb, _nilString);
   }
-  DataChanged(DCR_ITEM_UPDATED); // so name updates in tree
+  DataItemUpdated(); // so name updates in tree
   ReShowEdit(true);
   return mds.size;
 }
@@ -188,7 +189,7 @@ bool SelectEdit::ReShowEdit(bool force) {
     DataChanged(DCR_STRUCT_UPDATE_END);
   }
   else {
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
   }
 //  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
 #endif

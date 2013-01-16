@@ -1,0 +1,44 @@
+// Copyright, 1995-2013, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of Emergent
+//
+//   Emergent is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   Emergent is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+#ifndef FSLBrainAtlasFileParser_h
+#define FSLBrainAtlasFileParser_h 1
+
+// parent includes:
+#include <BrainAtlasFilerParser>
+
+// member includes:
+#include <QList>
+
+// declare all other types mentioned but not required to include:
+class QDomDocument;
+class BrainAtlasInfo;
+class BrainAtlasLabel;
+
+
+class EMERGENT_API FSLBrainAtlasFileParser : public BrainAtlasFileParser {
+public:
+  FSLBrainAtlasFileParser(const QString& filename);
+  virtual ~FSLBrainAtlasFileParser();
+  
+  BrainAtlasInfo ParseHeader();
+  QList<BrainAtlasLabel> ParseLabels();
+  
+private: 
+  QString m_filename;
+  QDomDocument* m_atlas_dom;
+};
+
+#endif // FSLBrainAtlasFileParser_h

@@ -20,6 +20,7 @@
 #include <iTextEdit>
 #include <iDataPanelSet>
 
+#include <DataChangedReason>
 #include <tabMisc>
 
 #include <css_machine.h>

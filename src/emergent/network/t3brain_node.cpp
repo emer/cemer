@@ -15,19 +15,3 @@
 
 #include "t3brain_node.h"
 
-SO_NODE_SOURCE(T3BrainNode);
-
-void T3BrainNode::initClass() 
-{
-  SO_NODE_INIT_CLASS(T3BrainNode, T3NodeLeaf, "T3NodeLeaf");
-}
-
-T3BrainNode::T3BrainNode(T3DataView* dataView_) 
-: inherited(dataView_)
-{
-  SO_NODE_CONSTRUCTOR(T3BrainNode);
-}
-
-T3BrainNode::~T3BrainNode()
-{
-}

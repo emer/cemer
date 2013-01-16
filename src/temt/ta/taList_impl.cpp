@@ -16,7 +16,6 @@
 #include "taList_impl.h"
 
 #include <taDataLink>
-#include <taMisc>
 #include <int_Matrix>
 #include <String_Matrix>
 #include <byte_Matrix>
@@ -29,6 +28,10 @@
 #include <dumpMisc>
 #include <MemberDef>
 #include <iTreeViewItem>
+
+#include <DataChangedReason>
+#include <taMisc>
+
 
 #ifdef TA_GUI
 #include  <QPixmap>

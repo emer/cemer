@@ -17,6 +17,7 @@
 #include <taGroup_impl>
 #include <taiViewType>
 
+#include <DataChangedReason>
 #include <taMisc>
 
 
