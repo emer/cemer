@@ -21,8 +21,10 @@
 #include <ProgEl>
 
 // member includes:
+#include <DynEnum>
 
 // declare all other types mentioned but not required to include:
+class DataTable; //
 
 TypeDef_Of(SetUnitsLit);
 

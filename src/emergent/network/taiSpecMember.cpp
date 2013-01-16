@@ -17,6 +17,9 @@
 #include <BaseSpec>
 #include <BaseSubSpec>
 #include <taiPlusToggle>
+#include <IDataHost>
+
+#include <taMisc>
 
 
 int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {

@@ -19,6 +19,7 @@
 #define cs_h
 
 #include <Network>
+#include <Schedule>
 
 #include "cs_def.h"
 #include "cs_TA_type.h"

@@ -20,6 +20,7 @@
 #include <GpOneToOnePrjnSpec>
 
 // member includes:
+#include <RndSeed>
 
 // declare all other types mentioned but not required to include:
 

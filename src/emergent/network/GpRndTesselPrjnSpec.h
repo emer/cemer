@@ -20,6 +20,9 @@
 #include <ProjectionSpec>
 
 // member includes:
+#include <taVector2i>
+#include <taVector2f>
+#include <RndSeed>
 
 // declare all other types mentioned but not required to include:
 
@@ -46,7 +49,7 @@ INHERITED(taList<GpTessEl>)
 public:
   TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
 private:
-  void	Initialize() 		{ };
+void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
   void 	Destroy()		{ };
 };
 
@@ -62,7 +65,7 @@ public:
   taVector2i	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
   taVector2f send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
   taVector2i	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
-  TessEl_List	send_gp_offs;	// offsets of the sending unit groups
+  GpTessEl_List	send_gp_offs;	// offsets of the sending unit groups
   bool		wrap;		// whether to wrap coordinates around (else clip)
   float		def_p_con;	// default probability of connectivity when new send_gp_offs are created
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not

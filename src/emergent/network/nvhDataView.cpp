@@ -14,12 +14,13 @@
 //   GNU General Public License for more details.
 
 #include "nvhDataView.h"
+#include <T3Color>
 
 void nvhDataView::Copy_(const nvhDataView& cp) {
   m_hcolor = cp.m_hcolor;
 }
 
-void nvhDataView::setHighlightColor(const ColorScaleColor& color) {
+void nvhDataView::setHighlightColor(const T3Color& color) {
   m_hcolor = color;
   DoHighlightColor(true);
 }

@@ -58,8 +58,8 @@ public:
 
 
 #ifndef __MAKETA__
-  override int  Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  override int  Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
+  override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
 #endif
 
   virtual int   Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx);

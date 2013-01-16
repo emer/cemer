@@ -20,6 +20,8 @@
 #include <ProjectionSpec>
 
 // member includes:
+#include <taVector2i>
+#include <taVector2f>
 
 // declare all other types mentioned but not required to include:
 

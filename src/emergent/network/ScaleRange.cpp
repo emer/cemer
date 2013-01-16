@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ScaleRange.h"
+#include <ColorScale>
 
 void ScaleRange::SetFromScale(ColorScale& cs) {
   auto_scale = cs.auto_scale;

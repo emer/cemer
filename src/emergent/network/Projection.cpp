@@ -14,6 +14,16 @@
 //   GNU General Public License for more details.
 
 #include "Projection.h"
+#include <Network>
+#include <taProject>
+#include <NetMonitor>
+#include <taFiler>
+
+#include <tabMisc>
+#include <taMisc>
+
+using namespace std;
+
 
 void Projection::Initialize() {
   off = false;
@@ -154,7 +164,7 @@ void Projection::UpdateName() {
   if(from) {
     String nwnm = "Fm_" + from->name;
     SetName(nwnm);              // setname ensures uniqueness
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
   }
 }
 
@@ -281,7 +291,7 @@ void Projection::SetFrom() {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex+1);
       if(from.ptr() == nwly) return;
       from = nwly;
-      DataChanged(DCR_ITEM_UPDATED);
+      DataItemUpdated();
     }
     break;
   case PREV:
@@ -293,13 +303,13 @@ void Projection::SetFrom() {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex-1);
       if(from.ptr() == nwly) return;
       from = nwly;
-      DataChanged(DCR_ITEM_UPDATED);
+      DataItemUpdated();
     }
     break;
   case SELF:
     if(from.ptr() == layer) return;
     from = layer;
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
     break;
   case CUSTOM:
     TestWarning(!(bool)from, "SetFrom", "CUSTOM projection and from is NULL");

@@ -14,9 +14,11 @@
 //   GNU General Public License for more details.
 
 #include "EmergentRoot.h"
-#include <taiObjectChooser>
+#include <taiObjChooser>
 #include <iToolBoxDockViewer>
-
+#include <ViewColor_List>
+#include <iBaseClipWidgetAction>
+#include <ToolBoxRegistrar>
 #include <InitNamedUnits>
 #include <SetUnitsLit>
 #include <SetUnitsVar>

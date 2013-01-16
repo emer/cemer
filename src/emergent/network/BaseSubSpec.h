@@ -21,6 +21,7 @@
 #include <taNBase>
 
 // member includes:
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class BaseSpec; //
@@ -31,7 +32,8 @@ class EMERGENT_API BaseSubSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##CAT_Spec specification class for sub-objects of specs
 INHERITED(taNBase)
 public:
-  String_Array unique; // #HIDDEN string list of unique members
+  String_Array  unique; // #HIDDEN string list of unique members
+
   virtual BaseSubSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the corresponding parent subspec of this one
   virtual BaseSpec*	FindParentBaseSpec();

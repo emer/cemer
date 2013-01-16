@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "SpecPtr.h"
+#include <Network>
+#include <ProjectBase>
+
+#include <taMisc>
 
 void SpecPtr_impl::Initialize() {
   owner = NULL;
@@ -41,7 +45,7 @@ taBase* SpecPtr_impl::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old
         new_guy = old_guy->Clone();
         spgp->Add(new_guy);
         new_guy->SetName(og_nm);
-        new_guy->DataChanged(DCR_ITEM_UPDATED);
+        new_guy->DataItemUpdated();
         taMisc::Info("Note: copied Spec:", og_nm,
                      "into .specs on new network because it was not otherwise found");
       }
@@ -88,7 +92,7 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
       SetSpec(nsp);             // set -- either null or a candidate
       sp = nsp;                 // update our cur ptr guy
-      DataChanged(DCR_ITEM_UPDATED);
+      DataItemUpdated();
     }
     else {
       SetSpec(NULL);            // get rid of existing -- will try to find new one
@@ -164,7 +168,7 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
     if(spgp) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
       SetSpec(nsp);             // set -- either null or a candidate
-      DataChanged(DCR_ITEM_UPDATED);
+      DataItemUpdated();
     }
     else {
       SetSpec(NULL);            // get rid of existing -- will try to find new one later
@@ -241,7 +245,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
                          "set spec pointer to existing spec named:", sp->name,
                          "of correct type:", type->name);
     }
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
     return;
   }
 
@@ -253,7 +257,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
                          "set spec pointer to NEW spec I just created, named:", sp->name,
                          "of type:", type->name);
     }
-    DataChanged(DCR_ITEM_UPDATED);
+    DataItemUpdated();
   }
 }
 

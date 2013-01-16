@@ -17,6 +17,10 @@
 #include <BrainAtlasUtils>
 #include <BrainAtlasInfo>
 
+#include <taMisc>
+
+#include <QStringList>
+
 void taBrainAtlas_List::Initialize() {
   name = "brain_atlases";
   not_init = true;

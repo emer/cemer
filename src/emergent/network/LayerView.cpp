@@ -14,6 +14,24 @@
 //   GNU General Public License for more details.
 
 #include "LayerView.h"
+#include <T3LayerNode>
+#include <Network>
+#include <NetView>
+#include <UnitView>
+#include <LayerView>
+#include <UnitGroupView>
+#include <MemberDef>
+#include <T3ExaminerViewer>
+#include <T3Misc>
+#include <taProject>
+#include <T3DataViewFrame>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/SbLinear.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoTransform.h>
 
 void LayerView::Initialize() {
   data_base = &TA_Layer;
@@ -164,9 +182,9 @@ void LayerView::Render_impl() {
 
   // ensure that the layer label does not go beyond width of layer itself!
   float eff_lay_font_size = nv->font_sizes.layer;
-  float lnm_wd = (eff_lay_font_size * lay->name.length()) / t3Misc::char_ht_to_wd_pts;
+  float lnm_wd = (eff_lay_font_size * lay->name.length()) / T3Misc::char_ht_to_wd_pts;
   if(lnm_wd > fx) {
-    eff_lay_font_size = (fx / (float)lay->name.length()) * t3Misc::char_ht_to_wd_pts;
+    eff_lay_font_size = (fx / (float)lay->name.length()) * T3Misc::char_ht_to_wd_pts;
   }
   eff_lay_font_size = MAX(eff_lay_font_size, nv->font_sizes.layer_min);
   node_so->resizeCaption(eff_lay_font_size);
@@ -222,7 +240,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->DataChanged(DCR_ITEM_UPDATED);
+  lay->DataItemUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -254,7 +272,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->DataChanged(DCR_ITEM_UPDATED);
+  lay->DataItemUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();

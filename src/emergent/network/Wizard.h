@@ -28,6 +28,7 @@ class DataTable; //
 class Program; //
 class Program_Group; //
 class RetinaProc; //
+class StdNetWizDlg; //
 
 
 TypeDef_Of(Wizard);
@@ -36,7 +37,7 @@ class EMERGENT_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:
-  StdNetWizDlg		std_net_dlg; // #HIDDEN #NO_SAVE std network dialog
+  StdNetWizDlg*		std_net_dlg; // #HIDDEN #NO_SAVE std network dialog
 
   virtual bool	StdEverything();
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_AFTER make everything (Network, Data, Programs) according to the standard wizards
@@ -87,7 +88,7 @@ protected:
 
 private:
   void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
+  void 	Destroy();
 };
 
 #endif // Wizard_h

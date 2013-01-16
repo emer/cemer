@@ -14,13 +14,20 @@
 //   GNU General Public License for more details.
 
 #include "T3LayerGroupNode.h"
+#include <T3LayerNode>
+#include <taString>
 
 #include <SoLineBox3d>
 #include <T3Translate1Translator>
 #include <T3Translate2Translator>
 
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/engines/SoCalculator.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+
 
 
 SO_NODE_SOURCE(T3LayerGroupNode);

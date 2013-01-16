@@ -26,6 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class UnitCallThreadMgr; //
+class Unit; //
 
 // this is the standard unit function call taking a network pointer arg
 // and the thread number int value

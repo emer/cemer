@@ -15,7 +15,15 @@
 
 #include "NetMonItem.h"
 #include <Network>
+#include <MemberDef>
+#include <MatrixChannelSpec>
+#include <UserDataItemBase>
+#include <taMath_float>
+#include <taMath_double>
+#include <DataSelectSpec>
+#include <taDataProc>
 
+#include <taMisc>
 
 void NetMonItem::Initialize() {
   off = false;

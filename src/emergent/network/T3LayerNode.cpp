@@ -16,10 +16,13 @@
 #include "T3LayerNode.h"
 #include <T3Translate1Translator>
 #include <T3Translate2Translator>
+#include <SoFrame>
+#include <taString>
 
-
+#include <Inventor/engines/SoCalculator.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
 
 
 const float T3LayerNode::height = 0.05f;

@@ -16,6 +16,8 @@
 #include "UnitSpec.h"
 #include <Network>
 
+#include <taMisc>
+
 void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;
   act_range.max = 1.0f; act_range.min = 0.0f;

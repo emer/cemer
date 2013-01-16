@@ -23,6 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class DataTable; //
 
 TypeDef_Of(SetUnitsVar);
 
@@ -49,7 +50,7 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual bool	GetInputDataVar();
 
-  override void		GenCssBody_impl(Program* prog);
+  override void	GenCssBody_impl(Program* prog);
   virtual bool	GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& idnm, DataTable* idat);
 
 private:

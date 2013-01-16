@@ -29,7 +29,8 @@
 // declare all other types mentioned but not required to include:
 class Projection; //
 class RecvCons; //
-
+class Unit; //
+class Layer; //
 
 TypeDef_Of(ProjectionSpec);
 

@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "LayerDataEl_List.h"
+#include <Network>
 
 void LayerDataEl_List::SetDataNetwork(DataBlock* db, Network* net) {
   for(int i = 0; i < size; ++i) {

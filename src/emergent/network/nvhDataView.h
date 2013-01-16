@@ -20,7 +20,7 @@
 #include <nvDataView>
 
 // member includes:
-#include <ColorScaleColor>
+#include <T3Color>
 
 // declare all other types mentioned but not required to include:
 
@@ -31,12 +31,12 @@ INHERITED(nvDataView)
 public:
   void                  setDefaultColor() {DoHighlightColor(false);}
     // restore to its default color
-  void                  setHighlightColor(const ColorScaleColor& color);
+  void                  setHighlightColor(const T3Color& color);
     // used for highlighting in gui, esp lay/prjn
 
   TA_BASEFUNS(nvhDataView)
 protected:
-  ColorScaleColor       m_hcolor; // hilight color (saved for rebuilds)
+  T3Color               m_hcolor; // hilight color (saved for rebuilds)
 
   virtual void          DoHighlightColor(bool apply) {}
 

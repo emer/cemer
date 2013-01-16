@@ -32,14 +32,12 @@
 #include <Inventor/nodes/SoCallback.h>
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoCylinder.h>
 //#include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoMaterial.h>
-//#include <Inventor/nodes/SoPerspectiveCamera.h>
-//#include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>

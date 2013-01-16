@@ -15,6 +15,8 @@
 
 #include "SmallWorldPrjnSpec.h"
 #include <Network>
+#include <DataTable>
+#include <taMath_float>
 
 void SmallWorldPrjnSpec::Initialize() {
   lambda = 3.0f;

@@ -15,6 +15,7 @@
 
 #include "ActBasedRF.h"
 #include <Network>
+#include <taMath_float>
 
 
 void ActBasedRF::Initialize() {

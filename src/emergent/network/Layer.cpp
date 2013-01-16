@@ -15,6 +15,16 @@
 
 #include "Layer.h"
 #include <Network>
+#include <MemberDef>
+#include <ProjectBase>
+#include <taFiler>
+#include <NetMonitor>
+
+#include <tabMisc>
+#include <taMisc>
+
+using namespace std;
+
 
 void Layer::Initialize() {
   // desc = ??

@@ -14,6 +14,17 @@
 //   GNU General Public License for more details.
 
 #include "Unit.h"
+#include <Network>
+#include <NetMonitor>
+#include <MemberDef>
+#include <SimpleMathSpec>
+#include <taFiler>
+#include <taProject>
+
+#include <taMisc>
+#include <tabMisc>
+
+using namespace std;
 
 void Unit::Initialize() {
   flags = UF_NONE;

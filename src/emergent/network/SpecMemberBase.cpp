@@ -14,6 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "SpecMemberBase.h"
+#include <BaseSpec>
+#include <MemberDef>
 
 void SpecMemberBase::Defaults() {
   Defaults_impl();

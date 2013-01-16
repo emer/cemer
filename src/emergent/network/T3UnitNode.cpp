@@ -14,11 +14,14 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode.h"
-
+#include <T3Color>
+#include <iVec3f>
 
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoMaterial.h>
+
 
 
 #define T3_UNIT_BASE_H	0.1f

@@ -261,9 +261,9 @@ public:
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
 
 #ifndef __MAKETA__
-  virtual void  SaveWeights_strm(ostream& strm, WtSaveFormat fmt = NET_FMT);
+  virtual void  SaveWeights_strm(std::ostream& strm, WtSaveFormat fmt = NET_FMT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual bool  LoadWeights_strm(istream& strm, bool quiet = false);
+  virtual bool  LoadWeights_strm(std::istream& strm, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
 #endif
 
@@ -556,9 +556,9 @@ public:
 #endif
 
 #ifndef __MAKETA__
-  override int  Dump_Load_Value(istream& strm, taBase* par=NULL);
-  override int  Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_impl(ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
+  override int  Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0);
 #endif
 
   override String       GetTypeDecoKey() const { return "Network"; }

@@ -23,6 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class T3Color; //
 
 class EMERGENT_API T3UnitNode: public T3NodeLeaf { //
 typedef T3NodeLeaf inherited;

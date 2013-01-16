@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "WtInitPrompt.h"
+#include <ProgVar>
+
+#include <taMisc>
 
 void WtInitPrompt::Initialize() {
   prompt = "Do you want to Initialize Network Weights? (WARNING: this will erase all previous training!)";

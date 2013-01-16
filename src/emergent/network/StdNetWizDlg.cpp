@@ -17,6 +17,11 @@
 #include <taGuiDialog>
 #include <Network>
 #include <DataTable>
+#include <ProjectBase>
+
+#include <taMisc>
+#include <tabMisc>
+
 
 
 void StdNetWizDlg::Initialize() {

@@ -14,6 +14,16 @@
 //   GNU General Public License for more details.
 
 #include "PrjnView.h"
+#include <T3PrjnNode>
+#include <T3LayerNode>
+#include <NetView>
+#include <Projection>
+#include <Layer>
+#include <taVector3i>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+
 
 void PrjnView::Initialize() {
   data_base = &TA_Projection;

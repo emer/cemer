@@ -14,8 +14,26 @@
 //   GNU General Public License for more details.
 
 #include "Network.h"
+#include <Network_Group>
+#include <NetView>
+#include <NetworkVoxelMapper>
+#include <BrainView>
+#include <MemberDef>
+#include <UserDataItem>
+#include <taProject>
+#include <taFiler>
+#include <SimpleMathSpec>
+#include <NetMonitor>
+#include <taMath_float>
 
-BrainAtlas_List* Network::brain_atlases = NULL;
+#include <tabMisc>
+#include <taMisc>
+
+
+using namespace std;
+
+
+taBrainAtlas_List* Network::brain_atlases = NULL;
 
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
@@ -2383,7 +2401,7 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
     use_prj->spec.SetSpec(ps);
   if(cs)
     use_prj->con_spec.SetSpec(cs);
-  use_prj->DataChanged(DCR_ITEM_UPDATED);
+  use_prj->DataItemUpdated();
   return use_prj;
 }
 
@@ -2406,7 +2424,7 @@ Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpe
     prj->spec.SetSpec(ps);
   if(cs)
     prj->con_spec.SetSpec(cs);
-  prj->DataChanged(DCR_ITEM_UPDATED);
+  prj->DataItemUpdated();
   return prj;
 }
 

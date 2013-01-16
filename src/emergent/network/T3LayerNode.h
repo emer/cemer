@@ -21,8 +21,16 @@
 #include <T3NodeParent>
 
 // member includes:
+#include <iPoint>
+#include <iVec3f>
 
 // declare all other types mentioned but not required to include:
+class SoTranslate2Dragger; // #IGNORE
+class SoTranslate1Dragger; // #IGNORE
+class SoTransform; // #IGNORE
+class SoCalculator; // #IGNORE
+class SoSeparator; // #IGNORE
+class SoFrame; // #IGNORE
 
 
 class EMERGENT_API T3LayerNode: public T3NodeParent {

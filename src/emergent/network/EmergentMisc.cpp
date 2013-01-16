@@ -19,6 +19,7 @@
 #include <tabMisc>
 #include <taRootBase>
 
+#include <css_machine.h>
 
 #ifdef TA_GUI
 # include <QApplication>

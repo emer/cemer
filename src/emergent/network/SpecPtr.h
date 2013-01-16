@@ -87,7 +87,7 @@ public:
       owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
       return true;
     }
-    taMisc::Error("SetSpec: incorrect type of Spec:",
+    TestError(true, "SetSpec", "incorrect type of Spec:",
 		  es->GetPath(), "of type:", es->GetTypeDef()->name,
 		  "should be at least:", base_type->name,"in object:",owner->GetPath());
     return false;

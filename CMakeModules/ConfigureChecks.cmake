@@ -17,7 +17,7 @@ set(TA_USE_QT TRUE)
 set(TA_USE_INVENTOR TRUE)
 
 # for now, obligatory V3 compatibility mode
-set(V3_COMPAT TRUE)
+#set(V3_COMPAT TRUE)
 
 # optional libraries -- found through the Findxx in main file
 IF(GSL_FOUND)

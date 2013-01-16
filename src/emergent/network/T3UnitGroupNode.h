@@ -19,6 +19,8 @@
 // parent includes:
 #include "network_def.h"
 #include <T3NodeParent>
+#include <iPoint>
+#include <iVec3f>
 
 // member includes:
 

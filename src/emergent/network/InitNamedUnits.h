@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class DataTable; //
+class DataCol; //
+class DynEnumType; //
 
 TypeDef_Of(InitNamedUnits);
 

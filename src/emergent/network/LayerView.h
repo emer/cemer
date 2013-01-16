@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class T3LayerNode; // #IGNORE
 class T3DataViewMain; //
+class Layer; //
+class BaseSpec; //
 
 TypeDef_Of(LayerView);
 

@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "NetCounterInit.h"
+#include <ProgVar>
+#include <MemberDef>
+
 
 String NetCounterInit::GetDisplayName() const {
   String rval = "Net Counter Init: ";

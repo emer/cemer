@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "NetGroupedDataLoop.h"
+#include <ProgVar>
+#include <DataTable>
+
+#include <taMisc>
 
 void NetGroupedDataLoop::Initialize() {
   group_order = PERMUTED;
@@ -41,7 +45,7 @@ void NetGroupedDataLoop::GetOrderVars() {
     if (!group_order_var) {
       group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
-      group_order_var->DataChanged(DCR_ITEM_UPDATED);
+      group_order_var->DataItemUpdated();
     }
   }
   group_order_var->var_type = ProgVar::T_HardEnum;
@@ -53,7 +57,7 @@ void NetGroupedDataLoop::GetOrderVars() {
     if (!item_order_var) {
       item_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_order_var->name = "item_order";
-      item_order_var->DataChanged(DCR_ITEM_UPDATED);
+      item_order_var->DataItemUpdated();
     }
   }
   item_order_var->var_type = ProgVar::T_HardEnum;
@@ -70,7 +74,7 @@ void NetGroupedDataLoop::GetIndexVars() {
     trial->name = "trial";
     trial->var_type = ProgVar::T_Int;
     trial->SetVarFlag(ProgVar::CTRL_READ_ONLY);
-    trial->DataChanged(DCR_ITEM_UPDATED);
+    trial->DataItemUpdated();
   }
 
   if (!group_index_var) {
@@ -79,7 +83,7 @@ void NetGroupedDataLoop::GetIndexVars() {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_index_var->name = "group_index";
       group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
-      group_index_var->DataChanged(DCR_ITEM_UPDATED);
+      group_index_var->DataItemUpdated();
     }
   }
   group_index_var->var_type = ProgVar::T_Int;
@@ -90,7 +94,7 @@ void NetGroupedDataLoop::GetIndexVars() {
       item_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_index_var->name = "item_index";
       item_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
-      item_index_var->DataChanged(DCR_ITEM_UPDATED);
+      item_index_var->DataItemUpdated();
     }
   }
   item_index_var->var_type = ProgVar::T_Int;

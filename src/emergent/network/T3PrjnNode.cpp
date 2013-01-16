@@ -19,6 +19,8 @@
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoCone.h>
 
 
 SO_NODE_SOURCE(T3PrjnNode);

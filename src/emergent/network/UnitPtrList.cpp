@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "UnitPtrList.h"
+#include <Unit>
 
 int UnitPtrList::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   if(size <= 0) return 0;

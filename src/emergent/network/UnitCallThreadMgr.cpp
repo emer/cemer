@@ -16,6 +16,8 @@
 #include "UnitCallThreadMgr.h"
 #include <Network>
 
+#include <taMisc>
+
 void UnitCallTask::Initialize() {
   uidx_st = -1;
   uidx_ed = -1;

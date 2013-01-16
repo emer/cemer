@@ -23,6 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class Unit; //
 
 TypeDef_Of(UnitPtrList);
 

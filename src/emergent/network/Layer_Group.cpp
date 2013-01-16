@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "Layer_Group.h"
+#include <Network>
+
+#include <DataChangedReason>
+
 
 bool Layer_Group::nw_itm_def_arg = false;
 
@@ -201,7 +205,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	    else {
 	      l2->pos.y += (l1e.y + 2) - l2s.y;
 	    }
-	    l2->DataChanged(DCR_ITEM_UPDATED);
+	    l2->DataItemUpdated();
 	    moved = true;
 	  }
 	  else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
@@ -212,7 +216,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	    else {
 	      l1->pos.y += (l2e.y + 2) - l1s.y;
 	    }
-	    l1->DataChanged(DCR_ITEM_UPDATED);
+	    l1->DataItemUpdated();
 	    moved = true;
 	  }
 	}
@@ -225,7 +229,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	  else {
 	    l2->pos2d.y += (l1e2d.y + 2) - l2s2d.y;
 	  }
-	  l2->DataChanged(DCR_ITEM_UPDATED);
+	  l2->DataItemUpdated();
 	  moved = true;
 	}
 	else if(l1s2d.x >= l2s2d.x && l1s2d.x < l2e2d.x &&
@@ -236,7 +240,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	  else {
 	    l1->pos2d.y += (l2e2d.y + 2) - l1s2d.y;
 	  }
-	  l1->DataChanged(DCR_ITEM_UPDATED);
+	  l1->DataItemUpdated();
 	  moved = true;
 	}
       }

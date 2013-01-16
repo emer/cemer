@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "Projection_Group.h"
+#include <Network>
+
+
+#include <DataChangedReason>
 
 Projection* Projection_Group::ConnectFrom(Layer* lay) {
   if(!lay) return NULL;

@@ -36,6 +36,14 @@
 
 // declare all other types mentioned but not required to include:
 class MatrixChannelSpec; //
+class Network; //
+class Layer; //
+class Projection; //
+class Projection_Group; //
+class Unit; //
+class Unit_Group; //
+class SendCons; //
+class RecvCons; //
 
 TypeDef_Of(NetMonItem);
 

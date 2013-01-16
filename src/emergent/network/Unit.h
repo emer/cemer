@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "network_def.h"
-#include <taBase>
+#include <taNBase>
 
 // member includes:
 #include <UnitRef>
@@ -26,6 +26,7 @@
 #include <Voxel_List>
 #include <RecvCons_List>
 #include <SendCons_List>
+#include <taVector3i>
 
 // declare all other types mentioned but not required to include:
 class Projection; //
@@ -143,11 +144,11 @@ public: //
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member) -- if prjn is specified, then it only copies weights for that particular projection on this unit, from the same projection index number on the src unit (assumes that there is a correspondence in the projections across this and source unit!)
 
 #ifndef __MAKETA__
-  virtual void  SaveWeights_strm(ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
+  virtual int   LoadWeights_strm(std::istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-  static int    SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
                                  bool quiet = false);
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 #endif

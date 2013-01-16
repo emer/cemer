@@ -222,7 +222,7 @@
 #ifdef TA_OS_WIN
 # define _USE_MATH_DEFINES
 #else
-// # include <stdint.h>
+# include <stdint.h>
 #endif
 
 // define useful types -- some will be defined by QT, so don't define them if using QT
@@ -250,8 +250,6 @@ typedef unsigned char   byte;
   typedef unsigned char         uint8_t;
   typedef unsigned int          uint;
   typedef unsigned int          uint32_t;
-  //typedef signed __int64              int64_t;
-  //typedef unsigned __int64            uint64_t;
   typedef long long             int64_t;
   typedef unsigned long long    uint64_t;
   //note: prob should inline these, rather than macros, but don't want naggling little
@@ -293,15 +291,8 @@ typedef unsigned char   byte;
 # error "TA_POINTER_SIZE should be 4 or 8"
 #endif
 
-//#ifdef _MSC_VER
-//# define ta_int64_t signed __int64;//int64_t;
-//# define ta_uint64_t uint64_t;
-  //typedef __int64             ta_int64_t;
-  //typedef unsigned __int64    ta_uint64_t;
-//#else // gcc
-  typedef long long             ta_int64_t;
-  typedef unsigned long long    ta_uint64_t;
-//#endif
+typedef long long             ta_int64_t;
+typedef unsigned long long    ta_uint64_t;
 
 // misc. compiler hacks for MAKETA
 
@@ -346,21 +337,21 @@ typedef unsigned char   byte;
 #endif
 
 // Some OS-specific includes or types
-// #ifdef TA_OS_WIN
-//   #ifndef __MAKETA__
-//     #include <io.h>
-//   #endif
-//   #ifdef _MSC_VER
-//     #define F_OK 00 // Existence only
-//     #define W_OK 02 // Write permission
-//     #define R_OK 04 // Read permission
-//   #endif
-//   //#define F_OK 06 // Read and write permission
+#ifdef TA_OS_WIN
+  #ifndef __MAKETA__
+    #include <io.h>
+  #endif
+  #ifdef _MSC_VER
+    #define F_OK 00 // Existence only
+    #define W_OK 02 // Write permission
+    #define R_OK 04 // Read permission
+  #endif
+  //#define F_OK 06 // Read and write permission
 
-//   typedef int pid_t; //
-// #else
-//   #include <unistd.h>
-// #endif
+  typedef int pid_t; //
+#else
+  #include <unistd.h>
+#endif
 
 // Qt Event IDs in emergent should be allocated here:
 #ifdef TA_USE_QT
@@ -371,12 +362,6 @@ enum CustomEventType {
 };
 #endif
 
-// #ifndef TA_GUI
-// class VoidClass { // dummy class used as gui obj proxy in NO_GUI builds so all legal C++ class semantics apply
-// public:
-//   VoidClass() {} // #IGNORE
-// };
-// #endif
 
 #ifdef __MAKETA__
 //NOTE: must use "" for msvc
@@ -413,15 +398,15 @@ enum CustomEventType {
 
 // Some global forward declarations
 
+class TypeDef; //
+class MemberDef; //
+class MethodDef; //
+
 // This macro must be used in all class headers that are TA parsed -- it makes
 // the TA_ TypeDef avail to any that include the class -- can also use in .cpp
 // of files that do not include the header but still need to access the TA info
 //#define TypeDef_Of(y) extern TypeDef TA_##T;
 #define TypeDef_Of(y) extern int __tmp_dummy_for_now__
-
-class TypeDef; //
-class MemberDef; //
-class MethodDef; //
 
 // fake version of mpi comm to allow functions to not be conditionalized
 #ifndef DMEM_COMPILE

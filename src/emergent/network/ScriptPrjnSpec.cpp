@@ -15,6 +15,7 @@
 
 #include "ScriptPrjnSpec.h"
 #include <Network>
+#include <taFiler>
 
 
 void ScriptPrjnSpec::Initialize() {

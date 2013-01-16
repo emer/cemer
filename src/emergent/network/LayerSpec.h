@@ -21,9 +21,9 @@
 #include <SpecPtr>
 
 // member includes:
-#include <Layer>
 
 // declare all other types mentioned but not required to include:
+class Layer; //
 
 TypeDef_Of(LayerSpec);
 

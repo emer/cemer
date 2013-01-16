@@ -18,6 +18,15 @@
 #include <T3TransformBoxDragger>
 
 
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/engines/SoCalculator.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+
+
 SO_NODE_SOURCE(T3NetViewObj);
 
 void T3NetViewObj::initClass()

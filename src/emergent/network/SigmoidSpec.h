@@ -21,6 +21,7 @@
 #include <taOBase>
 
 // member includes:
+#include <math.h>
 
 // declare all other types mentioned but not required to include:
 

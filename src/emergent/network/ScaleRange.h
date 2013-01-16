@@ -23,6 +23,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class ColorScale; //
+
 
 TypeDef_Of(ScaleRange);
 

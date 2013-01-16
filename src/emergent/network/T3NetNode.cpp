@@ -14,6 +14,19 @@
 //   GNU General Public License for more details.
 
 #include "T3NetNode.h"
+#include <T3TransformBoxDragger>
+#include <iVec3f>
+#include <SoLineBox3d>
+#include <taString>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/engines/SoCalculator.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+
 
 extern void T3NetNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso

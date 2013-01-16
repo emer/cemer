@@ -21,10 +21,15 @@
 #include <T3NodeParent>
 
 // member includes:
+#include <iVec3i>
+#include <iVec3f>
 
 // declare all other types mentioned but not required to include:
 class SoLineBox3d;
 class SoDrawStyle;
+class SoTranslate1Dragger;
+class SoTranslate2Dragger;
+
 
 class EMERGENT_API T3LayerGroupNode: public T3NodeParent {
 typedef T3NodeParent inherited;

@@ -15,6 +15,7 @@
 
 #include "RandomPrjnSpec.h"
 #include <Network>
+#include <int_Matrix>
 
 void RandomPrjnSpec::Initialize() {
   p_con = .25;

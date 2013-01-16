@@ -50,20 +50,15 @@ public:
 
   NetMonItem* 	AddBlank();
   // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
-  NetMonItem* 	AddNetwork(Network* net, const String& variable)
-  { return AddObject(net, variable);}
+  NetMonItem* 	AddNetwork(Network* net, const String& variable);
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
-  NetMonItem* 	AddLayer(Layer* lay, const String& variable)
-  { return AddObject(lay, variable);}
+  NetMonItem* 	AddLayer(Layer* lay, const String& variable);
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Layer or its subobjects
-  NetMonItem* 	AddProjection(Projection* prj, const String& variable)
-  { return AddObject(prj, variable);}
+  NetMonItem* 	AddProjection(Projection* prj, const String& variable);
   // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Projection or its subobjects
-  NetMonItem* 	AddUnitGroup(Unit_Group* ug, const String& variable)
-  { return AddObject(ug, variable);}
+  NetMonItem* 	AddUnitGroup(Unit_Group* ug, const String& variable);
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the UnitGroup or its subobjects
-  NetMonItem* 	AddUnit(Unit* un, const String& variable)
-  { return AddObject(un, variable);}
+  NetMonItem* 	AddUnit(Unit* un, const String& variable);
   // #CAT_Monitor #PROJ_SCOPE monitor a value in the Unit or its subobjects
   
   NetMonItem* 	AddObject(taBase* obj, const String& variable);

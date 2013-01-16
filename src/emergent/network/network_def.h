@@ -18,7 +18,8 @@
 #define EMERGENT_DEF_H
 
 #include <ta_def.h>
- 
+#include "network_TA_type.h"
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project

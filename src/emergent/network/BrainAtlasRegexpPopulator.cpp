@@ -14,6 +14,14 @@
 //   GNU General Public License for more details.
 
 #include "BrainAtlasRegexpPopulator.h"
+#include <BrainAtlasUtils>
+#include <taBrainAtlas>
+#include <BrainAtlasFactory>
+#include <BrainAtlas>
+#include <Network>
+
+#include <taMisc>
+
 
 BrainAtlasRegexpPopulator::BrainAtlasRegexpPopulator()
 : iRegexpDialogPopulator()

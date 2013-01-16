@@ -14,7 +14,22 @@
 //   GNU General Public License for more details.
 
 #include "LayerGroupView.h"
+#include <T3LayerGroupNode>
+#include <T3LayerNode>
 #include <Network>
+#include <NetView>
+#include <LayerView>
+#include <MemberDef>
+#include <T3ExaminerViewer>
+#include <T3Misc>
+#include <taProject>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
 
 void LayerGroupView::Initialize() {
   data_base = &TA_Layer_Group;
@@ -196,9 +211,9 @@ void LayerGroupView::Render_impl() {
 
     // ensure that the layer label does not go beyond width of layer itself!
     float eff_lay_font_size = nv->font_sizes.layer;
-    float lnm_wd = (eff_lay_font_size * lgp->name.length()) / t3Misc::char_ht_to_wd_pts;
+    float lnm_wd = (eff_lay_font_size * lgp->name.length()) / T3Misc::char_ht_to_wd_pts;
     if(lnm_wd > fx) {
-      eff_lay_font_size = (fx / (float)lgp->name.length()) * t3Misc::char_ht_to_wd_pts;
+      eff_lay_font_size = (fx / (float)lgp->name.length()) * T3Misc::char_ht_to_wd_pts;
     }
     node_so->resizeCaption(eff_lay_font_size);
 
@@ -261,7 +276,7 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lgp->DataChanged(DCR_ITEM_UPDATED);
+  lgp->DataItemUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -298,7 +313,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(shptrans[0], zfrac, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lgp->DataChanged(DCR_ITEM_UPDATED);
+  lgp->DataItemUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();

@@ -17,11 +17,13 @@
 #define T3NetViewObj_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <T3NodeLeaf>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class T3TransformBoxDragger; //
 
 class EMERGENT_API T3NetViewObj : public T3NodeLeaf {
   // network view object

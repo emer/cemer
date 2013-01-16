@@ -14,8 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Cylinder.h"
+#include <T3Color>
 
 #include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoTransform.h>
 
 SO_NODE_SOURCE(T3UnitNode_Cylinder);
 

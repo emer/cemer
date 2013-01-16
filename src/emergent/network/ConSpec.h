@@ -29,6 +29,7 @@ class BaseCons; //
 class RecvCons; //
 class SendCons; //
 class Unit; //
+class Network; //
 
 // the ConSpec has 2 versions of every function: one to go through the group
 // and the other to apply to a single connection.

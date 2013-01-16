@@ -14,6 +14,22 @@
 //   GNU General Public License for more details.
 
 #include "NetViewObjView.h"
+#include <Layer>
+#include <T3NetViewObj>
+#include <NetViewObj>
+#include <NetView>
+#include <T3ExaminerViewer>
+
+#include <taMisc>
+
+#include <Inventor/SoDB.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+
 
 void NetViewObjView::Initialize(){
   data_base = &TA_NetViewObj;

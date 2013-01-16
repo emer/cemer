@@ -15,6 +15,7 @@
 
 #include "GradientWtsPrjnSpec.h"
 #include <Network>
+#include <taMath_float>
 
 void GradientWtsPrjnSpec::Initialize() {
   wt_range.min = 0.0f;

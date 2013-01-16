@@ -14,6 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Rect.h"
+#include <T3Color>
+
 #include <Inventor/nodes/SoCube.h>
 
 SO_NODE_SOURCE(T3UnitNode_Rect);

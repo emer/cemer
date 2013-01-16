@@ -15,6 +15,9 @@
 
 #include "BaseSubSpec.h"
 #include <BaseSpec>
+#include <MemberDef>
+
+#include <taMisc>
 
 void BaseSubSpec::Initialize() {
 }
@@ -128,7 +131,7 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
       {
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-//      DataChanged(DCR_ITEM_UPDATED);
+//      DataItemUpdated();
       }
     }
   }

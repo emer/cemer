@@ -15,6 +15,7 @@
 
 #include "TiledNovlpPrjnSpec.h"
 #include <Network>
+#include <int_Array>
 
 void TiledNovlpPrjnSpec::Initialize() {
   reciprocal = false;

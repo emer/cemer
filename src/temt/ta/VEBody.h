@@ -31,7 +31,10 @@
 #include <VETexture>
 #include <VESurface>
 #include <ODEIntParams>
+
+#ifndef __MAKETA__
 #include <ode/ode.h>
+#endif
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
@@ -46,7 +49,7 @@ public:
   float         lin_thr;        // #DEF_0 #CONDSHOW_ON_on The body's linear damping threshold. Damping will be applied only if the linear speed is above the threshold limit
   float         ang;            // #DEF_0 #CONDSHOW_ON_on The body's angular damping scale.
   float         ang_thr;        // #DEF_0 #CONDSHOW_ON_on The body's angular damping threshold. Damping will be applied only if the angular speed is above the threshold limit
-  float         ang_speed;         // #DEF_0 #CONDSHOW_ON_on You can also limit the maximum angular speed. In contrast to the damping functions, the angular velocity is affected before the body is moved. This means that it will introduce errors in joints that are forcing the body to rotate too fast. Some bodies have naturally high angular velocities (like cars' wheels), so you may want to give them a very high (like the default, infinity) limit.
+  float         ang_speed;      // #DEF_0 #CONDSHOW_ON_on You can also limit the maximum angular speed. In contrast to the damping functions, the angular velocity is affected before the body is moved. This means that it will introduce errors in joints that are forcing the body to rotate too fast. Some bodies have naturally high angular velocities (like cars' wheels), so you may want to give them a very high (like the default, infinity) limit.
 
   TA_SIMPLE_BASEFUNS(ODEDamping);
 private:

@@ -14,6 +14,14 @@
 //   GNU General Public License for more details.
 
 #include "ProjectBase.h"
+#include <Wizard>
+
+#include <taiMisc>
+#include <taMisc>
+
+
+using namespace std;
+
 
 void ProjectBase::Initialize() {
   // up-class a few of the bases

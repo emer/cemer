@@ -20,6 +20,8 @@
 #include <ProjectionSpec>
 #include <RandomSpec>
 #include <RndSeed>
+#include <taVector2i>
+#include <taVector2f>
 
 // member includes:
 

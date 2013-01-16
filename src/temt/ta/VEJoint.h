@@ -23,7 +23,7 @@
 #include <VEBody>
 #include <taVector3f>
 #include <ODEIntParams>
-#include <ode/ode.h>
+
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 

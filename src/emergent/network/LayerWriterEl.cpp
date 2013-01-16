@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "LayerWriterEl.h"
+#include <Network>
 
 void LayerWriterEl::Initialize() {
   use_layer_type = true;

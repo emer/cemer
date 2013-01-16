@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Block.h"
+#include <T3Color>
+
+#include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoCube.h>
 
 // note: Block is never called now because it is done in optimized form by the unit group

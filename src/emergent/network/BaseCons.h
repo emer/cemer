@@ -21,14 +21,19 @@
 #include <taOBase>
 
 // member includes:
+#include <Connection>
+#include <ConSpec>
 #include <Relation>
+
 
 // declare all other types mentioned but not required to include:
 class NetMonitor; //
 class float_Array; //
 class float_Matrix; //
 class SimpleMathSpec; //
-
+class SendCons; //
+class Projection; //
+class Layer; //
 
 TypeDef_Of(BaseCons);
 
@@ -85,7 +90,7 @@ public:
 
 #ifdef DEBUG
   inline Connection*    OwnCn(int idx) const
-  { if(!OwnCons()) { taMisc::Error("owncn err"); return NULL; }
+  { if(TestError(!OwnCons(), "OwnCn", "programmer error -- don't own cons")) return NULL; 
     return (Connection*)&(cons_own[con_size * idx]); }
 #else
   inline Connection*    OwnCn(int idx) const { return (Connection*)&(cons_own[con_size * idx]); }
@@ -93,7 +98,7 @@ public:
   // #CAT_Access fast access (no range or own_cons checking) to owned connection at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
 #ifdef DEBUG
   inline Connection*    PtrCn(int idx) const
-  { if(!PtrCons()) { taMisc::Error("ptrcn err"); return NULL; }
+  { if(TestError(!PtrCons(), "PtrCn", "programmer error -- not ptr cons")) return NULL;
     return cons_ptr[idx]; }
 #else
   inline Connection*    PtrCn(int idx) const  { return cons_ptr[idx]; }
@@ -203,18 +208,20 @@ public:
   virtual bool  ConValuesFromMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
 
-  static int    LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet);
+#ifndef __MAKETA__
+  static int    LoadWeights_StartTag(std::istream& strm, const String& tag, String& val, bool quiet);
   // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
-  static int    LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
+  static int    LoadWeights_EndTag(std::istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
   // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
 
-  virtual void  SaveWeights_strm(ostream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
+  virtual int   LoadWeights_strm(std::istream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful -- the connections for both sides must already be allocated, but it can rearrange connections based on save unit indexes for random connectivity etc
-  static int    SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt = BaseCons::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, BaseCons::WtSaveFormat fmt = BaseCons::TEXT,
                                  bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
+#endif
 
   virtual void  SaveWeights(const String& fname="", Unit* ru = NULL, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
@@ -241,16 +248,18 @@ public:
 
   override String GetTypeDecoKey() const { return "Connection"; }
 
-  override int  Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Load_Value(istream& strm, taBase* par=NULL);
+#ifndef __MAKETA__
+  override int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
   // the dump system saves the alloc_size during the first 'path' stage of dumping, and then during loading does a full AllocCons for everything, building it all anew prior to the second 'value' stage of loading, which can then do ConnectFrom to setup connections, and set weights etc
 
   // the cons versions below have support for loading an "old" format file (prior to 4.1.0), which does not have the pre-alloc during the first path load phase: they save the load string into user data on the Unit, and then the Network::Dump_Load_Value goes through and reads those in after doing a manual Connect, so that everything is allocated
 
-  virtual int   Dump_Save_Cons(ostream& strm, int indent);
+  virtual int   Dump_Save_Cons(std::ostream& strm, int indent);
   // #CAT_FILE save just the connection values out to given stream -- call this in Dump_Save_Value after default guy to actually save connections (in RecvCons)
-  virtual int   Dump_Load_Cons(istream& strm, bool old_2nd_load = false);
+  virtual int   Dump_Load_Cons(std::istream& strm, bool old_2nd_load = false);
   // #CAT_FILE load just the connection values from given stream -- call this in Dump_Load_Value to actually load connections (in RecvCons)
+#endif
 
   void  CutLinks();
   void  Copy_(const BaseCons& cp);

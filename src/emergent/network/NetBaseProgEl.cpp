@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "NetBaseProgEl.h"
+#include <ProgVar>
 
 bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
   bool rval = ObjProgVarFilter(base_, var_);

@@ -15,6 +15,16 @@
 
 #include "RecvCons.h"
 #include <SendCons>
+#include <Projection>
+#include <Unit>
+#include <Layer>
+
+#include <taMisc>
+
+#include <sstream>
+
+using namespace std;
+
 
 void RecvCons::Initialize() {
   SetBaseFlag(OWN_CONS);        // we own by default

@@ -23,6 +23,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoLineBox3d;
+class T3TransformBoxDragger;
 
 class EMERGENT_API T3NetNode: public T3NodeParent {
 typedef T3NodeParent inherited;

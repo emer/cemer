@@ -23,6 +23,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoTransform; // #IGNORE
+class SoComplexity; // #IGNORE
+class SoCone; // #IGNORE
+class SoCylinder; // #IGNORE
+class SoMaterial; // #IGNORE
+
 
 class EMERGENT_API T3PrjnNode: public T3NodeParent {
 typedef T3NodeParent inherited;

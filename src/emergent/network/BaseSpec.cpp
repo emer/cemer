@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "BaseSpec.h"
+#include <SpecMemberBase>
+#include <taMisc>
+#include <MemberDef>
+#include <taDataLinkItr>
 
 bool BaseSpec::nw_itm_def_arg = false;
 
@@ -188,7 +192,7 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
         }
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-//      DataChanged(DCR_ITEM_UPDATED);
+//      DataItemUpdated();
       }
     }
   }

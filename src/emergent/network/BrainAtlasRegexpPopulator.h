@@ -17,6 +17,7 @@
 #define BrainAtlasRegexpPopulator_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <iRegexpDialogPopulator>
 
 // member includes:

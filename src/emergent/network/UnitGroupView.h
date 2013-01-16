@@ -26,6 +26,7 @@
 #include <CircMatrix>
 
 // declare all other types mentioned but not required to include:
+class Unit; //
 class Layer; //
 class LayerView; //
 class T3UnitGroupNode; // #IGNORE

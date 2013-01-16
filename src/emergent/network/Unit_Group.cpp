@@ -14,6 +14,18 @@
 //   GNU General Public License for more details.
 
 #include "Unit_Group.h"
+#include <Network>
+#include <NetMonitor>
+#include <taFiler>
+#include <MemberDef>
+#include <float_Array>
+#include <taProject>
+
+#include <tabMisc>
+#include <taMisc>
+
+
+using namespace std;
 
 void Unit_Group::Initialize() {
   own_lay = NULL;

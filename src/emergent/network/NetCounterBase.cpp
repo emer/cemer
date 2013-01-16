@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "NetCounterBase.h"
+#include <ProgVar>
+#include <MemberDef>
+
+#include <taMisc>
 
 void NetCounterBase::Initialize() {
   network_type = &TA_Network;
@@ -56,7 +60,7 @@ void NetCounterBase::GetLocalCtrVar() {
   if (!local_ctr_var) {
     local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     local_ctr_var->name = counter->name;
-    local_ctr_var->DataChanged(DCR_ITEM_UPDATED);
+    local_ctr_var->DataItemUpdated();
   }
   local_ctr_var->var_type = ProgVar::T_Int;
 }

@@ -15,6 +15,7 @@
 
 #include "TiledRFPrjnSpec.h"
 #include <Network>
+#include <int_Array>
 
 
 void TiledRFPrjnSpec::Initialize() {

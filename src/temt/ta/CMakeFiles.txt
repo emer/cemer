@@ -211,6 +211,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   NameValue.h
   taColor.h
+  taColor_List.h
   RGBA.h
   RGBA_List.h
   ColorScaleColor.h
@@ -1231,6 +1232,7 @@ set(ta_SRCS_MAKETA
 
   NameValue.cpp
   taColor.cpp
+  taColor_List.cpp
   RGBA.cpp
   RGBA_List.cpp
   ColorScaleColor.cpp

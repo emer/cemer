@@ -18,7 +18,8 @@
 
 // parent includes:
 #include "network_def.h"
-#include <taBase>
+#include <taOBase>
+#include <taList>
 
 // member includes:
 

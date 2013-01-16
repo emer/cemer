@@ -24,11 +24,11 @@
 #include <QList>
 
 // declare all other types mentioned but not required to include:
-class QList;
 class QColor;
 class QString;
 class QStringList;
 class BrainAtlasInfo;
+class BrainAtlas;
 
 
 class EMERGENT_API BrainAtlasUtils {

@@ -185,7 +185,6 @@ public:
   int           unit_val_transparency;
   int           last_state_change;
   bool          color_brain;
-  QColor        brain_area_color;
   String        color_brain_regexp;
   bool          show_atlas;
   String        brain_area_regexp;

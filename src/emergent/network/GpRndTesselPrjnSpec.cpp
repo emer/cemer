@@ -25,7 +25,6 @@ void GpRndTesselPrjnSpec::Initialize() {
   recv_gp_skip = 1;
   recv_gp_group = 1;
   send_gp_scale = 1.0f;
-  send_gp_offs.SetBaseType(&TA_GpTessEl);
 
   wrap = true;
   def_p_con = .25f;

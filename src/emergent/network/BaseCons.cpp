@@ -18,11 +18,16 @@
 #include <Layer>
 #include <Unit>
 #include <ConSpec>
+#include <NetMonitor>
+#include <SimpleMathSpec>
+#include <float_Array>
+#include <taFiler>
 
-
+#include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
 
+using namespace std;
 
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types

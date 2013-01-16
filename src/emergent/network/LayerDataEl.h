@@ -24,8 +24,10 @@
 #include <DataTable>
 #include <NetworkRef>
 #include <LayerRef>
+#include <PosVector2i>
 
 // declare all other types mentioned but not required to include:
+class Layer_Group; //
 
 // This is a workaround for a problem that can occur depending on the order of
 // includes.  The problem is that the windows header file "Nb30.h" contains

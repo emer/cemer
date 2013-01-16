@@ -17,9 +17,25 @@
 #include <ProjectBase>
 #include <Network>
 #include <DataTable>
+#include <StdNetWizDlg>
+#include <RetinaProc>
+#include <LayerWriter>
+#include <Loop>
+#include <ProgramCall>
+#include <IfElse>
+
+#include <tabMisc>
+#include <taMisc>
 
 
 void Wizard::Initialize() {
+  std_net_dlg = NULL;
+}
+
+void Wizard::Destroy() {
+  if(std_net_dlg) {
+    taBase::DelPointer((taBase**)&std_net_dlg);
+  }
 }
 
 void Wizard::UpdateAfterEdit() {
@@ -104,7 +120,10 @@ bool Wizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(proj->networks.size == 0)  // make a new one for starters always
     proj->networks.New(1);
-  bool rval = std_net_dlg.DoDialog();
+  if(!std_net_dlg) {
+    taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
+  }
+  bool rval = std_net_dlg->DoDialog();
   return rval;
 }
 

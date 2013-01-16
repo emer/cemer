@@ -14,6 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "NetCounterIncr.h"
+#include <ProgVar>
+#include <MemberDef>
 
 String NetCounterIncr::GetDisplayName() const {
   String rval = "Net Counter Incr: ";

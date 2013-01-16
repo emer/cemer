@@ -14,6 +14,17 @@
 //   GNU General Public License for more details.
 
 #include "UnitView.h"
+#include <NetView>
+#include <Network>
+#include <LayerView>
+#include <T3Color>
+
+#include <T3UnitNode_Circle>
+#include <T3UnitNode_Rect>
+#include <T3UnitNode_Block>
+#include <T3UnitNode_Cylinder>
+
+#include <Inventor/nodes/SoTransform.h>
 
 void UnitView::Initialize()
 {

@@ -18,10 +18,11 @@
 
 // parent includes:
 #include "network_def.h"
-#include <taBase>
+#include <taNBase>
 
 // smartptr, ref:
 #include <taSmartRefT>
+#include <taSmartPtrT>
 
 // member includes:
 #include <iColor>
@@ -30,7 +31,7 @@
 class int_Matrix; //
 class String_Matrix; //
 class float_Matrix; //
-class ColorSpecColor_List; //
+class taColor_List; //
 class BrainAtlasInfo; // #IGNORE
 class ColorScale; //
 class BrainAtlas; // #IGNORE
@@ -53,7 +54,7 @@ public:
   // #CAT_BrainAtlas get the color at a given index
   virtual iColor   	ColorForLabel(const String& label);
   // #CAT_BrainAtlas get the color at a given label
-  virtual void       	Colors(ColorSpecColor_List& colors,
+  virtual void       	Colors(taColor_List& colors,
                                  const String& labels_regexp=".*");
   // #CAT_BrainAtlas fill in the colors for the labels that match the given regexp (default is all)
   virtual void		Labels(String_Matrix& labels, const String& labels_regexp=".*");

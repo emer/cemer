@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "BaseSpec_Group.h"
+#include <BaseSpec>
 
 bool BaseSpec_Group::nw_itm_def_arg = false;
 

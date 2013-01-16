@@ -14,16 +14,32 @@
 //   GNU General Public License for more details.
 
 #include "UnitGroupView.h"
+#include <T3UnitGroupNode>
+#include <T3UnitNode>
 #include <Network>
+#include <NetView>
+#include <UnitView>
+#include <LayerView>
+#include <T3Color>
+#include <MemberDef>
+#include <T3DataViewFrame>
+#include <T3ExaminerViewer>
 
+#include <taMisc>
+
+#include <Inventor/SoEventManager.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 void UnitGroupView::Initialize() {
   data_base = &TA_Layer;

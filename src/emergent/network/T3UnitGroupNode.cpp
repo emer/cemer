@@ -15,8 +15,14 @@
 
 #include "T3UnitGroupNode.h"
 
+#include <Inventor/system/gl.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/nodes/SoCallback.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoFont.h>
 
 /*
       childNodes: SoSeparator -- the T3Node children (from parent class)

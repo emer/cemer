@@ -14,6 +14,22 @@
 //   GNU General Public License for more details.
 
 #include "taBrainAtlas.h"
+#include <BrainAtlasInfo>
+#include <BrainAtlasFactory>
+#include <BrainAtlas>
+#include <BrainAtlasUtils>
+#include <BrainAtlasRegexpPopulator>
+#include <iBrainViewEditDialog>
+
+#include <taColor_List>
+#include <String_Matrix>
+#include <int_Matrix>
+#include <float_Matrix>
+#include <ColorScale>
+#include <taVector3f>
+
+#include <QColor>
+
 
 taBrainAtlas::taBrainAtlas(const BrainAtlasInfo& info) : taNBase()
   , filepath(info.atlas_filename)
@@ -67,13 +83,12 @@ iColor taBrainAtlas::ColorForLabel(const String& label) {
   return BrainAtlasUtils::Color(Atlas(), Index(label));
 }
 
-void taBrainAtlas::Colors(TAColor_List& colors, const String& labels_regexp) {
+void taBrainAtlas::Colors(taColor_List& colors, const String& labels_regexp) {
   QList<QColor> qclr = BrainAtlasUtils::Colors(Atlas(), (QString)labels_regexp.chars());
   colors.Reset();
   for(int i=0; i< qclr.size(); i++) {
-    taColor* tac = new taColor;
+    taColor* tac = (taColor*)colors.New(1);
     tac->setColor((iColor)qclr[i]);
-    colors.Add(tac);
   }
 }
 

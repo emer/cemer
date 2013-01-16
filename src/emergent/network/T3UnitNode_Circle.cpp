@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "T3UnitNode_Circle.h"
+#include <T3Color>
 
 #include <Inventor/nodes/SoCylinder.h>
 

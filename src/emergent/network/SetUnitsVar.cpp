@@ -14,7 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "SetUnitsVar.h"
+#include <ProgVar>
+#include <DataTable>
 
+#include <taMisc>
 
 void SetUnitsVar::Initialize() {
   set_nm = true;
@@ -73,7 +76,7 @@ bool SetUnitsVar::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
-    input_data_var->DataChanged(DCR_ITEM_UPDATED);
+    input_data_var->DataItemUpdated();
   }
   return true;
 }

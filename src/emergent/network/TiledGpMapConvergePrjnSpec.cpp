@@ -15,6 +15,7 @@
 
 #include "TiledGpMapConvergePrjnSpec.h"
 #include <Network>
+#include <int_Array>
 
 
 void TiledGpMapConvergePrjnSpec::Initialize() {
@@ -210,7 +211,7 @@ bool TiledGpMapConvergePrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   else
     trg_send_geom = ((trg_recv_geom +1) * send_tile_skip);
 
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
 }
 
@@ -229,7 +230,7 @@ bool TiledGpMapConvergePrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   else
     trg_recv_geom = (trg_send_geom / send_tile_skip) - 1;
 
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 

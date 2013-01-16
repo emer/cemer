@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "NetMonitor.h"
+#include <Network>
+
+#include <taMisc>
 
 void NetMonitor::Initialize() {
   rmv_orphan_cols = true;
@@ -63,6 +66,26 @@ String NetMonitor::GetDisplayName() const {
   if(network) rval += " fm net: " + network->name;
   if(data) rval += " to data: " + data->name;
   return rval;
+}
+
+NetMonItem* NetMonitor::AddNetwork(Network* net, const String& variable) {
+  return AddObject(net, variable);
+}
+
+NetMonItem* NetMonitor::AddLayer(Layer* lay, const String& variable) {
+  return AddObject(lay, variable);
+}
+
+NetMonItem* NetMonitor::AddProjection(Projection* prj, const String& variable) {
+  return AddObject(prj, variable);
+}
+
+NetMonItem* NetMonitor::AddUnitGroup(Unit_Group* ug, const String& variable) {
+  return AddObject(ug, variable);
+}
+
+NetMonItem* NetMonitor::AddUnit(Unit* un, const String& variable) {
+  return AddObject(un, variable);
 }
 
 NetMonItem* NetMonitor::AddBlank() {

@@ -34,7 +34,13 @@
 // declare all other types mentioned but not required to include:
 class Network; //
 class NetViewPanel; //
+class UnitView; //
+class UnitGroupView; //
+class LayerView; //
+class T3Color;
 class T3NetNode; // #IGNORE
+class BaseSpec; //
+
 
 TypeDef_Of(NetViewFontSizes);
 
