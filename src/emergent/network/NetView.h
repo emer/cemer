@@ -105,7 +105,7 @@ private:
 TypeDef_Of(NetView);
 
 class EMERGENT_API NetView: public T3DataViewMain {
-// ##DUMP_LOAD_POST network view main object -- represents the network in view, manages all sub-types
+// ##DUMP_LOAD_POST #INSTANCE network view main object -- represents the network in view, manages all sub-types
 INHERITED(T3DataViewMain)
 friend class NetViewPanel;
 public:
