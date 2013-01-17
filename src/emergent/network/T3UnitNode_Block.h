@@ -25,8 +25,10 @@
 
 
 class EMERGENT_API T3UnitNode_Block: public T3UnitNode { // 2d color
+#ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Block);
+#endif
 friend class T3UnitGroupNode;
 public:
   static void	initClass();

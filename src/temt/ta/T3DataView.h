@@ -26,7 +26,7 @@
 #include <SoPtr>
 
 // declare all other types mentioned but not required to include:
-class T3Node; // #IGNORE
+class T3Node; // 
 class T3DataViewRoot; //
 class T3ExaminerViewer; // #IGNORE
 class iT3DataViewFrame; // #IGNORE

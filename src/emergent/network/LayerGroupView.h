@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class Layer_Group; //
-class T3LayerGroupNode; // #IGNORE
+class T3LayerGroupNode; //
 class BaseSpec; //
 
 TypeDef_Of(LayerGroupView);

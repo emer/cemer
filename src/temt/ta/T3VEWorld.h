@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class SoDirectionalLight; // 
+class SoDirectionalLight; // #IGNORE
 class SoGroup; // 
 class SoSwitch; // 
 

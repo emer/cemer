@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class T3LayerNode; // #IGNORE
+class T3LayerNode; //
 class T3DataViewMain; //
 class Layer; //
 class BaseSpec; //

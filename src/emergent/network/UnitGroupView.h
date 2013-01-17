@@ -29,7 +29,7 @@
 class Unit; //
 class Layer; //
 class LayerView; //
-class T3UnitGroupNode; // #IGNORE
+class T3UnitGroupNode; //
 
 
 TypeDef_Of(UnitGroupView);

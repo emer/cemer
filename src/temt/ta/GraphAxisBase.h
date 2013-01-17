@@ -29,7 +29,7 @@ class GraphColView; //
 class T3DataView_List; // 
 class DataCol; // 
 class GraphTableView; // 
-class T3Axis; //  #IGNORE
+class T3Axis; //
 
 
 class TA_API GraphAxisBase : public T3DataView {

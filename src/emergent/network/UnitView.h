@@ -26,7 +26,7 @@
 class LayerView; //
 class Unit; //
 class NetView; //
-class T3UnitNode; // #IGNORE
+class T3UnitNode; //
 
 TypeDef_Of(UnitView);
 

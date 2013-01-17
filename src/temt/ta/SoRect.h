@@ -18,10 +18,12 @@
 
 // parent includes:
 #include "ta_def.h"
+#ifndef __MAKETA__
 #include <Inventor/nodes/SoTriangleStripSet.h>
 
 // member includes:
 #include <Inventor/fields/SoMFVec3f.h>
+#endif
 
 // declare all other types mentioned but not required to include:
 

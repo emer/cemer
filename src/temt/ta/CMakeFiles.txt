@@ -11,7 +11,7 @@
 # local headers that need maketa run on them
 # maketa is VERY picky about the order of these files,
 # so they are broken into two sections.
-set(ta_HEADS_MAKETA_LOCAL_1
+set(ta_HEADS_MAKETA_LOCAL
   maketa_streambuf.h
   maketa_iostream.h
   maketa_fstream.h
@@ -676,6 +676,40 @@ set(ta_HEADS_MAKETA_LOCAL_1
 
   EditDataPanel.h
   iDataPanel_PtrList.h
+
+  T3Node.h
+  T3NodeLeaf.h
+  T3NodeParent.h
+
+  T3Color.h
+  T3ColorBar.h
+
+  T3GridColViewNode.h
+  T3GridViewNode.h
+  T3Axis.h
+  T3GraphLine.h
+  T3GraphViewNode.h
+
+  T3VEWorld.h
+  T3VEObject.h
+  T3VEBody.h
+  T3VEJoint.h
+  T3VESpace.h
+  T3VEStatic.h
+
+  SoCapsule.h
+  SoFrame.h
+  SoRect.h
+  SoLineBox3d.h
+  SoImageEx.h
+  SoMatrixGrid.h
+  So3DHeightField.h
+  T3ScaleUniformScaler.h
+  T3TransformBoxRotatorRotator.h
+  T3TransformBoxDragger.h
+  T3Translate1Translator.h
+  T3Translate2Translator.h
+  SoScrollBar.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -823,41 +857,8 @@ set(ta_HEADS_NOMAKETA
   IDataHost.h
   MembSet.h
 
-  T3Color.h
-  T3ColorBar.h
-  T3Node.h
-  T3NodeLeaf.h
-  T3NodeParent.h
-
-  T3GridColViewNode.h
-  T3GridViewNode.h
-  T3Axis.h
-  T3GraphLine.h
-  T3GraphViewNode.h
-
-  T3VEWorld.h
-  T3VEObject.h
-  T3VEBody.h
-  T3VEJoint.h
-  T3VESpace.h
-  T3VEStatic.h
-
-
   SoBase.h
   SoGroup.h
-  SoCapsule.h
-  SoFrame.h
-  SoRect.h
-  SoLineBox3d.h
-  SoImageEx.h
-  SoMatrixGrid.h
-  So3DHeightField.h
-  T3ScaleUniformScaler.h
-  T3TransformBoxRotatorRotator.h
-  T3TransformBoxDragger.h
-  T3Translate1Translator.h
-  T3Translate2Translator.h
-  SoScrollBar.h
 )
 
 set(ta_HEADS_NOMAKETA_MOC
@@ -993,17 +994,6 @@ set(ta_HEADS_NOMAKETA_MOC
   iT3DataViewFrame.h
 )
 
-# set(ta_HEADS_MAKETA_LOCAL_2
-#   t3node_so.h
-#   SoCapsule.h
-#   t3viewer.h
-#   colorbar_so.h
-#   ta_datatable_qtso.h
-#   ta_datatable_so.h
-#   ta_virtenv_qtso.h
-#   ta_virtenv_so.h
-# )
-
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
   ../taiqtso/iPoint.h
@@ -1012,15 +1002,13 @@ set(ta_HEADS_MAKETA
   ../taiqtso/iRect.h
   ../taiqtso/iVec3f.h
   ../taiqtso/iBox3f.h
-  ${ta_HEADS_MAKETA_LOCAL_1}
+  ${ta_HEADS_MAKETA_LOCAL}
   ${ta_HEADS_MAKETA_MOC}
-  # ../taiqtso/safeptr_so.h
-  # ${ta_HEADS_MAKETA_LOCAL_2}
 )
 
 # all heads -- include maketa generated ones here
 set(ta_HEADS
-  ${ta_HEADS_MAKETA_LOCAL_1}
+  ${ta_HEADS_MAKETA_LOCAL}
   NewViewHelper.h
   ta_gendoc.h
   ta_maketa_defs.h
@@ -1993,6 +1981,7 @@ set(ta_SRCS_NOMAKETA
 set(ta_SRCS
   ${ta_SRCS_MAKETA}
   ${ta_SRCS_NOMAKETA}
+  ta_qrc.cpp
   ta_TA.cpp
 )
 

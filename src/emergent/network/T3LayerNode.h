@@ -34,8 +34,10 @@ class SoFrame; // #IGNORE
 
 
 class EMERGENT_API T3LayerNode: public T3NodeParent {
+#ifndef __MAKETA__
 typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3LayerNode);
+#endif
 public:
   static const float 	height; // = 0.05f height of layer frame shape itself (in fractions of a unit)
   static const float 	width; // = 0.5f width of layer frame shape (in frac of unit)

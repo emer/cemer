@@ -266,7 +266,7 @@ public:
 
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
-  static TypeItem::ShowMembs show_gui;       // #SAVE #CAT_GUI #EXPERT what to show in the gui
+  static TypeItem::ShowMembs show_gui;       // #IGNORE #CAT_GUI #EXPERT what to show in the gui -- set in main window viewer
   static TypeInfo       type_info_;     // #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information
   //note: 'type_info' is a reserved word in C++, it is the type of rtti data
   static KeepTokens     keep_tokens;    // #SAVE #CAT_GUI #EXPERT default for keeping tokens
@@ -594,7 +594,7 @@ public:
   static String& PrintAllTokens(String& strm);
   // #CAT_GlobalState generate a list and count of all types that keep tokens, with a count of tokens
   static TypeItem::TypeInfoKinds TypeToTypeInfoKind(TypeDef* typ);
-  // #CAT_GlobalState translate typedef to internal type info kind
+  // #IGNORE translate typedef to internal type info kind
 
 #ifndef __MAKETA__
   static void   Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));

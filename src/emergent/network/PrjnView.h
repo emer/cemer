@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class Projection; //
-class T3PrjnNode; // #IGNORE
+class T3PrjnNode; //
 class BaseSpec; //
 
 TypeDef_Of(PrjnView);

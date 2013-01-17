@@ -31,9 +31,9 @@
 class DataTable; // 
 class ColorScaleSpec; // 
 class iGraphTableView_Panel; // 
-class T3DataViewFrame; // #IGNORE
-class T3GraphViewNode; // #IGNORE
-class T3GraphLine; // #IGNORE
+class T3DataViewFrame; //
+class T3GraphViewNode; //
+class T3GraphLine; //
 
 
 class TA_API GraphTableView: public DataTableView {

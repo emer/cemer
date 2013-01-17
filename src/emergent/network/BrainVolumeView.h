@@ -35,7 +35,7 @@
 class Network; //
 class Voxel; //
 class Unit; //
-class T3BrainNode; // #IGNORE
+class T3BrainNode; //
 class NiftiReader; // #IGNORE
 
 TypeDef_Of(BrainVolumeView);

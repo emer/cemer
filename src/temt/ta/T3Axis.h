@@ -27,7 +27,7 @@
 class SoFont; // 
 class iVec3f; // 
 class SbRotation; // 
-class SoComplexity; //
+class SoComplexity; // #IGNORE
 
 class TA_API T3Axis: public T3NodeLeaf {
   // dataview is the GraphAxisView

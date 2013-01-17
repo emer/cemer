@@ -18,7 +18,9 @@
 
 // parent includes:
 #include "ta_def.h"
+#ifndef __MAKETA__
 #include <Inventor/nodes/SoSeparator.h>
+#endif
 
 // member includes:
 

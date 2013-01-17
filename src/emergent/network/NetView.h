@@ -38,7 +38,7 @@ class UnitView; //
 class UnitGroupView; //
 class LayerView; //
 class T3Color;
-class T3NetNode; // #IGNORE
+class T3NetNode; //
 class BaseSpec; //
 
 

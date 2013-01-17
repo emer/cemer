@@ -124,11 +124,6 @@ set(network_HEADS_MAKETA_LOCAL
   BrainView.h
   BrainVolumeView.h
   BrainViewPanel.h
-)
-
-set(network_HEADS_NOMAKETA
-  ConSpec_inlines.h
-  Unit_inlines.h
 
   T3UnitNode.h
   T3UnitNode_Cylinder.h
@@ -141,6 +136,12 @@ set(network_HEADS_NOMAKETA
   T3LayerGroupNode.h
   T3NetViewObj.h
   T3NetNode.h
+  T3BrainNode.h
+)
+
+set(network_HEADS_NOMAKETA
+  ConSpec_inlines.h
+  Unit_inlines.h
 
   BrainAtlas.h
   BrainAtlasRegexpPopulator.h
@@ -158,8 +159,6 @@ set(network_HEADS_NOMAKETA
   NetworkVoxelMapper.h
   iBrainViewEditDialog.h
   NiftiReader.h
-
-  T3BrainNode.h
 
   znzlib.h
   nifti1.h

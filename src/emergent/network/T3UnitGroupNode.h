@@ -37,7 +37,9 @@ public:
   static float		inset; // amount inset from the layer
 
   static void		initClass();
+#ifndef __MAKETA__
   static void		shapeCallback(void* data, SoAction* act);
+#endif
   static void		drawGrid(T3UnitGroupNode* node);
 
 //  void			clearUnits(); // remove all units

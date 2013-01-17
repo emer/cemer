@@ -21,14 +21,16 @@
 
 // member includes:
 #include <iColor>
+#ifndef __MAKETA__
 #include <Inventor/SbColor.h>
+#endif
 
 // declare all other types mentioned but not required to include:
 
 // yet **another** color class!! but SbColor is not very convenient or intuitive, so
 // we use this to facilitate api simplification
 
-class TA_API T3Color { // ##NO_INSTANCE ##NO_TOKENS color for Coin 3d uses
+class TA_API T3Color { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS color for Coin 3d uses
 public:
 #ifdef __MAKETA__
   float 	r;

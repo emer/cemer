@@ -24,8 +24,10 @@
 // declare all other types mentioned but not required to include:
 
 class EMERGENT_API T3UnitNode_Rect: public T3UnitNode { // 2d color
+#ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Rect);
+#endif
 friend class T3UnitGroupNode;
 public:
   static void		initClass();

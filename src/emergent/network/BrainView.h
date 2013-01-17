@@ -35,7 +35,7 @@ class BrainViewPanel; //
 class BrainVolumeView; //
 class NiftiReader; // #IGNORE
 class TalairachAtlas; // #IGNORE
-class T3NetNode; // #IGNORE
+class T3NetNode; //
 class T3Color;
 
 TypeDef_Of(NetViewFontSizes);

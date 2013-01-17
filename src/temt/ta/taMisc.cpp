@@ -1187,21 +1187,26 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
   UpdateArgs();
 }
 
+static void init_inventor_type(TypeDef* typ) {
+  // look for an initClass method
+  MethodDef* md = typ->methods.FindName("initClass");
+  if (!md)
+    md = typ->methods.FindName("InitClass");
+  if (!md) return;
+  if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) return;
+  // call the init function
+  md->addr();
+  md->addr = NULL;          // reset so it isn't run again!
+}
+
+
 void taMisc::Init_Types() {// called after all type info has been loaded into types
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
   if(taMisc::use_gui) {
     for (int i = 0; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);
       if ((typ->ptr > 0) || (typ->ref)) continue;
-      // look for an initClass method
-      MethodDef* md = typ->methods.FindName("initClass");
-      if (!md)
-        md = typ->methods.FindName("InitClass");
-      if (!md) continue;
-      if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
-      // call the init function
-      md->addr();
-      md->addr = NULL;          // reset so it isn't run again!
+      init_inventor_type(typ);
     }
   }
   // add any Schema that couldn't be added earlier
