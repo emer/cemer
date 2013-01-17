@@ -95,7 +95,7 @@ public:
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   cssProgSpace*         calc_script;
-  // #HIDDEN #NO_SAVE script object for performing column calculations
+  // #IGNORE script object for performing column calculations
   taFiler*              log_file;
   // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
 

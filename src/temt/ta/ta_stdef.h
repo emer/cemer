@@ -29,6 +29,8 @@
 #   define __restrict
 # endif
 # include <stdlib.h>
+# include <string.h>
+# include <limits.h>
 #endif
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and

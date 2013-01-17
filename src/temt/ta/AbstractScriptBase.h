@@ -42,8 +42,8 @@ public:
     ScriptFile          // the script will be provided by a file
   };
 
-  cssProgSpace*         script; // #HIDDEN #NO_SAVE the script, created on first compile
-  cssTA_Base*           ths; // #HIDDEN #NO_SAVE #READ_ONLY the taBase outer this, as represented in script obj
+  cssProgSpace*         script; // #IGNORE the script, created on first compile
+  cssTA_Base*           ths; // #IGNORE the taBase outer this, as represented in script obj
   bool                  script_compiled; // #SHOW #NO_SAVE #READ_ONLY true when compiled
 
   virtual ScriptSource  scriptSource() {return NoScript;} // override this
