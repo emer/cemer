@@ -14,10 +14,18 @@
 //   GNU General Public License for more details.
 
 #include "BrainViewPanel.h"
+#include <Network>
 #include <BrainView>
+#include <BrainAtlasRegexpPopulator>
+#include <NiftiReader>
 #include <iFlowLayout>
+#include <T3ExaminerViewer>
+#include <taiRegexpField>
+#include <iLineEdit>
+#include <HColorScaleBar>
 
-#include "nifti_reader.h"
+#include <taMisc>
+#include <taiMisc>
 
 // Probably don't need all of these Qt headers:
 #include <QGroupBox>
@@ -310,7 +318,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layColorBar->addSpacing(taiM->hsep_c);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()));
 
-  cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
+  cbar = new HColorScaleBar(&(dv_->scale), ColorScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()));
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   layColorBar->addSpacing(taiM->hsep_c);

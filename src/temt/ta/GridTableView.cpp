@@ -22,7 +22,7 @@
 #include <T3DataViewFrame>
 #include <taDataLinkItr>
 #include <MainWindowViewer>
-#include <NewNetViewHelper>
+#include <NewViewHelper>
 #include <T3Misc>
 #include <iGridTableView_Panel>
 #include <iT3DataViewFrame>
@@ -107,7 +107,7 @@ bool DataTable::GridViewGotoRow(int row_no) {
 }
 
 GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
-  NewNetViewHelper new_net_view(fr, dt, "table");
+  NewViewHelper new_net_view(fr, dt, "table");
   if (!new_net_view.isValid()) return NULL;
 
   GridTableView* vw = new GridTableView;

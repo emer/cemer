@@ -15,6 +15,10 @@
 
 
 #include "so.h"
+#include <DumpFileCvt>
+
+#include <taMisc>
+
 
 static void so_converter_init() {
   DumpFileCvt* cvt = new DumpFileCvt("So", "SoUnit");

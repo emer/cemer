@@ -21,19 +21,11 @@
 #define rbp_h
 
 #include "bp.h"
-#include "netstru_extra.h"
+#include <Wizard>
 
 class RBpConSpec;
 class RBpUnit;
-class RBpUnitSpec;
-
-class RBpTrial;
-class RBpSequence;
-
-class APBpCycle;
-class APBpSettle;
-class APBpTrial;
-class APBpMaxDa_De; //
+class RBpUnitSpec;//
 
 // _
 

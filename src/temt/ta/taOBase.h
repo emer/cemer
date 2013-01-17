@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class UserDataItem_List; // 
-
+class taiMimeSource; //
 
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase

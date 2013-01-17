@@ -15,7 +15,16 @@
 
 #include "FSLBrainAtlas.h"
 #include <FSLBrainAtlasFileParser>
+#include <FSLBrainAtlasFileComposer>
 #include <BrainAtlasInfo>
+#include <NiftiReader>
+
+#include <taMisc>
+
+#include <QDomElement>
+
+// todo: assert is not the best way to deal with errors in emergent..
+#include <cassert>
 
 
 FSLBrainAtlas::FSLBrainAtlas(const QString& filename) : BrainAtlas(),

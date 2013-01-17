@@ -227,8 +227,9 @@ set(ta_HEADS_MAKETA_LOCAL_1
   iFont.h
   taFontSpec.h
 
-  ScriptBase_List.h
   AbstractScriptBase.h
+  ScriptBase.h
+  ScriptBase_List.h
 
   ISelectable.h
   IObjectSelectable.h
@@ -1020,7 +1021,7 @@ set(ta_HEADS_MAKETA
 # all heads -- include maketa generated ones here
 set(ta_HEADS
   ${ta_HEADS_MAKETA_LOCAL_1}
-  NewNetViewHelper.h
+  NewViewHelper.h
   ta_gendoc.h
   ta_maketa_defs.h
   ta_type_constr.h
@@ -1248,8 +1249,9 @@ set(ta_SRCS_MAKETA
   iFont.cpp
   taFontSpec.cpp
 
-  ScriptBase_List.cpp
   AbstractScriptBase.cpp
+  ScriptBase.cpp
+  ScriptBase_List.cpp
 
   ISelectable.cpp
   IObjectSelectable.cpp
@@ -1695,6 +1697,7 @@ set(ta_SRCS_MAKETA
 
   iDataPanel_PtrList.cpp
   taiTypeItemDataHost.cpp
+  NewViewHelper.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA
@@ -1967,7 +1970,7 @@ set(ta_SRCS_NOMAKETA
   T3VEStatic.cpp
   VEWorldViewPanel.cpp
 
-  NewNetViewHelper.cpp
+  NewViewHelper.cpp
 
   SoBase.cpp
   SoGroup.cpp

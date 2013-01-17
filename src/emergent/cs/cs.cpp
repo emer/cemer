@@ -14,6 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "cs.h"
+#include <DumpFileCvt>
+
+#include <taMisc>
+
 
 static void cs_converter_init() {
   DumpFileCvt* cvt = new DumpFileCvt("Cs", "CsUnit");

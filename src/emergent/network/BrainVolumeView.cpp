@@ -14,11 +14,19 @@
 //   GNU General Public License for more details.
 
 #include "BrainVolumeView.h"
+#include <Network>
 #include <T3BrainNode>
-
-#include "nifti_reader.h"
-
+#include <NiftiReader>
+#include <MemberDef>
+#include <BrainAtlasUtils>
+#include <T3Color>
+#include <BrainAtlas>
 #include <taMath_float>
+
+#include <taMisc>
+
+#include <QColor>
+#include <QList>
 
 #include <Inventor/SoEventManager.h>
 #include <Inventor/SoPickedPoint.h>
@@ -48,7 +56,7 @@
 #include <Inventor/nodes/SoText2.h>
 #include <Inventor/nodes/SoShapeHints.h>
 
-#include <QList>
+#include <sstream>
 
 namespace { // anonymous
   // Set to 0 to turn off debug output.

@@ -19,6 +19,8 @@
 #define so_h
 
 #include <Network>
+#include <ProjectBase>
+#include <Wizard>
 
 #include "so_def.h"
 #include "so_TA_type.h"

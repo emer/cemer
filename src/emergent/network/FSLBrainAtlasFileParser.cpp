@@ -14,6 +14,13 @@
 //   GNU General Public License for more details.
 
 #include "FSLBrainAtlasFileParser.h"
+#include <BrainAtlasInfo>
+#include <BrainAtlasLabel>
+
+#include <QDomDocument>
+#include <QColor>
+#include <QFileInfo>
+
 
 FSLBrainAtlasFileParser::FSLBrainAtlasFileParser(const QString& filename)
 : BrainAtlasFileParser(filename)

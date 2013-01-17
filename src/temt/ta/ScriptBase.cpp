@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ScriptBase.h"
+#include <taFiler>
+
+#include <taMisc>
 
 ScriptBase::ScriptBase() {
   script_file = taFiler::New("Script", ".css");

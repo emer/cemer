@@ -15,6 +15,7 @@
 
 #include "FullPrjnSpec.h"
 #include <Network>
+#include <int_Array>
 
 void FullPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
@@ -39,3 +40,30 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
+int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
+  if(!(bool)prjn->from) return 0;
+
+  int rval = 0;
+
+  int no = prjn->from->units.leaves;
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
+    no--;
+
+  int n_new_cons = (int)(p_add_con * (float)no);
+  if(n_new_cons <= 0) return 0;
+  int_Array new_idxs;
+  new_idxs.SetSize(no);
+  new_idxs.FillSeq();
+  FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
+    new_idxs.Permute();
+    for(int i=0;i<n_new_cons;i++) {
+      Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
+      Connection* cn = ru->ConnectFromCk(su, prjn); // check means that it won't add any new connections if already there!
+      if(cn) {
+        cn->wt = init_wt;
+        rval++;
+      }
+    }
+  }
+  return rval;
+}

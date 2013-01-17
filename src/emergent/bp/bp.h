@@ -22,6 +22,7 @@
 #include <Schedule>
 #include <SigmoidSpec>
 #include <float_CircBuffer>
+#include <ProjectBase>
 
 #include "bp_def.h"
 #include "bp_TA_type.h"

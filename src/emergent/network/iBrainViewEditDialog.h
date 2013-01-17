@@ -17,6 +17,7 @@
 #define iBrainViewEditDialog_h 1
 
 // parent includes:
+#include "network_def.h"
 #include <iRegexpDialog>
 
 // member includes:

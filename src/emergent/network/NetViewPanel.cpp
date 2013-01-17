@@ -15,14 +15,19 @@
 
 #include "NetViewPanel.h"
 #include <NetView>
+#include <Network>
 #include <T3ExaminerViewer>
 #include <taiField>
 #include <taiComboBox>
 #include <taiGroupElsButton>
 #include <HColorScaleBar>
 #include <iTreeView>
+#include <iTreeViewItem>
 #include <iMethodButtonMgr>
+#include <iLineEdit>
+#include <iFlowLayout>
 
+#include <taiMisc>
 
 #include <QVBoxLayout>
 #include <QCheckBox>
@@ -30,7 +35,11 @@
 #include <QLabel>
 #include <QAction>
 #include <QTabWidget>
+#include <QPushButton>
 
+NetView* NetViewPanel::getNetView() {
+  return static_cast<NetView *>(m_dv);
+}
 
 NetViewPanel::NetViewPanel(NetView* dv_)
 :inherited(dv_)

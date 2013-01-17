@@ -23,7 +23,7 @@
 #include <T3VEWorld>
 #include <taDataLinkItr>
 #include <taImage>
-#include <NewNetViewHelper>
+#include <NewViewHelper>
 #include <T3DataViewFrame>
 #include <taMath_float>
 
@@ -502,7 +502,7 @@ VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
 
 // Add a new VEWorldView object to the frame for the given VEWorld.
 VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
-  NewNetViewHelper new_net_view(fr, wl, "world");
+  NewViewHelper new_net_view(fr, wl, "world");
   if (!new_net_view.isValid()) return NULL;
 
   VEWorldView* vw = new VEWorldView;

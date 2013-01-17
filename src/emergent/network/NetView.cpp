@@ -14,6 +14,47 @@
 //   GNU General Public License for more details.
 
 #include "NetView.h"
+#include <T3NetNode>
+#include <Network>
+#include <NetViewPanel>
+#include <LayerGroupView>
+#include <PrjnView>
+#include <NetViewObjView>
+#include <UnitGroupView>
+#include <UnitView>
+#include <NewViewHelper>
+#include <T3DataViewFrame>
+#include <iT3DataViewFrame>
+#include <iT3ViewspaceWidget>
+#include <T3ExaminerViewer>
+#include <taDataLinkItr>
+#include <MemberDef>
+#include <taMath_float>
+#include <MainWindowViewer>
+#include <T3LayerNode>
+#include <T3UnitGroupNode>
+
+#include <taMisc>
+
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoCallback.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoComplexity.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/fields/SoSFVec3f.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/SoEventManager.h>
+#include <Inventor/actions/SoRayPickAction.h>
+#include <Inventor/SoPickedPoint.h>
+
 
 void NetViewFontSizes::Initialize() {
   net_name = .05f;
@@ -39,6 +80,87 @@ void NetViewParams::Initialize() {
   show_laygp = true;
 }
 
+void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
+  NetView* nv = (NetView*)userData;
+  T3DataViewFrame* fr = nv->GetFrame();
+  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+  SoMouseButtonEvent::Button but = mouseevent->getButton();
+  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
+  bool got_one = false;
+  for(int i=0;i<fr->root_view.children.size;i++) {
+    taDataView* dv = fr->root_view.children[i];
+    if(dv->InheritsFrom(&TA_NetView)) {
+      NetView* tnv = (NetView*)dv;
+      T3ExaminerViewer* viewer = tnv->GetViewer();
+      SoRayPickAction rp( viewer->getViewportRegion());
+      SbVec2s mpos_orig = mouseevent->getPosition();
+      SbVec2s mpos = mpos_orig;
+      int fail_cnt = 0;
+      do {
+        rp.setPoint(mpos);
+        rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
+        SoPickedPoint* pp = rp.getPickedPoint(0);
+        if(!pp) {
+//        taMisc::Info("no pick:", String(fail_cnt));
+          int pm_x = fail_cnt % 4 < 2 ? -1 : 1;
+          int pm_y = (fail_cnt % 4) % 2 == 0 ? -1 : 1;
+          // search in increasingly wide area around central point to see if we pick
+          mpos.setValue(mpos_orig[0] + pm_x * (fail_cnt / 4),
+                        mpos_orig[1] + pm_y * (fail_cnt / 4));
+          fail_cnt++;
+          continue;
+        }
+        SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+        if(!pobj) {
+          //    taMisc::Info("no pobj");
+          fail_cnt++;
+          continue;
+        }
+        //       taMisc::Info("obj typ: ", pobj->getTypeId().getName());
+        if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+          pobj = pp->getPath()->getNodeFromTail(3);
+          //    taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
+          if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+            pobj = pp->getPath()->getNodeFromTail(1);
+            //    taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
+            if(pobj->getName() == "WtLines") {
+              // disable selecting of wt lines!
+              ecb->setHandled();
+              //            taMisc::Info("wt lines bail");
+              return;
+            }
+            //    taMisc::Info("not unitgroupnode! bail");
+            fail_cnt++;
+            continue;
+          }
+        }
+        UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
+        Layer* lay = act_ugv->layer(); //cache
+        float disp_scale = lay->disp_scale;
+
+        SbVec3f pt = pp->getObjectPoint(pobj);
+        int xp = (int)((pt[0] * tnv->eff_max_size.x) / disp_scale);
+        int yp = (int)(-(pt[2] * tnv->eff_max_size.y) / disp_scale);
+
+        if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
+          Unit* unit = lay->UnitAtDispCoord(xp, yp);
+          if(unit && tnv->unit_src != unit) {
+            tnv->setUnitSrc(NULL, unit);
+            tnv->InitDisplay();   // this is apparently needed here!!
+            tnv->UpdateDisplay();
+          }
+        }
+        //       else {
+        //      taMisc::Info("coords off");
+        //       }
+        got_one = true;
+      } while(!got_one && fail_cnt < 100);
+    }  // for
+  } // if
+  if(got_one)
+    ecb->setHandled();
+}
+
 /*
 
   Scale Range semantics
@@ -51,7 +173,7 @@ void NetViewParams::Initialize() {
 
 // Add a new NetView object to the frame for the given Network.
 NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
-  NewNetViewHelper new_net_view(fr, net, "network");
+  NewViewHelper new_net_view(fr, net, "network");
   // true == Allow only one NetView instances in a frame
   // for a given network.
   if (!new_net_view.isValid(true)) return NULL;

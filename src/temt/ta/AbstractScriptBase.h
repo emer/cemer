@@ -30,7 +30,7 @@ class cssTA_Base; //
 class TA_API AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE abstract class for adding a script to other objects
 public:
-  static ScriptBase_List recompile_scripts; // #HIDDEN list of scripts to be recompiled in wait proc
+  static ScriptBase_List recompile_scripts; // #IGNORE list of scripts to be recompiled in wait proc
   static bool            Wait_RecompileScripts(); // wait process for recompiling
 
   enum ScriptSource {

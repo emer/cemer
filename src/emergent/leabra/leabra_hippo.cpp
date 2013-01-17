@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "leabra_hippo.h"
+#include <UniformRndPrjnSpec>
+
+#include <taMisc>
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //              Special Hippocampal ThetaPhase Layerspecs

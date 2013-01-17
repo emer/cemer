@@ -14,7 +14,8 @@
 //   GNU General Public License for more details.
 
 
-#include "emergent_base.h"
+#include <taMisc>
+#include <EmergentMisc>
 
 int main(int argc, const char* argv[]) {
   taMisc::app_name = "emergent";

@@ -26,6 +26,8 @@
 #include <ScaleRange_List>
 #include <taVector3f>
 #include <T3DataView_List>
+#include <String_Array>
+#include <taVector3i>
 
 // declare all other types mentioned but not required to include:
 class Network; //
@@ -33,6 +35,8 @@ class BrainViewPanel; //
 class BrainVolumeView; //
 class NiftiReader; // #IGNORE
 class TalairachAtlas; // #IGNORE
+class T3NetNode; // #IGNORE
+class T3Color;
 
 TypeDef_Of(NetViewFontSizes);
 
@@ -43,6 +47,7 @@ public:
   float  net_name;      // #DEF_0.05 network name font size
   float  net_vals;      // #DEF_0.05 network values font size (counters, stats)
   float  unit_trans;    // #DEF_0.6 transparency of the units
+  float  laygp_width;    // #DEF_1 width of the layer group lines (as a line width, not as a geometry size relative to normalized network size)
 
   override String       GetTypeDecoKey() const { return "Network"; }
 

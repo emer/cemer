@@ -17,9 +17,12 @@
 #include <BrainAtlasLabel>
 #include <BrainAtlas>
 #include <BrainAtlasInfo>
+#include <BrainAtlasFileParser>
+#include <BrainAtlasFileParserFactory>
 
 #include <QColor>
 #include <QStringList>
+#include <QDir>
 
 
 QList<QColor> BrainAtlasUtils::Colors(const BrainAtlas& atlas, const QString& labels_regex)

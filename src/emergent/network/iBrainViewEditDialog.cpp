@@ -15,7 +15,18 @@
 
 #include "iBrainViewEditDialog.h"
 #include <BrainAtlasRegexpPopulator>
+#include <taiObjChooser>
+#include <ColorScaleSpec>
+#include <ColorScaleColor_List>
+#include <int_Array>
 
+#include <QTableView>
+#include <QStandardItem>
+#include <QHeaderView>
+#include <QSortFilterProxyModel>
+#include <QColorDialog>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
   : inherited(regexp_field, field_name, re_populator, fieldOwner, read_only, editor_mode)
@@ -111,7 +122,7 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked()
   if(rows == 0) return;
 
   int clr_col = m_num_parts + NUM_EXTRA_COLS;
-  TAColor_List cls;
+  ColorScaleColor_List cls;
   int extra = 0;
   do {                          // it doesn't always generate enough..
     cspec->GenRanges(&cls, rows+extra);
@@ -146,7 +157,7 @@ void iBrainViewEditDialog::btnRandomColors_clicked()
   if(rows == 0) return;
 
   int clr_col = m_num_parts + NUM_EXTRA_COLS;
-  TAColor_List cls;
+  ColorScaleColor_List cls;
   int extra = 0;
   do {                          // it doesn't always generate enough..
     cspec->GenRanges(&cls, rows+extra);
@@ -162,7 +173,7 @@ void iBrainViewEditDialog::btnRandomColors_clicked()
     QModelIndex pidx = m_proxy_model->index(row, clr_col);
     QModelIndex sidx = m_proxy_model->mapToSource(pidx);
     QStandardItem* itm = m_table_model->item(sidx.row(), clr_col);
-    TAColor* clr = cls[prmt[row]];
+    ColorScaleColor* clr = cls[prmt[row]];
     String rgb = String("#") + clr->color().toString();
     itm->setText(rgb);
     itm->setBackground(QBrush(QColor(QString(rgb.chars()))));

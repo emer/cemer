@@ -14,10 +14,16 @@
 //   GNU General Public License for more details.
 
 #include "leabra_extra.h"
+#include <DataGroupSpec>
+#include <DataGroupEl>
+#include <Aggregate>
+#include <taDataProc>
+#include <taDataAnal>
+#include <ValIdx_Array>
+#include <OneToOnePrjnSpec>
+#include <FullPrjnSpec>
 
-#include "netstru_extra.h"
-#include "ta_dataproc.h"
-#include "ta_dataanal.h"
+#include <taMisc>
 
 //////////////////////////////////
 //      MarkerConSpec           //
@@ -3737,7 +3743,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //   else
 //     trg_send_geom = ((trg_recv_geom +1) * rf_move);
 
-//   DataChanged(DCR_ITEM_UPDATED);
+//   DataItemUpdated();
 //   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
 // }
 
@@ -3756,7 +3762,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //   else
 //     trg_recv_geom = (trg_send_geom / rf_move) - 1;
 
-//   DataChanged(DCR_ITEM_UPDATED);
+//   DataItemUpdated();
 //   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 // }
 
@@ -6244,7 +6250,7 @@ bool CerebConj2PrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   else
     trg_send_geom = ((trg_recv_geom +1) * rf_move);
 
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
 }
 
@@ -6263,7 +6269,7 @@ bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   else
     trg_recv_geom = (trg_send_geom / rf_move) - 1;
 
-  DataChanged(DCR_ITEM_UPDATED);
+  DataItemUpdated();
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 

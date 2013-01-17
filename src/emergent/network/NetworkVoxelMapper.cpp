@@ -15,11 +15,13 @@
 
 #include "NetworkVoxelMapper.h"
 #include <Network>
+#include <BrainAtlas>
 
 #include <taMisc>
 
 #include <algorithm>
 #include <cassert>
+#include <sstream>
 
 namespace { // anonymous
   // Set to 0 to turn off debug output.

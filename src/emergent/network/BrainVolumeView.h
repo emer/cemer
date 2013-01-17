@@ -21,6 +21,10 @@
 #include <T3DataViewPar>
 
 // member includes:
+#include <voidptr_Matrix>
+#include <float_Matrix>
+#include <BrainView>
+
 #ifndef __MAKETA__
 #include <QMultiMap>
 #include <QMap>
@@ -29,9 +33,10 @@
 
 // declare all other types mentioned but not required to include:
 class Network; //
-class BrainView; //
 class Voxel; //
+class Unit; //
 class T3BrainNode; // #IGNORE
+class NiftiReader; // #IGNORE
 
 TypeDef_Of(BrainVolumeView);
 

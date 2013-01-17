@@ -20,6 +20,7 @@
 
 #include "leabra.h"
 #include <DoGFilter>
+#include <TiledGpRFPrjnSpec>
 
 // extra specialized classes for variations on the Leabra algorithm
 

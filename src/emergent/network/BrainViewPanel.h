@@ -21,13 +21,16 @@
 #include <iViewPanelFrame>
 
 // member includes:
+#include <voidptr_Matrix>
 
 // declare all other types mentioned but not required to include:
-class ColorScaleBar;
-class taiField;
-class taiRegexpField;
-class BrainAtlasRegexpPopulator; 
-
+class ColorScaleBar;             // #IGNORE
+class taiField;                  // #IGNORE
+class taiRegexpField;            // #IGNORE
+class BrainAtlasRegexpPopulator; // #IGNORE
+class iMethodButtonMgr;          // #IGNORE
+class BrainView;
+class taVector3i;
 
 TypeDef_Of(BrainViewPanel);
 

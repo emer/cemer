@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class QDomDocument;
+class QDomElement; 
 class QDomNode;
 
 class EMERGENT_API FSLBrainAtlasFileComposer : public BrainAtlasFileComposer {

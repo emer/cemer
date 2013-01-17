@@ -15,11 +15,11 @@
 
 #include "leabra_pvlv.h"
 
-// #include "netstru_extra.h"
-
 #include <math.h>
 #include <limits.h>
 #include <float.h>
+
+#include <taMisc>
 
 //////////////////////////////////////////
 //      PV Con Spec                     //

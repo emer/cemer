@@ -14,20 +14,26 @@
 //   GNU General Public License for more details.
 
 #include "BrainView.h"
-
-#include <NewNetViewHelper>
+#include <NewViewHelper>
 #include <Network>
-
-#include "t3brain_node.h"
-
+#include <T3BrainNode>
+#include <T3NetNode>
 #include <BrainViewPanel>
 #include <BrainVolumeView>
-#include "nifti_reader.h"
+#include <NiftiReader>
+#include <iMethodButtonMgr>
+#include <T3DataViewFrame>
+#include <iT3DataViewFrame>
+#include <T3ExaminerViewer>
+#include <iT3ViewspaceWidget>
+#include <taMath_float>
+#include <T3Color>
 
-#ifndef __MAKETA___
-  #include <QObject>
-  #include <QFile>
-#endif
+#include <taMisc>
+
+
+#include <QObject>
+#include <QFile>
 
 #include <Inventor/SoEventManager.h>
 #include <Inventor/SoPickedPoint.h>
@@ -47,6 +53,7 @@ void BrainViewParams::Initialize() {
   unit_trans = 0.6f;
   net_name = .05f;
   net_vals = .05f;
+  laygp_width = 1.0f;
 } 
 
 Network*
@@ -70,7 +77,7 @@ BrainView::hasViewProperties() const {
 }
 
 BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
-  NewNetViewHelper newNetView(fr, net, "network");
+  NewViewHelper newNetView(fr, net, "network");
   if (!newNetView.isValid()) return NULL;
 
   // set a black background color

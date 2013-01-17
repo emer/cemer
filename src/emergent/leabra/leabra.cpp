@@ -14,10 +14,12 @@
 //   GNU General Public License for more details.
 
 #include "leabra.h"
+#include <taMath_double>
+#include <StdNetWizDlg>
+#include <FullPrjnSpec>
+#include <DumpFileCvt>
 
-#include "ta_platform.h"
-#include "netstru_extra.h"
-#include "ta_dataanal.h"
+#include <taMisc>
 
 static void leabra_converter_init() {
   DumpFileCvt* cvt = new DumpFileCvt("Leabra", "LeabraUnit");
@@ -6945,7 +6947,10 @@ bool LeabraWizard::StdNetwork() {
     if(net)
       StdLayerSpecs(net);
   }
-  bool rval = std_net_dlg.DoDialog();
+  if(!std_net_dlg) {
+    taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
+  }
+  bool rval = std_net_dlg->DoDialog();
   return rval;
 }
 

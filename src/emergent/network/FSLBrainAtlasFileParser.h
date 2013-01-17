@@ -17,7 +17,7 @@
 #define FSLBrainAtlasFileParser_h 1
 
 // parent includes:
-#include <BrainAtlasFilerParser>
+#include <BrainAtlasFileParser>
 
 // member includes:
 #include <QList>

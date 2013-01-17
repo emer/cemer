@@ -16,7 +16,6 @@
 
 #include "leabra_v3_compat.h"
 
-#include "ta_viewer.h"
 
 //////////////////////////
 // 	Max Da Stat	//

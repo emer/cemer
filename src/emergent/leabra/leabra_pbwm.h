@@ -15,7 +15,8 @@
 
 
 #include "leabra_pvlv.h"
-#include "netstru_extra.h" // NOTE
+#include <FullPrjnSpec>
+#include <TesselPrjnSpec>
 
 #ifndef leabra_pbwm_h
 #define leabra_pbwm_h

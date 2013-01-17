@@ -14,8 +14,10 @@
 //   GNU General Public License for more details.
 
 #include "FSLBrainAtlasFileComposer.h"
+#include <BrainAtlasInfo>
+#include <BrainAtlasLabel>
 
-
+#include <QTextStream>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QDomNode>

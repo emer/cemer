@@ -15,11 +15,12 @@
 
 #include "leabra_pbwm.h"
 
-#include "netstru_extra.h"
 
 #include <math.h>
 #include <limits.h>
 #include <float.h>
+
+#include <taMisc>
 
 //////////////////////////////////
 //      PBWM Unit Gp Data       //

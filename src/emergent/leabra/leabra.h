@@ -24,6 +24,11 @@
 #include <voidptr_Matrix>
 #include <int_Array>
 #include <Schedule>
+#include <SpecMemberBase>
+#include <taMath_float>
+#include <int_Matrix>
+#include <ProjectBase>
+#include <Wizard>
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"

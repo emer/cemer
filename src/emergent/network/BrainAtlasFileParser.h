@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class BrainAtlasInfo;
-
+class BrainAtlasLabel;
 
 class EMERGENT_API BrainAtlasFileParser {
 public:

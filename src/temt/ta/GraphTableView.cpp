@@ -20,7 +20,7 @@
 #include <taDataLinkItr>
 #include <T3DataViewFrame>
 #include <MainWindowViewer>
-#include <NewNetViewHelper>
+#include <NewViewHelper>
 #include <T3ExaminerViewer>
 #include <T3GraphLine>
 #include <T3GraphViewNode>
@@ -110,7 +110,7 @@ bool DataTable::GraphViewGotoRow(int row_no) {
 
 // Add a new GraphTableView object to the frame for the given DataTable.
 GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
-  NewNetViewHelper new_net_view(fr, dt, "table");
+  NewViewHelper new_net_view(fr, dt, "table");
   if (!new_net_view.isValid()) return NULL;
 
   GraphTableView* vw = new GraphTableView;

@@ -18,6 +18,9 @@
 // bp.cc
 
 #include "bp.h"
+#include <DumpFileCvt>
+
+#include <taMisc>
 
 #include <math.h>
 #include <limits.h>

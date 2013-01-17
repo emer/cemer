@@ -31,7 +31,8 @@ class taiGroupElsButton; // #IGNORE
 class iTreeView; //
 class iTreeViewItem; //
 class iMethodButtonMgr; //
-class taiRegexpField; //
+class taiRegexpField; // #IGNORE
+class BaseSpec; //
 
 TypeDef_Of(NetViewPanel);
 
@@ -122,9 +123,7 @@ public:
   iMethodButtonMgr*     meth_but_mgr;
   QWidget*              widCmdButtons;
 
-  NetView*              getNetView() {
-    return static_cast<NetView *>(m_dv);
-  }
+  NetView*              getNetView();
 
   void                  ColorScaleFromData();
   virtual void          GetVars();
