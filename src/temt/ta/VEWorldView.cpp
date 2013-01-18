@@ -394,7 +394,8 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
       nowin_rebuild_done = true;
     }
   }
-  if(TestError(!obv, "GetCameraImage", "no node_so for VEworld view -- need to run with no_win, not nogui!")) {
+  if(!obv) {
+    TestError(!taMisc::gui_active, "GetCameraImage", "no node_so for VEworld view -- need to run with no_win, not nogui!");
     return img;
   }
 

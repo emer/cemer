@@ -119,7 +119,9 @@ public: // IDataHost i/f -- some delegate up to mommy
   bool                  isConstructed() {return true;}
   bool                  isModal() {return false;} // never for us
   bool                  isReadOnly() {return read_only;}
+#ifndef __MAKETA__
   TypeItem::ShowMembs   show() const {return m_show;}
+#endif
     // used by polydata
   iMainWindowViewer*    window() const;
   void*                 Root() const {return (void*)base;} // base of the object
