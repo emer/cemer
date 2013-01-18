@@ -1010,11 +1010,9 @@ set(ta_HEADS_MAKETA
 set(ta_HEADS
   ${ta_HEADS_MAKETA_LOCAL}
   NewViewHelper.h
-  ta_gendoc.h
   ta_maketa_defs.h
   ta_type_constr.h
   qtdefs.h
-  ta_qtcursors.h
   ta_TA_type.h
   ta_TA_type_WRAPPER.h
   ta_TA_inst.h
