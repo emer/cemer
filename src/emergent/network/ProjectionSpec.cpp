@@ -14,8 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "ProjectionSpec.h"
-#include <Projection>
-#include <Layer>
+#include <Network>
+
 
 void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;

@@ -14,9 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "SendCons_List.h"
-#include <SendCons>
-#include <Projection>
-#include <Layer>
+#include <Network>
 
 void SendCons_List::Initialize() {
   SetBaseType(&TA_SendCons);

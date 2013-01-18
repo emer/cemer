@@ -22,7 +22,7 @@
 
 
 #include <QVBoxLayout>
-#include <QSTackedWidget>
+#include <QStackedWidget>
 #include <QMenu>
 
 iTabView::iTabView(QWidget* parent)

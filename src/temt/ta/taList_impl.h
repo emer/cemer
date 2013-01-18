@@ -25,6 +25,7 @@
 #include <taSmartRefT>
 
 // member includes:
+#include <cassert>
 
 // declare all other types mentioned but not required to include:
 class taHashTable; // 

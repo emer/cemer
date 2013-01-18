@@ -125,9 +125,9 @@ public:
 
   int		st_line;	// starting line
   int		st_col;		// column
-  streampos	strm_pos;	// current stream position (don't use tellg!!)
-  streampos	st_pos;		// starting (of parse) stream position
-  streampos	st_line_pos;	// start of line position
+  int	        strm_pos;	// current stream position (don't use tellg!!)
+  int	        st_pos;		// starting (of parse) stream position
+  int	        st_line_pos;	// start of line position
   int		line;		// current parsing line
   int		col;		// current parsing column
   String	cur_fname;	// current file name being processed

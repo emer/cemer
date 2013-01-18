@@ -14,10 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "SendCons.h"
-#include <Unit>
-#include <Projection>
-#include <Layer>
-
+#include <Network>
 
 
 void SendCons::Initialize() {

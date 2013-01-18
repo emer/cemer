@@ -21,7 +21,7 @@
 #include "css_c_ptr_types.h"
 
 #include <QObject>
-#include <QPushbutton>
+#include <QPushButton>
 #include <taiMenu>
 #include <IDataHost>
 #include <taiChoiceDialog>

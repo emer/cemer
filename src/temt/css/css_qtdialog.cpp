@@ -39,7 +39,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QObject>
-#include <QTooltip>
+#include <QToolTip>
 #include <QWidget>
 
 //////////////////////////////////////////////////

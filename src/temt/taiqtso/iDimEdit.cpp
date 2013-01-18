@@ -15,8 +15,7 @@
 
 #include "iDimEdit.h"
 
-#include "ispinbox.h"
-
+#include <iSpinBox>
 #include <QLabel>
 #include <QHBoxLayout>
 

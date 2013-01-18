@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "VEObjCarouselView.h"
-#include <VEObjCArousel>
+#include <VEObjCarousel>
 #include <T3VEBody>
 #include <T3ExaminerViewer>
 #include <VEWorldView>

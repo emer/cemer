@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iTreeViewItem.h"
-#include <taiDataLInk>
+#include <taiDataLink>
 #include <ViewColor_List>
 #include <iColor>
 #include <taiClipData>

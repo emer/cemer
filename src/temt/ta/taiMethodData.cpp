@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodData.h"
-#include <IdataHost>
+#include <IDataHost>
 #include <taiActions>
 #include <taProject>
 #include <taiArgType>

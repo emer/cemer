@@ -27,6 +27,7 @@
 #include <iFormLayout>
 #include <taiToolBar>
 #include <iMainWindowViewer>
+#include <taiMenuBar>
 
 #include <DataChangedReason>
 #include <taMisc>
@@ -37,7 +38,7 @@
 #include <QLineEdit>
 #include <QToolBar>
 #include <QApplication>
-
+#include <QMenuBar>
 
 
 

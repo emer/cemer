@@ -58,6 +58,18 @@
 #endif
 #include <ode/ode.h>
 
+#ifdef GPROF                    // turn on for profiling
+extern "C" void moncontrol(int mode);
+#endif
+
+#ifdef SATURN_PROF
+#include <Saturn.h>
+#endif
+
+#ifdef TA_OS_LINUX
+# include <fenv.h>
+#endif
+
 using namespace std;
 
 

@@ -20,7 +20,7 @@
 #include <iMatrixEditor>
 #include <MatrixTableModel>
 #include <DataTableModel>
-#include <taDataLInk>
+#include <taDataLink>
 #include <iMainWindowViewer>
 
 #include <DataChangedReason>

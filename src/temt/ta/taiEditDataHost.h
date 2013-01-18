@@ -34,6 +34,7 @@ class EditDataPanel;
 class taiMethodData;
 class taiMenu_List;             // #IGNORE
 class MembSet_List; // #IGNORE
+class taiMenuBar; //
 
 class TA_API taiEditDataHost : public taiDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that

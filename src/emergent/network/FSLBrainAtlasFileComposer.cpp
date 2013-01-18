@@ -17,6 +17,7 @@
 #include <BrainAtlasInfo>
 #include <BrainAtlasLabel>
 
+#include <QFile>
 #include <QTextStream>
 #include <QDomDocument>
 #include <QDomElement>

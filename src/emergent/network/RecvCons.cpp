@@ -14,10 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "RecvCons.h"
-#include <SendCons>
-#include <Projection>
-#include <Unit>
-#include <Layer>
+#include <Network>
 
 #include <taMisc>
 

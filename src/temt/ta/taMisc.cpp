@@ -53,6 +53,7 @@
 
 #include <unistd.h>
 #include <time.h>
+#include <csignal>
 
 #ifdef TA_OS_MAC
 # include <sys/types.h>

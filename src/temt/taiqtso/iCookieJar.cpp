@@ -51,7 +51,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "icookiejar.h"
 #include <QNetworkCookie>
 
 // Updated from https://wiki.mozilla.org/TLD_List#External_Links
@@ -755,7 +754,7 @@ void iNetworkCookieJar::setSecondLevelDomains(const QStringList &secondLevelDoma
  **
  ****************************************************************************/
 
-#include <Autosaver>
+#include <AutoSaver>
 
 #include <QApplication>
 #include <QDesktopServices>

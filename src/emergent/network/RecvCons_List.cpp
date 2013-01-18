@@ -14,9 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "RecvCons_List.h"
-#include <RecvCons>
-#include <Projection>
-#include <Layer>
+#include <Network>
 
 void  RecvCons_List::Initialize() {
   SetBaseType(&TA_RecvCons);

@@ -30,7 +30,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QHeaderView>
-#include <QSCrollBar>
+#include <QScrollBar>
 #include <QDialogButtonBox>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>

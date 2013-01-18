@@ -19,7 +19,6 @@
 #include <taiClipData>
 #include <SelectableHostHelper>
 #include <taiMenu>
-#include <itreewidget.h>
 #include <taiDataLink>
 #include <iMainWindowViewer>
 #include <taProject>

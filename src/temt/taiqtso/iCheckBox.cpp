@@ -15,7 +15,6 @@
 
 #include "iCheckBox.h"
 
-#include "icheckbox.h"
 #ifndef QT_NO_CHECKBOX
 #include <qpalette.h>
 #include <qbrush.h>

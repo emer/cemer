@@ -18,6 +18,7 @@
 #include <SelectEditDelegate>
 #include <taiEditTableWidget>
 #include <iFlowLayout>
+#include <taiMenuBar>
 
 #include <taMisc>
 #include <taiMisc>

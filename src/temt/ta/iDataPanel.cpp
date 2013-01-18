@@ -20,7 +20,7 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
-#include <QSCrollBar>
+#include <QScrollBar>
 
 
 iDataPanel::iDataPanel(taiDataLink* dl_)

@@ -15,8 +15,6 @@
 
 #include "iColor.h"
 
-#include "icolor.h"
-
 #ifdef TA_GUI
 # include <qcolor.h>
 # include <qbrush.h>
