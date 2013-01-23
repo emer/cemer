@@ -26,6 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class Program; // 
+TypeDef_Of(Program);
 class taBase; // 
 
 

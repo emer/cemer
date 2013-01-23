@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taPlugin; // 
-
+TypeDef_Of(taPlugin);
 
 TypeDef_Of(taPlugin_List);
 

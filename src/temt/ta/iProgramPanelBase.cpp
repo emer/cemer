@@ -19,6 +19,8 @@
 #include <iMainWindowViewer>
 #include <iDataPanelSet>
 
+TypeDef_Of(ProgramToolBar);
+
 #include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>

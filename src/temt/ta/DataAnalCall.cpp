@@ -15,6 +15,8 @@
 
 #include "DataAnalCall.h"
 
+TypeDef_Of(taDataAnal);
+
 #include <taMisc>
 
 void DataAnalCall::Initialize() {

@@ -17,6 +17,9 @@
 #include <Program>
 #include <taMisc>
 
+TypeDef_Of(taMath);
+TypeDef_Of(taMath_float);
+
 
 void MathCall::Initialize() {
   min_type = &TA_taMath;

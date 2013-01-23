@@ -17,6 +17,7 @@
 #include <iDocDataPanel>
 #include <taWizard>
 
+TypeDef_Of(PluginWizard);
 
 
 int tabWizardViewType::BidForView(TypeDef* td) {

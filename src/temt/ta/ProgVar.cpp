@@ -19,6 +19,10 @@
 #include <taDataLinkItr>
 #include <MemberDef>
 
+TypeDef_Of(taMatrix);
+TypeDef_Of(Function);
+TypeDef_Of(taProject);
+
 #include <DataChangedReason>
 #include <taMisc>
 

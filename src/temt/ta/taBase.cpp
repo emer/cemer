@@ -41,6 +41,7 @@
 #include <TypeDefault>
 #include <int_Matrix>
 #include <byte_Matrix>
+#include <slice_Matrix>
 #include <MainWindowViewer>
 #include <taiEdit>
 #include <ViewColor_List>

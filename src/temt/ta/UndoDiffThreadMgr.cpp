@@ -15,6 +15,8 @@
 
 #include "UndoDiffThreadMgr.h"
 
+TypeDef_Of(UndoDiffTask);
+
 void UndoDiffThreadMgr::Initialize() {
   n_threads = 2;                // don't use 0, just 1..
   task_type = &TA_UndoDiffTask;

@@ -26,9 +26,10 @@
 // declare all other types mentioned but not required to include:
 class Program;
 
+TypeDef_Of(iProgramCtrlDataHost);
 
 class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefListClient {
-  // ##IGNORE ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public: //

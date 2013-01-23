@@ -27,8 +27,9 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
+TypeDef_Of(VEWorld);
 
-TypeDef_Of(VEJoint);
+TypeDef_Of(VEJointStops);
 
 class TA_API VEJointStops : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
@@ -59,6 +60,8 @@ private:
   void  Destroy()       { };
 };
 
+TypeDef_Of(VEJointMotor);
+
 class TA_API VEJointMotor : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the CurFromODE call, using the motor system (be sure to set f_max!)
 INHERITED(taOBase)
@@ -78,6 +81,8 @@ private:
   void  Destroy()       { };
 };
 
+TypeDef_Of(ODEJointParams);
+
 class TA_API ODEJointParams : public ODEIntParams {
   // ODE integration parameters for joints
 INHERITED(ODEIntParams)
@@ -92,6 +97,8 @@ public:
 // protected:
 //   void       UpdateAfterEdit_impl();
 };
+
+TypeDef_Of(VEJoint);
 
 class TA_API VEJoint : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies

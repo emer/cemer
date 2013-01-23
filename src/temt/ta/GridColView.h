@@ -24,6 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class GridTableView; // 
+TypeDef_Of(GridTableView);
 class TypeDef; // 
 class T3GridColViewNode; //
 

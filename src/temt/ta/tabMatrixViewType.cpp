@@ -16,7 +16,7 @@
 #include "tabMatrixViewType.h"
 #include <iMatrixPanel>
 
-
+TypeDef_Of(taMatrix);
 
 int tabMatrixViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taMatrix))

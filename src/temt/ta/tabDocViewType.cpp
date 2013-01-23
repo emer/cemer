@@ -17,7 +17,7 @@
 #include <iDocDataPanel>
 #include <iDocEditDataPanel>
 
-
+TypeDef_Of(taDoc);
 
 int tabDocViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taDoc))

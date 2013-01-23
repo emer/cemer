@@ -16,6 +16,8 @@
 #include "gpiGroupType.h"
 #include <gpiGroupEditButton>
 
+TypeDef_Of(taGroup_impl);
+
 
 int gpiGroupType::BidForType(TypeDef* td) {
   if(td->InheritsFrom(TA_taGroup_impl))

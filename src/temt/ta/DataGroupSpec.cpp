@@ -15,6 +15,7 @@
 
 #include "DataGroupSpec.h"
 
+TypeDef_Of(DataGroupEl);
 
 void DataGroupSpec::Initialize() {
   ops.SetBaseType(&TA_DataGroupEl);

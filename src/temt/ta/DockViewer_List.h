@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class DockViewer; // 
-
+TypeDef_Of(DockViewer);
 
 TypeDef_Of(DockViewer_List);
 

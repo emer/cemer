@@ -18,6 +18,12 @@
 #include <ProgVar>
 #include <taMisc>
 
+TypeDef_Of(float_Matrix);
+TypeDef_Of(double_Matrix);
+TypeDef_Of(int_Matrix);
+TypeDef_Of(String_Matrix);
+TypeDef_Of(Variant_Matrix);
+
 
 void LocalVars::Initialize() {
 }

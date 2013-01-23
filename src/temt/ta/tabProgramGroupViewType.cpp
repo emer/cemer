@@ -17,6 +17,7 @@
 #include <iTreeView>
 #include <iProgramGroupPanel>
 
+TypeDef_Of(Program_Group);
 
 int tabProgramGroupViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_Program_Group))

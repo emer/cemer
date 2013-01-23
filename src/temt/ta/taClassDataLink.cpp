@@ -15,6 +15,12 @@
 
 #include "taClassDataLink.h"
 
+TypeDef_Of(EnumSpace);
+TypeDef_Of(TokenSpace);
+TypeDef_Of(MemberSpace);
+TypeDef_Of(PropertySpace);
+TypeDef_Of(MethodSpace);
+TypeDef_Of(TypeSpace);
 
 taClassDataLink::taClassDataLink(TypeItem::TypeInfoKinds tik_, void* data_, taDataLink* &link_ref_)
 :inherited(data_, link_ref_), tik(tik_)

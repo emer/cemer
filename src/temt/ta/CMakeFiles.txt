@@ -1549,7 +1549,6 @@ set(ta_SRCS_MAKETA
   VESpace.cpp
   VESpace_Group.cpp
   VELightParams.cpp
-  VECameraDists.cpp
   VECamera.cpp
   VELight.cpp
   VEWorld.cpp

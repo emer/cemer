@@ -21,6 +21,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
+TypeDef_Of(taList_impl);
 #include <taiMember>
 #endif
 

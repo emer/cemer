@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 class CircMatrix;
 
+TypeDef_Of(VisRegionParams);
+
 class TA_API VisRegionParams : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
 INHERITED(taOBase)
@@ -66,6 +68,8 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisRegionParams);
 };
+
+TypeDef_Of(VisRegionSizes);
 
 class TA_API VisRegionSizes : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters

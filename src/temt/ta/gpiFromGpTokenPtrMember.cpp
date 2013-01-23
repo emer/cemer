@@ -21,7 +21,8 @@
 
 #include <taiMisc>
 
-
+TypeDef_Of(taSmartPtr);
+TypeDef_Of(taGroup_impl);
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType()

@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class T3DataView; 
-
+TypeDef_Of(T3DataView);
 
 TypeDef_Of(T3DataView_List);
 

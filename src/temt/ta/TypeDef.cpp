@@ -21,6 +21,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
+TypeDef_Of(taBase_ptr);
 #include <taBase>
 #include <UserDataItem_List>
 #include <taiType>

@@ -17,6 +17,8 @@
 
 #include <T3NodeParent>
 
+TypeDef_Of(T3DataViewMain);
+
 void T3DataViewRoot::Initialize() {
   host = NULL;
   children.SetBaseType(&TA_T3DataViewMain);

@@ -20,6 +20,9 @@
 #include <taiStringDataHost>
 #include <taiChoiceDialog>
 
+TypeDef_Of(LocalVars);
+TypeDef_Of(ProgCode);
+
 #include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
@@ -28,7 +31,6 @@
 
 #include <QFileInfo>
 #include <QDir>
-
 
 using namespace std;
 

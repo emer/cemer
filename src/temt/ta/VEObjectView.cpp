@@ -22,7 +22,7 @@
 
 #include <taMisc>
 
-
+TypeDef_Of(VEObjCarousel);
 
 bool VEObjectView::isVisible() const {
   return (taMisc::use_gui );

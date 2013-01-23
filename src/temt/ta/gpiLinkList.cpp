@@ -16,6 +16,8 @@
 #include "gpiLinkList.h"
 #include <gpiListLinkEditButton>
 
+TypeDef_Of(taList_impl);
+
 
 int gpiLinkList::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->InheritsFrom(TA_taList_impl)) &&

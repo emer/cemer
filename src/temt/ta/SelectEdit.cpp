@@ -16,6 +16,8 @@
 #include "SelectEdit.h"
 #include <voidptr_PArray>
 
+TypeDef_Of(taProject);
+
 #include <DataChangedReason>
 #include <taMisc>
 

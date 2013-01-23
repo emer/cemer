@@ -16,6 +16,8 @@
 #include "gpiArrayEdit.h"
 #include <gpiArrayEditDataHost>
 
+TypeDef_Of(taArray);
+
 
 int gpiArrayEdit::BidForEdit(TypeDef* td){
   if (td->InheritsFrom(TA_taArray))

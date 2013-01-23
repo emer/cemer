@@ -15,6 +15,8 @@
 
 #include "PluginMakeThreadMgr.h"
 
+TypeDef_Of(PluginMakeTask);
+
 void PluginMakeThreadMgr::Initialize() {
   n_threads = 2;                // don't use 0, just 1..
   task_type = &TA_PluginMakeTask;

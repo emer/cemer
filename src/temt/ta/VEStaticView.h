@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
+TypeDef_Of(VEWorldView);
 class TypeDef; // 
 class VEStatic; // 
 

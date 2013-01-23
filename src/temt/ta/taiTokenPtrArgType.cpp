@@ -21,6 +21,7 @@
 
 #include <css_ta.h>
 
+TypeDef_Of(TypeDef_ptr);
 
 int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taBase) &&

@@ -17,6 +17,7 @@
 #include <taiProjTemplateElsButton>
 #include <taTypeInfoDataLink>
 
+TypeDef_Of(ProjTemplateEl);
 
 int taiProjTemplateElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProjTemplateEl))

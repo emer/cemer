@@ -15,6 +15,8 @@
 
 #include "ImageProcCall.h"
 
+TypeDef_Of(taImageProc);
+
 #include <taMisc>
 
 

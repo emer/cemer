@@ -20,6 +20,8 @@
 #include <taRootBase>
 #include <taProject>
 
+TypeDef_Of(CssExpr);
+TypeDef_Of(AssignExpr);
 
 void ProgCode::Initialize() {
   SetProgExprFlags();

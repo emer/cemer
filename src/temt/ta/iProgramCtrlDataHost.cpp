@@ -25,13 +25,13 @@
 #include <taiIncrField>
 #include <taiMember>
 #include <taiBitBox>
+#include <taiDynEnumMember>
 
 #include <DataChangedReason>
 #include <taMisc>
 #include <taiMisc>
 
-#include "ta_TA_inst.h"         // to get TAI_DynEnum
-
+TypeInst_Of(DynEnum);           // TAI_DynEnum
 
 iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
                                            bool modal_, QObject* parent)

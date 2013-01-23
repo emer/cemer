@@ -31,6 +31,8 @@
 #include <iNetworkAccessManager>
 #include <taGenDoc>
 
+TypeDef_Of(PluginWizard);
+
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>

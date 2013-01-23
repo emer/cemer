@@ -241,17 +241,17 @@ if (false) #source to make stub includes -- must be run after making the TA file
 endif (false)
 
 # dependencies
-add_dependencies(ta_TA maketa)
-add_dependencies(temt ta_TA)
-add_dependencies(css temt)
-#note: we have to make n_TA dep on temt otherwise VS will build all the TAs first (slow)
-add_dependencies(network_TA temt)
-#add_dependencies(network_TA ta_TA)
-add_dependencies(bp_TA network_TA)
-add_dependencies(cs_TA network_TA)
-add_dependencies(leabra_TA network_TA)
-add_dependencies(so_TA network_TA)
-add_dependencies(emergentlib temt network_TA bp_TA cs_TA leabra_TA so_TA)
+add_dependencies(temt maketa)
+# add_dependencies(temt ta_TA)
+# add_dependencies(css temt)
+# #note: we have to make n_TA dep on temt otherwise VS will build all the TAs first (slow)
+# add_dependencies(network_TA temt)
+# #add_dependencies(network_TA ta_TA)
+# add_dependencies(bp_TA network_TA)
+# add_dependencies(cs_TA network_TA)
+# add_dependencies(leabra_TA network_TA)
+# add_dependencies(so_TA network_TA)
+add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 
 ########### install files ###############

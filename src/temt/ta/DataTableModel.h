@@ -33,11 +33,11 @@ class taiDataLink; //
 class taDataLink; // 
 class DataTable; // 
 
+TypeDef_Of(DataTableModel);
 
 class TA_API DataTableModel: public QAbstractTableModel,
-  public IDataLinkClient
-{
-  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
+  public IDataLinkClient {
+// #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
 friend class DataTable;

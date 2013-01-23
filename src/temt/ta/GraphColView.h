@@ -25,6 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class GraphTableView; // 
+TypeDef_Of(GraphTableView);
 class TypeDef; // 
 
 /*

@@ -36,6 +36,7 @@ class IDataHost; //
 class taiMethodData; //
 class taiActions; //
 
+TypeDef_Of(iMethodButtonMgr);
 
 class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IDataHost and gui objects
@@ -79,7 +80,7 @@ protected:
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
-  TypeDef*      GetTypeDef() const {return &TA_QWidget;} // override
+  TypeDef*      GetTypeDef() const {return &TA_iMethodButtonMgr;} // override
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
   void          DataLinkDestroying(taDataLink* dl);
   void          DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);

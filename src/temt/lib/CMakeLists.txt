@@ -21,7 +21,7 @@ include(${PROJECT_SOURCE_DIR}/src/temt/ta/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_ta_SRCS ${mypath}/ta "${ta_SRCS}")
 ADD_PATH_TO_FILES(temt_ta_HEADS_MOC ${mypath}/ta "${ta_HEADS_MOC}")
 ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA ${mypath}/ta "${ta_HEADS_MAKETA}")
-SET_TA_PROPS(ta ${PROJECT_SOURCE_DIR}/src/temt/ta)
+#SET_TA_PROPS(ta ${PROJECT_SOURCE_DIR}/src/temt/ta)
 
 # css
 include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)

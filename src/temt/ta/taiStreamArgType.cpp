@@ -20,6 +20,11 @@
 
 #include <css_ta.h>
 
+TypeDef_Of(ios);
+TypeDef_Of(istream);
+TypeDef_Of(ostream);
+TypeDef_Of(fstream);
+
 using namespace std;
 
 

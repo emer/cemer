@@ -40,6 +40,8 @@
 class VEWorld; // 
 class VEObject; // 
 
+TypeDef_Of(ODEDamping);
+
 class TA_API ODEDamping : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE damping parameters
 INHERITED(taOBase)
@@ -56,6 +58,8 @@ private:
   void  Initialize();
   void  Destroy()       { };
 };
+
+TypeDef_Of(ODEFiniteRotation);
 
 class TA_API ODEFiniteRotation : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv finite rotation mode settings

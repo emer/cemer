@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
 
+TypeDef_Of(taGroup_List);
+
 class TA_API taGroup_List : public taList<taGroup_impl> {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER a list of groups
   INHERITED(taList<taGroup_impl>)

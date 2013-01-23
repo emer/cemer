@@ -15,6 +15,7 @@
 
 #include "ProgType_List.h"
 #include <Program>
+#include <DynEnumType>
 
 void ProgType_List::Initialize() {
   SetBaseType(&TA_ProgType);

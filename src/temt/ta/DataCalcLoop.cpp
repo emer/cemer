@@ -15,6 +15,11 @@
 
 #include "DataCalcLoop.h"
 
+TypeDef_Of(DataCalcAddDestRow);
+TypeDef_Of(DataCalcSetDestRow);
+TypeDef_Of(float_Matrix);
+TypeDef_Of(double_Matrix);
+TypeDef_Of(int_Matrix);
 
 void DataCalcLoop::Initialize() {
   src_row_var.name = "src_row";

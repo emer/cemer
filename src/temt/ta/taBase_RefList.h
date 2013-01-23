@@ -25,8 +25,11 @@
 // declare all other types mentioned but not required to include:
 class IRefListClient; //
 
+TypeDef_Of(taBase_RefList);
+
 class TA_API taBase_RefList: public taPtrList<taBase>,
-   virtual public IMultiDataLinkClient { // #IGNORE a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
+   virtual public IMultiDataLinkClient {
+  // ##NO_TOKENS ##NO_MEMBERS ##NO_CSS a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
   void                  setOwner(IRefListClient* own_);
 

@@ -15,6 +15,8 @@
 
 #include "DataLoop.h"
 
+TypeDef_Of(DataBlock);
+
 #include <taMisc>
 
 

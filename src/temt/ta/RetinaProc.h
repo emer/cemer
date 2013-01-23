@@ -152,6 +152,9 @@ protected:
 
 SmartRef_Of(RetinaProc); // RetinaProcRef
 
+TypeDef_Of(DoGRegionSpec);
+TypeDef_Of(DoGRetinaProc);
+
 class TA_API DoGRetinaProc : public RetinaProc {
   // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
@@ -163,6 +166,9 @@ public:
   void	Destroy() { };
   TA_BASEFUNS_NOCOPY(DoGRetinaProc);
 };
+
+TypeDef_Of(V1RegionSpec);
+TypeDef_Of(V1RetinaProc);
 
 class TA_API V1RetinaProc : public RetinaProc {
   // V1 version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params

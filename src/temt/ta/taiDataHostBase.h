@@ -39,15 +39,20 @@ class iHostDialog; //  #IGNORE
 class taBase;      // 
 class HiLightButton; // #IGNORE
 
+TypeDef_Of(taiDataHostBase_List);
+
 class TA_API taiDataHostBase_List : public taPtrList<taiDataHostBase> {
-  // #IGNORE list of data host base guys -- for async management -- no ownership of items
+  // list of data host base guys -- for async management -- no ownership of items
 protected:
 public:
   ~taiDataHostBase_List()            { Reset(); }
 };
 
+
+TypeDef_Of(taiDataHostBase);
+
 class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient {
-  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
   Q_OBJECT
 friend class iHostDialog;

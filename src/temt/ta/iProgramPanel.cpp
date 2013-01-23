@@ -23,6 +23,8 @@
 #include <taDataLinkItr>
 #include <iDataPanelSet>
 
+TypeDef_Of(ProgCode);
+
 #include <taMisc>
 
 #include <QApplication>

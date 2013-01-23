@@ -34,6 +34,7 @@ class DataCol; //
 class String_Matrix; // 
 class QModelIndex;
 
+TypeDef_Of(MatrixTableModel);
 
 class TA_API MatrixTableModel: public QAbstractTableModel,
   public IDataLinkClient

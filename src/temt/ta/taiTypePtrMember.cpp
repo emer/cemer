@@ -19,6 +19,7 @@
 
 #include <taMisc>
 
+TypeDef_Of(TypeDef_ptr);
 
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->ptr == 1) &&

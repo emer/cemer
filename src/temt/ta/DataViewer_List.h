@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class DataViewer; // 
-
+TypeDef_Of(DataViewer);
 
 TypeDef_Of(DataViewer_List);
 

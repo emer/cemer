@@ -27,6 +27,8 @@ class QColor; // #IGNORE
 class SoMFColor; // #IGNORE
 #endif
 
+TypeDef_Of(rgb_t);
+
 class TA_API rgb_t {
   // very low-level class, esp provided for rgb_Matrix and raw image ops -- we use default copy constructor and assignment operator;\nDO NOT CHANGE BYTE ORDER -- these are compatible (on all endians) with the jpeg decode library, and enable superfast copying to our matrixes
 public:
@@ -43,6 +45,8 @@ public:
   
   rgb_t() {r = 0; g = 0; b = 0;}
 };
+
+TypeDef_Of(iColor);
 
 class TA_API iColor { // value-type class used for specifying color values in a Qt and So-compatible way
 public:

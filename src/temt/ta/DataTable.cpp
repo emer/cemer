@@ -26,6 +26,13 @@
 #include <DataGroupSpec>
 #include <DataGroupEl>
 
+TypeDef_Of(float_Data);
+TypeDef_Of(double_Data);
+TypeDef_Of(int_Data);
+TypeDef_Of(byte_Data);
+TypeDef_Of(String_Data);
+TypeDef_Of(Variant_Data);
+
 #include <taMisc>
 #include <tabMisc>
 

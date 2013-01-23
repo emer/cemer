@@ -19,7 +19,7 @@
 
 #include <taMisc>
 
-
+TypeDef_Of(TypeDef_ptr);
 
 taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
                                  MemberDef* memb_md_, TypeDef* typ_,

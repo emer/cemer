@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TypeDef_Of(Random);
+
 void RandomCall::Initialize() {
   min_type = &TA_Random;
   object_type = &TA_Random;

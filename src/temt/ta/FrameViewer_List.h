@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class FrameViewer; // 
-
+TypeDef_Of(FrameViewer);
 
 TypeDef_Of(FrameViewer_List);
 

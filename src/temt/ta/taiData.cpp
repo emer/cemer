@@ -20,7 +20,7 @@
 #include <taiDataLink>
 #include <taiMisc>
 
-// NOTE: this is for ta_TA.cpp only
+// NOTE: this is for maketa only
 taiData::taiData()
   : QObject()
   , typ(0)

@@ -16,6 +16,7 @@
 #include "taiMatrixGeomType.h"
 #include <taiDimEdit>
 
+TypeDef_Of(MatrixGeom);
 
 int taiMatrixGeomType::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_MatrixGeom))

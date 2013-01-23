@@ -407,8 +407,8 @@ class MethodDef; //
 // This macro must be used in all class headers that are TA parsed -- it makes
 // the TA_ TypeDef avail to any that include the class -- can also use in .cpp
 // of files that do not include the header but still need to access the TA info
-//#define TypeDef_Of(y) extern TypeDef TA_##T;
-#define TypeDef_Of(y) extern int __tmp_dummy_for_now__
+#define TypeDef_Of(T) extern TypeDef TA_ ## T
+#define TypeInst_Of(T) extern T* TAI_ ## T
 
 // fake version of mpi comm to allow functions to not be conditionalized
 #ifndef DMEM_COMPILE

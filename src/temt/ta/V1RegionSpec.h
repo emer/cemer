@@ -30,6 +30,8 @@
 class DataTable; // 
 class V1RetinaProc; // 
 
+TypeDef_Of(V1GaborSpec);
+
 class TA_API V1GaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
 INHERITED(taOBase)
@@ -57,6 +59,8 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(V1sNeighInhib);
+
 class TA_API V1sNeighInhib : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
 INHERITED(taOBase)
@@ -73,6 +77,8 @@ public:
 protected:
   void 	UpdateAfterEdit_impl();
 };
+
+TypeDef_Of(V1MotionSpec);
 
 class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
@@ -93,6 +99,8 @@ public:
 protected:
   void 	UpdateAfterEdit_impl();
 };
+
+TypeDef_Of(V1BinocularSpec);
 
 class TA_API V1BinocularSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
@@ -133,6 +141,8 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(V1ComplexSpec);
+
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
@@ -157,6 +167,8 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(V2BordOwnSpec);
+
 class TA_API V2BordOwnSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
 INHERITED(taOBase)
@@ -178,6 +190,8 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(V2BordOwnStencilSpec);
+
 class TA_API V2BordOwnStencilSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership stencils for neighborhood connectivity
 INHERITED(taOBase)
@@ -195,6 +209,8 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V2BordOwnStencilSpec);
 };
+
+TypeDef_Of(VisSpatIntegSpec);
 
 class TA_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields

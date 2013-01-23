@@ -15,6 +15,7 @@
 
 #include "DataSortSpec.h"
 
+TypeDef_Of(DataSortEl);
 
 void DataSortSpec::Initialize() {
   ops.SetBaseType(&TA_DataSortEl);

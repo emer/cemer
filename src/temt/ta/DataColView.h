@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class DataTableView; // 
+TypeDef_Of(DataTableView);
 class TypeDef; // 
 class DataCol; // 
 

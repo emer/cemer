@@ -17,7 +17,6 @@
 // ta_type_constr.cc: Type Access Self-Construction Code
 
 #include "ta_type_constr.h"
-#include "ta_TA_type.h"
 #include <taString>
 #include <TypeDef>
 #include <taMisc>

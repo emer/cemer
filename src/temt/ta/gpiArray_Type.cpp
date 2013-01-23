@@ -16,6 +16,7 @@
 #include "gpiArray_Type.h"
 #include <gpiArrayEditButton>
 
+TypeDef_Of(taArray);
 
 int gpiArray_Type::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taArray)) { // bid higher than the class  type

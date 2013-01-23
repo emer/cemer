@@ -27,6 +27,7 @@
 #include <tabMisc>
 #include <taRootBase>
 
+TypeDef_Of(TypeDef_ptr);
 
 // macro for doing safe casts of types -- helps to uncover errors
 // when the actual class is not the expected class

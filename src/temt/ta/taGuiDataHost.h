@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class taGuiDialog;
-
+TypeDef_Of(taGuiDialog);
 
 TypeDef_Of(taGuiDataHost);
 

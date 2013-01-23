@@ -16,7 +16,7 @@
 #include "tabDataTableViewType.h"
 #include <iDataTablePanel>
 
-
+TypeDef_Of(DataTable);
 
 int tabDataTableViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_DataTable))

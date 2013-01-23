@@ -26,6 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 
+TypeDef_Of(MainWindowViewer);
 class iMainWindowViewer; // #IGNORE
 class TypeDef; // 
 class IDataViewWidget; // 

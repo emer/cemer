@@ -23,6 +23,12 @@
 #include <PublishDocsDialog>
 #include <taiStringDataHost>
 
+TypeDef_Of(taDataProc);
+TypeDef_Of(taDataAnal);
+TypeDef_Of(taDataGen);
+TypeDef_Of(taImageProc);
+TypeDef_Of(ClusterRun);
+
 #include <DataChangedReason>
 #include <taMisc>
 #include <tabMisc>

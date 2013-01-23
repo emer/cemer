@@ -20,6 +20,8 @@
 #include <T3DataViewer>
 #include <taBase>
 
+TypeDef_Of(taProject);
+
 #include <taMisc>
 #include <taiMisc>
 

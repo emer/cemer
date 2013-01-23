@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-
+TypeDef_Of(byte);
 
 TypeDef_Of(byte_Data);
 

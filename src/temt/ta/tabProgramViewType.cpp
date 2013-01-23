@@ -19,6 +19,7 @@
 #include <iProgramPanel>
 #include <iProgramViewScriptPanel>
 
+TypeDef_Of(Program);
 
 int tabProgramViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_Program))

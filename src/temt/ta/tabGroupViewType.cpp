@@ -23,6 +23,9 @@
 #include <taMisc>
 #include <taiMisc>
 
+TypeDef_Of(taGroup_impl);
+TypeDef_Of(taiArgType);
+
 
 int tabGroupViewType::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taGroup_impl))

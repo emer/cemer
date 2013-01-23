@@ -28,6 +28,7 @@
 class TypeDef; // 
 class iDataTableEditor; //
 class ClusterManager; // #IGNORE
+TypeDef_Of(GridSearch);
 
 
 TypeDef_Of(ClusterRun);

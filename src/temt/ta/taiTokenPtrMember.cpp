@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TypeDef_Of(TypeDef_ptr);
+
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType())

@@ -43,6 +43,8 @@ class taImage; //
 class VEWorld; //
 SmartRef_Of(VEWorld); // VEWorldRef
 
+TypeDef_Of(ODEWorldParams);
+
 class TA_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)

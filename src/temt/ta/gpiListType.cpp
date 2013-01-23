@@ -16,6 +16,7 @@
 #include "gpiListType.h"
 #include <gpiListEditButton>
 
+TypeDef_Of(taList_impl);
 
 int gpiListType::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl))

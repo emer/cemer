@@ -16,6 +16,7 @@
 #include "taiProgLibElArgType.h"
 #include <taiProgLibElsButton>
 
+TypeDef_Of(ProgLibEl);
 
 
 int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {

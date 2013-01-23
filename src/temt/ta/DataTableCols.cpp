@@ -16,6 +16,8 @@
 #include "DataTableCols.h"
 #include <DataTable>
 
+TypeDef_Of(DataColTp);
+
 #include <DataChangedReason>
 
 void DataTableCols::Initialize() {

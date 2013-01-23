@@ -18,9 +18,11 @@
 #include <MemberDef>
 #include <taiTypeDefButton>
 
+#include <taMisc>
+
 #include <css_ta.h>
 
-#include <taMisc>
+TypeDef_Of(TypeDef_ptr);
 
 int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (argt->DerivesFrom(TA_TypeDef) && (argt->ptr == 1))

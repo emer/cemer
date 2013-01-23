@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class Program; //
+TypeDef_Of(Program);
 
 TypeDef_Of(Program_List);
 
@@ -34,8 +35,8 @@ public:
   override String       GetTypeDecoKey() const { return "Program"; }
   TA_BASEFUNS_NOCOPY(Program_List);
 private:
-  void  Initialize();
-  void  Destroy()               {Reset(); }; //
+  void  Initialize()            { SetBaseType(&TA_Program); }
+  void  Destroy()               { Reset(); }
 }; //
 
 #endif // Program_List_h

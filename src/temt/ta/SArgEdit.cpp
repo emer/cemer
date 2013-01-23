@@ -16,6 +16,7 @@
 #include "SArgEdit.h"
 #include <SArgEditDataHost>
 
+TypeDef_Of(SArg_Array);
 
 int SArgEdit::BidForEdit(TypeDef* td){
   if(td->InheritsFrom(TA_SArg_Array))

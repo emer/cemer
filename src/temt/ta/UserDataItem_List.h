@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class UserDataItem; // 
-
+TypeDef_Of(UserDataItem);
 
 TypeDef_Of(UserDataItem_List);
 

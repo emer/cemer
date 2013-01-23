@@ -5,7 +5,9 @@ include(CMakeFiles.txt)
 
 set(mypath ${PROJECT_SOURCE_DIR}/src/temt/ta)
 
-CREATE_MAKETA_COMMAND(ta ${mypath} "${ta_HEADS_MAKETA}")
+#CREATE_MAKETA_COMMAND(ta ${mypath} "${ta_HEADS_MAKETA}")
+
+MAKETA_WRAP_H(${ta_HEADS_MAKETA})
 
 ########### running rcc qt resource compiler on ta.qrc ###############
 
