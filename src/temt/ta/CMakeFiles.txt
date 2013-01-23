@@ -1006,16 +1006,13 @@ set(ta_HEADS_MAKETA
   ${ta_HEADS_MAKETA_MOC}
 )
 
-# all heads -- include maketa generated ones here
+# all heads
 set(ta_HEADS
   ${ta_HEADS_MAKETA_LOCAL}
   NewViewHelper.h
   ta_maketa_defs.h
   ta_type_constr.h
   qtdefs.h
-  ta_TA_type.h
-  ta_TA_type_WRAPPER.h
-  ta_TA_inst.h
   ${ta_HEADS_NOMAKETA}
   ${ta_HEADS_NOMAKETA_MOC}
 )
@@ -1979,8 +1976,6 @@ set(ta_SRCS
   ${ta_SRCS_MAKETA}
   ${ta_SRCS_NOMAKETA}
   ta_qrc.cpp
-  ta_TA.cpp
 )
-
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

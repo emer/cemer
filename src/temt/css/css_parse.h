@@ -196,7 +196,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 51 "css_parse.y"
+#line 54 "css_parse.y"
 {
   cssElPlusIVal el_ival;
   cssElPtr     	el;		/* for coding */

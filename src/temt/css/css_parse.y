@@ -23,6 +23,9 @@
 #include "css_builtin.h"
 #include "css_ta.h"
 
+TypeDef_Of(taMatrix);
+TypeDef_Of(taBaseItr);
+
 #include <sstream>
 
 #if defined(SUN4) && !defined(__GNUG__) && !defined(SOLARIS)

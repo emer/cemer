@@ -315,7 +315,12 @@ void MTA::TypeDef_FixOpts(String_PArray& op) {
 }
 
 void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
-  if(ths->pre_parsed)    return;
+  //  if(ths->pre_parsed)    return;
+  String src_only = taMisc::GetFileFmPath(ths->source_file);
+  if(src_only != mta->basename) {
+    // cerr << src_only << " not = " << mta->basename << endl;
+    return; // not from target file!
+  }
 
 #ifdef TA_OS_WIN
   if (win_dll)
@@ -397,6 +402,12 @@ void MTA::TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm) {
 
 
 void MTA::TypeDef_Generate_Instances(TypeDef* ths, ostream& strm) {
+
+  String src_only = taMisc::GetFileFmPath(ths->source_file);
+  if(src_only != mta->basename) {
+    // cerr << src_only << " not = " << mta->basename << endl;
+    return; // not from target file!
+  }
 
   // this is just for reg_fun
   if(ths->InheritsFrom(TA_taRegFun) && this->gen_css
@@ -927,6 +938,12 @@ void TypeSpace_Generate_Data(TypeSpace* ths, ostream& strm) {
 }
 
 void TypeDef_Generate_Data(TypeDef* ths, ostream& strm) {
+  String src_only = taMisc::GetFileFmPath(ths->source_file);
+  if(src_only != mta->basename) {
+    // cerr << src_only << " not = " << mta->basename << endl;
+    return; // not from target file!
+  }
+
   if(!(ths->internal || ths->pre_parsed)) {
     if(ths->InheritsFormal(TA_enum)) {
       TypeDef_Generate_EnumData(ths, strm);
@@ -1585,6 +1602,12 @@ void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
 }
 
 void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
+  String src_only = taMisc::GetFileFmPath(ths->source_file);
+  if(src_only != mta->basename) {
+    // cerr << src_only << " not = " << mta->basename << endl;
+    return; // not from target file!
+  }
+
   if((ths->pre_parsed) && !(ths->InheritsFrom(TA_taRegFun)))
     return;
 

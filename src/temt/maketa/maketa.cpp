@@ -575,27 +575,36 @@ void mta_cleanup(int err) {
 }
 #endif
 
-void mta_print_commandline_args(char* argv[]) {
-    cerr << "Usage:\t" << argv[0]
-      << "\n(* indicates default argument)"
-      << "\n[-[-]help | -[-]?]  print this argument listing"
-      << "\n[-w]                wait for input before starting (useful when attaching debugger in Windows)"
-      << "\n[-v<level>]         verbosity level, 1-5, 1=results,2=more detail,3=trace,4=source,5=parse"
-      << "\n[-hx | -nohx*]      generate .hx, .ccx files instead of .h, .cpp (for cmp-based updating)"
-      << "\n[-autohx | -noautohx*] if making hx files, update h files if changed (autohx implies hx)"
-      << "\n[-css* | -nocss]     generate CSS stub functions"
-      << "\n[-instances]        generate instance tokens of types"
-      << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
-      << "\n[-I<include>]...    path to include files (one path per -I)"
-      << "\n[-D<define>]...     define a pre-processor macro"
-      << "\n[-cpp=<cpp command>] explicit path for c-pre-processor (g++ -E is default)"
-      << "\n[-hash<size>]       size of hash tables (default 2000), use -v1 to see actual sizes"
-      << "\n[-f <filename>]     read list of header files from given file"
-      << "\n[-k]                keep temporary files (useful for debugging)"
-      << "\n[-gendoc]           generate xml documentation for all types"
-      << "\n[-win_dll[=STR]]    use macro for external linkage, default is XXX_API where XXX is proj name (win only)"
-      << "\nproject             stub project name (generates project_TA[.cpp|_type.h|_inst.h])"
-      << "\nfiles...            the header files to be processed\n";
+void mta_print_args(int argc, char* argv[]) {
+  for(int i=0; i<argc; i++) {
+    cerr << argv[i] << " ";
+  }
+  cerr << endl;
+}
+
+void mta_print_usage(int argc, char* argv[]) {
+  cerr << "Usage:\t" << argv[0]
+       << "\n(* indicates default argument)"
+       << "\n[-[-]help | -[-]?]  print this argument listing"
+       << "\n[-w]                wait for input before starting (useful when attaching debugger in Windows)"
+       << "\n[-v<level>]         verbosity level, 1-5, 1=results,2=more detail,3=trace,4=source,5=parse"
+       << "\n[-hx | -nohx*]      generate .hx, .ccx files instead of .h, .cpp (for cmp-based updating)"
+       << "\n[-autohx | -noautohx*] if making hx files, update h files if changed (autohx implies hx)"
+       << "\n[-css* | -nocss]     generate CSS stub functions"
+       << "\n[-instances]        generate instance tokens of types"
+       << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
+       << "\n[-I<include>]...    path to include files (one path per -I)"
+       << "\n[-D<define>]...     define a pre-processor macro"
+       << "\n[-cpp=<cpp command>] explicit path for c-pre-processor (g++ -E is default)"
+       << "\n[-hash<size>]       size of hash tables (default 2000), use -v1 to see actual sizes"
+       << "\n[-f <filename>]     read list of header files from given file"
+       << "\n[-k]                keep temporary files (useful for debugging)"
+       << "\n[-gendoc]           generate xml documentation for all types"
+       << "\n[-win_dll[=STR]]    use macro for external linkage, default is XXX_API where XXX is proj name (win only)"
+       << "\nproject             stub project name (generates project_TA[.cpp|_type.h|_inst.h])"
+       << "\nfiles...            the header files to be processed\n";
+
+  mta_print_args(argc, argv);
 }
 
 int main(int argc, char* argv[])
@@ -604,7 +613,10 @@ int main(int argc, char* argv[])
 
   mta->spc = &(mta->spc_other);
 
-  if(argc < 2) { mta_print_commandline_args(argv); return 1;  } // wrong number of arguments
+  // mta_print_args(argc, argv);
+  // mta->verbose = 1;
+
+  if(argc < 2) { mta_print_usage(argc, argv); return 1;  } // wrong number of arguments
 #ifdef CYGWIN
   String cpp = "cpp";
   String rm = "rm ";
@@ -617,7 +629,7 @@ int main(int argc, char* argv[])
   String rm = String("/bin/rm ");
 #endif
   String incs;
-  mta->basename = "";           // initialize
+  mta->ta_ccname = "TA_out.cxx"; // initialize to default output
 
   bool wait = false;
   bool keep_tmp = false;
@@ -627,37 +639,36 @@ int main(int argc, char* argv[])
   mta->paths.Add(taMisc::FinalPathSep("."));
   for(i=1; i<argc; i++) {
     tmp = argv[i];
+    // cerr << "processing arg: " << tmp << endl;
     if( (tmp == "-help") || (tmp == "--help")
-      || (tmp == "-?") || (tmp == "--?") || (tmp == "/?")
-    ) {
-      mta_print_commandline_args(argv); return 1;               // EXIT
+        || (tmp == "-?") || (tmp == "--?") || (tmp == "/?")) {
+      mta_print_usage(argc, argv); return 1;               // EXIT
     }
-    mta->gen_doc = false;
-    if(tmp == "-css")
+    if(tmp == "-css") {
       mta->gen_css = true;
-    else if(tmp == "-nocss")
+    }
+    else if(tmp == "-nocss") {
       mta->gen_css = false;
-    else if(tmp == "-instances")
+    }
+    else if(tmp == "-instances") {
       mta->gen_instances = true;
-    else if(tmp == "-nohx")
-      mta->make_hx = false;
-    else if(tmp == "-hx")
-      mta->make_hx = true;
-    else if(tmp == "-noautohx")
-      mta->auto_hx = false;
-    else if(tmp == "-gendoc")
-      mta->gen_doc = true;
-    else if(tmp == "-autohx") {
-      mta->make_hx = true;
-      mta->auto_hx = true;
-    } else if(tmp == "-class_only")
+    }
+    else if(tmp == "-class_only") {
       mta->class_only = true;
-    else if(tmp == "-struct_union")
+    }
+    else if(tmp == "-struct_union") {
       mta->class_only = false;
-    else if(tmp == "-w")
+    }
+    else if(tmp == "-o") {
+      mta->ta_ccname = argv[i+1];
+      i++;                      // skip
+    }
+    else if(tmp == "-w") {
       wait = true;
-    else if(tmp == "-k")
+    }
+    else if(tmp == "-k") {
       keep_tmp = true;
+    }
     else if(tmp(0,2) == "-v") {
       mta->verbose = 1;
       int vl;
@@ -683,29 +694,36 @@ int main(int argc, char* argv[])
       incs += tmp + " ";
 #endif
       mta->paths.AddUnique(taMisc::FinalPathSep(tmp.from(2)));
-    } else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
+    }
+    else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
         i++; // get filename, put in quotes in case of spaces
         incs += String("/I \"") + (const char*)argv[i] + "\" ";
         mta->paths.AddUnique(taMisc::FinalPathSep(argv[i]));
       }
-    } else if(tmp(0,2) == "-D")
+    }
+    else if(tmp(0,2) == "-D") {
       incs += tmp + " ";
+    }
     else if(tmp(0,2) == "/D") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
         i++; // get define
         incs += String("/D ") +  (const char*)argv[i] + " ";
       }
-    } else if(tmp(0,5) == "-cpp=") {
+    }
+    else if(tmp(0,5) == "-cpp=") {
       if (tmp.length() > 5)
         cpp = tmp.after(4);
-    } else if(tmp(0,8) == "-win_dll") {
+      // cerr << "set cpp: " << cpp << endl;
+    }
+    else if(tmp(0,8) == "-win_dll") {
 #ifdef TA_OS_WIN
       mta->win_dll = true;
       if(tmp(8,1) == "=")
         mta->win_dll_str = tmp.after(9);
 #endif
-    } else if(tmp(0,2) == "-f") {
+    }
+    else if(tmp(0,2) == "-f") {
       fstream fh(argv[i+1], ios::in);
       if(fh.bad() || fh.eof()) {
         cerr << argv[0] << " could not open -f file: " << argv[i+1] << "\n";
@@ -733,12 +751,12 @@ int main(int argc, char* argv[])
       fh.close(); fh.clear();
       i++;                      // skip to next one
     }
-    else if(tmp[0] == '-')
+    else if(tmp[0] == '-') {
       cerr << argv[0] << " unknown flag: " << tmp << "\n";
-    else if(tmp[0] == '+')
+    }
+    else if(tmp[0] == '+') {
       cerr << argv[0] << " unknown flag: " << tmp << "\n";
-    else if(mta->basename.empty())
-      mta->basename = tmp;
+    }
     else {
       // add the header file; see comments in loop above about duplicates
       bool ok = true;
@@ -747,10 +765,12 @@ int main(int argc, char* argv[])
       if (!mta->headv.AddUnique(MTA::lexCanonical(tfl))) {
         cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
       }
+      mta->basename = taMisc::GetFileFmPath(mta->headv[0]); // first is basename
     }
   }
 
 #ifdef TA_OS_WIN
+  // todo: this won't work anymore:
   if (mta->win_dll) { // make sure macro value is set
     if (mta->win_dll_str.empty())
       mta->win_dll_str = upcase(mta->basename) + "_API";
@@ -800,34 +820,15 @@ int main(int argc, char* argv[])
     cpp += " -lang-c++";
   String comnd_base = cpp + " " + incs;
 
-  mta->spc_target.name = mta->basename;
-  //note: even for hx mode, the filenames need to be proper here
-  // during the scan, because code does some kind of funky comparisons
-  // so we fix them up later
-  mta->ta_type_h = mta->basename + "_TA_type.h";
-  mta->ta_inst_h = mta->basename + "_TA_inst.h";
-  mta->ta_ccname = mta->basename + "_TA.cpp";
-
-  // create stub _type.h file if doesn't exist, so compiles don't fail
-  FILE* dummy = fopen(mta->ta_type_h, "r");
-  if (!dummy) {
-    dummy = fopen(mta->ta_type_h, "w");
-  }
-  fclose(dummy);
-
   String comnd;
   for(i=0; i<mta->headv.size; i++) {
     String tmp_file = taMisc::FinalPathSep(taMisc::GetTemporaryPath()) +
       taMisc::GetFileFmPath(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
     mta->fname = mta->headv.FastEl(i);
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
-//    mta->fname.makeUnique();
-//    mta->fname.gsub("/", "\\");
-//mta->fname.gsub(":", ":\\");
     comnd = comnd_base + " /D __MAKETA__ " + mta->fname + " > " + tmp_file;
 #else
     comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_file + " " + mta->fname;
-//    comnd = comnd_base + " -C -D__MAKETA__ " + mta->fname + " > " + tmp_file;
 #endif
 
     if(mta->verbose > 0)
@@ -835,8 +836,8 @@ int main(int argc, char* argv[])
     cout.flush();
     int ret_code = system((char*)comnd);
     if (ret_code != 0) {
-      cout << "**maketa command did not succeed (err code  " << ret_code << ")\n";
-      cout << "\n**maketa command was: " << comnd.chars() << "\n\n";
+      cout << "**maketa cpp command did not succeed (err code  " << ret_code << ")\n";
+      cout << "\n**maketa cpp command was: " << comnd.chars() << "\n\n";
       return ret_code;
     }
     fstream strm;
@@ -868,11 +869,13 @@ int main(int argc, char* argv[])
   }
   mta->spc_target.BorrowUniqNameOld(mta->spc_extern); // get those types
 
-  cout << "List of pre-parsed files processed:\n";
-  String ppi;
-  mta->pre_parse_inits.Print(ppi);
-  cout << ppi;
-  cout << "\n";
+  if(mta->verbose > 1) {
+    cout << "List of pre-parsed files processed:\n";
+    String ppi;
+    mta->pre_parse_inits.Print(ppi);
+    cout << ppi;
+    cout << "\n";
+  }
 
   if(mta->verbose > 1) {
     cout << "\nPreParsed Types\n";
@@ -883,14 +886,14 @@ int main(int argc, char* argv[])
   mta->SetPreParseFlag(mta->spc_target, mta->spc_pre_parse);
 
   // give it 5 passes through to try to get everything in order..
-  int swp_cnt = 0;
-  if(mta->verbose > 0)
-    cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(mta->spc_target))) {
-    swp_cnt++;
-    if(mta->verbose > 0)
-      cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  }
+  // int swp_cnt = 0;
+  // if(mta->verbose > 0)
+  //   cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  // while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(mta->spc_target))) {
+  //   swp_cnt++;
+  //   if(mta->verbose > 0)
+  //     cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  // }
 
   if(mta->verbose > 3) {
     String tl;
@@ -898,64 +901,27 @@ int main(int argc, char* argv[])
     cout << tl;
   }
 
-  // if using hx mode, modify filenames now at this point for output
-  if(mta->make_hx) {
-    mta->ta_type_h = mta->basename + "_TA_type.hx";
-    mta->ta_inst_h = mta->basename + "_TA_inst.hx";
-    mta->ta_ccname = mta->basename + "_TA.ccx";
-  }
-  fstream out_type_h, out_inst_h, outc;
+  fstream outc;
 
-  if(mta->gen_doc) {
-    fstream gen_doc_xml;
-    gen_doc_xml.open(mta->basename + "_TA_doc.xml", ios::out);
-    mta->GenDoc(&(mta->spc_target), gen_doc_xml);
-    gen_doc_xml.close();  gen_doc_xml.clear();
-  }
-  else {
-    out_type_h.open((char*)mta->ta_type_h, ios::out);
-    out_inst_h.open((char*)mta->ta_inst_h, ios::out);
-    outc.open((char*)mta->ta_ccname, ios::out);
+  // if(mta->gen_doc) {
+  //   fstream gen_doc_xml;
+  //   gen_doc_xml.open(mta->basename + "_TA_doc.xml", ios::out);
+  //   mta->GenDoc(&(mta->spc_target), gen_doc_xml);
+  //   gen_doc_xml.close();  gen_doc_xml.clear();
+  // }
+  // else {
+  outc.open((char*)mta->ta_ccname, ios::out);
 
-    mta->TypeSpace_Declare_Types(&(mta->spc_target), out_type_h, mta->headv);
-    out_type_h.close();  out_type_h.clear();
-    mta->TypeSpace_Declare_Instances(&(mta->spc_target), out_inst_h, mta->headv);
-    out_inst_h.close();  out_inst_h.clear();
-    mta->TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
-    outc.close();  outc.clear();
+  mta->TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
+  outc.close();  outc.clear();
 
-    /* update times...why do we have to do this?? */
+  /* update times...why do we have to do this?? */
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
-    //TODO: fails on Windows (no "touch" command)
+  //TODO: fails on Windows (no "touch" command)
 #else
-    comnd = String("touch ") + mta->ta_type_h;
-    int res = system(comnd);
-    comnd = String("touch ") + mta->ta_inst_h;
-    res = system(comnd);
-    comnd = String("touch ") + mta->ta_ccname;
-    res = system(comnd);
+  // comnd = String("touch ") + mta->ta_ccname;
+  // res = system(comnd);
 #endif
-
-    // if in autohx mode, then update files that changed
-    if (mta->make_hx && mta->auto_hx) {
-      String fin, fout;
-      fin = mta->basename + "_TA_type.hx";
-      fout = mta->basename + "_TA_type.h";
-      if (!files_same(fin.chars(), fout.chars())) {
-        copy_file(fin.chars(), fout.chars());
-      }
-      fin = mta->basename + "_TA_inst.hx";
-      fout = mta->basename + "_TA_inst.h";
-      if (!files_same(fin.chars(), fout.chars())) {
-        copy_file(fin.chars(), fout.chars());
-      }
-      fin = mta->basename + "_TA.ccx";
-      fout = mta->basename + "_TA.cpp";
-      if (!files_same(fin.chars(), fout.chars())) {
-        copy_file(fin.chars(), fout.chars());
-      }
-    }
-  }
 
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
     cerr << "\nM!!: TypeSpace size and hash_table bucket_max values:\n"

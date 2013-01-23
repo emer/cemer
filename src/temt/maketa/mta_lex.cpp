@@ -347,15 +347,6 @@ int MTA::lex() {
 
       String cur_fname_only = taMisc::GetFileFmPath(cur_fname);
 
-      // don't include the base_TA.h file for this one
-      if((cur_fname.contains(ta_type_h)) ||
-	 (cur_fname.contains(ta_inst_h)))
-      {
-	if(verbose > 1)
-	  cout << "\nSkipping: " << cur_fname << " because TA_xxx.h\n";
-	state = Skip_File;
-	continue;
-      }
       // don't include any other files that will be included later...
       int hfoidx = head_fn_hash.FindHashValString(cur_fname_only);
       if(hfoidx >= 0) {
@@ -436,8 +427,8 @@ int MTA::lex() {
 		ta_decl = ta_decl.after("TA_");
 		itm = new TypeDef(ta_decl, true);
 		itm->pre_parsed = true;
-		yylval.typ = spc_pre_parse.AddUniqNameOld(itm);
-		pre_parse_inits.AddUnique(cur_fname);
+		// yylval.typ = spc_pre_parse.AddUniqNameOld(itm);
+		// pre_parse_inits.AddUnique(cur_fname);
 		return TA_TYPEDEF;
 	      }
 	    }

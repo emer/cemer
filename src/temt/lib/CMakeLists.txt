@@ -28,6 +28,8 @@ include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_css_SRCS ${mypath}/css "${css_SRCS}")
 ADD_PATH_TO_FILES(temt_css_HEADS_MOC ${mypath}/css "${css_HEADS_MOC}")
 
+MAKETA_WRAP_H(temt_ta_SRCS_MAKETA ${temt_ta_HEADS_MAKETA})
+
 if (QT_USE_5)
   qt5_wrap_cpp(temt_taiqtso_SRCS_MOC ${temt_taiqtso_HEADS_MOC})
   qt5_wrap_ui(temt_taiqtso_SRCS_UIC ${temt_taiqtso_SRCS_UI})
@@ -45,7 +47,7 @@ endif (QT_USE_5)
 # just list whole set of files here
 set(temtlib_SRCS
 	${temt_taiqtso_SRCS} ${temt_taiqtso_SRCS_MOC} ${temt_taiqtso_SRCS_UIC}
-	${temt_ta_SRCS} ${temt_ta_SRCS_MOC}
+	${temt_ta_SRCS} ${temt_ta_SRCS_MAKETA} ${temt_ta_SRCS_MOC}
 	${temt_css_SRCS} ${temt_css_SRCS_MOC})
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)

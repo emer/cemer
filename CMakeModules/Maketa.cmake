@@ -11,7 +11,7 @@ macro (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)
 endmacro(MAKETA_GET_INC_DIRS)
 
 if (WIN32)
-  set(MAKETA_FLAGS -css -autohx -win_dll)
+  set(MAKETA_FLAGS -css -win_dll)
   
   # this is critical for allowing dependencies to work out, and for compiling w/out extra load
   macro(SET_TA_PROPS outfile)
@@ -23,7 +23,7 @@ if (WIN32)
   endmacro(SET_TA_PROPS)
 
 else (WIN32)
-  set(MAKETA_FLAGS -autohx -css -cpp=\"${CMAKE_CXX_COMPILER} -x c++-header -E\")
+  set(MAKETA_FLAGS -css -cpp=\"${CMAKE_CXX_COMPILER} -x c++-header -E\")
   
   macro(SET_TA_PROPS outfile)
     SET_SOURCE_FILES_PROPERTIES(${outfile}
@@ -37,9 +37,8 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
   
   add_custom_command(
     OUTPUT ${outfile}
-    COMMAND maketa
-    ARGS ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
-    DEPENDS ${infile} VERBATIM)
+    COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
+    DEPENDS ${infile})
   SET_TA_PROPS(${outfile})
 endmacro (CREATE_MAKETA_COMMAND)
 
