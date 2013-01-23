@@ -28,6 +28,8 @@ class iBrowseViewer; // #IGNORE
 class taiDataLink; // 
 
 
+TypeDef_Of(BrowseViewer);
+
 class TA_API BrowseViewer : public FrameViewer {
   // #NO_TOKENS ##DEF_NAME_ROOT_Tree ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)

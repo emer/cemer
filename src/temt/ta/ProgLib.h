@@ -27,6 +27,8 @@ class ProgLibEl; //
 class Program_Group; // 
 
 
+TypeDef_Of(ProgLib);
+
 class TA_API ProgLib: public ProgLibEl_List {
   // #INSTANCE #INLINE #CAT_Program the program library
 INHERITED(ProgLibEl_List)

@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DynEnumItem_List);
+
 class TA_API DynEnumItem_List : public taList<DynEnumItem> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program ##SCOPE_Program list of dynamic enumerated type items
 INHERITED(taList<DynEnumItem>)

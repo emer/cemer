@@ -27,6 +27,8 @@ class TypeDef; //
 class VEObject; // 
 
 
+TypeDef_Of(VEObjectView);
+
 class TA_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies
 INHERITED(T3DataViewPar)

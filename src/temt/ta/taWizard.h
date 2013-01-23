@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taWizard);
+
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
 INHERITED(taNBase)

@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(CellRange);
+
 class TA_API CellRange { // specifies a range of cells
 public:
   int row_fr;

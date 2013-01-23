@@ -27,6 +27,8 @@ class taNBase; //
 class DataTable; // 
 class ProgVar; //
 
+TypeDef_Of(ProgVar_List);
+
 class TA_API ProgVar_List : public taList<ProgVar> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
 INHERITED(taList<ProgVar>)

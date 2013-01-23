@@ -26,6 +26,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(ProgramCall);
+
 class TA_API ProgramCall: public ProgramCallBase {
   // call (run) another program, setting any arguments before hand
 INHERITED(ProgramCallBase)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(RelationFloat);
+
 class TA_API RelationFloat : public taNBase {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math counting criteria params
   INHERITED(taNBase)

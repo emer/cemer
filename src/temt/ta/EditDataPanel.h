@@ -27,6 +27,8 @@ class iColor;
 class taiEditDataHost; // #IGNORE
 
 
+TypeDef_Of(EditDataPanel);
+
 class TA_API EditDataPanel: public iDataPanelFrame {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for any edit dialog-like data panel
 INHERITED(iDataPanelFrame)

@@ -25,6 +25,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataSelectSpec);
+
 class TA_API DataSelectSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable select specification (list of select elements)
   INHERITED(DataOpBaseSpec)

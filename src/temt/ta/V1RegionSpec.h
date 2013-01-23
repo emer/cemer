@@ -215,6 +215,8 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(V1RegionSpec);
+
 class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)

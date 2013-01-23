@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(RandomCall);
+
 class TA_API RandomCall : public StaticMethodCall { 
   // call a Random number generation function
 INHERITED(StaticMethodCall)

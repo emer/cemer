@@ -25,6 +25,8 @@
 class MemberSpace;
 
 
+TypeDef_Of(taMemberSpaceDataLink);
+
 class TA_API taMemberSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for MemberSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)

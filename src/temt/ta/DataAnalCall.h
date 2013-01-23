@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(DataAnalCall);
+
 class TA_API DataAnalCall : public StaticMethodCall { 
   // call a taDataAnal (data analysis) function
 INHERITED(StaticMethodCall)

@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taTypeInfoTreeDataNode);
+
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:

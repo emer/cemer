@@ -28,6 +28,8 @@ class TypeDef; //
 class MethodDef; // 
 
 
+TypeDef_Of(StaticMethodCall);
+
 class TA_API StaticMethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a static method (member function) on a type
 INHERITED(ProgEl)

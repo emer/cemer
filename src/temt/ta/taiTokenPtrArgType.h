@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiTokenPtrArgType);
+
 class TA_API taiTokenPtrArgType : public taiArgType {
   // for pointers to tokens (uses appropriate scoping)
   TAI_ARGTYPE_SUBCLASS(taiTokenPtrArgType, taiArgType);

@@ -27,6 +27,8 @@ class TypeDef; //
 class VEStatic; // 
 
 
+TypeDef_Of(VEStaticView);
+
 class TA_API VEStaticView: public T3DataView {
   // view of one static environment element
 INHERITED(T3DataView)

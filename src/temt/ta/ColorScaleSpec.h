@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 class ColorScaleColor_List; //
 
+TypeDef_Of(ColorScaleSpec);
+
 class TA_API ColorScaleSpec : public taNBase {
   // ##CAT_Display Color Spectrum Data
 INHERITED(taNBase)
@@ -50,6 +52,6 @@ private:
   void  Destroy()               { };
 };
 
-SmartRef_Of(ColorScaleSpec,TA_ColorScaleSpec); // ColorScaleSpecRef
+SmartRef_Of(ColorScaleSpec); // ColorScaleSpecRef
 
 #endif // ColorScaleSpec_h

@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(T3DataViewMain);
+
 class TA_API T3DataViewMain: public T3DataViewPar {
   // base class for major self-contained view objects, which can be independently positioned etc (main classes under T3DataViewRoot)
 #ifndef __MAKETA__

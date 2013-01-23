@@ -31,6 +31,8 @@ class iCheckBox; // #IGNORE
 class taiComboBox; //
 class GraphTableView; //
 
+TypeDef_Of(iGraphTableView_Panel);
+
 class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
 INHERITED(iDataTableView_Panel)

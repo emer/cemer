@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(RandomSpec);
+
 class TA_API RandomSpec : public Random {
   // Random Number Generation -- use this for inline members (hides name field)
 INHERITED(Random)

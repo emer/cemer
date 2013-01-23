@@ -25,6 +25,8 @@
 class iMatrixEditor; // #IGNORE
 class iTableView; // #IGNORE
 
+TypeDef_Of(iMatrixPanel);
+
 class TA_API iMatrixPanel: public iDataPanelFrame {
   Q_OBJECT
 #ifndef __MAKETA__

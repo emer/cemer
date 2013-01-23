@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(GraphAxisView);
+
 class TA_API GraphAxisView : public GraphAxisBase {
   // a non-Y axis (X, Z, etc)
 INHERITED(GraphAxisBase)

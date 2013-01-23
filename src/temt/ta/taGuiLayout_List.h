@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taGuiLayout_List);
+
 class TA_API taGuiLayout_List : public taList<taGuiLayout> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Gui list of ta gui layouts
 INHERITED(taList<taGuiLayout>)

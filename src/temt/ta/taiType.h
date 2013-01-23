@@ -26,6 +26,8 @@ class taiData;
 class IDataHost;
 
 
+TypeDef_Of(taiType);
+
 class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
   TAI_TYPEBASE_SUBCLASS(taiType, taiTypeBase);

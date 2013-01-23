@@ -2938,10 +2938,10 @@ String TypeDef::Includes() {
 
 
 bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
-  bool new_file = taMisc::CreateNewSrcFiles(name, top_path, src_dir);
+  // bool new_file = taMisc::CreateNewSrcFiles(name, top_path, src_dir);
   String fname = name;
-  if(!new_file)
-    fname += "_new";		// create a new guy..
+  // if(!new_file)
+  //   fname += "_new";		// create a new guy..
 
   String src_path = top_path + "/" + src_dir + "/";
   String hfile = src_path + name + ".h";
@@ -2952,6 +2952,25 @@ bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
   hstr.Load_str(hstrm);
   hstrm.close();
 
+  String tdstr = "TypeDef_Of(" + name + ");";
+  if(hstr.contains(tdstr)) return false; // already done
+
+  String clnm = "\nclass TA_API " + name;
+
+  if(!hstr.contains(clnm)) {
+    String clnm2 = "\nclass TA_API  " + name;
+    if(!hstr.contains(clnm2)) {
+      taMisc::Error("CreateNewSrcFiles: class decl: ", clnm, "not found for class", name);
+      return false;
+    }
+    hstr.gsub(clnm2, clnm);     // fix it!
+  }
+
+  String before_class = hstr.before(clnm);
+  String from_class = hstr.from(clnm);
+  hstr = before_class + "\n" + tdstr + "\n" + from_class;
+
+#if 0
   if(hstr.contains("\n// parent includes:"))
     hstr = hstr.before("\n// parent includes:");
   else if(hstr.contains("\n#include"))
@@ -2977,13 +2996,15 @@ bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
   hstr << srcstr << "\n";
 
   hstr << "#endif // " << name << "_h\n";
+#endif
+
 
   fstream strm;
   strm.open(src_path + fname + ".h", ios::out);
   hstr.Save_str(strm);
   strm.close();
 
-  return new_file;
+  return true;
 }
 
 #ifndef NO_TA_BASE

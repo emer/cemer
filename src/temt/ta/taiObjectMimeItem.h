@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiObjectMimeItem);
+
 class TA_API taiObjectMimeItem: public taiMimeItem { // for tacss object
 INHERITED(taiMimeItem)
 friend class taiObjectsMimeItem;

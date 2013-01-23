@@ -29,6 +29,8 @@ class SelectEdit; //
 class taBase; // 
 class TypeDef; // 
 
+TypeDef_Of(taGroup_impl);
+
 class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #STEM_BASE implementation of a group
 INHERITED(taList_impl)

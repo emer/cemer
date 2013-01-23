@@ -25,6 +25,8 @@
 class DataViewer; // 
 
 
+TypeDef_Of(DataViewer_List);
+
 class TA_API DataViewer_List: public DataView_List {
   // #NO_TOKENS ##EXPAND_DEF_0 list of data viewers
 INHERITED(DataView_List)

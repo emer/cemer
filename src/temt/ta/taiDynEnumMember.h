@@ -27,6 +27,8 @@ class taiBitBox; // #IGNORE
 class DynEnum; //
 
 
+TypeDef_Of(taiDynEnumMember);
+
 class TA_API taiDynEnumMember : public taiMember {
   // an int member with #DYNENUM_ON_xxx flag indicating DynEnumType guy
   TAI_MEMBER_SUBCLASS(taiDynEnumMember, taiMember);

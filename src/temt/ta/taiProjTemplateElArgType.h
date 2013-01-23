@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiProjTemplateElArgType);
+
 class TA_API taiProjTemplateElArgType : public gpiFromGpArgType {
   // for ProjTemplateEl* ptr args
   TAI_ARGTYPE_SUBCLASS(taiProjTemplateElArgType, gpiFromGpArgType);

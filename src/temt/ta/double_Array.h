@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(double_Array);
+
 class TA_API double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of doubles
 INHERITED(taArray<double>)

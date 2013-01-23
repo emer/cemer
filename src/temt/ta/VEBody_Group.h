@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(VEBody_Group);
+
 class TA_API VEBody_Group : public taGroup<VEBody> {
   // ##CAT_VirtEnv a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)

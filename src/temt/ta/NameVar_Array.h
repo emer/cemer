@@ -26,6 +26,8 @@
 class String_Array; // 
 
 
+TypeDef_Of(NameVar_Array);
+
 class TA_API NameVar_Array : public taArray<NameVar> {
   // #NO_TOKENS an array of name value (variant) items
 INHERITED(taArray<NameVar>)

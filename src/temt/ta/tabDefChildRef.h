@@ -28,6 +28,8 @@ class taDataLink; //
 class tabDefChildTreeDataNode; // 
 
 
+TypeDef_Of(tabDefChildRef);
+
 class TA_API tabDefChildRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taList objects -- does not ref count, but is a dlc so it tracks changes etc.
 public:
   inline taList_impl*   ptr() const {return m_ptr;}

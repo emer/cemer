@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(float_Data);
+
 class TA_API float_Data : public DataColTp<float_Matrix> {
   // floating point data
 INHERITED(DataColTp<float_Matrix>)

@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(taPlainArray);
 
 template<class T>
 class taPlainArray : public taArray_impl {

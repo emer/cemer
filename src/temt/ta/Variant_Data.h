@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(Variant_Data);
+
 class TA_API Variant_Data : public DataColTp<Variant_Matrix> {
   // Variant data
 INHERITED(DataColTp<Variant_Matrix>)

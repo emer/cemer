@@ -29,6 +29,8 @@ class taiAction; //
 class QToolButton; // #IGNORE
 
 
+TypeDef_Of(T3SavedView);
+
 class TA_API T3SavedView : public taNBase {
   // ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
 INHERITED(taNBase)

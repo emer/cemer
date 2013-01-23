@@ -27,6 +27,8 @@ class EnumDef; //
 class taDataLink; //
 #endif
 
+TypeDef_Of(EnumSpace);
+
 class TA_API EnumSpace : public taPtrList<EnumDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of enums
 protected:

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(Comment);
+
 class TA_API Comment: public ProgEl { 
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)

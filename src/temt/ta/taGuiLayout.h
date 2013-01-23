@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taGuiLayout);
+
 class TA_API taGuiLayout : public taNBase {
   // ##CAT_Gui manages a qt layout for the taGui system
 INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references

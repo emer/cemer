@@ -132,8 +132,10 @@ private:
 
 #endif // __MAKETA__
 
+TypeDef_Of(taGroup);
 
-template<class T> class taGroup : public taGroup_impl {
+template<class T>
+class taGroup : public taGroup_impl {
   // #INSTANCE #NO_UPDATE_AFTER
   INHERITED(taGroup_impl)
 public:

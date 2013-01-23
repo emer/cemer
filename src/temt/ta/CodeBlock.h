@@ -27,6 +27,8 @@ class ProgVar; //
 class TypeDef; // 
 
 
+TypeDef_Of(CodeBlock);
+
 class TA_API CodeBlock: public ProgEl { 
   // a block of code (list of program elements), each executed in sequence
 INHERITED(ProgEl)

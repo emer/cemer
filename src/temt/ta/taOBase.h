@@ -25,6 +25,8 @@
 class UserDataItem_List; // 
 class taiMimeSource; //
 
+TypeDef_Of(taOBase);
+
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 INHERITED(taBase)

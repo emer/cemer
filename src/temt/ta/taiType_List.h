@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiType_List);
+
 class TA_API taiType_List : public taPtrList<taiType> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:

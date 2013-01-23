@@ -26,6 +26,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataSrcDestProg);
+
 class TA_API DataSrcDestProg : public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE a program element for data operations involving a source and destination (virtual base class -- do not use)
 INHERITED(ProgEl)

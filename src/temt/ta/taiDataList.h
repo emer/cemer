@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiDataList);
+
 class TA_API taiDataList : public taPtrList<taiData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS taiData list, OBJECTS ARE DELETED ON REMOVAL
 INHERITED(taPtrList<taiData>)

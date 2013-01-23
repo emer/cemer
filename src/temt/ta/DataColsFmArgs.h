@@ -26,6 +26,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataColsFmArgs);
+
 class TA_API DataColsFmArgs: public ProgEl { 
   // sets column value(s) in a data table based on startup arguments of the same name as the column -- row in data table to set values in is specified by a program variable (which can itself be previously set by an argument)
 INHERITED(ProgEl)

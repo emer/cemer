@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(slice_Matrix);
+
 class TA_API slice_Matrix: public int_Matrix {
   // #INSTANCE an int matrix that is used to hold slicing information for indexing -- type is just a marker to unambiguously indicate this form of indexing
 INHERITED(int_Matrix)

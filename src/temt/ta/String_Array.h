@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(String_Array);
+
 class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of Strings
 INHERITED(taArray<String>)

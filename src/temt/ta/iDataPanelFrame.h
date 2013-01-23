@@ -26,6 +26,8 @@ class iDataPanelSet; //
 class QHBoxLayout; //
 
 
+TypeDef_Of(iDataPanelFrame);
+
 class TA_API iDataPanelFrame: public iDataPanel {
   // this is the base for all panels for regular data items that the user controls the viewing of -- as contrasted with iViewPanelFrame which is only for view control panels
   Q_OBJECT

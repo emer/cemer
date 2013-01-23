@@ -28,6 +28,8 @@ class MemberDef; //
 class taiDataLink; // 
 
 
+TypeDef_Of(tabBrowseViewer);
+
 class TA_API tabBrowseViewer : public BrowseViewer {
   // #NO_TOKENS for browsing when root is a taBase
 INHERITED(BrowseViewer)

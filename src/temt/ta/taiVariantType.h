@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiVariantType);
+
 class TA_API taiVariantType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiVariantType, taiType);
 public:

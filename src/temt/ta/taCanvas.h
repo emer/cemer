@@ -31,6 +31,8 @@ class QBrush; // #IGNORE
 // declare all other types mentioned but not required to include:
 class QPainterPath; // #IGNORE
 
+TypeDef_Of(taCanvas);
+
 class TA_API taCanvas : public taImage {
   // ##CAT_Data provides a mechanism for drawing onto an image buffer
 INHERITED(taImage)

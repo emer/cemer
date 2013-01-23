@@ -42,6 +42,8 @@ class iT3DataViewFrame;
 
 */
 
+TypeDef_Of(T3DataViewFrame);
+
 class TA_API T3DataViewFrame : public DataViewer {
   // ##DEF_NAME_ROOT_Frame top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(DataViewer)

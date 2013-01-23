@@ -26,6 +26,8 @@ class taiMimeFactory; //
 class TypeDef; // 
 
 
+TypeDef_Of(taiMimeFactory_List);
+
 class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
 INHERITED(taList<taiMimeFactory>)
 public:

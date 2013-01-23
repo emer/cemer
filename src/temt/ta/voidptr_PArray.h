@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(voidptr_PArray);
+
 class TA_API voidptr_PArray: public taPlainArray<voidptr> {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS a plain-array of void* pointers
 public:

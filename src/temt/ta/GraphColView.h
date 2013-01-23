@@ -46,6 +46,8 @@ class TypeDef; //
   RASTER_AXIS -- set as raster_axis
 */
 
+TypeDef_Of(GraphColView);
+
 class TA_API GraphColView : public DataColView {
   // information for graph display of a column: note that the axis handles all the key display, so not much happens with this guy
 INHERITED(DataColView)

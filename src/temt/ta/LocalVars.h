@@ -26,6 +26,8 @@
 class ProgVar; // 
 
 
+TypeDef_Of(LocalVars);
+
 class TA_API LocalVars: public ProgEl {
   // ##DEF_CHILD_local_vars #AKA_ProgVars local program variables -- these variables do NOT use or update the values that are shown -- they exist only as script variables (unlike global args and vars)
 INHERITED(ProgEl)

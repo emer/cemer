@@ -27,6 +27,8 @@ class MemberDefBase; //
 class taDataLink; //
 #endif
 
+TypeDef_Of(MemberDefBase_List);
+
 class TA_API MemberDefBase_List: public taPtrList<MemberDefBase> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS common subtype for Member and PropertySpace
 public:

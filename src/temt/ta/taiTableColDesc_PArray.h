@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiTableColDesc_PArray);
+
 class TA_API taiTableColDesc_PArray: public taPlainArray<taiTableColDesc> {
  // #NO_CSS #NO_MEMBERS
 public:

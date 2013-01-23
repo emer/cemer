@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ColorScaleColor);
+
 class TA_API ColorScaleColor : public taBase { // ##NO_TOKENS Color
 INHERITED(taBase)
 public:

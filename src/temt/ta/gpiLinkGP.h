@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiLinkGP);
+
 class TA_API gpiLinkGP : public taiMember {
   TAI_MEMBER_SUBCLASS(gpiLinkGP, taiMember);
 public:

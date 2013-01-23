@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(GridSearch);
+
 class TA_API GridSearch : public ParamSearchAlgo {
   // Grid Search algorithm.
   INHERITED(ParamSearchAlgo)

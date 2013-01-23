@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(RndSeed_List);
+
 class TA_API RndSeed_List : public taNBase {
   // ##CAT_Math ##DEF_CHILD_seeds ##DEF_CHILDNAME_Random_Seeds list of random seeds
 INHERITED(taNBase)

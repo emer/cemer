@@ -2155,15 +2155,15 @@ bool taMisc::CreateNewSrcFiles(const String& type_nm, const String& top_path,
         << "// member includes:\n\n"
         << "// declare all other types mentioned but not required to include:\n\n"
         << "TypeDef_Of(" << type_nm << ");\n\n"
-        // << "class X_API " << type_nm << " : public taNBase {\n"
-        // << "  // <describe here in full detail in one extended line comment>\n"
-        // << "INHERITED(taNBase)\n"
-        // << "public:\n\n"
-        // << "  TA_SIMPLE_BASEFUNS(" << type_nm << ");\n"
-        // << "private:\n"
-        // << "  void Initialize()  { };\n"
-        // << "  void Destroy()     { };\n"
-        // << "};\n\n"
+        << "class X_API " << type_nm << " : public taNBase {\n"
+        << "  // <describe here in full detail in one extended line comment>\n"
+        << "INHERITED(taNBase)\n"
+        << "public:\n\n"
+        << "  TA_SIMPLE_BASEFUNS(" << type_nm << ");\n"
+        << "private:\n"
+        << "  void Initialize()  { };\n"
+        << "  void Destroy()     { };\n"
+        << "};\n\n"
         << "#endif // " << type_nm << "_h\n";
     fstream strm;
     strm.open(hfile, ios::out);
@@ -2254,26 +2254,26 @@ void taMisc::CreateAllNewSrcFiles() {
   while(i < types.size) {
     TypeDef* typ = types.FastEl(i);
     bool dbg = false;
-    if(typ->InheritsFormal(&TA_template)) {
-      taMisc::Info("template: ", typ->name);
-      dbg = true;
-    }
+    // if(typ->InheritsFormal(&TA_template)) {
+    //   taMisc::Info("template: ", typ->name);
+    //   dbg = true;
+    // }
     if(!typ->IsClass() || !typ->IsAnchor()) {
       if(dbg) taMisc::Info("fail class, anchor");
       i++;
       continue;
     }
-    if(!typ->source_file.startsWith("ta_")) {
+    if(!typ->source_file.startsWith(typ->name)) {
       if(dbg) taMisc::Info("fail src file");
       i++;
       continue;
     }
-    if(typ->InheritsFormal(TA_templ_inst)) {
-      if(dbg) taMisc::Info("fail templ inst");
-      i++;
-      continue;
-    }
-    int chs = taMisc::Choice("Create new source file for: " + typ->name,
+    // if(typ->InheritsFormal(TA_templ_inst)) {
+    //   if(dbg) taMisc::Info("fail templ inst");
+    //   i++;
+    //   continue;
+    // }
+    int chs = taMisc::Choice("Fix new source file for: " + typ->name,
 			     "Yes", "No", "Back", "Cancel");
     if(chs == 3) break;
     if(chs == 2) {

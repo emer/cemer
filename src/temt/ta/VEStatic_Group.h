@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(VEStatic_Group);
+
 class TA_API VEStatic_Group : public taGroup<VEStatic> {
   // ##CAT_VirtEnv a group of virtual environment static elements
 INHERITED(taGroup<VEStatic>)

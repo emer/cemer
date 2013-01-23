@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class iProgramEditor;
 
+TypeDef_Of(iProgramPanelBase);
+
 class TA_API iProgramPanelBase: public iDataPanelFrame {
 // ##NO_CSS note: ProgramPanel and ProgramGroupPanel are almost identical
 INHERITED(iDataPanelFrame)

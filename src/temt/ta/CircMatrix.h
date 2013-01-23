@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(CircMatrix);
+
 class TA_API CircMatrix : public taNBase {
   // ##TOKENS #CAT_Data Circular buffer logic on top of a matrix -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items -- the *LAST* dimension is the circular one (i.e., the "frame" dimension)
 INHERITED(taNBase)

@@ -25,6 +25,8 @@
 class iTabView;  //
 class iDataPanel; //
 
+TypeDef_Of(iDataPanel_PtrList);
+
 class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   iTabView*     m_tabView; // optional, we manage the refs in panels if set

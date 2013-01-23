@@ -26,6 +26,8 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
+TypeDef_Of(float_Matrix);
+
 class TA_API float_Matrix: public taMatrixT<float> {
   // #INSTANCE a matrix of floats
 INHERITED(taMatrixT<float>)

@@ -25,6 +25,8 @@
 class T3TransformBoxDragger; // 
 
 
+TypeDef_Of(T3VEJoint);
+
 class TA_API T3VEJoint : public T3NodeLeaf {
   // joint for virtual environment
 #ifndef __MAKETA__

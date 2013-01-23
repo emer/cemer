@@ -25,7 +25,9 @@
 // declare all other types mentioned but not required to include:
 
 
-class TA_API  taFixedArray_impl {
+TypeDef_Of(taFixedArray_impl);
+
+class TA_API taFixedArray_impl {
   // #VIRT_BASE ##NO_INSTANCE #NO_TOKENS basic subtype for FixedArray, no tokens of which are ever kept
 public:
   int           size;                   // #NO_SAVE #READ_ONLY number of elements in the array

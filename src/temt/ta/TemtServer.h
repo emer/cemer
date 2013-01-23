@@ -27,6 +27,8 @@ class TemtServerAdapter; // #IGNORE
 class QTcpServer;        // #IGNORE
 
 
+TypeDef_Of(TemtServer);
+
 class TA_API TemtServer: public taOABase { 
   // #INSTANCE #TOKENS Temt Server, for tcp-based remote services 
 INHERITED(taOABase)

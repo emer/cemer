@@ -29,6 +29,8 @@
 class QObject; // 
 class taGuiActionHelper; // #IGNORE
 
+TypeDef_Of(taGuiAction);
+
 class TA_API taGuiAction : public taNBase {
   // ##CAT_Gui manages a qt action for the taGui system
 INHERITED(taNBase)

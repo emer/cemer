@@ -27,6 +27,8 @@ class Program; //
 class ProgVar; // 
 
 
+TypeDef_Of(ProgEl_List);
+
 class TA_API ProgEl_List: public taList<ProgEl> {
   // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
 INHERITED(taList<ProgEl>)

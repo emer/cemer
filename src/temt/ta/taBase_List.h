@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taBase_List);
+
 class TA_API taBase_List : public taList<taBase> {
   // #NO_TOKENS #NO_UPDATE_AFTER list of base objects
 INHERITED(taList<taBase>)

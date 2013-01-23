@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(String_Data);
+
 class TA_API String_Data : public DataColTp<String_Matrix> {
   // string data
 INHERITED(DataColTp<String_Matrix>)

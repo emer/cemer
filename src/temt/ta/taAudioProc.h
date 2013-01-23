@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taAudioProc);
+
 class TA_API taAudioProc : public taNBase {
   // #STEM_BASE ##CAT_Audio basic audio processing operations
 INHERITED(taNBase)

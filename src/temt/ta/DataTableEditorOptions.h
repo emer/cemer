@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataTableEditorOptions);
+
 class TA_API DataTableEditorOptions : public taOBase {
   // for specifying and saving params for editing options
 INHERITED(taOBase)

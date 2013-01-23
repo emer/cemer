@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiMatrixDataMimeItem);
+
 class TA_API taiMatrixDataMimeItem: public taiTabularDataMimeItem { // this class handles Matrix -- optimized since we know the dims, and know the data is accurate
   INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy

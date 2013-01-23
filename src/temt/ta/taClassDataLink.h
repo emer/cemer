@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taClassDataLink);
+
 class TA_API taClassDataLink: public taiDataLink { // DataLink for TypeInfo objects
 INHERITED(taiDataLink)
 public:

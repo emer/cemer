@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(int_Data);
+
 class TA_API int_Data : public DataColTp<int_Matrix> {
   // int data
 INHERITED(DataColTp<int_Matrix>)

@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(Wizard_Group);
+
 class TA_API Wizard_Group : public taGroup<taWizard> {
   // ##CAT_Wizard ##EXPAND_DEF_1 group of wizard objects
 INHERITED(taGroup<taWizard>)

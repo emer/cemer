@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(SelectEdit_Group);
+
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
   // ##CAT_Display ##EXPAND_DEF_1 group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)

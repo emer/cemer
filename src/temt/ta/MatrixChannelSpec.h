@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(MatrixChannelSpec);
+
 class TA_API MatrixChannelSpec: public ChannelSpec {
   // describes a matrix channel of data in a DataBlock
 INHERITED(ChannelSpec)

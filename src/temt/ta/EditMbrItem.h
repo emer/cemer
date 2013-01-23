@@ -25,6 +25,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(EditMbrItem);
+
 class TA_API EditMbrItem: public SelectEditItem {
   // a member select edit item -- allows editing of just one member from a class
   INHERITED(SelectEditItem)

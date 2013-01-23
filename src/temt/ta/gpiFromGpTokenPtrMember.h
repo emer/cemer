@@ -25,6 +25,8 @@
 class taList_impl; //
 
 
+TypeDef_Of(gpiFromGpTokenPtrMember);
+
 class TA_API gpiFromGpTokenPtrMember : public taiTokenPtrMember {
   TAI_MEMBER_SUBCLASS(gpiFromGpTokenPtrMember, taiTokenPtrMember);
 public:

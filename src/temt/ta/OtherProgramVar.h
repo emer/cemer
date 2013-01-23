@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(OtherProgramVar);
+
 class TA_API OtherProgramVar : public ProgEl { 
   // A program element for exchanging variable information between programs -- variables must have the same names in both programs
 INHERITED(ProgEl)

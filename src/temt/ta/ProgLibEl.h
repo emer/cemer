@@ -26,6 +26,8 @@
 class Program_Group; //
 class Program; //
 
+TypeDef_Of(ProgLibEl);
+
 class TA_API ProgLibEl: public taNBase {
   // #INSTANCE #INLINE #CAT_Program an element in the program library
 INHERITED(taNBase)

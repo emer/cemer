@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taUndoRec_List);
+
 class TA_API taUndoRec_List : public taList<taUndoRec> {
   // ##CAT_Undo list of undo records -- managed using circular buffer logic per new functions
 INHERITED(taList<taUndoRec>)

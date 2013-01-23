@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiTAPtrArgType);
+
 class TA_API gpiTAPtrArgType : public taiTokenPtrArgType {
   // for taBase pointers in groups, sets the typedef to be the right one..
   TAI_ARGTYPE_SUBCLASS(gpiTAPtrArgType, taiTokenPtrArgType);

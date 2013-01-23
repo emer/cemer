@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(UserData_DocLink);
+
 class TA_API UserData_DocLink: public UserDataItemBase {
   // a link to a doc -- when added to the userdata of an obj, will auto display the doc
 INHERITED(UserDataItemBase)

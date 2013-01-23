@@ -46,7 +46,9 @@ class taHashTable; //
 //                      PtrList
 /////////////////////////////////////////////////////////////////////
 
-class TA_API  taPtrList_impl {
+TypeDef_Of(taPtrList_impl);
+
+class TA_API taPtrList_impl {
   // #NO_TOKENS implementation of the pointer list class
 public:
   enum KeyType {

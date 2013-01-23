@@ -30,6 +30,8 @@
 // yet **another** color class!! but SbColor is not very convenient or intuitive, so
 // we use this to facilitate api simplification
 
+TypeDef_Of(T3Color);
+
 class TA_API T3Color { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS color for Coin 3d uses
 public:
 #ifdef __MAKETA__

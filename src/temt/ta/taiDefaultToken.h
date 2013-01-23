@@ -25,6 +25,8 @@
 class TypeDefault; //
 
 
+TypeDef_Of(taiDefaultToken);
+
 class TA_API taiDefaultToken : public taiTokenPtrMember {
   // Special edit menu for the TDefault's token member
   TAI_MEMBER_SUBCLASS(taiDefaultToken, taiTokenPtrMember);

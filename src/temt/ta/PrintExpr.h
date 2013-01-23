@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(PrintExpr);
+
 class TA_API PrintExpr: public ProgEl { 
   // print out (to the console) an expression -- e.g., an informational message for the user
 INHERITED(ProgEl)

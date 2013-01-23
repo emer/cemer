@@ -29,6 +29,8 @@ class iFlowLayout; // #IGNORE
 class iColor; //
 class iLabel; // #IGNORE
 
+TypeDef_Of(taiDataHost_impl);
+
 class TA_API taiDataHost_impl: public taiDataHostBase, virtual public IDataHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)

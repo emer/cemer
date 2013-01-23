@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiRealType);
+
 class TA_API taiRealType : public taiType { // handles real types, provides validators
   TAI_TYPEBASE_SUBCLASS(taiRealType, taiType);
 public:

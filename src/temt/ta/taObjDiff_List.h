@@ -28,6 +28,8 @@ class taBase; //
 class int_PArray;
 
 
+TypeDef_Of(taObjDiff_List);
+
 class TA_API taObjDiff_List: public taPtrList<taObjDiffRec> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS list of object difference records
 protected:

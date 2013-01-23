@@ -27,6 +27,8 @@ class cssProgSpace; //
 class cssTA_Base; // 
 
 
+TypeDef_Of(AbstractScriptBase);
+
 class TA_API AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE abstract class for adding a script to other objects
 public:

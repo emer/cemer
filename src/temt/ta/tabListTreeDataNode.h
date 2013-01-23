@@ -25,6 +25,8 @@
 class tabListDataLink;
 
 
+TypeDef_Of(tabListTreeDataNode);
+
 class TA_API tabListTreeDataNode: public tabParTreeDataNode {
 INHERITED(tabParTreeDataNode)
 public:

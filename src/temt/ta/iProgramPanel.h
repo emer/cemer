@@ -26,6 +26,8 @@ class Program; //
 class iTreeViewItem; //
 
 
+TypeDef_Of(iProgramPanel);
+
 class TA_API iProgramPanel: public iProgramPanelBase {
 INHERITED(iProgramPanelBase)
   Q_OBJECT

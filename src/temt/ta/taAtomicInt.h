@@ -90,7 +90,9 @@ public:
 # endif  // QT_VERSION
 #endif   // __MAKETA__
 
-class taAtomicInt : public QAtomicInt {
+TypeDef_Of(taAtomicInt);
+
+class TA_API taAtomicInt : public QAtomicInt {
 public:
 # if (QT_VERSION >= 0x050000)
   // Non-atomic API

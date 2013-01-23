@@ -25,6 +25,8 @@
 class PropertyDef; //
 
 
+TypeDef_Of(PropertySpace);
+
 class TA_API PropertySpace: public MemberDefBase_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of properties -- note: will hold PropertyDef (owned) and MemberDef (linked) objects
 INHERITED(MemberDefBase_List)

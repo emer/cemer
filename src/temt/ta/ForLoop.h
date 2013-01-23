@@ -26,6 +26,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(ForLoop);
+
 class TA_API ForLoop: public Loop { 
   // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
 INHERITED(Loop)

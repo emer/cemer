@@ -26,6 +26,8 @@
 class UserDataItem; // 
 
 
+TypeDef_Of(UserDataItem_List);
+
 class TA_API UserDataItem_List: public taGroup<UserDataItemBase> {
   // #CHILDREN_INLINE list of user data items
 INHERITED(taGroup<UserDataItemBase>)

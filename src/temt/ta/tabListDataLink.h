@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabListDataLink);
+
 class TA_API tabListDataLink: public tabODataLink {
   // DataLink for taList objects -- note that it also manages the ListView nodes
 INHERITED(tabODataLink)

@@ -25,6 +25,8 @@
 class iToolBoxDockViewer; // 
 
 
+TypeDef_Of(ToolBoxDockViewer);
+
 class TA_API ToolBoxDockViewer : public DockViewer {
   // ##DEF_NAME_ROOT_ToolBox floatable dockable toolbox window
 INHERITED(DockViewer)

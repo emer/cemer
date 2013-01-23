@@ -27,6 +27,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataJoinProg);
+
 class TA_API DataJoinProg : public DataSrcDestProg { 
   // joins two datatables (src and src_b) into dest datatable indexed by a common column
 INHERITED(DataSrcDestProg)

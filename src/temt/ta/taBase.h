@@ -363,7 +363,7 @@ public: \
 // standard smart refs and ptrs -- you should use this for every class
 #define TA_SMART_PTRS(y) \
   SmartPtr_Of(y) \
-  SmartRef_Of(y, TA_ ## y);
+  SmartRef_Of(y);
 
 // generic iterator over items in taBase containers
 #define TA_FOREACH(ELEM_VAR_NAME, LIST)                        \
@@ -403,6 +403,8 @@ public: \
 
 ////////////////////////////////////////////////////////////////////////////////////
 //              ta Base   ---   The Base of all type-aware classes
+
+TypeDef_Of(taBase);
 
 class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes

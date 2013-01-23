@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(TreeDecorationSpec_List);
+
 class TA_API TreeDecorationSpec_List: public taList<TreeDecorationSpec> {
 INHERITED(taList<TreeDecorationSpec>)
 public:

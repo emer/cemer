@@ -25,6 +25,8 @@
 class taiDataHost_impl; //
 
 
+TypeDef_Of(iUserDataPanel);
+
 class TA_API iUserDataPanel: public iDataPanelFrame {
 // ##NO_CSS note: UserDataItem_List main panel (for users)
 INHERITED(iDataPanelFrame)

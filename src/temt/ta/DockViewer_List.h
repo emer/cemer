@@ -25,6 +25,8 @@
 class DockViewer; // 
 
 
+TypeDef_Of(DockViewer_List);
+
 class TA_API DockViewer_List: public DataViewer_List { // #NO_TOKENS
 INHERITED(DataViewer_List)
 public:

@@ -36,6 +36,8 @@ class T3GraphViewNode; //
 class T3GraphLine; //
 
 
+TypeDef_Of(GraphTableView);
+
 class TA_API GraphTableView: public DataTableView {
   // the master view guy for entire graph view
 INHERITED(DataTableView)

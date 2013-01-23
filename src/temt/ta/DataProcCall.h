@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(DataProcCall);
+
 class TA_API DataProcCall : public StaticMethodCall { 
   // call a taDataProc (data processing/database) function
 INHERITED(StaticMethodCall)

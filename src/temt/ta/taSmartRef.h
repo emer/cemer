@@ -27,6 +27,8 @@ class TypeDef; //
 class taDataLink; // 
 
 
+TypeDef_Of(taSmartRef);
+
 class TA_API taSmartRef: protected IDataLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##SMART_POINTER safe reference for taBase objects -- does not ref count, but is a data link client so it tracks changes and automatically sets ptr to NULL when object dies
 friend class taBase;

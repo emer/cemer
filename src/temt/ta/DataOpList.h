@@ -26,6 +26,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataOpList);
+
 class TA_API DataOpList : public taList<DataOpEl> {
   // ##CAT_Data a list of data table operations
 INHERITED(taList<DataOpEl>)

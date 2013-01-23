@@ -25,6 +25,8 @@
 class taPlugin; // 
 
 
+TypeDef_Of(taPlugin_List);
+
 class TA_API taPlugin_List: public taPluginBase_List {
   // ##EXPAND_DEF_1 plugins available to the program (also used for descs)
 INHERITED(taPluginBase_List)

@@ -28,6 +28,8 @@
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
 
+TypeDef_Of(VEJoint);
+
 class TA_API VEJointStops : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
 INHERITED(taOBase)
@@ -213,6 +215,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEJoint,TA_VEJoint); // VEJointRef
+SmartRef_Of(VEJoint); // VEJointRef
 
 #endif // VEJoint_h

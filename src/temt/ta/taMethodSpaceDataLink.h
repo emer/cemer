@@ -25,6 +25,8 @@
 class MethodSpace;
 
 
+TypeDef_Of(taMethodSpaceDataLink);
+
 class TA_API taMethodSpaceDataLink: public taTypeSpaceDataLink_Base {
   // DataLink for MethodSpace objects -- note that it also manages the ListView nodes
 INHERITED(taTypeSpaceDataLink_Base)

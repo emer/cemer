@@ -28,6 +28,8 @@ class TypeDef; //
 class MethodDef; // 
 
 
+TypeDef_Of(MethodCall);
+
 class TA_API MethodCall: public ProgEl { 
   // ##DEF_CHILD_meth_args call a method (member function) on an object
 INHERITED(ProgEl)

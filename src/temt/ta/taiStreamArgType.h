@@ -25,6 +25,8 @@
 class taFiler; //
 
 
+TypeDef_Of(taiStreamArgType);
+
 class TA_API taiStreamArgType : public taiArgType {
   // for ios derived args (uses a file-requestor)
   TAI_ARGTYPE_SUBCLASS(taiStreamArgType, taiArgType);

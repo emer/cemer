@@ -29,6 +29,8 @@
 class iLineEdit; // #IGNORE
 class QProgressBar; // #IGNORE
 
+TypeDef_Of(iDocDataPanel);
+
 class TA_API iDocDataPanel: public iDataPanelFrame {
   // a panel frame for displaying docs
   Q_OBJECT

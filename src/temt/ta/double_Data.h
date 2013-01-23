@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(double_Data);
+
 class TA_API double_Data : public DataColTp<double_Matrix> {
   // doubleing point data
 INHERITED(DataColTp<double_Matrix>)

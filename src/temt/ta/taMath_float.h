@@ -30,6 +30,8 @@ class RelationFloat; //
 class Aggregate; // 
 
 
+TypeDef_Of(taMath_float);
+
 class TA_API taMath_float : public taMath {
   // single-precision (float) math computations
 INHERITED(taMath)

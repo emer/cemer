@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiTreeDataNode);
+
 class TA_API taiTreeDataNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:

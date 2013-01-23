@@ -34,6 +34,8 @@ class float_Matrix; //
 
 // note: following is informed by http://willperone.net/Code/quaternion.php and ODE code
 
+TypeDef_Of(taQuaternion);
+
 class TA_API taQuaternion: public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a quaternion representation of 3D rotation 
   INHERITED(taBase)

@@ -26,6 +26,8 @@
 class VEBody; // 
 
 
+TypeDef_Of(VEObject_Group);
+
 class TA_API VEObject_Group : public taGroup<VEObject> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VEObject>)

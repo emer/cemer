@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(String_PArray);
+
 class TA_API String_PArray : public taPlainArray<String> {
   // #NO_TOKENS a plain-array of strings
 INHERITED(taPlainArray<String>)

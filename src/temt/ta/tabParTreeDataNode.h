@@ -26,6 +26,8 @@
 class taiTreeDataNode; //
 
 
+TypeDef_Of(tabParTreeDataNode);
+
 class TA_API tabParTreeDataNode: public tabTreeDataNode {
 INHERITED(tabTreeDataNode)
 public:

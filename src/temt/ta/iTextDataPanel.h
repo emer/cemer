@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(iTextDataPanel);
+
 class TA_API iTextDataPanel: public iDataPanelFrame {
   // a panel frame for displaying text; used, ex. by Scripts and Programs
   Q_OBJECT

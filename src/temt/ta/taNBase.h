@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taNBase);
+
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 INHERITED(taOBase)
 public:

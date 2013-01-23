@@ -25,6 +25,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+TypeDef_Of(T3TransformBoxRotatorRotator);
+
 class TA_API T3TransformBoxRotatorRotator: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the transformBoxRotatorRotator
 #ifndef __MAKETA__

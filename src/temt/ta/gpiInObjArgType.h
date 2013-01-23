@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiInObjArgType);
+
 class TA_API gpiInObjArgType : public gpiTAPtrArgType {
   // for taBase pointers in groups with ARG_IN_OBJ
   TAI_ARGTYPE_SUBCLASS(gpiInObjArgType, gpiTAPtrArgType);

@@ -27,6 +27,8 @@ class iMethodButtonMgr; //
 class VEWorldView; //
 
 
+TypeDef_Of(VEWorldViewPanel);
+
 class TA_API VEWorldViewPanel: public iViewPanelFrame {
   // frame for gui interface to a VEWorldView -- usually posted by the worldview
 INHERITED(iViewPanelFrame)

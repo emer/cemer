@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ViewSpec);
+
 class TA_API ViewSpec: public taDataView {
   // ##CAT_Display generic specification for a view of some item
 INHERITED(taDataView)

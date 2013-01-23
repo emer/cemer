@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(IfContinue);
+
 class TA_API IfContinue: public ProgEl { 
   // if condition is true, continue looping (skip any following code and loop back to top of loop) (can leave condition empty to just insert an unconditional continue)
 INHERITED(ProgEl)

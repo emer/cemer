@@ -59,6 +59,8 @@ class taMatrix; //
 
 */
 
+TypeDef_Of(taiTabularDataMimeFactory);
+
 class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
 // this factory handles both Matrix and Table clipboard formats
 INHERITED(taiMimeFactory)

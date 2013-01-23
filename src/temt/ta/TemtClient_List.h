@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(TemtClient_List);
+
 class TA_API TemtClient_List: public taList<TemtClient> {
 public:
   TA_BASEFUNS2_NOCOPY(TemtClient_List, taList<TemtClient>);

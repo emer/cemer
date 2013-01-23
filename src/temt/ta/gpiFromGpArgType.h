@@ -25,6 +25,8 @@
 class taList_impl; //
 
 
+TypeDef_Of(gpiFromGpArgType);
+
 class TA_API gpiFromGpArgType : public taiTokenPtrArgType {
   // for taBase pointers with FROM_GROUP_xxx
   TAI_ARGTYPE_SUBCLASS(gpiFromGpArgType, taiTokenPtrArgType);

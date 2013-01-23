@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabDefChildTreeDataNode);
+
 class TA_API tabDefChildTreeDataNode: public tabParTreeDataNode {
 INHERITED(tabParTreeDataNode)
 friend class tabDefChildRef;

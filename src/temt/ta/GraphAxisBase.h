@@ -32,6 +32,8 @@ class GraphTableView; //
 class T3Axis; //
 
 
+TypeDef_Of(GraphAxisBase);
+
 class TA_API GraphAxisBase : public T3DataView {
   // ##INLINE base class for data about axis on a graph
 INHERITED(T3DataView)

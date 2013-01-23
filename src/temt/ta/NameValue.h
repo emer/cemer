@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(NameValue);
+
 class TA_API NameValue : public taNBase {
   // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER name/value pair
 INHERITED(taNBase)

@@ -32,6 +32,8 @@ class DataColView; //
 class iDataTableView_Panel; //
 
 
+TypeDef_Of(DataTableView);
+
 class TA_API DataTableView : public T3DataViewMain {
   // #VIRT_BASE base class of grid and graph views
 INHERITED(T3DataViewMain)

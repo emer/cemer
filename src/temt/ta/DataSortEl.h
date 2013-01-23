@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataSortEl);
+
 class TA_API DataSortEl : public DataOpEl {
   // one element of a data sorting specification
   INHERITED(DataOpEl)

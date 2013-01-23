@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(SArgEdit);
+
 class TA_API SArgEdit : public gpiArrayEdit {
   TAI_TYPEBASE_SUBCLASS(SArgEdit, gpiArrayEdit);
 public:

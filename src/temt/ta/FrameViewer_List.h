@@ -25,6 +25,8 @@
 class FrameViewer; // 
 
 
+TypeDef_Of(FrameViewer_List);
+
 class TA_API FrameViewer_List: public DataViewer_List { // #NO_TOKENS
 INHERITED(DataViewer_List)
 public:

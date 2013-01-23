@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DirectoryCatalog);
+
 class TA_API DirectoryCatalog: public DataBlock_Idx {
   // #INSTANCE a DirectoryCatalog provides a list of files in a directory
 INHERITED(DataBlock_Idx)

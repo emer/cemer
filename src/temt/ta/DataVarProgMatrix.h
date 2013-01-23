@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataVarProgMatrix);
+
 class TA_API DataVarProgMatrix : public DataVarProg { 
   // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- for matrix variables up to 4 cells (var_1 is first cell, var_2 is second cell..), name of column is var name before last '_'
 INHERITED(DataVarProg)

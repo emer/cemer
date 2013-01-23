@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ConsoleDockViewer);
+
 class TA_API ConsoleDockViewer: public DockViewer {
   // #NO_TOKENS ##DEF_NAME_ROOT_Console encapsulates the console into a dock viewer window
 INHERITED(DockViewer)

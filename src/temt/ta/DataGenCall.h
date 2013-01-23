@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(DataGenCall);
+
 class TA_API DataGenCall : public StaticMethodCall { 
   // call a taDataGen (data generation) function
 INHERITED(StaticMethodCall)

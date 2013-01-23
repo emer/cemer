@@ -30,6 +30,8 @@
 class DataTable;
 
 
+TypeDef_Of(FixedWidthSpec);
+
 class TA_API FixedWidthSpec: public taNBase {
   // ##CAT_Data ##TOKENS spec for doing a Fixed Width import of text into a DataTable
 INHERITED(taNBase)

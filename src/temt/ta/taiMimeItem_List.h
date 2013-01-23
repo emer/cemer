@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiMimeItem_List);
+
 class TA_API taiMimeItem_List: public taList<taiMimeItem> {
 INHERITED(taList<taiMimeItem>)
 public:

@@ -34,6 +34,8 @@ class taImage; //
 class DataTable; // 
 
 
+TypeDef_Of(RetinaProc);
+
 class TA_API RetinaProc : public taNBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_regions ##DEF_CHILDNAME_Regions full specification of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(taNBase)
@@ -148,7 +150,7 @@ protected:
 
 };
 
-SmartRef_Of(RetinaProc,TA_RetinaProc); // RetinaProcRef
+SmartRef_Of(RetinaProc); // RetinaProcRef
 
 class TA_API DoGRetinaProc : public RetinaProc {
   // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params

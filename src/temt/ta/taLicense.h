@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taLicense);
+
 class TA_API taLicense : public taOBase {
   // #EDIT_INLINE license information -- attach a license to an object
 INHERITED(taOBase)

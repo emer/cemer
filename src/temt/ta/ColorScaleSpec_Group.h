@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ColorScaleSpec_Group);
+
 class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
   // ##CAT_Display group of color scale specs
 INHERITED(taGroup<ColorScaleSpec>)

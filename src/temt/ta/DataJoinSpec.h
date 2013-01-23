@@ -26,6 +26,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DataJoinSpec);
+
 class TA_API DataJoinSpec : public taNBase {
   // #STEM_BASE ##INLINE ##CAT_Data datatable join specification: combine two tables along matching column values -- tables are both sorted (internally) by join col, so results are in that sort order
   INHERITED(taNBase)

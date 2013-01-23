@@ -26,6 +26,8 @@ class taBase; //
 class EditDataPanel; //
 
 
+TypeDef_Of(tabViewType);
+
 class TA_API tabViewType: public taiViewType { // for taBase and descendants
   TAI_TYPEBASE_SUBCLASS(tabViewType, taiViewType)
 public:

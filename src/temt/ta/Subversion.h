@@ -21,6 +21,8 @@
 
 // This class provides emergent programs with static functions that wrap
 // the SubversionClient API.
+TypeDef_Of(Subversion);
+
 class TA_API Subversion : public taNBase
 {
   // ##INLINE ##NO_TOKENS Subversion interface -- static functions for working with Subversion repositories.

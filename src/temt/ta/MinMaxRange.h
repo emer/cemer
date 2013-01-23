@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(MinMaxRange);
+
 class TA_API MinMaxRange : public MinMax {
   // min-max values plus scale and range #INLINE #INLINE_DUMP
   INHERITED(MinMax)

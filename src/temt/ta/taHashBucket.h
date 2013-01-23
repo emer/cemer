@@ -25,7 +25,9 @@
 // declare all other types mentioned but not required to include:
 
 
-class TA_API  taHashBucket : public taPtrList<taHashEl> {
+TypeDef_Of(taHashBucket);
+
+class TA_API taHashBucket : public taPtrList<taHashEl> {
   // holds a set of hash table entries that all have the same hash_code modulo value
 protected:
   void  El_Done_(void* it)      { delete (taHashEl*)it; }

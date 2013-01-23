@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiFilePtrType);
+
 class TA_API taiFilePtrType : public taiType {// ptr to tai_getFiles
   TAI_TYPEBASE_SUBCLASS(taiFilePtrType, taiType);
 public:

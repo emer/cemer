@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taProjVersion);
+
 class TA_API taProjVersion : public taOBase {
   // #EDIT_INLINE project version numbering information
 INHERITED(taOBase)

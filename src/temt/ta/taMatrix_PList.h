@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taMatrix_PList);
+
 class TA_API taMatrix_PList: public taPtrList<taMatrix> {
   // simple list for keeping track of slices
 INHERITED(taPtrList<taMatrix>)

@@ -25,6 +25,8 @@
 class T3TransformBoxDragger; // 
 
 
+TypeDef_Of(T3VEStatic);
+
 class TA_API T3VEStatic : public T3NodeLeaf {
   // static item for virtual environment
 #ifndef __MAKETA__

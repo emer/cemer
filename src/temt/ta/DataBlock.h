@@ -29,6 +29,8 @@
 class ChannelSpec; // 
 
 
+TypeDef_Of(DataBlock);
+
 class TA_API DataBlock: public taFBase {
   // #VIRT_BASE #STEM_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data
 INHERITED(taFBase)
@@ -269,6 +271,6 @@ private:
   void                  Destroy() {}
 };
 
-SmartRef_Of(DataBlock,TA_DataBlock); // DataBlockRef
+SmartRef_Of(DataBlock); // DataBlockRef
 
 #endif // DataBlock_h

@@ -27,6 +27,8 @@ class NumberedTextView;
 #endif
 class Program; 
 
+TypeDef_Of(iProgramViewScriptPanel);
+
 class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
   // a panel frame for viewing script code of program
   Q_OBJECT

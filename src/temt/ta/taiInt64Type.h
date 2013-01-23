@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiInt64Type);
+
 class TA_API taiInt64Type : public taiType { // handles 64-bit numeric int types
   TAI_TYPEBASE_SUBCLASS(taiInt64Type, taiType);
 public:

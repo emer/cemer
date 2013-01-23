@@ -27,7 +27,7 @@ software work for purposes of copyright.
 */
 
 /*
-  String class implementation
+  taString class implementation
  */
 
 #if (defined(TA_OS_WIN))
@@ -51,8 +51,8 @@ using namespace std;
 #include <Variant>
 #include <int_Matrix.h>
 
-String  String::operator [] (const Variant& i) const {
-  String rval;
+taString  taString::operator [] (const Variant& i) const {
+  taString rval;
   if(i.isNumeric()) {
     rval = elem(i.toInt());
   }
@@ -77,7 +77,7 @@ String  String::operator [] (const Variant& i) const {
       if(end < 0) end = 0;
       if(end < start) {
         error("operator[] IDX_SLICE, slice end is before start. start: "+
-              String(start) + " end: " + String(end) + " step: " + String(step));
+              taString(start) + " end: " + taString(end) + " step: " + taString(step));
         return rval;
       }
       if(step > 0) {
@@ -442,14 +442,14 @@ void taStrRep::upcase() {//note: should only be called on cnt<=1
 
 
 //////////////////////////
-//      String          //
+//      taString          //
 //////////////////////////
 
-const String String::con_0("0");
-const String String::con_1("1");
-const String String::con_NULL("NULL");
+const taString taString::con_0("0");
+const taString taString::con_1("1");
+const taString taString::con_NULL("NULL");
 
-String triml(const String& x) {
+taString triml(const taString& x) {
   int n = 0; // count of number to strip
   while (n < x.length()) {
     char c = x[n];
@@ -460,13 +460,13 @@ String triml(const String& x) {
   return x.right(x.length() - n);
 }
 
-String trimr(const String& x) {
+taString trimr(const taString& x) {
   // note: c=0 when len=0
   char c = x.lastchar();
   if (!((c== ' ') || (c == '\t')))
     return x;
 
-  String rval(x);
+  taString rval(x);
   rval.makeUnique();
   do {
     rval.truncate(rval.length() - 1);
@@ -475,11 +475,11 @@ String trimr(const String& x) {
   return rval;
 }
 
-String trim(const String& x) {
+taString trim(const taString& x) {
   return trimr(triml(x));
 }
 
-void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) {
+void taString::AppendCharToCppStringLiteral(taString& str, char c, bool char_mode) {
   //note: char_mode=true is for doing a single conversion for a char literal
   switch (c) { // do the specials first, since some printables are special
   case '\n': str += "\\n"; break;
@@ -497,20 +497,20 @@ void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) {
       str += c;
     else { // octal format with 3 digits is deterministically parsable in strings
       str += "\\";
-      str += String((int)c, "%o03.3"); // exactly 3 octal digits
+      str += taString((int)c, "%o03.3"); // exactly 3 octal digits
     } break;
   }
 }
 
-const String String::CharToCppLiteral(char c) {
-  String rval(1, 6, '\''); // buffer
+const taString taString::CharToCppLiteral(char c) {
+  taString rval(1, 6, '\''); // buffer
   AppendCharToCppStringLiteral(rval, c, true);
   rval += '\'';
   return rval;
 }
 
-const String String::StringToCppLiteral(const String& str) {
-  String rval(1, (str.length() * 11 ) / 10, '"'); // 10% extra sized buffer
+const taString taString::StringToCppLiteral(const taString& str) {
+  taString rval(1, (str.length() * 11 ) / 10, '"'); // 10% extra sized buffer
   int len = str.length(); // cache
   for (int i = 0; i < len; ++i)
     AppendCharToCppStringLiteral(rval, str.elem(i), false);
@@ -519,7 +519,7 @@ const String String::StringToCppLiteral(const String& str) {
 }
 
 
-String::String(uint slen, uint sz, char fill) {
+taString::taString(uint slen, uint sz, char fill) {
   if (sz == 0) sz = slen;
   if (fill == '\0') slen = 0;
   newRep(Snew(slen, sz));
@@ -528,38 +528,38 @@ String::String(uint slen, uint sz, char fill) {
   }
 }
 
-String::String(bool b) {
-  static String t("true");
-  static String f("false");
+taString::taString(bool b) {
+  static taString t("true");
+  static taString f("false");
   if (b) newRep(t.mrep);
   else   newRep(f.mrep);
 }
 
-String::String(int i,const char* format) {
+taString::taString(int i,const char* format) {
   char buf[32];
   sprintf(buf, format,i);
   newRep(Salloc(buf, -1));
 }
 
-String::String(uint u, const char* format) {
+taString::taString(uint u, const char* format) {
   char buf[32];
   sprintf(buf, format,u);
   newRep(Salloc(buf, -1));
 }
 
-String::String(long i,const char* format) {
+taString::taString(long i,const char* format) {
   char buf[32];
   sprintf(buf, format,i);
   newRep(Salloc(buf, -1));
 }
 
-String::String(ulong u, const char* format) {
+taString::taString(ulong u, const char* format) {
   char buf[32];
   sprintf(buf, format,u);
   newRep(Salloc(buf, -1));
 }
 
-String::String(ta_int64_t i64) {
+taString::taString(ta_int64_t i64) {
   char buf[64];
   const char* format;
 #ifdef _MSC_VER // MSVC
@@ -583,7 +583,7 @@ String::String(ta_int64_t i64) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(ta_uint64_t u64) {
+taString::taString(ta_uint64_t u64) {
   char buf[64];
   const char* format;
 #ifdef _MSC_VER // formats may be ms specific
@@ -607,26 +607,26 @@ String::String(ta_uint64_t u64) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(float f,const char* format) {
+taString::taString(float f,const char* format) {
   char buf[32];
   sprintf(buf,format,f);
   newRep(Salloc(buf, -1));
 }
 
-String::String(double f,const char* format) {
+taString::taString(double f,const char* format) {
   char buf[32];
   sprintf(buf,format,f);
   newRep(Salloc(buf, -1));
 }
 
-String::String(void* p) {
+taString::taString(void* p) {
   char buf[32];
   sprintf(buf,"%p",p);
   newRep(Salloc(buf, -1));
 }
 
 // sub routine where repl.len < pat.len (won't need new alloc)
-int String::_gsub_lt(const char* pat, int pl, const char* r, int rl) {
+int taString::_gsub_lt(const char* pat, int pl, const char* r, int rl) {
   int nmatches = 0;
   const char* s = chars(); // source string
   int sl = length(); //note: kept current
@@ -651,7 +651,7 @@ int String::_gsub_lt(const char* pat, int pl, const char* r, int rl) {
 }
 
 // sub routine where repl.len == pat.len (fast: replace in-place)
-int String::_gsub_eq(const char* pat, int pl, const char* r) {
+int taString::_gsub_eq(const char* pat, int pl, const char* r) {
   int nmatches = 0;
   const char* s = chars(); // source string
   int sl = length();
@@ -670,7 +670,7 @@ int String::_gsub_eq(const char* pat, int pl, const char* r) {
 }
 
 // sub routine where repl.len > pat.len
-int String::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
+int taString::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
   int nmatches = 0;
 
   int sl = length(); //note: kept current
@@ -697,7 +697,7 @@ int String::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
   return nmatches;
 }
 
-int String::_gsub(const char* pat, int pl, const char* r, int rl) {
+int taString::_gsub(const char* pat, int pl, const char* r, int rl) {
   makeUnique(); // just to be safe
   if (mrep->len == 0)  return 0;
   if (pl < 0) pl = pat ? (int)strlen(pat) : 0;
@@ -710,7 +710,7 @@ int String::_gsub(const char* pat, int pl, const char* r, int rl) {
 
 }
 
-int String::assertLength() {
+int taString::assertLength() {
   uint slen = (uint)strlen(mrep->s);
   if (slen <= mrep->sz) {
     mrep->len = slen;
@@ -719,7 +719,7 @@ int String::assertLength() {
   return slen;
 }
 
-String& String::cat(const String& y) {
+taString& taString::cat(const taString& y) {
   if (mrep->canCat(y.length()))
     mrep->cat(y.chars(), y.length());
   else
@@ -727,7 +727,7 @@ String& String::cat(const String& y) {
   return *this;
 }
 
-String& String::cat(const char* y, int slen) {
+taString& taString::cat(const char* y, int slen) {
   if (slen < 0) slen = static_cast<int>(strlen(y));
   if (y && (slen > 0) ) {
     if (mrep->canCat(slen))
@@ -738,7 +738,7 @@ String& String::cat(const char* y, int slen) {
   return *this;
 }
 
-String& String::cat(const char* y) {
+taString& taString::cat(const char* y) {
   uint slen = y ? (uint) strlen(y) : 0;
   if (slen) {
     if (mrep->canCat(slen))
@@ -749,7 +749,7 @@ String& String::cat(const char* y) {
   return *this;
 }
 
-String& String::cat(char y) {
+taString& taString::cat(char y) {
   if (y) {
     if (mrep->canCat(1))
       mrep->cat(&y, 1);
@@ -759,41 +759,41 @@ String& String::cat(char y) {
   return *this;
 }
 
-String& String::capitalize() {
+taString& taString::capitalize() {
   makeUnique();
   mrep->capitalize();
   return *this;
 }
 
-String& String::convert(int i,const char* format) {
+taString& taString::convert(int i,const char* format) {
   char buf[32];
   sprintf(buf, format,i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
-String& String::convert(long i,const char* format) {
+taString& taString::convert(long i,const char* format) {
   char buf[32];
   sprintf(buf,format,i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
-String& String::convert(float f,const char* format) {
+taString& taString::convert(float f,const char* format) {
   char buf[32];
   sprintf(buf,format,f);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
-String& String::convert(double f,const char* format) {
+taString& taString::convert(double f,const char* format) {
   char buf[32];
   sprintf(buf,format,f);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
-void String::del(int pos, int len)
+void taString::del(int pos, int len)
 {
   if ((pos < 0) || (len <= 0) || ((pos + len) > length())) return;
   int nlen = length() - len;
@@ -804,42 +804,42 @@ void String::del(int pos, int len)
   mrep->s[nlen] = '\0';
 }
 
-void String::del(const char* t, int startpos)
+void taString::del(const char* t, int startpos)
 {
   int tlen =  t ? (int)strlen(t) : 0;
   int p = search(startpos, length(), t, tlen);
   del(p, tlen);
 }
 
-void String::del(const String& y, int startpos)
+void taString::del(const taString& y, int startpos)
 {
   del(search(startpos, length(), y.chars(), y.length()), y.length());
 }
 
-void String::del(char c, int startpos)
+void taString::del(char c, int startpos)
 {
   del(search(startpos, length(), c), 1);
 }
 
-String& String::downcase() {
+taString& taString::downcase() {
   makeUnique();
   mrep->downcase();
   return *this;
 }
 
-String String::elidedToFirstLine() const {
+taString taString::elidedToFirstLine() const {
   int pos_nl = index('\n');
   if (pos_nl < 0) return *this;
   return before(pos_nl).cat("...");
 }
 
-String String::elidedTo(int width) const {
+taString taString::elidedTo(int width) const {
   //NOTE: by definition, -1 means no eliding, but if not, we still
   // need to remove line breaks, so can't just return clear text
   if (width < 0)
     return *this;
   // we always remove line breaks!
-  String src(this); // cheap, and usual result
+  taString src(this); // cheap, and usual result
   if (contains('\n')) {
     src.makeUnique();
     src.gsub('\n', " "); //note: len stays the same
@@ -869,14 +869,14 @@ String String::elidedTo(int width) const {
   return rval;
 }
 
-void String::error(const char* msg) const {
-  cerr << "String:" <<  msg << "\n";
+void taString::error(const char* msg) const {
+  cerr << "taString:" <<  msg << "\n";
 }
 
 #ifdef TA_USE_QT
 #include <QRegExp>
 
-bool String::matches_wildcard(const String& wild) const {
+bool taString::matches_wildcard(const taString& wild) const {
 #if (QT_VERSION >= 0x040600)
   QRegExp re(wild, Qt::CaseSensitive, QRegExp::WildcardUnix);
 #else
@@ -886,45 +886,45 @@ bool String::matches_wildcard(const String& wild) const {
   return re.exactMatch(*this);
 }
 
-bool String::matches_regexp(const String& wild) const {
+bool taString::matches_regexp(const taString& wild) const {
   QRegExp re(wild, Qt::CaseSensitive, QRegExp::RegExp);
   return re.exactMatch(*this);
 }
 
 #endif
 
-bool String::endsWith(char c) const {
+bool taString::endsWith(char c) const {
   return matches(c, length() - 1);
 }
 
-bool String::endsWith(const String& y) const {
+bool taString::endsWith(const taString& y) const {
   return matches(y, length() - y.length());
 }
 
-bool String::endsWith(const char* t) const {
-  return endsWith(String(t));
+bool taString::endsWith(const char* t) const {
+  return endsWith(taString(t));
 }
 
-bool String::startsWith(char c) const {
+bool taString::startsWith(char c) const {
   return matches(c, 0);
 }
 
-bool String::startsWith(const String& y) const {
+bool taString::startsWith(const taString& y) const {
   return matches(y, 0);
 }
 
-bool String::startsWith(const char* t) const {
-  return startsWith(String(t));
+bool taString::startsWith(const char* t) const {
+  return startsWith(taString(t));
 }
 
 
-void String::init(const char* s, int slen) {
+void taString::init(const char* s, int slen) {
   if (slen < 0)  slen = s ? (int)strlen(s) : 0;
   if (slen == 0) newRep(ADDR_NIL_STR_REP);
   else           newRep(Salloc(s, slen, slen));
 }
 
-bool String::isInt() const {
+bool taString::isInt() const {
   bool rval = false;
   for (int i = 0; i < (int)mrep->cnt; ++i) {
     char c = mrep->s[i];
@@ -937,24 +937,24 @@ bool String::isInt() const {
   return rval;
 }
 
-void String::makeUnique() {
+void taString::makeUnique() {
   if (mrep->cnt > 1)
     setRep(Salloc(mrep->s, mrep->len));
 }
 
-void String::makeUnique(uint min_new_sz) {
+void taString::makeUnique(uint min_new_sz) {
   if ((mrep->cnt > 1) || (mrep->sz < min_new_sz))
     setRep(Salloc(mrep->s, mrep->len, min_new_sz));
 }
 
 // the packthreshold is at least 15, since allocations typically are greater than requested
 #define PACK_THRESH 15
-void String::pack() {
+void taString::pack() {
   if (mrep->sz > (mrep->len + PACK_THRESH))
     setRep(Salloc(mrep->s, mrep->len));
 }
 
-String& String::prepend(const String& y) {
+taString& taString::prepend(const taString& y) {
   if (mrep->canCat(y.length()))
     mrep->prepend(y.chars(), y.length());
   else
@@ -962,7 +962,7 @@ String& String::prepend(const String& y) {
   return *this;
 }
 
-String& String::prepend(const char* y) {
+taString& taString::prepend(const char* y) {
   uint slen = (y) ? (uint)strlen(y) : 0;
   if (mrep->canCat(slen))
     mrep->prepend(y, slen);
@@ -971,7 +971,7 @@ String& String::prepend(const char* y) {
   return *this;
 }
 
-String& String::prepend(char y) {
+taString& taString::prepend(char y) {
   if (y) {
     if (mrep->canCat(1))
       mrep->prepend(&y, 1);
@@ -981,13 +981,13 @@ String& String::prepend(char y) {
   return *this;
 }
 
-String& String::reverse() {
+taString& taString::reverse() {
   makeUnique();
   mrep->reverse();
   return *this;
 }
 
-int String::Load_str(std::istream& istrm) {
+int taString::Load_str(std::istream& istrm) {
   truncate(0);
   const int buf_len = 1024;
   char buf[buf_len];
@@ -1008,13 +1008,13 @@ int String::Load_str(std::istream& istrm) {
   else return 0;
 }
 
-int String::Save_str(std::ostream& ostrm) {
+int taString::Save_str(std::ostream& ostrm) {
   ostrm.write(mrep->s, mrep->len);
   if (ostrm.bad()) return 1;
   else return 0;
 }
 
-String& String::set(const char* s, int slen) {
+taString& taString::set(const char* s, int slen) {
   if (slen < 0)
     slen = s ? (int)strlen(s) : 0;
   if (slen == 0) setRep(ADDR_NIL_STR_REP);
@@ -1022,25 +1022,25 @@ String& String::set(const char* s, int slen) {
   return *this;
 }
 
-bool String::toBool() const {
+bool taString::toBool() const {
   if (mrep->len == 0) return false;
   char c = (*this)[0];
   return ((c == 't') || (c == '1') || (c == 'T'));
 }
 
-char String::toChar() const {
+char taString::toChar() const {
   if (mrep->len == 1) return (*this)[0];
   else return '\0';;
 }
 
-void String::truncate(uint new_len) {
+void taString::truncate(uint new_len) {
   if (new_len >= mrep->len) return;
   makeUnique();
   mrep->len = new_len;
   mrep->s[new_len] = '\0';
 }
 
-String& String::upcase() {
+taString& taString::upcase() {
   makeUnique();
   mrep->upcase();
   return *this;
@@ -1052,110 +1052,110 @@ String& String::upcase() {
 
 // a helper needed by at, before, etc.
 
-String String::_substr(int first, int len) const {
+taString taString::_substr(int first, int len) const {
   if ((first < 0) || (len <= 0) || (first >= length()))
     return _nilString;
   else if ((first == 0) && (len == length())) // same as us, so don't make a new rep!
-    return String(*this);
+    return taString(*this);
   else {
     if ((first + len) > length())
       len = length() - first;
-    return String(&(mrep->s[first]), len);
+    return taString(&(mrep->s[first]), len);
   }
 }
 
-String String::at(int first, int len) const {
+taString taString::at(int first, int len) const {
   return _substr(first, len);
 }
 
-String String::operator() (int first, int len) const {
+taString taString::operator() (int first, int len) const {
   return _substr(first, len);
 }
 
-String String::before(int pos) const {
+taString taString::before(int pos) const {
   return _substr(0, pos);
 }
 
-String String::through(int pos) const {
+taString taString::through(int pos) const {
   return _substr(0, pos+1);
 }
 
-String String::after(int pos) const {
+taString taString::after(int pos) const {
   return _substr(pos + 1, length() - (pos + 1));
 }
 
-String String::right(int len) const {
+taString taString::right(int len) const {
   return _substr(length() - len, len);
 }
 
-String String::from(int pos) const {
+taString taString::from(int pos) const {
   return _substr(pos, length() - pos);
 }
 
-String String::at(const String& y, int startpos) const {
+taString taString::at(const taString& y, int startpos) const {
   int first = search(startpos, length(), y.chars(), y.length());
   return _substr(first,  y.length());
 }
 
-String String::at(const char* t, int startpos) const {
+taString taString::at(const char* t, int startpos) const {
   int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   return _substr(first, tlen);
 }
 
-String String::at(char c, int startpos) const {
+taString taString::at(char c, int startpos) const {
   int first = search(startpos, length(), c);
   return _substr(first, 1);
 }
 
-String String::before(const String& y, int startpos) const {
+taString taString::before(const taString& y, int startpos) const {
   int last = search(startpos, length(), y.chars(), y.length());
   return _substr(0, last);
 }
 
-String String::before(char c, int startpos) const {
+taString taString::before(char c, int startpos) const {
   int last = search(startpos, length(), c);
   return _substr(0, last);
 }
 
-String String::before(const char* t, int startpos) const {
+taString taString::before(const char* t, int startpos) const {
   int tlen = t ? (int)strlen(t) : 0;
   int last = search(startpos, length(), t, tlen);
   return _substr(0, last);
 }
 
-String String::through(const String& y, int startpos) const {
+taString taString::through(const taString& y, int startpos) const {
   int last = search(startpos, length(), y.chars(), y.length());
   if (last >= 0) last += y.length();
   return _substr(0, last);
 }
 
-String String::through(char c, int startpos) const {
+taString taString::through(char c, int startpos) const {
   int last = search(startpos, length(), c);
   if (last >= 0) last += 1;
   return _substr(0, last);
 }
 
-String String::through(const char* t, int startpos) const {
+taString taString::through(const char* t, int startpos) const {
   int tlen = t ? (int)strlen(t) : 0;
   int last = search(startpos, length(), t, tlen);
   if (last >= 0) last += tlen;
   return _substr(0, last);
 }
 
-String String::after(const String& y, int startpos) const {
+taString taString::after(const taString& y, int startpos) const {
   int first = search(startpos, length(), y.chars(), y.length());
   if (first >= 0) first += y.length();
   return _substr(first, length() - first);
 }
 
-String String::after(char c, int startpos) const {
+taString taString::after(char c, int startpos) const {
   int first = search(startpos, length(), c);
   if (first >= 0) first += 1;
   return _substr(first, length() - first);
 }
 
-String String::after(const char* t, int startpos) const {
+taString taString::after(const char* t, int startpos) const {
   int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   if (first >= 0) first += tlen;
@@ -1163,32 +1163,32 @@ String String::after(const char* t, int startpos) const {
 }
 
 
-String String::between(const String& st_str, const String& ed_str, int startpos) const {
-  String aft = after(st_str, startpos);
+taString taString::between(const taString& st_str, const taString& ed_str, int startpos) const {
+  taString aft = after(st_str, startpos);
   return aft.before(ed_str);
 }
 
-String String::between(char st_c, char ed_c, int startpos) const {
-  String aft = after(st_c, startpos);
+taString taString::between(char st_c, char ed_c, int startpos) const {
+  taString aft = after(st_c, startpos);
   return aft.before(ed_c);
 }
 
-String String::between(const char* st_str, const char* ed_str, int startpos) const {
-  String aft = after(st_str, startpos);
+taString taString::between(const char* st_str, const char* ed_str, int startpos) const {
+  taString aft = after(st_str, startpos);
   return aft.before(ed_str);
 }
 
-String String::from(const String& y, int startpos) const {
+taString taString::from(const taString& y, int startpos) const {
   int first = search(startpos, length(), y.chars(), y.length());
   return _substr(first, length() - first);
 }
 
-String String::from(char c, int startpos) const {
+taString taString::from(char c, int startpos) const {
   int first = search(startpos, length(), c);
   return _substr(first, length() - first);
 }
 
-String String::from(const char* t, int startpos) const {
+taString taString::from(const char* t, int startpos) const {
   int tlen = t ? (int)strlen(t) : 0;
   int first = search(startpos, length(), t, tlen);
   return _substr(first, length() - first);
@@ -1200,8 +1200,8 @@ String String::from(const char* t, int startpos) const {
  */
 
 
-int split(const String& src, String results[], int n, const String& sep) {
-  String x = src;
+int split(const taString& src, taString results[], int n, const taString& sep) {
+  taString x = src;
   const char* s = x.chars();
   int sl = x.length();
   int i = 0;
@@ -1219,7 +1219,7 @@ int split(const String& src, String results[], int n, const String& sep) {
 
 
 
-String join(const String src[], int n, const String& sep) {
+taString join(const taString src[], int n, const taString& sep) {
   if (n <= 0) return _nilString;
 
   int xlen = (n - 1) * sep.length();
@@ -1227,7 +1227,7 @@ String join(const String src[], int n, const String& sep) {
   for (i = 0; i < n; ++i)
     xlen += src[i].length();
 
-  String x(Snew(xlen));
+  taString x(Snew(xlen));
 
   int j =  0; // next starting position to copy
   for (i = 0; i < n - 1; ++i) {
@@ -1244,48 +1244,48 @@ String join(const String src[], int n, const String& sep) {
  misc
 */
 
-int compare(const String& x, const String& y) {
+int compare(const taString& x, const taString& y) {
   return strcmp(x.chars(), y.chars());
 }
 
-int compare(const String& x, const char* y) {
+int compare(const taString& x, const char* y) {
   if (y) return strcmp(x.chars(), y);
   else return strcmp(x.chars(), "");
 }
 
-int compare(const char* y, const String& x) {
+int compare(const char* y, const taString& x) {
   if (y) return strcmp(y, x.chars());
   else return strcmp("", x.chars());
 }
 
-int compare(const String& x, char y) {
+int compare(const taString& x, char y) {
   if (y) return strncmp(x.chars(), &y, 1);
   else return strcmp(x.chars(), "");
 }
 
-int compare(char y, const String& x) {
+int compare(char y, const taString& x) {
   if (y) return strncmp(&y, x.chars(), 1);
   else return strcmp("", x.chars());
 }
 
 
-int fcompare(const String& x, const String& y) {
+int fcompare(const taString& x, const taString& y) {
   return strcasecmp(x.chars(), y.chars());
 }
 
 
-String replicate(char c, int n) {
-  String w(n, n, c);
+taString replicate(char c, int n) {
+  taString w(n, n, c);
   return w;
 }
 
-String replicate(const String& y, int n) {
+taString replicate(const taString& y, int n) {
   int len = y.length();
   if ((len == 0) || (n == 0)) return _nilString;
   if (len == 1) return replicate(y[0], n); //more efficient, and the most likely (ex. " ", etc.)
 
   int xlen = n * len;
-  String w(Snew(xlen));
+  taString w(Snew(xlen));
   char* p = w.mrep->s;
   const char* yp = y.chars();
   while (n-- > 0) {
@@ -1295,13 +1295,13 @@ String replicate(const String& y, int n) {
   return w;
 }
 
-String replicate(const char* y, int n) {
+taString replicate(const char* y, int n) {
   int len = (y) ? (int)strlen(y) : 0;
   if ((len == 0) || (n == 0)) return _nilString;
   if (len == 1) return replicate(y[0], n); //more efficient, and the most likely (ex. " ", etc.)
 
   int xlen = n * len;
-  String w(Snew(xlen));
+  taString w(Snew(xlen));
   char* p = w.mrep->s;
   while (n-- > 0) {
     memcpy(p, y, len);
@@ -1310,7 +1310,7 @@ String replicate(const char* y, int n) {
   return w;
 }
 
-String common_prefix(const String& x, const String& y, int startpos) {
+taString common_prefix(const taString& x, const taString& y, int startpos) {
   const char* xchars = x.chars();
   const char* ychars = y.chars();
   const char* xs = &(xchars[startpos]);
@@ -1322,11 +1322,11 @@ String common_prefix(const String& x, const String& y, int startpos) {
   for (l=0; xs < topx && ys < topy && *xs++ == *ys++; ++l);
   if (l == 0) return _nilString;
 
-  String r(Salloc(ss, l, l));
+  taString r(Salloc(ss, l, l));
   return r;
 }
 
-String common_suffix(const String& x, const String& y, int startpos) {
+taString common_suffix(const taString& x, const taString& y, int startpos) {
   const char* xchars = x.chars();
   const char* ychars = y.chars();
   const char* xs = &(xchars[x.length() + startpos]);
@@ -1337,11 +1337,11 @@ String common_suffix(const String& x, const String& y, int startpos) {
   for (l= 0; xs >= botx && ys >= boty && *xs == *ys ; --xs, --ys, ++l);
   if (l == 0) return _nilString;
 
-  String r(Salloc(++xs, l, l));
+  taString r(Salloc(++xs, l, l));
   return r;
 }
 
-String& String::xml_esc() {
+taString& taString::xml_esc() {
   makeUnique();
   gsub("&", "&amp;");
   gsub("<", "&lt;");
@@ -1351,7 +1351,7 @@ String& String::xml_esc() {
   return *this;
 }
 
-String& String::quote_esc() {
+taString& taString::quote_esc() {
   makeUnique();
   gsub("\\", "\\\\");
   gsub("\"", "\\\"");
@@ -1360,7 +1360,7 @@ String& String::quote_esc() {
 
 // IO
 #define ISTR_RESIZE_QUANTA 80
-TA_API istream& operator>>(istream& s, String& x) {
+TA_API istream& operator>>(istream& s, taString& x) {
   //  if (!s.ipfx(0) || (!(s.flags() & ios::skipws) && !ws(s)))
   if ((!(s.flags() & ios::skipws) && !ws(s)))
   {
@@ -1386,12 +1386,12 @@ TA_API istream& operator>>(istream& s, String& x) {
   return s;
 }
 
-TA_API std::ostream& operator<<(std::ostream& s, const String& x) {
+TA_API std::ostream& operator<<(std::ostream& s, const taString& x) {
   s << x.chars();
   return s;
 }
 
-TA_API int readline(istream& s, String& x, char terminator, int discard) {
+TA_API int readline(istream& s, taString& x, char terminator, int discard) {
 //   if (!s.ipfx(0))
 //     return 0;
   int ch;
@@ -1417,7 +1417,7 @@ TA_API int readline(istream& s, String& x, char terminator, int discard) {
   return i;
 }
 
-TA_API int readline_auto(istream& strm, String& x) {
+TA_API int readline_auto(istream& strm, taString& x) {
   int c;
   uint i = 0;
   x.makeUnique(x.mrep->len + ISTR_RESIZE_QUANTA);
@@ -1446,7 +1446,7 @@ TA_API int readline_auto(istream& strm, String& x) {
 
 // from John.Willis@FAS.RI.CMU.EDU
 
-int String::freq(const String& y) const
+int taString::freq(const taString& y) const
 {
   int found = 0;
   for (int i = 0; i < length(); i++)
@@ -1454,7 +1454,7 @@ int String::freq(const String& y) const
   return(found);
 }
 
-int String::freq(const char* t) const
+int taString::freq(const char* t) const
 {
   int found = 0;
   for (int i = 0; i < length(); i++)
@@ -1462,7 +1462,7 @@ int String::freq(const char* t) const
   return(found);
 }
 
-int String::freq(char c) const
+int taString::freq(char c) const
 {
   int found = 0;
   for (int i = 0; i < length(); i++)

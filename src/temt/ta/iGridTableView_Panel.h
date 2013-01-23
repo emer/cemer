@@ -27,6 +27,8 @@ class taiIncrField; // #IGNORE
 class ColorScaleBar; // #IGNORE
 class GridTableView; //
 
+TypeDef_Of(iGridTableView_Panel);
+
 class TA_API iGridTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
 INHERITED(iDataTableView_Panel)

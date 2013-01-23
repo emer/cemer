@@ -82,6 +82,8 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
+TypeDef_Of(VisRegionSpecBase);
+
 class TA_API VisRegionSpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image base class for specifying a visual image region to be filtered according to a set of filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
 INHERITED(ImgProcThreadBase)

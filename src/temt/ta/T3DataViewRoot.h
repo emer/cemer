@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(T3DataViewRoot);
+
 class TA_API T3DataViewRoot: public T3DataViewPar {
   // #NO_TOKENS Root item for a viewwidget type
 #ifndef __MAKETA__

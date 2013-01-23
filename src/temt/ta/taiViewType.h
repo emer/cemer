@@ -28,6 +28,8 @@ class iDataPanelFrame; //
 class iDataPanel; //
 class taiDataLink; //
 
+TypeDef_Of(taiViewType);
+
 class TA_API taiViewType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS viewer services for the type
   TAI_TYPEBASE_SUBCLASS(taiViewType, taiTypeBase)

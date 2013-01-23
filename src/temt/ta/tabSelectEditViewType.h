@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabSelectEditViewType);
+
 class TA_API tabSelectEditViewType: public tabOViewType {
   TAI_TYPEBASE_SUBCLASS(tabSelectEditViewType, tabOViewType)
 public:

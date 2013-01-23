@@ -26,6 +26,8 @@
 class DataBlock; // 
 
 
+TypeDef_Of(ChannelSpec_List);
+
 class TA_API ChannelSpec_List: public taList<ChannelSpec> {
   // ##CAT_Data a list of channel specifications
 INHERITED(taList<ChannelSpec>)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiActuatorMethod);
+
 class TA_API taiActuatorMethod : public taiMethod {
   TAI_METHOD_SUBCLASS(taiActuatorMethod, taiMethod);
 public:

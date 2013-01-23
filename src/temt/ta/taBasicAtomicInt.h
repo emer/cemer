@@ -61,7 +61,9 @@ public:
 
 #endif
 
-class taBasicAtomicInt : public QBasicAtomicInt {
+TypeDef_Of(taBasicAtomicInt);
+
+class TA_API taBasicAtomicInt : public QBasicAtomicInt {
 public:
 # if (QT_VERSION >= 0x050000)
   // Non-atomic API

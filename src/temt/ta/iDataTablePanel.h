@@ -27,6 +27,8 @@ class iDataTableEditor; //
 class DataTable; //
 
 
+TypeDef_Of(iDataTablePanel);
+
 class TA_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)

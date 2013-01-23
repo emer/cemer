@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taTypeSpaceDataLink_Base);
+
 class TA_API taTypeSpaceDataLink_Base: public taClassDataLink {
   // DataLink for XxxSpace objects -- note that it also manages the ListView nodes
 INHERITED(taClassDataLink)

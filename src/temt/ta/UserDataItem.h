@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(UserDataItem);
+
 class TA_API UserDataItem: public UserDataItemBase {
   // an item of simple user data
 INHERITED(UserDataItemBase)

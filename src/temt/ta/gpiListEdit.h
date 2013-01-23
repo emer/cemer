@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiListEdit);
+
 class TA_API gpiListEdit : public taiEdit {
   TAI_TYPEBASE_SUBCLASS(gpiListEdit, taiEdit);
 public:

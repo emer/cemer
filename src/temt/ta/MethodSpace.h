@@ -31,6 +31,8 @@ class taDataLink; //
 #endif
 
 
+TypeDef_Of(MethodSpace);
+
 class TA_API MethodSpace: public Method_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of methods
 INHERITED(Method_List)

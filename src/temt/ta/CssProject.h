@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(CssProject);
+
 class TA_API CssProject : public taProject {
   // generic project -- can be used in css (has no network dependencies)
 INHERITED(taProject)

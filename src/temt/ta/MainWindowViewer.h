@@ -41,6 +41,8 @@ class taiMenuBar; // #IGNORE
 class taiActions; //
 
 
+TypeDef_Of(MainWindowViewer);
+
 class TA_API MainWindowViewer : public TopLevelViewer {
   // ##DEF_NAME_ROOT_Browser the uber controller for main windows
 INHERITED(TopLevelViewer)

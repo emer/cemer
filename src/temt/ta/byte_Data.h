@@ -26,6 +26,8 @@
 class TypeDef; // 
 
 
+TypeDef_Of(byte_Data);
+
 class TA_API byte_Data : public DataColTp<byte_Matrix> {
   // byte data
 INHERITED(DataColTp<byte_Matrix>)

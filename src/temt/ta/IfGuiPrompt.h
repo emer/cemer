@@ -26,6 +26,8 @@
 class ProgVar; // 
 
 
+TypeDef_Of(IfGuiPrompt);
+
 class TA_API IfGuiPrompt: public ProgEl { 
   // if in gui mode, prompt user prior to performing a given operation -- if user says OK then run the code, otherwise do nothing -- if not in gui mode (e.g., running in batch mode) then always run the code -- allows interactive control over otherwise default operations
 INHERITED(ProgEl)

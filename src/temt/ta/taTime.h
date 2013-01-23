@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taTime);
+
 class TA_API taTime : public taBase {
   // #STEM_BASE ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)

@@ -25,6 +25,8 @@
 class taUndoMgr; // 
 
 
+TypeDef_Of(UndoDiffThreadMgr);
+
 class TA_API UndoDiffThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UndoDiff tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)

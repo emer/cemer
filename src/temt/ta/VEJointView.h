@@ -27,6 +27,8 @@ class TypeDef; //
 class VEJoint; // 
 
 
+TypeDef_Of(VEJointView);
+
 class TA_API VEJointView: public T3DataView {
   // view of one joint
 INHERITED(T3DataView)

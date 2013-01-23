@@ -26,6 +26,8 @@
 class String_PArray; // 
 
 
+TypeDef_Of(NameVar_PArray);
+
 class TA_API NameVar_PArray : public taPlainArray<NameVar> {
   // #NO_TOKENS a plain-array of name value (variant) items
 INHERITED(taPlainArray<NameVar>)

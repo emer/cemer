@@ -25,7 +25,9 @@
 // declare all other types mentioned but not required to include:
 
 
-class TA_API  taArray_impl {
+TypeDef_Of(taArray_impl);
+
+class TA_API taArray_impl {
   // #NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
 public:
   int           size;                   // #NO_SAVE #READ_ONLY #CAT_taArray number of elements in the array

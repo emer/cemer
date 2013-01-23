@@ -31,6 +31,8 @@ class taGuiWidgetHelper; // #IGNORE
 class taiData; //
 
 
+TypeDef_Of(taGuiWidget);
+
 class TA_API taGuiWidget : public taNBase {
   // ##CAT_Gui manages a qt widget for the taGui system
 INHERITED(taNBase)

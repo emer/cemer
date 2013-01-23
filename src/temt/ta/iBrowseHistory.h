@@ -34,6 +34,8 @@ class ISelectableHost; //
 
 typedef taPtrList<taiDataLink> taiDataLink_PList; // list of taiDataLink
 
+TypeDef_Of(iBrowseHistory);
+
 class TA_API iBrowseHistory: public QObject, public IMultiDataLinkClient {
   // #NO_INSTANCE #NO_CSS retains browsing history
 INHERITED(QObject)

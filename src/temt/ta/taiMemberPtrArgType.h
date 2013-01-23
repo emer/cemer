@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiMemberPtrArgType);
+
 class TA_API taiMemberPtrArgType : public taiArgType {
   // for memberdef ptr types
   TAI_ARGTYPE_SUBCLASS(taiMemberPtrArgType, taiArgType);

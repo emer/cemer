@@ -25,6 +25,8 @@
 class T3TransformBoxDragger; // 
 
 
+TypeDef_Of(T3VEBody);
+
 class TA_API T3VEBody : public T3NodeLeaf {
   // body for virtual environment
 #ifndef __MAKETA__

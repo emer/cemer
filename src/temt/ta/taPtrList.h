@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(taPtrList);
 
 template<class T>
 class taPtrList : public taPtrList_impl { // #INSTANCE

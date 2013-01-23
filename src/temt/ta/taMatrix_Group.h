@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taMatrix_Group);
+
 class TA_API taMatrix_Group: public taGroup<taMatrix> {
   // ##CAT_Data group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)

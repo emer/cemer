@@ -58,6 +58,8 @@ class taBase;
 
 #define DL_FUNS(y)      TypeDef* GetTypeDef() const {return &TA_ ## y;} \
 
+TypeDef_Of(taDataLink);
+
 class TA_API taDataLink {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS #VIRT_BASE interface for taiDataLink and descendants
 friend class taDataLinkItr;

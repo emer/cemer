@@ -27,6 +27,8 @@ class DynEnumItem; //
 class DataTable; // 
 
 
+TypeDef_Of(DynEnumType);
+
 class TA_API DynEnumType : public ProgType {
   // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write
 INHERITED(ProgType)
@@ -81,6 +83,6 @@ private:
   void  Destroy()       {}
 };
 
-SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
+SmartRef_Of(DynEnumType); // DynEnumTypeRef
 
 #endif // DynEnumType_h

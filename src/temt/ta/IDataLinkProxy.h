@@ -25,6 +25,8 @@
 class taiDataLink; //
 
 
+TypeDef_Of(IDataLinkProxy);
+
 class TA_API IDataLinkProxy : public virtual ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
 public:
 #ifndef TA_NO_GUI

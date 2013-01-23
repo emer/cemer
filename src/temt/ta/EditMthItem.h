@@ -24,6 +24,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(EditMthItem);
+
 class TA_API EditMthItem: public SelectEditItem {
   // a method select edit item -- allows access via menu or button to just one method from a class
   INHERITED(SelectEditItem)

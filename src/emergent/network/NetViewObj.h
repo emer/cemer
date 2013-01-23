@@ -62,6 +62,6 @@ private:
   void  Destroy()       { CutLinks(); }
 };
 
-SmartRef_Of(NetViewObj,TA_NetViewObj); // NetViewObjRef
+SmartRef_Of(NetViewObj); // NetViewObjRef
 
 #endif // NetViewObj_h

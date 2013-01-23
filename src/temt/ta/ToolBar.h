@@ -25,6 +25,8 @@
 class iToolBar; // #IGNORE 
 
 
+TypeDef_Of(ToolBar);
+
 class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
 //nn? friend class MainWindowViewer;

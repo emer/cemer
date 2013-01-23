@@ -29,6 +29,8 @@ class iTabBarBase; //  #IGNORE
 class T3DataView; //
 
 
+TypeDef_Of(T3DataViewer);
+
 class TA_API T3DataViewer : public FrameViewer {
   // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(FrameViewer)

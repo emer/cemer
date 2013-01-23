@@ -26,6 +26,8 @@ class iProgramCtrlDataHost; // #IGNORE
 class Program; //
 
 
+TypeDef_Of(iProgramCtrlPanel);
+
 class TA_API iProgramCtrlPanel: public iDataPanelFrame {
 // ##NO_CSS panel for program control panel
 INHERITED(iDataPanelFrame)

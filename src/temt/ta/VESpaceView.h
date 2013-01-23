@@ -27,6 +27,8 @@ class TypeDef; //
 class VESpace; // 
 
 
+TypeDef_Of(VESpaceView);
+
 class TA_API VESpaceView: public T3DataViewPar {
   // view of one space
 INHERITED(T3DataViewPar)

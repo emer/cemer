@@ -39,6 +39,8 @@ class iTabBarBase;
 class iTabViewer;
 class iMainWindowViewer;
 
+TypeDef_Of(iDataPanel);
+
 class TA_API iDataPanel: public QFrame, public IDataLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels -- basic element that can appear in a tabbed viewing context (note: use iDataPanelFrame or iViewPanelFrame)
   Q_OBJECT

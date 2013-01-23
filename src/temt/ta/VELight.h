@@ -29,6 +29,8 @@
 // declare all other types mentioned but not required to include:
 class SoLight; // #IGNORE
 
+TypeDef_Of(VELight);
+
 class TA_API VELight : public VEBody {
   // virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
 INHERITED(VEBody)
@@ -65,6 +67,6 @@ private:
   void  Destroy() { };
 };
 
-SmartRef_Of(VELight,TA_VELight); // VELightRef
+SmartRef_Of(VELight); // VELightRef
 
 #endif // VELight_h

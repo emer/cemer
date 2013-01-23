@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(MiscCall);
+
 class TA_API MiscCall : public StaticMethodCall { 
   // call a taMisc function
 INHERITED(StaticMethodCall)

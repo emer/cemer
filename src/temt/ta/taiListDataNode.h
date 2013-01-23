@@ -26,6 +26,8 @@ class iListDataPanel; //
 class iTreeView; //
 
 
+TypeDef_Of(taiListDataNode);
+
 class TA_API taiListDataNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:

@@ -27,6 +27,8 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
+TypeDef_Of(String_Matrix);
+
 class TA_API String_Matrix: public taMatrixT<String> {
   // #INSTANCE a matrix of strings
 INHERITED(taMatrixT<String>)

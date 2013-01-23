@@ -26,6 +26,8 @@
 class taGuiDialog;
 
 
+TypeDef_Of(taGuiDataHost);
+
 class TA_API taGuiDataHost : public taiDataHostBase, virtual public IDataHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)

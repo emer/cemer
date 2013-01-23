@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataCalcAddDestRow);
+
 class TA_API DataCalcAddDestRow : public DataSrcDestProg { 
   // add a new blank row into the dest data table (used ONLY within a DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object) -- MUST put within a CodeBlock if multiple are used per loop, otherwise duplicate variable definition warnings will occur
 INHERITED(DataSrcDestProg)

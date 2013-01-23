@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(FixedWidthColSpec_List);
+
 class TA_API FixedWidthColSpec_List: public taList<FixedWidthColSpec> {
   // ##CAT_Data
 INHERITED(taList<FixedWidthColSpec>)

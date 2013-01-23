@@ -27,6 +27,8 @@
 class taObjDiff_List; //
 class taBase; //
 
+TypeDef_Of(taObjDiffRec);
+
 class TA_API taObjDiffRec : public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures
 INHERITED(taRefN)

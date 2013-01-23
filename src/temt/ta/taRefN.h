@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taRefN);
+
 class TA_API taRefN {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS reference counting base class
 public:

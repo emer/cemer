@@ -26,6 +26,8 @@ class taMatrix; //
 class MatrixGeom; // 
 
 
+TypeDef_Of(complex_Matrix);
+
 class TA_API complex_Matrix: public double_Matrix {
   // #INSTANCE matrix of complex numbers -- inner-most dimension is always size 2 and contains real, imag number pair
 INHERITED(double_Matrix)

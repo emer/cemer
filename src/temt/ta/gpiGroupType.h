@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiGroupType);
+
 class TA_API gpiGroupType : public gpiListType {
   TAI_TYPEBASE_SUBCLASS(gpiGroupType, gpiListType);
 public:

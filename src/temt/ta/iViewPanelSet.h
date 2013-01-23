@@ -26,6 +26,8 @@ class iTabBarBase;  //
 class iViewPanelFrame; //
 
 
+TypeDef_Of(iViewPanelSet);
+
 class TA_API iViewPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
   Q_OBJECT
 INHERITED(iDataPanelSetBase)

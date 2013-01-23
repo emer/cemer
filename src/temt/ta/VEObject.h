@@ -32,6 +32,8 @@ class VEWorld; //
 class VEBody; // 
 
 
+TypeDef_Of(VEObject);
+
 class TA_API VEObject : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
@@ -94,6 +96,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
+SmartRef_Of(VEObject); // VEObjectRef
 
 #endif // VEObject_h

@@ -28,6 +28,8 @@
 // declare all other types mentioned but not required to include:
 class VEArm; //
 
+TypeDef_Of(VELinearMuscle);
+
 class TA_API VELinearMuscle : public taNBase {
   // A muscle that exerts force proportional to its input
   INHERITED(taNBase)
@@ -57,6 +59,6 @@ private:
   virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 };
 
-SmartRef_Of(VELinearMuscle,TA_VELinearMuscle); // VELinearMuscleRef
+SmartRef_Of(VELinearMuscle); // VELinearMuscleRef
 
 #endif // VELinearMuscle_h

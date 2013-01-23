@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataCalcSetDestRow);
+
 class TA_API DataCalcSetDestRow : public DataSrcDestProg { 
   // set all the current values into the dest data table (used ONLY within a DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataSrcDestProg)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ResetDataRows);
+
 class TA_API ResetDataRows: public DataOneProg { 
   // clear out all existing rows of data in data table
 INHERITED(DataOneProg)

@@ -45,6 +45,8 @@ class DataTable; //
 class DataTableModel; // #IGNORE
 
 
+TypeDef_Of(iDataTableEditor);
+
 class TA_API iDataTableEditor: public QWidget,  public virtual ISelectableHost,
                                public virtual IDataLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER editor for data tables

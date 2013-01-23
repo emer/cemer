@@ -26,6 +26,8 @@ class taiClipData; // #IGNORE
 class ISelectable_PtrList; // 
 
 
+TypeDef_Of(IObjectSelectable);
+
 class TA_API IObjectSelectable: public ISelectable { // specialized for taBase object items
 INHERITED(ISelectable)
 public: // Interface Properties and Methods

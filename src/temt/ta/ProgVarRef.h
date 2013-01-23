@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 class ProgVar; //
-SmartRef_Of(ProgVar,TA_ProgVar); // ProgVarRef
+SmartRef_Of(ProgVar); // ProgVarRef
 
 #ifdef __MAKETA__
 class ProgVarRef;

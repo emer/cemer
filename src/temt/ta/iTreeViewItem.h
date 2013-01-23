@@ -46,6 +46,8 @@ enum NodeBitmapFlags {
   NBF_LINK_ITEM                 = 0x02
 };
 
+TypeDef_Of(iTreeViewItem);
+
 class TA_API iTreeViewItem: public iTreeWidgetItem,
   public virtual IDataLinkClient, public virtual IObjectSelectable {
   //  ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes

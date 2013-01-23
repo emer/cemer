@@ -27,6 +27,8 @@ class MemberDef; //
 class taiDataLink; // 
 
 
+TypeDef_Of(ClassBrowseViewer);
+
 class TA_API ClassBrowseViewer : public BrowseViewer {
   // #NO_TOKENS represents a class browser instance
 INHERITED(BrowseViewer)

@@ -29,6 +29,8 @@ class Program; //
 class taBase; // 
 
 
+TypeDef_Of(ProgType);
+
 class TA_API ProgType: public taNBase {
   // #STEM_BASE #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program a program type -- base class for defining new types within a program
 INHERITED(taNBase)
@@ -61,6 +63,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ProgType,TA_ProgType); // ProgTypeRef
+SmartRef_Of(ProgType); // ProgTypeRef
 
 #endif // ProgType_h

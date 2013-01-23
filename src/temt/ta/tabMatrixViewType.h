@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabMatrixViewType);
+
 class TA_API tabMatrixViewType: public tabOViewType {
   TAI_TYPEBASE_SUBCLASS(tabMatrixViewType, tabOViewType) //
 public:

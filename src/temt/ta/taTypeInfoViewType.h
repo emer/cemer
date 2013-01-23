@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taTypeInfoViewType);
+
 class TA_API taTypeInfoViewType: public taiViewType { // for TypeItem types and their spaces
   TAI_TYPEBASE_SUBCLASS(taTypeInfoViewType, taiViewType)
 public:

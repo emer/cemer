@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class taThreadMgr; //
 
+TypeDef_Of(taThreadMgr_PList);
+
 class TA_API taThreadMgr_PList : public taPtrList<taThreadMgr> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of thread managers
   //INHERITED(taPtrList<taManagedThread>)

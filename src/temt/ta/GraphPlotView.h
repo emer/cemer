@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(GraphPlotView);
+
 class TA_API GraphPlotView : public GraphAxisBase {
   // parameters for plotting one column of data -- contains Y axis data as well
 INHERITED(GraphAxisBase)

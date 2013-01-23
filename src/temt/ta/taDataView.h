@@ -45,6 +45,8 @@ class taDataLink; //
 
 */
 
+TypeDef_Of(taDataView);
+
 class TA_API taDataView: public taNBase, public virtual IDataLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object
 INHERITED(taNBase)

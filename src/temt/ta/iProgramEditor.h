@@ -46,6 +46,8 @@ class QWidget; //  #IGNORE
 class ISelectableHost; //
 
 
+TypeDef_Of(iProgramEditor);
+
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
                              public virtual IDataLinkClient {
   // #NO_CSS widget for editing entire programs

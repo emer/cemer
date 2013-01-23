@@ -25,6 +25,8 @@
 class ProgEl_List;
 
 
+TypeDef_Of(RegisterArgs);
+
 class TA_API RegisterArgs: public ProgEl { 
   // register command-line arguments for any MemberFmArg, ProgVarFmArg DataColsFmArgs program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
 INHERITED(ProgEl)

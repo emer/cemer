@@ -32,6 +32,8 @@ class iT3DataViewFrame; // #IGNORE
 class VEWorldViewPanel; //
 class SoOffscreenRendererQt; // #IGNORE
 
+TypeDef_Of(VEWorldView);
+
 class TA_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
 INHERITED(T3DataViewMain)

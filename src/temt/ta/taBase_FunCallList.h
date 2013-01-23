@@ -31,6 +31,8 @@ class taDataLink; //
 class taBase; // 
 
 
+TypeDef_Of(taBase_FunCallList);
+
 class TA_API taBase_FunCallList: public taPtrList<FunCallItem>
 #ifndef __MAKETA__
 , public IMultiDataLinkClient

@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(taSmartRefT);
 
 template<class T>
 class taSmartRefT: public taSmartRef {
@@ -63,9 +64,11 @@ private:
 };
 
 // macro for creating smart refs of taBase classes
-#define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
+#define SmartRef_Of(T) TypeDef_Of(T ## Ref); \
+  typedef taSmartRefT<T> T ## Ref
+  
 
-SmartRef_Of(taBase,);           // basic ref if you don't know the type
+SmartRef_Of(taBase);           // basic ref if you don't know the type
 
 
 #endif // taSmartRefT_h

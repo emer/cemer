@@ -26,6 +26,8 @@
 class DataOpEl; // 
 
 
+TypeDef_Of(DataSelectRowsProg);
+
 class TA_API DataSelectRowsProg : public DataSrcDestProg { 
   // selects rows from src_data into dest_data according to select_spec
 INHERITED(DataSrcDestProg)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(T3GridColViewNode);
+
 class TA_API T3GridColViewNode: public T3NodeLeaf {
   // grid view column -- mainly just for editing column spec ifno
 #ifndef __MAKETA__

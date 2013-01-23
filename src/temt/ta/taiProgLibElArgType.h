@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiProgLibElArgType);
+
 class TA_API taiProgLibElArgType : public gpiFromGpArgType {
   // for ProgLibEl* ptr args
   TAI_ARGTYPE_SUBCLASS(taiProgLibElArgType, gpiFromGpArgType);

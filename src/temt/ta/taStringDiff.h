@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 class taStringDiffEdits; // 
 
+TypeDef_Of(taStringDiff);
+
 class TA_API taStringDiff {
   // #NO_TOKENS computes differences between strings, on a line-by-line basis, using the SES/LCS algorithm of Myers (1986), which is used by diff -- converts strings to unique int hash codes first
 public:

@@ -70,6 +70,8 @@ private:
   void  Destroy()       { };
 };
 
+TypeDef_Of(VEBody);
+
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
@@ -265,6 +267,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEBody,TA_VEBody); // VEBodyRef
+SmartRef_Of(VEBody); // VEBodyRef
 
 #endif // VEBody_h

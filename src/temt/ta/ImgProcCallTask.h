@@ -36,6 +36,8 @@ typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
 typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
 #endif
 
+TypeDef_Of(ImgProcCallTask);
+
 class TA_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
 public:

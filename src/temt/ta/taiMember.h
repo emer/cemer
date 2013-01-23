@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 class taiEnumType; //
 
+TypeDef_Of(taiMember);
+
 class TA_API taiMember : public taiType {
 public:
   static  void  EndScript(const void* base);

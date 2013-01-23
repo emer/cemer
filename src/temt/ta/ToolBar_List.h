@@ -25,6 +25,8 @@
 class ToolBar; // 
 
 
+TypeDef_Of(ToolBar_List);
+
 class TA_API ToolBar_List: public DataViewer_List {
 INHERITED(DataViewer_List)
 public:

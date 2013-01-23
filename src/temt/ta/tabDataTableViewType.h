@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabDataTableViewType);
+
 class TA_API tabDataTableViewType: public tabOViewType {
   TAI_TYPEBASE_SUBCLASS(tabDataTableViewType, tabOViewType) //
 public:

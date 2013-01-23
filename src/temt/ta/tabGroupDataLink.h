@@ -25,6 +25,8 @@
 class taGroup_impl; //
 
 
+TypeDef_Of(tabGroupDataLink);
+
 class TA_API tabGroupDataLink: public tabListDataLink {
   // DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups
 INHERITED(tabListDataLink)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taThreadDefaults);
+
 class TA_API taThreadDefaults {
   // #EDIT_INLINE threading default parameters
 public:

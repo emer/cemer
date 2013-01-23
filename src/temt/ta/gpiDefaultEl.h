@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiDefaultEl);
+
 class TA_API gpiDefaultEl : public taiMember {
   TAI_MEMBER_SUBCLASS(gpiDefaultEl, taiMember);
 public:

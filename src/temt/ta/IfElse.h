@@ -27,6 +27,8 @@
 class ProgVar; // 
 
 
+TypeDef_Of(IfElse);
+
 class TA_API IfElse: public ProgEl { 
   // #AKA_If ##HAS_CONDTREE a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)

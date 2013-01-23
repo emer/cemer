@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(VELinMuscle_List);
+
 class TA_API VELinMuscle_List : public taList<VELinearMuscle> {
   // group of linear muscles
   INHERITED(taList<VELinearMuscle>)

@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 class SoTransform; // #IGNORE
 
+TypeDef_Of(taTransform);
+
 class TA_API taTransform: public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math 3-d transformation data; applied in order: s, r, t
   INHERITED(taBase)

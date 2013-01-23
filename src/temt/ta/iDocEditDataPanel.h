@@ -26,6 +26,8 @@ class DocEditDataHost; // #IGNORE
 class taDoc; //
 
 
+TypeDef_Of(iDocEditDataPanel);
+
 class TA_API iDocEditDataPanel: public iDataPanelFrame {
   // a panel frame for editing doc raw HTML/wiki source text
   Q_OBJECT

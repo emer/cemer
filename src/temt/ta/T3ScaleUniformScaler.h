@@ -25,6 +25,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+TypeDef_Of(T3ScaleUniformScaler);
+
 class TA_API T3ScaleUniformScaler: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the scaleUniformScaler
 #ifndef __MAKETA__

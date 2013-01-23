@@ -27,6 +27,8 @@ class taProject; //
 class Project_Group; // 
 
 
+TypeDef_Of(ProjTemplateEl);
+
 class TA_API ProjTemplateEl: public taNBase {
   // #INSTANCE #INLINE #CAT_Project an element in the project template listing
 INHERITED(taNBase)

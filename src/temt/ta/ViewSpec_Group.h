@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ViewSpec_Group);
+
 class TA_API ViewSpec_Group: public taGroup<ViewSpec> {
   // ##CAT_Display group of view specs
 INHERITED(taGroup<ViewSpec>)

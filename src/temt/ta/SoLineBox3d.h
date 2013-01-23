@@ -26,6 +26,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(SoLineBox3d);
+
 class TA_API SoLineBox3d : public SoIndexedLineSet {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a 3d box draw with lines, starting at 0,0,0 and going to 1,-1,1 (note: uses TA Y coords, not GL's)
 #ifndef __MAKETA__

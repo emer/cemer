@@ -25,6 +25,8 @@
 class taBase; // 
 class taBase_RefList; //
 
+TypeDef_Of(IRefListClient);
+
 class TA_API IRefListClient: virtual public ITypedObject { // #NO_CSS
 // optional interface so disparate classes can use RefList to get notifies
 public:

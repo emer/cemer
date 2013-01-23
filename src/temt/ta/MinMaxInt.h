@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(MinMaxInt);
+
 class TA_API MinMaxInt : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum integer values
   INHERITED(taBase)

@@ -25,6 +25,8 @@
 class UndoDiffThreadMgr; // 
 
 
+TypeDef_Of(UndoDiffTask);
+
 class TA_API UndoDiffTask : public taTask {
   // threading task for computing the diff on undo save data -- fork this off to save time
 INHERITED(taTask)

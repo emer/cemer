@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(float_Array);
+
 class TA_API float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of floats
 INHERITED(taArray<float>)

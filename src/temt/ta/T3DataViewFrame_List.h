@@ -25,6 +25,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(T3DataViewFrame_List);
+
 class TA_API T3DataViewFrame_List: public DataViewer_List { // #NO_TOKENS
 INHERITED(DataViewer_List)
 public:

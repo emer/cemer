@@ -26,6 +26,8 @@
 class iTabView; // #IGNORE
 
 
+TypeDef_Of(iDataPanelSetBase);
+
 class TA_API iDataPanelSetBase: public iDataPanel { //  common subclass for iDataPanelSet and iViewPanelSet
   Q_OBJECT
 INHERITED(iDataPanel)

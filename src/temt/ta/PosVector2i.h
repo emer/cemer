@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(PosVector2i);
+
 class TA_API PosVector2i : public taVector2i {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
   INHERITED(taVector2i)

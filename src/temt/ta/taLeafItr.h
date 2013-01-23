@@ -24,8 +24,9 @@
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
 
+TypeDef_Of(taLeafItr);
 
-class   TA_API taLeafItr {              // contains the indicies for iterating over leafs
+class TA_API taLeafItr {              // contains the indicies for iterating over leafs
 public:
   taGroup_impl*        cgp;            // pointer to current group
   int           g;              // index of current group

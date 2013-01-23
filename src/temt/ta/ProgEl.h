@@ -49,6 +49,8 @@ class taiItemPtrBase; // #IGNORE
   TA_BASEFUNS(T)
 
 
+TypeDef_Of(ProgEl);
+
 class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
 friend class ProgExprBase;
@@ -208,6 +210,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ProgEl,TA_ProgEl);
+SmartRef_Of(ProgEl);
 
 #endif // ProgEl_h

@@ -29,6 +29,8 @@
 class iPluginEditor; // #IGNORE
 
 
+TypeDef_Of(PluginWizard);
+
 class TA_API PluginWizard : public taWizard {
   // #STEM_BASE ##CAT_Wizard ##EXT_wiz wizard to create a new Plugin
 INHERITED(taWizard)

@@ -36,6 +36,8 @@ class taiBitBox; //
 class iMainWindowViewer; //
 
 
+TypeDef_Of(iSearchDialog);
+
 class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {
 //   search a project (or more)
 INHERITED(QDialog)

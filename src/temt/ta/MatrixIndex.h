@@ -25,6 +25,8 @@
 class int_Matrix; //
 
 
+TypeDef_Of(MatrixIndex);
+
 class TA_API MatrixIndex: public taBase  {
   // matrix index set -- holds dims() dimensions worth of integers, which are a multidimensional index into a particular matrix location
 INHERITED(taBase)

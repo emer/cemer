@@ -28,6 +28,8 @@
 class taTypeInfoDataLink;
 
 
+TypeDef_Of(taTypeSpaceTreeDataNode);
+
 class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeDataNode)
 public:

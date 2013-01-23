@@ -29,6 +29,8 @@ class taiMethodData; // #IGNORE
 // the client needs to check the MethodDef directives to decide if
 // the type is supposed to have buttons and/or menus in a given context
 
+TypeDef_Of(taiMethod);
+
 class TA_API taiMethod : public taiType {
 INHERITED(taiType)
 public:

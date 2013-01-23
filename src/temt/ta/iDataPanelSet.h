@@ -27,6 +27,8 @@ class QStackedLayout; // #IGNORE
 class iDataPanelFrame; //
 
 
+TypeDef_Of(iDataPanelSet);
+
 class TA_API iDataPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
   Q_OBJECT
 INHERITED(iDataPanelSetBase)

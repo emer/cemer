@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiBoolType);
+
 class TA_API taiBoolType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiBoolType, taiType);
 public:

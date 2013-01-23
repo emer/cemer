@@ -27,6 +27,8 @@
 class ProgVar; // 
 
 
+TypeDef_Of(Switch);
+
 class TA_API Switch: public ProgEl { 
   // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)

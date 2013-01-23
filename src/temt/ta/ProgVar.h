@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ProgVar);
+
 class TA_API ProgVar: public taNBase {
   // ##INSTANCE ##INLINE #STEM_BASE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)

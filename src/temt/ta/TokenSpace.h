@@ -26,6 +26,8 @@
 class taDataLink; //
 #endif
 
+TypeDef_Of(TokenSpace);
+
 class TA_API TokenSpace : public taPtrList<void> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:

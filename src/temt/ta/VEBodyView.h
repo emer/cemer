@@ -27,6 +27,8 @@ class TypeDef; //
 class VEBody; // 
 
 
+TypeDef_Of(VEBodyView);
+
 class TA_API VEBodyView: public T3DataView {
   // view of one body
 INHERITED(T3DataView)

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class MinMax;
 
+TypeDef_Of(FixedMinMax);
+
 class TA_API FixedMinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values with toggles for usage
 INHERITED(taBase)

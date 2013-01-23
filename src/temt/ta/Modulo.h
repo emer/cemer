@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(Modulo);
+
 class TA_API Modulo : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math modulo for things that happen periodically
   INHERITED(taNBase)

@@ -41,6 +41,8 @@ class SoAction;  // #IGNORE
 class SoGLRenderAction; // #IGNORE
 
 
+TypeDef_Of(SoCapsule);
+
 class TA_API SoCapsule : public SoCylinder {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a cylinder with spheres at the ends
 #ifndef __MAKETA__

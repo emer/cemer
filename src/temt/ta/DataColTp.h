@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(DataColTp);
 
 template<class T>
 class DataColTp : public DataCol {

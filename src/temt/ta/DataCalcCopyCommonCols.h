@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(DataCalcCopyCommonCols);
+
 class TA_API DataCalcCopyCommonCols : public DataSrcDestProg { 
   // copy all of the columns from source to dest that have the same name and type (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object) -- must do a + dest row *before* this step (copies into this new row)
 INHERITED(DataSrcDestProg)

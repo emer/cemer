@@ -25,6 +25,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+TypeDef_Of(T3Translate1Translator);
+
 class TA_API T3Translate1Translator: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS parameterizes and uses default color for the translate2 translator
 #ifndef __MAKETA__

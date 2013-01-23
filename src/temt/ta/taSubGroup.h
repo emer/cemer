@@ -35,6 +35,8 @@ private:
   void  Destroy()       { };
 };
 
+TypeDef_Of(taSubGroup);
+
 class TA_API taSubGroup : public taGroup_List {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
   INHERITED(taGroup_List)

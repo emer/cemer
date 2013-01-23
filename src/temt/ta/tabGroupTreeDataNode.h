@@ -26,6 +26,8 @@
 class taGroup_impl; //
 
 
+TypeDef_Of(tabGroupTreeDataNode);
+
 class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
 INHERITED(tabListTreeDataNode)
 public:

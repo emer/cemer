@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(NamedURL);
+
 class TA_API NamedURL {
   // ##INLINE a named URL
 public:

@@ -26,6 +26,8 @@ class iMethodButtonMgr; //
 class DataTableView; //
 
 
+TypeDef_Of(iDataTableView_Panel);
+
 class TA_API iDataTableView_Panel: public iViewPanelFrame {
   // abstract base for logview panels -- just has the viewspace widget; everything else is up to the subclass
   INHERITED(iViewPanelFrame)

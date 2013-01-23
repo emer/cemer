@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 class ImgProcThreadBase; // 
 
+TypeDef_Of(ImgProcCallThreadMgr);
+
 class TA_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)

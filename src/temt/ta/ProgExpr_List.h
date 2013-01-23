@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(ProgExpr_List);
+
 class TA_API ProgExpr_List : public taList<ProgExpr> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program expressions
 INHERITED(taList<ProgExpr>)

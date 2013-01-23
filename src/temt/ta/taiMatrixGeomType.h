@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiMatrixGeomType);
+
 class TA_API taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
   TAI_TYPEBASE_SUBCLASS(taiMatrixGeomType, taiClassType);
 public:

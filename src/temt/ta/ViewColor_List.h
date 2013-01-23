@@ -24,6 +24,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(ViewColor_List);
+
 class TA_API ViewColor_List : public taList<ViewColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ViewColor items
 INHERITED(taList<ViewColor>)

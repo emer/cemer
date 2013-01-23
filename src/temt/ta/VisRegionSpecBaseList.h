@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(VisRegionSpecBaseList);
+
 class TA_API VisRegionSpecBaseList : public taList<VisRegionSpecBase> {
   // ##CAT_Image a list of visual region image processing filters
 INHERITED(taList<VisRegionSpecBase>)

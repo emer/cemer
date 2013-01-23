@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(RndSeed);
+
 class TA_API RndSeed : public taNBase {
   // #STEM_BASE ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)

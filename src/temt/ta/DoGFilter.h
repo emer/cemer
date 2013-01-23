@@ -26,6 +26,8 @@
 class DataTable; // 
 
 
+TypeDef_Of(DoGFilter);
+
 class TA_API DoGFilter : public taNBase {
   // #STEM_BASE #INLINE ##CAT_Image defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast in an image
   INHERITED(taNBase)

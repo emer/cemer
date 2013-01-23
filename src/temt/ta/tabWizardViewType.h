@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabWizardViewType);
+
 class TA_API tabWizardViewType: public tabOViewType {
   TAI_TYPEBASE_SUBCLASS(tabWizardViewType, tabOViewType) //
 public:

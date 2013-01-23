@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiObjectMimeFactory);
+
 class TA_API taiObjectMimeFactory: public taiMimeFactory {
 INHERITED(taiMimeFactory)
 public:

@@ -67,6 +67,8 @@ protected:
 #endif
 
 
+TypeDef_Of(DMemShare);
+
 class TA_API DMemShare : public taBase_List {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of objects that are shared across distributed processes: link the objects into this list to share them
   INHERITED(taBase_List)

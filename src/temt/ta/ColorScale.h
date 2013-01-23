@@ -33,6 +33,8 @@ class ColorScaleSpec; //
 // typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
 // typedef ptr_iColor const_iColor;
 
+TypeDef_Of(ColorScale);
+
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 INHERITED(taNBase)
@@ -90,6 +92,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ColorScale,TA_ColorScale); // ColorScaleRef
+SmartRef_Of(ColorScale); // ColorScaleRef
 
 #endif // ColorScale_h

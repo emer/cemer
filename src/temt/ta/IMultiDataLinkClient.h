@@ -26,6 +26,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(IMultiDataLinkClient);
+
 class TA_API IMultiDataLinkClient : public virtual IDataLinkClient {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
 public:
 

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(iListDataPanel);
+
 class TA_API iListDataPanel: public iDataPanelFrame {
   Q_OBJECT
 #ifndef __MAKETA__

@@ -29,6 +29,8 @@
 class DataCol;
 
 
+TypeDef_Of(FixedWidthColSpec);
+
 class TA_API FixedWidthColSpec : public taNBase {
   // ##CAT_Data #STEM_BASE single column spec for fixed width loading of scalar cols
 INHERITED(taNBase)

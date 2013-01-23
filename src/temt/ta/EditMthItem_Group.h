@@ -27,6 +27,8 @@ class taBase; //
 class TypeDef; // 
 
 
+TypeDef_Of(EditMthItem_Group);
+
 class TA_API EditMthItem_Group : public taGroup<EditMthItem> {
   // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<EditMthItem>)

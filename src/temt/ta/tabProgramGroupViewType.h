@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(tabProgramGroupViewType);
+
 class TA_API tabProgramGroupViewType: public tabGroupViewType {
   TAI_TYPEBASE_SUBCLASS(tabProgramGroupViewType, tabGroupViewType) //
 public:

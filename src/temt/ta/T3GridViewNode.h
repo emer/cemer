@@ -29,6 +29,8 @@ class SoScrollBar; //
 class T3TransformBoxDragger; //
 
 
+TypeDef_Of(T3GridViewNode);
+
 class TA_API T3GridViewNode: public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;

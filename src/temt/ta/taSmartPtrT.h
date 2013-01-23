@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(taSmartPtrT);
 
 template<class T>
 class taSmartPtrT: public taSmartPtr {
@@ -51,7 +52,8 @@ private:
 
 // macro for creating smart ptrs of taBase classes
 
-#define SmartPtr_Of(T)  typedef taSmartPtrT<T> T ## Ptr;
+#define SmartPtr_Of(T) TypeDef_Of(T ## Ptr); \
+  typedef taSmartPtrT<T> T ## Ptr;
 
 SmartPtr_Of(taBase);            // basic ptr if you don't know the type
 

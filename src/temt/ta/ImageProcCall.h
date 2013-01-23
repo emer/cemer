@@ -25,6 +25,8 @@
 class ProgEl; // 
 
 
+TypeDef_Of(ImageProcCall);
+
 class TA_API ImageProcCall : public StaticMethodCall { 
   // call a taImageProc function
 INHERITED(StaticMethodCall)

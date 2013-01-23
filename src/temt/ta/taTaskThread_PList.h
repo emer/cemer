@@ -25,6 +25,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taTaskThread_PList);
+
 class TA_API taTaskThread_PList : public taPtrList<taTaskThread> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of task threads
   //INHERITED(taPtrList<taTaskThread>)

@@ -27,6 +27,8 @@
 // declare all other types mentioned but not required to include:
 class ClusterRun; //
 
+TypeDef_Of(ParamSearchAlgo);
+
 class TA_API ParamSearchAlgo : public taNBase {
   // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.
   INHERITED(taNBase)
@@ -47,6 +49,6 @@ private:
   void Destroy() { }
 };
 
-SmartRef_Of(ParamSearchAlgo, TA_ParamSearchAlgo); // ParamSearchAlgoRef
+SmartRef_Of(ParamSearchAlgo); // ParamSearchAlgoRef
 
 #endif // ParamSearchAlgo_h

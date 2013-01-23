@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class taBase; //
 
+TypeDef_Of(taiTokenPtrType);
+
 class TA_API taiTokenPtrType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTokenPtrType, taiType);
 public:

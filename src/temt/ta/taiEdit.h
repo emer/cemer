@@ -27,6 +27,8 @@ class taiEditDataHost; //
 class iMainWindowViewer; //
 class taiDataLink; //
 
+TypeDef_Of(taiEdit);
+
 class TA_API taiEdit : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiEdit, taiType);
 public:

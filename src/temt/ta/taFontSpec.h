@@ -24,6 +24,8 @@
 
 // declare all other types mentioned but not required to include:
 
+TypeDef_Of(taFontSpec);
+
 class TA_API taFontSpec : public taOBase, public iFont {
  // #INLINE #INLINE_DUMP ##CAT_Display a specification of a font (for Unix - X logical font description)
 INHERITED(taOBase)

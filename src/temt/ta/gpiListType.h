@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(gpiListType);
+
 class TA_API gpiListType : public taiClassType {
   TAI_TYPEBASE_SUBCLASS(gpiListType, taiClassType);
 public:

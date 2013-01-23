@@ -57,6 +57,8 @@ class taiMimeSource; //
      override his effLink
 */
 
+TypeDef_Of(ISelectable);
+
 class TA_API ISelectable: public virtual IDataLinkProxy { //
 INHERITED(IDataLinkProxy)
 friend class ISelectableHost;

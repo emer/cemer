@@ -26,6 +26,8 @@ class iFrameViewer; //
 class MainWindowViewer; // 
 
 
+TypeDef_Of(FrameViewer);
+
 class TA_API FrameViewer : public DataViewer {
   // #NO_TOKENS #VIRT_BASE for views that can be in the splitter of a MainWindowViewer
 INHERITED(DataViewer)

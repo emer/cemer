@@ -32,6 +32,8 @@ class iTreeView; //
 class DataLink_QObj; // #IGNORE
 class taiMimeSource; //
 
+TypeDef_Of(taiDataLink);
+
 class TA_API taiDataLink: public taDataLink {
   // interface for viewing system
 INHERITED(taDataLink)

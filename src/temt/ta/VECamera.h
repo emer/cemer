@@ -44,6 +44,8 @@ class SoPerspectiveCamera; // #IGNORE
 #endif
 
 
+TypeDef_Of(VECamera);
+
 class TA_API VECameraDists : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
 INHERITED(taOBase)
@@ -89,6 +91,6 @@ private:
   void  Destroy() { };
 };
 
-SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
+SmartRef_Of(VECamera); // VECameraRef
 
 #endif // VECamera_h

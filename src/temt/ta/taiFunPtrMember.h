@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 
 
+TypeDef_Of(taiFunPtrMember);
+
 class TA_API taiFunPtrMember : public taiMember {
   // pointer to a function
   TAI_MEMBER_SUBCLASS(taiFunPtrMember, taiMember);
