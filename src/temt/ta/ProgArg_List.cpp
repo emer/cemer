@@ -145,14 +145,14 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
           def_val = ot->name + "::" + def_val;
       }
       else if (arg_typ->InheritsFrom(TA_taString) ||
-        ((arg_typ->ptr == 1) && arg_typ->InheritsFrom(&TA_char)))
+               (arg_typ->IsPointer() && arg_typ->InheritsFrom(&TA_char)))
       {
         if(def_val.empty()) def_val = "\"\""; // empty string
       }
       pa->def_val = def_val;
     }
     else {                      // required
-      if(pa->arg_type->InheritsFormal(&TA_enum) && pa->expr.expr.empty()) {
+      if(pa->arg_type->IsEnum() && pa->expr.expr.empty()) {
         // pre-fill expr with lookup base for enum type -- makes lookup easier
         String eprfx = pa->arg_type->GetEnumPrefix();
         if(eprfx.nonempty()) {

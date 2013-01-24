@@ -278,11 +278,11 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || !md->type->DerivesFrom(TA_taBase)) continue;
-    if(md->type->ptr == 0) {
+    if(md->type->IsNotPtr()) {
       taBase* mb = (taBase*)md->GetOff(this);
       mb->CutLinks();
     }
-    else if(md->type->ptr == 1 && !md->HasOption("NO_SET_POINTER")) {
+    else if(md->type->IsPointer() && !md->HasOption("NO_SET_POINTER")) {
       taBase** mb = (taBase**)md->GetOff(this);
       taBase::DelPointer(mb);
     }
@@ -1630,7 +1630,7 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
         return false;
       }
       if(md) {                  // otherwise it is a taBase*
-        if(md->type->ptr == 1) {
+        if(md->type->IsPointer()) {
           bs = *((taBase**)bs);
           if(bs == NULL) {
             taMisc::Warning("*** Null object at end of path in SetValStr:",val);
@@ -2210,7 +2210,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   // first pass: just look at our guys
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->ptr == 0) {
+    if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taBase)) {
         taBase* obj = (taBase*)md->GetOff(this);
         if(mbr_name) {
@@ -2235,7 +2235,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->ptr == 0) {
+    if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taBase)) {
         taBase* obj = (taBase*)md->GetOff(this);
         obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
@@ -2272,7 +2272,7 @@ void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
 }
 
 taBase::ValType taBase::ValTypeForType(TypeDef* td) {
-  if (td->ptr == 0) {
+  if (td->IsNotPtr()) {
     if (td->DerivesFrom(TA_bool)) {
       return VT_INT;
     }
@@ -2749,7 +2749,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
 static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
   MemberDef* md;
   taBase* new_guy = par_obj->FindFromPath(srec->value, md);
-  if((drec->type->ptr == 1) && drec->type->DerivesFrom(&TA_taBase)) {
+  if((drec->type->IsPointer()) && drec->type->DerivesFrom(&TA_taBase)) {
     if(drec->mdef && drec->mdef->HasOption("OWN_POINTER")) {
       if(!drec->par_addr)
         taMisc::Warning("*** NULL parent for owned pointer:",drec->GetDisplayName());
@@ -2808,7 +2808,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
         tab_diff_typ = true;
       }
     }
-    else if(((rec->type->ptr == 1) && rec->type->DerivesFrom(&TA_taBase)) ||
+    else if(((rec->type->IsPointer()) && rec->type->DerivesFrom(&TA_taBase)) ||
             rec->type->InheritsFrom(TA_taSmartRef) ||
             rec->type->InheritsFrom(TA_taSmartPtr)) {
       taptr = true;
@@ -3116,7 +3116,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
   // then look in my sub-guys
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->ptr == 0) {
+    if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taBase)) {
         taBase* obj = (taBase*)md->GetOff(this);
         nfound += obj->SelectForEditSearch(memb_contains, editor);
@@ -3323,7 +3323,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->is_static) continue;
-    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3336,7 +3336,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
         nchg += chg; mychg += chg;
       }
     }
-    else if(md->type->ptr == 0) {
+    else if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
         int chg = UpdatePointers_NewPar_Ref(*ref, old_par, new_par);
@@ -3462,7 +3462,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->is_static) continue;
-    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3475,7 +3475,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
         nchg += chg; mychg += chg;
       }
     }
-    else if(md->type->ptr == 0) {
+    else if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
         int chg = taBase::UpdatePointers_NewParType_Ref(*ref, par_typ, new_par);
@@ -3563,7 +3563,7 @@ int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
     MemberDef* nmd = NULL;
     if(ntd && ntd->members.size > m)
       nmd = ntd->members[m];
-    if((omd->type->ptr == 0) && omd->type->InheritsFrom(TA_taBase)) {
+    if((omd->type->IsNotPtr()) && omd->type->InheritsFrom(TA_taBase)) {
       taBase* old_kid = (taBase*)omd->GetOff(this);
       taBase* new_kid = NULL;
       if(nmd && (nmd->type == omd->type)) new_kid = (taBase*)nmd->GetOff(this);
@@ -3579,7 +3579,7 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int mychg = 0;                // my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3592,7 +3592,7 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
         nchg += chg; mychg += chg;
       }
     }
-    else if(md->type->ptr == 0) {
+    else if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
         int chg = taBase::UpdatePointers_NewObj_Ref(*ref, this, old_ptr, new_ptr);

@@ -86,7 +86,7 @@ int yylex();
 /* class stuff */
 %type 	<typ>	classdsub classname classhead classnm classinh
 %type 	<typ>	classpar classptyp classpmod
-%type   <typ>	access classkeyword structunion templatekeyword
+%type   <typ>	access classkeyword structkeyword unionkeyword templatekeyword
 %type	<typ>	membs membline membtype
 %type   <memb>  membdefn basicmemb nostatmemb membname membnames membfunp
 %type 	<meth>	methdefn basicmeth nostatmeth methname mbfundefn
@@ -154,12 +154,10 @@ typedsub: TYPEDEF defn			{ $$ = $2; }
         ;
 
 defn:     type tyname term		{
-            $$ = $2; $2->AddParent($1); $2->ptr = $1->ptr;
-	    $2->par_formal.BorrowUnique($1->par_formal);
+            $$ = $2; $2->AddParent($1); $2->type = $1->type;
 	    mta->type_stack.Pop(); }
         | type COMMENT tyname term	{ /* annoying place for a comment, but.. */
-            $$ = $3; $3->AddParent($1); $3->ptr = $1->ptr;
-	    $3->par_formal.BorrowUnique($1->par_formal);
+            $$ = $3; $3->AddParent($1); $3->type = $1->type;
 	    mta->type_stack.Pop(); }
         /* predeclared type, which gets sucked in by the combtype list
 	   the second parent of the new type is the actual new type */
@@ -197,13 +195,11 @@ defn:     type tyname term		{
 	      }
 	    }
 	    $$ = td; } }
-        /* currently, parsing pointer-to-a-function typedefs, but not
-	   registering them as such, just giving them void* types */
         | type '(' '*' tyname ')' funargs term {
-	    $$ = $4; $$->AddParent(&TA_void_ptr); $$->ptr = 1;
+            $$ = $4; $$->SetType(TypeDef::FUN_PTR);
 	    mta->type_stack.Pop(); }
         | type SCOPER '*' tyname		{
-	    $$ = $4; $$->AddParent(&TA_void_ptr); $$->ptr = 1;
+            $$ = $4; $$->SetType(TypeDef::METH_PTR);
 	    mta->type_stack.Pop(); }
         ;
 
@@ -223,12 +219,12 @@ enumname: enumnm '{'
 
 enumnm:   ENUM tyname			{
   	    $$ = $2;
-	    $2->AddParFormal(&TA_enum); mta->cur_enum = $2;
+	    $2->SetActualType(TypeDef::ENUM); mta->cur_enum = $2;
 	    mta->SetSource($$, false); mta->type_stack.Pop(); }
         | ENUM 				{
 	    String nm = "enum_"; nm += (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); mta->cur_enum = $$;
-	    mta->SetSource($$, false); $$->AddParFormal(&TA_enum); $$->internal = true; }
+	    mta->SetSource($$, false); $$->SetActualType(TypeDef::ENUM); }
         ;
 
 classdecl:
@@ -248,7 +244,8 @@ classdefn:
           classdefns			{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("class", sp, $$); $$->source_end = mta->line-1; }
+	    if($$ == $1) { mta->TypeAdded("class", sp, $$); $$->FixClassTypes();
+              $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
 
@@ -284,7 +281,7 @@ classhead:
 classnm:  classkeyword tyname			{
             mta->state = MTA::Parse_class;
             $$ = $2; mta->last_class = mta->cur_class; mta->cur_class = $2;
-	    $2->AddParFormal(&TA_class);
+	    $2->SetActualType(TypeDef::CLASS);
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
         | classkeyword TYPE			{
             mta->state = MTA::Parse_class;
@@ -293,13 +290,22 @@ classnm:  classkeyword tyname			{
         | classkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); mta->type_stack.Push($$);
+	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::CLASS); 
+            mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
-        | structunion				{
+        | structkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); mta->type_stack.Push($$);
+	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::STRUCT);
+            mta->type_stack.Push($$);
+	    mta->last_class = mta->cur_class; mta->cur_class = $$;
+	    mta->cur_mstate = MTA::pblc; } /* is struct */
+        | unionkeyword				{
+            mta->state = MTA::Parse_class;
+	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
+	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::UNION);
+            mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
         ;
@@ -362,8 +368,7 @@ templhead:
           templatekeyword templopen templpars '>' classhead	{
 	    $5->templ_pars.Reset();
 	    $5->templ_pars.Duplicate(mta->cur_templ_pars);
-	    $5->internal = true;
-	    $5->AddParFormal(&TA_template); $$ = $5;
+	    $5->SetActualType(TypeDef::TEMPLATE); $$ = $5;
 	    mta->SetSource($$, true); }
         ;
 
@@ -521,14 +526,11 @@ nostatmemb:
         | membnames term		{ }
         | membtype membname ARRAY term	{
 	    $$ = $2;
-	    String nm = $1->name + "_ary";
-	    TypeDef* nty = new TypeDef((char*)nm, true, $1->ptr + 1);
 	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    TypeDef* uty = sp->AddUniqNameOld(nty); 
-	    if(uty == nty) { mta->TypeAdded("array", sp, uty); 
-	      nty->AddParFormal(&TA_ta_array); nty->AddParent($1); }
-	    else { mta->TypeNotAdded("array", sp, uty, nty); delete nty; }
-	    $2->type = uty; }
+            int spsz = sp->size;
+            TypeDef* nty = $1->GetArrayType_impl(*sp);
+	    if(spsz != sp->size) { mta->TypeAdded("array", sp, nty); }
+	    $2->type = nty; }
         | membtype membfunp funargs term { $2->type = $1; $$ = $2; }
         ;
 
@@ -715,42 +717,40 @@ tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$);
 
 type:	  noreftype
         | noreftype '&'			{
-	    String nm = $1->name + "_ref";
-	    TypeDef* nty = new TypeDef((char*)nm, true, $1->ptr, true);
 	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) { mta->TypeAdded("ref", sp, $$); nty->AddParent($1); }
-	    else { mta->TypeNotAdded("ref", sp, $$, nty); delete nty; }
+            int spsz = sp->size;
+            $$ = $1->GetRefType_impl(*sp);
+	    if(sp->size != spsz) { mta->TypeAdded("ref", sp, $$); }
 	  }
         ;
 
 noreftype:
 	  constype
         | constype ptrs			{
- 	    int i; String nm = $1->name; for(i=0; i<$2; i++) nm += "_ptr";
-	    TypeDef* nty = new TypeDef((char*)nm, true, $2); 
 	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) { mta->TypeAdded("ptr", sp, $$); nty->AddParent($1); }
-	    else { mta->TypeNotAdded("ptr", sp, $$, nty); delete nty; }
+            int spsz = sp->size;
+            $$ = $1;
+ 	    for(int i=0; i<$2; i++) {
+              $$ = $$->GetPtrType_impl(*sp);
+              if(sp->size != spcz) { mta->TypeAdded("ptr", sp, $$); }
+            }
 	  }
         ;
 
 constype: subtype
         | CONST subtype			{
-	    String nm = $1->name + "_" + $2->name;
-	    TypeDef* nty = new TypeDef((char*)nm, true);
 	    TypeSpace* sp = mta->GetTypeSpace($2);
-	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) { mta->TypeAdded("const", sp, $$);
-	                    nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
-	    else { mta->TypeNotAdded("const", sp, $$, nty); delete nty; }
+            int spsz = sp->size;
+            $$ = GetConstType_impl(*sp);
+	    if(sp->size != spcz) { mta->TypeAdded("const", sp, $$); }
 	  }
         ;
 
 subtype:  combtype
-        | structunion combtype		{ $$ = $2; }
-        | structunion tyname		{ $$ = $2; }
+        | structkeyword combtype	{ $$ = $2; }
+        | structkeyword tyname		{ $$ = $2; }
+        | unionkeyword combtype		{ $$ = $2; }
+        | unionkeyword tyname		{ $$ = $2; }
 	| TYPE SCOPER NAME		{
 	    TypeDef* td; if((td = $1->sub_types.FindName($3)) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -764,24 +764,24 @@ subtype:  combtype
         | SCOPER TYPE			{ $$ = $2; }
         | THISNAME
         | TYPE templopen templargs '>'		{ /* a template */
- 	    if(!($1->InheritsFormal(TA_template))) {
+            if(!($1->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
-	    if(($3->owner != NULL) && ($3->owner->owner != NULL))
-	      $$ = $1;	/* don't allow internal types with external templates */
-	    else {
-	      String nm = $1->GetTemplName(mta->cur_templ_pars);
-	      TypeDef* td;
-	      int lx_tok;
-	      if((td = mta->FindName(nm, lx_tok)) == NULL) {
-		td = $1->Clone(); td->name = nm;
-		td->SetTemplType($1, mta->cur_templ_pars);
-		TypeSpace* sp = mta->GetTypeSpace($1);
- 		$$ = sp->AddUniqNameOld(td);
-		if($$ == td) mta->TypeAdded("template instance", sp, $$); }
-	      else
-		$$ = td; } }
+	    /* if(($3->owner != NULL) && ($3->owner->owner != NULL)) */
+	    /*   $$ = $1;	/\* don't allow internal types with external templates *\/ */
+	    /* else { */
+            String nm = $1->GetTemplInstName(mta->cur_templ_pars);
+            TypeDef* td;
+            int lx_tok;
+            if((td = mta->FindName(nm, lx_tok)) == NULL) {
+              td = $1->Clone(); td->name = nm;
+              td->SetTemplType($1, mta->cur_templ_pars);
+              TypeSpace* sp = mta->GetTypeSpace($1);
+              $$ = sp->AddUniqNameOld(td);
+              if($$ == td) mta->TypeAdded("template instance", sp, $$); }
+            else
+              $$ = td; } }
 	| THISNAME templopen templargs '>'	{ /* this template */
-	    if(!($1->InheritsFormal(TA_template))) {
+            if(!($1->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
 	    $$ = $1; }
         ;
@@ -827,9 +827,12 @@ access:   PUBLIC
         | PROTECTED
         ;
 
-structunion:
+structkeyword:
           STRUCT		{ mta->defn_st_line = mta->line-1; }
-        | UNION			{ mta->defn_st_line = mta->line-1; }
+	;
+
+unionkeyword:
+          UNION			{ mta->defn_st_line = mta->line-1; }
 	;
 
 classkeyword:

@@ -31,13 +31,13 @@ bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   if (td->ptr || td->ref || td->formal)
     return true;
 
-  if(!td->InheritsFormal(TA_class))
+  if(!td->IsClass())
     return true;
-  if(td->InheritsFrom(&TA_const))
+  if(td->IsConst())
     return true;
 
   // exclude template instances (of any sort!)  //  && (td->children.size == 1)) 
-  if (td->InheritsFormal(TA_templ_inst))
+  if (td->IsTemplInst())
     return true;
 
 //   // exclude low-level non-instance guys, except for the ones we want..

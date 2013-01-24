@@ -218,7 +218,7 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
           nxtval = val.after(',');
           val = val.before(',');
         }
-        if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
+        if(md->type->IsEnum() && mbr_val.contains('|')) { // bits!
           if(mbr_val.contains(val)) {
             String aft = mbr_val.after(val);
             String bef = mbr_val.before(val);

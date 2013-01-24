@@ -25,7 +25,7 @@ TypeDef_Of(TypeDef_ptr);
 
 int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taBase) &&
-     (argt->ptr == 1) && argt->DerivesFrom(TA_taBase))
+     (argt->IsPointer()) && argt->DerivesFrom(TA_taBase))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

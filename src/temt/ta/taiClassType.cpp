@@ -20,7 +20,7 @@
 
 
 int taiClassType::BidForType(TypeDef* td) {
-  if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
+  if(td->IsActualClass()) //iCoord handled by built-in type system
     return (taiType::BidForType(td) +1);
   return 0;
 }

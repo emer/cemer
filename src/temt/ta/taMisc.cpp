@@ -2254,10 +2254,6 @@ void taMisc::CreateAllNewSrcFiles() {
   while(i < types.size) {
     TypeDef* typ = types.FastEl(i);
     bool dbg = false;
-    // if(typ->InheritsFormal(&TA_template)) {
-    //   taMisc::Info("template: ", typ->name);
-    //   dbg = true;
-    // }
     if(!typ->IsClass() || !typ->IsAnchor()) {
       if(dbg) taMisc::Info("fail class, anchor");
       i++;
@@ -2268,11 +2264,6 @@ void taMisc::CreateAllNewSrcFiles() {
       i++;
       continue;
     }
-    // if(typ->InheritsFormal(TA_templ_inst)) {
-    //   if(dbg) taMisc::Info("fail templ inst");
-    //   i++;
-    //   continue;
-    // }
     int chs = taMisc::Choice("Fix new source file for: " + typ->name,
 			     "Yes", "No", "Back", "Cancel");
     if(chs == 3) break;

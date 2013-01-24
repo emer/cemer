@@ -115,7 +115,7 @@ void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
   cat = "Enum";
   for(int i=0; i < targ_typ->sub_types.size; i++) {
     TypeDef* td = targ_typ->sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum)) {
+    if(td->IsEnum()) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ShowEnum(ed)) continue;
@@ -150,7 +150,7 @@ void taiEnumStaticButton::BuildChooser_1(taiItemChooser* ic) {
   cat = "Enum";
   for(int i=0; i < targ_typ->sub_types.size; i++) {
     TypeDef* td = targ_typ->sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum)) {
+    if(td->IsEnum()) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ShowEnum(ed)) continue;
@@ -191,7 +191,7 @@ void taiEnumStaticButton::BuildChooser_4(taiItemChooser* ic) {
   cat = "Enum";
   for(int i=0; i < targ_typ->sub_types.size; i++) {
     TypeDef* td = targ_typ->sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum)) {
+    if(td->IsEnum()) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ed->HasOption("EXPERT")) continue;

@@ -94,7 +94,7 @@ bool MemberDef::DumpMember(void* par) {
     return !(ValIsDefault(par, TypeItem::SHOW_CHECK_MASK));
   }
   // embedded types (simple or objects) get saved by default
-  else if (type->ptr == 0)
+  else if (type->IsNotPtr())
     return true;
   // ok, so it is a ptr -- some types get saved by default
   else if (type->DerivesFrom(TA_taBase) ||
@@ -116,7 +116,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   TypeDef* eff_type = type;
   
   // embedded classes can never be Variant, and are completely handled in this block
-  if (type->InheritsNonAtomicClass()) {
+  if (type->IsActualClass()) {
     taMisc::indent(strm, indent, 1) << name;
     if (type->InheritsFrom(TA_taBase)) {
       taBase* rbase = (taBase*)new_base;
@@ -140,7 +140,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     } 
   }
   
-  if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
+  if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
     taBase* tap = *((taBase**)new_base);
     if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*)base, indent);
@@ -190,7 +190,7 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
   int rval = false;
   void* new_base = GetOff(base);
 
-  if (type->InheritsNonAtomicClass()) {
+  if (type->IsActualClass()) {
     if(type->InheritsFrom(TA_taBase)) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_SaveR(strm, (taBase*)base, indent);
@@ -208,7 +208,7 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
       }
     }
   
-    if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
+    if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
       taBase* tap = *((taBase **)(new_base));
       if ((tap != NULL) && (tap->GetOwner() == base)) { // wholly owned subsidiary
         tap->Dump_Save_impl(strm, (taBase*) base, indent);
@@ -230,7 +230,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
   void* new_base = GetOff(base);
   
   
-  if (type->InheritsNonAtomicClass()) {
+  if (type->IsActualClass()) {
     if(type->InheritsFrom(TA_taBase)) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
@@ -257,7 +257,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
       }
     }
     
-    if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
+    if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
       taBase* tap = *((taBase **)(new_base));
       if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
         strm << "\n";			// actually saving a path: put a newline
@@ -293,7 +293,7 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
 }
 
 int TypeDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
-  if(InheritsFormal(TA_class)) {
+  if(IsActualClass()) {
     return members.Dump_Save_PathR(strm, base, par, indent);
   }
   return false;
@@ -313,7 +313,7 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
     strm << ";\n";
   }
   else */
-  if (InheritsNonAtomicClass()) {
+  if (IsActualClass()) {
     // semi-hack to not do INLINE if taBase has user data
     bool inline_dump = HasOption("INLINE_DUMP");
     if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
@@ -339,7 +339,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
   if(base == NULL)
     return false;
 
-  if((ptr == 1) && DerivesFrom(TA_taBase)) {
+  if((IsPointer()) && DerivesFrom(TA_taBase)) {
     taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*) par, indent);
@@ -357,7 +357,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Path(strm, base, par, indent);
     Dump_Save_Value(strm, base, par, indent);
   }
-  if(InheritsNonAtomicClass()) {
+  if(IsActualClass()) {
     bool inline_dump = HasOption("INLINE_DUMP");
     if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
       inline_dump = !((taOBase*)base)->HasUserDataList();
@@ -372,10 +372,6 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
       taMisc::indent(strm, indent, 1) << "};\n";
     }
   }
-//   if(InheritsFormal(TA_class) && !HasOption("INLINE_DUMP")) {
-//     members.Dump_SaveR(strm, base, par, indent+1);
-//     taMisc::indent(strm, indent, 1) << "};\n";
-//   }
   return true;
 }
 
@@ -383,7 +379,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   if(base == NULL)
     return false;
 
-  if((ptr == 1) && DerivesFrom(TA_taBase)) {
+  if((IsPointer()) && DerivesFrom(TA_taBase)) {
     taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*) par, indent);
@@ -400,7 +396,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   }
   // note: we don't do our INLINE hack here, because this code only looks
   // for *non* INLINE guys in this context...
-  if(InheritsNonAtomicClass() &&
+  if(IsActualClass() &&
      !HasOption("INLINE_DUMP"))
   {
     if(InheritsFrom(TA_taBase)) {
@@ -411,10 +407,6 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
       Dump_SaveR(strm, base, base, indent+1);
     taMisc::indent(strm, indent, 1) << "};\n";
   }
-//   if(InheritsFormal(TA_class) && !HasOption("INLINE_DUMP")) {
-//     members.Dump_SaveR(strm, base, par, indent+1);
-//     taMisc::indent(strm, indent, 1) << "};\n";
-//   }
   return true;
 }
 
@@ -471,7 +463,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     rbase->Dump_Save_impl(strm, (taBase*)par, indent);
   } else {
     Dump_Save_Path(strm, base, par, indent);
-    if (InheritsNonAtomicClass()) {
+    if (IsActualClass()) {
       strm << " { ";
       if(Dump_Save_PathR(strm, base, par, indent))
 	taMisc::indent(strm, indent, 1);
@@ -654,7 +646,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   int rval;
   TypeDef* eff_type = type; // overridden for variants
 
-  if (type->InheritsNonAtomicClass()) {
+  if (type->IsActualClass()) {
     if(type->InheritsFrom(TA_taBase)) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Load_impl(strm, (taBase*)base);
@@ -681,7 +673,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       var.GetRepInfo(eff_type, new_base);
     }
     
-    if ((eff_type->ptr == 1) && eff_type->DerivesFrom(TA_taBase)
+    if ((eff_type->IsPointer()) && eff_type->DerivesFrom(TA_taBase)
             && HasOption("OWN_POINTER"))
     {
       c = taMisc::skip_white(strm, true);
@@ -702,8 +694,6 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
 	      << String((ta_intptr_t)base);
 	  taMisc::Info(msg);
         }
-        //TODO: if we allow Variant taBase pointers, need to detect and do FixNull
-        // if (type->InheritsFormal(TA_Variant) ... do FixNull
         return rval;
       }
     }
@@ -983,7 +973,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     taMisc::LexBuf = String("{") + taMisc::LexBuf; // put lb back in..
     SetValStr(taMisc::LexBuf, base);
   }
-  else if(InheritsFormal(TA_class)) {
+  else if(IsActualClass()) {
     if(c != '{') {
       taMisc::Warning("Missing '{' in dump file for type:",name);
       return false;
@@ -1316,12 +1306,14 @@ void taBase::Dump_Save_GetPluginDeps() {
     //TODO: very obscure, but could possibly be a taBase in a Variant
     if (!td->DerivesFrom(&TA_taBase)) continue;
     taBase* ta = NULL;
-    if (td->ptr == 0) { // embedded
+    if (td->IsNotPtr()) { // embedded
       ta = (taBase*)md->GetOff(this);
-    } else if (td->ptr == 1) { // ptr to... but needs to be owned!
+    }
+    else if (td->IsPointer()) { // ptr to... but needs to be owned!
       ta = *(taBase**)md->GetOff(this);
       if (!ta || (ta->GetOwner() != this)) continue;
-    } else continue;// ptr > 1, not supposed to be saveable!
+    }   
+    else continue;// ptr > 1, not supposed to be saveable!
     ta->Dump_Save_GetPluginDeps();
   }
 }

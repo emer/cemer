@@ -53,6 +53,42 @@ class TA_API TypeDef : public TypeItem {
   // defines a type -- everything from int to classes, enums, typedefs, etc
 INHERITED(TypeItem)
 public:
+
+  enum TypeType { // #BITS what type of type is this?  some of these are mutex and some are add-on -- all mixed together for one-stop-shopping -- the core data types are set even for derived types (e.g., a pointer to an integer is still flagged as an integer) -- check for ACTUAL to distinguish derived from non-derived
+    VOID = 0x00000001,     // void -- no type!
+    BOOL = 0x00000002,     // boolean valued native type -- only one instance: bool
+    INTEGER = 0x00000004,  // some kind of integer data type, from char up to long long 
+    ENUM = 0x00000008,     // an enum type -- the overall type, not the individual enums, which are in enum_vals
+    FLOAT = 0x00000010,    // some kind of floating point data type, float, double, long-double
+    STRING = 0x00000020,   // a taString TA native string object -- treated as atomic in TA system
+    VARIANT = 0x00000040,  // a Variant TA native Variant object -- treated as atomic in TA system
+    SMART_PTR = 0x00000080, // some kind of atomic smart pointer object (taSmartPtr, taSmartRef)
+    SMART_INT = 0x00000100, // some kind of atomic smart integer object (AtomicInt, ContextFlag, etc)
+    CLASS = 0x00000200,    // a class object -- NOT including a STRING or VARIANT -- class templates are also marked as CLASS
+    TEMPLATE = 0x00000400, // a template of any sort -- class templates also have class set -- this is ONLY set for the template itself, not for anything derived from the template
+    TEMPLATE_INST = 0x00000800, // a direct instance of a template -- a template with specific parameter values provided -- this is only set for the direct instance itself, not for derived types
+    STRUCT = 0x00001000,   // a struct object
+    UNION = 0x00002000,    // a union 
+    FUNCTION = 0x000004000, // a function -- this is typically used in combination with POIINTER for a function pointer
+    METHOD = 0x00008000,    // a method on a class -- this is typically used in combination with POINTER for a method pointer
+    
+    ACTUAL = 0x00010000,    // this is an actual data value as specified above -- it is NOT a derived type such as a POINTER, REFERENCE, CONST, ARRAY, etc.
+    POINTER = 0x00020000,   // a pointer to the data value as specified above -- this is a first-order pointer -- see PTR_PTR for a pointer to a pointer (these two are mutex)
+    PTR_PTR = 0x00040000,   // a pointer to a pointer to a data value as specified above -- this is mutex with a first-order POINTER
+    REFERENCE = 0x00080000, // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
+    ARRAY = 0x00100000,     // an explicitly delimited array of data values of a specific length
+    CONST = 0x00200000,     // a constant data value -- not modifiable
+    SIGNED = 0x00400000,    // a signed INTEGER
+    UNSIGNED = 0x00800000,  // an unsigned INTEGER
+    SUBTYPE = 0x01000000,   // is a subtype defined within scope of a parent class
+
+    TABASE = 0x01000000,    // a CLASS that derives from taBase base class that is automatically type-aware
+
+    ANY_PTR = POINTER | PTR_PTR,
+    ATOMIC = BOOL | INTEGER | ENUM | FLOAT | STRING | VARIANT | SMART_PTR | SMART_INT,
+    NON_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST,
+  };
+
   enum StrContext { // context for getting or setting a string value
     SC_DEFAULT,         // default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
     SC_STREAMING,       // value is being used for streaming, ex. strings are quoted/escaped
@@ -60,24 +96,11 @@ public:
     SC_DISPLAY,         // value is being used for display purposes, and result includes html (rich text) formatting tags, etc
   };
 
-  static TypeDef*       GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
 
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
-  void*         dmem_type; // actually ptr to: MPI_Datatype_PArray
-  void          AssertDMem_Type(); // creates the dmem_type array if not already
-  virtual MPI_Datatype  GetDMemType(int share_set);
-#endif
+  TypeType      type;           // type information about this type -- what do we have here?
   TypeSpace*    owner;          // the owner of this one
-
   uint          size;           // size (in bytes) of item
-  short         ptr;            // number of pointers
-  bool          ref;            // true if a reference variable
-  bool          internal;       // true if an internal type (auto generated)
-  bool          formal;         // true if a formal type (e.g. class, const, enum..)
 #ifdef NO_TA_BASE
-  bool          pre_parsed;     // true if previously parsed by maketa
-#else
-  bool          is_subclass;    // true if is a class, and inherits from another
   TypeDef*      plugin;         // TypeDef of plugin object, if in a plugin (else NULL)
   void**        instance;       // pointer to the instance ptr of this type
   taBase_List*  defaults;       // default values registered for this type
@@ -87,7 +110,6 @@ public:
 
   TypeSpace     parents;        // type(s) this inherits from
   int_PArray    par_off;        // parent offsets
-  TypeSpace     par_formal;     // formal parents (e.g. class, const, enum..)
   TypeSpace     par_cache;      // cache of *all* parents for optimized inheritance checking (not avail during maketa)
   TypeSpace     children;       // inherited from this
   TokenSpace    tokens;         // tokens of this type (if kept)
@@ -107,18 +129,77 @@ public:
   String_PArray ignore_meths;   // methods to be ignored
   TypeSpace     templ_pars;     // template parameters
   String        c_name;         // C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
+  String        namespc;        // name space scope
   
   String	source_file;	// source file name where defined -- no path information, just file name
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
 
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
+  void*         dmem_type; // actually ptr to: MPI_Datatype_PArray
+  void          AssertDMem_Type(); // creates the dmem_type array if not already
+  virtual MPI_Datatype  GetDMemType(int share_set);
+#endif
+
+  /////////////////////////////////////////////////////////////
+  //            Basic Type Info
+
+  inline void           SetType(TypeType typ)   { type = (TypeType)(type | typ); }
+  // set type state on
+  inline void           SetActualType(TypeType typ) { SetType(typ); SetType(ACTUAL); }
+  // set type state on, and set the ACTUAL flag -- for defining actual (non-derived) types
+  inline void           ClearType(TypeType typ) { type = (TypeType)(type & ~typ); }
+  // clear type state (set off)
+  inline bool           HasType(TypeType typ) const { return (type & typ); }
+  // check if type is set
+  inline void           SetTypeState(TypeType typ, bool on)
+  { if(on) SetType(typ); else ClearType(typ); }
+  // set type state according to on bool (if true, set type, if false, clear it)
+  inline void           ToggleType(TypeType typ)  { SetTypeState(typ, !HasType(typ)); }
+  // toggle type state value -- if on, turn off, and vice-versa
+
+  inline bool   IsVoid() const { return HasType(VOID); }
+  inline bool   IsBool() const { return HasType(BOOL); }
+  inline bool   IsInt() const { return HasType(INTEGER); }
+  inline bool   IsEnum() const  { return HasType(ENUM); }
+  inline bool   IsFloat() const { return HasType(FLOAT); }
+  inline bool   IsString() const { return HasType(STRING); }
+  inline bool   IsVariant() const { return HasType(VARIANT); }
+  inline bool   IsSmartPtr() const { return HasType(SMART_PTR); }
+  inline bool   IsSmartInt() const { return HasType(SMART_INT); }
+  inline bool   IsAtomic() const { return HasType(ATOMIC); }
+  inline bool   IsClass() const { return HasType(CLASS); }
+  inline bool   IsActualClass() const { return HasType(CLASS) && HasType(ACTUAL); }
+  inline bool   IsTemplate() const { return HasType(TEMPLATE); }
+  inline bool   IsTemplInst() const { return HasType(TEMPLATE_INST); }
+  inline bool   IsVoidPtr() const  { return HasType(VOID) && HasType(POINTER); }
+  inline bool   IsTaBase() const  { return HasType(TABASE); }
+  inline bool   IsTemplClass() const { return HasType(CLASS) && HasType(TEMPLATE); }
+  inline bool   IsTemplInstClass() const { return HasType(CLASS) && HasType(TEMPLATE_INST); }
+  inline bool   IsFunPtr() const  { return HasType(FUNCTION) && HasType(POINTER); }
+  inline bool   IsMethPtr() const  { return HasType(METHOD) && HasType(POINTER); }
+  inline bool   IsActual() const { return HasType(ACTUAL); }
+  // true if this is the non-ptr, non-ref, non-const type
+  inline bool   IsPointer() const { return HasType(POINTER); }
+  inline bool   IsPtrPtr() const { return HasType(PTR_PTR); }
+  inline bool   IsAnyPtr() const { return HasType(ANY_PTR); }
+  inline bool   IsNotPtr() const { return !HasType(ANY_PTR); }
+  inline bool   IsRef() const { return HasType(REFERENCE); }
+  inline bool   IsArray() const { return HasType(ARRAY); }
+  inline bool   IsConst() const { return HasType(CONST); }
+  inline bool   IsSubType() const { return HasType(SUBTYPE); }
+
+  bool          IsBasePointerType() const;
+  // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
+  bool          IsVarCompat() const; // true if read/write compatible with Variant
+
+  void          FixActualType();
+  // fix the ACTUAL flag setting based on current flag settings -- sanity check
+  void          FixClassTypes();
+  // make sure the class type settings are correct for an actual class obj (during maketa)
+
   /////////////////////////////////////////////////////////////
   //            Constructors and misc industrial
-
-  bool          IsEnum() const; // true if an enum
-  bool          IsClass() const; // true if it is a class
-  bool          IsAnchor() const; // true if this is the non-ptr, non-ref, non-const type
-  bool          IsVarCompat() const; // true if read/write compatible with Variant
 
 #ifndef __MAKETA__
   override      TypeInfoKinds TypeInfoKind() const {return TIK_TYPE;}
@@ -131,17 +212,17 @@ public:
 #ifdef NO_TA_BASE
   TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
 	  const char* lis,
-          uint siz, int ptrs=0, bool refnc=false,
-          bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
+          int type_flags, uint siz, bool global_obj=false);
+  // global_obj=true for global (non new'ed) typedef objs
 #else
   TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
 	  const char* lis, const char* src_file, int src_st, int src_ed,
-          uint siz, void** inst, bool toks=false, int ptrs=0, bool refnc=false,
-          bool global_obj=false); // global_obj=true for global (non new'ed) typedef objs
+          int type_flags, uint siz, void** inst, bool toks=false, bool global_obj=false);
+  // global_obj=true for global (non new'ed) typedef objs
 #endif
-  TypeDef(const char* nm, bool intrnl, int ptrs=0, bool refnc=false, bool forml=false,
-          bool global_obj=false, uint siz = 0, const char* c_nm = NULL
-          ); // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
+  TypeDef(const char* nm, int type_flags, bool global_obj = false, uint siz = 0, 
+          const char* c_nm = NULL);
+  // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
   TypeDef(const TypeDef& td);
   ~TypeDef();
   TypeDef*              Clone()         { return new TypeDef(*this); }
@@ -161,6 +242,9 @@ public:
   /////////////////////////////////////////////////////////////
   //		Parents, Inheritance
 
+  static TypeDef*       FindGlobalTypeName(const String& nm);
+  // find a type with the given name on the global taMisc::types list of types -- use this to avoid having to include taMisc if that's all you're using it for
+
   override TypeDef*     GetOwnerType() const
   { if (owner) return owner->owner; else return NULL; }
   TypeDef*              GetParent() const { return parents.SafeEl(0); }
@@ -168,20 +252,42 @@ public:
 
   TypeDef*              GetNonPtrType() const;
   // gets base type (ptr=0) parent of this type
-  TypeDef*              GetPtrType() const;
-  // gets child type that is a ptr to this type -- makes one if necessary
   TypeDef*              GetNonRefType() const;
   // gets base type (not ref) parent of this type
   TypeDef*              GetNonConstType() const;
   // gets base type (not const) parent of this type
-  TypeDef*              GetNonConstNonRefType() const;
-  // gets base type (not const or ref) parent of this type
-  TypeDef*              GetClassType() const;
-  // gets a parent type that is a basic class object (i.e., InheritsFormal from TA_class) -- this is the best way to cut through all the type qualifiers and just find out what kind of object you've got (preferred over GetNonConstNonRefType for class objects) -- returns NULL if this does NOT so inherit
+  TypeDef*              GetActualType() const;
+  // gets actual type (non-derived -- no const, ptr, ref, etc)
+  TypeDef*              GetActualClassType() const;
+  // gets actual class object type -- returns NULL if this is not a class type
   TypeDef*              GetTemplType() const;
   // gets base template parent of this type
   TypeDef*              GetTemplInstType() const;
   // gets base template instantiation parent of this type
+
+  TypeType              GetPtrTypeFlag() const;
+  // get the appropriate flag to set for a pointer to this type (POINTER OR PTR_PTR)
+  TypeDef*              GetPtrType() const;
+  // gets child type that is a ptr to this type -- makes one if necessary in same type space that this type is in
+  TypeDef*              GetPtrType_impl(TypeSpace& make_spc) const;
+  // gets child type that is a ptr to this type -- makes one if necessary in given space
+  TypeDef*              GetRefType() const;
+  // gets child type that is a ref to this type -- makes one if necessary in same type space that this type is in
+  TypeDef*              GetRefType_impl(TypeSpace& make_spc) const;
+  // gets child type that is a ref to this type -- makes one if necessary in given space
+  TypeDef*              GetConstType() const;
+  // gets child type that is a const of this type -- makes one if necessary in same type space that this type is in
+  TypeDef*              GetConstType_impl(TypeSpace& make_spc) const;
+  // gets child type that is a const of this type -- makes one if necessary in given space
+  TypeDef*              GetArrayType() const;
+  // gets child type that is an array of this type -- makes one if necessary in same type space that this type is in
+  TypeDef*              GetArrayType_impl(TypeSpace& make_spc) const;
+  // gets child type that is an array of this type -- makes one if necessary in given space
+  void                  MakeMainDerivedTypes();
+  // makes (if not already there) the most common derived types for this ACTUAL type in same type space that this type is in: ptr, ptr_ptr, ref, ptr_ref, const_ref, const_ptr
+  void                  MakeMainDerivedTypes_impl(TypeSpace& make_spc);
+  // makes (if not already there) the most common derived types for this ACTUAL type in given space: ptr, ptr_ptr, ref, ptr_ref, const, const_ref, const_ptr
+
   TypeDef*              GetPluginType() const;
     // if in_plugin, this is the IPlugin-derivitive plugin type
   String                GetPtrString() const;
@@ -189,6 +295,9 @@ public:
   String                Get_C_Name() const;
   // get the C-code name for this type
   override const String GetPathName() const;
+
+  static TypeDef*       GetCommonSubtype(TypeDef* typ1, TypeDef* typ2);
+  // get the common primary (1st parent class) subtype between the two
 
   bool                  HasEnumDefs() const; // true if any subtypes are enums
   bool                  HasSubTypes() const; // true if any non-enum subtypes
@@ -210,9 +319,9 @@ public:
 
   // you inherit from yourself.  This ensures that you are a "base" class (ptr == 0)
   bool                  InheritsFromName(const char *nm) const
-  { if((ptr == 0) && ((name == nm) || FindParentName(nm))) return true; return false; }
+  { if(IsNotPtr() && ((name == nm) || FindParentName(nm))) return true; return false; }
   bool                  InheritsFrom(const TypeDef* td) const
-  { if((ptr == 0) && ((this == td) || FindParent(td))) return true; return false; }
+  { if(IsNotPtr() && ((this == td) || FindParent(td))) return true; return false; }
   bool                  InheritsFrom(const TypeDef& it) const
   { return InheritsFrom((TypeDef*)&it); }
 
@@ -223,21 +332,6 @@ public:
   { if((this == td) || FindParent(td)) return true; return false; }
   bool                  DerivesFrom(const TypeDef& it) const
   { return DerivesFrom((TypeDef*)&it); }
-
-  // inheritance from a formal class (e.g. const, static, class) -- NOTE: these are NOT inherited from parent types, so only an actual class object InheritsFormal(&TA_class)
-  bool                  InheritsFormal(TypeDef* it) const
-  { if((ptr == 0) && (par_formal.FindEl(it)>=0)) return true; return false; }
-  bool                  InheritsFormal(const TypeDef& it) const
-  { return InheritsFormal((TypeDef*)&it); }
-  bool                  DerivesFormal(TypeDef* it) const
-  { if(par_formal.FindEl(it)>=0) return true; return false; }
-  bool                  DerivesFormal(const TypeDef& it) const
-  { return DerivesFormal((TypeDef*)&it); }
-
-  bool                  InheritsNonAtomicClass() const;
-  // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant
-  bool                  IsBasePointerType() const;
-  // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
 
   TypeDef*              GetStemBase() const;
   // for class types: get first (from me) parent with STEM_BASE directive -- defines equivalence class -- returns NULL if not found
@@ -252,9 +346,6 @@ public:
   void          AddClassPar(TypeDef* p1=NULL, int p1_off=0, TypeDef* p2=NULL, int p2_off=0,
                             TypeDef* p3=NULL, int p3_off=0, TypeDef* p4=NULL, int p4_off=0,
                             TypeDef* p5=NULL, int p5_off=0, TypeDef* p6=NULL, int p6_off=0);
-  void          AddParFormal(TypeDef* p1=NULL, TypeDef* p2=NULL,
-                             TypeDef* p3=NULL, TypeDef* p4=NULL,
-                             TypeDef* p5=NULL, TypeDef* p6=NULL);
   void          AddTemplPars(TypeDef* p1=NULL, TypeDef* p2=NULL,
                              TypeDef* p3=NULL, TypeDef* p4=NULL,
                              TypeDef* p5=NULL, TypeDef* p6=NULL);
@@ -280,9 +371,8 @@ public:
   bool          FindChild(TypeDef* it) const;
   // recursively tries to  find child, returns true if successful
 
-  TypeDef*      GetTemplParent() const;
-  // returns immediate parent which is a template (or NULL if none found)
-  String        GetTemplName(const TypeSpace& inst_pars) const;
+  String        GetTemplInstName(const TypeSpace& inst_pars) const;
+  // get an appropriate name for a template instantiation based on parameters
   void          SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
   // set type of a template class
 
@@ -467,8 +557,6 @@ public:
   String	Includes();
   // #CAT_File generate list of includes for this type = parents and full class members
 
-protected:
-  mutable signed char    m_cacheInheritsNonAtomicClass;
 private:
   void          Initialize();
   void          Copy_(const TypeDef& cp);

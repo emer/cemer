@@ -63,9 +63,9 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     break;
   case TypeItem::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
-    if (td->internal && !td->InheritsFormal(TA_template)) {
-      break;
-    }
+    // if (td->internal && !td->InheritsFormal(TA_template)) {
+    //   break;
+    // }
     taiDataLink* dl = NULL;
     // if we are an enum, we handle differently (only showing enums, and directly under us)
     // don't sort them

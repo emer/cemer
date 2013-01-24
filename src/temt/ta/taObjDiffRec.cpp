@@ -125,11 +125,11 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
     else
       value = type->name;               // this is the relevant info at this level for diffing
   }
-  else if(((type->ptr == 1) && type->DerivesFrom(&TA_taBase)) ||
+  else if(((type->IsPointer()) && type->DerivesFrom(&TA_taBase)) ||
            type->InheritsFrom(TA_taSmartRef) ||
            type->InheritsFrom(TA_taSmartPtr)) {
     taBase* rbase = NULL;
-    if((type->ptr == 1) && type->DerivesFrom(&TA_taBase)) rbase = *((taBase**)addr);
+    if((type->IsPointer()) && type->DerivesFrom(&TA_taBase)) rbase = *((taBase**)addr);
     else if(type->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
     else if(type->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
     if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {

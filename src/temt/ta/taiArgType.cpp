@@ -95,7 +95,7 @@ taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
 }
 
 cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
-  if(arg_typ->ptr == 0) {
+  if(arg_typ->IsNotPtr()) {
     /* type notes:
       explicitly signed/unsigned chars are treated as numbers, whereas char is a char
       current gui stuff can't handle uints well, so we lump them with variants

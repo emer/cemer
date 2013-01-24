@@ -26,7 +26,8 @@
 #ifdef __MAKETA__
 #define ContextFlag unsigned char
 #else
-class TA_API ContextFlag { // replacement for is_xxx flags that retains bool test semantics, but does proper enter/exit counting; use in ++ ... -- pairs
+class TA_API ContextFlag {
+  // ##SMART_INT replacement for is_xxx flags that retains bool test semantics, but does proper enter/exit counting; use in ++ ... -- pairs
 public:
   operator bool() {return (cnt != 0);}
   signed char   operator++() {return ++cnt;}

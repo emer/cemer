@@ -107,7 +107,7 @@ taList_impl* gpiFromGpArgType::GetList(MemberDef* from_md, const void* base) {
     return NULL;
   if(from_md->type->InheritsFrom(&TA_taSmartRef))
     return (taList_impl*)((taSmartRef*)from_md->GetOff(base))->ptr();
-  else if(from_md->type->ptr == 1)
+  else if(from_md->type->IsPointer())
     return *((taList_impl**)from_md->GetOff(base));
   else
     return (taList_impl*)from_md->GetOff(base);

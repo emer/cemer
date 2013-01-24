@@ -26,7 +26,7 @@ void taiEnumType::Initialize() {
 }
 
 int taiEnumType::BidForType(TypeDef* td){
-  if (td->InheritsFormal(TA_enum))
+  if (td->IsEnum())
     return (taiType::BidForType(td) +1);
   return 0;
 }

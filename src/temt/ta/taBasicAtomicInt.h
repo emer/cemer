@@ -31,7 +31,8 @@ class QBasicAtomicInt;
 #else
 
 # if (QT_VERSION < 0x040400) || !defined(TA_USE_QT)
-class TA_API QBasicAtomicInt { // this copies the barest API of QBasicAtomicInt, which is a Plain Old Data type
+class TA_API QBasicAtomicInt {
+  // ##SMART_INT this copies the barest API of QBasicAtomicInt, which is a Plain Old Data type
 public:
   volatile int _q_value;
   
@@ -64,6 +65,7 @@ public:
 TypeDef_Of(taBasicAtomicInt);
 
 class TA_API taBasicAtomicInt : public QBasicAtomicInt {
+  // ##SMART_INT a basic atomic integer for threadsafe processing
 public:
 # if (QT_VERSION >= 0x050000)
   // Non-atomic API

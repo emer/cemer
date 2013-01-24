@@ -44,24 +44,10 @@ TypeDef_Of(taBase_ptr);
 using namespace std;
 
 
-TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
-  // search up typ1's tree until a common subtype is found
-  // note: doesn't matter which obj's tree we go up, so we just pick typ1
-  TypeDef* rval = typ1;
-  while (rval && (!typ2->InheritsFrom(rval))) {
-    // note: we only search up the primary inheritance hierarchy
-    rval = rval->parents.SafeEl(0);
-  }
-  return rval;
-}
-
 void TypeDef::Initialize() {
+  type = VOID;
   owner = NULL;
   size = 0;
-  ptr = 0;
-  ref = false;
-  internal = false;
-  formal = false;
   source_start = -1;
   source_end = -1;
 
@@ -70,10 +56,7 @@ void TypeDef::Initialize() {
   ie = NULL;
   iv = NULL;
 #endif
-#ifdef NO_TA_BASE
-  pre_parsed = false;   // true if previously parsed by maketa
-#else
-  is_subclass = false;
+#ifndef NO_TA_BASE
   plugin = NULL; // set true by TypeSpace::SetOwner if initing a plugin
   instance = NULL;
   defaults = NULL;
@@ -82,8 +65,6 @@ void TypeDef::Initialize() {
 
   parents.name = "parents";
   parents.owner = this;
-  par_formal.name = "par_formal";
-  par_formal.owner = this;
   par_cache.name = "par_cache";
   par_cache.owner = this;
   children.name = "children";
@@ -103,7 +84,6 @@ void TypeDef::Initialize() {
   methods.owner = this;
   templ_pars.name = "templ_pars";
   templ_pars.owner = this;
-  m_cacheInheritsNonAtomicClass = 0;
 #if (!defined(NO_TA_BASE) && defined(DMEM_COMPILE))
   dmem_type = NULL;
 #endif
@@ -125,11 +105,11 @@ TypeDef::TypeDef(const char* nm)
 #ifdef NO_TA_BASE
 TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
 		 const char* lis,
-		 uint siz, int ptrs, bool refnc, bool global_obj)
+		 int type_flags, uint siz, bool global_obj)
 #else
 TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* op,
 		 const char* lis, const char* src_file, int src_st, int src_ed,
-		 uint siz, void** inst, bool toks, int ptrs, bool refnc, bool global_obj)
+		 int type_flags, uint siz, void** inst, bool toks, bool global_obj)
 #endif
 :inherited()
 {
@@ -141,32 +121,32 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
   source_start = src_st;
   source_end = src_ed;
 #endif
-  name = nm; desc = dsc;
-  c_name = nm;
+  name = nm;
+  desc = dsc;
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
 #ifndef NO_TA_BASE
   CleanupCats(true);            // save the last one for initialization
 #endif
+  type = (TypeType)type_flags;
   size = siz;
-  ptr = ptrs;
-  ref = refnc;
   if(global_obj)
     taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }
 
-TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
-                 bool global_obj, uint siz, const char* c_nm
-)
+TypeDef::TypeDef(const char* nm, int type_flags, bool global_obj, uint siz,
+                 const char* c_nm)
 :inherited()
 {
   Initialize();
-  name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml;
+  name = nm; 
+  type = (TypeType)type_flags;
   size = siz; // note: may get updated later
+  if(IsAnyPtr()) {
+    size = sizeof(void*);
+  }
   if (c_nm) c_name = c_nm;
-  else c_name = name;
-  if(ptr > 0) size = sizeof(void*);
   if(global_obj)
     taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }
@@ -184,26 +164,19 @@ void TypeDef::Copy(const TypeDef& cp) {
 }
 
 void TypeDef::Copy_(const TypeDef& cp) {
-#ifdef NO_TA_BASE
-  pre_parsed    = cp.pre_parsed;
-#else
-  is_subclass   = cp.is_subclass;
+#ifndef NO_TA_BASE
   plugin = cp.plugin;
   instance = cp.instance ;
   //TODO: copy the schema
 // don't copy the tokens..
 #endif
   c_name        = cp.c_name;
+  type          = cp.type    ;
   size          = cp.size    ;
-  ptr           = cp.ptr     ;
-  ref           = cp.ref     ;
-  internal      = cp.internal;
-  formal        = cp.formal  ;
 
   inh_opts      = cp.inh_opts ;
 
   parents       = cp.parents  ;
-  par_formal    = cp.par_formal;
   par_cache     = cp.par_cache;
   children      = cp.children ; // not sure about this one..
 
@@ -261,6 +234,57 @@ void TypeDef::AddUserDataSchema(UserDataItemBase* item) {
 }
 #endif
 
+bool TypeDef::IsBasePointerType() const {
+#ifndef NO_TA_BASE
+  if((IsPointer() && IsTaBase()) ||
+     (!IsAnyPtr() && IsSmartPtr() && (DerivesFrom(TA_taSmartPtr) ||
+                                      DerivesFrom(TA_taSmartRef))) )
+    return true;
+#endif
+  return false;
+}
+
+bool TypeDef::IsVarCompat() const {
+  // a few "blockers"
+  if (IsRef() || IsPtrPtr() || IsVoid()) return false;
+#ifndef NO_TA_BASE
+  if (IsPointer()) {
+    if(IsTaBase()) return true;
+    else return false;          // no other pointers supported
+  }
+#endif
+  if (!IsAtomic()) return false;
+  // ok, hopefully the rest are ok!
+  return true;
+}
+
+void TypeDef::FixActualType() {
+  if(HasType(NON_ACTUAL)) ClearType(ACTUAL);
+  else SetType(ACTUAL);
+}
+
+void TypeDef::FixClassTypes() {
+  if(name == "taString") {
+    ClearType(CLASS);
+    SetType(STRING);
+  }
+  else if(name == "Variant") {
+    ClearType(CLASS);
+    SetType(VARIANT);
+  }
+  else if(HasOption("SMART_POINTER")) {
+    ClearType(CLASS);
+    SetType(SMART_PTR);
+  }
+  else if(HasOption("SMART_INT")) {
+    ClearType(CLASS);
+    SetType(SMART_INT);
+  }
+  else if(InheritsFrom(TA_taBase)) {
+    SetType(TABASE);
+  }
+}
+
 void TypeDef::CleanupCats(bool save_last) {
   if(save_last) {
     bool got_op = false;
@@ -314,50 +338,6 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
   }
 }
 
-bool TypeDef::InheritsNonAtomicClass() const {
-  if (m_cacheInheritsNonAtomicClass == 0) {
-    // set cache
-    m_cacheInheritsNonAtomicClass = (InheritsFormal(TA_class)
-        && !InheritsFrom(TA_taString)
-        && !InheritsFrom(TA_Variant)
-#ifndef NO_TA_BASE
-        && !InheritsFrom(TA_taSmartPtr)
-        && !InheritsFrom(TA_taSmartRef)
-# if TA_USE_QT
-        && !InheritsFrom(TA_QAtomicInt)
-# endif
-#endif
-    ) ? 1 : -1;
-  }
-  return (m_cacheInheritsNonAtomicClass == 1);
-}
-
-bool TypeDef::IsBasePointerType() const {
-#ifndef NO_TA_BASE
-  if(((ptr == 1) && DerivesFrom(TA_taBase)) ||
-     ((ptr == 0) && (DerivesFrom(TA_taSmartPtr) ||
-                     DerivesFrom(TA_taSmartRef))) )
-    return true;
-#endif
-  return false;
-}
-
-TypeDef* TypeDef::GetStemBase() const {
-  if(HasOption("STEM_BASE")) return const_cast<TypeDef*>(this);
-  // first breadth
-  for(int i=0; i < parents.size; i++) {
-    TypeDef* par = parents.FastEl(i);
-    if(par->HasOption("STEM_BASE"))
-      return par;
-  }
-  // then depth recursion
-  for(int i=0; i < parents.size; i++) {
-    TypeDef* rval = parents.FastEl(i)->GetStemBase();
-    if(rval) return rval;
-  }
-  return NULL;
-}
-
 void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
   int i;
   for(i=0; i<members.size; i++) {
@@ -392,18 +372,6 @@ void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
   }
 }
 
-TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
-  *md = members.FindName(nm);
-  if (*md) return this;
-
-  for (int i = 0; i < children.size; i++) {
-    if (TypeDef *td = children[i]->FindTypeWithMember(nm,md)) {
-      return td;
-    }
-  }
-  return NULL;
-}
-
 bool TypeDef::CheckList(const String_PArray& lst) const {
   for (int i = 0; i < lists.size; i++) {
     if (lst.FindEl(lists.FastEl(i)) >= 0)
@@ -412,85 +380,196 @@ bool TypeDef::CheckList(const String_PArray& lst) const {
   return false;
 }
 
+TypeDef* TypeDef::FindGlobalTypeName(const String& nm) {
+  return taMisc::types.FindName(nm);
+}
 
 TypeDef* TypeDef::GetNonPtrType() const {
-  if(ptr == 0)    return const_cast<TypeDef*>(this);
+  if(!IsAnyPtr())    return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
   while(rval->GetParent() != NULL) {
     rval = rval->GetParent();
-    if(rval->ptr == 0)
+    if(!rval->IsAnyPtr())
       return rval;
   }
   return rval;                  // always return something
 }
 
 TypeDef* TypeDef::GetNonRefType() const {
-  if(!ref)    return const_cast<TypeDef*>(this);
+  if(!IsRef())    return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
   while(rval->GetParent() != NULL) {
     rval = rval->GetParent();
-    if(!rval->ref)
+    if(!rval->IsRef())
       return rval;
   }
   return rval;                  // always return something
 }
 
+TypeDef* TypeDef::GetNonConstType() const {
+  if(!IsConst())    return const_cast<TypeDef*>(this);
+
+  TypeDef* rval = const_cast<TypeDef*>(this);
+  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
+    if(!rval->IsConst())
+      return rval;
+  }
+  return NULL;
+}
+
+TypeDef* TypeDef::GetActualType() const {
+  if(IsActual()) return const_cast<TypeDef*>(this);
+
+  TypeDef* rval = const_cast<TypeDef*>(this);
+  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
+    if(rval->IsActual())
+      return rval;
+  }
+  return NULL;
+}
+
 TypeDef* TypeDef::GetTemplType() const {
-  if(InheritsFormal(TA_template)) return const_cast<TypeDef*>(this);
+  if(IsTemplate()) return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
-    if(rval->InheritsFormal(TA_template))
+    if(rval->IsTemplate())
       return rval;
   }
   return NULL;
 }
 
 TypeDef* TypeDef::GetTemplInstType() const {
-  if(InheritsFormal(TA_templ_inst)) return const_cast<TypeDef*>(this);
+  if(IsTemplInst()) return const_cast<TypeDef*>(this);
 
   TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
-    if(rval->InheritsFormal(TA_templ_inst))
+    if(rval->IsTemplInst())
       return rval;
   }
   return NULL;
 }
 
-TypeDef* TypeDef::GetNonConstType() const {
-  if(!DerivesFrom(TA_const))    return const_cast<TypeDef*>(this);
-
-  TypeDef* rval = const_cast<TypeDef*>(this);
-  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
-    if(!rval->DerivesFrom(TA_const))
-      return rval;
+TypeDef::TypeType TypeDef::GetPtrTypeFlag() const {
+  TypeType rval = POINTER;
+  if(IsPointer()) {
+    rval = PTR_PTR;
   }
-  return NULL;
+  else if(IsPtrPtr()) {
+    taMisc::Error("GetPtrTypeFlag: cannot get a pointer to a pointer-pointer!", name);
+    rval = PTR_PTR;
+  }
+  return rval;
 }
 
-TypeDef* TypeDef::GetNonConstNonRefType() const {
-  if(!(DerivesFrom(TA_const) || ref))  return const_cast<TypeDef*>(this);
-
-  TypeDef* rval = const_cast<TypeDef*>(this);
-  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
-    if (!(rval->DerivesFrom(TA_const) || rval->ref))
-      return rval;
-  }
-  return NULL;
+TypeDef* TypeDef::GetPtrType() const {
+  if(owner)
+    return GetPtrType_impl(*owner);
+  return GetPtrType_impl(taMisc::types);
 }
 
-TypeDef* TypeDef::GetClassType() const {
-  if(InheritsFormal(&TA_class)) return const_cast<TypeDef*>(this);
-
-  TypeDef* rval = const_cast<TypeDef*>(this);
-  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
-    if(rval->InheritsFormal(&TA_class))
-      return rval;
+TypeDef* TypeDef::GetPtrType_impl(TypeSpace& make_spc) const {
+  String nm = name + "_ptr";
+  TypeDef* rval = children.FindName(nm);
+  TypeType ptr_flag = GetPtrTypeFlag();
+  if (!rval) {
+    // need to make one, we use same pattern as maketa
+    rval = new TypeDef(nm, type, false, 0);
+    make_spc.Add(rval);
+    // unconstify us, this is an internal operation, still considered "const" access
+    rval->AddParent(const_cast<TypeDef*>(this));
   }
-  return NULL;
+  rval->ClearType(ACTUAL);    // we are no longer actual
+  rval->ClearType(ANY_PTR);   // get rid of any existing pointer flags
+  rval->SetType(ptr_flag);    // set new ones
+  return rval;
 }
+
+TypeDef* TypeDef::GetRefType() const {
+  if(owner)
+    return GetRefType_impl(*owner);
+  return GetRefType_impl(taMisc::types);
+}
+
+TypeDef* TypeDef::GetRefType_impl(TypeSpace& make_spc) const {
+  String nm = name + "_ref";
+  TypeDef* rval = children.FindName(nm);
+  if (!rval) {
+    // need to make one, we use same pattern as maketa
+    rval = new TypeDef(nm, type, false, size);
+    make_spc.Add(rval);
+    // unconstify us, this is an internal operation, still considered "const" access
+    rval->AddParent(const_cast<TypeDef*>(this));
+  }
+  rval->ClearType(ACTUAL);    // we are no longer actual
+  rval->SetType(REFERENCE);   // set new ones
+  return rval;
+}
+
+TypeDef* TypeDef::GetConstType() const {
+  if(owner)
+    return GetConstType_impl(*owner);
+  return GetConstType_impl(taMisc::types);
+}
+
+TypeDef* TypeDef::GetConstType_impl(TypeSpace& make_spc) const {
+  String nm = "const_" + name;
+  TypeDef* rval = children.FindName(nm);
+  if (!rval) {
+    // need to make one, we use same pattern as maketa
+    rval = new TypeDef(nm, type, false, size);
+    make_spc.Add(rval);
+    // unconstify us, this is an internal operation, still considered "const" access
+    rval->AddParent(const_cast<TypeDef*>(this));
+  }
+  rval->ClearType(ACTUAL);    // we are no longer actual
+  rval->SetType(CONST);   // set new ones
+  return rval;
+}
+
+TypeDef* TypeDef::GetArrayType() const {
+  if(owner)
+    return GetArrayType_impl(*owner);
+  return GetArrayType_impl(taMisc::types);
+}
+
+TypeDef* TypeDef::GetArrayType_impl(TypeSpace& make_spc) const {
+  String nm = name + "_ary";
+  TypeDef* rval = children.FindName(nm);
+  if (!rval) {
+    // need to make one, we use same pattern as maketa
+    rval = new TypeDef(nm, type, false, size);
+    make_spc.Add(rval);
+    // unconstify us, this is an internal operation, still considered "const" access
+    rval->AddParent(const_cast<TypeDef*>(this));
+  }
+  rval->ClearType(ACTUAL);    // we are no longer actual
+  rval->SetType(ARRAY);   // set new ones
+  return rval;
+}
+
+void TypeDef::MakeMainDerivedTypes() {
+  if(owner)
+    return MakeMainDerivedTypes_impl(*owner);
+  return MakeMainDerivedTypes_impl(taMisc::types);
+}
+
+void TypeDef::MakeMainDerivedTypes_impl(TypeSpace& make_spc) {
+  if(!IsActual()) {
+    taMisc::Error("MakeMainDerivedTypes_impl: must only be called on an ACTUAL type", name);
+    return;
+  }
+  TypeDef* ptr = GetPtrType_impl(make_spc);
+  TypeDef* ptr_ptr = ptr->GetPtrType_impl(make_spc);
+  TypeDef* ref = GetRefType_impl(make_spc);
+  TypeDef* ptr_ref = ptr->GetRefType_impl(make_spc);
+  TypeDef* cnst = GetConstType_impl(make_spc);
+  TypeDef* cnst_ref = ref->GetConstType_impl(make_spc);
+  TypeDef* cnst_ptr = ptr->GetConstType_impl(make_spc);
+}
+
 
 TypeDef* TypeDef::GetPluginType() const {
 #ifdef NO_TA_BASE
@@ -501,57 +580,66 @@ TypeDef* TypeDef::GetPluginType() const {
 }
 
 String TypeDef::GetPtrString() const {
-  String rval; int i;
-  for(i=0; i<ptr; i++) rval += "*";
-  return rval;
+  if(IsPointer()) return "*";
+  if(IsPtrPtr()) return "**";
+  return _nilString;
 }
 
 
 String TypeDef::Get_C_Name() const {
+  if(c_name.nonempty()) return c_name; // cached -- send it!
+
   String rval;
-  if(ref) {
+  if(namespc.nonempty())
+    rval += namespc + "::";
+
+  if (IsSubType() && (owner != NULL) && (owner->owner != NULL) && (owner->owner != this)) {
+    rval += owner->owner->Get_C_Name() + "::";
+  }
+
+  if(IsRef()) {
     TypeDef *nrt = GetNonRefType();
     if (!nrt) {
-      //taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
-      return name;
+      taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
+      rval += name;
+      return rval;
     }
     if (nrt == this) return name + "&";
-    rval = nrt->Get_C_Name() + "&";
+    rval += nrt->Get_C_Name() + "&";
+    const_cast<TypeDef*>(this)->c_name = rval;              // cache
     return rval;
   }
 
-  if (ptr > 0) {
+  if(IsAnyPtr()) {
     TypeDef *npt = GetNonPtrType();
     if (!npt) {
-      //taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
-      return name;
+      taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
+      rval += name;
+      return rval;
     }
     if (npt == this) return name + GetPtrString();
-    rval = npt->Get_C_Name() + GetPtrString();
+    rval += npt->Get_C_Name() + GetPtrString();
+    const_cast<TypeDef*>(this)->c_name = rval;              // cache
     return rval;
   }
 
   // combo type
-  if ((parents.size > 1) && !InheritsFormal(TA_class)) {
+  if ((parents.size > 1) && !IsClass()) {
     for (int i = 0; i < parents.size; i++) {
       TypeDef* pt = parents.FastEl(i);
       rval += pt->Get_C_Name();
       if (i < parents.size-1) rval += " ";
     }
+    const_cast<TypeDef*>(this)->c_name = rval;              // cache
     return rval;
   }
 
-  // on some local list and not internal
-  // (which were not actually delcared at this scope anyway)
-  if (!(internal) && (owner != NULL) && (owner->owner != NULL) && (owner->owner != this)) {
-    rval = owner->owner->Get_C_Name() + "::";
-  }
-
-  if (InheritsFormal(TA_templ_inst) && (templ_pars.size > 0)) {
-    TypeDef* tmpar = GetTemplParent();
+  if (IsTemplInst() && (templ_pars.size > 0)) {
+    TypeDef* tmpar = GetTemplType();
     if (!tmpar) {
       taMisc::Error("Null TemplParent in TypeDef::Get_C_Name()", name);
-      return name;
+      rval += name;
+      return rval;
     }
     rval += tmpar->name + "<"; // note: name is always its valid c_name
     for (int i = 0; i < templ_pars.size; i++) {
@@ -563,41 +651,89 @@ String TypeDef::Get_C_Name() const {
     return rval;
   }
 
-  //note: normally, c_name should be valid, but may be cases, ex. templates, dynamic types, etc
-  // where c_name was not set or updated, so most contexts the name is the same
-  if (c_name.empty())
-    rval += name;                       // the default
-  else
-    rval += c_name;                     // the default
+  rval += name;                       // the default
+  const_cast<TypeDef*>(this)->c_name = rval;
   return rval;
+}
+
+const String TypeDef::GetPathName() const {
+//TODO: this routine may not even be used!
+  // are we owned?
+  // are we an EnumDef?
+
+  String rval;
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) {
+    rval = owtp->GetPathName() + "::";
+  }
+  rval += name;
+  return rval;
+}
+
+TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
+  // search up typ1's tree until a common subtype is found
+  // note: doesn't matter which obj's tree we go up, so we just pick typ1
+  TypeDef* rval = typ1;
+  while (rval && (!typ2->InheritsFrom(rval))) {
+    // note: we only search up the primary inheritance hierarchy
+    rval = rval->parents.SafeEl(0);
+  }
+  return rval;
+}
+
+bool TypeDef::HasEnumDefs() const {
+  for (int i = 0; i < sub_types.size; ++i) {
+    TypeDef* td = sub_types.FastEl(i);
+    if (td->enum_vals.size > 0) return true;
+  }
+  return false;
+}
+
+bool TypeDef::HasSubTypes() const {
+  bool rval = false;
+  for (int i = 0; i < sub_types.size; ++i) {
+    TypeDef* td = sub_types.FastEl(i);
+    if (td->enum_vals.size == 0) {
+      rval = true;
+      break;
+    }
+  }
+  return rval;
+}
+
+TypeDef* TypeDef::GetStemBase() const {
+  if(HasOption("STEM_BASE")) return const_cast<TypeDef*>(this);
+  // first breadth
+  for(int i=0; i < parents.size; i++) {
+    TypeDef* par = parents.FastEl(i);
+    if(par->HasOption("STEM_BASE"))
+      return par;
+  }
+  // then depth recursion
+  for(int i=0; i < parents.size; i++) {
+    TypeDef* rval = parents.FastEl(i)->GetStemBase();
+    if(rval) return rval;
+  }
+  return NULL;
 }
 
 TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   if(parents.LinkUnique(it))
     par_off.Add(p_off);         // it was unique, add offset
-  // only add to children if not internal (except when parent is)
-  bool templ = InheritsFormal(TA_template); // cache
-  if (templ || (!internal || it->internal))
-    it->children.Link(this);
-  // since templs don't call AddParClass, we have to determine
-#ifndef NO_TA_BASE
-  // if it is a subclass here...
-  if (templ && it->InheritsFormal(TA_class))
-    is_subclass = true;
-#endif
+
+  it->children.Link(this);
 
   opts.DupeUnique(it->inh_opts);
   inh_opts.DupeUnique(it->inh_opts);    // and so on
 
-  if(InheritsFrom(TA_taBase))
-    opts.AddUnique(opt_instance);       // ta_bases always have an instance
+  // note: type flags are set explicitly prior to calling AddParent!
 
 #ifndef NO_TA_BASE
+  if(IsTaBase() || InheritsFrom(TA_taBase))
+    opts.AddUnique(opt_instance);       // ta_bases always have an instance
+
   CleanupCats(false);           // save first guy for add parent!
 #endif
-
-  // no need to get all this junk for internals
-  if(internal && !templ) return it;
 
   // use the old one because the parent does not have precidence over existing
   enum_vals.BorrowUniqNameOld(it->enum_vals);
@@ -622,9 +758,6 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
                           TypeDef* p3, int p3_off, TypeDef* p4, int p4_off,
                           TypeDef* p5, int p5_off, TypeDef* p6, int p6_off)
 {
-#ifndef NO_TA_BASE
-  is_subclass = true;
-#endif
   bool mi = false;
   if(p1 != NULL)    AddParent(p1,p1_off);
   if(p2 != NULL)    { AddParent(p2,p2_off); mi = true; }
@@ -634,16 +767,6 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
   if(p6 != NULL)    AddParent(p6,p6_off);
 
   if(mi)            ComputeMembBaseOff();
-}
-
-void TypeDef::AddParFormal(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
-                           TypeDef* p5, TypeDef* p6) {
-  if(p1 != NULL)    par_formal.LinkUnique(p1);
-  if(p2 != NULL)    par_formal.LinkUnique(p2);
-  if(p3 != NULL)    par_formal.LinkUnique(p3);
-  if(p4 != NULL)    par_formal.LinkUnique(p4);
-  if(p5 != NULL)    par_formal.LinkUnique(p5);
-  if(p6 != NULL)    par_formal.LinkUnique(p6);
 }
 
 void TypeDef::AddTemplPars(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
@@ -693,20 +816,15 @@ void TypeDef::ComputeMembBaseOff() {
   }
 }
 
-bool TypeDef::FindChildName(const char* nm) const {
-  if (children.FindName(nm))
+bool TypeDef::IgnoreMeth(const String& nm) const {
+  if(!IsClass())
+    return false;
+  if(ignore_meths.FindEl(nm) >= 0)
     return true;
-  for (int i = 0; i < children.size; i++) {
-    if (children.FastEl(i)->FindChildName(nm))
-      return true;
-  }
-  return false;
-}
-bool TypeDef::FindChild(TypeDef* it) const {
-  if (children.FindEl(it) >= 0)
-    return true;
-  for (int i = 0; i < children.size; i++) {
-    if (children.FastEl(i)->FindChild(it))
+
+  int i;
+  for(i=0; i<parents.size; i++) {
+    if(parents.FastEl(i)->IgnoreMeth(nm))
       return true;
   }
   return false;
@@ -740,7 +858,6 @@ void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
   return NULL;
 }
 
-
 int TypeDef::GetParOff(TypeDef* it, int boff) const {
   int use_boff = (boff >= 0) ? boff : 0;
   if (it == this) return use_boff; // you are it!
@@ -755,39 +872,26 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
   return -1;
 }
 
-const String TypeDef::GetPathName() const {
-//TODO: this routine may not even be used!
-  // are we owned?
-  // are we an EnumDef?
-
-  String rval;
-  TypeDef* owtp = GetOwnerType();
-  if (owtp) {
-    rval = owtp->GetPathName() + "::";
+bool TypeDef::FindChildName(const char* nm) const {
+  if (children.FindName(nm))
+    return true;
+  for (int i = 0; i < children.size; i++) {
+    if (children.FastEl(i)->FindChildName(nm))
+      return true;
   }
-  rval += name;
-  return rval;
+  return false;
+}
+bool TypeDef::FindChild(TypeDef* it) const {
+  if (children.FindEl(it) >= 0)
+    return true;
+  for (int i = 0; i < children.size; i++) {
+    if (children.FastEl(i)->FindChild(it))
+      return true;
+  }
+  return false;
 }
 
-TypeDef* TypeDef::GetPtrType() const {
-  TypeDef* rval = children.FindName(name + "_ptr");
-  if (rval) {
-    // make sure its ptr count is one more than ours!
-    if (rval->ptr != (ptr + 1)) {
-      rval = NULL;
-    }
-  }
-  if (!rval) {
-    // need to make one, we use same pattern as maketa
-    rval = new TypeDef(name + "_ptr", internal, ptr + 1, 0, 0, 0);
-    taMisc::types.Add(rval);
-    // unconstify us, this is an internal operation, still considered "const" access
-    rval->AddParent(const_cast<TypeDef*>(this));
-  }
-  return rval;
-}
-
-String TypeDef::GetTemplName(const TypeSpace& inst_pars) const {
+String TypeDef::GetTemplInstName(const TypeSpace& inst_pars) const {
   String rval = name;
   int i;
   for(i=0; i<inst_pars.size; i++) {
@@ -796,40 +900,47 @@ String TypeDef::GetTemplName(const TypeSpace& inst_pars) const {
   return rval;
 }
 
-TypeDef* TypeDef::GetTemplParent() const {
-  int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->InheritsFormal(TA_template))
-      return parents.FastEl(i);
+void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
+  if(inst_pars.size != templ_pars.size) {
+    String defn_no(templ_pars.size);
+    String inst_no(inst_pars.size);
+    taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
+                   inst_no);
+    String msg;
+    msg << "Defined with parameters: ";
+    templ_pars.Print(msg);
+    msg << "\nInstantiated with parameters: ";
+    inst_pars.Print(msg);
+    taMisc::Error(msg);
+    return;
   }
-  return NULL;
-}
 
-bool TypeDef::IgnoreMeth(const String& nm) const {
-  if(!InheritsFormal(TA_class))
-    return false;
-  if(ignore_meths.FindEl(nm) >= 0)
-    return true;
+  ClearType(TEMPLATE);
+  SetType(TEMPLATE_INST);       // update types
+
+  parents.Reset();                      // bag the template's parents
+  parents.LinkUnique(templ_par);        // parent is the templ_par
+  templ_par->children.LinkUnique(this);
+  children.Reset();                     // don't have any real children..
+
+  // todo: need to add support for arbitrary strings here, which are not just types
 
   int i;
-  for(i=0; i<parents.size; i++) {
-    if(parents.FastEl(i)->IgnoreMeth(nm))
-      return true;
+  for(i=0; i<inst_pars.size; i++) {
+    TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
+    TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
+
+    templ_pars.ReplaceLinkIdx(i, inst_tp); // actually replace it
+
+    // update sub-types based on defn_tp (go backwards to get most extended types 1st)
+    int j;
+    for(j=sub_types.size-1; j>=0; j--) {
+      sub_types.FastEl(j)->ReplaceParent(defn_tp, inst_tp);
+    }
   }
-  return false;
-}
 
-bool TypeDef::IsAnchor() const {
-  return ((ptr == 0) && !ref && !DerivesFrom(TA_const)
-    && (enum_vals.size == 0));
-}
-
-bool TypeDef::IsClass() const {
-  return InheritsFormal(TA_class);
-}
-
-bool TypeDef::IsEnum() const {
-  return (enum_vals.size > 0);
+  // update to use new types
+  UpdateMDTypes(templ_par->templ_pars, templ_pars);
 }
 
 MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
@@ -871,13 +982,25 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
   return md;
 }
 
+TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
+  *md = members.FindName(nm);
+  if (*md) return this;
+
+  for (int i = 0; i < children.size; i++) {
+    if (TypeDef *td = children[i]->FindTypeWithMember(nm,md)) {
+      return td;
+    }
+  }
+  return NULL;
+}
+
 EnumDef* TypeDef::FindEnum(const String& nm) const {
   EnumDef* rval = enum_vals.FindName(nm);
   if (rval) return rval;
 
   for (int i = 0; i < sub_types.size; i++) {
     TypeDef* td = sub_types.FastEl(i);
-    if (td->InheritsFormal(TA_enum)) {
+    if (td->IsEnum()) {
       rval = td->FindEnum(nm);
       if (rval) return rval;
     }
@@ -913,7 +1036,7 @@ String TypeDef::GetEnumString(const String& enum_tp_nm, int enum_val) const {
   int i;
   for(i=0; i < sub_types.size; i++) {
     TypeDef* td = sub_types.FastEl(i);
-    if(td->InheritsFormal(TA_enum) && (enum_tp_nm.empty() || (td->name == enum_tp_nm))) {
+    if(td->IsEnum() && (enum_tp_nm.empty() || (td->name == enum_tp_nm))) {
       rval = td->enum_vals.FindNo(enum_val);
       if(rval != NULL) return rval->name;
     }
@@ -1015,46 +1138,6 @@ int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
 }
 #endif // ndef NO_TA_BASE
 
-bool TypeDef::HasEnumDefs() const {
-  for (int i = 0; i < sub_types.size; ++i) {
-    TypeDef* td = sub_types.FastEl(i);
-    if (td->enum_vals.size > 0) return true;
-  }
-  return false;
-}
-
-bool TypeDef::HasSubTypes() const {
-  bool rval = false;
-  for (int i = 0; i < sub_types.size; ++i) {
-    TypeDef* td = sub_types.FastEl(i);
-    if (td->enum_vals.size == 0) {
-      rval = true;
-      break;
-    }
-  }
-  return rval;
-}
-
-/*obs void TypeDef::Register(void* it) {
-  if(taMisc::in_init)           // don't register the instance tokens
-    return;
-  if((taMisc::keep_tokens != taMisc::ForceTokens) &&
-     (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
-    return;
-
-  TypeDef* par = GetParent();   // un-register from parent..
-  int pos;
-  if(par && (par->tokens.keep ||
-             (taMisc::keep_tokens == taMisc::ForceTokens))
-     && ((pos = par->tokens.FindEl(it)) >= 0))
-  {
-    par->tokens.RemoveIdx(pos);
-    par->tokens.sub_tokens.ref();       // sub class got a new token..
-  }
-  if(par)                       // only register if you have a parent...
-    tokens.Link(it);
-}*/
-
 void TypeDef::RegisterFinal(void* it) {
   if(taMisc::in_init)           // don't register the instance tokens
     return;
@@ -1095,60 +1178,6 @@ bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
   }
   return rval;
 }
-
-void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
-  if(inst_pars.size != templ_pars.size) {
-    String defn_no(templ_pars.size);
-    String inst_no(inst_pars.size);
-    taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
-                   inst_no);
-    String msg;
-    msg << "Defined with parameters: ";
-    templ_pars.Print(msg);
-    msg << "\nInstantiated with parameters: ";
-    inst_pars.Print(msg);
-    taMisc::Error(msg);
-    return;
-  }
-
-  parents.Reset();                      // bag the template's parents
-  parents.LinkUnique(templ_par);        // parent is the templ_par
-  par_formal.RemoveEl(&TA_template);
-  par_formal.Link(&TA_templ_inst);      // now a template instantiation
-  templ_par->children.LinkUnique(this);
-  internal = false;                     // not internal any more
-  children.Reset();                     // don't have any real children..
-
-  // todo: need to add support for arbitrary strings here, which are not just types
-
-  int i;
-  for(i=0; i<inst_pars.size; i++) {
-    TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
-    TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
-
-    templ_pars.ReplaceLinkIdx(i, inst_tp); // actually replace it
-
-    // update sub-types based on defn_tp (go backwards to get most extended types 1st)
-    int j;
-    for(j=sub_types.size-1; j>=0; j--) {
-      sub_types.FastEl(j)->ReplaceParent(defn_tp, inst_tp);
-    }
-  }
-
-  // update to use new types
-  UpdateMDTypes(templ_par->templ_pars, templ_pars);
-}
-
-/*obs void TypeDef::unRegister(void* it) {
-  if((taMisc::keep_tokens != taMisc::ForceTokens) &&
-     (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
-    return;
-
-  if(!tokens.RemoveEl(it)) {    // if we couldn't find this one, must be a sub-tok..
-    int subt = (int)(tokens.sub_tokens) - 1;
-    tokens.sub_tokens = MAX(subt, 0); // might blow down..
-  }
-}*/
 
 void TypeDef::unRegisterFinal(void* it) {
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
@@ -1210,24 +1239,20 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       if(non_def) {
         rval += "</font>";
       }
-      if(md->type->DerivesFormal(TA_enum) || md->type->ptr > 0
-#ifndef NO_TA_BASE
-         || md->type->DerivesFrom(TA_taSmartPtr) || md->type->DerivesFrom(TA_taSmartRef)
-#endif
-         )
+      if(md->type->IsEnum() || md->type->IsAnyPtr() || md->type->IsSmartPtr())
         rval += "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;";
       else
         rval += "<font style=\"background-color: white\">&nbsp;&nbsp;";
-      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
+      if(md->type->IsString())     rval += "\"";
       rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
-      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
+      if(md->type->IsString())     rval += "\"";
       rval += "&nbsp;&nbsp;</font>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
     else {
       rval += md->name + "=";
-      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
+      if(md->type->IsString())     rval += "\"";
       rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
-      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
+      if(md->type->IsString())     rval += "\"";
       rval += ": ";
     }
   }
@@ -1315,7 +1340,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return String::con_NULL;
     return String((ta_intptr_t)*((void**)base));
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     if (DerivesFrom(TA_bool)) {
       bool b = *((bool*)base);
       switch (sc) {
@@ -1373,13 +1398,13 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(DerivesFrom(TA_double)) {
       return FormatDouble(*static_cast<const double *>(base), sc);
     }
-    else if(DerivesFormal(TA_enum)) {
+    else if(IsEnum()) {
       return GetValStr_enum(base, par, memb_def, sc, force_inline);
     }
-    else if(DerivesFrom(TA_taString))
+    else if(IsString())
       return *((String*)base);
     // in general, Variant is handled by recalling this routine on its rep's typdef
-    else if (DerivesFrom(TA_Variant)) {
+    else if (IsVariant()) {
       TypeDef* typ;
       void* var_base;
       Variant& var = *((Variant*)base);
@@ -1397,7 +1422,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return String((int)(*((taAtomicInt*)base)));
     }
 # endif
-    else if(DerivesFrom(TA_taBase)) {
+    else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase)
         return rbase->GetValStr(par, memb_def, sc, force_inline);
@@ -1434,23 +1459,23 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       } else  return String::con_NULL;
     }
 #endif
-    else if(DerivesFormal(TA_class) &&
+    else if(IsClass() &&
             (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
     {
       return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
     }
-    else if(DerivesFormal(TA_struct))
+    else if(IsStruct())
       return "struct " + name;
-    else if(DerivesFormal(TA_union))
+    else if(IsUnion())
       return "union " + name;
-    else if(DerivesFormal(TA_class))
+    else if(IsClass())
       return "class " + name;
     else if(DerivesFrom(TA_void))
       return "void";
   }
-  else if(ptr == 1) {
+  else if(IsPointer()) {
 #ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taBase)) {
+    if(IsTaBase()) {
       return taBase::GetValStr_ptr(this, base_, par, memb_def, sc, force_inline);
     }
     else
@@ -1596,7 +1621,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       *((ta_void_fun*)base) = fun->addr;
     return;
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     if(DerivesFrom(TA_bool)) {
       *((bool*)base) = val.toBool();
     }
@@ -1604,13 +1629,13 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       *((int*)base) = val.toInt();
     else if(DerivesFrom(TA_float))
       *((float*)base) = val.toFloat();
-    else if(DerivesFormal(TA_enum)) {
+    else if(IsEnum()) {
       SetValStr_enum(val, base, par, memb_def, sc, force_inline);
     }
-    else if(DerivesFrom(TA_taString))
+    else if(IsString())
       *((String*)base) = val;
     // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    else if (DerivesFrom(TA_Variant)) {
+    else if (IsVariant()) {
       TypeDef* typ;
       void* var_base;
       Variant& var = *((Variant*)base);
@@ -1654,7 +1679,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
        (*((QAtomicInt*)base)) = val.toInt();
     }
 # endif
-    else if(DerivesFrom(TA_taBase)) {
+    else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase)
         rbase->SetValStr(val, par, memb_def, sc, force_inline);
@@ -1684,7 +1709,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
             return;
           }
           if(md) {
-            if (md->type->ptr == 1) {
+            if (md->type->IsPointer()) {
               bs = *((taBase**)bs);
               if(bs == NULL) {
                 taMisc::Warning("*** Null object at end of path in SetValStr:",val);
@@ -1701,15 +1726,15 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       ref = bs;
     }
 #endif
-    else if(DerivesFormal(TA_class) &&
+    else if(IsClass() &&
             (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       SetValStr_class_inline(val, base, par, memb_def, sc, force_inline);
     }
   }
-  else if(ptr == 1) {
+  else if(IsPointer()) {
     bool is_null = ((val == "NULL") || (val == "(NULL)"));
 #ifndef NO_TA_BASE
-    if (DerivesFrom(TA_taBase)) {
+    if (IsTaBase()) {
       if (tabMisc::root) {
         if (is_null)
           taBase::DelPointer((taBase**)base);
@@ -1789,17 +1814,17 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
                            void* base, void* par, TypeDef* par_typ, MemberDef* memb_def,
                            StrContext sc)
 {
-  if(ptr == 0) {
+  if(IsNotPtr()) {
 #ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taBase)) {
+    if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase)
         return rbase->ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
     }
     else
 #endif
-      if(DerivesFormal(TA_class) &&
-            !(DerivesFrom(TA_taString) || DerivesFrom(TA_Variant)
+      if(IsClass() &&
+            !(IsString() || IsVariant()
 #ifndef NO_TA_BASE
               || DerivesFrom(TA_QAtomicInt) || DerivesFrom(TA_taArray_impl)
               || DerivesFrom(TA_taSmartPtr) || DerivesFrom(TA_taSmartRef)
@@ -1821,7 +1846,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   SetValStr(str, base, par, memb_def, sc, false);
   String repl_info = String("orig val: ") + orig + " new val: " + str;
 #ifndef NO_TA_BASE
-  if(par_typ && par && par_typ->DerivesFrom(TA_taBase)) {
+  if(par_typ && par && par_typ->IsTaBase()) {
     if(memb_def) {
       taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
                    "in", par_typ->name, "object:",((taBase*)par)->GetPathNames(),repl_info);
@@ -1845,17 +1870,6 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   return rval;
 }
 
-bool TypeDef::IsVarCompat() const {
-  // a few "blockers"
-  if (ref || (ptr > 1) || InheritsFrom(TA_void)) return false;
-#ifndef NO_TA_BASE
-  if ((ptr ==1) && !InheritsFrom(TA_taBase)) return false;
-#endif
-  if (InheritsNonAtomicClass()) return false;
-  // ok, hopefully the rest are ok!
-  return true;
-}
-
 const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
@@ -1875,7 +1889,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     else
       return String((ta_intptr_t)*((void**)base)); //TODO: is this the best??
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     if (DerivesFrom(TA_bool)) {
       bool b = *((bool*)base);
       return b; //T_Bool
@@ -1916,20 +1930,20 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     else if(DerivesFrom(TA_double)) {
       return *((double*)base); // T_Double
     }
-    else if(DerivesFormal(TA_enum)) {
+    else if(IsEnum()) {
       int en_val = *((int*)base);
       String rval = GetEnumString("", en_val);
       if(rval.empty()) rval = (String)en_val;
       return rval;  // T_String
     }
-    else if(DerivesFrom(TA_taString))
+    else if(IsString())
       return *((String*)base); // T_String
-    else if(DerivesFrom(TA_Variant)) {
+    else if(IsVariant()) {
       return *((Variant*)base);
     }
 #ifndef NO_TA_BASE
     //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
-    else if(DerivesFrom(TA_taBase)) {
+    else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
       return rbase; // T_Base
@@ -1945,12 +1959,12 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
 #endif
     // NOTE: other value types are not really supported, just fall through to return invalid
   }
-  else if (ptr == 1) {
+  else if (IsPointer()) {
     if (DerivesFrom(TA_char)) {
       return *((char**)base); // T_String
     }
 #ifndef NO_TA_BASE
-    else if (DerivesFrom(TA_taBase)) {
+    else if (IsTaBase()) {
       //NOTE: strictly speaking, we should be returning a generic ptr which points to the
       // base value, but in practice, this is never what we want, since members that
       // are taBase*'s are ubiquitous, what we actually want is a reference to the thing
@@ -1970,7 +1984,7 @@ bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
   // some cases are simple, for non-class values
   if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
     (ptr > 0) ||
-    !InheritsNonAtomicClass()
+    !IsActualClass()
   ){
     return ValIsEmpty(base, memb_def); // note: show not used for single guy
   } else { // instance of a class, so must recursively determine
@@ -2003,7 +2017,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     else
       return !(*((void**)base));
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     if (DerivesFrom(TA_bool)) {
       bool b = *((bool*)base);
       return !b; //T_Bool
@@ -2044,12 +2058,12 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     else if(DerivesFrom(TA_double)) {
       return (*((double*)base) == 0); // T_Double
     }
-    else if(DerivesFormal(TA_enum)) {
+    else if(IsEnum()) {
       return (*((int*)base) == 0); // T_Int
     }
-    else if(DerivesFrom(TA_taString))
+    else if(IsString())
       return ((*((String*)base)).empty()); // T_String
-    else if(DerivesFrom(TA_Variant)) {
+    else if(IsVariant()) {
       return ((*((Variant*)base)).isDefault());
     }
 #ifndef NO_TA_BASE
@@ -2079,7 +2093,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       *((ta_void_fun*)base) = fun->addr;
     return;
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     if(DerivesFrom(TA_bool)) {
       *((bool*)base) = val.toBool(); return;
     }
@@ -2087,7 +2101,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       *((int*)base) = val.toInt(); return;}
     else if(DerivesFrom(TA_float)) {
       *((float*)base) = val.toFloat(); return;}
-    else if(DerivesFormal(TA_enum)) {
+    else if(IsEnum()) {
       // if it is a number, assume direct value, otherwise it is a string
       if (val.isNumeric()) {
         *((int*)base) = val.toInt();
@@ -2095,10 +2109,10 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       }
       SetValStr_enum(val.toString(), base, par, memb_def);
     }
-    else if(DerivesFrom(TA_taString)) {
+    else if(IsString()) {
       *((String*)base) = val.toString(); return;}
     // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    else if (DerivesFrom(TA_Variant)) {
+    else if (IsVariant()) {
       *((Variant*)base) = val; return;
     }
     // note: char is treated as an ansi character
@@ -2153,9 +2167,9 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
     }
 #endif
   }
-  else if(ptr == 1) {
+  else if(IsPointer()) {
 #ifndef NO_TA_BASE
-    if (DerivesFrom(TA_taBase)) {
+    if (IsTaBase()) {
       taBase* bs = val.toBase();
       if (bs && !bs->GetTypeDef()->DerivesFrom(this)) {
         taMisc::Warning("Attempt to set member of type", this->name, " from ",
@@ -2212,7 +2226,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
         continue;
       }
     }
-    if (md->type->InheritsFormal(TA_class)) {
+    if (md->type->IsClass()) {
       primitives[curr_prim] = md->type->GetDMemType(share_set);
     }
     else if (md->type->InheritsFrom(TA_double)) {
@@ -2273,36 +2287,37 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       *((void**)trg_base) = *((void**)src_base); // otherwise just a voidptr
     return;
   }
-  if (ptr == 0) {
+  if (IsNotPtr()) {
     // internal types can simply be bit copied
     if (internal) {
       memcpy(trg_base, src_base, size);
     }
-    else if(DerivesFormal(&TA_enum)) {
+    else if(IsEnum()) {
       memcpy(trg_base, src_base, size); // bit copy
     }
-    else if (DerivesFrom(TA_Variant))
+    else if (IsVariant())
       *((Variant*)trg_base) = *((Variant*)src_base);
-    else if (DerivesFrom(TA_taString))
+    else if (IsString())
       *((String*)trg_base) = *((String*)src_base);
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taSmartRef))
       *((taSmartRef*)trg_base) = *((taSmartRef*)src_base);
     else if(DerivesFrom(TA_taSmartPtr))
       *((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
-    else if(DerivesFrom(TA_taBase)) {
+    else if(IsTaBase()) {
       taBase* rbase = (taBase*)trg_base;
       taBase* sbase = (taBase*)src_base;
-      if(sbase->InheritsFrom(rbase->GetTypeDef()) || rbase->InheritsFrom(sbase->GetTypeDef())) // makin it safe..
+      if(sbase->InheritsFrom(rbase->GetTypeDef()) ||
+         rbase->InheritsFrom(sbase->GetTypeDef())) // makin it safe..
         rbase->UnSafeCopy(sbase);
     }
 #endif
-    else if(DerivesFormal(TA_class))
+    else if(IsClass())
       members.CopyFromSameType(trg_base, src_base);
   }
   else if(ptr >= 1) {
 #ifndef NO_TA_BASE
-    if((ptr == 1) && DerivesFrom(TA_taBase)) {
+    if((IsPointer()) && IsTaBase()) {
       taBase** rbase = (taBase**)trg_base;
       taBase** sbase = (taBase**)src_base;
       taBase::SetPointer(rbase, *sbase);
@@ -2319,9 +2334,9 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
 void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {
-  if(InheritsFormal(TA_class)) {
+  if(IsClass()) {
 #ifndef NO_TA_BASE
-    if(InheritsFrom(TA_taBase)) {
+    if(IsTaBase()) {
       taBase* src = (taBase*)src_base;
       // I actually inherit from the other guy, need to use their type for copying!
       if((src->GetTypeDef() != this) && InheritsFrom(src->GetTypeDef())) {
@@ -2346,7 +2361,7 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
                               void* trg_base, void* src_base,
                               int show_forbidden, int show_allowed, bool no_ptrs,
                               bool test_only) {
-  if(InheritsFormal(TA_class)) {
+  if(IsClass()) {
     return members.CompareSameType(mds, base_types, trg_bases, src_bases,
                                    this, trg_base, src_base,
                                    show_forbidden, show_allowed, no_ptrs, test_only);
@@ -2373,9 +2388,14 @@ String& TypeDef::PrintInherit_impl(String& strm) const {
 }
 
 String& TypeDef::PrintInherit(String& strm) const {
-  for(int i=0; i<par_formal.size; i++) {
-    strm << par_formal.FastEl(i)->name << " ";
-  }
+  if(IsClass())
+    strm << "class ";
+  else if(IsEnum())
+    strm << "enum ";
+  else if(IsStruct())
+    strm << "struct ";
+  else if(IsUnion())
+    strm << "union ";
 
   strm << name;
   if(parents.size > 0)
@@ -2393,12 +2413,12 @@ String& TypeDef::PrintType(String& strm, int indent) const {
   PrintInherit(strm);
 //  if(taMisc::type_info_ == taMisc::ALL_INFO)
   strm << " (Sz: " << String(size) << ")";
-  if(InheritsFormal(TA_class) || InheritsFormal(TA_enum))
+  if(IsClass() || IsEnum())
     strm << " {";
   else
     strm << ";";
   if(!desc.empty()) {
-    if(InheritsFormal(TA_class)) {
+    if(IsClass()) {
       strm << "\n";
       taMisc::IndentString(strm, indent) << "//" << desc ;
     }
@@ -2408,7 +2428,7 @@ String& TypeDef::PrintType(String& strm, int indent) const {
 
   PrintType_OptsLists(strm);
   strm << "\n";
-  if(InheritsFormal(TA_class)) {
+  if(IsClass()) {
     if(sub_types.size > 0) {
       strm << "\n";
       taMisc::IndentString(strm, indent+1) << "// sub-types\n";
@@ -2432,7 +2452,7 @@ String& TypeDef::PrintType(String& strm, int indent) const {
     }
     strm << "\n";
   }
-  else if(InheritsFormal(TA_enum)) {
+  else if(IsEnum()) {
     enum_vals.PrintType(strm, indent+1);
     taMisc::IndentString(strm, indent) << "}\n";
   }
@@ -2442,11 +2462,11 @@ String& TypeDef::PrintType(String& strm, int indent) const {
 String& TypeDef::Print(String& strm, void* base, int indent) const {
   taMisc::IndentString(strm, indent);
 #ifndef NO_TA_BASE
-  if(DerivesFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase;
-    if(ptr == 0)
+    if(!IsAnyPtr())
       rbase = (taBase*)base;
-    else if(ptr == 1)
+    else if(IsPointer())
       rbase = *((taBase**)base);
     else
       rbase = NULL;
@@ -2461,14 +2481,14 @@ String& TypeDef::Print(String& strm, void* base, int indent) const {
     strm << Get_C_Name();
 
 #ifndef NO_TA_BASE
-  if(InheritsFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase = (taBase*)base;
     strm << " " << rbase->GetName()
          << " (refn=" << taBase::GetRefn(rbase) << ")";
   }
 #endif
 
-  if(InheritsFormal(TA_class)) {
+  if(IsClass()) {
     strm << " {\n";
     members.Print(strm, base, indent+1);
     taMisc::IndentString(strm, indent) << "}\n";
@@ -2489,13 +2509,13 @@ String TypeDef::GetHTMLLink(bool gendoc) const {
   if(npt && npt->DerivesFrom(TA_const))
     npt = npt->GetNonConstType();
   if(npt) {
-    if(npt->InheritsFormal(TA_class)) {
+    if(npt->IsClass()) {
       if(gendoc)
         rval.cat("<a href=\"").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
       else
         rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
     }
-    else if(npt->InheritsFormal(TA_enum)) {
+    else if(npt->IsEnum()) {
       rval.cat("<a href=\"#").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
     }
     else {
@@ -2515,10 +2535,10 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
   if(ot) {
     own_typ.cat(ot->name).cat("::");
   }
-  if(InheritsFormal(TA_class)) {
+  if(IsClass()) {
     // todo: not yet supported by maketa..
   }
-  else if(InheritsFormal(TA_enum)) {
+  else if(IsEnum()) {
     if(short_fmt) {
       rval.cat("enum <b><a href=\"#").cat(name).cat("\">").cat(own_typ).cat(name).cat("</a></b> { ");
       for(int i=0;i<enum_vals.size;i++) {
@@ -2554,7 +2574,7 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
 }
 
 String TypeDef::GetHTML(bool gendoc) const {
-  if(!InheritsFormal(TA_class)) return GetHTMLLink(gendoc);
+  if(!IsClass()) return GetHTMLLink(gendoc);
 
   STRING_BUF(rval, 9096); // extends if needed
 
@@ -2621,7 +2641,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     rval.cat("<p>Inherits From: ");
     for(int i=0;i<par_cache.size; i++) {
       TypeDef* par = par_cache[i];
-      if(par->InheritsFormal(TA_templ_inst)) continue; // none of those
+      if(par->IsTemplInst()) continue; // none of those
       if(inhi > 0) rval.cat(", ");
       rval.cat(par->GetHTMLLink(gendoc));
       inhi++;
@@ -2634,7 +2654,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     rval.cat("<p>Inherited By: ");
     for(int i=0;i<children.size; i++) {
       TypeDef* par = children[i];
-      if(par->InheritsFormal(TA_templ_inst)) continue; // none of those
+      if(par->IsTemplInst()) continue; // none of those
       if(inhi > 0) rval.cat(", ");
       rval.cat(par->GetHTMLLink(gendoc));
       inhi++;
@@ -2662,9 +2682,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     rval.cat("<ul>\n");
     for(int i=0;i<sub_types.size;i++) {
       TypeDef* st = sub_types[i];
-      if(!st->InheritsFormal(&TA_enum)) continue;
+      if(!st->IsEnum()) continue;
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
-      if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
+      if(st->GetOwnerType()->IsTemplInst()) continue;
       rval.cat("<li>").cat(st->GetHTMLSubType(gendoc, true)).cat("</li>\n"); // true=short fmt
     }
     rval.cat("</ul>\n");
@@ -2679,9 +2699,9 @@ String TypeDef::GetHTML(bool gendoc) const {
 
     for(int i=0;i<sub_types.size;i++) {
       TypeDef* st = sub_types[i];
-      if(!st->InheritsFormal(&TA_enum)) continue;
+      if(!st->IsEnum()) continue;
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
-      if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
+      if(st->GetOwnerType()->IsTemplInst()) continue;
       rval.cat(st->GetHTMLSubType(gendoc, false));
     }
   }
@@ -2870,7 +2890,7 @@ String TypeDef::Includes() {
   inc_str << "\n// parent includes:";
   for(int i=0; i< parents.size; i++) {
     TypeDef* par = parents[i];
-    if(par->InheritsFormal(TA_templ_inst)) {
+    if(par->IsTemplInst()) {
       for(int j=0; j<par->templ_pars.size; j++) {
 	TypeDef* tp = par->templ_pars[j];
 	if(tp->IsClass() && tp->IsAnchor()) {
@@ -3016,7 +3036,7 @@ bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,
                             TypeDef* par_typ, taObjDiffRec* par_od) const {
-  if(InheritsFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase = (taBase*)base;
     if(rbase) {
       rbase->GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
@@ -3033,7 +3053,7 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 //   }
 
   // then check for classes
-  if(ptr == 0 && InheritsNonAtomicClass()) {
+  if(IsNotPtr() && IsActualClass()) {
     GetObjDiffVal_class(odl, nest_lev, base, memb_def, par, par_typ, odr);
   }
 }

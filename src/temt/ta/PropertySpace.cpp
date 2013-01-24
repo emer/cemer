@@ -73,7 +73,7 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
     } else {
       TypeDef* td = mth->arg_types.SafeEl(0);
       if (td)
-        td = td->GetNonConstNonRefType();
+        td = td->GetActualType();
       pd->setType(td);
       taRefN::SetRefDone(*((taRefN**)&pd->set_mth), mth);
     }
@@ -116,7 +116,7 @@ MemberDefBase* PropertySpace::FindNameR(const char* nm) const {
   }
 
   for (int i = 0; i < size; i++) {
-    if (FastEl(i)->type->ptr == 0) {
+    if (FastEl(i)->type->IsNotPtr()) {
       if (MemberDefBase *rval = FastEl(i)->type->properties.FindNameR(nm)) {
         return rval;
       }

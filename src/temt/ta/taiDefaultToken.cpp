@@ -21,7 +21,7 @@
 
 int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
   TypeDef* mtd = md->type;
-  if (((mtd->ptr == 1) && mtd->DerivesFrom(TA_taBase)) &&
+  if (((mtd->IsPtr()) && mtd->DerivesFrom(TA_taBase)) &&
      md->HasOption("DEFAULT_EDIT"))
     return taiTokenPtrMember::BidForMember(md,td)+10;
   return 0;

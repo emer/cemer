@@ -19,7 +19,7 @@
 
 
 int taiFilePtrType::BidForType(TypeDef* td) {
-  if(td->DerivesFrom(TA_taFiler) && (td->ptr == 1))
+  if(td->DerivesFrom(TA_taFiler) && (td->IsPointer()))
     return (taiType::BidForType(td) +1);
   return 0;
 }

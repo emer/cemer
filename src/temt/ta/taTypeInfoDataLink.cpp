@@ -45,9 +45,9 @@ bool taTypeInfoDataLink::HasChildItems() {
   case TypeItem::TIK_METHOD: break;
   case TypeItem::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
-    if (td->internal && !td->InheritsFormal(TA_template)) {
-      break;
-    }
+    // if (td->internal && !td->InheritsFormal(TA_template)) {
+    //   break;
+    // }
     rval = true;
     }
   default:break; // compiler food

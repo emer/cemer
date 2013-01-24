@@ -170,7 +170,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
   dumpMisc::path_subs.FixPath(td, tabMisc::root, pat);
   MemberDef* md = NULL;
   taBase* rval = tabMisc::root->FindFromPath(pat, md);
-  if(rval && md && (md->type->ptr == 1)) { // deref ptr
+  if(rval && md && (md->type->IsPointer())) { // deref ptr
     rval = *((taBase**)rval);
   }
   rval = FixPathFind(pat, rval, trg_td, trg_nm); // try to fix based on trg info

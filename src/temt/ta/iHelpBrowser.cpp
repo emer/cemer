@@ -317,12 +317,12 @@ void iHelpBrowser::find_prev_clicked() {
 void iHelpBrowser::AddTypesR(TypeSpace* ts) {
   for (int i = 0; i < ts->size; ++i) {
     TypeDef* typ = ts->FastEl(i);
-    if (!(typ->IsClass() && typ->IsAnchor()))
+    if (!(typ->IsClass() && typ->IsActual()))
       continue;
-    if (typ->InheritsFormal(TA_templ_inst) ||
-      typ->HasOption("VIRT_BASE") ||
-      typ->HasOption("HIDDEN") ||
-      typ->HasOption("IGNORE"))
+    if (// typ->IsTemplInst() ||
+        typ->HasOption("VIRT_BASE") ||
+        typ->HasOption("HIDDEN") ||
+        typ->HasOption("IGNORE"))
       continue;
     // get rid of the junk stub types by looking for empties...
     if ((typ->members.size == 0) && (typ->methods.size == 0))

@@ -37,7 +37,7 @@ void MemberProgEl::UpdateAfterEdit_impl() {
       }
     }
     path += member_lookup->name;
-    if(member_lookup->type->InheritsFormal(&TA_class) &&
+    if(member_lookup->type->IsClass() &&
        !member_lookup->type->InheritsFrom(&TA_taString))
       path += ".";
     member_lookup = NULL;

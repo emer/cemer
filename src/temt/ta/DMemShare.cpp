@@ -107,7 +107,7 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
 		    "Pointers can not be shared.");
       continue;
     }
-    if(md->type->InheritsFormal(TA_class)) {
+    if(md->type->IsClass()) {
       if(par_md != NULL) {
 	taMisc::Error("WARNING: DMEM_SHARE_SET in too many nested objects: only one level of subobject nesting allowed!  type:",
 		      td->name, ", member:", md->name);

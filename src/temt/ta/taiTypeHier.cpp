@@ -42,10 +42,10 @@ taiTypeHier::~taiTypeHier() {
 
 bool taiTypeHier::AddType_Class(TypeDef* typ_) {
   if (typ_->HasOption("HIDDEN")) return false;
-  if (!typ_->InheritsFormal(TA_class)) // only type classes please..
+  if (!typ_->IsActualClass()) // only type classes please..
     return false;
   // no templates (since a template is not itself a type)
-  if (typ_->InheritsFormal(TA_templ_inst))
+  if (typ_->IsTemplInst())
     return false;
   // no nested typedefs TODO: find a better way to identify nested typedefs
   if (typ_->name == "inherited") return false;
@@ -137,7 +137,7 @@ void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAct
     if (chld->ptr != 0)
       continue;
     if (!AddType_Class(chld)) {
-      if (chld->InheritsFormal(TA_templ_inst) && (chld->children.size == 1)) {
+      if (chld->IsTemplInst() && (chld->children.size == 1)) {
         GetMenu_impl(menu, chld->children.FastEl(0), acn);
       }
       continue;

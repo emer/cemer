@@ -1192,11 +1192,6 @@ public:
   { return GetTypeDef()->InheritsFromName(nm); }
   // #CAT_ObjectMgmt does this inherit from given type name?
 
-  bool          InheritsFormal(TypeDef* it) const       // #IGNORE
-  { return GetTypeDef()->InheritsFormal(it); }
-  bool          InheritsFormal(const TypeDef& it) const // #IGNORE
-  { return GetTypeDef()->InheritsFormal(it); }
-
   TypeDef*      GetStemBase() const;
   // #IGNORE get first (from me) parent with STEM_BASE directive -- defines equivalence class -- if not found, then taBase is returned
 

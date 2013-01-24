@@ -25,7 +25,7 @@
 TypeDef_Of(TypeDef_ptr);
 
 int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if (argt->DerivesFrom(TA_TypeDef) && (argt->ptr == 1))
+  if (argt->DerivesFrom(TA_TypeDef) && (argt->IsPointer()))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

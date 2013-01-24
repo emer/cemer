@@ -35,13 +35,13 @@ taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
 
 taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
   if ((typ_->ptr > 0) || (typ_->HasOption("HIDDEN"))) return TC_NoAdd;
-  if (!typ_->InheritsFormal(TA_class)) // only type classes please..
+  if (!typ_->IsActualClass()) // only type classes please..
     return TC_NoAdd;
   // no nested typedefs TODO: find a better way to identify nested typedefs
   if (typ_->name == "inherited") return TC_NoAdd;
 
   // we don't add templates, but we do add their children
-  if (typ_->InheritsFormal(TA_templ_inst))
+  if (typ_->IsTemplInst())
     return TC_NoAddCheckChildren;
 
   if(typ_->HasOption("VIRT_BASE")) {

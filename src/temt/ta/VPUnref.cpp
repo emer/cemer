@@ -36,7 +36,7 @@ taBase* VPUnref::Resolve() {
   if(!bs)
     return NULL;
   if(md) {
-    if(md->type->ptr == 1) {
+    if(md->type->IsPointer()) {
       bs = *((taBase**)bs);
       if(!bs)
 	return NULL;

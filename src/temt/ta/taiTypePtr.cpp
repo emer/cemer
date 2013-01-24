@@ -23,7 +23,7 @@ void taiTypePtr::Initialize() {
 }
 
 int taiTypePtr::BidForType(TypeDef* td) {
-  if(td->DerivesFrom(TA_TypeDef) && (td->ptr == 1))
+  if(td->DerivesFrom(TA_TypeDef) && (td->IsPointer()))
     return taiType::BidForType(td) + 1;
   return 0;
 }

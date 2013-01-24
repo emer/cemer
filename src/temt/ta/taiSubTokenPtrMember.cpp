@@ -23,7 +23,7 @@
 
 
 int taiSubTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if((md->type->ptr == 1) && (md->OptionAfter("SUBTYPE_") != ""))
+  if((md->type->IsPointer()) && (md->OptionAfter("SUBTYPE_") != ""))
     return (taiMember::BidForMember(md,td) + 1);
   return 0;
 }

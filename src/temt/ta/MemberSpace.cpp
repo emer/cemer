@@ -43,7 +43,7 @@ MemberDef* MemberSpace::FindNameR(const char* nm) const {
   }
 
   for (int i = 0; i < size; i++) {
-    if (FastEl(i)->type->ptr == 0) {
+    if (FastEl(i)->type->IsNotPtr()) {
       if (MemberDef *rval = FastEl(i)->type->members.FindNameR(nm)) {
         return rval;
       }
@@ -80,7 +80,7 @@ MemberDef* MemberSpace::FindTypeR(TypeDef* it) const {
   }
 
   for (int i = 0; i < size; i++) {
-    if (FastEl(i)->type->ptr == 0) {
+    if (FastEl(i)->type->IsNotPtr()) {
       if (MemberDef *rval = FastEl(i)->type->members.FindTypeR(it)) {
         return rval;
       }
@@ -134,7 +134,7 @@ int MemberSpace::FindPtr(void* base, void* mbr) const {
   for(i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
     // check conventional pointers of any type
-    if((md->type->ptr == 1) && (mbr == *((void **)md->GetOff(base))))
+    if(md->type->IsPointer() && (mbr == *((void **)md->GetOff(base))))
       return i;
     // Variants: just check for equivalence to contained pointer,
     //  if doesn't contain a ptr, test will return null
@@ -183,7 +183,8 @@ bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
   for(i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
     if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
-      if(no_ptrs && (md->type->ptr > 0 || md->type->HasOption("SMART_POINTER"))) continue;
+      if(no_ptrs && (md->type->IsAnyPtr() || md->type->HasOption("SMART_POINTER")))
+        continue;
       some_diff |= md->CompareSameType(mds, base_types, trg_bases, src_bases,
                                        base_typ, trg_base, src_base,
                                        show_forbidden, show_allowed, no_ptrs, test_only);

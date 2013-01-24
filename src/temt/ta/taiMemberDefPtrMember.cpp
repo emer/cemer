@@ -19,7 +19,7 @@
 
 
 int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if ((md->type->ptr == 1) && (md->type->DerivesFrom(TA_MemberDef)))
+  if ((md->type->IsPointer()) && (md->type->DerivesFrom(TA_MemberDef)))
     return (inherited::BidForMember(md,td) + 1);
   return 0;
 }

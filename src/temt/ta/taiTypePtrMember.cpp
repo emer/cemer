@@ -22,7 +22,7 @@
 TypeDef_Of(TypeDef_ptr);
 
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if ((md->type->ptr == 1) &&
+  if ((md->type->IsPointer()) &&
      ((md->OptionAfter("TYPE_") != "") || (md->OptionAfter("TYPE_ON_") != "")
       || (md->HasOption("NULL_OK")))
      && md->type->DerivesFrom(TA_TypeDef))

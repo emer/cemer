@@ -32,7 +32,8 @@ class QAtomicInt;
 #else
 
 # if (QT_VERSION < 0x040400) || !defined(TA_USE_QT)
-class TA_API QAtomicInt: public QBasicAtomicInt { // this copies the barest API of QAtomicInt
+class TA_API QAtomicInt: public QBasicAtomicInt {
+  // ##SMART_INT this copies the barest API of QAtomicInt
 public:
   QAtomicInt& operator=(int value)
     {_q_value = value; return *this;}
@@ -93,6 +94,7 @@ public:
 TypeDef_Of(taAtomicInt);
 
 class TA_API taAtomicInt : public QAtomicInt {
+  // ##SMART_INT an atomic integer for threadsafe processing
 public:
 # if (QT_VERSION >= 0x050000)
   // Non-atomic API

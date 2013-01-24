@@ -284,7 +284,7 @@ void taiMethodData::GenerateScript() {
   int_Array tmp_objs;           // indicies of the temp objects
   for (int i = 0; i < arg_dlg->type_el.size; ++i) {
     taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(i);
-    if((art->arg_typ->ptr == 0) && art->arg_typ->DerivesFrom(TA_taBase))
+    if((art->arg_typ->IsNotPtr()) && art->arg_typ->DerivesFrom(TA_taBase))
       tmp_objs.Add(i+1);
   }
   if (tmp_objs.size > 0) {

@@ -476,7 +476,7 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
     MemberDef* md = btyp->members.FastEl(i);
     // if base is an embedded list, then check all its children
     if (md->type->InheritsFrom(&TA_taList_impl) &&
-      (md->type->ptr == 0))
+        (md->type->IsNotPtr()))
     {
       taList_impl* lst = (taList_impl*)md->GetOff(base);
       rval = GetTemplateInstance_impl(typ, lst);

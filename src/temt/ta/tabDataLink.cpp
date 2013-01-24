@@ -416,7 +416,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       if (md->is_static) continue;
       if (md->HasOption("NO_SEARCH")) continue;
-      if (md->type->ptr == 0) {
+      if (md->type->IsNotPtr()) {
         // a list or greater is never a "value"
         if (md->type->InheritsFrom(TA_taList_impl)) continue;
         if (md->type->InheritsFrom(TA_taBase)) {
@@ -434,7 +434,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
                 if (IsHit(targs, kicks, probed, ci))
           {++n; AddHit(item_type, probed, hits);}
       }
-      else if(md->type->ptr == 1) {
+      else if(md->type->IsPointer()) {
         // if a pointer, treat it as a value and go for it!
                   probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
                   if (IsHit(targs, kicks, probed, ci))
@@ -478,7 +478,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
           TypeItem::SC_TREE)) continue;
     }
 
-    if (md->type->ptr == 0) {
+    if (md->type->IsNotPtr()) {
         chld = static_cast<taBase*>(md->GetOff(tab));
     }
     else { // must be == 1

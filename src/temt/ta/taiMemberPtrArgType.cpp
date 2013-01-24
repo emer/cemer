@@ -22,7 +22,7 @@
 
 
 int taiMemberPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if (argt->DerivesFrom(TA_MemberDef) && (argt->ptr == 1))
+  if (argt->DerivesFrom(TA_MemberDef) && (argt->IsPointer()))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

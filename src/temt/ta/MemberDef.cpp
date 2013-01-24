@@ -33,7 +33,7 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
   if (!dsc_str.empty())
     dsc_str += "<br>";
   dsc_str += desc;
-  if(md->type->InheritsFormal(TA_class) &&
+  if(md->type->IsClass() &&
      (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
@@ -44,7 +44,7 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
       GetMembDesc(smd, dsc_str, indent);
     }
   }
-  else if (md->type->InheritsFormal(TA_enum)) {
+  else if (md->type->IsEnum()) {
     for (int i = 0; i < md->type->enum_vals.size; ++i) {
       EnumDef* ed = md->type->enum_vals.FastEl(i);
       if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
@@ -237,7 +237,7 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 int show_forbidden, int show_allowed, bool no_ptrs,
                                 bool test_only) {
   bool some_diff = false;
-  if(type->InheritsFormal(TA_class)) {
+  if(type->IsClass()) {
     if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
       // check the members
       some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
