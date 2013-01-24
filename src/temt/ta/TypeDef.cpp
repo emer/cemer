@@ -1260,65 +1260,6 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
   return rval;
 }
 
-namespace { // anonymous
-  // Functions to format float/double values consistently across platforms.
-
-  void NormalizeRealString(String &str) {
-    // Make NaN and infinity representations consistent.
-    // Windows may use "1.#QNAN" or "-1.#IND" for nan.
-    if (str.contains_ci("nan") || str.contains_ci("ind")) {
-      str = "nan";
-      return;
-    }
-
-    // Windows uses "1.#INF" or "-1.#INF" for infinities.
-    if (str.contains_ci("inf")) {
-      str = (str.elem(0) == '-') ? "-inf" : "inf";
-      return;
-    }
-
-    // Get rid of leading zeros in the exponent, since mac/win aren't
-    // consistent in how many they output for padding.
-    int exponent = str.index_ci("e+");
-    if (exponent == -1) exponent = str.index_ci("e-");
-    if (exponent > 0) {
-      exponent += 2;
-      int first_non_zero = exponent;
-      while (str.elem(first_non_zero) == '0') ++first_non_zero;
-      if (first_non_zero > exponent) {
-        str.del(exponent, first_non_zero - exponent);
-      }
-    }
-
-    // Convert , to . for intl contexts so files are always uniform
-    str.repl(",", ".");
-  }
-
-  String FormatFloat(float f, TypeDef::StrContext sc) {
-    switch (sc) {
-      case TypeDef::SC_STREAMING: {
-        String ret(f, "%.7g");
-        NormalizeRealString(ret);
-        return ret;
-      }
-      default:
-        return String(f);
-    }
-  }
-
-  String FormatDouble(double d, TypeDef::StrContext sc) {
-    switch (sc) {
-      case TypeDef::SC_STREAMING: {
-        String ret(d, "%.16lg");
-        NormalizeRealString(ret);
-        return ret;
-      }
-      default:
-        return String(d);
-    }
-  }
-}
-
 String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
                           StrContext sc, bool force_inline) const
 {
@@ -1326,7 +1267,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
-  if (InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+  if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun;
     if(memb_def != NULL)
@@ -1340,92 +1281,132 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return String::con_NULL;
     return String((ta_intptr_t)*((void**)base));
   }
-  if (IsNotPtr()) {
-    if (DerivesFrom(TA_bool)) {
-      bool b = *((bool*)base);
-      switch (sc) {
-      case SC_STREAMING: return (b) ? String::con_1 : String::con_0;
-      case SC_DISPLAY: return (b) ? String("+") : String("-");
-      default:
-        return String(b);
+  if(IsNotPtr()) {
+    if(IsAtomic()) {
+      if(IsBool()) {
+	bool b = *((bool*)base);
+	switch (sc) {
+	case SC_STREAMING: return (b) ? String::con_1 : String::con_0;
+	case SC_DISPLAY: return (b) ? String("+") : String("-");
+	default:
+	  return String(b);
+	}
       }
-    }
-    // note: char is generic, and typically we won't use signed char
-    else if (DerivesFrom(TA_char)) {
-      switch (sc) {
-      case SC_STREAMING: return String((int)*((char*)base));
-      default:
-        return String(*((char*)base));
-      }
-    }
-    // note: explicit use of signed char is treated like a number
-    else if ((DerivesFrom(TA_signed_char))) {
-      return String((int)*((signed char*)base)); // treat as numbers
-    }
-    // note: explicit use of unsigned char is "byte" in ta/pdp
-    else if ((DerivesFrom(TA_unsigned_char))) {
-      return String((uint)*((unsigned char*)base)); // treat bytes as numbers
-    }
-    else if(DerivesFrom(TA_short)) {
-      return String((int)*((short*)base));
-    }
-    else if(DerivesFrom(TA_unsigned_short)) {
-      return String((uint)*((unsigned short*)base));
-    }
-    else if(DerivesFrom(TA_int)) {
+      else if(IsInt()) {
+	// note: char is generic, and typically we won't use signed char
+	if (DerivesFrom(TA_char)) {
+	  switch (sc) {
+	  case SC_STREAMING: return String((int)*((char*)base));
+	  default:
+	    return String(*((char*)base));
+	  }
+	}
+	// note: explicit use of signed char is treated like a number
+	else if ((DerivesFrom(TA_signed_char))) {
+	  return String((int)*((signed char*)base)); // treat as numbers
+	}
+	// note: explicit use of unsigned char is "byte" in ta/pdp
+	else if ((DerivesFrom(TA_unsigned_char))) {
+	  return String((uint)*((unsigned char*)base)); // treat bytes as numbers
+	}
+	else if(DerivesFrom(TA_short)) {
+	  return String((int)*((short*)base));
+	}
+	else if(DerivesFrom(TA_unsigned_short)) {
+	  return String((uint)*((unsigned short*)base));
+	}
+	else if(DerivesFrom(TA_int)) {
 #ifndef NO_TA_BASE
-      if(sc == SC_DISPLAY && par && memb_def && memb_def->HasOption("DYNENUM_ON_enum_type")) {
-        // shameless hack to get dyn enum to display text value
-        DynEnum* dye = (DynEnum*)par;
-        return dye->NameVal();
-      }
-      else
+	  if(sc == SC_DISPLAY && par && memb_def &&
+	     memb_def->HasOption("DYNENUM_ON_enum_type")) {
+	    // shameless hack to get dyn enum to display text value
+	    DynEnum* dye = (DynEnum*)par;
+	    return dye->NameVal();
+	  }
+	  else
 #endif
-        return String(*((int*)base));
+	    return String(*((int*)base));
+	}
+	else if(DerivesFrom(TA_unsigned_int)) {
+	  return String(*((uint*)base));
+	}
+	else if(DerivesFrom(TA_int64_t)) {
+	  return String(*((int64_t*)base));
+	}
+	else if(DerivesFrom(TA_uint64_t)) {
+	  return String(*((uint64_t*)base));
+	}
+      }
+      else if(IsFloat()) {
+	if(DerivesFrom(TA_float)) {
+	  return taMisc::StreamFormatFloat(*static_cast<const float *>(base), sc);
+	}
+	else if(DerivesFrom(TA_double)) {
+	  return taMisc::StreamFormatDouble(*static_cast<const double *>(base), sc);
+	}
+      }
+      else if(IsEnum()) {
+	return GetValStr_enum(base, par, memb_def, sc, force_inline);
+      }
     }
-    else if(DerivesFrom(TA_unsigned_int)) {
-      return String(*((uint*)base));
+    else if(IsAtomicEff()) {
+      if(IsString()) {
+	return *((String*)base);
+      }
+      else if (IsVariant()) { // in general, Variant is handled by recalling this routine on its rep's typdef
+
+	TypeDef* typ;
+	void* var_base;
+	Variant& var = *((Variant*)base);
+	//note: TA_void does not deal with this properly, so don't indirect...
+	if (var.type() == Variant::T_Invalid)
+	  return _nilString;
+	//NOTE: maybe we should indirect, rather than return NULL directly...
+	if (var.isNull()) return String::con_NULL;
+	var.GetRepInfo(typ, var_base);
+	return typ->GetValStr(var_base, NULL, memb_def, sc, force_inline);
+      }
+#ifdef NO_TA_BASE
     }
-    else if(DerivesFrom(TA_int64_t)) {
-      return String(*((int64_t*)base));
+#else
+      else if (DerivesFrom(TA_taSmartPtr)) {
+	// we just delegate to taBase* since we are binary compatible
+	return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc, force_inline);
+      }
+      else if (DerivesFrom(TA_taSmartRef)) {
+	taSmartRef& ref = *((taSmartRef*)base);
+	taBase* rbase = ref;
+	if (rbase) {
+	  if ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)) {
+	    switch (sc) {
+	    case SC_STREAMING:
+	      return dumpMisc::path_tokens.GetPath(rbase);        // use path tokens when saving..
+	    case SC_DISPLAY:
+	      return rbase->GetName();
+	    default:
+	      return rbase->GetPathNames();
+	    }
+	  }
+	  else {
+	    return String((intptr_t)rbase);
+	  }
+	}
+	else {
+	  return String::con_NULL;
+	}
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
+	return String((int)(*((taAtomicInt*)base)));
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
+	return String((int)(*((taBasicAtomicInt*)base)));
+      }
     }
-    else if(DerivesFrom(TA_uint64_t)) {
-      return String(*((uint64_t*)base));
-    }
-    else if(DerivesFrom(TA_float)) {
-      return FormatFloat(*static_cast<const float *>(base), sc);
-    }
-    else if(DerivesFrom(TA_double)) {
-      return FormatDouble(*static_cast<const double *>(base), sc);
-    }
-    else if(IsEnum()) {
-      return GetValStr_enum(base, par, memb_def, sc, force_inline);
-    }
-    else if(IsString())
-      return *((String*)base);
-    // in general, Variant is handled by recalling this routine on its rep's typdef
-    else if (IsVariant()) {
-      TypeDef* typ;
-      void* var_base;
-      Variant& var = *((Variant*)base);
-      //note: TA_void does not deal with this properly, so don't indirect...
-      if (var.type() == Variant::T_Invalid)
-        return _nilString;
-        //NOTE: maybe we should indirect, rather than return NULL directly...
-      if (var.isNull()) return String::con_NULL;
-      var.GetRepInfo(typ, var_base);
-      return typ->GetValStr(var_base, NULL, memb_def, sc, force_inline);
-    }
-#ifndef NO_TA_BASE
-# ifdef TA_USE_QT
-    else if(DerivesFrom(TA_taAtomicInt)) {
-      return String((int)(*((taAtomicInt*)base)));
-    }
-# endif
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
-      if(rbase)
+      if(rbase) {
         return rbase->GetValStr(par, memb_def, sc, force_inline);
+      }
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
@@ -1437,42 +1418,21 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       }
       return name;
     }
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      // we just delegate to taBase* since we are binary compatible
-      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc, force_inline);
-    }
-    else if (DerivesFrom(TA_taSmartRef)) {
-      taSmartRef& ref = *((taSmartRef*)base);
-      taBase* rbase = ref;
-      if (rbase) {
-        if ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)) {
-          switch (sc) {
-          case SC_STREAMING:
-            return dumpMisc::path_tokens.GetPath(rbase);        // use path tokens when saving..
-          case SC_DISPLAY:
-            return rbase->GetName();
-          default:
-            return rbase->GetPathNames();
-          }
-        } else
-          return String((intptr_t)rbase);
-      } else  return String::con_NULL;
-    }
 #endif
-    else if(IsClass() &&
-            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
+  else if(IsClass() &&
+	  (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
     {
       return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
     }
-    else if(IsStruct())
-      return "struct " + name;
-    else if(IsUnion())
-      return "union " + name;
-    else if(IsClass())
-      return "class " + name;
-    else if(DerivesFrom(TA_void))
-      return "void";
-  }
+  else if(IsStruct())
+    return "struct " + name;
+  else if(IsUnion())
+    return "union " + name;
+  else if(IsClass())
+    return "class " + name;
+  else if(IsVoid())
+    return "void";
+}
   else if(IsPointer()) {
 #ifndef NO_TA_BASE
     if(IsTaBase()) {
@@ -1484,22 +1444,28 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       TypeDef* td = *((TypeDef**)base);
       if (td) {
         return td->GetPathName();
-      } else
+      }
+      else {
         return String::con_NULL;
+      }
     }
     else if (DerivesFrom(TA_MemberDef)) {
       MemberDef* md = *((MemberDef**)base);
       if (md) {
         return md->GetPathName();
-      } else
+      }
+      else {
         return String::con_NULL;
+      }
     }
     else if (DerivesFrom(TA_MethodDef)) {
       MethodDef* md = *((MethodDef**)base);
       if (md) {
         return md->GetPathName();
-      } else
+      }
+      else {
         return String::con_NULL;
+      }
     }
   }
   return name;
@@ -1983,9 +1949,7 @@ bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
 {
   // some cases are simple, for non-class values
   if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
-    (ptr > 0) ||
-    !IsActualClass()
-  ){
+      (IsAnyPtr()) || !IsActualClass()) {
     return ValIsEmpty(base, memb_def); // note: show not used for single guy
   } else { // instance of a class, so must recursively determine
     // just find all eligible guys, and return true if none fail
@@ -2273,7 +2237,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {
   // if its void, odds are it is a fun pointer
-  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+  if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun;
     if(memb_def != NULL)
@@ -2287,33 +2251,34 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       *((void**)trg_base) = *((void**)src_base); // otherwise just a voidptr
     return;
   }
-  if (IsNotPtr()) {
-    // internal types can simply be bit copied
-    if (internal) {
+  if(IsNotPtr()) {
+    if(IsAtomic()) {
       memcpy(trg_base, src_base, size);
     }
-    else if(IsEnum()) {
-      memcpy(trg_base, src_base, size); // bit copy
-    }
-    else if (IsVariant())
-      *((Variant*)trg_base) = *((Variant*)src_base);
-    else if (IsString())
-      *((String*)trg_base) = *((String*)src_base);
+    else if(IsAtomicEff()) {
+      if(IsVariant())
+	*((Variant*)trg_base) = *((Variant*)src_base);
+      else if (IsString())
+	*((String*)trg_base) = *((String*)src_base);
 #ifndef NO_TA_BASE
-    else if(DerivesFrom(TA_taSmartRef))
-      *((taSmartRef*)trg_base) = *((taSmartRef*)src_base);
-    else if(DerivesFrom(TA_taSmartPtr))
-      *((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
+      else if(DerivesFrom(TA_taSmartRef))
+	*((taSmartRef*)trg_base) = *((taSmartRef*)src_base);
+      else if(DerivesFrom(TA_taSmartPtr))
+	*((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
+      else if(DerivesFrom(TA_taAtomicInt))
+	*((taAtomicInt*)trg_base) = *((taAtomicInt*)src_base);
+      else if(DerivesFrom(TA_taBasicAtomicInt))
+	*((taBasicAtomicInt*)trg_base) = *((taBasicAtomicInt*)src_base);
+    }
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)trg_base;
       taBase* sbase = (taBase*)src_base;
-      if(sbase->InheritsFrom(rbase->GetTypeDef()) ||
-         rbase->InheritsFrom(sbase->GetTypeDef())) // makin it safe..
-        rbase->UnSafeCopy(sbase);
+      rbase->Copy(sbase);
     }
 #endif
-    else if(IsClass())
+    else if(IsClass()) {
       members.CopyFromSameType(trg_base, src_base);
+    }
   }
   else if(ptr >= 1) {
 #ifndef NO_TA_BASE
@@ -2334,7 +2299,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
 void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {
-  if(IsClass()) {
+  if(IsActualClass()) {
 #ifndef NO_TA_BASE
     if(IsTaBase()) {
       taBase* src = (taBase*)src_base;
@@ -2347,13 +2312,15 @@ void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
 #endif // NO_TA_BASE
     members.CopyOnlySameType(trg_base, src_base);
   }
-  else
+  else {
     CopyFromSameType(trg_base, src_base, memb_def);
+  }
 }
 
 void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
-  if(memb_no < members.size)
+  if(memb_no < members.size) {
     members[memb_no]->CopyFromSameType(trg_base, src_base);
+  }
 }
 
 bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
@@ -2361,7 +2328,7 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
                               void* trg_base, void* src_base,
                               int show_forbidden, int show_allowed, bool no_ptrs,
                               bool test_only) {
-  if(IsClass()) {
+  if(IsActualClass()) {
     return members.CompareSameType(mds, base_types, trg_bases, src_bases,
                                    this, trg_base, src_base,
                                    show_forbidden, show_allowed, no_ptrs, test_only);

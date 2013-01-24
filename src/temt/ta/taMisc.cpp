@@ -1500,17 +1500,63 @@ String taMisc::FormatValue(float val, int width, int precision) {
     sval = sval.before(width);
   while((int)sval.length() < width) sval += " ";
   return sval;
-//    String sval(val);
-//    if(sval.contains('.')) {
-//      String digs = sval.after('.');
-//      sval = sval.through('.') + digs.at(0,MIN(precision,(int)digs.length()));
-//      if(digs.contains("e"))
-//        sval += digs.from('e');
-//    }
-//    if((int)sval.length() > width)
-//      sval = sval.before(width);
-//    return sval;
 }
+
+void taMisc::NormalizeRealString(String &str) {
+  // Make NaN and infinity representations consistent.
+  // Windows may use "1.#QNAN" or "-1.#IND" for nan.
+  if (str.contains_ci("nan") || str.contains_ci("ind")) {
+    str = "nan";
+    return;
+  }
+
+  // Windows uses "1.#INF" or "-1.#INF" for infinities.
+  if (str.contains_ci("inf")) {
+    str = (str.elem(0) == '-') ? "-inf" : "inf";
+    return;
+  }
+
+  // Get rid of leading zeros in the exponent, since mac/win aren't
+  // consistent in how many they output for padding.
+  int exponent = str.index_ci("e+");
+  if (exponent == -1) exponent = str.index_ci("e-");
+  if (exponent > 0) {
+    exponent += 2;
+    int first_non_zero = exponent;
+    while (str.elem(first_non_zero) == '0') ++first_non_zero;
+    if (first_non_zero > exponent) {
+      str.del(exponent, first_non_zero - exponent);
+    }
+  }
+
+  // Convert , to . for intl contexts so files are always uniform
+  str.repl(",", ".");
+}
+
+String taMisc::StreamFormatFloat(float f, TypeDef::StrContext sc) {
+  switch (sc) {
+  case TypeDef::SC_STREAMING: {
+    String ret(f, "%.7g");
+    NormalizeRealString(ret);
+    return ret;
+  }
+  default:
+    return String(f);
+  }
+}
+
+String taMisc::StreamFormatDouble(double d, TypeDef::StrContext sc) {
+  switch (sc) {
+  case TypeDef::SC_STREAMING: {
+    String ret(d, "%.16lg");
+    NormalizeRealString(ret);
+    return ret;
+  }
+  default:
+    return String(d);
+  }
+}
+
 
 /* from xmgr, graphutils.c, copyright P. Turner
  * nicenum: find a "nice" number approximately equal to x

@@ -779,7 +779,7 @@ subtype:  combtype
               $$ = sp->AddUniqNameOld(td);
               if($$ == td) mta->TypeAdded("template instance", sp, $$); }
             else
-              $$ = td; } }
+              $$ = td; }
 	| THISNAME templopen templargs '>'	{ /* this template */
             if(!($1->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }

@@ -85,7 +85,8 @@ public:
     TABASE = 0x01000000,    // a CLASS that derives from taBase base class that is automatically type-aware
 
     ANY_PTR = POINTER | PTR_PTR,
-    ATOMIC = BOOL | INTEGER | ENUM | FLOAT | STRING | VARIANT | SMART_PTR | SMART_INT,
+    ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
+    ATOMIC_EFF = STRING | VARIANT | SMART_PTR | SMART_INT, // effective atomic classes -- pass by value and act like atomic, but don't support bitwise copy -- need to use actual class interface
     NON_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST,
   };
 
@@ -163,15 +164,18 @@ public:
   inline bool   IsInt() const { return HasType(INTEGER); }
   inline bool   IsEnum() const  { return HasType(ENUM); }
   inline bool   IsFloat() const { return HasType(FLOAT); }
+  inline bool   IsAtomic() const { return HasType(ATOMIC); }
   inline bool   IsString() const { return HasType(STRING); }
   inline bool   IsVariant() const { return HasType(VARIANT); }
   inline bool   IsSmartPtr() const { return HasType(SMART_PTR); }
   inline bool   IsSmartInt() const { return HasType(SMART_INT); }
-  inline bool   IsAtomic() const { return HasType(ATOMIC); }
+  inline bool   IsAtomicEff() const { return HasType(ATOMIC_EFF); }
   inline bool   IsClass() const { return HasType(CLASS); }
   inline bool   IsActualClass() const { return HasType(CLASS) && HasType(ACTUAL); }
   inline bool   IsTemplate() const { return HasType(TEMPLATE); }
   inline bool   IsTemplInst() const { return HasType(TEMPLATE_INST); }
+  inline bool   IsStruct() const { return HasType(STRUCT); }
+  inline bool   IsUnion() const { return HasType(UNION); }
   inline bool   IsVoidPtr() const  { return HasType(VOID) && HasType(POINTER); }
   inline bool   IsTaBase() const  { return HasType(TABASE); }
   inline bool   IsTemplClass() const { return HasType(CLASS) && HasType(TEMPLATE); }

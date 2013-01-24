@@ -19,8 +19,7 @@
 // parent includes:
 
 // member includes:
-#include <TypeSpace>
-#include <TypeItem>
+#include <TypeDef>
 #include <taVersion>
 #include <taThreadDefaults>
 #include <NamedURL>
@@ -688,6 +687,12 @@ public:
 
   static String FormatValue(float val, int width, int precision);
   // #CAT_Utility format output of value according to width and precision
+  static String StreamFormatFloat(float val, TypeDef::StrContext sc);
+  // #CAT_Utility format a floating number for given streaming output context
+  static String StreamFormatDouble(double val, TypeDef::StrContext sc);
+  // #CAT_Utility format a double floating number for given streaming output context
+  static void	NormalizeRealString(String& str);
+  // make NaN and infinity representations consistent across platforms in real string
 
   static double NiceRoundNumber(double x, bool round);
   // #CAT_Utility returns a nice round number close to x -- useful for graphing axes, etc -- rounds if round is true, otherwise does ceil(ing)
