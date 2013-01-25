@@ -44,7 +44,8 @@ class MethodDef; //
 
 TypeDef_Of(Variant);
 
-class TA_API Variant { // flexible value m_type that can hold many different types of content
+class TA_API Variant {
+  // flexible value atomic type that can hold many different types of content
 public:
 
   // note: VarType values must never change, they are used in persistence, add new ones only

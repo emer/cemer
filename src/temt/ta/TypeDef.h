@@ -48,6 +48,7 @@ class UserDataItem_List; //
   #undef SC_DEFAULT
 #endif
 
+TypeDef_Of(TypeDef);
 
 class TA_API TypeDef : public TypeItem {
   // defines a type -- everything from int to classes, enums, typedefs, etc
@@ -200,8 +201,6 @@ public:
   bool          IsBasePointerType() const;
   // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
   bool          IsVarCompat() const; // true if read/write compatible with Variant
-  void          FixClassTypes();
-  // make sure the class type settings are correct for an actual class obj (during maketa)
   String        GetTypeEnumString() const;
   // get the type enums for this class as a string, e.g. TypeDef::CLASS | TypeDef::POINTER
 

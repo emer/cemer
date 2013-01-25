@@ -102,7 +102,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 45 "mta_parse.y"
+#line 46 "mta_parse.y"
 {
   TypeDef* 	typ;
   EnumDef* 	enm;

@@ -19,6 +19,7 @@
 
 #include "maketa.h"
 #include <taMisc>
+#include <BuiltinTypeDefs>
 
 #if defined(SUN4) && !defined(__GNUG__) && !defined(SOLARIS)
 #include <alloca.h>
@@ -236,7 +237,7 @@ classdefn:
           classdefns			{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("class", sp, $$); $$->FixClassTypes();
+	    if($$ == $1) { mta->TypeAdded("class", sp, $$); mta->FixClassTypes($$);
               $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
@@ -304,18 +305,18 @@ classnm:  classkeyword tyname			{
 
 /* class inheritance */
 classinh: classpar			{
-	    mta->cur_class->AddParent($1); }
+            if($1 != NULL) mta->cur_class->AddParent($1); }
         | classinh ',' classpar		{
-	    mta->cur_class->AddParent($3);
-	    if(!mta->cur_class->HasOption("MULT_INHERIT"))
-	      mta->cur_class->opts.Add("MULT_INHERIT"); }
+            if($3 != NULL) {mta->cur_class->AddParent($3);
+	      if(!mta->cur_class->HasOption("MULT_INHERIT"))
+                mta->cur_class->opts.Add("MULT_INHERIT"); } }
         ;
 
 /* class parent */
 classpar: type
         | classptyp type	{ $$ = $2; }
-        | MP_NAME			{ $$ = &TA_class; } /* unknown parent.. */
-        | classptyp MP_NAME	{ $$ = &TA_class; } /* unknown parent.. */
+        | MP_NAME		{ $$ = NULL; } /* unknown parent.. */
+        | classptyp MP_NAME	{ $$ = NULL; } /* unknown parent.. */
         ;
 
 classptyp: classpmod
@@ -452,7 +453,7 @@ membs:	  membline		{ mta->Class_UpdateLastPtrs(); }
 membline: membdefn			{
             if($1 != NULL) {
 	      if((mta->cur_mstate == MTA::pblc) && !($1->HasOption("IGNORE"))
-		 && !($1->type->DerivesFrom(TA_const))) {
+		 && !($1->type->IsConst())) {
 		mta->cur_class->members.AddUniqNameNew($1);
 		if(mta->verbose >= 3)
 		  cerr << "M!!: member: " << $1->name << " added to: "
@@ -531,11 +532,11 @@ nostatmemb:
 
 membnames:
            membname			{
-	     if((mta->cur_mstate == MTA::pblc) && !($1->type->DerivesFrom(TA_const)))
+	     if((mta->cur_mstate == MTA::pblc) && !($1->type->IsConst()))
 	       mta->cur_class->members.AddUniqNameNew($1);
              mta->memb_stack.Pop(); $$ = NULL; }
         |  membnames ',' membname       {
-	     if((mta->cur_mstate == MTA::pblc) && !($3->type->DerivesFrom(TA_const)))
+	     if((mta->cur_mstate == MTA::pblc) && !($3->type->IsConst()))
 	       mta->cur_class->members.AddUniqNameNew($3);
              mta->memb_stack.Pop(); $$ = NULL; }
         ;

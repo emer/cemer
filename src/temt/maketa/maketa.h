@@ -139,6 +139,8 @@ public:
 
   TypeSpace*	GetTypeSpace(TypeDef* td);
   // get appropriate type space for adding a new type derived from this one
+  void          FixClassTypes(TypeDef* td);
+  // make sure the class type settings are correct for an actual class obj
 
   void		TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td);
   // report that type was added if verbose is on

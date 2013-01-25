@@ -18,6 +18,8 @@
 #include <MethodDef>
 #include <EnumDef>
 #include <taHashTable>
+#include <BuiltinTypeDefs>
+
 #include <taMisc>
 
 #ifndef NO_TA_BASE
@@ -258,27 +260,40 @@ bool TypeDef::IsVarCompat() const {
   return true;
 }
 
-void TypeDef::FixClassTypes() {
-  if(name == "taString") {
-    ClearType(CLASS);
-    SetType(STRING);
-  }
-  else if(name == "Variant") {
-    ClearType(CLASS);
-    SetType(VARIANT);
-  }
-  else if(HasOption("SMART_POINTER")) {
-    ClearType(CLASS);
-    SetType(SMART_PTR);
-  }
-  else if(HasOption("SMART_INT")) {
-    ClearType(CLASS);
-    SetType(SMART_INT);
-  }
-  else if(InheritsFrom(TA_taBase)) {
-    SetType(TABASE);
-  }
+String TypeDef::GetTypeEnumString() const {
+  String rval;
+  if(HasType(VOID)) rval += "|TypeDef::VOID";
+  if(HasType(BOOL)) rval += "|TypeDef::BOOL";
+  if(HasType(INTEGER)) rval += "|TypeDef::INTEGER";
+  if(HasType(ENUM)) rval += "|TypeDef::ENUM";
+  if(HasType(FLOAT)) rval += "|TypeDef::FLOAT";
+  if(HasType(STRING)) rval += "|TypeDef::STRING";
+  if(HasType(VARIANT)) rval += "|TypeDef::VARIANT";
+  if(HasType(SMART_PTR)) rval += "|TypeDef::SMART_PTR";
+  if(HasType(SMART_INT)) rval += "|TypeDef::SMART_INT";
+  if(HasType(CLASS)) rval += "|TypeDef::CLASS";
+  if(HasType(TEMPLATE)) rval += "|TypeDef::TEMPLATE";
+  if(HasType(TEMPLATE_INST)) rval += "|TypeDef::TEMPLATE_INST";
+  if(HasType(STRUCT)) rval += "|TypeDef::STRUCT";
+  if(HasType(UNION)) rval += "|TypeDef::UNION";
+  if(HasType(FUNCTION)) rval += "|TypeDef::FUNCTION";
+  if(HasType(METHOD)) rval += "|TypeDef::METHOD";
+  
+  if(HasType(POINTER)) rval += "|TypeDef::POINTER";
+  if(HasType(PTR_PTR)) rval += "|TypeDef::PTR_PTR";
+  if(HasType(REFERENCE)) rval += "|TypeDef::REFERENCE";
+  if(HasType(ARRAY)) rval += "|TypeDef::ARRAY";
+  if(HasType(CONST)) rval += "|TypeDef::CONST";
+  if(HasType(SIGNED)) rval += "|TypeDef::SIGNED";
+  if(HasType(UNSIGNED)) rval += "|TypeDef::UNSIGNED";
+  if(HasType(SUBTYPE)) rval += "|TypeDef::SUBTYPE";
+
+  if(HasType(TABASE)) rval += "|TypeDef::TABASE";
+
+  if(rval.startsWith("|")) rval = rval.after("|");
+  return rval;
 }
+
 
 TypeDef* TypeDef::FindGlobalTypeName(const String& nm) {
   return taMisc::types.FindName(nm);
@@ -430,6 +445,11 @@ TypeDef* TypeDef::GetActualType() const {
       return rval;
   }
   return NULL;
+}
+
+TypeDef* TypeDef::GetActualClassType() const {
+  if(!IsClass()) return NULL;
+  return GetActualType();
 }
 
 TypeDef* TypeDef::GetTemplType() const {
@@ -1267,12 +1287,12 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
   // if its void, odds are its a function..
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
-    MethodDef* fun;
-    if(memb_def != NULL)
-      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-                                                 memb_def->lists, lidx);
-    else
-      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    MethodDef* fun = NULL;
+    // if(memb_def != NULL)
+    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
+    //                                              memb_def->lists, lidx);
+    // else
+    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if(fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
@@ -1580,7 +1600,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
 
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
-    MethodDef* fun = TA_taRegFun.methods.FindName(val);
+    MethodDef* fun = NULL; //TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
@@ -1844,12 +1864,12 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
   // if its void, odds are its a function..
   if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
-    MethodDef* fun;
-    if(memb_def != NULL)
-      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-                                                 memb_def->lists, lidx);
-    else
-      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    MethodDef* fun = NULL;
+    // if(memb_def != NULL)
+    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
+    //                                              memb_def->lists, lidx);
+    // else
+    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if (fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
@@ -1989,12 +2009,12 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
   // if its void, odds are its a function..
   if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
-    MethodDef* fun;
-    if(memb_def != NULL)
-      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-                                                 memb_def->lists, lidx);
-    else
-      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    MethodDef* fun = NULL;
+    // if(memb_def != NULL)
+    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
+    //                                              memb_def->lists, lidx);
+    // else
+    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if (fun)
       return false;
     else
@@ -2087,7 +2107,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
                         MemberDef* memb_def)
 {
   if(IsVoid() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
-    MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
+    MethodDef* fun = NULL; // TA_taRegFun.methods.FindName(val.toString());
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
@@ -2299,12 +2319,12 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
   // if its void, odds are it is a fun pointer
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
-    MethodDef* fun;
-    if(memb_def != NULL)
-      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)src_base),
-                                                 memb_def->lists, lidx);
-    else
-      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)src_base), lidx);
+    MethodDef* fun = NULL;
+    // if(memb_def != NULL)
+    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)src_base),
+    //                                              memb_def->lists, lidx);
+    // else
+    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)src_base), lidx);
     if((fun != NULL) || (memb_def != NULL))
       *((ta_void_fun*)trg_base) = *((ta_void_fun*)src_base); // must be a funptr
     else
@@ -2712,7 +2732,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<sub_types.size;i++) {
       TypeDef* st = sub_types[i];
       if(!st->IsEnum()) continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+#endif
       if(st->GetOwnerType()->IsTemplInst()) continue;
       rval.cat("<li>").cat(st->GetHTMLSubType(gendoc, true)).cat("</li>\n"); // true=short fmt
     }
@@ -2729,7 +2751,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<sub_types.size;i++) {
       TypeDef* st = sub_types[i];
       if(!st->IsEnum()) continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+#endif
       if(st->GetOwnerType()->IsTemplInst()) continue;
       rval.cat(st->GetHTMLSubType(gendoc, false));
     }
@@ -2748,7 +2772,9 @@ String TypeDef::GetHTML(bool gendoc) const {
       MemberDef* md = members[i];
       if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
         continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
@@ -2760,7 +2786,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<methods.size;i++) {
       MethodDef* md = methods[i];
       if(md->HasOption("EXPERT")) continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
@@ -2784,7 +2812,9 @@ String TypeDef::GetHTML(bool gendoc) const {
       MemberDef* md = members[i];
       if(!(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT")))
         continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;
@@ -2796,7 +2826,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     for(int i=0;i<methods.size;i++) {
       MethodDef* md = methods[i];
       if(!md->HasOption("EXPERT")) continue;
+#ifndef NO_TA_BASE
       if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+#endif
       String cat = md->GetCat();
       if(cat.empty()) cat = "_NoCategory";
       String key = cat + ":" + md->name;

@@ -26,6 +26,7 @@ class Member_List; //
 class TypeSpace; //
 class voidptr_PArray; //
 
+TypeDef_Of(MemberDef);
 
 class TA_API MemberDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)

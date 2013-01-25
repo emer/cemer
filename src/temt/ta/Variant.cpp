@@ -20,6 +20,7 @@
 #include <MemberDef>
 #include <PropertyDef>
 #include <MethodDef>
+#include <BuiltinTypeDefs>
 
 #ifndef NO_TA_BASE
 #include <taMatrix>

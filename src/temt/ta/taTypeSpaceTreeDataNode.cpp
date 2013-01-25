@@ -135,7 +135,7 @@ bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
     || (td->formal)
   ) return false;
   // need to check parentage for const -- (note: const is not formal for some weird reason)
-  if (td->InheritsFrom(&TA_const)) 
+  if (td->IsConst()) 
     return false;
   
   return true;

@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class EnumSpace; //
 
+TypeDef_Of(EnumDef);
+
 class TA_API EnumDef : public TypeItem { //  defines an enum member
 INHERITED(TypeItem)
 public:

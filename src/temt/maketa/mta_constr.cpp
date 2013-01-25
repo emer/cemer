@@ -17,6 +17,8 @@
 // mta_constr.cpp
 
 #include "mta_constr.h"
+#include <BuiltinTypeDefs>
+
 #include <taMisc>
 
 // this is the offset of arg indexes into css-passed arg strings relative to the actual
@@ -158,12 +160,12 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
 
     strm << "(\"" << ths->name << "\", \"" << ths->desc << "\", ";
     strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \""
-         << str_lists << "\", ";
-    strm << "\"" << ths->source_file << "\", " << String(ths->source_start)
-	 << ", " << String(ths->source_end) << ", ";
+         << str_lists << "\",\n";
+    strm << "\"  " << ths->source_file << "\", " << String(ths->source_start)
+	 << ", " << String(ths->source_end) << ",\n";
 
     // type_flags:
-    strm << ths->GetTypeEnumString() << ", ";
+    strm << "  " << ths->GetTypeEnumString() << ", ";
 
     // size:
     if(ths->IsTemplate()) {
@@ -247,7 +249,7 @@ void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
 String VariantToTargetConversion(TypeDef* param_td) {
   String conv;
   if (param_td) { // better exist!
-    if (param_td->InheritsFrom(TA_taBase) && (param_td->IsPointer())) {
+    if (param_td->IsTaBase() && (param_td->IsPointer())) {
       conv = "dynamic_cast<" + param_td->GetNonPtrType()->Get_C_Name() +
         "*>(val.toBase())";
     } else { // anything else -- if illegal, will show up as compile error in TA.cpp
@@ -409,7 +411,7 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
         not_mod = false;        got_one = true;
       }
     }
-    else if(nrt->DerivesFrom(TA_taBase)) {
+    else if(nrt->IsTaBase()) {
       // need to use taBase* to preserve reffing sanity!
       strm << "    *arg[" << args_idx << "]=(taBase" << nrt->GetPtrString() << ")";
       strm << "refarg_" << args_idx << ";";
@@ -566,14 +568,14 @@ void MethodDef_GenArgs(MethodDef* md, ostream& strm, int act_argc) {
 }
 
 void MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm) {
-  if(ownr->InheritsFrom(TA_taRegFun))
-    strm << "  static cssEl* cssElCFun_" << md->name;
-  else
+  // if(ownr->InheritsFrom(TA_taRegFun))
+  //   strm << "  static cssEl* cssElCFun_" << md->name;
+  // else
     strm << "  static cssEl* cssElCFun_" << ownr->name << "_" << md->name;
   strm << "_stub(";
-  if(ownr->InheritsFrom(TA_taRegFun))
-    strm << "void*,";
-  else
+  // if(ownr->InheritsFrom(TA_taRegFun))
+  //   strm << "void*,";
+  // else
     strm << "void* ths,";
   if(md->fun_argc == 0)
     strm << "int, cssEl**) {\n";
@@ -585,9 +587,9 @@ void MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm) {
 }
 
 void MethodDef_GenStubCall(TypeDef* ownr, MethodDef* md, ostream& strm) {
-  if(ownr->InheritsFrom(TA_taRegFun))
-    strm << md->name << "(";
-  else
+  // if(ownr->InheritsFrom(TA_taRegFun))
+  //   strm << md->name << "(";
+  // else
     strm << "((" << ownr->Get_C_Name() << "*)ths)->" << md->name << "(";
 }
 
@@ -675,7 +677,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       cmd = "cssCPtr_String(";
     else if(md->type->DerivesFrom(TA_Variant))
       cmd = "cssCPtr_Variant(";
-    else if(md->type->DerivesFrom(TA_taBase)) {
+    else if(md->type->IsTaBase()) {
       TypeDef* cltp = md->type->GetActualClassType();
       include_td = true;
       if(cltp->name.endsWith("_Matrix")) { // apparently inherits not working here
@@ -1012,9 +1014,9 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
     if (md->is_virtual) strm << ",1"; else strm << ",0";
     if(md->is_static) {                         // only static gets addr
       strm << ",1,(ta_void_fun)(";
-      if(ownr->InheritsFrom(TA_taRegFun))
-        strm <<  md->name << ")";
-      else
+      // if(ownr->InheritsFrom(TA_taRegFun))
+      //   strm <<  md->name << ")";
+      // else
         strm << ownr->Get_C_Name() << "::" << md->name << ")";
     }
     else
@@ -1022,9 +1024,9 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
 
     if((mta->gen_css && !ownr->HasOption("NO_CSS"))) {
       strm << ",cssElCFun_";
-      if(ownr->InheritsFrom(TA_taRegFun))
-        strm << md->name << "_stub";
-      else
+      // if(ownr->InheritsFrom(TA_taRegFun))
+      //   strm << md->name << "_stub";
+      // else
         strm << ownr->name << "_" << md->name << "_stub";
     }
     else {

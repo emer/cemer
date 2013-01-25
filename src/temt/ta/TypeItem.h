@@ -27,6 +27,8 @@
 class TypeDef; //
 class taDataLink; //
 
+TypeDef_Of(TypeItem);
+
 class TA_API TypeItem: public taRefN, public ITypedObject {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
 INHERITED(taRefN)
@@ -105,7 +107,7 @@ public:
   taDataLink*   data_link;
 
   override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_void;}
+  override TypeDef*     GetTypeDef() const {return &TA_TypeItem; }
   virtual TypeInfoKinds TypeInfoKind() const {return TIK_UNKNOWN;}
   virtual TypeDef*      GetOwnerType() const {return NULL;}
   virtual const String  GetPathName() const {return name;}

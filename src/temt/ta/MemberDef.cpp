@@ -16,8 +16,10 @@
 #include "MemberDef.h"
 #include <TypeDef>
 #include <EnumDef>
-#include <taMisc>
 #include <voidptr_PArray>
+#include <BuiltinTypeDefs>
+
+#include <taMisc>
 
 using namespace std;
 

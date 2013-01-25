@@ -30,9 +30,6 @@
 class iColor; //
 class ColorScaleSpec; //
 
-// typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
-// typedef ptr_iColor const_iColor;
-
 TypeDef_Of(ColorScale);
 
 class TA_API ColorScale : public taNBase {

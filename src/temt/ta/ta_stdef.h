@@ -404,6 +404,12 @@ class TypeDef; //
 class MemberDef; //
 class MethodDef; //
 
+// for css support
+class cssEl;                    // #IGNORE
+
+typedef cssEl* (*css_fun_stub_ptr)(void*, int, cssEl**);
+typedef void (*ta_void_fun)();
+
 // This macro must be used in all class headers that are TA parsed -- it makes
 // the TA_ TypeDef avail to any that include the class -- can also use in .cpp
 // of files that do not include the header but still need to access the TA info
