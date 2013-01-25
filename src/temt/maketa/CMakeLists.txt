@@ -42,6 +42,7 @@ set(maketa_HEADS
   ../ta/PropertyDef.h
   ../ta/MethodDef.h
   ../ta/TypeDef.h
+  ../ta/BuiltinTypeDefs.h
 
   ../ta/taVersion.h
   ../ta/taMisc.h
@@ -94,6 +95,7 @@ set(maketa_SRCS
   ../ta/PropertyDef.cpp
   ../ta/MethodDef.cpp
   ../ta/TypeDef.cpp
+  ../ta/BuiltinTypeDefs.cpp
   ../ta/taVersion.cpp
   ../ta/taMisc.cpp
   mta_parse.cpp

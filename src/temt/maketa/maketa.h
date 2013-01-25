@@ -65,14 +65,7 @@ public:
 
   static char 	LastLn[8192];	// last line parsed
 
-  TypeSpace* 	spc;		// holds general defns
-  TypeSpace	spc_target;	// holds the defns for target header files
-  TypeSpace	spc_other;	// holds defns for non-target headers
-  TypeSpace	spc_extern;	// external defs
-  TypeSpace	spc_ignore;	// put ignored types here
-  TypeSpace	spc_pre_parse;	// pre-parsed but not-yet reparsed things here
   TypeSpace	spc_keywords;	// holds some key words for searching
-  TypeSpace	spc_builtin;	// holds builtin types (which are always available)
 
   TypeSpace	type_stack;	// for storing names, etc.
   EnumSpace	enum_stack;	// for storing names, etc.
@@ -95,8 +88,6 @@ public:
   bool		burp_fundefn;	// true if needs to burp after parsing fundefn
   bool		gen_css;	// generate css stuff?
   bool		gen_instances;	// generate instances?
-  bool		make_hx;	// make an hx file instead of an h file
-  bool		auto_hx;	// if making hx files, update h files if changed
   bool		gen_doc;	// generate docs
   bool		class_only;	// parse structs of type "class" only (not struct or union)
   int		verbose;	// level of verbosity
@@ -106,22 +97,12 @@ public:
 #endif
   int		hash_size;	// hash_table size (default 2000)
 
-  String	fname;		// file name
-  String	basename;	// base file name
-  String	ta_type_h;	// header output name
-  String	ta_inst_h;	// header output name
-  String	ta_ccname;	// header output name
-
-  String_PArray	pre_parse_inits; // init commands to be called for pre-parsed files
-  String_PArray	included;	// files already processed as includes, no need to rpt
-  taHashTable   included_hash;  // hash table for faster checking
-  String_PArray	tmp_include;	// temp holder for current file parse
+  String	trg_header;	// header file to process, full path as provided
+  String	trg_fname_only; // target header -- file name only
+  String	out_fname;	// output file name to generate maketa type info into
+  String        tmp_fname;      // temporary file name for cpp output
 
   String_PArray	paths;		// paths we check, in order (have final sep)
-  String_PArray	headv;		// list of header files
-  String_PArray	head_fn_only; 	// only the file names of the headers
-  taHashTable   headv_hash;     // hash table of headv for faster checking
-  taHashTable   head_fn_hash;   // hash table of head_fn_only for faster checking
 
   int		st_line;	// starting line
   int		st_col;		// column
@@ -131,6 +112,8 @@ public:
   int		line;		// current parsing line
   int		col;		// current parsing column
   String	cur_fname;	// current file name being processed
+  String        cur_fname_only; // only file name of current file
+  bool          cur_is_trg;     // current filename is target file during parsing
   int		anon_no;	// anonymous type number
   int		defn_st_line;	// starting line of current definition, possibly..
 
@@ -141,8 +124,10 @@ public:
   MTA();
   virtual ~MTA();
 
+  int           Main(int argc, char* argv[]);
+  // the main function that does everything -- called by overall main
+
   void		InitKeyWords();
-  void		InitTypeSpace(TypeSpace& ts);
   void		BuildHashTables();
   void 		Burp();
   void          SetSource(TypeDef* td, bool use_defn_st_line);
@@ -168,12 +153,8 @@ public:
   TypeDef* 	FindName(const char* nm, int& lex_token);
   // search all the relevant lists for given name, return lex_token of that item
 
-  void		SetPreParseFlag(TypeSpace& spc, TypeSpace& pplist);
-  // set pre-parse flag for all types in spc that are on the pplist
   String	FindFile(const String& fname, bool& ok);
   // find the file, searching on .path if needed; returns full LexCanonical fname, clears ok if not found (fname can have full path)
-  void          AddIncluded();
-  // add tmp_include files to overall included list
 
   // LEX functions (defined in mta_lex.cc)
   String	LexBuf;
@@ -197,29 +178,17 @@ public:
   static String  lexCanonical(const String& in);
   // canonicalize the path for lexing
 
-protected:
-  void 		AddBuiltIn(TypeSpace& ts);
-  void 		InitBuiltIn(); // do once
-public: // these used to be standalone functions
-//////////////////////////////////
-// 	Declarations		//
-//////////////////////////////////
-// (_TA_type.h _TA_inst.h files)
-
- void TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm,
-				    const String_PArray& hv);
- void TypeDef_Declare_Types(TypeDef* ths, ostream& strm);
-
- void TypeSpace_Declare_Instances(TypeSpace* ths, ostream& strm,
-					const String_PArray& hv);
- void TypeDef_Declare_Instances(TypeDef* ths, ostream& strm);
+public:
 
 //////////////////////////////////
 // 	  _TA.cc File		//
 //////////////////////////////////
 
- void TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArray& hv,
-			       const String_PArray& ppfiles);
+  bool TypeDef_Generate_Test(TypeDef* ths);
+  // test if this type should be generated or not
+
+  void TypeSpace_Generate(TypeSpace* ths, ostream& strm);
+
 //////////////////////////////////
 // 	TypeDef Constructors	//
 //////////////////////////////////
@@ -243,8 +212,8 @@ public: // these used to be standalone functions
 //////////////////////////////////
 // (part 4 of _TA.cc file)
 
-  void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
-				    const String_PArray& ppfiles);
+  void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm);
+
 //////////////////////////////////
 // 	  GenDoc		//
 //////////////////////////////////

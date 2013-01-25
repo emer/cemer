@@ -31,49 +31,14 @@
 
 // the member data is now in static data structures, that are then
 // read in by the _init function.
-// see typea_constr.h for those functions and the reading in functions..
-
-
-//////////////////////////////////
-// 	Link Resolution		//
-//////////////////////////////////
-// (called before generating types)
-
-extern void TypeSpace_Generate_AddUndef(TypeSpace* ths, TypeSpace* trg, TypeSpace* dst);
-extern void MemberSpace_Generate_AddUndef(MemberSpace* ths, TypeSpace* trg, TypeSpace* dst);
-extern void MethodSpace_Generate_AddUndef(MethodSpace* ths, TypeSpace* trg, TypeSpace* dst);
-
-extern void TypeSpace_Generate_LinkRefs(TypeSpace* ths, TypeSpace* dst);
-extern void TypeDef_Generate_LinkRefs(TypeDef* ths, TypeSpace* trg, TypeSpace* dst);
-
-//////////////////////////////////////////////////
-//   	List Sorting: Parents Before Children	//
-//////////////////////////////////////////////////
-// (called before generating types)
-
-extern bool TypeSpace_Sort_Order(TypeSpace* ths);
-// returns true if a type was out of order, else otherwise
-
-//////////////////////////////////
-// 	Declarations		//
-//////////////////////////////////
-// (_TA_type.h _TA_inst.h files)
-/* moved to MTA class
-extern void TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm,
-				    const String_PArray& hv);
-extern void TypeDef_Declare_Types(TypeDef* ths, ostream& strm);
-
-extern void TypeSpace_Declare_Instances(TypeSpace* ths, ostream& strm,
-					const String_PArray& hv);
-extern void TypeDef_Declare_Instances(TypeDef* ths, ostream& strm */
+// see ta_type_constr.h for those functions and the reading in functions..
 
 
 //////////////////////////////////
 // 	      Includes 		//
 //////////////////////////////////
 
-extern void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
-			       bool instances=false);
+extern void TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances=false);
 
 
 //////////////////////////////////
@@ -89,7 +54,6 @@ extern void TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArra
 //////////////////////////////////
 
 extern String TypeDef_Gen_Ref(TypeDef* ths);
-extern String TypeDef_Gen_Ref_To(TypeDef* ths);
 extern String TypeDef_Gen_Ref_Of(TypeDef* ths);
 
 //////////////////////////////////

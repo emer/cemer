@@ -57,7 +57,7 @@ public:
   enum TypeType { // #BITS what type of type is this?  some of these are mutex and some are add-on -- all mixed together for one-stop-shopping -- the core data types are set even for derived types (e.g., a pointer to an integer is still flagged as an integer) -- check for ACTUAL to distinguish derived from non-derived
     VOID = 0x00000001,     // void -- no type!
     BOOL = 0x00000002,     // boolean valued native type -- only one instance: bool
-    INTEGER = 0x00000004,  // some kind of integer data type, from char up to long long 
+    INTEGER = 0x00000004,  // some kind of integer data type, from char up to long long -- exclusive of enum
     ENUM = 0x00000008,     // an enum type -- the overall type, not the individual enums, which are in enum_vals
     FLOAT = 0x00000010,    // some kind of floating point data type, float, double, long-double
     STRING = 0x00000020,   // a taString TA native string object -- treated as atomic in TA system
@@ -72,7 +72,6 @@ public:
     FUNCTION = 0x000004000, // a function -- this is typically used in combination with POIINTER for a function pointer
     METHOD = 0x00008000,    // a method on a class -- this is typically used in combination with POINTER for a method pointer
     
-    ACTUAL = 0x00010000,    // this is an actual data value as specified above -- it is NOT a derived type such as a POINTER, REFERENCE, CONST, ARRAY, etc.
     POINTER = 0x00020000,   // a pointer to the data value as specified above -- this is a first-order pointer -- see PTR_PTR for a pointer to a pointer (these two are mutex)
     PTR_PTR = 0x00040000,   // a pointer to a pointer to a data value as specified above -- this is mutex with a first-order POINTER
     REFERENCE = 0x00080000, // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
@@ -87,7 +86,9 @@ public:
     ANY_PTR = POINTER | PTR_PTR,
     ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
     ATOMIC_EFF = STRING | VARIANT | SMART_PTR | SMART_INT, // effective atomic classes -- pass by value and act like atomic, but don't support bitwise copy -- need to use actual class interface
-    NON_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST,
+    NOT_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST, // not actual type itself
+    FUN_PTR = FUNCTION | POINTER,
+    METH_PTR = METHOD | POINTER,
   };
 
   enum StrContext { // context for getting or setting a string value
@@ -147,8 +148,6 @@ public:
 
   inline void           SetType(TypeType typ)   { type = (TypeType)(type | typ); }
   // set type state on
-  inline void           SetActualType(TypeType typ) { SetType(typ); SetType(ACTUAL); }
-  // set type state on, and set the ACTUAL flag -- for defining actual (non-derived) types
   inline void           ClearType(TypeType typ) { type = (TypeType)(type & ~typ); }
   // clear type state (set off)
   inline bool           HasType(TypeType typ) const { return (type & typ); }
@@ -158,6 +157,11 @@ public:
   // set type state according to on bool (if true, set type, if false, clear it)
   inline void           ToggleType(TypeType typ)  { SetTypeState(typ, !HasType(typ)); }
   // toggle type state value -- if on, turn off, and vice-versa
+
+  inline bool   IsNotActual() const { return HasType(NOT_ACTUAL); }
+  // not an actual primary data type, but a derived type: pointer, reference, const, etc
+  inline bool   IsActual() const { return !IsNotActual(); }
+  // this is the actual primary data type
 
   inline bool   IsVoid() const { return HasType(VOID); }
   inline bool   IsBool() const { return HasType(BOOL); }
@@ -171,7 +175,7 @@ public:
   inline bool   IsSmartInt() const { return HasType(SMART_INT); }
   inline bool   IsAtomicEff() const { return HasType(ATOMIC_EFF); }
   inline bool   IsClass() const { return HasType(CLASS); }
-  inline bool   IsActualClass() const { return HasType(CLASS) && HasType(ACTUAL); }
+  inline bool   IsActualClass() const { return HasType(CLASS) && IsActual(); }
   inline bool   IsTemplate() const { return HasType(TEMPLATE); }
   inline bool   IsTemplInst() const { return HasType(TEMPLATE_INST); }
   inline bool   IsStruct() const { return HasType(STRUCT); }
@@ -182,8 +186,6 @@ public:
   inline bool   IsTemplInstClass() const { return HasType(CLASS) && HasType(TEMPLATE_INST); }
   inline bool   IsFunPtr() const  { return HasType(FUNCTION) && HasType(POINTER); }
   inline bool   IsMethPtr() const  { return HasType(METHOD) && HasType(POINTER); }
-  inline bool   IsActual() const { return HasType(ACTUAL); }
-  // true if this is the non-ptr, non-ref, non-const type
   inline bool   IsPointer() const { return HasType(POINTER); }
   inline bool   IsPtrPtr() const { return HasType(PTR_PTR); }
   inline bool   IsAnyPtr() const { return HasType(ANY_PTR); }
@@ -191,16 +193,17 @@ public:
   inline bool   IsRef() const { return HasType(REFERENCE); }
   inline bool   IsArray() const { return HasType(ARRAY); }
   inline bool   IsConst() const { return HasType(CONST); }
+  inline bool   IsSigned() const { return HasType(SIGNED); }
+  inline bool   IsUnSigned() const { return HasType(UNSIGNED); }
   inline bool   IsSubType() const { return HasType(SUBTYPE); }
 
   bool          IsBasePointerType() const;
   // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
   bool          IsVarCompat() const; // true if read/write compatible with Variant
-
-  void          FixActualType();
-  // fix the ACTUAL flag setting based on current flag settings -- sanity check
   void          FixClassTypes();
   // make sure the class type settings are correct for an actual class obj (during maketa)
+  String        GetTypeEnumString() const;
+  // get the type enums for this class as a string, e.g. TypeDef::CLASS | TypeDef::POINTER
 
   /////////////////////////////////////////////////////////////
   //            Constructors and misc industrial
@@ -232,22 +235,23 @@ public:
   TypeDef*              Clone()         { return new TypeDef(*this); }
   TypeDef*              MakeToken()     { return new TypeDef(); }
 
+
+  static TypeDef*       FindGlobalTypeName(const String& nm);
+  // find a type with the given name on the global taMisc::types list of types -- use this to avoid having to include taMisc if that's all you're using it for
+  void                  AddNewGlobalType(bool make_derived = true);
+  // add this type to global taMisc::types list of types, and call MakeMainDerivedTypes by default -- mainly used for initial population of global type table at program startup, by maketa generated code
+
   void                  CleanupCats(bool save_last);
   // cleanup the #CAT_ category options (allow for derived types to set new categories); if save_last it saves the last cat on the list (for typedef initialization); otherwise saves first (for addparent)
-
   void                  DuplicateMDFrom(const TypeDef* old);
   // duplicates members, methods from given type
   void                  UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw);
   // updates pointers within members, methods to new types from old
-
   bool                  CheckList(const String_PArray& lst) const;
   // check if have a list in common
 
   /////////////////////////////////////////////////////////////
   //		Parents, Inheritance
-
-  static TypeDef*       FindGlobalTypeName(const String& nm);
-  // find a type with the given name on the global taMisc::types list of types -- use this to avoid having to include taMisc if that's all you're using it for
 
   override TypeDef*     GetOwnerType() const
   { if (owner) return owner->owner; else return NULL; }

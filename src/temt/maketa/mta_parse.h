@@ -39,72 +39,70 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     CLASS = 258,
-     TYPENAME = 259,
-     STRUCT = 260,
-     UNION = 261,
-     ENUM = 262,
-     FUNTYPE = 263,
-     STATIC = 264,
-     TEMPLATE = 265,
-     CONST = 266,
-     TYPEDEF = 267,
-     TA_TYPEDEF = 268,
-     TYPE = 269,
-     NUMBER = 270,
-     FUNCTION = 271,
-     ARRAY = 272,
-     NAME = 273,
-     COMMENT = 274,
-     FUNCALL = 275,
-     SCOPER = 276,
-     EQUALS = 277,
-     PUBLIC = 278,
-     PRIVATE = 279,
-     PROTECTED = 280,
-     OPERATOR = 281,
-     FRIEND = 282,
-     THISNAME = 283,
-     REGFUN = 284,
-     VIRTUAL = 285
+     MP_CLASS = 258,
+     MP_TYPENAME = 259,
+     MP_STRUCT = 260,
+     MP_UNION = 261,
+     MP_ENUM = 262,
+     MP_FUNTYPE = 263,
+     MP_STATIC = 264,
+     MP_TEMPLATE = 265,
+     MP_CONST = 266,
+     MP_TYPEDEF = 267,
+     MP_TYPE = 268,
+     MP_NUMBER = 269,
+     MP_FUNCTION = 270,
+     MP_ARRAY = 271,
+     MP_NAME = 272,
+     MP_COMMENT = 273,
+     MP_FUNCALL = 274,
+     MP_SCOPER = 275,
+     MP_EQUALS = 276,
+     MP_PUBLIC = 277,
+     MP_PRIVATE = 278,
+     MP_PROTECTED = 279,
+     MP_OPERATOR = 280,
+     MP_FRIEND = 281,
+     MP_THISNAME = 282,
+     MP_REGFUN = 283,
+     MP_VIRTUAL = 284
    };
 #endif
 /* Tokens.  */
-#define CLASS 258
-#define TYPENAME 259
-#define STRUCT 260
-#define UNION 261
-#define ENUM 262
-#define FUNTYPE 263
-#define STATIC 264
-#define TEMPLATE 265
-#define CONST 266
-#define TYPEDEF 267
-#define TA_TYPEDEF 268
-#define TYPE 269
-#define NUMBER 270
-#define FUNCTION 271
-#define ARRAY 272
-#define NAME 273
-#define COMMENT 274
-#define FUNCALL 275
-#define SCOPER 276
-#define EQUALS 277
-#define PUBLIC 278
-#define PRIVATE 279
-#define PROTECTED 280
-#define OPERATOR 281
-#define FRIEND 282
-#define THISNAME 283
-#define REGFUN 284
-#define VIRTUAL 285
+#define MP_CLASS 258
+#define MP_TYPENAME 259
+#define MP_STRUCT 260
+#define MP_UNION 261
+#define MP_ENUM 262
+#define MP_FUNTYPE 263
+#define MP_STATIC 264
+#define MP_TEMPLATE 265
+#define MP_CONST 266
+#define MP_TYPEDEF 267
+#define MP_TYPE 268
+#define MP_NUMBER 269
+#define MP_FUNCTION 270
+#define MP_ARRAY 271
+#define MP_NAME 272
+#define MP_COMMENT 273
+#define MP_FUNCALL 274
+#define MP_SCOPER 275
+#define MP_EQUALS 276
+#define MP_PUBLIC 277
+#define MP_PRIVATE 278
+#define MP_PROTECTED 279
+#define MP_OPERATOR 280
+#define MP_FRIEND 281
+#define MP_THISNAME 282
+#define MP_REGFUN 283
+#define MP_VIRTUAL 284
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 44 "mta_parse.y"
+#line 45 "mta_parse.y"
 {
   TypeDef* 	typ;
   EnumDef* 	enm;
@@ -114,7 +112,7 @@ typedef struct YYSTYPE
   int	   	rval;
 }
 /* Line 1529 of yacc.c.  */
-#line 118 "y.tab.h"
+#line 116 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -18,6 +18,7 @@
 %{
 
 #include "maketa.h"
+#include <taMisc>
 
 #if defined(SUN4) && !defined(__GNUG__) && !defined(SOLARIS)
 #include <alloca.h>
@@ -51,27 +52,24 @@ int yylex();
 }
 
 /* type definition keywords */
-%token	<typ> 	CLASS TYPENAME STRUCT UNION ENUM FUNTYPE STATIC TEMPLATE CONST
-%token	<typ>	TYPEDEF
-
-/* pre-defined types */
-%token	<typ>	TA_TYPEDEF
+%token	<typ> 	MP_CLASS MP_TYPENAME MP_STRUCT MP_UNION MP_ENUM MP_FUNTYPE MP_STATIC MP_TEMPLATE MP_CONST
+%token	<typ>	MP_TYPEDEF
 
 /* basic tokens */
-%token	<typ>	TYPE
-%token	<rval>	NUMBER FUNCTION ARRAY
-%token  <chr>	NAME COMMENT FUNCALL SCOPER EQUALS
+%token	<typ>	MP_TYPE
+%token	<rval>	MP_NUMBER MP_FUNCTION MP_ARRAY
+%token  <chr>	MP_NAME MP_COMMENT MP_FUNCALL MP_SCOPER MP_EQUALS
 
 /* access categories */
-%token	<typ>	PUBLIC PRIVATE PROTECTED
+%token	<typ>	MP_PUBLIC MP_PRIVATE MP_PROTECTED
 
 /* class member stuff */
-%token	<typ>	OPERATOR FRIEND THISNAME REGFUN VIRTUAL
+%token	<typ>	MP_OPERATOR MP_FRIEND MP_THISNAME MP_REGFUN MP_VIRTUAL
 
 
 /* top-level types */
 %type 	<typ>	typedefn typedefns enumdefn classdecl classdecls
-%type	<typ>	classdefn classdefns templdefn templdefns preparsed
+%type	<typ>	classdefn classdefns templdefn templdefns
 %type	<meth>	fundecl
 
 /* typedef stuff */
@@ -106,7 +104,7 @@ int yylex();
 %type   <rval>	ptrs
 
 %left	'*'
-%left   SCOPER '('
+%left   MP_SCOPER '('
 
 %%
 list:	/* nothing */		{ mta->yy_state = MTA::YYRet_Exit; }
@@ -125,15 +123,9 @@ list:	/* nothing */		{ mta->yy_state = MTA::YYRet_Exit; }
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
         | list fundecl		{
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
-        | list preparsed	{
-	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
 	| list error		{
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_NoSrc; return mta->yy_state; }
 	;
-
-preparsed:
-          TA_TYPEDEF		{ }
-        ;
 
 typedefn: typedefns			{
   	  if($1 != NULL) {
@@ -144,19 +136,19 @@ typedefn: typedefns			{
 
 typedefns:
           typedsub			{ mta->Burp(); }/* read ahead to comment */
-        | typedsub COMMENT		{
+        | typedsub MP_COMMENT		{
 	    if($1 != NULL)  SETDESC($1,$2); }
         ;
 
-typedsub: TYPEDEF defn			{ $$ = $2; }
-        | TYPEDEF classdsub tdname term {
+typedsub: MP_TYPEDEF defn			{ $$ = $2; }
+        | MP_TYPEDEF classdsub tdname term {
 	    $$ = $2; $2->name = $3; mta->type_stack.Pop(); }
         ;
 
 defn:     type tyname term		{
             $$ = $2; $2->AddParent($1); $2->type = $1->type;
 	    mta->type_stack.Pop(); }
-        | type COMMENT tyname term	{ /* annoying place for a comment, but.. */
+        | type MP_COMMENT tyname term	{ /* annoying place for a comment, but.. */
             $$ = $3; $3->AddParent($1); $3->type = $1->type;
 	    mta->type_stack.Pop(); }
         /* predeclared type, which gets sucked in by the combtype list
@@ -169,36 +161,36 @@ defn:     type tyname term		{
 	  }
 	  else {
 	    TypeDef* td = $1->parents[1]; mta->type_stack.Pop();
-	    TypeSpace* sp = $1->owner;
-	    sp->RemoveEl($1); /* get rid of new one, cuz it is bogus */
-	    /* not on list that it would be placed on now.. */
-	    if((td->owner != mta->spc) && (mta->spc->FindName(td->name) == NULL)) {
-	      if(mta->verbose >= 3)
-		cerr << "M!!: transfered: " << td->name << " from: " << td->owner->name
-		     << " to: " << mta->spc->name << "\n";
-	      mta->spc->Transfer(td); /* now check for parent which is a combo of basic types */
-	      if((td->parents.size == 1) && (td->parents[0]->owner != mta->spc) &&
-		 (td->parents[0]->parents.size == 2)) {
-		/* has one parent that is a combo-type which might be basic */
-		TypeDef* par = td->parents[0];
-		if((mta->spc_builtin.FindName(par->parents[0]->name) != NULL) &&
-		   (mta->spc_builtin.FindName(par->parents[1]->name) != NULL)) {
-		  if(mta->verbose >= 3)
-		    cerr << "M!!: transfered: " << par->name << " from: " << par->owner->name
-			 << " to: " << mta->spc->name << "\n";
-		  TypeDef* already_there = mta->spc->FindName(par->name);
-		  if(already_there == NULL)
-		    mta->spc->Transfer(par); /* move parent to this list too */
-		  else
-		    td->parents.ReplaceLinkIdx(0, already_there);
-		}
-	      }
-	    }
+	    /* TypeSpace* sp = $1->owner; */
+	    /* sp->RemoveEl($1); /\* get rid of new one, cuz it is bogus *\/ */
+	    /* /\* not on list that it would be placed on now.. *\/ */
+	    /* if((td->owner != mta->spc) && (mta->spc->FindName(td->name) == NULL)) { */
+	    /*   if(mta->verbose >= 3) */
+	    /*     cerr << "M!!: transfered: " << td->name << " from: " << td->owner->name */
+	    /*          << " to: " << mta->spc->name << "\n"; */
+	    /*   mta->spc->Transfer(td); /\* now check for parent which is a combo of basic types *\/ */
+	    /*   if((td->parents.size == 1) && (td->parents[0]->owner != mta->spc) && */
+	    /*      (td->parents[0]->parents.size == 2)) { */
+	    /*     /\* has one parent that is a combo-type which might be basic *\/ */
+	    /*     TypeDef* par = td->parents[0]; */
+	    /*     if((mta->spc_builtin.FindName(par->parents[0]->name) != NULL) && */
+	    /*        (mta->spc_builtin.FindName(par->parents[1]->name) != NULL)) { */
+	    /*       if(mta->verbose >= 3) */
+	    /*         cerr << "M!!: transfered: " << par->name << " from: " << par->owner->name */
+	    /*     	 << " to: " << mta->spc->name << "\n"; */
+	    /*       TypeDef* already_there = mta->spc->FindName(par->name); */
+	    /*       if(already_there == NULL) */
+	    /*         mta->spc->Transfer(par); /\* move parent to this list too *\/ */
+	    /*       else */
+	    /*         td->parents.ReplaceLinkIdx(0, already_there); */
+	    /*     } */
+	    /*   } */
+	    /* } */
 	    $$ = td; } }
         | type '(' '*' tyname ')' funargs term {
             $$ = $4; $$->SetType(TypeDef::FUN_PTR);
 	    mta->type_stack.Pop(); }
-        | type SCOPER '*' tyname		{
+        | type MP_SCOPER '*' tyname		{
             $$ = $4; $$->SetType(TypeDef::METH_PTR);
 	    mta->type_stack.Pop(); }
         ;
@@ -213,18 +205,18 @@ enumdsub: enumname enums '}' term
         ;
 
 enumname: enumnm '{'
-        | enumnm COMMENT '{'		{ SETDESC($1,$2); }
-        | enumnm '{' COMMENT		{ SETDESC($1,$3); }
+        | enumnm MP_COMMENT '{'		{ SETDESC($1,$2); }
+        | enumnm '{' MP_COMMENT		{ SETDESC($1,$3); }
         ;
 
-enumnm:   ENUM tyname			{
+enumnm:   MP_ENUM tyname			{
   	    $$ = $2;
-	    $2->SetActualType(TypeDef::ENUM); mta->cur_enum = $2;
+	    $2->SetType(TypeDef::ENUM); mta->cur_enum = $2;
 	    mta->SetSource($$, false); mta->type_stack.Pop(); }
-        | ENUM 				{
+        | MP_ENUM 				{
 	    String nm = "enum_"; nm += (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); mta->cur_enum = $$;
-	    mta->SetSource($$, false); $$->SetActualType(TypeDef::ENUM); }
+	    mta->SetSource($$, false); $$->SetType(TypeDef::ENUM); }
         ;
 
 classdecl:
@@ -237,7 +229,7 @@ classdecl:
 
 classdecls:
           classnm term			{ mta->Burp(); } /* read ahead to comment */
-        | classnm term COMMENT		{ SETDESC($1,$3); }
+        | classnm term MP_COMMENT		{ SETDESC($1,$3); }
         ;
 
 classdefn:
@@ -264,10 +256,10 @@ classname:
           classhead '{'			{
 	    $1->tokens.keep = true; mta->Class_ResetCurPtrs();
 	    mta->SetSource($1, true); }
-        | classhead COMMENT '{'			{
+        | classhead MP_COMMENT '{'			{
 	    SETDESC($1,$2); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
             mta->SetSource($1, true); }
-        | classhead '{' COMMENT 		{
+        | classhead '{' MP_COMMENT 		{
 	    SETDESC($1,$3); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs();
 	    mta->SetSource($1, true); 
 	  }
@@ -281,30 +273,30 @@ classhead:
 classnm:  classkeyword tyname			{
             mta->state = MTA::Parse_class;
             $$ = $2; mta->last_class = mta->cur_class; mta->cur_class = $2;
-	    $2->SetActualType(TypeDef::CLASS);
+	    $2->SetType(TypeDef::CLASS);
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
-        | classkeyword TYPE			{
+        | classkeyword MP_TYPE			{
             mta->state = MTA::Parse_class;
 	    $$ = $2; mta->last_class = mta->cur_class; mta->cur_class = $2;
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
         | classkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::CLASS); 
+	    $$ = new TypeDef(nm); $$->SetType(TypeDef::CLASS); 
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
         | structkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::STRUCT);
+	    $$ = new TypeDef(nm); $$->SetType(TypeDef::STRUCT);
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
         | unionkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetActualType(TypeDef::UNION);
+	    $$ = new TypeDef(nm); $$->SetType(TypeDef::UNION);
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
@@ -322,8 +314,8 @@ classinh: classpar			{
 /* class parent */
 classpar: type
         | classptyp type	{ $$ = $2; }
-        | NAME			{ $$ = &TA_class; } /* unknown parent.. */
-        | classptyp NAME	{ $$ = &TA_class; } /* unknown parent.. */
+        | MP_NAME			{ $$ = &TA_class; } /* unknown parent.. */
+        | classptyp MP_NAME	{ $$ = &TA_class; } /* unknown parent.. */
         ;
 
 classptyp: classpmod
@@ -331,7 +323,7 @@ classptyp: classpmod
         ;
 
 classpmod: access
-        | VIRTUAL
+        | MP_VIRTUAL
         ;
 
 templdefn:
@@ -358,9 +350,9 @@ templname:
           templhead '{'			{
             mta->state = MTA::Parse_inclass; $1->tokens.keep = true;
 	    mta->Class_ResetCurPtrs(); }
-        | templhead COMMENT '{'			{
+        | templhead MP_COMMENT '{'		{
 	    SETDESC($1,$2); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs(); }
-        | templhead '{' COMMENT 		{
+        | templhead '{' MP_COMMENT 		{
 	    SETDESC($1,$3); mta->state = MTA::Parse_inclass; mta->Class_ResetCurPtrs(); }
         ;
 
@@ -368,7 +360,7 @@ templhead:
           templatekeyword templopen templpars '>' classhead	{
 	    $5->templ_pars.Reset();
 	    $5->templ_pars.Duplicate(mta->cur_templ_pars);
-	    $5->SetActualType(TypeDef::TEMPLATE); $$ = $5;
+	    $5->SetType(TypeDef::TEMPLATE); $$ = $5;
 	    mta->SetSource($$, true); }
         ;
 
@@ -381,21 +373,24 @@ templpars:
         ;
 
 templpar:
-          CLASS tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
-        | TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
+          MP_CLASS tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
+        | MP_TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         | type tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
-        | type tyname EQUALS		{ mta->cur_templ_pars.Link($2); $$ = $2; }
+        | type tyname MP_EQUALS		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         ;
 
 fundecl:  funnm				{
-            if(mta->spc == &(mta->spc_target)) /* only add reg_funs in target space */
-	       TA_taRegFun.methods.AddUniqNameNew($1);
-	    mta->meth_stack.Pop(); }
+            if(mta->cur_is_trg) { /* only add reg_funs in target space */
+              TypeDef* nt = new TypeDef($1->name, TypeDef::FUNCTION | TypeDef::POINTER,
+                                        0,0);
+              taMisc::types.Add(nt);
+              nt->methods.AddUniqNameNew($1); }
+            mta->meth_stack.Pop(); }
         ;
 
-funnm:    REGFUN ftype regfundefn fundefn	{
+funnm:    MP_REGFUN ftype regfundefn fundefn	{
             $3->type = $2; SETDESC($3,$4); $$ = $3; }
-        | REGFUN regfundefn fundefn		{
+        | MP_REGFUN regfundefn fundefn		{
             $2->type = &TA_int; SETDESC($2,$3); $$ = $2; }
         ;
 
@@ -409,7 +404,7 @@ enums:    enumline
         ;
 
 enumline: enumitm
-        | enumitm COMMENT		{ if($1 != NULL) SETENUMDESC($1,$2); }
+        | enumitm MP_COMMENT		{ if($1 != NULL) SETENUMDESC($1,$2); }
         ;
 
 enumitm:  enumitms
@@ -422,7 +417,7 @@ enumitm:  enumitms
 enumitms: enmitmname			{
             mta->cur_enum->enum_vals.Add($1);
 	    mta->enum_stack.Pop(); }
-        | enmitmname EQUALS enummath	{ /* using -424242 as a err code (ugly) */
+        | enmitmname MP_EQUALS enummath	{ /* using -424242 as a err code (ugly) */
             mta->cur_enum->enum_vals.Add($1); if($3 != -424242) $1->enum_no = $3;
 	    mta->enum_stack.Pop(); }
         ;
@@ -442,12 +437,12 @@ enummath:
         ;
 
 enummathitm:
-          NAME				{ $$ = -424242; }
-        | NUMBER
+          MP_NAME		{ $$ = -424242; }
+        | MP_NUMBER
         ;
 
 enmitmname:
-          NAME			{ $$ = new EnumDef($1); mta->enum_stack.Push($$); }
+          MP_NAME		{ $$ = new EnumDef($1); mta->enum_stack.Push($$); }
         ;
 
 membs:	  membline		{ mta->Class_UpdateLastPtrs(); }
@@ -491,10 +486,10 @@ membline: membdefn			{
 
 membdefn:
           basicmemb
-        | PUBLIC ':'			{ $$ = NULL; mta->cur_mstate = MTA::pblc; }
-        | PRIVATE ':'			{ $$ = NULL; mta->cur_mstate = MTA::prvt; }
-        | PROTECTED ':'			{ $$ = NULL; mta->cur_mstate = MTA::prot; }
-        | COMMENT	 		{
+        | MP_PUBLIC ':'			{ $$ = NULL; mta->cur_mstate = MTA::pblc; }
+        | MP_PRIVATE ':'			{ $$ = NULL; mta->cur_mstate = MTA::prvt; }
+        | MP_PROTECTED ':'			{ $$ = NULL; mta->cur_mstate = MTA::prot; }
+        | MP_COMMENT	 		{
 	    $$ = NULL;
 	    if(mta->last_memb != NULL) {
 	      SETDESC(mta->last_memb, $1);
@@ -515,16 +510,16 @@ membdefn:
 
 basicmemb:
           nostatmemb
-        | STATIC nostatmemb		{
+        | MP_STATIC nostatmemb		{
 	  $$ = $2; if($2 != NULL) $2->is_static = true;
 	  else if(mta->cur_memb != NULL) mta->cur_memb->is_static = true; }
         ;
 
 nostatmemb:
           membtype membnames term	{ $$ = $2; }
-        | membtype membname EQUALS term { $$ = $2; }
+        | membtype membname MP_EQUALS term { $$ = $2; }
         | membnames term		{ }
-        | membtype membname ARRAY term	{
+        | membtype membname MP_ARRAY term	{
 	    $$ = $2;
 	    TypeSpace* sp = mta->GetTypeSpace($1);
             int spsz = sp->size;
@@ -545,42 +540,48 @@ membnames:
              mta->memb_stack.Pop(); $$ = NULL; }
         ;
 
-membname: NAME			{
+membname: MP_NAME			{
             $$ = new MemberDef($1); mta->cur_memb = $$; mta->memb_stack.Push($$);
             if(mta->cur_memb_type != NULL) $$->type = mta->cur_memb_type;
             else $$->type = &TA_int; }
         ;
 
-membfunp: '(' '*' NAME ')'	{
+membfunp: '(' '*' MP_NAME ')'	{
 	    $$ = new MemberDef($3); mta->cur_memb = $$; mta->memb_stack.Push($$);
 	    $$->fun_ptr = 1; }
         ;
 
 methdefn: basicmeth
         | consthsnm constfun fundefn		{ $$ = NULL; mta->thisname = false; }
-        | FUNTYPE consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
-        | VIRTUAL consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
+        | MP_FUNTYPE consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
+        | MP_VIRTUAL consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
         | consthsnm constfun constrlist fundefn	{ $$ = NULL; mta->thisname = false; }
         | '~' consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
-        | FUNTYPE '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
-        | VIRTUAL '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
-        | FRIEND ftype OPERATOR funargs fundefn	{ $$ = NULL; }
-        | FRIEND OPERATOR funargs fundefn	{ $$ = NULL; }
-        | FRIEND ftype term			{ $$ = NULL; }
-        | FRIEND CLASS ftype term		{ $$ = NULL; }
-        | FRIEND CLASS NAME term		{ $$ = NULL; }
-        | FRIEND ftype methname funargs fundefn 	{
+        | MP_FUNTYPE '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
+        | MP_VIRTUAL '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
+        | MP_FRIEND ftype MP_OPERATOR funargs fundefn	{ $$ = NULL; }
+        | MP_FRIEND MP_OPERATOR funargs fundefn	{ $$ = NULL; }
+        | MP_FRIEND ftype term			{ $$ = NULL; }
+        | MP_FRIEND MP_CLASS ftype term		{ $$ = NULL; }
+        | MP_FRIEND MP_CLASS MP_NAME term		{ $$ = NULL; }
+        | MP_FRIEND ftype methname funargs fundefn 	{
 	    $$ = NULL; String tmp = $5;
-	    if(tmp.contains("REG_FUN") && (mta->spc == &(mta->spc_target))) {
-	      TA_taRegFun.methods.AddUniqNameNew($3); $3->type = $2;
+	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
+              TypeDef* nt = new TypeDef($3->name, TypeDef::FUNCTION | TypeDef::POINTER,
+                                        0,0);
+              taMisc::types.Add(nt);
+	      nt->methods.AddUniqNameNew($3); $3->type = $2;
 	      mta->meth_stack.Pop();  $3->fun_argc = $4; $3->arg_types.size = $4;
 	      $3->is_static = true; /* consider these to be static functions */
 	      SETDESC($3,$5); }
 	    else { $$ = NULL; mta->meth_stack.Pop(); } }
-        | FRIEND methname funargs fundefn 	{
+        | MP_FRIEND methname funargs fundefn 	{
 	    $$ = NULL; String tmp = $4;
-	    if(tmp.contains("REG_FUN") && (mta->spc == &(mta->spc_target))) {
-	      TA_taRegFun.methods.AddUniqNameNew($2); $2->type = &TA_int;
+	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
+              TypeDef* nt = new TypeDef($2->name, TypeDef::FUNCTION | TypeDef::POINTER,
+                                        0,0);
+              taMisc::types.Add(nt);
+	      nt->methods.AddUniqNameNew($2); $2->type = &TA_int;
 	      mta->meth_stack.Pop();  $2->fun_argc = $3; $2->arg_types.size = $3;
 	      $2->is_static = true; /* consider these to be static functions */
 	      SETDESC($2,$4); }
@@ -589,19 +590,19 @@ methdefn: basicmeth
 
 basicmeth:
           nostatmeth
-        | STATIC nostatmeth		{ $$ = $2; $2->is_static = true; }
-        | VIRTUAL nostatmeth	{ $$ = $2;  if($2 != NULL) $2->is_virtual = true;
+        | MP_STATIC nostatmeth		{ $$ = $2; $2->is_static = true; }
+        | MP_VIRTUAL nostatmeth	{ $$ = $2;  if($2 != NULL) $2->is_virtual = true;
 	  else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
-        | FUNTYPE VIRTUAL nostatmeth	{ $$ = $3;  if($3 != NULL) $3->is_virtual = true;
+        | MP_FUNTYPE MP_VIRTUAL nostatmeth	{ $$ = $3;  if($3 != NULL) $3->is_virtual = true;
 	    else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
         ;
 
 nostatmeth:
           membtype mbfundefn fundefn		{ $$ = $2; $2->type = $1; SETDESC($2,$3); }
         | mbfundefn fundefn			{ $1->type = &TA_int; SETDESC($1,$2); }
-        | membtype OPERATOR funargs fundefn	{ $$ = NULL; }
-        | membtype OPERATOR '(' ')' funargs fundefn { $$ = NULL; }
-        | OPERATOR funargs fundefn		{ $$ = NULL; }
+        | membtype MP_OPERATOR funargs fundefn	{ $$ = NULL; }
+        | membtype MP_OPERATOR '(' ')' funargs fundefn { $$ = NULL; }
+        | MP_OPERATOR funargs fundefn		{ $$ = NULL; }
         ;
 
 mbfundefn: methname funargs 		{
@@ -611,28 +612,28 @@ mbfundefn: methname funargs 		{
 	     if($1->fun_argd > $1->fun_argc) $1->fun_argd = -1; }
         ;
 
-methname: NAME			{
+methname: MP_NAME			{
             $$ = new MethodDef($1); mta->cur_meth = $$; mta->meth_stack.Push($$); }
         ;
 
 fundefn:  term				{ $$ = ""; }
         | funsubdefn			{ $$ = $1; }
         | funsubdecl term		{ $$ = $1; }
-        | COMMENT term			{ $$ = $1; }
-        | COMMENT funsubdefn		{ $$ = $1; }
-        | COMMENT funsubdecl term	{ $$ = $1; }
+        | MP_COMMENT term		{ $$ = $1; }
+        | MP_COMMENT funsubdefn		{ $$ = $1; }
+        | MP_COMMENT funsubdecl term	{ $$ = $1; }
         ;
 
 funsubdefn:
-          FUNCTION			{ $$ = ""; }
-        | CONST FUNCTION		{ $$ = ""; }
-        | CONST COMMENT FUNCTION	{ $$ = $2; }
+          MP_FUNCTION			{ $$ = ""; }
+        | MP_CONST MP_FUNCTION		{ $$ = ""; }
+        | MP_CONST MP_COMMENT MP_FUNCTION { $$ = $2; }
         ;
 
 funsubdecl:
-          EQUALS			{ $$ = ""; }
-        | CONST				{ $$ = ""; }
-        | CONST EQUALS			{ $$ = ""; }
+          MP_EQUALS			{ $$ = ""; }
+        | MP_CONST			{ $$ = ""; }
+        | MP_CONST MP_EQUALS		{ $$ = ""; }
         ;
 
 funargs:  '(' ')'			{ $$ = 0; }
@@ -650,7 +651,7 @@ args:	  argdefn			{ $$ = 1; }
 
 argdefn:  subargdefn			{
             if(mta->cur_meth != NULL) { mta->cur_meth->arg_defs.Add(""); } }
-        | subargdefn EQUALS		{
+        | subargdefn MP_EQUALS		{
 	    if(mta->cur_meth != NULL) {
 	      String ad = $2;
 	      ad.gsub("(__null)", "NULL"); /* standardize on NULL */
@@ -665,19 +666,19 @@ subargdefn:
 	    $$ = 1; String nm = "na";
 	    if(mta->cur_meth != NULL) {
 	      mta->cur_meth->arg_types.Link($1); mta->cur_meth->arg_names.Add(nm); } }
-        | type NAME			{
+        | type MP_NAME			{
 	    $$ = 1; String nm = $2;
 	    if(mta->cur_meth != NULL) {
 	      mta->cur_meth->arg_types.Link($1); mta->cur_meth->arg_names.Add(nm); } }
-        | type NAME ARRAY		{
+        | type MP_NAME MP_ARRAY		{
 	    $$ = 1; String nm = String($2) + "[]";
 	    if(mta->cur_meth != NULL) {
 	      mta->cur_meth->arg_types.Link($1); mta->cur_meth->arg_names.Add(nm); } }
-        | type '(' '*' NAME ')'	funargs	{
+        | type '(' '*' MP_NAME ')'	funargs	{
 	    $$ = 1; String nm = String("(*") + String($4) + ")";
 	    if(mta->cur_meth != NULL) {
 	      mta->cur_meth->arg_types.Link($1); mta->cur_meth->arg_names.Add(nm); } }
-        | NAME				{
+        | MP_NAME				{
 	    $$ = 1; String nm = $1;
 	    if(mta->cur_meth != NULL) {
 	      mta->cur_meth->arg_types.Link(&TA_int); mta->cur_meth->arg_names.Add(nm); } }
@@ -688,35 +689,35 @@ constrlist:
         | constrlist constref
         ;
 
-constref: constcoln TYPE FUNCALL
+constref: constcoln MP_TYPE MP_FUNCALL
         ;
 
 consthsnm:
-          THISNAME '('			{
+          MP_THISNAME '('	{
             mta->thisname = true; mta->constcoln = false; }
         ;
 
-constcoln: ':'				{ mta->constcoln = true; }
+constcoln: ':'			{ mta->constcoln = true; }
         ;
 
-ptrs:	  '*' 				{ $$ = 1; }
-        | ptrs '*'			{ $$ = $1 + 1; }
+ptrs:	  '*' 			{ $$ = 1; }
+        | ptrs '*'		{ $$ = $1 + 1; }
         ;
 
 membtype:  ftype		{ mta->cur_memb_type = $1; }
         ;
 
 ftype:	  type
-        | FUNTYPE		{ $$ = &TA_int; }
-        | FUNTYPE type		{ $$ = $2; }
+        | MP_FUNTYPE		{ $$ = &TA_int; }
+        | MP_FUNTYPE type	{ $$ = $2; }
         ;
 
-tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$);
+tyname:	  MP_NAME		{ $$ = new TypeDef($1); mta->type_stack.Push($$);
                                   mta->SetSource($$, false); }
         ;
 
 type:	  noreftype
-        | noreftype '&'			{
+        | noreftype '&'		{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
             int spsz = sp->size;
             $$ = $1->GetRefType_impl(*sp);
@@ -726,23 +727,23 @@ type:	  noreftype
 
 noreftype:
 	  constype
-        | constype ptrs			{
+        | constype ptrs		{
 	    TypeSpace* sp = mta->GetTypeSpace($1);
             int spsz = sp->size;
             $$ = $1;
  	    for(int i=0; i<$2; i++) {
               $$ = $$->GetPtrType_impl(*sp);
-              if(sp->size != spcz) { mta->TypeAdded("ptr", sp, $$); }
+              if(sp->size != spsz) { mta->TypeAdded("ptr", sp, $$); }
             }
 	  }
         ;
 
 constype: subtype
-        | CONST subtype			{
+        | MP_CONST subtype	{
 	    TypeSpace* sp = mta->GetTypeSpace($2);
             int spsz = sp->size;
-            $$ = GetConstType_impl(*sp);
-	    if(sp->size != spcz) { mta->TypeAdded("const", sp, $$); }
+            $$ = $2->GetConstType_impl(*sp);
+	    if(sp->size != spsz) { mta->TypeAdded("const", sp, $$); }
 	  }
         ;
 
@@ -751,19 +752,19 @@ subtype:  combtype
         | structkeyword tyname		{ $$ = $2; }
         | unionkeyword combtype		{ $$ = $2; }
         | unionkeyword tyname		{ $$ = $2; }
-	| TYPE SCOPER NAME		{
+	| MP_TYPE MP_SCOPER MP_NAME	{
 	    TypeDef* td; if((td = $1->sub_types.FindName($3)) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
 	    $$ = td; }
-	| THISNAME SCOPER NAME		{
+	| MP_THISNAME MP_SCOPER MP_NAME	{
 	    TypeDef* td; if((td = $1->sub_types.FindName($3)) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
 	    $$ = td; }
-	| TYPE SCOPER TYPE		{ $$ = $3; }
-	| THISNAME SCOPER TYPE		{ $$ = $3; }
-        | SCOPER TYPE			{ $$ = $2; }
-        | THISNAME
-        | TYPE templopen templargs '>'		{ /* a template */
+	| MP_TYPE MP_SCOPER MP_TYPE	{ $$ = $3; }
+	| MP_THISNAME MP_SCOPER MP_TYPE	{ $$ = $3; }
+        | MP_SCOPER MP_TYPE		{ $$ = $2; }
+        | MP_THISNAME
+        | MP_TYPE templopen templargs '>' { /* a template */
             if(!($1->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
 	    /* if(($3->owner != NULL) && ($3->owner->owner != NULL)) */
@@ -780,14 +781,14 @@ subtype:  combtype
               if($$ == td) mta->TypeAdded("template instance", sp, $$); }
             else
               $$ = td; }
-	| THISNAME templopen templargs '>'	{ /* this template */
+	| MP_THISNAME templopen templargs '>'	{ /* this template */
             if(!($1->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
 	    $$ = $1; }
         ;
 
-combtype: TYPE
-        | combtype TYPE			{
+combtype: MP_TYPE
+        | combtype MP_TYPE		{
 	    String nm = $1->name + "_" + $2->name;
 	    TypeDef* nty = new TypeDef((char*)nm, true);
 	    TypeSpace* sp = mta->GetTypeSpace($2);
@@ -805,42 +806,42 @@ templargs:
 
 
 templarg:
-          TYPE			{ mta->cur_templ_pars.Link($1); }
-        | NAME			{ $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
-        | NUMBER		{ $$ = new TypeDef((String)$1); mta->cur_templ_pars.Push($$); }
+          MP_TYPE		{ mta->cur_templ_pars.Link($1); }
+        | MP_NAME		{ $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
+        | MP_NUMBER		{ $$ = new TypeDef((String)$1); mta->cur_templ_pars.Push($$); }
           /* todo: need to add support for arbitrary strings here, which are not just types */
 	;
 
-tdname:   NAME
-        | TYPE			{ $$ = $1->name; }
+tdname:   MP_NAME
+        | MP_TYPE		{ $$ = $1->name; }
         ;
 
-varname:  NAME
-        | NAME ARRAY
+varname:  MP_NAME
+        | MP_NAME MP_ARRAY
         ;
 
 term:	  ';'
         ;
 
-access:   PUBLIC
-        | PRIVATE
-        | PROTECTED
+access:   MP_PUBLIC
+        | MP_PRIVATE
+        | MP_PROTECTED
         ;
 
 structkeyword:
-          STRUCT		{ mta->defn_st_line = mta->line-1; }
+          MP_STRUCT		{ mta->defn_st_line = mta->line-1; }
 	;
 
 unionkeyword:
-          UNION			{ mta->defn_st_line = mta->line-1; }
+          MP_UNION		{ mta->defn_st_line = mta->line-1; }
 	;
 
 classkeyword:
-          CLASS			{ mta->defn_st_line = mta->line-1; }
+          MP_CLASS		{ mta->defn_st_line = mta->line-1; }
         ;
 
 templatekeyword:
-          TEMPLATE		{ mta->defn_st_line = mta->line-1; }
+          MP_TEMPLATE		{ mta->defn_st_line = mta->line-1; }
         ;
 
 %%
@@ -849,7 +850,7 @@ templatekeyword:
 
 void yyerror(const char *s) { 	/* called for yacc syntax error */
   int i;
-  if((mta->verbose < 1) && (mta->spc != &(mta->spc_target)))
+  if((mta->verbose < 1) && (!mta->cur_is_trg))
     return;
 
   if(strcmp(s, "parse error") == 0) {

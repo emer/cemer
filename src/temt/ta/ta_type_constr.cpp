@@ -19,10 +19,55 @@
 #include "ta_type_constr.h"
 #include <taString>
 #include <TypeDef>
-#include <taMisc>
 #include <EnumDef>
 #include <MethodDef>
 #include <MemberDef>
+
+#include <taMisc>
+
+
+///////////////////////////////////////////////////////////////////
+//        Registrar for keeping track of all init funs
+
+TypeDefInitRegistrar_PtrList* TypeDefInitRegistrar::instances = NULL;
+
+TypeDefInitRegistrar::TypeDefInitRegistrar(TypeDefInitFun types_init_fun_,
+                                           TypeDefInitFun data_init_fun_)
+  : types_init_fun(types_init_fun_),
+    data_init_fun(data_init_fun_)
+{
+  if(!instances)
+    instances = new TypeDefInitRegistrar_PtrList;
+  instances->Add(this);
+}
+
+bool TypeDefInitRegistrar::CallAllTypeInitFuns() {
+  if(!instances) {
+    taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
+    return false;
+  }
+  for(int i=0; i<instances->size; i++) {
+    TypeDefInitRegistrar* it = instances[i];
+    (*(it->types_init_fun))();  // call method
+  }
+  return true;
+}
+
+bool TypeDefInitRegistrar::CallAllDataInitFuns() {
+  if(!instances) {
+    taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
+    return false;
+  }
+  for(int i=0; i<instances->size; i++) {
+    TypeDefInitRegistrar* it = instances[i];
+    (*(it->data_init_fun))();  // call method
+  }
+  return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+//    methods for actually initializing things from data structures
 
 static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, const char* nm) {
   String full_nm = nm;

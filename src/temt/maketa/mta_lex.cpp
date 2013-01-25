@@ -294,14 +294,14 @@ int MTA::lex() {
 	  String tmp = ComBuf;
 	  if(tmp.contains("#REG_FUN")) { // function follows comment
 	    state = Parse_fundef;
-	    return REGFUN;
+	    return MP_REGFUN;
 	  }
 	}
 	if((state == Find_Item) || (state == Parse_infun)
 	   || (state == Skip_File))
 	  continue;
 	yylval.chr = ComBuf;
-	return COMMENT;
+	return MP_COMMENT;
       }
       else {
 	c = '/';
@@ -345,38 +345,12 @@ int MTA::lex() {
       if (state == Skip_File) // if previously skipping, default is to find
 	state = Find_Item;
 
-      String cur_fname_only = taMisc::GetFileFmPath(cur_fname);
-
-      // don't include any other files that will be included later...
-      int hfoidx = head_fn_hash.FindHashValString(cur_fname_only);
-      if(hfoidx >= 0) {
-        int hidx = headv_hash.FindHashValString(fname);
-        if(hidx != hfoidx) {     // not current file!
-          if(verbose > 1) {
-            cout << "\nSkipping: " << cur_fname << " because of: "
-                 << cur_fname_only << "\n";
-          }
-          state = Skip_File;
-        }
-      }
-      if(state != Skip_File) {
-        if(included_hash.FindHashValString(cur_fname) >= 0) {
-          if(verbose > 1) {
-            cout << "\nSkipping: " << cur_fname << " because prev included\n";
-          }
-          state = Skip_File;
-        }
-      }
-      String fname_only = taMisc::GetFileFmPath(fname);
-
-      if(cur_fname_only != fname_only) {
-	spc = &(spc_other); // add to other space when not in cur space
-	if(state != Skip_File) {
-	  tmp_include.AddUnique(cur_fname); // note: already lexcanonicalized
-	}
+      cur_fname_only = taMisc::GetFileFmPath(cur_fname);
+      if(cur_fname_only == trg_fname_only) {
+        cur_is_trg = true;
       }
       else {
-	spc = &(spc_target); // add to target space
+        cur_is_trg = false;
       }
 
       if(verbose > 1) {
@@ -395,44 +369,28 @@ int MTA::lex() {
       if((itm = spc_keywords.FindName(LexBuf)) != NULL) {
 	yylval.typ = itm;
 	switch (itm->idx) {
-	case TYPEDEF:
+	case MP_TYPEDEF:
 	  state = Parse_typedef;
 	  return itm->idx;
-	case ENUM:
+	case MP_ENUM:
 	  state = Parse_enum;
 	  return itm->idx;
-	case CLASS:
+	case MP_CLASS:
 	  state = Parse_class;
 	  return itm->idx;
-	case STRUCT:
+	case MP_STRUCT:
 	  if(class_only)
 	    break;
 	  state = Parse_class;
 	  return itm->idx;
-	case UNION:
+	case MP_UNION:
 	  if(class_only)
 	    break;
 	  state = Parse_class;
 	  return itm->idx;
-	case TEMPLATE:
+	case MP_TEMPLATE:
 	  state = Parse_class;
 	  return itm->idx;
-	case TA_TYPEDEF:
-	  {
-	    String ta_decl;
-	    if(last_word == "extern") {
-	      readword(skipwhite());
-	      ta_decl = LexBuf;
-	      if(ta_decl.contains("TA_")) {
-		ta_decl = ta_decl.after("TA_");
-		itm = new TypeDef(ta_decl, true);
-		itm->pre_parsed = true;
-		// yylval.typ = spc_pre_parse.AddUniqNameOld(itm);
-		// pre_parse_inits.AddUnique(cur_fname);
-		return TA_TYPEDEF;
-	      }
-	    }
-	  }
 	}
       }
       last_word = LexBuf;
@@ -450,7 +408,7 @@ int MTA::lex() {
 	  c = skipwhite_peek();	// only peek at nonwhite stuff
 	  if(c == ';')		// and get trailing semi
 	    Getc();
-	  return FUNCTION;
+	  return MP_FUNCTION;
 	}
       }
       else if(readword(c) == EOF) {
@@ -475,7 +433,7 @@ int MTA::lex() {
 	  c = Peekc();
 	  if(((bdepth == 0) && ((c == ',') || (c == ')') || (c == '>'))) || (c == ';')) {
 	    yylval.chr = EqualsBuf;
-	    return EQUALS;
+	    return MP_EQUALS;
 	  }
 	  Getc();
 	  if ((c != '"') && (c != '\n') && (c != '\r'))
@@ -486,7 +444,7 @@ int MTA::lex() {
 	return YYRet_Exit;
       }
       yylval.chr = "";
-      return EQUALS;
+      return MP_EQUALS;
     }
 
     if((state == Parse_inclass) && (c == '[')) {
@@ -494,7 +452,7 @@ int MTA::lex() {
       do {
 	c = Getc();
 	if(((bdepth == 0) && (c == ']')) || (c == ';'))
-	  return ARRAY;
+	  return MP_ARRAY;
 	if(c == ')')	bdepth--;
         if(c == '(')	bdepth++;
 	if(c == ']')	bdepth--;
@@ -509,7 +467,7 @@ int MTA::lex() {
       do {
 	c = Getc();
 	if(((bdepth == 0) && (c == ')')) || (c == ';'))
-	  return FUNCALL;
+	  return MP_FUNCALL;
 	if(c == ')')	bdepth--;
         if(c == '(')	bdepth++;
       } while (c != EOF);
@@ -536,7 +494,7 @@ int MTA::lex() {
 
       iv = (int)strtol(LexBuf, NULL, 0);	// only care about ints
       yylval.rval = iv;
-      return NUMBER;
+      return MP_NUMBER;
     }
     
     if(isalpha(c) || (c == '_')) {
@@ -552,18 +510,18 @@ int MTA::lex() {
       
       if(yylval.typ == NULL) {
 	yylval.chr = LexBuf;
-	return NAME;
+	return MP_NAME;
       }
-      if(lx_tok == OPERATOR) {
+      if(lx_tok == MP_OPERATOR) {
 	while((c=Peekc()) != '(') Getc(); // skip to the parens
       }
-      if(lx_tok == ENUM) {
+      if(lx_tok == MP_ENUM) {
 	state = Parse_enum;
       }
       return lx_tok;
     }
 
-    if(c == ':') return follow(':', SCOPER, ':');
+    if(c == ':') return follow(':', MP_SCOPER, ':');
     return c;
 
   } while(1);

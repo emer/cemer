@@ -258,11 +258,6 @@ bool TypeDef::IsVarCompat() const {
   return true;
 }
 
-void TypeDef::FixActualType() {
-  if(HasType(NON_ACTUAL)) ClearType(ACTUAL);
-  else SetType(ACTUAL);
-}
-
 void TypeDef::FixClassTypes() {
   if(name == "taString") {
     ClearType(CLASS);
@@ -282,6 +277,17 @@ void TypeDef::FixClassTypes() {
   }
   else if(InheritsFrom(TA_taBase)) {
     SetType(TABASE);
+  }
+}
+
+TypeDef* TypeDef::FindGlobalTypeName(const String& nm) {
+  return taMisc::types.FindName(nm);
+}
+
+void TypeDef::AddNewGlobalType(bool make_derived) {
+  taMisc::types.Add(this);
+  if(make_derived) {
+    MakeMainDerivedTypes_impl(taMisc::types);
   }
 }
 
@@ -378,10 +384,6 @@ bool TypeDef::CheckList(const String_PArray& lst) const {
       return true;
   }
   return false;
-}
-
-TypeDef* TypeDef::FindGlobalTypeName(const String& nm) {
-  return taMisc::types.FindName(nm);
 }
 
 TypeDef* TypeDef::GetNonPtrType() const {
@@ -481,7 +483,6 @@ TypeDef* TypeDef::GetPtrType_impl(TypeSpace& make_spc) const {
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
   }
-  rval->ClearType(ACTUAL);    // we are no longer actual
   rval->ClearType(ANY_PTR);   // get rid of any existing pointer flags
   rval->SetType(ptr_flag);    // set new ones
   return rval;
@@ -503,7 +504,6 @@ TypeDef* TypeDef::GetRefType_impl(TypeSpace& make_spc) const {
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
   }
-  rval->ClearType(ACTUAL);    // we are no longer actual
   rval->SetType(REFERENCE);   // set new ones
   return rval;
 }
@@ -524,7 +524,6 @@ TypeDef* TypeDef::GetConstType_impl(TypeSpace& make_spc) const {
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
   }
-  rval->ClearType(ACTUAL);    // we are no longer actual
   rval->SetType(CONST);   // set new ones
   return rval;
 }
@@ -545,7 +544,6 @@ TypeDef* TypeDef::GetArrayType_impl(TypeSpace& make_spc) const {
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
   }
-  rval->ClearType(ACTUAL);    // we are no longer actual
   rval->SetType(ARRAY);   // set new ones
   return rval;
 }
@@ -1366,9 +1364,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 	var.GetRepInfo(typ, var_base);
 	return typ->GetValStr(var_base, NULL, memb_def, sc, force_inline);
       }
-#ifdef NO_TA_BASE
-    }
-#else
+#ifndef NO_TA_BASE
       else if (DerivesFrom(TA_taSmartPtr)) {
 	// we just delegate to taBase* since we are binary compatible
 	return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc, force_inline);
@@ -1401,7 +1397,9 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       else if(DerivesFrom(TA_taBasicAtomicInt)) {
 	return String((int)(*((taBasicAtomicInt*)base)));
       }
+#endif
     }
+#ifndef NO_TA_BASE
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       if(rbase) {
@@ -1419,20 +1417,20 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return name;
     }
 #endif
-  else if(IsClass() &&
-	  (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
-    {
-      return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
-    }
-  else if(IsStruct())
-    return "struct " + name;
-  else if(IsUnion())
-    return "union " + name;
-  else if(IsClass())
-    return "class " + name;
-  else if(IsVoid())
-    return "void";
-}
+    else if(IsClass() &&
+            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
+      {
+        return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
+      }
+    else if(IsStruct())
+      return "struct " + name;
+    else if(IsUnion())
+      return "union " + name;
+    else if(IsClass())
+      return "class " + name;
+    else if(IsVoid())
+      return "void";
+  }
   else if(IsPointer()) {
 #ifndef NO_TA_BASE
     if(IsTaBase()) {
@@ -1581,115 +1579,126 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
   if (sc == SC_DEFAULT)
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
 
-  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+  if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val);
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
   }
-  if (IsNotPtr()) {
-    if(DerivesFrom(TA_bool)) {
-      *((bool*)base) = val.toBool();
+  if(IsNotPtr()) {
+    if(IsAtomic()) {
+      if(IsBool()) {
+        *((bool*)base) = val.toBool();
+      }
+      else if(IsInt()) {
+        if(DerivesFrom(TA_int))
+          *((int*)base) = val.toInt();
+        // note: char is treated as an ansi character
+        else if (DerivesFrom(TA_char)) //TODO: char conversion heuristics
+          *((char*)base) = val.toChar();
+        // signed char is treated like a number
+        else if (DerivesFrom(TA_signed_char))
+          *((signed char*)base) = (signed char)val.toShort();
+        // unsigned char is "byte" in ta/pdp and treated like a number
+        else if (DerivesFrom(TA_unsigned_char))
+          *((unsigned char*)base) = (unsigned char)val.toUShort();
+        else if(DerivesFrom(TA_short))
+          *((short*)base) = val.toShort();
+        else if(DerivesFrom(TA_unsigned_short))
+          *((unsigned short*)base) = val.toUShort();
+        else if(DerivesFrom(TA_unsigned_int))
+          *((uint*)base) = val.toUInt();
+        else if(DerivesFrom(TA_int64_t))
+          *((int64_t*)base) = val.toInt64();
+        else if(DerivesFrom(TA_uint64_t))
+          *((uint64_t*)base) = val.toUInt64();
+      }
+      else if(IsFloat()) {
+        if(DerivesFrom(TA_float))
+          *((float*)base) = val.toFloat();
+        else if(DerivesFrom(TA_double))
+          *((double*)base) = val.toDouble();
+      }
+      else if(IsEnum()) {
+        SetValStr_enum(val, base, par, memb_def, sc, force_inline);
+      }
     }
-    else if(DerivesFrom(TA_int))
-      *((int*)base) = val.toInt();
-    else if(DerivesFrom(TA_float))
-      *((float*)base) = val.toFloat();
-    else if(IsEnum()) {
-      SetValStr_enum(val, base, par, memb_def, sc, force_inline);
-    }
-    else if(IsString())
-      *((String*)base) = val;
-    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    else if (IsVariant()) {
-      TypeDef* typ;
-      void* var_base;
-      Variant& var = *((Variant*)base);
-      // if it doesn't have a type, then it will just become a string
-      // (we can't let TA_void get processed...)
-      if (var.type() == Variant::T_Invalid) {
-        // don't do anything for empty string
-        if (!val.empty())
-          var = val;
+    else if(IsAtomicEff()) {
+      if(IsString()) {
+        *((String*)base) = val;
+      }
+      else if (IsVariant()) {
+        TypeDef* typ;
+        void* var_base;
+        Variant& var = *((Variant*)base);
+        // if it doesn't have a type, then it will just become a string
+        // (we can't let TA_void get processed...)
+        if (var.type() == Variant::T_Invalid) {
+          // don't do anything for empty string
+          if (!val.empty())
+            var = val;
+          return;
+        }
+        var.GetRepInfo(typ, var_base);
+        typ->SetValStr(val, var_base, par, memb_def, sc, force_inline);
+        var.UpdateAfterLoad();
+      }
+#ifndef NO_TA_BASE
+      else if (DerivesFrom(TA_taSmartPtr)) {
+        // we just delegate, since we are binary compat
+        TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc, force_inline);
         return;
       }
-      var.GetRepInfo(typ, var_base);
-      typ->SetValStr(val, var_base, par, memb_def, sc, force_inline);
-      var.UpdateAfterLoad();
+      else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
+        taBase* bs = NULL;
+        if ((val != String::con_NULL) && (val != "Null")) {
+          String tmp_val(val); // FindFromPath can change it
+          if (sc == SC_STREAMING) {
+            bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
+            if (!bs)return;       // indicates deferred
+          } else {
+            MemberDef* md = NULL;
+            bs = tabMisc::root->FindFromPath(tmp_val, md);
+            if(!bs) {
+              taMisc::Warning("*** Invalid Path in SetValStr:",val);
+              return;
+            }
+            if(md) {
+              if (md->type->IsPointer()) {
+                bs = *((taBase**)bs);
+                if(bs == NULL) {
+                  taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+                  return;
+                }
+              } else if(md->type->ptr != 0) {
+                taMisc::Warning("*** ptr count greater than 1 in path:", val);
+                return;
+              }
+            }
+          }
+        }
+        taSmartRef& ref = *((taSmartRef*)base);
+        ref = bs;
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
+        (*((taAtomicInt*)base)) = val.toInt();
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
+        (*((taBasicAtomicInt*)base)) = val.toInt();
+      }
+#endif
     }
-    // note: char is treated as an ansi character
-    else if (DerivesFrom(TA_char))
-    //TODO: char conversion heuristics
-      *((char*)base) = val.toChar();
-    // signed char is treated like a number
-    else if (DerivesFrom(TA_signed_char))
-      *((signed char*)base) = (signed char)val.toShort();
-    // unsigned char is "byte" in ta/pdp and treated like a number
-    else if (DerivesFrom(TA_unsigned_char))
-      *((unsigned char*)base) = (unsigned char)val.toUShort();
-    else if(DerivesFrom(TA_short))
-      *((short*)base) = val.toShort();
-    else if(DerivesFrom(TA_unsigned_short))
-      *((unsigned short*)base) = val.toUShort();
-    else if(DerivesFrom(TA_unsigned_int))
-      *((uint*)base) = val.toUInt();
-    else if(DerivesFrom(TA_int64_t))
-      *((int64_t*)base) = val.toInt64();
-    else if(DerivesFrom(TA_uint64_t))
-      *((uint64_t*)base) = val.toUInt64();
-    else if(DerivesFrom(TA_double))
-      *((double*)base) = val.toDouble();
 #ifndef NO_TA_BASE
-# ifdef TA_USE_QT
-    else if(DerivesFrom(TA_QAtomicInt)) {
-       (*((QAtomicInt*)base)) = val.toInt();
-    }
-# endif
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
-      if(rbase)
+      if(rbase) {
         rbase->SetValStr(val, par, memb_def, sc, force_inline);
+      }
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
       if(gp != NULL)
         gp->InitFromString(val);
-    }
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      // we just delegate, since we are binary compat
-      TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc, force_inline);
-      return;
-    }
-    else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
-      taBase* bs = NULL;
-      if ((val != String::con_NULL) && (val != "Null")) {
-        String tmp_val(val); // FindFromPath can change it
-        if (sc == SC_STREAMING) {
-          bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
-          if (!bs)return;       // indicates deferred
-        } else {
-          MemberDef* md = NULL;
-          bs = tabMisc::root->FindFromPath(tmp_val, md);
-          if(!bs) {
-            taMisc::Warning("*** Invalid Path in SetValStr:",val);
-            return;
-          }
-          if(md) {
-            if (md->type->IsPointer()) {
-              bs = *((taBase**)bs);
-              if(bs == NULL) {
-                taMisc::Warning("*** Null object at end of path in SetValStr:",val);
-                return;
-              }
-            } else if(md->type->ptr != 0) {
-              taMisc::Warning("*** ptr count greater than 1 in path:", val);
-              return;
-            }
-          }
-        }
-      }
-      taSmartRef& ref = *((taSmartRef*)base);
-      ref = bs;
     }
 #endif
     else if(IsClass() &&
@@ -1789,17 +1798,9 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     }
     else
 #endif
-      if(IsClass() &&
-            !(IsString() || IsVariant()
-#ifndef NO_TA_BASE
-              || DerivesFrom(TA_QAtomicInt) || DerivesFrom(TA_taArray_impl)
-              || DerivesFrom(TA_taSmartPtr) || DerivesFrom(TA_taSmartRef)
-#endif
-              )
-         )
-    {
-      return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc);
-    }
+      if(IsClass()) {
+        return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc);
+      }
   }
   // only apply filtering to the terminal leaves case here, not to higher level owners
   if(memb_def && mbr_filt.nonempty() && !memb_def->name.contains(mbr_filt))
@@ -1815,7 +1816,8 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   if(par_typ && par && par_typ->IsTaBase()) {
     if(memb_def) {
       taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
-                   "in", par_typ->name, "object:",((taBase*)par)->GetPathNames(),repl_info);
+                   "in", par_typ->name,
+                   "object:",((taBase*)par)->GetPathNames(),repl_info);
     }
     else {
       taMisc::Info("Replaced string value in type:", name, "in", par_typ->name, "object:",
@@ -1840,7 +1842,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
-  if (InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) {
+  if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun;
     if(memb_def != NULL)
@@ -1855,71 +1857,88 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     else
       return String((ta_intptr_t)*((void**)base)); //TODO: is this the best??
   }
-  if (IsNotPtr()) {
-    if (DerivesFrom(TA_bool)) {
-      bool b = *((bool*)base);
-      return b; //T_Bool
+  if(IsNotPtr()) {
+    if(IsAtomic()) {
+      if(IsBool()) {
+        bool b = *((bool*)base);
+        return b; //T_Bool
+      }
+      else if(IsInt()) {
+        // note: char is generic char, and typically we won't use signed char
+        if (DerivesFrom(TA_char)) {
+          return *((char*)base); // T_Char
+        }
+        // note: explicit use of signed char is treated like a number
+        else if ((DerivesFrom(TA_signed_char))) {
+          return (int)*((signed char*)base); // T_Int
+        }
+        // note: explicit use of unsigned char is "byte" in ta/pdp
+        else if ((DerivesFrom(TA_unsigned_char))) {
+          return (uint)*((unsigned char*)base);  // T_UInt
+        }
+        else if(DerivesFrom(TA_short)) {
+          return (int)*((short*)base);  // T_Int
+        }
+        else if(DerivesFrom(TA_unsigned_short)) {
+          return (uint)*((unsigned short*)base);  // T_UInt
+        }
+        else if(DerivesFrom(TA_int)) {
+          return *((int*)base);  // T_Int
+        }
+        else if(DerivesFrom(TA_unsigned_int)) {
+          return *((uint*)base);  // T_UInt
+        }
+        else if(DerivesFrom(TA_int64_t)) {
+          return *((int64_t*)base);  // T_Int64
+        }
+        else if(DerivesFrom(TA_uint64_t)) {
+          return *((uint64_t*)base);  // T_UInt64
+        }
+      }
+      else if(IsFloat()) {
+        if(DerivesFrom(TA_float)) {
+          return *((float*)base); // T_Double
+        }
+        else if(DerivesFrom(TA_double)) {
+          return *((double*)base); // T_Double
+        }
+      }
+      else if(IsEnum()) {
+        int en_val = *((int*)base);
+        String rval = GetEnumString("", en_val);
+        if(rval.empty()) rval = (String)en_val;
+        return rval;  // T_String
+      }
     }
-    // note: char is generic char, and typically we won't use signed char
-    else if (DerivesFrom(TA_char)) {
-      return *((char*)base); // T_Char
-    }
-    // note: explicit use of signed char is treated like a number
-    else if ((DerivesFrom(TA_signed_char))) {
-      return (int)*((signed char*)base); // T_Int
-    }
-    // note: explicit use of unsigned char is "byte" in ta/pdp
-    else if ((DerivesFrom(TA_unsigned_char))) {
-      return (uint)*((unsigned char*)base);  // T_UInt
-    }
-    else if(DerivesFrom(TA_short)) {
-      return (int)*((short*)base);  // T_Int
-    }
-    else if(DerivesFrom(TA_unsigned_short)) {
-      return (uint)*((unsigned short*)base);  // T_UInt
-    }
-    else if(DerivesFrom(TA_int)) {
-      return *((int*)base);  // T_Int
-    }
-    else if(DerivesFrom(TA_unsigned_int)) {
-      return *((uint*)base);  // T_UInt
-    }
-    else if(DerivesFrom(TA_int64_t)) {
-      return *((int64_t*)base);  // T_Int64
-    }
-    else if(DerivesFrom(TA_uint64_t)) {
-      return *((uint64_t*)base);  // T_UInt64
-    }
-    else if(DerivesFrom(TA_float)) {
-      return *((float*)base); // T_Double
-    }
-    else if(DerivesFrom(TA_double)) {
-      return *((double*)base); // T_Double
-    }
-    else if(IsEnum()) {
-      int en_val = *((int*)base);
-      String rval = GetEnumString("", en_val);
-      if(rval.empty()) rval = (String)en_val;
-      return rval;  // T_String
-    }
-    else if(IsString())
-      return *((String*)base); // T_String
-    else if(IsVariant()) {
-      return *((Variant*)base);
+    else if(IsAtomicEff()) {
+      if(IsString()) {
+        return *((String*)base); // T_String
+      }
+      else if(IsVariant()) {
+        return *((Variant*)base);
+      }
+#ifndef NO_TA_BASE
+      else if (DerivesFrom(TA_taSmartPtr)) {
+        taBase* rbase = (taBase*)base;
+        return rbase; // T_Base
+      }
+      else if (DerivesFrom(TA_taSmartRef)) {
+        taBase* rbase = *((taSmartRef*)base);
+        return rbase; // T_Base
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
+	return (int)(*((taAtomicInt*)base));
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
+	return (int)(*((taBasicAtomicInt*)base));
+      }
+#endif
     }
 #ifndef NO_TA_BASE
     //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
-      return rbase; // T_Base
-    }
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      taBase* rbase = (taBase*)base;
-      return rbase; // T_Base
-    }
-    else if (DerivesFrom(TA_taSmartRef)) {
-      taBase* rbase = *((taSmartRef*)base);
       return rbase; // T_Base
     }
 #endif
@@ -1968,7 +1987,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
-  if (InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) {
+  if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun;
     if(memb_def != NULL)
@@ -1982,125 +2001,177 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
       return !(*((void**)base));
   }
   if (IsNotPtr()) {
-    if (DerivesFrom(TA_bool)) {
-      bool b = *((bool*)base);
-      return !b; //T_Bool
+    if(IsAtomic()) {
+      if(IsBool()) {
+        bool b = *((bool*)base);
+        return !b; //T_Bool
+      }
+      else if(IsInt()) {
+        // note: char is generic char, and typically we won't use signed char
+        if (DerivesFrom(TA_char)) {
+          return (*((char*)base) == '\0');
+        }
+        // note: explicit use of signed char is treated like a number
+        else if ((DerivesFrom(TA_signed_char))) {
+          return (*((signed char*)base) == 0);
+        }
+        // note: explicit use of unsigned char is "byte" in ta/pdp
+        else if ((DerivesFrom(TA_unsigned_char))) {
+          return (*((unsigned char*)base) == 0);
+        }
+        else if(DerivesFrom(TA_short)) {
+          return (*((short*)base) == 0);
+        }
+        else if(DerivesFrom(TA_unsigned_short)) {
+          return (*((unsigned short*)base) == 0);
+        }
+        else if(DerivesFrom(TA_int)) {
+          return (*((int*)base) == 0);
+        }
+        else if(DerivesFrom(TA_unsigned_int)) {
+          return (*((uint*)base) == 0);
+        }
+        else if(DerivesFrom(TA_int64_t)) {
+          return (*((int64_t*)base) == 0);
+        }
+        else if(DerivesFrom(TA_uint64_t)) {
+          return (*((uint64_t*)base) == 0);  // T_UInt64
+        }
+      }
+      else if(IsFloat()) {
+        if(DerivesFrom(TA_float)) {
+          return (*((float*)base) == 0); // T_Double
+        }
+        else if(DerivesFrom(TA_double)) {
+          return (*((double*)base) == 0); // T_Double
+        }
+      }
+      else if(IsEnum()) {
+        return (*((int*)base) == 0); // T_Int
+      }
     }
-    // note: char is generic char, and typically we won't use signed char
-    else if (DerivesFrom(TA_char)) {
-      return (*((char*)base) == '\0');
-    }
-    // note: explicit use of signed char is treated like a number
-    else if ((DerivesFrom(TA_signed_char))) {
-      return (*((signed char*)base) == 0);
-    }
-    // note: explicit use of unsigned char is "byte" in ta/pdp
-    else if ((DerivesFrom(TA_unsigned_char))) {
-      return (*((unsigned char*)base) == 0);
-    }
-    else if(DerivesFrom(TA_short)) {
-      return (*((short*)base) == 0);
-    }
-    else if(DerivesFrom(TA_unsigned_short)) {
-      return (*((unsigned short*)base) == 0);
-    }
-    else if(DerivesFrom(TA_int)) {
-      return (*((int*)base) == 0);
-    }
-    else if(DerivesFrom(TA_unsigned_int)) {
-      return (*((uint*)base) == 0);
-    }
-    else if(DerivesFrom(TA_int64_t)) {
-      return (*((int64_t*)base) == 0);
-    }
-    else if(DerivesFrom(TA_uint64_t)) {
-      return (*((uint64_t*)base) == 0);  // T_UInt64
-    }
-    else if(DerivesFrom(TA_float)) {
-      return (*((float*)base) == 0); // T_Double
-    }
-    else if(DerivesFrom(TA_double)) {
-      return (*((double*)base) == 0); // T_Double
-    }
-    else if(IsEnum()) {
-      return (*((int*)base) == 0); // T_Int
-    }
-    else if(IsString())
-      return ((*((String*)base)).empty()); // T_String
-    else if(IsVariant()) {
-      return ((*((Variant*)base)).isDefault());
-    }
+    else if(IsAtomicEff()) {
+      if(IsString())
+        return ((*((String*)base)).empty()); // T_String
+      else if(IsVariant()) {
+        return ((*((Variant*)base)).isDefault());
+      }
 #ifndef NO_TA_BASE
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      taBase* rbase = (taBase*)base;
-      return !(rbase); // T_Base
-    }
-    else if (DerivesFrom(TA_taSmartRef)) {
-      taBase* rbase = *((taSmartRef*)base);
-      return !(rbase); // T_Base
-    }
+      else if (DerivesFrom(TA_taSmartPtr)) {
+        taBase* rbase = (taBase*)base;
+        return !(rbase); // T_Base
+      }
+      else if (DerivesFrom(TA_taSmartRef)) {
+        taBase* rbase = *((taSmartRef*)base);
+        return !(rbase); // T_Base
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
+	return (*((taAtomicInt*)base)) == 0;
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
+	return (*((taBasicAtomicInt*)base)) == 0;
+      }
 #endif
+    }
     // must be some other value or a class -- default to saying no to empty
     else return false;
-    // NOTE: other value types are not really supported, just fall through to return invalid
+    // NOTE: other value types are not really supported, just fall through to return    invalid
   }
-  else // (ptr >= 1)
+  else if(IsPointer()) {
     return !(*((void**)base)); // only empty if NULL
+  }
+  return false;
 }
 
 void TypeDef::SetValVar(const Variant& val, void* base, void* par,
                         MemberDef* memb_def)
 {
-  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+  if(IsVoid() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
   }
   if (IsNotPtr()) {
-    if(DerivesFrom(TA_bool)) {
-      *((bool*)base) = val.toBool(); return;
+    if(IsAtomic()) {
+      if(IsBool()) {
+        *((bool*)base) = val.toBool(); return;
+      }
+      else if(IsInt()) {
+        if(DerivesFrom(TA_int)) {
+          *((int*)base) = val.toInt(); return;
+        }
+        else if (DerivesFrom(TA_char)) { // TODO: char conversion heuristics
+          *((char*)base) = val.toChar(); return;
+        }
+        // signed char is treated like a number
+        else if (DerivesFrom(TA_signed_char)) {
+          *((signed char*)base) = (signed char)val.toInt(); return;
+        }
+        // unsigned char is "byte" in ta/pdp and treated like a number
+        else if (DerivesFrom(TA_unsigned_char)) {
+          *((unsigned char*)base) = val.toByte(); return;
+        }
+        else if(DerivesFrom(TA_short)) {
+          *((short*)base) = (short)val.toInt(); return;
+        }
+        else if(DerivesFrom(TA_unsigned_short)) {
+          *((unsigned short*)base) = (unsigned short)val.toUInt(); return;
+        }
+        else if(DerivesFrom(TA_unsigned_int)) {
+          *((uint*)base) = val.toUInt(); return;
+        }
+        else if(DerivesFrom(TA_int64_t)) {
+          *((int64_t*)base) = val.toInt64(); return;
+        }
+        else if(DerivesFrom(TA_uint64_t)) {
+          *((uint64_t*)base) = val.toUInt64(); return;
+        }
+      }
+      else if(IsFloat()) {
+        if(DerivesFrom(TA_float)) {
+          *((float*)base) = val.toFloat(); return;
+        }
+        else if(DerivesFrom(TA_double)) {
+          *((double*)base) = val.toDouble(); return;
+        }
+      }
+      else if(IsEnum()) {
+        // if it is a number, assume direct value, otherwise it is a string
+        if (val.isNumeric()) {
+          *((int*)base) = val.toInt();
+          return;
+        }
+        SetValStr_enum(val.toString(), base, par, memb_def);
+      }
     }
-    else if(DerivesFrom(TA_int)) {
-      *((int*)base) = val.toInt(); return;}
-    else if(DerivesFrom(TA_float)) {
-      *((float*)base) = val.toFloat(); return;}
-    else if(IsEnum()) {
-      // if it is a number, assume direct value, otherwise it is a string
-      if (val.isNumeric()) {
-        *((int*)base) = val.toInt();
+    else if(IsAtomicEff()) {
+      if(IsString()) {
+        *((String*)base) = val.toString(); return;
+      }
+      else if (IsVariant()) {
+        *((Variant*)base) = val; return;
+      }
+#ifndef NO_TA_BASE
+      else if (DerivesFrom(TA_taSmartPtr)) {
+        // we just delegate, since we are binary compat
+        TA_taBase_ptr.SetValVar(val, base, par, memb_def);
         return;
       }
-      SetValStr_enum(val.toString(), base, par, memb_def);
+      else if(DerivesFrom(TA_taSmartRef)) {
+        //VERY DANGEROUS!!!! No type checking!!!!
+        taSmartRef& ref = *((taSmartRef*)base);
+        ref = val.toBase();
+        return;
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
+	(*((taAtomicInt*)base)) = val.toInt(); return;
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
+	(*((taBasicAtomicInt*)base)) = val.toInt(); return;
+      }
+#endif
     }
-    else if(IsString()) {
-      *((String*)base) = val.toString(); return;}
-    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    else if (IsVariant()) {
-      *((Variant*)base) = val; return;
-    }
-    // note: char is treated as an ansi character
-    else if (DerivesFrom(TA_char)) {
-    //TODO: char conversion heuristics
-      *((char*)base) = val.toChar(); return;}
-    // signed char is treated like a number
-    else if (DerivesFrom(TA_signed_char)) {
-      *((signed char*)base) = (signed char)val.toInt(); return;}
-    // unsigned char is "byte" in ta/pdp and treated like a number
-    else if (DerivesFrom(TA_unsigned_char)) {
-      *((unsigned char*)base) = val.toByte(); return;}
-    else if(DerivesFrom(TA_short)) {
-      *((short*)base) = (short)val.toInt(); return;}
-    else if(DerivesFrom(TA_unsigned_short)) {
-      *((unsigned short*)base) = (unsigned short)val.toUInt(); return;}
-    else if(DerivesFrom(TA_unsigned_int)) {
-      *((uint*)base) = val.toUInt(); return;}
-    else if(DerivesFrom(TA_int64_t)) {
-      *((int64_t*)base) = val.toInt64(); return;}
-    else if(DerivesFrom(TA_uint64_t)) {
-      *((uint64_t*)base) = val.toUInt64(); return;}
-    else if(DerivesFrom(TA_double)) {
-      *((double*)base) = val.toDouble(); return;}
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {
       //TODO: not handled!
@@ -2116,17 +2187,6 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       if (gp != NULL) {
         gp->InitFromString(val.toString());
       }
-      return;
-    }
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      // we just delegate, since we are binary compat
-      TA_taBase_ptr.SetValVar(val, base, par, memb_def);
-      return;
-    }
-    else if(DerivesFrom(TA_taSmartRef)) {
-      //VERY DANGEROUS!!!! No type checking!!!!
-      taSmartRef& ref = *((taSmartRef*)base);
-      ref = val.toBase();
       return;
     }
 #endif
@@ -2256,20 +2316,28 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       memcpy(trg_base, src_base, size);
     }
     else if(IsAtomicEff()) {
-      if(IsVariant())
+      if(IsVariant()) {
 	*((Variant*)trg_base) = *((Variant*)src_base);
-      else if (IsString())
+      }
+      else if (IsString()) {
 	*((String*)trg_base) = *((String*)src_base);
+      }
 #ifndef NO_TA_BASE
-      else if(DerivesFrom(TA_taSmartRef))
+      else if(DerivesFrom(TA_taSmartRef)) {
 	*((taSmartRef*)trg_base) = *((taSmartRef*)src_base);
-      else if(DerivesFrom(TA_taSmartPtr))
+      }
+      else if(DerivesFrom(TA_taSmartPtr)) {
 	*((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
-      else if(DerivesFrom(TA_taAtomicInt))
+      }
+      else if(DerivesFrom(TA_taAtomicInt)) {
 	*((taAtomicInt*)trg_base) = *((taAtomicInt*)src_base);
-      else if(DerivesFrom(TA_taBasicAtomicInt))
+      }
+      else if(DerivesFrom(TA_taBasicAtomicInt)) {
 	*((taBasicAtomicInt*)trg_base) = *((taBasicAtomicInt*)src_base);
+      }
+#endif
     }
+#ifndef NO_TA_BASE
     else if(IsTaBase()) {
       taBase* rbase = (taBase*)trg_base;
       taBase* sbase = (taBase*)src_base;
@@ -2280,7 +2348,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       members.CopyFromSameType(trg_base, src_base);
     }
   }
-  else if(ptr >= 1) {
+  else if(IsAnyPtr()) {
 #ifndef NO_TA_BASE
     if((IsPointer()) && IsTaBase()) {
       taBase** rbase = (taBase**)trg_base;
@@ -2401,7 +2469,7 @@ String& TypeDef::PrintType(String& strm, int indent) const {
       taMisc::IndentString(strm, indent+1) << "// sub-types\n";
       int i;
       for(i=0; i<sub_types.size; i++) {
-        if(!(sub_types.FastEl(i)->internal))
+        if(sub_types.FastEl(i)->IsActual())
           sub_types.FastEl(i)->PrintType(strm,indent+1) << "\n";
       }
     }
@@ -2468,13 +2536,7 @@ String& TypeDef::Print(String& strm, void* base, int indent) const {
 
 String TypeDef::GetHTMLLink(bool gendoc) const {
   STRING_BUF(rval, 32); // extends if needed
-  TypeDef* npt = const_cast<TypeDef*>(this);
-  if(npt->ptr > 0)
-    npt = npt->GetNonPtrType();
-  if(npt && npt->ref)
-    npt = npt->GetNonRefType();
-  if(npt && npt->DerivesFrom(TA_const))
-    npt = npt->GetNonConstType();
+  TypeDef* npt = GetActualType();
   if(npt) {
     if(npt->IsClass()) {
       if(gendoc)
@@ -2860,7 +2922,7 @@ String TypeDef::Includes() {
     if(par->IsTemplInst()) {
       for(int j=0; j<par->templ_pars.size; j++) {
 	TypeDef* tp = par->templ_pars[j];
-	if(tp->IsClass() && tp->IsAnchor()) {
+	if(tp->IsActualClass()) {
 	  inc_str << "\n#include <" << tp->name << ">";
 	  inc_list.Link(tp);
 	}
@@ -2876,7 +2938,7 @@ String TypeDef::Includes() {
     MemberDef* md = members[i];
     if(md->GetOwnerType() != this) continue;
     TypeDef* mtyp = md->type;
-    if(mtyp->IsClass() && mtyp->IsAnchor() && mtyp->name != "taBasePtr") {
+    if(mtyp->IsActualClass() && mtyp->name != "taBasePtr") {
       if(inc_list.FindEl(mtyp) < 0) {
 	inc_str << "\n#include <" << mtyp->name << ">";
 	inc_list.Link(mtyp);
@@ -2888,8 +2950,8 @@ String TypeDef::Includes() {
   for(int i=0; i< members.size; i++) {
     MemberDef* md = members[i];
     if(md->GetOwnerType() != this) continue;
-    TypeDef* cltyp = md->type->GetClassType();
-    if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+    TypeDef* cltyp = md->type->GetActualClassType();
+    if(cltyp) {
       if(inc_list.FindEl(cltyp) < 0) {
 	inc_str << "\nclass " << cltyp->name << "; // ";
 	inc_list.Link(cltyp);
@@ -2901,8 +2963,8 @@ String TypeDef::Includes() {
     if(md->GetOwnerType() != this) continue;
     { // return type
       TypeDef* argt = md->type;
-      TypeDef* cltyp = argt->GetClassType();
-      if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+      TypeDef* cltyp = argt->GetActualClassType();
+      if(cltyp) {
 	if(inc_list.FindEl(cltyp) < 0) {
 	  inc_str << "\nclass " << cltyp->name << "; // ";
 	  inc_list.Link(cltyp);
@@ -2911,8 +2973,8 @@ String TypeDef::Includes() {
     }
     for(int j=0; j< md->arg_types.size; j++) {
       TypeDef* argt = md->arg_types[j];
-      TypeDef* cltyp = argt->GetClassType();
-      if(cltyp && cltyp->IsClass() && cltyp->IsAnchor()) {
+      TypeDef* cltyp = argt->GetActualClassType();
+      if(cltyp) {
 	if(inc_list.FindEl(cltyp) < 0) {
 	  inc_str << "\nclass " << cltyp->name << "; // ";
 	  inc_list.Link(cltyp);

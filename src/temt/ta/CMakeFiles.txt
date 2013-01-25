@@ -710,6 +710,7 @@ set(ta_HEADS_MAKETA_LOCAL
   T3Translate1Translator.h
   T3Translate2Translator.h
   SoScrollBar.h
+  BuiltinTypeDefs.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1680,6 +1681,7 @@ set(ta_SRCS_MAKETA
   iDataPanel_PtrList.cpp
   taiTypeItemDataHost.cpp
   NewViewHelper.cpp
+  BuiltinTypeDefs.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA

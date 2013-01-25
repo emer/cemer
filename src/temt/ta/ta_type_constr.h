@@ -18,27 +18,59 @@
 #define ta_type_constr_h
 
 #include "ta_def.h"
+#include <taPtrList>
 #include <PropertyDef>
 
-// new type information construction system
-// this includes the code to load the information from the _TA.cc file
-// _TA.cc must include this header, but libtypea does not need to include
-// the code generation code (mta_constr.cc)
+// type information construction system -- for type information generated
+// by maketa -- produced in maketa/mta_constr.cpp
+// this code loads the information from the _TA.cpp file
+// _TA.cpp must include this header
 
-// the typedefs come first, and are initialized just as before,
-// same with the stubs
+// this is the type of a function that initializes typedef's,
+// as defined in the _TA.cpp file
+typedef void (*TypeDefInitFun)();
 
-// the member data is now in static data structures, that are then
-// read in by the _init function.
+///////////////////////////////////////////////////////////////////
+//        Registrar for keeping track of all init funs
+
+class TypeDefInitRegistrar; //
+
+class TA_API TypeDefInitRegistrar_PtrList: public taPtrList<TypeDefInitRegistrar> {
+INHERITED(taPtrList<TypeDefInitRegistrar>)
+public:
+  TypeDefInitRegistrar_PtrList() {}
+};
+
+class TA_API TypeDefInitRegistrar {
+  // static class used to register typedef initialization functions
+public:
+  static TypeDefInitRegistrar_PtrList* instances;
+  // this is the list of all the instances of this class, which get added to the list automatically in their constructors
+
+  static bool CallAllTypeInitFuns();
+  // call all the type initialization functions that have been registered in instances
+  static bool CallAllDataInitFuns();
+  // call all the data initialization functions that have been registered in instances
+
+  TypeDefInitFun        types_init_fun;
+  // the initialization function for type defs for this instance
+  TypeDefInitFun        data_init_fun;
+  // the initialization function for member, property, method, enum data for this instance
+
+  TypeDefInitRegistrar(TypeDefInitFun types_init_fun_, TypeDefInitFun data_init_fun_);
+  // constructor that adds this object to the list of instances, and sets the init_fun
+};
+
+///////////////////////////////////////////////////////////////////
+//       Data structures for holding all the type init info
 
 class TA_API MemberDef_data {
 public:
-  TypeDef* 	type;		// either the type is known
-  const char*		type_nm;	// or its a type::subtype, given by this name
-  const char*		name;
-  const char*		desc;
-  const char*		opts;
-  const char*		lists;
+  const char*  	type;
+  const char*	name;
+  const char*	desc;
+  const char*	opts;
+  const char*	lists;
   ta_memb_ptr	off;		// offset if not static
   bool		is_static;
   void*		addr;		// address static absolute addr
@@ -47,12 +79,11 @@ public:
 
 class TA_API PropertyDef_data {
 public:
-  TypeDef* 	type;		// either the type is known
-  const char*		type_nm;	// or its a type::subtype, given by this name
-  const char*		name;
-  const char*		desc;
-  const char*		opts;
-  const char*		lists;
+  const char* 	type;
+  const char*	name;
+  const char*	desc;
+  const char*	opts;
+  const char*	lists;
   bool		is_static;
   ta_prop_get_fun prop_get; // stub function to get the property (as Variant)
   ta_prop_set_fun prop_set; // stub function to set the property (as Variant)
@@ -60,20 +91,18 @@ public:
 
 class TA_API MethodArgs_data {
 public:
-  TypeDef*	type;		// either the type is known
-  const char*		type_nm;	// or its a type::subtype, given by this name
-  const char*		name;
-  const char*		def;		// default value
+  const char* 	type;
+  const char*	name;
+  const char*	def;		// default value
 };
 
 class TA_API MethodDef_data {
 public:
-  TypeDef* 	type;		// either the type is known
-  const char*		type_nm;	// or its a type::subtype, given by this name
-  const char*		name;
-  const char*		desc;
-  const char*		opts;
-  const char*		lists;
+  const char*   type;
+  const char*	name;
+  const char*	desc;
+  const char*	opts;
+  const char*	lists;
   short		fun_overld;	// number of times overloaded
   short		fun_argc;	// nofun, or # of parameters to the function
   short		fun_argd;	// indx for start of the default args (-1 if none)
@@ -87,10 +116,13 @@ public:
 class TA_API EnumDef_data {
 public:
   const char* 	name;
-  const char*		desc;
-  const char*		opts;
+  const char*	desc;
+  const char*	opts;
   int		val;
 };
+
+//////////////////////////////////////////////////////////////////////
+//    methods for actually initializing things from data structures
 
 extern TA_API void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
 			       const char* inh_opts, const char* opts, const char* lists,

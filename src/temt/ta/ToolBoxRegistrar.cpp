@@ -16,6 +16,13 @@
 #include "ToolBoxRegistrar.h"
 #include <ToolBoxRegistrar_PtrList>
 
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::m_instances = NULL;
+
+ToolBoxRegistrar_PtrList* ToolBoxRegistrar::instances() {
+  if (!m_instances)
+    m_instances = new ToolBoxRegistrar_PtrList;
+  return m_instances;
+}
 
 ToolBoxRegistrar::ToolBoxRegistrar(ToolBoxProc proc_)
 : proc(proc_)
