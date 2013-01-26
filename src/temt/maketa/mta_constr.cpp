@@ -124,7 +124,6 @@ String TypeDef_Gen_Ref_Of(TypeDef* ths) {
 
 void MTA::TypeDef_Generate_Instances(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Generate_Test(ths)) return;
-
   if(ths->IsTemplate()) return; // no instances for that guy!
 
   if((this->gen_instances || ths->HasOption("INSTANCE"))
@@ -198,7 +197,7 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
 
   // size:
   if(ths->IsTemplate()) {
-    strm << "0, ";
+    strm << "0, 0";
   }
   else {
     if(ths->IsEnum())
@@ -235,6 +234,7 @@ void MTA::TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm) {
 
 void MTA::TypeDef_Generate_Stubs(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Generate_Test(ths)) return;
+  if(ths->IsTemplate()) return;
 
   // this is just for reg_fun
   // if(ths->InheritsFrom(TA_taRegFun) && this->gen_css
@@ -731,11 +731,12 @@ void TypeSpace_Generate_Data(TypeSpace* ths, ostream& strm) {
 
 void TypeDef_Generate_Data(TypeDef* ths, ostream& strm) {
   if(!mta->TypeDef_Generate_Test(ths)) return;
+  if(ths->IsTemplate()) return;
 
   if(ths->IsEnum()) {
     TypeDef_Generate_EnumData(ths, strm);
   }
-  if(ths->IsActualClass() && !(ths->HasOption("NO_MEMBERS"))) {
+  if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS")) {
     TypeDef_Generate_EnumData(ths, strm);
     TypeDef_Generate_MemberData(ths, strm);
     TypeDef_Generate_MethodData(ths, strm);
@@ -1012,7 +1013,7 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
     else
       strm << ",0,NULL";
 
-    if((mta->gen_css && !ownr->HasOption("NO_CSS"))) {
+    if(mta->gen_css && !ownr->HasOption("NO_CSS") && !ownr->IsTemplate()) {
       strm << ",cssElCFun_";
       // if(ownr->InheritsFrom(TA_taRegFun))
       //   strm << md->name << "_stub";
@@ -1335,8 +1336,9 @@ void TypeDef_Generate_DataInit(TypeDef* ths, ostream& strm) {
 
   if(ths->IsActualClass()) {
     if((mta->gen_instances || (ths->HasOption("INSTANCE")))
-       && !(ths->HasOption("NO_INSTANCE")))
+       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate()) {
       strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
+    }
   }
 
   String ths_ref = "TA_" + ths->name + ".";
@@ -1345,7 +1347,7 @@ void TypeDef_Generate_DataInit(TypeDef* ths, ostream& strm) {
   if(ths->IsEnum()) {
     TypeDef_Init_EnumData(ths, strm);
   }
-  if(ths->IsActualClass() && !(ths->HasOption("NO_MEMBERS"))) {
+  if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS") && !ths->IsTemplate()) {
     TypeDef_Init_EnumData(ths, strm);
     SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
     TypeDef_Init_MemberData(ths, strm);
