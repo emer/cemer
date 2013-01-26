@@ -640,9 +640,6 @@ String TypeDef::GetPtrString() const {
 
 String TypeDef::Get_C_Name() const {
   if(c_name.nonempty()) {
-    if(c_name.contains("_")) {
-      taMisc::Warning("c_name has underbar");
-    }
     return c_name; // cached -- send it!
   }
 
@@ -652,19 +649,6 @@ String TypeDef::Get_C_Name() const {
 
   if (IsSubType() && (owner != NULL) && (owner->owner != NULL) && (owner->owner != this)) {
     rval += owner->owner->Get_C_Name() + "::";
-  }
-
-  if(IsConst()) {
-    TypeDef *nrt = GetNonConstType();
-    if (!nrt) {
-      taMisc::Error("Null NonConstType in TypeDef::Get_C_Name()", name);
-      rval += name;
-      return rval;
-    }
-    if (nrt == this) return "const " + name;
-    rval += "const " + nrt->Get_C_Name();
-    const_cast<TypeDef*>(this)->c_name = rval;              // cache
-    return rval;
   }
 
   if(IsRef()) {
@@ -689,6 +673,19 @@ String TypeDef::Get_C_Name() const {
     }
     if (npt == this) return name + GetPtrString();
     rval += npt->Get_C_Name() + GetPtrString();
+    const_cast<TypeDef*>(this)->c_name = rval;              // cache
+    return rval;
+  }
+
+  if(IsConst()) {
+    TypeDef *nrt = GetNonConstType();
+    if (!nrt) {
+      taMisc::Error("Null NonConstType in TypeDef::Get_C_Name()", name);
+      rval += name;
+      return rval;
+    }
+    if (nrt == this) return "const " + name;
+    rval += "const " + nrt->Get_C_Name();
     const_cast<TypeDef*>(this)->c_name = rval;              // cache
     return rval;
   }
@@ -814,6 +811,12 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   return it;
 }
 
+TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
+  TypeDef* par = FindGlobalTypeName(nm);
+  if(!par) return NULL;
+  return AddParent(par, p_off);
+}
+
 void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
                          TypeDef* p5, TypeDef* p6) {
   if(p1 != NULL)    AddParent(p1);
@@ -822,6 +825,16 @@ void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p4 != NULL)    AddParent(p4);
   if(p5 != NULL)    AddParent(p5);
   if(p6 != NULL)    AddParent(p6);
+}
+
+void TypeDef::AddParentNames(const char* p1, const char* p2, const char* p3,
+                             const char* p4, const char* p5, const char* p6) {
+  if(p1 != NULL)    AddParentName(p1);
+  if(p2 != NULL)    AddParentName(p2);
+  if(p3 != NULL)    AddParentName(p3);
+  if(p4 != NULL)    AddParentName(p4);
+  if(p5 != NULL)    AddParentName(p5);
+  if(p6 != NULL)    AddParentName(p6);
 }
 
 void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
@@ -835,6 +848,21 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
   if(p4 != NULL)    AddParent(p4,p4_off);
   if(p5 != NULL)    AddParent(p5,p5_off);
   if(p6 != NULL)    AddParent(p6,p6_off);
+
+  if(mi)            ComputeMembBaseOff();
+}
+
+void TypeDef::AddClassParNames(const char* p1, int p1_off, const char* p2, int p2_off,
+                               const char* p3, int p3_off, const char* p4, int p4_off,
+                               const char* p5, int p5_off, const char* p6, int p6_off)
+{
+  bool mi = false;
+  if(p1 != NULL)    AddParentName(p1,p1_off);
+  if(p2 != NULL)    { AddParentName(p2,p2_off); mi = true; }
+  if(p3 != NULL)    AddParentName(p3,p3_off);
+  if(p4 != NULL)    AddParentName(p4,p4_off);
+  if(p5 != NULL)    AddParentName(p5,p5_off);
+  if(p6 != NULL)    AddParentName(p6,p6_off);
 
   if(mi)            ComputeMembBaseOff();
 }

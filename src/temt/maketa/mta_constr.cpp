@@ -125,6 +125,8 @@ String TypeDef_Gen_Ref_Of(TypeDef* ths) {
 void MTA::TypeDef_Generate_Instances(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Generate_Test(ths)) return;
 
+  if(ths->IsTemplate()) return; // no instances for that guy!
+
   if((this->gen_instances || ths->HasOption("INSTANCE"))
      && !ths->HasOption("NO_INSTANCE")) {
 #ifdef TA_OS_WIN
@@ -205,7 +207,7 @@ void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {
       strm << "sizeof(" << ths->Get_C_Name() << "), ";
     strm << "(void**)";
     if((mta->gen_instances || ths->HasOption("INSTANCE"))
-       && !ths->HasOption("NO_INSTANCE"))
+       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate())
       strm << "&TAI_" << ths->name;
     else
       strm << "0";
@@ -1189,26 +1191,6 @@ void MTA::TypeSpace_Generate_DataInit(TypeSpace* ths, ostream& strm) {
 void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   TypeDef_Generate_AddOtherParents(ths, typ_ref, strm);
 
-// (u)intptr_t requires test at runtime:
-  if (ths == &TA_intptr_t) {
-    strm << "    if (sizeof(intptr_t) == sizeof(int)) " << typ_ref
-      << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
-    return;
-  } else if (ths == &TA_uintptr_t) {
-    strm << "    if (sizeof(uintptr_t) == sizeof(unsigned int)) " << typ_ref
-      << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
-    return;
-  } else
-// long types just get parented and thus aliased to the correct size
-  if (ths == &TA_long) {
-    strm << "    if (sizeof(long) == sizeof(int)) " << typ_ref
-      << "AddParents(&TA_int);\n    else "  << typ_ref << "AddParents(&TA_int64_t);\n";
-    return;
-  } else if (ths == &TA_unsigned_long) {
-    strm << "    if (sizeof(unsigned long) == sizeof(unsigned int)) " << typ_ref
-      << "AddParents(&TA_unsigned_int);\n    else "  << typ_ref << "AddParents(&TA_uint64_t);\n";
-    return;
-  }
   if(ths->parents.size == 0)
     return;
 
@@ -1227,24 +1209,19 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
     return;
   }
 
-  strm << "    " << typ_ref;
-  if(ths->IsActualClass())   strm << "AddClassPar(";
-  else                       strm << "AddParents(";
+  strm << "  " << typ_ref;
+  if(ths->IsActualClass())   strm << "AddClassParNames(";
+  else                       strm << "AddParentNames(";
   String ths_cnm = ths->Get_C_Name();
   cnt = 0;
   for (i=0; i < ths->parents.size; ++i) {
     TypeDef* ptd = ths->parents.FastEl(i);
-    // if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-    //     (mta->spc_builtin.FindName(ptd->name) == NULL) &&
-    //     (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
-    //   continue; // add parents only if on same list. (except if pre-parsed)
-    // }
     if (cnt > 0)
       strm << ", ";
     if((ptd->owner != NULL) && (ptd->owner->owner != NULL))
-      strm << "TA_" << ptd->owner->owner->name << ".sub_types.FindName(\"" << ptd->name << "\")";
+      strm << "\"" << ptd->owner->owner->name << "::" << ptd->name << "\"";
     else
-      strm << "&TA_" << ptd->name;
+      strm << "\"" << ptd->name << "\"";
     if(ths->IsActualClass()) {
       if((ths->parents.size>1) && !ths->IsTemplate() && !ptd->IsTemplate()) {
         if((mta->gen_instances || (ths->HasOption("INSTANCE")))
@@ -1276,7 +1253,7 @@ void TypeDef_Generate_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm
   // and add template parameters too!
   if(ths->IsTemplInst() && !ths->HasOption("NO_CSS")) {
     if(ths->templ_pars.size > 0) {
-      strm << "    " << typ_ref << "AddTemplPars(";
+      strm << "  " << typ_ref << "AddTemplPars(";
       for(int i=0; i < ths->templ_pars.size; i++) {
 	TypeDef* ptd = ths->templ_pars.FastEl(i);
 	if(ptd->HasOption("NO_CSS")) continue;
@@ -1295,7 +1272,7 @@ void TypeDef_Generate_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm) 
   if(ths->parents.size == 0)
     return;
 
-  strm << "    " << typ_ref << "AddParents(";
+  strm << "  " << typ_ref << "AddParents(";
   int i;
   for(i=0; i < MIN(ths->parents.size, PAR_ARG_COUNT); i++) {
     TypeDef* ptd = ths->parents.FastEl(i);
@@ -1325,7 +1302,7 @@ void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
     String str_inh_opts = taMisc::StrArrayToChar(sbt->inh_opts);
     String str_lists = taMisc::StrArrayToChar(sbt->lists);
 
-    strm << "    sbt = new TypeDef(\"" << sbt->name << "\", \"" << sbt->desc << "\", ";
+    strm << "  sbt = new TypeDef(\"" << sbt->name << "\", \"" << sbt->desc << "\", ";
     strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \"";
     strm << str_lists << "\", ";
     strm << "\"" << sbt->source_file << "\", " << String(sbt->source_start)
@@ -1336,7 +1313,7 @@ void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
     String sbt_ref = "sbt->";
     TypeDef_Generate_AddAllParents(sbt, sbt_ref, strm);
 
-    strm << "    TA_" << ownr->name << ".sub_types.Add(sbt);\n";
+    strm << "  TA_" << ownr->name << ".sub_types.Add(sbt);\n";
   }
 }
 
@@ -1359,7 +1336,7 @@ void TypeDef_Generate_DataInit(TypeDef* ths, ostream& strm) {
   if(ths->IsActualClass()) {
     if((mta->gen_instances || (ths->HasOption("INSTANCE")))
        && !(ths->HasOption("NO_INSTANCE")))
-      strm << "    TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
+      strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
   }
 
   String ths_ref = "TA_" + ths->name + ".";

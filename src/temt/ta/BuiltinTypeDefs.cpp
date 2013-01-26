@@ -236,5 +236,24 @@ void tac_AddBuiltinTypeDefs() {
   TA_signed_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long_int.AddParents(&TA_int64_t);
   TA_unsigned_long_long.AddParents(&TA_uint64_t);
-  //note: (u)intptr_t has special runtime code to test size and add to either (u)int or (u)int64_t
+
+  if(sizeof(intptr_t) == sizeof(int))
+    TA_intptr_t.AddParents(&TA_int);
+  else
+    TA_intptr_t.AddParents(&TA_int64_t);
+
+  if(sizeof(uintptr_t) == sizeof(unsigned int))
+    TA_uintptr_t.AddParents(&TA_unsigned_int);
+  else
+    TA_uintptr_t.AddParents(&TA_uint64_t);
+
+  if(sizeof(long) == sizeof(int))
+    TA_long.AddParents(&TA_int);
+  else
+    TA_long.AddParents(&TA_int64_t);;
+
+  if(sizeof(unsigned long) == sizeof(unsigned int))
+    TA_unsigned_long.AddParents(&TA_unsigned_int);
+  else
+    TA_unsigned_long.AddParents(&TA_uint64_t);
 }
