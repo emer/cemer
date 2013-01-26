@@ -26,7 +26,7 @@ void taiFileDialogArgType::Destroy() {
 }
 
 int taiFileDialogArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if(argt->InheritsFrom(&TA_taString) && GetOptionAfter("FILE_DIALOG_", md, aidx) != "")
+  if(argt->IsString() && GetOptionAfter("FILE_DIALOG_", md, aidx) != "")
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

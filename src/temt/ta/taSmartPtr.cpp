@@ -23,7 +23,7 @@ TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
     act_name = targ->name.after("taSmartPtrT_");
     if (act_name.nonempty()) {
       TypeDef* rval = taMisc::FindTypeName(act_name);
-      if (rval && rval->InheritsFrom(&TA_taBase))
+      if (rval && rval->IsTaBase())
         return rval;
     }
     targ = targ->GetParent();

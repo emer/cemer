@@ -35,6 +35,8 @@
 // delta version (5/07) uses temporal derivative of LV & PV signals, not synaptic depression
 
 
+TypeDef_Of(PVLVLayerSpec);
+
 class LEABRA_API PVLVLayerSpec : public ScalarValLayerSpec {
   // #VIRT_BASE -- generic PVLV layer spec -- all PVLV layer specs inherit from this
 INHERITED(ScalarValLayerSpec)
@@ -51,6 +53,8 @@ private:
 //////////////////////////////////////////
 //      PV: Primary Value Layer         //
 //////////////////////////////////////////
+
+TypeDef_Of(PVConSpec);
 
 class LEABRA_API PVConSpec : public LeabraConSpec {
   // pvlv connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters
@@ -116,6 +120,8 @@ private:
 };
 
 
+TypeDef_Of(PVMiscSpec);
+
 class LEABRA_API PVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
@@ -136,6 +142,8 @@ private:
   void  Destroy()       { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(PViLayerSpec);
 
 class LEABRA_API PViLayerSpec : public PVLVLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values, contribute to overall dopamine with PV delta pvd = PVe - PVi; PV DA = pvd_t - pvd_t-1
@@ -180,6 +188,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 //      PVr = PV reward detection system (habenula?)
+
+TypeDef_Of(PVrConSpec);
 
 class LEABRA_API PVrConSpec : public PVConSpec {
   // primary value connection spec with asymmetrical learning rates -- used for reward detection connections -- have asymmetric weight decrease to lock in expectations for longer
@@ -234,6 +244,8 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(PVDetectSpec);
+
 class LEABRA_API PVDetectSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected -- just learns with value 1 for PV present, .5 for absent
 INHERITED(SpecMemberBase)
@@ -250,6 +262,8 @@ private:
   void  Destroy()       { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(PVrLayerSpec);
 
 class LEABRA_API PVrLayerSpec : public PVLVLayerSpec {
   // primary value reward detection layer: learns when rewards are expected to occur -- gets a 1 for any primary value feedback (reward or punishment), and .5 otherwise
@@ -287,6 +301,8 @@ private:
 ////////////////////////////////////////////////////////////////////////
 //              LV System: Learned Value
 
+TypeDef_Of(LVMiscSpec);
+
 class LEABRA_API LVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
@@ -311,6 +327,8 @@ private:
   void  Destroy()       { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(LVeLayerSpec);
 
 class LEABRA_API LVeLayerSpec : public PVLVLayerSpec {
   // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version LVe.  LV contribution to dopamine is based on LV delta lvd = LVe - LVi; LV DA = lvd_t - lvd_t-1
@@ -358,6 +376,8 @@ private:
   void  Defaults_init()         { };
 };
 
+TypeDef_Of(LViLayerSpec);
+
 class LEABRA_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 INHERITED(LVeLayerSpec)
@@ -376,6 +396,8 @@ private:
 //////////////////////////////////////////
 //        Novelty Value Layer (NV)      //
 //////////////////////////////////////////
+
+TypeDef_Of(NVConSpec);
 
 class LEABRA_API NVConSpec : public PVConSpec {
   // novelty value connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters -- has decay to refresh novelty if not seen for a while..
@@ -420,6 +442,8 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(NVSpec);
+
 class LEABRA_API NVSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(SpecMemberBase)
@@ -439,6 +463,8 @@ private:
   void  Destroy()       { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(NVLayerSpec);
 
 class LEABRA_API NVLayerSpec : public PVLVLayerSpec {
   // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is: NV delta nvd = NV - val_thr; NV DA = nvd_t - nvd_t-1
@@ -479,6 +505,8 @@ private:
 //        DaLayer       //
 //////////////////////////
 
+TypeDef_Of(PVLVDaSpec);
+
 class LEABRA_API PVLVDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(SpecMemberBase)
@@ -498,6 +526,8 @@ private:
   void  Destroy()       { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(PVLVDaLayerSpec);
 
 class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
   // computes PVLV dopamine (Da) signal: typically if(ER), da = PVe-PVi, else LVe - LVi
@@ -533,6 +563,8 @@ private:
   void  Destroy()               { };
   void  Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(PVLVTonicDaLayerSpec);
 
 class LEABRA_API PVLVTonicDaLayerSpec : public PVLVLayerSpec {
   // display of tonic dopamine level -- just clamps the current value which is always stored in network->pvlv_tonic_da and is the definitive value (which can be manipulated by other layers) that is just reflected in this layer -- does not do any actual computation

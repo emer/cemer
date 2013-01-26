@@ -30,8 +30,10 @@ class SbVec2s;          // #IGNORE
 class SbVec3s;          // #IGNORE
 #endif
 
-#include <iPoint>
+#include <iVec2i>
 #include <iSize>
+
+TypeDef_Of(iRect);
 
 class TAIQTSO_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
@@ -41,11 +43,11 @@ public:
   int h;
 
   iRect();
-  iRect(const iPoint& topLeft, const iPoint& bottomRight);
-  iRect(const iPoint& topLeft, const iSize& size );
+  iRect(const iVec2i& topLeft, const iVec2i& bottomRight);
+  iRect(const iVec2i& topLeft, const iSize& size );
   iRect(int left, int top, int width, int height);
 
-  iPoint topLeft() const {return iPoint(x, y);}
+  iVec2i topLeft() const {return iVec2i(x, y);}
   iSize size() const {return iSize(w, h);}
   int left() const {return x;}
   int top() const {return y;}

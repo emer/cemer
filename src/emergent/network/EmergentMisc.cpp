@@ -90,7 +90,7 @@ int EmergentMisc::Main(int& argc, const char *argv[]) {
   taMisc::wiki1_url = NamedURL("emergent", "http://grey.colorado.edu/emergent");
   taMisc::wiki2_url = NamedURL("CCN", "http://grey.colorado.edu/CompCogNeuro");
 
-  if(!taRootBase::Startup_Main(argc, argv, ta_Init_network, &TA_EmergentRoot)) return 1;
+  if(!taRootBase::Startup_Main(argc, argv, &TA_EmergentRoot)) return 1;
 #ifdef TA_GUI
   if(taMisc::gui_active) {
     QPixmap* pm = new QPixmap((const char*)emergent_bitmap_bits);

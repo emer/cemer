@@ -18,7 +18,7 @@
 
 #include "taiqtso_def.h"
 
-#include <iPoint>
+#include <iVec2i>
 
 /* Notes:
    1. all classes below are value-semantics, and use the implicit copy and = operators.
@@ -30,6 +30,8 @@
 #ifdef TA_USE_INVENTOR
 class SbVec3s;          // #IGNORE
 #endif
+
+TypeDef_Of(iVec3i);
 
 class TAIQTSO_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:

@@ -57,7 +57,7 @@ void taiSubTokenPtrMember::GetImage_impl(taiData* dat, const void* base){
 void taiSubTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiSubToken* rval = (taiSubToken*)dat;
-  if (!no_setpointer && mbr->type->DerivesFrom(TA_taBase))
+  if (!no_setpointer && mbr->type->IsTaBase())
     taBase::SetPointer((taBase**)new_base, (taBase*)rval->GetValue());
   else
     *((void**)new_base) = rval->GetValue();

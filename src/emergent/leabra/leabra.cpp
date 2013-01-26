@@ -44,7 +44,6 @@ static void leabra_converter_init() {
 }
 
 void leabra_module_init() {
-  ta_Init_leabra();             // initialize types
   leabra_converter_init();      // configure converter
 }
 

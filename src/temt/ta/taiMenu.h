@@ -37,7 +37,7 @@ public:
     // constructor for Browser and context menus ft=0 means default font size;
   ~taiMenu();
 
-  void                  exec(const iPoint& pos);
+  void                  exec(const iVec2i& pos);
   taiAction*            insertItem(const char* val, const QObject *receiver = NULL, const char* member = NULL,
     const QKeySequence* accel = NULL); // OBS compatability routine with QMenu
   void                  insertSeparator() {AddSep();} // Qt-convenience

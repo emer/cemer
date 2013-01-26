@@ -31,7 +31,6 @@
 #include <Wizard>
 
 #include "leabra_def.h"
-#include "leabra_TA_type.h"
 
 // these are needed for FLT_MAX
 #include <math.h>
@@ -141,6 +140,8 @@ public:
   LeabraSRAvgCon() { sravg_s = sravg_m = 0.0f; }
 };
 
+TypeDef_Of(WtScaleSpec);
+
 class LEABRA_API WtScaleSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
 INHERITED(SpecMemberBase)
@@ -170,6 +171,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(WtScaleSpecInit);
+
 class LEABRA_API WtScaleSpecInit : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial weight scaling values -- applied to active WtScaleSpec values during InitWeights -- useful for adapting scale values
 INHERITED(SpecMemberBase)
@@ -188,6 +191,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(WtSigSpec);
 
 class LEABRA_API WtSigSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
@@ -233,6 +238,8 @@ private:
   void	Defaults_init() { Initialize(); } // note: ConSpec defaults should modalize on learn_rule
 };
 
+TypeDef_Of(LearnMixSpec);
+
 class LEABRA_API LearnMixSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
 INHERITED(SpecMemberBase)
@@ -252,6 +259,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(XCalLearnSpec);
 
 class LEABRA_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
@@ -309,6 +318,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(SAvgCorSpec);
+
 class LEABRA_API SAvgCorSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
 INHERITED(SpecMemberBase)
@@ -327,6 +338,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(AdaptRelNetinSpec);
 
 class LEABRA_API AdaptRelNetinSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
@@ -356,6 +369,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init();	// does not change the on flag
 };
+
+TypeDef_Of(LeabraConSpec);
 
 class LEABRA_API LeabraConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Leabra Leabra connection specs
@@ -585,6 +600,8 @@ private:
 };
 TA_SMART_PTRS(LeabraConSpec)
 
+TypeDef_Of(LeabraBiasSpec);
+
 class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
@@ -609,6 +626,8 @@ private:
 };
 TA_SMART_PTRS(LeabraBiasSpec)
 
+TypeDef_Of(LeabraRecvCons);
+
 class LEABRA_API LeabraRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Leabra Leabra receiving connection group
 INHERITED(RecvCons)
@@ -632,6 +651,8 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
+TypeDef_Of(LeabraSendCons);
 
 class LEABRA_API LeabraSendCons : public SendCons {
   // #STEM_BASE ##CAT_Leabra Leabra sending connection group
@@ -697,6 +718,8 @@ private:
 // equivalent logic and _time or _rate values directly into spec of interest
 // definitely good to show both reps!
 
+TypeDef_Of(DtSpec);
+
 class LEABRA_API DtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math time constant specification -- shows both multiplier and time constant (inverse) value 
 INHERITED(SpecMemberBase)
@@ -717,6 +740,8 @@ private:
   void	Defaults_init() { }
 };
 
+
+TypeDef_Of(ActFunSpec);
 
 class LEABRA_API ActFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
@@ -751,6 +776,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(SpikeFunSpec);
 
 class LEABRA_API SpikeFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
@@ -788,6 +815,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(SpikeMiscSpec);
+
 class LEABRA_API SpikeMiscSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra misc spiking parameters 
 INHERITED(SpecMemberBase)
@@ -821,6 +850,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(ActAdaptSpec);
+
 class LEABRA_API ActAdaptSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
 INHERITED(SpecMemberBase)
@@ -850,6 +881,8 @@ private:
 };
 
 
+TypeDef_Of(DepressSpec);
+
 class LEABRA_API DepressSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
 INHERITED(SpecMemberBase)
@@ -873,6 +906,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(SynDelaySpec);
+
 class LEABRA_API SynDelaySpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
 INHERITED(SpecMemberBase)
@@ -890,6 +925,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(OptThreshSpec);
 
 class LEABRA_API OptThreshSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
@@ -909,6 +946,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(LeabraDtSpec);
 
 class LEABRA_API LeabraDtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra rate constants for temporal derivatives in Leabra (Vm, net input)
@@ -936,6 +975,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(LeabraActAvgSpec);
 
 class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
@@ -965,6 +1006,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(LeabraChannels);
+
 class LEABRA_API LeabraChannels : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
 INHERITED(taOBase)
@@ -983,6 +1026,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(VChanSpec);
 
 class LEABRA_API VChanSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
@@ -1021,6 +1066,8 @@ private:
   void	Destroy()	{ };
 };
 
+TypeDef_Of(MaxDaSpec);
+
 class LEABRA_API MaxDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute the maxda value, which serves as a stopping criterion for settling
 INHERITED(SpecMemberBase)
@@ -1047,6 +1094,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(DaModSpec);
+
 class LEABRA_API DaModSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 INHERITED(SpecMemberBase)
@@ -1070,6 +1119,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(NoiseAdaptSpec);
 
 class LEABRA_API NoiseAdaptSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
@@ -1102,6 +1153,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(LeabraUnitSpec);
 
 class LEABRA_API LeabraUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_Leabra Leabra unit specifications, point-neuron approximation
@@ -1398,6 +1451,8 @@ private:
 };
 TA_SMART_PTRS(LeabraUnitSpec)
 
+TypeDef_Of(VChanBasis);
+
 class LEABRA_API VChanBasis : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
 INHERITED(taBase)
@@ -1418,6 +1473,8 @@ private:
   void	Destroy()	{ };
 };
 
+TypeDef_Of(LeabraUnitChans);
+
 class LEABRA_API LeabraUnitChans : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra units
 INHERITED(taBase)
@@ -1435,6 +1492,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(LeabraUnit);
 
 class LEABRA_API LeabraUnit : public Unit {
   // #STEM_BASE ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
@@ -1687,6 +1746,8 @@ typedef void (LeabraUnit::*LeabraUnitMethod)(LeabraNetwork*, int);
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
 
+TypeDef_Of(LeabraPrj);
+
 class LEABRA_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
@@ -1729,6 +1790,8 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //			Layer Level Code
 
+TypeDef_Of(LeabraSort);
+
 class LEABRA_API LeabraSort : public taPtrList<LeabraUnit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Leabra used for sorting units in kwta computation
 INHERITED(taPtrList<LeabraUnit>)
@@ -1739,6 +1802,8 @@ protected:
   // compare two items for purposes of sorting: descending order by net
 public:
 };
+
+TypeDef_Of(AvgMaxVals);
 
 class LEABRA_API AvgMaxVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
@@ -1765,6 +1830,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+TypeDef_Of(CtSRAvgVals);
 
 class LEABRA_API CtSRAvgVals : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sender-receiver average values accumulated during Ct processing -- e.g., overall vals used for normalization
@@ -1800,6 +1867,8 @@ private:
 
 // misc data-holding structures
 
+TypeDef_Of(LeabraInhibSpec);
+
 class LEABRA_API LeabraInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system (kwta, unit inhib, etc)
 INHERITED(SpecMemberBase)
@@ -1834,6 +1903,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(KWTASpec);
+
 class LEABRA_API KWTASpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies k-winner-take-all parameters
 INHERITED(SpecMemberBase)
@@ -1866,6 +1937,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(GpInhibSpec);
+
 class LEABRA_API GpInhibSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among groups (either layers within a layer group or unit groups within a layer, both of which can operate according to different settings) -- each item's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value is then a MAX of the individual original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak items (layers or unit groups) to drop out
 INHERITED(SpecMemberBase)
@@ -1889,6 +1962,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(KwtaTieBreak);
+
 class LEABRA_API KwtaTieBreak : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
 INHERITED(SpecMemberBase)
@@ -1910,6 +1985,8 @@ private:
   void	Defaults_init();
 };
 
+
+TypeDef_Of(AdaptISpec);
 
 class LEABRA_API AdaptISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
@@ -1940,6 +2017,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(ClampSpec);
+
 class LEABRA_API ClampSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping 
 INHERITED(SpecMemberBase)
@@ -1961,6 +2040,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(DecaySpec);
+
 class LEABRA_API DecaySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
 INHERITED(SpecMemberBase)
@@ -1979,6 +2060,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { };  // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(CtLayerInhibMod);
 
 class LEABRA_API CtLayerInhibMod : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
@@ -2004,6 +2087,8 @@ private:
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
+TypeDef_Of(LayAbsNetAdaptSpec);
+
 class LEABRA_API LayAbsNetAdaptSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
 INHERITED(SpecMemberBase)
@@ -2023,6 +2108,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(LeabraLayerSpec);
 
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
@@ -2389,6 +2476,8 @@ private:
 SpecPtr_of(LeabraLayerSpec);
 TA_SMART_PTRS(LeabraLayerSpec)
 
+TypeDef_Of(KWTAVals);
+
 class LEABRA_API KWTAVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for kwta stuff
 INHERITED(taOBase)
@@ -2417,6 +2506,8 @@ private:
   void 	Destroy()	{ };
 };
 
+TypeDef_Of(AdaptIVals);
+
 class LEABRA_API AdaptIVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for adapting kwta stuff
 INHERITED(taOBase)
@@ -2434,6 +2525,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+TypeDef_Of(InhibVals);
 
 class LEABRA_API InhibVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for inhibition
@@ -2453,6 +2546,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+TypeDef_Of(KwtaSortBuff);
 
 class LEABRA_API KwtaSortBuff : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra kwta sort buffer -- structured by group and index
@@ -2501,6 +2596,8 @@ private:
 };
 
 
+TypeDef_Of(KwtaSortBuff_Lis);
+
 class LEABRA_API KwtaSortBuff_List: public taList<KwtaSortBuff> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of kwta sort buffs -- a specific number are defined as standard per the enum
 INHERITED(taList<KwtaSortBuff>)
@@ -2533,6 +2630,10 @@ private:
 
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
+TypeDef_Of(LeabraInhib {
+  // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
+    publi);
+
 public:
   LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of inactive units
@@ -2564,6 +2665,8 @@ public:
 };
 
 
+ TypeDef_Of(LeabraUnGpData);
+
 class LEABRA_API LeabraUnGpData : public taOBase, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra data to maintain for independent unit groups of competing units within a single layer -- storing separately allows unit groups to be virtual (virt_groups flag on layer)
 INHERITED(taOBase)
@@ -2582,6 +2685,8 @@ private:
   void	Destroy()		{ };
 };
 
+ TypeDef_Of(LeabraUnGpData_Lis);
+
 class LEABRA_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of unit group data for leabra unit subgroups
 INHERITED(taList<LeabraUnGpData>)
@@ -2596,6 +2701,8 @@ private:
   void 	Destroy()		{ };
 };
 
+
+ TypeDef_Of(LeabraLayer);
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
@@ -2880,6 +2987,8 @@ private:
 TA_SMART_PTRS(LeabraLayer)
 
 
+  TypeDef_Of(LeabraUnit_Group);
+
 class LEABRA_API LeabraUnit_Group : public Unit_Group {
   // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer -- optional data structure given use of virt_groups
 INHERITED(Unit_Group)
@@ -2895,6 +3004,8 @@ private:
 //////////////////////////
 // 	Network		//
 //////////////////////////
+
+ TypeDef_Of(LeabraNetMisc);
 
 class LEABRA_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
@@ -2914,6 +3025,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+ TypeDef_Of(CtTrialTiming);
 
 class LEABRA_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
@@ -2940,6 +3053,8 @@ private:
   void 	Destroy()	{ };
 };
 
+ TypeDef_Of(CtSRAvgSpec);
+
 class LEABRA_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
 INHERITED(taOBase)
@@ -2964,6 +3079,8 @@ private:
   void 	Destroy()	{ };
 };
 
+
+ TypeDef_Of(CtSineInhibMod);
 
 class LEABRA_API CtSineInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
@@ -2997,6 +3114,8 @@ private:
   void 	Destroy()	{ };
 };
 
+ TypeDef_Of(CtFinalInhibMod);
+
 class LEABRA_API CtFinalInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
 INHERITED(taOBase)
@@ -3024,6 +3143,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+ TypeDef_Of(CtLrnTrigSpec);
 
 class LEABRA_API CtLrnTrigSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
@@ -3060,6 +3181,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+ TypeDef_Of(CtLrnTrigVals);
 
 class LEABRA_API CtLrnTrigVals : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra state variables for continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
@@ -3111,6 +3234,8 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
+
+ TypeDef_Of(LeabraNetwork);
 
 class LEABRA_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
@@ -3500,6 +3625,8 @@ private:
   void	Initialize();
   void 	Destroy()		{}
 };
+
+ TypeDef_Of(LeabraProject);
 
 class LEABRA_API LeabraProject : public ProjectBase {
   // #STEM_BASE ##CAT_Leabra project for Leabra models
@@ -3999,6 +4126,8 @@ inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
 //////////////////////////////////
 //	Leabra Wizard		//
 //////////////////////////////////
+
+TypeDef_Of(LeabraWizard);
 
 class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects

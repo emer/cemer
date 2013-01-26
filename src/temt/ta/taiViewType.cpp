@@ -22,13 +22,14 @@ taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
   if (!el || !el_typ) return NULL; // subclass will have to grok
 
   // handle ptrs by derefing the type and the el
-  if (el_typ->ptr > 0) {
-    int ptr = el_typ->ptr; // need to deref this many times
-    el_typ = el_typ->GetNonPtrType(); // gets base type in one step
-    while (el && ptr) {
-      el = *((void**)el);
-      --ptr;
-    }
+  if(el_typ->IsPointer()) {
+    el_typ = el_typ->GetNonPtrType();
+    el = *((void**)el);
+  }
+  else if(el_typ->IsPtrPtr()) {
+    el_typ = el_typ->GetNonPtrType();
+    el = *((void**)el);         // 2x
+    el = *((void**)el);
   }
 
   if (!el || !el_typ) return NULL;

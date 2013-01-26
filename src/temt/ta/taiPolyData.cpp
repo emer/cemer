@@ -94,7 +94,7 @@ void taiPolyData::ChildRemove(taiData* child) {
 }
 
 void taiPolyData::GetImage_impl(const void* base_) {
-  if (typ && typ->InheritsFrom(&TA_taBase)) {
+  if (typ && typ->IsTaBase()) {
     m_child_base = (taBase*)base_; // used for Seledit ctxt menus, and similar
   }
   for (int i = 0; i < memb_el.size; ++i) {

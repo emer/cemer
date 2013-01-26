@@ -19,6 +19,7 @@
 #include <iLineEdit>
 #include <taiIncrField>
 #include <HColorScaleBar>
+#include <BuiltinTypeDefs>
 
 #include <taMisc>
 #include <taiMisc>

@@ -20,6 +20,7 @@
 #include <taMatrixT>
 
 // member includes:
+#include <BuiltinTypeDefs>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 

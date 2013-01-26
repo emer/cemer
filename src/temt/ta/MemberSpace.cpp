@@ -138,7 +138,7 @@ int MemberSpace::FindPtr(void* base, void* mbr) const {
       return i;
     // Variants: just check for equivalence to contained pointer,
     //  if doesn't contain a ptr, test will return null
-    if (md->type->InheritsFrom(TA_Variant)) {
+    if (md->type->IsVariant()) {
       Variant& var = *((Variant*)md->GetOff(base));
       if (mbr == var.toPtr())
         return i;

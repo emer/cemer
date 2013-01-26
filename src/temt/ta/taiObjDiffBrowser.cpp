@@ -348,7 +348,7 @@ void taiObjDiffBrowser::AddItems() {
           witm->setTextColor(COL_A_VAL, clr);
         }
 
-        if(a_rec->type->InheritsFrom(&TA_taBase) && a_rec->tabref && !a_rec->mdef) {
+        if(a_rec->type->IsTaBase() && a_rec->tabref && !a_rec->mdef) {
           witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
           witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
         }
@@ -378,7 +378,7 @@ void taiObjDiffBrowser::AddItems() {
           witm->setTextColor(COL_B_VAL, clr);
         }
 
-        if(b_rec->type->InheritsFrom(&TA_taBase) && b_rec->tabref && !b_rec->mdef) {
+        if(b_rec->type->IsTaBase() && b_rec->tabref && !b_rec->mdef) {
           witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
           witm->setCheckState(COL_B_VIEW, Qt::Unchecked);
         }
@@ -408,7 +408,7 @@ void taiObjDiffBrowser::AddItems() {
         witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
         if(!a_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
           // only ta base items really feasible here..
-          if(rec->type->InheritsFrom(&TA_taBase)) {
+          if(rec->type->IsTaBase()) {
             witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
             witm->setCheckState(COL_A_FLG, Qt::Unchecked);
             witm->setCheckState(COL_B_FLG, Qt::Unchecked);
@@ -427,7 +427,7 @@ void taiObjDiffBrowser::AddItems() {
         witm->setExpanded(false);
         if(!b_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
           // only ta base items really feasible here..
-          if(rec->type->InheritsFrom(&TA_taBase)) {
+          if(rec->type->IsTaBase()) {
             witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
             witm->setCheckState(COL_A_FLG, Qt::Unchecked);
             witm->setCheckState(COL_B_FLG, Qt::Unchecked);

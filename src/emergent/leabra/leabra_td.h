@@ -22,6 +22,8 @@
 // 	Reinforcement Learning Algorithms (TD/PVLV/BG/PFC)	//
 //////////////////////////////////////////////////////////////////
 
+TypeDef_Of(DaModUnit);
+
 class LEABRA_API DaModUnit : public LeabraUnit {
   // obsolete -- now incorporated into base LeabraUnit
 INHERITED(LeabraUnit)
@@ -31,6 +33,8 @@ private:
  void	Initialize()    { };
   void	Destroy()	{ };
 };
+
+TypeDef_Of(DaModUnitSpec);
 
 class LEABRA_API DaModUnitSpec : public LeabraUnitSpec {
   // obsolete -- now incoroporated into base LeabraUnitSpec
@@ -44,6 +48,8 @@ private:
 
 ////////////////////////////////////////////////////////////
 //		Td Unit still needs separate vars
+
+TypeDef_Of(LeabraTdUnit);
 
 class LEABRA_API LeabraTdUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
@@ -59,6 +65,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(LeabraTdUnitSpec);
 
 class LEABRA_API LeabraTdUnitSpec : public LeabraUnitSpec {
   // Leabra unit with temporal-differences variables for prior activation states
@@ -83,6 +91,8 @@ private:
 //	External Reward Layer		//
 //////////////////////////////////////////
 
+TypeDef_Of(AvgExtRewSpec);
+
 class LEABRA_API AvgExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
 INHERITED(SpecMemberBase)
@@ -100,6 +110,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(OutErrSpec);
 
 class LEABRA_API OutErrSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
@@ -121,6 +133,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(ExtRewSpec);
+
 class LEABRA_API ExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
 INHERITED(SpecMemberBase)
@@ -139,6 +153,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(ExtRewLayerSpec);
 
 class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
   // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
@@ -203,6 +219,8 @@ private:
 // 	Standard TD Reinforcement Learning 		//
 //////////////////////////////////////////////////////////
 
+TypeDef_Of(TDRewPredConSpec);
+
 class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 INHERITED(LeabraConSpec)
@@ -258,6 +276,8 @@ private:
 //	TD Reward Prediction Layer		//
 //////////////////////////////////////////////////
 
+TypeDef_Of(TDRewPredLayerSpec);
+
 class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
 INHERITED(ScalarValLayerSpec)
@@ -298,6 +318,8 @@ private:
 //	TD Reward Integration Layer	//
 //////////////////////////////////////////
 
+TypeDef_Of(TDRewIntegSpec);
+
 class LEABRA_API TDRewIntegSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
 INHERITED(SpecMemberBase)
@@ -315,6 +337,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { };
 };
+
+TypeDef_Of(TDRewIntegLayerSpec);
 
 class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
@@ -345,6 +369,8 @@ private:
 //////////////////////////
 //	  TdLayer 	//
 //////////////////////////
+
+TypeDef_Of(TdLayerSpec);
 
 class LEABRA_API TdLayerSpec : public LeabraLayerSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!

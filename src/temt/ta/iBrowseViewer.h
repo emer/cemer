@@ -21,6 +21,7 @@
 
 // member includes:
 #include <BrowseViewer>
+#include <BuiltinTypeDefs>
 
 // declare all other types mentioned but not required to include:
 class iTreeView; //

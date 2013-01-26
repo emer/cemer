@@ -23,7 +23,7 @@
 TypeDef_Of(taGroup_impl);
 
 int gpiFromGpArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_taBase))
+  if (!argt->IsPointer() || !argt->IsTaBase())
     return 0;
   String fmgp = GetOptionAfter("FROM_GROUP_", md, aidx);
   if (fmgp.empty()) return 0;

@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiInt64Type.h"
+#include <BuiltinTypeDefs>
 
 
 int taiInt64Type::BidForType(TypeDef* td){

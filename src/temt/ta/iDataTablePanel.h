@@ -25,6 +25,7 @@
 class iTableView; //
 class iDataTableEditor; //
 class DataTable; //
+class ISelectable_PtrList; //
 
 
 TypeDef_Of(iDataTablePanel);

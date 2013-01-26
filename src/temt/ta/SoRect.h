@@ -42,8 +42,10 @@ public:
   float		width;
   float		height;
 
+#ifndef __MAKETA__
   SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
   SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+#endif
 
   void		setDimensions(float wd, float ht);
   SoRect();

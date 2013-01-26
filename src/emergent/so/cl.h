@@ -28,7 +28,9 @@ class ClLayerSpec;
 class SoftClUnitSpec;
 class SoftClConSpec;
 
-class ClConSpec : public SoConSpec {
+TypeDef_Of(ClConSpec);
+
+class SO_API ClConSpec : public SoConSpec {
   // competitive learning connection spec (uses normalized input activation)
 INHERITED(SoConSpec)
 public:
@@ -43,7 +45,9 @@ private:
   void	Destroy()		{ };
 };
 
-class SoftClConSpec : public SoConSpec {
+TypeDef_Of(SoftClConSpec);
+
+class SO_API SoftClConSpec : public SoConSpec {
   // soft competitive learning connection spec
 INHERITED(SoConSpec)
 public:
@@ -59,7 +63,9 @@ private:
 };
 
 
-class ClLayerSpec : public SoLayerSpec {
+TypeDef_Of(ClLayerSpec);
+
+class SO_API ClLayerSpec : public SoLayerSpec {
   // competitive learning layer spec
 INHERITED(SoLayerSpec)
 public:
@@ -72,7 +78,9 @@ private:
   void	Destroy()	{ };
 };
 
-class SoftClUnitSpec : public SoUnitSpec {
+TypeDef_Of(SoftClUnitSpec);
+
+class SO_API SoftClUnitSpec : public SoUnitSpec {
   // soft competitive learning unit spec
 INHERITED(SoUnitSpec)
 public:
@@ -93,7 +101,9 @@ private:
   void	Destroy()	{ };
 };
 
-class SoftClLayerSpec : public SoLayerSpec {
+TypeDef_Of(SoftClLayerSpec);
+
+class SO_API SoftClLayerSpec : public SoLayerSpec {
   // soft competitive learning layer spec: does a softmax on the units
 INHERITED(SoLayerSpec)
 public:

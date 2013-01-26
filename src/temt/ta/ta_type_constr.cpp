@@ -22,6 +22,8 @@
 #include <EnumDef>
 #include <MethodDef>
 #include <MemberDef>
+#include <BuiltinTypeDefs>
+
 
 #include <taMisc>
 
@@ -47,7 +49,7 @@ bool TypeDefInitRegistrar::CallAllTypeInitFuns() {
     return false;
   }
   for(int i=0; i<instances->size; i++) {
-    TypeDefInitRegistrar* it = instances[i];
+    TypeDefInitRegistrar* it = instances->FastEl(i);
     (*(it->types_init_fun))();  // call method
   }
   return true;
@@ -59,7 +61,7 @@ bool TypeDefInitRegistrar::CallAllDataInitFuns() {
     return false;
   }
   for(int i=0; i<instances->size; i++) {
-    TypeDefInitRegistrar* it = instances[i];
+    TypeDefInitRegistrar* it = instances->FastEl(i);
     (*(it->data_init_fun))();  // call method
   }
   return true;
@@ -69,32 +71,15 @@ bool TypeDefInitRegistrar::CallAllDataInitFuns() {
 //////////////////////////////////////////////////////////////////////
 //    methods for actually initializing things from data structures
 
-static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, const char* nm) {
-  String full_nm = nm;
-  TypeDef* rval;
-  String sub_nm = full_nm.after("::");
-  String tp_nm;
-  if(full_nm(0,2) == "::") {
-    tp_nm = cur_tp.name;
-    rval = cur_tp.sub_types.FindName(sub_nm);
+
+static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
+  TypeDef* typ = TypeDef::FindGlobalTypeName(nm, false);
+  if(!typ) { // not found -- need to create a new guy
+    taMisc::Warning("tac_GetTypeFmName(): type named:", nm,
+                    "not found -- now creating it!");
+    return NULL;             // sorry null for now -- TODO: need to make it!!
   }
-  else {
-    tp_nm = full_nm.before("::");
-    TypeDef* td = taMisc::types.FindName(tp_nm);
-    if(td == NULL) {
-      // todo: should probably have "undefined ref" thing that then goes back
-      // afterwards like in loading/saving and fills things in
-      return &TA_int;	// this happens very rarely, and is always an enum (int)
-//       taMisc::Error("tac_GetTypeFmName(): type:",tp_nm,"was not found, check include declare order");
-//       return NULL;
-    }
-    rval = td->sub_types.FindName(sub_nm);
-  }
-  if(rval == NULL) {
-    taMisc::Error("tac_GetTypeFmName(): sub_type:",sub_nm,"was not found on type:",
-		    tp_nm, "check class definition");
-  }
-  return rval;
+  return typ;
 }
 
 void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
@@ -103,8 +88,9 @@ void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
 		 EnumDef_data* dt) {
   if(dt == NULL) return;
   TypeDef* enm = new TypeDef(name, desc, inh_opts, opts, lists,
-			     src_file, src_st, src_ed, sizeof(int), (void**)0);
-  enm->AddParFormal(&TA_enum);
+			     src_file, src_st, src_ed, 
+                             TypeDef::ENUM | TypeDef::SUBTYPE,
+                             sizeof(int), (void**)0);
   while(dt->name != NULL) {
     enm->enum_vals.Add(dt->name, dt->desc, dt->opts, dt->val);
     dt++;
@@ -123,7 +109,7 @@ void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
     }
   }
 #endif
-    
+
   tp.sub_types.Add(enm);
 }
 
@@ -136,12 +122,11 @@ void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt) {
 
 
 void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
-  while((dt != NULL) && ((dt->type != NULL) || (dt->type_nm != NULL))) {
-    if(dt->type == NULL)
-      dt->type = tac_GetTypeFmName(tp, dt->type_nm);
-    if(dt->type != NULL) {
+  while((dt != NULL) && (dt->type != NULL)) {
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    if(typ != NULL) {
       MemberDef* md;
-      md = new MemberDef(dt->type, dt->name, dt->desc, dt->opts, dt->lists,
+      md = new MemberDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
 			 dt->off, dt->is_static, dt->addr, dt->fun_ptr);
       tp.members.AddUniqNameNew(md);
     }
@@ -150,13 +135,12 @@ void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
 }
 
 void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt) {
-  while((dt != NULL) && ((dt->type != NULL) || (dt->type_nm != NULL))) {
-    if(dt->type == NULL)
-      dt->type = tac_GetTypeFmName(tp, dt->type_nm);
-    if(dt->type != NULL) {
+  while((dt != NULL) && (dt->type != NULL)) {
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    if(typ != NULL) {
       PropertyDef* md;
-      md = new PropertyDef(dt->type, dt->name, dt->desc, dt->opts, dt->lists,
-	dt->prop_get, dt->prop_set, dt->is_static);
+      md = new PropertyDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
+                           dt->prop_get, dt->prop_set, dt->is_static);
       tp.properties.AddUniqNameNew(md);
     }
     dt++;
@@ -165,33 +149,25 @@ void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt) {
 
 
 void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
-  while((dt != NULL) && ((dt->type != NULL) || (dt->type_nm != NULL))) {
-    if(dt->type == NULL)
-      dt->type = tac_GetTypeFmName(tp, dt->type_nm);
-
-    if(dt->type != NULL) {
+  while((dt != NULL) && (dt->type != NULL)) {
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    if(typ != NULL) {
       MethodDef* md;
-      md = new MethodDef(dt->type, dt->name, dt->desc, dt->opts, dt->lists,
+      md = new MethodDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
 			 dt->fun_overld, dt->fun_argc, dt->fun_argd,
 			 dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
       MethodArgs_data* fa = dt->fun_args;
-      while((fa != NULL) && ((fa->type != NULL) || (fa->type_nm != NULL))) {
-	if(fa->type == NULL)
-	  fa->type = tac_GetTypeFmName(tp, fa->type_nm);
-
-	md->arg_types.Link(fa->type);
-	md->arg_names.Add(fa->name);
-	md->arg_defs.Add(fa->def);
-	md->arg_vals.Add(fa->def); // initial val is default
+      while((fa != NULL) && (fa->type != NULL)) {
+        TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type);
+        if(fatyp != NULL) {
+          md->arg_types.Link(fatyp);
+          md->arg_names.Add(fa->name);
+          md->arg_defs.Add(fa->def);
+          md->arg_vals.Add(fa->def); // initial val is default
+        }
 	fa++;
       }
       tp.methods.AddUniqNameNew(md);
-/*nuke      // use a very simple adduniqnamenew here: all the hard work is already done
-      int idx;
-      if(tp.methods.FindName(md->name, idx) != NULL)
-	tp.methods.Replace(idx, md);
-      else
-	tp.methods.Add(md);*/
     }
     dt++;
   }

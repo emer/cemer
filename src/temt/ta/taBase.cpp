@@ -261,8 +261,8 @@ void taBase::CutLinks() {
 void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
-    if((md->owner != &(td->members)) || (md->type->ptr > 0)) continue;
-    if(md->type->InheritsFrom(TA_taBase)) {
+    if((md->owner != &(td->members)) || md->type->IsAnyPtr()) continue;
+    if(md->type->IsTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
       taBase::Own(*mb, this);
     }
@@ -277,7 +277,7 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   // go in reverse order because sometimes later members refer to earlier member items
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members.FastEl(i);
-    if((md->owner != &(td->members)) || !md->type->DerivesFrom(TA_taBase)) continue;
+    if((md->owner != &(td->members)) || !md->type->IsTaBase()) continue;
     if(md->type->IsNotPtr()) {
       taBase* mb = (taBase*)md->GetOff(this);
       mb->CutLinks();
@@ -356,7 +356,7 @@ void taBase::SetTypeDefaults_parents(TypeDef* ttd, taBase* scope) {
   int i;
   for(i=0; i<ttd->parents.size; i++) {
     TypeDef* par = ttd->parents.FastEl(i);
-    if(!par->InheritsFrom(TA_taBase)) continue; // only ta-bases
+    if(!par->IsTaBase()) continue; // only ta-bases
     SetTypeDefaults_parents(par, scope); // first do parents of parent
     if(par->defaults != NULL)
       SetTypeDefaults_impl(par, scope);    // then actually do parent
@@ -1020,7 +1020,7 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
 
     MemberDef* md;
     void* tmp_ptr = FindMembeR(el_path, md);
-    if(tmp_ptr && (!md || md->type->InheritsFrom(TA_taBase))) { // null md = taBase
+    if(tmp_ptr && (!md || md->type->IsTaBase())) { // null md = taBase
       taBase* mbr = (taBase*)tmp_ptr;
       if(delim_pos < length) {  // there's more to be done..
         rval = mbr->FindFromPath(path, ret_md, next_pos); // start from after delim
@@ -1061,7 +1061,7 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
       return _nilVariant;
     }
     eff_typ = omd->type;
-    if(eff_typ->InheritsFrom(&TA_taBase)) {
+    if(eff_typ->IsTaBase()) {
       return ((taBase*)eff_base)->GetValFromPath(eff_path, ret_md, warn_not_found);
     }
   }
@@ -1637,7 +1637,7 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
             return false;
           }
         }
-        else if(md->type->ptr != 0) {
+        else if(md->type->IsPtrPtr()) {
           taMisc::Warning("*** ptr count != 1 in path:", val);
           return false;
         }
@@ -2113,7 +2113,7 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then check for taBase items, checking object name and type (breadth first)
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->InheritsFrom(TA_taBase) || md->HasOption("NO_FIND")) continue;
+    if(!md->type->IsTaBase() || md->HasOption("NO_FIND")) continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     if(mobj->FindCheck(nm) || md->type->InheritsFromName(nm)) {
       ret_md = md;
@@ -2124,7 +2124,7 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then do a depth-recursive search
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->InheritsFrom(TA_taBase) || md->HasOption("NO_FIND")) continue;
+    if(!md->type->IsTaBase() || md->HasOption("NO_FIND")) continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     void* rval = mobj->FindMembeR(nm, ret_md);
     if(rval)
@@ -2211,7 +2211,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->IsNotPtr()) {
-      if(md->type->InheritsFrom(TA_taBase)) {
+      if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         if(mbr_name) {
           if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
@@ -2236,7 +2236,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->IsNotPtr()) {
-      if(md->type->InheritsFrom(TA_taBase)) {
+      if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
                          obj_desc, obj_val, mbr_name, type_desc);
@@ -2261,7 +2261,7 @@ void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
   // then recurse..
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->ptr > 0 || !md->type->InheritsFrom(TA_taBase)) continue;
+    if(md->type->IsAnyPtr() || !md->type->IsTaBase()) continue;
     if(md->type->HasOption("EDIT_INLINE") || md->type->HasOption("INLINE")) continue;
     if(md->HasOption("HIDDEN")) continue; // categorically don't look at hidden objects for diffs
     taBase* obj = (taBase*)md->GetOff(this);
@@ -2273,39 +2273,35 @@ void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
 
 taBase::ValType taBase::ValTypeForType(TypeDef* td) {
   if (td->IsNotPtr()) {
-    if (td->DerivesFrom(TA_bool)) {
+    if (td->IsBool()) {
       return VT_INT;
     }
-    // note: char is generic char, and typically we won't use signed char
-    else if (td->DerivesFrom(TA_char)) {
+    else if(td->IsInt()) {
+      // note: char is generic char, and typically we won't use signed char
+      if (td->DerivesFrom(TA_char)) {
+        return VT_STRING;
+      }
+      // note: explicit use of signed char is treated like a number
+      else if (td->DerivesFrom(TA_unsigned_char))
+        return VT_BYTE;
+      else {
+        return VT_INT;
+      }
+    }
+    else if(td->IsFloat()) {
+      if (td->DerivesFrom(TA_double)) {
+        return VT_DOUBLE;
+      }
+      else if (td->DerivesFrom(TA_float)) {
+        return VT_FLOAT;
+      }
+    }
+    else if(td->IsEnum()) {
       return VT_STRING;
     }
-    // note: explicit use of signed char is treated like a number
-    else if (td->DerivesFrom(TA_unsigned_char))
-      return VT_BYTE;
-    else if (td->DerivesFrom(TA_signed_char)
-      || td->DerivesFrom(TA_short)
-      || td->DerivesFrom(TA_unsigned_short)
-      || td->DerivesFrom(TA_int)
-      || td->DerivesFrom(TA_unsigned_int)
-      )
-    {
-      return VT_INT;
-    }
-    else if (td->DerivesFrom(TA_double))
-    {
-      return VT_DOUBLE;
-    }
-    else if (td->DerivesFrom(TA_float))
-    {
-      return VT_FLOAT;
-    }
-    else if(td->DerivesFormal(TA_enum)) {
+    else if(td->IsString())
       return VT_STRING;
-    }
-    else if(td->DerivesFrom(TA_taString))
-      return VT_STRING;
-    else if(td->DerivesFrom(TA_Variant)) {
+    else if(td->IsVariant()) {
       return VT_VARIANT;
     }
   }
@@ -2749,7 +2745,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
 static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
   MemberDef* md;
   taBase* new_guy = par_obj->FindFromPath(srec->value, md);
-  if((drec->type->IsPointer()) && drec->type->DerivesFrom(&TA_taBase)) {
+  if((drec->type->IsPointer()) && drec->type->IsTaBase()) {
     if(drec->mdef && drec->mdef->HasOption("OWN_POINTER")) {
       if(!drec->par_addr)
         taMisc::Warning("*** NULL parent for owned pointer:",drec->GetDisplayName());
@@ -2788,7 +2784,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_a = NULL;
     taBase* tab_b = NULL;;
     // make sure pointers are still current
-    if(rec->type->InheritsFrom(&TA_taBase)) {
+    if(rec->type->IsTaBase()) {
       if(rec->tabref) {
         if(!((taBaseRef*)rec->tabref)->ptr())
           continue;
@@ -2808,7 +2804,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
         tab_diff_typ = true;
       }
     }
-    else if(((rec->type->IsPointer()) && rec->type->DerivesFrom(&TA_taBase)) ||
+    else if(((rec->type->IsPointer()) && rec->type->IsTaBase()) ||
             rec->type->InheritsFrom(TA_taSmartRef) ||
             rec->type->InheritsFrom(TA_taSmartPtr)) {
       taptr = true;
@@ -2816,7 +2812,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     taBase* tab_par_a = NULL;
     taBase* tab_par_b = NULL;
-    if(rec->par_type && rec->par_type->InheritsFrom(&TA_taBase)) {
+    if(rec->par_type && rec->par_type->IsTaBase()) {
       // make sure *parent* pointer is still current
       if(rec->par_odr && rec->par_odr->tabref) {
         if(!((taBaseRef*)rec->par_odr->tabref)->ptr())
@@ -2825,7 +2821,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       }
     }
     if(rec->diff_odr && rec->diff_odr->par_type &&
-       rec->diff_odr->par_type->InheritsFrom(&TA_taBase)) {
+       rec->diff_odr->par_type->IsTaBase()) {
       // make sure *parent* pointer is still current
       if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->tabref) {
         if(!((taBaseRef*)rec->diff_odr->par_odr->tabref)->ptr())
@@ -2996,7 +2992,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
             else {
               MemberDef* dmd;
               void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
-              if(dmd && dmd->type->InheritsFrom(&TA_taBase)) { // it should!
+              if(dmd && dmd->type->IsTaBase()) { // it should!
                 taBase* down = (taBase*)mbase;
                 down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
                 added = true;
@@ -3010,7 +3006,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
               // find member in dest par (parents always ta base..)
               MemberDef* dmd;
               void* mbase = tabparpar_b->FindMembeR(parpar_a->mdef->name, dmd);
-              if(dmd && dmd->type->InheritsFrom(&TA_taBase)) { // it should!
+              if(dmd && dmd->type->IsTaBase()) { // it should!
                 taBase* down = (taBase*)mbase;
                 down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
                 added = true;
@@ -3117,7 +3113,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->IsNotPtr()) {
-      if(md->type->InheritsFrom(TA_taBase)) {
+      if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nfound += obj->SelectForEditSearch(memb_contains, editor);
       }
@@ -3323,7 +3319,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->is_static) continue;
-    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->IsTaBase() &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3347,7 +3343,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
         int chg = UpdatePointers_NewPar_SmPtr(*ref, old_par, new_par);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->InheritsFrom(TA_taBase)) {
+      else if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewPar(old_par, new_par); // doesn't count for me
       }
@@ -3462,7 +3458,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->is_static) continue;
-    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->IsTaBase() &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3486,7 +3482,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
         int chg = taBase::UpdatePointers_NewParType_SmPtr(*ref, par_typ, new_par);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->InheritsFrom(TA_taBase)) {
+      else if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewParType(par_typ, new_par);
       }
@@ -3563,7 +3559,7 @@ int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
     MemberDef* nmd = NULL;
     if(ntd && ntd->members.size > m)
       nmd = ntd->members[m];
-    if((omd->type->IsNotPtr()) && omd->type->InheritsFrom(TA_taBase)) {
+    if((omd->type->IsNotPtr()) && omd->type->IsTaBase()) {
       taBase* old_kid = (taBase*)omd->GetOff(this);
       taBase* new_kid = NULL;
       if(nmd && (nmd->type == omd->type)) new_kid = (taBase*)nmd->GetOff(this);
@@ -3579,7 +3575,7 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int mychg = 0;                // my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if((md->type->IsPointer()) && md->type->DerivesFrom(TA_taBase) &&
+    if((md->type->IsPointer()) && md->type->IsTaBase() &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
       taBase** ptr = (taBase**)md->GetOff(this);
@@ -3603,7 +3599,7 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
         int chg = taBase::UpdatePointers_NewObj_SmPtr(*ref, this, old_ptr, new_ptr);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->InheritsFrom(TA_taBase)) {
+      else if(md->type->IsTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewObj(old_ptr, new_ptr);
       }

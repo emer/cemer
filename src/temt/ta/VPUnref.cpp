@@ -41,7 +41,7 @@ taBase* VPUnref::Resolve() {
       if(!bs)
 	return NULL;
     }
-    else if(md->type->ptr != 0) {
+    else if(md->type->IsAnyPtr()) {
       taMisc::Warning("ptr count != 0 in path:", path);
       return NULL;
     }

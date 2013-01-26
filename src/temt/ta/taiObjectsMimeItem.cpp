@@ -84,7 +84,7 @@ TypeDef* taiObjectsMimeItem::CommonSubtype() const {
     rval = TypeDef::GetCommonSubtype(rval, 
       ((taiObjectMimeItem*)item(i))->td());
   }
-  if (rval && rval->InheritsFrom(&TA_taBase))
+  if (rval && rval->IsTaBase())
     m_all_base = 1;
   return rval;
 }

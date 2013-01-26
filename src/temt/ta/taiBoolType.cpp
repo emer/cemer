@@ -20,7 +20,7 @@
 
 
 int taiBoolType::BidForType(TypeDef* td){
-  if(td->InheritsFrom(TA_bool))
+  if(td->IsBool())
     return (taiType::BidForType(td) +1);
   return 0;
 }

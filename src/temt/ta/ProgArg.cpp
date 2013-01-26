@@ -15,6 +15,7 @@
 
 #include "ProgArg.h"
 #include <Program>
+#include <BuiltinTypeDefs>
 
 
 void ProgArg::Initialize() {

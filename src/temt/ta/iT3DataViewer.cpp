@@ -23,7 +23,7 @@
 #include <taiMenu>
 #include <iMainWindowViewer>
 #include <MainWindowViewer>
-#include <iPoint>
+#include <iVec2i>
 
 #include <taMisc>
 #include <taiMisc>

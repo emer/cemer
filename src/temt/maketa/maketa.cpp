@@ -103,6 +103,7 @@ void MTA::InitKeyWords() {
 
 void MTA::BuildHashTables() {
   taMisc::types.BuildHashTable(hash_size);
+  spc_keywords.BuildHashTable(hash_size);
 }
 
 void MTA::Burp() {
@@ -130,6 +131,12 @@ void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
   else {
     td->source_start = line-1;
   }
+}
+
+void MTA::ClearSource(TypeDef* td) {
+  td->source_file = "";
+  td->source_start = -1;
+  td->source_start = -1;
 }
 
 String MTA::FindFile(const String& fname, bool& ok) {
@@ -462,6 +469,8 @@ int MTA::Main(int argc, char* argv[]) {
   BuildHashTables();       // after getting any user-spec'd hash size
 
   trg_fname_only = taMisc::GetFileFmPath(trg_header);
+  trg_basename = taMisc::StringCVar(trg_fname_only);
+
   if(verbose > 0) {
     cerr << "M!!: target header file to be parsed: " << trg_header << endl;
   }

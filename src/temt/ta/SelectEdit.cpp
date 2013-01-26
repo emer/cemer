@@ -141,7 +141,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
   taMisc::Info("SelectEdit::CompareObjs generated", (String)mds.size, "differences");
   for(int i=0;i<mds.size;i++) {
     TypeDef* td = base_types[i];
-    if(!td->InheritsFrom(&TA_taBase)) continue;
+    if(!td->IsTaBase()) continue;
     //    MemberDef* md = mds[i];
     taBase* itma = (taBase*)trg_bases[i];
     taBase* itmb = (taBase*)src_bases[i];

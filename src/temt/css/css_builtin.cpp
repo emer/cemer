@@ -2544,17 +2544,17 @@ static void Install_Types() {
   int i, j;
   for(i=0; i<taMisc::types.size; i++) {
     TypeDef* tmp = taMisc::types.FastEl(i);
-    if(tmp->InheritsFormal(TA_class)) {
+    if(tmp->IsActualClass()) {
       // don't add any template instances that have a single further subclass
       // (use the subclass instead)
-      if(tmp->InheritsFormal(TA_templ_inst)) {
+      if(tmp->IsTemplInst()) {
 	if((tmp->children.size != 1) || (tmp->children.FastEl(0)->parents.size > 1)) {
 	  if(tmp->InheritsFrom(TA_taMatrix)) {
 	    taBase* inst = (taBase*)tmp->GetInstance();
 	    if(inst) taBase::Ref(inst); // ref it!
 	    cssMisc::TypesSpace.Push(new cssTA_Matrix(inst, 1, tmp, tmp->name));
 	  }
-	  else if(tmp->InheritsFrom(TA_taBase)) {
+	  else if(tmp->IsTaBase()) {
 	    taBase* inst = (taBase*)tmp->GetInstance();
 	    if(inst) taBase::Ref(inst); // ref it!
 	    cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
@@ -2574,7 +2574,7 @@ static void Install_Types() {
 	  if(inst) taBase::Ref(inst); // ref it!
 	  cssMisc::TypesSpace.Push(new cssTA_Matrix(inst, 1, tmp, tmp->name));
 	}
-	else if(tmp->InheritsFrom(TA_taBase)) {
+	else if(tmp->IsTaBase()) {
 	  taBase* inst = (taBase*)tmp->GetInstance();
 	  if(inst) taBase::Ref(inst); // ref it!
 	  cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
@@ -2584,7 +2584,7 @@ static void Install_Types() {
 	}
       }
     }
-    else if(tmp->InheritsFormal(TA_enum)) {
+    else if(tmp->IsEnum()) {
       if((tmp->name != "DataChangedReason") && (tmp->name != "CancelOp") &&
 	 (tmp->name != "NodeBitmapFlags")) {
 	cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
@@ -2796,7 +2796,7 @@ static String* css_scope_search(TypeDef* td, int lst_idx, int& idx, int& sub_itm
   else {
     while(idx < td->sub_types.size) {
       TypeDef* st = td->sub_types.FastEl(idx);
-      if(st->InheritsFormal(TA_enum)) {
+      if(st->IsEnum()) {
 	while(sub_itm < st->enum_vals.size) {
 	  EnumDef* en = st->enum_vals.FastEl(sub_itm++);
 	  if(en->name(0,mb_name.length()) == mb_name)

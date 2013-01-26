@@ -17,6 +17,7 @@
 #include <taiField>
 #include <iLineEdit>
 #include <MemberDef>
+#include <BuiltinTypeDefs>
 
 #include <QDoubleValidator>
 

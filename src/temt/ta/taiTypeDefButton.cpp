@@ -34,7 +34,7 @@ taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
 }
 
 taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
-  if ((typ_->ptr > 0) || (typ_->HasOption("HIDDEN"))) return TC_NoAdd;
+  if ((typ_->IsAnyPtr()) || (typ_->HasOption("HIDDEN"))) return TC_NoAdd;
   if (!typ_->IsActualClass()) // only type classes please..
     return TC_NoAdd;
   // no nested typedefs TODO: find a better way to identify nested typedefs
@@ -156,7 +156,7 @@ int taiTypeDefButton::CountChildren(TypeDef* td) {
   TypeDef* chld;
   for (int i = 0; i < td->children.size; ++i) {
     chld = td->children[i];
-    if (chld->ptr != 0)
+    if (chld->IsAnyPtr())
       continue;
     ++rval;
   }

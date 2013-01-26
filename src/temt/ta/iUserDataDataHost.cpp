@@ -209,8 +209,8 @@ void iUserDataDataHost::GetImage_Item(int row) {
     String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true);
     // augment plain non-class vals with bg color
     if(!txt.contains("<font style=\"background-color:")) {
-      if(mbr->type->DerivesFormal(TA_enum) || mbr->type->DerivesFrom(TA_taSmartPtr)
-          || mbr->type->DerivesFrom(TA_taSmartRef) || mbr->type->ptr > 0)
+      if(mbr->type->IsEnum() || mbr->type->DerivesFrom(TA_taSmartPtr)
+          || mbr->type->DerivesFrom(TA_taSmartRef) || mbr->type->IsAnyPtr())
         txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
       else
         txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";

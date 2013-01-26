@@ -236,6 +236,16 @@ void TypeDef::AddUserDataSchema(UserDataItemBase* item) {
 }
 #endif
 
+bool TypeDef::IsSubType() const {
+  if(!HasType(SUBTYPE)) return false;
+  if(owner == NULL || owner->owner == NULL) {
+    taMisc::Warning("type marked SUBTYPE has null owner!", name);
+    const_cast<TypeDef*>(this)->ClearType(SUBTYPE);
+    return false;
+  }
+  return true;
+}
+
 bool TypeDef::IsBasePointerType() const {
 #ifndef NO_TA_BASE
   if((IsPointer() && IsTaBase()) ||
@@ -295,8 +305,32 @@ String TypeDef::GetTypeEnumString() const {
 }
 
 
-TypeDef* TypeDef::FindGlobalTypeName(const String& nm) {
-  return taMisc::types.FindName(nm);
+TypeDef* TypeDef::FindGlobalTypeName(const String& nm, bool err_not_found) {
+  if(nm.contains("::")) {
+    String typnm = nm.before("::");
+    String subnm = nm.after("::");
+    TypeDef* typ = taMisc::types.FindName(typnm);
+    if(!typ) {
+      if(err_not_found) {
+        taMisc::Error("FindGlobalTypeName: type named:", typnm, "not found!");
+      }
+      return NULL;
+    }
+    TypeDef* sub = typ->FindSubType(subnm);
+    if(!sub) {
+      if(err_not_found) {
+        taMisc::Error("FindGlobalTypeName: sub type named:", subnm,
+                      "not found in parent class of type:", typnm);
+      }
+      return NULL;
+    }
+    return sub;
+  }
+  TypeDef* typ = taMisc::types.FindName(nm);
+  if(!typ && err_not_found) {
+    taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
+  }
+  return typ;
 }
 
 void TypeDef::AddNewGlobalType(bool make_derived) {
@@ -605,7 +639,12 @@ String TypeDef::GetPtrString() const {
 
 
 String TypeDef::Get_C_Name() const {
-  if(c_name.nonempty()) return c_name; // cached -- send it!
+  if(c_name.nonempty()) {
+    if(c_name.contains("_")) {
+      taMisc::Warning("c_name has underbar");
+    }
+    return c_name; // cached -- send it!
+  }
 
   String rval;
   if(namespc.nonempty())
@@ -613,6 +652,19 @@ String TypeDef::Get_C_Name() const {
 
   if (IsSubType() && (owner != NULL) && (owner->owner != NULL) && (owner->owner != this)) {
     rval += owner->owner->Get_C_Name() + "::";
+  }
+
+  if(IsConst()) {
+    TypeDef *nrt = GetNonConstType();
+    if (!nrt) {
+      taMisc::Error("Null NonConstType in TypeDef::Get_C_Name()", name);
+      rval += name;
+      return rval;
+    }
+    if (nrt == this) return "const " + name;
+    rval += "const " + nrt->Get_C_Name();
+    const_cast<TypeDef*>(this)->c_name = rval;              // cache
+    return rval;
   }
 
   if(IsRef()) {
@@ -747,7 +799,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   // note: type flags are set explicitly prior to calling AddParent!
 
 #ifndef NO_TA_BASE
-  if(IsTaBase() || InheritsFrom(TA_taBase))
+  if(IsTaBase())
     opts.AddUnique(opt_instance);       // ta_bases always have an instance
 
   CleanupCats(false);           // save first guy for add parent!
@@ -935,7 +987,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
 
   ClearType(TEMPLATE);
   SetType(TEMPLATE_INST);       // update types
-
+  
   parents.Reset();                      // bag the template's parents
   parents.LinkUnique(templ_par);        // parent is the templ_par
   templ_par->children.LinkUnique(this);
@@ -1010,6 +1062,10 @@ TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
     }
   }
   return NULL;
+}
+
+TypeDef* TypeDef::FindSubType(const String& sub_nm) const {
+  return sub_types.FindName(sub_nm);
 }
 
 EnumDef* TypeDef::FindEnum(const String& nm) const {
@@ -1690,7 +1746,8 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
                   taMisc::Warning("*** Null object at end of path in SetValStr:",val);
                   return;
                 }
-              } else if(md->type->ptr != 0) {
+              }
+              else if(md->type->IsPtrPtr()) {
                 taMisc::Warning("*** ptr count greater than 1 in path:", val);
                 return;
               }
@@ -1703,9 +1760,9 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       else if(DerivesFrom(TA_taAtomicInt)) {
         (*((taAtomicInt*)base)) = val.toInt();
       }
-      else if(DerivesFrom(TA_taBasicAtomicInt)) {
-        (*((taBasicAtomicInt*)base)) = val.toInt();
-      }
+      // else if(DerivesFrom(TA_taBasicAtomicInt)) {
+      //   (*((taBasicAtomicInt*)base)) = val.toInt();
+      // }
 #endif
     }
 #ifndef NO_TA_BASE
@@ -2187,9 +2244,9 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       else if(DerivesFrom(TA_taAtomicInt)) {
 	(*((taAtomicInt*)base)) = val.toInt(); return;
       }
-      else if(DerivesFrom(TA_taBasicAtomicInt)) {
-	(*((taBasicAtomicInt*)base)) = val.toInt(); return;
-      }
+      // else if(DerivesFrom(TA_taBasicAtomicInt)) {
+      //   (*((taBasicAtomicInt*)base)) = val.toInt(); return;
+      // }
 #endif
     }
 #ifndef NO_TA_BASE
@@ -2263,7 +2320,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
     MemberDef* md = members.FastEl(m);
     String shrset = md->OptionAfter("DMEM_SHARE_SET_");
     if(shrset.empty()) continue;
-    if (md->type->ptr > 0) {
+    if (md->type->IsAnyPtr()) {
       if(taMisc::dmem_proc == 0) {
         taMisc::Error("WARNING: DMEM_SHARE_SET Specified for a pointer.",
                       "Pointers can not be shared.");
@@ -3109,7 +3166,7 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                                        memb_def, (void*)base,
                                        (void*)par, par_typ, par_od);
   odl.Add(odr);
-//   if(ptr > 0) {
+//   if(IsAnyPtr()) {
 //     // this will be set wrong here..  need some complex logic probaly to fix it..
 //   }
 

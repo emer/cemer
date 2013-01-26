@@ -21,7 +21,7 @@
 
 
 int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (md->type->InheritsFrom(&TA_taString) && md->HasOption("REGEXP_DIALOG"))
+  if (md->type->IsString() && md->HasOption("REGEXP_DIALOG"))
     return (taiMember::BidForMember(md,td) + 1);
   return 0;
 }

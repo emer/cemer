@@ -24,7 +24,7 @@ TypeDef_Of(taGroup_impl);
 
 int gpiInObjArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&
-      (argt->IsPointer()) && argt->DerivesFrom(TA_taBase) && (md->HasOption("ARG_ON_OBJ")))
+      (argt->IsPointer()) && argt->IsTaBase() && (md->HasOption("ARG_ON_OBJ")))
     return gpiTAPtrArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

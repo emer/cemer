@@ -681,7 +681,7 @@ void cssTA_Base::operator=(const String& s) {
 	taMisc::Warning("Invalid Path in cssTA_Base = String:",tmp_val);
 	return;
       }
-      if(md && (md->type->ptr == 1)) {
+      if(md && (md->type->IsPointer())) {
 	bs = *((taBase**)bs);
 	if(!bs) {
 	  taMisc::Warning("Null object at end of path in cssTA_Base = String:",tmp_val);

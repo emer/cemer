@@ -195,7 +195,7 @@ class   iMenuButton;            // #IGNORE #HIDDEN -- some AbstractButton derivi
 class   iMethodButtonFrame;
 class   iDataViewer;            // #IGNORE #HIDDEN  -- in ta_qtviewer.h
 #define iPixmap         QPixmap
-class   iPoint;                 //
+class   iVec2i;                 //
 class   iRect;                  //
 class   iSize;                  //
 class   iSpinBox;               // #IGNORE #HIDDEN

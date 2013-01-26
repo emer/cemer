@@ -36,11 +36,11 @@ taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
   rval->AddItem("NULL");
   rval->AddSep();
   MethodDef* fun;
-  for (int i = 0; i < TA_taRegFun.methods.size; ++i) {
-    fun = TA_taRegFun.methods.FastEl(i);
-    if (mbr->CheckList(fun->lists))
-      rval->AddItem((char*)fun->name, (void*)fun->addr);
-  }
+  // for (int i = 0; i < TA_taRegFun.methods.size; ++i) {
+  //   fun = TA_taRegFun.methods.FastEl(i);
+  //   if (mbr->CheckList(fun->lists))
+  //     rval->AddItem((char*)fun->name, (void*)fun->addr);
+  // }
   return rval;
 }
 
@@ -52,8 +52,8 @@ void taiFunPtrMember::GetImage_impl(taiData* dat, const void* base){
     return;
   }
   int cnt;
-  MethodDef* fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)new_base),
-                                                        mbr->lists, cnt);
+  MethodDef* fun = NULL; //TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)new_base),
+  //                                                        mbr->lists, cnt);
   if (fun)
     rval->GetImageByIndex(cnt + 1); //1 for NULL item
   GetOrigVal(dat, base);

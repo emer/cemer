@@ -302,7 +302,7 @@ void ISelectableHost::DoDynAction(int idx) {
   if( (prompt_argc != 0) || meth->HasOption("CONFIRM")) {
     base = curItem()->effLink(gui_ctxt)->data();
     arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, hide_args);
-    if (base && typ->InheritsFrom(TA_taBase)) {
+    if (base && typ->IsTaBase()) {
       bool ok;
       iColor bgclr = ((taBase*)base)->GetEditColorInherit(ok);
       if (ok) arg_dlg->setBgColor(bgclr);

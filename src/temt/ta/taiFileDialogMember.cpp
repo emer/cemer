@@ -18,7 +18,7 @@
 
 
 int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (md->type->InheritsFrom(&TA_taString) && md->OptionAfter("FILE_DIALOG_").nonempty())
+  if (md->type->IsString() && md->OptionAfter("FILE_DIALOG_").nonempty())
     return (taiMember::BidForMember(md,td) + 1);
   return 0;
 }

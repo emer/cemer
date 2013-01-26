@@ -25,6 +25,10 @@
 #include <taiMenu_List>
 #include <MembSet>
 #include <taiDataList>
+#else
+class taiMenu_List;
+class MembSet;
+class taiDataList;
 #endif
 
 // declare all other types mentioned but not required to include:

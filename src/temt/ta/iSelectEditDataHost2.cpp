@@ -219,8 +219,10 @@ void iSelectEditDataHost2::GetImage_Item(int row) {
   // true = force inline
   // augment plain non-class vals with bg color
   if(!txt.contains("<font style=\"background-color:")) {
-    if(item->mbr->type->DerivesFormal(TA_enum) || item->mbr->type->DerivesFrom(TA_taSmartPtr)
-        || item->mbr->type->DerivesFrom(TA_taSmartRef) || item->mbr->type->ptr > 0)
+    if(item->mbr->type->IsEnum() ||      
+       item->mbr->type->DerivesFrom(TA_taSmartPtr) ||
+       item->mbr->type->DerivesFrom(TA_taSmartRef) ||
+       item->mbr->type->IsAnyPtr())
       txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
     else
       txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";

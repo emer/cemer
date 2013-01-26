@@ -23,6 +23,7 @@
 #include <taiListElsButton>
 #include <taiPolyData>
 #include <iCheckBox>
+#include <BuiltinTypeDefs>
 
 #include <taMisc>
 #include <taiMisc>

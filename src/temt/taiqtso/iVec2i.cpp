@@ -13,25 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "iPoint.h"
+#include "iVec2i.h"
 
 #ifdef TA_USE_INVENTOR
   #include <Inventor/SbLinear.h>
 
-iPoint::iPoint(const SbVec2s& src) {
+iVec2i::iVec2i(const SbVec2s& src) {
   short xs; short ys;
   src.getValue(xs, ys);
   x = xs; y = ys;
 }
 
-iPoint& iPoint::operator=(const SbVec2s& src) {
+iVec2i& iVec2i::operator=(const SbVec2s& src) {
   short xs; short ys;
   src.getValue(xs, ys);
   x = xs; y = ys;
   return *this;
 }
 
-iPoint::operator SbVec2s() const {
+iVec2i::operator SbVec2s() const {
   return SbVec2s((short)x, (short)y);
 }
 
@@ -40,23 +40,23 @@ iPoint::operator SbVec2s() const {
 #ifdef TA_GUI
   #include "qpoint.h"
 
-iPoint::iPoint(const QPoint& val)
+iVec2i::iVec2i(const QPoint& val)
 : x(val.x()), y(val.y())
 {
 }
 
-iPoint& iPoint::operator=(const QPoint& val) {
+iVec2i& iVec2i::operator=(const QPoint& val) {
   x = val.x();
   y = val.y();
   return *this;
 }
 
-iPoint::operator QPoint() const {
+iVec2i::operator QPoint() const {
   return QPoint(x, y);
 }
 #endif
 
-int iPoint::getArrayIndex(int x_, int y_) {
+int iVec2i::getArrayIndex(int x_, int y_) {
   if ((x_ >= x) || (y_ >= y)) return -1;
   else return (y_ * x) + x_;
 }

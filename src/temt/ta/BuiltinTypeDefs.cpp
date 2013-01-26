@@ -94,6 +94,8 @@ TypeDef TA_long_long            ("long_long",   TypeDef::INTEGER | TypeDef::SIGN
                                  sizeof(long long), "long long");
 TypeDef TA_signed_long_long     ("signed_long_long", TypeDef::INTEGER | TypeDef::SIGNED, 1,
                                  sizeof(signed long long), "signed long long");
+TypeDef TA_signed_long_long_int ("signed_long_long_int", TypeDef::INTEGER | TypeDef::SIGNED, 1,
+                                 sizeof(signed long long), "signed long long int");
 TypeDef TA_uint64_t             ("uint64_t",    TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
                                  sizeof(uint64_t));
 TypeDef TA_unsigned_long_long ("unsigned_long_long", TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
@@ -177,6 +179,7 @@ void tac_AddBuiltinTypeDefs() {
   TA_int64_t.AddNewGlobalType();           
   TA_long_long.AddNewGlobalType();         
   TA_signed_long_long.AddNewGlobalType();  
+  TA_signed_long_long_int.AddNewGlobalType();  
   TA_uint64_t.AddNewGlobalType();          
   TA_unsigned_long_long.AddNewGlobalType();
 
@@ -231,6 +234,7 @@ void tac_AddBuiltinTypeDefs() {
   TA_ulong.AddParents(&TA_unsigned_long);
   TA_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long.AddParents(&TA_int64_t);
+  TA_signed_long_long_int.AddParents(&TA_int64_t);
   TA_unsigned_long_long.AddParents(&TA_uint64_t);
   //note: (u)intptr_t has special runtime code to test size and add to either (u)int or (u)int64_t
 }

@@ -50,8 +50,10 @@ public:
   float		inset; // #DEF_0.05
   Orientation	orientation; // #DEF_Hor
 
+#ifndef __MAKETA__
   SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
   SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+#endif
 
   void		setDimensions(float bs, float ht, float dp); // use existing inset
   void		setDimensions(float bs, float ht, float dp, float in);

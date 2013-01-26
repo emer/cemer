@@ -113,7 +113,7 @@ if (WIN32)
 # :( /O2 is incompatible with /RTC1 that gets set automatically
 #  add_definitions(/O2)
 else (WIN32)
-  add_definitions(-O2 -g)
+#  add_definitions(-O2 -g)
 endif (WIN32)
 
 #NOTE: we don't use decorative suffix -- confusing, and there should only be one

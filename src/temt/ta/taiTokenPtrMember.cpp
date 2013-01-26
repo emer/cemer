@@ -25,7 +25,7 @@ TypeDef_Of(TypeDef_ptr);
 
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType())
+  if(td->IsTaBase() && md->type->IsBasePointerType())
     return inherited::BidForMember(md,td) + 1;
   return 0;
 }
@@ -34,7 +34,7 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   // setting mode now is good for rest of life
-  if (mbr->type->DerivesFrom(TA_taBase))
+  if (mbr->type->IsTaBase())
     mode = MD_BASE;
   else if (mbr->type->DerivesFrom(TA_taSmartPtr))
     mode = MD_SMART_PTR;
@@ -155,8 +155,6 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   TypeDef* targ_typ = GetMinType(base);
 
   taBase* scope = (taBase*)base;
-/*nn    if((rval->host != NULL) && (rval->host)->GetRootTypeDef()->InheritsFrom(TA_taBase))
-      scope = (taBase*)(rval->host)->Base(); */
   TypeDef* scope_type = NULL;
   if(mbr->HasOption("NO_SCOPE")) {
     scope = NULL;

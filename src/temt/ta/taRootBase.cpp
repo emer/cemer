@@ -30,6 +30,7 @@
 #include <ConsoleDockViewer>
 #include <iNetworkAccessManager>
 #include <taGenDoc>
+#include "ta_type_constr.h"
 
 TypeDef_Of(PluginWizard);
 
@@ -1217,10 +1218,11 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   return true;
 }
 
-bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
-  // first initialize the types
-  if(ta_init_fun)
-    (*ta_init_fun)();
+bool taRootBase::Startup_InitTA() {
+  // first initialize the type data from maketa generated files, registered here:
+  TypeDefInitRegistrar::CallAllTypeInitFuns();
+  TypeDefInitRegistrar::CallAllDataInitFuns();
+
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 
@@ -1752,9 +1754,7 @@ bool taRootBase::Startup_RunStartupScript() {
   return true;
 }
 
-bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun,
-                              TypeDef* root_typ)
-{
+bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) {
   ++in_init;
   root_type = root_typ;
 #ifdef GPROF
@@ -1779,7 +1779,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
   if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
   if(!Startup_InitApp(argc, argv)) goto startup_failed;
-  if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
+  if(!Startup_InitTA()) goto startup_failed;
   if(!Startup_InitTypes()) goto startup_failed;
   if(!Startup_EnumeratePlugins()) goto startup_failed;
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration

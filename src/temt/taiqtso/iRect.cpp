@@ -36,9 +36,9 @@ iRect::operator QRect() const {
 #endif
 
 iRect::iRect(): x(0), y(0), w(0), h(0) {}
-iRect::iRect(const iPoint& topLeft, const iPoint& bottomRight)
+iRect::iRect(const iVec2i& topLeft, const iVec2i& bottomRight)
     : x(topLeft.x), y(topLeft.y), w(bottomRight.x - topLeft.x), h(bottomRight.y - topLeft.y) {}
-iRect::iRect(const iPoint& topLeft, const iSize& size )
+iRect::iRect(const iVec2i& topLeft, const iSize& size )
     : x(topLeft.x), y(topLeft.y), w(size.w), h(size.h) {}
 iRect::iRect(int left, int top, int width, int height)
     : x(left), y(top), w(width), h(height) {}

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMenu.h"
-#include <iPoint>
+#include <iVec2i>
 
 
 taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -44,7 +44,7 @@ void taiMenu::init()
 taiMenu::~taiMenu() {
 }
 
-void taiMenu::exec(const iPoint& pos) {
+void taiMenu::exec(const iVec2i& pos) {
   menu()->exec((QPoint)pos);
 }
 

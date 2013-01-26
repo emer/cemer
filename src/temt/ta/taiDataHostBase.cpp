@@ -114,7 +114,7 @@ void taiDataHostBase::Apply() {
 }
 
 taBase* taiDataHostBase::Base_() const {
-  if (typ && typ->InheritsFrom(&TA_taBase))
+  if (typ && typ->IsTaBase())
     return (taBase*)root;
   else return NULL;
 }

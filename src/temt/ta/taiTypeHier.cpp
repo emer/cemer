@@ -67,7 +67,7 @@ int taiTypeHier::CountChildren(TypeDef* td) {
   TypeDef* chld;
   for (int i = 0; i < td->children.size; ++i) {
     chld = td->children[i];
-    if (chld->ptr != 0)
+    if (chld->IsAnyPtr())
       continue;
     ++rval;
   }
@@ -115,7 +115,7 @@ void taiTypeHier::GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMe
   // add entries for the subclasses
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);
-    if (chld->ptr != 0)
+    if (chld->IsAnyPtr())
       continue;
 
     if ((CountChildren(chld) > 0) || (CountEnums(chld) > 0))
@@ -134,7 +134,7 @@ void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAct
   }
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);
-    if (chld->ptr != 0)
+    if (chld->IsAnyPtr())
       continue;
     if (!AddType_Class(chld)) {
       if (chld->IsTemplInst() && (chld->children.size == 1)) {

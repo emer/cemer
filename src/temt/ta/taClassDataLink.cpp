@@ -14,6 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taClassDataLink.h"
+#include <BuiltinTypeDefs>
+
+TypeDef_Of(EnumDef);
+TypeDef_Of(TokenDef);
+TypeDef_Of(MemberDef);
+TypeDef_Of(PropertyDef);
+TypeDef_Of(MethodDef);
+TypeDef_Of(TypeDef);
 
 TypeDef_Of(EnumSpace);
 TypeDef_Of(TokenSpace);

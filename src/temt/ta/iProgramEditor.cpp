@@ -493,7 +493,7 @@ void iProgramEditor::GetValue() {
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
 
-  if(typ->InheritsFrom(TA_taBase) && base) {
+  if(typ->IsTaBase() && base) {
     taProject* proj = (taProject*)((taBase*)base)->GetOwner(&TA_taProject);
     if(proj) {
       proj->undo_mgr.SaveUndo(base, "Edit", base);
@@ -513,7 +513,7 @@ void iProgramEditor::GetValue() {
       }
     }
   }
-  if (typ->InheritsFrom(TA_taBase)) {
+  if (typ->IsTaBase()) {
     base->UpdateAfterEdit();    // hook to update the contents after an edit..
     base->MakeNameUnique();
 //shouldn't be necessary    taiMisc::Update(base);

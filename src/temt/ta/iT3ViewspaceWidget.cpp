@@ -17,7 +17,7 @@
 #include <iSoSelectionEvent>
 #include <T3ExaminerViewer>
 #include <iT3DataViewFrame>
-#include <iPoint>
+#include <iVec2i>
 #include <T3DataView>
 #include <taiDataLink>
 

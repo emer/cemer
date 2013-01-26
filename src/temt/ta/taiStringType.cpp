@@ -19,7 +19,7 @@
 
 
 int taiStringType::BidForType(TypeDef* td){
-  if (td->InheritsFrom(TA_taString))
+  if (td->IsString())
     return(taiType::BidForType(td) + 2); // outbid class
   return 0;
 }

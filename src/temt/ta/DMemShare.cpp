@@ -101,7 +101,7 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
     DMemShareVar* var = (DMemShareVar*)vars[shrset];
 
     MPI_Datatype new_type = MPI_DATATYPE_NULL;
-    if(md->type->ptr > 0) {
+    if(md->type->IsAnyPtr()) {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for a pointer in type:",
 		    td->name, ", member:", md->name,
 		    "Pointers can not be shared.");

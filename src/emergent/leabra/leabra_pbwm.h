@@ -26,6 +26,8 @@
 // based on the pvlv reinforcement learning mechanism
 // this file defines BG + PFC gating/active maintenance mechanisms
 
+TypeDef_Of(PBWMUnGpData);
+
 class LEABRA_API PBWMUnGpData : public LeabraUnGpData {
   // PBWM version of data to maintain for independent unit groups of competing units within a single layer -- contains extra information for PBWM state
 INHERITED(LeabraUnGpData)
@@ -57,6 +59,8 @@ private:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
+TypeDef_Of(SNrThalMiscSpec);
+
 class LEABRA_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
@@ -75,6 +79,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(SNrThalLayerSpec);
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
   // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_mid, gating status in unit group data per stripe
@@ -148,6 +154,8 @@ public:
   MatrixCon() { sact_lrn = 0.0f; }
 };
 
+TypeDef_Of(MatrixConSpec);
+
 class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for Matrix_Go connections only -- use MatrixNoGoConSpec for NoGo pathway
 INHERITED(LeabraConSpec)
@@ -215,6 +223,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(MatrixNoGoConSpec);
 
 class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
   // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_mid).  also uses recv scale_eff for stripe-specific wt scale params
@@ -286,6 +296,8 @@ private:
 };
 
 
+TypeDef_Of(MatrixBiasSpec);
+
 class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
   // Matrix bias spec: special learning parameters for matrix units
 INHERITED(LeabraBiasSpec)
@@ -316,6 +328,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(MatrixUnitSpec);
+
 class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 INHERITED(LeabraUnitSpec)
@@ -337,6 +351,8 @@ private:
 //////////////////////////////////
 //	  Matrix Layer Spec	//
 //////////////////////////////////
+
+TypeDef_Of(MatrixMiscSpec);
 
 class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
@@ -361,6 +377,8 @@ private:
   void	Defaults_init() { };
 };
 
+TypeDef_Of(MatrixGoNogoGainSpec);
+
 class LEABRA_API MatrixGoNogoGainSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 INHERITED(SpecMemberBase)
@@ -382,6 +400,8 @@ private:
   void	Defaults_init() { };
 };
 
+
+TypeDef_Of(MatrixLayerSpec);
 
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer -- one for Go pathway and another for NoGo pathway -- Go recv marker con from NoGo, both recv from SNrThal to get final go signal
@@ -473,6 +493,8 @@ private:
 //	PFC Layer Spec (Maintenance)	//
 //////////////////////////////////////////
 
+TypeDef_Of(PFCDeepGatedConSpec);
+
 class LEABRA_API PFCDeepGatedConSpec : public LeabraConSpec {
   // projection from PFC Deep layers that goes via thalamus to another PFC layer, and is thus subject to gating in that layer -- just uses recv based scale_eff on con group for netin scaling, so it is stripe specific
 INHERITED(LeabraConSpec)
@@ -521,6 +543,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(PFCsUnitSpec);
+
 class LEABRA_API PFCsUnitSpec : public LeabraUnitSpec {
   // superficial layer PFC unit spec -- drives maintenance activation values
 INHERITED(LeabraUnitSpec)
@@ -537,6 +561,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(PFCGateSpec);
 
 class LEABRA_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
@@ -562,6 +588,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(PFCLayerSpec);
 
 class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
   // #AKA_PFCDeepLayerSpec Prefrontal cortex layer -- deep and superficial types
@@ -657,6 +685,8 @@ private:
 //	    Special PrjnSpecs	 	//
 //////////////////////////////////////////
 
+TypeDef_Of(GpCustomPrjnSpecBase);
+
 class LEABRA_API GpCustomPrjnSpecBase : public ProjectionSpec {
   // #VIRT_BASE basic custom group-level projection spec -- core methods for connecting groups
 INHERITED(ProjectionSpec)
@@ -682,6 +712,8 @@ private:
 };
 
 
+TypeDef_Of(PFCLVPrjnSpec);
+
 class LEABRA_API PFCLVPrjnSpec : public GpCustomPrjnSpecBase {
   // A special projection spec for PFC to LVe/i layers. If n unit groups (stripes) in LV == PFC, then it makes Gp one-to-one projections; if LV stripes == 1, it makes a single full projection; if LV stripes == PFC + 1, the first projection is full and the subsequent are gp one-to-one; if recv fm multiple PFC layers, same logic applies to each
 INHERITED(GpCustomPrjnSpecBase)
@@ -698,6 +730,8 @@ private:
   void	Defaults_init() 	{ };
 };
 
+TypeDef_Of(SNrPrjnSpec);
+
 class LEABRA_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
   // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, IN_MNT, OUTPUT, etc.) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
@@ -712,6 +746,8 @@ private:
   void 	Destroy()		{ };
   void	Defaults_init() 	{ };
 };
+
+TypeDef_Of(PVrToMatrixGoPrjnSpec);
 
 class LEABRA_API PVrToMatrixGoPrjnSpec : public ProjectionSpec {
   // Projection from PVLV PVr layer to Matrix_Go layer -- PVr=1 value unit (right-most) connects to Output Go units, while PVr=.5 value unit (middle) connects to Input and Maint Go units, providing a bias for output gating when rewards are expected
@@ -728,6 +764,8 @@ private:
   void	Defaults_init() 	{ };
 };
 
+
+TypeDef_Of(TopoWtsPrjnSpec);
 
 class EMERGENT_API TopoWtsPrjnSpec : public FullPrjnSpec {
   // #AKA_FullTopolGradWtsPrjnSpec full connectivity, with user-definable topologically-defined gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units (unit groups) in the same topologically relative location as the receiving unit (unit groups), and fall off from there (either linearly or as a Gaussian; other functions can be added) -- if send and/or recv layer(s) have unit groups, then use_send_gps/use_recv_gps must be checked and it is the unit group position that counts -- all params then refer to un_gp position indices and all units within the send and/or recv group have the same connectivity (TODO: can this be overridden with use_recv_gps, use_send_grps flags? i.e., are these flags optional? depends on how the indexing works!!); subsets of units (un_gps) can also be designated for either sending layer, receiving layer, or both

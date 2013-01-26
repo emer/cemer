@@ -24,8 +24,8 @@
 TypeDef_Of(TypeDef_ptr);
 
 int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if (td->InheritsFrom(TA_taBase) &&
-     (argt->IsPointer()) && argt->DerivesFrom(TA_taBase))
+  if (td->IsTaBase() &&
+     (argt->IsPointer()) && argt->IsTaBase())
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }
@@ -85,7 +85,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   //  taiToken* rval = (taiToken*)dat;
   taBase* scope = NULL;
   if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
-          (rval->host->GetRootTypeDef()->InheritsFrom(TA_taBase)))
+          (rval->host->GetRootTypeDef()->IsTaBase()))
     scope = (rval->host)->Base();
   else
     scope = (taBase*)base;

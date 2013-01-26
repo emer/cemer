@@ -17,7 +17,7 @@
 #include <iMainWindowViewer>
 #include <taiClipData>
 #include <CellRange>
-#include <iPoint>
+#include <iVec2i>
 
 #include <taMisc>
 #include <taiMisc>

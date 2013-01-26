@@ -32,6 +32,9 @@ class iTreeWidgetItem; // #IGNORE
 #ifndef __MAKETA__
 #include <iTreeView>
 #include <taiActions>
+#else
+class iTreeView;
+class taiActions;
 #endif
 
 /* Node Bitmap flags

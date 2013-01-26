@@ -45,6 +45,8 @@
 // learning just happens at end of trial as usual, but encoder projections use
 // the act_mid, act_p variables to learn on the right signals
 
+TypeDef_Of(ThetaPhaseLayerSpec);
+
 class LEABRA_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
   // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning
 INHERITED(LeabraLayerSpec)
@@ -66,6 +68,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(ECinLayerSpec);
+
 class LEABRA_API ECinLayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for EC input layers that implements ThetaPhase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(ThetaPhaseLayerSpec)
@@ -78,6 +82,8 @@ private:
   void	Destroy()		{ };
 };
 
+TypeDef_Of(CA3LayerSpec);
+
 class LEABRA_API CA3LayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for CA3 layers that implements ThetaPhase learning -- this serves only as a marker for CA1 layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(ThetaPhaseLayerSpec)
@@ -87,6 +93,8 @@ private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
 };
+
+TypeDef_Of(ECoutLayerSpec);
 
 class LEABRA_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for EC out layers that implements ThetaPhase learning -- automatically clamps to EC in activations in plus phase and records act_mid mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_mid)
@@ -110,6 +118,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(CA1LayerSpec);
 
 class LEABRA_API CA1LayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for CA1 layers that implements ThetaPhase learning -- modulates EC_in and CA1 weight scale strengths, and records act_mid mid minus for auto encoder
@@ -139,6 +149,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init()		{ };
 };
+
+TypeDef_Of(SubiculumNoveltySpec);
 
 class LEABRA_API SubiculumNoveltySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
@@ -172,6 +184,8 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+TypeDef_Of(SubiculumLayerSpec);
+
 class LEABRA_API SubiculumLayerSpec : public ScalarValLayerSpec {
   // layer spec for subiculum layer that computes an online novely signal based on the mismatch between EC_in and EC_out, and optionally modulates learning rate in conspec (for perforant path etc) as a function of novelty -- recv prjns must be sequential matched pairs of ECin and ECout layers
 INHERITED(ScalarValLayerSpec)
@@ -204,6 +218,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(HippoEncoderConSpec);
 
 class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
   // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_mid) -- soft bounding as specified in spec
@@ -254,6 +270,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init() 	{ Initialize(); }
 };
+
+TypeDef_Of(XCalCHLConSpec);
 
 class LEABRA_API XCalCHLConSpec : public LeabraConSpec {
   // does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..

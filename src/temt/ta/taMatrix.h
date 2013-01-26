@@ -25,6 +25,7 @@
 
 // member includes:
 #include <MatrixGeom>
+#include <BuiltinTypeDefs>
 
 // declare all other types mentioned but not required to include:
 class int_Matrix; // 

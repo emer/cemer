@@ -119,17 +119,17 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
     name = type->name;
   }
 #ifndef NO_TA_BASE
-  if(type->InheritsFrom(&TA_taBase)) {
+  if(type->IsTaBase()) {
     if(!mdef && nest_level > 0)
       value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
     else
       value = type->name;               // this is the relevant info at this level for diffing
   }
-  else if(((type->IsPointer()) && type->DerivesFrom(&TA_taBase)) ||
+  else if(((type->IsPointer()) && type->IsTaBase()) ||
            type->InheritsFrom(TA_taSmartRef) ||
            type->InheritsFrom(TA_taSmartPtr)) {
     taBase* rbase = NULL;
-    if((type->IsPointer()) && type->DerivesFrom(&TA_taBase)) rbase = *((taBase**)addr);
+    if((type->IsPointer()) && type->IsTaBase()) rbase = *((taBase**)addr);
     else if(type->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
     else if(type->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
     if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
@@ -154,7 +154,7 @@ void taObjDiffRec::ComputeHashCode() {
 
 String taObjDiffRec::GetDisplayName() {
 #ifndef NO_TA_BASE
-  if(!mdef && addr && type->InheritsFrom(&TA_taBase)) {
+  if(!mdef && addr && type->IsTaBase()) {
     return name + ": " + ((taBase*)addr)->GetDisplayName();
   }
 #endif
@@ -164,7 +164,7 @@ String taObjDiffRec::GetDisplayName() {
 bool taObjDiffRec::ActionAllowed() {
   if(HasDiffFlag(DIFF_ADDEL)) {
     if(HasDiffFlag(SUB_NO_ACT)) return false;
-    if(!type->InheritsFrom(&TA_taBase)) return false;
+    if(!type->IsTaBase()) return false;
   }
   else if(HasDiffFlag(DIFF_PAR)) {
     return false;

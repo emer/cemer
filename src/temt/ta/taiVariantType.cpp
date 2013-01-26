@@ -19,7 +19,7 @@
 
 
 int taiVariantType::BidForType(TypeDef* td){
-  if(td->InheritsFrom(TA_Variant))
+  if(td->IsVariant())
     return(taiType::BidForType(td) + 2); // outbid taiClass type
   return 0;
 }

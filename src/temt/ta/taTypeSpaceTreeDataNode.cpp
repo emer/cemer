@@ -130,12 +130,7 @@ bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
   if (!tsdl->ShowChild(td)) return false;
   if (!ShowItem(td)) return false;
   // basic behavior is that we don't show derivitive types, ex. consts, refs, ptrs, etc.
-  if ((td->ptr > 0) 
-    || (td->ref)
-    || (td->formal)
-  ) return false;
-  // need to check parentage for const -- (note: const is not formal for some weird reason)
-  if (td->IsConst()) 
+  if (td->IsNotActual())
     return false;
   
   return true;

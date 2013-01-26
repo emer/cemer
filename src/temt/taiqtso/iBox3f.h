@@ -46,6 +46,8 @@ class SbBox3f;          // #IGNORE
    are coincident with the coordinate planes
 */
 
+TypeDef_Of(iBox3f);
+
 class TAIQTSO_API iBox3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d box, typically used for a bounding box in a normalized coordinate system
 public:
   iVec3f        min; // minimum point

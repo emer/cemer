@@ -16,21 +16,22 @@
 #include "taiIntType.h"
 #include <taiIncrField>
 #include <MemberDef>
+#include <BuiltinTypeDefs>
 
 
 int taiIntType::BidForType(TypeDef* td){
 //NOTE: we can't properly handle uints, so we don't bid for them
 // we left the handler code in the other routines, in case we implement them
   // we handle all numeric int types < 32 bits but NOT uint/ulong
-  if (td->DerivesFrom(&TA_int)
-      || td->DerivesFrom(&TA_short)
-      || td->DerivesFrom(&TA_unsigned_short)
-      || td->DerivesFrom(&TA_signed_char)
-      || td->DerivesFrom(&TA_unsigned_char))
+  if(td->IsInt() && (td->DerivesFrom(&TA_int)
+                     || td->DerivesFrom(&TA_short)
+                     || td->DerivesFrom(&TA_unsigned_short)
+                     || td->DerivesFrom(&TA_signed_char)
+                     || td->DerivesFrom(&TA_unsigned_char)))
   {
     return (taiType::BidForType(td) +1);
   }
-  else if (td->DerivesFrom(&TA_QAtomicInt))
+  else if (td->DerivesFrom(&TA_taAtomicInt))
   {
     // needs higher bid to overcome class
     return (taiType::BidForType(td) +10);
@@ -60,7 +61,7 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
     it = val.toInt();
     max = MIN(max, it);
   }
-  if (typ->DerivesFrom(&TA_int) || typ->DerivesFrom(&TA_QAtomicInt)) {
+  if (typ->DerivesFrom(&TA_int) || typ->DerivesFrom(&TA_taAtomicInt)) {
     min = MAX(min, INT_MIN);
     max = MIN(max, INT_MAX);
 //  }
@@ -140,8 +141,8 @@ void taiIntType::GetValue_impl(taiData* dat, void* base) {
   else if (typ->DerivesFrom(&TA_unsigned_char)) {
     *((unsigned char*)base) = (unsigned char)val;
   }
-  else if (typ->DerivesFrom(&TA_QAtomicInt)) {
-    *((QAtomicInt*)base) = val;
+  else if (typ->DerivesFrom(&TA_taAtomicInt)) {
+    *((taAtomicInt*)base) = val;
   }
   else {
     // should never happen

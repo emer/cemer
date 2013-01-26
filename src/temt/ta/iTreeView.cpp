@@ -25,7 +25,7 @@
 #include <taiClipData>
 #include <taiObjectMimeFactory>
 #include <iBrowseHistory>
-#include <iPoint>
+#include <iVec2i>
 
 #include <DataChangedReason>
 #include <taMisc>

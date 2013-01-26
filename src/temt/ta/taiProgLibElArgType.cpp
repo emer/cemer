@@ -20,7 +20,7 @@ TypeDef_Of(ProgLibEl);
 
 
 int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProgLibEl))
+  if (!argt->IsPointer() || !argt->DerivesFrom(TA_ProgLibEl))
     return 0;
   return gpiFromGpArgType::BidForArgType(aidx,argt,md,td)+1;
 }

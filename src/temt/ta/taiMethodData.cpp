@@ -58,7 +58,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
   base = bs;
   meth = md;
   gui_parent = gui_parent_;
-  if(base && typ && typ->InheritsFrom(TA_taBase)) {
+  if(base && typ && typ->IsTaBase()) {
     typ = ((taBase*)base)->GetTypeDef(); // get the *actual* type def of this object!
   }
   is_menu_item = false;
@@ -100,7 +100,7 @@ bool taiMethodData::CallFun_impl() {
   String meth_name = meth->name; // in case we delete
 
   // save undo state!
-  if (typ->InheritsFrom(TA_taBase)) {
+  if (typ->IsTaBase()) {
     taBase* tab = (taBase*)base;
     taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
     if(proj) {
@@ -141,7 +141,7 @@ bool taiMethodData::CallFun_impl() {
     return (bool)ths;
   }
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
-  if (typ->InheritsFrom(TA_taBase)) {
+  if (typ->IsTaBase()) {
     bool ok;
     iColor bgclr = ((taBase*)base)->GetEditColorInherit(ok);
     if (ok) arg_dlg->setBgColor(bgclr);
@@ -248,7 +248,7 @@ void taiMethodData::UpdateAfter() {
   }
   // this is inside the host itself
   if ((host->GetRootTypeDef() != NULL) &&
-    host->GetRootTypeDef()->InheritsFrom(TA_taBase))
+    host->GetRootTypeDef()->IsTaBase())
   {
     taBase* tap = host->Base();
     if (tap && meth->HasOption("UPDATE_MENUS")) {
@@ -259,7 +259,7 @@ void taiMethodData::UpdateAfter() {
 }
 
 void taiMethodData::GenerateScript() {
-  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->IsTaBase())
     return;
 
 #ifndef DMEM_COMPILE
@@ -284,7 +284,7 @@ void taiMethodData::GenerateScript() {
   int_Array tmp_objs;           // indicies of the temp objects
   for (int i = 0; i < arg_dlg->type_el.size; ++i) {
     taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(i);
-    if((art->arg_typ->IsNotPtr()) && art->arg_typ->DerivesFrom(TA_taBase))
+    if((art->arg_typ->IsNotPtr()) && art->arg_typ->IsTaBase())
       tmp_objs.Add(i+1);
   }
   if (tmp_objs.size > 0) {

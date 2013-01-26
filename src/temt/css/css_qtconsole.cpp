@@ -192,7 +192,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
     TypeDef* st = par_td->sub_types.FastEl(i);
     if(st->name(0,len) == mb_name)
       lst.append(par_path + st->name);
-    if(st->InheritsFormal(TA_enum)) {
+    if(st->IsEnum()) {
       for(int j=0;j<st->enum_vals.size; j++) {
         EnumDef* en = st->enum_vals.FastEl(j);
         if(en->name(0,len) == mb_name)

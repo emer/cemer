@@ -20,7 +20,7 @@
 TypeDef_Of(ProjTemplateEl);
 
 int taiProjTemplateElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
-  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProjTemplateEl))
+  if (!argt->IsPointer() || !argt->DerivesFrom(TA_ProjTemplateEl))
     return 0;
   return gpiFromGpArgType::BidForArgType(aidx,argt,md,td)+1;
 }

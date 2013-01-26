@@ -21,6 +21,7 @@
 #include <taiBitBox>
 #include <iLineEdit>
 #include <iComboBox>
+#include <BuiltinTypeDefs>
 
 
 #include <QHBoxLayout>

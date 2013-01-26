@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "EditMbrItem.h"
+#include <BuiltinTypeDefs>
 
 
 void EditMbrItem::Initialize() {
@@ -41,7 +42,7 @@ void EditMbrItem::UpdateAfterEdit_impl() {
     prv_desc = desc;
   }
   is_numeric = false;
-  if(mbr && !mbr->type->InheritsNonAtomicClass()) {
+  if(mbr && mbr->type->IsAtomic()) {
     if(mbr->type->InheritsFrom(&TA_float) || mbr->type->InheritsFrom(&TA_double)
        || mbr->type->InheritsFrom(&TA_int) || mbr->type->InheritsFrom(&TA_int64_t)) {
       if(!mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY"))

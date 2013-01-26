@@ -24,6 +24,8 @@
 
 // extra specialized classes for variations on the Leabra algorithm
 
+TypeDef_Of(MarkerConSpec);
+
 class LEABRA_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 INHERITED(LeabraConSpec)
@@ -54,6 +56,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(LayerActUnitSpec);
+
 class LEABRA_API LayerActUnitSpec : public LeabraUnitSpec {
   // Layer-driven activation unit spec -- use this for any layer that computes activation values at the layer-level, instead of using the usual net input, currents etc -- saves on computational costs by negating most functions
 INHERITED(LeabraUnitSpec)
@@ -77,6 +81,8 @@ private:
 // 	Context Layer for Sequential	//
 //////////////////////////////////////////
 
+TypeDef_Of(CtxtUpdateSpec);
+
 class LEABRA_API CtxtUpdateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
 INHERITED(SpecMemberBase)
@@ -97,6 +103,8 @@ private:
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
+TypeDef_Of(CtxtNSpec);
+
 class LEABRA_API CtxtNSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
 INHERITED(SpecMemberBase)
@@ -114,6 +122,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(LeabraContextLayerSpec);
 
 class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
@@ -158,6 +168,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init();
 };
+
+TypeDef_Of(LeabraTILayerSpec);
 
 class LEABRA_API LeabraTILayerSpec : public LeabraLayerSpec {
   // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- effectively a simple recurrent network (SRN) context layer at this point, with a flexible api for future expansion -- only really need to use this for DEEP (Context) layers -- supers can be any layerspec -- deep should also have LayerActUnitSpec unit spec to optimize computation
@@ -204,6 +216,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(LeabraMultCopyLayerSpec);
+
 class LEABRA_API LeabraMultCopyLayerSpec : public LeabraLayerSpec {
   // layer that copies activations from one layer and multiplies them by values from another -- i.e., multiplicative gating -- must recv from 2 prjns (any more ignored) -- first is copy activation, second is multiplication activation
 INHERITED(LeabraLayerSpec)
@@ -238,6 +252,8 @@ private:
 // 	Misc Special Objects		//
 //////////////////////////////////////////
 
+TypeDef_Of(LeabraLinUnitSpec);
+
 class LEABRA_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
 INHERITED(LeabraUnitSpec)
@@ -254,6 +270,8 @@ private:
 };
 
 // note: the following is not compatible with the leabra unit equations
+
+TypeDef_Of(IzhikevichSpec);
 
 // class LEABRA_API IzhikevichSpec : public taOBase {
 //   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Izhikevich simplified Hodgkin-Huxley type spiking dynamics -- uses SPIKE mode and adds special v_m dynamics -- default parameters are for normalized V_m range (0-1) which corresponds to -90..50 in neural mV terms
@@ -291,6 +309,8 @@ private:
 //   void	Destroy()	{ };
 // };
 
+
+TypeDef_Of(LeabraNegBiasSpec);
 
 class LEABRA_API LeabraNegBiasSpec : public LeabraBiasSpec {
   // only learns negative bias changes, not positive ones (decay restores back to zero)
@@ -336,6 +356,8 @@ private:
 //////////////////////////////////////////////////////////////////
 // 	Variations of XCAL
 
+TypeDef_Of(XCalSRAvgConSpec);
+
 class LEABRA_API XCalSRAvgConSpec : public LeabraConSpec {
   // send-recv average at the connection level learning in XCal
 INHERITED(LeabraConSpec)
@@ -378,6 +400,8 @@ private:
 };
 
 
+TypeDef_Of(XCalHebbConSpec);
+
 class LEABRA_API XCalHebbConSpec : public LeabraConSpec {
   // xcal version of hebbian learning
 INHERITED(LeabraConSpec)
@@ -412,6 +436,8 @@ private:
 // todo: this should be supported with a special unit and unitspec where needed -- completely 
 // untested at this point..
 //
+TypeDef_Of(XCalMlTraceConSpec);
+
 // class LEABRA_API XCalMlTraceConSpec : public LeabraConSpec {
 //   // xcal with ml_mix > 0 -- provides a trace of recv activation in learning
 // INHERITED(LeabraConSpec)
@@ -455,6 +481,8 @@ private:
 //////////////////////////////////////////
 // 	Synaptic Depression: Trial Level
 
+TypeDef_Of(TrialSynDepCon);
+
 class LEABRA_API TrialSynDepCon : public LeabraCon {
   // synaptic depression connection at the trial level (as opposed to cycle level)
 INHERITED(LeabraCon)
@@ -463,6 +491,8 @@ public:
 
   TrialSynDepCon() { effwt = 0.0f; }
 };
+
+TypeDef_Of(TrialSynDepSpec);
 
 class LEABRA_API TrialSynDepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
@@ -482,6 +512,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { };
 };
+
+TypeDef_Of(TrialSynDepConSpec);
 
 class LEABRA_API TrialSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the trial level (as opposed to cycle level)
@@ -595,6 +627,8 @@ private:
 ////////////////////////////////////////////////////////////////
 //      Synaptic Depression: Cycle Level, simple
 
+TypeDef_Of(CycleSynDepCon);
+
 class LEABRA_API CycleSynDepCon : public LeabraCon {
   // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
 INHERITED(LeabraCon)
@@ -603,6 +637,8 @@ public:
 
   CycleSynDepCon() { effwt = 0.0f; }
 };
+
+TypeDef_Of(CycleSynDepSpec);
 
 class LEABRA_API CycleSynDepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
@@ -633,6 +669,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(CycleSynDepConSpec);
 
 class LEABRA_API CycleSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
@@ -719,6 +757,8 @@ private:
 ////////////////////////////////////////////////////////////////
 //      Synaptic Depression: Cycle Level, Ca-Based
 
+TypeDef_Of(CaiSynDepCon);
+
 class LEABRA_API CaiSynDepCon : public LeabraCon {
   // synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraCon)
@@ -728,6 +768,8 @@ public:
 
   CaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
 };
+
+TypeDef_Of(CaiSynDepSpec);
 
 class LEABRA_API CaiSynDepSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
@@ -769,6 +811,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(CaiSynDepConSpec);
 
 class LEABRA_API CaiSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the cycle level, based on synaptic integration of calcium
@@ -876,6 +920,8 @@ private:
 
 // todo: could inherit from CaiSynDepCon/Spec and probably save a lot of code, but sravg guys might be more difficult -- try that later
 
+TypeDef_Of(SRAvgCaiSynDepCon);
+
 class LEABRA_API SRAvgCaiSynDepCon : public LeabraSRAvgCon {
   // send-recv average at the connection level learning in XCal, combined with synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraCon)
@@ -885,6 +931,8 @@ public:
 
   SRAvgCaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
 };
+
+TypeDef_Of(SRAvgCaiSynDepConSpec);
 
 class LEABRA_API SRAvgCaiSynDepConSpec : public LeabraConSpec {
   // send-recv average at the connection level learning in XCal, synaptic depression connection at the cycle level, based on synaptic integration of calcium
@@ -1016,6 +1064,8 @@ private:
 
 // todo: this code needs a lot of work!
 
+TypeDef_Of(FastWtCon);
+
 class LEABRA_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
@@ -1024,6 +1074,8 @@ public:
 
   FastWtCon() { swt = sdwt = 0.0f; }
 };
+
+TypeDef_Of(FastWtSpec);
 
 class LEABRA_API FastWtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
@@ -1060,6 +1112,8 @@ private:
 // and calls Compute_Weights after each trial..
 
 // TODO: following code is not dealing with contrast enhancement on the swt vals!!!!
+
+TypeDef_Of(FastWtConSpec);
 
 class LEABRA_API FastWtConSpec : public LeabraConSpec {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
@@ -1167,6 +1221,8 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //	Activation Trace Hebbian learning (Foldiak, Rolls etc)
 
+TypeDef_Of(ActAvgHebbMixSpec);
+
 class LEABRA_API ActAvgHebbMixSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
 INHERITED(SpecMemberBase)
@@ -1186,6 +1242,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(ActAvgHebbConSpec);
 
 class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
   // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories -- only for Leabra_CHL
@@ -1225,6 +1283,8 @@ private:
   void	Destroy()		{ };
   void	Defaults_init() 	{ };
 };
+
+TypeDef_Of(LeabraDeltaConSpec);
 
 class LEABRA_API LeabraDeltaConSpec : public LeabraConSpec {
   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
@@ -1305,6 +1365,8 @@ public:
   }
 };
 
+TypeDef_Of(XCALSpikeSpec);
+
 class LEABRA_API XCALSpikeSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
 INHERITED(SpecMemberBase)
@@ -1333,6 +1395,8 @@ private:
   void	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(LeabraXCALSpikeConSpec);
 
 class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
   // XCAL purely spiking learning rule based on Urakubo et al 2008 -- computes a postsynaptic calcium value that drives learning using the XCAL_C fully continous-time learning parameters
@@ -1445,6 +1509,8 @@ private:
 ////////////////////////////////////////////////////////////////////////
 //	Limited precision weights: for hardware impl testing
 
+TypeDef_Of(LeabraLimPrecConSpec);
+
 class LEABRA_API LeabraLimPrecConSpec : public LeabraConSpec {
   // ##CAT_Leabra Leabra limited precision connection specs: limits weight values to specified level of precision between 0-1
 INHERITED(LeabraConSpec)
@@ -1499,6 +1565,8 @@ private:
 ////////////////////////////////////////////////////////////////////////
 //	da-noise modulated learning as in MazzoniAndersenJordan91
 
+TypeDef_Of(LeabraDaNoise);
+
 class LEABRA_API LeabraDaNoise : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
 INHERITED(SpecMemberBase)
@@ -1518,6 +1586,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(LeabraDaNoiseConSpec);
 
 class LEABRA_API LeabraDaNoiseConSpec : public LeabraConSpec {
   // ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
@@ -1611,6 +1681,8 @@ private:
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
 
+TypeDef_Of(ScalarValSpec);
+
 class LEABRA_API ScalarValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
 INHERITED(SpecMemberBase)
@@ -1655,6 +1727,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(ScalarValBias);
+
 class LEABRA_API ScalarValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
@@ -1694,6 +1768,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(ScalarValLayerSpec);
 
 class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
   // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
@@ -1795,6 +1871,8 @@ private:
   void	Defaults_init();
 };
 
+TypeDef_Of(ScalarValSelfPrjnSpec);
+
 class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
   // special projection for making self-connection that establishes neighbor similarity in scalar val
 INHERITED(ProjectionSpec)
@@ -1817,6 +1895,8 @@ private:
   void 	Destroy()		{ };
   void	Defaults_init() 	{ };
 };
+
+TypeDef_Of(MotorForceSpec);
 
 class LEABRA_API MotorForceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
@@ -1857,6 +1937,8 @@ private:
   void	Defaults_init() { };
 };
 
+TypeDef_Of(MotorForceLayerSpec);
+
 class LEABRA_API MotorForceLayerSpec : public ScalarValLayerSpec {
   // represents motor force as a function of joint position and velocity using scalar val layer spec: layer uses unit groups -- each group represents a force (typically localist), and groups are organized in X axis by position, Y axis by velocity.  Overall value is weighted average from neighboring unit groups
 INHERITED(ScalarValLayerSpec)
@@ -1890,6 +1972,8 @@ private:
 //////////////////////////////////
 // 	TwoD Value Layer	//
 //////////////////////////////////
+
+TypeDef_Of(TwoDValLeabraLayer);
 
 class LEABRA_API TwoDValLeabraLayer : public LeabraLayer {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer)
@@ -1957,6 +2041,8 @@ private:
   void 	Destroy()		{ };
 };
 
+TypeDef_Of(TwoDValSpec);
+
 class LEABRA_API TwoDValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
 INHERITED(SpecMemberBase)
@@ -2009,6 +2095,8 @@ private:
   void	Defaults_init() { };
 };
 
+TypeDef_Of(TwoDValBias);
+
 class LEABRA_API TwoDValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
@@ -2042,6 +2130,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
+
+TypeDef_Of(TwoDValLayerSpec);
 
 class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires TwoDValLeabraLayer to encode values (no longer using first row of units)
@@ -2122,6 +2212,8 @@ private:
   void	Defaults_init() 	{ };
 };
 
+TypeDef_Of(DecodeTwoDValLayerSpec);
+
 class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
@@ -2148,6 +2240,8 @@ private:
 //////////////////////////////////
 // 	FourD Value Layer	//
 //////////////////////////////////
+
+TypeDef_Of(FourDValLeabraLayer);
 
 class LEABRA_API FourDValLeabraLayer : public LeabraLayer {
   // represents one or more four-d value(s) using a coarse-coded distributed code over units, with units within unit groups representing the Z,W coords and overall unit groups themselves representing X,Y coords.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of values 
@@ -2222,6 +2316,8 @@ private:
   void 	Destroy()		{ };
 };
 
+TypeDef_Of(FourDValSpec);
+
 class LEABRA_API FourDValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for four-dimensional values
 INHERITED(SpecMemberBase)
@@ -2272,6 +2368,8 @@ private:
   void	Defaults_init() { };
 };
 
+TypeDef_Of(FourDValBias);
+
 class LEABRA_API FourDValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for four-d value units
 INHERITED(SpecMemberBase)
@@ -2303,6 +2401,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { };
 };
+
+TypeDef_Of(FourDValLayerSpec);
 
 class LEABRA_API FourDValLayerSpec : public LeabraLayerSpec {
   // represents one or more four-d value(s) using a coarse-coded distributed code over units, with units within unit groups representing the Z,W coords and overall unit groups themselves representing X,Y coords.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires FourDValLeabraLayer to encode values (no longer using first row of units)
@@ -2384,6 +2484,8 @@ private:
 
 // this is invalidated by rewrite
 
+// TypeDef_Of(V1RFPrjnSpec);
+
 // class LEABRA_API V1RFPrjnSpec : public ProjectionSpec {
 //   // V1 receptive field projection spec: does overlapping tiled receptive fields with Gabor and Blob filter weights - rf_spec.rf_width specifies the width of the receptive field, and rf_move specifies how much to move in input coordinates per each recv group
 // INHERITED(ProjectionSpec)
@@ -2419,6 +2521,8 @@ private:
 //   void	Defaults_init() 	{ };
 // };
 
+TypeDef_Of(LeabraExtOnlyUnitSpec);
+
 class LEABRA_API LeabraExtOnlyUnitSpec : public LeabraUnitSpec {
   // only units with an above-threshold (opt_thresh.send) of ext input are allowed to get active -- soft clamping inputs provide a multiplicative mask on the input dynamics -- kind of a special form of sigma-pi unit -- useful e.g., for visual inputs computed by V2 layer, where network dynamics then operate to disambiguate, but cannot hallucinate -- if no ext input, uses first prjn, first con sending act
 INHERITED(LeabraUnitSpec)
@@ -2436,6 +2540,8 @@ private:
 };
 
 
+
+TypeDef_Of(SaliencyPrjnSpec);
 
 class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
   // Saliency projection spec from V1 layer: receiving layer must have a unit group for each feature, with each unit group having the V1 unit group geometry -- gets excitatory connection from feature corresponding to group index, and from all-but that feature in surrounding sending areas, producing a contrast enhancement effect.  Competition within group and across whole layer produces pop-out dynamics
@@ -2471,6 +2577,8 @@ private:
   void	Defaults_init() 	{ };
 };
 
+TypeDef_Of(V1LateralContourPrjnSpec);
+
 class LEABRA_API V1LateralContourPrjnSpec : public ProjectionSpec {
   // lateral projections within V1 layer to support continuation of contours -- helps make edges more robust to differences in bottom-up strength, based on principle of good continuation -- requires unit groups within layer where x dim represents angle
 INHERITED(ProjectionSpec)
@@ -2492,6 +2600,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(V2BoLateralPrjnSpec);
 
 class LEABRA_API V2BoLateralPrjnSpec : public ProjectionSpec {
   // lateral projections within V2 layer to support border ownership computation
@@ -2529,6 +2639,8 @@ private:
 };
 
 
+TypeDef_Of(FgBoEllipseGpPrjnEl);
+
 class EMERGENT_API FgBoEllipseGpPrjnEl : public taNBase {
   // #AKA_FgBoGroupingPrjnEl ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a figure-ground border-ownership grouping projection spec -- contains parameters for a specific sized item
 INHERITED(taNBase)
@@ -2560,6 +2672,8 @@ private:
   void	Destroy()	{ };
 };
 
+TypeDef_Of(FgBoEllipseGpPrjnEl_List);
+
 class EMERGENT_API FgBoEllipseGpPrjnEl_List : public taList<FgBoEllipseGpPrjnEl> {
   // #AKA_FgBoGroupingPrjnEl_List ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of FgBoEllipseGpPrjnEl objects
 INHERITED(taList<FgBoEllipseGpPrjnEl>)
@@ -2569,6 +2683,8 @@ private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
 };
+
+TypeDef_Of(FgBoEllipseGpPrjnSpec);
 
 class LEABRA_API FgBoEllipseGpPrjnSpec : public ProjectionSpec {
   // #AKA_FgBoGroupingPrjnSpec figure-ground border-ownership grouping projection spec -- 
@@ -2594,6 +2710,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(FgBoWedgeGpPrjnSpec);
 
 class LEABRA_API FgBoWedgeGpPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) configured in pattern of 4 1/4 circle wedges, and 4 90 degree straight segments with different border prefs, onto V2 border ownership connections -- recv group size must be 8 x depth where depth is number of depths represented in V2 layer -- 4 units are each quadrant of the wedge
@@ -2627,6 +2745,8 @@ private:
   void	Destroy()	{ };
 };
 
+
+TypeDef_Of(V1EndStopPrjnSpec);
 
 class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
   // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
@@ -2663,6 +2783,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(VisDisparityPrjnSpec);
 
 class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
   // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be right eye, second MUST be left eye -- right is just one-to-one dominant driver) -- should have same gp_geom as sending layer gp_geom -- features within sending gps are replicated for each disparity -- MUST only have one of these per configuration of sending / recv layers, as local data is stored and cached from connection for use in initweights
@@ -2716,6 +2838,8 @@ private:
 };
 
 
+TypeDef_Of(VisDispLaySpec);
+
 class LEABRA_API VisDispLaySpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra visual disparity layer specs
 INHERITED(taOBase)
@@ -2731,6 +2855,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(VisDisparityLayerSpec);
 
 class LEABRA_API VisDisparityLayerSpec : public LeabraLayerSpec {
   // visual disparity layer spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be VisDisparityPrjnSpec from right eye, second MUST be same spec type from left eye -- right is just one-to-one dominant driver) -- this layerspec computes sqrt(left*right) activation into ext of units, which can be added into netinput if !clamp.hard, or activation forced to this value otherwise -- also manages horizontal apeture problem -- use MarkerConSpec for these prjs to prevent computation otherwise
@@ -2755,6 +2881,8 @@ private:
   void 	Destroy()		{ };
 };
 
+TypeDef_Of(TiledGpRFOneToOnePrjnSpec);
+
 class LEABRA_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
 INHERITED(TiledGpRFPrjnSpec)
@@ -2775,6 +2903,8 @@ private:
 };
 
 
+TypeDef_Of(TiledGpRFOneToOneWtsPrjnSpec);
+
 class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
 INHERITED(TiledGpRFPrjnSpec)
@@ -2790,6 +2920,8 @@ private:
   void	Destroy()	{ };
 };
 
+TypeDef_Of(V2toV4DepthPrjnSpec);
+
 class LEABRA_API V2toV4DepthPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec that only connects to a specific depth in V2 border ownership input layer
 INHERITED(TiledGpRFPrjnSpec)
@@ -2804,6 +2936,8 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+TypeDef_Of(V1FeatInhibSpec);
 
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition
@@ -2826,6 +2960,8 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init() { Initialize(); }
 };
+
+TypeDef_Of(LeabraV1LayerSpec);
 
 class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
   // LayerSpec that implements competition both within unit groups and among features in nearby unit groups, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups) -- inhibition is oriented according to x axis of feature position, assuming that this encodes orientation angle (0 = horiz), and acts just like the gp_i, gp_g form of inhibition
@@ -2867,6 +3003,8 @@ private:
 
 ///////////////////////////////////////////////////////////////////
 //	Cerebellum-related special guys
+
+TypeDef_Of(CerebConj2PrjnSpec);
 
 class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
   // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)

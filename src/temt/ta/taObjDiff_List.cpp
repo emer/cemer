@@ -170,11 +170,11 @@ void taObjDiff_List::Diff() {
         rec_a->diff_odr = rec_b; // this is the paired guy
         rec_b->diff_odr = rec_a; // bidir pairing: why not..
 #ifndef NO_TA_BASE
-        if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+        if(rec_a->type->IsTaBase()) { // must have owner to do diff actd
           if(!((taBase*)rec_a->addr)->GetOwner())
             rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
         }
-        if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+        if(rec_b->type->IsTaBase()) { // must have owner to do diff actd
           if(!((taBase*)rec_b->addr)->GetOwner())
             rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
         }
@@ -213,7 +213,7 @@ void taObjDiff_List::Diff() {
               rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
             }
 #ifndef NO_TA_BASE
-            if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+            if(rec_a->type->IsTaBase()) { // must have owner to do diff actd
               if(!((taBase*)rec_a->addr)->GetOwner())
                 rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
             }
@@ -255,7 +255,7 @@ void taObjDiff_List::Diff() {
               rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
             }
 #ifndef NO_TA_BASE
-            if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+            if(rec_b->type->IsTaBase()) { // must have owner to do diff actd
               if(!((taBase*)rec_b->addr)->GetOwner())
                 rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
             }

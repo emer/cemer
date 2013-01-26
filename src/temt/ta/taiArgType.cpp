@@ -17,6 +17,7 @@
 #include <taBase>
 #include <Variant>
 #include <taiBoolType>
+#include <BuiltinTypeDefs>
 
 #include <css_machine.h>
 #include <css_basic_types.h>
@@ -95,84 +96,103 @@ taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
 }
 
 cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
+  /* type notes:
+     explicitly signed/unsigned chars are treated as numbers, whereas char is a char
+     current gui stuff can't handle uints well, so we lump them with variants
+  */
   if(arg_typ->IsNotPtr()) {
-    /* type notes:
-      explicitly signed/unsigned chars are treated as numbers, whereas char is a char
-      current gui stuff can't handle uints well, so we lump them with variants
-    */
-    if (arg_typ->DerivesFrom(TA_int)  ||
-      arg_typ->DerivesFrom(TA_short) || arg_typ->DerivesFrom(TA_unsigned_short) ||
-      arg_typ->DerivesFrom(TA_signed_char) || arg_typ->DerivesFrom(TA_unsigned_char)
-    ) {
-      arg_typ = &TA_int;
-      arg_val = new cssInt(0, nm);
-      arg_base = (void*)&(((cssInt*)arg_val)->val);
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_int64_t) || arg_typ->DerivesFrom(TA_uint64_t)
-      || arg_typ->DerivesFrom(TA_unsigned_int)
-    ) {
-      arg_typ = &TA_Variant;
-      arg_val = new cssVariant(Variant(0LL), nm);
-      arg_base = (void*)&(((cssVariant*)arg_val)->val);
-      use_it = new taiType(arg_typ); // note: only use the vanilla string field gui, not the Variant gui
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_bool)) {
-      arg_val = new cssBool(false, nm);
-      arg_base = (void*)&(((cssBool*)arg_val)->val);
-      use_it = new taiBoolType(arg_typ); // make an it for it...
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_char)) {
-      arg_typ = &TA_char;
-      arg_val = new cssChar(0, nm);
-      arg_base = (void*)&(((cssChar*)arg_val)->val);
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_float) || arg_typ->DerivesFrom(TA_double)) {
-      arg_typ = &TA_double;
-      arg_val = new cssReal(0, nm);
-      arg_base = (void*)&(((cssReal*)arg_val)->val);
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_taString)) {
-      arg_typ = &TA_taString;
-      arg_val = new cssString("", nm);
-      arg_base = (void*)&(((cssString*)arg_val)->val);
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_Variant)) {
-      arg_typ = &TA_Variant;
-      arg_val = new cssVariant(_nilVariant, nm);
-      arg_base = (void*)&(((cssVariant*)arg_val)->val);
-      return arg_val;
-    } else if (arg_typ->DerivesFrom(TA_taBase)) {
-      arg_typ = arg_typ->GetNonRefType()->GetNonConstType();
+    if(arg_typ->IsAtomic()) {
+      if(arg_typ->IsInt()) {
+        if(arg_typ->DerivesFrom(TA_int)  ||
+           arg_typ->DerivesFrom(TA_short) || arg_typ->DerivesFrom(TA_unsigned_short) ||
+           arg_typ->DerivesFrom(TA_signed_char) || arg_typ->DerivesFrom(TA_unsigned_char)
+           ) {
+          arg_typ = &TA_int;
+          arg_val = new cssInt(0, nm);
+          arg_base = (void*)&(((cssInt*)arg_val)->val);
+          return arg_val;
+        }
+        else if(arg_typ->DerivesFrom(TA_int64_t) || arg_typ->DerivesFrom(TA_uint64_t)
+                || arg_typ->DerivesFrom(TA_unsigned_int)
+                ) {
+          arg_typ = &TA_Variant;
+          arg_val = new cssVariant(Variant(0LL), nm);
+          arg_base = (void*)&(((cssVariant*)arg_val)->val);
+          use_it = new taiType(arg_typ); // note: only use the vanilla string field gui, not the Variant gui
+          return arg_val;
+        }
+        else if(arg_typ->DerivesFrom(TA_char)) {
+          arg_typ = &TA_char;
+          arg_val = new cssChar(0, nm);
+          arg_base = (void*)&(((cssChar*)arg_val)->val);
+          return arg_val;
+        }
+      }
+      else if(arg_typ->IsBool()) {
+        arg_val = new cssBool(false, nm);
+        arg_base = (void*)&(((cssBool*)arg_val)->val);
+        use_it = new taiBoolType(arg_typ); // make an it for it...
+        return arg_val;
+      }
+      else if(arg_typ->IsFloat()) {
+        arg_typ = &TA_double;
+        arg_val = new cssReal(0, nm);
+        arg_base = (void*)&(((cssReal*)arg_val)->val);
+        return arg_val;
+      }
+      else if (arg_typ->IsEnum()) {
+        arg_val = new cssEnum(0, nm);
+        arg_base = (void*)&(((cssEnum*)arg_val)->val);
+        return arg_val;
+      }
+    }
+    else if(arg_typ->IsAtomicEff()) {
+      if (arg_typ->IsString()) {
+        arg_typ = &TA_taString;
+        arg_val = new cssString("", nm);
+        arg_base = (void*)&(((cssString*)arg_val)->val);
+        return arg_val;
+      }
+      else if(arg_typ->IsVariant()) {
+        arg_typ = &TA_Variant;
+        arg_val = new cssVariant(_nilVariant, nm);
+        arg_base = (void*)&(((cssVariant*)arg_val)->val);
+        return arg_val;
+      }
+    }
+    else if(arg_typ->IsTaBase()) {
+      arg_typ = arg_typ->GetActualType();
       if(arg_typ->GetInstance() == NULL) return NULL;
       arg_val = new cssTA_Base(NULL, 0, arg_typ, nm); // it will create token for us!
       arg_base = (void*)((cssTA_Base*)arg_val)->ptr;
       return arg_val;
-    } else if (arg_typ->DerivesFormal(TA_enum)) {
-      arg_val = new cssEnum(0, nm);
-      arg_base = (void*)&(((cssEnum*)arg_val)->val);
-      return arg_val;
     }
     return NULL;
   }
-  // ptr > 0 (probably 1)
-
-  if(arg_typ->DerivesFrom(TA_char)) {
-    arg_typ = &TA_taString;
-    arg_val = new cssString("", nm);
-    arg_base = (void*)&(((cssString*)arg_val)->val);
-    return arg_val;
-  }
-  else if(arg_typ->DerivesFrom(TA_taBase)) {
-    TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
-    arg_val = new cssTA_Base(NULL, 1, npt, nm);
+  else if(arg_typ->IsPointer()) {
+    if(arg_typ->DerivesFrom(TA_char)) {
+      arg_typ = &TA_taString;
+      arg_val = new cssString("", nm);
+      arg_base = (void*)&(((cssString*)arg_val)->val);
+      return arg_val;
+    }
+    else if(arg_typ->IsTaBase()) {
+      TypeDef* npt = arg_typ->GetActualType();
+      arg_val = new cssTA_Base(NULL, 1, npt, nm);
+      arg_base = (void*)&(((cssTA*)arg_val)->ptr);
+      return arg_val;
+    }
+    // just delegate to TA as last resort
+    TypeDef* npt = arg_typ->GetActualType();
+    arg_val = new cssTA(NULL, 1, npt, nm);
     arg_base = (void*)&(((cssTA*)arg_val)->ptr);
     return arg_val;
   }
-
-  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
-  arg_val = new cssTA(NULL, 1, npt, nm);
-  arg_base = (void*)&(((cssTA*)arg_val)->ptr);
-  return arg_val;
+  else if(arg_typ->IsPtrPtr()) {
+    // not handled!
+    return NULL;
+  }
+  return NULL;
 }
 
 bool taiArgType::GetHasOption(const String& opt, MethodDef* md, int aidx) {

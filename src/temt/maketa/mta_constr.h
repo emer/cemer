@@ -54,6 +54,7 @@ extern void TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArra
 //////////////////////////////////
 
 extern String TypeDef_Gen_Ref(TypeDef* ths);
+extern String TypeDef_Gen_Ref_To(TypeDef* ths);
 extern String TypeDef_Gen_Ref_Of(TypeDef* ths);
 
 //////////////////////////////////
@@ -97,8 +98,7 @@ extern void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm,
 extern void TypeSpace_Generate_Data(TypeSpace* ths, ostream& strm);
 extern void TypeDef_Generate_Data(TypeDef* ths, ostream& strm);
 
-// generates the two type fields (either a ptr to the type or a string descr)
-extern String TypeDef_Generate_TypeFields(TypeDef* ths, TypeDef* ownr_ownr);
+extern String TypeDef_Generate_TypeName(TypeDef* ths);
 
 
 //////////////////////////////////
@@ -156,7 +156,8 @@ extern void PropertySpace_Generate_Data(PropertySpace* ths, TypeDef* ownr, ostre
 /*extern void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
 				    const String_PArray& ppfiles); */
 
-extern void TypeDef_Generate_Init(TypeDef* ths, ostream& strm);
+extern void TypeDef_Generate_TypeInit(TypeDef* ths, ostream& strm);
+extern void TypeDef_Generate_DataInit(TypeDef* ths, ostream& strm);
 extern void SubTypeSpace_Generate_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
 extern void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm);
 extern void TypeDef_Generate_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm);

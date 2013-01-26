@@ -59,7 +59,7 @@ void taiToken::Edit() {
   if(cur_base == NULL) return;
 
   taiEdit* gc;
-  if (typ->InheritsFrom(TA_taBase)) {
+  if (typ->IsTaBase()) {
     gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   }
   else {
@@ -99,7 +99,7 @@ taBase* taiToken::GetValue() {
 }
 
 void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* actn) {
-  if (!td->InheritsFrom(TA_taBase)) return; // sanity check, so we don't crash...
+  if (!td->IsTaBase()) return; // sanity check, so we don't crash...
 
   if (!td->tokens.keep) {
     menu->AddItem("<Sorry, not keeping tokens>", taiMenu::normal);
@@ -143,7 +143,7 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
 
   for (int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    if (chld->ptr != 0)
+    if (chld->IsAnyPtr())
       continue;
     if ((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
       continue;

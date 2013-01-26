@@ -17,6 +17,8 @@
 
 #include <TypeDef> 
 #include <MemberDef> 
+TypeDef_Of(PropertyDef);
+TypeDef_Of(EnumDef);
 
 #ifndef NO_TA_BASE
 #include <taBase> 
@@ -1206,7 +1208,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   if(taMisc::use_gui) {
     for (int i = 0; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);
-      if ((typ->ptr > 0) || (typ->ref)) continue;
+      if(typ->IsNotActual() || !typ->IsClass()) continue;
       init_inventor_type(typ);
     }
   }
@@ -2300,7 +2302,7 @@ void taMisc::CreateAllNewSrcFiles() {
   while(i < types.size) {
     TypeDef* typ = types.FastEl(i);
     bool dbg = false;
-    if(!typ->IsClass() || !typ->IsAnchor()) {
+    if(!typ->IsClass() || !typ->IsActual()) {
       if(dbg) taMisc::Info("fail class, anchor");
       i++;
       continue;

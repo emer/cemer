@@ -69,7 +69,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
     }
     arg1_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
-    if (arg1_typ->ptr != 1) {
+    if (!arg1_typ->IsPointer()) {
       taMisc::Warning("method:", md->name, "should have had arg1 in class* form.");
       continue;
     }
@@ -85,7 +85,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
     if ((md->arg_types.size == 0) || !md->HasOption("DYN2N1")) continue;
     arg1_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
-    if (arg1_typ->ptr != 1) {
+    if (!arg1_typ->IsPointer()) {
       taMisc::Warning("method:", md->name, "should have had class* form.");
       continue;
     }
@@ -112,7 +112,7 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
     if (md->arg_types.size == 0) continue;
     TypeDef* arg0_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
-    if (arg0_typ->ptr != 1) {
+    if (!arg0_typ->IsPointer()) {
       continue;
     }
     // meth must be marked for drop

@@ -248,7 +248,7 @@ bool taiMember::isCondShow() const {
 }
 
 void taiMember::StartScript(const void* base) {
-  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->IsTaBase())
     return;
 
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
@@ -259,7 +259,7 @@ void taiMember::StartScript(const void* base) {
 }
 
 void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
-  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->IsTaBase())
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!

@@ -19,6 +19,7 @@
 #include <taiField>
 #include <iFlowLayout>
 #include <iMethodButtonMgr>
+#include <BuiltinTypeDefs>
 
 #include <taMisc>
 #include <taiMisc>

@@ -73,7 +73,7 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
   if (!typ) return NULL; //TODO: maybe we should put a marker item in list???
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
-  if (typ->InheritsFrom(&TA_taBase)) {
+  if (typ->IsTaBase()) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);

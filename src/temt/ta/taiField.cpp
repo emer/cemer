@@ -18,6 +18,7 @@
 #include <iLineEdit>
 #include <MemberDef>
 #include <iTextEdit>
+#include <BuiltinTypeDefs>
 
 
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)

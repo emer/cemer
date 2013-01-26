@@ -830,54 +830,29 @@ cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
 
 cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* md,
                           cssEl* class_parent) {
-  TypeDef* nptd = td->GetNonPtrType(); // always create one of these
+  TypeDef* nptd = td->GetActualType(); // always create one of these
 
   if(!nptd)
     return &cssMisc::Void;
 
   bool ro = md && md->HasOption("READ_ONLY");
 
-  int new_ptr = td->ptr;
-  if(new_ptr == 1) new_ptr++;   // bump up to a **
-  else if(new_ptr > 1) {
+  int new_ptr = 0;
+  if(td->IsPointer()) {
+    new_ptr = 2;                // bump to a **
+  }
+  else if(td->IsPtrPtr()) {
     cssMisc::Error(NULL, "GetElFromTA -- cannot process ** (pointer-pointer) C members!");
     return &cssMisc::Void;
   }
 
-  if(nptd->InheritsNonAtomicClass()) {
-    if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
-       || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
-      return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd->DerivesFrom(TA_taMatrix))
-      return new cssTA_Matrix(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd->DerivesFrom(TA_taBase))
-      return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
-    else
-      return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
-  }
-  else {
-    if(nptd->InheritsFormal(TA_class)) {
-      if(nptd == &TA_taString)
-        return new cssCPtr_String(itm, new_ptr, nm, class_parent, ro);
-      else if(nptd == &TA_Variant)
-        return new cssCPtr_Variant(itm, new_ptr, nm, class_parent, ro);
-      else if(nptd == &TA_TypeDef)
-        return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
-      else if(nptd == &TA_MemberDef)
-        return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
-      else if(nptd == &TA_MethodDef)
-        return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
-      else if(nptd->DerivesFrom(TA_taSmartRef))
-        return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
-      else
-        return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
-    }
-    else {
-      if(nptd->DerivesFrom(TA_bool))
-        return new cssCPtr_bool(itm, new_ptr, nm, class_parent, ro);
-      else if(nptd->DerivesFormal(TA_enum))
-        return new cssCPtr_enum(itm, new_ptr, nm, class_parent, ro);
-      else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
+  if(nptd->IsAtomic()) {
+    if(nptd->IsBool())
+      return new cssCPtr_bool(itm, new_ptr, nm, class_parent, ro);
+    else if(nptd->IsEnum())
+      return new cssCPtr_enum(itm, new_ptr, nm, class_parent, ro);
+    else if(nptd->IsInt()) {
+      if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
         return new cssCPtr_int(itm, new_ptr, nm, class_parent, ro);
       else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
         return new cssCPtr_short(itm, new_ptr, nm, class_parent, ro);
@@ -888,16 +863,45 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
         return new cssCPtr_char(itm, new_ptr, nm, class_parent, ro);
       else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
         return new cssCPtr_long_long(itm, new_ptr, nm, class_parent, ro);
-      else if(nptd->DerivesFrom(TA_float))
+    }
+    else if(nptd->IsFloat()) {
+      if(nptd->DerivesFrom(TA_float))
         return new cssCPtr_float(itm, new_ptr, nm, class_parent, ro);
       else if(nptd->DerivesFrom(TA_double))
         return new cssCPtr_double(itm, new_ptr, nm, class_parent, ro);
-      else {
-        cssMisc::Error(NULL, "GetElFromTA -- atomic class not managed in case:", nptd->name);
-        return &cssMisc::Void;
-      }
+    }
+    else {
+      cssMisc::Error(NULL, "GetElFromTA -- atomic class not managed in case:", nptd->name);
+      return &cssMisc::Void;
     }
   }
+  else if(nptd->IsAtomicEff()) {
+    if(nptd->IsString())
+      return new cssCPtr_String(itm, new_ptr, nm, class_parent, ro);
+    else if(nptd->IsVariant())
+      return new cssCPtr_Variant(itm, new_ptr, nm, class_parent, ro);
+    else if(nptd->DerivesFrom(TA_taSmartRef))
+      return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
+  }
+  else if(nptd->IsClass()) {
+    if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
+       || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
+      return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd->DerivesFrom(TA_taMatrix))
+      return new cssTA_Matrix(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd->IsTaBase())
+      return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd == &TA_TypeDef)
+      return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd == &TA_MemberDef)
+      return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd == &TA_MethodDef)
+      return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
+    else
+      return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
+  }
+  cssMisc::Error(NULL, "GetElFromTA -- could not process type:", nptd->name);
+  return &cssMisc::Void;
 }
 
 cssEl* cssEl::TAElem(taBase* ths, const Variant& i) const {

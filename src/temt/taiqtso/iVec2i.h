@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iPoint_h
-#define iPoint_h 1
+#ifndef iVec2i_h
+#define iVec2i_h 1
 
 #include "taiqtso_def.h"
 
@@ -29,7 +29,9 @@
 class SbVec2s;          // #IGNORE
 #endif
 
-class TAIQTSO_API iPoint { // #NO_TOKENS #INSTANCE #EDIT_INLINE
+TypeDef_Of(iVec2i);
+
+class TAIQTSO_API iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int   x;
   int   y;
@@ -39,26 +41,26 @@ public:
   void          getValue(int& x_, int& y_) {x_ = x; y_ = y;}
   void          setValue(int x_, int y_) {x = x_; y = y_;}
 
-  iPoint() {x = 0; y = 0;}
-  iPoint(int x_, int y_) {x = x_; y = y_;}
-  iPoint(int v) {x = v; y = v;}
-  iPoint(const iPoint& cp) {x = cp.x; y = cp.y;}
+  iVec2i() {x = 0; y = 0;}
+  iVec2i(int x_, int y_) {x = x_; y = y_;}
+  iVec2i(int v) {x = v; y = v;}
+  iVec2i(const iVec2i& cp) {x = cp.x; y = cp.y;}
 
-  iPoint& operator =(const iPoint& cp) {x = cp.x; y = cp.y; return *this;}
-  iPoint& operator =(int v) {x = v; y = v; return *this;}
+  iVec2i& operator =(const iVec2i& cp) {x = cp.x; y = cp.y; return *this;}
+  iVec2i& operator =(int v) {x = v; y = v; return *this;}
 
 #ifdef TA_GUI
-  iPoint(const QPoint& val);
-  iPoint& operator=(const QPoint& val);
+  iVec2i(const QPoint& val);
+  iVec2i& operator=(const QPoint& val);
   operator QPoint() const;
 #endif
 #ifdef TA_USE_INVENTOR
-  iPoint(const SbVec2s& src);
-  iPoint&       operator=(const SbVec2s& src);
+  iVec2i(const SbVec2s& src);
+  iVec2i&       operator=(const SbVec2s& src);
   operator SbVec2s() const; // note: will always be in range in context of gui
 #endif
 };
 
-typedef iPoint iVec2i; // synonym
+typedef iVec2i iPoint; // synonym
 
-#endif // iPoint_h
+#endif // iVec2i_h

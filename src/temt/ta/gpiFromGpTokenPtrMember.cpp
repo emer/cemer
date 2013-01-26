@@ -25,7 +25,7 @@ TypeDef_Of(taSmartPtr);
 TypeDef_Of(taGroup_impl);
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType()
+  if(td->IsTaBase() && md->type->IsBasePointerType()
      && md->OptionAfter("FROM_GROUP_").nonempty())
     return taiTokenPtrMember::BidForMember(md,td)+1;
   return 0;
@@ -36,7 +36,7 @@ taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par
   if(from_md == NULL)   return NULL;
 
   // setting mode now is good for rest of life
-  if(mbr->type->DerivesFrom(TA_taBase))
+  if(mbr->type->IsTaBase())
     mode = MD_BASE;
   else if (mbr->type->DerivesFrom(TA_taSmartPtr))
     mode = MD_SMART_PTR;

@@ -71,7 +71,7 @@ bool MemberDef::DumpMember(void* par) {
     return false;
   // if taBase, query it for member save
   TypeDef* par_typ = GetOwnerType();
-  if (par && par_typ && par_typ->InheritsFrom(&TA_taBase)) {
+  if (par && par_typ && par_typ->IsTaBase()) {
     taBase* par_ = (taBase*)par;
     taBase::DumpQueryResult dqr = par_->Dump_QuerySaveMember(this); 
     if (dqr == taBase::DQR_NO_SAVE) return false;
@@ -97,7 +97,7 @@ bool MemberDef::DumpMember(void* par) {
   else if (type->IsNotPtr())
     return true;
   // ok, so it is a ptr -- some types get saved by default
-  else if (type->DerivesFrom(TA_taBase) ||
+  else if (type->IsTaBase() ||
      type->DerivesFrom(TA_TypeDef) ||
      type->DerivesFrom(TA_MemberDef) ||
      type->DerivesFrom(TA_MethodDef))
@@ -118,7 +118,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   // embedded classes can never be Variant, and are completely handled in this block
   if (type->IsActualClass()) {
     taMisc::indent(strm, indent, 1) << name;
-    if (type->InheritsFrom(TA_taBase)) {
+    if (type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rbase->Dump_Save_inline(strm, (taBase*)base, indent);
     }
@@ -128,7 +128,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   }
   
   // otherwise, we could have a Variant, in which case we will indirect
-  else if (type->InheritsFrom(TA_Variant)) {
+  else if (type->IsVariant()) {
     Variant& var = *((Variant*)(new_base));
     var.GetRepInfo(eff_type, new_base);
     // we need to output a spurious name and type info for taBase types
@@ -140,7 +140,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     } 
   }
   
-  if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
+  if ((eff_type->IsPointer()) && (eff_type->IsTaBase())) {
     taBase* tap = *((taBase**)new_base);
     if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*)base, indent);
@@ -159,7 +159,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   taMisc::indent(strm, indent, 1) << name;
 
   bool save_value = true;
-  if (type->InheritsFrom(TA_Variant)) {
+  if (type->IsVariant()) {
     Variant& var = *((Variant*)(new_base));
     var.Dump_Save_Type(strm);
     // we don't try to save null atomics
@@ -170,7 +170,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   if (save_value) {
     String str = eff_type->GetValStr(new_base, base, this);
     strm << "=";
-    if (eff_type->InheritsFrom(TA_taString)) {
+    if (eff_type->IsString()) {
       // note: it won't stream an empty string
       taMisc::write_quoted_string(strm, str);
     } else {
@@ -191,7 +191,7 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
   void* new_base = GetOff(base);
 
   if (type->IsActualClass()) {
-    if(type->InheritsFrom(TA_taBase)) {
+    if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_SaveR(strm, (taBase*)base, indent);
     }
@@ -201,14 +201,14 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
   else {
     TypeDef* eff_type = type;
     // variant taBase types will get indirected
-    if (type->InheritsFrom(TA_Variant)) {
+    if (type->IsVariant()) {
       Variant& var = *((Variant*)(new_base));
       if (!var.isBaseType()) {
         var.GetRepInfo(eff_type, new_base);
       }
     }
   
-    if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
+    if ((eff_type->IsPointer()) && (eff_type->IsTaBase())) {
       taBase* tap = *((taBase **)(new_base));
       if ((tap != NULL) && (tap->GetOwner() == base)) { // wholly owned subsidiary
         tap->Dump_Save_impl(strm, (taBase*) base, indent);
@@ -231,7 +231,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
   
   
   if (type->IsActualClass()) {
-    if(type->InheritsFrom(TA_taBase)) {
+    if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
     }
@@ -243,7 +243,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
     // in which case, we'll output just the var type info for the variant,
     // then proceed in this routine with the new type
     TypeDef* eff_type = type; 
-    if (type->InheritsFrom(TA_Variant)) {
+    if (type->IsVariant()) {
       Variant& var = *((Variant*)(new_base));
       TypeDef* var_typ; void* var_data;
       var.GetRepInfo(var_typ, var_data);
@@ -257,7 +257,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
       }
     }
     
-    if ((eff_type->IsPointer()) && (eff_type->DerivesFrom(TA_taBase))) {
+    if ((eff_type->IsPointer()) && (eff_type->IsTaBase())) {
       taBase* tap = *((taBase **)(new_base));
       if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
         strm << "\n";			// actually saving a path: put a newline
@@ -275,7 +275,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
 
 int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
   strm << name << " ";
-  if(InheritsFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase = (taBase*)base;
     if(rbase->GetOwner() == NULL)
       strm << "NULL";
@@ -316,7 +316,7 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
   if (IsActualClass()) {
     // semi-hack to not do INLINE if taBase has user data
     bool inline_dump = HasOption("INLINE_DUMP");
-    if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
+    if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
       inline_dump = !((taOBase*)base)->HasUserDataList();
     }
     if(inline_dump) {
@@ -339,7 +339,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
   if(base == NULL)
     return false;
 
-  if((IsPointer()) && DerivesFrom(TA_taBase)) {
+  if((IsPointer()) && IsTaBase()) {
     taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*) par, indent);
@@ -348,7 +348,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
   }
 
   taMisc::indent(strm, indent, 1);
-  if(InheritsFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase = (taBase*)base;
     rbase->Dump_Save_Path(strm, (taBase*)par, indent);
     rbase->Dump_Save_Value(strm, (taBase*)par, indent);
@@ -359,11 +359,11 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
   }
   if(IsActualClass()) {
     bool inline_dump = HasOption("INLINE_DUMP");
-    if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
+    if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
       inline_dump = !((taOBase*)base)->HasUserDataList();
     }
     if (!inline_dump) {
-      if(InheritsFrom(TA_taBase)) {
+      if(IsTaBase()) {
         taBase* rbase = (taBase*)base;
         rbase->Dump_SaveR(strm, rbase, indent+1);
       }
@@ -379,7 +379,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   if(base == NULL)
     return false;
 
-  if((IsPointer()) && DerivesFrom(TA_taBase)) {
+  if((IsPointer()) && IsTaBase()) {
     taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*) par, indent);
@@ -387,7 +387,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
     return false;
   }
 
-  if(InheritsFrom(TA_taBase)) {
+  if(IsTaBase()) {
     taBase* rbase = (taBase*)base;
     rbase->Dump_Save_Value(strm, (taBase*)par, indent);
   }
@@ -399,7 +399,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   if(IsActualClass() &&
      !HasOption("INLINE_DUMP"))
   {
-    if(InheritsFrom(TA_taBase)) {
+    if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
     }
@@ -431,7 +431,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
          << " rev" << taMisc::svn_rev << "\n";
   }
   taMisc::strm_ver = 3;
-  if (InheritsFrom(TA_taBase)) {
+  if (IsTaBase()) {
     taBase* rbase = (taBase*)base;
 
     dumpMisc::dump_root = rbase;
@@ -647,7 +647,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   TypeDef* eff_type = type; // overridden for variants
 
   if (type->IsActualClass()) {
-    if(type->InheritsFrom(TA_taBase)) {
+    if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Load_impl(strm, (taBase*)base);
     }
@@ -673,7 +673,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       var.GetRepInfo(eff_type, new_base);
     }
     
-    if ((eff_type->IsPointer()) && eff_type->DerivesFrom(TA_taBase)
+    if ((eff_type->IsPointer()) && eff_type->IsTaBase()
             && HasOption("OWN_POINTER"))
     {
       c = taMisc::skip_white(strm, true);
@@ -798,7 +798,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
       return false;
     }
 
-    if(!DerivesFrom(TA_taBase)) {
+    if(!IsTaBase()) {
       if(!DerivesFrom(td)) {
 	taMisc::Warning("Type mismatch, expecting:",name,"Got:",td->name);
 	return false;
@@ -806,7 +806,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
     }
   }
 
-  if((base != NULL) || !(td->DerivesFrom(TA_taBase)) || (path == "")) {
+  if((base != NULL) || !(td->IsTaBase()) || (path == "")) {
     if(taMisc::verbose_load >= taMisc::TRACE) {
       const char* nm = (typnm != NULL) ? typnm : "NULL";
       String msg;
@@ -901,7 +901,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     return false;
   }
 
-  if(ppar_md && !ppar_md->type->InheritsFrom(TA_taBase)) {
+  if(ppar_md && !ppar_md->type->IsTaBase()) {
     taMisc::Warning("Dump_Load_path_impl: Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
@@ -1029,7 +1029,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     taMisc::Info(msg);
   }
   if((rval > 0) && (base != NULL)) {
-    if(td->InheritsFrom(TA_taBase)) {
+    if(td->IsTaBase()) {
       taBase* rbase = (taBase*)base;
       rval = rbase->Dump_Load_Value(strm, (taBase*)par);
       if(rval==1) {
@@ -1164,7 +1164,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     return false;
   }
   
-  if(!td->InheritsFrom(TA_taBase)) {
+  if(!td->IsTaBase()) {
     taMisc::Warning("Only taBase objects may be loaded, not:", td->name);
     return false;
   }
@@ -1304,7 +1304,7 @@ void taBase::Dump_Save_GetPluginDeps() {
     // ok, check if embedded taBase, or owned pointer
     TypeDef* td = md->type; 
     //TODO: very obscure, but could possibly be a taBase in a Variant
-    if (!td->DerivesFrom(&TA_taBase)) continue;
+    if (!td->IsTaBase()) continue;
     taBase* ta = NULL;
     if (td->IsNotPtr()) { // embedded
       ta = (taBase*)md->GetOff(this);

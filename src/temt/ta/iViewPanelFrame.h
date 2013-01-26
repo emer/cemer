@@ -26,6 +26,7 @@
 // declare all other types mentioned but not required to include:
 class HiLightButton; // #IGNORE
 class iViewPanelSet; //
+class taDataView;
 
 TypeDef_Of(iViewPanelFrame);
 

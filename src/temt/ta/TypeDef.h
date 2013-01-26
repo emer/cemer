@@ -82,14 +82,16 @@ public:
     UNSIGNED = 0x00800000,  // an unsigned INTEGER
     SUBTYPE = 0x01000000,   // is a subtype defined within scope of a parent class
 
-    TABASE = 0x01000000,    // a CLASS that derives from taBase base class that is automatically type-aware
+    TABASE = 0x02000000,    // a CLASS that derives from taBase base class that is automatically type-aware
 
+#ifndef __MAKETA__
     ANY_PTR = POINTER | PTR_PTR,
     ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
     ATOMIC_EFF = STRING | VARIANT | SMART_PTR | SMART_INT, // effective atomic classes -- pass by value and act like atomic, but don't support bitwise copy -- need to use actual class interface
     NOT_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST, // not actual type itself
     FUN_PTR = FUNCTION | POINTER,
     METH_PTR = METHOD | POINTER,
+#endif
   };
 
   enum StrContext { // context for getting or setting a string value
@@ -103,7 +105,7 @@ public:
   TypeType      type;           // type information about this type -- what do we have here?
   TypeSpace*    owner;          // the owner of this one
   uint          size;           // size (in bytes) of item
-#ifdef NO_TA_BASE
+#ifndef NO_TA_BASE
   TypeDef*      plugin;         // TypeDef of plugin object, if in a plugin (else NULL)
   void**        instance;       // pointer to the instance ptr of this type
   taBase_List*  defaults;       // default values registered for this type
@@ -147,6 +149,8 @@ public:
   /////////////////////////////////////////////////////////////
   //            Basic Type Info
 
+  inline void           AssignType(TypeType typ) { type = typ; }
+  // set type state directly to given value
   inline void           SetType(TypeType typ)   { type = (TypeType)(type | typ); }
   // set type state on
   inline void           ClearType(TypeType typ) { type = (TypeType)(type & ~typ); }
@@ -196,7 +200,7 @@ public:
   inline bool   IsConst() const { return HasType(CONST); }
   inline bool   IsSigned() const { return HasType(SIGNED); }
   inline bool   IsUnSigned() const { return HasType(UNSIGNED); }
-  inline bool   IsSubType() const { return HasType(SUBTYPE); }
+  bool   IsSubType() const;
 
   bool          IsBasePointerType() const;
   // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
@@ -235,8 +239,8 @@ public:
   TypeDef*              MakeToken()     { return new TypeDef(); }
 
 
-  static TypeDef*       FindGlobalTypeName(const String& nm);
-  // find a type with the given name on the global taMisc::types list of types -- use this to avoid having to include taMisc if that's all you're using it for
+  static TypeDef*       FindGlobalTypeName(const String& nm, bool err_not_found = true);
+  // find a type with the given name on the global taMisc::types list of types -- use this to avoid having to include taMisc if that's all you're using it for -- will give an error message if not found unless otherwise turned off
   void                  AddNewGlobalType(bool make_derived = true);
   // add this type to global taMisc::types list of types, and call MakeMainDerivedTypes by default -- mainly used for initial population of global type table at program startup, by maketa generated code
 
@@ -392,6 +396,9 @@ public:
   // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net offsets provide overall offset from original own_td obj
   TypeDef*      FindTypeWithMember(const char* nm, MemberDef** md);
   // returns the type or child type with memberdef md
+
+  TypeDef*      FindSubType(const String& sub_nm) const;
+  // find subtype by name
 
   EnumDef*      FindEnum(const String& enum_nm) const;
   // find an enum and return its definition (or NULL if not found).  searches in enum_vals, then subtypes

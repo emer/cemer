@@ -24,7 +24,7 @@
 
 // member includes:
 #include <byte_Matrix>
-#include <iPoint>
+#include <iVec2i>
 
 // declare all other types mentioned but not required to include:
 class SbImage; // #IGNORE

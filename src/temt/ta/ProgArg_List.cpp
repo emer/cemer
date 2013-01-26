@@ -17,6 +17,7 @@
 #include <Program>
 #include <ProgVar_List>
 #include <MethodDef>
+#include <BuiltinTypeDefs>
 
 
 void ProgArg_List::Initialize() {
@@ -144,7 +145,7 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
         if(ot)
           def_val = ot->name + "::" + def_val;
       }
-      else if (arg_typ->InheritsFrom(TA_taString) ||
+      else if (arg_typ->IsString() ||
                (arg_typ->IsPointer() && arg_typ->InheritsFrom(&TA_char)))
       {
         if(def_val.empty()) def_val = "\"\""; // empty string

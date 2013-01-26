@@ -554,7 +554,7 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
-      if (typ && typ->InheritsFrom(&TA_taBase))
+      if (typ && typ->IsTaBase())
         mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))

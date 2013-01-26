@@ -125,7 +125,7 @@ EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
 }
 
 const iColor taiEdit::GetBackgroundColor(void* base, bool& ok) {
-  if (typ->InheritsFrom(&TA_taBase) && base) {
+  if (typ->IsTaBase() && base) {
     return ((taBase*)base)->GetEditColorInherit(ok);
   }
   ok = false;

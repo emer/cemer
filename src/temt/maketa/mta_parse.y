@@ -141,7 +141,7 @@ typedefns:
 	    if($1 != NULL)  SETDESC($1,$2); }
         ;
 
-typedsub: MP_TYPEDEF defn			{ $$ = $2; }
+typedsub: MP_TYPEDEF defn		{ $$ = $2; }
         | MP_TYPEDEF classdsub tdname term {
 	    $$ = $2; $2->name = $3; mta->type_stack.Pop(); }
         ;
@@ -189,10 +189,10 @@ defn:     type tyname term		{
 	    /* } */
 	    $$ = td; } }
         | type '(' '*' tyname ')' funargs term {
-            $$ = $4; $$->SetType(TypeDef::FUN_PTR);
+            $$ = $4; $$->AssignType(TypeDef::FUN_PTR);
 	    mta->type_stack.Pop(); }
-        | type MP_SCOPER '*' tyname		{
-            $$ = $4; $$->SetType(TypeDef::METH_PTR);
+        | type MP_SCOPER '*' tyname	{
+            $$ = $4; $$->AssignType(TypeDef::METH_PTR);
 	    mta->type_stack.Pop(); }
         ;
 
@@ -210,14 +210,14 @@ enumname: enumnm '{'
         | enumnm '{' MP_COMMENT		{ SETDESC($1,$3); }
         ;
 
-enumnm:   MP_ENUM tyname			{
+enumnm:   MP_ENUM tyname		{
   	    $$ = $2;
-	    $2->SetType(TypeDef::ENUM); mta->cur_enum = $2;
+	    $2->AssignType(TypeDef::ENUM); mta->cur_enum = $2;
 	    mta->SetSource($$, false); mta->type_stack.Pop(); }
         | MP_ENUM 				{
 	    String nm = "enum_"; nm += (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); mta->cur_enum = $$;
-	    mta->SetSource($$, false); $$->SetType(TypeDef::ENUM); }
+	    mta->SetSource($$, false); $$->AssignType(TypeDef::ENUM); }
         ;
 
 classdecl:
@@ -230,7 +230,7 @@ classdecl:
 
 classdecls:
           classnm term			{ mta->Burp(); } /* read ahead to comment */
-        | classnm term MP_COMMENT		{ SETDESC($1,$3); }
+        | classnm term MP_COMMENT	{ SETDESC($1,$3); }
         ;
 
 classdefn:
@@ -274,7 +274,7 @@ classhead:
 classnm:  classkeyword tyname			{
             mta->state = MTA::Parse_class;
             $$ = $2; mta->last_class = mta->cur_class; mta->cur_class = $2;
-	    $2->SetType(TypeDef::CLASS);
+	    $2->AssignType(TypeDef::CLASS); mta->ClearSource($2); /* tyname set -- premature */
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
         | classkeyword MP_TYPE			{
             mta->state = MTA::Parse_class;
@@ -283,21 +283,21 @@ classnm:  classkeyword tyname			{
         | classkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetType(TypeDef::CLASS); 
+	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::CLASS); 
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
             mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
         | structkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetType(TypeDef::STRUCT);
+	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::STRUCT);
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
         | unionkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
-	    $$ = new TypeDef(nm); $$->SetType(TypeDef::UNION);
+	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::UNION);
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
@@ -474,12 +474,17 @@ membline: membdefn			{
 	    mta->meth_stack.Pop(); $$ = NULL; }
         | enumdsub			{
 	    mta->cur_class->sub_types.AddUniqNameNew($1);
+            $1->SetType(TypeDef::SUBTYPE);
+            mta->TypeAdded("enum", &(mta->cur_class->sub_types), $1);
+            $1->source_end = mta->line-1;
 	    mta->state = MTA::Parse_inclass; $$ = NULL; }
         | typedsub			{
 	    mta->cur_class->sub_types.AddUniqNameNew($1);
+            $1->SetType(TypeDef::SUBTYPE);
 	    mta->state = MTA::Parse_inclass; $$ = NULL; }
         | classdsub term			{ /* todo: not dealing with sub classes yet.. */
 	    mta->last_class->sub_types.AddUniqNameNew($1);
+            $1->SetType(TypeDef::SUBTYPE);
   	    mta->cur_class = mta->last_class; /* pop back last class.. */
 	    mta->state = MTA::Parse_inclass; $$ = NULL; }
         | error				{ $$ = NULL; }

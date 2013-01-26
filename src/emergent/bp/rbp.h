@@ -47,6 +47,8 @@ class RBpUnitSpec;//
 // backward passes: do Compute_Error, then Compute_Send_dEdNet, the Step_Back
 // and iterate..
 
+TypeDef_Of(RBpConSpec);
+
 class BP_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 INHERITED(BpConSpec)
@@ -60,6 +62,8 @@ private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
 };
+
+TypeDef_Of(SymRBpConSpec);
 
 class BP_API SymRBpConSpec : public RBpConSpec {
   // Recurrent Backprop Con Spec: option to maintain weight symmetry through simple averaging of two weight changes
@@ -77,6 +81,8 @@ private:
   void	Destroy()		{ };
 };
 
+
+TypeDef_Of(RBpUnitSpec);
 
 class BP_API RBpUnitSpec : public BpUnitSpec {
   // Recurrent Backprop Unit Specification
@@ -121,6 +127,8 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
+TypeDef_Of(RBpUnit);
 
 class BP_API RBpUnit : public BpUnit {
   // recurrent BP unit
@@ -194,6 +202,8 @@ inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   }
 }
 
+TypeDef_Of(RBpContextSpec);
+
 class BP_API RBpContextSpec : public RBpUnitSpec {
   // RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!
 INHERITED(RBpUnitSpec)
@@ -234,6 +244,8 @@ private:
 //	Additional Unit Types		//
 //////////////////////////////////////////
 
+TypeDef_Of(NoisyRBpUnitSpec);
+
 class BP_API NoisyRBpUnitSpec : public RBpUnitSpec {
   // RBp with noisy output signal (act plus noise)
 INHERITED(RBpUnitSpec)
@@ -254,6 +266,8 @@ private:
 //////////////////////////////////
 //	Bp Wizard		//
 //////////////////////////////////
+
+TypeDef_Of(BpWizard);
 
 class BP_API BpWizard : public Wizard {
   // #STEM_BASE backprop-specific wizard for automating construction of simulation objects

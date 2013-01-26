@@ -28,6 +28,7 @@
 // declare all other types mentioned but not required to include:
 class iLineEdit; // #IGNORE
 class QProgressBar; // #IGNORE
+class taDoc; //
 
 TypeDef_Of(iDocDataPanel);
 

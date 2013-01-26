@@ -30,7 +30,7 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   // setting mode now is good for rest of life
-  if (typ->DerivesFrom(TA_taBase))
+  if (typ->IsTaBase())
     mode = MD_BASE;
   else if (typ->DerivesFrom(TA_taSmartPtr))
     mode = MD_SMART_PTR;
@@ -109,7 +109,7 @@ void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
     else
       *((void**)base) = rval->GetValue();
 /*type must derive from taBase, otherwise we wouldn't have bid!!!
-        if(!no_setpointer && typ->DerivesFrom(TA_taBase))
+        if(!no_setpointer && typ->IsTaBase())
       taBase::SetPointer((taBase**)base, (taBase*)rval->GetValue());
     else
       *((void**)base) = rval->GetValue(); */

@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class iMatrixEditor; // #IGNORE
 class iTableView; // #IGNORE
+class taMatrix; //
 
 TypeDef_Of(iMatrixPanel);
 

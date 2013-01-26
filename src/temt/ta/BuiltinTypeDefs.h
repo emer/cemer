@@ -87,6 +87,7 @@ extern TA_API TypeDef TA_unsigned_long;
 extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_long_long;
   extern TA_API TypeDef TA_signed_long_long;
+  extern TA_API TypeDef TA_signed_long_long_int;
 extern TA_API TypeDef TA_uint64_t; // note: seemingly absent in MSVC
   extern TA_API TypeDef TA_unsigned_long_long;
 extern TA_API TypeDef TA_intptr_t; //NOTE: synonym, will either be 'int' or 'int64_t'
@@ -94,6 +95,20 @@ extern TA_API TypeDef TA_uintptr_t;
 
 extern TA_API TypeDef TA_float;
 extern TA_API TypeDef TA_double;
+
+#ifndef NO_TA_BASE
+extern TA_API TypeDef TA_ios;
+extern TA_API TypeDef TA_streambuf;
+extern TA_API TypeDef TA_istream;
+extern TA_API TypeDef TA_ostream;
+extern TA_API TypeDef TA_iostream;
+extern TA_API TypeDef TA_ifstream;
+extern TA_API TypeDef TA_ofstream;
+extern TA_API TypeDef TA_fstream;
+extern TA_API TypeDef TA_istringstream;
+extern TA_API TypeDef TA_ostringstream;
+extern TA_API TypeDef TA_stringstream;
+#endif
 
 // this function adds the builtin types to the taMisc::types list -- must be called
 // at start of type initialization at program startup, prior to adding other types

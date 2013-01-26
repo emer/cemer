@@ -52,7 +52,7 @@ void taiSubToken::Edit() {
   if (cur_base == NULL) return;
 
   taiEdit* gc;
-  if(typ->InheritsFrom(TA_taBase)) {
+  if(typ->IsTaBase()) {
     gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   }
   else {

@@ -29,6 +29,8 @@
 class SbVec3f;          // #IGNORE
 #endif
 
+TypeDef_Of(iVec3f);
+
 class TAIQTSO_API iVec3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d vector, for things like points and sizes
 public:
   float         x;

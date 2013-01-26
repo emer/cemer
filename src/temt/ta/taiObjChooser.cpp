@@ -71,7 +71,7 @@ taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, taBase* scope_ref_,
   setModal(true);
   init(captn, true, par_window_); //select_only = true always true for typedef!
 
-  if(!td->InheritsFrom(TA_taBase)) {
+  if(!td->IsTaBase()) {
     taMisc::Warning("*** warning, will not be able to select non-taBase tokens in chooser");
   }
   typ_par_obj = td;
@@ -186,7 +186,7 @@ void taiObjChooser::AddObjects(taBase* obj) {
   TypeDef* td = obj->GetTypeDef();
   for (int i = 0; i < td->members.size; ++i) {
     MemberDef* md = td->members.FastEl(i);
-    if(!md->type->InheritsFrom(&TA_taBase)) continue;
+    if(!md->type->IsTaBase()) continue;
     taBase* mb = (taBase*)md->GetOff((void*)obj);
     if(mb->GetOwner() == NULL) continue; // not going to be a good selection item
     AddItem((const char*)md->name, md);
@@ -198,7 +198,7 @@ void taiObjChooser::AddTokens(TypeDef* td) {
   for(i=0; i<td->tokens.size; i++) {
     void* tmp = td->tokens.FastEl(i);
     String adrnm = String((long)tmp);
-    if(td->InheritsFrom(TA_taBase)) {
+    if(td->IsTaBase()) {
       taBase* btmp = (taBase*)tmp;
       if((scope_ref != NULL) && !btmp->SameScope(scope_ref))
         continue;
@@ -217,7 +217,7 @@ void taiObjChooser::AddTokens(TypeDef* td) {
 
   for(i=0; i<td->children.size; i++) {
     TypeDef* chld = td->children[i];
-    if(chld->ptr != 0)
+    if(chld->IsAnyPtr())
       continue;
     if((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
       continue;
@@ -255,7 +255,7 @@ void taiObjChooser::UpdateFmSelStr() {
       msel_obj = reg_par_obj->FindFromPath(msel_str, md);
   }
   else if(typ_par_obj != NULL) {
-    if(!typ_par_obj->InheritsFrom(TA_taBase))
+    if(!typ_par_obj->IsTaBase())
       return;
     long adr = (long)msel_str;
     msel_obj = (taBase*)adr;

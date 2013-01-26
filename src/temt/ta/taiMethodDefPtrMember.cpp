@@ -16,7 +16,7 @@
 #include "taiMethodDefPtrMember.h"
 #include <taiData>
 #include <taiMethodDefButton>
-
+#include <MethodDef>
 
 int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->IsPointer()) && (md->type->DerivesFrom(TA_MethodDef)))

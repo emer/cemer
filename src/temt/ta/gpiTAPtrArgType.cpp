@@ -20,7 +20,7 @@
 
 int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&
-      (argt->IsPointer()) && argt->DerivesFrom(TA_taBase))
+      (argt->IsPointer()) && argt->IsTaBase())
     return taiTokenPtrArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }

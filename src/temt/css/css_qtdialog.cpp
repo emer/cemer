@@ -243,17 +243,17 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
     TypeDef* td = ((cssTA*)el)->type_def;
     if(td == NULL) return NULL;
     // todo: put in support for fstreams, enums, etc.
-    if(td->DerivesFrom(TA_taBase)) {
-      if(td->ptr == 0)
+    if(td->IsTaBase()) {
+      if(!td->IsPointer())
 	return new cssiType(orig_obj, td, (void*)&(((cssTA*)el)->ptr), true); // needs ptr type
       else
 	return new cssiType(orig_obj, td, (void*)&(((cssTA*)el)->ptr)); // already has ptr type
     }
-    if(td->DerivesFrom(TA_TypeDef) && (td->ptr == 1))
+    if(td->DerivesFrom(TA_TypeDef) && (td->IsPointer()))
       return new cssiType(orig_obj, &TA_TypeDef_ptr, (void*)&(((cssTA*)el)->ptr));
-    else if(td->DerivesFrom(TA_MemberDef) && (td->ptr == 1))
+    else if(td->DerivesFrom(TA_MemberDef) && (td->IsPointer()))
       return new cssiType(orig_obj, &TA_MemberDef_ptr, (void*)&(((cssTA*)el)->ptr));
-    else if(td->DerivesFrom(TA_MethodDef) && (td->ptr == 1))
+    else if(td->DerivesFrom(TA_MethodDef) && (td->IsPointer()))
       return new cssiType(orig_obj, &TA_MethodDef_ptr, (void*)&(((cssTA*)el)->ptr));
 
     return NULL;

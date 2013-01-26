@@ -16,8 +16,6 @@ set(ta_HEADS_MAKETA_LOCAL
   maketa_iostream.h
   maketa_fstream.h
   maketa_sstream.h
-  ta_stdef.h
-  ta_def.h
 
   taBasicAtomicInt.h
   taAtomicInt.h
@@ -767,6 +765,9 @@ set(ta_HEADS_MAKETA_MOC
 
 # this is no-moc
 set(ta_HEADS_NOMAKETA
+  ta_stdef.h
+  ta_def.h
+
   DataChangedReason.h
 
   VPUnref.h
@@ -997,7 +998,7 @@ set(ta_HEADS_NOMAKETA_MOC
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
-  ../taiqtso/iPoint.h
+  ../taiqtso/iVec2i.h
   ../taiqtso/iVec3i.h
   ../taiqtso/iSize.h
   ../taiqtso/iRect.h

@@ -44,7 +44,7 @@ TokenSpace::~TokenSpace() {
 
 String TokenSpace::El_GetName_(void* it) const {
 #ifndef NO_TA_BASE
-  if((owner == NULL) || !(owner->InheritsFrom(TA_taBase))) {
+  if((owner == NULL) || !(owner->IsTaBase())) {
 #else
   if(owner == NULL) {
 #endif

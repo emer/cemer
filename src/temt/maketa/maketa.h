@@ -99,6 +99,7 @@ public:
 
   String	trg_header;	// header file to process, full path as provided
   String	trg_fname_only; // target header -- file name only
+  String	trg_basename;   // basic unique name for target -- 
   String	out_fname;	// output file name to generate maketa type info into
   String        tmp_fname;      // temporary file name for cpp output
 
@@ -132,6 +133,8 @@ public:
   void 		Burp();
   void          SetSource(TypeDef* td, bool use_defn_st_line);
   // set the source_file and source_start values in type to current vals, optionally using defn_st_line
+  void          ClearSource(TypeDef* td);
+  // clear the source_file and source_start values from type -- premature..
   void		Class_ResetCurPtrs();
   // reset pointers
   void		Class_UpdateLastPtrs();
@@ -191,10 +194,13 @@ public:
 
   void TypeSpace_Generate(TypeSpace* ths, ostream& strm);
 
-//////////////////////////////////
-// 	TypeDef Constructors	//
-//////////////////////////////////
-// (part 1 of _TA.cc file)
+//////////////////////////////////////////
+// 	Type Instances and Constructors	//
+//////////////////////////////////////////
+// (part 1,2 of _TA.cc file)
+
+  void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
+  void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
 
   void TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm);
   void TypeDef_FixOpts(String_PArray& op);
@@ -202,19 +208,20 @@ public:
 
 
 //////////////////////////////////
-//   Type Instances & stubs	//
+//   Type css method stubs	//
 //////////////////////////////////
-// (part 2 of _TA.cc file)
+// (part 3 of _TA.cc file)
 
-  void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
-  void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
+  void TypeSpace_Generate_Stubs(TypeSpace* ths, ostream& strm);
+  void TypeDef_Generate_Stubs(TypeDef* ths, ostream& strm);
 
 //////////////////////////////////
 // 	  Init Function		//
 //////////////////////////////////
 // (part 4 of _TA.cc file)
 
-  void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm);
+  void TypeSpace_Generate_TypeInit(TypeSpace* ths, ostream& strm);
+  void TypeSpace_Generate_DataInit(TypeSpace* ths, ostream& strm);
 
 //////////////////////////////////
 // 	  GenDoc		//

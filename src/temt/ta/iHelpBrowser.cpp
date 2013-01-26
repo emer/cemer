@@ -463,8 +463,7 @@ void iHelpBrowser::filter_textChanged(const QString& /*text*/) {
 }
 
 QTreeWidgetItem* iHelpBrowser::FindItem(TypeDef* typ) {
-  typ = typ->GetNonPtrType();
-  typ = typ->GetNonConstNonRefType();
+  typ = typ->GetActualType();
   QTreeWidgetItemIterator it(tv);
   QTreeWidgetItem* rval;
   while ((rval = *it)) {

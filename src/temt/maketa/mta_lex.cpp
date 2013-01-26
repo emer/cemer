@@ -353,7 +353,7 @@ int MTA::lex() {
         cur_is_trg = false;
       }
 
-      if(verbose > 1) {
+      if(verbose >= 1) {
 	cout << "file: " << cur_fname << "\n";
       }
       continue;			// now actually parse something new..
