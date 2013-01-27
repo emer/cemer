@@ -123,6 +123,8 @@ class LeabraProject;
 ///////////////////////////////////////////////////
 //		LeabraCon -- Connection 
 
+TypeDef_Of(LeabraCon);
+
 class LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
@@ -130,6 +132,9 @@ public:
   
   LeabraCon() { pdw = 0.0f; }
 };
+
+
+TypeDef_Of(LeabraSRAvgCon);
 
 class LeabraSRAvgCon : public LeabraCon {
   // Leabra connection with send-recv average coproduct variables -- required for CTLEABRA_CAL learning rule and perhaps other situations
@@ -1746,7 +1751,7 @@ typedef void (LeabraUnit::*LeabraUnitMethod)(LeabraNetwork*, int);
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
 
-TypeDef_Of(LeabraPrj);
+TypeDef_Of(LeabraPrjn);
 
 class LEABRA_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
@@ -2110,6 +2115,8 @@ private:
 };
 
 TypeDef_Of(LeabraLayerSpec);
+TypeDef_Of(LeabraUnGpData);
+
 
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
@@ -2596,7 +2603,7 @@ private:
 };
 
 
-TypeDef_Of(KwtaSortBuff_Lis);
+TypeDef_Of(KwtaSortBuff_List);
 
 class LEABRA_API KwtaSortBuff_List: public taList<KwtaSortBuff> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of kwta sort buffs -- a specific number are defined as standard per the enum
@@ -2627,13 +2634,10 @@ private:
   void 	Destroy()		{ };
 };
 
+TypeDef_Of(LeabraInhib);
 
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
-TypeDef_Of(LeabraInhib {
-  // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
-    publi);
-
 public:
   LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of inactive units
@@ -2685,7 +2689,8 @@ private:
   void	Destroy()		{ };
 };
 
- TypeDef_Of(LeabraUnGpData_Lis);
+
+TypeDef_Of(LeabraUnGpData_List);
 
 class LEABRA_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of unit group data for leabra unit subgroups
@@ -2702,7 +2707,7 @@ private:
 };
 
 
- TypeDef_Of(LeabraLayer);
+TypeDef_Of(LeabraLayer);
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
@@ -2987,7 +2992,7 @@ private:
 TA_SMART_PTRS(LeabraLayer)
 
 
-  TypeDef_Of(LeabraUnit_Group);
+TypeDef_Of(LeabraUnit_Group);
 
 class LEABRA_API LeabraUnit_Group : public Unit_Group {
   // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer -- optional data structure given use of virt_groups
@@ -3005,7 +3010,7 @@ private:
 // 	Network		//
 //////////////////////////
 
- TypeDef_Of(LeabraNetMisc);
+TypeDef_Of(LeabraNetMisc);
 
 class LEABRA_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
@@ -3053,7 +3058,7 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(CtSRAvgSpec);
+TypeDef_Of(CtSRAvgSpec);
 
 class LEABRA_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
@@ -3080,7 +3085,7 @@ private:
 };
 
 
- TypeDef_Of(CtSineInhibMod);
+TypeDef_Of(CtSineInhibMod);
 
 class LEABRA_API CtSineInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
@@ -3114,7 +3119,7 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(CtFinalInhibMod);
+TypeDef_Of(CtFinalInhibMod);
 
 class LEABRA_API CtFinalInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
@@ -3144,7 +3149,8 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(CtLrnTrigSpec);
+
+TypeDef_Of(CtLrnTrigSpec);
 
 class LEABRA_API CtLrnTrigSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
@@ -3182,7 +3188,8 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(CtLrnTrigVals);
+
+TypeDef_Of(CtLrnTrigVals);
 
 class LEABRA_API CtLrnTrigVals : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra state variables for continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
@@ -3235,7 +3242,8 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(LeabraNetwork);
+
+TypeDef_Of(LeabraNetwork);
 
 class LEABRA_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects

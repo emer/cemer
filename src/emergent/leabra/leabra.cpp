@@ -19,6 +19,9 @@
 #include <FullPrjnSpec>
 #include <DumpFileCvt>
 
+TypeDef_Of(ExtRewLayerSpec);
+TypeDef_Of(MarkerConSpec);
+
 #include <taMisc>
 
 static void leabra_converter_init() {

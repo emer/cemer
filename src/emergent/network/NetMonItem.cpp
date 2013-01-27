@@ -25,6 +25,8 @@
 
 #include <taMisc>
 
+TypeDef_Of(UserDataItem);
+
 void NetMonItem::Initialize() {
   off = false;
   computed = false;
@@ -470,14 +472,13 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     }
     // we can only handle embedded objs and ptrs to objs
     taBase* ths = NULL;
-    if (md->type->ptr == 0)
+    if (!md->type->IsAnyPtr())
       ths = (taBase*) md->GetOff((void*)obj);
-    else if (md->type->ptr == 1)
+    else if (md->type->IsPointer())
       ths = *((taBase**)md->GetOff((void*)obj));
     else {
       TestError(true, "ScanObject_InObject", "can only handle embedded taBase objects"
-                " or ptrs to them, not level=",
-                String(md->type->ptr), " var: ", var);
+                " or ptrs to them, not pointer-pointers, var: ", var);
       return true; //no mon, but we did handle it
     }
 

@@ -146,6 +146,8 @@ private:
 ////////////////////////////////////////////////////////////////////
 //	  Matrix Con/Units
 
+TypeDef_Of(MatrixCon);
+
 class MatrixCon : public LeabraCon {
   // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning
 public:

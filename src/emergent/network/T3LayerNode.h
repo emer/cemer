@@ -21,7 +21,7 @@
 #include <T3NodeParent>
 
 // member includes:
-#include <iPoint>
+#include <iVec2i>
 #include <iVec3f>
 
 // declare all other types mentioned but not required to include:

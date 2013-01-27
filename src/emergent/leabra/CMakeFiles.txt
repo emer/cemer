@@ -10,8 +10,6 @@
 
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
-    ../../temt/ta/ta_TA_type.h
-    ../network/network_TA_type.h
     leabra_def.h
     leabra.h
     leabra_extra.h
@@ -32,8 +30,6 @@ set(leabra_HEADS
     leabra_pbwm.h
     leabra_hippo.h
 #    leabra_v3_compat.h
-    leabra_TA_inst.h
-    leabra_TA_type.h
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -46,5 +42,4 @@ set(leabra_SRCS
     leabra_pbwm.cpp
     leabra_hippo.cpp
 #    leabra_v3_compat.cpp
-    leabra_TA.cpp
 )

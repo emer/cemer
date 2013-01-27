@@ -300,9 +300,9 @@ void BrainView::GetMembs() {
           nmd->idx = md->idx;   // so restore it to the orig one
         }       // check for nongroup owned sub fields (ex. bias)
         else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
-          if(md->type->ptr > 1) continue; // only one level of pointer tolerated
+          if(md->type->IsPtrPtr()) continue; // only one level of pointer tolerated
           TypeDef* nptd;
-          if(md->type->ptr > 0) {
+          if(md->type->IsPointer()) {
             taBase** par_ptr = (taBase**)md->GetOff((void*)u);
             if(*par_ptr == NULL) continue; // null pointer
             nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
@@ -626,7 +626,7 @@ void BrainView::Render_net_text() {
     if(!md->HasOption("VIEW")) continue;
     if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
     chld_idx++;
-    if(md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum)) {
+    if(md->type->InheritsFrom(&TA_taString) || md->type->IsEnum()) {
       if(cur_col > 0) {
         cur_row++;
         cur_col=0;
@@ -691,7 +691,7 @@ void BrainView::Render_net_text() {
       SoTransform* tr = new SoTransform;
       tsep->addChild(tr);
       bool cur_str = false;
-      if((md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum))) {
+      if((md->type->InheritsFrom(&TA_taString) || md->type->IsEnum())) {
         cur_str = true;
         if(cur_col > 0) { // go to next
           cur_row++;

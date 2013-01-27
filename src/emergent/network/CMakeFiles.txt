@@ -171,7 +171,6 @@ set(network_HEADS_NOMAKETA
 # The order of files passed to maketa is important since it appears not to
 # process #include directives.
 set(network_HEADS_MAKETA
-    ../../temt/ta/ta_TA_type.h
     ${network_HEADS_MAKETA_LOCAL}
 )
 
@@ -179,8 +178,6 @@ set(network_HEADS_MAKETA
 set(network_HEADS
     ${network_HEADS_MAKETA_LOCAL}
     ${network_HEADS_NOMAKETA}
-    network_TA_type.h
-    network_TA_inst.h
 )
 
 # headers that need Qt moc run
@@ -343,7 +340,6 @@ set(network_SRCS_LOCAL
 # but DO include _TA.cpp files
 set(network_SRCS
   ${network_SRCS_LOCAL}
-  network_TA.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

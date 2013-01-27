@@ -21,6 +21,11 @@
 
 #include <taMisc>
 
+TypeDef_Of(PFCLayerSpec);
+TypeDef_Of(MatrixLayerSpec);
+TypeDef_Of(SNrThalLayerSpec);
+
+
 //////////////////////////////////////////
 //      LeabraTd Units and Cons         //
 //////////////////////////////////////////

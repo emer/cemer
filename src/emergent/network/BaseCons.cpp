@@ -797,7 +797,7 @@ int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
   // output the connection values
   for(int j=0; j<con_type->members.size; j++) {
     MemberDef* md = con_type->members.FastEl(j);
-    if((md->type->ptr > 0) || (md->HasOption("NO_SAVE")))
+    if((md->type->IsAnyPtr()) || (md->HasOption("NO_SAVE")))
       continue;
     taMisc::indent(strm, indent+1,1) << md->name << " = {";
     for(int i=0; i<size; i++) {

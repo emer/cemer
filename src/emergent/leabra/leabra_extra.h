@@ -1346,6 +1346,8 @@ private:
 // turn this on to enable various debugging things..
 // #define XCAL_DEBUG 1
 
+TypeDef_Of(LeabraSpikeCon);
+
 class LeabraSpikeCon : public LeabraSRAvgCon {
   // #STEM_BASE ##CAT_Leabra Leabra connection for spike-based learning
 public:

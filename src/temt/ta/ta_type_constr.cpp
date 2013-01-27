@@ -80,6 +80,26 @@ static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
                  "not found -- now creating it!");
     typ = new TypeDef(nm);
     typ->AddNewGlobalType(false);
+    if(typ->name.endsWith("_ptr")) {
+      typ->SetType(TypeDef::POINTER);
+      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ptr"));
+      typ->AddParent(par);
+    }
+    if(typ->name.endsWith("_ref")) {
+      typ->SetType(TypeDef::REFERENCE);
+      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ref"));
+      typ->AddParent(par);
+    }
+    if(typ->name.endsWith("_ary")) {
+      typ->SetType(TypeDef::ARRAY);
+      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ary"));
+      typ->AddParent(par);
+    }
+    if(typ->name.startsWith("const_")) {
+      typ->SetType(TypeDef::CONST);
+      TypeDef* par = tac_GetTypeFmName(tp, typ->name.after("const_"));
+      typ->AddParent(par);
+    }
   }
   return typ;
 }
