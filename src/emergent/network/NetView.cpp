@@ -15,7 +15,6 @@
 
 #include "NetView.h"
 #include <T3NetNode>
-#include <Network>
 #include <NetViewPanel>
 #include <LayerGroupView>
 #include <PrjnView>

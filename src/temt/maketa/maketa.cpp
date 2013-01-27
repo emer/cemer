@@ -163,6 +163,10 @@ String MTA::FindFile(const String& fname, bool& ok) {
 
 TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
   TypeSpace* rval = &taMisc::types;
+  // todo: need to detect templates defined in sub-classes
+  // if(td->IsTemplate() && cur_class != NULL) {
+  //   rval = &(cur_class->sub_types); // put template instances on sub classes
+  // }
   TypeDef* partd;
   if((td->owner != NULL) && (td->owner->owner != NULL)) {
     rval = td->owner;

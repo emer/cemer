@@ -18,7 +18,6 @@
 
 // parent includes:
 #include <LayerDataEl>
-#include <Unit>
 
 // member includes:
 #include <RandomSpec>

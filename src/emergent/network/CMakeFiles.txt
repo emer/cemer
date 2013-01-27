@@ -20,11 +20,6 @@ set(network_HEADS_MAKETA_LOCAL
   Schedule.h
   PRerrVals.h
 
-  UnitRef.h
-  LayerRef.h
-  ProjectionRef.h
-  NetworkRef.h
-
   Connection.h
   ConSpec.h
   BaseCons.h
@@ -140,6 +135,11 @@ set(network_HEADS_MAKETA_LOCAL
 )
 
 set(network_HEADS_NOMAKETA
+  UnitRef.h
+  LayerRef.h
+  ProjectionRef.h
+  NetworkRef.h
+
   ConSpec_inlines.h
   Unit_inlines.h
 

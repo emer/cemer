@@ -23,8 +23,7 @@
 // member includes:
 #include <taTransform>
 #include <String_Array>
-#include <UnitRef>
-#include <LayerRef>
+#include <Network>
 #include <String_Matrix>
 #include <CircMatrix>
 #include <ColorScale>
@@ -32,7 +31,6 @@
 #include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
-class Network; //
 class NetViewPanel; //
 class UnitView; //
 class UnitGroupView; //

@@ -107,4 +107,8 @@ private:
   void  Destroy();
 };
 
+#ifdef __TA_COMPILE__
+#include <Network>
+#endif
+
 #endif // UnitCallThreadMgr_h

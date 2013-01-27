@@ -22,7 +22,6 @@
 // member includes:
 #include <LayerDataEl_List>
 #include <LayerWriterEl>
-#include <NetworkRef>
 
 // declare all other types mentioned but not required to include:
 

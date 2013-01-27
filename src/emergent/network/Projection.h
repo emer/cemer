@@ -194,4 +194,9 @@ private:
   void  Destroy();
 };
 
+// needs the actual layer include to compile TA file
+#ifdef __TA_COMPILE__
+#include <Layer>
+#endif
+
 #endif // Projection_h

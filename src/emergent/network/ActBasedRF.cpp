@@ -14,7 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "ActBasedRF.h"
-#include <Network>
 #include <taMath_float>
 
 

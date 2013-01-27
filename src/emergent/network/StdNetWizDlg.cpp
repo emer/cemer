@@ -15,7 +15,6 @@
 
 #include "StdNetWizDlg.h"
 #include <taGuiDialog>
-#include <Network>
 #include <DataTable>
 #include <ProjectBase>
 

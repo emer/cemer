@@ -23,8 +23,7 @@
 // member includes:
 #include <DataTable>
 #include <float_Matrix>
-#include <NetworkRef>
-#include <LayerRef>
+#include <Network>
 
 // declare all other types mentioned but not required to include:
 

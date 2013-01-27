@@ -68,5 +68,9 @@ public:
 };
 TA_SMART_PTRS(BaseSpec_Group)
 
+// compiling TA_ file requires BaseSpec, so we add it here
+#ifdef __TA_COMPILE__
+#include <BaseSpec>
+#endif
 
 #endif // BaseSpec_Group_h

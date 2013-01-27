@@ -42,8 +42,13 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
 
 bool MTA::TypeDef_Gen_Test_TI(TypeDef* ths) {
   if(ths->IsActual() && ths->IsTemplInst() && 
-     (trg_fname_only == taMisc::GetFileFmPath(ths->source_file)))
+     (trg_fname_only == taMisc::GetFileFmPath(ths->source_file))) {
+    // todo: gross temp hack to avoid instantiating a template within a template
+    // need to instead properly detect subtype template instances -- see GetTypeSpace
+    if(ths->templ_pars.size == 1 && ths->templ_pars[0]->name == "T")
+      return false;
     return true;
+  }
   return false;
 }
 
@@ -135,6 +140,7 @@ void MTA::TypeSpace_Gen(TypeSpace* ths, ostream& strm) {
 // 	Includes
 
 void MTA::TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances) {
+  strm << "#define __TA_COMPILE__\n";
   strm << "#include <TypeDef>\n";
   if(!instances) {
     strm << "#include \"ta_type_constr.h\"\n";

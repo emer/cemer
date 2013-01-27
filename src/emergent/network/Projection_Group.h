@@ -18,7 +18,12 @@
 
 // parent includes:
 #include <taGroup>
+#ifdef __TA_COMPILE__
+#include "network_def.h"
+class Projection;
+#else
 #include <Projection>
+#endif
 
 // member includes:
 
@@ -44,5 +49,11 @@ private:
   void  Initialize()            { SetBaseType(&TA_Projection); send_prjns = false; }
   void  Destroy()               { };
 };
+
+// needs the actual layer include to compile TA file
+#ifdef __TA_COMPILE__
+#include <Projection>
+#include <Layer>
+#endif
 
 #endif // Projection_Group_h

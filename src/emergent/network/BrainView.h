@@ -21,7 +21,7 @@
 #include <T3DataViewMain>
 
 // member includes:
-#include <UnitRef>
+#include <Network>
 #include <ColorScale>
 #include <ScaleRange_List>
 #include <taVector3f>
@@ -30,7 +30,6 @@
 #include <taVector3i>
 
 // declare all other types mentioned but not required to include:
-class Network; //
 class BrainViewPanel; //
 class BrainVolumeView; //
 class NiftiReader; // #IGNORE

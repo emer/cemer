@@ -14,7 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "InitNamedUnits.h"
-#include <ProgVar>
 #include <taProject>
 #include <Network>
 #include <GridTableView>

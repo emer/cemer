@@ -21,6 +21,7 @@
 #include <ProgEl>
 
 // member includes:
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 class DataTable; //

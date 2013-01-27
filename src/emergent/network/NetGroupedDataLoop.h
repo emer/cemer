@@ -19,6 +19,7 @@
 // parent includes:
 #include "network_def.h"
 #include <Loop>
+#include <ProgVar>
 
 // member includes:
 #include <int_Array>

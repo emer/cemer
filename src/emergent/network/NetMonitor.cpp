@@ -14,7 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "NetMonitor.h"
-#include <Network>
 
 #include <taMisc>
 

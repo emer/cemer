@@ -15,7 +15,6 @@
 
 #include "BrainView.h"
 #include <NewViewHelper>
-#include <Network>
 #include <T3BrainNode>
 #include <T3NetNode>
 #include <BrainViewPanel>

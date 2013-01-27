@@ -14,7 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "NetCounterBase.h"
-#include <ProgVar>
 #include <MemberDef>
 
 #include <taMisc>

@@ -14,7 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "NetGroupedDataLoop.h"
-#include <ProgVar>
 #include <DataTable>
 
 #include <taMisc>

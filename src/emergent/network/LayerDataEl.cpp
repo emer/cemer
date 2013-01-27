@@ -15,7 +15,6 @@
 
 #include "LayerDataEl.h"
 #include <LayerWriter>
-#include <Network>
 
 void LayerDataEl::Initialize() {
   net_target = LAYER;

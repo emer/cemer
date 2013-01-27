@@ -21,7 +21,7 @@
 #include <taNBase>
 
 // member includes:
-#include <NetworkRef>
+#include <Network>
 
 // declare all other types mentioned but not required to include:
 class taGuiDialog; //

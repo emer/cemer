@@ -22,6 +22,7 @@
 
 // member includes:
 #include <DynEnum>
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 class DataTable; //
