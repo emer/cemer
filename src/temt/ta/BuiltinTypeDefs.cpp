@@ -59,6 +59,8 @@ TypeDef TA_uint16_t             ("uint16_t",    TypeDef::INTEGER | TypeDef::UNSI
                                  sizeof(uint16_t));
 TypeDef TA_unsigned_short_int ("unsigned_short_int", TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
                                  sizeof(unsigned short int), "unsigned short int");
+TypeDef TA_ushort               ("ushort",    TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
+                                 sizeof(ushort));
 
 TypeDef TA_int                  ("int",         TypeDef::INTEGER | TypeDef::SIGNED, 1,
                                  sizeof(int));
@@ -162,6 +164,7 @@ void tac_AddBuiltinTypeDefs() {
   TA_unsigned_short.AddNewGlobalType();    
   TA_uint16_t.AddNewGlobalType();          
   TA_unsigned_short_int.AddNewGlobalType();
+  TA_ushort.AddNewGlobalType();          
                       
   TA_int.AddNewGlobalType();               
   TA_int32_t.AddNewGlobalType();           
@@ -231,6 +234,7 @@ void tac_AddBuiltinTypeDefs() {
   TA_int16_t.AddParents(&TA_short);
   TA_unsigned_short_int.AddParents(&TA_unsigned_short);
   TA_uint16_t.AddParents(&TA_unsigned_short);
+  TA_ushort.AddParents(&TA_unsigned_short);
   TA_signed_int.AddParents(&TA_int);
   TA_signed.AddParents(&TA_int);
   TA_int32_t.AddParents(&TA_int);

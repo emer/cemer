@@ -71,6 +71,7 @@ extern TA_API TypeDef TA_short;
 extern TA_API TypeDef TA_unsigned_short;
   extern TA_API TypeDef TA_uint16_t; // note: seemingly absent in MSVC
   extern TA_API TypeDef TA_unsigned_short_int;
+  extern TA_API TypeDef TA_ushort;
 extern TA_API TypeDef TA_int;
   extern TA_API TypeDef TA_int32_t;
   extern TA_API TypeDef TA_signed;

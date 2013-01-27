@@ -195,6 +195,8 @@ public:
 
   bool TypeDef_Gen_Test(TypeDef* ths);
   // test if this type should be generated or not
+  bool TypeDef_Gen_Test_TI(TypeDef* ths);
+  // test if this template instantiation type should be generated or not
   String TypeDef_Gen_TypeName(TypeDef* ths);
   // generate the type name as a string for string lookup in Data fields
   String TypeDef_Gen_TypeDef_Ptr(TypeDef* ths);
@@ -234,6 +236,7 @@ public:
   void TypeSpace_Gen_TypeDefs(TypeSpace* ths, ostream& strm);
   // top-level generate TypeDef constructors
   void TypeDef_Gen_TypeDefs(TypeDef* ths, ostream& strm);
+  void TypeDef_Gen_TypeDefs_impl(TypeDef* ths, ostream& strm);
 
   /////////////////////////////////////////
   //   css method stubs	
@@ -318,17 +321,20 @@ public:
 
 
   //////////////////////////////////
-  // 	  Init Function
+  // 	  TypeInit Function
 
   void TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm);
-  void TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm);
-
   void TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm);
+
+  //////////////////////////////////
+  // 	  DataInit Function
+
+  void TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm);
   void TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm);
-  void SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
   void TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm);
   void TypeDef_Gen_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm);
   void TypeDef_Gen_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm);
+  void SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
 
 
   //////////////////////////////////

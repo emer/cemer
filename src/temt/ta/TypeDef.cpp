@@ -811,8 +811,13 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
 }
 
 TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
-  TypeDef* par = FindGlobalTypeName(nm);
-  if(!par) return NULL;
+  TypeDef* par = FindGlobalTypeName(nm, false);
+  if(!par) {
+    par = new TypeDef(nm);
+    par->type = type;           // assume same kind of thing
+    taMisc::Info("AddParentName -- added new unknown type:",
+                 nm, "as parent of type:", name);
+  }
   return AddParent(par, p_off);
 }
 
@@ -874,6 +879,27 @@ void TypeDef::AddTemplPars(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p4 != NULL)    templ_pars.Link(p4);
   if(p5 != NULL)    templ_pars.Link(p5);
   if(p6 != NULL)    templ_pars.Link(p6);
+}
+
+void TypeDef::AddTemplParNames(const char* p1, const char* p2, const char* p3,
+                               const char* p4, const char* p5, const char* p6) {
+  if(p1 != NULL)    AddTemplParName(p1);
+  if(p2 != NULL)    AddTemplParName(p2);
+  if(p3 != NULL)    AddTemplParName(p3);
+  if(p4 != NULL)    AddTemplParName(p4);
+  if(p5 != NULL)    AddTemplParName(p5);
+  if(p6 != NULL)    AddTemplParName(p6);
+}
+
+void TypeDef::AddTemplParName(const char* pn) {
+  TypeDef* td = FindGlobalTypeName(pn, false);
+  if(!td) {
+    td = new TypeDef(pn);
+    td->AddNewGlobalType(false);
+    taMisc::Info("AddTemplParName -- added new unknown void type as template parameter:",
+                 pn);
+  }
+  templ_pars.Link(td);
 }
 
 void TypeDef::CacheParents() {

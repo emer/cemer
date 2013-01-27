@@ -73,11 +73,13 @@ bool TypeDefInitRegistrar::CallAllDataInitFuns() {
 
 
 static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
-  TypeDef* typ = TypeDef::FindGlobalTypeName(nm, false);
+  String snm = nm;
+  TypeDef* typ = TypeDef::FindGlobalTypeName(snm, false);
   if(!typ) { // not found -- need to create a new guy
-    taMisc::Warning("tac_GetTypeFmName(): type named:", nm,
-                    "not found -- now creating it!");
-    return NULL;             // sorry null for now -- TODO: need to make it!!
+    taMisc::Info("tac_GetTypeFmName(): type named:", nm,
+                 "not found -- now creating it!");
+    typ = new TypeDef(nm);
+    typ->AddNewGlobalType(false);
   }
   return typ;
 }

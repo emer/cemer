@@ -28,16 +28,23 @@
 // 2+ = actual args
 static const int stub_arg_off = 2;
 
+#define PAR_ARG_COUNT   6
 
 bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
   if(ths->IsNotActual()) return false; // only actual types!
   if(ths->IsTemplInst()) return false; // no template instances -- duplicates!!
-  String src_only = taMisc::GetFileFmPath(ths->source_file);
-  if(src_only != trg_fname_only) {
+  if(trg_fname_only != taMisc::GetFileFmPath(ths->source_file)) {
     return false; // not from target file!
   }
   if(ths->HasOption("IGNORE")) return false;
   return true;
+}
+
+bool MTA::TypeDef_Gen_Test_TI(TypeDef* ths) {
+  if(ths->IsActual() && ths->IsTemplInst() && 
+     (trg_fname_only == taMisc::GetFileFmPath(ths->source_file)))
+    return true;
+  return false;
 }
 
 String MTA::TypeDef_Gen_TypeName(TypeDef* ths) {
@@ -190,13 +197,15 @@ void MTA::TypeSpace_Gen_TypeDefs(TypeSpace* ths, ostream& strm) {
 
 void MTA::TypeDef_Gen_TypeDefs(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Gen_Test(ths)) return;
-
 #ifdef TA_OS_WIN
   if (win_dll)
     strm << win_dll_str << " ";
 #endif
     strm << "TypeDef TA_" << ths->name;
+  TypeDef_Gen_TypeDefs_impl(ths, strm);
+}
 
+void MTA::TypeDef_Gen_TypeDefs_impl(TypeDef* ths, ostream& strm) {
   String_PArray act_opts = ths->opts;
   String_PArray act_inh_opts = ths->inh_opts;
 
@@ -1191,7 +1200,7 @@ void MTA::TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
-//        Init Function
+//       TypeInit Function
 
 void MTA::TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm) {
   strm << "\n// TypeDef Init Function\n";
@@ -1207,6 +1216,25 @@ void MTA::TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm) {
   }
   strm << "} \n";
 }
+
+void MTA::TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm) {
+  if(TypeDef_Gen_Test(ths)) {
+    strm << "  TA_" << ths->name << ".AddNewGlobalType();\n";
+  }
+  else if(TypeDef_Gen_Test_TI(ths)) {
+    ths->opts.AddUnique("NO_INSTANCE");
+    strm << "  if(TypeDef::FindGlobalTypeName(\"" << ths->name << "\", false) == NULL) {\n";
+    // instantiate template types!
+    strm << "    TypeDef* TA_" << ths->name << " = new TypeDef";
+    TypeDef_Gen_TypeDefs_impl(ths, strm);
+    strm << "    TA_" << ths->name << "->AddNewGlobalType(false);\n";
+    strm << "  }\n";
+  }    
+}
+
+
+//////////////////////////////////
+// 	  DataInit Function
 
 void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
   strm << "\n// Data Init Function\n";
@@ -1228,7 +1256,51 @@ void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
        << "ta_DataInit_" << trg_basename << ");\n\n";
 }
 
-#define PAR_ARG_COUNT   6
+void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
+  if(TypeDef_Gen_Test_TI(ths)) {
+    strm << "  TypeDef* TA_" << ths->name << " = TypeDef::FindGlobalTypeName(\""
+         << ths->name << "\", false);\n";
+    strm << "  if(TA_" << ths->name << "->parents.size == 0) {\n";
+    String ths_ref = "TA_" + ths->name + "->";
+    TypeDef_Gen_AddParents(ths, ths_ref, strm);
+    strm << "  }\n";
+    return;
+  }
+
+  if(!TypeDef_Gen_Test(ths)) return;
+
+  // int reg_fun_level = 0;
+  // if(ths->InheritsFrom(TA_taRegFun)) {
+  //   if(basename == "ta")
+  //     reg_fun_level = 1;        // add reg_fun and its methods
+  //   else
+  //     reg_fun_level = 2;        // just add reg_fun methods (not the typedef)
+  // }
+
+  if(ths->IsActualClass()) {
+    if((gen_instances || (ths->HasOption("INSTANCE")))
+       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate()) {
+      strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
+    }
+  }
+
+  String ths_ref = "TA_" + ths->name + ".";
+  TypeDef_Gen_AddParents(ths, ths_ref, strm);
+
+  if(ths->IsEnum()) {
+    TypeDef_Init_EnumData(ths, strm);
+  }
+  if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS") && !ths->IsTemplate()) {
+    TypeDef_Init_EnumData(ths, strm);
+    SubTypeSpace_Gen_Init(&(ths->sub_types), ths, strm);
+    TypeDef_Init_MemberData(ths, strm);
+    TypeDef_Init_MethodData(ths, strm);
+    TypeDef_Init_PropertyData(ths, strm);
+  }
+  // if((reg_fun_level > 0) && (gen_css) && !ths->HasOption("NO_CSS")) {
+  //   TypeDef_Init_MethodData(ths, strm);
+  // }
+}
 
 void MTA::TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   TypeDef_Gen_AddOtherParents(ths, typ_ref, strm);
@@ -1295,11 +1367,11 @@ void MTA::TypeDef_Gen_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm
   // and add template parameters too!
   if(ths->IsTemplInst() && !ths->HasOption("NO_CSS")) {
     if(ths->templ_pars.size > 0) {
-      strm << "  " << typ_ref << "AddTemplPars(";
+      strm << "  " << typ_ref << "AddTemplParNames(";
       for(int i=0; i < ths->templ_pars.size; i++) {
 	TypeDef* ptd = ths->templ_pars.FastEl(i);
 	if(ptd->HasOption("NO_CSS")) continue;
-	strm << "&TA_" << ptd->name;
+	strm << "\"" << ptd->name << "\"";
 	if(i < ths->templ_pars.size-1)
 	  strm << ", ";
       }
@@ -1358,43 +1430,3 @@ void MTA::SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
   }
 }
 
-void MTA::TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm) {
-  if(!TypeDef_Gen_Test(ths)) return;
-  strm << "  TA_" << ths->name << ".AddNewGlobalType();\n";
-}
-
-void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
-  if(!TypeDef_Gen_Test(ths)) return;
-
-  // int reg_fun_level = 0;
-  // if(ths->InheritsFrom(TA_taRegFun)) {
-  //   if(basename == "ta")
-  //     reg_fun_level = 1;        // add reg_fun and its methods
-  //   else
-  //     reg_fun_level = 2;        // just add reg_fun methods (not the typedef)
-  // }
-
-  if(ths->IsActualClass()) {
-    if((gen_instances || (ths->HasOption("INSTANCE")))
-       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate()) {
-      strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
-    }
-  }
-
-  String ths_ref = "TA_" + ths->name + ".";
-  TypeDef_Gen_AddParents(ths, ths_ref, strm);
-
-  if(ths->IsEnum()) {
-    TypeDef_Init_EnumData(ths, strm);
-  }
-  if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS") && !ths->IsTemplate()) {
-    TypeDef_Init_EnumData(ths, strm);
-    SubTypeSpace_Gen_Init(&(ths->sub_types), ths, strm);
-    TypeDef_Init_MemberData(ths, strm);
-    TypeDef_Init_MethodData(ths, strm);
-    TypeDef_Init_PropertyData(ths, strm);
-  }
-  // if((reg_fun_level > 0) && (gen_css) && !ths->HasOption("NO_CSS")) {
-  //   TypeDef_Init_MethodData(ths, strm);
-  // }
-}

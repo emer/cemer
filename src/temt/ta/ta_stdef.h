@@ -233,12 +233,9 @@
 
 #else // !def TA_GUI or making ta
 
-typedef unsigned char   uchar;
 typedef unsigned short  ushort;
 typedef unsigned        uint;
 typedef unsigned long   ulong;
-typedef char*           pchar;
-typedef uchar*          puchar; //
 
 #endif // TA_GUI
 

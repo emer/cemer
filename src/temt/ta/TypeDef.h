@@ -369,6 +369,10 @@ public:
   void          AddTemplPars(TypeDef* p1=NULL, TypeDef* p2=NULL,
                              TypeDef* p3=NULL, TypeDef* p4=NULL,
                              TypeDef* p5=NULL, TypeDef* p6=NULL);
+  void          AddTemplParNames(const char* p1=NULL, const char* p2=NULL,
+                                 const char* p3=NULL, const char* p4=NULL,
+                                 const char* p5=NULL, const char* p6=NULL);
+  void          AddTemplParName(const char* pn);
 
   void          CacheParents();
   // populate par_cache with *all* the parents and set hash table -- call this after all types are loaded etc -- in InitializeTypes
