@@ -230,6 +230,7 @@ set(ta_HEADS_MAKETA_LOCAL
   ScriptBase_List.h
 
   ISelectable.h
+  ISelectable_PtrList.h
   IObjectSelectable.h
 
   DataViewer.h
@@ -253,8 +254,6 @@ set(ta_HEADS_MAKETA_LOCAL
   TreeDecorationSpec_List.h
   MainWindowViewer.h
 
-  ProgramRef.h
-  ProgVarRef.h
   ProgLine.h
   ProgLine_List.h
   ProgType.h
@@ -744,6 +743,7 @@ set(ta_HEADS_MAKETA_MOC
   iProgramCtrlPanel.h
   iProgramEditor.h
   iProgramViewScriptPanel.h
+  iProgramCtrlDataHost.h
 
   iSelectEditPanel.h
 
@@ -751,6 +751,9 @@ set(ta_HEADS_MAKETA_MOC
   iDocDataPanel.h
 
   iSearchDialog.h
+
+  MatrixTableModel.h
+  DataTableModel.h
 
   iMatrixPanel.h
 
@@ -769,6 +772,9 @@ set(ta_HEADS_NOMAKETA
   ta_def.h
 
   DataChangedReason.h
+
+  ProgramRef.h
+  ProgVarRef.h
 
   VPUnref.h
   VPUList.h
@@ -844,7 +850,6 @@ set(ta_HEADS_NOMAKETA
   HiLightButton.h
   IDataViewWidget.h
 
-  ISelectable_PtrList.h
   iApplicationToolBar.h
   iToolBar_List.h
   iTabView_PtrList.h
@@ -877,7 +882,6 @@ set(ta_HEADS_NOMAKETA_MOC
 
   PublishDocsDialog.h
 
-  iProgramCtrlDataHost.h
   taiProgStepButton.h
   taiClipData.h
   SynchronousNetRequest.h
@@ -981,8 +985,6 @@ set(ta_HEADS_NOMAKETA_MOC
   ColorMatrixGrid.h
   ColorPad.h
 
-  MatrixTableModel.h
-  DataTableModel.h
   iDataTableView.h
   DataTableDelegate.h
   iDataTablePanel_Mbr.h

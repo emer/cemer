@@ -79,10 +79,10 @@ public:
   taHashTable*          hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
 
 
-  virtual taMatrix*     AR() = 0;
-  // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
   virtual const taMatrix*       AR() const = 0;
   // #CAT_Access const version of the matrix pointer
+  virtual taMatrix*     AR() = 0;
+  // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
 
   /////////////////////////////////////////////
   // type of data

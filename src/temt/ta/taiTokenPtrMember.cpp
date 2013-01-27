@@ -21,9 +21,6 @@
 
 #include <taMisc>
 
-TypeDef_Of(TypeDef_ptr);
-
-
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->IsTaBase() && md->type->IsBasePointerType())
     return inherited::BidForMember(md,td) + 1;
@@ -116,7 +113,7 @@ TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
       int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                     tmp, false); // no warn
-      if (md && (md->type == &TA_TypeDef_ptr)) {
+      if (md && (md->type->name == "TypeDef_ptr")) {
         dir_type = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
     }
@@ -125,7 +122,7 @@ TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
     // static type scoping
     tmp = mbr->OptionAfter("TYPE_");
     if (tmp.nonempty()) {
-      dir_type = taMisc::types.FindName(tmp);
+      dir_type = TypeDef::FindGlobalTypeName(tmp);
     }
   }
   if (dir_type && dir_type->InheritsFrom(rval))
@@ -165,7 +162,7 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   else {
     String sctyp = mbr->OptionAfter("SCOPE_");
     if(!sctyp.empty()) {
-      scope_type = taMisc::types.FindName(sctyp);
+      scope_type = TypeDef::FindGlobalTypeName(sctyp);
     }
   }
 

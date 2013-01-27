@@ -19,8 +19,6 @@
 
 #include <taMisc>
 
-TypeDef_Of(TypeDef_ptr);
-
 int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if ((md->type->IsPointer()) &&
      ((md->OptionAfter("TYPE_") != "") || (md->OptionAfter("TYPE_ON_") != "")
@@ -52,7 +50,7 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
     ta_memb_ptr net_mbr_off = 0;    int net_base_off = 0;
     MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                   mb_nm, false); // no warn
-    if (md && (md->type == &TA_TypeDef_ptr)) {
+    if (md && (md->type->name == "TypeDef_ptr")) {
       td = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
     }
   }
@@ -61,7 +59,7 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
     if(mb_nm == "this")
       td = typ;
     else if(mb_nm != "")
-      td = taMisc::types.FindName((char*)mb_nm);
+      td = TypeDef::FindGlobalTypeName(mb_nm);
   }
   TypeDef* targ_typ = (td) ? td : mbr->type;
   rval->GetImage((TypeDef*)*((void**)new_base), targ_typ);

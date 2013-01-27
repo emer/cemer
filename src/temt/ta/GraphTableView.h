@@ -162,7 +162,9 @@ public:
   // updates the values in us and the stored ones in the colorscale list
 
 
-  iGraphTableView_Panel*        lvp(){return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
+  iGraphTableView_Panel*        lvp();
+  // #IGNORE
+  
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
 
   override const iColor bgColor(bool& ok) const;

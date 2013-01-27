@@ -45,6 +45,7 @@ public:
   virtual taiDataLink*  rootLink() {return NULL;}
 
   inline iBrowseViewer* widget() {return (iBrowseViewer*)inherited::widget();}
+  // #IGNORE
 
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
 protected:

@@ -17,8 +17,6 @@
 
 TypeDef_Of(taDataAnal);
 
-#include <taMisc>
-
 void DataAnalCall::Initialize() {
   min_type = &TA_taDataAnal;
   object_type = &TA_taDataAnal;
@@ -32,7 +30,7 @@ bool DataAnalCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
   String objnm = mthobj.before("::");
-  TypeDef* td = taMisc::types.FindName(objnm);
+  TypeDef* td = TypeDef::FindGlobalTypeName(objnm);
   if(!td) return false;
   if(objnm == "taDataAnal") return true;
   return false;

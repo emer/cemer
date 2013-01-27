@@ -19,8 +19,6 @@
 
 #include <taMisc>
 
-TypeDef_Of(TypeDef_ptr);
-
 taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
                                  MemberDef* memb_md_, TypeDef* typ_,
                                  IDataHost* host_, taiData* par,
@@ -79,7 +77,7 @@ void taiTypeInfoBase::GetTarget() {
         ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
         MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                         mb_nm, false); // no warn
-        if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
+        if (tdmd && (tdmd->type->name == "TypeDef_ptr")) {
           targ_typ = *(TypeDef**)(MemberDef::GetOff_static(menubase, net_base_off, net_mbr_off));
         }
       }
@@ -89,7 +87,7 @@ void taiTypeInfoBase::GetTarget() {
 
   mb_nm = memb_md->OptionAfter("TYPE_");
   if (!mb_nm.empty()) {
-    targ_typ = taMisc::types.FindName(mb_nm);
+    targ_typ = TypeDef::FindGlobalTypeName(mb_nm);
     return;
   }
 }

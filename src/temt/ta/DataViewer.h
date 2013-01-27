@@ -59,13 +59,13 @@ public:
   bool                  visible; // #HIDDEN whether toolbar window is being shown to user
 
   virtual bool          deleteOnWinClose() const {return false;}
-  inline IDataViewWidget* dvwidget() const {return m_dvwidget;}
+  inline IDataViewWidget* dvwidget() const {return m_dvwidget;} // #IGNORE
   override bool         isMapped() const; // only true if in gui mode and gui stuff exists
   MainWindowViewer*     parent() const;
   override TypeDef*     parentType() const {return &TA_MainWindowViewer;}
-  QWidget*              widget();
+  QWidget*              widget(); // #IGNORE
   virtual iMainWindowViewer* viewerWindow() const;
-    // #IGNORE valid if is, or is within, a main window
+  // #IGNORE valid if is, or is within, a main window
 
   override bool         isTopLevelView() const {return true;} //
 

@@ -25,6 +25,8 @@
 #include <taiField>
 #include <taiComboBox>
 #include <taiButtonMenu>
+#include <BuiltinTypeDefs>
+
 #include <taiMisc>
 
 //#include <stdlib.h>
@@ -127,7 +129,7 @@ void cssiROType::GetImage(taiData* dat, const void* base) {
 //////////////////////////////////////////////////
 
 cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
-  : cssiType(orgo, &TA_enum, bs, false)
+  : cssiType(orgo, &TA_int, bs, false) // note: was TA_enum
 {
   enum_type = enum_typ;
 }

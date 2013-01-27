@@ -98,7 +98,7 @@ public:
   void                  setBrowserViewer(bool is_browser, bool is_viewer); // use this to set the weird  bits
 
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();}
-
+  // #IGNORE
 
   void                  AddDock(DockViewer* dv);
     // add the supplied dock

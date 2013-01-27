@@ -44,6 +44,7 @@ public:
   DockViewerFlags       dock_flags; // #READ_ONLY #SHOW how this dock window is allowed to behave
   int                   dock_area; // one of the Qt::DockWidgetArea flags, def is bottom
   inline iDockViewer*   widget() {return (iDockViewer*)inherited::widget();}
+  // #IGNORE 
 
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
 

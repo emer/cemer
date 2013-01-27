@@ -548,7 +548,7 @@ void iHelpBrowser::LoadUrl(const String& url) {
     base_url = url.before("#");
   if (url.startsWith("ta:.Type.")) {
     String typ_name(base_url.after(".Type."));
-    TypeDef* typ = taMisc::types.FindName(typ_name);
+    TypeDef* typ = TypeDef::FindGlobalTypeName(typ_name);
     LoadType_impl(typ, base_url, anchor);
   }
   else if(url.startsWith("http://.type.")) {

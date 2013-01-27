@@ -20,8 +20,8 @@
 #include <ProgEl>
 
 // member includes:
-#include <ProgramRef>
-#include <ProgVarRef>
+#include <Program>
+#include <ProgVar>
 
 // declare all other types mentioned but not required to include:
 

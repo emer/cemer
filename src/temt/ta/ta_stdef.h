@@ -229,8 +229,6 @@
 
 // define useful types -- some will be defined by QT, so don't define them if using QT
 
-typedef void* voidptr; // for maketa, which chokes on void* in a template
-
 #if ((defined TA_GUI) && (!defined __MAKETA__))
 
 #else // !def TA_GUI or making ta
@@ -415,6 +413,8 @@ typedef void (*ta_void_fun)();
 // of files that do not include the header but still need to access the TA info
 #define TypeDef_Of(T) extern TypeDef TA_ ## T
 #define TypeInst_Of(T) extern T* TAI_ ## T
+
+typedef void* voidptr; // for maketa, which chokes on void* in a template
 
 // fake version of mpi comm to allow functions to not be conditionalized
 #ifndef DMEM_COMPILE

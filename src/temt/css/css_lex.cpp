@@ -230,7 +230,7 @@ int yylex()
 		if(obj->GetType() == cssEl::T_TA) {
 		  cssTA* tao = (cssTA*)obj->GetNonRefObj();
 		  TypeDef* taonrt = tao->GetNonRefTypeDef();
-		  if(taonrt && taonrt->DerivesFormal(TA_enum))
+		  if(taonrt && taonrt->IsEnum())
 		    return CSS_SCPTYPE;
 		}
 	      }

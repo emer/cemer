@@ -115,7 +115,7 @@ cssString::operator TypeDef*() const {
 
 cssString::operator MemberDef*() const {
   MemberDef* md;
-  TA_MemberDef_ptr.SetValStr(val, (void*)&md);
+  TA_MemberDef.GetPtrType()->SetValStr(val, (void*)&md);
   if(md == NULL) {
     cssMisc::Error(prog, "Could not find member def:", val);
     return NULL;
@@ -125,7 +125,7 @@ cssString::operator MemberDef*() const {
 
 cssString::operator MethodDef*() const {
   MethodDef* md;
-  TA_MethodDef_ptr.SetValStr(val, (void*)&md);
+  TA_MethodDef.GetPtrType()->SetValStr(val, (void*)&md);
   if(md == NULL) {
     cssMisc::Error(prog, "Could not find method def:", val);
     return NULL;

@@ -21,7 +21,6 @@
 
 #include <css_ta.h>
 
-TypeDef_Of(TypeDef_ptr);
 
 int taiTokenPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->IsTaBase() &&
@@ -67,7 +66,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                     mb_nm, false); // no warn
-      if (md && (md->type == &TA_TypeDef_ptr)) {
+      if (md && (md->type->name == "TypeDef_ptr")) {
         TypeDef* mbr_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
         if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
           npt = mbr_typ;                // make sure this applies to this argument..
@@ -77,7 +76,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   else {
     mb_nm = GetOptionAfter("TYPE_");
     if(!mb_nm.empty()) {        // check again..
-      TypeDef* tmptd = taMisc::types.FindName(mb_nm);
+      TypeDef* tmptd = TypeDef::FindGlobalTypeName(mb_nm);
       if(tmptd) npt = tmptd;
     }
   }
@@ -99,7 +98,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   else {
     String sctyp = GetOptionAfter("SCOPE_");
     if(!sctyp.empty()) {
-      scope_type = taMisc::types.FindName(sctyp);
+      scope_type = TypeDef::FindGlobalTypeName(sctyp);
     }
   }
   String nulltxt = GetOptionAfter("NULL_TEXT_");

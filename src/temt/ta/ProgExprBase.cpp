@@ -336,7 +336,7 @@ bool ProgExprBase::ParseExpr() {
     parse_ve_off = 4;
   }
   else {
-    if((bool)taMisc::types.FindName(expr)) {
+    if((bool)TypeDef::FindGlobalTypeName(expr, false)) {
       var_expr = expr;
       return true; // just a type name -- good!
     }
@@ -679,7 +679,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     break;
   }
   case 3: {
-    TypeDef* lookup_td = taMisc::types.FindName(base_path);
+    TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
     if(lookup_td) {
       taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
                                                              NULL, 0, lookup_seed);

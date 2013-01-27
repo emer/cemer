@@ -727,7 +727,7 @@ cssEl* ProgVar::NewCssEl() {
     return new cssCPtr_bool(&bool_val, 0, name);
     break;
   case T_Object:
-    return new cssSmartRef(&object_val, 0, &TA_taBaseRef, name);
+    return new cssSmartRef(&object_val, 0, TypeDef::FindGlobalTypeName("taBaseRef"), name);
     break;
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 0, name, hard_enum_type);

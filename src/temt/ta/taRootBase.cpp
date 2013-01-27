@@ -1220,6 +1220,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
 
 bool taRootBase::Startup_InitTA() {
   // first initialize the type data from maketa generated files, registered here:
+  tac_AddBuiltinTypeDefs();    // adds to taMisc::types
   TypeDefInitRegistrar::CallAllTypeInitFuns();
   TypeDefInitRegistrar::CallAllDataInitFuns();
 

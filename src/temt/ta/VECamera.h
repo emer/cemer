@@ -81,7 +81,7 @@ public:
   taVector3f    dir_norm;       // #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual void          ConfigCamera(SoPerspectiveCamera* cam);
-  // config So camera parameters
+  // #IGNORE config So camera parameters
 
   override void Init();
   override void CurFromODE(bool updt_disp = false);

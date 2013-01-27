@@ -51,7 +51,7 @@ public:
   static int            rl_callback(); // a readline-compatible callback -- calls event loop
 
   static taiMiscCore*   New(QObject* parent = NULL);
-    // either call this or call taiMisc::New
+  // #IGNORE either call this or call taiMisc::New
 
   static void           WaitProc(); // the core idle loop process
 

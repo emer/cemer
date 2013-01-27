@@ -70,9 +70,9 @@ public:
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
 
   static int    cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr);
-  // external parsing function for css: pre for initial parsing
+  // #IGNORE external parsing function for css: pre for initial parsing
   static int    cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr);
-  // external parsing function for css: post if nothing else gets it (bad var)
+  // #IGNORE external parsing function for css: post if nothing else gets it (bad var)
 
   virtual bool  ParseExpr();
   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)

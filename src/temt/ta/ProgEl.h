@@ -58,11 +58,12 @@ friend class ProgExprBase;
 INHERITED(taOBase)
 public:
   // Signature of following functions must match that of the item_filter_fun typedef.
-  static bool           StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
- static bool            NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser); // add NewGlobalVar and NewLocalVar options to the chooser
-  static bool           ObjProgVarFilter(void* base, void* var); // Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
-  static bool           DataProgVarFilter(void* base, void* var); // data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive
-  static bool           DynEnumProgVarFilter(void* base, void* var); // DynEnum progvar filter -- only shows DynEnum items -- use in ITEM_FILTER comment directive
+  static bool           StdProgVarFilter(void* base, void* var); // #IGNORE generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
+  static bool            NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser); 
+  // #IGNORE add NewGlobalVar and NewLocalVar options to the chooser
+  static bool           ObjProgVarFilter(void* base, void* var); // #IGNORE Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
+  static bool           DataProgVarFilter(void* base, void* var); // #IGNORE data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive
+  static bool           DynEnumProgVarFilter(void* base, void* var); // #IGNORE DynEnum progvar filter -- only shows DynEnum items -- use in ITEM_FILTER comment directive
 
   enum ProgFlags { // #BITS flags for modifying program element function or other information
     PEF_NONE            = 0, // #NO_BIT

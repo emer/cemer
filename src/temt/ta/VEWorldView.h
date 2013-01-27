@@ -72,7 +72,7 @@ public:
   // configure the lights during rendering -- called by Render_impl
 
   virtual QImage	GetCameraImage(int cam_no);
-  // get the output of the given camera number (currently 0 or 1)
+  // #IGNORE get the output of the given camera number (currently 0 or 1)
 
   bool			isVisible() const;
   override bool		ignoreDataChanged() const { return !isVisible(); }
@@ -81,6 +81,7 @@ public:
   
   virtual void		UpdateName();
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
+  // #IGNORE
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

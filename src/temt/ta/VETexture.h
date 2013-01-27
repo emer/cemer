@@ -64,13 +64,13 @@ public:
   // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit within containing unit group
 
   virtual void          SetTexture(SoTexture2* sotx);
-  // configure the texture based on values
+  // #IGNORE configure the texture based on values
   virtual bool          UpdateTexture();
   // #BUTTON if environment is already initialized and viewed, this will update the texture actually shown in the view
 
   virtual bool          NeedsTransform(); // determines if SoTexture2Transform is needed
   virtual void          SetTransform(SoTexture2Transform* sotx);
-  // configure the transform based on values
+  // #IGNORE configure the transform based on values
 
   override String       GetDesc() const { return desc; }
   override int  GetIndex() const { return idx; }

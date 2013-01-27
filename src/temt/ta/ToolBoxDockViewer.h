@@ -34,6 +34,7 @@ public:
   static ToolBoxDockViewer*     New(); // create an initialized instance
 
   inline iToolBoxDockViewer*    widget() {return (iToolBoxDockViewer*)inherited::widget();}
+  // #IGNORE
 
   TA_DATAVIEWFUNS(ToolBoxDockViewer, DockViewer) //
 

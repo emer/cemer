@@ -97,7 +97,7 @@ bool StaticMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const 
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
   String objnm = mthobj.before("::");
-  TypeDef* td = taMisc::types.FindName(objnm);
+  TypeDef* td = TypeDef::FindGlobalTypeName(objnm);
   if(!td) return false; // todo: maybe trigger an err here??
   // don't compete with subclasses
   if(objnm != "taMisc" && !objnm.contains("taMath") && objnm != "Random"
@@ -117,7 +117,7 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
   }
   String objnm = mthobj.before("::");
   String methnm = mthobj.after("::");
-  object_type = taMisc::types.FindName(objnm);
+  object_type = TypeDef::FindGlobalTypeName(objnm);
   if(rval.nonempty())
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
   UpdateAfterEdit_impl();                          // update based on obj

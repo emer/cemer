@@ -31,7 +31,7 @@ taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   iRegexpDialogPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");
   if (!pop_type.empty()) {
-    if (TypeDef *type = taMisc::types.FindName(pop_type)) {
+    if (TypeDef *type = TypeDef::FindGlobalTypeName(pop_type, false)) {
       if (void *pv_inst = type->GetInstance()) {
         populator = reinterpret_cast<iRegexpDialogPopulator *>(pv_inst);
       }

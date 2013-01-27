@@ -35,7 +35,8 @@ friend class iDataPanel;
 public:
 
   inline iTabViewer*    widget() {return (iTabViewer*)inherited::widget();}
-  iTabBarBase*          tabBar();
+  // #IGNORE
+  iTabBarBase*          tabBar(); // #IGNORE
 
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:

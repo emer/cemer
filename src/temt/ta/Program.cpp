@@ -1551,7 +1551,8 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   if(taMisc::is_loading) return false; // don't check for loading -- just causes disaster when renaming during loading
   if(forbidden_names.size == 0)
     InitForbiddenNames();
-  if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
+  if((forbidden_names.FindEl(chk_nm) < 0) &&
+     !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
                 "is a css reserved name used for something else -- please choose another name");

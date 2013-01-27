@@ -195,6 +195,7 @@ void MTA::FixClassTypes(TypeDef* td) {
   }
   else if(td->InheritsFromName("taBase")) {
     td->SetType(TypeDef::TABASE);
+    td->opts.AddUnique(TypeDef::opt_instance);       // ta_bases always have an instance
   }
 }
 
@@ -551,7 +552,7 @@ int MTA::Main(int argc, char* argv[]) {
 
   outc.open((char*)out_fname, ios::out);
 
-  TypeSpace_Generate(&taMisc::types, outc);
+  TypeSpace_Gen(&taMisc::types, outc);
   outc.close();  outc.clear();
 
   if((verbose > 0) && (taMisc::types.hash_table != NULL)) {

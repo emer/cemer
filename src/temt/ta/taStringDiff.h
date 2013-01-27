@@ -87,14 +87,14 @@ public:
   // do the diff based on data in data_a and data_b -- does LCS, Optimize and CreateDiffs
 
   void  GetLines(taStringDiffData& ddata, const String& str);
-  // find line starting positions in the text strings
+  // #IGNORE find line starting positions in the text strings
 
   void DiffCodes(taStringDiffData& ddata, const String& str,
          bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
-  // convert text string into integer codes
+  // #IGNORE convert text string into integer codes
 
   void  Optimize(taStringDiffData& ddata);
-  // optimize sequences of modified strings to make more readable
+  // #IGNORE optimize sequences of modified strings to make more readable
 
   void  CreateDiffs(const String& str_a, const String& str_b);
   // create diff list in diffs based on results of LCS/SMS computation, stored in data_a and B

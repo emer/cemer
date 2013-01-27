@@ -41,9 +41,9 @@ public:
   float         focal_dist;     // #READ_ONLY #EXPERT focal distance
 
   void          getCameraParams(SoCamera* cam);
-  // get the camera parameters into our saved values
+  // #IGNORE get the camera parameters into our saved values
   bool          setCameraParams(SoCamera* cam);
-  // set the camera parmeters from our saved values (returns false if no view saved)
+  // #IGNORE set the camera parmeters from our saved values (returns false if no view saved)
 
   void          SetCameraPos(float x, float y, float z) { pos.SetXYZ(x,y,z); }
   // #CAT_Display set camera position

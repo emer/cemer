@@ -50,7 +50,7 @@ int main(int argc, const char *argv[]) {
   //nn cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
   taMisc::use_plugins = false;
-  if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
+  if(!taRootBase::Startup_Main(argc, argv, &TA_taRootBase)) return 1;
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
   if(taRootBase::Startup_Run())
     return 0;

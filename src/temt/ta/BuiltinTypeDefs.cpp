@@ -24,6 +24,8 @@
 TypeDef TA_void                 ("void",        TypeDef::VOID, 1, 0);
 TypeDef TA_void_ptr             ("void_ptr",    TypeDef::VOID | TypeDef::POINTER, 1,
                                  sizeof(void*), "void*");
+TypeDef TA_voidptr              ("voidptr",    TypeDef::VOID | TypeDef::POINTER, 1,
+                                 sizeof(void*), "void*");
 
 TypeDef TA_bool                 ("bool",        TypeDef::BOOL, 1,
                                  sizeof(bool));
@@ -38,6 +40,8 @@ TypeDef TA_unsigned_char        ("unsigned_char",TypeDef::INTEGER | TypeDef::UNS
                                  sizeof(unsigned char), "unsigned char");
 TypeDef TA_uint8_t              ("uint8_t",     TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
                                  sizeof(uint8_t));
+TypeDef TA_byte                 ("byte",     TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
+                                 sizeof(byte));
 
 TypeDef TA_short                ("short",       TypeDef::INTEGER | TypeDef::SIGNED, 1,
                                  sizeof(short));
@@ -138,6 +142,7 @@ TypeDef TA_MethodDef            ("MethodDef",    TypeDef::CLASS, 1,
 void tac_AddBuiltinTypeDefs() {
   // note: AddNewGlobalType() automatically makes all common derivatives
   TA_void_ptr.AddNewGlobalType(false); // don't make derivatives, and add first so void derivatives pick it up..
+  TA_voidptr.AddNewGlobalType(false); // don't make derivatives
   TA_void.AddNewGlobalType();
   TA_bool.AddNewGlobalType();
                       
@@ -146,6 +151,7 @@ void tac_AddBuiltinTypeDefs() {
   TA_int8_t.AddNewGlobalType();            
   TA_unsigned_char.AddNewGlobalType();     
   TA_uint8_t.AddNewGlobalType();           
+  TA_byte.AddNewGlobalType();           
                       
   TA_short.AddNewGlobalType();             
   TA_int16_t.AddNewGlobalType();           
@@ -209,12 +215,16 @@ void tac_AddBuiltinTypeDefs() {
   TA_MethodDef.AddParents(&TA_TypeItem);
 #endif
 
+  TA_void_ptr.AddParents(&TA_void);
+  TA_voidptr.AddParents(&TA_void_ptr);
+
 #if (defined(TA_OS_WIN) && defined(_MSC_VER))
   TA_int8_t.AddParents(&TA_char);
 #else
   TA_int8_t.AddParents(&TA_signed_char);
 #endif
   TA_uint8_t.AddParents(&TA_unsigned_char); // note: doesn't exist per se on MSVC
+  TA_byte.AddParents(&TA_unsigned_char);
   TA_signed_short.AddParents(&TA_short);
   TA_short_int.AddParents(&TA_short);
   TA_signed_short_int.AddParents(&TA_short);

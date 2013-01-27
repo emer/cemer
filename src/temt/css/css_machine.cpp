@@ -779,6 +779,9 @@ cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
   void* itm_ptr;
   var.GetRepInfo(td, itm_ptr);
   TypeDef* nptd = td->GetNonPtrType();
+  int td_ptr = 0;
+  if(td->IsPointer()) td_ptr = 1;
+  else if(td->IsPtrPtr()) td_ptr = 2;
   switch (var.type()) {
   case Variant::T_Invalid:
     return &cssMisc::Void;
@@ -807,18 +810,18 @@ cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
     return &cssMisc::Void;
     break;
   case Variant::T_Base:
-    return new cssTA_Base(var.toBase(), td->ptr, td, nm, class_parent, ro);
+    return new cssTA_Base(var.toBase(), td_ptr, td, nm, class_parent, ro);
     break;
   case Variant::T_Matrix:
-    return new cssTA_Matrix(var.toMatrix(), td->ptr, td, nm, class_parent, ro);
+    return new cssTA_Matrix(var.toMatrix(), td_ptr, td, nm, class_parent, ro);
     break;
   case Variant::T_TypeItem: {
     if(nptd == &TA_TypeDef)
-      return new cssTypeDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+      return new cssTypeDef(var.toTypeItem(), td_ptr, td, nm, class_parent, ro);
     else if(nptd == &TA_MemberDef)
-      return new cssMemberDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+      return new cssMemberDef(var.toTypeItem(), td_ptr, td, nm, class_parent, ro);
     else if(nptd == &TA_MethodDef)
-      return new cssMethodDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+      return new cssMethodDef(var.toTypeItem(), td_ptr, td, nm, class_parent, ro);
     break;
   }
   default:
@@ -1076,7 +1079,7 @@ cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const String& memb) const
   }
   TypeDef* td = typ->sub_types.FindName(memb);
   if(td) {
-    if(td->DerivesFormal(TA_enum))
+    if(td->IsEnum())
       return new cssCPtr_enum(NULL, 1, td->name, td);
     return new cssTA(NULL, 1, td);
   }

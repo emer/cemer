@@ -42,8 +42,8 @@ public:
   T3DataViewFrame_List  frames; //
 
   override bool         isRootLevelView() const {return true;}
-  iT3DataViewer*        widget();
-  iTabBarBase*          tabBar();
+  iT3DataViewer*        widget(); // #IGNORE
+  iTabBarBase*          tabBar(); // #IGNORE
 
   virtual T3DataView*   FindRootViewOfData(taBase* data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 

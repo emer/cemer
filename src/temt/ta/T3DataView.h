@@ -105,7 +105,8 @@ public:
   override void         ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
   override void         ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
 
-  virtual void          OnWindowBind(iT3DataViewFrame* vw); // called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
+  virtual void          OnWindowBind(iT3DataViewFrame* vw);
+  // #IGNORE called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
   virtual void          ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void          UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
 
@@ -122,7 +123,6 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override GuiContext   shType() const {return GC_DUAL_DEF_DATA;}
   override taiDataLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const; // not par_link
 protected:
-//  override void               FillContextMenu_impl(taiActions* menu, GuiContext sh_typ);
   override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
     GuiContext sh_typ) const;
 

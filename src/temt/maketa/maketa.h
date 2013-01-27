@@ -66,6 +66,7 @@ public:
   static char 	LastLn[8192];	// last line parsed
 
   TypeSpace	spc_keywords;	// holds some key words for searching
+  TypeSpace	spc_typedef_gen; // space of types to generate typedefs for because they are referred to in methods, etc
 
   TypeSpace	type_stack;	// for storing names, etc.
   EnumSpace	enum_stack;	// for storing names, etc.
@@ -185,47 +186,153 @@ public:
 
 public:
 
-//////////////////////////////////
-// 	  _TA.cc File		//
-//////////////////////////////////
+  ///////////////////////////////////////////////////////////////////
+  //            Construct Types
+  //            the following are all defined in mta_constr.cpp
 
-  bool TypeDef_Generate_Test(TypeDef* ths);
+  /////////////////////////
+  //    global helpers
+
+  bool TypeDef_Gen_Test(TypeDef* ths);
   // test if this type should be generated or not
-
-  void TypeSpace_Generate(TypeSpace* ths, ostream& strm);
-
-//////////////////////////////////////////
-// 	Type Instances and Constructors	//
-//////////////////////////////////////////
-// (part 1,2 of _TA.cc file)
-
-  void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
-  void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
-
-  void TypeSpace_Generate_Types(TypeSpace* ths, ostream& strm);
+  String TypeDef_Gen_TypeName(TypeDef* ths);
+  // generate the type name as a string for string lookup in Data fields
+  String TypeDef_Gen_TypeDef_Ptr(TypeDef* ths);
+  // generate a string expression for a pointer to this typedef -- e.g., &TA_taBase
+  String TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths);
+  // generate a reference to this typedef -- helper impl
+  String TypeDef_Gen_TypeDef_Ptr_Path(TypeDef* ths);
+  // generate a reference to this typedef -- helper includes path based on subtype
   void TypeDef_FixOpts(String_PArray& op);
-  void TypeDef_Generate_Types(TypeDef* ths, ostream& strm);
+  // fix options
+  String VariantToTargetConversion(TypeDef* param_td);
+  // convert variant to target typedef -- for propstubs
+
+  //////////////////////////////////////////
+  // 	Overall Gen Entry Point
+
+  void TypeSpace_Gen(TypeSpace* ths, ostream& strm);
+  // top-level entry point to generating the output -- calls everything below
 
 
-//////////////////////////////////
-//   Type css method stubs	//
-//////////////////////////////////
-// (part 3 of _TA.cc file)
+  //////////////////////////////////////////
+  // 	Includes
 
-  void TypeSpace_Generate_Stubs(TypeSpace* ths, ostream& strm);
-  void TypeDef_Generate_Stubs(TypeDef* ths, ostream& strm);
+  void TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances=false);
+  // top-level generate Includes
 
-//////////////////////////////////
-// 	  Init Function		//
-//////////////////////////////////
-// (part 4 of _TA.cc file)
+  //////////////////////////////////////////
+  // 	Type Instances
 
-  void TypeSpace_Generate_TypeInit(TypeSpace* ths, ostream& strm);
-  void TypeSpace_Generate_DataInit(TypeSpace* ths, ostream& strm);
+  void TypeSpace_Gen_Instances(TypeSpace* ths, ostream& strm);
+  // top-level generate Instances
+  void TypeDef_Gen_Instances(TypeDef* ths, ostream& strm);
 
-//////////////////////////////////
-// 	  GenDoc		//
-//////////////////////////////////
+  //////////////////////////////////////////
+  // 	TypeDef constructors 
+
+  void TypeSpace_Gen_TypeDefs(TypeSpace* ths, ostream& strm);
+  // top-level generate TypeDef constructors
+  void TypeDef_Gen_TypeDefs(TypeDef* ths, ostream& strm);
+
+  /////////////////////////////////////////
+  //   css method stubs	
+
+  void TypeSpace_Gen_Stubs(TypeSpace* ths, ostream& strm);
+  // top-level generate css stubs
+  void TypeDef_Gen_Stubs(TypeDef* ths, ostream& strm, bool add_typedefs = false);
+
+  void TypeSpace_Gen_TypeDefOf(TypeSpace* ths, ostream& strm);
+  // generate TypeDef_Of() for all items on the list
+  void TypeDef_Gen_TypeDefOf(TypeDef* ths, ostream& strm);
+
+  void MethodSpace_Gen_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm,
+                                  bool add_typedefs = false);
+
+  void MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc,
+                                 bool add_typedefs = false);
+  void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm,
+                                  int act_argc);
+  String MethodDef_GetCSSType(TypeDef* td);
+  void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm,
+                            bool add_typedefs = false);
+  void MethodDef_GenArgs(MethodDef* md, ostream& strm, int act_argc,
+                         bool add_typedefs = false);
+  void MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm);
+  void MethodDef_GenStubCall(TypeDef* ownr, MethodDef* md, ostream& strm);
+  void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm,
+                            int act_argc, bool add_typedefs = false);
+
+  void MemberSpace_Gen_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& strm);
+  void MethodSpace_Gen_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& strm);
+
+
+  ///////////////////////////////////////////
+  //   Data generation: Enum, Member, Method, Property
+
+  void TypeSpace_Gen_Data(TypeSpace* ths, ostream& strm);
+  // top-level generate data
+  void TypeDef_Gen_Data(TypeDef* ths, ostream& strm);
+
+  //////////////////////////////////
+  //   	     Enum Data
+
+  void TypeDef_Gen_EnumData(TypeDef* ths, ostream& strm);
+  void TypeDef_Init_EnumData(TypeDef* ths, ostream& strm);
+
+  void EnumSpace_Gen_Data(EnumSpace* ths, ostream& strm);
+
+
+  //////////////////////////////////
+  // 	   Member Data
+
+  void TypeDef_Gen_MemberData(TypeDef* ths, ostream& strm);
+  void TypeDef_Init_MemberData(TypeDef* ths, ostream& strm);
+
+  bool MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md);
+  void MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm);
+
+
+  //////////////////////////////////
+  // 	   Method Data
+
+  void TypeDef_Gen_MethodData(TypeDef* ths, ostream& strm);
+  void TypeDef_Init_MethodData(TypeDef* ths, ostream& strm);
+
+  bool MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md);
+
+  void MethodSpace_Gen_ArgData(MethodSpace* ths, TypeDef* ownr, ostream& strm);
+  void MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm);
+
+  void MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm);
+
+
+  //////////////////////////////////
+  // 	   Property Data
+
+  void TypeDef_Gen_PropertyData(TypeDef* ths, ostream& strm);
+  void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm);
+
+  bool PropertySpace_Filter_Property(PropertySpace* ths, PropertyDef* md);
+  void PropertySpace_Gen_Data(PropertySpace* ths, TypeDef* ownr, ostream& strm);
+
+
+  //////////////////////////////////
+  // 	  Init Function
+
+  void TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm);
+  void TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm);
+
+  void TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm);
+  void TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm);
+  void SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
+  void TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm);
+  void TypeDef_Gen_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm);
+  void TypeDef_Gen_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm);
+
+
+  //////////////////////////////////
+  // 	  GenDoc (not currently used)
 
   void GenDoc(TypeSpace* ths, fstream& strm);
   bool TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts);

@@ -199,15 +199,9 @@ String cssTA::GetStr() const {
     }
     else if(ptr_cnt == 2) {
       // need the correct typedef here, either find it or make it..
-      String ptrnm = type_def->name + "_ptr";
-      TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
+      TypeDef* ptr_typ = type_def->GetPtrType();
       if(ptr_typ)
 	rval = ptr_typ->GetValStr(ptr);
-      else {
-	TypeDef nw_tp(*type_def);
-	nw_tp.ptr++;
-	rval = nw_tp.GetValStr(ptr);
-      }
     }
     return rval;
   }
@@ -261,7 +255,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
     // crazy special case: todo: move this to a subtype??
     if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
       cssMbrCFun& mbf = (cssMbrCFun&)s;
-      MethodDef* fun = TA_taRegFun.methods.FindName(mbf.name);
+      MethodDef* fun = NULL; //TA_taRegFun.methods.FindName(mbf.name);
       if(fun)
 	*((ta_void_fun*)ptr) = fun->addr;
       else {
@@ -1433,15 +1427,15 @@ String cssMemberDef::GetStr() const {
   if(!ptr)
     return rval;
   else if(ptr_cnt == 1)
-    rval = TA_MemberDef_ptr.GetValStr((void*)&ptr);
+    rval = TA_MemberDef.GetPtrType()->GetValStr((void*)&ptr);
   else if((ptr_cnt == 2) && *((MemberDef**)ptr))
-    rval = TA_MemberDef_ptr.GetValStr(((MemberDef**)ptr));
+    rval = TA_MemberDef.GetPtrType()->GetValStr(((MemberDef**)ptr));
   return rval;
 }
 
 void cssMemberDef::operator=(const String& s) {
   if(ptr_cnt == 1) {
-    TA_MemberDef_ptr.SetValStr(s, (void*)&ptr);
+    TA_MemberDef.GetPtrType()->SetValStr(s, (void*)&ptr);
     return;
   }
   cssTA::operator=(s);
@@ -1486,15 +1480,15 @@ String cssMethodDef::GetStr() const {
   if(!ptr)
     return rval;
   else if(ptr_cnt == 1)
-    rval = TA_MethodDef_ptr.GetValStr((void*)&ptr);
+    rval = TA_MethodDef.GetPtrType()->GetValStr((void*)&ptr);
   else if((ptr_cnt == 2) && *((MethodDef**)ptr))
-    rval = TA_MethodDef_ptr.GetValStr(((MethodDef**)ptr));
+    rval = TA_MethodDef.GetPtrType()->GetValStr(((MethodDef**)ptr));
   return rval;
 }
 
 void cssMethodDef::operator=(const String& s) {
   if(ptr_cnt == 1) {
-    TA_MethodDef_ptr.SetValStr(s, (void*)&ptr);
+    TA_MethodDef.GetPtrType()->SetValStr(s, (void*)&ptr);
     return;
   }
   cssTA::operator=(s);

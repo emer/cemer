@@ -23,7 +23,6 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
-TypeDef_Of(taBase_ptr);
 #include <taBase>
 #include <UserDataItem_List>
 #include <taiType>
@@ -795,10 +794,10 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
 
   // note: type flags are set explicitly prior to calling AddParent!
 
-#ifndef NO_TA_BASE
   if(IsTaBase())
     opts.AddUnique(opt_instance);       // ta_bases always have an instance
 
+#ifndef NO_TA_BASE
   CleanupCats(false);           // save first guy for add parent!
 #endif
 
@@ -1471,7 +1470,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 #ifndef NO_TA_BASE
       else if (DerivesFrom(TA_taSmartPtr)) {
 	// we just delegate to taBase* since we are binary compatible
-	return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc, force_inline);
+	return TA_taBase.GetPtrType()->GetValStr(base_, par, memb_def, sc, force_inline);
       }
       else if (DerivesFrom(TA_taSmartRef)) {
 	taSmartRef& ref = *((taSmartRef*)base);
@@ -1750,7 +1749,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 #ifndef NO_TA_BASE
       else if (DerivesFrom(TA_taSmartPtr)) {
         // we just delegate, since we are binary compat
-        TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc, force_inline);
+        TA_taBase.GetPtrType()->SetValStr(val, base, par, memb_def, sc, force_inline);
         return;
       }
       else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
@@ -2260,7 +2259,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
 #ifndef NO_TA_BASE
       else if (DerivesFrom(TA_taSmartPtr)) {
         // we just delegate, since we are binary compat
-        TA_taBase_ptr.SetValVar(val, base, par, memb_def);
+        TA_taBase.GetPtrType()->SetValVar(val, base, par, memb_def);
         return;
       }
       else if(DerivesFrom(TA_taSmartRef)) {

@@ -148,11 +148,11 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
       ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
       peb->UpdateProgExpr_NewOwner();
     }
-    else if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+    else if(md->type->InheritsFromName("ProgVarRef")) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       UpdateProgVarRef_NewOwner(*pvr);
     }
-    else if(md->type->InheritsFrom(&TA_ProgramRef)) {
+    else if(md->type->InheritsFromName("ProgramRef")) {
       ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
       if(pvr->ptr()) {
         Program_Group* mygp = GET_MY_OWNER(Program_Group);
@@ -198,11 +198,11 @@ void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
       ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
       peb->UpdateProgExpr_NewOwner();
     }
-    else if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+    else if(md->type->InheritsFromName("ProgVarRef")) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       UpdateProgVarRef_NewOwner(*pvr);
     }
-    else if(md->type->InheritsFrom(&TA_ProgramRef)) {
+    else if(md->type->InheritsFromName("ProgramRef")) {
       ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
       if(pvr->ptr()) {
         Program_Group* mygp = GET_MY_OWNER(Program_Group);
@@ -376,7 +376,7 @@ void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   TypeDef* td = GetTypeDef();
   for(int i=0;i<td->members.size;i++) {
     MemberDef* md = td->members[i];
-    if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+    if(md->type->InheritsFromName("ProgVarRef")) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       CheckProgVarRef(*pvr, quiet, rval);
     }

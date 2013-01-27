@@ -1957,7 +1957,9 @@ void GraphTableView::setScaleData(bool auto_scale_, float min_, float max_) {
   UpdateDisplay(true);
 }
 
-
+iGraphTableView_Panel* GraphTableView::lvp() {
+  return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;
+}
 
 // callback for view transformer dragger
 void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {

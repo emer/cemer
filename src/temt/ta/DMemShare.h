@@ -119,7 +119,6 @@ public:
 // dummy versions of these guys to keep the _TA files the same..
 
 #define DMEM_GUI_RUN_IF
-typedef int MPI_Comm;		// mpi communicator
 
 TypeDef_Of(DMemShare);
 

@@ -42,6 +42,7 @@
 #include <QToolTip>
 #include <QWidget>
 
+
 //////////////////////////////////////////////////
 // 		cssiEditDialog			//
 //////////////////////////////////////////////////
@@ -250,11 +251,14 @@ cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {
 	return new cssiType(orig_obj, td, (void*)&(((cssTA*)el)->ptr)); // already has ptr type
     }
     if(td->DerivesFrom(TA_TypeDef) && (td->IsPointer()))
-      return new cssiType(orig_obj, &TA_TypeDef_ptr, (void*)&(((cssTA*)el)->ptr));
+      return new cssiType(orig_obj, TA_TypeDef.GetPtrType(),
+                          (void*)&(((cssTA*)el)->ptr));
     else if(td->DerivesFrom(TA_MemberDef) && (td->IsPointer()))
-      return new cssiType(orig_obj, &TA_MemberDef_ptr, (void*)&(((cssTA*)el)->ptr));
+      return new cssiType(orig_obj, TA_MemberDef.GetPtrType(),
+                          (void*)&(((cssTA*)el)->ptr));
     else if(td->DerivesFrom(TA_MethodDef) && (td->IsPointer()))
-      return new cssiType(orig_obj, &TA_MethodDef_ptr, (void*)&(((cssTA*)el)->ptr));
+      return new cssiType(orig_obj, TA_MethodDef.GetPtrType(),
+                          (void*)&(((cssTA*)el)->ptr));
 
     return NULL;
   }
@@ -414,7 +418,7 @@ void cssiArgDialog::Constr_ArgTypes() {
 #ifdef DEBUG
 // 	cerr << md->name << " arg val: " << val << endl;
 #endif
-	if (art->arg_typ->DerivesFormal(TA_enum)) {
+	if (art->arg_typ->IsEnum()) {
 	  art->arg_typ->SetValStr(val, art->arg_base);
 	} else {
 	  *el = val;
@@ -471,7 +475,7 @@ void cssiArgDialog::GetValue() {
     if (art->err_flag)
       err_flag = true;
     else if(!art->meth->HasOption("NO_SAVE_ARG_VAL")) {
-      if(art->arg_typ->DerivesFormal(TA_enum)) {
+      if(art->arg_typ->IsEnum()) {
 	art->meth->arg_vals.FastEl(i) = art->arg_typ->GetValStr(art->arg_base);
       }
       else if(!art->arg_typ->DerivesFrom(TA_ios)) {

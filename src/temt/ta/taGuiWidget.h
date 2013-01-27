@@ -48,7 +48,7 @@ public:
 
   virtual void          UrlAction();    // execute the action_url
   virtual void          Connect_UrlAction(QObject* src_obj, const char* src_signal);
-  // connects source object signal to the UrlAction via helper
+  // #IGNORE connects source object signal to the UrlAction via helper
   virtual void          FixUrl(const String& url_tag, const String& path);
   // replace starting tag in url with given path
 

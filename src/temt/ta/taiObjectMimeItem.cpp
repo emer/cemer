@@ -17,7 +17,6 @@
 #include <taiMimeSource>
 #include <taiObjectMimeFactory>
 
-#include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
 
@@ -30,7 +29,8 @@ void taiObjectMimeItem::Initialize() {
 }
 
 bool taiObjectMimeItem::Constr_impl(const String&) {
-  m_td = taMisc::types.FindName(m_type_name); // note: could be NULL if, ex. decoding leabra object in instance of bp
+  m_td = TypeDef::FindGlobalTypeName(m_type_name, false);
+  // note: could be NULL if, ex. decoding leabra object in instance of bp
   return (m_td);
 }
 

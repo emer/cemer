@@ -38,9 +38,9 @@ public:
   float                 a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
 
   const iColor          color() const;
-  // return the internal value-based color object -- common currency for color reps
+  // #IGNORE return the internal value-based color object -- common currency for color reps
   void                  setColor(const iColor& cp);
-  // set from the internal value-based color object -- common currency for color reps
+  // #IGNORE set from the internal value-based color object -- common currency for color reps
   void                  setColorName(const String& nm);
   // set from standard X11 color names, most of which are also web/html standard color names
 

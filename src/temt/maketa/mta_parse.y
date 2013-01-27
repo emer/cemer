@@ -162,31 +162,6 @@ defn:     type tyname term		{
 	  }
 	  else {
 	    TypeDef* td = $1->parents[1]; mta->type_stack.Pop();
-	    /* TypeSpace* sp = $1->owner; */
-	    /* sp->RemoveEl($1); /\* get rid of new one, cuz it is bogus *\/ */
-	    /* /\* not on list that it would be placed on now.. *\/ */
-	    /* if((td->owner != mta->spc) && (mta->spc->FindName(td->name) == NULL)) { */
-	    /*   if(mta->verbose >= 3) */
-	    /*     cerr << "M!!: transfered: " << td->name << " from: " << td->owner->name */
-	    /*          << " to: " << mta->spc->name << "\n"; */
-	    /*   mta->spc->Transfer(td); /\* now check for parent which is a combo of basic types *\/ */
-	    /*   if((td->parents.size == 1) && (td->parents[0]->owner != mta->spc) && */
-	    /*      (td->parents[0]->parents.size == 2)) { */
-	    /*     /\* has one parent that is a combo-type which might be basic *\/ */
-	    /*     TypeDef* par = td->parents[0]; */
-	    /*     if((mta->spc_builtin.FindName(par->parents[0]->name) != NULL) && */
-	    /*        (mta->spc_builtin.FindName(par->parents[1]->name) != NULL)) { */
-	    /*       if(mta->verbose >= 3) */
-	    /*         cerr << "M!!: transfered: " << par->name << " from: " << par->owner->name */
-	    /*     	 << " to: " << mta->spc->name << "\n"; */
-	    /*       TypeDef* already_there = mta->spc->FindName(par->name); */
-	    /*       if(already_there == NULL) */
-	    /*         mta->spc->Transfer(par); /\* move parent to this list too *\/ */
-	    /*       else */
-	    /*         td->parents.ReplaceLinkIdx(0, already_there); */
-	    /*     } */
-	    /*   } */
-	    /* } */
 	    $$ = td; } }
         | type '(' '*' tyname ')' funargs term {
             $$ = $4; $$->AssignType(TypeDef::FUN_PTR);

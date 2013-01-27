@@ -79,12 +79,12 @@ public: // Interface Properties and Methods
   virtual taiDataLink*  clipParLink(GuiContext sh_typ) const;
     // for tree stuff, we use the gui parent for clip ops; for t3 we use the eff_data owner
   virtual MemberDef*    par_md() const;// eff_data parent item's (if any) md
-  virtual ISelectableHost* host() const = 0; //
+  virtual ISelectableHost* host() const = 0; // #IGNORE
   virtual GuiContext    shType() const {return GC_SINGLE_DATA;} // mediates menu handling, and default source for clip ops
   taBase*               taData(GuiContext sh_typ = GC_DEFAULT) const; // if the eff_data is taBase, this returns it
 //obs  virtual String   view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
-  QWidget*              widget() const; // gets from host
-  QObject*              clipHandlerObj() const; // shortcut for host()->clipHanderObj();
+  QWidget*              widget() const; // #IGNORE gets from host
+  QObject*              clipHandlerObj() const; // #IGNORE shortcut for host()->clipHanderObj();
 
   virtual TypeDef*      GetEffDataTypeDef(GuiContext sh_typ = GC_DEFAULT) const; // gets it from effLink
   virtual int           EditAction_(ISelectable_PtrList& sel_items, int ea,
@@ -92,15 +92,15 @@ public: // Interface Properties and Methods
    // do the indicated edit action (called from browser or list view); normally implement the _impl
   virtual void          FillContextMenu(ISelectable_PtrList& sel_items,
     taiActions* menu, GuiContext sh_typ = GC_DEFAULT);
-   // for multi or single (normally implement the _impl)
-//  virtual void                FillContextMenu(taiActions* menu);
-   // for single (normally implement the _impl)
+   // #IGNORE for multi or single (normally implement the _impl)
   virtual taiClipData*  GetClipData(const ISelectable_PtrList& sel_items,
-    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const; // works for single or multi; normally not overridden
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
+  // #IGNORE works for single or multi; normally not overridden
   virtual taiClipData*  GetClipDataSingle(int src_edit_action,
     bool for_drag, GuiContext sh_typ = GC_DEFAULT) const = 0;
+  // #IGNORE 
   virtual taiClipData*  GetClipDataMulti(const ISelectable_PtrList& sel_items,
-    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const {return NULL;}// only needed if multi is handled
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const {return NULL;}// #IGNORE only needed if multi is handled
   virtual int           QueryEditActions_(taiMimeSource* ms,
     GuiContext sh_typ = GC_DEFAULT) const; // typically called on single item for canAcceptDrop
   int                   QueryEditActions_(const ISelectable_PtrList& sel_items,

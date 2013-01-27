@@ -711,7 +711,7 @@ cssCPtr_String::operator MemberDef*() const {
   if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
   String& nm = GetStringRef();
   MemberDef* md;
-  TA_MemberDef_ptr.SetValStr(nm, (void*)&md);
+  TA_MemberDef.GetPtrType()->SetValStr(nm, (void*)&md);
   if(md == NULL) {
     cssMisc::Error(prog, "Could not find member def:", nm);
     return NULL;
@@ -723,7 +723,7 @@ cssCPtr_String::operator MethodDef*() const {
   if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
   String& nm = GetStringRef();
   MethodDef* md;
-  TA_MethodDef_ptr.SetValStr(nm, (void*)&md);
+  TA_MethodDef.GetPtrType()->SetValStr(nm, (void*)&md);
   if(md == NULL) {
     cssMisc::Error(prog, "Could not find method def:", nm);
     return NULL;

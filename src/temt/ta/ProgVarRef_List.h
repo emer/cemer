@@ -27,7 +27,7 @@
 TypeDef_Of(ProgVarRef_List);
 
 class TA_API ProgVarRef_List: public taPtrList<ProgVarRef> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program variable references
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE #NO_CSS #NO_MEMBERS ##CAT_Program list of program variable references
 INHERITED(taList<ProgVarRef>)
 public:
   ProgVarRef*   FindVar(ProgVar* var, int& idx) const;

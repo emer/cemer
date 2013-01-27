@@ -27,8 +27,6 @@
 #include <tabMisc>
 #include <taRootBase>
 
-TypeDef_Of(TypeDef_ptr);
-
 // macro for doing safe casts of types -- helps to uncover errors
 // when the actual class is not the expected class
 // (of course this NEVER happens... uh, huh... ;) )
@@ -296,7 +294,7 @@ TypeDef* taiMember::GetTargetType(const void* base) {
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                       mb_nm, false); // no warn
-      if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
+      if (tdmd && (tdmd->type->name == "TypeDef_ptr")) {
         targ_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
 //      else {                 // try fully dynamic
@@ -311,7 +309,7 @@ TypeDef* taiMember::GetTargetType(const void* base) {
 
   mb_nm = mbr->OptionAfter("TYPE_");
   if (!mb_nm.empty()) {
-    targ_typ = taMisc::types.FindName(mb_nm);
+    targ_typ = TypeDef::FindGlobalTypeName(mb_nm);
     return targ_typ;
   }
   return targ_typ;

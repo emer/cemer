@@ -34,7 +34,7 @@ friend class taBaseAdapter;
 public:
 #ifdef TA_USE_QT
   taBaseAdapter*        adapter; // #IGNORE
-  void                  SetAdapter(taBaseAdapter* adapter_);
+  void                  SetAdapter(taBaseAdapter* adapter_); // #IGNORE
   void  Initialize()    {adapter = NULL;}
 #else
   void  Initialize()    {}

@@ -15,6 +15,7 @@
 
 #include "MiscCall.h"
 #include <Program>
+
 #include <taMisc>
 
 void MiscCall::Initialize() {
@@ -30,7 +31,7 @@ bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
   String objnm = mthobj.before("::");
-  TypeDef* td = taMisc::types.FindName(objnm);
+  TypeDef* td = TypeDef::FindGlobalTypeName(objnm);
   if(!td) return false;
   if(objnm == "taMisc") return true;
   return false;

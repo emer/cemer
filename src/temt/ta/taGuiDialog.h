@@ -128,7 +128,7 @@ public:
   virtual bool  AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm,
                             const String& parent, const String& layout = _nilString,
                             const String& attributes = _nilString);
-  // #EXPERT #CAT_Widget add an object (taBase) pointer button -- attributes are:
+  // #EXPERT #CAT_Widget #IGNORE add an object (taBase) pointer button -- attributes are:
   virtual bool  AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
                             const String& parent, const String& layout = _nilString,
                             const String& attributes = _nilString);

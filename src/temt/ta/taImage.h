@@ -42,9 +42,9 @@ class TA_API taImage : public taNBase {
 public:
 #ifdef TA_GUI
   QImage&  	GetImage() { return q_img; }
-  // get the underlying qt image
+  // #IGNORE get the underlying qt image
   void  	SetImage(const QImage& img) { q_img = img; }
-  // #CAT_Image set the underlying qt image
+  // #CAT_Image #IGNORE set the underlying qt image
 #endif
   virtual bool	LoadImage(const String& fname);
   // #BUTTON #CAT_File #FILE_DIALOG_LOAD #EXT_png,jpg load the image from given file name (leave file name blank to get a chooser)

@@ -94,7 +94,7 @@ void taGuiWidget::GetImage() {
   if(widget_type == "ObjectPtr") {
     String typnm = taGuiDialog::GetAttribute("type=", attributes);
     TypeDef* td;
-    if(typnm.nonempty()) td = taMisc::types.FindName(typnm);
+    if(typnm.nonempty()) td = TypeDef::FindGlobalTypeName(typnm);
     if(!td) td = &TA_taOBase;
     ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }

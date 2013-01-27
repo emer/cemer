@@ -22,8 +22,6 @@
 
 #include <css_ta.h>
 
-TypeDef_Of(TypeDef_ptr);
-
 int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (argt->DerivesFrom(TA_TypeDef) && (argt->IsPointer()))
     return taiArgType::BidForArgType(aidx,argt,md,td)+1;
@@ -43,7 +41,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
                                                     mb_nm, false); // no warn
-      if (md && (md->type == &TA_TypeDef_ptr)) {
+      if (md && (md->type->name == "TypeDef_ptr")) {
         tpdf = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
     }
@@ -62,7 +60,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
         if (typ->IsTaBase() && (base != NULL))
           tpdf = ((taBase*)base)->GetTypeDef();
       } else {
-        tpdf = taMisc::types.FindName(mb_nm);
+        tpdf = TypeDef::FindGlobalTypeName(mb_nm);
       }
       if (tpdf == NULL)
         tpdf = &TA_taBase;
@@ -104,7 +102,7 @@ void taiTypePtrArgType::GetImage_impl(taiData* dat, const void* base) {
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {// must be a string..
-      TypeDef* tdlkup = taMisc::types.FindName(val.toString());
+      TypeDef* tdlkup = TypeDef::FindGlobalTypeName(val.toString());
       if(tdlkup && !tdlkup->InheritsFrom(base_type)) {
         base_type = tdlkup;     // reset base type to accommodate current value
       }

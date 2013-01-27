@@ -33,7 +33,8 @@ class TA_API FrameViewer : public DataViewer {
 INHERITED(DataViewer)
 public:
 
-  inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();} // lex override
+  inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();}
+  // #IGNORE lex override
 
   inline MainWindowViewer* mainWindowViewer() {return parent();}
 

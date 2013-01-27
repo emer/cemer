@@ -16,7 +16,6 @@
 #include "gpiTAPtrArgType.h"
 #include <taList_impl>
 
-#include <taMisc>
 
 int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&
@@ -30,7 +29,7 @@ cssEl* gpiTAPtrArgType::GetElFromArg(const char* nm, void* base) {
   if ((lst != NULL) &&
      (arg_typ->DerivesFrom(lst->el_base) || lst->el_base->DerivesFrom(arg_typ->GetNonPtrType()))) {
     String ptrnm = lst->el_base->name + "_ptr";
-    TypeDef* ntd = taMisc::types.FindName(ptrnm);
+    TypeDef* ntd = TypeDef::FindGlobalTypeName(ptrnm);
     if (ntd != NULL)
       arg_typ = ntd;    // search in el_base (if args are compatible)
   }

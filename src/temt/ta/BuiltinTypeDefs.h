@@ -53,6 +53,7 @@
 
 extern TA_API TypeDef TA_void;
 extern TA_API TypeDef TA_void_ptr;
+extern TA_API TypeDef TA_voidptr;
 
 extern TA_API TypeDef TA_bool;
 
@@ -61,6 +62,7 @@ extern TA_API TypeDef TA_signed_char;
   extern TA_API TypeDef TA_int8_t;
 extern TA_API TypeDef TA_unsigned_char;
   extern TA_API TypeDef TA_uint8_t;  // note: seemingly absent in MSVC
+  extern TA_API TypeDef TA_byte;  // note: seemingly absent in MSVC
 extern TA_API TypeDef TA_short;
   extern TA_API TypeDef TA_int16_t;
   extern TA_API TypeDef TA_signed_short;

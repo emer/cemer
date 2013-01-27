@@ -32,7 +32,7 @@ taiData* taiSubTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, Q
   TypeDef* td = NULL;
   String typ_nm = mbr->OptionAfter("SUBTYPE_");
   if (!typ_nm.empty())
-    td = taMisc::types.FindName((char*)typ_nm);
+    td = TypeDef::FindGlobalTypeName(typ_nm, false);
   if (td == NULL)
     td = mbr->type;
   if (mbr->HasOption("NULL_OK"))
