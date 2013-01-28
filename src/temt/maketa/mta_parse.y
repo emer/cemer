@@ -132,6 +132,9 @@ typedefn: typedefns			{
   	  if($1 != NULL) {
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
+            // a typedef can never be literally a template or a template inst!
+            $$->ClearType(TypeDef::TEMPLATE);
+            $$->ClearType(TypeDef::TEMPLATE_INST);
 	    if($$ == $1) mta->TypeAdded("typedef", sp, $$); } }
         ;
 

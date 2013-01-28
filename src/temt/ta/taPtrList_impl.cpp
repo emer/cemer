@@ -105,8 +105,17 @@ void taPtrList_impl::BuildHashTable(int sz, KeyType key_typ) {
   hash_table->key_type = key_typ;
 
   if(!hash_table->Alloc(sz)) return;
-  for(int i=0; i<size; i++)
+  for(int i=0; i<size; i++) {
     hash_table->AddHash(El_GetHashVal_(el[i]), i, El_GetHashString_(el[i]));
+  }
+}
+
+void taPtrList_impl::ReBuildHashTable() {
+  if(!hash_table) return;
+  hash_table->RemoveAll();
+  for(int i=0; i<size; i++) {
+    hash_table->AddHash(El_GetHashVal_(el[i]), i, El_GetHashString_(el[i]));
+  }
 }
 
 taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
@@ -786,6 +795,21 @@ void taPtrList_impl::BorrowUniqNameOld(const taPtrList_impl& cp) {
       Link_(it);
   }
   scratch_list.size = 0;
+}
+
+void taPtrList_impl::BorrowUniqNameOldFirst(const taPtrList_impl& cp) {
+  if(!Alloc(size + cp.size)) return;
+  scratch_list.size = 0;
+  scratch_list.Stealth_Borrow(*this);   // get this into scratch for find, and to add back
+  size = 0;                             // effectively reset us to 0, so all new links go at start
+  for(int i=0; i < cp.size; i++) {
+    void* it = cp.el[i];
+    if(Scratch_Find_(El_GetName_(it)) < 0)
+      Link_(it);
+  }
+  Stealth_Borrow(scratch_list); // now get everyone back from scratch
+  scratch_list.size = 0;
+  ReBuildHashTable();           // needed if we have one
 }
 
 void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {

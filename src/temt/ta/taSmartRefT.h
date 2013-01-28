@@ -64,8 +64,7 @@ private:
 };
 
 // macro for creating smart refs of taBase classes
-#define SmartRef_Of(T) TypeDef_Of(T ## Ref); \
-  typedef taSmartRefT<T> T ## Ref
+#define SmartRef_Of(T) TypeDef_Of(T ## Ref); typedef taSmartRefT<T> T ## Ref; /* sr */
   
 
 SmartRef_Of(taBase);           // basic ref if you don't know the type

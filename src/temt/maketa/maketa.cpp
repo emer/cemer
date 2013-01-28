@@ -213,7 +213,9 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
 
   if(verbose <= 2)      return;
   cerr << "M!!: " << typ << " added: " << td->name << " to: "
-       << sp->name << " idx: " << td->idx << endl;
+       << sp->name << " idx: " << td->idx << " src: "
+       << td->source_file << ":" << td->source_start << "-" << td->source_end
+       << endl;
 }
 
 void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
@@ -283,6 +285,27 @@ TypeDef* MTA::FindName(const char* nm, int& lex_token) {
   return rval;
 }
 
+bool MTA::TypeSpace_Sort_Order(TypeSpace* ths) {
+  bool move_occurred = false;
+  int i;
+  for(i=0; i< ths->size; i++) {
+    TypeDef* td = ths->FastEl(i);
+    int j;
+    for(j=0; j<td->parents.size; j++) {
+      TypeDef* par_td = td->parents.FastEl(j);
+      if((td->idx < par_td->idx) && (td->owner == ths) && (par_td->owner == ths)) {
+        if(mta->verbose > 0)
+          cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
+               << par_td->idx+1 << "\n";
+        // child comes before parent..
+        ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
+        move_occurred = true;
+      }
+    }
+  }
+  return move_occurred;
+}
+
 
 #if (defined(TA_OS_UNIX))
 void mta_cleanup(int err) {
@@ -328,7 +351,9 @@ void mta_print_usage(int argc, char* argv[]) {
 
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
-  // verbose = 1;
+  // verbose = 3;
+  // bool keep_tmp = true;
+  bool keep_tmp = false;
 
   if(argc < 2) { mta_print_usage(argc, argv); return 1;  } // wrong number of arguments
 
@@ -349,7 +374,6 @@ int MTA::Main(int argc, char* argv[]) {
   String incs;
 
   bool wait = false;
-  bool keep_tmp = false;
   int i;
   String tmp;
   // always search in current directory first...
@@ -545,6 +569,16 @@ int MTA::Main(int argc, char* argv[]) {
 
   ////////////////////////////////////////////////
   //    Generate output
+
+  // give it 5 passes through to try to get everything in order..
+  int swp_cnt = 0;
+  if(mta->verbose > 0)
+    cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(taMisc::types))) {
+    swp_cnt++;
+    if(mta->verbose > 0)
+      cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  }
 
   if(verbose > 3) {
     String tl;

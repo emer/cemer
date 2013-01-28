@@ -140,6 +140,7 @@ public:
   String	source_file;	// source file name where defined -- no path information, just file name
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
+  bool          inited;         // has this type been fully initialized yet?
 
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
   void*         dmem_type; // actually ptr to: MPI_Datatype_PArray
@@ -188,6 +189,7 @@ public:
   inline bool   IsUnion() const { return HasType(UNION); }
   inline bool   IsVoidPtr() const  { return HasType(VOID) && HasType(POINTER); }
   inline bool   IsTaBase() const  { return HasType(TABASE); }
+  inline bool   IsActualTaBase() const  { return HasType(TABASE) && IsActual(); }
   inline bool   IsTemplClass() const { return HasType(CLASS) && HasType(TEMPLATE); }
   inline bool   IsTemplInstClass() const { return HasType(CLASS) && HasType(TEMPLATE_INST); }
   inline bool   IsFunPtr() const  { return HasType(FUNCTION) && HasType(POINTER); }
@@ -351,7 +353,9 @@ public:
   TypeDef*      AddParent(TypeDef* it, int p_off=0);
   // adds parent and inherits all the stuff from it
   TypeDef*      AddParentName(const char* nm, int p_off=0);
-  // adds parent and inherits all the stuff from it
+  // adds parent but does NOT inherit the data items such as enum_vals, sub_vals, etc
+  void          AddParentData();
+  // add the data from the parent(s), recursively, inserted before my data -- this is last step of initialization routine -- checks and sets the inited flag to mark progress and avoid duplicative effort
 
   // these are for construction
   void          AddParents(TypeDef* p1=NULL, TypeDef* p2=NULL,

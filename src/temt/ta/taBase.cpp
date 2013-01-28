@@ -1020,7 +1020,7 @@ taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) 
 
     MemberDef* md;
     void* tmp_ptr = FindMembeR(el_path, md);
-    if(tmp_ptr && (!md || md->type->IsTaBase())) { // null md = taBase
+    if(tmp_ptr && (!md || md->type->IsActualTaBase())) { // null md = taBase
       taBase* mbr = (taBase*)tmp_ptr;
       if(delim_pos < length) {  // there's more to be done..
         rval = mbr->FindFromPath(path, ret_md, next_pos); // start from after delim
@@ -1061,7 +1061,7 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
       return _nilVariant;
     }
     eff_typ = omd->type;
-    if(eff_typ->IsTaBase()) {
+    if(eff_typ->IsActualTaBase()) {
       return ((taBase*)eff_base)->GetValFromPath(eff_path, ret_md, warn_not_found);
     }
   }
@@ -2113,7 +2113,8 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then check for taBase items, checking object name and type (breadth first)
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->IsTaBase() || md->HasOption("NO_FIND")) continue;
+    if(!md->type->IsActualTaBase() || md->HasOption("NO_FIND"))
+      continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     if(mobj->FindCheck(nm) || md->type->InheritsFromName(nm)) {
       ret_md = md;
@@ -2124,7 +2125,8 @@ void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   // then do a depth-recursive search
   for(int i=0; i < td->members.size; i++) {
     md = td->members[i];
-    if(!md->type->IsTaBase() || md->HasOption("NO_FIND")) continue;
+    if(!md->type->IsActualTaBase() || md->HasOption("NO_FIND"))
+      continue;
     taBase* mobj = (taBase*)md->GetOff((void*)this);
     void* rval = mobj->FindMembeR(nm, ret_md);
     if(rval)
@@ -2211,7 +2213,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->IsNotPtr()) {
-      if(md->type->IsTaBase()) {
+      if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         if(mbr_name) {
           if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
@@ -2261,7 +2263,7 @@ void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
   // then recurse..
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->IsAnyPtr() || !md->type->IsTaBase()) continue;
+    if(md->type->IsAnyPtr() || !md->type->IsActualTaBase()) continue;
     if(md->type->HasOption("EDIT_INLINE") || md->type->HasOption("INLINE")) continue;
     if(md->HasOption("HIDDEN")) continue; // categorically don't look at hidden objects for diffs
     taBase* obj = (taBase*)md->GetOff(this);
@@ -2745,7 +2747,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
 static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
   MemberDef* md;
   taBase* new_guy = par_obj->FindFromPath(srec->value, md);
-  if((drec->type->IsPointer()) && drec->type->IsTaBase()) {
+  if(drec->type->IsPointer() && drec->type->IsTaBase()) {
     if(drec->mdef && drec->mdef->HasOption("OWN_POINTER")) {
       if(!drec->par_addr)
         taMisc::Warning("*** NULL parent for owned pointer:",drec->GetDisplayName());
@@ -2812,7 +2814,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     taBase* tab_par_a = NULL;
     taBase* tab_par_b = NULL;
-    if(rec->par_type && rec->par_type->IsTaBase()) {
+    if(rec->par_type && rec->par_type->IsActualTaBase()) {
       // make sure *parent* pointer is still current
       if(rec->par_odr && rec->par_odr->tabref) {
         if(!((taBaseRef*)rec->par_odr->tabref)->ptr())
@@ -2821,7 +2823,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       }
     }
     if(rec->diff_odr && rec->diff_odr->par_type &&
-       rec->diff_odr->par_type->IsTaBase()) {
+       rec->diff_odr->par_type->IsActualTaBase()) {
       // make sure *parent* pointer is still current
       if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->tabref) {
         if(!((taBaseRef*)rec->diff_odr->par_odr->tabref)->ptr())
@@ -2992,7 +2994,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
             else {
               MemberDef* dmd;
               void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
-              if(dmd && dmd->type->IsTaBase()) { // it should!
+              if(dmd && dmd->type->IsActualTaBase()) { // it should!
                 taBase* down = (taBase*)mbase;
                 down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
                 added = true;
@@ -3006,7 +3008,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
               // find member in dest par (parents always ta base..)
               MemberDef* dmd;
               void* mbase = tabparpar_b->FindMembeR(parpar_a->mdef->name, dmd);
-              if(dmd && dmd->type->IsTaBase()) { // it should!
+              if(dmd && dmd->type->IsActualTaBase()) { // it should!
                 taBase* down = (taBase*)mbase;
                 down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
                 added = true;
@@ -3113,7 +3115,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->IsNotPtr()) {
-      if(md->type->IsTaBase()) {
+      if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nfound += obj->SelectForEditSearch(memb_contains, editor);
       }

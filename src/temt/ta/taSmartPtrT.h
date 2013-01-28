@@ -52,8 +52,7 @@ private:
 
 // macro for creating smart ptrs of taBase classes
 
-#define SmartPtr_Of(T) TypeDef_Of(T ## Ptr); \
-  typedef taSmartPtrT<T> T ## Ptr;
+#define SmartPtr_Of(T) TypeDef_Of(T ## Ptr); typedef taSmartPtrT<T> T ## Ptr; /* sp */
 
 SmartPtr_Of(taBase);            // basic ptr if you don't know the type
 

@@ -51,6 +51,7 @@ void TypeDef::Initialize() {
   size = 0;
   source_start = -1;
   source_end = -1;
+  inited = false;
 
 #ifdef TA_GUI
   it = NULL;
@@ -818,7 +819,42 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
     taMisc::Info("AddParentName -- added new unknown type:",
                  nm, "as parent of type:", name);
   }
-  return AddParent(par, p_off);
+
+  if(parents.LinkUnique(par))
+    par_off.Add(p_off);         // it was unique, add offset
+
+  par->children.Link(this);
+
+  opts.DupeUnique(par->inh_opts);
+  inh_opts.DupeUnique(par->inh_opts);    // and so on
+
+  // note: type flags are set explicitly prior to calling AddParent!
+
+  if(IsTaBase())
+    opts.AddUnique(opt_instance);       // ta_bases always have an instance
+
+#ifndef NO_TA_BASE
+  CleanupCats(false);           // save first guy for add parent!
+#endif
+  
+  return par;
+}
+
+void TypeDef::AddParentData() {
+  for(int i=0; i< parents.size; i++) {
+    TypeDef* par = parents[i];
+    if(!par->inited) {
+      par->AddParentData();
+    }
+
+    // we already have our data, so we have to put the parent stuff first..
+    enum_vals.BorrowUniqNameOldFirst(par->enum_vals);
+    sub_types.BorrowUniqNameOldFirst(par->sub_types);
+    members.BorrowUniqNameOldFirst(par->members);
+    properties.BorrowUniqNameOldFirst(par->properties);
+    methods.BorrowUniqNameOldFirst(par->methods);
+  }
+  inited = true;                // we are now good
 }
 
 void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,

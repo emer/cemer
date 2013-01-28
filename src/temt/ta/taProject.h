@@ -223,6 +223,6 @@ private:
   void  Destroy();
 };
 
-TA_SMART_PTRS(taProject)
+TA_SMART_PTRS(taProject);
 
 #endif // taProject_h

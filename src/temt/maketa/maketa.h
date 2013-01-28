@@ -159,6 +159,9 @@ public:
   TypeDef* 	FindName(const char* nm, int& lex_token);
   // search all the relevant lists for given name, return lex_token of that item
 
+  bool          TypeSpace_Sort_Order(TypeSpace* ths);
+  // sort the order of the types so children come after parents..
+
   String	FindFile(const String& fname, bool& ok);
   // find the file, searching on .path if needed; returns full LexCanonical fname, clears ok if not found (fname can have full path)
 
@@ -195,8 +198,6 @@ public:
 
   bool TypeDef_Gen_Test(TypeDef* ths);
   // test if this type should be generated or not
-  bool TypeDef_Gen_Test_TI(TypeDef* ths);
-  // test if this template instantiation type should be generated or not
   String TypeDef_Gen_TypeName(TypeDef* ths);
   // generate the type name as a string for string lookup in Data fields
   String TypeDef_Gen_TypeDef_Ptr(TypeDef* ths);
@@ -331,6 +332,7 @@ public:
 
   void TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm);
   void TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm);
+
   void TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm);
   void TypeDef_Gen_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm);
   void TypeDef_Gen_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm);

@@ -1225,6 +1225,11 @@ bool taRootBase::Startup_InitTA() {
   TypeDefInitRegistrar::CallAllTypeInitFuns();
   TypeDefInitRegistrar::CallAllDataInitFuns();
 
+  for(int i=0; i< taMisc::types.size; i++) {
+    TypeDef* td = taMisc::types[i];
+    td->AddParentData();        // recursive, adds in right order..
+  }
+
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 

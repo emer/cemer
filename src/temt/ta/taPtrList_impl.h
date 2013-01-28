@@ -208,6 +208,8 @@ public:
 
   virtual void  BuildHashTable(int n_buckets, KeyType key_typ = KT_NAME);
   // #CAT_Modify build a hash table with given number of buckets and key type (not dynamic, so make it big)
+  virtual void  ReBuildHashTable();
+  // #CAT_Modify re-build existing hash table for all items on the list
 
   virtual bool  RemoveName(const String& item_nm);
   // #CAT_Modify remove (and delete) named element from list
@@ -261,6 +263,8 @@ public:
   // #CAT_Copy borrow so result is unique names, replacing with new ones where dupl
   void  BorrowUniqNameOld(const taPtrList_impl& cp);
   // #CAT_Copy borrow so result is unique names, using old ones where dupl
+  void  BorrowUniqNameOldFirst(const taPtrList_impl& cp);
+  // #CAT_Copy borrow so result is unique names, using old ones where dupl, inserting new ones first (in order) on the list
 
   /////////////////////////////////
   // copying items between lists //

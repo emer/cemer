@@ -32,22 +32,19 @@ static const int stub_arg_off = 2;
 
 bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
   if(ths->IsNotActual()) return false; // only actual types!
-  if(ths->IsTemplInst()) return false; // no template instances -- duplicates!!
   if(trg_fname_only != taMisc::GetFileFmPath(ths->source_file)) {
     return false; // not from target file!
   }
   if(ths->HasOption("IGNORE")) return false;
-  return true;
-}
-
-bool MTA::TypeDef_Gen_Test_TI(TypeDef* ths) {
-  if(ths->IsActual() && ths->IsTemplInst() && 
-     (trg_fname_only == taMisc::GetFileFmPath(ths->source_file))) {
-    if(ths->HasType(TypeDef::TI_ARGS_NOTINST)) // not ready for primetime yet
-      return false;
-    return true;
+  if(ths->IsTemplInst()) {
+    // cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
+    if(ths->children.size == 1) {
+      TypeDef* chld = ths->children[0];
+      return TypeDef_Gen_Test(chld); // we get instantiated where our parents live!
+    }
+    return false;
   }
-  return false;
+  return true;
 }
 
 String MTA::TypeDef_Gen_TypeName(TypeDef* ths) {
@@ -1222,18 +1219,9 @@ void MTA::TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm) {
 }
 
 void MTA::TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm) {
-  if(TypeDef_Gen_Test(ths)) {
-    strm << "  TA_" << ths->name << ".AddNewGlobalType();\n";
-  }
-  else if(TypeDef_Gen_Test_TI(ths)) {
-    ths->opts.AddUnique("NO_INSTANCE");
-    strm << "  if(TypeDef::FindGlobalTypeName(\"" << ths->name << "\", false) == NULL) {\n";
-    // instantiate template types!
-    strm << "    TypeDef* TA_" << ths->name << " = new TypeDef";
-    TypeDef_Gen_TypeDefs_impl(ths, strm);
-    strm << "    TA_" << ths->name << "->AddNewGlobalType(false);\n";
-    strm << "  }\n";
-  }    
+  if(!TypeDef_Gen_Test(ths)) return;
+
+  strm << "  TA_" << ths->name << ".AddNewGlobalType();\n";
 }
 
 
@@ -1261,16 +1249,6 @@ void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
 }
 
 void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
-  if(TypeDef_Gen_Test_TI(ths)) {
-    strm << "  TypeDef* TA_" << ths->name << " = TypeDef::FindGlobalTypeName(\""
-         << ths->name << "\", false);\n";
-    strm << "  if(TA_" << ths->name << "->parents.size == 0) {\n";
-    String ths_ref = "TA_" + ths->name + "->";
-    TypeDef_Gen_AddParents(ths, ths_ref, strm);
-    strm << "  }\n";
-    return;
-  }
-
   if(!TypeDef_Gen_Test(ths)) return;
 
   // int reg_fun_level = 0;
@@ -1280,6 +1258,8 @@ void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
   //   else
   //     reg_fun_level = 2;        // just add reg_fun methods (not the typedef)
   // }
+
+  strm << "\n";                 // new row for new class
 
   if(ths->IsActualClass()) {
     if((gen_instances || (ths->HasOption("INSTANCE")))
