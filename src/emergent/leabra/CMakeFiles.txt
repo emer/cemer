@@ -10,7 +10,6 @@
 
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
-    leabra_def.h
     leabra.h
     leabra_extra.h
     leabra_td.h

@@ -18,6 +18,8 @@
 // bp.cc
 
 #include "bp.h"
+TypeDef_Of(BpWizard);
+
 #include <DumpFileCvt>
 
 #include <taMisc>
@@ -54,7 +56,6 @@ static void bp_converter_init() {
 }
 
 void bp_module_init() {
-  ta_Init_bp();                 // initialize types
   bp_converter_init();          // configure converter
 }
 

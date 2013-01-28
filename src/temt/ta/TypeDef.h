@@ -83,6 +83,7 @@ public:
     SUBTYPE = 0x01000000,   // is a subtype defined within scope of a parent class
 
     TABASE = 0x02000000,    // a CLASS that derives from taBase base class that is automatically type-aware
+    TI_ARGS_NOTINST = 0x04000000, // template instantiation that still has non-instantiated args -- this is true e.g., for a template instantiated within a template  with the param of the parent template that has yet to be instantiated
 
 #ifndef __MAKETA__
     ANY_PTR = POINTER | PTR_PTR,

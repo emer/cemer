@@ -15,9 +15,11 @@
 
 #include "BaseSpec.h"
 #include <SpecMemberBase>
-#include <taMisc>
 #include <MemberDef>
 #include <taDataLinkItr>
+#include <SpecPtr>
+
+#include <taMisc>
 
 bool BaseSpec::nw_itm_def_arg = false;
 

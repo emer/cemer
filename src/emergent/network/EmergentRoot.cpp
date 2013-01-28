@@ -31,6 +31,8 @@
 #include <NetDataLoop>
 #include <NetGroupedDataLoop>
 
+TypeDef_Of(ProjectBase);
+
 #include <taMisc>
 #include <tabMisc>
 

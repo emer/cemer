@@ -16,6 +16,8 @@
 #include "NetBaseProgEl.h"
 #include <ProgVar>
 
+TypeDef_Of(Network);
+
 bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
   bool rval = ObjProgVarFilter(base_, var_);
   if(!rval) return false; // doesn't pass basic test

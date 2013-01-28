@@ -10,7 +10,6 @@
 
 # all headers that need maketa run on them
 set(cs_HEADS_MAKETA
-    cs_def.h
     cs.h
 #    cs_v3_compat.h
 )

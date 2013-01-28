@@ -18,6 +18,11 @@
 
 #include <taMisc>
 
+TypeDef_Of(FullPrjnSpec);
+TypeDef_Of(OneToOnePrjnSpec);
+TypeDef_Of(GpOneToOnePrjnSpec);
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //              Special Hippocampal ThetaPhase Layerspecs
 

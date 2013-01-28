@@ -20,7 +20,7 @@
 #include <BrainView>
 #include <MemberDef>
 #include <UserDataItem>
-#include <taProject>
+#include <ProjectBase>
 #include <taFiler>
 #include <SimpleMathSpec>
 #include <NetMonitor>
@@ -29,6 +29,8 @@
 #include <tabMisc>
 #include <taMisc>
 
+TypeDef_Of(FullPrjnSpec);
+TypeDef_Of(CustomPrjnSpec);
 
 using namespace std;
 

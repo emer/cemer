@@ -24,6 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class LayerView; //
+TypeDef_Of(LayerView);
 class Unit; //
 class NetView; //
 class T3UnitNode; //

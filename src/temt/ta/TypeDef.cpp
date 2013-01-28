@@ -1047,19 +1047,24 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   children.Reset();                     // don't have any real children..
 
   // todo: need to add support for arbitrary strings here, which are not just types
-
-  int i;
-  for(i=0; i<inst_pars.size; i++) {
+  
+  bool some_args_not_real = false;
+  for(int i=0; i<inst_pars.size; i++) {
     TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
     TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
 
     templ_pars.ReplaceLinkIdx(i, inst_tp); // actually replace it
 
     // update sub-types based on defn_tp (go backwards to get most extended types 1st)
-    int j;
-    for(j=sub_types.size-1; j>=0; j--) {
+    for(int j=sub_types.size-1; j>=0; j--) {
       sub_types.FastEl(j)->ReplaceParent(defn_tp, inst_tp);
     }
+    if(FindGlobalTypeName(inst_tp->name, false) == NULL) { // couldn't find it
+      some_args_not_real = true;
+    }
+  }
+  if(some_args_not_real) {      // yet to be realized
+    SetType(TI_ARGS_NOTINST);
   }
 
   // update to use new types

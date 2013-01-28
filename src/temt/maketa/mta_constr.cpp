@@ -43,9 +43,7 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
 bool MTA::TypeDef_Gen_Test_TI(TypeDef* ths) {
   if(ths->IsActual() && ths->IsTemplInst() && 
      (trg_fname_only == taMisc::GetFileFmPath(ths->source_file))) {
-    // todo: gross temp hack to avoid instantiating a template within a template
-    // need to instead properly detect subtype template instances -- see GetTypeSpace
-    if(ths->templ_pars.size == 1 && ths->templ_pars[0]->name == "T")
+    if(ths->HasType(TypeDef::TI_ARGS_NOTINST)) // not ready for primetime yet
       return false;
     return true;
   }

@@ -25,7 +25,6 @@
 #include <ProjectBase>
 
 #include "bp_def.h"
-#include "bp_TA_type.h"
 
 // forwards this file
 class BpConSpec;
@@ -130,14 +129,6 @@ BP_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su
 BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
 // #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
      ;				// term here so scanner picks up comment
-// #REG_FUN
-BP_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
-// #LIST_BpConSpec_WtDecay Simple weight decay (subtract decay*wt)
-     ;				// term here so scanner picks up comment
-// #REG_FUN
-BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
-// #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
-     ;				// term here so scanner picks up comment
 
 TypeDef_Of(BpRecvCons);
 
@@ -218,14 +209,6 @@ private:
 
 // #REG_FUN
 BP_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
-// #LIST_BpUnit_Error Squared error function for bp
-     ;				// term here so scanner picks up comment
-// #REG_FUN
-BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
-// #LIST_BpUnit_Error Cross entropy error function for bp
-     ;				// term here so scanner picks up comment
-// REG_FUN
-void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
 // #LIST_BpUnit_Error Squared error function for bp
      ;				// term here so scanner picks up comment
 // #REG_FUN

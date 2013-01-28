@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TesselEl);
+TypeDef_Of(TessEl);
 
 class EMERGENT_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
@@ -40,7 +40,7 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(TesselEl_List);
+TypeDef_Of(TessEl_List);
 
 class EMERGENT_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects

@@ -70,7 +70,7 @@ public:
   virtual void	      SetColorString(const String& labels_regexp, const String& color);
   // #CAT_BrainAtlas set color of all areas matching regexp to given color, specified as a string (#rrggbb or a common color name)
   virtual void	      SetColor(const String& labels_regexp, iColor color);
-  // #CAT_BrainAtlas set color of all areas matching regexp to given color, specified with an internal color object
+  // #CAT_BrainAtlas #IGNORE set color of all areas matching regexp to given color, specified with an internal color object
 
   virtual void        EditAtlas();
   // #BUTTON #NO_BUSY #CAT_BrainAtlas edit the atlas contents, including the colors associated with regions in this atlas

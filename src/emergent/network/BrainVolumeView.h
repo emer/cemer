@@ -29,6 +29,7 @@
 #include <QMultiMap>
 #include <QMap>
 #include <QList>
+#include <QColor>
 #endif
 
 // declare all other types mentioned but not required to include:

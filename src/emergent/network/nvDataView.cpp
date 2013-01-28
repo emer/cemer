@@ -15,6 +15,8 @@
 
 #include "nvDataView.h"
 
+TypeDef_Of(NetView);
+
 NetView* nvDataView::getNetView()
 {
   if (!m_nv) {

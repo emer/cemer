@@ -23,7 +23,6 @@
 #include <Wizard>
 
 #include "so_def.h"
-#include "so_TA_type.h"
 
 class SoCon;
 class SoConSpec;

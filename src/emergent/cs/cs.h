@@ -24,7 +24,6 @@
 #include <Wizard>
 
 #include "cs_def.h"
-#include "cs_TA_type.h"
 
 // pre-declare
 

@@ -21,6 +21,7 @@
 #ifdef __TA_COMPILE__
 #include "network_def.h"
 class Projection;
+TypeDef_Of(Projection);
 #else
 #include <Projection>
 #endif

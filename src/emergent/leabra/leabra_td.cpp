@@ -24,7 +24,8 @@
 TypeDef_Of(PFCLayerSpec);
 TypeDef_Of(MatrixLayerSpec);
 TypeDef_Of(SNrThalLayerSpec);
-
+TypeDef_Of(FullPrjnSpec);
+TypeDef_Of(OneToOnePrjnSpec);
 
 //////////////////////////////////////////
 //      LeabraTd Units and Cons         //

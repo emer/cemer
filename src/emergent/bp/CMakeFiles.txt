@@ -10,7 +10,6 @@
 
 # all headers that need maketa run on them
 set(bp_HEADS_MAKETA
-    bp_def.h
     bp.h
     rbp.h
 #    bp_v3_compat.h

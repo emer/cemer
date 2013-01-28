@@ -125,7 +125,7 @@ public: //
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   inline bool   lay_lesioned() const;
-  // #CAT_Structure is the layer this unit is in lesioned?
+  // #CAT_Structure #IGNORE is the layer this unit is in lesioned?
   inline Layer* own_lay() const;
   // #CAT_Structure get the owning layer of this unit
   inline Network* own_net() const;

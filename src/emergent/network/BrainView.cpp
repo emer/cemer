@@ -888,7 +888,7 @@ bool BrainView::IsValid() const
   return state_valid;
 }
 
-QString BrainView::DataName() const
+String BrainView::DataName() const
 {
   return brain_data_name;
 }
@@ -979,7 +979,7 @@ bool BrainView::ColorBrain() const
   return color_brain;
 }
 
-QString BrainView::ColorBrainRegexp() const
+String BrainView::ColorBrainRegexp() const
 {
   return color_brain_regexp;
 }
@@ -989,12 +989,12 @@ bool BrainView::ViewAtlas() const
   return show_atlas;
 }
 
-QString BrainView::ViewAtlasRegexp() const
+String BrainView::ViewAtlasRegexp() const
 {
   return brain_area_regexp;
 }
 
-QString BrainView::NetworkBrainAreas() const
+String BrainView::NetworkBrainAreas() const
 {
   QString brain_areas("");
   Network* net = this->net();
@@ -1020,7 +1020,7 @@ QString BrainView::NetworkBrainAreas() const
   return brain_areas;
 }
 
-void BrainView::SetDataName(const QString& data_name)
+void BrainView::SetDataName(const String& data_name)
 {
   if (data_name == brain_data_name) {
     return;
@@ -1030,13 +1030,13 @@ void BrainView::SetDataName(const QString& data_name)
   // our existing data set
   QFile f(data_name);
   if (!f.exists()) {
-    taMisc::Info("File does not exist:", data_name.toStdString().c_str());
+    taMisc::Info("File does not exist:", data_name);
     return;
   }
 
   NiftiReader tmp(data_name);
   if (!tmp.IsValid()) {
-    taMisc::Info("NiftiReader could not read:", data_name.toStdString().c_str());
+    taMisc::Info("NiftiReader could not read:", data_name);
     return;
   }
 
@@ -1207,7 +1207,7 @@ void BrainView::SetColorBrain(int state)
   EmitAndClearState();
 }
 
-void BrainView::SetColorBrainRegexp(const QString& regexp)
+void BrainView::SetColorBrainRegexp(const String& regexp)
 {
   if (regexp != color_brain_regexp) {
     color_brain_regexp = regexp;
@@ -1232,7 +1232,7 @@ void BrainView::SetViewAtlas(int state)
   EmitAndClearState();
 }
 
-void BrainView::SetViewAtlasRegexp(const QString& regexp)
+void BrainView::SetViewAtlasRegexp(const String& regexp)
 {
   if (regexp != brain_area_regexp) {
     brain_area_regexp = regexp;

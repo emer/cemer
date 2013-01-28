@@ -37,7 +37,7 @@ class TalairachAtlas; // #IGNORE
 class T3NetNode; //
 class T3Color;
 
-TypeDef_Of(NetViewFontSizes);
+TypeDef_Of(BrainViewParams);
 
 class EMERGENT_API BrainViewParams : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
@@ -140,7 +140,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // view state functions etc
   bool            IsValid() const;
-  QString         DataName() const;
+  String         DataName() const;
   taVector3i         Dimensions() const;
   AnatomicalPlane ViewPlane() const;
   int             SliceStart() const;
@@ -153,15 +153,15 @@ public:
   int             NumSlices() const;
   int             MaxSlices() const;
   bool            ColorBrain() const;
-  QString         ColorBrainRegexp() const;
+  String          ColorBrainRegexp() const;
   bool            ViewAtlas() const;
-  QString         ViewAtlasRegexp() const;
-  QString         NetworkBrainAreas() const;
+  String          ViewAtlasRegexp() const;
+  String          NetworkBrainAreas() const;
 
   float           SliceTransparencyXformed() const;
   // transformed slice transparency for use in actual rendering	
     
-  void            SetDataName(const QString& data_name);
+  void            SetDataName(const String& data_name);
   void            SetDimensions(const taVector3i& dimensions);
   void            SetViewPlane( AnatomicalPlane plane );
   void            SetViewPlane( int plane );
@@ -172,9 +172,9 @@ public:
   void            SetSliceTransparency(int transparency);
   void            SetUnitValuesTransparency(int transparency);
   void            SetColorBrain(int state);
-  void            SetColorBrainRegexp(const QString& regexp);
+  void            SetColorBrainRegexp(const String& regexp);
   void            SetViewAtlas(int state);
-  void            SetViewAtlasRegexp(const QString& regexp);
+  void            SetViewAtlasRegexp(const String& regexp);
 
   bool          state_valid;
   String        brain_data_name;
@@ -204,6 +204,7 @@ public:
   virtual void          GetMembs();
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
+  // #IGNORE
   virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val,
                                        T3Color& col, float& sc_val);
   virtual void          GetUnitDisplayVals(BrainVolumeView* bvv, taVector2i& co, float& val,
@@ -231,7 +232,7 @@ public:
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   override GuiContext   shType() const;
 #endif
-  override const iColor bgColor(bool& ok) const;
+  override const iColor bgColor(bool& ok) const; // #IGNORE
   override void         InitLinks();
   override void         CutLinks();
   override void         ChildUpdateAfterEdit(taBase* child, bool& handled);

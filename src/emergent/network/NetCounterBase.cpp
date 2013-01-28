@@ -18,6 +18,9 @@
 
 #include <taMisc>
 
+TypeDef_Of(Network);
+
+
 void NetCounterBase::Initialize() {
   network_type = &TA_Network;
   counter = NULL;

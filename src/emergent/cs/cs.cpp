@@ -43,7 +43,6 @@ static void cs_converter_init() {
 }
 
 void cs_module_init() {
-  ta_Init_cs();                 // initialize types
   cs_converter_init();          // configure converter
 }
 

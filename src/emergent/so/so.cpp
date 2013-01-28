@@ -44,7 +44,6 @@ static void so_converter_init() {
 }
 
 void so_module_init() {
-  ta_Init_so();                 // initialize types
   so_converter_init();          // configure converter
 }
 

@@ -25,6 +25,7 @@
 // declare all other types mentioned but not required to include:
 class NetViewObj; //
 class NetView; //
+TypeDef_Of(NetView);
 
 TypeDef_Of(NetViewObjView);
 

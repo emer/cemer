@@ -216,6 +216,7 @@ public:
   virtual void          GetMaxSize(); // get max size from network
 
   void                  GetUnitColor(float val, iColor& col, float& sc_val);
+  // #IGNORE 
   virtual void          GetUnitDisplayVals(UnitGroupView* ugrv, taVector2i& co, float& val,
                                            T3Color& col, float& sc_val);
   void                  InitScaleRange(ScaleRange& sr);
@@ -269,14 +270,14 @@ public:
   // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
 
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
-  // process key presses from examiner viewer -- for arrow-key navigation
+  // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
   override void         Dump_Load_post();
 #ifndef __MAKETA__
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   override GuiContext   shType() const {return GC_DUAL_DEF_VIEW;}
 #endif
-  override const iColor bgColor(bool& ok) const;
+  override const iColor bgColor(bool& ok) const; // #IGNORE 
   override void         InitLinks();
   override void         CutLinks();
   override void         ChildUpdateAfterEdit(taBase* child, bool& handled);

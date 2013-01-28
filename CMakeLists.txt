@@ -97,16 +97,16 @@ include(${mod_path}/SetBuildSuffix.cmake)
 
 include(CTest)
 
-# find all of our dependencies -- also sets their include paths in include_directories
-# and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
-find_package(EmergentDependencies)
-
-# includes 
+# includes -- ours must come before others..
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}/src/temt/lib
 )
+
+# find all of our dependencies -- also sets their include paths in include_directories
+# and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
+find_package(EmergentDependencies)
 
 # install destinations
 if (WIN32)

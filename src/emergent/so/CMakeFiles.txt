@@ -10,7 +10,6 @@
 
 # all headers that need maketa run on them
 set(so_HEADS_MAKETA
-    so_def.h
     so.h
     som.h
     cl.h

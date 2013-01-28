@@ -19,6 +19,8 @@
 #include <tabMisc>
 #include <taRootBase>
 
+TypeDef_Of(EmergentRoot);
+
 #include <css_machine.h>
 
 #ifdef TA_GUI
