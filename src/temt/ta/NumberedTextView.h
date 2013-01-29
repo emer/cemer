@@ -16,7 +16,7 @@
 #ifndef NumberedTextView_h
 #define NumberedTextView_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QFrame>
 

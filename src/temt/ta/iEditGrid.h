@@ -16,7 +16,7 @@
 #ifndef iEditGrid_h
 #define iEditGrid_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <qsize.h>
 #include <QWidget>
@@ -27,7 +27,7 @@ class QGridLayout; //
 class QScrollArea; //
 
 
-class TAIQTSO_API iEditGrid: public QWidget {
+class TA_API iEditGrid: public QWidget {
   Q_OBJECT
 public:
   QHBoxLayout*		layOuter;

@@ -25,6 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 
+typedef taList<RndSeed> RndSeed_List_impl; // basic list without container methods
 
 TypeDef_Of(RndSeed_List);
 
@@ -32,7 +33,7 @@ class TA_API RndSeed_List : public taNBase {
   // ##CAT_Math ##DEF_CHILD_seeds ##DEF_CHILDNAME_Random_Seeds list of random seeds
 INHERITED(taNBase)
 public:
-  taList<RndSeed>       seeds;  // the list of random seeds
+  RndSeed_List_impl     seeds;  // the list of random seeds
 
   override taList_impl* children_() {return &seeds;}
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

@@ -27,8 +27,4 @@
 class ProgVar; //
 SmartRef_Of(ProgVar); // ProgVarRef
 
-#ifdef __MAKETA__
-class ProgVarRef;
-#endif
-
 #endif // ProgVarRef_h

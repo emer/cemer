@@ -17,7 +17,7 @@
 #define SoPtr_h 1
 
 // parent includes:
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 // member includes:
 
@@ -35,7 +35,7 @@ class SoSelection;		// #IGNORE
 class SoTransform;		// #IGNORE
 
 
-class TAIQTSO_API SoPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for SoBase objects -- automatically does ref counts
+class TA_API SoPtr_impl { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for SoBase objects -- automatically does ref counts
 public:
   inline operator 	bool() const {return (m_ptr);} // for ptr-like NULL checks
   SoPtr_impl() {m_ptr = 0;}
@@ -59,7 +59,7 @@ protected:
 
 // macro for creating safe ptrs of SoBase classes
 
-#define SoPtr_Of(T)  class TAIQTSO_API T ## Ptr: public SoPtr<T> { \
+#define SoPtr_Of(T)  class TA_API T ## Ptr: public SoPtr<T> { \
 public: \
   T* operator=(T ## Ptr& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
   T* operator=(T* src) {set(src); return (T*)m_ptr;} \

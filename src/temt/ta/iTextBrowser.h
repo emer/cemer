@@ -16,12 +16,12 @@
 #ifndef iTextBrowser_h
 #define iTextBrowser_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QTextBrowser>
 
 
-class TAIQTSO_API iTextBrowser: public QTextBrowser { 
+class TA_API iTextBrowser: public QTextBrowser { 
 INHERITED(QTextBrowser)
   Q_OBJECT
 public:

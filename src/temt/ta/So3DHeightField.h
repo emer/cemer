@@ -20,22 +20,24 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoSeparator.h>
+#else
+class SoSeparator; //
 #endif
 
 // member includes:
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taMatrix;
-class ColorScale;
-class MinMaxRange;
-class SoFont;
-class SoDrawStyle;
-class SoMaterial;
-class SoIndexedLineSet;
-class SoTransform;
-class SoVertexProperty;
-class SoIndexedTriangleStripSet;
+class taMatrix; //
+class ColorScale; //
+class MinMaxRange; //
+class SoFont; //
+class SoDrawStyle; //
+class SoMaterial; //
+class SoIndexedLineSet; //
+class SoTransform; //
+class SoVertexProperty; //
+class SoIndexedTriangleStripSet; //
 
 
 TypeDef_Of(So3DHeightField);

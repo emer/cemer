@@ -27,6 +27,9 @@
 #ifndef __MAKETA__
 #include <QMutex>
 #include <QWaitCondition>
+#else
+class QMutex; //
+class QWaitCondition; //
 #endif
 
 // declare all other types mentioned but not required to include:

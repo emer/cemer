@@ -17,7 +17,7 @@ ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
 SET_TA_PROPS(network ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
-MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA})
+MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA} OPTIONS network)
 
 # bp
 include(${PROJECT_SOURCE_DIR}/src/emergent/bp/CMakeFiles.txt)
@@ -25,7 +25,7 @@ ADD_PATH_TO_FILES(emergent_bp_SRCS ${mypath}/bp "${bp_SRCS}")
 ADD_PATH_TO_FILES(emergent_bp_HEADS_MAKETA ${mypath}/bp "${bp_HEADS_MAKETA}")
 SET_TA_PROPS(bp ${PROJECT_SOURCE_DIR}/src/emergent/bp)
 
-MAKETA_WRAP_H(emergent_bp_SRCS_MAKETA ${emergent_bp_HEADS_MAKETA})
+MAKETA_WRAP_H(emergent_bp_SRCS_MAKETA ${emergent_bp_HEADS_MAKETA} OPTIONS bp)
 
 # leabra
 include(${PROJECT_SOURCE_DIR}/src/emergent/leabra/CMakeFiles.txt)
@@ -33,7 +33,7 @@ ADD_PATH_TO_FILES(emergent_leabra_SRCS ${mypath}/leabra "${leabra_SRCS}")
 ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA ${mypath}/leabra "${leabra_HEADS_MAKETA}")
 SET_TA_PROPS(leabra ${PROJECT_SOURCE_DIR}/src/emergent/leabra)
 
-MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA})
+MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA} OPTIONS leabra)
 
 # cs
 include(${PROJECT_SOURCE_DIR}/src/emergent/cs/CMakeFiles.txt)
@@ -41,7 +41,7 @@ ADD_PATH_TO_FILES(emergent_cs_SRCS ${mypath}/cs "${cs_SRCS}")
 ADD_PATH_TO_FILES(emergent_cs_HEADS_MAKETA ${mypath}/cs "${cs_HEADS_MAKETA}")
 SET_TA_PROPS(cs ${PROJECT_SOURCE_DIR}/src/emergent/cs)
 
-MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA})
+MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA} OPTIONS cs)
 
 # so
 include(${PROJECT_SOURCE_DIR}/src/emergent/so/CMakeFiles.txt)
@@ -49,7 +49,7 @@ ADD_PATH_TO_FILES(emergent_so_SRCS ${mypath}/so "${so_SRCS}")
 ADD_PATH_TO_FILES(emergent_so_HEADS_MAKETA ${mypath}/so "${so_HEADS_MAKETA}")
 SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
 
-MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA})
+MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
 
 if (QT_USE_5)
   qt5_wrap_cpp(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})

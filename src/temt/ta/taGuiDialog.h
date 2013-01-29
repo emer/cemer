@@ -35,6 +35,7 @@ class taGuiWidget; //
 class taGuiLayout; // 
 class taGuiAction; // 
 class taGuiDataHost; //
+class QAction; //
 
 
 TypeDef_Of(taGuiDialog);

@@ -16,11 +16,11 @@
 #ifndef iLineEdit_h
 #define iLineEdit_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QLineEdit>
 
-class TAIQTSO_API iLineEdit: public QLineEdit {
+class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:

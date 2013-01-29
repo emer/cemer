@@ -16,11 +16,11 @@
 #ifndef iColorButton_h
 #define iColorButton_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <QColor>
 #include <QToolButton>
 
-class TAIQTSO_API iColorButton: public QToolButton {
+class TA_API iColorButton: public QToolButton {
 INHERITED(QToolButton)
   Q_OBJECT
 public:

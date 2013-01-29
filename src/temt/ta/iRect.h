@@ -16,7 +16,7 @@
 #ifndef iRect_h
 #define iRect_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 /* Notes:
    1. all classes below are value-semantics, and use the implicit copy and = operators.
@@ -37,7 +37,7 @@ class QRect; //
 
 TypeDef_Of(iRect);
 
-class TAIQTSO_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
+class TA_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int x;
   int y;

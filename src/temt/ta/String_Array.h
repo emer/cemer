@@ -23,6 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QStringList; //
 
 
 TypeDef_Of(String_Array);

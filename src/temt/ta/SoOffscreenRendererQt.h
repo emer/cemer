@@ -16,7 +16,7 @@
 #ifndef SoOffscreenRendererQt_h
 #define SoOffscreenRendererQt_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QGLPixelBuffer>
 
@@ -26,7 +26,7 @@
 class SbViewportRegion; // #IGNORE
 class SoCamera; // #IGNORE
 
-class TAIQTSO_API SoOffscreenRendererQt {
+class TA_API SoOffscreenRendererQt {
   // ##NO_CSS ##NO_INSTANCE ##NO_TOKENS offscreen renderer that uses a QGLPixelBuffer as the underlying offscreen render buffer -- this then provides direct support for multisampling antialiasing, which is enabled by default
 public:
   SoOffscreenRendererQt(const SbViewportRegion & viewportregion);

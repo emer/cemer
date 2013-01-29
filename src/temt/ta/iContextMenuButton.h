@@ -16,10 +16,10 @@
 #ifndef iContextMenuButton_h
 #define iContextMenuButton_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <QToolButton>
 
-class TAIQTSO_API iContextMenuButton: public QToolButton {
+class TA_API iContextMenuButton: public QToolButton {
   // ##NO_CSS automatically calls associated menu when activated by a context menu event
 INHERITED(QToolButton)
   Q_OBJECT

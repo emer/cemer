@@ -16,12 +16,12 @@
 #ifndef iComboBox_h
 #define iComboBox_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QObject>
 #include <QComboBox>
 
-class TAIQTSO_API iComboBox: public QComboBox {
+class TA_API iComboBox: public QComboBox {
   Q_OBJECT
 public:
   iComboBox(QWidget* parent = NULL);

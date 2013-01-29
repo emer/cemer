@@ -33,7 +33,7 @@ static const int stub_arg_off = 2;
 bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
   if(ths->IsNotActual()) return false; // only actual types!
   if(trg_fname_only != taMisc::GetFileFmPath(ths->source_file)) {
-    if(verbose >= 2) {
+    if(verbose >= 4) {
       cerr << "mta_constr: skipping out-of-source type: " << ths->name 
            << " src: " << ths->source_file << endl;
     }
@@ -49,9 +49,9 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
     if(verbose >= 2) {
       cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
     }
-    if(ths->children.size == 1) {
+    if(ths->children.size > 0) {
       TypeDef* chld = ths->children[0];
-      return TypeDef_Gen_Test(chld); // we get instantiated where our parents live!
+      return TypeDef_Gen_Test(chld); // we get instantiated where first parent lives!
     }
     return false;
   }
@@ -139,6 +139,7 @@ void MTA::TypeSpace_Gen(TypeSpace* ths, ostream& strm) {
   TypeSpace_Gen_Data(ths, strm);
   TypeSpace_Gen_TypeInit(ths, strm);
   TypeSpace_Gen_DataInit(ths, strm);
+  TypeSpace_Gen_InstInit(ths, strm);
 }
 
 
@@ -166,8 +167,37 @@ void MTA::TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances) {
   }
   strm << "#include <BuiltinTypeDefs>\n";
   strm << "#include <taMisc>\n\n";
-  strm << "using namespace std;\n";
 
+  String_PArray ti_incs;
+
+  // include type classes for template instances!  prevents a load of compile errs
+  for(int i=0; i<taMisc::types.size; i++) {
+    TypeDef* ths = taMisc::types.FastEl(i);
+    if(!TypeDef_Gen_Test(ths)) continue;
+    if(ths->IsTemplInst() && ths->IsClass()) {
+      for(int j=0; j< ths->templ_pars.size; j++) {
+        TypeDef* tp = ths->templ_pars[j];
+        if(tp->IsActualClass()) {
+          String src = taMisc::GetFileFmPath(tp->source_file);
+          if(src != trg_fname_only) {
+            if(src.empty())
+              ti_incs.AddUnique("<" + tp->name + ">");
+            else
+              ti_incs.AddUnique("\"" + src + "\"");
+          }
+        }
+      }
+    }
+  }
+  if(ti_incs.size > 0) {
+    strm << "\n// include template instance paramter files -- fixes a lot of bugs" << endl;
+    for(int i=0; i<ti_incs.size; i++) {
+      strm << "#include " << ti_incs[i] << "\n";
+    }
+    strm << "\n";
+  }
+
+  strm << "using namespace std;\n";
   strm << "\n\n";
 }
 
@@ -854,13 +884,13 @@ void MTA::TypeDef_Gen_EnumData(TypeDef* ths, ostream& strm) {
          || (enm->enum_vals.size == 0))
         continue;
 
-      strm << "static EnumDef_data TA_" << ths->name << "_" << enm->name
+      strm << "\nstatic EnumDef_data TA_" << ths->name << "_" << enm->name
            << "[]={\n";
       EnumSpace_Gen_Data(&(enm->enum_vals), strm);
     }
   }
   else if(ths->IsEnum()) {
-    strm << "static EnumDef_data TA_" << ths->name << "_EnumDef[]={\n";
+    strm << "\nstatic EnumDef_data TA_" << ths->name << "_EnumDef[]={\n";
     EnumSpace_Gen_Data(&(ths->enum_vals), strm);
   }
 }
@@ -944,7 +974,7 @@ void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
     strm << "static int " << ownr->Get_C_Name() << "::* " << mbr_off_nm << ";\n";
   }
 
-  strm << "static MemberDef_data TA_" << ownr->name << "_MemberDef[]={\n";
+  strm << "\nstatic MemberDef_data TA_" << ownr->name << "_MemberDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     MemberDef* md = ths->FastEl(i);
@@ -1042,7 +1072,7 @@ void MTA::MethodSpace_Gen_ArgData(MethodSpace* ths, TypeDef* ownr, ostream& strm
 }
 
 void MTA::MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
-  strm << "static MethodArgs_data TA_" << ownr->name << "_" << ths->name
+  strm << "\nstatic MethodArgs_data TA_" << ownr->name << "_" << ths->name
        << "_MethArgs[]={\n";
 
   for(int i=0; i<ths->arg_types.size; i++) {
@@ -1055,7 +1085,7 @@ void MTA::MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
 
 
 void MTA::MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
-  strm << "static MethodDef_data TA_" << ownr->name << "_MethodDef[]={\n";
+  strm << "\nstatic MethodDef_data TA_" << ownr->name << "_MethodDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     MethodDef* md = ths->FastEl(i);
@@ -1158,7 +1188,7 @@ void MTA::PropertySpace_Gen_Data(PropertySpace* ths, TypeDef* ownr, ostream& str
       n_non_statics++;
   }
 
-  strm << "static PropertyDef_data TA_" << ownr->name << "_PropertyDef[]={\n";
+  strm << "\nstatic PropertyDef_data TA_" << ownr->name << "_PropertyDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     PropertyDef* md = dynamic_cast<PropertyDef*>(ths->FastEl(i));
@@ -1253,10 +1283,6 @@ void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
     TypeDef_Gen_DataInit(ths->FastEl(i), strm);
   }
   strm << "} \n\n";
-  strm << "// Register Init Functions\n\n";
-  strm << "TypeDefInitRegistrar ta_tdreg_" << trg_basename
-       << "(ta_TypeInit_" << trg_basename << ", "
-       << "ta_DataInit_" << trg_basename << ");\n\n";
 }
 
 void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
@@ -1271,13 +1297,6 @@ void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
   // }
 
   strm << "\n";                 // new row for new class
-
-  if(ths->IsActualClass()) {
-    if((gen_instances || (ths->HasOption("INSTANCE")))
-       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate()) {
-      strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
-    }
-  }
 
   String ths_ref = "TA_" + ths->name + ".";
   TypeDef_Gen_AddParents(ths, ths_ref, strm);
@@ -1304,9 +1323,8 @@ void MTA::TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
     return;
 
   int cnt=0;
-  int i;
   // see if there are any parents, and also check for too many for us to handle!
-  for (i=0; i < ths->parents.size; i++) {
+  for (int i=0; i < ths->parents.size; i++) {
     TypeDef* ptd = ths->parents.FastEl(i);
     cnt++;
   }
@@ -1319,39 +1337,16 @@ void MTA::TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   }
 
   strm << "  " << typ_ref;
-  if(ths->IsActualClass())   strm << "AddClassParNames(";
-  else                       strm << "AddParentNames(";
+  strm << "AddParentNames(";
   String ths_cnm = ths->Get_C_Name();
-  cnt = 0;
-  for (i=0; i < ths->parents.size; ++i) {
+  for (int i=0; i < ths->parents.size; ++i) {
     TypeDef* ptd = ths->parents.FastEl(i);
-    if (cnt > 0)
+    if (i > 0)
       strm << ", ";
     if(ptd->IsSubType())
       strm << "\"" << ptd->owner->owner->name << "::" << ptd->name << "\"";
     else
       strm << "\"" << ptd->name << "\"";
-    if(ths->IsActualClass()) {
-      if((ths->parents.size>1) && !ths->IsTemplate() && !ptd->IsTemplate()) {
-        if((gen_instances || (ths->HasOption("INSTANCE")))
-           && !(ths->HasOption("NO_INSTANCE")))
-        {
-          strm << ",(int)((unsigned long)((" << ptd->Get_C_Name() << "*)"
-               << "TAI_" << ths->name << ")-(unsigned long)TAI_" << ths->name
-               << ")";
-        }
-        else {
-          strm << ",0";
-          if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios") &&
-            !ths->HasOption("NO_MEMBERS"))
-            taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
-                           "-parent offset cannot be computed!");
-        }
-      }
-      else
-        strm << ",0";
-    }
-    ++cnt;
   }
   strm << ");\n";
 }
@@ -1387,7 +1382,7 @@ void MTA::TypeDef_Gen_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm) 
     if(ptd->IsSubType())
       strm << "\"" << ptd->owner->owner->name << "::" << ptd->name << "\"";
     else
-      strm << ptd->name;
+      strm << "\"" << ptd->name << "\"";
     if(i < ths->parents.size-1)
       strm << ", ";
   }
@@ -1422,6 +1417,65 @@ void MTA::SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
     TypeDef_Gen_AddAllParents(sbt, sbt_ref, strm);
 
     strm << "  TA_" << ownr->name << ".sub_types.Add(sbt);\n";
+  }
+}
+
+//////////////////////////////////
+//       InstInit Function
+
+void MTA::TypeSpace_Gen_InstInit(TypeSpace* ths, ostream& strm) {
+  strm << "\n// Instance Init Function\n";
+
+#ifdef TA_OS_WIN
+  if (win_dll)
+    strm << win_dll_str << " ";
+#endif
+  strm << "void ta_InstInit_" << trg_basename << "() {\n";
+
+  for(int i=0; i<ths->size; i++) {
+    TypeDef_Gen_InstInit(ths->FastEl(i), strm);
+  }
+  strm << "} \n";
+  strm << "// Register Init Functions\n\n";
+  strm << "TypeDefInitRegistrar ta_tdreg_" << trg_basename
+       << "(ta_TypeInit_" << trg_basename << ", "
+       << "ta_DataInit_" << trg_basename << ", "
+       << "ta_InstInit_" << trg_basename << ");\n\n";
+}
+
+void MTA::TypeDef_Gen_InstInit(TypeDef* ths, ostream& strm) {
+  if(!TypeDef_Gen_Test(ths)) return;
+
+  if(ths->IsActualClass()) {
+    if((gen_instances || (ths->HasOption("INSTANCE")))
+       && !ths->HasOption("NO_INSTANCE") && !ths->IsTemplate()) {
+      strm << "  TAI_" << ths->name << " = new "<< ths->Get_C_Name() << ";\n";
+      if(ths->parents.size>1) {
+        strm << "  " << "TA_" << ths->name << ".SetParOffsets(";
+        for (int i=0; i < ths->parents.size; ++i) {
+          TypeDef* ptd = ths->parents.FastEl(i);
+          if (i > 0)
+            strm << ", ";
+          if(!ptd->IsTemplate()) {
+            strm << "(int)((unsigned long)((" << ptd->Get_C_Name() << "*)"
+                 << "TAI_" << ths->name << ")-(unsigned long)TAI_" << ths->name
+                 << ")";
+          }
+          else {
+            strm << "0";
+            taMisc::Error("warning: type:",ths->name,"has mult inherit but one parent is a template (shouldn't happen)!");
+          }
+        }
+        strm << ");\n";
+      }
+    }
+    else {
+      if((ths->parents.size > 1) && !ths->InheritsFromName("ios") &&
+         !ths->HasOption("NO_MEMBERS")) {
+        taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
+                      "-parent offset cannot be computed!");
+      }
+    }
   }
 }
 

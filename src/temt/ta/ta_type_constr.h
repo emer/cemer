@@ -51,13 +51,18 @@ public:
   // call all the type initialization functions that have been registered in instances
   static bool CallAllDataInitFuns();
   // call all the data initialization functions that have been registered in instances
+  static bool CallAllInstInitFuns();
+  // call all the inst initialization functions that have been registered in instances
 
   TypeDefInitFun        types_init_fun;
   // the initialization function for type defs for this instance
   TypeDefInitFun        data_init_fun;
   // the initialization function for member, property, method, enum data for this instance
+  TypeDefInitFun        inst_init_fun;
+  // the initialization function for instances of types 
 
-  TypeDefInitRegistrar(TypeDefInitFun types_init_fun_, TypeDefInitFun data_init_fun_);
+  TypeDefInitRegistrar(TypeDefInitFun types_init_fun_, TypeDefInitFun data_init_fun_,
+                       TypeDefInitFun inst_init_fun_);
   // constructor that adds this object to the list of instances, and sets the init_fun
 };
 

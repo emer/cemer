@@ -16,11 +16,11 @@
 #ifndef iSpinBox_h
 #define iSpinBox_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QSpinBox>
 
-class TAIQTSO_API iSpinBox: public QSpinBox {
+class TA_API iSpinBox: public QSpinBox {
   Q_OBJECT
 INHERITED(QSpinBox)
 public:

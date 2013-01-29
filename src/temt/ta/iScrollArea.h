@@ -16,11 +16,11 @@
 #ifndef iScrollArea_h
 #define iScrollArea_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QScrollArea>
 
-class TAIQTSO_API iScrollArea: public QScrollArea {
+class TA_API iScrollArea: public QScrollArea {
   // ##NO_CSS scroll area with better visual semantics than the stock Qt one
 INHERITED(QScrollArea)
   Q_OBJECT

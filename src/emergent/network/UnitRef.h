@@ -27,8 +27,4 @@
 class Unit; //
 TA_SMART_PTRS(Unit); // UnitRef
 
-#ifdef __MAKETA__
-class UnitRef;
-#endif
-
 #endif // UnitRef_h

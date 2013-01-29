@@ -29,6 +29,8 @@ class iFlowLayout; //
 class iColor; //
 class iLabel; //
 class QMenu; //
+class QContextMenuEvent; //
+
 
 TypeDef_Of(taiDataHost_impl);
 

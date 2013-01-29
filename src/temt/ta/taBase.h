@@ -110,8 +110,8 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   void Copy(const y& cp) { Copy_impl(cp);} \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   y& operator=(const y& cp) { Copy(cp); return *this;}
 
 #define TA_TMPLT_BASEFUNS_MAIN_(y,T) \
@@ -132,8 +132,8 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   void Copy(const y<T>& cp) { Copy_impl(cp);} \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
 // common defs used to make instances: Cloning and Tokens

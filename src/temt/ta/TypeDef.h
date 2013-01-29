@@ -367,10 +367,11 @@ public:
   void          AddClassPar(TypeDef* p1=NULL, int p1_off=0, TypeDef* p2=NULL, int p2_off=0,
                             TypeDef* p3=NULL, int p3_off=0, TypeDef* p4=NULL, int p4_off=0,
                             TypeDef* p5=NULL, int p5_off=0, TypeDef* p6=NULL, int p6_off=0);
-  void          AddClassParNames(const char* p1=NULL, int p1_off=0,
-                                 const char* p2=NULL, int p2_off=0,
-                            const char* p3=NULL, int p3_off=0, const char* p4=NULL, int p4_off=0,
-                            const char* p5=NULL, int p5_off=0, const char* p6=NULL, int p6_off=0);
+
+  void          SetParOffsets(int p1_off=0, int p2_off=0, int p3_off=0,
+                              int p4_off=0, int p5_off=0, int p6_off=0);
+  // set offsets for existing set of parents, and call ComputeMembBaseOff
+
   void          AddTemplPars(TypeDef* p1=NULL, TypeDef* p2=NULL,
                              TypeDef* p3=NULL, TypeDef* p4=NULL,
                              TypeDef* p5=NULL, TypeDef* p6=NULL);

@@ -16,7 +16,7 @@
 #ifndef iDimEdit_h
 #define iDimEdit_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QWidget>
 
@@ -28,7 +28,7 @@ class iSpinBox; //
 // 	iDimEdit		//
 //////////////////////////////////
 
-class TAIQTSO_API iDimEdit: public QWidget {
+class TA_API iDimEdit: public QWidget {
   // #IGNORE provides a horizontal striped background, to highlight items
   Q_OBJECT
 public:

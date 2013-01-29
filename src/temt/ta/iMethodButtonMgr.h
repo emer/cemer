@@ -32,11 +32,13 @@ class taiDataList;
 #endif
 
 // declare all other types mentioned but not required to include:
-class taiMenu_List; // #IGNORE
+class taiMenu_List; //
 class taBase; //
 class IDataHost; //
 class taiMethodData; //
 class taiActions; //
+class QLayout; //
+class IDataHost; //
 
 TypeDef_Of(iMethodButtonMgr);
 

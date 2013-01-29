@@ -23,8 +23,8 @@
 #include <iDataPanel_PtrList>
 
 // declare all other types mentioned but not required to include:
-class iTabView; // #IGNORE
-
+class iTabView; //
+class QStackedWidget; //
 
 TypeDef_Of(iDataPanelSetBase);
 

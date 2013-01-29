@@ -28,38 +28,39 @@
 // declare all other types mentioned but not required to include:
 
 // externals -- note: some are here for use by other files, not this one
-class SbColor; // #IGNORE
-class SoCoordinate3; // #IGNORE
-class SbRotation; // #IGNORE
-class SbVec3f; // #IGNORE
-class SoAsciiText; // #IGNORE
-class SoDrawStyle; // #IGNORE
-class SoFont; // #IGNORE
-class SoLightModel; // #IGNORE
-class SoLineSet; // #IGNORE
-class SoMarkerSet; // #IGNORE
-class SoMaterial; // #IGNORE
-class SoMFVec3f; // #IGNORE
-class SoNode; // #IGNORE
-class SoPackedColor; // #IGNORE
-class SoPerspectiveCamera; // #IGNORE
-class SoPickStyle; // #IGNORE
-class SoRotation; // #IGNORE
-class SoScale; // #IGNORE
-class SoSeparator; // #IGNORE
-class SoTexture2; // #IGNORE
-class SoTexture2Transform; // #IGNORE
-class SoTranslate1Dragger; // #IGNORE
-class SoTranslation; // #IGNORE
-class SoTransform; // #IGNORE
-class SoTriangleStripSet; // #IGNORE
-class SoIndexedTriangleStripSet; // #IGNORE
-class SoUnits; // #IGNORE
-class SoVertexProperty; // #IGNORE
-class SoTransformBoxDragger; // #IGNORE
-class SoCalculator; // #IGNORE
-class SoIndexedLineSet; // #IGNORE
-class SoDrawStyle; // #IGNORE
+class SoGroup; //
+class SbColor; // 
+class SoCoordinate3; // 
+class SbRotation; // 
+class SbVec3f; // 
+class SoAsciiText; // 
+class SoDrawStyle; // 
+class SoFont; // 
+class SoLightModel; // 
+class SoLineSet; // 
+class SoMarkerSet; // 
+class SoMaterial; // 
+class SoMFVec3f; // 
+class SoNode; // 
+class SoPackedColor; // 
+class SoPerspectiveCamera; // 
+class SoPickStyle; // 
+class SoRotation; // 
+class SoScale; // 
+class SoSeparator; // 
+class SoTexture2; // 
+class SoTexture2Transform; // 
+class SoTranslate1Dragger; // 
+class SoTranslation; // 
+class SoTransform; // 
+class SoTriangleStripSet; // 
+class SoIndexedTriangleStripSet; // 
+class SoUnits; // 
+class SoVertexProperty; // 
+class SoTransformBoxDragger; // 
+class SoCalculator; // 
+class SoIndexedLineSet; // 
+class SoDrawStyle; // 
 class T3DataView;  //
 class iVec3f; //
 

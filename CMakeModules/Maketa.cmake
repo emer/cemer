@@ -44,14 +44,25 @@ endmacro (CREATE_MAKETA_COMMAND)
 
 # new maketa command -- based directly on QT4_WRAP_CPP in Qt4Macros.cmake
 # uses QT4 macros directly
+# MUST call with OPTIONS and the tag name for the clean_ta_xx command
 macro(MAKETA_WRAP_H outfiles)
   QT4_EXTRACT_OPTIONS(mta_files mta_options ${ARGN})
-
+  if(mta_options STREQUAL "")
+    message(ERROR "MAKETA_WRAP_H must be called with OPTIONS xxx where xxx is code name for make clean target (clean_ta_xxx)")
+  endif()
   foreach (it ${mta_files})
     get_filename_component(it ${it} ABSOLUTE)
     QT4_MAKE_OUTPUT_FILE(${it} TA_ cxx outfile)
     CREATE_MAKETA_COMMAND(${it} ${outfile})
     set(${outfiles} ${${outfiles}} ${outfile})
   endforeach()
+
+  list(GET ${outfiles} 0 firstfile)
+  get_filename_component(outpath ${firstfile} PATH)
+  add_custom_target(clean_ta_${mta_options}
+    COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/CMakeModules/maketa_clean.cmake WORKING_DIRECTORY ${outpath}
+  )
+
 endmacro (MAKETA_WRAP_H)
+
 

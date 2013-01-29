@@ -338,6 +338,11 @@ public:
   void TypeDef_Gen_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm);
   void SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm);
 
+  //////////////////////////////////
+  // 	  InstInit Function
+
+  void TypeSpace_Gen_InstInit(TypeSpace* ths, ostream& strm);
+  void TypeDef_Gen_InstInit(TypeDef* ths, ostream& strm);
 
   //////////////////////////////////
   // 	  GenDoc (not currently used)

@@ -380,13 +380,12 @@ void TypeDef::CleanupCats(bool save_last) {
 }
 
 void TypeDef::DuplicateMDFrom(const TypeDef* old) {
-  int i;
-  for(i=0; i<members.size; i++) {
+  for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     if(md->owner == &(old->members))
       members.ReplaceIdx(i, md->Clone());
   }
-  for(i=0; i<methods.size; i++) {
+  for(int i=0; i<methods.size; i++) {
     MethodDef* md = methods.FastEl(i);
     if(md->owner == &(old->methods))
       methods.ReplaceIdx(i, md->Clone());
@@ -394,33 +393,41 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
 }
 
 void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
-  int i;
-  for(i=0; i<members.size; i++) {
+  for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     if(md->owner != &members)   // only for members we own
       continue;
 
-    int j;
-    for(j=0; j<ol.size; j++) {
+    for(int j=0; j<ol.size; j++) {
       TypeDef* old_st = ol.FastEl(j);
       TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
 
       if(md->type == old_st)
         md->type = new_st;
+      if(md->type->IsTemplInst()) {
+        if(md->type->templ_pars.ReplaceLinkAll(old_st, new_st)) {
+          // update name after replacing
+          md->type->name = md->type->name.before("_"); // todo: brazen hack
+          md->type->name = md->type->GetTemplInstName(md->type->templ_pars);
+        }
+      }
     }
   }
-  for(i=0; i<methods.size; i++) {
+  for(int i=0; i<methods.size; i++) {
     MethodDef* md = methods.FastEl(i);
     if(md->owner != &methods)
       continue;
 
-    int j;
-    for(j=0; j<ol.size; j++) {
+    for(int j=0; j<ol.size; j++) {
       TypeDef* old_st = ol.FastEl(j);
       TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
 
       if(md->type == old_st)
         md->type = new_st;
+
+      if(md->type->IsTemplInst()) {
+        md->type->templ_pars.ReplaceLinkAll(old_st, new_st);
+      }
 
       md->arg_types.ReplaceLinkAll(old_st, new_st);
     }
@@ -814,10 +821,14 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
   if(!par) {
     par = new TypeDef(nm);
     par->type = type;           // assume same kind of thing
-    if(!(par->name.startsWith("Q") || par->name.startsWith("So"))) {
+#ifdef DEBUG
+    if(!(par->name.startsWith("Q") || par->name.startsWith("So")
+         || par->name.startsWith("Sb") || par->name.startsWith("i")
+         || par->name.startsWith("I"))) {
       taMisc::Info("AddParentName -- added new unknown type:",
                    nm, "as parent of type:", name);
     }
+#endif
   }
 
   if(parents.LinkUnique(par))
@@ -892,18 +903,18 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
   if(mi)            ComputeMembBaseOff();
 }
 
-void TypeDef::AddClassParNames(const char* p1, int p1_off, const char* p2, int p2_off,
-                               const char* p3, int p3_off, const char* p4, int p4_off,
-                               const char* p5, int p5_off, const char* p6, int p6_off)
+void TypeDef::SetParOffsets(int p1_off, int p2_off,
+                            int p3_off, int p4_off,
+                            int p5_off, int p6_off)
 {
+  par_off.SetSize(parents.size);
   bool mi = false;
-  if(p1 != NULL)    AddParentName(p1,p1_off);
-  if(p2 != NULL)    { AddParentName(p2,p2_off); mi = true; }
-  if(p3 != NULL)    AddParentName(p3,p3_off);
-  if(p4 != NULL)    AddParentName(p4,p4_off);
-  if(p5 != NULL)    AddParentName(p5,p5_off);
-  if(p6 != NULL)    AddParentName(p6,p6_off);
-
+  if(par_off.size >= 1)    par_off[0] = p1_off;
+  if(par_off.size >= 2)    { par_off[1] = p2_off; mi = true; }
+  if(par_off.size >= 3)    par_off[2] = p3_off;
+  if(par_off.size >= 4)    par_off[3] = p4_off;
+  if(par_off.size >= 5)    par_off[4] = p5_off;
+  if(par_off.size >= 6)    par_off[5] = p6_off;
   if(mi)            ComputeMembBaseOff();
 }
 

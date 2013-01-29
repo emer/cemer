@@ -168,7 +168,6 @@
 #define YYERROR_VERBOSE 1
 
 /* DLL building options under windows */
-// note: we put taiqtso/ta/css in one dll, so slave to TA
 // note: we put bp/cs/leabra/network/so in one dll, so slave to EMERGENT
 // define flags as follows:
 // DLL      USING         BUILDING
@@ -179,11 +178,9 @@
 // note: cmake on Win automatically defines temt_EXPORTS or emergentlib_EXPORTS
 // but we just manually define our own legacy guys, including the xxx_DLL as appropriate
 # ifdef TA_DLL
-#   define TAIQTSO_DLL
 #   define CSS_DLL
 # endif
 # ifdef TA_EXPORTS
-#   define TAIQTSO_EXPORTS
 #   define CSS_EXPORTS
 # endif
 

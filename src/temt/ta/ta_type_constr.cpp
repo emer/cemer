@@ -34,9 +34,11 @@
 TypeDefInitRegistrar_PtrList* TypeDefInitRegistrar::instances = NULL;
 
 TypeDefInitRegistrar::TypeDefInitRegistrar(TypeDefInitFun types_init_fun_,
-                                           TypeDefInitFun data_init_fun_)
+                                           TypeDefInitFun data_init_fun_,
+                                           TypeDefInitFun inst_init_fun_)
   : types_init_fun(types_init_fun_),
-    data_init_fun(data_init_fun_)
+    data_init_fun(data_init_fun_),
+    inst_init_fun(inst_init_fun_)
 {
   if(!instances)
     instances = new TypeDefInitRegistrar_PtrList;
@@ -67,54 +69,50 @@ bool TypeDefInitRegistrar::CallAllDataInitFuns() {
   return true;
 }
 
+bool TypeDefInitRegistrar::CallAllInstInitFuns() {
+  if(!instances) {
+    taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
+    return false;
+  }
+  for(int i=0; i<instances->size; i++) {
+    TypeDefInitRegistrar* it = instances->FastEl(i);
+    (*(it->inst_init_fun))();  // call method
+  }
+  return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 //    methods for actually initializing things from data structures
 
 
 static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
+  static String_PArray already_warned;
+
   String snm = nm;
   TypeDef* typ = TypeDef::FindGlobalTypeName(snm, false);
-  if(!typ) { // not found -- need to create a new guy
-    typ = new TypeDef(nm);
-    typ->AddNewGlobalType(false);
-    if(typ->name.endsWith("_ptr")) {
-      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ptr"));
-      typ->type = par->type;
-      typ->SetType(TypeDef::POINTER);
-      typ->AddParent(par);
-      taMisc::Info("tac_GetTypeFmName(): ptr type named:", nm,
-                   "not found -- created it!");
-    }
-    else if(typ->name.endsWith("_ref")) {
-      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ref"));
-      typ->type = par->type;
-      typ->SetType(TypeDef::REFERENCE);
-      typ->AddParent(par);
-      taMisc::Info("tac_GetTypeFmName(): ref type named:", nm,
-                   "not found -- created it!");
-    }
-    else if(typ->name.endsWith("_ary")) {
+  if(!typ) { // not found
+    if(snm.endsWith("_ary")) {  // we dynamically construct arrays
+      typ = new TypeDef(nm);
+      typ->AddNewGlobalType(false);
       TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ary"));
       typ->type = par->type;
       typ->SetType(TypeDef::ARRAY);
       typ->AddParent(par);
-      // arrays are OK
     }
-    else if(typ->name.startsWith("const_")) {
-      TypeDef* par = tac_GetTypeFmName(tp, typ->name.after("const_"));
-      typ->type = par->type;
-      typ->SetType(TypeDef::CONST);
-      typ->AddParent(par);
-      taMisc::Info("tac_GetTypeFmName(): const type named:", nm,
-                   "not found -- created it!");
-    }
-    else {                      // must be an unknown class
-      typ->AssignType(TypeDef::CLASS);
-      if(!(typ->name.startsWith("Q") || typ->name.startsWith("So"))) {
-        taMisc::Info("tac_GetTypeFmName(): unknown type named:", nm,
-                     "not found -- created it assuming a class");
+    else {
+#ifdef DEBUG      
+      String anm = snm;
+      if(anm.startsWith("const_")) anm = anm.after("const_");
+      if(already_warned.FindEl(anm) < 0) {
+        if(!(anm.startsWith("Q") || anm.startsWith("So") || anm.startsWith("Sb")
+             || anm.startsWith("i") || anm.startsWith("I"))) {
+          taMisc::Info("tac_GetTypeFmName(): unknown type named:", nm,
+                       "not found -- anything involving this type will not be constructed");
+        }
+        already_warned.Add(anm);
       }
+#endif
     }
   }
   return typ;
@@ -190,22 +188,35 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
   while((dt != NULL) && (dt->type != NULL)) {
     TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
     if(typ != NULL) {
-      MethodDef* md;
-      md = new MethodDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
-			 dt->fun_overld, dt->fun_argc, dt->fun_argd,
-			 dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
+      bool some_invalid_type = false;
       MethodArgs_data* fa = dt->fun_args;
       while((fa != NULL) && (fa->type != NULL)) {
         TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type);
-        if(fatyp != NULL) {
-          md->arg_types.Link(fatyp);
-          md->arg_names.Add(fa->name);
-          md->arg_defs.Add(fa->def);
-          md->arg_vals.Add(fa->def); // initial val is default
+        if(fatyp == NULL) {
+          some_invalid_type = true;
+          break;
         }
 	fa++;
       }
-      tp.methods.AddUniqNameNew(md);
+      if(!some_invalid_type) {
+        MethodDef* md;
+        md = new MethodDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
+                           dt->fun_overld, dt->fun_argc, dt->fun_argd,
+                           dt->is_static, dt->addr, dt->stubp, dt->is_virtual);
+
+        MethodArgs_data* fa = dt->fun_args;
+        while((fa != NULL) && (fa->type != NULL)) {
+          TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type);
+          if(fatyp != NULL) {
+            md->arg_types.Link(fatyp);
+            md->arg_names.Add(fa->name);
+            md->arg_defs.Add(fa->def);
+            md->arg_vals.Add(fa->def); // initial val is default
+          }
+          fa++;
+        }
+        tp.methods.AddUniqNameNew(md);
+      }
     }
     dt++;
   }

@@ -16,10 +16,10 @@
 #ifndef iMenuButton_h
 #define iMenuButton_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <QToolButton>
 
-class TAIQTSO_API iMenuButton: public QToolButton {
+class TA_API iMenuButton: public QToolButton {
   // ##NO_CSS button to use for menu buttons (standalone or in toolbars)
 INHERITED(QToolButton)
   Q_OBJECT

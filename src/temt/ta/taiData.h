@@ -34,11 +34,13 @@
 #include <taSmartRefT>
 
 // declare all other types mentioned but not required to include:
-class QLayout; // #IGNORE
 class TypeDef; //
 class MemberDef; //
 class IDataHost; //
-class iLabel; // #IGNORE
+class iLabel; //
+class QLayout; //
+class QLabel; //
+class QEvent; //
 
 
 // NOTE: see ta_qtviewer.h for clipboard handling details.

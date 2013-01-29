@@ -16,11 +16,11 @@
 #ifndef iCheckBox_h
 #define iCheckBox_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QCheckBox>
 
-class TAIQTSO_API iCheckBox: public QCheckBox {
+class TA_API iCheckBox: public QCheckBox {
 //class __declspec(dllexport) iCheckBox: public QCheckBox {
   Q_OBJECT
 INHERITED(QCheckBox)

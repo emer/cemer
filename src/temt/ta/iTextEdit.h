@@ -16,13 +16,13 @@
 #ifndef iTextEdit_h
 #define iTextEdit_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QTextEdit>
 
 // provides emacs keys for text editing!
 
-class TAIQTSO_API iTextEdit: public QTextEdit { 
+class TA_API iTextEdit: public QTextEdit { 
 INHERITED(QTextEdit)
   Q_OBJECT
 public:

@@ -16,13 +16,13 @@
 #ifndef iLabel_h
 #define iLabel_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QLabel>
 #include <QVariant>
 
 
-class TAIQTSO_API iLabel: public QLabel {
+class TA_API iLabel: public QLabel {
 //class __declspec(dllexport) iLabel: public QLabel {
   Q_OBJECT
 INHERITED(QLabel)

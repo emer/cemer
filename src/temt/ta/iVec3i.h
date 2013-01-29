@@ -16,7 +16,7 @@
 #ifndef iVec3i_h
 #define iVec3i_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <iVec2i>
 
@@ -33,7 +33,7 @@ class SbVec3s;          // #IGNORE
 
 TypeDef_Of(iVec3i);
 
-class TAIQTSO_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
+class TA_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int   z;
 

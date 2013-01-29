@@ -32,6 +32,8 @@ class TypeDef; //
 class taiDataLink; // 
 class taDataLink; // 
 class DataTable; // 
+class QModelIndex; //
+
 
 TypeDef_Of(DataTableModel);
 

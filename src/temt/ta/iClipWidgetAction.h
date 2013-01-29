@@ -16,14 +16,14 @@
 #ifndef iClipWidgetAction_h
 #define iClipWidgetAction_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QWidgetAction>
 #include <QStringList>
 
 class QMimeData;
 
-class TAIQTSO_API iClipWidgetAction: public QWidgetAction {
+class TA_API iClipWidgetAction: public QWidgetAction {
   // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
 INHERITED(QWidgetAction)
   Q_OBJECT

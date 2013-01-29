@@ -16,7 +16,7 @@
 #ifndef NumberBar_h
 #define NumberBar_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QWidget>
 #include <QPixmap>

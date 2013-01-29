@@ -16,7 +16,7 @@
 #ifndef iFormLayout_h
 #define iFormLayout_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QFormLayout>
 
@@ -28,7 +28,7 @@
 typedef QMap<int, QWidget*> QMap_int_QWidget;
 typedef QMap<int, QLayout*> QMap_int_QLayout;
 
-class TAIQTSO_API iFormLayout : public QFormLayout {
+class TA_API iFormLayout : public QFormLayout {
 INHERITED(QFormLayout)
 public:
   bool		isVisible(int row);

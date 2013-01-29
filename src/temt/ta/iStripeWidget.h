@@ -16,13 +16,13 @@
 #ifndef iStripeWidget_h
 #define iStripeWidget_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <qsize.h>
 #include <QWidget>
 
 
-class TAIQTSO_API iStripeWidget: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
+class TA_API iStripeWidget: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
 public:
   QSize 		minimumSizeHint () const; // override
   void 			setColors(const QColor& hilight, const QColor& bg); 

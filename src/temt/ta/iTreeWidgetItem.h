@@ -16,7 +16,7 @@
 #ifndef iTreeWidgetItem_h
 #define iTreeWidgetItem_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QEvent>
 #include <QPoint>
@@ -25,7 +25,7 @@
 
 class iTreeWidget;
 
-class TAIQTSO_API iTreeWidgetItem: public QTreeWidgetItem { 
+class TA_API iTreeWidgetItem: public QTreeWidgetItem { 
 INHERITED(QTreeWidgetItem)
 friend class iTreeWidget;
 public:

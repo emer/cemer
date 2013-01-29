@@ -16,11 +16,11 @@
 #ifndef iDialog_h
 #define iDialog_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QDialog>
 
-class TAIQTSO_API iDialog : public QDialog
+class TA_API iDialog : public QDialog
 {
   Q_OBJECT
 

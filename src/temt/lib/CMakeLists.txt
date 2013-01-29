@@ -24,7 +24,7 @@ include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_css_SRCS ${mypath}/css "${css_SRCS}")
 ADD_PATH_TO_FILES(temt_css_HEADS_MOC ${mypath}/css "${css_HEADS_MOC}")
 
-MAKETA_WRAP_H(temt_ta_SRCS_MAKETA ${temt_ta_HEADS_MAKETA})
+MAKETA_WRAP_H(temt_ta_SRCS_MAKETA ${temt_ta_HEADS_MAKETA} OPTIONS ta)
 
 if (QT_USE_5)
   qt5_wrap_ui(temt_ta_SRCS_UIC ${temt_ta_SRCS_UI})

@@ -27,8 +27,4 @@
 class Network; //
 TA_SMART_PTRS(Network); // NetworkRef
 
-#ifdef __MAKETA__
-class NetworkRef;
-#endif
-
 #endif // NetworkRef_h

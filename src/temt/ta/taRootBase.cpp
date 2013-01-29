@@ -1230,6 +1230,9 @@ bool taRootBase::Startup_InitTA() {
     td->AddParentData();        // recursive, adds in right order..
   }
 
+  // only call inst once all the type information is fully in place!
+  TypeDefInitRegistrar::CallAllInstInitFuns();
+
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 

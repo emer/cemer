@@ -26,9 +26,10 @@
 #include <Variant>
 
 // declare all other types mentioned but not required to include:
-class QString; // #IGNORE
-class QKeySequence; // #IGNORE
-class taiMenuAction; // #IGNORE
+class QString; //
+class QKeySequence; //
+class taiMenuAction; //
+class QMenu; //
 
 class TA_API taiAction: public QAction {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu

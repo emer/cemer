@@ -16,7 +16,7 @@
 #ifndef iFlowLayout_h
 #define iFlowLayout_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QLayout>
 #include <QRect>
@@ -30,7 +30,7 @@
 
 typedef QList<QLayoutItem*> QLayoutItemList; //note: not exported
 
-class TAIQTSO_API iFlowLayout : public QLayout
+class TA_API iFlowLayout : public QLayout
 {
 public:
   iFlowLayout(QWidget *parent, int margin = 0, int spacing = -1,

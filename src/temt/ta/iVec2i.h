@@ -16,7 +16,7 @@
 #ifndef iVec2i_h
 #define iVec2i_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 /* Notes:
    1. all classes below are value-semantics, and use the implicit copy and = operators.
@@ -34,7 +34,7 @@ class QPoint; //
 
 TypeDef_Of(iVec2i);
 
-class TAIQTSO_API iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
+class TA_API iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int   x;
   int   y;

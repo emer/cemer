@@ -16,7 +16,7 @@
 #ifndef iSplitter_h
 #define iSplitter_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QSplitter>
 

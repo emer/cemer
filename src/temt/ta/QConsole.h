@@ -17,7 +17,7 @@
 #define QConsole_h 1
 
 #include "config.h"
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #ifndef TA_OS_WIN
 #include <Interceptor>

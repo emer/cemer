@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class iListDataPanel; //
 class iTreeView; //
-
+class QTreeWidgetItem; //
 
 TypeDef_Of(taiListDataNode);
 

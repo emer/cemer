@@ -261,6 +261,9 @@ set(ta_HEADS_MAKETA_LOCAL
   TreeDecorationSpec_List.h
   MainWindowViewer.h
 
+  ProgramRef.h
+  ProgVarRef.h
+
   ProgLine.h
   ProgLine_List.h
   ProgType.h
@@ -786,9 +789,6 @@ set(ta_HEADS_NOMAKETA
   iTreeWidgetItem.h
 
   DataChangedReason.h
-
-  ProgramRef.h
-  ProgVarRef.h
 
   VPUnref.h
   VPUList.h

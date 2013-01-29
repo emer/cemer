@@ -16,7 +16,7 @@
 #ifndef iVec3f_h
 #define iVec3f_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 /* Notes:
    1. all classes below are value-semantics, and use the implicit copy and = operators.
@@ -31,7 +31,7 @@ class SbVec3f;          // #IGNORE
 
 TypeDef_Of(iVec3f);
 
-class TAIQTSO_API iVec3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d vector, for things like points and sizes
+class TA_API iVec3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d vector, for things like points and sizes
 public:
   float         x;
   float         y;

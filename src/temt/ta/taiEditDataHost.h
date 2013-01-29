@@ -32,13 +32,14 @@ class taiDataList;
 #endif
 
 // declare all other types mentioned but not required to include:
-class taiActions;
-class QButtonGroup;             // #IGNORE
-class EditDataPanel;
-class taiMethodData;
-class taiMenu_List;             // #IGNORE
-class MembSet_List; // #IGNORE
+class taiActions; //
+class QButtonGroup; //
+class EditDataPanel; //
+class taiMethodData; //
+class taiMenu_List; //
+class MembSet_List; //
 class taiMenuBar; //
+class QAction; //
 
 TypeDef_Of(taiEditDataHost);
 

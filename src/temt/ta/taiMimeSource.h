@@ -28,10 +28,10 @@
 #include <taiObjectsMimeItem>
 
 // declare all other types mentioned but not required to include:
-class QMimeData; // #IGNORE
-class QString; // #IGNORE
-class QByteArray; // #IGNORE
-
+class QMimeData; //
+class QString; //
+class QByteArray; //
+class QStringList; //
 
 /* taiMimeSource
 

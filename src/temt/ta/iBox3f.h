@@ -16,7 +16,7 @@
 #ifndef iBox3f_h
 #define iBox3f_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <iVec3f>
 
@@ -48,7 +48,7 @@ class SbBox3f;          // #IGNORE
 
 TypeDef_Of(iBox3f);
 
-class TAIQTSO_API iBox3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d box, typically used for a bounding box in a normalized coordinate system
+class TA_API iBox3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d box, typically used for a bounding box in a normalized coordinate system
 public:
   iVec3f        min; // minimum point
   iVec3f        max;  // maximum point

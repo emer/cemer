@@ -52,7 +52,7 @@ class TA_API iColor { // value-type class used for specifying color values in a 
 public:
   static const iColor	black_; // convenience -- can take its address to pass an iColor* for black
 
-  static const iColor*	black() {return &black_;} // convenience -- can pass an iColor* for black
+  static const iColor*	black() {return &black_;} // #IGNORE convenience -- can pass an iColor* for black
 
   static int		fc2ic(float value) {return (int) (255.0f * value);} // #IGNORE float color to int color
   static float		ic2fc(int value) {return ((float) value) / 255.0f ;} // #IGNORE int color to float color
@@ -129,7 +129,7 @@ struct {
 #endif
 
 #ifdef TA_USE_INVENTOR
-  void		copyTo(SoMFColor& col) const; //
+  void		copyTo(SoMFColor& col) const; // #IGNORE
 #endif
 
 };

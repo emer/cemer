@@ -16,7 +16,7 @@
 #ifndef iTreeWidget_h
 #define iTreeWidget_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <QEvent>
 #include <QPoint>
@@ -26,7 +26,7 @@
 class iTreeWidgetItem; //
 //class iTWDropEvent;
 
-class TAIQTSO_API iTreeWidget: public QTreeWidget { 
+class TA_API iTreeWidget: public QTreeWidget { 
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:

@@ -22,6 +22,8 @@
 // member includes:
 #ifndef __MAKETA__
 #include <QImage>
+#else
+class QImage; //
 #endif
 
 // declare all other types mentioned but not required to include:

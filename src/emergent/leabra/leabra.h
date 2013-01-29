@@ -2481,7 +2481,6 @@ private:
 };
 
 SpecPtr_of(LeabraLayerSpec);
-TA_SMART_PTRS(LeabraLayerSpec)
 
 TypeDef_Of(KWTAVals);
 

@@ -16,7 +16,7 @@
 #ifndef iSplitterHandle_h
 #define iSplitterHandle_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <QSplitter>
 
 class iSplitterHandle : public QSplitterHandle {

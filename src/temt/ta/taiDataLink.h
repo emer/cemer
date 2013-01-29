@@ -29,8 +29,11 @@ class iSearchDialog; //
 class iDataPanel; //
 class taiTreeDataNode; //
 class iTreeView; //
-class DataLink_QObj; // #IGNORE
+class DataLink_QObj; //
 class taiMimeSource; //
+class QIcon; //
+class QVariant; //
+
 
 TypeDef_Of(taiDataLink);
 

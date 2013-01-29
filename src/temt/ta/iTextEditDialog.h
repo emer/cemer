@@ -16,7 +16,7 @@
 #ifndef iTextEditDialog_h
 #define iTextEditDialog_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 
 #include <iDialog>
 
@@ -24,7 +24,7 @@
 class QTextEdit;
 class QPushButton;
 
-class TAIQTSO_API iTextEditDialog : public iDialog {
+class TA_API iTextEditDialog : public iDialog {
   Q_OBJECT
 INHERITED(iDialog)
 public:

@@ -28,21 +28,23 @@
 #include <DataTable>
 
 // declare all other types mentioned but not required to include:
-class QVBoxLayout; //  #IGNORE
-class QSplitter; //  #IGNORE
-class iDataTableView; // #IGNORE
-class iMatrixEditor; // #IGNORE
+class QVBoxLayout; //  
+class QSplitter; //  
+class iDataTableView; // 
+class iMatrixEditor; // 
 class ISelectable; // 
-class QObject; //  #IGNORE
-class iMainWindowViewer; //  #IGNORE
+class QObject; //  
+class iMainWindowViewer; //  
 class taProject; // 
 class ISelectable_PtrList; // 
-class QWidget; //  #IGNORE
+class QWidget; //  
 class TypeDef; // 
 class taiDataLink; // 
 class taDataLink; // 
 class DataTable; // 
-class DataTableModel; // #IGNORE
+class DataTableModel; // 
+class QModelIndex; //
+class QEvent; //
 
 
 TypeDef_Of(iDataTableEditor);

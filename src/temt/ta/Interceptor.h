@@ -17,7 +17,7 @@
 #define Interceptor_h 1
 
 #include "config.h"
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <qobject.h>
 
 class QTextStream;

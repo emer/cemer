@@ -16,13 +16,13 @@
 #ifndef iClipToolWidget_h
 #define iClipToolWidget_h 1
 
-#include "taiqtso_def.h"
+#include "ta_def.h"
 #include <QToolButton>
 #include <QPointer>
 
 class iClipWidgetAction;
 
-class TAIQTSO_API iClipToolWidget: public QToolButton {
+class TA_API iClipToolWidget: public QToolButton {
 // a toolbar widget that copies to clipboard and is drag enabled
 INHERITED(QToolButton)
   Q_OBJECT

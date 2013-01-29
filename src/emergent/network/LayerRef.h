@@ -27,8 +27,4 @@
 class Layer; //
 TA_SMART_PTRS(Layer); // LayerRef
 
-#ifdef __MAKETA__
-class LayerRef;
-#endif
-
 #endif // LayerRef_h

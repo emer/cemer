@@ -31,7 +31,7 @@ class iMainWindowViewer; // #IGNORE
 class TypeDef; // 
 class IDataViewWidget; // 
 class QWidget; // 
-
+class QPixmap; //
 
 TypeDef_Of(DataViewer);
 

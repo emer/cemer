@@ -352,9 +352,12 @@ void mta_print_usage(int argc, char* argv[]) {
 
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
-  // verbose = 3;
-  // bool keep_tmp = true;
+#if 0 // change to 1 for debugging
+  verbose = 3;
+  bool keep_tmp = true;
+#else
   bool keep_tmp = false;
+#endif
 
   if(argc < 2) { mta_print_usage(argc, argv); return 1;  } // wrong number of arguments
 
@@ -572,14 +575,14 @@ int MTA::Main(int argc, char* argv[]) {
   //    Generate output
 
   // give it 5 passes through to try to get everything in order..
-  int swp_cnt = 0;
-  if(mta->verbose > 0)
-    cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(taMisc::types))) {
-    swp_cnt++;
-    if(mta->verbose > 0)
-      cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  }
+  // int swp_cnt = 0;
+  // if(mta->verbose > 0)
+  //   cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  // while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(taMisc::types))) {
+  //   swp_cnt++;
+  //   if(mta->verbose > 0)
+  //     cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
+  // }
 
   if(verbose > 3) {
     String tl;

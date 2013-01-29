@@ -25,8 +25,9 @@
 #include <taColor>
 
 // declare all other types mentioned but not required to include:
-class T3DataView;
-class iT3DataViewFrame;
+class T3DataView; //
+class iT3DataViewFrame; //
+class QPixmap; //
 
 
 /* T3DataViewFrame
