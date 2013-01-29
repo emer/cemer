@@ -310,6 +310,7 @@ templdefn:
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld($1);
 	    if($$ == $1) { mta->TypeAdded("template", sp, $$);
+              mta->FixClassTypes($$);
 	      $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
