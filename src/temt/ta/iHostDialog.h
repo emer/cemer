@@ -23,7 +23,10 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiDataHostBase;
+class taiDataHostBase; //
+class QVBoxLayout; // 
+class QScrollArea; //
+
 
 class TA_API iHostDialog : public iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS dialog with taiDataHostBase owner

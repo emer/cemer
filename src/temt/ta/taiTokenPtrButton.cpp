@@ -157,7 +157,7 @@ void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
 int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
   QTreeWidgetItem* top_item)
 {
-  if (!td->IsTaBase() || (td->IsAnyPtr())) return 0;
+  if(!td->IsActualTaBase()) return 0;
   int rval = 0;
 
   //NOTES:

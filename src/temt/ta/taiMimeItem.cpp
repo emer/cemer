@@ -15,7 +15,7 @@
 
 #include "taiMimeItem.h"
 #include <taiMimeSource>
-
+#include <QMimeData>
 
 
 int taiMimeItem::data(const QMimeData* md, const QString& mimeType,

@@ -23,6 +23,8 @@
 class MatrixGeom;
 
 // declare all other types mentioned but not required to include:
+class iDimEdit; //
+
 
 class TA_API taiDimEdit : public taiData { // specify number of dims and each dim value, ex. for Matrix dims
   Q_OBJECT

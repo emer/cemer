@@ -175,8 +175,8 @@ taMisc::ConsoleType taMisc::console_type = CT_GUI;
 taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
-int     taMisc::display_width = 80;
-int     taMisc::max_display_width = 180;
+int     taMisc::display_width = 120;
+int     taMisc::max_display_width = 255;
 int     taMisc::indent_spc = 2;
 int     taMisc::display_height = 25;
 #ifdef TA_OS_MAC

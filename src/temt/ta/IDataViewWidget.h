@@ -25,7 +25,7 @@
 class QWidget; // 
 class DataViewer; // 
 class iMainWindowViewer; // 
-
+class QCloseEvent; //
 
 class TA_API IDataViewWidget { // interface that all DataViewer::widget() class must implement
 friend class DataViewer;

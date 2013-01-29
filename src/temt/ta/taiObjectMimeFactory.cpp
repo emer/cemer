@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiObjectMimeFactory.h"
-
+#include <QMimeData>
 
 #include <sstream>
 

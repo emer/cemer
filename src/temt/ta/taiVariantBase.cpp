@@ -53,7 +53,9 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
   QWidget* rep_ = MakeLayoutWidget(gui_parent_);
   SetRep(rep_);
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep_, host->colorOfCurRow());
+    QPalette pal = rep_->palette();
+    pal.setColor(QPalette::Background, host->colorOfCurRow());
+    rep_->setPalette(pal); 
   }
   InitLayout();
   Constr_impl(gui_parent_, (mflags & flgReadOnly));

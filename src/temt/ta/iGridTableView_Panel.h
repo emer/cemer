@@ -22,10 +22,17 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiField; // #IGNORE
-class taiIncrField; // #IGNORE
-class ColorScaleBar; // #IGNORE
+class taiField; //
+class taiIncrField; //
+class ColorScaleBar; //
 class GridTableView; //
+class QCheckBox; //
+class QPushButton; //
+class QToolBar; //
+class QHBoxLayout; // 
+class QLabel; //
+class QAction; //
+
 
 TypeDef_Of(iGridTableView_Panel);
 

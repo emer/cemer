@@ -22,6 +22,7 @@
 #include <QPalette>
 #include <QApplication>
 #include <QTextEdit>
+#include <QKeyEvent>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -122,7 +123,7 @@ void iLineEdit::setReadOnly(bool value) {
   QPalette pal(palette());
   if (value) {
     setFocusPolicy(Qt::ClickFocus); // take out of tab chain
-    pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
+    pal.setColor(backgroundRole(), Qt::lightGray);
   } else {
     setFocusPolicy(Qt::StrongFocus); // put back in tab chain
     pal.setColor(backgroundRole(),

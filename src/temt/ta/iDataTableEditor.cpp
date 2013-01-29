@@ -30,6 +30,8 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QCoreApplication>
+#include <QKeyEvent>
+
 
 iDataTableEditor::iDataTableEditor(QWidget* parent)
 :inherited(parent)

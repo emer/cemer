@@ -22,6 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QModelIndex;
+#ifdef __MAKETA__
+class   QModelIndexList;        // #IGNORE
+#else
+#include <QList>
+typedef QList<QModelIndex> QModelIndexList;
+#endif
 
 TypeDef_Of(CellRange);
 

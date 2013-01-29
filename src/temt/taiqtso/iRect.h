@@ -30,6 +30,8 @@ class SbVec2s;          // #IGNORE
 class SbVec3s;          // #IGNORE
 #endif
 
+class QRect; //
+
 #include <iVec2i>
 #include <iSize>
 

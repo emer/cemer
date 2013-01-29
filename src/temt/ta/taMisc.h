@@ -35,6 +35,9 @@
 #ifndef __MAKETA__
 #include <iostream>
 #include <fstream>
+#ifndef NO_TA_BASE
+#include <QPointer>
+#endif
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -45,6 +48,9 @@ class UserDataItemBase; //
 class MemberDef; // 
 class UserDataItem_List; //
 
+#ifndef NO_TA_BASE
+class QMainWindow;
+#endif
 
 typedef  void (*init_proc_t)() ;        // initialization proc
 
@@ -688,9 +694,9 @@ public:
   static String FormatValue(float val, int width, int precision);
   // #CAT_Utility format output of value according to width and precision
   static String StreamFormatFloat(float val, TypeDef::StrContext sc);
-  // #CAT_Utility format a floating number for given streaming output context
+  // #CAT_Utility #IGNORE format a floating number for given streaming output context
   static String StreamFormatDouble(double val, TypeDef::StrContext sc);
-  // #CAT_Utility format a double floating number for given streaming output context
+  // #CAT_Utility #IGNORE format a double floating number for given streaming output context
   static void	NormalizeRealString(String& str);
   // make NaN and infinity representations consistent across platforms in real string
 

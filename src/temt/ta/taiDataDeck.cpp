@@ -17,10 +17,8 @@
 #include <IDataHost>
 #include <iColor>
 
-
 #include <QStackedLayout>
 
-#include "taiqtso_def.h"
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
   : taiCompData(typ_, host_, par, gui_parent_, flags)
@@ -28,7 +26,9 @@ taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget*
   lay_type = LT_Stacked;
   SetRep(MakeLayoutWidget(gui_parent_));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
+    QPalette pal = rep()->palette();
+    pal.setColor(QPalette::Background, host->colorOfCurRow());
+    rep()->setPalette(pal); 
   }
 }
 

@@ -35,9 +35,13 @@
 
 // declare all other types mentioned but not required to include:
 class taiDataHostBase; //
-class iHostDialog; //  #IGNORE
+class iHostDialog; //
 class taBase;      // 
-class HiLightButton; // #IGNORE
+class HiLightButton; //
+class QVBoxLayout; // 
+class QScrollArea; //
+class QHBoxLayout; // 
+class QLabel; //
 
 TypeDef_Of(taiDataHostBase_List);
 

@@ -76,7 +76,9 @@ void taiWizardDataHost::Constr_Data_Labels()
     for (int i = 0; i < membs.size; ++i) {
       iStripeWidget* tab = new iStripeWidget();
       tabs->addTab(tab, page_names.SafeEl(i));
-      SET_PALETTE_BACKGROUND_COLOR(tab, bg_color);
+      QPalette pal = tab->palette();
+      pal.setColor(QPalette::Background, bg_color);
+      tab->setPalette(pal); 
       tab->setHiLightColor(bg_color_dark);
       tab->setStripeHeight(row_height + (2 * 1));
     }

@@ -27,7 +27,12 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taiItemPtrBase;
+class taiItemPtrBase; //
+class QVBoxLayout; // 
+class QComboBox; //
+class QTreeWidget; //
+class QTreeWidgetItem; //
+class QLineEdit; //
 
 
 class TA_API taiItemChooser: iDialog {

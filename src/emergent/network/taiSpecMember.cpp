@@ -174,7 +174,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
 }
 
 void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
-  if(!taMisc::record_on || !typ->InheritsFrom(TA_taBase))
+  if(!taMisc::record_on || !typ->IsActualTaBase())
     return;
   String new_val;
   bool uniq = false;

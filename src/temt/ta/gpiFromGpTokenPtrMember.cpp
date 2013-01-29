@@ -25,7 +25,7 @@ TypeDef_Of(taSmartPtr);
 TypeDef_Of(taGroup_impl);
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->IsTaBase() && md->type->IsBasePointerType()
+  if(td->IsActualTaBase() && md->type->IsBasePointerType()
      && md->OptionAfter("FROM_GROUP_").nonempty())
     return taiTokenPtrMember::BidForMember(md,td)+1;
   return 0;

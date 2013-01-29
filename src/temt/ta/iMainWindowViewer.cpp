@@ -54,6 +54,7 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QKeyEvent>
 
 
 

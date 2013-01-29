@@ -26,6 +26,7 @@
 #include <iDataPanel>
 #include <iTextEdit>
 #include <taPlugins>
+#include <QKeyEvent>
 
 #include <taMisc>
 

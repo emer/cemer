@@ -17,6 +17,7 @@
 #include <iTabBarBase>
 #include <iTabWidget>
 
+#include <QContextMenuEvent>
 
 iTabBarEx::iTabBarEx(iTabWidget* parent)
 :inherited(parent)

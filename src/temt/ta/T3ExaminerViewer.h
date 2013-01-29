@@ -28,11 +28,15 @@
 #include <taiAction_List>
 
 // declare all other types mentioned but not required to include:
-class iT3ViewspaceWidget;
-class T3DataViewFrame;
-class SoCamera;
-class SbViewportRegion;
-class QtThumbWheel;
+class iT3ViewspaceWidget; //
+class T3DataViewFrame; //
+class SoCamera; //
+class SbViewportRegion; //
+class QtThumbWheel; //
+class QVBoxLayout; // 
+class QHBoxLayout; // 
+class QLabel; //
+
 
 #ifndef __MAKETA__
 #include <Quarter/Quarter.h>

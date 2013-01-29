@@ -506,7 +506,7 @@ Variant taList_impl::IterElem(taBaseItr* itr) const {
 String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
   int itm_idx) const
 {
-  if (child && typ && typ->IsTaBase())
+  if (child && typ && typ->IsActualTaBase())
     return ChildGetColText_impl((taBase*)child, key, itm_idx);
   else return inherited_taPtrList::ChildGetColText(child, typ, key, itm_idx);
 }

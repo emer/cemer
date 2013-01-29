@@ -22,7 +22,7 @@
 #include <taMisc>
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->IsTaBase() && md->type->IsBasePointerType())
+  if(td->IsActualTaBase() && md->type->IsBasePointerType())
     return inherited::BidForMember(md,td) + 1;
   return 0;
 }

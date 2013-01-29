@@ -20,6 +20,8 @@
 #include <taiMisc>
 
 #include <QButtonGroup>
+#include <QKeyEvent>
+
 
 iDataPanelSetButton::iDataPanelSetButton(QWidget* parent) : QToolButton(parent) {
   m_datapanelset = NULL;

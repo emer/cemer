@@ -23,8 +23,8 @@
 #include <MembSet>
 
 // declare all other types mentioned but not required to include:
-class taWizard;
-
+class taWizard; //
+class QTabWidget; //
 
 class TA_API taiWizardDataHost : public taiDataHost_impl {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages

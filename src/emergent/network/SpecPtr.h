@@ -131,9 +131,6 @@ public: \
   TA_BASEFUNS_LITE(T ## _SPtr); \
 }
 
-#define SpecPtr_of(T) \
-TypeDef_Of(T ## _SPtr ); \
-SpecPtrEx_of(T,EMERGENT_API)
-
+#define SpecPtr_of(T) TypeDef_Of(T ## _SPtr ); SpecPtrEx_of(T,EMERGENT_API);
 
 #endif // SpecPtr_h

@@ -22,14 +22,19 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiField; // #IGNORE
-class taiIncrField; // #IGNORE
-class ColorScaleBar; // #IGNORE
-class taiListElsButton; // #IGNORE
-class taiPolyData; // #IGNORE
-class iCheckBox; // #IGNORE
+class taiField; //
+class taiIncrField; //
+class ColorScaleBar; //
+class taiListElsButton; //
+class taiPolyData; //
+class iCheckBox; //
 class taiComboBox; //
 class GraphTableView; //
+class QHBoxLayout; // 
+class QCheckBox; //
+class QPushButton; //
+class QLabel; //
+
 
 TypeDef_Of(iGraphTableView_Panel);
 

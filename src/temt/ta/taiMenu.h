@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iVec2i;
 
 class TA_API taiMenu : public taiActions {
   // (possibly) hierarchical menu for selecting a single item

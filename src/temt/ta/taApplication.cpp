@@ -15,6 +15,8 @@
 
 #include "taApplication.h"
 #include <taRootBase>
+#include <QFileOpenEvent>
+
 
 taApplication::taApplication(int & argc, char ** argv) : QApplication(argc, argv) {
 }

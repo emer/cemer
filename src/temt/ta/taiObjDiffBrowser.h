@@ -29,6 +29,7 @@ class taObjDiff_List; //
 class taiObjDiffBrowserFilter; //
 class QVBoxLayout; //
 class QTreeWidget; //
+class QTreeWidgetItem; //
 class QPushButton; //
 class QBrush; //
 

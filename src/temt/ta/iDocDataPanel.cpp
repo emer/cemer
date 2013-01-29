@@ -33,6 +33,7 @@
 #include <QWebView>
 #include <QWebFrame>
 #include <QDesktopServices>
+#include <QKeyEvent>
 
 
 iDocDataPanel::iDocDataPanel()

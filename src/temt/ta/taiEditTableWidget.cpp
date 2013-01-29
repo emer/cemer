@@ -18,6 +18,8 @@
 #include <taMisc>
 #include <taiMisc>
 
+#include <QKeyEvent>
+
 
 taiEditTableWidget::taiEditTableWidget(QWidget* parent)
 :inherited(parent)

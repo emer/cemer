@@ -29,6 +29,7 @@
 #include <QMenu>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QKeyEvent>
 
 #include <taMisc>
 #include <taiMisc>

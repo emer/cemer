@@ -22,11 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class QMimeData; //
+class QByteArray; //
 
 TypeDef_Of(taiMimeItem);
 
-class TA_API taiMimeItem: public taOBase { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS object that encapsulates the info for one object or other item of clipboard data
+class TA_API taiMimeItem: public taOBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS object that encapsulates the info for one object or other item of clipboard data
 INHERITED(taOBase)
 public:
   enum MimeItemFlags { // #BITS

@@ -25,6 +25,9 @@
 class taiField; //
 class iMethodButtonMgr; //
 class VEWorldView; //
+class QHBoxLayout; // 
+class QCheckBox; //
+class QLabel; //
 
 
 TypeDef_Of(VEWorldViewPanel);

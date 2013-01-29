@@ -26,6 +26,8 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
+class QButtonGroup; //
+
 
 // Button 0 is the default if user presses Enter
 // Button 1 is the Cancel, if user presses Esc (only if "no_cancel" option false)

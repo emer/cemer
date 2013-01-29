@@ -53,11 +53,15 @@ void HiLightButton::released() {
 
 void HiLightButton::setHiLight(bool value) {
   if (mhiLight == value) return;
-  //TODO: hilighting!
+  QPalette palette;
   if (value) {
-     setPaletteBackgroundColor(mhiLight_color);
-  } else {
-     setPaletteBackgroundColor(QApplication::palette().color(QPalette::Active, QPalette::Button));
+    palette.setColor(backgroundRole(), mhiLight_color);
+    setPalette(palette);    
+  }
+  else {
+    palette.setColor(backgroundRole(),
+                     QApplication::palette().color(QPalette::Active, QPalette::Button));
+    setPalette(palette);    
   }
   mhiLight = value;
 }

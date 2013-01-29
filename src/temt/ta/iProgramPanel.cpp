@@ -28,6 +28,7 @@ TypeDef_Of(ProgCode);
 #include <taMisc>
 
 #include <QApplication>
+#include <QKeyEvent>
 
 
 iProgramPanel::iProgramPanel(taiDataLink* dl_)

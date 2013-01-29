@@ -72,7 +72,7 @@ taiDataLink* tabODataLink::GetListChild(void* el) {
   if (typ == NULL) return NULL;
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
-  if (typ->IsTaBase()) {
+  if (typ->IsActualTaBase()) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   // get the link

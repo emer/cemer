@@ -24,6 +24,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QTextEdit>
+#include <QKeyEvent>
 
 
 taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_)

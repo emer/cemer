@@ -53,5 +53,5 @@ void taiClassType::GetValue_impl(taiData* dat, void* base) {
 
 bool taiClassType::CanBrowse() const {
   //TODO: add additionally supported base types
-  return (typ->IsTaBase()  && !typ->HasOption("HIDDEN"));
+  return (typ->IsActualTaBase()  && !typ->HasOption("HIDDEN"));
 }

@@ -29,12 +29,14 @@
 
 
 // declare all other types mentioned but not required to include:
-class taiEditDataHost;
-class QAbstractItemModel;
-class QWidget;
-class QModelIndex;
-class taBase;
-class taiData;
+class taiEditDataHost; //
+class taBase; //
+class taiData; //
+class QAbstractItemModel; //
+class QWidget; //
+class QModelIndex; //
+class QHBoxLayout; // 
+
 
 class TA_API taiDataDelegate: public QItemDelegate {
 INHERITED(QItemDelegate)

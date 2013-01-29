@@ -13,6 +13,18 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+// get qvariant before tastring!
+#include "ta_stdef.h"
+#ifdef TA_USE_QT
+#  include <QVariant>
+#else
+inline double qAbs(const double& t) { return t >= 0 ? t : -t; }
+static bool qFuzzyCompare(double p1, double p2)
+{
+    return qAbs(p1 - p2) < 0.00000000001;
+}
+#endif
+
 #include "Variant.h"
 #include <taMisc>
 #include <TypeDef>
@@ -28,15 +40,6 @@
 #include <taRootBase>
 #endif
 
-#ifdef TA_USE_QT
-#  include <QVariant>
-#else
-inline double qAbs(const double& t) { return t >= 0 ? t : -t; }
-static bool qFuzzyCompare(double p1, double p2)
-{
-    return qAbs(p1 - p2) < 0.00000000001;
-}
-#endif
 
 using namespace std;
 

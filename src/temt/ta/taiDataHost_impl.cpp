@@ -30,6 +30,7 @@
 #include <QMenu>
 #include <QFrame>
 #include <QVBoxLayout>
+#include <QContextMenuEvent>
 
 
 void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
@@ -136,7 +137,9 @@ void taiDataHost_impl::Constr_Methods_impl() { //note: conditional constructions
     tmp = new QFrame(); // tmp = new QFrame(widget());
     tmp->setVisible(false); // prevents it showing as global win in some situations
     tmp->setAutoFillBackground(true); // for when disconnected from us
-    SET_PALETTE_BACKGROUND_COLOR(tmp, bg_color);
+    QPalette pal = tmp->palette();
+    pal.setColor(QPalette::Background, bg_color);
+    tmp->setPalette(pal); 
     tmp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }

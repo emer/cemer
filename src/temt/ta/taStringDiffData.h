@@ -26,7 +26,7 @@
 
 
 class TA_API taStringDiffData {
-  // ##NO_TOKENS #IGNORE one data record for each String item being compared in taStringDiff
+  // ##NO_TOKENS one data record for each String item being compared in taStringDiff
 public:
   int           lines;          // Number of elements (lines)
   int_PArray    data;           // Buffer of numbers that will be compared (hash codes of items).

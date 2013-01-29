@@ -66,7 +66,9 @@ void gpiMultiEditDataHost::Constr_Box() {
   taiEditDataHost::Constr_Box();
 
   scrMulti = new iScrollArea(splBody);
-  SET_PALETTE_BACKGROUND_COLOR(scrMulti->viewport(), bg_color);
+  QPalette pal = scrMulti->viewport()->palette();
+  pal.setColor(QPalette::Background, bg_color);
+  scrMulti->viewport()->setPalette(pal); 
   scrMulti->setWidgetResizable(true);
   multi = new QWidget();
   scrMulti->setWidget(multi);
@@ -74,7 +76,9 @@ void gpiMultiEditDataHost::Constr_Box() {
   lay_multi = new QHBoxLayout(multi);
   lay_multi->setMargin(0);
   multi_body = new iEditGrid(header_row, 2, 1, 1, 1, multi);  // , hmargins, vmargins, rows, cols, par
-  SET_PALETTE_BACKGROUND_COLOR(multi_body, bg_color);
+  pal = multi_body->palette();
+  pal.setColor(QPalette::Background, bg_color);
+  multi_body->setPalette(pal); 
   multi_body->setHiLightColor(bg_color_dark);
   multi_body->setRowHeight(row_height);
   lay_multi->addWidget(multi_body);

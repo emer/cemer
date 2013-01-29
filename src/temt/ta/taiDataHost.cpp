@@ -37,10 +37,12 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   if (buddy) label->setUserData((ta_intptr_t)buddy);
-  if (ctx_obj) QObject::connect(
-    label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
-      ctx_obj, ctx_slot );
-// if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
+  if (ctx_obj) {
+    QObject::connect
+      (label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+       ctx_obj, ctx_slot );
+  }
+  // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
   QWidget* buddy_widg = NULL;
   if (buddy) {
     buddy->setLabel(label);
@@ -91,7 +93,11 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   f.setBold(true);
   wid->setFont(f);
   wid->setFixedHeight(row_height);
-  SET_PALETTE_BACKGROUND_COLOR(wid, colorOfRow(row));
+
+  QPalette pal = wid->palette();
+  pal.setColor(QPalette::Background, colorOfRow(row));
+  wid->setPalette(pal); 
+
   if (!desc.empty()) {
     wid->setToolTip(desc);
   }
@@ -115,12 +121,7 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   ln->show();
   layH->addSpacing(2);
   // add the item to span both cols
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody->addRow(layH);
-#else
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
-  layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter));
-#endif
   wid->show(); // needed for rebuilds, to make the widget show
   return row;
 }
@@ -130,11 +131,11 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
 {
   if (row < 0)
     row = layBody->rowCount();
-//LABEL
+  //LABEL
   iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
     this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
 
-//DATA
+  //DATA
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
   QHBoxLayout* lay_dat = new QHBoxLayout();
@@ -142,23 +143,11 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   lay_dat->addWidget(data, 0, Qt::AlignVCenter/*, (Qt::AlignLeft | Qt::AlignVCenter)*/);
   if (!fill_hor) lay_dat->addStretch();
 
-// add label/body and show
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  // add label/body and show
   label->setMinimumHeight(row_height);
   label->setMaximumHeight(row_height);
   lay_dat->addStrut(row_height); // make it full height, so controls center
   layBody->addRow(label, lay_dat);
-#else
-
-
-  QHBoxLayout* lay_lbl = new QHBoxLayout();
-  lay_lbl->setMargin(0);
-  lay_lbl->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  lay_lbl->addSpacing(2);
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN));
-  layBody->addLayout(lay_lbl, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  layBody->addLayout(lay_dat, row, 1);
-#endif
 
   label->show(); // needed for rebuilds, to make the widget show
   data->show(); // needed for rebuilds, to make the widget show
@@ -181,12 +170,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
   if (!fill_hor) hbl->addStretch();
 
 // add label/body and show
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody->addRow(hbl);
-#else
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN));
-  layBody->addLayout(hbl, row, 0, 1, 2); // col 0, span 1 row, span 2 cols
-#endif
 
 //   if(!first_tab_foc) {
 //     if(data->focusPolicy() & Qt::TabFocus) {
@@ -203,7 +187,9 @@ void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& 
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  SET_PALETTE_BACKGROUND_COLOR(label, colorOfRow(row));
+  QPalette pal = label->palette();
+  pal.setColor(QPalette::Background, colorOfRow(row));
+  label->setPalette(pal); 
   if (!desc.empty()) {
     label->setToolTip(desc);
   }
@@ -239,14 +225,18 @@ void taiDataHost::Constr_Box() {
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
   scrBody = new iScrollArea(scr_par);
-  SET_PALETTE_BACKGROUND_COLOR(scrBody->viewport(), bg_color_dark);
+  QPalette pal = scrBody->viewport()->palette();
+  pal.setColor(QPalette::Background, bg_color_dark);
+  scrBody->viewport()->setPalette(pal); 
   scrBody->setWidgetResizable(true);
   body = new iStripeWidget();
   body_vlay = new QVBoxLayout(body);
   body_vlay->setMargin(0);
 
   scrBody->setWidget(body);
-  SET_PALETTE_BACKGROUND_COLOR(body, bg_color);
+  pal = body->palette();
+  pal.setColor(QPalette::Background, bg_color);
+  body->setPalette(pal); 
   ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
   ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
   //TODO: if adding spacing, need to include LAYBODY_SPACING;
@@ -258,7 +248,6 @@ void taiDataHost::Constr_Box() {
 
 void taiDataHost::Constr_Body_impl() {
   first_tab_foc = NULL;         // reset
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody = new iFormLayout();
   layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
   layBody->setLabelAlignment(Qt::AlignLeft);
@@ -267,18 +256,6 @@ void taiDataHost::Constr_Body_impl() {
   layBody->setVerticalSpacing(2 * LAYBODY_MARGIN);
   layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
   layBody->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
-#else
-  layBody = new QGridLayout();
-#if QT_VERSION >= 0x040300
-  layBody->setHorizontalSpacing(LAYBODY_SPACING);
-  layBody->setVerticalSpacing(0);
-  layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
-#else
-  layBody->setSpacing(LAYBODY_SPACING);
-  layBody->setMargin(LAYBODY_MARGIN);
-#endif
-  layBody->setColumnStretch(1,1);
-#endif // 4.4 vs. <4.4
   body_vlay->addLayout(layBody);
   body_vlay->addStretch(1);
 }

@@ -20,6 +20,7 @@
 #include <taMisc>
 #include <taiMisc>
 
+#include <QCloseEvent>
 
 
 IDataViewWidget::IDataViewWidget(DataViewer* viewer_)

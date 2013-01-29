@@ -19,6 +19,8 @@
 
 #include <QIcon>
 #include <QMenu>
+#include <QContextMenuEvent>
+
 
 QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1];
 

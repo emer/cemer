@@ -27,6 +27,9 @@
 
 
 // declare all other types mentioned but not required to include:
+class QVBoxLayout; // 
+class QCheckBox; //
+class iLineEdit; //
 
 
 class TA_API taiObjDiffBrowserFilter : iDialog {

@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QCheckBox; //
+
 
 class TA_API taiMethToggle : public taiMethodData {
   // toggle representation of a method (does not call directly, but checks flag)

@@ -39,7 +39,7 @@
 #include <QToolBar>
 #include <QApplication>
 #include <QMenuBar>
-
+#include <QKeyEvent>
 
 
 taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
@@ -554,19 +554,11 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
-      if (typ && typ->IsTaBase())
+      if (typ && typ->IsActualTaBase())
         mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
       // note: visibles are cached, so nothing happens if it hasn't changed
       layBody->setVisible(cur_row, mb_dat->visible());
-#else
-      if (mb_dat->visible()) {
-        layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN));
-      } else {
-        layBody->setRowMinimumHeight(cur_row, 0);
-      }
-#endif
       ++cur_row;
     }
   }

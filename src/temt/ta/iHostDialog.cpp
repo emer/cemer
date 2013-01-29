@@ -16,12 +16,12 @@
 #include "iHostDialog.h"
 #include <iScrollArea>
 
-#include <QVBoxLayout>
-#include <QApplication>
-
 #include <taMisc>
 #include <taiMisc>
 
+#include <QVBoxLayout>
+#include <QApplication>
+#include <QCloseEvent>
 
 
 iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)

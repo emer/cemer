@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class iCheckBox; //
 
 class TA_API taiToggle : public taiData {
 public:

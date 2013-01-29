@@ -26,8 +26,10 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class iSplitter;
-class NumberedTextView;
+class iSplitter; //
+class NumberedTextView; //
+class QVBoxLayout; // 
+class QHBoxLayout; // 
 
 
 class TA_API iPluginEditor: public QMainWindow {

@@ -33,11 +33,22 @@ static const int stub_arg_off = 2;
 bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
   if(ths->IsNotActual()) return false; // only actual types!
   if(trg_fname_only != taMisc::GetFileFmPath(ths->source_file)) {
+    if(verbose >= 2) {
+      cerr << "mta_constr: skipping out-of-source type: " << ths->name 
+           << " src: " << ths->source_file << endl;
+    }
     return false; // not from target file!
   }
-  if(ths->HasOption("IGNORE")) return false;
+  if(ths->HasOption("IGNORE")) {
+    if(verbose >= 2) {
+      cerr << "mta_constr: skipping ignored type: " << ths->name << endl;
+    }
+    return false;
+  }
   if(ths->IsTemplInst()) {
-    // cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
+    if(verbose >= 2) {
+      cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
+    }
     if(ths->children.size == 1) {
       TypeDef* chld = ths->children[0];
       return TypeDef_Gen_Test(chld); // we get instantiated where our parents live!

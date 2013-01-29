@@ -31,7 +31,11 @@
 
 
 // declare all other types mentioned but not required to include:
-class iTabBar;
+class iTabBar; //
+class QVBoxLayout; // 
+class QStackedWidget; //
+class QMenu; //
+
 
 // NOTE: pan_idx is of panelCount and panel()
 //       tab_idx is of tabCount and tabPanel()

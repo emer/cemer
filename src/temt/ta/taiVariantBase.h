@@ -22,11 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiComboBox;
-class taiToggle;
-class taiIncrField;
-class taiField;
-class taiTokenPtrButton;
+class taiComboBox; //
+class taiToggle; //
+class taiIncrField; //
+class taiField; //
+class taiTokenPtrButton; //
+class QStackedWidget; //
+
 
 
 class TA_API taiVariantBase: public taiCompData {

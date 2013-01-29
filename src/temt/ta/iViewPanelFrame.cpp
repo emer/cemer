@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 
 
 TypeItem::ShowMembs iViewPanelFrame::show() const {

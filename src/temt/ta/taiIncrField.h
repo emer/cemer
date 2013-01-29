@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iSpinBox; //
 
 
 // this is for integers -- includes up and down arrow buttons

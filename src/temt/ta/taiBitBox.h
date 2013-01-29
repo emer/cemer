@@ -23,6 +23,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QHBoxLayout; // 
+
 
 class TA_API iBitCheckBox: public iCheckBox { // #IGNORE specialized checkbox for the taiBitBox class
   Q_OBJECT

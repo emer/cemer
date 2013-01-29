@@ -24,10 +24,11 @@
 #include <TypeDef>
 
 // declare all other types mentioned but not required to include:
-class Qframe; // #IGNORE
-class iFlowLayout; // #IGNORE
+class QFrame; //
+class iFlowLayout; //
 class iColor; //
-class iLabel; // #IGNORE
+class iLabel; //
+class QMenu; //
 
 TypeDef_Of(taiDataHost_impl);
 

@@ -24,6 +24,10 @@
 // declare all other types mentioned but not required to include:
 class ToolBoxDockViewer; //
 class iToolBoxDockViewer; //
+class QToolBox; //
+class iClipWidgetAction; //
+class QToolBar; //
+
 
 typedef void (*ToolBoxProc)(iToolBoxDockViewer* tb);
 

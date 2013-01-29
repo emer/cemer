@@ -25,6 +25,8 @@
 class CellRange; //
 class DataTable; //
 class taMatrix; //
+class taiClipData; //
+class QMimeData; //
 
 /*
   MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)

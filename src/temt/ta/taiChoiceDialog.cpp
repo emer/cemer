@@ -23,6 +23,7 @@
 #include <QButtonGroup>
 #include <QPushButton>
 #include <QClipboard>
+#include <QKeyEvent>
 
 
 const String taiChoiceDialog::delimiter("!|");

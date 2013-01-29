@@ -609,12 +609,10 @@ void TypeDef::MakeMainDerivedTypes() {
 }
 
 void TypeDef::MakeMainDerivedTypes_impl(TypeSpace& make_spc) {
-  if(!IsActual()) {
-    taMisc::Error("MakeMainDerivedTypes_impl: must only be called on an ACTUAL type", name);
-    return;
-  }
   TypeDef* ptr = GetPtrType_impl(make_spc);
-  TypeDef* ptr_ptr = ptr->GetPtrType_impl(make_spc);
+  if(!ptr->IsPtrPtr()) {
+    TypeDef* ptr_ptr = ptr->GetPtrType_impl(make_spc);
+  }
   TypeDef* ref = GetRefType_impl(make_spc);
   TypeDef* ptr_ref = ptr->GetRefType_impl(make_spc);
   TypeDef* cnst = GetConstType_impl(make_spc);
@@ -816,8 +814,10 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
   if(!par) {
     par = new TypeDef(nm);
     par->type = type;           // assume same kind of thing
-    taMisc::Info("AddParentName -- added new unknown type:",
-                 nm, "as parent of type:", name);
+    if(!(par->name.startsWith("Q") || par->name.startsWith("So"))) {
+      taMisc::Info("AddParentName -- added new unknown type:",
+                   nm, "as parent of type:", name);
+    }
   }
 
   if(parents.LinkUnique(par))

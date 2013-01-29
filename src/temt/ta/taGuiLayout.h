@@ -25,7 +25,7 @@
 #endif
 
 // declare all other types mentioned but not required to include:
-
+class QBoxLayout; //
 
 TypeDef_Of(taGuiLayout);
 

@@ -20,12 +20,16 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <QObject>
+#include <QEvent>
+#else
+class QEvent; //
 #endif
 
 // member includes:
 #include <taString>
 
 // declare all other types mentioned but not required to include:
+class QTimer; //
 
 // note: because this defines CancelOp, it must be TA parsed -- otherwise it would not be
 

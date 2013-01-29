@@ -34,7 +34,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
     TypeDef* tpdf = NULL;
     if (mb_nm == "this") {
       tpdf = typ;
-      if (typ->IsTaBase() && (base != NULL))
+      if (typ->IsActualTaBase() && (base != NULL))
         tpdf = ((taBase*)base)->GetTypeDef();
     } else {
       TypeDef* own_td = typ;
@@ -57,7 +57,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       TypeDef* tpdf;
       if (mb_nm == "this") {
         tpdf = typ;
-        if (typ->IsTaBase() && (base != NULL))
+        if (typ->IsActualTaBase() && (base != NULL))
           tpdf = ((taBase*)base)->GetTypeDef();
       } else {
         tpdf = TypeDef::FindGlobalTypeName(mb_nm);

@@ -39,6 +39,7 @@
 #include <QToolButton>
 #include <QApplication>
 #include <QLineEdit>
+#include <QKeyEvent>
 
 
 iProgramEditor::iProgramEditor(QWidget* parent)
@@ -493,7 +494,7 @@ void iProgramEditor::GetValue() {
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
 
-  if(typ->IsTaBase() && base) {
+  if(typ->IsActualTaBase() && base) {
     taProject* proj = (taProject*)((taBase*)base)->GetOwner(&TA_taProject);
     if(proj) {
       proj->undo_mgr.SaveUndo(base, "Edit", base);
@@ -513,7 +514,7 @@ void iProgramEditor::GetValue() {
       }
     }
   }
-  if (typ->IsTaBase()) {
+  if (typ->IsActualTaBase()) {
     base->UpdateAfterEdit();    // hook to update the contents after an edit..
     base->MakeNameUnique();
 //shouldn't be necessary    taiMisc::Update(base);

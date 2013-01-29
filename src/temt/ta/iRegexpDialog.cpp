@@ -34,6 +34,8 @@
 #include <QDialogButtonBox>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include <QKeyEvent>
+
 
 const QString iRegexpDialog::DOT_STAR(".*");
 

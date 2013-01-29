@@ -20,11 +20,16 @@
 
 #include <QWidget>
 
+class QHBoxLayout; // 
+class QLabel; //
+class iSpinBox; //
+
 //////////////////////////////////
 // 	iDimEdit		//
 //////////////////////////////////
 
-class TAIQTSO_API iDimEdit: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
+class TAIQTSO_API iDimEdit: public QWidget {
+  // #IGNORE provides a horizontal striped background, to highlight items
   Q_OBJECT
 public:
   QHBoxLayout*		lay;

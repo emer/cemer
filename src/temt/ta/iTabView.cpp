@@ -24,6 +24,8 @@
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QMenu>
+#include <QKeyEvent>
+
 
 iTabView::iTabView(QWidget* parent)
 :QWidget(parent)

@@ -22,9 +22,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiItemPtrBase;
-class taiItemChooser;
-class String_Array;
+class taiItemPtrBase; //
+class taiItemChooser; //
+class String_Array; //
+class QAbstractButton; //
+class QToolButton; //
+class QTreeWidgetItem; //
 
 typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in ITEM_FILTER_xxx
 typedef bool (*cust_chooser_fun)(taBase*, taiItemPtrBase*); // optional custom config, spec'ed in CUST_CHOOSER_xxx

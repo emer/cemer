@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class QMimeData; //
 
 TypeDef_Of(taiObjectMimeFactory);
 

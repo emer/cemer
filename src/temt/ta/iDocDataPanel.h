@@ -23,12 +23,17 @@
 #ifndef __MAKETA__
 #include <QWebView>
 #include <QWebPage>
+#else
+class QWebView; //
+class QAction; //
 #endif
 
 // declare all other types mentioned but not required to include:
-class iLineEdit; // #IGNORE
-class QProgressBar; // #IGNORE
+class iLineEdit; //
+class QProgressBar; //
 class taDoc; //
+class QToolBar; //
+class QLabel; //
 
 TypeDef_Of(iDocDataPanel);
 

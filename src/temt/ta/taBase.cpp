@@ -262,7 +262,7 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || md->type->IsAnyPtr()) continue;
-    if(md->type->IsTaBase()) {
+    if(md->type->IsActualTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
       taBase::Own(*mb, this);
     }
@@ -356,7 +356,7 @@ void taBase::SetTypeDefaults_parents(TypeDef* ttd, taBase* scope) {
   int i;
   for(i=0; i<ttd->parents.size; i++) {
     TypeDef* par = ttd->parents.FastEl(i);
-    if(!par->IsTaBase()) continue; // only ta-bases
+    if(!par->IsActualTaBase()) continue; // only ta-bases
     SetTypeDefaults_parents(par, scope); // first do parents of parent
     if(par->defaults != NULL)
       SetTypeDefaults_impl(par, scope);    // then actually do parent
@@ -2237,12 +2237,10 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->IsNotPtr()) {
-      if(md->type->IsTaBase()) {
-        taBase* obj = (taBase*)md->GetOff(this);
-        obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
-                         obj_desc, obj_val, mbr_name, type_desc);
-      }
+    if(md->type->IsActualTaBase()) {
+      taBase* obj = (taBase*)md->GetOff(this);
+      obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
+                       obj_desc, obj_val, mbr_name, type_desc);
     }
   }
   if(owners && (items.size > st_sz)) { // we added somebody somewhere..
@@ -2786,7 +2784,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_a = NULL;
     taBase* tab_b = NULL;;
     // make sure pointers are still current
-    if(rec->type->IsTaBase()) {
+    if(rec->type->IsActualTaBase()) {
       if(rec->tabref) {
         if(!((taBaseRef*)rec->tabref)->ptr())
           continue;
@@ -3345,7 +3343,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
         int chg = UpdatePointers_NewPar_SmPtr(*ref, old_par, new_par);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->IsTaBase()) {
+      else if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewPar(old_par, new_par); // doesn't count for me
       }
@@ -3484,7 +3482,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
         int chg = taBase::UpdatePointers_NewParType_SmPtr(*ref, par_typ, new_par);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->IsTaBase()) {
+      else if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewParType(par_typ, new_par);
       }
@@ -3561,7 +3559,7 @@ int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
     MemberDef* nmd = NULL;
     if(ntd && ntd->members.size > m)
       nmd = ntd->members[m];
-    if((omd->type->IsNotPtr()) && omd->type->IsTaBase()) {
+    if(omd->type->IsActualTaBase()) {
       taBase* old_kid = (taBase*)omd->GetOff(this);
       taBase* new_kid = NULL;
       if(nmd && (nmd->type == omd->type)) new_kid = (taBase*)nmd->GetOff(this);
@@ -3601,7 +3599,7 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
         int chg = taBase::UpdatePointers_NewObj_SmPtr(*ref, this, old_ptr, new_ptr);
         nchg += chg; mychg += chg;
       }
-      else if(md->type->IsTaBase()) {
+      else if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
         nchg += obj->UpdatePointers_NewObj(old_ptr, new_ptr);
       }

@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
+
 class TA_API taiTokenPtrMultiTypeButton : public taiItemPtrBase {
   // for tokens of taBase objects of multiple types
   INHERITED(taiItemPtrBase)

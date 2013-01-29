@@ -58,7 +58,7 @@ void iCheckBox::setReadOnly(bool value) {
   QPalette pal(palette());
   if (value) {
 //    setFocusPolicy(ClickFocus);
-    pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
+    pal.setColor(backgroundRole(), Qt::lightGray);
   } else {
 //    setFocusPolicy(StrongFocus);
     pal.setColor(backgroundRole(), 

@@ -24,25 +24,33 @@
 #include <MembSet>
 #include <iColor>
 
+#ifndef __MAKETA__
+#include <QEvent>
+#else
+class QEvent; //
+class QContextMenuEvent; //
+class QAction; //
+#endif
+
 // declare all other types mentioned but not required to include:
 class iBrowseHistory; //
-class taiAction; //  #IGNORE
-class QVBoxLayout; //  #IGNORE
-class QScrollArea; //  #IGNORE
-class iStripeWidget; // #IGNORE
-class iMethodButtonMgr; // #IGNORE
-class QHBoxLayout; //  #IGNORE
-class QToolBar; //  #IGNORE
-class HiLightButton; //  #IGNORE
-class iTreeView; //  #IGNORE
-class iTreeSearch; //  #IGNORE
-class iMainWindowViewer; // #IGNORE
+class taiAction; //
+class QVBoxLayout; //
+class QScrollArea; //
+class iStripeWidget; //
+class iMethodButtonMgr; //
+class QHBoxLayout; //
+class QToolBar; //
+class HiLightButton; //
+class iTreeView; //
+class iTreeSearch; //
+class iMainWindowViewer; //
 class taBase; // 
 class TypeDef; // 
 class taiDataLink; // 
 class taDataLink; // 
 class iTreeViewItem; //
-class QWidget; //  #IGNORE
+class QWidget; //
 class ISelectableHost; //
 
 

@@ -41,6 +41,8 @@ class iTreeViewItem; //
 class iTabViewer; //
 class ISelectableHost; //
 class iDataPanel; //
+class QSplitter; //
+class iRect; //
 
 
 class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {

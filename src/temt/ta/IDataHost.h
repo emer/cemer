@@ -27,6 +27,8 @@ class iMainWindowViewer; //
 class taBase; // 
 class TypeDef; // 
 class taiData; //
+class iColor; //
+
 
 class TA_API IDataHost: public ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:

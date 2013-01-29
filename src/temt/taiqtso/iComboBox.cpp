@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iComboBox.h"
+#include <QWheelEvent>
 
 iComboBox::iComboBox(QWidget* parent)
   : QComboBox(parent)

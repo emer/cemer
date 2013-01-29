@@ -35,9 +35,16 @@ class iTabView; // #IGNORE
 #endif
 
 // declare all other types mentioned but not required to include:
-class iTabBarBase;
-class iTabViewer;
-class iMainWindowViewer;
+class iTabBarBase; //
+class iTabViewer; //
+class iMainWindowViewer; //
+class QScrollBar; //
+class QScrollArea; //
+class QPoint; //
+class QVBoxLayout; // 
+class QHideEvent; //
+class QShowEvent; //
+
 
 TypeDef_Of(iDataPanel);
 

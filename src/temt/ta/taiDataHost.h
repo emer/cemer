@@ -26,12 +26,15 @@
 #ifndef __MAKETA__
 #include <QPointer>
 #include <QWidget>
+#else
+class QWidget; //
+class QPointer; //
 #endif
-class iFormLayout; // #IGNORE
-class QVBoxLayout; // #IGNORE
-class iEditGrid;   // #IGNORE
-class QSplitter;   // #IGNORE
-class iLabel;      // #IGNORE
+class iFormLayout; //
+class QVBoxLayout; //
+class iEditGrid;   //
+class QSplitter;   //
+class iLabel;      //
 
 TypeDef_Of(taiDataHost);
 
@@ -56,11 +59,7 @@ public:
 #endif
 
   QVBoxLayout*  body_vlay;      // vertical layout in body -- this is created with body
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   iFormLayout*  layBody;
-#else
-  QGridLayout*    layBody;      // layout for the body -- deleted/reconstructed when show changes
-#endif
 
   override int          curRow() const {return cur_row;}
   override QWidget*     firstTabFocusWidget() { return first_tab_foc; }

@@ -39,14 +39,7 @@ void taiToken::Chooser() {
   chs->setSel_obj(cur_obj); // set initial selection
   bool rval = chs->Choose();
   if (rval) {
-    setCur_obj((taBase*)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
- /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select...>") &&
-       (ta_actions->cur_sel->men_act != NULL)) {
-      ta_actions->cur_sel->usr_data = (void*)chs_obj;
-      ta_actions->cur_sel->men_act->Select(ta_actions->cur_sel); // call it!
-    }
-    else
-      ta_actions->setLabel(chs->sel_str());*/
+    setCur_obj((taBase*)chs->sel_obj());
   }
   delete chs;
   // todo: need to return focus after dialog if possible:
@@ -59,7 +52,7 @@ void taiToken::Edit() {
   if(cur_base == NULL) return;
 
   taiEdit* gc;
-  if (typ->IsTaBase()) {
+  if (typ->IsActualTaBase()) {
     gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   }
   else {
@@ -99,11 +92,12 @@ taBase* taiToken::GetValue() {
 }
 
 void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* actn) {
-  if (!td->IsTaBase()) return; // sanity check, so we don't crash...
+  if (!td->IsActualTaBase()) return; // sanity check, so we don't crash...
 
   if (!td->tokens.keep) {
     menu->AddItem("<Sorry, not keeping tokens>", taiMenu::normal);
-  } else {
+  }
+  else {
     bool too_many = false;
     if (scope_ref != NULL) {
       int cnt = taBase::NTokensInScope(td, scope_ref);
@@ -120,7 +114,8 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
       if (actn != NULL) {               // also set callback action!
         mnel->connect(actn);
       }
-    } else {
+    }
+    else {
       taiMenuAction ma(this, SLOT(ItemChosen(taiAction*)));
       String    nm;
       for (int i = 0; i < td->tokens.size; ++i) {
@@ -148,11 +143,10 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
     if ((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
       continue;
     if (chld->tokens.size != 0) {
-//Qt3      taiMenu* submenu = menu->AddSubMenu(chld->name, (void*)chld);
       taiMenu* submenu = menu->AddSubMenu(chld->name);
-//huh?? why??      menu->AddSep();
       GetMenu_impl(submenu, chld, actn);
-    } else {
+    }
+    else {
       GetMenu_impl(menu, chld, actn);   // if no tokens, don't add a submenu..
     }
   }

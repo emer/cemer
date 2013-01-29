@@ -28,15 +28,16 @@
 #endif
 
 // declare all other types mentioned but not required to include:
-class iT3ViewspaceWidget;
-class T3ExaminerViewer;
-class iT3DataViewer;
-class T3DataViewFrame;
-class iViewPanelSet;
-class iViewPanelFrame;
-class T3DataViewRoot;
-class T3Node;
-class T3DataView;
+class iT3ViewspaceWidget; //
+class T3ExaminerViewer; //
+class iT3DataViewer; //
+class T3DataViewFrame; //
+class iViewPanelSet; //
+class iViewPanelFrame; //
+class T3DataViewRoot; //
+class T3Node; //
+class T3DataView; //
+class SoNode; //
 
 
 class TA_API iT3DataViewFrame : public QWidget, public IDataViewWidget {

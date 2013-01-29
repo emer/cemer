@@ -71,7 +71,7 @@ bool MemberDef::DumpMember(void* par) {
     return false;
   // if taBase, query it for member save
   TypeDef* par_typ = GetOwnerType();
-  if (par && par_typ && par_typ->IsTaBase()) {
+  if (par && par_typ && par_typ->IsActualTaBase()) {
     taBase* par_ = (taBase*)par;
     taBase::DumpQueryResult dqr = par_->Dump_QuerySaveMember(this); 
     if (dqr == taBase::DQR_NO_SAVE) return false;
@@ -122,8 +122,9 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       taBase* rbase = (taBase*)new_base;
       rbase->Dump_Save_inline(strm, (taBase*)base, indent);
     }
-    else
+    else {
       type->Dump_Save_inline(strm, new_base, base, indent);
+    }
     return true;
   }
   
@@ -195,8 +196,9 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_SaveR(strm, (taBase*)base, indent);
     }
-    else
+    else {
       rval = type->Dump_SaveR(strm, new_base, base, indent);
+    }
   }
   else {
     TypeDef* eff_type = type;
@@ -235,8 +237,9 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
     }
-    else
+    else {
       rval = type->Dump_Save_PathR(strm, new_base, (taBase*)base, indent);
+    }
   }
   else {
     // if it is a Variant, we are only interested in non-null taBase ptrs
@@ -275,7 +278,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
 
 int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
   strm << name << " ";
-  if(IsTaBase()) {
+  if(IsActualTaBase()) {
     taBase* rbase = (taBase*)base;
     if(rbase->GetOwner() == NULL)
       strm << "NULL";
@@ -348,7 +351,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
   }
 
   taMisc::indent(strm, indent, 1);
-  if(IsTaBase()) {
+  if(IsActualTaBase()) {
     taBase* rbase = (taBase*)base;
     rbase->Dump_Save_Path(strm, (taBase*)par, indent);
     rbase->Dump_Save_Value(strm, (taBase*)par, indent);
@@ -363,7 +366,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
       inline_dump = !((taOBase*)base)->HasUserDataList();
     }
     if (!inline_dump) {
-      if(IsTaBase()) {
+      if(IsActualTaBase()) {
         taBase* rbase = (taBase*)base;
         rbase->Dump_SaveR(strm, rbase, indent+1);
       }
@@ -387,7 +390,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
     return false;
   }
 
-  if(IsTaBase()) {
+  if(IsActualTaBase()) {
     taBase* rbase = (taBase*)base;
     rbase->Dump_Save_Value(strm, (taBase*)par, indent);
   }
@@ -396,15 +399,14 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   }
   // note: we don't do our INLINE hack here, because this code only looks
   // for *non* INLINE guys in this context...
-  if(IsActualClass() &&
-     !HasOption("INLINE_DUMP"))
-  {
+  if(IsActualClass() && !HasOption("INLINE_DUMP")) {
     if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
     }
-    else
+    else {
       Dump_SaveR(strm, base, base, indent+1);
+    }
     taMisc::indent(strm, indent, 1) << "};\n";
   }
   return true;
@@ -431,7 +433,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
          << " rev" << taMisc::svn_rev << "\n";
   }
   taMisc::strm_ver = 3;
-  if (IsTaBase()) {
+  if (IsActualTaBase()) {
     taBase* rbase = (taBase*)base;
 
     dumpMisc::dump_root = rbase;
@@ -651,8 +653,9 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Load_impl(strm, (taBase*)base);
     }
-    else
+    else {
       rval = type->Dump_Load_impl(strm, new_base, base);
+    }
     if (taMisc::verbose_load >= taMisc::TRACE) {
       String msg;
       msg << "Leaving MemberDef::Dump_Load, member: " << name
@@ -673,9 +676,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       var.GetRepInfo(eff_type, new_base);
     }
     
-    if ((eff_type->IsPointer()) && eff_type->IsTaBase()
-            && HasOption("OWN_POINTER"))
-    {
+    if ((eff_type->IsPointer()) && eff_type->IsTaBase() && HasOption("OWN_POINTER")) {
       c = taMisc::skip_white(strm, true);
       if (c == '{') {
         // a taBase object that was saved as a member, but is now a pointer..
@@ -901,7 +902,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     return false;
   }
 
-  if(ppar_md && !ppar_md->type->IsTaBase()) {
+  if(ppar_md && !ppar_md->type->IsActualTaBase()) {
     taMisc::Warning("Dump_Load_path_impl: Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
@@ -1029,7 +1030,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     taMisc::Info(msg);
   }
   if((rval > 0) && (base != NULL)) {
-    if(td->IsTaBase()) {
+    if(td->IsActualTaBase()) {
       taBase* rbase = (taBase*)base;
       rval = rbase->Dump_Load_Value(strm, (taBase*)par);
       if(rval==1) {
@@ -1164,7 +1165,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     return false;
   }
   
-  if(!td->IsTaBase()) {
+  if(!td->IsActualTaBase()) {
     taMisc::Warning("Only taBase objects may be loaded, not:", td->name);
     return false;
   }

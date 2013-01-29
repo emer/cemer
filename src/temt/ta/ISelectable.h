@@ -27,14 +27,16 @@ class MemberDef; //
 class taiDataLink; // 
 class ISelectableHost; // 
 class taBase; // 
-class QWidget; // #IGNORE
-class QObject; // #IGNORE
 class TypeDef; // 
 class ISelectable_PtrList; // 
-class taiClipData; // #IGNORE
+class taiClipData; //
 class taiActions; //
 class taiMimeSource; //
 
+class QWidget; //
+class QObject; //
+class QMimeData; //
+class QPoint; //
 
 /*
   this interface is for selectable items in the view, such as tree nodes in the browser, or

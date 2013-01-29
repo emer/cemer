@@ -23,9 +23,11 @@
 
 // declare all other types mentioned but not required to include:
 class taiEditDataHost; //
-class QStackedLayout; // #IGNORE
+class QStackedLayout; //
 class iDataPanelFrame; //
-
+class QHBoxLayout; // 
+class QButtonGroup; //
+class QFrame; //
 
 TypeDef_Of(iDataPanelSet);
 

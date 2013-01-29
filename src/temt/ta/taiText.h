@@ -22,7 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iLineEdit;
+class iLineEdit; //
+class QToolButton; //
 
 
 class TA_API taiText : public taiData {

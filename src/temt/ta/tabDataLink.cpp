@@ -39,7 +39,7 @@ void tabDataLink::ChildQueryEditActions_impl(const MemberDef* par_md, taiDataLin
 {
   if (child) {
     TypeDef* td = child->GetDataTypeDef();
-    if (td && td->IsTaBase()) {
+    if (td && td->IsActualTaBase()) {
       data()->ChildQueryEditActions(par_md, (taBase*)child->data(), ms, allowed, forbidden);
       return;
     }
@@ -53,7 +53,7 @@ int tabDataLink::ChildEditAction_impl(const MemberDef* par_md, taiDataLink* chil
   int rval = 0;
   if (child) {
     TypeDef* td = child->GetDataTypeDef();
-    if (td && td->IsTaBase()) {
+    if (td && td->IsActualTaBase()) {
       int rval = data()->ChildEditAction(par_md, (taBase*)child->data(), ms, ea);
       if (rval == 0)
         child->EditAction_impl(ms, ea);
@@ -419,7 +419,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       if (md->type->IsNotPtr()) {
         // a list or greater is never a "value"
         if (md->type->InheritsFrom(TA_taList_impl)) continue;
-        if (md->type->IsTaBase()) {
+        if (md->type->IsActualTaBase()) {
           taBase* obj = (taBase*)md->GetOff(tab);
           taBase* own = obj->GetOwner(); //note: embedded obj must be owned by par
           // non-owned values can't be browsed, and must be handled inline, below

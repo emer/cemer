@@ -29,6 +29,7 @@
 #include <QPrintDialog>
 #include <QTextEdit>
 #include <QDialog>
+#include <QKeyEvent>
 
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,

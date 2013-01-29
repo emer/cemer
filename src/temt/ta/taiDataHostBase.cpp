@@ -114,7 +114,7 @@ void taiDataHostBase::Apply() {
 }
 
 taBase* taiDataHostBase::Base_() const {
-  if (typ && typ->IsTaBase())
+  if (typ && typ->IsActualTaBase())
     return (taBase*)root;
   else return NULL;
 }
@@ -203,7 +203,9 @@ void taiDataHostBase::Constr_impl() {
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
   widButtons->setAutoFillBackground(true);
-  SET_PALETTE_BACKGROUND_COLOR(widButtons, bg_color);
+  QPalette pal = widButtons->palette();
+  pal.setColor(QPalette::Background, bg_color);
+  widButtons->setPalette(pal); 
   layButtons = new QHBoxLayout(widButtons);
   layButtons->setMargin(0);
 //def  layButtons->setMargin(2); // facilitates container
@@ -224,7 +226,9 @@ void taiDataHostBase::Constr_Strings() {
 void taiDataHostBase::Constr_Widget() {
   if (mwidget != NULL) return;
   mwidget = new QWidget();
-  SET_PALETTE_BACKGROUND_COLOR(widget(), bg_color);
+  QPalette pal = widget()->palette();
+  pal.setColor(QPalette::Background, bg_color);
+  widget()->setPalette(pal); 
   widget()->setFont(taiM->dialogFont(ctrl_size));
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look

@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QToolBar; //
+
 
 class TA_API taiToolBar: public taiActions { // a toolbar, in which the actions appear as toolbuttons or button menus
   Q_OBJECT

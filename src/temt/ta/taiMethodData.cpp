@@ -58,7 +58,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
   base = bs;
   meth = md;
   gui_parent = gui_parent_;
-  if(base && typ && typ->IsTaBase()) {
+  if(base && typ && typ->IsActualTaBase()) {
     typ = ((taBase*)base)->GetTypeDef(); // get the *actual* type def of this object!
   }
   is_menu_item = false;
@@ -100,7 +100,7 @@ bool taiMethodData::CallFun_impl() {
   String meth_name = meth->name; // in case we delete
 
   // save undo state!
-  if (typ->IsTaBase()) {
+  if (typ->IsActualTaBase()) {
     taBase* tab = (taBase*)base;
     taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
     if(proj) {
@@ -141,7 +141,7 @@ bool taiMethodData::CallFun_impl() {
     return (bool)ths;
   }
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
-  if (typ->IsTaBase()) {
+  if (typ->IsActualTaBase()) {
     bool ok;
     iColor bgclr = ((taBase*)base)->GetEditColorInherit(ok);
     if (ok) arg_dlg->setBgColor(bgclr);
@@ -247,9 +247,7 @@ void taiMethodData::UpdateAfter() {
     return;
   }
   // this is inside the host itself
-  if ((host->GetRootTypeDef() != NULL) &&
-    host->GetRootTypeDef()->IsTaBase())
-  {
+  if ((host->GetRootTypeDef() != NULL) && host->GetRootTypeDef()->IsActualTaBase()) {
     taBase* tap = host->Base();
     if (tap && meth->HasOption("UPDATE_MENUS")) {
       taiMisc::Update(tap);     // update menus and stuff
@@ -259,7 +257,7 @@ void taiMethodData::UpdateAfter() {
 }
 
 void taiMethodData::GenerateScript() {
-  if(!taMisc::record_on || !typ->IsTaBase())
+  if(!taMisc::record_on || !typ->IsActualTaBase())
     return;
 
 #ifndef DMEM_COMPILE
@@ -284,7 +282,7 @@ void taiMethodData::GenerateScript() {
   int_Array tmp_objs;           // indicies of the temp objects
   for (int i = 0; i < arg_dlg->type_el.size; ++i) {
     taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(i);
-    if((art->arg_typ->IsNotPtr()) && art->arg_typ->IsTaBase())
+    if(art->arg_typ->IsActualTaBase())
       tmp_objs.Add(i+1);
   }
   if (tmp_objs.size > 0) {

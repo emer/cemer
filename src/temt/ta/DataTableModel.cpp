@@ -21,7 +21,6 @@
 #include <taMisc>
 #include <taiMisc>
 
-#include <taiqtso_def.h> // COLOR_RO_BACKGROUND
 #include <QColor>
 
 
@@ -103,7 +102,7 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
     & QStyle::State_Selected)) */
     // note: only make it actual ro color if ro (not for "(matrix)" cells)
     if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
-      return QColor(COLOR_RO_BACKGROUND);
+      return QColor(Qt::lightGray);
     break;
   case Qt::TextColorRole: { // QColor: color of text
     if (col->is_matrix)

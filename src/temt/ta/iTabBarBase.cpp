@@ -17,6 +17,8 @@
 
 #include <taiMisc>
 
+#include <QKeyEvent>
+
 
 iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
 }

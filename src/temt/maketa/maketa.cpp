@@ -294,9 +294,10 @@ bool MTA::TypeSpace_Sort_Order(TypeSpace* ths) {
     for(j=0; j<td->parents.size; j++) {
       TypeDef* par_td = td->parents.FastEl(j);
       if((td->idx < par_td->idx) && (td->owner == ths) && (par_td->owner == ths)) {
-        if(mta->verbose > 0)
+        if(mta->verbose > 4) {
           cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
                << par_td->idx+1 << "\n";
+        }
         // child comes before parent..
         ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
         move_occurred = true;

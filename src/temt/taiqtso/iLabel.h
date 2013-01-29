@@ -19,6 +19,8 @@
 #include "taiqtso_def.h"
 
 #include <QLabel>
+#include <QVariant>
+
 
 class TAIQTSO_API iLabel: public QLabel {
 //class __declspec(dllexport) iLabel: public QLabel {

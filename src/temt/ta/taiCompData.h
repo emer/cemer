@@ -23,7 +23,9 @@
 #include <taiDataList>
 
 // declare all other types mentioned but not required to include:
-
+class QHBoxLayout; // 
+class iFlowLayout; //
+class QStackedLayout; //
 
 class TA_API taiCompData : public taiData {
   //  #NO_INSTANCE base class for composite data elements

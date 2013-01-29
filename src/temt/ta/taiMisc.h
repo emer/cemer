@@ -35,7 +35,9 @@ class QAbstractScrollArea; //
 class QWidget; // 
 class QPoint; // 
 class QObject; // 
-class iNetworkAccessManager;
+class iNetworkAccessManager; //
+class QAbstractButton; //
+class QProgressDialog; //
 
 
 class TA_API taiMisc: public taiMiscCore {

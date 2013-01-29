@@ -24,10 +24,8 @@
 #include <taMisc>
 #include <taiMisc>
 
-
-#include <taiqtso_def.h> // COLOR_RO_BACKGROUND
 #include <QColor>
-
+#include <QMimeData>
 
 
 MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
@@ -77,7 +75,7 @@ QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
  /* note: only used when !(option.showDecorationSelected && (option.state
     & QStyle::State_Selected)) */
     if (!(flags(index) & Qt::ItemIsEditable))
-      return QColor(COLOR_RO_BACKGROUND);
+      return QColor(Qt::lightGray);
     break;
 /*Qt::TextColorRole
   QColor: color of text

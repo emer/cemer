@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class UserDataDelegate; //
+class QTableWidget; //
+class QTableWidgetItem; //
 
 
 class TA_API iUserDataDataHost : public taiEditDataHost {

@@ -20,20 +20,25 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoSeparator.h>
+#else
+class SoSeparator; //
 #endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class SoMaterial;
-class SoTranslate1Dragger;
-class SoTranslation;
+class SoMaterial; //
+class SoTranslate1Dragger; //
+class SoTranslation; // 
+class SoCube; //
+class SoCylinder; //
+class SoTransform; //
+
 
 // unfortunately you can't seem to do multiple inheritance for both QObject and So,
 // so we need to do our own callbacks..
 
 class SoScrollBar;
-
 typedef void (*SoScrollBarCB)(SoScrollBar*, int, void*);
 // callback function format: passes the scrollbar, current value, and void* user_data
 

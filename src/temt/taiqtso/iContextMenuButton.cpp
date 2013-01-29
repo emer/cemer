@@ -17,6 +17,7 @@
 
 #include <QMenu>
 #include <QPainter>
+#include <QContextMenuEvent>
 
 iContextMenuButton::iContextMenuButton(QWidget* parent)
 :inherited(parent)

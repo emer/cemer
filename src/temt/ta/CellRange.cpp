@@ -14,7 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "CellRange.h"
-#include <QModelIndex>
+#include <QModelIndexList>
+
 
 void CellRange::SetExtent(int wd, int ht) {
   col_to = col_fr + wd - 1;

@@ -29,7 +29,7 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QWidget>
-
+#include <QStatusTipEvent>
 
 namespace // anon
 {

@@ -24,11 +24,19 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taiRegexpField;
-class iRegexpDialogPopulator;
-class QStandardItem;
-class QDialogButtonBox;
-
+class taiRegexpField; //
+class iRegexpDialogPopulator; //
+class QStandardItem; //
+class QDialogButtonBox; //
+class QVBoxLayout; // 
+class QHBoxLayout; // 
+class QComboBox; //
+class QListWidget; //
+class QListWidgetItem; //
+class QStandardItemModel; //
+class QTableView; //
+class QSortFilterProxyModel; //
+class QLineEdit; //
 
 class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT

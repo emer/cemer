@@ -19,11 +19,14 @@
 // parent includes:
 #include <ITypedObject>
 
+#ifndef __MAKETA__
+#include <QObject>
+#endif
+
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taVersion; // 
-
 
 class IPlugin: public virtual ITypedObject  {
   // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode

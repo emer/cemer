@@ -20,8 +20,9 @@
 
 #include <taiMisc>
 
-
 #include <QVBoxLayout>
+#include <QKeyEvent>
+
 
 DocEditDataHost::DocEditDataHost(void* base, TypeDef* typ_, bool read_only_,
       bool modal_, QObject* parent)

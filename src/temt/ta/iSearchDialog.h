@@ -34,6 +34,11 @@ class taiDataLink; //
 class taDataLink; // 
 class taiBitBox; //
 class iMainWindowViewer; //
+class QVBoxLayout; // 
+class iLineEdit; //
+class QAbstractButton; //
+class iTextBrowser; //
+class QStatusBar; //
 
 
 TypeDef_Of(iSearchDialog);
@@ -82,9 +87,7 @@ public:
   static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
   QVBoxLayout*          layOuter;
-//QHBoxLayout*            layOptions;
   taiBitBox*              bbOptions;
-//QHBoxLayout*            laySearch;
   iLineEdit*                search;
   QAbstractButton*          btnGo;
   QAbstractButton*          btnStop;

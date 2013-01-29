@@ -22,6 +22,9 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iColorButton; //
+
+
 
 class TA_API taiColor : public taiData {
   INHERITED(taiData)

@@ -33,6 +33,12 @@ class QProgressBar; //
 class QWebView; //
 class QNetworkReply; //
 class TypeSpace; //
+class iLineEdit; //
+class QTreeWidget; //
+class QTreeWidgetItem; //
+class QSplitter; //
+class QAbstractButton; //
+class QLabel; //
 
 
 class TA_API iHelpBrowser: public QMainWindow {

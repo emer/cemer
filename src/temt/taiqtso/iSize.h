@@ -18,6 +18,8 @@
 
 #include "taiqtso_def.h"
 
+class QSize; //
+
 TypeDef_Of(iSize);
 
 class TAIQTSO_API iSize { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE

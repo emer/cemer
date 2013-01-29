@@ -144,7 +144,7 @@ TypeDef TA_MethodDef            ("MethodDef",    TypeDef::CLASS, 1,
 void tac_AddBuiltinTypeDefs() {
   // note: AddNewGlobalType() automatically makes all common derivatives
   TA_void_ptr.AddNewGlobalType(false); // don't make derivatives, and add first so void derivatives pick it up..
-  TA_voidptr.AddNewGlobalType(false); // don't make derivatives
+  TA_voidptr.AddNewGlobalType(true); // do make derivatives
   TA_void.AddNewGlobalType();
   TA_bool.AddNewGlobalType();
                       

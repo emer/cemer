@@ -39,6 +39,8 @@
 #include <QDesktopServices>
 #include <QNetworkReply>
 #include <QCoreApplication>
+#include <QKeyEvent>
+
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
 public:

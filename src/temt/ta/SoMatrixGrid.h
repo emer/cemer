@@ -20,6 +20,8 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoSeparator.h>
+#else
+class SoSeparator; //
 #endif
 
 // member includes:
@@ -31,6 +33,7 @@ class ColorScale;
 class SoVertexProperty;
 class SoFont;
 class SoIndexedTriangleStripSet;
+class SoTransform;
 
 
 TypeDef_Of(SoMatrixGrid);

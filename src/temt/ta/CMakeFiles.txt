@@ -1016,7 +1016,6 @@ set(ta_HEADS
   NewViewHelper.h
   ta_maketa_defs.h
   ta_type_constr.h
-  qtdefs.h
   ${ta_HEADS_NOMAKETA}
   ${ta_HEADS_NOMAKETA_MOC}
 )

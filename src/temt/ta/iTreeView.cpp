@@ -37,6 +37,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QScrollBar>
+#include <QKeyEvent>
 
 
 

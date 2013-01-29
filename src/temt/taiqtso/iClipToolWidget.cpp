@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDrag>
+#include <QMouseEvent>
 
 
 iClipToolWidget::iClipToolWidget(iClipWidgetAction* cwa_, QWidget* parent) 

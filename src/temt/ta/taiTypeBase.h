@@ -23,6 +23,7 @@
 #include <TypeDef>
 
 // declare all other types mentioned but not required to include:
+class iColor; //
 
 
 TypeDef_Of(taiTypeBase);

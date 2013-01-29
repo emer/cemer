@@ -24,9 +24,12 @@
 #include <taiDataList>
 
 // declare all other types mentioned but not required to include:
-class HiLightButton; // #IGNORE
+class HiLightButton; //
 class iViewPanelSet; //
-class taDataView;
+class taDataView; //
+class QBoxLayout; //
+class QKeyEvent; //
+
 
 TypeDef_Of(iViewPanelFrame);
 

@@ -27,8 +27,10 @@
 #include <ColorBar>
 
 // declare all other types mentioned but not required to include:
-class iLineEdit;
-class ColorScale;
+class iLineEdit; //
+class ColorScale; //
+class QBoxLayout; //
+class QAbstractButton; //
 
 
 class TA_API ColorScaleBar : public QWidget { // #IGNORE  Scalebar

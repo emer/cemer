@@ -25,6 +25,7 @@
 #include <QModelIndex>
 #include <QScrollBar>
 #include <QPalette>
+#include <QContextMenuEvent>
 
 #include <iostream>
 using namespace std;

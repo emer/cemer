@@ -58,6 +58,30 @@ public:
   static float		ic2fc(int value) {return ((float) value) / 255.0f ;} // #IGNORE int color to float color
   static bool  		find (const char* name, float& r, float& g, float& b); // for Iv compat
 
+#ifndef __MAKETA__
+union {
+  uint32_t	c; // for uber-efficient copying
+struct {
+#endif // MAKETA
+
+#if (TA_BYTE_ORDER == TA_BIG_ENDIAN)
+  uint8_t	a; 
+  uint8_t 	r;
+  uint8_t 	g;
+  uint8_t 	b;
+#elif (TA_BYTE_ORDER == TA_LITTLE_ENDIAN)
+  uint8_t 	b;
+  uint8_t 	g;
+  uint8_t 	r;
+  uint8_t	a; 
+#else
+# error "Undefined byte order"
+#endif
+
+#ifndef __MAKETA__
+};};
+#endif // MAKETA
+
   iColor() {setRgba(0,0,0,255);} // black
   iColor(int r_, int g_, int b_) {setRgb(r_, g_, b_);}
   iColor(float r_, float g_, float b_) {setRgb(r_, g_, b_);}
@@ -97,7 +121,7 @@ public:
   iColor& operator =(float x) {setRgba(x, x, x, 1.0f); return *this;}
 
 #ifdef TA_GUI
-  iColor(const QColor& src); // conversion constructor
+  iColor(const QColor& src); // #IGNORE conversion constructor
   void	 	set(const QColor& src); // #IGNORE
   void	 	set(const QColor* src); // #IGNORE
   iColor& 	operator=(const QColor&  src); // #IGNORE conversion assignment operator
@@ -108,29 +132,6 @@ public:
   void		copyTo(SoMFColor& col) const; //
 #endif
 
-#ifndef __MAKETA__
-union {
-  uint32_t	c; // for uber-efficient copying
-struct {
-#endif // MAKETA
-
-#if (TA_BYTE_ORDER == TA_BIG_ENDIAN)
-  uint8_t	a; 
-  uint8_t 	r;
-  uint8_t 	g;
-  uint8_t 	b;
-#elif (TA_BYTE_ORDER == TA_LITTLE_ENDIAN)
-  uint8_t 	b;
-  uint8_t 	g;
-  uint8_t 	r;
-  uint8_t	a; 
-#else
-# error "Undefined byte order"
-#endif
-
-#ifndef __MAKETA__
-};};
-#endif // MAKETA
 };
 
 #endif // iColor_h

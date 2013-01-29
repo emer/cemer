@@ -21,9 +21,6 @@
 
 #include "config.h"
 
-//TEMP: comment out to use legacy layout for Qt 4.4; uncomment to enable for testing
-#define TA_USE_QFORMLAYOUT
-
 #ifndef __MAKETA__
 # if defined(_MSC_VER) //&& defined (_WIN64)
 #   define __restrict
@@ -77,15 +74,6 @@
 #  endif
 #  ifdef TA_PROFILE
 #    undef TA_PROFILE
-#  endif
-// we don't try scanning Qt's header files when running maketa
-#elif defined(__MAKETA__)
-#  include "qtdefs.h" // declares common classes so qxx.h files don't need to be included
-#else // normal ta, in all variants
-#  ifdef TA_USE_QT // normal to always include QT
-#    include <QtGlobal>
-#    include <qevent.h>
-#    include "qtdefs.h" // declares common qt and related classes often used by pointer
 #  endif
 #endif
 
@@ -227,18 +215,9 @@
 # include <stdint.h>
 #endif
 
-// define useful types -- some will be defined by QT, so don't define them if using QT
-
-#if ((defined TA_GUI) && (!defined __MAKETA__))
-
-#else // !def TA_GUI or making ta
-
 typedef unsigned short  ushort;
 typedef unsigned        uint;
 typedef unsigned long   ulong;
-
-#endif // TA_GUI
-
 typedef unsigned char   byte;
 
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
@@ -383,17 +362,14 @@ enum CustomEventType {
 #define SIGNAL_PROC_FUN_TYPE void (*)(int)
 #define SIGNAL_PROC_FUN_ARG(x) void (*x)(int)
 
-// Some misc. compatability defines -- made porting to Qt easier
-
-#ifdef TA_USE_QT
-// dummy defines for Qt -- its header files are too complex and parameterized for maketa
-#  include "ta_maketa_defs.h"
-#endif
-
 // required for ODE -- we use single precision only
 #define dSINGLE
 
 // Some global forward declarations
+
+class QObject; //
+class QWidget; //
+class QString; //
 
 class TypeDef; //
 class MemberDef; //

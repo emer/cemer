@@ -25,6 +25,8 @@
 #include <QHeaderView>
 #include <QCoreApplication>
 #include <QScrollBar>
+#include <QKeyEvent>
+
 
 iTableView::iTableView(QWidget* parent)
 :inherited(parent)

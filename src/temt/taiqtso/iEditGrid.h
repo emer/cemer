@@ -21,6 +21,12 @@
 #include <qsize.h>
 #include <QWidget>
 
+class QHBoxLayout; // 
+class iStripeWidget; //
+class QGridLayout; //
+class QScrollArea; //
+
+
 class TAIQTSO_API iEditGrid: public QWidget {
   Q_OBJECT
 public:

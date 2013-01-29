@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QMenuBar; //
+
 
 class TA_API taiMenuBar : public taiActions {
   // top level menu bar

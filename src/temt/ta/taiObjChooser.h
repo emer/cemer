@@ -29,8 +29,13 @@
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
-class taList_impl;
-class taBase;
+class taList_impl; //
+class taBase; //
+class QGridLayout; //
+class QListWidget; //
+class QListWidgetItem; //
+class QHBoxLayout; // 
+class QLineEdit; //
 
 
 class TA_API taiObjChooser: iDialog {

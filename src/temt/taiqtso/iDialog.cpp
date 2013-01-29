@@ -19,6 +19,7 @@
 
 #include <QApplication>
 #include <QPointer>
+#include <QKeyEvent>
 
 iDialog::iDialog(QWidget* parent, Qt::WindowFlags f)
   : QDialog(parent, f)

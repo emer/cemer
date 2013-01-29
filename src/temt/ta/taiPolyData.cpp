@@ -82,7 +82,9 @@ void taiPolyData::AddTypeMembers() {
 void taiPolyData::Constr(QWidget* gui_parent_) {
   SetRep(MakeLayoutWidget(gui_parent_));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
+    QPalette pal = rep()->palette();
+    pal.setColor(QPalette::Background, host->colorOfCurRow());
+    rep()->setPalette(pal); 
   }
 }
 
@@ -94,7 +96,7 @@ void taiPolyData::ChildRemove(taiData* child) {
 }
 
 void taiPolyData::GetImage_impl(const void* base_) {
-  if (typ && typ->IsTaBase()) {
+  if (typ && typ->IsActualTaBase()) {
     m_child_base = (taBase*)base_; // used for Seledit ctxt menus, and similar
   }
   for (int i = 0; i < memb_el.size; ++i) {

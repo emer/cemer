@@ -76,29 +76,45 @@ static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
   String snm = nm;
   TypeDef* typ = TypeDef::FindGlobalTypeName(snm, false);
   if(!typ) { // not found -- need to create a new guy
-    taMisc::Info("tac_GetTypeFmName(): type named:", nm,
-                 "not found -- now creating it!");
     typ = new TypeDef(nm);
     typ->AddNewGlobalType(false);
     if(typ->name.endsWith("_ptr")) {
-      typ->SetType(TypeDef::POINTER);
       TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ptr"));
+      typ->type = par->type;
+      typ->SetType(TypeDef::POINTER);
       typ->AddParent(par);
+      taMisc::Info("tac_GetTypeFmName(): ptr type named:", nm,
+                   "not found -- created it!");
     }
-    if(typ->name.endsWith("_ref")) {
-      typ->SetType(TypeDef::REFERENCE);
+    else if(typ->name.endsWith("_ref")) {
       TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ref"));
+      typ->type = par->type;
+      typ->SetType(TypeDef::REFERENCE);
       typ->AddParent(par);
+      taMisc::Info("tac_GetTypeFmName(): ref type named:", nm,
+                   "not found -- created it!");
     }
-    if(typ->name.endsWith("_ary")) {
-      typ->SetType(TypeDef::ARRAY);
+    else if(typ->name.endsWith("_ary")) {
       TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ary"));
+      typ->type = par->type;
+      typ->SetType(TypeDef::ARRAY);
       typ->AddParent(par);
+      // arrays are OK
     }
-    if(typ->name.startsWith("const_")) {
-      typ->SetType(TypeDef::CONST);
+    else if(typ->name.startsWith("const_")) {
       TypeDef* par = tac_GetTypeFmName(tp, typ->name.after("const_"));
+      typ->type = par->type;
+      typ->SetType(TypeDef::CONST);
       typ->AddParent(par);
+      taMisc::Info("tac_GetTypeFmName(): const type named:", nm,
+                   "not found -- created it!");
+    }
+    else {                      // must be an unknown class
+      typ->AssignType(TypeDef::CLASS);
+      if(!(typ->name.startsWith("Q") || typ->name.startsWith("So"))) {
+        taMisc::Info("tac_GetTypeFmName(): unknown type named:", nm,
+                     "not found -- created it assuming a class");
+      }
     }
   }
   return typ;

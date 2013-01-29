@@ -466,7 +466,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     //note: if memb not found, then we assume it is in an iterated subobj...
     if (!md) return false;
 
-    if(TestError(!md->type->InheritsFrom(&TA_taBase),"ScanObject_InObject",
+    if(TestError(!md->type->IsActualTaBase(),"ScanObject_InObject",
                  "can only monitor taBase objects, not: ", md->type->name, " var: ", var)) {
       return true; //no mon, but we did handle it
     }

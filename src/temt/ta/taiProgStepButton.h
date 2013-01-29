@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class Program; //
+class QToolBar; //
+class QRadioButton; //
 
 
 class TA_API taiProgStepButton : public taiMethodData {

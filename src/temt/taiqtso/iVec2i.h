@@ -29,6 +29,9 @@
 class SbVec2s;          // #IGNORE
 #endif
 
+class QPoint; //
+
+
 TypeDef_Of(iVec2i);
 
 class TAIQTSO_API iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
