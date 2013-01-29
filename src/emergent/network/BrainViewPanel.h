@@ -24,13 +24,23 @@
 #include <voidptr_Matrix>
 
 // declare all other types mentioned but not required to include:
-class ColorScaleBar;             // #IGNORE
-class taiField;                  // #IGNORE
-class taiRegexpField;            // #IGNORE
-class BrainAtlasRegexpPopulator; // #IGNORE
-class iMethodButtonMgr;          // #IGNORE
-class BrainView;
-class taVector3i;
+class ColorScaleBar;             // 
+class taiField;                  // 
+class taiRegexpField;            // 
+class BrainAtlasRegexpPopulator; // 
+class iMethodButtonMgr;          // 
+class BrainView; //
+class taVector3i; //
+class QHBoxLayout; // 
+class QCheckBox; //
+class QTabWidget; //
+class QPushButton; //
+class QTreeWidget; //
+class QSpinBox; //
+class QComboBox; //
+class QSlider; //
+class QLabel; //
+class ISelectableHost; //
 
 TypeDef_Of(BrainViewPanel);
 

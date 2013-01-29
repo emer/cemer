@@ -38,6 +38,7 @@ class LayerView; //
 class T3Color;
 class T3NetNode; //
 class BaseSpec; //
+class QKeyEvent; //
 
 
 TypeDef_Of(NetViewFontSizes);

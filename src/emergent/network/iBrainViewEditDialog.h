@@ -23,6 +23,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class QModelIndex; //
+
 
 class EMERGENT_API iBrainViewEditDialog : public iRegexpDialog {
   Q_OBJECT

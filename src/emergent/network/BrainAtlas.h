@@ -21,11 +21,12 @@
 
 // member includes:
 #include <QList>
+#include <QString>
+
 
 // declare all other types mentioned but not required to include:
 class BrainAtlasLabel;
 class taVector3f;
-class QString;
 
 
 class EMERGENT_API BrainAtlas {

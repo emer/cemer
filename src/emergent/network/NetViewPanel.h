@@ -25,14 +25,24 @@
 // declare all other types mentioned but not required to include:
 class NetView; //
 class ColorScaleBar; //
-class taiField; // #IGNORE
-class taiComboBox; // #IGNORE
-class taiGroupElsButton; // #IGNORE
+class taiField; //
+class taiComboBox; //
+class taiGroupElsButton; //
 class iTreeView; //
 class iTreeViewItem; //
 class iMethodButtonMgr; //
-class taiRegexpField; // #IGNORE
+class taiRegexpField; //
 class BaseSpec; //
+class QHBoxLayout; // 
+class QCheckBox; //
+class QToolBar; //
+class QLabel; //
+class QPushButton; //
+class QAction; //
+class QTabWidget; //
+class QTreeWidget; //
+class ISelectableHost; //
+
 
 TypeDef_Of(NetViewPanel);
 

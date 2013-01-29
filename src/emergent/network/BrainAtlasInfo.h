@@ -20,6 +20,7 @@
 #include "network_def.h"
 
 // member includes:
+#include <QString>
 
 // declare all other types mentioned but not required to include:
 

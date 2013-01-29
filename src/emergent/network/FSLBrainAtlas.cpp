@@ -18,6 +18,7 @@
 #include <FSLBrainAtlasFileComposer>
 #include <BrainAtlasInfo>
 #include <NiftiReader>
+#include <QSet>
 
 #include <taMisc>
 

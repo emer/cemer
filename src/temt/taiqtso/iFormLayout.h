@@ -18,8 +18,6 @@
 
 #include "taiqtso_def.h"
 
-#if (QT_VERSION >= 0x040400)
-
 #include <QFormLayout>
 
 #ifndef __MAKETA__
@@ -53,7 +51,5 @@ protected:
 private:
   void init();
 };
-
-#endif // Qt 4.4
 
 #endif // iFormLayout_h

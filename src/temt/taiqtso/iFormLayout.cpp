@@ -15,8 +15,6 @@
 
 #include "iFormLayout.h"
 
-#if (QT_VERSION >= 0x040400)
-
 template class QMap<int, QWidget*>; // instantiate
 template class QMap<int, QLayout*>; // instantiate
 
@@ -52,22 +50,6 @@ int iFormLayout::GetIndexFromRowRole(int row, ItemRole role) {
     getItemPosition(index, &trow, &trole);
   }
   return index;
-  
-/*  
-  // make an educated guess, then iterate in until same
-  int index = (row * 2) + role;
-  int trow;
-  ItemRole trole;
-  getItemPosition(index, &trow, &trole);
-  while ((index >= 0) && ((row != trow) || (role != trole))) {
-    // following is not optimum, but is simple, and we must be close...
-    if ((trow == -1) || (row < trow) || ((row == trow) && (role < trole)))
-      index--;
-    else index++;
-    getItemPosition(index, &trow, &trole);
-  }
-  return index;
-*/  
 }
 
 bool iFormLayout::isVisible(int row) {
@@ -114,4 +96,3 @@ void iFormLayout::setVisible(int row, bool val) {
   }
 }
 
-#endif // Qt 4.4

@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoCylinder; //
 
 
 class EMERGENT_API T3UnitNode_Circle: public T3UnitNode { // 2d color

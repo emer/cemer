@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoCube; //
 
 
 class EMERGENT_API T3UnitNode_Block: public T3UnitNode { // 2d color

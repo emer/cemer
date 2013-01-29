@@ -22,6 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoCylinder; //
+
 
 class EMERGENT_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
 #ifndef __MAKETA__

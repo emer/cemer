@@ -32,6 +32,7 @@
 #include <MainWindowViewer>
 #include <T3LayerNode>
 #include <T3UnitGroupNode>
+#include <QKeyEvent>
 
 #include <taMisc>
 
