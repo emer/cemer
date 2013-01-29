@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/stdafx.h"
+#include "../src/temt/ta/stdafx.h"

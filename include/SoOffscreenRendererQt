@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/SoOffscreenRendererQt.h"
+#include "../src/temt/ta/SoOffscreenRendererQt.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/QConsole.h"
+#include "../src/temt/ta/QConsole.h"

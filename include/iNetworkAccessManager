@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/iNetworkAccessManager.h"
+#include "../src/temt/ta/iNetworkAccessManager.h"

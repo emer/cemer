@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/iColorButton.h"
+#include "../src/temt/ta/iColorButton.h"

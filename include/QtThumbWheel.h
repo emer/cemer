@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/QtThumbWheel.h"
+#include "../src/temt/ta/QtThumbWheel.h"

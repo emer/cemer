@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/iTreeWidgetItem.h"
+#include "../src/temt/ta/iTreeWidgetItem.h"

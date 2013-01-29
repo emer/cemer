@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/taiqtso_def.h"
+#include "../src/temt/ta/taiqtso_def.h"

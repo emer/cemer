@@ -17,6 +17,13 @@ set(ta_HEADS_MAKETA_LOCAL
   maketa_fstream.h
   maketa_sstream.h
 
+  iVec2i.h
+  iVec3i.h
+  iSize.h
+  iRect.h
+  iVec3f.h
+  iBox3f.h
+
   taBasicAtomicInt.h
   taAtomicInt.h
   taString.h
@@ -771,6 +778,13 @@ set(ta_HEADS_NOMAKETA
   ta_stdef.h
   ta_def.h
 
+  SoPtr.h
+  SoOffscreenRendererQt.h
+  iStripeWidget.h
+  iFlowLayout.h
+  iFormLayout.h
+  iTreeWidgetItem.h
+
   DataChangedReason.h
 
   ProgramRef.h
@@ -869,6 +883,35 @@ set(ta_HEADS_NOMAKETA
 )
 
 set(ta_HEADS_NOMAKETA_MOC
+  AutoSaver.h
+  iMenuButton.h
+  iContextMenuButton.h
+  iColorButton.h
+  iCheckBox.h
+  iClipWidgetAction.h
+  iClipToolWidget.h
+  iComboBox.h
+  iCookieJar.h
+  iDialog.h
+  iDimEdit.h
+  iEditGrid.h
+  iLabel.h
+  iLineEdit.h
+  iTextEditDialog.h
+  iNetworkAccessManager.h
+  Interceptor.h
+  iScrollArea.h
+  iSplitter.h
+  iSplitterHandle.h
+  iSpinBox.h
+  iTextBrowser.h
+  iTextEdit.h
+  iTreeWidget.h
+  NumberBar.h
+  NumberedTextView.h
+  QtThumbWheel.h
+  QConsole.h
+
   taPluginInst.h
   iPluginEditor.h
 
@@ -1000,12 +1043,6 @@ set(ta_HEADS_NOMAKETA_MOC
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
-  ../taiqtso/iVec2i.h
-  ../taiqtso/iVec3i.h
-  ../taiqtso/iSize.h
-  ../taiqtso/iRect.h
-  ../taiqtso/iVec3f.h
-  ../taiqtso/iBox3f.h
   ${ta_HEADS_MAKETA_LOCAL}
   ${ta_HEADS_MAKETA_MOC}
 )
@@ -1688,6 +1725,47 @@ set(ta_SRCS_MAKETA
 
 # these correspond to TA_HEADS_NOMAKETA
 set(ta_SRCS_NOMAKETA
+  AutoSaver.cpp
+  iMenuButton.cpp
+  iContextMenuButton.cpp
+  iColorButton.cpp
+  iCheckBox.cpp
+  iClipWidgetAction.cpp
+  iClipToolWidget.cpp
+  iComboBox.cpp
+  iCookieJar.cpp
+  iDialog.cpp
+  iDimEdit.cpp
+  iStripeWidget.cpp
+  iEditGrid.cpp
+  iFlowLayout.cpp
+  iFormLayout.cpp
+  iVec2i.cpp
+  iSize.cpp
+  iRect.cpp
+  iVec3i.cpp
+  iVec3f.cpp
+  iBox3f.cpp
+  iLabel.cpp
+  iLineEdit.cpp
+  iTextEditDialog.cpp
+  iNetworkAccessManager.cpp
+  Interceptor.cpp
+  SoOffscreenRendererQt.cpp
+  iScrollArea.cpp
+  iSplitter.cpp
+  iSplitterHandle.cpp
+  iSpinBox.cpp
+  iTextBrowser.cpp
+  iTextEdit.cpp
+  iTreeWidgetItem.cpp
+  iTreeWidget.cpp
+  NumberBar.cpp
+  NumberedTextView.cpp
+  QtThumbWheel.cpp
+  QConsole.cpp
+  SoPtr.cpp
+
   VPUnref.cpp
   VPUList.cpp
   DumpPathSub.cpp
@@ -1974,6 +2052,10 @@ set(ta_SRCS_NOMAKETA
   SoScrollBar.cpp
   T3Color.cpp
   SoCapsule.cpp
+)
+
+set(ta_SRCS_UI
+  passworddialog.ui
 )
 
 set(ta_SRCS

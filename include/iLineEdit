@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/iLineEdit.h"
+#include "../src/temt/ta/iLineEdit.h"

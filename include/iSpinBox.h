@@ -1,1 +1,1 @@
-#include "../src/temt/taiqtso/iSpinBox.h"
+#include "../src/temt/ta/iSpinBox.h"

@@ -159,7 +159,6 @@ endif (NOT WIN32)
 
 # TEMT system: The EMergent Toolkit
 add_subdirectory(src/temt/maketa)
-add_subdirectory(src/temt/taiqtso)
 add_subdirectory(src/temt/ta)
 add_subdirectory(src/temt/css)
 add_subdirectory(src/temt/lib)
