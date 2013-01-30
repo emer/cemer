@@ -37,7 +37,7 @@ void MemberProgEl::UpdateAfterEdit_impl() {
       }
     }
     path += member_lookup->name;
-    if(member_lookup->type->IsClass())
+    if(member_lookup->type->IsActualClassNoEff())
       path += ".";
     member_lookup = NULL;
   }

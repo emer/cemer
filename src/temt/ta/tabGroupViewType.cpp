@@ -136,7 +136,7 @@ void taiTypeBase::InitializeTypes(bool gui) {
     // the highest bid for the member's it (may be based on opts field)
     // and do the enum types since they are not global and only on members
 
-    if (gui && td->IsActualClass()) {
+    if (gui && td->IsActualClassNoEff()) {
       for (j=0; j < td->members.size; ++j) {
         MemberDef* md = td->members.FastEl(j);
         if (md->owner->owner != td) continue; // if we do not own this mdef, skip
@@ -181,7 +181,7 @@ void taiTypeBase::InitializeTypes(bool gui) {
         }
       }
 
-    } // td->IsActualClass()
+    } // td->IsActualClassNoEff()
 
   } // for each Type
 

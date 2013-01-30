@@ -68,11 +68,11 @@ String taTypeSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& 
 bool taTypeSpaceDataLink::ShowChild(TypeDef* td) const {
   bool rval = false; // have to find at least one show condition
   if (dm & DM_ShowRoot) {
-    if (td->IsClass()) return false;
+    if (td->IsActualClassNoEff()) return false;
     else rval = true;
   }
   if (dm & DM_ShowNonRoot) {
-    if (!(td->IsClass())) return false;
+    if (!(td->IsActualClassNoEff())) return false;
     else rval = true;
   }
   if (dm & DM_ShowEnums) {

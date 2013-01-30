@@ -892,15 +892,14 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
                           TypeDef* p3, int p3_off, TypeDef* p4, int p4_off,
                           TypeDef* p5, int p5_off, TypeDef* p6, int p6_off)
 {
-  bool mi = false;
   if(p1 != NULL)    AddParent(p1,p1_off);
-  if(p2 != NULL)    { AddParent(p2,p2_off); mi = true; }
+  if(p2 != NULL)    AddParent(p2,p2_off);
   if(p3 != NULL)    AddParent(p3,p3_off);
   if(p4 != NULL)    AddParent(p4,p4_off);
   if(p5 != NULL)    AddParent(p5,p5_off);
   if(p6 != NULL)    AddParent(p6,p6_off);
-
-  if(mi)            ComputeMembBaseOff();
+  // note: need to call ComputeMembBaseOff(); once all the info is in place for 
+  // all parents 
 }
 
 void TypeDef::SetParOffsets(int p1_off, int p2_off,
@@ -908,14 +907,14 @@ void TypeDef::SetParOffsets(int p1_off, int p2_off,
                             int p5_off, int p6_off)
 {
   par_off.SetSize(parents.size);
-  bool mi = false;
   if(par_off.size >= 1)    par_off[0] = p1_off;
-  if(par_off.size >= 2)    { par_off[1] = p2_off; mi = true; }
+  if(par_off.size >= 2)    par_off[1] = p2_off;
   if(par_off.size >= 3)    par_off[2] = p3_off;
   if(par_off.size >= 4)    par_off[3] = p4_off;
   if(par_off.size >= 5)    par_off[4] = p5_off;
   if(par_off.size >= 6)    par_off[5] = p6_off;
-  if(mi)            ComputeMembBaseOff();
+  // note: need to call ComputeMembBaseOff(); once all the info is in place!
+  // all parents 
 }
 
 void TypeDef::AddTemplPars(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
@@ -1980,7 +1979,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     }
     else
 #endif
-      if(IsClass()) {
+      if(IsActualClassNoEff()) {
         return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc);
       }
   }
@@ -2150,9 +2149,10 @@ bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
 {
   // some cases are simple, for non-class values
   if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
-      (IsAnyPtr()) || !IsActualClass()) {
+      (IsAnyPtr()) || !IsActualClassNoEff()) {
     return ValIsEmpty(base, memb_def); // note: show not used for single guy
-  } else { // instance of a class, so must recursively determine
+  }
+  else { // instance of a class, so must recursively determine
     // just find all eligible guys, and return true if none fail
     for (int i = 0; i < members.size; ++i) {
       MemberDef* md = members.FastEl(i);
@@ -2432,7 +2432,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
         continue;
       }
     }
-    if (md->type->IsClass()) {
+    if (md->type->IsActualClassNoEff()) {
       primitives[curr_prim] = md->type->GetDMemType(share_set);
     }
     else if (md->type->InheritsFrom(TA_double)) {
@@ -2549,7 +2549,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
 void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {
-  if(IsActualClass()) {
+  if(IsActualClassNoEff()) {
 #ifndef NO_TA_BASE
     if(IsTaBase()) {
       taBase* src = (taBase*)src_base;
@@ -2578,7 +2578,7 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
                               void* trg_base, void* src_base,
                               int show_forbidden, int show_allowed, bool no_ptrs,
                               bool test_only) {
-  if(IsActualClass()) {
+  if(IsActualClassNoEff()) {
     return members.CompareSameType(mds, base_types, trg_bases, src_bases,
                                    this, trg_base, src_base,
                                    show_forbidden, show_allowed, no_ptrs, test_only);
@@ -2705,7 +2705,7 @@ String& TypeDef::Print(String& strm, void* base, int indent) const {
   }
 #endif
 
-  if(IsClass()) {
+  if(IsActualClassNoEff()) {
     strm << " {\n";
     members.Print(strm, base, indent+1);
     taMisc::IndentString(strm, indent) << "}\n";
@@ -2785,7 +2785,7 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
 }
 
 String TypeDef::GetHTML(bool gendoc) const {
-  if(!IsClass()) return GetHTMLLink(gendoc);
+  if(!IsActualClassNoEff()) return GetHTMLLink(gendoc);
 
   STRING_BUF(rval, 9096); // extends if needed
 
@@ -2844,8 +2844,13 @@ String TypeDef::GetHTML(bool gendoc) const {
   rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
   rval.cat("<p>See for more info: <a href=\"").cat(wiki_help_url).cat(name).cat("\">Wiki Docs For: ").cat(name).cat("</a></p>\n\n");
 
-  // NOTE: for include file tracking -- not a bad idea to actually record this info in maketa!!
-  //  rval.cat("<pre> #include &lt;QTextDocument&gt;</pre>\n");
+  String incnm = "&lt;" + name + "&gt";
+  if(!source_file.startsWith(name))
+    incnm = "\"" + source_file + "\"";
+
+  rval.cat("<pre> #include ").cat(incnm).cat("</pre>\n");
+  rval.cat("<p>(defined at: ").cat(source_file).cat(":")
+    .cat((String)source_start).cat("-").cat((String)source_end).cat("</p>\n");
 
   if(par_cache.size > 0) {
     int inhi = 0;
@@ -3132,7 +3137,7 @@ String TypeDef::Includes() {
     MemberDef* md = members[i];
     if(md->GetOwnerType() != this) continue;
     TypeDef* mtyp = md->type;
-    if(mtyp->IsActualClass() && mtyp->name != "taBasePtr") {
+    if(mtyp->IsActualClassNoEff() && mtyp->name != "taBasePtr") {
       if(inc_list.FindEl(mtyp) < 0) {
 	inc_str << "\n#include <" << mtyp->name << ">";
 	inc_list.Link(mtyp);
@@ -3276,7 +3281,7 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 //   }
 
   // then check for classes
-  if(IsNotPtr() && IsActualClass()) {
+  if(IsActualClassNoEff()) {
     GetObjDiffVal_class(odl, nest_lev, base, memb_def, par, par_typ, odr);
   }
 }

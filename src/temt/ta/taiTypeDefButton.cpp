@@ -35,7 +35,7 @@ taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
 
 taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
   if ((typ_->IsAnyPtr()) || (typ_->HasOption("HIDDEN"))) return TC_NoAdd;
-  if (!typ_->IsActualClass()) // only type classes please..
+  if (!typ_->IsActualClassNoEff()) // only type classes please..
     return TC_NoAdd;
   // no nested typedefs TODO: find a better way to identify nested typedefs
   if (typ_->name == "inherited") return TC_NoAdd;

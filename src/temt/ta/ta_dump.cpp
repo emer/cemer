@@ -115,8 +115,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   void* new_base = GetOff(base);
   TypeDef* eff_type = type;
   
-  // embedded classes can never be Variant, and are completely handled in this block
-  if (type->IsActualClass()) {
+  if (type->IsActualClassNoEff()) {
     taMisc::indent(strm, indent, 1) << name;
     if (type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
@@ -191,7 +190,7 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
   int rval = false;
   void* new_base = GetOff(base);
 
-  if (type->IsActualClass()) {
+  if (type->IsActualClassNoEff()) {
     if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_SaveR(strm, (taBase*)base, indent);
@@ -232,7 +231,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
   void* new_base = GetOff(base);
   
   
-  if (type->IsActualClass()) {
+  if (type->IsActualClassNoEff()) {
     if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
@@ -296,27 +295,14 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
 }
 
 int TypeDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent) {
-  if(IsActualClass()) {
+  if(IsActualClassNoEff()) {
     return members.Dump_Save_PathR(strm, base, par, indent);
   }
   return false;
 }
 
 int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
-/*  if (DerivesFrom(TA_Variant)) {
-    if (base == NULL) return false;
-    Variant& var = *((Variant*)(base));
-    bool is_null = var.isNull();
-    strm << " " << (int)var.type() << " " << (is_null) ? '1' : '0';
-    if ((var.type() != Variant::T_Invalid) && !is_null) {
-      TypeDef* var_typ; void* var_data;
-      var.GetRepInfo(var_typ, var_data);
-      strm << " = " << var_typ->GetValStr(var_data, par);
-    }
-    strm << ";\n";
-  }
-  else */
-  if (IsActualClass()) {
+  if (IsActualClassNoEff()) {
     // semi-hack to not do INLINE if taBase has user data
     bool inline_dump = HasOption("INLINE_DUMP");
     if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
@@ -360,7 +346,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Path(strm, base, par, indent);
     Dump_Save_Value(strm, base, par, indent);
   }
-  if(IsActualClass()) {
+  if(IsActualClassNoEff()) {
     bool inline_dump = HasOption("INLINE_DUMP");
     if (inline_dump && DerivesFrom(&TA_taOBase) && IsNotPtr()) {
       inline_dump = !((taOBase*)base)->HasUserDataList();
@@ -399,7 +385,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   }
   // note: we don't do our INLINE hack here, because this code only looks
   // for *non* INLINE guys in this context...
-  if(IsActualClass() && !HasOption("INLINE_DUMP")) {
+  if(IsActualClassNoEff() && !HasOption("INLINE_DUMP")) {
     if(IsTaBase()) {
       taBase* rbase = (taBase*)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
@@ -463,9 +449,10 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
     rbase->Dump_Save_impl(strm, (taBase*)par, indent);
-  } else {
+  }
+  else {
     Dump_Save_Path(strm, base, par, indent);
-    if (IsActualClass()) {
+    if (IsActualClassNoEff()) {
       strm << " { ";
       if(Dump_Save_PathR(strm, base, par, indent))
 	taMisc::indent(strm, indent, 1);
@@ -648,7 +635,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
   int rval;
   TypeDef* eff_type = type; // overridden for variants
 
-  if (type->IsActualClass()) {
+  if (type->IsActualClassNoEff()) {
     if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
       rval = rbase->Dump_Load_impl(strm, (taBase*)base);
@@ -974,7 +961,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     taMisc::LexBuf = String("{") + taMisc::LexBuf; // put lb back in..
     SetValStr(taMisc::LexBuf, base);
   }
-  else if(IsActualClass()) {
+  else if(IsActualClassNoEff()) {
     if(c != '{') {
       taMisc::Warning("Missing '{' in dump file for type:",name);
       return false;

@@ -92,7 +92,7 @@ void DMemAggVars::ScanMembers_impl(TypeDef* td, void* base) {
     if(!((trg_op_str.empty() && (opstr == "DYN")) || (opstr == trg_op_str))) continue;
 
     MPI_Datatype new_type = MPI_DATATYPE_NULL;
-    if(md->type->IsClass()) {
+    if(md->type->IsActualClassNoEff()) {
       ScanMembers_impl(md->type, md->GetOff(base));
       continue;
     }

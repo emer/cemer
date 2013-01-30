@@ -1233,6 +1233,13 @@ bool taRootBase::Startup_InitTA() {
   // only call inst once all the type information is fully in place!
   TypeDefInitRegistrar::CallAllInstInitFuns();
 
+  // finally, once the base offsets are in place, update the member base offsets
+  for(int i=0; i< taMisc::types.size; i++) {
+    TypeDef* td = taMisc::types[i];
+    if(!td->IsActualClass()) continue;
+    td->ComputeMembBaseOff();
+  }
+
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 

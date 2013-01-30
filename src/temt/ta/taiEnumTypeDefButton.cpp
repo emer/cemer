@@ -98,7 +98,7 @@ int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
   // add entries for the subclasses (but only full class types)
   for (int i = 0; i < top_typ->children.size; ++i) {
     TypeDef* chld = top_typ->children.FastEl(i);
-    if (chld->IsAnyPtr() || !chld->IsClass())
+    if(!chld->IsActualClassNoEff())
       continue;
     //note: we are recursive, but aren't making a tree
     int num = BuildChooser_0(ic, chld, top_item);

@@ -182,19 +182,15 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 
 void MTA::FixClassTypes(TypeDef* td) {
   if(td->name == "taString") {
-    td->ClearType(TypeDef::CLASS);
     td->SetType(TypeDef::STRING);
   }
   else if(td->name == "Variant") {
-    td->ClearType(TypeDef::CLASS);
     td->SetType(TypeDef::VARIANT);
   }
   else if(td->HasOption("SMART_POINTER")) {
-    td->ClearType(TypeDef::CLASS);
     td->SetType(TypeDef::SMART_PTR);
   }
   else if(td->HasOption("SMART_INT")) {
-    td->ClearType(TypeDef::CLASS);
     td->SetType(TypeDef::SMART_INT);
   }
   else if(td->InheritsFromName("taBase")) {

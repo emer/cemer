@@ -183,6 +183,7 @@ public:
   inline bool   IsAtomicEff() const { return HasType(ATOMIC_EFF); }
   inline bool   IsClass() const { return HasType(CLASS); }
   inline bool   IsActualClass() const { return HasType(CLASS) && IsActual(); }
+  inline bool   IsActualClassNoEff() const { return IsActualClass() && !IsAtomicEff(); }
   inline bool   IsTemplate() const { return HasType(TEMPLATE); }
   inline bool   IsTemplInst() const { return HasType(TEMPLATE_INST); }
   inline bool   IsStruct() const { return HasType(STRUCT); }

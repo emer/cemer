@@ -1208,7 +1208,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   if(taMisc::use_gui) {
     for (int i = 0; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);
-      if(typ->IsNotActual() || !typ->IsClass()) continue;
+      if(!typ->IsActualClassNoEff()) continue;
       init_inventor_type(typ);
     }
   }

@@ -35,7 +35,7 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
   if (!dsc_str.empty())
     dsc_str += "<br>";
   dsc_str += desc;
-  if(md->type->IsClass() &&
+  if(md->type->IsActualClassNoEff() &&
      (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
@@ -239,7 +239,7 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
                                 int show_forbidden, int show_allowed, bool no_ptrs,
                                 bool test_only) {
   bool some_diff = false;
-  if(type->IsClass()) {
+  if(type->IsActualClassNoEff()) {
     if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
       // check the members
       some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
