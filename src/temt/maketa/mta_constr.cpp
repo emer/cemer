@@ -46,9 +46,9 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
     return false;
   }
   if(ths->IsTemplInst()) {
-    if(verbose >= 2) {
-      cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
-    }
+    // if(verbose >= 2) {
+    //   cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
+    // }
     if(ths->children.size > 0) {
       TypeDef* chld = ths->children[0];
       return TypeDef_Gen_Test(chld); // we get instantiated where first parent lives!
@@ -388,7 +388,8 @@ void MTA::MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc,
       continue;
     }
 
-    if(nrt->IsNotPtr() && nrt->IsClass()) continue; // css class is implicit ptr anyway
+    if(nrt->IsNotPtr() && (nrt->IsClass() && !nrt->IsAtomicEff()))
+      continue; // css class is implicit ptr anyway
 
     int args_idx = j + stub_arg_off;
 
@@ -420,7 +421,8 @@ void MTA::MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm
       continue;
     }
 
-    if(nrt->IsNotPtr() && nrt->IsClass()) continue; // css class is implicit ptr anyway
+    if(nrt->IsNotPtr() && (nrt->IsClass() && !nrt->IsAtomicEff()))
+      continue; // css class is implicit ptr anyway
 
     int args_idx = j + stub_arg_off;
 
@@ -443,9 +445,12 @@ void MTA::MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm
       strm << "refarg_" << args_idx << ";";
       not_mod = false;          got_one = true;
     }
-    //TODO: seems to be a conceptual bug, since we should be able to pass
+    // NOTE: seems to be a conceptual bug, since we should be able to pass
     //  generic pointer to &ref to access the arg by value; therefore, no
     // copying back should be necessary, in fact, that is probably not desirable
+    // BUT: the issue here is that css guys do NOT pass by reference -- always by
+    // value, so they are not directly compatible -- would need to create a whole
+    // set of ref converter functions in cssEl to make this work -- could consider
     if(not_mod && (verbose > 0)) {
       String stargno = String(j);
       String stmbnm = ownr->Get_C_Name() + "::" + md->name + "()";
@@ -481,7 +486,8 @@ void MTA::MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& str
   TypeDef* class_typ = argt->GetActualClassType();
 
   if(argt->IsRef()) {
-    if(!argt->IsConst() && !(argt->IsNotPtr() && argt->IsClass())) {
+    if(!argt->IsConst() && !(argt->IsNotPtr() && (argt->IsClass() &&
+                                                  !argt->IsAtomicEff()))) {
       // non-const reference arg..
       if(!add_typedefs) {
         strm << "refarg_" << args_idx;
@@ -645,31 +651,51 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
     strm << "  ";
   }
 
+  TypeDef* act_typ = md->type->GetActualType();
+
+  bool no_new = false;
   bool has_rval = ((md->type->IsAnyPtr()) || (md->type != &TA_void));
   if (md->type->IsNotPtr()) {
     has_rval = true;
-    if (md->type->IsVoid()) // explicitly not, so ok,
+    if (md->type->IsVoid()) { // explicitly not, so ok,
       has_rval = false;
-    else if(md->type->IsVariant() || md->type->DerivesFrom(TA_uint64_t))
+      if(!md->type->name.contains("void")) {
+        if(add_typedefs) {
+          cerr << "W!!: non-void type is marked void in file: " << cur_fname
+               << " method: " << md->name
+               << " so I don't know how to handle return type: " << md->type->name
+               << " -- it will be ignored!\n";
+        }
+      }
+    }
+    else if(md->type->IsVariant() || md->type->DerivesFrom(TA_uint64_t)) {
       cmd = "cssVariant(";
-    else if(md->type->DerivesFrom(TA_int64_t))
+    }
+    else if(md->type->DerivesFrom(TA_int64_t)) {
       cmd = "cssInt64(";
-    else if (md->type->DerivesFrom(TA_char))
+    }
+    else if (md->type->DerivesFrom(TA_char)) {
       cmd = "cssChar(";
-    else if (md->type->IsInt())
+    }
+    else if (md->type->IsInt()) {
       cmd = "cssInt((int)";
-    else if (md->type->IsBool())
+    }
+    else if (md->type->IsBool()) {
       cmd = "cssBool(";
-    else if(md->type->IsFloat())
+    }
+    else if(md->type->IsFloat()) {
       cmd = "cssReal((double)";
-    else if (md->type->IsString())
+    }
+    else if (md->type->IsString()) {
       cmd = "cssString(";
-    else if (md->type->IsEnum())
+    }
+    else if (md->type->IsEnum()) {
       cmd = "cssInt((int)";
+    }
     else {
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
-      if (verbose > 0) {
+      if(add_typedefs) {
         cerr << "W!!: Warning: in file: " << cur_fname << " method: " << md->name <<
           " don't know how to handle return type: " << md->type->name <<
           " so it will be ignored!\n";
@@ -693,64 +719,80 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
     // TODO: wrapping unsigned types with a signed wrapper as we do will
     // give wrong behavior when the value is > MAX_xxx (i.e. looks -ve to int type
     // We should have distinct signed/unsigned types
-    if(md->type->IsInt()) {
-      if(md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int))
+    if(md->type->IsAtomic()) {
+      if(md->type->IsInt()) {
+        if(md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int))
+          cmd = "cssCPtr_int(";
+        else if(md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short))
+          cmd = "cssCPtr_short(";
+        else if(md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_unsigned_long))
+          cmd = "cssCPtr_long(";
+        //NOTE: slightly wrong conceptually to include the signed/unsigned, since these
+        // are really math types, not a char type, but the ptr groks the size, so that is
+        // more important, and the cssChar type can grok math, so only output might be affected
+        else if(md->type->DerivesFrom(TA_char) || md->type->DerivesFrom(TA_signed_char) ||
+                md->type->DerivesFrom(TA_unsigned_char))
+          cmd = "cssCPtr_char(";
+        //TODO: wrapping uint64 in int64 will give incorrect results for large vals!
+        else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
+          cmd = "cssCPtr_long_long(";
+      }
+      else if(md->type->IsEnum()) {
         cmd = "cssCPtr_int(";
-      else if(md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short))
-        cmd = "cssCPtr_short(";
-      else if(md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_unsigned_long))
-        cmd = "cssCPtr_long(";
-      //NOTE: slightly wrong conceptually to include the signed/unsigned, since these
-      // are really math types, not a char type, but the ptr groks the size, so that is
-      // more important, and the cssChar type can grok math, so only output might be affected
-      else if(md->type->DerivesFrom(TA_char) || md->type->DerivesFrom(TA_signed_char) ||
-              md->type->DerivesFrom(TA_unsigned_char))
-        cmd = "cssCPtr_char(";
-      //TODO: wrapping uint64 in int64 will give incorrect results for large vals!
-      else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
-        cmd = "cssCPtr_long_long(";
+      }
+      else if(md->type->IsFloat()) {
+        if(md->type->DerivesFrom(TA_double))
+          cmd = "cssCPtr_double(";
+        else if(md->type->DerivesFrom(TA_float))
+          cmd = "cssCPtr_float(";
+      }
+      else if(md->type->IsBool())
+        cmd = "cssCPtr_bool(";
     }
-    else if(md->type->IsEnum())
-      cmd = "cssCPtr_int(";
-    else if(md->type->DerivesFrom(TA_double))
-      cmd = "cssCPtr_double(";
-    else if(md->type->DerivesFrom(TA_float))
-      cmd = "cssCPtr_float(";
-    else if(md->type->IsBool())
-      cmd = "cssCPtr_bool(";
-    else if(md->type->DerivesFrom(TA_taString))
-      cmd = "cssCPtr_String(";
-    else if(md->type->DerivesFrom(TA_Variant))
-      cmd = "cssCPtr_Variant(";
+    else if(md->type->IsAtomicEff()) {
+      if(md->type->DerivesFrom(TA_taString))
+        cmd = "cssCPtr_String(";
+      else if(md->type->DerivesFrom(TA_Variant))
+        cmd = "cssCPtr_Variant(";
+    }
     else if(md->type->IsTaBase()) {
-      TypeDef* cltp = md->type->GetActualClassType();
+      // NOTE: many times the taBase status of a type is NOT known because it is
+      // simply a "class TypeName;" declare with no inheritance information at all
+      // therefore, Inherits doesn't work, and so we rely on names..
       include_td = true;
-      if(cltp->name.endsWith("_Matrix")) { // apparently inherits not working here
+      if(act_typ->name.endsWith("_Matrix")) { // see above note
         cmd = "cssTA_Matrix(";
       }
       else {
         cmd = "cssTA_Base(";
       }
     }
-    else if(md->type->DerivesFrom(TA_TypeDef)) {
+    else if(md->type->DerivesFrom(TA_TypeDef) || act_typ->name == "TypeDef") {
       cmd = "cssTypeDef(";
       include_td = true;
     }
-    else if(md->type->DerivesFrom(TA_MethodDef)) {
+    else if(md->type->DerivesFrom(TA_MethodDef) || act_typ->name == "MethodDef") {
       cmd = "cssMethodDef(";
       include_td = true;
     }
-    else if(md->type->DerivesFrom(TA_MemberDef)) {
+    else if(md->type->DerivesFrom(TA_MemberDef) || act_typ->name == "MemberDef") {
       cmd = "cssMemberDef(";
       include_td = true;
     }
     else {
-      cmd = "cssTA(";
+      // this is the generic fallback for all guys -- dynamic runtime lookup of type!
+      cmd = "cssTA::MakeTA(";
+      no_new = true;
       include_td = true;
     }
     // everything is cast into a void*!
     if(!add_typedefs) {
-      strm << "rval=new " << cmd << "(void*)";
+      if(no_new) {
+        strm << "rval=" << cmd << "(void*)";
+      }
+      else {
+        strm << "rval=new " << cmd << "(void*)";
+      }
       MethodDef_GenStubCall(ownr, md, strm);
     }
     MethodDef_GenArgs(md, strm, act_argc, add_typedefs);

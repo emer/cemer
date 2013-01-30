@@ -134,7 +134,7 @@ typedefn: typedefns			{
 	    $$ = sp->AddUniqNameOld($1);
             // a typedef can never be literally a template or a template inst!
             $$->ClearType(TypeDef::TEMPLATE);
-            $$->ClearType(TypeDef::TEMPLATE_INST);
+            $$->ClearType(TypeDef::TEMPL_INST);
 	    if($$ == $1) mta->TypeAdded("typedef", sp, $$); } }
         ;
 
@@ -150,10 +150,10 @@ typedsub: MP_TYPEDEF defn		{ $$ = $2; }
         ;
 
 defn:     type tyname term		{
-            $$ = $2; $2->AddParent($1); $2->type = $1->type;
+            $$ = $2; $2->AddParent($1); $2->AssignType($1->type);
 	    mta->type_stack.Pop(); }
         | type MP_COMMENT tyname term	{ /* annoying place for a comment, but.. */
-            $$ = $3; $3->AddParent($1); $3->type = $1->type;
+            $$ = $3; $3->AddParent($1); $3->AssignType($1->type);
 	    mta->type_stack.Pop(); }
         /* predeclared type, which gets sucked in by the combtype list
 	   the second parent of the new type is the actual new type */
@@ -733,10 +733,12 @@ constype: subtype
         ;
 
 subtype:  combtype
-        | structkeyword combtype	{ $$ = $2; }
-        | structkeyword tyname		{ $$ = $2; }
-        | unionkeyword combtype		{ $$ = $2; }
-        | unionkeyword tyname		{ $$ = $2; }
+        | structkeyword combtype	{ $$ = $2; $$->SetType(TypeDef::STRUCT);
+            $$->ClearType(TypeDef::VOID); }
+        | structkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::STRUCT); }
+        | unionkeyword combtype		{ $$ = $2; $$->SetType(TypeDef::UNION);
+            $$->ClearType(TypeDef::VOID); }
+        | unionkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::UNION); }
 	| MP_TYPE MP_SCOPER MP_NAME	{
 	    TypeDef* td; if((td = $1->sub_types.FindName($3)) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -775,7 +777,9 @@ subtype:  combtype
 combtype: MP_TYPE
         | combtype MP_TYPE		{
 	    String nm = $1->name + "_" + $2->name;
-	    TypeDef* nty = new TypeDef((char*)nm, true);
+	    TypeDef* nty = new TypeDef((char*)nm);
+            nty->AssignType($1->type); // get from first guy
+            nty->SetType($2->type);   // add from second
 	    TypeSpace* sp = mta->GetTypeSpace($2);
 	    $$ = sp->AddUniqNameOld(nty);
 	    if($$ == nty) { mta->TypeAdded("combo", sp, $$);

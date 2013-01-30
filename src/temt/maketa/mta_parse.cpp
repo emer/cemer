@@ -586,10 +586,10 @@ static const yytype_uint16 yyrline[] =
      624,   625,   628,   629,   632,   633,   634,   637,   639,   650,
      654,   658,   662,   666,   673,   674,   677,   681,   685,   688,
      689,   692,   695,   696,   697,   700,   704,   705,   714,   715,
-     726,   727,   735,   736,   737,   738,   739,   740,   744,   748,
-     749,   750,   751,   752,   769,   775,   776,   788,   789,   794,
-     795,   796,   800,   801,   804,   805,   808,   811,   812,   813,
-     817,   821,   825,   829
+     726,   727,   735,   736,   738,   739,   741,   742,   746,   750,
+     751,   752,   753,   754,   771,   777,   778,   792,   793,   798,
+     799,   800,   804,   805,   808,   809,   812,   815,   816,   817,
+     821,   825,   829,   833
 };
 #endif
 
@@ -1845,7 +1845,7 @@ yyreduce:
 	    (yyval.typ) = sp->AddUniqNameOld((yyvsp[(1) - (1)].typ));
             // a typedef can never be literally a template or a template inst!
             (yyval.typ)->ClearType(TypeDef::TEMPLATE);
-            (yyval.typ)->ClearType(TypeDef::TEMPLATE_INST);
+            (yyval.typ)->ClearType(TypeDef::TEMPL_INST);
 	    if((yyval.typ) == (yyvsp[(1) - (1)].typ)) mta->TypeAdded("typedef", sp, (yyval.typ)); } }
     break;
 
@@ -1874,14 +1874,14 @@ yyreduce:
   case 15:
 #line 152 "mta_parse.y"
     {
-            (yyval.typ) = (yyvsp[(2) - (3)].typ); (yyvsp[(2) - (3)].typ)->AddParent((yyvsp[(1) - (3)].typ)); (yyvsp[(2) - (3)].typ)->type = (yyvsp[(1) - (3)].typ)->type;
+            (yyval.typ) = (yyvsp[(2) - (3)].typ); (yyvsp[(2) - (3)].typ)->AddParent((yyvsp[(1) - (3)].typ)); (yyvsp[(2) - (3)].typ)->AssignType((yyvsp[(1) - (3)].typ)->type);
 	    mta->type_stack.Pop(); }
     break;
 
   case 16:
 #line 155 "mta_parse.y"
     { /* annoying place for a comment, but.. */
-            (yyval.typ) = (yyvsp[(3) - (4)].typ); (yyvsp[(3) - (4)].typ)->AddParent((yyvsp[(1) - (4)].typ)); (yyvsp[(3) - (4)].typ)->type = (yyvsp[(1) - (4)].typ)->type;
+            (yyval.typ) = (yyvsp[(3) - (4)].typ); (yyvsp[(3) - (4)].typ)->AddParent((yyvsp[(1) - (4)].typ)); (yyvsp[(3) - (4)].typ)->AssignType((yyvsp[(1) - (4)].typ)->type);
 	    mta->type_stack.Pop(); }
     break;
 
@@ -2807,26 +2807,28 @@ yyreduce:
 
   case 183:
 #line 736 "mta_parse.y"
-    { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
+    { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->SetType(TypeDef::STRUCT);
+            (yyval.typ)->ClearType(TypeDef::VOID); }
     break;
 
   case 184:
-#line 737 "mta_parse.y"
-    { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
+#line 738 "mta_parse.y"
+    { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->AssignType(TypeDef::STRUCT); }
     break;
 
   case 185:
-#line 738 "mta_parse.y"
-    { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
+#line 739 "mta_parse.y"
+    { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->SetType(TypeDef::UNION);
+            (yyval.typ)->ClearType(TypeDef::VOID); }
     break;
 
   case 186:
-#line 739 "mta_parse.y"
-    { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
+#line 741 "mta_parse.y"
+    { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->AssignType(TypeDef::UNION); }
     break;
 
   case 187:
-#line 740 "mta_parse.y"
+#line 742 "mta_parse.y"
     {
 	    TypeDef* td; if((td = (yyvsp[(1) - (3)].typ)->sub_types.FindName((yyvsp[(3) - (3)].chr))) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -2834,7 +2836,7 @@ yyreduce:
     break;
 
   case 188:
-#line 744 "mta_parse.y"
+#line 746 "mta_parse.y"
     {
 	    TypeDef* td; if((td = (yyvsp[(1) - (3)].typ)->sub_types.FindName((yyvsp[(3) - (3)].chr))) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -2842,22 +2844,22 @@ yyreduce:
     break;
 
   case 189:
-#line 748 "mta_parse.y"
+#line 750 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(3) - (3)].typ); }
     break;
 
   case 190:
-#line 749 "mta_parse.y"
+#line 751 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(3) - (3)].typ); }
     break;
 
   case 191:
-#line 750 "mta_parse.y"
+#line 752 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
     break;
 
   case 193:
-#line 752 "mta_parse.y"
+#line 754 "mta_parse.y"
     { /* a template */
             if(!((yyvsp[(1) - (4)].typ)->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
@@ -2878,7 +2880,7 @@ yyreduce:
     break;
 
   case 194:
-#line 769 "mta_parse.y"
+#line 771 "mta_parse.y"
     { /* this template */
             if(!((yyvsp[(1) - (4)].typ)->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
@@ -2886,10 +2888,12 @@ yyreduce:
     break;
 
   case 196:
-#line 776 "mta_parse.y"
+#line 778 "mta_parse.y"
     {
 	    String nm = (yyvsp[(1) - (2)].typ)->name + "_" + (yyvsp[(2) - (2)].typ)->name;
-	    TypeDef* nty = new TypeDef((char*)nm, true);
+	    TypeDef* nty = new TypeDef((char*)nm);
+            nty->AssignType((yyvsp[(1) - (2)].typ)->type); // get from first guy
+            nty->SetType((yyvsp[(2) - (2)].typ)->type);   // add from second
 	    TypeSpace* sp = mta->GetTypeSpace((yyvsp[(2) - (2)].typ));
 	    (yyval.typ) = sp->AddUniqNameOld(nty);
 	    if((yyval.typ) == nty) { mta->TypeAdded("combo", sp, (yyval.typ));
@@ -2899,53 +2903,53 @@ yyreduce:
     break;
 
   case 198:
-#line 789 "mta_parse.y"
+#line 793 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(1) - (3)].typ); }
     break;
 
   case 199:
-#line 794 "mta_parse.y"
+#line 798 "mta_parse.y"
     { mta->cur_templ_pars.Link((yyvsp[(1) - (1)].typ)); }
     break;
 
   case 200:
-#line 795 "mta_parse.y"
+#line 799 "mta_parse.y"
     { (yyval.typ) = new TypeDef((yyvsp[(1) - (1)].chr)); mta->cur_templ_pars.Push((yyval.typ)); }
     break;
 
   case 201:
-#line 796 "mta_parse.y"
+#line 800 "mta_parse.y"
     { (yyval.typ) = new TypeDef((String)(yyvsp[(1) - (1)].rval)); mta->cur_templ_pars.Push((yyval.typ)); }
     break;
 
   case 203:
-#line 801 "mta_parse.y"
+#line 805 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (1)].typ)->name; }
     break;
 
   case 210:
-#line 817 "mta_parse.y"
-    { mta->defn_st_line = mta->line-1; }
-    break;
-
-  case 211:
 #line 821 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
-  case 212:
+  case 211:
 #line 825 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
-  case 213:
+  case 212:
 #line 829 "mta_parse.y"
+    { mta->defn_st_line = mta->line-1; }
+    break;
+
+  case 213:
+#line 833 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2949 "y.tab.c"
+#line 2953 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -3159,7 +3163,7 @@ yyreturn:
 }
 
 
-#line 832 "mta_parse.y"
+#line 836 "mta_parse.y"
 
 
 	/* end of grammar */

@@ -81,8 +81,8 @@ public:
   T3DataView*           singleChild() const; // return the single child
 
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
-  const iColor          GetBgColor() const; // get the effective bg color
-  const iColor          GetTextColor() const; // get the effective text color
+  const iColor          GetBgColor() const; // #IGNORE get the effective bg color
+  const iColor          GetTextColor() const; // #IGNORE get the effective text color
 
   virtual void          AddView(T3DataView* view); // add a view
   // #IGNORE

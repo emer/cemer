@@ -36,9 +36,9 @@ public:
   static bool           CheckComplexGeom(const MatrixGeom& gm, bool err = true);
   // #CAT_Complex check to make sure given geometry is correct for representing complex numbers (inner-most dimension size = 2, 2+ dims overall)
   static MatrixGeom     NonComplexGeom(const MatrixGeom& gm);
-  // #CAT_Complex return the equivalent geometry for a non-complex matrix of the same size as given geometry (i.e., remove the inner-most dimension)
+  // #CAT_Complex #IGNORE return the equivalent geometry for a non-complex matrix of the same size as given geometry (i.e., remove the inner-most dimension)
   static MatrixGeom     ComplexGeom(const MatrixGeom& gm);
-  // #CAT_Complex return the equivalent geometry for complex matrix of the same size as given geometry (i.e., add the inner-most dimension)
+  // #CAT_Complex #IGNORE return the equivalent geometry for complex matrix of the same size as given geometry (i.e., add the inner-most dimension)
 
   virtual  double_Matrix* SqMag() const;
   // #CAT_Complex return a new double matrix that contains the squared magnitudes of the complex numbers in this matrix (real * real + imag * imag)

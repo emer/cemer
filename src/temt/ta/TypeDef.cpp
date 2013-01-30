@@ -227,6 +227,13 @@ TypeDef::~TypeDef() {
     taMisc::not_constr = true;
 }
 
+void TypeDef::CopyActualType(const TypeDef& cp) {
+  int my_mods = type & ALL_MODS;
+  type = cp.type;               // grab their values
+  ClearType(ALL_MODS);     // erase any of their mods
+  SetType((TypeType)my_mods);        // reinstate my mods
+}
+
 #ifndef NO_TA_BASE
 void TypeDef::AddUserDataSchema(UserDataItemBase* item) {
   if (!schema) {
@@ -283,22 +290,21 @@ String TypeDef::GetTypeEnumString() const {
   if(HasType(SMART_INT)) rval += "|TypeDef::SMART_INT";
   if(HasType(CLASS)) rval += "|TypeDef::CLASS";
   if(HasType(TEMPLATE)) rval += "|TypeDef::TEMPLATE";
-  if(HasType(TEMPLATE_INST)) rval += "|TypeDef::TEMPLATE_INST";
+  if(HasType(TEMPL_INST)) rval += "|TypeDef::TEMPL_INST";
   if(HasType(STRUCT)) rval += "|TypeDef::STRUCT";
   if(HasType(UNION)) rval += "|TypeDef::UNION";
   if(HasType(FUNCTION)) rval += "|TypeDef::FUNCTION";
   if(HasType(METHOD)) rval += "|TypeDef::METHOD";
+  if(HasType(TABASE)) rval += "|TypeDef::TABASE";
+  if(HasType(SIGNED)) rval += "|TypeDef::SIGNED";
+  if(HasType(UNSIGNED)) rval += "|TypeDef::UNSIGNED";
   
   if(HasType(POINTER)) rval += "|TypeDef::POINTER";
   if(HasType(PTR_PTR)) rval += "|TypeDef::PTR_PTR";
   if(HasType(REFERENCE)) rval += "|TypeDef::REFERENCE";
   if(HasType(ARRAY)) rval += "|TypeDef::ARRAY";
   if(HasType(CONST)) rval += "|TypeDef::CONST";
-  if(HasType(SIGNED)) rval += "|TypeDef::SIGNED";
-  if(HasType(UNSIGNED)) rval += "|TypeDef::UNSIGNED";
   if(HasType(SUBTYPE)) rval += "|TypeDef::SUBTYPE";
-
-  if(HasType(TABASE)) rval += "|TypeDef::TABASE";
 
   if(rval.startsWith("|")) rval = rval.after("|");
   return rval;
@@ -543,6 +549,10 @@ TypeDef* TypeDef::GetPtrType_impl(TypeSpace& make_spc) const {
     make_spc.Add(rval);
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
+    // if(rval->IsVoid() && !rval->name.contains("void")) {
+    //   cerr << "oops -- GetPtrType created a void!: " << rval->name
+    //        << " " << rval->GetTypeEnumString() << endl;
+    // }
   }
   rval->ClearType(ANY_PTR);   // get rid of any existing pointer flags
   rval->SetType(ptr_flag);    // set new ones
@@ -564,6 +574,10 @@ TypeDef* TypeDef::GetRefType_impl(TypeSpace& make_spc) const {
     make_spc.Add(rval);
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
+    // if(rval->IsVoid() && !rval->name.contains("void")) {
+    //   cerr << "oops -- GetRefType created a void!: " << rval->name
+    //        << " " << rval->GetTypeEnumString() << endl;
+    // }
   }
   rval->SetType(REFERENCE);   // set new ones
   return rval;
@@ -584,6 +598,10 @@ TypeDef* TypeDef::GetConstType_impl(TypeSpace& make_spc) const {
     make_spc.Add(rval);
     // unconstify us, this is an internal operation, still considered "const" access
     rval->AddParent(const_cast<TypeDef*>(this));
+    // if(rval->IsVoid() && !rval->name.contains("void")) {
+    //   cerr << "oops -- GetConstType created a void!: " << rval->name
+    //        << " " << rval->GetTypeEnumString() << endl;
+    // }
   }
   rval->SetType(CONST);   // set new ones
   return rval;
@@ -1085,7 +1103,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   }
 
   ClearType(TEMPLATE);
-  SetType(TEMPLATE_INST);       // update types
+  SetType(TEMPL_INST);       // update types
   
   parents.Reset();                      // bag the template's parents
   parents.LinkUnique(templ_par);        // parent is the templ_par
@@ -1345,6 +1363,7 @@ bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
   if (anidx >= 0) {
     parents.ReplaceLinkIdx(anidx, new_tp);
     name.gsub(old_tp->name, new_tp->name);
+    CopyActualType(*new_tp);
     return true;
   }
   bool rval = false;
@@ -1352,6 +1371,7 @@ bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
     if (parents.FastEl(i)->ReplaceParent(old_tp, new_tp)) {
       rval = true;
       name.gsub(old_tp->name, new_tp->name); // updt name at all levels
+      CopyActualType(*new_tp);
     }
   }
   return rval;
@@ -2845,8 +2865,9 @@ String TypeDef::GetHTML(bool gendoc) const {
   rval.cat("<p>See for more info: <a href=\"").cat(wiki_help_url).cat(name).cat("\">Wiki Docs For: ").cat(name).cat("</a></p>\n\n");
 
   String incnm = "&lt;" + name + "&gt";
-  if(!source_file.startsWith(name))
-    incnm = "\"" + source_file + "\"";
+  String srconly = taMisc::GetFileFmPath(source_file);
+  if(!srconly.startsWith(name))
+    incnm = "\"" + srconly + "\"";
 
   rval.cat("<pre> #include ").cat(incnm).cat("</pre>\n");
   rval.cat("<p>(defined at: ").cat(source_file).cat(":")

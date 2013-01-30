@@ -154,7 +154,7 @@ public:
   inline taQuaternion Conjugated() const {
     taQuaternion rv(*this); rv.Conjugate(); return rv;
   }
-  // #CAT_Quaternion return conjugate version of this quaternion (imaginary x,y,z values flipped to their negatives)
+  // #CAT_Quaternion #IGNORE return conjugate version of this quaternion (imaginary x,y,z values flipped to their negatives)
   inline void Invert() {
     Conjugate(); *this /= SqMag(); 
   }
@@ -162,7 +162,7 @@ public:
   inline taQuaternion Inverted() const {
     taQuaternion rv(*this); rv.Invert(); return rv;
   }
-  // #CAT_Quaternion convert this quaternion into its conjugate (imaginary x,y,z values flipped to their negatives)
+  // #CAT_Quaternion #IGNORE convert this quaternion into its conjugate (imaginary x,y,z values flipped to their negatives)
   inline void Normalize() {
     *this /= Mag(); 
   }
@@ -170,7 +170,7 @@ public:
   inline taQuaternion Normalized() const {
     taQuaternion rv(*this); rv.Normalize(); return rv;
   }
-  // #CAT_Quaternion return normalized version of this quaternion (divide by magnitude or length)
+  // #CAT_Quaternion #IGNORE return normalized version of this quaternion (divide by magnitude or length)
 
   inline taQuaternion operator + (const taQuaternion& q) const {
     taQuaternion rv; rv.s = s + q.s; rv.x = x + q.x; rv.y = y + q.y; rv.z = z + q.z; return rv;

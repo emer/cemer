@@ -38,6 +38,20 @@ class CSS_API cssTA : public cssCPtr {
   // a pointer that has a TA TypeDef associated with it: uses type info to perform ops 
   // NOTE: specialized versions exist for specific types: those must be used (e.g., taBase, etc)
 public:
+  enum cssTATypes {
+    TAT_TA,
+    TAT_Base,
+    TAT_Matrix,
+    TAT_SmartRef,
+    TAT_IOS,
+    TAT_FStream,
+    TAT_SStream,
+    TAT_LeafItr,
+    TAT_TypeDef,
+    TAT_MemberDef,
+    TAT_MethodDef,
+  };
+
   TypeDef*	type_def;	// TypeDef Info
 
   uint		GetSize() const		{ return sizeof(*this); }
@@ -45,6 +59,7 @@ public:
   cssEl*	GetTypeObject() const;
   cssTypes	GetType() const		{ return T_TA; }
   cssTypes	GetPtrType() const	{ return T_TA; }
+  virtual cssTATypes  GetTAType() const { return TAT_TA; }
 
   virtual TypeDef* GetNonRefTypeDef() const	{ return type_def; }
   // any kind of reference-semantics object can override to de-ref'd type
@@ -79,9 +94,14 @@ public:
   cssTA(const cssTA& cp);
   cssTA(const cssTA& cp, const String& nm);
 
+  static cssEl* MakeTA(void* it, int pc, TypeDef* td, const String& nm = _nilString,
+                       cssEl* cls_par=NULL, bool ro = false);
+  // make an appropriate cssTA or subclass object based on actual typedef passed in -- does dynamic typedef inherits checking to find appropriate ta subtype to make -- used in css stub functions when type is not definitively known
+
   cssCloneOnly(cssTA);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssTA((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
+
 
   // converters
   void* 	GetVoidPtrOfType(TypeDef* td) const;
@@ -126,10 +146,13 @@ public:
 #define cssTA_inst_ptr(l,n,c,t,x)	l .Push(x = new cssTA(n, c, t, #x))
 #define cssTA_inst_ptr_nm(l,n,c,t,x,s)	l .Push(x = new cssTA(n, c, t, s))
 
+
 class CSS_API cssTA_Base : public cssTA {
   // specifically for taBase types -- calls the overloaded versions of TypeDef functions
 INHERITED(cssTA)
 public:
+  cssTATypes    GetTAType() const { return TAT_Base; }
+
   String	PrintStr() const;
 
   String&	PrintType(String& fh) const;
@@ -195,6 +218,94 @@ public:
 #define cssTA_Base_inst_ptr(l,n,c,t,x)	l .Push(x = new cssTA_Base(n, c, t, #x))
 #define cssTA_Base_inst_ptr_nm(l,n,c,t,x,s) l .Push(x = new cssTA_Base(n, c, t, s))
 
+
+class CSS_API cssTA_Matrix : public cssTA_Base {
+  // a matrix ta base object -- handles all the matrix math magically..
+INHERITED(cssTA_Base)
+public:
+  cssTATypes    GetTAType() const { return TAT_Matrix; }
+
+
+  static bool IsMatrix(const cssEl& s);
+  // check to see if the given item is also a cssTA_Matrix object -- must have valid ta base object pointer too
+  static taMatrix* MatrixPtr(const cssEl& s);
+  // return the matrix object from a given element known to be a matrix
+  taMatrix* 	GetMatrixPtr() 	const { return (taMatrix*)GetTAPtr(); }
+  // return matrix pointer for this object
+
+  override bool	IsTaMatrix() const { return true; }
+
+  cssTA_Matrix() : cssTA_Base()	    { }
+  cssTA_Matrix(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
+	       bool ro=false) : cssTA_Base(it,pc,td,nm,cls_par,ro) { };
+  cssTA_Matrix(taMatrix* mtx);
+  // this treats mtx arg as an OWN_OBJ and ref's it
+  cssTA_Matrix(const cssTA_Matrix& cp) : cssTA_Base(cp) { };
+  cssTA_Matrix(const cssTA_Base& cp, const String& nm) : cssTA_Base(cp, nm) { };
+  ~cssTA_Matrix();
+
+  cssCloneOnly(cssTA_Matrix);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
+
+  Variant GetVar() const 	{ return Variant(GetMatrixPtr()); }
+  String GetStr() const;
+
+  // void UpdateAfterEdit();
+
+  cssEl* operator[](const Variant& idx) const;
+
+  override bool AssignCheckSource(const cssEl& s);
+
+  void* 	GetVoidPtrOfType(TypeDef* td) const;
+  void* 	GetVoidPtrOfType(const String& td) const;
+  // these are type-safe ways to convert a cssEl into a ptr to object of given type
+
+#ifndef NO_TA_BASE
+  operator int_Matrix*() const;
+  operator byte_Matrix*() const;
+  operator float_Matrix*() const;
+  operator double_Matrix*() const;
+  operator String_Matrix*() const;
+  operator Variant_Matrix*() const;
+#endif
+
+  operator Real() const;
+  operator Int() const;
+  operator bool() const;
+
+  void operator=(const cssEl& s);
+  USING(cssTA_Base::operator=)
+
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
+  cssEl* operator%(cssEl& t);
+  cssEl* operator^(cssEl& s);
+
+  cssEl* operator-();
+  cssEl* operator*()		{ return cssTA_Base::operator*(); }
+
+  void operator+=(cssEl& t);
+  void operator-=(cssEl& t);
+  void operator*=(cssEl& t);
+  void operator/=(cssEl& t);
+  void operator%=(cssEl& t);
+
+  cssEl* operator! ();
+  cssEl* operator&&(cssEl& s);
+  cssEl* operator||(cssEl& s);
+
+  cssEl* operator< (cssEl& s);
+  cssEl* operator> (cssEl& s);
+  cssEl* operator<=(cssEl& s);
+  cssEl* operator>=(cssEl& s);
+  cssEl* operator==(cssEl& s);
+  cssEl* operator!=(cssEl& s);
+};
+
+
 class CSS_API cssSmartRef : public cssTA {
   // a taSmartRef object (ptr_cnt = 0)
 public:
@@ -202,6 +313,8 @@ public:
 
   inline taSmartRef* GetSmartRef() const { if(ptr) return (taSmartRef*)ptr; return NULL; }
   inline taBase* GetSmartRefPtr() const  { taSmartRef* rf = GetSmartRef(); if(rf) return rf->ptr(); return NULL; }
+
+  cssTATypes    GetTAType() const { return TAT_SmartRef; }
 
   String	PrintStr() const;
   String	PrintFStr() const;
@@ -320,6 +433,8 @@ public:
 class CSS_API cssIOS : public cssTA {
   // a pointer to an iostream object of any sort: supports various streaming ops
 public:
+  cssTATypes    GetTAType() const { return TAT_IOS; }
+
   String	PrintFStr() const;
   String	GetStr() const;
 
@@ -359,6 +474,8 @@ public:
 class CSS_API cssFStream : public cssIOS {
   // owns its own fstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
+  cssTATypes    GetTAType() const { return TAT_FStream; }
+
   static TypeDef*	TA_TypeDef(); // returns TA_fstream
   uint		GetSize() const	{ return sizeof(*this); }
 
@@ -388,6 +505,8 @@ public:
 class CSS_API cssSStream : public cssIOS {
   // owns its own sstream with ptr_cnt = 0: manages the construction and destruction of obj
 public:
+  cssTATypes    GetTAType() const { return TAT_SStream; }
+
   uint		GetSize() const	{ return sizeof(*this); }
 
   // constructors
@@ -416,6 +535,8 @@ public:
 class CSS_API cssLeafItr : public cssTA {
   // owns its own leafitr with ptr_cnt = 0: manages the construction and destruction of obj
 public:
+  cssTATypes    GetTAType() const { return TAT_LeafItr; }
+
   static TypeDef*	TA_TypeDef(); // returns TA_taLeafItr
   uint		GetSize() const	{ return sizeof(*this); }
 
@@ -445,6 +566,8 @@ public:
 class CSS_API cssTypeDef : public cssTA {
   // a pointer to a TypeDef (any number of ptr_cnt)
 public:
+  cssTATypes    GetTAType() const { return TAT_TypeDef; }
+
   String	PrintStr() const;
   String	PrintFStr() const;
   String&	PrintType(String& fh) const;
@@ -470,6 +593,8 @@ public:
 class CSS_API cssMemberDef : public cssTA {
   // a pointer to a MemberDef (any number of ptr_cnt)
 public:
+  cssTATypes    GetTAType() const { return TAT_MemberDef; }
+
   // constructors
   cssMemberDef() : cssTA() { };
   cssMemberDef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
@@ -490,6 +615,8 @@ public:
 class CSS_API cssMethodDef : public cssTA {
   // a pointer to a MethodDef (any number of ptr_cnt)
 public:
+  cssTATypes    GetTAType() const { return TAT_MethodDef; }
+
   // constructors
   cssMethodDef() : cssTA() { };
   cssMethodDef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
@@ -507,89 +634,6 @@ public:
   USING(cssTA::operator=)
 };
 
-
-class CSS_API cssTA_Matrix : public cssTA_Base {
-  // a matrix ta base object -- handles all the matrix math magically..
-INHERITED(cssTA_Base)
-public:
-  static bool IsMatrix(const cssEl& s);
-  // check to see if the given item is also a cssTA_Matrix object -- must have valid ta base object pointer too
-  static taMatrix* MatrixPtr(const cssEl& s);
-  // return the matrix object from a given element known to be a matrix
-  taMatrix* 	GetMatrixPtr() 	const { return (taMatrix*)GetTAPtr(); }
-  // return matrix pointer for this object
-
-  override bool	IsTaMatrix() const { return true; }
-
-  cssTA_Matrix() : cssTA_Base()	    { }
-  cssTA_Matrix(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
-	       bool ro=false) : cssTA_Base(it,pc,td,nm,cls_par,ro) { };
-  cssTA_Matrix(taMatrix* mtx);
-  // this treats mtx arg as an OWN_OBJ and ref's it
-  cssTA_Matrix(const cssTA_Matrix& cp) : cssTA_Base(cp) { };
-  cssTA_Matrix(const cssTA_Base& cp, const String& nm) : cssTA_Base(cp, nm) { };
-  ~cssTA_Matrix();
-
-  cssCloneOnly(cssTA_Matrix);
-  cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
-
-  Variant GetVar() const 	{ return Variant(GetMatrixPtr()); }
-  String GetStr() const;
-
-  // void UpdateAfterEdit();
-
-  cssEl* operator[](const Variant& idx) const;
-
-  override bool AssignCheckSource(const cssEl& s);
-
-  void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const String& td) const;
-  // these are type-safe ways to convert a cssEl into a ptr to object of given type
-
-#ifndef NO_TA_BASE
-  operator int_Matrix*() const;
-  operator byte_Matrix*() const;
-  operator float_Matrix*() const;
-  operator double_Matrix*() const;
-  operator String_Matrix*() const;
-  operator Variant_Matrix*() const;
-#endif
-
-  operator Real() const;
-  operator Int() const;
-  operator bool() const;
-
-  void operator=(const cssEl& s);
-  USING(cssTA_Base::operator=)
-
-  cssEl* operator+(cssEl& t);
-  cssEl* operator-(cssEl& t);
-  cssEl* operator*(cssEl& t);
-  cssEl* operator/(cssEl& t);
-  cssEl* operator%(cssEl& t);
-  cssEl* operator^(cssEl& s);
-
-  cssEl* operator-();
-  cssEl* operator*()		{ return cssTA_Base::operator*(); }
-
-  void operator+=(cssEl& t);
-  void operator-=(cssEl& t);
-  void operator*=(cssEl& t);
-  void operator/=(cssEl& t);
-  void operator%=(cssEl& t);
-
-  cssEl* operator! ();
-  cssEl* operator&&(cssEl& s);
-  cssEl* operator||(cssEl& s);
-
-  cssEl* operator< (cssEl& s);
-  cssEl* operator> (cssEl& s);
-  cssEl* operator<=(cssEl& s);
-  cssEl* operator>=(cssEl& s);
-  cssEl* operator==(cssEl& s);
-  cssEl* operator!=(cssEl& s);
-};
 
 
 #endif // css_ta.h

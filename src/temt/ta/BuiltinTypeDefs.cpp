@@ -118,9 +118,9 @@ TypeDef TA_double               ("double",      TypeDef::FLOAT, 1,
                                  sizeof(double));
 
 #ifdef NO_TA_BASE
-TypeDef TA_taString             ("taString",      TypeDef::STRING, 1,
+TypeDef TA_taString             ("taString",      TypeDef::STRING | TypeDef::CLASS, 1,
                                  sizeof(taString));
-TypeDef TA_Variant              ("Variant",       TypeDef::VARIANT, 1,
+TypeDef TA_Variant              ("Variant",       TypeDef::VARIANT | TypeDef::CLASS, 1,
                                  sizeof(Variant));
 
 TypeDef TA_TypeItem             ("TypeItem",     TypeDef::CLASS, 1,

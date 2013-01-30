@@ -56,33 +56,33 @@ INHERITED(TypeItem)
 public:
 
   enum TypeType { // #BITS what type of type is this?  some of these are mutex and some are add-on -- all mixed together for one-stop-shopping -- the core data types are set even for derived types (e.g., a pointer to an integer is still flagged as an integer) -- check for ACTUAL to distinguish derived from non-derived
-    VOID = 0x00000001,     // void -- no type!
-    BOOL = 0x00000002,     // boolean valued native type -- only one instance: bool
-    INTEGER = 0x00000004,  // some kind of integer data type, from char up to long long -- exclusive of enum
-    ENUM = 0x00000008,     // an enum type -- the overall type, not the individual enums, which are in enum_vals
-    FLOAT = 0x00000010,    // some kind of floating point data type, float, double, long-double
-    STRING = 0x00000020,   // a taString TA native string object -- treated as atomic in TA system
-    VARIANT = 0x00000040,  // a Variant TA native Variant object -- treated as atomic in TA system
-    SMART_PTR = 0x00000080, // some kind of atomic smart pointer object (taSmartPtr, taSmartRef)
-    SMART_INT = 0x00000100, // some kind of atomic smart integer object (AtomicInt, ContextFlag, etc)
-    CLASS = 0x00000200,    // a class object -- NOT including a STRING or VARIANT -- class templates are also marked as CLASS
+    VOID     = 0x00000001, // void -- either a real void or just not spec'd yet
+    BOOL     = 0x00000002, // boolean valued native type -- only one instance: bool
+    INTEGER  = 0x00000004, // some kind of integer data type, from char up to long long -- exclusive of enum
+    ENUM     = 0x00000008, // an enum type -- the overall type, not the individual enums, which are in enum_vals
+    FLOAT    = 0x00000010, // some kind of floating point data type, float, double, long-double
+    STRING   = 0x00000020, // a taString TA native string object -- treated as atomic in TA system
+    VARIANT  = 0x00000040, // a Variant TA native Variant object -- treated as atomic in TA system
+    SMART_PTR= 0x00000080, // some kind of atomic smart pointer object (taSmartPtr, taSmartRef)
+    SMART_INT= 0x00000100, // some kind of atomic smart integer object (AtomicInt, ContextFlag, etc)
+    CLASS    = 0x00000200, // a class object -- NOT including a STRING or VARIANT -- class templates are also marked as CLASS
     TEMPLATE = 0x00000400, // a template of any sort -- class templates also have class set -- this is ONLY set for the template itself, not for anything derived from the template
-    TEMPLATE_INST = 0x00000800, // a direct instance of a template -- a template with specific parameter values provided -- this is only set for the direct instance itself, not for derived types
-    STRUCT = 0x00001000,   // a struct object
-    UNION = 0x00002000,    // a union 
-    FUNCTION = 0x000004000, // a function -- this is typically used in combination with POIINTER for a function pointer
-    METHOD = 0x00008000,    // a method on a class -- this is typically used in combination with POINTER for a method pointer
+    TEMPL_INST=0x00000800, // a direct instance of a template -- a template with specific parameter values provided -- this is only set for the direct instance itself, not for derived types
+    STRUCT   = 0x00001000, // a struct object
+    UNION    = 0x00002000, // a union 
+    FUNCTION = 0x00004000, // a function -- this is typically used in combination with POIINTER for a function pointer
+    METHOD   = 0x00008000, // a method on a class -- this is typically used in combination with POINTER for a method pointer
+    TABASE   = 0x00010000, // a CLASS that derives from taBase base class that is automatically type-aware
+    SIGNED   = 0x00020000, // a signed INTEGER
+    UNSIGNED = 0x00040000, // an unsigned INTEGER
     
-    POINTER = 0x00020000,   // a pointer to the data value as specified above -- this is a first-order pointer -- see PTR_PTR for a pointer to a pointer (these two are mutex)
-    PTR_PTR = 0x00040000,   // a pointer to a pointer to a data value as specified above -- this is mutex with a first-order POINTER
-    REFERENCE = 0x00080000, // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
-    ARRAY = 0x00100000,     // an explicitly delimited array of data values of a specific length
-    CONST = 0x00200000,     // a constant data value -- not modifiable
-    SIGNED = 0x00400000,    // a signed INTEGER
-    UNSIGNED = 0x00800000,  // an unsigned INTEGER
-    SUBTYPE = 0x01000000,   // is a subtype defined within scope of a parent class
+    POINTER  = 0x00100000, // a pointer to the data value as specified above -- this is a first-order pointer -- see PTR_PTR for a pointer to a pointer (these two are mutex)
+    PTR_PTR  = 0x00200000, // a pointer to a pointer to a data value as specified above -- this is mutex with a first-order POINTER
+    REFERENCE=0x00400000,  // a reference type -- an implicit pointer to a data value -- can modify a POINTER or PTR_PTR type as well
+    ARRAY    = 0x00800000, // an explicitly delimited array of data values of a specific length
+    CONST    = 0x01000000, // a constant data value -- not modifiable
+    SUBTYPE  = 0x02000000, // is a subtype defined within scope of a parent class
 
-    TABASE = 0x02000000,    // a CLASS that derives from taBase base class that is automatically type-aware
     TI_ARGS_NOTINST = 0x04000000, // template instantiation that still has non-instantiated args -- this is true e.g., for a template instantiated within a template  with the param of the parent template that has yet to be instantiated
 
 #ifndef __MAKETA__
@@ -90,6 +90,7 @@ public:
     ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
     ATOMIC_EFF = STRING | VARIANT | SMART_PTR | SMART_INT, // effective atomic classes -- pass by value and act like atomic, but don't support bitwise copy -- need to use actual class interface
     NOT_ACTUAL = ANY_PTR | REFERENCE | ARRAY | CONST, // not actual type itself
+    ALL_MODS = NOT_ACTUAL | SUBTYPE | TI_ARGS_NOTINST, // all modifiers (non-core content)
     FUN_PTR = FUNCTION | POINTER,
     METH_PTR = METHOD | POINTER,
 #endif
@@ -165,6 +166,9 @@ public:
   inline void           ToggleType(TypeType typ)  { SetTypeState(typ, !HasType(typ)); }
   // toggle type state value -- if on, turn off, and vice-versa
 
+  void                  CopyActualType(const TypeDef& cp);
+  // copy the actual type information from source typedef -- everything except the derived type values and other modifiers 
+
   inline bool   IsNotActual() const { return HasType(NOT_ACTUAL); }
   // not an actual primary data type, but a derived type: pointer, reference, const, etc
   inline bool   IsActual() const { return !IsNotActual(); }
@@ -185,16 +189,18 @@ public:
   inline bool   IsActualClass() const { return HasType(CLASS) && IsActual(); }
   inline bool   IsActualClassNoEff() const { return IsActualClass() && !IsAtomicEff(); }
   inline bool   IsTemplate() const { return HasType(TEMPLATE); }
-  inline bool   IsTemplInst() const { return HasType(TEMPLATE_INST); }
+  inline bool   IsTemplInst() const { return HasType(TEMPL_INST); }
   inline bool   IsStruct() const { return HasType(STRUCT); }
   inline bool   IsUnion() const { return HasType(UNION); }
+  inline bool   IsFunction() const { return HasType(FUNCTION); }
+  inline bool   IsMethod() const { return HasType(METHOD); }
+  inline bool   IsFunPtr() const  { return HasType(FUNCTION) && HasType(POINTER); }
+  inline bool   IsMethPtr() const  { return HasType(METHOD) && HasType(POINTER); }
   inline bool   IsVoidPtr() const  { return HasType(VOID) && HasType(POINTER); }
   inline bool   IsTaBase() const  { return HasType(TABASE); }
   inline bool   IsActualTaBase() const  { return HasType(TABASE) && IsActual(); }
   inline bool   IsTemplClass() const { return HasType(CLASS) && HasType(TEMPLATE); }
-  inline bool   IsTemplInstClass() const { return HasType(CLASS) && HasType(TEMPLATE_INST); }
-  inline bool   IsFunPtr() const  { return HasType(FUNCTION) && HasType(POINTER); }
-  inline bool   IsMethPtr() const  { return HasType(METHOD) && HasType(POINTER); }
+  inline bool   IsTemplInstClass() const { return HasType(CLASS) && HasType(TEMPL_INST); }
   inline bool   IsPointer() const { return HasType(POINTER); }
   inline bool   IsPtrPtr() const { return HasType(PTR_PTR); }
   inline bool   IsAnyPtr() const { return HasType(ANY_PTR); }

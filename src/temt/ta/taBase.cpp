@@ -310,12 +310,6 @@ void taBase::InitSetDefaultName() {
 void taBase::Destroy() {
 #ifdef DEBUG
   SetBaseFlag(DESTROYED);
-//TEMP -- try to find evil Mac issue
-  if (tabMisc::delayed_close.FindEl(this) >= 0) {
-    int i = 0;
-    ++i;
-    taMisc::Warning("taBase object being destroyed on DelayedClose list");
-  }
 #endif
 }
 

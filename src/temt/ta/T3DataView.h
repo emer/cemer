@@ -74,7 +74,7 @@ public:
   taTransform*       m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
 
   virtual const iColor  bgColor(bool& ok) const {ok = false; return iColor();}
-    // high-level items can optionally supply a bg color, for when they are singles
+  // #IGNORE high-level items can optionally supply a bg color, for when they are singles
   virtual bool          hasChildren() const {return false;}
   virtual bool          hasViewProperties() const {return false;}
   // true if this item has editable view properties, and should be shown

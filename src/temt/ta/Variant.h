@@ -77,7 +77,8 @@ public:
      short prec, bool hex = false) // format a number (hex for integral types only)
      {return val.formatNumber_impl(prec, hex);} 
 
-  const void*		addrData() const {return &d;} // this is for low-level routines
+  const void*		addrData() const {return &d;}
+  // #IGNORE this is for low-level routines
   
   bool			isAtomic() const {return (m_type <= T_String);} 
     // 'true' for non-ptr types (includes Invalid)

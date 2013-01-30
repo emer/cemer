@@ -887,21 +887,8 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
       return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
   }
   else if(nptd->IsClass()) {
-    if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
-       || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
-      return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd->DerivesFrom(TA_taMatrix))
-      return new cssTA_Matrix(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd->IsTaBase())
-      return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd == &TA_TypeDef)
-      return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd == &TA_MemberDef)
-      return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
-    else if(nptd == &TA_MethodDef)
-      return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
-    else
-      return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
+    // this handles all the TA subtypes
+    return cssTA::MakeTA(itm, new_ptr, nptd, nm, class_parent, ro);
   }
   cssMisc::Error(NULL, "GetElFromTA -- could not process type:", nptd->name);
   return &cssMisc::Void;
