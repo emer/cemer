@@ -29,24 +29,8 @@ inline Layer* Unit::own_lay() const {
   return ((Unit_Group*)owner)->own_lay;
 }
 
-inline Network* Unit::own_net() const {
-  Layer* ol = own_lay();
-  if(!ol) return NULL;
-  return ol->own_net;
-}
-
 inline bool Unit::lay_lesioned() const {
   return own_lay()->lesioned();
-}
-
-inline Unit_Group* Unit::own_subgp() const {
-  if(!owner || !owner->GetOwner()) return NULL;
-  if(owner->GetOwner()->InheritsFrom(&TA_Layer)) return NULL; // we're owned by the layer really
-  return (Unit_Group*)owner;
-}
-
-inline int Unit::UnitGpIdx() const {
-  return own_lay()->UnitGpIdx((Unit*)this);
 }
 
 #endif // Unit_inlines_h

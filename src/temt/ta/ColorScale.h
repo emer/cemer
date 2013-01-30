@@ -62,7 +62,7 @@ public:
   virtual const iColor  GetColor(float val, float& sc_val, iColor* maincolor=NULL,
                                  iColor* contrast=NULL);
   // #IGNORE
-  virtual const iColor  GetContrastColor(int idx, bool* ok = NULL);
+  virtual const iColor  GetContrastColor(int idx, bool* ok = NULL); // #IGNORE
   int                   GetIdx(float val);
   void                  DefaultChunks();
 

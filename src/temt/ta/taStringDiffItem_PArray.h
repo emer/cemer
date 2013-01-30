@@ -28,7 +28,7 @@
 TypeDef_Of(taStringDiffItem_PArray);
 
 class TA_API taStringDiffItem_PArray : public taPlainArray<taStringDiffItem> {
-  // #NO_TOKENS a plain-array of string diff items
+  // #NO_TOKENS #NO_CSS a plain-array of string diff items
 INHERITED(taPlainArray<taStringDiffItem>)
 public:
 

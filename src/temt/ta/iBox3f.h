@@ -53,8 +53,9 @@ public:
   iVec3f        min; // minimum point
   iVec3f        max;  // maximum point
 
-  iVec3f        center() const {return iVec3f((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);}
-    // center point of the box
+  iVec3f        center() const
+  { return iVec3f((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2); }
+  // #IGNORE center point of the box
   float         height() const {return (max.y - min.y);}
   float         width() const {return (max.x - min.x);}
   float         depth() const {return (max.z - min.z);}
@@ -64,7 +65,7 @@ public:
   float         right() const {return max.x;}
   float         far() const {return min.z;} //#IGNORE
   float         near() const {return max.z;} //#IGNORE
-  iVec3f        size() const {return iVec3f(max.x - min.x, max.y - min.y, max.z - min.z);}  // size of the box in each dimension
+  iVec3f        size() const {return iVec3f(max.x - min.x, max.y - min.y, max.z - min.z);}  // #IGNORE size of the box in each dimension
   bool          isZero() const { return (min.isZero() && max.isZero());}
 
   void          setValue(float min_x, float min_y, float min_z,  float max_x, float max_y, float max_z)

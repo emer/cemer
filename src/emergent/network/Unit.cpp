@@ -537,6 +537,22 @@ int Unit::CountRecvCons() {
   return n_recv_cons;
 }
 
+Network* Unit::own_net() const {
+  Layer* ol = own_lay();
+  if(!ol) return NULL;
+  return ol->own_net;
+}
+
+Unit_Group* Unit::own_subgp() const {
+  if(!owner || !owner->GetOwner()) return NULL;
+  if(owner->GetOwner()->InheritsFrom(&TA_Layer)) return NULL; // we're owned by the layer really
+  return (Unit_Group*)owner;
+}
+
+int Unit::UnitGpIdx() const {
+  return own_lay()->UnitGpIdx((Unit*)this);
+}
+
 void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   if((bias.size) && (src->bias.size)) {
     bias.OwnCn(0)->wt = src->bias.OwnCn(0)->wt;

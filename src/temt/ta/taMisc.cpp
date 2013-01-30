@@ -21,6 +21,7 @@ TypeDef_Of(PropertyDef);
 TypeDef_Of(EnumDef);
 
 #ifndef NO_TA_BASE
+#include "svnrev.h"
 #include <taBase> 
 #include <UserDataItemBase> 
 #include <taFiler>

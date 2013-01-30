@@ -128,11 +128,11 @@ public: //
   // #CAT_Structure #IGNORE is the layer this unit is in lesioned?
   inline Layer* own_lay() const;
   // #CAT_Structure get the owning layer of this unit
-  inline Network* own_net() const;
+  Network*      own_net() const;
   // #CAT_Structure get the owning network of this unit
-  inline Unit_Group* own_subgp() const;
+  Unit_Group*   own_subgp() const;
   // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup -- note that with virt_groups as default, most units do not have an owning subgroup even if there are logical subgroups
-  inline int    UnitGpIdx() const;
+  int           UnitGpIdx() const;
   // #CAT_Structure get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
 
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
