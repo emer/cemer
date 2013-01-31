@@ -13,18 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#ifndef taiEditOfArray_h
+#define taiEditOfArray_h 1
 
-TypeDef_Of(taList_impl);
+// parent includes:
+#include <taiEdit>
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
-  return 0;
-}
+// member includes:
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
+// declare all other types mentioned but not required to include:
+
+
+TypeDef_Of(taiEditOfArray);
+
+class TA_API taiEditOfArray : public taiEdit {
+  TAI_TYPEBASE_SUBCLASS(taiEditOfArray, taiEdit);
+public:
+  int           BidForEdit(TypeDef* td);
+protected:
+  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
+};
+
+#endif // taiEditOfArray_h

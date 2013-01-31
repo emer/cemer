@@ -21,7 +21,7 @@
 #include <taiDataLink>
 #include <taiBitBox>
 #include <EnumDef>
-#include <taiEnumType>
+#include <taiTypeOfEnum>
 
 #include <taMisc>
 #include <tabMisc>
@@ -144,7 +144,7 @@ void taiMember::GetImage(taiData* dat, const void* base) {
   }
 }
 
-void taiMember::CheckProcessCondEnum(taiEnumType* et, taiData* dat,
+void taiMember::CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat,
     const void* base)
 {
   taiBitBox* bb = dynamic_cast<taiBitBox*>(dat); // should be, except maybe if ro
@@ -172,7 +172,7 @@ void taiMember::CheckProcessCondEnum(taiEnumType* et, taiData* dat,
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
   mbr->type->it->SetCurParObjType((void*)base, typ);
   // special: if enum type, do the detailed bit-level COND processing
-  taiEnumType* et = dynamic_cast<taiEnumType*>(mbr->type->it);
+  taiTypeOfEnum* et = dynamic_cast<taiTypeOfEnum*>(mbr->type->it);
   if (et && et->isCond()) {
     CheckProcessCondEnum(et, dat, base);
   }

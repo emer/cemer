@@ -13,18 +13,26 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#ifndef taiTypeOfGroup_h
+#define taiTypeOfGroup_h 1
 
-TypeDef_Of(taList_impl);
+// parent includes:
+#include <taiTypeOfList>
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
-  return 0;
-}
+// member includes:
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
+// declare all other types mentioned but not required to include:
+
+
+TypeDef_Of(taiTypeOfGroup);
+
+class TA_API taiTypeOfGroup : public taiTypeOfList {
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfGroup, taiTypeOfList);
+public:
+  int           BidForType(TypeDef* td);
+protected:
+  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+};
+
+#endif // taiTypeOfGroup_h

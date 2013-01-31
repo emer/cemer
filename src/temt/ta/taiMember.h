@@ -25,7 +25,7 @@
 
 
 // declare all other types mentioned but not required to include:
-class taiEnumType; //
+class taiTypeOfEnum; //
 
 TypeDef_Of(taiMember);
 
@@ -104,7 +104,7 @@ protected:
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void          GetMbrValue_impl(taiData* dat, void* base);
   override bool         isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
-  void                  CheckProcessCondEnum(taiEnumType* et, taiData* dat, const void* base);
+  void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat, const void* base);
 };
 
 

@@ -13,18 +13,28 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#ifndef taiTypeOfColor_h
+#define taiTypeOfColor_h 1
 
-TypeDef_Of(taList_impl);
+// parent includes:
+#include <taiTypeOfClass>
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
-  return 0;
-}
+// member includes:
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
+// declare all other types mentioned but not required to include:
+
+
+TypeDef_Of(taiTypeOfColor);
+
+class TA_API taiTypeOfColor : public taiTypeOfClass { // special editor for colors, add dialog
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfColor, taiTypeOfClass);
+public:
+  override bool handlesReadOnly() const { return true; }
+  override bool requiresInline() const  { return true; }
+  int           BidForType(TypeDef* td);
+protected:
+  taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+};
+
+#endif // taiTypeOfColor_h

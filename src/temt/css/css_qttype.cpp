@@ -21,7 +21,7 @@
 #include "css_qtdata.h"
 #include "css_qtdialog.h"
 
-#include <taiTokenPtrType>
+#include <taiTypeOfTokenPtr>
 #include <taiField>
 #include <taiComboBox>
 #include <taiButtonMenu>
@@ -57,7 +57,7 @@ cssiType::cssiType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type) : taiT
   cur_base = bs;
   use_it = NULL;
   if (use_ptr_type) {
-    use_it = new taiTokenPtrType(tp);
+    use_it = new taiTypeOfTokenPtr(tp);
     use_it->no_setpointer = true; // don't set pointers for css pointers!
   }
   qobj = NULL;

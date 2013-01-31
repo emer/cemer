@@ -13,18 +13,23 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#ifndef taiTypeOfInt64_h
+#define taiTypeOfInt64_h 1
 
-TypeDef_Of(taList_impl);
+// parent includes:
+#include <taiType>
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
-  return 0;
-}
+// member includes:
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
+// declare all other types mentioned but not required to include:
+
+
+TypeDef_Of(taiTypeOfInt64);
+
+class TA_API taiTypeOfInt64 : public taiType { // handles 64-bit numeric int types
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfInt64, taiType);
+public:
+  int           BidForType(TypeDef* td);
+};
+
+#endif // taiTypeOfInt64_h

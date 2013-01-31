@@ -2679,7 +2679,7 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
 
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "ChangeMyType") return _nilVariant;
-  return Variant(GetStemBase()->name); // taiTypePtrArgType will convert from String
+  return Variant(GetStemBase()->name); // taiTypeOfTypePtrArgType will convert from String
 }
 
 String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {

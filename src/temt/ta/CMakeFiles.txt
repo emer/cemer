@@ -555,30 +555,31 @@ set(ta_HEADS_MAKETA_LOCAL
 
   taiTypeBase.h
   taiViewType.h
+
   taiType.h
   taiMember.h
   taiEdit.h
   taiMethod.h
   taiArgType.h
   taiType_List.h
-  taiIntType.h
-  taiInt64Type.h
-  taiRealType.h
-  taiEnumType.h
-  taiBoolType.h
-  taiStringType.h
-  taiVariantType.h
-  taiClassType.h
-  taiMatrixGeomType.h
-  taiColorType.h
-  taitaColorType.h
+
+  taiTypeOfInt.h
+  taiTypeOfInt64.h
+  taiTypeOfReal.h
+  taiTypeOfEnum.h
+  taiTypeOfBool.h
+  taiTypeOfString.h
+  taiTypeOfVariant.h
+  taiTypeOfClass.h
+  taiTypeOfMatrixGeom.h
+  taiTypeOfColor.h
+  taiTypeOftaColor.h
   taiTypeOfList.h
-  gpiGroupType.h
-  gpiArray_Type.h
-  taiTokenPtrType.h
-  taiTypePtr.h
-  taiFilePtrType.h
-  taiDefaultEdit.h
+  taiTypeOfGroup.h
+  taiTypeOfArray.h
+  taiTypeOfTokenPtr.h
+  taiTypeOfTypePtr.h
+  taiTypeOfFilePtr.h
 
   taiMemberOfTokenPtr.h
   taiMemberOfDefaultToken.h
@@ -598,7 +599,7 @@ set(ta_HEADS_MAKETA_LOCAL
   taiMemberOfDynEnum.h
   taiMemberOfProgVarIntVal.h
 
-  taiActuatorMethod.h
+  taiMethodOfActuator.h
   taiStreamArgType.h
   taiTokenPtrArgType.h
   taiTypePtrArgType.h
@@ -608,9 +609,12 @@ set(ta_HEADS_MAKETA_LOCAL
   gpiTAPtrArgType.h
   gpiInObjArgType.h
   gpiFromGpArgType.h
-  gpiListEdit.h
-  gpiArrayEdit.h
-  SArgEdit.h
+
+  taiEditOfDefault.h
+  taiEditOfList.h
+  taiEditOfArray.h
+  taiEditOfSArg.h
+
   tabViewType.h
   tabOViewType.h
   tabListViewType.h
@@ -627,7 +631,7 @@ set(ta_HEADS_MAKETA_LOCAL
   tabProgramViewType.h
   tabProgramGroupViewType.h
   taiProgLibElArgType.h
-  taiStepButtonMethod.h
+  taiMethodOfStepButton.h
 
   taGuiWidget.h
   taGuiWidget_List.h
@@ -843,7 +847,7 @@ set(ta_HEADS_NOMAKETA
   taiMenuAction.h
   taiMethMenu.h
   taiMethButton.h
-  gpiListEditButton.h
+  taigpiListEdittButton.h
   gpiSubEditButton.h
   gpiLinkEditButton.h
   gpiListLinkEditButton.h
@@ -1614,24 +1618,24 @@ set(ta_SRCS_MAKETA
   taiMethod.cpp
   taiArgType.cpp
   taiType_List.cpp
-  taiIntType.cpp
-  taiInt64Type.cpp
-  taiRealType.cpp
-  taiEnumType.cpp
-  taiBoolType.cpp
-  taiStringType.cpp
-  taiVariantType.cpp
-  taiClassType.cpp
-  taiMatrixGeomType.cpp
-  taiColorType.cpp
-  taitaColorType.cpp
+
+  taiTypeOfInt.cpp
+  taiTypeOfInt64.cpp
+  taiTypeOfReal.cpp
+  taiTypeOfEnum.cpp
+  taiTypeOfBool.cpp
+  taiTypeOfString.cpp
+  taiTypeOfVariant.cpp
+  taiTypeOfClass.cpp
+  taiTypeOfMatrixGeom.cpp
+  taiTypeOfColor.cpp
+  taiTypeOftaColor.cpp
   taiTypeOfList.cpp
-  gpiGroupType.cpp
-  gpiArray_Type.cpp
-  taiTokenPtrType.cpp
-  taiTypePtr.cpp
-  taiFilePtrType.cpp
-  taiDefaultEdit.cpp
+  taiTypeOfGroup.cpp
+  taiTypeOfArray.cpp
+  taiTypeOfTokenPtr.cpp
+  taiTypeOfTypePtr.cpp
+  taiTypeOfFilePtr.cpp
 
   taiMemberOfTokenPtr.cpp
   taiMemberOfDefaultToken.cpp
@@ -1651,7 +1655,7 @@ set(ta_SRCS_MAKETA
   taiMemberOfDynEnum.cpp
   taiMemberOfProgVarIntVal.cpp
 
-  taiActuatorMethod.cpp
+  taiMethodOfActuator.cpp
   taiStreamArgType.cpp
   taiTokenPtrArgType.cpp
   taiTypePtrArgType.cpp
@@ -1661,9 +1665,12 @@ set(ta_SRCS_MAKETA
   gpiTAPtrArgType.cpp
   gpiInObjArgType.cpp
   gpiFromGpArgType.cpp
-  gpiListEdit.cpp
-  gpiArrayEdit.cpp
-  SArgEdit.cpp
+
+  taiEditOfDefault.cpp
+  taiEditOfList.cpp
+  taiEditOfArray.cpp
+  taiEditOfSArg.cpp
+
   tabViewType.cpp
   tabOViewType.cpp
   tabListViewType.cpp
@@ -1679,7 +1686,7 @@ set(ta_SRCS_MAKETA
   tabProgramViewType.cpp
   tabProgramGroupViewType.cpp
   taiProgLibElArgType.cpp
-  taiStepButtonMethod.cpp
+  taiMethodOfStepButton.cpp
 
   taGuiWidget.cpp
   taGuiWidget_List.cpp

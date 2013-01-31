@@ -13,26 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiTypeOfTypePtr_h
+#define taiTypeOfTypePtr_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiType>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfList);
+TypeDef_Of(taiTypeOfTypePtr);
 
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiTypeOfTypePtr : public taiType {
+  // typedef pointer
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfTypePtr, taiType);
 public:
   int           BidForType(TypeDef* td);
-protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
+  void          Initialize();
+
+  TypeDef*      orig_typ;
 };
 
-#endif // taiTypeOfList_h
+#endif // taiTypeOfTypePtr_h

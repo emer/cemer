@@ -13,26 +13,26 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiMethodOfStepButton_h
+#define taiMethodOfStepButton_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiMethodOfActuator>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfList);
+TypeDef_Of(taiMethodOfStepButton);
 
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiMethodOfStepButton : public taiMethodOfActuator {
+  TAI_METHOD_SUBCLASS(taiMethodOfStepButton, taiMethodOfActuator);
 public:
-  int           BidForType(TypeDef* td);
+  int                   BidForMethod(MethodDef* md, TypeDef* td);
 protected:
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  taiMethodData*        GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*        GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
-#endif // taiTypeOfList_h
+#endif // taiMethodOfStepButton_h

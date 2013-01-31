@@ -13,26 +13,35 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiTypeOfEnum_h
+#define taiTypeOfEnum_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiType>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfList);
+TypeDef_Of(taiTypeOfEnum);
 
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiTypeOfEnum : public taiType {
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfEnum, taiType);
 public:
+  override bool handlesReadOnly() const { return true; } // uses a RO iLineEdit w/ enum name
+
+  inline bool   isCond() const {return m_is_cond;} // true if a BIT, and has any CONDxxxx bits
   int           BidForType(TypeDef* td);
-protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
+protected:
+  void          Initialize();
+
+  bool          isBit; // true if a BIT type enum
+  bool          m_is_cond; // true if a BIT, and has any CONDxxxx bits
 };
 
-#endif // taiTypeOfList_h
+#endif // taiTypeOfEnum_h

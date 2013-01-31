@@ -13,26 +13,29 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiTypeOfInt_h
+#define taiTypeOfInt_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiType>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfList);
+TypeDef_Of(taiTypeOfInt);
 
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiTypeOfInt : public taiType { // handles numeric int types, up to 32-bits
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfInt, taiType);
 public:
+  override bool handlesReadOnly() const { return true; } // uses a RO iSpinBox
+
   int           BidForType(TypeDef* td);
-protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
 };
 
-#endif // taiTypeOfList_h
+#endif // taiTypeOfInt_h

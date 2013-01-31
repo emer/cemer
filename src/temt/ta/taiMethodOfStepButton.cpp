@@ -13,18 +13,26 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#include "taiMethodOfStepButton.h"
+#include <taiProgStepButton>
+#include <taiMethMenu>
 
-TypeDef_Of(taList_impl);
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
+
+
+int taiMethodOfStepButton::BidForMethod(MethodDef* md, TypeDef* td) {
+  if (md->HasOption("STEP_BUTTON"))
+    return (inherited::BidForMethod(md,td) + 1);
   return 0;
 }
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+taiMethodData* taiMethodOfStepButton::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiProgStepButton* rval = new taiProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
+
+taiMethodData* taiMethodOfStepButton::GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+

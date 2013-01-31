@@ -13,26 +13,38 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiTypeOfTokenPtr_h
+#define taiTypeOfTokenPtr_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiType>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taBase; //
 
+TypeDef_Of(taiTypeOfTokenPtr);
 
-TypeDef_Of(taiTypeOfList);
-
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiTypeOfTokenPtr : public taiType {
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfTokenPtr, taiType);
 public:
+  enum Mode {
+    MD_BASE,            // taBase pointer
+    MD_SMART_PTR,       // taSmartPtr -- acts almost identical to taBase*
+    MD_SMART_REF        // taSmartRef
+  };
+  override bool handlesReadOnly() const { return true; } // uses a RO tokenptr button
+  taBase*       GetTokenPtr(const void* base) const; // depends on mode
+  TypeDef*      GetMinType(const void* base);
   int           BidForType(TypeDef* td);
 protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
+
+  Mode          mode; // set during first GetDataRep (is garbage until then)
 };
 
-#endif // taiTypeOfList_h
+#endif // taiTypeOfTokenPtr_h

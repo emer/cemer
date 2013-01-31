@@ -16,7 +16,7 @@
 #include "taiArgType.h"
 #include <taBase>
 #include <Variant>
-#include <taiBoolType>
+#include <taiTypeOfBool>
 #include <BuiltinTypeDefs>
 
 #include <css_machine.h>
@@ -131,7 +131,7 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
       else if(arg_typ->IsBool()) {
         arg_val = new cssBool(false, nm);
         arg_base = (void*)&(((cssBool*)arg_val)->val);
-        use_it = new taiBoolType(arg_typ); // make an it for it...
+        use_it = new taiTypeOfBool(arg_typ); // make an it for it...
         return arg_val;
       }
       else if(arg_typ->IsFloat()) {

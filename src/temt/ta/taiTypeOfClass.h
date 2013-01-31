@@ -13,26 +13,37 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiTypeOfList_h
-#define taiTypeOfList_h 1
+#ifndef taiTypeOfClass_h
+#define taiTypeOfClass_h 1
 
 // parent includes:
-#include <taiTypeOfClass>
+#include <taiType>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfList);
+TypeDef_Of(taiTypeOfClass);
 
-class TA_API taiTypeOfList : public taiTypeOfClass {
-  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiTypeOfClass);
+class TA_API taiTypeOfClass : public taiType {
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfClass, taiType);
 public:
+  override bool allowsInline() const    { return true; }
+  override bool handlesReadOnly() const { return true; } // uses a RO PolyData or RO EditButton
+  override bool CanBrowse() const;
+
   int           BidForType(TypeDef* td);
+  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+         // add in req for inline
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
 protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 };
 
-#endif // taiTypeOfList_h
+#endif // taiTypeOfClass_h

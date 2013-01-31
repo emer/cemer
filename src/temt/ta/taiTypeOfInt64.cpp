@@ -13,18 +13,16 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#include "taiTypeOfInt64.h"
+#include <BuiltinTypeDefs>
 
-TypeDef_Of(taList_impl);
 
-int taiTypeOfList::BidForType(TypeDef* td) {
-  if (td->InheritsFrom(TA_taList_impl))
-    return (taiTypeOfClass::BidForType(td) +1);
+int taiTypeOfInt64::BidForType(TypeDef* td){
+  // we handle all 64-bit types
+  if (td->DerivesFrom(&TA_int64_t) || td->DerivesFrom(&TA_uint64_t))
+    return (taiType::BidForType(td) +1);
   return 0;
 }
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  return rval;
-}
+//TODO: we really are still just using the taiType defaults
+// need to create a 64-bit spin, or at least a customized edit

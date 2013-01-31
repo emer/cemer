@@ -15,7 +15,7 @@
 
 #include "taiMemberOfDefaultToken.h"
 #include <MemberDef>
-#include <taiDefaultEdit>
+#include <taiEditOfDefault>
 #include <taiEditButton>
 
 
@@ -28,7 +28,7 @@ int taiMemberOfDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiMemberOfDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  taiDefaultEdit* tde = new taiDefaultEdit(mbr->type->GetNonPtrType());
+  taiEditOfDefault* tde = new taiEditOfDefault(mbr->type->GetNonPtrType());
   taiEditButton *rval = taiEditButton::New(NULL, tde, mbr->type->GetNonPtrType(),
      host_, par, gui_parent_, flags_);
   return rval;
