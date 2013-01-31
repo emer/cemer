@@ -79,11 +79,11 @@ public:
   // #IGNORE set callback for when value changes
 
   void	DragStartCB(SoTranslate1Dragger* dragger);
-  // callback: do not touch!
+  // #IGNORE callback: do not touch!
   void	DraggingCB(SoTranslate1Dragger* dragger);
-  // callback: do not touch!
+  // #IGNORE callback: do not touch!
   void	DragFinishCB(SoTranslate1Dragger* dragger);
-  // callback: do not touch!
+  // #IGNORE callback: do not touch!
 protected:
   const char*  	getFileFormatName() const {return "Separator"; } 
 

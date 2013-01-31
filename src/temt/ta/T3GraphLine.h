@@ -76,7 +76,7 @@ public:
 
   static void		initClass();
 
-  SoFont*		labelFont() const {return labelFont_;} // setup after creating
+  SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
   void			setMarkerSize(MarkerSize sz);
   bool			valueColorMode(){return valueColorMode_;}

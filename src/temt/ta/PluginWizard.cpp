@@ -159,7 +159,7 @@ void PluginWizard::CreateDestFile(const String& src_file,
     return;
   }
   String src;
-  if (TestError(src.Load_str(fsrc),
+  if (TestError(!src.Load_str(fsrc),
     "PluginWizard::CreateDestFile",
     "Could not read contents of file:", src_file)) {
     ok = false;
@@ -169,7 +169,7 @@ void PluginWizard::CreateDestFile(const String& src_file,
   String dst;
   TemplatizeFile(src_file, src, dst, ok);
   if (!ok) return;
-  if (TestError((dst.Save_str(fdst)),
+  if (TestError(!dst.Save_str(fdst),
     "PluginWizard::CreateDestFile",
     "Could not write results to:", dst_file,
     " -- make sure the file does not exist and/or is not write_protected and/or you have permission to create files in the destination")) {

@@ -44,22 +44,22 @@ public:
 
 //  void			clearUnits(); // remove all units
 //  void			addUnit(int x, int y); // remove all units
-  SoFont*		unitCaptionFont(bool auto_create = false);
+  SoFont*		unitCaptionFont(bool auto_create = false); // #IGNORE
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z,
 				float disp_scale);
 
   // sets (actual) geom of group; creates/positions units; setes max_size
-  SoIndexedTriangleStripSet* shape() {return shape_;}
-  SoVertexProperty* 	vtxProp() {return vtx_prop_;}
-  SoSeparator*		unitText() {return unit_text_;} // extra text of unit vars
-  SoSeparator*		getUnitText();		      // get a new unit text separator
+  SoIndexedTriangleStripSet* shape() {return shape_;} // #IGNORE
+  SoVertexProperty* 	vtxProp() {return vtx_prop_;} // #IGNORE
+  SoSeparator*		unitText() {return unit_text_;} // #IGNORE extra text of unit vars
+  SoSeparator*		getUnitText();		      // #IGNORE get a new unit text separator
   void			removeUnitText();	      // remove unit text separator
 
-  SoSeparator*		snapBordSep() {return snap_bord_;}
-  SoDrawStyle*		snapBordDraw() {return snap_bord_draw_;}
-  SoIndexedLineSet*	snapBordSet() {return snap_bord_set_;}
-  SoVertexProperty* 	snapBordVtxProp() {return snap_bord_vtx_prop_;}
+  SoSeparator*		snapBordSep() {return snap_bord_;} // #IGNORE
+  SoDrawStyle*		snapBordDraw() {return snap_bord_draw_;} // #IGNORE
+  SoIndexedLineSet*	snapBordSet() {return snap_bord_set_;} // #IGNORE
+  SoVertexProperty* 	snapBordVtxProp() {return snap_bord_vtx_prop_;} // #IGNORE
 
   T3UnitGroupNode(T3DataView* dataView_ = NULL, bool no_unts = false);
 

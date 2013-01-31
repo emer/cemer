@@ -42,9 +42,9 @@ public:
   T3TransformBoxDragger(float half_size=1.1f, float cube_size=0.6f, float line_width=0.4f);
 
   // elements within me:
-  SoTransform*		xf_;		// transform -- set as you need
-  SoTransformBoxDragger* dragger_;	// dragger
-  SoCalculator*		trans_calc_;    // translation calculator -- gets from translation of dragger
+  SoTransform*		xf_;		// #IGNORE transform -- set as you need
+  SoTransformBoxDragger* dragger_;	// #IGNORE dragger
+  SoCalculator*		trans_calc_;    // #IGNORE translation calculator -- gets from translation of dragger
 protected:
   const char*  	getFileFormatName() const {return "Separator"; } 
 };

@@ -41,7 +41,7 @@ TypeDef_Of(ImgProcCallTask);
 class TA_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
 public:
-  ThreadImgProcCall* img_proc_call;	// method to call on the object
+  ThreadImgProcCall* img_proc_call;	// #IGNORE method to call on the object
 
   override void run();
   // runs specified chunk of computation

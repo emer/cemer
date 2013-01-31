@@ -33,7 +33,7 @@ typedef T3DataViewPar inherited;
 friend class iT3DataViewFrame;
 friend class T3DataViewFrame;
 public:
-  ISelectableHost*      host; // ss/b set by owner
+  ISelectableHost*      host; // #IGNORE ss/b set by owner
 
 //note: typically never has a non-null parent, because it is rooted in non-T3DataView
   override T3DataViewRoot* root() {return this;}

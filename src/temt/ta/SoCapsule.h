@@ -54,8 +54,8 @@ public:
   static void initClass();
   SoCapsule();
 
-  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);
-  virtual void GLRender(SoGLRenderAction * action);
+  virtual void getPrimitiveCount(SoGetPrimitiveCountAction * action);  // #IGNORE 
+  virtual void GLRender(SoGLRenderAction * action); // #IGNORE 
 
 protected:
   virtual ~SoCapsule();

@@ -47,7 +47,7 @@ public:
 
   static void		initClass(); //
   Axis			axis() const {return axis_;} //note: lifetime invariant
-  SoFont*		labelFont() const {return labelFont_;} // setup after creating
+  SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
   float			fontSize() const { return font_size_; }
 
   void			clear();
@@ -58,7 +58,7 @@ public:
   // SoAsciiText::Justification just
   void			addLabelRot(const char* text, const iVec3f& at, int just,
 				    SbRotation& rot);
-  // add the label text, with explicit justification (used for axis title, and unit labels)
+  // #IGNORE add the label text, with explicit justification (used for axis title, and unit labels)
   void			addLine(const iVec3f& from, const iVec3f to);
 
   T3Axis(Axis axis = X, T3DataView* dataView_ = NULL, float fnt_sz=.05f, int n_axis = 0);

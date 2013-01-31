@@ -413,7 +413,8 @@ public:
   //    Global State, Flags Etc
 
   static TypeSpace      types;          // #READ_ONLY #NO_SAVE #EXPERT list of all the active types
-  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE list of types that have AKA for other types that are no longer supported
+  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #EXPERT list of types that have AKA for other types that are no longer supported
+  static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #EXPERT registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization
@@ -574,6 +575,14 @@ public:
 
   static TypeDef* FindTypeName(const String& typ_nm);
   // #CAT_GlobalState looks up typedef by name on global list of types, using AKA to find replacement types if original name not found
+  static MethodDef* FindRegFunName(const String& name, int& idx);
+  // #CAT_GlobalState find registered function on given list by name, idx is index of fun within list of registered functions (reg_funs)
+  static MethodDef* FindRegFunAddr(ta_void_fun funa, int& idx);
+  // #CAT_GlobalState #IGNORE find registered function on given list by addr, idx is index of funs within list of registered functions (reg_funs)
+  static MethodDef* FindRegFunListAddr(ta_void_fun funa, const String_PArray& lst, int& lidx);
+  // #CAT_GlobalState #IGNORE find registered function on given list by addr, lidx is 'index' of funs on same list
+  static MethodDef* FindRegFunListIdx(int lidx, const String_PArray& lst);
+  // #CAT_GlobalState #IGNORE find registered function on given list by lidx, which is 'index' of funs on same list (as returned by FindRegFunListAddr)
   static void   FlushConsole();
   // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output (NOTE: output to cout, cerr is deprecated and should be avoided -- use ConsoleOutput instead)
   static bool   ConsoleOutput(const String& str, bool err = false, bool pager = true);
@@ -781,6 +790,10 @@ public:
   static bool   RemovePath(const String& path);
   // #CAT_File remove full path relative to current working directory (or absolute path) including all *empty* intermediate directories along the way -- only removes directories that are empty -- returns success
 
+  static int    ReplaceStringInFile(const String& filename, const String& search_str,
+                                    const String& repl_str);
+  // #CAT_File replace all occurrences of search_str with repl_str in given file -- loads file into a String, does gsub, and saves back -- may not be suitable for very large files -- returns number of replacements actually made, or -1 if there was an error in loading the file
+
   static String GetCurrentPath();
   // #CAT_File get current working directory path
   static bool   SetCurrentPath(const String& path);
@@ -820,16 +833,6 @@ public:
 
   static bool   InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?
-
-  static bool	CreateNewSrcFiles(const String& type_nm, const String& top_path,
-				   const String& src_dir);
-  // #CAT_File create new .h header and .cpp source file for type name as top_path/src_dir/<type_nm>.h|.cpp, and create header include stubs in top_path/include/<type_nm>|.h -- top_path must be full path to source top (e.g., $HOME/emergent) -- if files already exist, a _new suffix is added, and return value is false (else true) -- also does svn add using shell to add to svn -- files have src_dir/COPYRIGHT.txt appended at top if avail, and .cpp file automatically includes header
-
-  static void	CreateAllNewSrcFiles();
-  // #CAT_File create all new source files!!  this is a one-time function that will be removed!
-  static bool	CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
-					  const String& src_dir);
-  // #CAT_File create all new source files for an existing type -- just calls TypeDef version of this
 
   /////////////////////////////////////////////////
   // Computer system info, and timing

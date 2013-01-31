@@ -91,8 +91,10 @@ extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_long_long;
   extern TA_API TypeDef TA_signed_long_long;
   extern TA_API TypeDef TA_signed_long_long_int;
+  extern TA_API TypeDef TA_ta_int64_t;
 extern TA_API TypeDef TA_uint64_t; // note: seemingly absent in MSVC
   extern TA_API TypeDef TA_unsigned_long_long;
+  extern TA_API TypeDef TA_ta_uint64_t;
 extern TA_API TypeDef TA_intptr_t; //NOTE: synonym, will either be 'int' or 'int64_t'
 extern TA_API TypeDef TA_uintptr_t;
 

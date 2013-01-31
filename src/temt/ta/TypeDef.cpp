@@ -1468,11 +1468,11 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun = NULL;
-    // if(memb_def != NULL)
-    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-    //                                              memb_def->lists, lidx);
-    // else
-    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    if(memb_def != NULL)
+      fun = taMisc::FindRegFunListAddr(*((ta_void_fun*)base),
+                                       memb_def->lists, lidx);
+    else
+      fun = taMisc::FindRegFunAddr(*((ta_void_fun*)base), lidx);
     if(fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
@@ -1780,7 +1780,8 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
 
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
-    MethodDef* fun = NULL; //TA_taRegFun.methods.FindName(val);
+    int lidx;
+    MethodDef* fun = taMisc::FindRegFunName(val, lidx);
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
@@ -2046,11 +2047,11 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
   if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun = NULL;
-    // if(memb_def != NULL)
-    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-    //                                              memb_def->lists, lidx);
-    // else
-    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    if(memb_def != NULL)
+      fun = taMisc::FindRegFunListAddr(*((ta_void_fun*)base),
+                                       memb_def->lists, lidx);
+    else
+      fun = taMisc::FindRegFunAddr(*((ta_void_fun*)base), lidx);
     if (fun != NULL)
       return fun->name;
     else if(*((void**)base) == NULL)
@@ -2192,11 +2193,11 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
   if (IsVoidPtr() || ((memb_def) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun = NULL;
-    // if(memb_def != NULL)
-    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-    //                                              memb_def->lists, lidx);
-    // else
-    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    if(memb_def != NULL)
+      fun = taMisc::FindRegFunListAddr(*((ta_void_fun*)base),
+                                       memb_def->lists, lidx);
+    else
+      fun = taMisc::FindRegFunAddr(*((ta_void_fun*)base), lidx);
     if (fun)
       return false;
     else
@@ -2289,7 +2290,8 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
                         MemberDef* memb_def)
 {
   if(IsVoid() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
-    MethodDef* fun = NULL; // TA_taRegFun.methods.FindName(val.toString());
+    int lidx;
+    MethodDef* fun = taMisc::FindRegFunName(val.toString(), lidx);
     if((fun != NULL) && (fun->addr != NULL))
       *((ta_void_fun*)base) = fun->addr;
     return;
@@ -2502,11 +2504,11 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
     MethodDef* fun = NULL;
-    // if(memb_def != NULL)
-    //   fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)src_base),
-    //                                              memb_def->lists, lidx);
-    // else
-    //   fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)src_base), lidx);
+    if(memb_def != NULL)
+      fun = taMisc::FindRegFunListAddr(*((ta_void_fun*)src_base),
+                                       memb_def->lists, lidx);
+    else
+      fun = taMisc::FindRegFunAddr(*((ta_void_fun*)src_base), lidx);
     if((fun != NULL) || (memb_def != NULL))
       *((ta_void_fun*)trg_base) = *((ta_void_fun*)src_base); // must be a funptr
     else
@@ -3128,154 +3130,6 @@ String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx
   return rval;
 }
 
-String TypeDef::Includes() {
-  String inc_str;
-  TypeSpace inc_list;
-
-  inc_list.Link(this);		// don't redo ourselves!
-  inc_list.Link(&TA_Variant);	// exclude common things
-  inc_list.Link(&TA_taString);	
-
-  inc_str << "\n// parent includes:";
-  for(int i=0; i< parents.size; i++) {
-    TypeDef* par = parents[i];
-    if(par->IsTemplInst()) {
-      for(int j=0; j<par->templ_pars.size; j++) {
-	TypeDef* tp = par->templ_pars[j];
-	if(tp->IsActualClass()) {
-	  inc_str << "\n#include <" << tp->name << ">";
-	  inc_list.Link(tp);
-	}
-      }
-      par = par->parents[0];	// now go to template itself
-    }
-    inc_str << "\n#include <" << par->name << ">";
-    inc_list.Link(par);
-  }
-
-  inc_str << "\n\n// member includes:";
-  for(int i=0; i< members.size; i++) {
-    MemberDef* md = members[i];
-    if(md->GetOwnerType() != this) continue;
-    TypeDef* mtyp = md->type;
-    if(mtyp->IsActualClassNoEff() && mtyp->name != "taBasePtr") {
-      if(inc_list.FindEl(mtyp) < 0) {
-	inc_str << "\n#include <" << mtyp->name << ">";
-	inc_list.Link(mtyp);
-      }
-    }
-  }
-
-  inc_str << "\n\n// declare all other types mentioned but not required to include:";
-  for(int i=0; i< members.size; i++) {
-    MemberDef* md = members[i];
-    if(md->GetOwnerType() != this) continue;
-    TypeDef* cltyp = md->type->GetActualClassType();
-    if(cltyp) {
-      if(inc_list.FindEl(cltyp) < 0) {
-	inc_str << "\nclass " << cltyp->name << "; // ";
-	inc_list.Link(cltyp);
-      }
-    }
-  }
-  for(int i=0; i< methods.size; i++) {
-    MethodDef* md = methods[i];
-    if(md->GetOwnerType() != this) continue;
-    { // return type
-      TypeDef* argt = md->type;
-      TypeDef* cltyp = argt->GetActualClassType();
-      if(cltyp) {
-	if(inc_list.FindEl(cltyp) < 0) {
-	  inc_str << "\nclass " << cltyp->name << "; // ";
-	  inc_list.Link(cltyp);
-	}
-      }
-    }
-    for(int j=0; j< md->arg_types.size; j++) {
-      TypeDef* argt = md->arg_types[j];
-      TypeDef* cltyp = argt->GetActualClassType();
-      if(cltyp) {
-	if(inc_list.FindEl(cltyp) < 0) {
-	  inc_str << "\nclass " << cltyp->name << "; // ";
-	  inc_list.Link(cltyp);
-	}
-      }
-    }
-  }
-  inc_str << "\n\n\n";
-  return inc_str;
-}
-
-
-bool TypeDef::CreateNewSrcFiles(const String& top_path, const String& src_dir) {
-  // bool new_file = taMisc::CreateNewSrcFiles(name, top_path, src_dir);
-  String fname = name;
-  // if(!new_file)
-  //   fname += "_new";		// create a new guy..
-
-  String src_path = top_path + "/" + src_dir + "/";
-  String hfile = src_path + name + ".h";
-
-  fstream hstrm;
-  hstrm.open(hfile, ios::in);
-  String hstr;
-  hstr.Load_str(hstrm);
-  hstrm.close();
-
-  String tdstr = "TypeDef_Of(" + name + ");";
-  if(hstr.contains(tdstr)) return false; // already done
-
-  String clnm = "\nclass TA_API " + name;
-
-  if(!hstr.contains(clnm)) {
-    String clnm2 = "\nclass TA_API  " + name;
-    if(!hstr.contains(clnm2)) {
-      taMisc::Error("CreateNewSrcFiles: class decl: ", clnm, "not found for class", name);
-      return false;
-    }
-    hstr.gsub(clnm2, clnm);     // fix it!
-  }
-
-  String before_class = hstr.before(clnm);
-  String from_class = hstr.from(clnm);
-  hstr = before_class + "\n" + tdstr + "\n" + from_class;
-
-#if 0
-  if(hstr.contains("\n// parent includes:"))
-    hstr = hstr.before("\n// parent includes:");
-  else if(hstr.contains("\n#include"))
-    hstr = hstr.before("\n#include");
-  else
-    hstr = hstr.before("\n#endif");
-
-  String incs = Includes();
-
-  hstr << incs;
-  
-  String cmd;
-  cmd << "sed -n " << source_start << "," << source_end << "p "
-      << src_path << source_file << " > " << src_path << "create_new_src_src";
-  taMisc::ExecuteCommand(cmd);
-  
-  fstream srcstrm;
-  srcstrm.open(src_path + "create_new_src_src", ios::in);
-  String srcstr;
-  srcstr.Load_str(srcstrm);
-  srcstrm.close();
-
-  hstr << srcstr << "\n";
-
-  hstr << "#endif // " << name << "_h\n";
-#endif
-
-
-  fstream strm;
-  strm.open(src_path + fname + ".h", ios::out);
-  hstr.Save_str(strm);
-  strm.close();
-
-  return true;
-}
 
 #ifndef NO_TA_BASE
 

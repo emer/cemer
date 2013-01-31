@@ -47,13 +47,13 @@ public:
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
 
-  virtual SoSeparator*	x_axis() { return x_axis_sep_; }
-  virtual SoSeparator*	z_axis() { return z_axis_sep_; }
-  virtual SoSeparator*	y_axes() { return y_axes_sep_; }
-  virtual SoSeparator*	legend() { return legend_sep_; }
-  virtual SoSeparator*	graphs() { return graphs_sep_; }
+  virtual SoSeparator*	x_axis() { return x_axis_sep_; } // #IGNORE 
+  virtual SoSeparator*	z_axis() { return z_axis_sep_; } // #IGNORE 
+  virtual SoSeparator*	y_axes() { return y_axes_sep_; } // #IGNORE 
+  virtual SoSeparator*	legend() { return legend_sep_; } // #IGNORE 
+  virtual SoSeparator*	graphs() { return graphs_sep_; } // #IGNORE 
 
-  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }
+  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; } // #IGNORE 
 
 protected:
   float			width_;

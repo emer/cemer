@@ -27,7 +27,8 @@ else (WIN32)
   
   macro(SET_TA_PROPS outfile)
     SET_SOURCE_FILES_PROPERTIES(${outfile}
-      PROPERTIES COMPILE_FLAGS "-O0 -g0" GENERATED 1    
+      PROPERTIES COMPILE_FLAGS "-O0 -g0" 
+      GENERATED 1    
       )
   endmacro(SET_TA_PROPS)
 endif (WIN32)
@@ -38,8 +39,12 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
   add_custom_command(
     OUTPUT ${outfile}
     COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
-    DEPENDS ${infile})
-  SET_TA_PROPS(${outfile})
+    DEPENDS ${infile}
+  )
+  # IMPORTANT: setting these props triggers a full rebuild of the source whenever
+  # the list of files changes -- so we cannot do this -- now with distributed maketa
+  # this is not such a big deal, so we let it go..
+  # SET_TA_PROPS(${outfile})
 endmacro (CREATE_MAKETA_COMMAND)
 
 # new maketa command -- based directly on QT4_WRAP_CPP in Qt4Macros.cmake

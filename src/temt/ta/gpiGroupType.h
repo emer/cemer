@@ -17,7 +17,7 @@
 #define gpiGroupType_h 1
 
 // parent includes:
-#include <gpiListType>
+#include <taiTypeOfList>
 
 // member includes:
 
@@ -26,8 +26,8 @@
 
 TypeDef_Of(gpiGroupType);
 
-class TA_API gpiGroupType : public gpiListType {
-  TAI_TYPEBASE_SUBCLASS(gpiGroupType, gpiListType);
+class TA_API gpiGroupType : public taiTypeOfList {
+  TAI_TYPEBASE_SUBCLASS(gpiGroupType, taiTypeOfList);
 public:
   int           BidForType(TypeDef* td);
 protected:

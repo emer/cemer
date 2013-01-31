@@ -42,14 +42,14 @@ public:
   static float 		frame_width; // = .02 width of frame itself
   static void		initClass();
 
-  SoFrame*		frame() const {return frame_;} 
-  SoGroup*		grid() const {return grid_;}
-  SoMaterial*		matStage() const {return mat_stage_;}
-  SoSeparator*		header() const {return header_;}
-  SoSeparator*		body() const {return body_;}
+  SoFrame*		frame() const {return frame_;} // #IGNORE 
+  SoGroup*		grid() const {return grid_;}  // #IGNORE 
+  SoMaterial*		matStage() const {return mat_stage_;}  // #IGNORE 
+  SoSeparator*		header() const {return header_;}  // #IGNORE 
+  SoSeparator*		body() const {return body_;}  // #IGNORE 
 
-  SoScrollBar*		ColScrollBar() const { return col_scroll_bar_; }
-  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }
+  SoScrollBar*		ColScrollBar() const { return col_scroll_bar_; }  // #IGNORE 
+  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }  // #IGNORE 
 
   virtual void		render();
   virtual void		setWidth(float wdth);

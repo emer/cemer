@@ -987,7 +987,31 @@ taString& taString::reverse() {
   return *this;
 }
 
-int taString::Load_str(std::istream& istrm) {
+bool taString::LoadFromFile(const String& fname) {
+  fstream strm;
+  strm.open(fname, ios::in);
+  if(!strm.good() || strm.bad()) {
+    strm.close();
+    return false;
+  }
+  bool rval = Load_str(strm);
+  strm.close();
+  return rval;
+}
+
+bool taString::SaveToFile(const String& fname) {
+  fstream strm;
+  strm.open(fname, ios::out);
+  if(!strm.good() || strm.bad()) {
+    strm.close();
+    return false;
+  }
+  bool rval = Save_str(strm);
+  strm.close();
+  return rval;
+}
+
+bool taString::Load_str(std::istream& istrm) {
   truncate(0);
   const int buf_len = 1024;
   char buf[buf_len];
@@ -1004,14 +1028,14 @@ int taString::Load_str(std::istream& istrm) {
     cat(buf, n_read);
   }
 
-  if (istrm.bad()) return 1;
-  else return 0;
+  if (istrm.bad()) return false;
+  else return true;
 }
 
-int taString::Save_str(std::ostream& ostrm) {
+bool taString::Save_str(std::ostream& ostrm) {
   ostrm.write(mrep->s, mrep->len);
-  if (ostrm.bad()) return 1;
-  else return 0;
+  if (ostrm.bad()) return false;
+  else return true;
 }
 
 taString& taString::set(const char* s, int slen) {

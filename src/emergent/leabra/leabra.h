@@ -2748,7 +2748,7 @@ public:
     if(acc_md == ACC_GP) return gp_kbuffs.FastEl(buff);
     return lay_kbuffs.FastEl(buff);
   }
-  // #CAT_Activation get kwta sort buffer for given access mode (gp or layer) and buffer type
+  // #CAT_Activation #IGNORE get kwta sort buffer for given access mode (gp or layer) and buffer type
   KwtaSortBuff_List* 	SortBuffList(AccessMode acc_md) {
     if(acc_md == ACC_GP) return &gp_kbuffs;
     return &lay_kbuffs;

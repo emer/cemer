@@ -102,10 +102,14 @@ TypeDef TA_signed_long_long     ("signed_long_long", TypeDef::INTEGER | TypeDef:
                                  sizeof(signed long long), "signed long long");
 TypeDef TA_signed_long_long_int ("signed_long_long_int", TypeDef::INTEGER | TypeDef::SIGNED, 1,
                                  sizeof(signed long long), "signed long long int");
+TypeDef TA_ta_int64_t           ("ta_int64_t",     TypeDef::INTEGER | TypeDef::SIGNED, 1,
+                                 sizeof(ta_int64_t));
 TypeDef TA_uint64_t             ("uint64_t",    TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
                                  sizeof(uint64_t));
 TypeDef TA_unsigned_long_long ("unsigned_long_long", TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
                                  sizeof(unsigned long long), "unsigned long long");
+TypeDef TA_ta_uint64_t          ("ta_uint64_t",    TypeDef::INTEGER | TypeDef::UNSIGNED, 1,
+                                 sizeof(ta_uint64_t));
 
 TypeDef TA_intptr_t             ("intptr_t",    TypeDef::INTEGER | TypeDef::SIGNED, 1,
                                  sizeof(intptr_t));
@@ -189,8 +193,11 @@ void tac_AddBuiltinTypeDefs() {
   TA_long_long.AddNewGlobalType();         
   TA_signed_long_long.AddNewGlobalType();  
   TA_signed_long_long_int.AddNewGlobalType();  
+  TA_ta_int64_t.AddNewGlobalType();           
+
   TA_uint64_t.AddNewGlobalType();          
   TA_unsigned_long_long.AddNewGlobalType();
+  TA_ta_uint64_t.AddNewGlobalType();          
 
   TA_intptr_t.AddNewGlobalType();
   TA_uintptr_t.AddNewGlobalType();
@@ -249,7 +256,9 @@ void tac_AddBuiltinTypeDefs() {
   TA_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long_int.AddParents(&TA_int64_t);
+  TA_ta_int64_t.AddParents(&TA_int64_t);
   TA_unsigned_long_long.AddParents(&TA_uint64_t);
+  TA_ta_uint64_t.AddParents(&TA_uint64_t);
 
   if(sizeof(intptr_t) == sizeof(int))
     TA_intptr_t.AddParents(&TA_int);

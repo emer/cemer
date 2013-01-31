@@ -40,7 +40,7 @@ public:
 
   void		setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
   void		setArrowColor(const SbColor& clr, float transp);
-  // set arrow color
+  // #IGNORE set arrow color
 
   T3PrjnNode(T3DataView* dataView_ = NULL, bool projected = true, float rad = .01f);
 

@@ -51,7 +51,7 @@ TypeDef_Of(iDataTableEditor);
 
 class TA_API iDataTableEditor: public QWidget,  public virtual ISelectableHost,
                                public virtual IDataLinkClient {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER editor for data tables
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS editor for data tables
   Q_OBJECT
 INHERITED(QWidget)
 public:

@@ -589,14 +589,6 @@ public:
   // loads the actual member values of the object (false if error)
 #endif
 
-  /////////////////////////////////////////////////////////////
-  //		Generate source code stubs in standard format -- timesaver
-
-  bool		CreateNewSrcFiles(const String& top_path, const String& src_dir);
-  // #CAT_File create files for this class type in given location (top_path/src_dir and top_path/include) -- see taMisc::CreateNewSrcFiles for details -- also automatically adds proper set of includes and declarations based on inheritance and members
-  String	Includes();
-  // #CAT_File generate list of includes for this type = parents and full class members
-
 private:
   void          Initialize();
   void          Copy_(const TypeDef& cp);

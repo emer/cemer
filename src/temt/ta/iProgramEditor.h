@@ -58,7 +58,7 @@ TypeDef_Of(iProgramEditor);
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
                              public virtual IDataLinkClient {
-  // #NO_CSS widget for editing entire programs
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget for editing entire programs
   INHERITED(QWidget)
   Q_OBJECT
 public:

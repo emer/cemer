@@ -39,9 +39,13 @@ endif (QT_USE_5)
 
 # just list whole set of files here
 set(temtlib_SRCS
+  ${temt_ta_SRCS}
+  ${temt_ta_SRCS_MAKETA}
+  ${temt_ta_SRCS_MOC}
   ${temt_ta_SRCS_UIC}
-  ${temt_ta_SRCS} ${temt_ta_SRCS_MAKETA} ${temt_ta_SRCS_MOC}
-  ${temt_css_SRCS} ${temt_css_SRCS_MOC})
+  ${temt_css_SRCS}
+  ${temt_css_SRCS_MOC}
+  )
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
 

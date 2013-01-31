@@ -192,8 +192,8 @@ public:
                              int discard_terminator = 1);
   TA_API friend int        readline_auto(istream& strm, taString& x);
   // reads a line regardless of OS terminator (n rn r) convention of the stream (discarding terminators); returns num chars read
-  int                   Save_str(ostream& ostrm);
-  int                   Load_str(istream& istrm);
+  bool                  Save_str(ostream& ostrm);
+  bool                  Load_str(istream& istrm);
   // #IGNORE
 #else
   taString&   operator<<(char c) { return cat(c); }
@@ -218,9 +218,13 @@ public:
                                  char terminator = '\n',
                                  int discard_terminator = 1);
   TA_API friend int     readline_auto(std::istream& strm, taString& x);
-  int                   Load_str(std::istream& istrm); // load contents from a stream
-  int                   Save_str(std::ostream& ostrm); // save contents to a stream
+  bool                  Load_str(std::istream& istrm); // load contents from a stream
+  bool                  Save_str(std::ostream& ostrm); // save contents to a stream
 #endif
+  bool                  LoadFromFile(const String& fname);
+  // load contents of given file into string
+  bool                  SaveToFile(const String& fname);
+  // save contents of string to given file name
 
   ////////////////////////////////////////////////
   // constructors & assignment

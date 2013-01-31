@@ -44,7 +44,7 @@ public:
 				float max_x, float max_y, float max_z);
 
   bool			hideLines() { return hide_lines_; }
-  SoDrawStyle* 		drawStyle() { return drw_styl_; }
+  SoDrawStyle* 		drawStyle() { return drw_styl_; } // #IGNORE
 
   T3LayerGroupNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
 		   bool hide_lines = false, bool mode_2d = false);

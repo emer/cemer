@@ -137,6 +137,7 @@ extern TA_API void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt);
 extern TA_API void tac_AddMembers(TypeDef& tp, MemberDef_data* dt);
 extern TA_API void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt);
 extern TA_API void tac_AddMethods(TypeDef& tp, MethodDef_data* dt);
+extern TA_API void tac_AddRegFun(TypeDef& tp);
 
 #endif // ta_type_constr_h
 

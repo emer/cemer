@@ -73,19 +73,19 @@ class iVec3f; //
 
   Coordinate Space
 
-  The coordinate space for "pos" and "geom" calls follows the PDP conventions. The values
+  The coordinate space for "pos" and "geom" calls follows the emergent conventions. The values
   are in integral units in some abstract 3-d space; the frame of reference is as follows:
 
-  Dimension	PDP	Inventor
+  Dimension	emergent Inventor
   left-->right	+x	+x
   bott->top	+y	+y
   back->front	-z	+z
 
-  Because of how layers are stacked, the PDP-y space is scaled with respect to the other
+  Because of how layers are stacked, the emergent-y space is scaled with respect to the other
   spaces. However, this is not done with transforms (it would distort shapes), but merely
-  by scaling the PDP y factor.
+  by scaling the emergent y factor.
 
-  The letter 'p' in front of coordinate items (px, py, etc.) means PDP coordinates.
+  The letter 'p' in front of coordinate items (px, py, etc.) means emergent coordinates.
 
   TODO:
 
@@ -158,8 +158,10 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 */
 TypeDef_Of(T3Node);
 
+// NOTE: unfortunately we cannot mark T3Nodes as ##NO_MEMBERS because we need the initClass method which is called to initialize Coin3d Types
+
 class TA_API T3Node: public SoSeparator {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  an base class for PDP project items, like networks, etc.
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a base class for Inventor (Coin3d) nodes -- are paired with corresponding T3DataView object that provides persistence and generally controls behavior of this node -- T3Node should be minimal container object
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -170,22 +172,23 @@ public:
   static void		initClass();
 
   static void		insertChildBefore(SoGroup* group, SoNode* child, SoNode* before);
-   // insert before node; before=NULL for end;
+   // #IGNORE insert before node; before=NULL for end;
   static void		insertChildAfter(SoGroup* group, SoNode* child, SoNode* after);
-   // insert before node; after=NULL for start
-  static SoNode*	getNodeByName(SoGroup* group, const char* name); // find node by name, if any
+   // #IGNORE insert before node; after=NULL for start
+  static SoNode*	getNodeByName(SoGroup* group, const char* name);
+  // #IGNORE find node by name, if any
 
   inline T3DataView*	dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
 
-  virtual SoFont*	captionFont(bool auto_create = false) = 0;
-  SoAsciiText*		captionNode(bool auto_create = false);
-  SoSeparator*	        topSeparator() {return this;}
-  SoTransform*		transform() const {return transform_;} // the master transform, for the whole entity
-  virtual SoSeparator*	shapeSeparator() = 0;
-  SoTransform*		txfm_shape() const {return txfm_shape_;} 
-    // the transform for the shape
-  SoMaterial*		material() const {return material_;}
-  virtual SoSeparator*	childNodes() {return NULL;} // use this to set/get T3Node children
+  virtual SoFont*	captionFont(bool auto_create = false) = 0; // #IGNORE 
+  SoAsciiText*		captionNode(bool auto_create = false); // #IGNORE 
+  SoSeparator*	        topSeparator() {return this;} // #IGNORE 
+  SoTransform*		transform() const {return transform_;} // #IGNORE the master transform, for the whole entity
+  virtual SoSeparator*	shapeSeparator() = 0;                  // #IGNORE 
+  SoTransform*		txfm_shape() const {return txfm_shape_;}
+  // #IGNORE the transform for the shape
+  SoMaterial*		material() const {return material_;} // #IGNORE 
+  virtual SoSeparator*	childNodes() {return NULL;} // #IGNORE use this to set/get T3Node children
 
   virtual const char*	caption();
   virtual void		setCaption(const char* value); //NOTE: if you want to transform, you MUST call transformCaption every time after calling setCaption
@@ -197,7 +200,7 @@ public:
   virtual bool		expanded() {return true;} // many nodes have an expanded and compact rep
   virtual void		setExpanded(bool value) {}
 
-  virtual void		addRemoveChildNode(SoNode* node, bool adding); // called by pdpDataView (default prints console error)
+  virtual void		addRemoveChildNode(SoNode* node, bool adding); // #IGNORE called by pdpDataView (default prints console error)
 
   T3Node(T3DataView* dataView_ = NULL);
 

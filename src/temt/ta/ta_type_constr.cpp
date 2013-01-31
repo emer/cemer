@@ -86,16 +86,15 @@ bool TypeDefInitRegistrar::CallAllInstInitFuns() {
 //    methods for actually initializing things from data structures
 
 
-static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
-  static String_PArray already_warned;
-
+static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm, 
+                                  const String& ref_type, const String& ref_oth) {
   String snm = nm;
   TypeDef* typ = TypeDef::FindGlobalTypeName(snm, false);
   if(!typ) { // not found
     if(snm.endsWith("_ary")) {  // we dynamically construct arrays
       typ = new TypeDef(nm);
       typ->AddNewGlobalType(false);
-      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ary"));
+      TypeDef* par = tac_GetTypeFmName(tp, typ->name.before("_ary"), ref_type, ref_oth);
       typ->type = par->type;
       typ->SetType(TypeDef::ARRAY);
       typ->AddParent(par);
@@ -104,14 +103,9 @@ static TypeDef* tac_GetTypeFmName(TypeDef& tp, const char* nm) {
 #ifdef DEBUG      
       String anm = snm;
       if(anm.startsWith("const_")) anm = anm.after("const_");
-      if(already_warned.FindEl(anm) < 0) {
-        if(!(anm.startsWith("Q") || anm.startsWith("So") || anm.startsWith("Sb")
-             || anm.startsWith("i") || anm.startsWith("I"))) {
-          taMisc::Info("tac_GetTypeFmName(): unknown type named:", nm,
-                       "not found -- anything involving this type will not be constructed");
-        }
-        already_warned.Add(anm);
-      }
+      taMisc::Info("tac_GetTypeFmName(): unknown type named:", nm,
+                   "referred to by type:", ref_type, "in:", ref_oth,
+                   "anything involving this type will not be constructed");
 #endif
     }
   }
@@ -159,7 +153,8 @@ void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt) {
 
 void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
   while((dt != NULL) && (dt->type != NULL)) {
-    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type, tp.name,
+                                     String("Member: ") + dt->name);
     if(typ != NULL) {
       MemberDef* md;
       md = new MemberDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
@@ -172,7 +167,8 @@ void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
 
 void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt) {
   while((dt != NULL) && (dt->type != NULL)) {
-    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type, tp.name,
+                                     String("Property: ") + dt->name);
     if(typ != NULL) {
       PropertyDef* md;
       md = new PropertyDef(typ, dt->name, dt->desc, dt->opts, dt->lists,
@@ -186,12 +182,14 @@ void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt) {
 
 void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
   while((dt != NULL) && (dt->type != NULL)) {
-    TypeDef* typ = tac_GetTypeFmName(tp, dt->type);
+    TypeDef* typ = tac_GetTypeFmName(tp, dt->type, tp.name,
+                                     String("Method rval: ") + dt->name);
     if(typ != NULL) {
       bool some_invalid_type = false;
       MethodArgs_data* fa = dt->fun_args;
       while((fa != NULL) && (fa->type != NULL)) {
-        TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type);
+        TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type, tp.name,
+                                           String("Method arg: ") + dt->name + "->" + fa->name);
         if(fatyp == NULL) {
           some_invalid_type = true;
           break;
@@ -206,7 +204,8 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
 
         MethodArgs_data* fa = dt->fun_args;
         while((fa != NULL) && (fa->type != NULL)) {
-          TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type);
+          TypeDef* fatyp = tac_GetTypeFmName(tp, fa->type, tp.name,
+                                             String("Method arg: ") + dt->name + "->" + fa->name);
           if(fatyp != NULL) {
             md->arg_types.Link(fatyp);
             md->arg_names.Add(fa->name);
@@ -220,4 +219,8 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
     }
     dt++;
   }
+}
+
+void tac_AddRegFun(TypeDef& td) {
+  taMisc::reg_funs.Link(&td);
 }

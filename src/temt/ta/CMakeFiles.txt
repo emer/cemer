@@ -572,7 +572,7 @@ set(ta_HEADS_MAKETA_LOCAL
   taiMatrixGeomType.h
   taiColorType.h
   taitaColorType.h
-  gpiListType.h
+  taiTypeOfList.h
   gpiGroupType.h
   gpiArray_Type.h
   taiTokenPtrType.h
@@ -718,6 +718,7 @@ set(ta_HEADS_MAKETA_LOCAL
   T3Translate2Translator.h
   SoScrollBar.h
   BuiltinTypeDefs.h
+  taCodeUtils.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1622,7 +1623,7 @@ set(ta_SRCS_MAKETA
   taiMatrixGeomType.cpp
   taiColorType.cpp
   taitaColorType.cpp
-  gpiListType.cpp
+  taiTypeOfList.cpp
   gpiGroupType.cpp
   gpiArray_Type.cpp
   taiTokenPtrType.cpp
@@ -1721,6 +1722,7 @@ set(ta_SRCS_MAKETA
   taiTypeItemDataHost.cpp
   NewViewHelper.cpp
   BuiltinTypeDefs.cpp
+  taCodeUtils.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA

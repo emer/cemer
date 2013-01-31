@@ -52,7 +52,7 @@ public:
   void                  emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
   void                  emit_dataChanged(const QModelIndex& topLeft,
-    const QModelIndex& bottomRight);
+                                         const QModelIndex& bottomRight); // #IGNORE 
 
 public slots:
   void                  matDataChanged(int col_idx); // mat editor calls when data changes

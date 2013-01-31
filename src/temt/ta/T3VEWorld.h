@@ -42,16 +42,16 @@ public:
 
   void                  setSunLightDir(float x_dir, float y_dir, float z_dir);
   void                  setSunLightOn(bool on);
-  SoDirectionalLight*   getSunLight()     { return sun_light; }
+  SoDirectionalLight*   getSunLight()     { return sun_light; } // #IGNORE 
 
   void                  setCamLightDir(float x_dir, float y_dir, float z_dir);
   void                  setCamLightOn(bool on);
-  SoDirectionalLight*   getCamLight()     { return cam_light; }
+  SoDirectionalLight*   getCamLight()     { return cam_light; } // #IGNORE 
 
-  SoGroup*              getLightGroup() { return light_group; }
-  SoSwitch*             getCameraSwitch() { return camera_switch; }
-  SoSwitch*             getTextureSwitch() { return textures; }
-  SoSwitch*             getTextureXformSwitch() { return texture_xforms; }
+  SoGroup*              getLightGroup() { return light_group; }  // #IGNORE 
+  SoSwitch*             getCameraSwitch() { return camera_switch; } // #IGNORE 
+  SoSwitch*             getTextureSwitch() { return textures; } // #IGNORE 
+  SoSwitch*             getTextureXformSwitch() { return texture_xforms; } // #IGNORE 
 
 protected:
   SoDirectionalLight*   sun_light;

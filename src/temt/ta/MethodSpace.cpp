@@ -115,45 +115,6 @@ end:
   return result;
 }
 
-MethodDef* MethodSpace::FindAddr(ta_void_fun funa, int& idx) const {
-  int i;
-  idx = 0;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->addr == funa) {
-      idx = i;
-      return FastEl(i);
-    }
-  }
-  return NULL;
-}
-
-
-// lidx is "index" in space for items on same list
-MethodDef* MethodSpace::FindOnListAddr(ta_void_fun funa, const String_PArray& lst, int& lidx) const {
-  int i;
-  lidx = 0;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->CheckList(lst)) {
-      if(FastEl(i)->addr == funa)
-        return FastEl(i);
-      lidx++;
-    }
-  }
-  return NULL;
-}
-
-MethodDef* MethodSpace::FindOnListIdx(int lidx, const String_PArray& lst) const {
-  int i, chk = 0;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->CheckList(lst)) {
-      if(chk == lidx)
-        return FastEl(i);
-      chk++;
-    }
-  }
-  return NULL;
-}
-
 MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
   idx = -1;
   for (int i = 0; i < size; ++i) {

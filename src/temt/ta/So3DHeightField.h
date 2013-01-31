@@ -87,7 +87,7 @@ public:
   // get text representation of value
 
   SoTransform*	transform() const { return transform_; }
-  // the master transform, for the whole entity
+  // #IGNORE the master transform, for the whole entity
 
   So3DHeightField(taMatrix* mat_ = NULL, taMatrix* vec_mat_ = NULL, ColorScale* cs = NULL, 
 		  MinMaxRange* vec_r = NULL, bool vec_nrm_ = false,

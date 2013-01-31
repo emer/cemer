@@ -65,14 +65,8 @@ public:
 
   bool          AddUniqNameNew(MethodDef* it);
 
-  MethodDef*    FindAddr(ta_void_fun funa, int& idx) const;
-  // find fun by addr, idx is actual index in method space
-  MethodDef*    FindOnListAddr(ta_void_fun funa, const String_PArray& lst, int& lidx) const;
-  // find fun on given list by addr, lidx is 'index' of funs on same list
-  MethodDef*    FindOnListIdx(int lidx, const String_PArray& lst) const;
-  // find fun on given list by index, as given by FindOnListAddr()
   MethodDef*    FindVirtualBase(MethodDef* it, int& idx);
-    // find the virtual method with same name and signature
+  // find the virtual method with same name and signature
 
   // IO
   virtual String&      PrintType(String& strm, int indent = 0) const;

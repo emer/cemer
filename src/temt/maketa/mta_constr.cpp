@@ -313,9 +313,8 @@ void MTA::TypeDef_Gen_Stubs(TypeDef* ths, ostream& strm, bool add_typedefs) {
   if(ths->IsTemplate()) return;
 
   // this is just for reg_fun
-  // if(ths->InheritsFrom(TA_taRegFun) && this->gen_css
-  //    && !ths->HasOption("NO_CSS"))
-  //   MethodSpace_Gen_Stubs(&(ths->methods), ths, strm);
+  if(ths->IsFunction() && this->gen_css && !ths->HasOption("NO_CSS"))
+    MethodSpace_Gen_Stubs(&(ths->methods), ths, strm, add_typedefs);
 
   if(!ths->IsActualClass()) return;
 
@@ -612,14 +611,14 @@ void MTA::MethodDef_GenArgs(MethodDef* md, ostream& strm, int act_argc, bool add
 }
 
 void MTA::MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm) {
-  // if(ownr->InheritsFrom(TA_taRegFun))
-  //   strm << "static cssEl* cssElCFun_" << md->name;
-  // else
+  if(ownr->IsFunction())
+    strm << "static cssEl* cssElCFun_" << md->name;
+  else
     strm << "static cssEl* cssElCFun_" << ownr->name << "_" << md->name;
   strm << "_stub(";
-  // if(ownr->InheritsFrom(TA_taRegFun))
-  //   strm << "void*,";
-  // else
+  if(ownr->IsFunction())
+    strm << "void*,";
+  else
     strm << "void* ths,";
   if(md->fun_argc == 0)
     strm << "int, cssEl**) {\n";
@@ -631,9 +630,9 @@ void MTA::MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm) {
 }
 
 void MTA::MethodDef_GenStubCall(TypeDef* ownr, MethodDef* md, ostream& strm) {
-  // if(ownr->InheritsFrom(TA_taRegFun))
-  //   strm << md->name << "(";
-  // else
+  if(ownr->IsFunction())
+    strm << md->name << "(";
+  else
     strm << "((" << ownr->Get_C_Name() << "*)ths)->" << md->name << "(";
 }
 
@@ -908,10 +907,9 @@ void MTA::TypeDef_Gen_Data(TypeDef* ths, ostream& strm) {
     TypeDef_Gen_MethodData(ths, strm);
     TypeDef_Gen_PropertyData(ths, strm);
   }
-  // if(ths->InheritsFrom(TA_taRegFun)
-  //    && (gen_css) && !ths->HasOption("NO_CSS")) {
-  //   TypeDef_Gen_MethodData(ths, strm);
-  // }
+  if(ths->IsFunction() && (gen_css) && !ths->HasOption("NO_CSS")) {
+    TypeDef_Gen_MethodData(ths, strm);
+  }
 }
 
 
@@ -1147,9 +1145,9 @@ void MTA::MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
     if (md->is_virtual) strm << ",1"; else strm << ",0";
     if(md->is_static) {                         // only static gets addr
       strm << ",1,(ta_void_fun)(";
-      // if(ownr->InheritsFrom(TA_taRegFun))
-      //   strm <<  md->name << ")";
-      // else
+      if(ownr->IsFunction())
+        strm <<  md->name << ")";
+      else
         strm << ownr->Get_C_Name() << "::" << md->name << ")";
     }
     else
@@ -1157,9 +1155,9 @@ void MTA::MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
 
     if(gen_css && !ownr->HasOption("NO_CSS") && !ownr->IsTemplate()) {
       strm << ",cssElCFun_";
-      // if(ownr->InheritsFrom(TA_taRegFun))
-      //   strm << md->name << "_stub";
-      // else
+      if(ownr->IsFunction())
+        strm << md->name << "_stub";
+      else
         strm << ownr->name << "_" << md->name << "_stub";
     }
     else {
@@ -1294,6 +1292,7 @@ void MTA::TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm) {
     strm << win_dll_str << " ";
 #endif
   strm << "void ta_TypeInit_" << trg_basename << "() {\n";
+  strm << "  TypeDef* sbt = NULL;\n\n";
 
   for(int i=0; i<ths->size; i++) {
     TypeDef_Gen_TypeInit(ths->FastEl(i), strm);
@@ -1304,7 +1303,29 @@ void MTA::TypeSpace_Gen_TypeInit(TypeSpace* ths, ostream& strm) {
 void MTA::TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Gen_Test(ths)) return;
 
-  strm << "  TA_" << ths->name << ".AddNewGlobalType();\n";
+  // get all the type-level info here in first pass -- doesn't depend on anything else
+  // but other data later (members, methods) can depend on this type info..
+
+  bool reg_fun = false;
+  if(ths->IsFunction() && (gen_css) && !ths->HasOption("NO_CSS")) {
+    reg_fun = true;
+  }
+
+  strm << "\n  TA_" << ths->name << ".AddNewGlobalType(";
+  if(reg_fun) {
+    strm << "false";            // don't create all the derivatives on this guy!
+  }
+  strm << ");\n";
+  if(ths->IsEnum()) {
+    TypeDef_Init_EnumData(ths, strm);
+  }
+  if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS") && !ths->IsTemplate()) {
+    TypeDef_Init_EnumData(ths, strm);
+    SubTypeSpace_Gen_Init(&(ths->sub_types), ths, strm);
+  }
+  if(reg_fun) {
+    strm << "  tac_AddRegFun(TA_" + ths->name + ");\n";
+  }
 }
 
 
@@ -1319,7 +1340,6 @@ void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
     strm << win_dll_str << " ";
 #endif
   strm << "void ta_DataInit_" << trg_basename << "() {\n";
-  strm << "  TypeDef* sbt = NULL;\n\n";
 
   for(int i=0; i<ths->size; i++) {
     TypeDef_Gen_DataInit(ths->FastEl(i), strm);
@@ -1330,32 +1350,19 @@ void MTA::TypeSpace_Gen_DataInit(TypeSpace* ths, ostream& strm) {
 void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
   if(!TypeDef_Gen_Test(ths)) return;
 
-  // int reg_fun_level = 0;
-  // if(ths->InheritsFrom(TA_taRegFun)) {
-  //   if(basename == "ta")
-  //     reg_fun_level = 1;        // add reg_fun and its methods
-  //   else
-  //     reg_fun_level = 2;        // just add reg_fun methods (not the typedef)
-  // }
-
   strm << "\n";                 // new row for new class
 
   String ths_ref = "TA_" + ths->name + ".";
   TypeDef_Gen_AddParents(ths, ths_ref, strm);
 
-  if(ths->IsEnum()) {
-    TypeDef_Init_EnumData(ths, strm);
-  }
   if(ths->IsActualClass() && !ths->HasOption("NO_MEMBERS") && !ths->IsTemplate()) {
-    TypeDef_Init_EnumData(ths, strm);
-    SubTypeSpace_Gen_Init(&(ths->sub_types), ths, strm);
     TypeDef_Init_MemberData(ths, strm);
     TypeDef_Init_MethodData(ths, strm);
     TypeDef_Init_PropertyData(ths, strm);
   }
-  // if((reg_fun_level > 0) && (gen_css) && !ths->HasOption("NO_CSS")) {
-  //   TypeDef_Init_MethodData(ths, strm);
-  // }
+  if(ths->IsFunction() && (gen_css) && !ths->HasOption("NO_CSS")) {
+    TypeDef_Init_MethodData(ths, strm);
+  }
 }
 
 void MTA::TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {

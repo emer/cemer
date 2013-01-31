@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef gpiListType_h
-#define gpiListType_h 1
+#ifndef taiTypeOfList_h
+#define taiTypeOfList_h 1
 
 // parent includes:
 #include <taiClassType>
@@ -24,10 +24,10 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(gpiListType);
+TypeDef_Of(taiTypeOfList);
 
-class TA_API gpiListType : public taiClassType {
-  TAI_TYPEBASE_SUBCLASS(gpiListType, taiClassType);
+class TA_API taiTypeOfList : public taiClassType {
+  TAI_TYPEBASE_SUBCLASS(taiTypeOfList, taiClassType);
 public:
   int           BidForType(TypeDef* td);
 protected:
@@ -35,4 +35,4 @@ protected:
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 };
 
-#endif // gpiListType_h
+#endif // taiTypeOfList_h

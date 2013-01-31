@@ -575,21 +575,21 @@ static const yytype_uint16 yyrline[] =
      257,   261,   268,   275,   285,   287,   294,   295,   296,   297,
      300,   301,   304,   305,   309,   319,   320,   324,   330,   333,
      335,   340,   347,   351,   352,   356,   357,   358,   359,   362,
-     371,   373,   377,   382,   383,   386,   387,   390,   391,   392,
-     397,   400,   406,   407,   412,   420,   421,   425,   428,   429,
-     432,   441,   454,   460,   464,   469,   473,   474,   475,   476,
-     477,   497,   498,   504,   505,   506,   507,   514,   518,   522,
-     528,   534,   539,   540,   541,   542,   543,   544,   545,   546,
-     547,   548,   549,   550,   551,   552,   563,   577,   578,   579,
-     581,   586,   587,   588,   589,   590,   593,   600,   604,   605,
-     606,   607,   608,   609,   613,   614,   615,   619,   620,   621,
-     624,   625,   628,   629,   632,   633,   634,   637,   639,   650,
-     654,   658,   662,   666,   673,   674,   677,   681,   685,   688,
-     689,   692,   695,   696,   697,   700,   704,   705,   714,   715,
-     726,   727,   735,   736,   738,   739,   741,   742,   746,   750,
-     751,   752,   753,   754,   771,   777,   778,   792,   793,   798,
-     799,   800,   804,   805,   808,   809,   812,   815,   816,   817,
-     821,   825,   829,   833
+     372,   374,   378,   383,   384,   387,   388,   391,   392,   393,
+     398,   401,   407,   408,   413,   421,   422,   426,   429,   430,
+     433,   442,   455,   461,   465,   470,   474,   475,   476,   477,
+     478,   498,   499,   505,   506,   507,   508,   515,   519,   523,
+     529,   535,   540,   541,   542,   543,   544,   545,   546,   547,
+     548,   549,   550,   551,   552,   553,   563,   576,   577,   578,
+     580,   585,   586,   587,   588,   589,   592,   599,   603,   604,
+     605,   606,   607,   608,   612,   613,   614,   618,   619,   620,
+     623,   624,   627,   628,   631,   632,   633,   636,   638,   649,
+     653,   657,   661,   665,   672,   673,   676,   680,   684,   687,
+     688,   691,   694,   695,   696,   699,   703,   704,   713,   714,
+     725,   726,   734,   735,   737,   738,   740,   741,   745,   749,
+     750,   751,   752,   753,   770,   776,   777,   791,   792,   797,
+     798,   799,   803,   804,   807,   808,   811,   814,   815,   816,
+     820,   824,   828,   832
 };
 #endif
 
@@ -2173,60 +2173,61 @@ yyreduce:
 #line 362 "mta_parse.y"
     {
             if(mta->cur_is_trg) { /* only add reg_funs in target space */
-              TypeDef* nt = new TypeDef((yyvsp[(1) - (1)].meth)->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef((yyvsp[(1) - (1)].meth)->name, TypeDef::FUNCTION,0,0);
+              mta->SetSource(nt, false);
               taMisc::types.Add(nt);
-              nt->methods.AddUniqNameNew((yyvsp[(1) - (1)].meth)); }
+              nt->methods.AddUniqNameNew((yyvsp[(1) - (1)].meth));
+              taMisc::reg_funs.Link(nt); }
             mta->meth_stack.Pop(); }
     break;
 
   case 70:
-#line 371 "mta_parse.y"
+#line 372 "mta_parse.y"
     {
             (yyvsp[(3) - (4)].meth)->type = (yyvsp[(2) - (4)].typ); SETDESC((yyvsp[(3) - (4)].meth),(yyvsp[(4) - (4)].chr)); (yyval.meth) = (yyvsp[(3) - (4)].meth); }
     break;
 
   case 71:
-#line 373 "mta_parse.y"
+#line 374 "mta_parse.y"
     {
             (yyvsp[(2) - (3)].meth)->type = &TA_int; SETDESC((yyvsp[(2) - (3)].meth),(yyvsp[(3) - (3)].chr)); (yyval.meth) = (yyvsp[(2) - (3)].meth); }
     break;
 
   case 72:
-#line 377 "mta_parse.y"
+#line 378 "mta_parse.y"
     {
             (yyvsp[(1) - (2)].meth)->is_static = true; /* consider these to be static functions */
             (yyvsp[(1) - (2)].meth)->fun_argc = (yyvsp[(2) - (2)].rval); (yyvsp[(1) - (2)].meth)->arg_types.size = (yyvsp[(2) - (2)].rval); mta->burp_fundefn = true; }
     break;
 
   case 76:
-#line 387 "mta_parse.y"
+#line 388 "mta_parse.y"
     { if((yyvsp[(1) - (2)].enm) != NULL) SETENUMDESC((yyvsp[(1) - (2)].enm),(yyvsp[(2) - (2)].chr)); }
     break;
 
   case 79:
-#line 392 "mta_parse.y"
+#line 393 "mta_parse.y"
     { /* trying to do some math */
            (yyval.enm) = NULL;
 	   mta->skiptocommarb(); }
     break;
 
   case 80:
-#line 397 "mta_parse.y"
+#line 398 "mta_parse.y"
     {
             mta->cur_enum->enum_vals.Add((yyvsp[(1) - (1)].enm));
 	    mta->enum_stack.Pop(); }
     break;
 
   case 81:
-#line 400 "mta_parse.y"
+#line 401 "mta_parse.y"
     { /* using -424242 as a err code (ugly) */
             mta->cur_enum->enum_vals.Add((yyvsp[(1) - (3)].enm)); if((yyvsp[(3) - (3)].rval) != -424242) (yyvsp[(1) - (3)].enm)->enum_no = (yyvsp[(3) - (3)].rval);
 	    mta->enum_stack.Pop(); }
     break;
 
   case 83:
-#line 407 "mta_parse.y"
+#line 408 "mta_parse.y"
     {
 	  if(((yyvsp[(1) - (3)].rval) != -424242) && ((yyvsp[(3) - (3)].rval) != -424242))  (yyval.rval) = (yyvsp[(1) - (3)].rval) + (yyvsp[(3) - (3)].rval);
 	  else if((yyvsp[(1) - (3)].rval) != -424242)	(yyval.rval) = (yyvsp[(1) - (3)].rval);
@@ -2235,7 +2236,7 @@ yyreduce:
     break;
 
   case 84:
-#line 412 "mta_parse.y"
+#line 413 "mta_parse.y"
     {
 	  if(((yyvsp[(1) - (3)].rval) != -424242) && ((yyvsp[(3) - (3)].rval) != -424242)) (yyval.rval) = (yyvsp[(1) - (3)].rval) - (yyvsp[(3) - (3)].rval);
 	  else if((yyvsp[(1) - (3)].rval) != -424242)	(yyval.rval) = (yyvsp[(1) - (3)].rval);
@@ -2244,27 +2245,27 @@ yyreduce:
     break;
 
   case 85:
-#line 420 "mta_parse.y"
+#line 421 "mta_parse.y"
     { (yyval.rval) = -424242; }
     break;
 
   case 87:
-#line 425 "mta_parse.y"
+#line 426 "mta_parse.y"
     { (yyval.enm) = new EnumDef((yyvsp[(1) - (1)].chr)); mta->enum_stack.Push((yyval.enm)); }
     break;
 
   case 88:
-#line 428 "mta_parse.y"
-    { mta->Class_UpdateLastPtrs(); }
-    break;
-
-  case 89:
 #line 429 "mta_parse.y"
     { mta->Class_UpdateLastPtrs(); }
     break;
 
+  case 89:
+#line 430 "mta_parse.y"
+    { mta->Class_UpdateLastPtrs(); }
+    break;
+
   case 90:
-#line 432 "mta_parse.y"
+#line 433 "mta_parse.y"
     {
             if((yyvsp[(1) - (1)].memb) != NULL) {
 	      if((mta->cur_mstate == MTA::pblc) && !((yyvsp[(1) - (1)].memb)->HasOption("IGNORE"))
@@ -2277,7 +2278,7 @@ yyreduce:
     break;
 
   case 91:
-#line 441 "mta_parse.y"
+#line 442 "mta_parse.y"
     {
             if((yyvsp[(1) - (1)].meth) != NULL) {
 	      if(mta->cur_mstate == MTA::pblc) {
@@ -2294,7 +2295,7 @@ yyreduce:
     break;
 
   case 92:
-#line 454 "mta_parse.y"
+#line 455 "mta_parse.y"
     {
 	    mta->cur_class->sub_types.AddUniqNameNew((yyvsp[(1) - (1)].typ));
             (yyvsp[(1) - (1)].typ)->SetType(TypeDef::SUBTYPE);
@@ -2304,7 +2305,7 @@ yyreduce:
     break;
 
   case 93:
-#line 460 "mta_parse.y"
+#line 461 "mta_parse.y"
     {
 	    mta->cur_class->sub_types.AddUniqNameNew((yyvsp[(1) - (1)].typ));
             (yyvsp[(1) - (1)].typ)->SetType(TypeDef::SUBTYPE);
@@ -2312,7 +2313,7 @@ yyreduce:
     break;
 
   case 94:
-#line 464 "mta_parse.y"
+#line 465 "mta_parse.y"
     { /* todo: not dealing with sub classes yet.. */
 	    mta->last_class->sub_types.AddUniqNameNew((yyvsp[(1) - (2)].typ));
             (yyvsp[(1) - (2)].typ)->SetType(TypeDef::SUBTYPE);
@@ -2321,27 +2322,27 @@ yyreduce:
     break;
 
   case 95:
-#line 469 "mta_parse.y"
+#line 470 "mta_parse.y"
     { (yyval.typ) = NULL; }
     break;
 
   case 97:
-#line 474 "mta_parse.y"
+#line 475 "mta_parse.y"
     { (yyval.memb) = NULL; mta->cur_mstate = MTA::pblc; }
     break;
 
   case 98:
-#line 475 "mta_parse.y"
+#line 476 "mta_parse.y"
     { (yyval.memb) = NULL; mta->cur_mstate = MTA::prvt; }
     break;
 
   case 99:
-#line 476 "mta_parse.y"
+#line 477 "mta_parse.y"
     { (yyval.memb) = NULL; mta->cur_mstate = MTA::prot; }
     break;
 
   case 100:
-#line 477 "mta_parse.y"
+#line 478 "mta_parse.y"
     {
 	    (yyval.memb) = NULL;
 	    if(mta->last_memb != NULL) {
@@ -2362,29 +2363,29 @@ yyreduce:
     break;
 
   case 102:
-#line 498 "mta_parse.y"
+#line 499 "mta_parse.y"
     {
 	  (yyval.memb) = (yyvsp[(2) - (2)].memb); if((yyvsp[(2) - (2)].memb) != NULL) (yyvsp[(2) - (2)].memb)->is_static = true;
 	  else if(mta->cur_memb != NULL) mta->cur_memb->is_static = true; }
     break;
 
   case 103:
-#line 504 "mta_parse.y"
+#line 505 "mta_parse.y"
     { (yyval.memb) = (yyvsp[(2) - (3)].memb); }
     break;
 
   case 104:
-#line 505 "mta_parse.y"
+#line 506 "mta_parse.y"
     { (yyval.memb) = (yyvsp[(2) - (4)].memb); }
     break;
 
   case 105:
-#line 506 "mta_parse.y"
+#line 507 "mta_parse.y"
     { }
     break;
 
   case 106:
-#line 507 "mta_parse.y"
+#line 508 "mta_parse.y"
     {
 	    (yyval.memb) = (yyvsp[(2) - (4)].memb);
 	    TypeSpace* sp = mta->GetTypeSpace((yyvsp[(1) - (4)].typ));
@@ -2395,12 +2396,12 @@ yyreduce:
     break;
 
   case 107:
-#line 514 "mta_parse.y"
+#line 515 "mta_parse.y"
     { (yyvsp[(2) - (4)].memb)->type = (yyvsp[(1) - (4)].typ); (yyval.memb) = (yyvsp[(2) - (4)].memb); }
     break;
 
   case 108:
-#line 518 "mta_parse.y"
+#line 519 "mta_parse.y"
     {
 	     if((mta->cur_mstate == MTA::pblc) && !((yyvsp[(1) - (1)].memb)->type->IsConst()))
 	       mta->cur_class->members.AddUniqNameNew((yyvsp[(1) - (1)].memb));
@@ -2408,7 +2409,7 @@ yyreduce:
     break;
 
   case 109:
-#line 522 "mta_parse.y"
+#line 523 "mta_parse.y"
     {
 	     if((mta->cur_mstate == MTA::pblc) && !((yyvsp[(3) - (3)].memb)->type->IsConst()))
 	       mta->cur_class->members.AddUniqNameNew((yyvsp[(3) - (3)].memb));
@@ -2416,7 +2417,7 @@ yyreduce:
     break;
 
   case 110:
-#line 528 "mta_parse.y"
+#line 529 "mta_parse.y"
     {
             (yyval.memb) = new MemberDef((yyvsp[(1) - (1)].chr)); mta->cur_memb = (yyval.memb); mta->memb_stack.Push((yyval.memb));
             if(mta->cur_memb_type != NULL) (yyval.memb)->type = mta->cur_memb_type;
@@ -2424,79 +2425,78 @@ yyreduce:
     break;
 
   case 111:
-#line 534 "mta_parse.y"
+#line 535 "mta_parse.y"
     {
 	    (yyval.memb) = new MemberDef((yyvsp[(3) - (4)].chr)); mta->cur_memb = (yyval.memb); mta->memb_stack.Push((yyval.memb));
 	    (yyval.memb)->fun_ptr = 1; }
     break;
 
   case 113:
-#line 540 "mta_parse.y"
-    { (yyval.meth) = NULL; mta->thisname = false; }
-    break;
-
-  case 114:
 #line 541 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 115:
+  case 114:
 #line 542 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 116:
+  case 115:
 #line 543 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 117:
+  case 116:
 #line 544 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 118:
+  case 117:
 #line 545 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 119:
+  case 118:
 #line 546 "mta_parse.y"
     { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 120:
+  case 119:
 #line 547 "mta_parse.y"
-    { (yyval.meth) = NULL; }
+    { (yyval.meth) = NULL; mta->thisname = false; }
     break;
 
-  case 121:
+  case 120:
 #line 548 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
-  case 122:
+  case 121:
 #line 549 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
-  case 123:
+  case 122:
 #line 550 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
-  case 124:
+  case 123:
 #line 551 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
-  case 125:
+  case 124:
 #line 552 "mta_parse.y"
+    { (yyval.meth) = NULL; }
+    break;
+
+  case 125:
+#line 553 "mta_parse.y"
     {
 	    (yyval.meth) = NULL; String tmp = (yyvsp[(5) - (5)].chr);
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
-              TypeDef* nt = new TypeDef((yyvsp[(3) - (5)].meth)->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef((yyvsp[(3) - (5)].meth)->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
 	      nt->methods.AddUniqNameNew((yyvsp[(3) - (5)].meth)); (yyvsp[(3) - (5)].meth)->type = (yyvsp[(2) - (5)].typ);
 	      mta->meth_stack.Pop();  (yyvsp[(3) - (5)].meth)->fun_argc = (yyvsp[(4) - (5)].rval); (yyvsp[(3) - (5)].meth)->arg_types.size = (yyvsp[(4) - (5)].rval);
@@ -2510,8 +2510,7 @@ yyreduce:
     {
 	    (yyval.meth) = NULL; String tmp = (yyvsp[(4) - (4)].chr);
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
-              TypeDef* nt = new TypeDef((yyvsp[(2) - (4)].meth)->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef((yyvsp[(2) - (4)].meth)->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
 	      nt->methods.AddUniqNameNew((yyvsp[(2) - (4)].meth)); (yyvsp[(2) - (4)].meth)->type = &TA_int;
 	      mta->meth_stack.Pop();  (yyvsp[(2) - (4)].meth)->fun_argc = (yyvsp[(3) - (4)].rval); (yyvsp[(2) - (4)].meth)->arg_types.size = (yyvsp[(3) - (4)].rval);
@@ -2521,49 +2520,49 @@ yyreduce:
     break;
 
   case 128:
-#line 578 "mta_parse.y"
+#line 577 "mta_parse.y"
     { (yyval.meth) = (yyvsp[(2) - (2)].meth); (yyvsp[(2) - (2)].meth)->is_static = true; }
     break;
 
   case 129:
-#line 579 "mta_parse.y"
+#line 578 "mta_parse.y"
     { (yyval.meth) = (yyvsp[(2) - (2)].meth);  if((yyvsp[(2) - (2)].meth) != NULL) (yyvsp[(2) - (2)].meth)->is_virtual = true;
 	  else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
     break;
 
   case 130:
-#line 581 "mta_parse.y"
+#line 580 "mta_parse.y"
     { (yyval.meth) = (yyvsp[(3) - (3)].meth);  if((yyvsp[(3) - (3)].meth) != NULL) (yyvsp[(3) - (3)].meth)->is_virtual = true;
 	    else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
     break;
 
   case 131:
-#line 586 "mta_parse.y"
+#line 585 "mta_parse.y"
     { (yyval.meth) = (yyvsp[(2) - (3)].meth); (yyvsp[(2) - (3)].meth)->type = (yyvsp[(1) - (3)].typ); SETDESC((yyvsp[(2) - (3)].meth),(yyvsp[(3) - (3)].chr)); }
     break;
 
   case 132:
-#line 587 "mta_parse.y"
+#line 586 "mta_parse.y"
     { (yyvsp[(1) - (2)].meth)->type = &TA_int; SETDESC((yyvsp[(1) - (2)].meth),(yyvsp[(2) - (2)].chr)); }
     break;
 
   case 133:
-#line 588 "mta_parse.y"
+#line 587 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
   case 134:
-#line 589 "mta_parse.y"
+#line 588 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
   case 135:
-#line 590 "mta_parse.y"
+#line 589 "mta_parse.y"
     { (yyval.meth) = NULL; }
     break;
 
   case 136:
-#line 593 "mta_parse.y"
+#line 592 "mta_parse.y"
     {
              (yyvsp[(1) - (2)].meth)->fun_argc = (yyvsp[(2) - (2)].rval); (yyvsp[(1) - (2)].meth)->arg_types.size = (yyvsp[(2) - (2)].rval); mta->burp_fundefn = false;
 	     /* argd should always be less than argc, but scanner might screw up
@@ -2572,114 +2571,114 @@ yyreduce:
     break;
 
   case 137:
-#line 600 "mta_parse.y"
+#line 599 "mta_parse.y"
     {
             (yyval.meth) = new MethodDef((yyvsp[(1) - (1)].chr)); mta->cur_meth = (yyval.meth); mta->meth_stack.Push((yyval.meth)); }
     break;
 
   case 138:
-#line 604 "mta_parse.y"
+#line 603 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 139:
-#line 605 "mta_parse.y"
+#line 604 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (1)].chr); }
     break;
 
   case 140:
-#line 606 "mta_parse.y"
+#line 605 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (2)].chr); }
     break;
 
   case 141:
-#line 607 "mta_parse.y"
+#line 606 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (2)].chr); }
     break;
 
   case 142:
-#line 608 "mta_parse.y"
+#line 607 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (2)].chr); }
     break;
 
   case 143:
-#line 609 "mta_parse.y"
+#line 608 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (3)].chr); }
     break;
 
   case 144:
-#line 613 "mta_parse.y"
+#line 612 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 145:
-#line 614 "mta_parse.y"
+#line 613 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 146:
-#line 615 "mta_parse.y"
+#line 614 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(2) - (3)].chr); }
     break;
 
   case 147:
-#line 619 "mta_parse.y"
+#line 618 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 148:
-#line 620 "mta_parse.y"
+#line 619 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 149:
-#line 621 "mta_parse.y"
+#line 620 "mta_parse.y"
     { (yyval.chr) = ""; }
     break;
 
   case 150:
-#line 624 "mta_parse.y"
+#line 623 "mta_parse.y"
     { (yyval.rval) = 0; }
     break;
 
   case 151:
-#line 625 "mta_parse.y"
+#line 624 "mta_parse.y"
     { (yyval.rval) = (yyvsp[(2) - (3)].rval); }
     break;
 
   case 152:
-#line 628 "mta_parse.y"
+#line 627 "mta_parse.y"
     { (yyval.rval) = 0; }
     break;
 
   case 153:
-#line 629 "mta_parse.y"
+#line 628 "mta_parse.y"
     { (yyval.rval) = (yyvsp[(1) - (2)].rval); }
     break;
 
   case 154:
-#line 632 "mta_parse.y"
+#line 631 "mta_parse.y"
     { (yyval.rval) = 1; }
     break;
 
   case 155:
-#line 633 "mta_parse.y"
+#line 632 "mta_parse.y"
     { (yyval.rval) = (yyvsp[(1) - (3)].rval) + 1; }
     break;
 
   case 156:
-#line 634 "mta_parse.y"
+#line 633 "mta_parse.y"
     { (yyval.rval) = (yyvsp[(1) - (4)].rval); }
     break;
 
   case 157:
-#line 637 "mta_parse.y"
+#line 636 "mta_parse.y"
     {
             if(mta->cur_meth != NULL) { mta->cur_meth->arg_defs.Add(""); } }
     break;
 
   case 158:
-#line 639 "mta_parse.y"
+#line 638 "mta_parse.y"
     {
 	    if(mta->cur_meth != NULL) {
 	      String ad = (yyvsp[(2) - (2)].chr);
@@ -2691,7 +2690,7 @@ yyreduce:
     break;
 
   case 159:
-#line 650 "mta_parse.y"
+#line 649 "mta_parse.y"
     {
 	    (yyval.rval) = 1; String nm = "na";
 	    if(mta->cur_meth != NULL) {
@@ -2699,7 +2698,7 @@ yyreduce:
     break;
 
   case 160:
-#line 654 "mta_parse.y"
+#line 653 "mta_parse.y"
     {
 	    (yyval.rval) = 1; String nm = (yyvsp[(2) - (2)].chr);
 	    if(mta->cur_meth != NULL) {
@@ -2707,7 +2706,7 @@ yyreduce:
     break;
 
   case 161:
-#line 658 "mta_parse.y"
+#line 657 "mta_parse.y"
     {
 	    (yyval.rval) = 1; String nm = String((yyvsp[(2) - (3)].chr)) + "[]";
 	    if(mta->cur_meth != NULL) {
@@ -2715,7 +2714,7 @@ yyreduce:
     break;
 
   case 162:
-#line 662 "mta_parse.y"
+#line 661 "mta_parse.y"
     {
 	    (yyval.rval) = 1; String nm = String("(*") + String((yyvsp[(4) - (6)].chr)) + ")";
 	    if(mta->cur_meth != NULL) {
@@ -2723,7 +2722,7 @@ yyreduce:
     break;
 
   case 163:
-#line 666 "mta_parse.y"
+#line 665 "mta_parse.y"
     {
 	    (yyval.rval) = 1; String nm = (yyvsp[(1) - (1)].chr);
 	    if(mta->cur_meth != NULL) {
@@ -2731,49 +2730,49 @@ yyreduce:
     break;
 
   case 167:
-#line 681 "mta_parse.y"
+#line 680 "mta_parse.y"
     {
             mta->thisname = true; mta->constcoln = false; }
     break;
 
   case 168:
-#line 685 "mta_parse.y"
+#line 684 "mta_parse.y"
     { mta->constcoln = true; }
     break;
 
   case 169:
-#line 688 "mta_parse.y"
+#line 687 "mta_parse.y"
     { (yyval.rval) = 1; }
     break;
 
   case 170:
-#line 689 "mta_parse.y"
+#line 688 "mta_parse.y"
     { (yyval.rval) = (yyvsp[(1) - (2)].rval) + 1; }
     break;
 
   case 171:
-#line 692 "mta_parse.y"
+#line 691 "mta_parse.y"
     { mta->cur_memb_type = (yyvsp[(1) - (1)].typ); }
     break;
 
   case 173:
-#line 696 "mta_parse.y"
+#line 695 "mta_parse.y"
     { (yyval.typ) = &TA_int; }
     break;
 
   case 174:
-#line 697 "mta_parse.y"
+#line 696 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
     break;
 
   case 175:
-#line 700 "mta_parse.y"
+#line 699 "mta_parse.y"
     { (yyval.typ) = new TypeDef((yyvsp[(1) - (1)].chr)); mta->type_stack.Push((yyval.typ));
                                   mta->SetSource((yyval.typ), false); }
     break;
 
   case 177:
-#line 705 "mta_parse.y"
+#line 704 "mta_parse.y"
     {
 	    TypeSpace* sp = mta->GetTypeSpace((yyvsp[(1) - (2)].typ));
             int spsz = sp->size;
@@ -2783,7 +2782,7 @@ yyreduce:
     break;
 
   case 179:
-#line 715 "mta_parse.y"
+#line 714 "mta_parse.y"
     {
 	    TypeSpace* sp = mta->GetTypeSpace((yyvsp[(1) - (2)].typ));
             int spsz = sp->size;
@@ -2796,7 +2795,7 @@ yyreduce:
     break;
 
   case 181:
-#line 727 "mta_parse.y"
+#line 726 "mta_parse.y"
     {
 	    TypeSpace* sp = mta->GetTypeSpace((yyvsp[(2) - (2)].typ));
             int spsz = sp->size;
@@ -2806,29 +2805,29 @@ yyreduce:
     break;
 
   case 183:
-#line 736 "mta_parse.y"
+#line 735 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->SetType(TypeDef::STRUCT);
             (yyval.typ)->ClearType(TypeDef::VOID); }
     break;
 
   case 184:
-#line 738 "mta_parse.y"
+#line 737 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->AssignType(TypeDef::STRUCT); }
     break;
 
   case 185:
-#line 739 "mta_parse.y"
+#line 738 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->SetType(TypeDef::UNION);
             (yyval.typ)->ClearType(TypeDef::VOID); }
     break;
 
   case 186:
-#line 741 "mta_parse.y"
+#line 740 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); (yyval.typ)->AssignType(TypeDef::UNION); }
     break;
 
   case 187:
-#line 742 "mta_parse.y"
+#line 741 "mta_parse.y"
     {
 	    TypeDef* td; if((td = (yyvsp[(1) - (3)].typ)->sub_types.FindName((yyvsp[(3) - (3)].chr))) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -2836,7 +2835,7 @@ yyreduce:
     break;
 
   case 188:
-#line 746 "mta_parse.y"
+#line 745 "mta_parse.y"
     {
 	    TypeDef* td; if((td = (yyvsp[(1) - (3)].typ)->sub_types.FindName((yyvsp[(3) - (3)].chr))) == NULL) {
 	      yyerror("Subtype not found"); YYERROR; }
@@ -2844,22 +2843,22 @@ yyreduce:
     break;
 
   case 189:
-#line 750 "mta_parse.y"
+#line 749 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(3) - (3)].typ); }
     break;
 
   case 190:
-#line 751 "mta_parse.y"
+#line 750 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(3) - (3)].typ); }
     break;
 
   case 191:
-#line 752 "mta_parse.y"
+#line 751 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(2) - (2)].typ); }
     break;
 
   case 193:
-#line 754 "mta_parse.y"
+#line 753 "mta_parse.y"
     { /* a template */
             if(!((yyvsp[(1) - (4)].typ)->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
@@ -2880,7 +2879,7 @@ yyreduce:
     break;
 
   case 194:
-#line 771 "mta_parse.y"
+#line 770 "mta_parse.y"
     { /* this template */
             if(!((yyvsp[(1) - (4)].typ)->IsTemplate())) {
 	      yyerror("Template syntax error"); YYERROR; }
@@ -2888,7 +2887,7 @@ yyreduce:
     break;
 
   case 196:
-#line 778 "mta_parse.y"
+#line 777 "mta_parse.y"
     {
 	    String nm = (yyvsp[(1) - (2)].typ)->name + "_" + (yyvsp[(2) - (2)].typ)->name;
 	    TypeDef* nty = new TypeDef((char*)nm);
@@ -2903,53 +2902,53 @@ yyreduce:
     break;
 
   case 198:
-#line 793 "mta_parse.y"
+#line 792 "mta_parse.y"
     { (yyval.typ) = (yyvsp[(1) - (3)].typ); }
     break;
 
   case 199:
-#line 798 "mta_parse.y"
+#line 797 "mta_parse.y"
     { mta->cur_templ_pars.Link((yyvsp[(1) - (1)].typ)); }
     break;
 
   case 200:
-#line 799 "mta_parse.y"
+#line 798 "mta_parse.y"
     { (yyval.typ) = new TypeDef((yyvsp[(1) - (1)].chr)); mta->cur_templ_pars.Push((yyval.typ)); }
     break;
 
   case 201:
-#line 800 "mta_parse.y"
+#line 799 "mta_parse.y"
     { (yyval.typ) = new TypeDef((String)(yyvsp[(1) - (1)].rval)); mta->cur_templ_pars.Push((yyval.typ)); }
     break;
 
   case 203:
-#line 805 "mta_parse.y"
+#line 804 "mta_parse.y"
     { (yyval.chr) = (yyvsp[(1) - (1)].typ)->name; }
     break;
 
   case 210:
-#line 821 "mta_parse.y"
+#line 820 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
   case 211:
-#line 825 "mta_parse.y"
+#line 824 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
   case 212:
-#line 829 "mta_parse.y"
+#line 828 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
   case 213:
-#line 833 "mta_parse.y"
+#line 832 "mta_parse.y"
     { mta->defn_st_line = mta->line-1; }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2953 "y.tab.c"
+#line 2952 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -3163,7 +3162,7 @@ yyreturn:
 }
 
 
-#line 836 "mta_parse.y"
+#line 835 "mta_parse.y"
 
 
 	/* end of grammar */

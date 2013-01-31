@@ -181,14 +181,12 @@ bool taStringDiff::DiffFiles(const String& fname_a, const String& fname_b,
   int err;
   istrm.open(fname_a.chars(), ios::in);
   if(!istrm.is_open()) goto exit;
-  err = str_a.Load_str(istrm);
-  if(err) goto exit;
+  if(!str_a.Load_str(istrm)) goto exit;
 
   istrm.close();
   istrm.open(fname_b.chars(), ios::in);
   if(!istrm.is_open()) goto exit;
-  err = str_b.Load_str(istrm);
-  if(err) goto exit;
+  if(!str_b.Load_str(istrm)) goto exit;
   istrm.close();
 
   DiffStrings(str_a, str_b, trimSpace, ignoreSpace, ignoreCase);

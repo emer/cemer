@@ -34,15 +34,15 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  SoDrawStyle*		shapeDraw() {return shape_draw_;}
-  SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
-  SoTransform* 		netTextXform() {return net_text_xform_;}
-  SoTransform* 		netTextDragXform() {return net_text_drag_xform_;}
+  SoDrawStyle*		shapeDraw() {return shape_draw_;} // #IGNORE
+  SoSeparator*		netText() {return net_text_;} // #IGNORE extra text of network vars etc
+  SoTransform* 		netTextXform() {return net_text_xform_;} // #IGNORE
+  SoTransform* 		netTextDragXform() {return net_text_drag_xform_;} // #IGNORE
   bool			netTextDrag() {return show_net_text_drag_;}
-  SoSeparator*		wtLinesSep() {return wt_lines_;}
-  SoDrawStyle*		wtLinesDraw() {return wt_lines_draw_;}
-  SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;}
-  SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
+  SoSeparator*		wtLinesSep() {return wt_lines_;} // #IGNORE
+  SoDrawStyle*		wtLinesDraw() {return wt_lines_draw_;} // #IGNORE
+  SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;} // #IGNORE
+  SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;} // #IGNORE
 
   T3NetNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
 	    bool show_net_text = true, bool show_nt_drag = true,

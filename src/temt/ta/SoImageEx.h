@@ -61,15 +61,15 @@ public:
   static void		initClass();
   
   static bool		SetTextureFile(SoTexture2* sotx, const String& fname);
-    // set a texture from a file, using simage if available, else Qt
+  // #IGNORE set a texture from a file, using simage if available, else Qt
   static bool		SetTextureImage(SoTexture2* sotx, const QImage& img);
-    // set a texture from a QImage (note: y is flipped for Coin's base 0)
+  // #IGNORE set a texture from a QImage (note: y is flipped for Coin's base 0)
   
-  SoTexture2*		texture;
+  SoTexture2*		texture;  // #IGNORE 
   
-  void		setImage(const QImage& src);
+  void		setImage(const QImage& src);  // #IGNORE 
   void		setImage(const taMatrix& src, bool top_zero = false);
-    // gray: X,Y; rgb: X,Y,[rgb] -- tz false is normal convention for pdp
+  // gray: X,Y; rgb: X,Y,[rgb] -- tz false is normal convention for pdp
   
   SoImageEx();
 protected:

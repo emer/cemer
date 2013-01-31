@@ -21,7 +21,7 @@ TypeDef_Of(taGroup_impl);
 
 int gpiGroupType::BidForType(TypeDef* td) {
   if(td->InheritsFrom(TA_taGroup_impl))
-    return (gpiListType::BidForType(td) +1);
+    return (taiTypeOfList::BidForType(td) +1);
   return 0;
 }
 

@@ -17,6 +17,7 @@
 
 #include <TypeDef> 
 #include <MemberDef> 
+#include <MethodDef>
 TypeDef_Of(PropertyDef);
 TypeDef_Of(EnumDef);
 
@@ -332,6 +333,7 @@ bool    taMisc::dmem_debug = false;
 // give the main typespace a big hash table..
 TypeSpace taMisc::types("taMisc::types", 10000);
 TypeSpace taMisc::aka_types("taMisc::aka_types", 100);
+TypeSpace taMisc::reg_funs("taMisc::reg_funs", 100);
 TypeDef*        taMisc::default_scope = NULL;
 
 taPtrList_impl* taMisc::init_hook_list = NULL;
@@ -806,6 +808,68 @@ TypeDef* taMisc::FindTypeName(const String& typ_nm) {
     }
   }
   taMisc::Warning("Unknown type:",typ_nm);
+  return NULL;
+}
+
+MethodDef* taMisc::FindRegFunName(const String& name, int& idx) {
+  idx = -1;
+  for(int i=0; i<reg_funs.size; i++) {
+    TypeDef* rftp = taMisc::reg_funs.FastEl(i);
+    if(!rftp->IsFunction() || rftp->methods.size != 1) continue; // shouldn't happen
+    if(rftp->name != name) continue;
+    MethodDef* fun = rftp->methods[0];
+    idx = i;
+    return fun;
+  }
+  return NULL;
+}
+
+MethodDef* taMisc::FindRegFunAddr(ta_void_fun funa, int& idx) {
+  idx = -1;
+  for(int i=0; i<reg_funs.size; i++) {
+    TypeDef* rftp = taMisc::reg_funs.FastEl(i);
+    if(!rftp->IsFunction() || rftp->methods.size != 1) continue; // shouldn't happen
+    MethodDef* fun = rftp->methods[0];
+    if(fun->addr == funa) {
+      idx = i;
+      return fun;
+    }
+  }
+  return NULL;
+}
+
+MethodDef* taMisc::FindRegFunListAddr(ta_void_fun funa, const String_PArray& lst,
+                                      int& lidx) {
+  // lidx is "index" in space for items on same list
+  lidx = 0;
+  for(int i=0; i<reg_funs.size; i++) {
+    TypeDef* rftp = taMisc::reg_funs.FastEl(i);
+    if(!rftp->IsFunction() || rftp->methods.size != 1) continue; // shouldn't happen
+    MethodDef* fun = rftp->methods[0];
+    if(fun->CheckList(lst)) {
+      if(fun->addr == funa) {
+        return fun;
+      }
+      lidx++;
+    }
+  }
+  lidx = -1;
+  return NULL;
+}
+
+MethodDef* taMisc::FindRegFunListIdx(int lidx, const String_PArray& lst) {
+  int chk = 0;
+  for(int i=0; i<reg_funs.size; i++) {
+    TypeDef* rftp = taMisc::reg_funs.FastEl(i);
+    if(!rftp->IsFunction() || rftp->methods.size != 1) continue; // shouldn't happen
+    MethodDef* fun = rftp->methods[0];
+    if(fun->CheckList(lst)) {
+      if(chk == lidx) {
+        return fun;
+      }
+      chk++;
+    }
+  }
   return NULL;
 }
 
@@ -1940,6 +2004,22 @@ bool taMisc::RemovePath(const String& fn) {
   return d.rmpath(fn);
 }
 
+int taMisc::ReplaceStringInFile(const String& filename, const String& search_str,
+                                 const String& repl_str) {
+  if(!FileExists(filename)) {
+    taMisc::Error("ReplaceStringInFile: file named:",filename,"does not exist");
+    return -1;
+  }
+
+  String fstr;
+  fstr.LoadFromFile(filename);
+  int rval = fstr.gsub(search_str, repl_str);
+  if(rval > 0) {
+    fstr.SaveToFile(filename);
+  }
+  return rval;
+}
+
 /////////////////////////////////////////
 //		Various standard paths		
 
@@ -2167,182 +2247,6 @@ bool taMisc::InternetConnected() {
   }
 #endif
   return any_valid;
-}
-
-bool taMisc::CreateNewSrcFiles(const String& type_nm, const String& top_path,
-			       const String& src_dir) {
-  String src_path = top_path + "/" + src_dir + "/";
-  String crfile = src_path + "COPYRIGHT.txt";
-  String cmfile = src_path + "CMakeFiles.txt";
-  String hfile = src_path + type_nm + ".h";
-  String cppfile = src_path + type_nm + ".cpp";
-  String incfile = top_path + "/include/" + type_nm;
-  String incfileh = incfile + ".h";
-
-  if(!FileExists(crfile)) {
-    taMisc::Error("CreateNewSrcFiles: copyright file:", crfile, "not found -- paths must be wrong -- aborting");
-    return false;
-  }
-
-  fstream crstrm;
-  crstrm.open(crfile, ios::in);
-  String crstr;
-  crstr.Load_str(crstrm);
-  crstrm.close();
-
-  bool got_one = false;
-
-  if(FileExists(hfile)) {
-    taMisc::Warning("header file:", hfile, "already exists, not changing");
-  }
-  else {
-    String str = crstr;
-    str << "\n#ifndef " << type_nm << "_h\n"
-        << "#define " << type_nm << "_h 1\n\n"
-        << "// parent includes:\n"
-        << "#include <taNBase>\n\n"
-        << "// member includes:\n\n"
-        << "// declare all other types mentioned but not required to include:\n\n"
-        << "TypeDef_Of(" << type_nm << ");\n\n"
-        << "class X_API " << type_nm << " : public taNBase {\n"
-        << "  // <describe here in full detail in one extended line comment>\n"
-        << "INHERITED(taNBase)\n"
-        << "public:\n\n"
-        << "  TA_SIMPLE_BASEFUNS(" << type_nm << ");\n"
-        << "private:\n"
-        << "  void Initialize()  { };\n"
-        << "  void Destroy()     { };\n"
-        << "};\n\n"
-        << "#endif // " << type_nm << "_h\n";
-    fstream strm;
-    strm.open(hfile, ios::out);
-    str.Save_str(strm);
-    strm.close();
-    ExecuteCommand("svn add " + hfile);
-    got_one = true;
-  }
-
-  if(FileExists(cppfile)) {
-    taMisc::Warning("cpp file:", cppfile, "already exists, not changing");
-  }
-  else {
-    String str = crstr;
-    str << "\n#include \"" << type_nm << ".h\"\n\n";
-    fstream strm;
-    strm.open(cppfile, ios::out);
-    str.Save_str(strm);
-    strm.close();
-    ExecuteCommand("svn add " + cppfile);
-    got_one = true;
-  }
-
-  if(FileExists(incfile)) {
-    taMisc::Warning("include file:", incfile, "already exists, not changing");
-  }
-  else {
-    String str;
-    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
-    fstream strm;
-    strm.open(incfile, ios::out);
-    str.Save_str(strm);
-    strm.close();
-    ExecuteCommand("svn add " + incfile);
-    got_one = true;
-  }
-
-  if(FileExists(incfileh)) {
-    taMisc::Warning("include file:", incfileh, "already exists, not changing");
-  }
-  else {
-    String str;
-    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
-    fstream strm;
-    strm.open(incfileh, ios::out);
-    str.Save_str(strm);
-    strm.close();
-    ExecuteCommand("svn add " + incfileh);
-    got_one = true;
-  }
-
-  fstream cmstrm;
-  cmstrm.open(cmfile, ios::in);
-  String cmstr;
-  cmstr.Load_str(cmstrm);
-  cmstrm.close();
-  bool changed = false;
-
-  if(!cmstr.contains(type_nm + ".h")) {
-    String cmrest = cmstr.after(".h\n)");
-    cmstr = cmstr.before(".h\n)");
-    cmstr << ".h\n  " << type_nm << ".h\n)" << cmrest;
-    changed = true;
-  }
-  if(!cmstr.contains(type_nm + ".cpp")) {
-    String cmrest = cmstr.after(".cpp\n)");
-    cmstr = cmstr.before(".cpp\n)");
-    cmstr << ".cpp\n  " << type_nm << ".cpp\n)" << cmrest;
-    changed = true;
-  }
-
-  if(changed) {
-    fstream cmostrm;
-    cmostrm.open(cmfile, ios::out);
-    cmstr.Save_str(cmostrm);
-  }
-
-  return got_one;
-}
-
-void taMisc::CreateAllNewSrcFiles() {
-#ifndef NO_TA_BASE
-  //  TA_TimeUsed.CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
-  // TA_DataView_List.CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
-
-  int_Array iary;
-  int i=0;
-  while(i < types.size) {
-    TypeDef* typ = types.FastEl(i);
-    bool dbg = false;
-    if(!typ->IsClass() || !typ->IsActual()) {
-      if(dbg) taMisc::Info("fail class, anchor");
-      i++;
-      continue;
-    }
-    if(!typ->source_file.startsWith(typ->name)) {
-      if(dbg) taMisc::Info("fail src file");
-      i++;
-      continue;
-    }
-    int chs = taMisc::Choice("Fix new source file for: " + typ->name,
-			     "Yes", "No", "Back", "Cancel");
-    if(chs == 3) break;
-    if(chs == 2) {
-      if(iary.size > 0) {
-	i = iary.Pop();
-      }
-      continue;
-    }
-    iary.Add(i);
-    if(chs == 1) {
-      i++;
-      continue;
-    }
-    if(chs == 0) {
-      typ->CreateNewSrcFiles("/home/oreilly/emergent", "src/temt/ta");
-      i++;
-    }
-  }
-#endif
-}
-
-bool taMisc::CreateNewSrcFilesExisting(const String& type_nm, const String& top_path,
-				       const String& src_dir) {
-  TypeDef* td = types.FindName(type_nm);
-  if(!td) {
-    taMisc::Error("type not found:", type_nm);
-    return false;
-  }
-  return td->CreateNewSrcFiles(top_path, src_dir);
 }
 
 

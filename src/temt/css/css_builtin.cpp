@@ -2592,14 +2592,15 @@ static void Install_Types() {
 			 tmp->enum_vals.FastEl(j)->name);
       }
     }
-    // else if(tmp->InheritsFrom(TA_taRegFun)) {
-    //   for(j=0; j < tmp->methods.size; j++) {
-    //     MethodDef* md = tmp->methods.FastEl(j);
-    //     if(md->stubp != NULL)
-    //       cssMisc::HardFuns.Push(new cssMbrCFun(md->fun_argc, NULL, md->stubp,
-    //     					md->name));
-    //   }
-    // }
+    else if(tmp->IsFunction() && tmp->IsActual()) { // RegFun
+      if(tmp->methods.size == 1) {
+        MethodDef* md = tmp->methods[0];
+        if(md->stubp != NULL) {
+          cssMisc::HardFuns.Push(new cssMbrCFun(md->fun_argc, NULL, md->stubp,
+                                                md->name));
+        }
+      }
+    }
   }
   cssMisc::TypesSpace.Sort();		// must sort before anything happens
   GeneratePtrRefTypes();

@@ -361,10 +361,11 @@ templpar:
 
 fundecl:  funnm				{
             if(mta->cur_is_trg) { /* only add reg_funs in target space */
-              TypeDef* nt = new TypeDef($1->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef($1->name, TypeDef::FUNCTION,0,0);
+              mta->SetSource(nt, false);
               taMisc::types.Add(nt);
-              nt->methods.AddUniqNameNew($1); }
+              nt->methods.AddUniqNameNew($1);
+              taMisc::reg_funs.Link(nt); }
             mta->meth_stack.Pop(); }
         ;
 
@@ -552,8 +553,7 @@ methdefn: basicmeth
         | MP_FRIEND ftype methname funargs fundefn 	{
 	    $$ = NULL; String tmp = $5;
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
-              TypeDef* nt = new TypeDef($3->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef($3->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
 	      nt->methods.AddUniqNameNew($3); $3->type = $2;
 	      mta->meth_stack.Pop();  $3->fun_argc = $4; $3->arg_types.size = $4;
@@ -563,8 +563,7 @@ methdefn: basicmeth
         | MP_FRIEND methname funargs fundefn 	{
 	    $$ = NULL; String tmp = $4;
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
-              TypeDef* nt = new TypeDef($2->name, TypeDef::FUNCTION | TypeDef::POINTER,
-                                        0,0);
+              TypeDef* nt = new TypeDef($2->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
 	      nt->methods.AddUniqNameNew($2); $2->type = &TA_int;
 	      mta->meth_stack.Pop();  $2->fun_argc = $3; $2->arg_types.size = $3;

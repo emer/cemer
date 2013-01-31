@@ -48,7 +48,7 @@ public:
   int           uidx_st;        // unit list number to start on
   int           uidx_ed;        // unit number to end before
   int           uidx_inc;       // how much to increment counter by
-  ThreadUnitCall* unit_call;    // method to call on the unit
+  ThreadUnitCall* unit_call;    // #IGNORE method to call on the unit
 
   override void run();
   // runs specified chunks and then nibbles on remainder

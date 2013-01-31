@@ -31,6 +31,7 @@
 #include <iNetworkAccessManager>
 #include <taGenDoc>
 #include "ta_type_constr.h"
+#include <taCodeUtils>
 
 TypeDef_Of(PluginWizard);
 
@@ -38,6 +39,7 @@ TypeDef_Of(PluginWizard);
 #include <tabMisc>
 #include <taRootBase>
 #include <taiMisc>
+
 
 #include <QPointer>
 #include <QFileInfo>
@@ -755,6 +757,18 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("CreateNewSrc", "\
  -- create new source code files for given type name -- does basic formatting and adds to svn and creates new include entries and adds to CMakeLists.txt -- must run in directory where you want to create the new source files!");
 
+  taMisc::AddArgName("--rename_type", "RenameType");
+  taMisc::AddArgName("rename_type=", "RenameType");
+  taMisc::AddArgName("--rename_to", "RenameTypeTo");
+  taMisc::AddArgName("rename_to=", "RenameTypeTo");
+  taMisc::AddArgNameDesc("RenameType", "\
+ -- rename type to a new name -- renames file, include file, renames all references in current directory -- must run in directory where you want to do the rename -- must pass rename_to as the target name to rename type to");
+
+  taMisc::AddArgName("--remove_type", "RemoveType");
+  taMisc::AddArgName("remove_type=", "RemoveType");
+  taMisc::AddArgNameDesc("RemoveType", "\
+ -- remove existing type -- removes files with name of type, and reports on any files that still refer to that type -- DOES NOT ASK FOR CONFIRMATION -- USE WITH EXTREME CAUTION -- must run in directory where you want to do the rename -- must pass rename_to as the target name to rename type to");
+
   taMisc::Init_Args(argc, argv);
   return true;
 }
@@ -786,6 +800,8 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("MakeUserPlugin")
      || taMisc::CheckArgByName("MakeSystemPlugin")
      || taMisc::CheckArgByName("CreateNewSrc")
+     || taMisc::CheckArgByName("RenameType")
+     || taMisc::CheckArgByName("RemoveType")
      ) { // auto nogui by default
     taMisc::use_plugins = false;                      // don't use if making
     taMisc::use_gui = false;
@@ -1718,7 +1734,36 @@ bool taRootBase::Startup_ProcessArgs() {
     src_path = src_path.after("/");
     taMisc::Info("creating new source files for type:", srcnm, "in top path:", top_path,
 		 "src_path:", src_path);
-    taMisc::CreateNewSrcFiles(srcnm, top_path, src_path);
+    taCodeUtils::CreateNewSrcFiles(srcnm, top_path, src_path);
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("RenameType")) {
+    run_startup = false;
+    String oldnm = taMisc::FindArgByName("RenameType");
+    String newnm = taMisc::FindArgByName("RenameTypeTo");
+    if(newnm.empty()) {
+      taMisc::Error("RenameType: no rename_to arg provided for new name");
+    }
+    else {
+      String curpath = QDir::currentPath();
+      String top_path = curpath.before("/src/",-1);
+      String src_path = curpath.from("/src/",-1);
+      src_path = src_path.after("/");
+      taMisc::Info("renaming type from old name:", oldnm,"to new name:",newnm,
+                   "in top path:", top_path,"src_path:", src_path);
+      taCodeUtils::RenameType(oldnm, newnm, top_path, src_path);
+      run_startup = false;
+    }
+  }
+  if(taMisc::CheckArgByName("RemoveType")) {
+    String srcnm = taMisc::FindArgByName("RemoveType");
+    String curpath = QDir::currentPath();
+    String top_path = curpath.before("/src/",-1);
+    String src_path = curpath.from("/src/",-1);
+    src_path = src_path.after("/");
+    taMisc::Info("removing type:", srcnm, "in top path:", top_path,
+		 "src_path:", src_path);
+    taCodeUtils::RemoveType(srcnm, top_path, src_path);
     run_startup = false;
   }
 
@@ -1894,6 +1939,7 @@ extern "C" {
 void taRootBase::Cleanup_Main() {
   taMisc::in_shutdown++;
   taMisc::aka_types.Reset();    // errs happen when this gets reset out of order
+  taMisc::reg_funs.Reset();    // errs happen when this gets reset out of order
   // remove sig handler -- very nasty when baddies happen after this point
   if (milestone & SM_REG_SIG) {
     taMisc::Register_Cleanup(SIG_DFL); // replace back to using default

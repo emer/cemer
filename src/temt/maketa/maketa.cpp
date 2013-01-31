@@ -570,7 +570,7 @@ int MTA::Main(int argc, char* argv[]) {
   ////////////////////////////////////////////////
   //    Generate output
 
-  // give it 5 passes through to try to get everything in order..
+  // give it 10 passes through to try to get everything in order..
   // int swp_cnt = 0;
   // if(mta->verbose > 0)
   //   cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";

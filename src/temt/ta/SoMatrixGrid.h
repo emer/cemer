@@ -79,7 +79,7 @@ public:
   // get text representation of value
 
   SoTransform*	transform() const { return transform_; }
-  // the master transform, for the whole entity
+  // #IGNORE the master transform, for the whole entity
   USING(inherited::getMatrix)
   taMatrix*	getMatrix() const { return matrix; }
 

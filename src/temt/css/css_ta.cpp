@@ -45,11 +45,13 @@ cssEl* cssTA::MakeTA(void* it, int pc, TypeDef* td, const String& nm, cssEl* cls
   if(td == NULL) {
     return new cssTA(it, pc, td, nm, cls_par, ro);
   }
-  if(td->DerivesFrom(TA_taMatrix)) {
-    return new cssTA_Matrix(it, pc, td, nm, cls_par, ro);
-  }
-  else if(td->DerivesFrom(TA_taBase)) {
-    return new cssTA_Base(it, pc, td, nm, cls_par, ro);
+  if(td->IsTaBase()) {
+    if(td->DerivesFrom(TA_taMatrix)) {
+      return new cssTA_Matrix(it, pc, td, nm, cls_par, ro);
+    }
+    else {
+      return new cssTA_Base(it, pc, td, nm, cls_par, ro);
+    }
   }
   else if(td->DerivesFrom(TA_taSmartRef)) {
     return new cssSmartRef(it, pc, td, nm, cls_par, ro);
@@ -291,12 +293,14 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
   if(s.GetType() == T_MbrCFun) {
     // crazy special case: todo: move this to a subtype??
     if((ptr_cnt == 1) && type_def->InheritsFrom(TA_void)) {
+      int lidx;
       cssMbrCFun& mbf = (cssMbrCFun&)s;
-      MethodDef* fun = NULL; //TA_taRegFun.methods.FindName(mbf.name);
+      MethodDef* fun = taMisc::FindRegFunName(mbf.name, lidx);
       if(fun)
 	*((ta_void_fun*)ptr) = fun->addr;
       else {
-	cssMisc::Error(prog, "Failed to assign TA void* member fun of type:", GetTypeName(),
+	cssMisc::Error(prog, "Failed to assign TA void* member fun of type:",
+                       GetTypeName(),
 		       "Source is an unregistered member function named:", mbf.name,
 		       "add #REG_FUN to function");
       }
