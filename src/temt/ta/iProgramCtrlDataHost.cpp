@@ -25,7 +25,7 @@
 #include <taiIncrField>
 #include <taiMember>
 #include <taiBitBox>
-#include <taiDynEnumMember>
+#include <taiMemberOfDynEnum>
 
 #include <DataChangedReason>
 #include <taMisc>
@@ -391,13 +391,13 @@ void iProgramCtrlDataHost::GetImage_Membs()
           taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
           if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ",
                             mb_dat->metaObject()->className())) continue;
-          taiDynEnumMember::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
+          taiMemberOfDynEnum::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
         }
         else {
           taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
           if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ",
                             mb_dat->metaObject()->className())) continue;
-          taiDynEnumMember::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
+          taiMemberOfDynEnum::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
         }
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff

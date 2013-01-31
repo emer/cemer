@@ -17,7 +17,7 @@
 #include <taiEditDataHost>
 #include <MemberDef>
 #include <taiMember>
-#include <taiTDefaultMember>
+#include <taiMemberOfTypeDefault>
 #include <taBase_List>
 #include <TypeDefault>
 
@@ -62,7 +62,7 @@ void taiDefaultEditDataHost::Enum_Members() {
     mspace.Add(md);
     md->im = typ->members.FastEl(i)->im;        // set this here
     if (md->im != NULL) {
-      taiTDefaultMember* tdm = new taiTDefaultMember(md, typ);
+      taiMemberOfTypeDefault* tdm = new taiMemberOfTypeDefault(md, typ);
       tdm->bid = md->im->bid + 1;
       tdm->AddMember(md);
     }

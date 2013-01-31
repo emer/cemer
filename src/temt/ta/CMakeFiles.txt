@@ -579,17 +579,25 @@ set(ta_HEADS_MAKETA_LOCAL
   taiTypePtr.h
   taiFilePtrType.h
   taiDefaultEdit.h
-  taiTokenPtrMember.h
-  taiDefaultToken.h
-  taiSubTokenPtrMember.h
-  taiTypePtrMember.h
-  taiEnumTypePtrMember.h
-  taiMemberDefPtrMember.h
-  taiMethodDefPtrMember.h
-  taiFunPtrMember.h
-  taiFileDialogMember.h
-  taiRegexpDialogMember.h
-  taiTDefaultMember.h
+
+  taiMemberOfTokenPtr.h
+  taiMemberOfDefaultToken.h
+  taiMemberOfSubTokenPtr.h
+  taiMemberOfTypePtr.h
+  taiMemberOfEnumTypePtr.h
+  taiMemberOfMemberDefPtr.h
+  taiMemberOfMethodDefPtr.h
+  taiMemberOfFunPtr.h
+  taiMemberOfFileDialog.h
+  taiMemberOfRegexpDialog.h
+  taiMemberOfTypeDefault.h
+  taiMemberOfListDefaultEl.h
+  taiMemberOfLinkGroup.h
+  taiMemberOfLinkList.h
+  taiMemberOfTokenPtrFromGroup.h
+  taiMemberOfDynEnum.h
+  taiMemberOfProgVarIntVal.h
+
   taiActuatorMethod.h
   taiStreamArgType.h
   taiTokenPtrArgType.h
@@ -597,10 +605,6 @@ set(ta_HEADS_MAKETA_LOCAL
   taiMemberPtrArgType.h
   taiMethodPtrArgType.h
   taiFileDialogArgType.h
-  gpiDefaultEl.h
-  gpiLinkGP.h
-  gpiLinkList.h
-  gpiFromGpTokenPtrMember.h
   gpiTAPtrArgType.h
   gpiInObjArgType.h
   gpiFromGpArgType.h
@@ -620,8 +624,6 @@ set(ta_HEADS_MAKETA_LOCAL
   tabSelectEditViewType.h
 
   taiProjTemplateElArgType.h
-  taiDynEnumMember.h
-  taiProgVarIntValMember.h
   tabProgramViewType.h
   tabProgramGroupViewType.h
   taiProgLibElArgType.h
@@ -1630,17 +1632,25 @@ set(ta_SRCS_MAKETA
   taiTypePtr.cpp
   taiFilePtrType.cpp
   taiDefaultEdit.cpp
-  taiTokenPtrMember.cpp
-  taiDefaultToken.cpp
-  taiSubTokenPtrMember.cpp
-  taiTypePtrMember.cpp
-  taiEnumTypePtrMember.cpp
-  taiMemberDefPtrMember.cpp
-  taiMethodDefPtrMember.cpp
-  taiFunPtrMember.cpp
-  taiFileDialogMember.cpp
-  taiRegexpDialogMember.cpp
-  taiTDefaultMember.cpp
+
+  taiMemberOfTokenPtr.cpp
+  taiMemberOfDefaultToken.cpp
+  taiMemberOfSubTokenPtr.cpp
+  taiMemberOfTypePtr.cpp
+  taiMemberOfEnumTypePtr.cpp
+  taiMemberOfMemberDefPtr.cpp
+  taiMemberOfMethodDefPtr.cpp
+  taiMemberOfFunPtr.cpp
+  taiMemberOfFileDialog.cpp
+  taiMemberOfRegexpDialog.cpp
+  taiMemberOfTypeDefault.cpp
+  taiMemberOfListDefaultEl.cpp
+  taiMemberOfLinkGroup.cpp
+  taiMemberOfLinkList.cpp
+  taiMemberOfTokenPtrFromGroup.cpp
+  taiMemberOfDynEnum.cpp
+  taiMemberOfProgVarIntVal.cpp
+
   taiActuatorMethod.cpp
   taiStreamArgType.cpp
   taiTokenPtrArgType.cpp
@@ -1648,10 +1658,6 @@ set(ta_SRCS_MAKETA
   taiMemberPtrArgType.cpp
   taiMethodPtrArgType.cpp
   taiFileDialogArgType.cpp
-  gpiDefaultEl.cpp
-  gpiLinkGP.cpp
-  gpiLinkList.cpp
-  gpiFromGpTokenPtrMember.cpp
   gpiTAPtrArgType.cpp
   gpiInObjArgType.cpp
   gpiFromGpArgType.cpp
@@ -1670,8 +1676,6 @@ set(ta_SRCS_MAKETA
   tabSelectEditViewType.cpp
 
   taiProjTemplateElArgType.cpp
-  taiDynEnumMember.cpp
-  taiProgVarIntValMember.cpp
   tabProgramViewType.cpp
   tabProgramGroupViewType.cpp
   taiProgLibElArgType.cpp

@@ -150,7 +150,7 @@ bool taCodeUtils::RenameType(const String& type_nm, const String& new_nm,
     taMisc::Error("type not found:", type_nm);
     return false;
   }
-  TypeDef* new_td = TypeDef::FindGlobalTypeName(new_nm);
+  TypeDef* new_td = TypeDef::FindGlobalTypeName(new_nm, false);
   if(new_td) {
     taMisc::Error("ooops: new type name already exists!", new_nm);
     return false;
@@ -229,6 +229,7 @@ bool taCodeUtils::ListAllInherits(const String& type_nm) {
   taMisc::Info("Types that inherit from:", trgtp->name);
   for(int i=0; i< taMisc::types.size; i++) {
     TypeDef* td = taMisc::types.FastEl(i);
+    if(!td->IsActualClass()) continue;
     if(td->InheritsFrom(trgtp)) {
       taMisc::Info(td->name);
     }

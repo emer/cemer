@@ -24,7 +24,7 @@
 #include <taiBitBox>
 #include <taiComboBox>
 #include <iComboBox>
-#include <taiDynEnumMember>
+#include <taiMemberOfDynEnum>
 #include <iDataTableEditor>
 
 #include <taMisc>
@@ -561,13 +561,13 @@ bool taGuiDialog::AddDynEnum(DynEnum* deptr, const String& nm,
   taGuiWidget* w = NULL;
   if(deptr->enum_type->bits) {
     taiBitBox* taidata = new taiBitBox(&TA_DynEnum, data_host, NULL, par->widget);
-    taiDynEnumMember::UpdateDynEnumBits(taidata, *deptr);
+    taiMemberOfDynEnum::UpdateDynEnumBits(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Bits",
                        layout, atts, Variant((void*)deptr), _nilString, taidata);
   }
   else {
     taiComboBox* taidata = new taiComboBox(&TA_DynEnum, data_host, NULL, par->widget);
-    taiDynEnumMember::UpdateDynEnumCombo(taidata, *deptr);
+    taiMemberOfDynEnum::UpdateDynEnumCombo(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Enum",
                        layout, atts, Variant((void*)deptr), _nilString, taidata);
   }
