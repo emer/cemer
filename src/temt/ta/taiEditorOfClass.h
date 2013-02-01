@@ -23,11 +23,11 @@
 // member includes:
 #ifndef __MAKETA__
 #include <taiWidgetActions_List>
-#include <MembSet>
+#include <taiMemberWidgets>
 #include <taiWidget_List>
 #else
 class taiWidgetActions_List;
-class MembSet;
+class taiMemberWidgets;
 class taiWidget_List;
 #endif
 
@@ -37,7 +37,7 @@ class QButtonGroup; //
 class EditDataPanel; //
 class taiWidgetMethod; //
 class taiWidgetActions_List; //
-class MembSet_List; //
+class taiMemberWidgets_List; //
 class taiWidgetMenuBar; //
 class QAction; //
 
@@ -49,7 +49,7 @@ class TA_API taiEditorOfClass : public taiEditorWidgetsMain {
 INHERITED(taiEditorWidgetsMain)
 friend class EditDataPanel;
 public:
-  enum DefMembSet { // keys for default members sets -- always created
+  enum DeftaiMemberWidgets { // keys for default members sets -- always created
     MS_NORM,    // normal members, always shown
     MS_EXPT,    // Expert members
     MS_HIDD,    // Hidden members
@@ -69,7 +69,7 @@ public:
   taiWidgetMenuBar*           menu; // menu bar
 #endif
 
-  MembSet_List          membs;
+  taiMemberWidgets_List          membs;
   QButtonGroup*         bgrp; // group used for set checkboxes
   taiWidget_List           meth_el;        // method elements
 

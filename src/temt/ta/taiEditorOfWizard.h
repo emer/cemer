@@ -20,7 +20,7 @@
 #include <taiEditorWidgets>
 
 // member includes:
-#include <MembSet>
+#include <taiMemberWidgets>
 
 // declare all other types mentioned but not required to include:
 class taWizard; //
@@ -31,7 +31,7 @@ class TA_API taiEditorOfWizard : public taiEditorWidgets {
   Q_OBJECT
 INHERITED(taiEditorWidgets)
 public:
-  MembSet_List          membs; // one set per page
+  taiMemberWidgets_List          membs; // one set per page
 
   QTabWidget*           tabs;
 

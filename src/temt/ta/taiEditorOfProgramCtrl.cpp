@@ -105,13 +105,13 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
     Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
   }
 
-//   MembSet* ms = membs.SafeEl(MS_GP);
+//   taiMemberWidgets* ms = membs.SafeEl(MS_GP);
 //   ms->text = "Items from Program_Group";
 //   ms->desc = "useful items from the Program_Group to which this Program belongs";
 //   iLabel* lbl = new iLabel(ms->text.chars(), body);
 //   AddSectionLabel(-1, lbl,ms->desc.chars());
 
-  MembSet* ms = NULL;
+  taiMemberWidgets* ms = NULL;
   iLabel* lbl = NULL;
   // args and vars
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {

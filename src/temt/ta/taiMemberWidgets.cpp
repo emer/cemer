@@ -13,15 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "MembSet.h"
+#include "taiMemberWidgets.h"
 
-MembSet_List::~MembSet_List() {
+taiMemberWidgets_List::~taiMemberWidgets_List() {
   Reset();
 }
 
-bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat) {
+bool taiMemberWidgets_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat) {
   for (int i = 0; i < size; ++i) {
-    MembSet* ms = FastEl(i);
+    taiMemberWidgets* ms = FastEl(i);
     int msd_size = ms->data_el.size;
     if (idx >= msd_size) {
       idx -= msd_size;
@@ -37,11 +37,11 @@ bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat) {
   return false;
 }
 
-int MembSet_List::GetFlatDataIndex(taiWidget* dat) {
+int taiMemberWidgets_List::GetFlatDataIndex(taiWidget* dat) {
   if (!dat) return -1;
   int rval = 0;
   for (int i = 0; i < size; ++i) {
-    MembSet* ms = FastEl(i);
+    taiMemberWidgets* ms = FastEl(i);
     int ti_set = ms->data_el.FindEl(dat);
     if (ti_set >= 0) {
       return (rval + ti_set);
@@ -52,11 +52,11 @@ int MembSet_List::GetFlatDataIndex(taiWidget* dat) {
   return -1;
 }
 
-int MembSet_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
+int taiMemberWidgets_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
   if (!mbr || !base) return -1;
   int rval = 0;
   for (int i = 0; i < size; ++i) {
-    MembSet* ms = FastEl(i);
+    taiMemberWidgets* ms = FastEl(i);
     for (int j = 0; j < ms->data_el.size; ++j, ++rval) {
       if (mbr != ms->memb_el.PosSafeEl(j)) continue;
       if (ms->data_el.FastEl(j)->Base() == base) return rval;
@@ -65,28 +65,28 @@ int MembSet_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
   return -1;
 }
 
-int MembSet_List::GetDataSize() const {
+int taiMemberWidgets_List::GetDataSize() const {
   int rval = 0;
   for (int i = 0; i < size; ++i) {
-    MembSet* ms = FastEl(i);
+    taiMemberWidgets* ms = FastEl(i);
     rval += ms->data_el.size;
   }
   return rval;
 }
 
-void MembSet_List::ResetItems(bool data_only) {
+void taiMemberWidgets_List::ResetItems(bool data_only) {
   for (int i = size - 1; i >= 0; --i) {
-    MembSet* ms = FastEl(i);
+    taiMemberWidgets* ms = FastEl(i);
     ms->data_el.Reset();
     if (!data_only) ms->memb_el.Reset();
   }
 }
 
-void MembSet_List::SetMinSize(int n) {
+void taiMemberWidgets_List::SetMinSize(int n) {
   if (n < 0) return;
   Alloc(n); // noop if already sized larger
   while (n > size) {
-    Add(new MembSet);
+    Add(new taiMemberWidgets);
   }
 }
 

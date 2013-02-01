@@ -18,12 +18,39 @@
 
 // parent includes:
 #include <taThreadMgr>
-#include <ImgProcCallTask>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class ImgProcThreadBase; // 
+
+// this is the standard function call taking the thread number int value
+// all threaded functions MUST use this call signature!
+#ifdef __MAKETA__
+typedef void* ThreadImgProcCall;
+#else
+typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
+typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
+#endif
+
+TypeDef_Of(ImgProcCallTask);
+
+class TA_API ImgProcCallTask : public taTask {
+INHERITED(taTask)
+public:
+  ThreadImgProcCall* img_proc_call;	// #IGNORE method to call on the object
+
+  override void run();
+  // runs specified chunk of computation
+
+  ImgProcCallThreadMgr* mgr() { return (ImgProcCallThreadMgr*)owner->GetOwner(); }
+
+  TA_BASEFUNS_NOCOPY(ImgProcCallTask);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
 
 TypeDef_Of(ImgProcCallThreadMgr);
 

@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef MembSet_h
-#define MembSet_h 1
+#ifndef taiMemberWidgets_h
+#define taiMemberWidgets_h 1
 
 // parent includes:
 #include "ta_def.h"
@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class TA_API MembSet { // #IGNORE
+class TA_API taiMemberWidgets { // #IGNORE
 public:
   Member_List           memb_el; // member elements (1:1 with data_el), empty in inline mode
   taiWidget_List           data_el; // data elements (1:1 with memb_el WHEN section shown)
@@ -35,13 +35,13 @@ public:
   bool                  show; // flag to help by indicating whether to show or not
   bool                  modal; // flag to indicate that section is modal (checkbox, or default closed tree)
 
-  MembSet() {show = false; modal = false;}
+  taiMemberWidgets() {show = false; modal = false;}
 private:
-  MembSet(const MembSet& cp); // value semantics not allowed
-  MembSet& operator=(const MembSet& cp);
+  taiMemberWidgets(const taiMemberWidgets& cp); // value semantics not allowed
+  taiMemberWidgets& operator=(const taiMemberWidgets& cp);
 };
 
-class TA_API MembSet_List : public taPtrList<MembSet> { // #IGNORE -- note that 1st list is always the default (no parent) -- leave it empty to have no root items
+class TA_API taiMemberWidgets_List : public taPtrList<taiMemberWidgets> { // #IGNORE -- note that 1st list is always the default (no parent) -- leave it empty to have no root items
 public:
   int                   def_size; // set to how many you want to use default processing
   void                  SetMinSize(int n); // make sure there are at least n sets
@@ -53,11 +53,11 @@ public:
    // get the flat idx from a mbr/dat, -1 if not found
   int                   GetDataSize() const; // # data items
 
-  MembSet_List()  {def_size = 0;}
-  ~MembSet_List();
+  taiMemberWidgets_List()  {def_size = 0;}
+  ~taiMemberWidgets_List();
 protected:
-  void  El_Done_(void* it) { delete (MembSet*)it; }
+  void  El_Done_(void* it) { delete (taiMemberWidgets*)it; }
 };
 
 
-#endif // MembSet_h
+#endif // taiMemberWidgets_h

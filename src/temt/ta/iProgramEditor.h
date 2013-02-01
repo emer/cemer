@@ -21,7 +21,7 @@
 #include <ISigLinkClient>
 
 // member includes:
-#include <MembSet>
+#include <taiMemberWidgets>
 #include <iColor>
 
 #ifndef __MAKETA__
@@ -154,7 +154,7 @@ protected:
   bool                  warn_clobber; // set if we get a notify and are already modified
   bool                  apply_req;
   taBase*               base; // no need for smartref, because we are a dlc
-  MembSet_List          membs; // the member items, one set per line
+  taiMemberWidgets_List          membs; // the member items, one set per line
 
   int                   row;
   TypeItem::ShowMembs   m_show;

@@ -71,7 +71,7 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
   // mark place
   String nm;
   String help_text;
-  MembSet* memb_set = NULL;
+  taiMemberWidgets* memb_set = NULL;
 
   int set_idx = 0;
   // note: iterates non-empty groups only
@@ -128,7 +128,7 @@ void taiEditorOfSelectEditFull::FillLabelContextMenu_SelEdit(QMenu* menu,
 void taiEditorOfSelectEditFull::GetImage_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
+    taiMemberWidgets* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       taiWidget* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
@@ -147,7 +147,7 @@ void taiEditorOfSelectEditFull::GetImage_Membs_def() {
 void taiEditorOfSelectEditFull::GetValue_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
+    taiMemberWidgets* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       taiWidget* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);

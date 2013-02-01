@@ -106,7 +106,7 @@ void taiEditorOfUserData::Constr_Data_Labels() {
   // mark place
   String nm;
   String help_text;
-  MembSet* ms = NULL;
+  taiMemberWidgets* ms = NULL;
 
   int set_idx = 0;
   int row = 0;

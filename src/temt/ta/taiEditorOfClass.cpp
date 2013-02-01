@@ -53,7 +53,7 @@ taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
   show_set(MS_NORM) = true;
 
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
-    MembSet* ms = membs.SafeEl(j);
+    taiMemberWidgets* ms = membs.SafeEl(j);
     if (!ms) break; // shouldn't happen
     ms->modal = true;
     switch (j) {
@@ -213,7 +213,7 @@ void taiEditorOfClass::Constr_Data_Labels() {
   }
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     if (j >= membs.def_size) return; // don't do those
-    MembSet* ms = membs.SafeEl(j);
+    taiMemberWidgets* ms = membs.SafeEl(j);
     if (!ms || ms->memb_el.size == 0) continue;
     String text = ms->text;
     String desc = ms->desc;

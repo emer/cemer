@@ -34,7 +34,7 @@ INHERITED(taiEditorOfClass)
   Q_OBJECT
 public: //
 // We use sets: 0:name/desc; 1: gp guys (ex step); set2: args; set3: vars
-  enum CtrlMembSets {
+  enum CtrltaiMemberWidgetss {
     MS_PROG,
 //     MS_GP,
     MS_ARGS,

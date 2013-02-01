@@ -14,10 +14,37 @@
 //   Lesser General Public License for more details.
 
 #include "ImgProcCallThreadMgr.h"
-#include <ImgProcCallTask>
 #include <taMisc>
 
+void ImgProcCallTask::Initialize() {
+  img_proc_call = NULL;
+}
 
+void ImgProcCallTask::Destroy() {
+  img_proc_call = NULL;
+}
+
+void ImgProcCallTask::run() {
+  ImgProcCallThreadMgr* mg = mgr();
+  ImgProcThreadBase* base = mg->img_proc();
+
+  // all nibbling all the time
+  const int nib_chnk = mg->nibble_chunk;
+  const int nib_stop = mg->n_cmp_units;
+
+  while(true) {
+    int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
+    if(nxt_uidx >= nib_stop) break;
+    const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
+    for(int i=nxt_uidx; i <mx; i++) {
+      img_proc_call->call(base, i, task_id); // task id indicates threading, and which thread
+    }
+    if(mx == nib_stop) break;           // we're the last guy
+  }
+}
+
+/////////////////////////////////
+//              Mgr
 
 void ImgProcCallThreadMgr::Initialize() {
   min_units = taMisc::thread_defaults.min_units;

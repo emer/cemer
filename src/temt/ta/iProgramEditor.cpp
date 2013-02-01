@@ -308,7 +308,7 @@ void iProgramEditor::Controls_Add() {
   if (read_only) flags |= taiWidget::flgReadOnly;
   const int ctrl_size = taiM->ctrl_size;
   for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
+    taiMemberWidgets* ms = membs.FastEl(j);
     if (ms->memb_el.size == 0) continue; // actually, is end
     QHBoxLayout* hbl = new QHBoxLayout();
     //hbl->setMargin(ln_vmargin);
@@ -505,7 +505,7 @@ void iProgramEditor::GetValue() {
   InternalSetModified(false); // do it first, so signals/updates etc. see us nonmodified
   bool first_diff = true;
   for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
+    taiMemberWidgets* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
       taiWidget* mb_dat = ms->data_el.FastEl(i);
@@ -528,7 +528,7 @@ void iProgramEditor::GetImage() {
   meth_but_mgr->GetImage();
   ++m_changing;
   for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
+    taiMemberWidgets* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
       taiWidget* mb_dat = ms->data_el.FastEl(i);

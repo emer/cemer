@@ -17,6 +17,8 @@ set(ta_HEADS_MAKETA_LOCAL
   maketa_fstream.h
   maketa_sstream.h
 
+  BuiltinTypeDefs.h
+
   iVec2i.h
   iVec3i.h
   iSize.h
@@ -500,13 +502,13 @@ set(ta_HEADS_MAKETA_LOCAL
 
   taRootBase.h
   tabMisc.h
+  taCodeUtils.h
 
   taAudioProc.h
 
   taImage.h
   taCanvas.h
 
-  ImgProcCallTask.h
   ImgProcCallThreadMgr.h
   ImgProcThreadBase.h
   ImageProcCall.h
@@ -722,8 +724,6 @@ set(ta_HEADS_MAKETA_LOCAL
   T3Translate1Translator.h
   T3Translate2Translator.h
   SoScrollBar.h
-  BuiltinTypeDefs.h
-  taCodeUtils.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -992,6 +992,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiEditorOfSArg.h
   taiEditorOfTypeItem.h
 
+  taiMemberWidgets.h
   taiListMemberWidgets.h
   taiListMemberWidgets_List.h
   taiListTypeWidgets.h
@@ -1033,8 +1034,6 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiWidgetSubGroupEditButton.h
 
   iDialogRegexpPopulator.h
-
-  MembSet.h
 
   T3Misc.h
   iSoSelectionEvent.h
@@ -1569,7 +1568,6 @@ set(ta_SRCS_MAKETA
   ImageProcCall.cpp
   ImgProcCallThreadMgr.cpp
   ImgProcThreadBase.cpp
-  ImgProcCallTask.cpp
 
   DoGFilter.cpp
   GaborFilter.cpp
@@ -1830,7 +1828,7 @@ set(ta_SRCS_NOMAKETA
 
   iDialogChoice.cpp
   iHiLightButton.cpp
-  MembSet.cpp
+  taiMemberWidgets.cpp
 
   taiWidgetActions.cpp
   taiWidgetComposite.cpp
