@@ -26,10 +26,10 @@ Projection* Projection_Group::ConnectFrom(Layer* lay) {
   return prjn;
 }
 
-void Projection_Group::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
+void Projection_Group::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
   if(send_prjns) return;
-  if (dcr == SLS_LIST_ITEM_INSERT) {
+  if (sls == SLS_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
     if (net)
       net->RebuildAllViews();

@@ -313,7 +313,7 @@ void taiDataHostBase::SigLinkDestroying(taSigLink* dl) {
   root = NULL;
 }
 
-void taiDataHostBase::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taiDataHostBase::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 //inherited class completely implements
 }
 

@@ -409,7 +409,7 @@ IDataViewWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iMainWindowViewer(this, gui_parent);
 }
 
-void MainWindowViewer::SigEmit_Child(taBase* child, int dcr, void* op1, void* op2) {
+void MainWindowViewer::SigEmit_Child(taBase* child, int sls, void* op1, void* op2) {
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:

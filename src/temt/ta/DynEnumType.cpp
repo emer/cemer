@@ -140,14 +140,14 @@ bool DynEnumType::EnumsFromDataTable(DataTable* dt, const Variant& col) {
   return true;
 }
 
-void DynEnumType::SigEmit(int dcr, void* op1, void* op2) {
+void DynEnumType::SigEmit(int sls, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
-  if (dcr == SLS_CHILD_ITEM_UPDATED) {
+  if (sls == SLS_CHILD_ITEM_UPDATED) {
     SigEmitUpdated();
     return; // don't send any further
   }
-  inherited::SigEmit(dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
 }
 
 void DynEnumType::CheckChildConfig_impl(bool quiet, bool& rval) {

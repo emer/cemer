@@ -538,7 +538,7 @@ public:
   override int          Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
   override int          Dump_Load_Value(std::istream& strm, taBase* par=NULL);
 #endif
-  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   override void         InitLinks();
   override void         CutLinks();
   TA_ABSTRACT_BASEFUNS(taMatrix);

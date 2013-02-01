@@ -147,7 +147,7 @@ String DataLoop::GetDisplayName() const {
 }
 
 void DataLoop::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                    int dcr, void* op1_, void* op2_) {
+                                    int sls, void* op1_, void* op2_) {
   GetOrderVal();
   UpdateAfterEdit();
 }

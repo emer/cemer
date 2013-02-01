@@ -127,7 +127,7 @@ protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
   override void		SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-					     int dcr, void* op1_, void* op2_);
+					     int sls, void* op1_, void* op2_);
 
   ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
   ChannelSpec* 		AddScalarChan_Agg(const String& valname, ValType vt);

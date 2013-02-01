@@ -210,10 +210,10 @@ void T3DataView::SigRecvStructUpdateEnd_impl() {
   Render();
 }
 
-void T3DataView::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
-  inherited::SigLinkRecv(dl, dcr, op1, op2);
+void T3DataView::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+  inherited::SigLinkRecv(dl, sls, op1, op2);
   // if we have started a batch op, then Reset, since we will for sure eventually
-  if ((dcr == SLS_STRUCT_UPDATE_BEGIN) && (dbuCnt() == 1))
+  if ((sls == SLS_STRUCT_UPDATE_BEGIN) && (dbuCnt() == 1))
     Reset();
 }
 

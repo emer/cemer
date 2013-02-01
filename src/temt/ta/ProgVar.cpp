@@ -488,14 +488,14 @@ void ProgVar::Cleanup() {
   //TODO: anything about DynEnums???
 }
 
-void ProgVar::SigEmit(int dcr, void* op1, void* op2) {
+void ProgVar::SigEmit(int sls, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
-  if ((dcr == SLS_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
+  if ((sls == SLS_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
     SigEmitUpdated();
     return; // don't send any further
   }
-  inherited::SigEmit(dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
 }
 
 String ProgVar::GetDisplayName() const {

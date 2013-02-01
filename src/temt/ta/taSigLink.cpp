@@ -56,7 +56,7 @@ void taSigLink::SigDestroying() { //note: linklist will automatically remove us
   }
 }
 
-void taSigLink::DoNotify(int dcr, void* op1_, void* op2_) {
+void taSigLink::DoNotify(int sls, void* op1_, void* op2_) {
 #if !defined(NO_TA_BASE)
  // check for dispatch in a thread, which is Very Bad(TM)!!!
   if (!taTaskThread::inMainThread()) {
@@ -66,18 +66,18 @@ void taSigLink::DoNotify(int dcr, void* op1_, void* op2_) {
 #endif
   for (int i = 0; i < clients.size; ++i) {
     ISigLinkClient* dlc = clients.FastEl(i);
-    if ((dcr == SLS_REBUILD_VIEWS) && !dlc->isDataView()) continue;
+    if ((sls == SLS_REBUILD_VIEWS) && !dlc->isDataView()) continue;
     if (dlc->ignoreSigEmit())
-      dlc->IgnoredSigEmit(this, dcr, op1_, op2_);
+      dlc->IgnoredSigEmit(this, sls, op1_, op2_);
     else
-      dlc->SigLinkRecv(this, dcr, op1_, op2_);
+      dlc->SigLinkRecv(this, sls, op1_, op2_);
   }
 }
 
 // set this to emit debug messages for the following code..
 // #define DATA_DATA_DEBUG 1
 
-void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
+void taSigLink::SigLinkEmit(int sls, void* op1_, void* op2_) {
 /*
   m_dbu_cnt = 0: idle state
   m_dbu_cnt < 0: in a DATA_UPDATE context
@@ -103,10 +103,10 @@ void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
   bool suppress = false; // set it if we should supress forwarding
   bool dummy_end = false;
   //we translate the NoDirty guy, since it is only for the sender's use
-  if (dcr == SLS_ITEM_UPDATED_ND) {
-    dcr = SLS_ITEM_UPDATED;
+  if (sls == SLS_ITEM_UPDATED_ND) {
+    sls = SLS_ITEM_UPDATED;
   }
-  if (dcr == SLS_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
+  if (sls == SLS_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     // only forward the first one (ex some clients do a reset step)
     // OR the first one where DATA->STRUCT
     suppress = (m_dbu_cnt > 0); // send if first, or we were in DATA state
@@ -119,7 +119,7 @@ void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
     taMisc::Info((String)(int)this, "stru beg:", String(m_dbu_cnt));
 #endif
   }
-  else if (dcr == SLS_DATA_UPDATE_BEGIN) {
+  else if (sls == SLS_DATA_UPDATE_BEGIN) {
     suppress = (m_dbu_cnt != 0);
     if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
     else               --m_dbu_cnt;
@@ -127,17 +127,17 @@ void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
     taMisc::Info((String)(int)this, "data beg:", String(m_dbu_cnt));
 #endif
   }
-  else if ((dcr == SLS_STRUCT_UPDATE_END) || (dcr == SLS_DATA_UPDATE_END)) {
+  else if ((sls == SLS_STRUCT_UPDATE_END) || (sls == SLS_DATA_UPDATE_END)) {
 #ifdef DATA_DATA_DEBUG
     bool was_stru = false;      // debug only
-    if(dcr == SLS_STRUCT_UPDATE_END)
+    if(sls == SLS_STRUCT_UPDATE_END)
       was_stru = true;
 #endif
     if (m_dbu_cnt < 0) {
       ++m_dbu_cnt;
     } else if (m_dbu_cnt > 0) {
       --m_dbu_cnt;
-      dcr = SLS_STRUCT_UPDATE_END; // force to be struct end, in case we notify
+      sls = SLS_STRUCT_UPDATE_END; // force to be struct end, in case we notify
     }
     // this situation might theoretically arise if some updating action
     // mid-update causes a link to an item to get created, which will then
@@ -157,11 +157,11 @@ void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
 #endif
     // at the end, also send a IU
     if (m_dbu_cnt == 0) {
-      if (dcr == SLS_DATA_UPDATE_END) { // just turn it into an IU
+      if (sls == SLS_DATA_UPDATE_END) { // just turn it into an IU
         //NOTE: clients who count (ex taDataView) must detect this implicit
         // DATA_UPDATE_END as occurring when:
         // State=DATA, Count=1
-        dcr = SLS_ITEM_UPDATED;
+        sls = SLS_ITEM_UPDATED;
 #ifdef DATA_DATA_DEBUG
         taMisc::Info((String)(int)this, "cvt to iu:", String(m_dbu_cnt));
 #endif
@@ -171,20 +171,20 @@ void taSigLink::SigLinkEmit(int dcr, void* op1_, void* op2_) {
       }
     } else suppress = true;
   }
-  else if (dcr == SLS_ITEM_UPDATED) {
+  else if (sls == SLS_ITEM_UPDATED) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
-  else if (dcr < SLS_UPDATE_VIEWS) {
+  else if (sls < SLS_UPDATE_VIEWS) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
 
   if (!suppress) {
 #ifdef DATA_DATA_DEBUG
-    taMisc::Info((String)(int)this, "sending:", String(dcr));
+    taMisc::Info((String)(int)this, "sending:", String(sls));
 #endif
-    DoNotify(dcr, op1_, op2_);
+    DoNotify(sls, op1_, op2_);
   }
   if (dummy_end)
     DoNotify(SLS_DATA_UPDATE_END, NULL, NULL);

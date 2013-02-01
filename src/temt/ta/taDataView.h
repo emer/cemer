@@ -163,13 +163,13 @@ public: // ISigLinkCLient
     return (m_data) ? m_data->GetTypeDef() : &TA_taBase; } // TypeDef of the data
   override bool         ignoreSigEmit() const {return (m_vis_cnt <= 0);}
   override bool         isDataView() const {return true;}
-  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
-  override void         IgnoredSigEmit(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  override void         IgnoredSigEmit(taSigLink* dl, int sls, void* op1, void* op2);
   override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when destroying; it will remove
 
 protected:
   override void         UpdateAfterEdit_impl();
-  virtual void          SigLinkRecv_impl(int dcr, void* op1, void* op2) {}
+  virtual void          SigLinkRecv_impl(int sls, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void          SigRecvUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
   virtual void          SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) {}
@@ -177,7 +177,7 @@ protected:
   // called for Update All Views, and at end of a DataUpdate batch
   virtual void          SigRecvRebuildView_impl() {} // called for Rebuild All Views, clients usually do beg/end both
   virtual void          SigRecvStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
-  virtual void          SigEmit_Child(taBase* child, int dcr, void* op1, void* op2) {}
+  virtual void          SigEmit_Child(taBase* child, int sls, void* op1, void* op2) {}
    // typically from an owned list
   virtual void          DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
   virtual void          SetVisible_impl(DataViewAction act);

@@ -161,7 +161,7 @@ public:
   override bool         BrowserCollapseAll();
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
-  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgVar);

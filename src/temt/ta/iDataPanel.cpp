@@ -75,8 +75,8 @@ void iDataPanel::customEvent(QEvent* ev_) {
 }
 
 
-void iDataPanel::SigEmit_impl(int dcr, void* op1, void* op2) {
-  if (dcr <= SLS_ITEM_UPDATED_ND) {
+void iDataPanel::SigEmit_impl(int sls, void* op1, void* op2) {
+  if (sls <= SLS_ITEM_UPDATED_ND) {
     if (tabView())
       tabView()->UpdateTabName(this); //in case changed
   }

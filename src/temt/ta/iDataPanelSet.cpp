@@ -144,10 +144,10 @@ void iDataPanelSet::AllSubPanelsAdded() {
   }
 }
 
-void iDataPanelSet::SigEmit_impl(int dcr, void* op1, void* op2) {
-  inherited::SigEmit_impl(dcr, op1, op2);
+void iDataPanelSet::SigEmit_impl(int sls, void* op1, void* op2) {
+  inherited::SigEmit_impl(sls, op1, op2);
   // if UDC then we need to invoke the dyn panel update procedure on the tai guy
-  if (dcr == SLS_USER_DATA_UPDATED) {
+  if (sls == SLS_USER_DATA_UPDATED) {
     TypeDef* typ = link()->GetDataTypeDef();
     if (typ && typ->iv) {
       typ->iv->CheckUpdateDataPanelSet(this);

@@ -51,8 +51,8 @@ iUserDataPanel::~iUserDataPanel() {
   }
 }
 
-void iUserDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(dcr, op1_, op2_);
+void iUserDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
 }
 

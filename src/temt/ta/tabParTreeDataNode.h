@@ -49,7 +49,7 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_tabParTreeDataNode;}
 protected:
   taiTreeDataNode*      last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
-  override void         SigEmit_impl(int dcr, void* op1, void* op2);
+  override void         SigEmit_impl(int sls, void* op1, void* op2);
   override void         CreateChildren_impl();
   taiTreeDataNode*      CreateListItem(taiTreeDataNode* par_node,
     taiTreeDataNode* after, taBase* el);

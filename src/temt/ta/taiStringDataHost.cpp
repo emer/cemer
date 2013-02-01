@@ -109,7 +109,7 @@ void taiStringDataHost::btnPrint_clicked() {
   edit->document()->print(&pr);
 }
 
-void taiStringDataHost::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taiStringDataHost::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 }
 
 void taiStringDataHost::DoConstr_Dialog(iHostDialog*& dlg) {

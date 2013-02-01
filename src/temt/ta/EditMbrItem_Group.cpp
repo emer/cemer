@@ -20,10 +20,10 @@
 #include <taMisc>
 
 
-void EditMbrItem_Group::SigEmit(int dcr, void* op1, void* op2)
+void EditMbrItem_Group::SigEmit(int sls, void* op1, void* op2)
 {
-  inherited::SigEmit(dcr, op1, op2);
-  SelectEdit::StatSigEmit_Group(this, dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
+  SelectEdit::StatSigEmit_Group(this, sls, op1, op2);
 }
 
 taBase* EditMbrItem_Group::GetBase_Flat(int idx) const {

@@ -31,7 +31,7 @@ class TA_API DataView_List: public taList<taDataView> {
   // #NO_TOKENS ##CAT_Display
 INHERITED(taList<taDataView>)
 public:
-  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
     // we send to an owner DataView SigEmit_Child
 
   virtual void          DoAction(taDataView::DataViewAction act);

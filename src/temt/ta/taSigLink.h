@@ -81,7 +81,7 @@ public:
   virtual String        GetName() const {return _nilString;}
   virtual String        GetDisplayName() const; // default return Member name if has MemberDef, else GetName
   void                  SigDestroying(); // called by host when destroying, but it is still responsible for deleting us
-  virtual void          SigLinkEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  virtual void          SigLinkEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   // this is how we emit the signal to the receivers
   virtual bool          HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
 
@@ -108,7 +108,7 @@ protected:
   ISigLinkClient_PtrList clients; // clients of this item (ex. either primary, or where it is aliased or linked)
   int                   m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
 private:
-  void                  DoNotify(int dcr, void* op1_, void* op2_);
+  void                  DoNotify(int sls, void* op1_, void* op2_);
     // don't even DREAM of making this non-private!!!!
 };
 

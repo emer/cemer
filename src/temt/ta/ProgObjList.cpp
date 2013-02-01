@@ -81,8 +81,8 @@ void ProgObjList::GetVarsForObjs() {
   }
 }
 
-void ProgObjList::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
+void ProgObjList::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
   if(!taMisc::is_loading && !taMisc::is_duplicating && !isDestroying())
     GetVarsForObjs();
 }

@@ -82,7 +82,7 @@ public: // ISigLinkClient interface
 protected:
   taDoc*                m_doc; // ref managed through link; we just put ptr here to detect change
   bool                  is_loading;
-  override void         SigEmit_impl(int dcr, void* op1, void* op2);
+  override void         SigEmit_impl(int sls, void* op1, void* op2);
   override void         UpdatePanel_impl();
   override bool         eventFilter(QObject *obj, QEvent *event);
   // translate emacs keys..

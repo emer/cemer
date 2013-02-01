@@ -82,8 +82,8 @@ public:
   virtual const String  GetColText(int col, const String& def = _nilString) const;
 
   override void         CreateChildren();
-  void                  SigEmit(int dcr, void* op1, void* op2)
-    {SigEmit_impl(dcr, op1, op2);} // primarily to support Refresh
+  void                  SigEmit(int sls, void* op1, void* op2)
+    {SigEmit_impl(sls, op1, op2);} // primarily to support Refresh
   virtual void          DecorateDataNode(); // sets icon and other visual attributes, based on state of node
   bool                  ShowNode(int show) const
     {return ShowNode_impl(show, _nilString);}
@@ -114,8 +114,8 @@ public: // ITypedObject interface
   override TypeDef*     GetTypeDef() const {return &TA_iTreeViewItem;}
 
 public: // ISigLinkClient interface
-  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2)
-    {SigEmit(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
+  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2)
+    {SigEmit(sls, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when it is destroying --
 
 public: // ISelectable interface
@@ -141,7 +141,7 @@ protected:
   MemberDef*            m_md; // for members, the MemberDef (otherwise NULL)
   override void         dropped(const QMimeData* mime, const QPoint& pos,
     int key_mods, WhereIndicator where);
-  virtual void          SigEmit_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
+  virtual void          SigEmit_impl(int sls, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void         itemExpanded(bool value);
 
   virtual bool          ShowNode_impl(int show, const String& context) const;

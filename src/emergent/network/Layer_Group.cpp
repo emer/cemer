@@ -58,9 +58,9 @@ void Layer_Group::AddRelPos2d(taVector2i& rel_pos) {
   }
 }
 
-void Layer_Group::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
-  if (dcr == SLS_LIST_ITEM_INSERT) {
+void Layer_Group::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
+  if (sls == SLS_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
     if (net)
       net->RebuildAllViews();

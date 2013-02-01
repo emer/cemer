@@ -191,7 +191,7 @@ protected:
   override bool         CheckConfig_impl(bool quiet);
   override void         CheckThisConfig_impl(bool quiet, bool& rval);
   override void         SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                             int dcr, void* op1_, void* op2_);
+                                             int sls, void* op1_, void* op2_);
 
   virtual bool          useDesc() const {return true;} // hack for CommentEl
 

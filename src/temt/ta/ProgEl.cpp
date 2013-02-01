@@ -384,7 +384,7 @@ void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                    int dcr, void* op1_, void* op2_) {
+                                    int sls, void* op1_, void* op2_) {
 //NO!!!!! Does a UAE if content of ref changes; otherwise, don't need this
 //  UpdateAfterEdit();          // just do this for all guys -- keeps display updated
 }

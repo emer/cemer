@@ -50,9 +50,9 @@ public:
     // hidden guys can ignore changes (but they always get Destroyed)
   virtual bool          isDataView() const {return false;} // true for dataviews
   virtual void          SigLinkDestroying(taSigLink* dl) = 0; // called by SigLink when destroying; it will remove siglink ref in dlc upon return
-  virtual void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) = 0;
+  virtual void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) = 0;
   // this is how we receive a signal from the siglink
-  virtual void          IgnoredSigEmit(taSigLink* dl, int dcr,
+  virtual void          IgnoredSigEmit(taSigLink* dl, int sls,
     void* op1, void* op2) {} // called instead if ignoreSigEmit was true
 
   ISigLinkClient() {m_link = NULL;}

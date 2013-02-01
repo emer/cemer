@@ -57,16 +57,16 @@ void DynEnumItem_List::OrderItems() {
   }
 }
 
-void DynEnumItem_List::SigEmit(int dcr, void* op1, void* op2) {
+void DynEnumItem_List::SigEmit(int sls, void* op1, void* op2) {
   OrderItems();
   // we notify owner, so editing items causes related things to update,
   // typically used by ProgVar to make sure the enum list gets updated in gui
   taBase* own = GetOwner();
   if(own) {
-    if(dcr <= SLS_CHILD_ITEM_UPDATED)
+    if(sls <= SLS_CHILD_ITEM_UPDATED)
       own->SigEmit(SLS_CHILD_ITEM_UPDATED, (void*)this);
   }
-  inherited::SigEmit(dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
 }
 
 bool DynEnumItem_List::BrowserSelectMe() {

@@ -124,7 +124,7 @@ public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iSearchDialog;}
   override bool         ignoreSigEmit() const {return true;}
-  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2) {}
+  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) {}
   override void         SigLinkDestroying(taSigLink* dl);
 
 

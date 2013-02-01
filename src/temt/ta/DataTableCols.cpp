@@ -43,10 +43,10 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
   }
 }
 
-void DataTableCols::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
+void DataTableCols::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
 
-  if ((dcr >= SLS_LIST_ORDER_MIN) && (dcr <= SLS_LIST_ORDER_MAX)) {
+  if ((sls >= SLS_LIST_ORDER_MIN) && (sls <= SLS_LIST_ORDER_MAX)) {
     DataTable* dt = GET_MY_OWNER(DataTable); // cache
     if (!dt) return;
     // if last col removed then rows must become 0

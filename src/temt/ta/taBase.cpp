@@ -1724,16 +1724,16 @@ void taBase::RebuildAllViews() {
     SigEmit(SLS_REBUILD_VIEWS);
 }
 
-void taBase::SigEmit(int dcr, void* op1, void* op2) {
+void taBase::SigEmit(int sls, void* op1, void* op2) {
   if(taMisc::is_loading)  return; // no notifies while loading!!
 
-  if (dcr != SLS_ITEM_UPDATED_ND)
+  if (sls != SLS_ITEM_UPDATED_ND)
     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   // only assume stale for strict condition:
-  if ((useStale() && (dcr == SLS_ITEM_UPDATED)))
+  if ((useStale() && (sls == SLS_ITEM_UPDATED)))
     setStale();
   taSigLink* dl = sig_link();
-  if (dl) dl->SigLinkEmit(dcr, op1, op2);
+  if (dl) dl->SigLinkEmit(sls, op1, op2);
 }
 
 void taBase::SigEmitUpdated() {

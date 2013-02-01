@@ -68,14 +68,14 @@ void iListDataPanel::ConfigHeader() {
   }
 }
 
-void iListDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(dcr, op1_, op2_);
-  if (dcr == SLS_LIST_ITEM_REMOVE) {
+void iListDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
+  if (sls == SLS_LIST_ITEM_REMOVE) {
     // index will now be invalid for followers
     RenumberList();
   }
   // we handle the cases separately, since just refilling the list
-  else if (dcr == SLS_LIST_ITEM_INSERT) {
+  else if (sls == SLS_LIST_ITEM_INSERT) {
     // insert at end, regardless of sort order
     taiSigLink* item = link()->GetListChild(op1_);
     if (!item) {
@@ -89,11 +89,11 @@ void iListDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
     RenumberList();
   }
   // note: remember, we already handled insert and remove
-  else if ((dcr >= SLS_LIST_MIN) && (dcr <= SLS_LIST_MAX)) {
+  else if ((sls >= SLS_LIST_MIN) && (sls <= SLS_LIST_MAX)) {
     // for other list ops, esp sort or move, just reorder whole list (easy, harmless)
     RenumberList();
   }
-  else if (dcr == SLS_STRUCT_UPDATE_END) {
+  else if (sls == SLS_STRUCT_UPDATE_END) {
     ConfigHeader();
   }
 }

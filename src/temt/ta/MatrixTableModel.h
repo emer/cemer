@@ -89,7 +89,7 @@ public: // ISigLinkClient i/f
   override TypeDef*     GetTypeDef() const {return &TA_MatrixTableModel;}
 //  override bool               ignoreSigEmit() const;
   override void         SigLinkDestroying(taSigLink* dl);
-  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 protected:
   taMatrix*             m_mat;

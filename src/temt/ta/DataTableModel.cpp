@@ -46,14 +46,14 @@ void DataTableModel::SigLinkDestroying(taSigLink* dl) {
   m_dt = NULL;
 }
 
-void DataTableModel::SigLinkRecv(taSigLink* dl, int dcr,
+void DataTableModel::SigLinkRecv(taSigLink* dl, int sls,
   void* op1, void* op2)
 { // called from DataTable::SigEmit
   if (notifying) return;
   //this is primarily for code-driven changes
-  if ((dcr <= SLS_ITEM_UPDATED_ND) || // data itself updated
-    (dcr == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
-    (dcr == SLS_DATA_UPDATE_END)) // for row insert/deletes
+  if ((sls <= SLS_ITEM_UPDATED_ND) || // data itself updated
+    (sls == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (sls == SLS_DATA_UPDATE_END)) // for row insert/deletes
   {
     emit_layoutChanged();
   }

@@ -16,9 +16,9 @@
 #include "taSmartRef.h"
 #include <taSigLink>
 
-void taSmartRef::SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2) {
+void taSmartRef::SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) {
   if (m_own) {
-    m_own->SmartRef_SigEmit(this, m_ptr, dcr, op1, op2);
+    m_own->SmartRef_SigEmit(this, m_ptr, sls, op1, op2);
   }
 }
 void taSmartRef::SigLinkDestroying(taSigLink* dl) {

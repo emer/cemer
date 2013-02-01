@@ -903,7 +903,7 @@ public:
   // #CAT_Display called after data changes, to update views
   virtual void          RebuildAllViews();
   // #CAT_Display call after data changes, to rebuild views, typically when a child is added
-  virtual void          SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  virtual void          SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   // #IGNORE sends the indicated notification to all siglink clients, if any; virtual so we can override to trap/monitor
   void                  SigEmitUpdated();
   // #CAT_ObjectMgmt send the ITEM_UPDATED data changed signal to indicate to gui elements etc that this item has been updated
@@ -946,7 +946,7 @@ protected:      // Impl
   virtual void          SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
   // #IGNORE the obj (to which we had a ref) is about to destroy (the ref has already been NULL'ed)
   virtual void          SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-    int dcr, void* op1_, void* op2_) {}
+    int sls, void* op1_, void* op2_) {}
   // #IGNORE the obj (to which we have a ref) has signalled the indicated data change
   virtual void          SmartRef_SigChanging(taSmartRef* ref,
     taBase* obj, bool setting) {}

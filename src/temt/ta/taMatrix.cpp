@@ -666,10 +666,10 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   return true;
 }
 
-void taMatrix::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
+void taMatrix::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
   if (slice_par) {
-    slice_par->SigEmit(dcr, op1, op2);
+    slice_par->SigEmit(sls, op1, op2);
   }
 }
 

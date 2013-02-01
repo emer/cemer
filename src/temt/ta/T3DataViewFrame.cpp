@@ -118,9 +118,9 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   return rval;
 }
 
-void T3DataViewFrame::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
-  if (dcr <= SLS_ITEM_UPDATED_ND) {
+void T3DataViewFrame::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
+  if (sls <= SLS_ITEM_UPDATED_ND) {
     T3DataViewer* par = GET_MY_OWNER(T3DataViewer);
     if (par) par->FrameChanged(this);
   }

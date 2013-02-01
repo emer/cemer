@@ -515,11 +515,11 @@ String taList_impl::ChildGetColText_impl(taBase* child, const KeyString& key, in
   return child->GetColText(key, itm_idx);
 }
 
-void taList_impl::SigEmit(int dcr, void* op1, void* op2) {
+void taList_impl::SigEmit(int sls, void* op1, void* op2) {
   //note: set stale before notifies
-  if (useStale() && ((dcr >= SLS_LIST_ORDER_MIN) && (dcr <= SLS_LIST_ORDER_MAX)))
+  if (useStale() && ((sls >= SLS_LIST_ORDER_MIN) && (sls <= SLS_LIST_ORDER_MAX)))
     setStale();
-  inherited_taBase::SigEmit(dcr, op1, op2);
+  inherited_taBase::SigEmit(sls, op1, op2);
 }
 
 String taList_impl::GetColHeading(const KeyString& key) const {

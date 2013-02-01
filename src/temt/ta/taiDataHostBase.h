@@ -153,7 +153,7 @@ public: // ITypedObject i/f (common to IDLC and IDH)
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  bool                ignoreSigEmit() const; we always accept, but respect hidden
   void          SigLinkDestroying(taSigLink* dl);
-  void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 
 // virtuals for IDataHost i/f -- call back to these from taiDataHost

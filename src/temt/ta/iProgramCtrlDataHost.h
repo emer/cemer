@@ -69,7 +69,7 @@ public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);
   override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
   override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int dcr, void* op1, void* op2);
+    int sls, void* op1, void* op2);
 };
 
 

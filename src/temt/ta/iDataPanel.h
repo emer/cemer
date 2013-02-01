@@ -150,8 +150,8 @@ public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanel;}
   override bool         ignoreSigEmit() const {return (!isVisible());}
-  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2)
-    {SigEmit_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
+  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2)
+    {SigEmit_impl(sls, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void         SigLinkDestroying(taSigLink* dl) {} // called by SigLink when it is destroying --
 
 protected:
@@ -167,7 +167,7 @@ protected:
   override void         customEvent(QEvent* ev_);
   override void         hideEvent(QHideEvent* ev); // auto-apply
   override void         showEvent(QShowEvent* ev);
-  virtual void          SigEmit_impl(int dcr, void* op1, void* op2); // tab name may have changed
+  virtual void          SigEmit_impl(int sls, void* op1, void* op2); // tab name may have changed
   virtual void          OnWindowBind_impl(iTabViewer* itv) {}
   virtual void          Render_impl() {} // only called once, when content needs to be created
   virtual void          ResolveChanges_impl(CancelOp& cancel_op) {}

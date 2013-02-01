@@ -171,7 +171,7 @@ void taiDataHost_impl::Insert_Methods() {
   }
 }
 
-void taiDataHost_impl::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taiDataHost_impl::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 //note: nothing in base, by design
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
@@ -185,18 +185,18 @@ void taiDataHost_impl::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2)
   if (!isConstructed()) return;
 
   if (updating) return; // it is us that caused this
-  if (dcr == SLS_STRUCT_UPDATE_END) {
+  if (sls == SLS_STRUCT_UPDATE_END) {
     Refresh_impl(true);
   }
   // RESOLVE_NOW is typically invoked by a button method
-  else if (dcr == SLS_RESOLVE_NOW)
+  else if (sls == SLS_RESOLVE_NOW)
   {
     CancelOp cancel_op = CO_PROCEED; //note: may make more sense to be CO_NOT_CANCELLABLE
     ResolveChanges(cancel_op);
   }
   // we really just want to ignore the BEGIN-type guys, otherwise accept all others
-  else if (!((dcr == SLS_STRUCT_UPDATE_BEGIN) ||
-    (dcr == SLS_DATA_UPDATE_BEGIN)))
+  else if (!((sls == SLS_STRUCT_UPDATE_BEGIN) ||
+    (sls == SLS_DATA_UPDATE_BEGIN)))
   {
     Refresh_impl(false);
   }

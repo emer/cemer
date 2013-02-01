@@ -78,7 +78,7 @@ public: // ITypedObject interface
 public: // ISigLinkClient interface
   override TypeDef*     GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taBase;} // TypeDef of the data
-  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2);
+  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2);
   override void         SigLinkDestroying(taSigLink* dl);
 };
 

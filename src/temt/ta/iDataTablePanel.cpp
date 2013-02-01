@@ -46,9 +46,9 @@ QWidget* iDataTablePanel::firstTabFocusWidget() {
   return dte->tvTable;
 }
 
-void iDataTablePanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+void iDataTablePanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
   if(!isVisible() || !dte || !dte->isVisible()) return; // no update when hidden!
-  inherited::SigEmit_impl(dcr, op1_, op2_);
+  inherited::SigEmit_impl(sls, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
 }
 

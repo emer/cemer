@@ -37,7 +37,7 @@ public:
   virtual void  OrderItems();
   // ensure that the item values are sequentially increasing
 
-  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
 
   override int  El_Compare_(void* a, void* b) const
   { int rval=-1; if(((DynEnumItem*)a)->value > ((DynEnumItem*)b)->value) rval=1;

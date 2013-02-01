@@ -89,13 +89,13 @@ void MatrixTableModel::SigLinkDestroying(taSigLink* dl) {
   m_mat = NULL;
 }
 
-void MatrixTableModel::SigLinkRecv(taSigLink* dl, int dcr,
+void MatrixTableModel::SigLinkRecv(taSigLink* dl, int sls,
   void* op1, void* op2)
 {
   if (notifying) return;
-  if ((dcr <= SLS_ITEM_UPDATED_ND) || // data itself updated
-    (dcr == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
-    (dcr == SLS_DATA_UPDATE_END)) // for row insert/deletes
+  if ((sls <= SLS_ITEM_UPDATED_ND) || // data itself updated
+    (sls == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (sls == SLS_DATA_UPDATE_END)) // for row insert/deletes
   { 
     emit_layoutChanged();
   }

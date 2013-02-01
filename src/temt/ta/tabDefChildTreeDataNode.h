@@ -43,7 +43,7 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_tabDefChildTreeDataNode;}
 protected:
   tabDefChildRef        m_def_child; // for list notifies
-  virtual void          DefChild_SigEmit(int dcr, void* op1, void* op2);
+  virtual void          DefChild_SigEmit(int sls, void* op1, void* op2);
 private:
   void                  init(taSigLinkOBase* link_, int dn_flags_); // #IGNORE
 };

@@ -87,7 +87,7 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   TypeDef*      GetTypeDef() const {return &TA_iMethodButtonMgr;} // override
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
   void          SigLinkDestroying(taSigLink* dl);
-  void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 private:
   void          Init();

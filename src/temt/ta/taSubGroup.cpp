@@ -18,11 +18,11 @@
 
 #include <SigLinkSignal>
 
-void taSubGroup::SigEmit(int dcr, void* op1, void* op2) {
+void taSubGroup::SigEmit(int sls, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
-  if ((dcr >= SLS_LIST_ITEM_TO_GROUP_MIN) && (dcr <= SLS_LIST_ITEM_TO_GROUP_MAX))
-    ((taGroup_impl*)owner)->SigEmit(dcr + SLS_ListItem_Group_Offset, op1, op2);
+  if ((sls >= SLS_LIST_ITEM_TO_GROUP_MIN) && (sls <= SLS_LIST_ITEM_TO_GROUP_MAX))
+    ((taGroup_impl*)owner)->SigEmit(sls + SLS_ListItem_Group_Offset, op1, op2);
 }
 
 bool taSubGroup::Transfer(taBase* it) {

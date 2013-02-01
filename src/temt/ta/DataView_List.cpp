@@ -15,11 +15,11 @@
 
 #include "DataView_List.h"
 
-void DataView_List::SigEmit(int dcr, void* op1, void* op2) {
-  inherited::SigEmit(dcr, op1, op2);
+void DataView_List::SigEmit(int sls, void* op1, void* op2) {
+  inherited::SigEmit(sls, op1, op2);
   taDataView* own = GET_MY_OWNER(taDataView);
   if (own)
-    own->SigEmit_Child(this, dcr, op1, op2);
+    own->SigEmit_Child(this, sls, op1, op2);
 }
 
 void DataView_List::El_disOwn_(void* it) {

@@ -43,10 +43,10 @@ void taBase_RefList::SigLinkDestroying(taSigLink* dl) {
   }
 }
 
-void taBase_RefList::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taBase_RefList::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
   if (!m_own) return;
   taBase* tab = dl->taData();
-  m_own->SigEmit_Ref(this, tab, dcr, op1, op2);
+  m_own->SigEmit_Ref(this, tab, sls, op1, op2);
 }
 
 void* taBase_RefList::El_Ref_(void* it_) {

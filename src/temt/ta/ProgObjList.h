@@ -38,7 +38,7 @@ public:
   virtual DataTable* NewDataTable(int n_tables = 1);
   // #BUTTON make new DataTable object(s) for local use in Program
 
-  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   virtual void  GetVarsForObjs();
   // automatically create variables for objects in parent program
 

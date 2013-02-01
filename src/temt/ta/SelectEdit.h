@@ -45,7 +45,7 @@ class TA_API SelectEdit: public taNBase, public virtual IRefListClient {
   // #STEM_BASE ##EXT_edit ##CAT_Display Selectively edit members from different objects
   INHERITED(taNBase)
 public:
-  static void           StatSigEmit_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
+  static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
   bool                  auto_edit; // automatically bring up edit dialog upon loading
   String                desc;   // #EDIT_DIALOG description of what this edit contains
@@ -180,14 +180,14 @@ public: // IRefListClient i/f
   override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
     // note: item will already have been removed from list
   override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int dcr, void* op1, void* op2);
+    int sls, void* op1, void* op2);
 
 protected:
   int                   m_changing; // flag so we don't recursively delete bases
   taBase_RefList        base_refs; // all bases notify us via this list
 
   override void         UpdateAfterEdit_impl();
-  virtual void          SigEmit_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
+  virtual void          SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
   virtual void          BaseAdded(taBase* ta);
   virtual void          BaseRemoved(taBase* ta);

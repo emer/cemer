@@ -99,16 +99,16 @@ bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
   return false;
 }
 
-void tabGroupTreeDataNode::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(dcr, op1_, op2_);
+void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
   if (!this->children_created) {
-    if ((dcr == SLS_GROUP_INSERT) || (dcr == SLS_GROUP_REMOVE))
+    if ((sls == SLS_GROUP_INSERT) || (sls == SLS_GROUP_REMOVE))
       UpdateLazyChildren(); // updates
     return;
   }
   AssertLastListItem();
   int idx;
-  switch (dcr) {
+  switch (sls) {
   case SLS_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists

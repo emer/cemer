@@ -46,7 +46,7 @@ public:
   ~iUserDataDataHost();
 
 public: // ISigLinkClient i/f
-  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 protected:
   int                   sel_item_row;

@@ -63,13 +63,13 @@ bool iProgramViewScriptPanel::ignoreSigEmit() const {
 //  return !isVisible();
 }
 
-void iProgramViewScriptPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+void iProgramViewScriptPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
   if(vs && vs->isVisible())
     UpdatePanel_impl();
-//   if (dcr <= SLS_ITEM_UPDATED_ND) {
+//   if (sls <= SLS_ITEM_UPDATED_ND) {
 //     this->m_update_req = true; // so we update next time we show, if hidden
 //   }
-//   inherited::SigEmit_impl(dcr, op1_, op2_);
+//   inherited::SigEmit_impl(sls, op1_, op2_);
 }
 
 bool iProgramViewScriptPanel::HasChanged() {

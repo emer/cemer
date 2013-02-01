@@ -1343,9 +1343,9 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   prog_type->LoadProgram(this);
 }
 
-void Program::SigEmit(int dcr, void* op1, void* op2) {
+void Program::SigEmit(int sls, void* op1, void* op2) {
   // just for debug trapping..
-  inherited::SigEmit(dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
   sub_progs_updtd = false;
 }
 

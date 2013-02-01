@@ -60,7 +60,7 @@ protected slots:
 protected:
   QPushButton*          btnPrint;
 
-  void                  SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
   override void         Constr_Strings();
   override void         Constr_Box();
   override void         Constr_RegNotifies();

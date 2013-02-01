@@ -118,24 +118,24 @@ bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
   return false;
 }
 
-void tabParTreeDataNode::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(dcr, op1_, op2_);
+void tabParTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
   if (!this->children_created) {
-    if ((dcr == SLS_LIST_ITEM_INSERT) || (dcr == SLS_LIST_ITEM_REMOVE) ||
-        (dcr == SLS_STRUCT_UPDATE_END)) {
+    if ((sls == SLS_LIST_ITEM_INSERT) || (sls == SLS_LIST_ITEM_REMOVE) ||
+        (sls == SLS_STRUCT_UPDATE_END)) {
       UpdateLazyChildren(); // updates
     }
     return;
   }
 
-  if(dcr == SLS_ITEM_UPDATED || dcr == SLS_STRUCT_UPDATE_END) {
+  if(sls == SLS_ITEM_UPDATED || sls == SLS_STRUCT_UPDATE_END) {
     if(!RebuildChildrenIfNeeded())
       UpdateListNames();
     return;
   }
 
   int idx;
-  switch (dcr) {
+  switch (sls) {
   case SLS_LIST_INIT: break;
   case SLS_LIST_ITEM_INSERT: {  // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found

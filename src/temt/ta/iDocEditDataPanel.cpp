@@ -57,11 +57,11 @@ bool iDocEditDataPanel::ignoreSigEmit() const {
 //  return !isVisible();
 }
 
-void iDocEditDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr <= SLS_ITEM_UPDATED_ND) {
+void iDocEditDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  if (sls <= SLS_ITEM_UPDATED_ND) {
     this->m_update_req = true; // so we update next time we show, if hidden
   }
-  inherited::SigEmit_impl(dcr, op1_, op2_);
+  inherited::SigEmit_impl(sls, op1_, op2_);
 }
 
 bool iDocEditDataPanel::HasChanged() {

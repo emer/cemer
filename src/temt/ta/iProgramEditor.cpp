@@ -456,9 +456,9 @@ void iProgramEditor::SigLinkDestroying(taSigLink* dl) {
   setEditNode(NULL, false);
 }
 
-void iProgramEditor::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void iProgramEditor::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
   if (m_changing > 0) return; // gets triggered when we do the GetValue on ctrl0
-  if (dcr <= SLS_ITEM_UPDATED_ND) {
+  if (sls <= SLS_ITEM_UPDATED_ND) {
     // if it has been edited, (maybe??) warn user, else just silently update it
     if (m_modified) {
       warn_clobber = true; // no other visible sign, warned if save

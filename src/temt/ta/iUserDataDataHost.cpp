@@ -251,7 +251,7 @@ void iUserDataDataHost::Constr_Methods_impl() {
   Insert_Methods();
 }
 
-void iUserDataDataHost::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+void iUserDataDataHost::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 //note: we completely replace default, and basically rebuild on any Group notify,
 // and ignore the other notifies (i.e the List guys, which will be echoes of a Group
 
@@ -266,11 +266,11 @@ void iUserDataDataHost::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2
   if (updating) return; // it is us that caused this
   // only do simple refresh if an item is updated, otherwise, the major changes
   // of Insert, Remove, etc. need full refresh
-  if (dcr == SLS_GROUP_ITEM_UPDATE)
+  if (sls == SLS_GROUP_ITEM_UPDATE)
   {
     Refresh_impl(false);
-  } else if ((dcr > SLS_GROUP_ITEM_UPDATE) &&
-    (dcr <= SLS_GROUP_LIST_SORTED))
+  } else if ((sls > SLS_GROUP_ITEM_UPDATE) &&
+    (sls <= SLS_GROUP_LIST_SORTED))
   {
     Refresh_impl(true);
   }

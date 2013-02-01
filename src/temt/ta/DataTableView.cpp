@@ -64,16 +64,16 @@ void DataTableView::UpdateAfterEdit_impl() {
   //note: UAE calls setDirty, which is where we do most of the rejigging
 }
 
-void DataTableView::IgnoredSigEmit(taSigLink* dl, int dcr,
+void DataTableView::IgnoredSigEmit(taSigLink* dl, int sls,
     void* op1, void* op2)
 {
   // if it is a struct begin or end, we better not ignore it, because
   // it could require us to reset, so we free locked matrix col slices
   // this could reduce our invisible efficiency BUT is necessary!!!
-  if ((dcr == SLS_STRUCT_UPDATE_BEGIN) ||
-      (dcr == SLS_STRUCT_UPDATE_END))
+  if ((sls == SLS_STRUCT_UPDATE_BEGIN) ||
+      (sls == SLS_STRUCT_UPDATE_END))
   {
-    SigLinkRecv(dl, dcr, op1, op2);
+    SigLinkRecv(dl, sls, op1, op2);
   }
 }
 

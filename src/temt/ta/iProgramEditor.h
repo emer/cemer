@@ -121,7 +121,7 @@ public: // ITypedObject i/f
 
 public: // ISigLinkClient i/f
   void                  SigLinkDestroying(taSigLink* dl);
-  void                  SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE

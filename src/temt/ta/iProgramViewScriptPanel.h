@@ -61,7 +61,7 @@ public: // ISigLinkClient interface
   override bool         ignoreSigEmit() const;
 
 protected:
-  override void         SigEmit_impl(int dcr, void* op1, void* op2); //
+  override void         SigEmit_impl(int sls, void* op1, void* op2); //
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);

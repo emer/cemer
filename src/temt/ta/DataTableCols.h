@@ -38,7 +38,7 @@ class TA_API DataTableCols: public taList<DataCol> {
 INHERITED(taList<DataCol>)
 friend class DataTable;
 public:
-  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
 #ifdef __MAKETA__
   taBase*               New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)"); // #NO_MENU

@@ -95,8 +95,8 @@ void iDataTableEditor::SigLinkDestroying(taSigLink* dl) {
   }
 }
 
-void iDataTableEditor::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
-//   taMisc::Info("idte:ddc", String(dcr));
+void iDataTableEditor::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+//   taMisc::Info("idte:ddc", String(sls));
 }
 
 DataTableModel* iDataTableEditor::dtm() const {

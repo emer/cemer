@@ -39,9 +39,9 @@ QWidget* iTextDataPanel::firstTabFocusWidget() {
   return txtText;
 }
 
-void iTextDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(dcr, op1_, op2_);
-//TODO:  if (dcr <= SLS_ITEM_UPDATED_ND) ;
+void iTextDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(sls, op1_, op2_);
+//TODO:  if (sls <= SLS_ITEM_UPDATED_ND) ;
   //get updated text
 }
 

@@ -169,7 +169,7 @@ void ProgExprBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
 }
 
 void ProgExprBase::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                    int dcr, void* op1_, void* op2_)
+                                    int sls, void* op1_, void* op2_)
 {
   // we only update ourself if the schema of a var changed
   if (obj && obj->InheritsFrom(&TA_ProgVar)) {

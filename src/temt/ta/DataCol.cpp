@@ -187,11 +187,11 @@ void DataCol::UpdateAfterEdit_impl() {
   Init();
 }
 
-void DataCol::SigEmit(int dcr, void* op1, void* op2) {
+void DataCol::SigEmit(int sls, void* op1, void* op2) {
   RemoveHashTable();
-  inherited::SigEmit(dcr, op1, op2);
+  inherited::SigEmit(sls, op1, op2);
   // treat item changes here as struct changes to the table
-  if (dcr <= SLS_ITEM_UPDATED_ND) {
+  if (sls <= SLS_ITEM_UPDATED_ND) {
     DataTable* dt = dataTable();
     if (dt) {
       dt->StructUpdate(true);

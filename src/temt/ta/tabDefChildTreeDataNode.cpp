@@ -42,9 +42,9 @@ tabDefChildTreeDataNode::~tabDefChildTreeDataNode()
 {
 }
 
-void tabDefChildTreeDataNode::DefChild_SigEmit(int dcr, void* op1, void* op2) {
+void tabDefChildTreeDataNode::DefChild_SigEmit(int sls, void* op1, void* op2) {
   // we only pass on the List notifies
-  if ((!(dcr >= SLS_LIST_MIN) && (dcr <= SLS_LIST_MAX))) return;
-  SigEmit(dcr, op1, op2);
+  if ((!(sls >= SLS_LIST_MIN) && (sls <= SLS_LIST_MAX))) return;
+  SigEmit(sls, op1, op2);
 }
 

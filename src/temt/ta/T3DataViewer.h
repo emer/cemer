@@ -59,7 +59,7 @@ public:
 
 protected:
   // from taDataView
-  override void         SigEmit_Child(taBase* child, int dcr, void* op1, void* op2);
+  override void         SigEmit_Child(taBase* child, int sls, void* op1, void* op2);
   override void         DoActionChildren_impl(DataViewAction act); // just one act
 
   // DataViewer

@@ -33,7 +33,7 @@ public:
   virtual void          SigDestroying_Ref(taBase_RefList* src, taBase* ta) = 0;
     // note: item will already have been removed from list
   virtual void          SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int dcr, void* op1, void* op2) = 0;
+    int sls, void* op1, void* op2) = 0;
 
 };
 

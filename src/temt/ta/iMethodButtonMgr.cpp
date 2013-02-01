@@ -138,8 +138,8 @@ void iMethodButtonMgr::SigLinkDestroying(taSigLink* dl) {
   //TODO: delete the buttons etc.
 }
 
-void iMethodButtonMgr::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
-  if (dcr > SLS_ITEM_UPDATED_ND) return;
+void iMethodButtonMgr::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+  if (sls > SLS_ITEM_UPDATED_ND) return;
   GetImage();
 }
 

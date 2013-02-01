@@ -88,7 +88,7 @@ public:
 
   override String GetTypeDecoKey() const { return "Layer"; }
 
-  void  SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(Layer_Group);

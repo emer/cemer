@@ -105,8 +105,8 @@ void iTreeViewItem::CreateChildren() {
   DecorateDataNode();
 }
 
-void iTreeViewItem::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr != SLS_ITEM_UPDATED) return;
+void iTreeViewItem::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  if (sls != SLS_ITEM_UPDATED) return;
   if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
     String nm = link()->GetName();
     if (nm.empty())

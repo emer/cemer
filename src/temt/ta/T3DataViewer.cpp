@@ -111,7 +111,7 @@ void T3DataViewer::ConstrFrames_impl() {
   }
 }
 
-void T3DataViewer::SigEmit_Child(taBase* child, int dcr, void* op1, void* op2) {
+void T3DataViewer::SigEmit_Child(taBase* child, int sls, void* op1, void* op2) {
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:if new addition when mapped, then add gui

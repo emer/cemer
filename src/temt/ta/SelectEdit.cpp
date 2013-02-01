@@ -23,11 +23,11 @@ TypeDef_Of(taProject);
 
 
 
-void SelectEdit::StatSigEmit_Group(taGroup_impl* grp, int dcr,
+void SelectEdit::StatSigEmit_Group(taGroup_impl* grp, int sls,
   void* op1, void* op2)
 {
   if (!grp->owner || !grp->owner->InheritsFrom(&TA_SelectEdit)) return;
-  ((SelectEdit*)(grp->owner))->SigEmit_Group(grp, dcr, op1, op2);
+  ((SelectEdit*)(grp->owner))->SigEmit_Group(grp, sls, op1, op2);
 }
 
 
@@ -101,23 +101,23 @@ void SelectEdit::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
 }
 
 void SelectEdit::SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int dcr, void* op1, void* op2)
+    int sls, void* op1, void* op2)
 {
   // simplest, is to just issue our own SigEmit
-  if(dcr < SLS_UPDATE_VIEWS)
+  if(sls < SLS_UPDATE_VIEWS)
     SigEmitUpdated();
 }
 
 void SelectEdit::SigEmit_Group(taGroup_impl* grp,
-    int dcr, void* op1, void* op2)
+    int sls, void* op1, void* op2)
 {
   if (m_changing) return;
   if (taMisc::is_loading) return; // note: base's aren't set yet, so we can't add
-  if (dcr == SLS_GROUP_ITEM_REMOVE) {
+  if (sls == SLS_GROUP_ITEM_REMOVE) {
     SelectEditItem* ei = (SelectEditItem*)op1;
     BaseRemoved(ei->base);
   }
-  else if (dcr == SLS_GROUP_ITEM_INSERT) {
+  else if (sls == SLS_GROUP_ITEM_INSERT) {
     SelectEditItem* ei = (SelectEditItem*)op1;
     BaseAdded(ei->base); // ignored if null, but shouldn't happen anyway
   }

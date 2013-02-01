@@ -63,8 +63,8 @@ iProgramPanelBase::iProgramPanelBase(taiSigLink* dl_)
   connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
 }
 
-void iProgramPanelBase::SigEmit_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr == SLS_RESOLVE_NOW)
+void iProgramPanelBase::SigEmit_impl(int sls, void* op1_, void* op2_) {
+  if (sls == SLS_RESOLVE_NOW)
   {
     if (pe->HasChanged()) {
       pe->GetValue();
@@ -72,7 +72,7 @@ void iProgramPanelBase::SigEmit_impl(int dcr, void* op1_, void* op2_) {
     }
   }
   else
-    inherited::SigEmit_impl(dcr, op1_, op2_);
+    inherited::SigEmit_impl(sls, op1_, op2_);
     //NOTE: don't need to do anything because DataModel will handle it
 }
 

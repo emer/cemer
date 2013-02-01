@@ -199,7 +199,7 @@ void iProgramCtrlDataHost::SigDestroying_Ref(taBase_RefList* ref, taBase* base) 
 }
 
 void iProgramCtrlDataHost::SigEmit_Ref(taBase_RefList* ref, taBase* base,
-    int dcr, void* op1, void* op2)
+    int sls, void* op1, void* op2)
 {
   if (ignoreSigEmit()) return; // not visible, so ignore!
   Program* prog = this->prog(); //cache
@@ -207,14 +207,14 @@ void iProgramCtrlDataHost::SigEmit_Ref(taBase_RefList* ref, taBase* base,
   // ignore list delete msgs, since the obj itself should notify
   if (ref == &refs_struct) {
     if ((base == &(prog->args)) ||(base == &(prog->vars))) {
-      if ((dcr <= SLS_LIST_INIT) ||  (dcr == SLS_LIST_ITEM_REMOVE) ||
-        (dcr > SLS_LIST_SORTED)
+      if ((sls <= SLS_LIST_INIT) ||  (sls == SLS_LIST_ITEM_REMOVE) ||
+        (sls > SLS_LIST_SORTED)
       ) return;
     }
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     // for step, only interested in group-as-object item update
     if (base == pg) {
-      if ((dcr > SLS_ITEM_UPDATED_ND))
+      if ((sls > SLS_ITEM_UPDATED_ND))
         return;
     }
   }

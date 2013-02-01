@@ -983,7 +983,7 @@ void NetMonItem::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
 }
 
 void NetMonItem::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-    int dcr, void* op1_, void* op2_)
+    int sls, void* op1_, void* op2_)
 {
 //NOTE: we get these here when script running and any member vars are updated --
 // don't update objects -- instead, we may want to use a RefList for the objects,

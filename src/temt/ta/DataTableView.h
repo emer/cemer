@@ -97,7 +97,7 @@ public:
   T3_DATAVIEWFUNS(DataTableView, T3DataViewMain) //
 
 // ISigLinkClient i/f
-  override void         IgnoredSigEmit(taSigLink* dl, int dcr,
+  override void         IgnoredSigEmit(taSigLink* dl, int sls,
     void* op1, void* op2); //
 
 // ISelectable i/f
