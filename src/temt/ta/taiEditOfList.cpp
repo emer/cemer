@@ -15,8 +15,8 @@
 
 #include "taiEditOfList.h"
 #include <taList_impl>
-#include <gpiCompactListDataHost>
-#include <gpiListDataHost>
+#include <taiEditorWidgetsOfListCompact>
+#include <taiEditorWidgetsOfList>
 
 
 
@@ -26,7 +26,7 @@ int taiEditOfList::BidForEdit(TypeDef* td) {
   return 0;
 }
 
-taiEditDataHost* taiEditOfList::CreateDataHost(void* base, bool readonly) {
+taiEditorOfWidgetsClass* taiEditOfList::CreateDataHost(void* base, bool readonly) {
   // compact is either specified explicitly,
   // or we must use it if the base_type of the list requires inline
   bool use_compact = false;
@@ -38,7 +38,7 @@ taiEditDataHost* taiEditOfList::CreateDataHost(void* base, bool readonly) {
     }
   }
   if (use_compact)
-    return new gpiCompactListDataHost(base, typ, readonly);
+    return new taiEditorWidgetsOfListCompact(base, typ, readonly);
   else
-    return new gpiListDataHost(base, typ, readonly);
+    return new taiEditorWidgetsOfList(base, typ, readonly);
 }

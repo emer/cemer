@@ -24,7 +24,7 @@
 #include <QCloseEvent>
 
 
-iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
+iHostDialog::iHostDialog(taiEditor* owner_, QWidget* parent, int wflags)
 :iDialog(parent, (Qt::WindowFlags)wflags)
 {
   owner = owner_;
@@ -60,11 +60,11 @@ void iHostDialog::closeEvent(QCloseEvent* ev) {
     ev->ignore();
     return;
   } else if (!discarded) {
-    owner->state = taiDataHost::ACCEPTED;
+    owner->state = taiEditorOfWidgetsMain::ACCEPTED;
     return; // not rejected
   }
   // discarded, or didn't have any changes
-  owner->state = taiDataHost::CANCELED;
+  owner->state = taiEditorOfWidgetsMain::CANCELED;
   setResult(Rejected);
 }
 

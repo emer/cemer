@@ -15,7 +15,7 @@
 
 #include "UserDataDelegate.h"
 #include <UserDataItemBase>
-#include <iUserDataDataHost>
+#include <taiEditorWidgetsOfUserData>
 #include <taiMember>
 #include <taiField>
 #include <taiPolyData>
@@ -27,7 +27,7 @@
 
 
 UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,
-  iUserDataDataHost* uddh_)
+  taiEditorWidgetsOfUserData* uddh_)
 :inherited(uddh_)
 {
   udil = udil_;

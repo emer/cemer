@@ -45,7 +45,7 @@ cssEl* taiArgTypeOfFromGroup::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfFromGroup::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiArgTypeOfFromGroup::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return NULL;
   int new_flags = flags_;

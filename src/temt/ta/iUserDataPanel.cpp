@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iUserDataPanel.h"
-#include <iUserDataDataHost>
+#include <taiEditorWidgetsOfUserData>
 #include <UserDataItem_List>
 
 #include <taMisc>
@@ -30,10 +30,10 @@ iUserDataPanel::iUserDataPanel(taiSigLink* dl_)
   if (se_) {
     switch (taMisc::select_edit_style) { // NOTE: the two below look identical to me...
     case taMisc::ES_ALL_CONTROLS:
-      se = new iUserDataDataHost(se_, se_->GetTypeDef());
+      se = new taiEditorWidgetsOfUserData(se_, se_->GetTypeDef());
       break;
     case taMisc::ES_ACTIVE_CONTROL:
-      se = new iUserDataDataHost(se_, se_->GetTypeDef());
+      se = new taiEditorWidgetsOfUserData(se_, se_->GetTypeDef());
       break;
     }
     if (taMisc::color_hints & taMisc::CH_EDITS) {

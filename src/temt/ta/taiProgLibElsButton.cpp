@@ -21,7 +21,7 @@
 #include <QTreeWidgetItem>
 
 
-taiProgLibElsButton::taiProgLibElsButton(TypeDef* typ_, IDataHost* host, taiData* par,
+taiProgLibElsButton::taiProgLibElsButton(TypeDef* typ_, IWidgetHost* host, taiData* par,
                                          QWidget* gui_parent_, int flags_)
  :inherited(typ_, host, par, gui_parent_, flags_)
 {

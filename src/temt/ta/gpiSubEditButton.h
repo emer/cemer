@@ -28,7 +28,7 @@ class TA_API gpiSubEditButton : public taiEditButton {
 public:
   String        label;
   gpiSubEditButton(void* base, const char* nm,
-        TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+        TypeDef* tp, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   override void         SetLabel();
 };
 

@@ -26,7 +26,7 @@
 class TA_API gpiLinkEditButton : public gpiGroupEditButton {
 // link groups don't have the option to create or xfer
 public:
-  gpiLinkEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiLinkEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void         GetMethMenus(); // exclude certain methods here..
 };

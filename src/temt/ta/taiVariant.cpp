@@ -15,7 +15,7 @@
 
 #include "taiVariant.h"
 
-taiVariant::taiVariant(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiVariant::taiVariant(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 :inherited(&TA_Variant, host_, par, gui_parent_, flags)
 {
   Constr(gui_parent_);

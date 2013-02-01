@@ -30,8 +30,8 @@ class TA_API taiComboBox : public taiData {
 public:
   inline iComboBox*     rep() const { return (iComboBox*)(QWidget*)m_rep; }
 
-  taiComboBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
-  taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiComboBox(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiComboBox(bool is_enum, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   void          AddItem(const String& val, const QVariant& userData = QVariant()); // add an item to the list
@@ -48,7 +48,7 @@ public:
 
 #ifndef __MAKETA__
 signals:
-  void          itemChanged(int itm); // for use by non-IDataHost users, forwards chkbox signal
+  void          itemChanged(int itm); // for use by non-IWidgetHost users, forwards chkbox signal
 #endif
 
 protected:

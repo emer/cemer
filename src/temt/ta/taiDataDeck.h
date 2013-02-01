@@ -29,7 +29,7 @@ class TA_API taiDataDeck : public taiCompData {
 public:
   inline QWidget* rep() {return (QWidget*)m_rep;}
 
-  taiDataDeck(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiDataDeck(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
   virtual void  GetImage(int i);
 };

@@ -32,7 +32,7 @@ public:
   inline QAbstractButton* rep() {return (QAbstractButton*)(QWidget*)m_rep;}
 
   override void         Delete(); // should delete the menu if we didn't use it
-  taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+  taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
 private:
   void                  init();

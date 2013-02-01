@@ -25,7 +25,7 @@
 
 class TA_API gpiListEditButton : public taiEditButton {
 public:
-  gpiListEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void         SetLabel();
   // display the number of items in the list in the label

@@ -47,7 +47,7 @@ void taiMember::EndScript(const void* base) {
   taMisc::record_script << "}" << "\n";
 }
 
-bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {
+bool taiMember::isReadOnly(taiData* dat, IWidgetHost* host_) {
   // ReadOnly if parent type is RO, or par is RO, OR directives state RO
   bool rval = taiType::isReadOnly(dat, host_);
   rval = rval || mbr->HasOption("READ_ONLY") || //note: 'IV' only for legacy support
@@ -59,7 +59,7 @@ bool taiMember::handlesReadOnly() const {
   return mbr->type->it->handlesReadOnly();
 }
 
-taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* taiMember::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                taiType* parent_type_, int flags_, MemberDef*)
 {//note: we ignore MemberDef because we use our own
   bool ro = isReadOnly(par, host_);
@@ -109,7 +109,7 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   return rval;
 }
 
-taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiMember::GetDataRep_impl(IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_, mbr);
@@ -315,7 +315,7 @@ TypeDef* taiMember::GetTargetType(const void* base) {
   return targ_typ;
 }
 
-taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
+taiData* taiMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   taiData* rval = NULL;

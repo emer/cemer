@@ -35,7 +35,7 @@ public:
 
   virtual void          GetGetFile();   // make sure we have a getfile..
 
-  taiFileButton(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+  taiFileButton(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_,
       int flags_, bool rd_only = false, bool wrt_only = false);
   ~taiFileButton();
 

@@ -23,7 +23,7 @@ int taiMemberOfFileDialog::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfFileDialog::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiMemberOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   String file_act = mbr->OptionAfter("FILE_DIALOG_");
   taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
   if(file_act == "SAVE")

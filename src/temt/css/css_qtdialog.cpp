@@ -48,7 +48,7 @@
 
 cssiEditDialog::cssiEditDialog(cssClassInst* ob, cssProgSpace* tp,
 	bool read_only_, bool modal_, QObject* parent)
-: taiEditDataHost(NULL, NULL, read_only_, modal_, parent)
+: taiEditorOfWidgetsClass(NULL, NULL, read_only_, modal_, parent)
 {
   obj = ob;
   top = tp;
@@ -66,7 +66,7 @@ cssiEditDialog::~cssiEditDialog() {
 
 void cssiEditDialog::ClearBody_impl() {
   type_el.Reset();
-  taiEditDataHost::ClearBody_impl();
+  taiEditorOfWidgetsClass::ClearBody_impl();
 }
 
 void cssiEditDialog::GetName(int idx, cssEl* md, String& name, String& desc) {
@@ -124,7 +124,7 @@ void cssiEditDialog::Constr_Strings() {
 int cssiEditDialog::Edit(bool modal_, int min_width, int min_height) {
   if (!modal_)
     taiMisc::css_active_edits.Add(this);
-  return taiEditDataHost::Edit(modal_, min_width, min_height);
+  return taiEditorOfWidgetsClass::Edit(modal_, min_width, min_height);
 }
 
 void cssiEditDialog::GetValue() {

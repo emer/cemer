@@ -31,7 +31,7 @@ class TA_API taiMethToggle : public taiMethodData {
 public:
   inline QCheckBox*     rep() {return (QCheckBox*)(QWidget*)m_rep;}
 
-  taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
 public slots:

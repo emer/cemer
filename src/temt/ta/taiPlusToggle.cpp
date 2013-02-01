@@ -21,7 +21,7 @@
 
 
 
-taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiPlusToggle::taiPlusToggle(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
   : taiCompData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep(MakeLayoutWidget(gui_parent_));

@@ -15,7 +15,7 @@
 
 #include "taiDataDelegate.h"
 #include <taiData>
-#include <taiEditDataHost>
+#include <taiEditorOfWidgetsClass>
 #include <taiField>
 #include <taiMember>
 
@@ -27,7 +27,7 @@
 #include <QKeyEvent>
 
 
-taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_)
+taiDataDelegate::taiDataDelegate(taiEditorOfWidgetsClass* edh_)
 {
   edh = edh_;
   m_dat_row = -1;

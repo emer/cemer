@@ -37,7 +37,7 @@ public:
 
   void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
 
-  taiGroupElsButton(TypeDef* typ, IDataHost* host, taiData* par,
+  taiGroupElsButton(TypeDef* typ, IWidgetHost* host, taiData* par,
                     QWidget* gui_parent_, int flags_ = 0,
                     const String& flt_start_txt = ""); //note: typ is type of grp
 protected:

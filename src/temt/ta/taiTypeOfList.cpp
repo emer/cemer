@@ -24,7 +24,7 @@ int taiTypeOfList::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiTypeOfList::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

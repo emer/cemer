@@ -24,7 +24,7 @@
 
 #include <QAbstractButton>
 
-taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiData* par, QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 {
   taiActions* rval = NULL; //note: switch handles all actual cases, NULL=compiler food
@@ -39,7 +39,7 @@ taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* 
   return rval;
 }
 
-taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, IDataHost* host_,
+taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, IWidgetHost* host_,
                        taiData* par_, QWidget* gui_parent_, int flags_,
                        taiActions* par_menu_, bool has_menu, QMenu* exist_menu)
   : taiData(typ_, host_, par_, gui_parent_, flags_)

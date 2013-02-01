@@ -52,8 +52,8 @@ public:
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() {return true;} // override
 
-  taiBitBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
-  taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiBitBox(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiBitBox(bool is_enum, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   virtual void  SetEnumType(TypeDef* enum_typ, bool force = false); // sets a new enum type
@@ -73,7 +73,7 @@ public slots:
 
 #ifndef __MAKETA__
 signals:
-  void          itemChanged(int itm); // for use by non-IDataHost users, forwards chkbox signal
+  void          itemChanged(int itm); // for use by non-IWidgetHost users, forwards chkbox signal
 #endif
 
 protected:

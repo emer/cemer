@@ -25,7 +25,7 @@
 
 class TA_API gpiArrayEditButton : public taiEditButton {
 public:
-  gpiArrayEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiArrayEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void         SetLabel();
   // display the number of items in the group in the label

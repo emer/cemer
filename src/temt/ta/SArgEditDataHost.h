@@ -17,15 +17,15 @@
 #define SArgEditDataHost_h 1
 
 // parent includes:
-#include <gpiArrayEditDataHost>
+#include <taiEditorWidgetsOfArray>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API SArgEditDataHost : public gpiArrayEditDataHost {
+class TA_API SArgEditDataHost : public taiEditorWidgetsOfArray {
   // ##NO_INSTANCE
-INHERITED(gpiArrayEditDataHost)
+INHERITED(taiEditorWidgetsOfArray)
 public:
   bool          ShowMember(MemberDef* md) const;
 

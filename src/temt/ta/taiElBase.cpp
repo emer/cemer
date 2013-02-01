@@ -17,7 +17,7 @@
 #include <taiActions>
 
 
-taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host_, taiData* par,
+taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IWidgetHost* host_, taiData* par,
                      QWidget* gui_parent_, int flags_)
   : taiData(tp, host_, par, gui_parent_, flags_)
 {

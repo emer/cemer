@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiVariantBase.h"
-#include <IDataHost>
+#include <IWidgetHost>
 #include <taiComboBox>
 #include <iLabel>
 #include <iComboBox>
@@ -34,7 +34,7 @@
 
 TypeDef_Of(taMatrix);
 
-taiVariantBase::taiVariantBase(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiVariantBase::taiVariantBase(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags)
   : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   //note: call Constr in your own class' constructor

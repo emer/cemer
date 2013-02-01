@@ -78,19 +78,19 @@ void iMethodButtonMgr::Reset() {
 }
 
 void iMethodButtonMgr::Constr(QWidget* widg_, QLayout* lay_,
-  taBase* base_, IDataHost* host_)
+  taBase* base_, IWidgetHost* host_)
 {
   widg = widg_;
   m_lay = lay_;
   Constr_impl(base_, host_);
 }
 
-void iMethodButtonMgr::Constr(taBase* base_, IDataHost* host_)
+void iMethodButtonMgr::Constr(taBase* base_, IWidgetHost* host_)
 {
   Constr_impl(base_, host_);
 }
 
-void iMethodButtonMgr::Constr_impl(taBase* base_, IDataHost* host_)
+void iMethodButtonMgr::Constr_impl(taBase* base_, IWidgetHost* host_)
 {
   Reset();
   host = host_; // prob not needed

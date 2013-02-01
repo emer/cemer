@@ -23,7 +23,7 @@
 #include <QTreeWidgetItem>
 
 
-taiListElsButton::taiListElsButton(TypeDef* typ_, IDataHost* host,
+taiListElsButton::taiListElsButton(TypeDef* typ_, IWidgetHost* host,
 				   taiData* par, QWidget* gui_parent_, int flags_,
 				   const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)

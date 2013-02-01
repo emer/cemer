@@ -25,7 +25,7 @@
 #include <QHBoxLayout>
 #include <QStackedLayout>
 
-taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
+taiCompData::taiCompData(TypeDef* typ_, IWidgetHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, parent_, gui_parent_, flags_)
 {
   lay = NULL; // usually created in InitLayout;
@@ -94,18 +94,18 @@ void taiCompData::AddChildMember(MemberDef* md) {
   // get caption
   String name;
   String desc;
-  taiDataHost::GetName(md, name, desc);
-  iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
+  taiEditorOfWidgetsMain::GetName(md, name, desc);
+  iLabel* lbl = taiEditorOfWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
   lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
 
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(SigEmitNotify(taiData*)),
           this, SLOT(ChildSigEmit(taiData*)) );
 
-  // check for a compatible taiDataHost, and if so, connect context menu
+  // check for a compatible taiEditorOfWidgetsMain, and if so, connect context menu
   if (host) {
 
-    taiDataHost* tadh = dynamic_cast<taiDataHost*>((QObject*)host->This());
+    taiEditorOfWidgetsMain* tadh = dynamic_cast<taiEditorOfWidgetsMain*>((QObject*)host->This());
     if (tadh) {
       connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
         tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodData.h"
-#include <IDataHost>
+#include <IWidgetHost>
 #include <taiActions>
 #include <taProject>
 #include <taiArgType>
@@ -35,7 +35,7 @@ TypeDef_Of(istream);
 TypeDef_Of(fstream);
 TypeDef_Of(ostream);
 
-void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
+void taiMethodData::ShowReturnVal(cssEl* rval, IWidgetHost* host,
   const String& meth_name)
 {
   if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
@@ -51,7 +51,7 @@ void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
   taMisc::Confirm(val);
 }
 
-taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiData* par,
                              QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -96,7 +96,7 @@ bool taiMethodData::CallFun_impl() {
   // determine if needs rval now, before we may get deleted when callivoidng
   bool show_rval = (meth->HasOption("USE_RVAL")  ||
        (meth->HasOption("USE_RVAL_RMB") && (arg_dlg->mouse_button == Qt::RightButton)) );
-  IDataHost* thost = host; // in case we delete
+  IWidgetHost* thost = host; // in case we delete
   String meth_name = meth->name; // in case we delete
 
   // save undo state!
@@ -237,8 +237,8 @@ void taiMethodData::UpdateAfter() {
     return;
   // this is for stuff just called from menus, not host
   if ((host == NULL) ||
-    (host->GetTypeDef()->InheritsFrom(&TA_taiDataHost) &&
-    (((taiDataHost*)host->This())->state != taiDataHost::ACTIVE)) )
+    (host->GetTypeDef()->InheritsFrom(&TA_taiEditorOfWidgetsMain) &&
+    (((taiEditorOfWidgetsMain*)host->This())->state != taiEditorOfWidgetsMain::ACTIVE)) )
   {
     if(base == NULL) return;
     taBase* tap = (taBase*)base;

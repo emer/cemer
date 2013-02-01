@@ -14,13 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiDataDeck.h"
-#include <IDataHost>
+#include <IWidgetHost>
 #include <iColor>
 
 #include <QStackedLayout>
 
 
-taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
+taiDataDeck::taiDataDeck(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags)
   : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   lay_type = LT_Stacked;

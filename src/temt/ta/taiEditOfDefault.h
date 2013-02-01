@@ -31,7 +31,7 @@ class TA_API taiEditOfDefault : public taiEdit {
 public:
   int   BidForEdit(TypeDef*) { return 0; }
 protected:
-  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
+  override taiEditorOfWidgetsClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
 #endif // taiEditOfDefault_h

@@ -36,7 +36,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; //
 class MemberDef; //
-class IDataHost; //
+class IWidgetHost; //
 class iLabel; //
 class QLayout; //
 class QLabel; //
@@ -98,7 +98,7 @@ public:
 public:
   TypeDef*              typ;            // type for the gui object
   MemberDef*            mbr;            // for members
-  IDataHost*            host;           // dialog or edit panel that this belongs to (optional)
+  IWidgetHost*            host;           // dialog or edit panel that this belongs to (optional)
   String                orig_val;       // text of original data value
 
 protected:
@@ -115,7 +115,7 @@ protected:
 // Methods
 public:
   taiData(); // for ta_TA.cc only
-  taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
+  taiData(TypeDef* typ_, IWidgetHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
   virtual ~taiData();
 
   taiData*              parent() {return mparent;} // if data is contained within data, this the parent container

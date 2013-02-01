@@ -58,7 +58,7 @@ public:
 //
 //   // default member action is to pass thru to the type
 //
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
   // get taiData rep of type -- delegates to mbr's it
   DefaultStatus         GetDefaultStatus(String memb_val);
@@ -92,18 +92,18 @@ public:
 protected:
   // the "Arbitrate routines all apply the same logic of ro, and subtype, to call
   // either that guy, or our own -- only SpecPtr overrides these
-  virtual taiData*      GetArbitrateDataRep(IDataHost* host_, taiData* par,
+  virtual taiData*      GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr); // gets sub or this, and factors ro
   virtual void          GetArbitrateImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void          GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 
-  override taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
+  override taiData*     GetDataRep_impl(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   override void         GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void          GetMbrValue_impl(taiData* dat, void* base);
-  override bool         isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
+  override bool         isReadOnly(taiData* dat, IWidgetHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
   void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat, const void* base);
 };
 

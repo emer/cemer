@@ -17,7 +17,7 @@
 #include <BaseSpec>
 #include <BaseSubSpec>
 #include <taiPlusToggle>
-#include <IDataHost>
+#include <IWidgetHost>
 
 #include <taMisc>
 
@@ -37,7 +37,7 @@ int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
 //      (((BaseSpec*)dlg->cur_base)->GetOwner(&TA_BaseSpec) == NULL))
 //   {
 
-bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
+bool taiSpecMember::NoCheckBox(IWidgetHost* host_) const {
   if (!host_) return true;
   void* base = host_->Base();
   TypeDef* typ = host_->GetRootTypeDef();
@@ -69,7 +69,7 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   return true;                  // default is to not have box...
 }
 
-taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
+taiData* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
   QWidget* gui_parent, int flags_, MemberDef* mbr_)
 {
   if (!mbr_) mbr_ = mbr;
@@ -98,7 +98,7 @@ taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
 }
 
 void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
-  IDataHost* host_ = dat->host;
+  IWidgetHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     if (HasLowerBidder())
@@ -134,7 +134,7 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
 }
 
 void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
-  IDataHost* host_ = dat->host;
+  IWidgetHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     if (HasLowerBidder())

@@ -23,18 +23,18 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiDataHostBase; //
+class taiEditor; //
 class QVBoxLayout; // 
 class QScrollArea; //
 
 
 class TA_API iHostDialog : public iDialog {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS dialog with taiDataHostBase owner
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS dialog with taiEditor owner
   INHERITED(iDialog)
   Q_OBJECT
-friend class taiDataHostBase;
+friend class taiEditor;
 public:
-  iHostDialog(taiDataHostBase* owner_, QWidget* parent = 0, int wflags = 0);
+  iHostDialog(taiEditor* owner_, QWidget* parent = 0, int wflags = 0);
   ~iHostDialog();
 
   bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
@@ -45,7 +45,7 @@ public:
   void          setCentralWidget(QWidget* widg); // is put in a scroll area; dialog is limited to screen size
   void          setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
 protected:
-  taiDataHostBase*      owner;
+  taiEditor*      owner;
   QVBoxLayout*  layOuter;
   QWidget*      mcentralWidget;
   QScrollArea*  scr;

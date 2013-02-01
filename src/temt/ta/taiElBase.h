@@ -34,7 +34,7 @@ public:
 //  void                GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
   virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void          setCur_obj(taBase* value, bool do_chng = true); // set cur_obj and notifies change if different
-  taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiElBase(taiActions* actions_, TypeDef* tp, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiElBase();
 protected:
   taiActions*   ta_actions;

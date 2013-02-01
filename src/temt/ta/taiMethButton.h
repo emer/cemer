@@ -28,7 +28,7 @@ class TA_API taiMethButton : public taiMethodData {
 public:
   override QWidget* GetButtonRep();
 
-  taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 };
 

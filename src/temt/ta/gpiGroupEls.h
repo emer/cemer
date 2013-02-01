@@ -27,9 +27,9 @@ class TA_API gpiGroupEls : public gpiListEls {
   // menu of elements in the group
   Q_OBJECT
 public:
-  gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
-  gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
+  gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp = NULL, IWidgetHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 
 //  void                GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}

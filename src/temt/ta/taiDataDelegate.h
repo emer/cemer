@@ -29,7 +29,7 @@
 
 
 // declare all other types mentioned but not required to include:
-class taiEditDataHost; //
+class taiEditorOfWidgetsClass; //
 class taBase; //
 class taiData; //
 class QAbstractItemModel; //
@@ -42,14 +42,14 @@ class TA_API taiDataDelegate: public QItemDelegate {
 INHERITED(QItemDelegate)
 Q_OBJECT
 public:
-  taiEditDataHost*      edh;
+  taiEditorOfWidgetsClass*      edh;
 
   virtual void          GetImage() const; // callable from edh any time
   virtual void          GetValue() const; // callable from edh
   virtual bool          IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const = 0;
 
-  taiDataDelegate(taiEditDataHost* edh_);
+  taiDataDelegate(taiEditorOfWidgetsClass* edh_);
 
 public: // overrides
   override QWidget*     createEditor(QWidget* parent,

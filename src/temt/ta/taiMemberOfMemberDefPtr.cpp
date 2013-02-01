@@ -24,7 +24,7 @@ int taiMemberOfMemberDefPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfMemberDefPtr::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiMemberOfMemberDefPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))

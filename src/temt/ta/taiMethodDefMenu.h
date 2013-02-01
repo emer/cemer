@@ -37,7 +37,7 @@ public:
   virtual MethodDef*    GetValue();
 
   taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_,
-    MemberDef* memb_md_, TypeDef* typ_, IDataHost* host, taiData* par,
+    MemberDef* memb_md_, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
 };
 

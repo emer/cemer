@@ -29,9 +29,9 @@ INHERITED(taiTypeHier)
 public:
   TypeDef*      lst_typd;       // typedef of the list
 
-  gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IDataHost* host_, taiData* par,
+  gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // no flags
-  gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IDataHost* host_,
+  gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_,
       taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
   USING(inherited::GetMenu)

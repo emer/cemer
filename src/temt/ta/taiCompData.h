@@ -38,7 +38,7 @@ public:
     LT_Stacked
   };
 
-  taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
+  taiCompData(TypeDef* typ_, IWidgetHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
   override ~taiCompData();
 
   taiDataList           data_el;

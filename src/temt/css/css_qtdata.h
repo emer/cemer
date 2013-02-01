@@ -44,7 +44,7 @@ public:
   taiDataList   data_el;
   taiType_List  type_el; // type elements (not stored on classes, so kept here)
 
-  cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, taiData* par,
+  cssiPolyData(cssClassInst* ob, TypeDef* typ_, IWidgetHost* host_, taiData* par,
                QWidget* gui_parent, int flags_ = 0);
   ~cssiPolyData();
 
@@ -69,7 +69,7 @@ public:
   cssClassInst*         arg_obj;        // argument object (if necc)
 
   cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-        TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
+        TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
 //  ~cssiMethMenu();
 
   void          ShowReturnVal(cssEl* rval);

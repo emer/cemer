@@ -30,7 +30,7 @@ class TA_API taiPolyData : public taiCompData {
   Q_OBJECT
   INHERITED(taiCompData)
 public:
-  static taiPolyData*   New(bool add_members, TypeDef* typ_, IDataHost* host, taiData* par,
+  static taiPolyData*   New(bool add_members, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags = 0); // set add_members false to manually add members, otherwise all eligible typ members added
   static bool           ShowMemberStat(MemberDef* md, int show); // primarily for ProgEdit so we can use the exact same algorithm
 
@@ -52,7 +52,7 @@ protected:
   override void         GetImage_impl(const void* base);
   override void         GetValue_impl(void* base) const;
   virtual bool          ShowMember(MemberDef* md) const;
-  taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiPolyData(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
 
 

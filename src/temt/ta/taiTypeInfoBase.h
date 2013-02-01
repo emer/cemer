@@ -42,7 +42,7 @@ public:
   virtual void          GetImage(const void* base, bool get_menu = true, void* cur_sel = NULL);
 
   taiTypeInfoBase(taiActions::RepType rt, int ft, MemberDef* memb_md_,
-    TypeDef* typ_, IDataHost* host, taiData* par,
+    TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
   ~taiTypeInfoBase();
 protected:

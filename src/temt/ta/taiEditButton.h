@@ -29,7 +29,7 @@ class TA_API taiEditButton : public taiButtonMenu {
   Q_OBJECT
   INHERITED(taiButtonMenu)
 public:
-  static taiEditButton* New(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
+  static taiEditButton* New(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgReadOnly, flgEditOnly -- internally sets flgEditOnly if appropriate
 
   ~taiEditButton();
@@ -47,7 +47,7 @@ protected:
   virtual void          GetMethMenus();
   virtual void          SetLabel();
 
-  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
+  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 };
 

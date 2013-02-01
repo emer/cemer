@@ -30,7 +30,7 @@ class TA_API taiIncrField : public taiData { // increment/decrement field
   Q_OBJECT
 public:
   inline iSpinBox*      rep() const { return (iSpinBox*)(QWidget*)m_rep; }
-  taiIncrField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiIncrField(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: flgPosOnly
 
   virtual void          setMinimum(const Variant& min); //NOTE: for iSpinBox, this must be an int

@@ -17,7 +17,7 @@
 #define iProgramEditor_h 1
 
 // parent includes:
-#include <IDataHost>
+#include <IWidgetHost>
 #include <ISigLinkClient>
 
 // member includes:
@@ -56,14 +56,14 @@ class ISelectableHost; //
 
 TypeDef_Of(iProgramEditor);
 
-class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
+class TA_API iProgramEditor: public QWidget, public virtual IWidgetHost,
                              public virtual ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget for editing entire programs
   INHERITED(QWidget)
   Q_OBJECT
 public:
 #ifndef __MAKETA__
-  enum CustomEventType { // note: just copied from taiDataHost, not all used
+  enum CustomEventType { // note: just copied from taiEditorOfWidgetsMain, not all used
     CET_RESHOW          = QEvent::User + 1,  // uses ReShowEvent
     CET_GET_IMAGE,
     CET_APPLY
@@ -123,7 +123,7 @@ public: // ISigLinkClient i/f
   void                  SigLinkDestroying(taSigLink* dl);
   void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
-public: // IDataHost i/f -- some delegate up to mommy
+public: // IWidgetHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE
   bool                  HasChanged() {return m_modified;}
   bool                  isConstructed() {return true;}

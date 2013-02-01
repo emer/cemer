@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <iDataPanel>
-#include <IDataHost>
+#include <IWidgetHost>
 
 // member includes:
 #include <taiDataList>
@@ -33,8 +33,8 @@ class QKeyEvent; //
 
 TypeDef_Of(iViewPanelFrame);
 
-class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
-  // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
+class TA_API iViewPanelFrame: public iDataPanel, public virtual IWidgetHost {
+  // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IWidgetHost and Apply/Revert services, so you can use taiData ctrls
   Q_OBJECT
   INHERITED(iDataPanel)
   friend class iViewPanelSet;
@@ -46,7 +46,7 @@ public:
   };
 
 #ifndef __MAKETA__
-  enum CustomEventType { // note: just copied from taiDataHost, not all used
+  enum CustomEventType { // note: just copied from taiEditorOfWidgetsMain, not all used
     CET_RESHOW          = QEvent::User + 1,  // uses ReShowEvent
     CET_GET_IMAGE,
     CET_APPLY
@@ -92,7 +92,7 @@ public: // ISigLinkClient interface
   override void         SigLinkDestroying(taSigLink* dl); //note: dl is on the view, not underlying data
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelFrame;}
 
-public: // IDataHost i/f -- some delegate up to mommy
+public: // IWidgetHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE probably not used, we just return our own bg color
   bool                  HasChanged() {return m_modified;}
   bool                  isConstructed() {return true;}

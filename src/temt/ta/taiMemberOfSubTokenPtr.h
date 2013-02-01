@@ -31,7 +31,7 @@ class TA_API taiMemberOfSubTokenPtr : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfSubTokenPtr, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 protected:
   override void GetImage_impl(taiData* dat, const void* base);

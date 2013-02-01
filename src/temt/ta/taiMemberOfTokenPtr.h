@@ -43,7 +43,7 @@ public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 protected:
   Mode          mode; // set during first GetDataRep (is garbage until then)
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   override void GetImage_impl(taiData* dat, const void* base);
   override void GetMbrValue_impl(taiData* dat, void* base);

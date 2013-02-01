@@ -15,7 +15,7 @@
 
 #include "iDocEditDataPanel.h"
 #include <taDoc>
-#include <DocEditDataHost>
+#include <taiEditorWidgetsDoc>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -28,7 +28,7 @@ iDocEditDataPanel::iDocEditDataPanel(taiSigLink* dl_)
   taDoc* doc_ = doc();
   de = NULL;
   if (doc_) {
-    de = new DocEditDataHost(doc_, doc_->GetTypeDef());
+    de = new taiEditorWidgetsDoc(doc_, doc_->GetTypeDef());
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bool ok;
       iColor bgcol = doc_->GetEditColorInherit(ok);

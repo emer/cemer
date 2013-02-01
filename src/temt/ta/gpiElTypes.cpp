@@ -16,7 +16,7 @@
 #include "gpiElTypes.h"
 
 
-gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IDataHost* host_, 
+gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_, 
   taiData* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(rt, ft, typ_, host_, par, gui_parent_, flags_)
 {
@@ -24,7 +24,7 @@ gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* t
 }
 
 gpiElTypes::gpiElTypes
-(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = gtd;

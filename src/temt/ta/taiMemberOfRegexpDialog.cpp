@@ -26,7 +26,7 @@ int taiMemberOfRegexpDialog::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfRegexpDialog::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   // Get the iRegexpDialogPopulator instance that should be used for this field.
   iRegexpDialogPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");

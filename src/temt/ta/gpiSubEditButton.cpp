@@ -18,7 +18,7 @@
 
 
 gpiSubEditButton::gpiSubEditButton
-(void* base, const char* nm, TypeDef* tp, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, const char* nm, TypeDef* tp, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
   label = nm;

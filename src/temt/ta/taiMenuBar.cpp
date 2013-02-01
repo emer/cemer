@@ -20,7 +20,7 @@
 
 
 
-taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IDataHost* host_,
+taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IWidgetHost* host_,
                        taiData* par_, QWidget* gui_parent_, int flags_)
   : taiActions(normal, ft, typ_, host_, par_, gui_parent_, flags_)
 {

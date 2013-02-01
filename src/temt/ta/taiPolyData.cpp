@@ -22,7 +22,7 @@
 
 
 
-taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
+taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IWidgetHost* host_,
   taiData* par, QWidget* gui_parent_, int flags)
 {
   taiPolyData*  rval = new taiPolyData(typ_, host_, par, gui_parent_, flags);
@@ -41,7 +41,7 @@ bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
     return md->ShowMember((TypeItem::ShowMembs)show);
 }
 
-taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
+taiPolyData::taiPolyData(TypeDef* typ_, IWidgetHost* host_, taiData* par,
                          QWidget* gui_parent_, int flags_)
   : inherited(typ_, host_, par, gui_parent_, flags_)
 {

@@ -16,7 +16,7 @@
 #include "taiType.h"
 #include <taiData>
 #include <taiField>
-#include <IDataHost>
+#include <IWidgetHost>
 
 
 void taiType::Initialize() {
@@ -41,7 +41,7 @@ void taiType::AddToType(TypeDef* td) {
 //   GetDataRep_impl()       // from this class, as a default
 //   GetDataRep_impl()       // virtual
 //   GetDataRepInline_impl() // virtual
-taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* taiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                              taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   // Note: user can pass in flgReadOnly to force readonly, but we can also set it.
@@ -72,7 +72,7 @@ taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent
   return rval;
 }
 
-taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiType::GetDataRep_impl(IWidgetHost* host_, taiData* par,
                                   QWidget* gui_parent_, int flags_,
                                   MemberDef*)
 {
@@ -81,7 +81,7 @@ taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
   return rval;
 }
 
-taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
+taiData* taiType::GetDataRepInline_impl(IWidgetHost* host_, taiData* par,
                                         QWidget* gui_parent, int flags_,
                                         MemberDef* mbr_)
 {
@@ -131,7 +131,7 @@ void taiType::GetValue_impl(taiData* dat, void* base) {
   typ->SetValStr(strval, base);
 }
 
-bool taiType::isReadOnly(taiData* dat, IDataHost* host_) {
+bool taiType::isReadOnly(taiData* dat, IWidgetHost* host_) {
   // ReadOnly if host_ is RO, OR par is RO, OR directives state RO
   if (dat && dat->readOnly()) {
     return true;

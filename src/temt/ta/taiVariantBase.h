@@ -47,7 +47,7 @@ public:
   };
 
   bool                  fillHor() {return true;} // override
-  taiVariantBase(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiVariantBase(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiVariantBase();
 
 protected:

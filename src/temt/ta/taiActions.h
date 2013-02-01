@@ -53,7 +53,7 @@ public:
     update =            0x80    // flag added to normal selection types, causes parent item to indicate Changed when item selected
   };
 
-  static taiActions* New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+  static taiActions* New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL); // note: this is primarily for compatibility with Qt3 version code
 
   SelType               sel_type;
@@ -117,7 +117,7 @@ public:
   virtual void          Reset();
 
   taiAction*            operator[](int index) const {return items.SafeEl(index);}
-  taiActions(int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+  taiActions(int sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL,
       bool has_menu = false, QMenu* exist_menu = NULL);
   ~taiActions();

@@ -28,7 +28,7 @@ void cssiSession::CancelProgEdits(cssProgSpace* prsp) {
   int i;
   for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
     cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && ((dlg->top == prsp) || (dlg->top == NULL)))
+    if ((dlg->state == taiEditorOfWidgetsMain::ACTIVE) && ((dlg->top == prsp) || (dlg->top == NULL)))
       dlg->Cancel();
   }
   taiMisc::PurgeDialogs();
@@ -38,7 +38,7 @@ void cssiSession::CancelClassEdits(cssClassType* cltyp) {
   int i;
   for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
     cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj->type_def == cltyp))
+    if ((dlg->state == taiEditorOfWidgetsMain::ACTIVE) && (dlg->obj->type_def == cltyp))
       dlg->Cancel();
   }
   taiMisc::PurgeDialogs();
@@ -48,7 +48,7 @@ void cssiSession::CancelObjEdits(cssClassInst* clobj) {
   int i;
   for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
     cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if ((dlg->state == taiDataHost::ACTIVE) && (dlg->obj == clobj))
+    if ((dlg->state == taiEditorOfWidgetsMain::ACTIVE) && (dlg->obj == clobj))
       dlg->Cancel();
   }
   taiMisc::PurgeDialogs();
@@ -59,7 +59,7 @@ void cssiSession::RaiseObjEdits() {
   taiMiscCore::RunPending();
   for (i=taiMisc::css_active_edits.size-1; i>=0; i--) {
     cssiEditDialog* dlg = (cssiEditDialog*)taiMisc::css_active_edits.FastEl(i);
-    if (dlg->state == taiDataHost::ACTIVE)
+    if (dlg->state == taiEditorOfWidgetsMain::ACTIVE)
       dlg->Raise();
   }
   taiMiscCore::RunPending();

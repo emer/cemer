@@ -48,7 +48,7 @@ public:
   override void         EditPanel();
   override void         EditDialog();
 
-  taiTokenPtrMultiTypeButton(TypeDef* typ_, IDataHost* host,
+  taiTokenPtrMultiTypeButton(TypeDef* typ_, IWidgetHost* host,
                              taiData* par, QWidget* gui_parent_, int flags_ = 0,
                              const String& flt_start_txt = "");
 protected:

@@ -45,7 +45,7 @@ public:
     // gets or updates the menu
 
 private: //test for usage
-  taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);
 protected:

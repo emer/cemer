@@ -21,7 +21,7 @@
 #include <taMisc>
 
 
-gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_,
+gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -33,7 +33,7 @@ gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef
 }
 
 gpiListEls::gpiListEls(taiMenu* existing_menu, taList_impl* lst, TypeDef* typ_,
-	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_) {
   ths = lst;
   over_max = false;

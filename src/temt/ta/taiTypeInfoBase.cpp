@@ -21,7 +21,7 @@
 
 taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
                                  MemberDef* memb_md_, TypeDef* typ_,
-                                 IDataHost* host_, taiData* par,
+                                 IWidgetHost* host_, taiData* par,
                                  QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, par, gui_parent_, flags_)
 {

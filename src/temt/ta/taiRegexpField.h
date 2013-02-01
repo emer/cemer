@@ -29,7 +29,7 @@ class TA_API taiRegexpField : public taiText {
   Q_OBJECT
   INHERITED(taiText)
 public:
-  taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
+  taiRegexpField(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
 
   void                  SetFieldOwner(const void *fieldOwner);
 

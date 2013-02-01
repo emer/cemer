@@ -17,7 +17,7 @@
 #define taiWizardDataHost_h 1
 
 // parent includes:
-#include <taiDataHost_impl>
+#include <taiEditorOfWidgets>
 
 // member includes:
 #include <MembSet>
@@ -26,10 +26,10 @@
 class taWizard; //
 class QTabWidget; //
 
-class TA_API taiWizardDataHost : public taiDataHost_impl {
+class TA_API taiWizardDataHost : public taiEditorOfWidgets {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages
   Q_OBJECT
-INHERITED(taiDataHost_impl)
+INHERITED(taiEditorOfWidgets)
 public:
   MembSet_List          membs; // one set per page
 

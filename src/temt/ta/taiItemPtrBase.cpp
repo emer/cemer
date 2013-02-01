@@ -26,7 +26,7 @@
 
 
 taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
-                               IDataHost* host_, taiData* par,
+                               IWidgetHost* host_, taiData* par,
                                QWidget* gui_parent_, int flags_,
                                const String& flt_start_txt)
   : taiData(typ_, host_, par, gui_parent_, flags_)

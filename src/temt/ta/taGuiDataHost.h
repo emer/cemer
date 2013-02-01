@@ -17,8 +17,8 @@
 #define taGuiDataHost_h 1
 
 // parent includes:
-#include <taiDataHostBase>
-#include <IDataHost>
+#include <taiEditor>
+#include <IWidgetHost>
 
 // member includes:
 
@@ -28,9 +28,9 @@ TypeDef_Of(taGuiDialog);
 
 TypeDef_Of(taGuiDataHost);
 
-class TA_API taGuiDataHost : public taiDataHostBase, virtual public IDataHost
+class TA_API taGuiDataHost : public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-INHERITED(taiDataHostBase)
+INHERITED(taiEditor)
   Q_OBJECT
 friend class iHostDialog;
 public:
@@ -51,7 +51,7 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_taGuiDataHost;}
 
-public: // IDataHost i/f
+public: // IWidgetHost i/f
   override const iColor  colorOfCurRow() const { return bgColor(); }
   override TypeItem::ShowMembs  show() const;
   override bool         HasChanged() {return modified;}

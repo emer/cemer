@@ -26,7 +26,7 @@ int taiMemberOfTypeDefault::BidForMember(MemberDef*, TypeDef*) {
   return 0;
 }
 
-taiData* taiMemberOfTypeDefault::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* taiMemberOfTypeDefault::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                        taiType*, int flags_, MemberDef* mbr)
 {
   taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);

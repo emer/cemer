@@ -45,7 +45,7 @@ public:
   virtual bool          ShowMethod(MethodDef* mth);
   override void         btnHelp_clicked();
 
-  taiMemberMethodDefButton(TypeDef* typ_, IDataHost* host,
+  taiMemberMethodDefButton(TypeDef* typ_, IWidgetHost* host,
                            taiData* par, QWidget* gui_parent_, int flags_ = 0,
                            const String& flt_start_txt = "");
 protected:

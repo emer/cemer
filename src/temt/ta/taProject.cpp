@@ -14,14 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taProject.h"
-#include <taiEditDataHost>
+#include <taiEditorOfWidgetsClass>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 #include <taiMiscCore>
 #include <iTreeView>
 #include <taFiler>
 #include <PublishDocsDialog>
-#include <taiStringDataHost>
+#include <taiEditorOfString>
 
 TypeDef_Of(taDataProc);
 TypeDef_Of(taDataAnal);
@@ -45,7 +45,7 @@ using namespace std;
 
 
 #ifdef TA_GUI
-class SimLogEditDialog: public taiEditDataHost {
+class SimLogEditDialog: public taiEditorOfWidgetsClass {
 public:
   override bool ShowMember(MemberDef* md) const {
     // just show a small subset of the members
@@ -59,7 +59,7 @@ public:
   override void Constr_Methods_impl() { }       // suppress methods
 
   SimLogEditDialog(void* base, TypeDef* tp, bool read_only_,
-        bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
+        bool modal_) : taiEditorOfWidgetsClass(base, tp, read_only_, modal_) { };
 };
 #endif
 
@@ -625,7 +625,7 @@ void taProject::ViewProjLog() {
     view_plog.Load_str(fh);
     TypeDef* td = GetTypeDef();
     MemberDef* md = td->members.FindName("view_plog");
-    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+    taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true);
     // args are: read_only, modal, parent, line_nos
     host_->Constr("Project Log for Project: " + name);
     host_->Edit(false);
@@ -665,7 +665,7 @@ void taProject::UpdateChangeLog() {
   version.step++;               // increment the step always
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("last_change_desc");
-  taiStringDataHost* dlg = new taiStringDataHost(md, this, td, false); // false = not read only
+  taiEditorOfString* dlg = new taiEditorOfString(md, this, td, false); // false = not read only
   dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  <b>NOTE: Cancel</b> here is <i>only</i> for the change log entry -- not for the project save!");
   if(dlg->Edit(true)) {
     time_t tmp = time(NULL);

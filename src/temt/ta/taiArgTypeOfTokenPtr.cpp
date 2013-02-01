@@ -15,7 +15,7 @@
 
 #include "taiArgTypeOfTokenPtr.h"
 #include <taiTokenPtrButton>
-#include <IDataHost>
+#include <IWidgetHost>
 
 #include <taMisc>
 
@@ -37,7 +37,7 @@ cssEl* taiArgTypeOfTokenPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfTokenPtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))

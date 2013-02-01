@@ -24,7 +24,7 @@ int taiTypeOfMatrixGeom::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfMatrixGeom::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiTypeOfMatrixGeom::GetDataRepInline_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiDimEdit *rval = new taiDimEdit(typ, host_, par, gui_parent_, flags_);
   return rval;
 }

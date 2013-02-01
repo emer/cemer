@@ -35,7 +35,7 @@ cssEl* taiArgTypeOfMethodPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfMethodPtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiArgTypeOfMethodPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MethodDef* init_md = typ->methods.FindName("Load");
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);

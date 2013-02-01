@@ -17,7 +17,7 @@
 #include <Program_Group>
 #include <taProject>
 #include <ProgramCallBase>
-#include <taiStringDataHost>
+#include <taiEditorOfString>
 #include <taiChoiceDialog>
 
 TypeDef_Of(LocalVars);
@@ -1369,7 +1369,7 @@ void Program::GlobalTrace() {
   if(taMisc::gui_active) {
     TypeDef* td = &TA_Program;
     MemberDef* md = td->members.FindName("global_trace");
-    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, false, true);
+    taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, false, true);
     // args are: read_only, modal, parent, line_nos, rich_text
     host_->Constr("Global Trace of Programs Called to last Stop");
     host_->Edit(false);
@@ -1384,7 +1384,7 @@ void Program::LocalTrace() {
     local_trace = RenderLocalTrace(true);
     TypeDef* td = GetTypeDef();
     MemberDef* md = td->members.FindName("local_trace");
-    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true, false);
+    taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
     // args are: read_only, modal, parent, line_nos, rich_text
     host_->Constr("Local Trace of Program: " + name);
     host_->Edit(false);
@@ -1469,7 +1469,7 @@ void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
   ViewScriptUpdate();
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("view_script");
-  taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true, true);
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, true);
   // args are: read_only, modal, parent, line_nos, rich_text
   host_->Constr("Css Script for program: " + name);
   host_->Edit(false);
@@ -1484,12 +1484,12 @@ void Program::SaveListing(ostream& strm) {
 
 #ifdef TA_GUI
 void Program::ViewListing() {
-  taiStringDataHost* host_ = NULL;
+  taiEditorOfString* host_ = NULL;
   view_listing = ProgramListing();
   if(!host_) {
     TypeDef* td = GetTypeDef();
     MemberDef* md = td->members.FindName("view_listing");
-    host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+    host_ = new taiEditorOfString(md, this, td, true, false, NULL, true);
     // args are: read_only, modal, parent, line_nos
     host_->Constr("Listing of program elements for program: " + name);
     host_->Edit(false);

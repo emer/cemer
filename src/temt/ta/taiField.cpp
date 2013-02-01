@@ -21,7 +21,7 @@
 #include <BuiltinTypeDefs>
 
 
-taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiField::taiField(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
   : taiText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
             "Edit this field in a multi-line dialog.")
   , lookupfun_md(0)

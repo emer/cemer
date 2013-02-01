@@ -77,7 +77,7 @@ void  cssiType::Assert_QObj() {
   }
 }
 
-taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* cssiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                               taiType*, int, MemberDef*)
 {
   if (use_it)
@@ -111,7 +111,7 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 {
 }
 
-taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* cssiROType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                 taiType*, int, MemberDef*)
 {
   taiField* rval = new taiField(typ, host_, par, gui_parent_, true);
@@ -134,7 +134,7 @@ cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
   enum_type = enum_typ;
 }
 
-taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* cssiEnumType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                   taiType*, int, MemberDef*)
 {
   taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent_);
@@ -176,7 +176,7 @@ cssiClassType::cssiClassType(cssEl* orgo, void* bs)
 {
 }
 
-taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* cssiClassType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   cssClassInst* obj = (cssClassInst*) cur_base;
@@ -232,7 +232,7 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 {
 }
 
-taiData* cssiArrayType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+taiData* cssiArrayType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   taiButtonMenu* rval = new taiButtonMenu

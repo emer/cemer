@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class UserDataItem_List;
-class iUserDataDataHost;
+class taiEditorWidgetsOfUserData;
 
 
 class TA_API UserDataDelegate: public taiDataDelegate {
@@ -31,7 +31,7 @@ INHERITED(taiDataDelegate)
 Q_OBJECT
 public:
   UserDataItem_List*    udil;
-  iUserDataDataHost*    uddh;
+  taiEditorWidgetsOfUserData*    uddh;
 
   override bool         IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const;
@@ -39,7 +39,7 @@ public:
   override QWidget* createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-  UserDataDelegate(UserDataItem_List* udil_, iUserDataDataHost* uddh_);
+  UserDataDelegate(UserDataItem_List* udil_, taiEditorWidgetsOfUserData* uddh_);
 };
 
 #endif // UserDataDelegate_h

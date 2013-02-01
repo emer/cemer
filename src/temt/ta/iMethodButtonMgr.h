@@ -34,16 +34,16 @@ class taiDataList;
 // declare all other types mentioned but not required to include:
 class taiMenu_List; //
 class taBase; //
-class IDataHost; //
+class IWidgetHost; //
 class taiMethodData; //
 class taiActions; //
 class QLayout; //
-class IDataHost; //
+class IWidgetHost; //
 
 TypeDef_Of(iMethodButtonMgr);
 
 class TA_API iMethodButtonMgr: public QObject, virtual public ISigLinkClient
-{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IDataHost and gui objects
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IWidgetHost and gui objects
 INHERITED(QObject)
   Q_OBJECT
 public:
@@ -55,9 +55,9 @@ public:
   void                  setBase(taBase* value);
 
   void                  Constr(taBase* base,
-    IDataHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
+    IWidgetHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
   void                  Constr(QWidget* widg, QLayout* lay, taBase* base,
-    IDataHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
+    IWidgetHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
   void                  AddMethButton(taiMethodData* mth_rep,
     const String& label = _nilString);
   void                  GetImage();
@@ -70,14 +70,14 @@ public:
 protected:
   QWidget*              widg; // the host widget
   QLayout*              m_lay; // usually an iFlowLayout or QHBoxLayout, margins/spacing set
-  IDataHost*    host; // must have outer lifetime to us!
+  IWidgetHost*    host; // must have outer lifetime to us!
   taBase*               base; // the object that has the methods
   TypeDef*              typ;
   taiMenu_List          ta_menu_buttons; // menu representations (from methods -- menubuttons only)
   taiActions*           cur_menu_but; // current menu button to add to (if not otherwise
   taiDataList           meth_el;        // method elements
 
-  void                  Constr_impl(taBase* base, IDataHost* host); // #IGNORE
+  void                  Constr_impl(taBase* base, IWidgetHost* host); // #IGNORE
   virtual void          Constr_Methods_impl(); // #IGNORE
   void                  DoAddMethButton(QWidget* but); // #IGNORE
   void                  SetCurMenuButton(MethodDef* md);

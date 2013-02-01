@@ -19,7 +19,7 @@
 #include <taiMisc>
 
 
-taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
+taiToggle::taiToggle(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
        taiData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep( new iCheckBox(gui_parent_) );

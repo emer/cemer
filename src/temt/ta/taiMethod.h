@@ -44,8 +44,8 @@ public:
   // bid for (appropriateness) for given type of method (default is not at all approp.)
 
   taiMethodData*        GetGenericMethodRep(void* base, taiData* par); // this is just for CallFun
-  taiMethodData*        GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
-  taiMethodData*        GetMenuMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
+  taiMethodData*        GetButtonMethodRep(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_);
+  taiMethodData*        GetMenuMethodRep(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
   USING(inherited::GetImage)
   override void         GetImage(taiData*, const void*) { }
   override void         GetValue(taiData*, void*)       { }
@@ -60,9 +60,9 @@ public:
         { return new taiMethod(md,td);}
   TypeDef*      GetTypeDef() const {return &TA_taiMethod;}
 protected:
-  virtual taiMethodData* GetButtonMethodRep_impl(void* base, IDataHost* host_,
+  virtual taiMethodData* GetButtonMethodRep_impl(void* base, IWidgetHost* host_,
     taiData* par, QWidget* gui_parent_, int flags_) {return NULL;}
-  virtual taiMethodData* GetMenuMethodRep_impl(void* base, IDataHost* host_,
+  virtual taiMethodData* GetMenuMethodRep_impl(void* base, IWidgetHost* host_,
     taiData* par, QWidget* gui_parent_, int flags_) {return NULL;}
 };
 

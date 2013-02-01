@@ -34,7 +34,7 @@ public:
   iCheckBox*            but_rep;
   inline QWidget*       rep() {return (QWidget*)m_rep;} //parent of contained controls
 
-  taiPlusToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiPlusToggle(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiPlusToggle();
 
   override void InitLayout();

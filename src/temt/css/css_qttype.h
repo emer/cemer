@@ -62,7 +62,7 @@ public:
 
   int           BidForType(TypeDef*)    { return 0; } // don't do any real types!
   virtual void          CallEdit() {}     // invoke an edit dialog (normally called from qobj)
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
 
   override void GetImage(taiData* dat, const void* base);
@@ -84,7 +84,7 @@ protected:
 class CSS_API cssiROType : public cssiType {
   // a css read-only type
 public:
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
 
   override void GetImage(taiData* dat, const void* base);
@@ -102,7 +102,7 @@ class CSS_API cssiEnumType : public cssiType {
 public:
   cssEnumType*  enum_type;
 
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
 
   override void GetImage(taiData* dat, const void* base);
@@ -118,7 +118,7 @@ public:
 class CSS_API cssiClassType : public cssiType {
   // a css class type
 public:
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
 
   override void         CallEdit();     // invoke an edit dialog (normally called from qobj)
@@ -139,7 +139,7 @@ class CSS_API cssiArrayType : public cssiType {
 public:
   override void         CallEdit();     // invoke an edit dialog (normally called from qobj)
 
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
 
   override void GetImage(taiData* dat, const void* base) {}

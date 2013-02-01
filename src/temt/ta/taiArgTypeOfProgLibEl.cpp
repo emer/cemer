@@ -25,7 +25,7 @@ int taiArgTypeOfProgLibEl::BidForArgType(int aidx, TypeDef* argt, MethodDef* md,
   return taiArgTypeOfFromGroup::BidForArgType(aidx,argt,md,td)+1;
 }
 
-taiData* taiArgTypeOfProgLibEl::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiArgTypeOfProgLibEl::GetDataRep_impl(IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
   MemberDef* from_md = GetFromMd();

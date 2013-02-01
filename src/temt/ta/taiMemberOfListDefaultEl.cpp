@@ -28,7 +28,7 @@ int taiMemberOfListDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfListDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
         NULL, typ, host_, par, gui_parent_, (flags_ | taiData::flgNullOk | taiData::flgNoList));
   return rval;

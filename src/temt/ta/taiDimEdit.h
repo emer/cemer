@@ -32,7 +32,7 @@ class TA_API taiDimEdit : public taiData { // specify number of dims and each di
 public:
   inline iDimEdit*              rep() const {return (iDimEdit*)(QWidget*)m_rep;}
   bool                  fillHor() {return true;} // override
-  taiDimEdit(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiDimEdit(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags:
 
   void                  GetImage(const MatrixGeom* arr);

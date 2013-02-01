@@ -32,7 +32,7 @@ class TA_API taiArgTypeOfTokenPtr : public taiArgType {
 public:
   int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*        GetElFromArg(const char* arg_nm, void* base);
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
   void          GetValue_impl(taiData* dat, void* base);

@@ -17,7 +17,7 @@
 #include <taiMenu>
 
 
-taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_,
+taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_,
                          taiData* par, QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -27,7 +27,7 @@ taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHos
 }
 
 taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
-                         IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+                         IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
   : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   ta_actions = existing_menu;

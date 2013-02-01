@@ -17,7 +17,7 @@
 #include <iVec2i>
 
 
-taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
                  QWidget* gui_parent_, int flags_, taiActions* par_menu_)
   : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {

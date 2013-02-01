@@ -18,7 +18,7 @@
 #include <MatrixGeom>
 
 
-taiDimEdit::taiDimEdit(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiDimEdit::taiDimEdit(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);

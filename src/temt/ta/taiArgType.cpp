@@ -84,7 +84,7 @@ void taiArgType::GetValue_impl(taiData* dat, void*) {
     arg_typ->it->GetValue(dat, arg_base);
 }
 
-taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiArgType::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (arg_base == NULL) return NULL;
 
   taiData* rval;

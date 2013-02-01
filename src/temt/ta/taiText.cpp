@@ -24,7 +24,7 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 
-taiText::taiText(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_,
+taiText::taiText(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_,
                  bool needs_edit_button, const char *tooltip)
   : taiData(typ_, host_, par, gui_parent_, flags_)
   , leText()

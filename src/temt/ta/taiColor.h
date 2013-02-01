@@ -34,7 +34,7 @@ public:
   void                  GetImage(const iColor& val);
   iColor                GetValue() const;
 
-  taiColor(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+  taiColor(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_,
     int flags = 0);
 
 };

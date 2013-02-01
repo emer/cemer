@@ -41,9 +41,9 @@ public:
   void          GetImage(taList_impl* base_lst, taBase* it);
   taBase*       GetValue();
 
-  gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
-  gpiListEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
 
 public slots:

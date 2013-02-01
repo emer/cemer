@@ -26,7 +26,7 @@
 class TA_API gpiListLinkEditButton : public gpiListEditButton {
 // link lists don't have the option to create or xfer
 public:
-  gpiListLinkEditButton(void* base, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListLinkEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   override void         GetMethMenus(); // exclude certain methods here..
 };

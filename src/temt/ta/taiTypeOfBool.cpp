@@ -25,7 +25,7 @@ int taiTypeOfBool::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfBool::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
+taiData* taiTypeOfBool::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);

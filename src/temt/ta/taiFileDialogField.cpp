@@ -19,7 +19,7 @@
 #include <taFiler>
 
 
-taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData* par,
+taiFileDialogField::taiFileDialogField(TypeDef* typ_, IWidgetHost* host_, taiData* par,
                                        QWidget* gui_parent_, int flags_, FileActionType fact,
                                        const String& fext, const String& ftyp, int fcmprs)
   : taiText(typ_, host_, par, gui_parent_, flags_, true,

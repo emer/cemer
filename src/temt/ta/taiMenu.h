@@ -31,7 +31,7 @@ class TA_API taiMenu : public taiActions {
   friend class taiMenu_List; // hack because lists return refs to strings, not values
   friend class taiActions;
 public:
-  taiMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
+  taiMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
 //nbg  taiMenu(int rt, int st, int ft, QWidget* gui_parent_); // constructor for WinBase and other non-taiDialog uses
   taiMenu(QWidget* gui_parent_, int sel_type_= normal, int font_spec_ = 0, QMenu* exist_menu = NULL);

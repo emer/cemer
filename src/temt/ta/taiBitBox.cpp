@@ -43,13 +43,13 @@ void iBitCheckBox::this_clicked(bool on)
   emit clickedEx(this, on);
 }
 
-taiBitBox::taiBitBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiBitBox::taiBitBox(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
 }
 
-taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {

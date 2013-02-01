@@ -34,10 +34,10 @@ public:
 
   void          CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
 
-  virtual bool  NoCheckBox(IDataHost* host_) const; // deterimine if check box should be used
+  virtual bool  NoCheckBox(IWidgetHost* host_) const; // deterimine if check box should be used
 
 protected:
-  override taiData*     GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  override taiData*     GetArbitrateDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
   override void         GetArbitrateImage(taiData* dat, const void* base);
   override void         GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 };

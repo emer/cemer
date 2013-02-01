@@ -40,9 +40,9 @@ public:
   virtual void          GetImage(TypeDef* ths);
   virtual TypeDef*      GetValue();
 
-  taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
-  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0);
   ~taiTypeHier(); //
 protected:

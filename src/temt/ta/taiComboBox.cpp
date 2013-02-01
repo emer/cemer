@@ -22,13 +22,13 @@
 
 
 
-taiComboBox::taiComboBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiComboBox::taiComboBox(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
 }
 
-taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiComboBox::taiComboBox(bool is_enum, TypeDef* typ_, IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -50,7 +50,7 @@ void taiComboBox::Initialize(QWidget* gui_parent_, bool is_enum_) {
   else
     QObject::connect(m_rep, SIGNAL(activated(int) ),
           this, SLOT(repChanged() ) );
-  // also to aux signal (used by non-IDataHost clients)
+  // also to aux signal (used by non-IWidgetHost clients)
   QObject::connect(m_rep, SIGNAL(activated(int) ),
     this, SIGNAL(itemChanged(int)) );
 }

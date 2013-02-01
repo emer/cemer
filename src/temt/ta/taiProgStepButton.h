@@ -34,7 +34,7 @@ public:
   override QWidget* GetButtonRep();
   override bool UpdateButtonRep();
 
-  taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
  public slots:

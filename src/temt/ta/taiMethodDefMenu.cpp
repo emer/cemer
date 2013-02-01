@@ -25,7 +25,7 @@
 //////////////////////////////////
 
 taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_,
-  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par,
+  MemberDef* memb_md_, TypeDef* typ_, IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
@@ -56,7 +56,7 @@ void taiMemberDefMenu::GetMenu() {
   // if the target type is member-containing type, then optionally filter members by visibility of its host
   if (targ_typ == typ) {
     if ((md != NULL)  && (md->HasOption("TYPESHOW_VISIBLE"))) {
-      taiEditDataHost* dlg = taiM->FindEdit(menubase, typ); //NOTE: finds any, in any window or viewer
+      taiEditorOfWidgetsClass* dlg = taiM->FindEdit(menubase, typ); //NOTE: finds any, in any window or viewer
       if (dlg != NULL) {
         show = dlg->show;
       }
@@ -78,7 +78,7 @@ void taiMemberDefMenu::GetMenu() {
 
 taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_,
                                    MemberDef* memb_md_, TypeDef* typ_,
-                                   IDataHost* host_, taiData* par,
+                                   IWidgetHost* host_, taiData* par,
                                    QWidget* gui_parent_, int flags_)
   : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {

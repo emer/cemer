@@ -24,7 +24,7 @@
 
 
 
-taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
                    QWidget* gui_parent_, int flags_)
   : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {

@@ -28,7 +28,7 @@ class TA_API taiToggle : public taiData {
 public:
   inline iCheckBox*     rep() const { return (iCheckBox*)(QWidget*)m_rep; }
 
-  taiToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiToggle(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 //  ~taiToggle() {}
 
   void  GetImage(bool val);

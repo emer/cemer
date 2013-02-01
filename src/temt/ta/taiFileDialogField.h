@@ -34,7 +34,7 @@ public:
     FA_APPEND,
   };
 
-  taiFileDialogField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+  taiFileDialogField(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_,
                      int flags = 0, FileActionType fact=FA_LOAD, const String& fext = "",
                      const String& ftyp = "", int fcmprs = -1);
 

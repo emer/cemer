@@ -32,7 +32,7 @@ public:
   void          GetImage(const Variant& var) {GetImage_Variant(var);}
   void          GetValue(Variant& var) const {GetValue_Variant(var);}
 
-  taiVariant(IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiVariant(IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiVariant();
 protected:
   override void         GetImageVar_impl(const Variant& val) {GetImage(val);}

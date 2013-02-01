@@ -33,7 +33,7 @@ public:
   void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
   override void         btnHelp_clicked();
 
-  taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
+  taiEnumTypeDefButton(TypeDef* typ_, IWidgetHost* host,
                        taiData* par, QWidget* gui_parent_, int flags_ = 0,
                        const String& flt_start_txt = "");
 protected:

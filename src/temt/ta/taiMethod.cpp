@@ -24,7 +24,7 @@ void taiMethod::AddMethod(MethodDef* md) {
   meth = md;
 }
 
-taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiData* par,
+taiMethodData* taiMethod::GetButtonMethodRep(void* base, IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_)
 {
   taiMethodData* rval = GetButtonMethodRep_impl(base, host_, par, gui_parent_, 0);
@@ -42,7 +42,7 @@ taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
   return rval;
 }
 
-taiMethodData* taiMethod::GetMenuMethodRep(void* base, IDataHost* host_, taiData* par,
+taiMethodData* taiMethod::GetMenuMethodRep(void* base, IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_)
 {
   taiMethodData* rval = GetMenuMethodRep_impl(base, host_, par, gui_parent_, 0);

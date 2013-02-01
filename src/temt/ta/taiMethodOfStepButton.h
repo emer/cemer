@@ -31,8 +31,8 @@ class TA_API taiMethodOfStepButton : public taiMethodOfActuator {
 public:
   int                   BidForMethod(MethodDef* md, TypeDef* td);
 protected:
-  taiMethodData*        GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  taiMethodData*        GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*        GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*        GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
 #endif // taiMethodOfStepButton_h

@@ -28,7 +28,7 @@ TypeItem::ShowMembs taGuiDataHost::show() const {
 }
 
 taGuiDataHost::taGuiDataHost(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
-  : taiDataHostBase(&TA_taGuiDialog, read_only_, modal_, parent) {
+  : taiEditor(&TA_taGuiDialog, read_only_, modal_, parent) {
   gui_owner = own;
 }
 

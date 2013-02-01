@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taLicense.h"
-#include <taiStringDataHost>
+#include <taiEditorOfString>
 
 #include <taMisc>
 
@@ -33,7 +33,7 @@ void taLicense::ViewLicense() {
   if(license == CUSTOM_LIC) lic_text += custom;
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("lic_text");
-  taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, false);
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, false);
   // args are: read_only, modal, parent, line_nos
   host_->Constr("License Text for the Project");
   host_->Edit(false);

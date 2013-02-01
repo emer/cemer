@@ -29,7 +29,7 @@ int taiMemberOfFunPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfFunPtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiMemberOfFunPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiButtonMenu* rval = new taiButtonMenu(taiMenu::radio_update, taiMisc::fonSmall,

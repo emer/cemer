@@ -40,7 +40,7 @@ public:
   cssiArgDialog* arg_dlg;
   int           use_argc;
 
-  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
   virtual QWidget*      GetButtonRep() {return buttonRep;}
@@ -59,7 +59,7 @@ public slots:
   virtual void  CallFun() {CallFun_impl();} // call the function (button callback)
 
 protected:
-  static void   ShowReturnVal(cssEl* rval, IDataHost* host,
+  static void   ShowReturnVal(cssEl* rval, IWidgetHost* host,
      const String& meth_name); // show return value after menu call
 
 #ifndef __MAKETA__

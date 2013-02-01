@@ -108,7 +108,7 @@ protected:
   virtual void          BuildCategories_impl() {} // for types that support categories
   virtual void          UpdateImage(void* cur_sel);
 
-  taiItemPtrBase(TypeDef* typ_, IDataHost* host,
+  taiItemPtrBase(TypeDef* typ_, IWidgetHost* host,
                  taiData* par, QWidget* gui_parent_, int flags_ = 0,
                  const String& flt_start_txt = ""); // typ_
 };

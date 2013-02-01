@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEdit.h"
-#include <taiEditDataHost>
+#include <taiEditorOfWidgetsClass>
 
 #include <taiMisc>
 #include <taMisc>
@@ -24,14 +24,14 @@ void taiEdit::AddEdit(TypeDef* td) {
   InsertThisIntoBidList(td->ie);
 }
 
-taiEditDataHost* taiEdit::CreateDataHost(void* base, bool read_only) {
-  return new taiEditDataHost(base, typ, read_only);
+taiEditorOfWidgetsClass* taiEdit::CreateDataHost(void* base, bool read_only) {
+  return new taiEditorOfWidgetsClass(base, typ, read_only);
 }
 
 int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
   // get currently active win -- we will only look in any other window
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  taiEditDataHost* host = taiMisc::FindEdit(base, cur_win);
+  taiEditorOfWidgetsClass* host = taiMisc::FindEdit(base, cur_win);
   if (!host) {
     host = CreateDataHost(base, readonly);
 
@@ -61,7 +61,7 @@ int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
 int taiEdit::EditDialog(void* base, bool read_only, bool modal,
                         const iColor& bgcol, int min_width, int min_height)
 {
-  taiEditDataHost* host = NULL;
+  taiEditorOfWidgetsClass* host = NULL;
   if (!modal) {
     host = taiMisc::FindEditDialog(base, read_only);
     if (host) {
@@ -83,14 +83,14 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
     //TODO: maybe we always null out, or should we allow caller to specify?
     //bgcol = NULL;
   }
-  host->Constr("", "", taiDataHost::HT_DIALOG);
+  host->Constr("", "", taiEditorOfWidgetsMain::HT_DIALOG);
   return host->Edit(modal, min_width, min_height);
 }
 
 EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
    bool read_only, const iColor& bgcol)
 {
-  taiEditDataHost* host = CreateDataHost(base, read_only);
+  taiEditorOfWidgetsClass* host = CreateDataHost(base, read_only);
   if (taMisc::color_hints & taMisc::CH_EDITS) {
     if (&bgcol == &def_color) {
       bool ok = false;
@@ -105,7 +105,7 @@ EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
     //bgcol = NULL;
   }
 
-  host->Constr("", "", taiDataHost::HT_PANEL, true);
+  host->Constr("", "", taiEditorOfWidgetsMain::HT_PANEL, true);
   EditDataPanel* rval = host->EditPanelDeferred(link);
   return rval;
 }
@@ -113,7 +113,7 @@ EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
 EditDataPanel* taiEdit::EditPanel(taiSigLink* link, void* base,
    bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol)
 {
-  taiEditDataHost* host = NULL;
+  taiEditorOfWidgetsClass* host = NULL;
   host = taiMisc::FindEditPanel(base, read_only, not_in_win);
   if (host) {
     host->Raise();

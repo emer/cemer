@@ -31,7 +31,7 @@ class TA_API taiTypeOfTypePtr : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfTypePtr, taiType);
 public:
   int           BidForType(TypeDef* td);
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
   void          GetValue_impl(taiData* dat, void* base);

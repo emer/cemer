@@ -19,7 +19,7 @@
 #include <taiEdit>
 
 
-taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
                          QWidget* gui_parent_, int flags_)
   : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -28,7 +28,7 @@ taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHos
   ownflag = true;
 }
 
-taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host_,
+taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host_,
                          taiData* par, QWidget* gui_parent_, int flags_)
   : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {

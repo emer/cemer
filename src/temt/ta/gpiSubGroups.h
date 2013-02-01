@@ -42,9 +42,9 @@ public:
   void          GetImage(taGroup_impl* base_gp, taGroup_impl* gp);
   taGroup_impl*        GetValue();
 
-  gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IDataHost* host_, taiData* par,
+  gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
-  gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_ = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
+  gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_ = NULL, IWidgetHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
 public slots:
   virtual void  Edit();         // edit callback

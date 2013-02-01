@@ -23,7 +23,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iSelectEditDataHostBase; // #IGNORE
+class taiEditorWidgetsOfSelectEditBase; // #IGNORE
 
 TypeDef_Of(iSelectEditPanel);
 
@@ -32,7 +32,7 @@ class TA_API iSelectEditPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  iSelectEditDataHostBase*     se;
+  taiEditorWidgetsOfSelectEditBase*     se;
   SelectEdit*           sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
 
   override bool         HasChanged(); // 'true' if user has unsaved changes

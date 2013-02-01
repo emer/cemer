@@ -21,7 +21,7 @@
 
 
 
-taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
+taiColor::taiColor(TypeDef* typ_, IWidgetHost* host_, taiData* par,
   QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {

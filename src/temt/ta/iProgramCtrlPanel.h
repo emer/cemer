@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iProgramCtrlDataHost; // #IGNORE
+class taiEditorWidgetsOfProgramCtrl; // #IGNORE
 class Program; //
 
 
@@ -33,7 +33,7 @@ class TA_API iProgramCtrlPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  iProgramCtrlDataHost* pc;
+  taiEditorWidgetsOfProgramCtrl* pc;
 
   Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
   override String       panel_type() const {return "Program Ctrl";}

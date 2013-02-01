@@ -19,7 +19,7 @@
 #include <MemberDef>
 
 
-taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
+taiRegexpField::taiRegexpField(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
   : taiText(typ_, host_, par, gui_parent_, flags_,
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")

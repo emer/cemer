@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditOfDefault.h"
-#include <taiEditDataHost>
+#include <taiEditorOfWidgetsClass>
 #include <MemberDef>
 #include <taiMember>
 #include <taiMemberOfTypeDefault>
@@ -23,8 +23,8 @@
 
 
 // this special edit is for defualt instances
-class taiEditOfDefaultDataHost : public taiEditDataHost {
-INHERITED(taiEditDataHost)
+class taiEditOfDefaultDataHost : public taiEditorOfWidgetsClass {
+INHERITED(taiEditorOfWidgetsClass)
 public:
   override void GetValue();
 
@@ -42,7 +42,7 @@ private:
 
 taiEditOfDefaultDataHost::taiEditOfDefaultDataHost(void* base, TypeDef* typ_, bool read_only_,
         bool modal_, QObject* parent)
-: taiEditDataHost(base, typ_, read_only_, modal_, parent)
+: taiEditorOfWidgetsClass(base, typ_, read_only_, modal_, parent)
 {
 }
 
@@ -94,6 +94,6 @@ void taiEditOfDefaultDataHost::GetValue() {
 //       taiEditOfDefault       //
 ////////////////////////////////
 
-taiEditDataHost* taiEditOfDefault::CreateDataHost(void* base, bool readonly) {
+taiEditorOfWidgetsClass* taiEditOfDefault::CreateDataHost(void* base, bool readonly) {
   return new taiEditOfDefaultDataHost(base, typ, readonly);
 }

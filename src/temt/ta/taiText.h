@@ -31,7 +31,7 @@ class TA_API taiText : public taiData {
   Q_OBJECT
   INHERITED(taiData)
 public:
-  taiText(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+  taiText(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_,
           int flags, bool needs_edit_button, const char *tooltip);
 
   iLineEdit*            rep() const;

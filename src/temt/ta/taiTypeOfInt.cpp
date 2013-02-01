@@ -39,7 +39,7 @@ int taiTypeOfInt::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfInt::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
+taiData* taiTypeOfInt::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
 //TODO: the taiIncrField control can only handle int values, so can't handle uint range
 // should either replace with a DoubleSpin, or longlongspin
   taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);

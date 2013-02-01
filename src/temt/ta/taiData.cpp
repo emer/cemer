@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiData.h"
-#include <IDataHost>
+#include <IWidgetHost>
 #include <iLabel>
 #include <taiDataDeck>
 #include <taiSigLink>
@@ -37,7 +37,7 @@ taiData::taiData()
 {
 }
 
-taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget*, int flags_)
+taiData::taiData(TypeDef* typ_, IWidgetHost* host_, taiData* parent_, QWidget*, int flags_)
   : QObject()
   , typ(typ_)
   , mbr(0)

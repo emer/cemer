@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taiData;
-class IDataHost;
+class IWidgetHost;
 
 
 TypeDef_Of(taiType);
@@ -44,7 +44,7 @@ public:
   virtual int           BidForType(TypeDef*) { return 1; }
   // bid for (appropriateness) for given type
 
-  virtual taiData*      GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+  virtual taiData*      GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
   // get taiData rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
 
@@ -72,11 +72,11 @@ public:
   void                  Destroy();
 
 protected:
-  virtual bool          isReadOnly(taiData* dat, IDataHost* host_ = NULL);
+  virtual bool          isReadOnly(taiData* dat, IWidgetHost* host_ = NULL);
   // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
-  virtual taiData*      GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  virtual taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior uses a taiField type
-  virtual taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  virtual taiData*      GetDataRepInline_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior same as GetDataRep_impl
 
   virtual void          GetImage_impl(taiData* dat, const void* base);

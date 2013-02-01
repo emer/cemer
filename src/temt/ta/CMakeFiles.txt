@@ -733,10 +733,10 @@ set(ta_HEADS_MAKETA_MOC
 
   taiAction.h
   taiData.h
-  taiDataHost_impl.h
-  taiDataHost.h
-  taiDataHostBase.h
-  taiEditDataHost.h
+  taiEditorOfWidgets.h
+  taiEditorOfWidgetsMain.h
+  taiEditor.h
+  taiEditorOfWidgetsClass.h
   iMethodButtonMgr.h
   taGuiDataHost.h
 
@@ -760,7 +760,7 @@ set(ta_HEADS_MAKETA_MOC
   iProgramCtrlPanel.h
   iProgramEditor.h
   iProgramViewScriptPanel.h
-  iProgramCtrlDataHost.h
+  taiEditorWidgetsOfProgramCtrl.h
 
   iSelectEditPanel.h
 
@@ -859,11 +859,11 @@ set(ta_HEADS_NOMAKETA
   gpiElTypes.h
   taiProjTemplateElsButton.h
 
-  taiTypeItemDataHost.h
-  gpiMultiEditDataHost.h
-  gpiListDataHost.h
-  gpiCompactListDataHost.h
-  gpiArrayEditDataHost.h
+  taiEditorWidgetsOfTypeItem.h
+  taiEditorWidgetsMulti.h
+  taiEditorWidgetsOfList.h
+  taiEditorWidgetsOfListCompact.h
+  taiEditorWidgetsOfArray.h
   SArgEditDataHost.h
 
   iRegexpDialogPopulator.h
@@ -882,7 +882,7 @@ set(ta_HEADS_NOMAKETA
 
   iProgramToolBar.h
 
-  IDataHost.h
+  IWidgetHost.h
   MembSet.h
 
   SoBase.h
@@ -941,7 +941,7 @@ set(ta_HEADS_NOMAKETA_MOC
 
   taSigLink_QObj.h
 
-  DocEditDataHost.h
+  taiEditorWidgetsDoc.h
 
   taiActions.h
   taiCompData.h
@@ -981,7 +981,7 @@ set(ta_HEADS_NOMAKETA_MOC
 
   iRegexpDialog.h
   taiRegexpField.h
-  taiStringDataHost.h
+  taiEditorOfString.h
   taiWizardDataHost.h
 
   iHostDialog.h
@@ -1014,16 +1014,16 @@ set(ta_HEADS_NOMAKETA_MOC
   iMatrixEditor.h
   iClassBrowseViewer.h
 
-  iSelectEditDataHostBase.h
+  taiEditorWidgetsOfSelectEditBase.h
   taiDataDelegate.h
   SelectEditDelegate.h
-  iSelectEditDataHost.h
-  iSelectEditDataHost2.h
+  taiEditorWidgetsOfSelectEditFull.h
+  taiEditorWidgetsOfSelectEditFast.h
 
   taiObjDiffBrowserFilter.h
   taiObjDiffBrowser.h
 
-  iUserDataDataHost.h
+  taiEditorWidgetsOfUserData.h
   UserDataDelegate.h
 
   ColorScaleBar.h
@@ -1741,7 +1741,7 @@ set(ta_SRCS_MAKETA
   VESpaceView.cpp
 
   iDataPanel_PtrList.cpp
-  taiTypeItemDataHost.cpp
+  taiEditorWidgetsOfTypeItem.cpp
   NewViewHelper.cpp
   BuiltinTypeDefs.cpp
   taCodeUtils.cpp
@@ -1813,12 +1813,12 @@ set(ta_SRCS_NOMAKETA
   PublishDocsDialog.cpp
   taApplication.cpp
 
-  IDataHost.cpp
-  taiDataHost.cpp
-  taiDataHost_impl.cpp
-  taiDataHostBase.cpp
+  IWidgetHost.cpp
+  taiEditorOfWidgetsMain.cpp
+  taiEditorOfWidgets.cpp
+  taiEditor.cpp
 
-  taiEditDataHost.cpp
+  taiEditorOfWidgetsClass.cpp
   taiChoiceDialog.cpp
   HiLightButton.cpp
   MembSet.cpp
@@ -1896,22 +1896,22 @@ set(ta_SRCS_NOMAKETA
   SynchronousNetRequest.cpp
   taiDataDelegate.cpp
 
-  iSelectEditDataHostBase.cpp
+  taiEditorWidgetsOfSelectEditBase.cpp
   SelectEditDelegate.cpp
-  iSelectEditDataHost.cpp
-  iSelectEditDataHost2.cpp
-  gpiMultiEditDataHost.cpp
-  gpiListDataHost.cpp
-  gpiCompactListDataHost.cpp
-  gpiArrayEditDataHost.cpp
+  taiEditorWidgetsOfSelectEditFull.cpp
+  taiEditorWidgetsOfSelectEditFast.cpp
+  taiEditorWidgetsMulti.cpp
+  taiEditorWidgetsOfList.cpp
+  taiEditorWidgetsOfListCompact.cpp
+  taiEditorWidgetsOfArray.cpp
   SArgEditDataHost.cpp
-  DocEditDataHost.cpp
+  taiEditorWidgetsDoc.cpp
 
   iRegexpDialogPopulator.cpp
   iRegexpDialog.cpp
   taiRegexpField.cpp
 
-  taiStringDataHost.cpp
+  taiEditorOfString.cpp
   taiWizardDataHost.cpp
   iHostDialog.cpp
   EditDataPanel.cpp
@@ -1987,7 +1987,7 @@ set(ta_SRCS_NOMAKETA
   iProgramGroupPanel.cpp
   iProgramPanel.cpp
   iProgramToolBar.cpp
-  iProgramCtrlDataHost.cpp
+  taiEditorWidgetsOfProgramCtrl.cpp
   iProgramCtrlPanel.cpp
 
   iSelectEditPanel.cpp
@@ -1996,7 +1996,7 @@ set(ta_SRCS_NOMAKETA
   taiObjDiffBrowserFilter.cpp
   taiObjDiffBrowser.cpp
 
-  iUserDataDataHost.cpp
+  taiEditorWidgetsOfUserData.cpp
   iUserDataPanel.cpp
 
   ColorScaleBar.cpp

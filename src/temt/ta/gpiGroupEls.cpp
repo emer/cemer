@@ -24,13 +24,13 @@
 
 
 
-gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_, 
+gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_, 
   taiData* par, QWidget* gui_parent_, int flags_)
 : gpiListEls(rt,ft,lst, typ_, host_,par, gui_parent_, flags_)
 {
 }
 
-gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IDataHost* host_, taiData* par,
+gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_) // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 : gpiListEls(existing_menu, gp, tp, host_,par, gui_parent_, flags_)
 {

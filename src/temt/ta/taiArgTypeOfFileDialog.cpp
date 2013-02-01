@@ -37,7 +37,7 @@ cssEl* taiArgTypeOfFileDialog::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfFileDialog::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiArgTypeOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par,
                                                QWidget* gui_parent_, int flags_, MemberDef*) {
   String file_act = GetOptionAfter("FILE_DIALOG_");
   taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;

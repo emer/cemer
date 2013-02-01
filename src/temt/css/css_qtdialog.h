@@ -21,7 +21,7 @@
 
 #include "css_qttype.h"
 
-#include <taiEditDataHost>
+#include <taiEditorOfWidgetsClass>
 #include <taiType_List>
 
 class cssClassInst;
@@ -33,7 +33,7 @@ class taiType_List;
 class cssClassInst;
 class taiArgType;
 
-class CSS_API cssiEditDialog : public taiEditDataHost {
+class CSS_API cssiEditDialog : public taiEditorOfWidgetsClass {
   // edit dialog for editing css classes
 public:
   static cssiType*	GetTypeFromEl(cssEl* el, bool read_only);

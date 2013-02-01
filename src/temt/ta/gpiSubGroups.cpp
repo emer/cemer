@@ -21,7 +21,7 @@
 #include <taMisc>
 
 
-gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IDataHost* host_, 
+gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, 
   taiData* par,	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -33,7 +33,7 @@ gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, Typ
 }
 
 gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_,
-	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   ths = gp;
