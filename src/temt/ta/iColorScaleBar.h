@@ -23,7 +23,7 @@
 #endif
 
 // member includes:
-#include <Widget_List>
+#include <iWidget_List>
 #include <iColorBar>
 
 // declare all other types mentioned but not required to include:
@@ -65,7 +65,7 @@ public:
   QAbstractButton* 	max_incr;	// increment maximum button
   QAbstractButton* 	max_decr;	// decrement maximum button
 
-  Widget_List	  	padlist; 	// #IGNORE list of color pads for palletes
+  iWidget_List	  	padlist; 	// #IGNORE list of color pads for palletes
 
   void			emit_scaleValueChanged();
   virtual void SetRange(float val);

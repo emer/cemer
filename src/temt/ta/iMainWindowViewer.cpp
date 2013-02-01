@@ -43,7 +43,7 @@
 #include <T3DataViewer>
 #include <iHelpBrowser>
 #include <iTextBrowser>
-#include <Widget_List>
+#include <iWidget_List>
 #include <iRect>
 
 #include <taMisc>
@@ -1532,7 +1532,7 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
   windowMenu->Reset();
 
   // Populate with current windows.
-  Widget_List wl;
+  iWidget_List wl;
   taiMisc::GetWindowList(wl);
   for (int i = 0; i < wl.size; ++i) {
     QWidget* wid = wl.FastEl(i);
@@ -1555,7 +1555,7 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
 
 void iMainWindowViewer::windowActivate(int win) {
   // populate with current windows -- should correspond to the ones enumerated
-  Widget_List wl;
+  iWidget_List wl;
   taiMisc::GetWindowList(wl);
   QWidget* wid = wl.PosSafeEl(win);
   if (!wid) return;

@@ -18,7 +18,7 @@
 #include <iCookieJar>
 #include <iDialogTextEdit>
 #include <iDialogChoice>
-#include <Widget_List>
+#include <iWidget_List>
 #include <EditDataPanel>
 #include <TopLevelViewer>
 #include <iMainWindowViewer>
@@ -194,7 +194,7 @@ void taiMisc::CheckConfigResult_(bool ok) {
   }
 }
 
-void taiMisc::GetWindowList(Widget_List& rval) {
+void taiMisc::GetWindowList(iWidget_List& rval) {
 //note: try the app's thoughts on this...
   foreach(QWidget* widget, QApplication::topLevelWidgets()) {
     if (!widget->isHidden())
