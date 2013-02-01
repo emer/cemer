@@ -14,13 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "TestWizard.h"
-#include <taiEditorWidgetsOfWizard>
+#include <taiEditorOfWizard>
 
 
 void TestWizard::LaunchWizard() {
 
   TypeDef* td = GetTypeDef();
-  taiEditorWidgetsOfWizard* dlg = new taiEditorWidgetsOfWizard(this, td, false); // false = not read only
+  taiEditorOfWizard* dlg = new taiEditorOfWizard(this, td, false); // false = not read only
   dlg->Constr("Wizard");
   if(dlg->Edit(true)) {
   }

@@ -14,12 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "EditDataPanel.h"
-#include <taiEditorWidgetsOfClass>
+#include <taiEditorOfClass>
 
 #include <taiMisc>
 
 
-EditDataPanel::EditDataPanel(taiEditorWidgetsOfClass* owner_, taiSigLink* dl_)
+EditDataPanel::EditDataPanel(taiEditorOfClass* owner_, taiSigLink* dl_)
 :inherited(dl_)
 {
   owner = owner_;
@@ -82,7 +82,7 @@ void EditDataPanel::UpdatePanel() {
 
 void EditDataPanel::Render_impl() {
   inherited::Render_impl();
-  taiEditorWidgetsOfClass* edh = editDataHost();
+  taiEditorOfClass* edh = editDataHost();
   if (edh->state >= taiEditorWidgetsMain::CONSTRUCTED) return;
 
   edh->ConstrDeferred();
@@ -104,7 +104,7 @@ QWidget* EditDataPanel::firstTabFocusWidget() {
 
 void EditDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  taiEditorWidgetsOfClass* edh = editDataHost();
+  taiEditorOfClass* edh = editDataHost();
   if(edh && edh->state >= taiEditorWidgetsMain::CONSTRUCTED)  {
     edh->GetButtonImage();              // update buttons whenver we show!
   }

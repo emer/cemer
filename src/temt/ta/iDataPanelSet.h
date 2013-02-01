@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiEditorWidgetsOfClass; //
+class taiEditorOfClass; //
 class QStackedLayout; //
 class iDataPanelFrame; //
 class QHBoxLayout; // 
@@ -40,7 +40,7 @@ public:
   QHBoxLayout*            layButtons;
   QButtonGroup*             buttons; // one QPushButton for each (note: not a widget)
   QStackedLayout*           layMinibar; // if any panels use the minibar, created
-  taiEditorWidgetsOfClass*      method_box_mgr; // edh object that manages the method box!
+  taiEditorOfClass*      method_box_mgr; // edh object that manages the method box!
 
   void                  setPanelAvailable(iDataPanel* pn); // dynamically show/hide a btn/pn
 
@@ -49,7 +49,7 @@ public:
   void                  AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
   void                  AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
   void                  SetMethodBox(QWidget* meths,
-                                     taiEditorWidgetsOfClass* mgr);
+                                     taiEditorOfClass* mgr);
   // sets a box that contains methods, on bottom, along with manager of those buttons
   void                  UpdateMethodButtons();
   // update the method buttons, by calling on manager

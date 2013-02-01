@@ -617,7 +617,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
 }
 
 void iProgramEditor::DoSelectForEdit(QAction* act) {
-//note: this routine is duplicated in the taiEditorWidgetsOfClass
+//note: this routine is duplicated in the taiEditorOfClass
 
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;

@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiEditorWidgetsDoc; // #IGNORE
+class taiEditorOfDoc; // #IGNORE
 class taDoc; //
 
 
@@ -33,7 +33,7 @@ class TA_API iDocEditDataPanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)
 public:
-  taiEditorWidgetsDoc*      de; // the doc editor
+  taiEditorOfDoc*      de; // the doc editor
 
   taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
   override String       panel_type() const {return "Doc Source";}

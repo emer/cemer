@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "iSelectEditPanel.h"
-#include <taiEditorWidgetsOfSelectEditFull>
-#include <taiEditorWidgetsOfSelectEditFast>
+#include <taiEditorOfSelectEditFull>
+#include <taiEditorOfSelectEditFast>
 #include <iDataPanelSet>
 
 #include <taMisc>
@@ -30,10 +30,10 @@ iSelectEditPanel::iSelectEditPanel(taiSigLink* dl_)
   if (se_) {
     switch (taMisc::select_edit_style) {
     case taMisc::ES_ALL_CONTROLS:
-      se = new taiEditorWidgetsOfSelectEditFull(se_, se_->GetTypeDef());
+      se = new taiEditorOfSelectEditFull(se_, se_->GetTypeDef());
       break;
     case taMisc::ES_ACTIVE_CONTROL:
-      se = new taiEditorWidgetsOfSelectEditFast(se_, se_->GetTypeDef());
+      se = new taiEditorOfSelectEditFast(se_, se_->GetTypeDef());
       break;
     }
     if (taMisc::color_hints & taMisc::CH_EDITS) {

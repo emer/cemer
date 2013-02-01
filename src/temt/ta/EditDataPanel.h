@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class iColor;
-class taiEditorWidgetsOfClass; // #IGNORE
+class taiEditorOfClass; // #IGNORE
 
 
 TypeDef_Of(EditDataPanel);
@@ -32,10 +32,10 @@ TypeDef_Of(EditDataPanel);
 class TA_API EditDataPanel: public iDataPanelFrame {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for any edit dialog-like data panel
 INHERITED(iDataPanelFrame)
-friend class taiEditorWidgetsOfClass;
+friend class taiEditorOfClass;
 public:
   iColor*               bgcol; // temp holding spot
-  taiEditorWidgetsOfClass*      editDataHost() {return owner;}
+  taiEditorOfClass*      editDataHost() {return owner;}
   override String       panel_type() const; // this string is on the subpanel button for this panel
   override void         Closing(CancelOp& cancel_op);
   override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default
@@ -43,14 +43,14 @@ public:
   override void         UpdatePanel(); // always do it, even when hidden; the edit sorts it out
   override QWidget*     firstTabFocusWidget();
 
-  EditDataPanel(taiEditorWidgetsOfClass* owner_, taiSigLink* dl_);
+  EditDataPanel(taiEditorOfClass* owner_, taiSigLink* dl_);
   ~EditDataPanel();
 
 public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_EditDataPanel;}
 
 protected:
-  taiEditorWidgetsOfClass*      owner;
+  taiEditorOfClass*      owner;
   override void         UpdatePanel_impl(); // the refresh guy!
   override void         Render_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);

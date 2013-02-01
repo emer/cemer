@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiEditorWidgetsOfSelectEditFast;
+class taiEditorOfSelectEditFast;
 class SelectEdit;
 class EditMbrItem;
 
@@ -32,7 +32,7 @@ INHERITED(taiDataDelegate)
 Q_OBJECT
 public:
   SelectEdit*           sele;
-  taiEditorWidgetsOfSelectEditFast* sedh;
+  taiEditorOfSelectEditFast* sedh;
 
   override void         GetImage() const; // callable from edh any time
   override void         GetValue() const; // callable from edh
@@ -43,7 +43,7 @@ public:
   override QWidget* createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-  SelectEditDelegate(SelectEdit* sele_, taiEditorWidgetsOfSelectEditFast* sedh_);
+  SelectEditDelegate(SelectEdit* sele_, taiEditorOfSelectEditFast* sedh_);
 
  protected:
   mutable EditMbrItem*   emi;

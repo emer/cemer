@@ -19,7 +19,7 @@
 #include <taiMember>
 #include <taiEditTableWidget>
 
-#include <taiEditorWidgetsOfSelectEditFast>
+#include <taiEditorOfSelectEditFast>
 #include <taiDataDelegate>
 
 #include <QTableWidget>
@@ -35,7 +35,7 @@ QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,
 }
 
 SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
-  taiEditorWidgetsOfSelectEditFast* sedh_)
+  taiEditorOfSelectEditFast* sedh_)
 :inherited(sedh_)
 {
   sele = sele_;

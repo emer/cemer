@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditOfArray.h"
-#include <taiEditorWidgetsOfArray>
+#include <taiEditorOfArray>
 
 TypeDef_Of(taArray);
 
@@ -25,6 +25,6 @@ int taiEditOfArray::BidForEdit(TypeDef* td){
   return 0;
 }
 
-taiEditorWidgetsOfClass* taiEditOfArray::CreateDataHost(void* base, bool readonly) {
-  return new taiEditorWidgetsOfArray(base, typ, readonly);
+taiEditorOfClass* taiEditOfArray::CreateDataHost(void* base, bool readonly) {
+  return new taiEditorOfArray(base, typ, readonly);
 }

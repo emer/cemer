@@ -24,7 +24,7 @@
 #include <TypeSpace>
 #include <taBase_PtrList>
 #include <taiEditorWidgetsMain>
-#include <taiEditorWidgetsOfClass>
+#include <taiEditorOfClass>
 #include <iTopLevelWindow_List>
 #include <iFont>
 
@@ -116,8 +116,8 @@ public:
 
 
   static taiHostDialog_List     active_dialogs; // #IGNORE list of active (NoBlock) dialogs
-  static taiEditorWidgetsOfClass_List   active_edits;   // #IGNORE list of active edit dialogs
-  static taiEditorWidgetsOfClass_List   css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
+  static taiEditorOfClass_List   active_edits;   // #IGNORE list of active edit dialogs
+  static taiEditorOfClass_List   css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
   static iTopLevelWindow_List   active_wins; // #IGNORE currently open windows
   static iNetworkAccessManager* net_access_mgr; // #IGNORE network access manager for web browser
 
@@ -154,11 +154,11 @@ public:
   // revert any open edit dialogs for given object
 //  static bool ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
-  static taiEditorWidgetsOfClass* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
+  static taiEditorOfClass* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
-  static taiEditorWidgetsOfClass* FindEditDialog(void* base, bool read_only);
+  static taiEditorOfClass* FindEditDialog(void* base, bool read_only);
   // find an active (non-modal) edit dialog with same read_only state for the object
-  static taiEditorWidgetsOfClass* FindEditPanel(void* base, bool read_only,
+  static taiEditorOfClass* FindEditPanel(void* base, bool read_only,
     iMainWindowViewer* not_in_win = NULL);
 
   static void   Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up

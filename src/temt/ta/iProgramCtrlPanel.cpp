@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iProgramCtrlPanel.h"
-#include <taiEditorWidgetsOfProgramCtrl>
+#include <taiEditorOfProgramCtrl>
 #include <Program>
 #include <iDataPanelSet>
 
@@ -29,7 +29,7 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiSigLink* dl_)
   Program* prog_ = prog();
   pc = NULL;
   if (prog_) {
-    pc = new taiEditorWidgetsOfProgramCtrl(prog_);
+    pc = new taiEditorOfProgramCtrl(prog_);
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bool ok;
       iColor bgcol = prog_->GetEditColorInherit(ok);

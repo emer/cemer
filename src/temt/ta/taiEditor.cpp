@@ -135,12 +135,12 @@ void taiEditor::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destr
   }
 }
 
-void taiEditor::Cancel() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
+void taiEditor::Cancel() { //note: taiEditorOfClass takes care of cancelling panels
   state = CANCELED;
   Cancel_impl();
 }
 
-void taiEditor::Cancel_impl() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
+void taiEditor::Cancel_impl() { //note: taiEditorOfClass takes care of cancelling panels
   if (dialog) {
     dialog->dismiss(false);
   }

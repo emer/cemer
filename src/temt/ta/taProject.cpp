@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taProject.h"
-#include <taiEditorWidgetsOfClass>
+#include <taiEditorOfClass>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 #include <taiMiscCore>
@@ -45,7 +45,7 @@ using namespace std;
 
 
 #ifdef TA_GUI
-class SimLogEditDialog: public taiEditorWidgetsOfClass {
+class SimLogEditDialog: public taiEditorOfClass {
 public:
   override bool ShowMember(MemberDef* md) const {
     // just show a small subset of the members
@@ -59,7 +59,7 @@ public:
   override void Constr_Methods_impl() { }       // suppress methods
 
   SimLogEditDialog(void* base, TypeDef* tp, bool read_only_,
-        bool modal_) : taiEditorWidgetsOfClass(base, tp, read_only_, modal_) { };
+        bool modal_) : taiEditorOfClass(base, tp, read_only_, modal_) { };
 };
 #endif
 

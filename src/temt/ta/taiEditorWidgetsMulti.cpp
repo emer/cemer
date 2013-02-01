@@ -45,7 +45,7 @@ void taiEditorWidgetsMulti::SetMultiSize(int rows, int cols) {
 
 void taiEditorWidgetsMulti::ClearBody_impl() {
   ClearMultiBody_impl();
-  taiEditorWidgetsOfClass::ClearBody_impl();
+  taiEditorOfClass::ClearBody_impl();
 }
 
 void taiEditorWidgetsMulti::ClearMultiBody_impl() {
@@ -63,7 +63,7 @@ void taiEditorWidgetsMulti::Constr_Box() {
   splBody->setOrientation(Qt::Vertical);
   vblDialog->addWidget(splBody, 1); // gets all the space
 
-  taiEditorWidgetsOfClass::Constr_Box();
+  taiEditorOfClass::Constr_Box();
 
   scrMulti = new iScrollArea(splBody);
   QPalette pal = scrMulti->viewport()->palette();

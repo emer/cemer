@@ -56,7 +56,7 @@ void taiMemberDefMenu::GetMenu() {
   // if the target type is member-containing type, then optionally filter members by visibility of its host
   if (targ_typ == typ) {
     if ((md != NULL)  && (md->HasOption("TYPESHOW_VISIBLE"))) {
-      taiEditorWidgetsOfClass* dlg = taiM->FindEdit(menubase, typ); //NOTE: finds any, in any window or viewer
+      taiEditorOfClass* dlg = taiM->FindEdit(menubase, typ); //NOTE: finds any, in any window or viewer
       if (dlg != NULL) {
         show = dlg->show;
       }

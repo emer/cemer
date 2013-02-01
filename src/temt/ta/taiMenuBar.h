@@ -36,7 +36,7 @@ public:
   override void         AddSep(bool new_radio_grp = false) {} // no seps or groups allowed in a menubar
 
   taiMenuBar(int font_spec_, TypeDef* typ_, IWidgetHost* host,
-      taiData* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorWidgetsOfClass
+      taiData* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorOfClass
   taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by iDataViewer
   ~taiMenuBar();
 protected:

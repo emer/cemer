@@ -166,7 +166,7 @@ void taSigLinkBase::FillContextMenu_impl(taiActions* menu) {
   // add the BUTTON and MENU_BUTTON items
   cnt = 0;
   taiMenu_List ta_menus;
-  String men_nm = "Misc";  //see note in taiEditorWidgetsOfClass::SetCurMenuButton
+  String men_nm = "Misc";  //see note in taiEditorOfClass::SetCurMenuButton
   String on_nm;
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);

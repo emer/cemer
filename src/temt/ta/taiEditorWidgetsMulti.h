@@ -17,14 +17,14 @@
 #define taiEditorWidgetsMulti_h 1
 
 // parent includes:
-#include <taiEditorWidgetsOfClass>
+#include <taiEditorOfClass>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiEditorWidgetsMulti: public taiEditorWidgetsOfClass {
-INHERITED(taiEditorWidgetsOfClass)
+class TA_API taiEditorWidgetsMulti: public taiEditorOfClass {
+INHERITED(taiEditorOfClass)
 public:
   QWidget*              multi; // outer container
     QScrollArea*        scrMulti;               // scrollbars for the multi items
@@ -37,11 +37,11 @@ public:
 
   override void ClearBody_impl();       // clear body data for reshowing
   void          AddMultiRowName(int row, const String& name, const String& desc)
-    {taiEditorWidgetsOfClass::AddMultiRowName(multi_body, row, name, desc);} // adds a label item in first column of multi data area
+    {taiEditorOfClass::AddMultiRowName(multi_body, row, name, desc);} // adds a label item in first column of multi data area
   void          AddMultiColName(int col, const String& name, const String& desc)
-    {taiEditorWidgetsOfClass::AddMultiColName(multi_body, col, name, desc);} // adds descriptive column text to top of a multi data item
+    {taiEditorOfClass::AddMultiColName(multi_body, col, name, desc);} // adds descriptive column text to top of a multi data item
   void          AddMultiData(int row, int col, QWidget* data)
-    {taiEditorWidgetsOfClass::AddMultiData(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
+    {taiEditorOfClass::AddMultiData(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
   override void         SetMultiSize(int rows, int cols); //note: can never shrink
 protected:
   int           multi_rows;

@@ -114,7 +114,7 @@ const iColor taiEditorWidgets::colorOfRow(int row) const {
   }
 }
 
-void taiEditorWidgets::Cancel_impl() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
+void taiEditorWidgets::Cancel_impl() { //note: taiEditorOfClass takes care of cancelling panels
   inherited::Cancel_impl();
   // delete any methods
   if (frmMethButtons) {
@@ -162,7 +162,7 @@ taBase* taiEditorWidgets::GetMethBase_Flat(int) {
 }
 
 void taiEditorWidgets::Insert_Methods() {
-  //NOTE: for taiEditorWidgetsOfClass, menus are always put in widget() even in deferred
+  //NOTE: for taiEditorOfClass, menus are always put in widget() even in deferred
   if (frmMethButtons && !frmMethButtons->parentWidget()) {
     // meth buttons always at bottom of inner layout
     vblDialog->addSpacing(2);

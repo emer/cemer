@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEdit.h"
-#include <taiEditorWidgetsOfClass>
+#include <taiEditorOfClass>
 
 #include <taiMisc>
 #include <taMisc>
@@ -24,14 +24,14 @@ void taiEdit::AddEdit(TypeDef* td) {
   InsertThisIntoBidList(td->ie);
 }
 
-taiEditorWidgetsOfClass* taiEdit::CreateDataHost(void* base, bool read_only) {
-  return new taiEditorWidgetsOfClass(base, typ, read_only);
+taiEditorOfClass* taiEdit::CreateDataHost(void* base, bool read_only) {
+  return new taiEditorOfClass(base, typ, read_only);
 }
 
 int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
   // get currently active win -- we will only look in any other window
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  taiEditorWidgetsOfClass* host = taiMisc::FindEdit(base, cur_win);
+  taiEditorOfClass* host = taiMisc::FindEdit(base, cur_win);
   if (!host) {
     host = CreateDataHost(base, readonly);
 
@@ -61,7 +61,7 @@ int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
 int taiEdit::EditDialog(void* base, bool read_only, bool modal,
                         const iColor& bgcol, int min_width, int min_height)
 {
-  taiEditorWidgetsOfClass* host = NULL;
+  taiEditorOfClass* host = NULL;
   if (!modal) {
     host = taiMisc::FindEditDialog(base, read_only);
     if (host) {
@@ -90,7 +90,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
 EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
    bool read_only, const iColor& bgcol)
 {
-  taiEditorWidgetsOfClass* host = CreateDataHost(base, read_only);
+  taiEditorOfClass* host = CreateDataHost(base, read_only);
   if (taMisc::color_hints & taMisc::CH_EDITS) {
     if (&bgcol == &def_color) {
       bool ok = false;
@@ -113,7 +113,7 @@ EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
 EditDataPanel* taiEdit::EditPanel(taiSigLink* link, void* base,
    bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol)
 {
-  taiEditorWidgetsOfClass* host = NULL;
+  taiEditorOfClass* host = NULL;
   host = taiMisc::FindEditPanel(base, read_only, not_in_win);
   if (host) {
     host->Raise();
