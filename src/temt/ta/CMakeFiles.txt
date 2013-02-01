@@ -600,15 +600,15 @@ set(ta_HEADS_MAKETA_LOCAL
   taiMemberOfProgVarIntVal.h
 
   taiMethodOfActuator.h
-  taiStreamArgType.h
-  taiTokenPtrArgType.h
-  taiTypePtrArgType.h
-  taiMemberPtrArgType.h
-  taiMethodPtrArgType.h
-  taiFileDialogArgType.h
-  gpiTAPtrArgType.h
-  gpiInObjArgType.h
-  gpiFromGpArgType.h
+  taiArgTypeOfStream.h
+  taiArgTypeOfTokenPtr.h
+  taiArgTypeOfTypePtr.h
+  taiArgTypeOfMemberPtr.h
+  taiArgTypeOfMethodPtr.h
+  taiArgTypeOfFileDialog.h
+  taiArgTypeOftaBasePtr.h
+  taiArgTypeOfListOnObjBasePtr.h
+  taiArgTypeOfFromGroup.h
 
   taiEditOfDefault.h
   taiEditOfList.h
@@ -627,10 +627,10 @@ set(ta_HEADS_MAKETA_LOCAL
   tabWizardViewType.h
   tabSelectEditViewType.h
 
-  taiProjTemplateElArgType.h
+  taiArgTypeOfProjTemplateEl.h
   tabProgramViewType.h
   tabProgramGroupViewType.h
-  taiProgLibElArgType.h
+  taiArgTypeOfProgLibEl.h
   taiMethodOfStepButton.h
 
   taGuiWidget.h
@@ -1656,15 +1656,15 @@ set(ta_SRCS_MAKETA
   taiMemberOfProgVarIntVal.cpp
 
   taiMethodOfActuator.cpp
-  taiStreamArgType.cpp
-  taiTokenPtrArgType.cpp
-  taiTypePtrArgType.cpp
-  taiMemberPtrArgType.cpp
-  taiMethodPtrArgType.cpp
-  taiFileDialogArgType.cpp
-  gpiTAPtrArgType.cpp
-  gpiInObjArgType.cpp
-  gpiFromGpArgType.cpp
+  taiArgTypeOfStream.cpp
+  taiArgTypeOfTokenPtr.cpp
+  taiArgTypeOfTypePtr.cpp
+  taiArgTypeOfMemberPtr.cpp
+  taiArgTypeOfMethodPtr.cpp
+  taiArgTypeOfFileDialog.cpp
+  taiArgTypeOftaBasePtr.cpp
+  taiArgTypeOfListOnObjBasePtr.cpp
+  taiArgTypeOfFromGroup.cpp
 
   taiEditOfDefault.cpp
   taiEditOfList.cpp
@@ -1682,10 +1682,10 @@ set(ta_SRCS_MAKETA
   tabWizardViewType.cpp
   tabSelectEditViewType.cpp
 
-  taiProjTemplateElArgType.cpp
+  taiArgTypeOfProjTemplateEl.cpp
   tabProgramViewType.cpp
   tabProgramGroupViewType.cpp
-  taiProgLibElArgType.cpp
+  taiArgTypeOfProgLibEl.cpp
   taiMethodOfStepButton.cpp
 
   taGuiWidget.cpp

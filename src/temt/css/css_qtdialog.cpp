@@ -30,8 +30,7 @@
 #include <int_Matrix>
 #include <taiMisc>
 #include <iHostDialog>
-#include <taiArgType>
-#include <taiStreamArgType>
+#include <taiArgTypeOfStream>
 #include <taiTokenPtrButton>
 #include <HiLightButton>
 #include <taFiler>
@@ -505,7 +504,7 @@ int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
     // special cases for single args -- can pop up choosers directly instead
     TypeDef* argt = md->arg_types[0];
     if(argt->InheritsFrom(TA_ios) && !md->HasOption("FILE_ARG_EDIT")) {
-      taiStreamArgType* sa = (taiStreamArgType*)type_el.FastEl(0);
+      taiArgTypeOfStream* sa = (taiArgTypeOfStream*)type_el.FastEl(0);
       if (sa->gf == NULL)
 	return cssiEditDialog::Edit(modal_);
       if (sa->arg_typ->InheritsFrom(TA_ostream)) {
