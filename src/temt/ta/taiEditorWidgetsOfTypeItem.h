@@ -17,7 +17,7 @@
 #define taiEditorWidgetsOfTypeItem_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 // member includes:
 #include <TypeItem>
@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 
 
-class TA_API taiEditorWidgetsOfTypeItem: public taiEditorOfWidgetsClass {
+class TA_API taiEditorWidgetsOfTypeItem: public taiEditorWidgetsOfClass {
 // #IGNORE displays data on a TypeItem item
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
 public:
   TypeItem*             ti; // #IGNORE
   TypeItem::TypeInfoKinds          tik;

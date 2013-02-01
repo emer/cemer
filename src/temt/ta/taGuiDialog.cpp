@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiDialog.h"
-#include <taGuiDataHost>
+#include <taGuiEditor>
 #include <Program>
 #include <ProgVar>
 #include <taiIncrField>
@@ -54,7 +54,7 @@ void taGuiDialog::Reset() {
   actions.Reset();
   if(data_host)
     delete data_host;
-  data_host = new taGuiDataHost(this, false, false, NULL); // not modal by default
+  data_host = new taGuiEditor(this, false, false, NULL); // not modal by default
 }
 
 int taGuiDialog::PostDialog(bool modal) {

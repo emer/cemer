@@ -77,8 +77,8 @@ const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
 taiHostDialog_List      taiMisc::active_dialogs;
-taiEditorOfWidgetsClass_List    taiMisc::active_edits;
-taiEditorOfWidgetsClass_List    taiMisc::css_active_edits;
+taiEditorWidgetsOfClass_List    taiMisc::active_edits;
+taiEditorWidgetsOfClass_List    taiMisc::css_active_edits;
 iTopLevelWindow_List    taiMisc::active_wins;
 TypeSpace               taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
@@ -517,7 +517,7 @@ void taiMisc::Quit_impl(CancelOp cancel_op) {
 void taiMisc::ResolveEditChanges(CancelOp& cancel_op) {
   for (int i = 0; i < taiMisc::active_edits.size; ++i) {
     taiEditor* edh = taiMisc::active_edits.FastEl(i);
-    if (!edh || (edh->state != taiEditorOfWidgetsClass::ACTIVE)) continue;
+    if (!edh || (edh->state != taiEditorWidgetsOfClass::ACTIVE)) continue;
     edh->ResolveChanges(cancel_op); // don't need 'discard'
     if (cancel_op == CO_CANCEL) return;
   }
@@ -539,8 +539,8 @@ void taiMisc::Update(taBase* obj) {
 void taiMisc::PurgeDialogs() {
   bool did_purge = false;
   for (int i = active_dialogs.size - 1; i >= 0; --i) {
-    taiEditorOfWidgetsMain* dlg = active_dialogs.FastEl(i);
-    if ((dlg->state & taiEditorOfWidgetsMain::STATE_MASK) >= taiEditorOfWidgetsMain::ACCEPTED) {
+    taiEditorWidgetsMain* dlg = active_dialogs.FastEl(i);
+    if ((dlg->state & taiEditorWidgetsMain::STATE_MASK) >= taiEditorWidgetsMain::ACCEPTED) {
       active_dialogs.RemoveIdx(i);
       did_purge = true;
     }
@@ -591,8 +591,8 @@ void taiMisc::SetWinCursors() {
   if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
-    taiEditorOfWidgetsClass* dlg = active_edits.FastEl(i);
-    if((dlg->root == obj) && (dlg->state == taiEditorOfWidgetsMain::ACTIVE)) {
+    taiEditorWidgetsOfClass* dlg = active_edits.FastEl(i);
+    if((dlg->root == obj) && (dlg->state == taiEditorWidgetsMain::ACTIVE)) {
       dlg->Revert_force();
       got_one = true;
     }
@@ -604,8 +604,8 @@ void taiMisc::SetWinCursors() {
   if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
-    taiEditorOfWidgetsClass* edh = active_edits.FastEl(i);
-    if((edh->root == obj) && (edh->state == taiEditorOfWidgetsMain::ACTIVE)) {
+    taiEditorWidgetsOfClass* edh = active_edits.FastEl(i);
+    if((edh->root == obj) && (edh->state == taiEditorWidgetsMain::ACTIVE)) {
       edh->ReShow_Async(force);
       got_one = true;
     }
@@ -613,15 +613,15 @@ void taiMisc::SetWinCursors() {
   return got_one;
 }*/
 
-taiEditorOfWidgetsClass* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
+taiEditorWidgetsOfClass* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
   //NOTE: not_in_win works as follows:
   // NULL: ok to return any edit (typically used to get show value)
   // !NULL: must get other win that not; used to raise that edit panel to top, so
   //  shouldn't hide the edit panel that invoked the operation
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
-    taiEditorOfWidgetsClass* host = active_edits.FastEl(i);
-    if ((host->root != obj) || (host->state != taiEditorOfWidgetsMain::ACTIVE))
+    taiEditorWidgetsOfClass* host = active_edits.FastEl(i);
+    if ((host->root != obj) || (host->state != taiEditorWidgetsMain::ACTIVE))
       continue;
     if (host->isDialog() && !host->modal)
       return host;
@@ -632,11 +632,11 @@ taiEditorOfWidgetsClass* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_
   return NULL;
 }
 
-taiEditorOfWidgetsClass* taiMisc::FindEditDialog(void* obj, bool read_only_state) {
+taiEditorWidgetsOfClass* taiMisc::FindEditDialog(void* obj, bool read_only_state) {
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
-    taiEditorOfWidgetsClass* host = active_edits.FastEl(i);
-    if ((host->root != obj) || (host->state != taiEditorOfWidgetsMain::ACTIVE))
+    taiEditorWidgetsOfClass* host = active_edits.FastEl(i);
+    if ((host->root != obj) || (host->state != taiEditorWidgetsMain::ACTIVE))
       continue;
     if (host->isDialog() && !host->modal && (host->read_only == read_only_state))
       return host;
@@ -644,7 +644,7 @@ taiEditorOfWidgetsClass* taiMisc::FindEditDialog(void* obj, bool read_only_state
   return NULL;
 }
 
-taiEditorOfWidgetsClass* taiMisc::FindEditPanel(void* obj, bool read_only,
+taiEditorWidgetsOfClass* taiMisc::FindEditPanel(void* obj, bool read_only,
   iMainWindowViewer* not_in_win)
 {
   //NOTE: not_in_win works as follows:
@@ -653,8 +653,8 @@ taiEditorOfWidgetsClass* taiMisc::FindEditPanel(void* obj, bool read_only,
   //  shouldn't hide the edit panel that invoked the operation
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
-    taiEditorOfWidgetsClass* host = active_edits.FastEl(i);
-    if ((host->root != obj) || (host->state != taiEditorOfWidgetsMain::ACTIVE))
+    taiEditorWidgetsOfClass* host = active_edits.FastEl(i);
+    if ((host->root != obj) || (host->state != taiEditorWidgetsMain::ACTIVE))
       continue;
     if (host->isPanel() && (host->read_only == read_only) &&
       (host->dataPanel()->window() != not_in_win)) // if niw NULL, then will always be true

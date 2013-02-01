@@ -34,7 +34,7 @@ class DataTable; //
 class taGuiWidget; // 
 class taGuiLayout; // 
 class taGuiAction; // 
-class taGuiDataHost; //
+class taGuiEditor; //
 class QAction; //
 
 
@@ -44,7 +44,7 @@ class TA_API taGuiDialog : public taNBase {
   // ##CAT_Gui a gui dialog object -- makes a gui dialog that can be constructed with simple method calls to display a variety of gui elements (widgets) -- useful for building custom interface elements such as wizards
 INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
-  taGuiDataHost*        data_host; // #IGNORE the dialog window
+  taGuiEditor*        data_host; // #IGNORE the dialog window
   String                prompt;    // main text at top of dialog window
   String                win_title; // window title
   int                   width;     // min width of dialog

@@ -327,8 +327,8 @@ void iProgramEditor::Controls_Add() {
 //obs      QLabel* lbl = taiM->NewLabel(, body);
       String name;
       String desc;
-      taiEditorOfWidgetsMain::GetName(md, name, desc);
-      iLabel* lbl = taiEditorOfWidgetsMain::MakeInitEditLabel(name, body,
+      taiEditorWidgetsMain::GetName(md, name, desc);
+      iLabel* lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, body,
         ctrl_size,  desc, mb_dat,
         this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
 
@@ -606,7 +606,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   if (sel_item_dat) {
     sel_item_mbr = sel_item_dat->mbr;
     sel_item_base = sel_item_dat->Base();
-    taiEditorOfWidgetsMain::DoFillLabelContextMenu_SelEdit(menu, last_id,
+    taiEditorWidgetsMain::DoFillLabelContextMenu_SelEdit(menu, last_id,
       sel_item_base, sel_item_mbr, body,
     this, SLOT(DoSelectForEdit(QAction*)));
   }
@@ -617,7 +617,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
 }
 
 void iProgramEditor::DoSelectForEdit(QAction* act) {
-//note: this routine is duplicated in the taiEditorOfWidgetsClass
+//note: this routine is duplicated in the taiEditorWidgetsOfClass
 
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
@@ -660,7 +660,7 @@ void iProgramEditor::Refresh() {
 
 void iProgramEditor::setEditBgColor(const iColor& value) {
   bg_color = value;
-  taiEditorOfWidgetsMain::MakeDarkBgColor(bg_color, bg_color_dark);
+  taiEditorWidgetsMain::MakeDarkBgColor(bg_color, bg_color_dark);
   body->setColors(bg_color, bg_color_dark);
 }
 

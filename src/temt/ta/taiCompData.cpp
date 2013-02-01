@@ -94,18 +94,18 @@ void taiCompData::AddChildMember(MemberDef* md) {
   // get caption
   String name;
   String desc;
-  taiEditorOfWidgetsMain::GetName(md, name, desc);
-  iLabel* lbl = taiEditorOfWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
+  taiEditorWidgetsMain::GetName(md, name, desc);
+  iLabel* lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
   lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
 
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(SigEmitNotify(taiData*)),
           this, SLOT(ChildSigEmit(taiData*)) );
 
-  // check for a compatible taiEditorOfWidgetsMain, and if so, connect context menu
+  // check for a compatible taiEditorWidgetsMain, and if so, connect context menu
   if (host) {
 
-    taiEditorOfWidgetsMain* tadh = dynamic_cast<taiEditorOfWidgetsMain*>((QObject*)host->This());
+    taiEditorWidgetsMain* tadh = dynamic_cast<taiEditorWidgetsMain*>((QObject*)host->This());
     if (tadh) {
       connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
         tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));

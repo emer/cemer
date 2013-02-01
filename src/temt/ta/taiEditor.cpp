@@ -135,12 +135,12 @@ void taiEditor::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destr
   }
 }
 
-void taiEditor::Cancel() { //note: taiEditorOfWidgetsClass takes care of cancelling panels
+void taiEditor::Cancel() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
   state = CANCELED;
   Cancel_impl();
 }
 
-void taiEditor::Cancel_impl() { //note: taiEditorOfWidgetsClass takes care of cancelling panels
+void taiEditor::Cancel_impl() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
   if (dialog) {
     dialog->dismiss(false);
   }
@@ -184,7 +184,7 @@ void taiEditor::Constr(const char* aprompt, const char* win_title,
 
 void taiEditor::ConstrDeferred() {
   if (state != DEFERRED1) {
-    taMisc::Error("taiEditorOfWidgetsMain::ConstrDeferred2: expected host to be in state DEFERRED1");
+    taMisc::Error("taiEditorWidgetsMain::ConstrDeferred2: expected host to be in state DEFERRED1");
     return;
   }
   Constr_impl();
@@ -352,8 +352,8 @@ int taiEditor::Edit(bool modal_, int min_width, int min_height) {
   if(min_height > 0)
     dialog->setMinimumHeight(min_height);
   //note: following is hack from rebasing
-  if (!modal && (GetTypeDef()->InheritsFrom(&TA_taiEditorOfWidgetsMain))) {
-    taiMisc::active_dialogs.AddUnique((taiEditorOfWidgetsMain*)this); // add to the list of active dialogs
+  if (!modal && (GetTypeDef()->InheritsFrom(&TA_taiEditorWidgetsMain))) {
+    taiMisc::active_dialogs.AddUnique((taiEditorWidgetsMain*)this); // add to the list of active dialogs
   }
   state = ACTIVE;
   int rval = dialog->post(modal);

@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiEditorOfWidgetsClass_h
-#define taiEditorOfWidgetsClass_h 1
+#ifndef taiEditorWidgetsOfClass_h
+#define taiEditorWidgetsOfClass_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsMain>
+#include <taiEditorWidgetsMain>
 #include <taPtrList>
 
 // member includes:
@@ -41,12 +41,12 @@ class MembSet_List; //
 class taiMenuBar; //
 class QAction; //
 
-TypeDef_Of(taiEditorOfWidgetsClass);
+TypeDef_Of(taiEditorWidgetsOfClass);
 
-class TA_API taiEditorOfWidgetsClass : public taiEditorOfWidgetsMain {
+class TA_API taiEditorWidgetsOfClass : public taiEditorWidgetsMain {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
   Q_OBJECT
-INHERITED(taiEditorOfWidgetsMain)
+INHERITED(taiEditorWidgetsMain)
 friend class EditDataPanel;
 public:
   enum DefMembSet { // keys for default members sets -- always created
@@ -92,10 +92,10 @@ public:
 
   bool                  SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
 
-  taiEditorOfWidgetsClass(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
+  taiEditorWidgetsOfClass(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);
-  taiEditorOfWidgetsClass()             { };
-  ~taiEditorOfWidgetsClass();
+  taiEditorWidgetsOfClass()             { };
+  ~taiEditorWidgetsOfClass();
 
 
   override int          Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
@@ -109,7 +109,7 @@ public:
   void                  SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void          SetCurMenu_Name(String men_nm); // sets or creates the cur_menu -- leave blank for implicit ("Actions")
   virtual void          SetCurMenuButton(MethodDef* md);
-  override void         Raise() {if (isPanel()) DoRaise_Panel(); else taiEditorOfWidgetsMain::Raise();}
+  override void         Raise() {if (isPanel()) DoRaise_Panel(); else taiEditorWidgetsMain::Raise();}
   override void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
   override void         Cancel_impl();
@@ -119,7 +119,7 @@ public: // routines for the taiDelegate style of edit host
   virtual void          GetImage_Item(int row) {} // called from GetImage and ed->GetValue
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  override TypeDef*     GetTypeDef() const {return &TA_taiEditorOfWidgetsClass;}
+  override TypeDef*     GetTypeDef() const {return &TA_taiEditorWidgetsOfClass;}
 public slots:
 // IWidgetHost i/f
   override iMainWindowViewer* viewerWindow() const;
@@ -170,6 +170,6 @@ protected slots:
   virtual void          bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 
-typedef taPtrList<taiEditorOfWidgetsClass> taiEditorOfWidgetsClass_List; // #IGNORE
+typedef taPtrList<taiEditorWidgetsOfClass> taiEditorWidgetsOfClass_List; // #IGNORE
 
-#endif // taiEditorOfWidgetsClass_h
+#endif // taiEditorWidgetsOfClass_h

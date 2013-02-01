@@ -17,7 +17,7 @@
 #define taiEditorWidgetsOfProgramCtrl_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 #include <IRefListClient>
 
 // member includes:
@@ -28,9 +28,9 @@ class Program;
 
 TypeDef_Of(taiEditorWidgetsOfProgramCtrl);
 
-class TA_API taiEditorWidgetsOfProgramCtrl : public taiEditorOfWidgetsClass, public virtual IRefListClient {
+class TA_API taiEditorWidgetsOfProgramCtrl : public taiEditorWidgetsOfClass, public virtual IRefListClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
   Q_OBJECT
 public: //
 // We use sets: 0:name/desc; 1: gp guys (ex step); set2: args; set3: vars

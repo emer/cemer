@@ -13,26 +13,26 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "SArgEditDataHost.h"
+#include "taiEditorWidgetsOfSArg.h"
 #include <SArg_Array>
 #include <MemberDef>
 #include <taiType>
 
 
-SArgEditDataHost::SArgEditDataHost(void* base, TypeDef* tp,  bool read_only_,
+taiEditorWidgetsOfSArg::taiEditorWidgetsOfSArg(void* base, TypeDef* tp,  bool read_only_,
   bool modal_, QObject* parent)
 :inherited(base, tp, read_only_, modal_, parent) 
 {
 }
 
-bool SArgEditDataHost::ShowMember(MemberDef* md) const {
+bool taiEditorWidgetsOfSArg::ShowMember(MemberDef* md) const {
   if (md->name == "size")
     return true;
   else
     return inherited::ShowMember(md);
 }
 
-void SArgEditDataHost::Constr_AryData() {
+void taiEditorWidgetsOfSArg::Constr_AryData() {
   SArg_Array* cur_ary = (SArg_Array*)root;
   cur_ary->UpdateAfterEdit();
   MemberDef* eldm = typ->members.FindName("el");

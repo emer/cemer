@@ -17,7 +17,7 @@
 #define taiEditorWidgetsOfUserData_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 // member includes:
 
@@ -27,9 +27,9 @@ class QTableWidget; //
 class QTableWidgetItem; //
 
 
-class TA_API taiEditorWidgetsOfUserData : public taiEditorOfWidgetsClass {
+class TA_API taiEditorWidgetsOfUserData : public taiEditorWidgetsOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
   Q_OBJECT
 public:
   UserDataItem_List*    udil;

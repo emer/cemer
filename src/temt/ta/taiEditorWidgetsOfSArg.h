@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef SArgEditDataHost_h
-#define SArgEditDataHost_h 1
+#ifndef taiEditorWidgetsOfSArg_h
+#define taiEditorWidgetsOfSArg_h 1
 
 // parent includes:
 #include <taiEditorWidgetsOfArray>
@@ -23,17 +23,17 @@
 
 // declare all other types mentioned but not required to include:
 
-class TA_API SArgEditDataHost : public taiEditorWidgetsOfArray {
+class TA_API taiEditorWidgetsOfSArg : public taiEditorWidgetsOfArray {
   // ##NO_INSTANCE
 INHERITED(taiEditorWidgetsOfArray)
 public:
   bool          ShowMember(MemberDef* md) const;
 
-  SArgEditDataHost(void* base, TypeDef* tp, bool read_only_ = false,
+  taiEditorWidgetsOfSArg(void* base, TypeDef* tp, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);
-  SArgEditDataHost()    { };
+  taiEditorWidgetsOfSArg()    { };
 protected:
   override void         Constr_AryData();
 };
 
-#endif // SArgEditDataHost_h
+#endif // taiEditorWidgetsOfSArg_h

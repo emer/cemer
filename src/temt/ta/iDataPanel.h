@@ -59,7 +59,7 @@ friend class iDataPanelSetBase;
 //friend class iDataPanelSet;
 public:
 #ifndef __MAKETA__
-  enum CustomEventType { // note: just copied from taiEditorOfWidgetsMain, not all used
+  enum CustomEventType { // note: just copied from taiEditorWidgetsMain, not all used
     CET_SHOW_PANEL      = QEvent::User + 1,  // to get panel to show
     CET_SHOW_PANEL_FOCUS,  // to get panel to show/focus
   };

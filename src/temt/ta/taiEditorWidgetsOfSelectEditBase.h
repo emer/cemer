@@ -17,15 +17,15 @@
 #define taiEditorWidgetsOfSelectEditBase_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiEditorWidgetsOfSelectEditBase : public taiEditorOfWidgetsClass {
+class TA_API taiEditorWidgetsOfSelectEditBase : public taiEditorWidgetsOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
   Q_OBJECT
 public:
   SelectEdit*   sele;

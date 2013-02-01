@@ -17,7 +17,7 @@
 #define taiEditorWidgetsDoc_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 // member includes:
 
@@ -26,9 +26,9 @@ class QTextEdit;
 class taDoc;
 class QWidget;
 
-class TA_API taiEditorWidgetsDoc: public taiEditorOfWidgetsClass {
+class TA_API taiEditorWidgetsDoc: public taiEditorWidgetsOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit data host for editing raw HTML/wiki text
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
   Q_OBJECT
 public:
   QTextEdit*            tedHtml; // r/w Html tab

@@ -160,7 +160,7 @@ void iDataPanelSet::SetMenu(QWidget* menu) {
   layDetail->insertWidget(0, menu);
 }
 
-void iDataPanelSet::SetMethodBox(QWidget* meths, taiEditorOfWidgetsClass* mgr) {
+void iDataPanelSet::SetMethodBox(QWidget* meths, taiEditorWidgetsOfClass* mgr) {
   meths->setParent(centralWidget());
   layDetail->addWidget(meths);
   method_box_mgr = mgr;

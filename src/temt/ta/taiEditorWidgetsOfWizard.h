@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiWizardDataHost_h
-#define taiWizardDataHost_h 1
+#ifndef taiEditorWidgetsOfWizard_h
+#define taiEditorWidgetsOfWizard_h 1
 
 // parent includes:
-#include <taiEditorOfWidgets>
+#include <taiEditorWidgets>
 
 // member includes:
 #include <MembSet>
@@ -26,10 +26,10 @@
 class taWizard; //
 class QTabWidget; //
 
-class TA_API taiWizardDataHost : public taiEditorOfWidgets {
+class TA_API taiEditorWidgetsOfWizard : public taiEditorWidgets {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages
   Q_OBJECT
-INHERITED(taiEditorOfWidgets)
+INHERITED(taiEditorWidgets)
 public:
   MembSet_List          membs; // one set per page
 
@@ -45,9 +45,9 @@ public:
 //  override bool       eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return
 
-  taiWizardDataHost(taWizard* base, TypeDef* typ_ = NULL,
+  taiEditorWidgetsOfWizard(taWizard* base, TypeDef* typ_ = NULL,
     bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-  ~taiWizardDataHost();
+  ~taiEditorWidgetsOfWizard();
 
 protected:
   String_PArray         page_names; // stores names, or blank if none
@@ -63,4 +63,4 @@ protected:
   override void         Ok_impl();
 };
 
-#endif // taiWizardDataHost_h
+#endif // taiEditorWidgetsOfWizard_h

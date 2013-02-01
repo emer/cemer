@@ -237,8 +237,8 @@ void taiMethodData::UpdateAfter() {
     return;
   // this is for stuff just called from menus, not host
   if ((host == NULL) ||
-    (host->GetTypeDef()->InheritsFrom(&TA_taiEditorOfWidgetsMain) &&
-    (((taiEditorOfWidgetsMain*)host->This())->state != taiEditorOfWidgetsMain::ACTIVE)) )
+    (host->GetTypeDef()->InheritsFrom(&TA_taiEditorWidgetsMain) &&
+    (((taiEditorWidgetsMain*)host->This())->state != taiEditorWidgetsMain::ACTIVE)) )
   {
     if(base == NULL) return;
     taBase* tap = (taBase*)base;

@@ -31,7 +31,7 @@ class TA_API taiEditOfArray : public taiEdit {
 public:
   int           BidForEdit(TypeDef* td);
 protected:
-  override taiEditorOfWidgetsClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance
+  override taiEditorWidgetsOfClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
 #endif // taiEditOfArray_h

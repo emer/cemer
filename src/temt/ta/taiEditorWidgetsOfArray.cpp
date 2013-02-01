@@ -23,7 +23,7 @@
 
 taiEditorWidgetsOfArray::taiEditorWidgetsOfArray(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
-: taiEditorOfWidgetsClass(base, typ_, read_only_, modal_, parent)
+: taiEditorWidgetsOfClass(base, typ_, read_only_, modal_, parent)
 {
   // array items get their own memb, but they are handled by us
   membs.SetMinSize(membs.size + 1);
@@ -35,7 +35,7 @@ taiEditorWidgetsOfArray::~taiEditorWidgetsOfArray() {
 }
 
 void taiEditorWidgetsOfArray::ClearBody_impl() {
-  taiEditorOfWidgetsClass::ClearBody_impl();
+  taiEditorWidgetsOfClass::ClearBody_impl();
 }
 
 bool taiEditorWidgetsOfArray::ShowMember(MemberDef* md) const {
@@ -78,7 +78,7 @@ int taiEditorWidgetsOfArray::Edit() {
 			      "Ok", "Cancel");
     if(rval == 1) return 0;
   }
-  return taiEditorOfWidgetsClass::Edit();
+  return taiEditorWidgetsOfClass::Edit();
 } */
 
 void taiEditorWidgetsOfArray::GetImage_Membs() {

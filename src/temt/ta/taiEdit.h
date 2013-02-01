@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class EditDataPanel; //
-class taiEditorOfWidgetsClass; //
+class taiEditorWidgetsOfClass; //
 class iMainWindowViewer; //
 class taiSigLink; //
 
@@ -58,7 +58,7 @@ public:
   void                  Destroy() {}
 
 protected:
-  virtual taiEditorOfWidgetsClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance, overridden by subclasses
+  virtual taiEditorWidgetsOfClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance, overridden by subclasses
 };
 
 #endif // taiEdit_h

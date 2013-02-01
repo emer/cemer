@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiEditorOfWidgetsClass.h"
+#include "taiEditorWidgetsOfClass.h"
 #include <taiMethodData>
 #include <iCheckBox>
 #include <EditDataPanel>
@@ -42,9 +42,9 @@
 #include <QKeyEvent>
 
 
-taiEditorOfWidgetsClass::taiEditorOfWidgetsClass(void* base, TypeDef* typ_, bool read_only_,
+taiEditorWidgetsOfClass::taiEditorWidgetsOfClass(void* base, TypeDef* typ_, bool read_only_,
         bool modal_, QObject* parent)
-:taiEditorOfWidgetsMain(typ_, read_only_, modal_, parent)
+:taiEditorWidgetsMain(typ_, read_only_, modal_, parent)
 {
   root = base;
   // note: subclass might add more membs, and might set def_size to use them
@@ -82,7 +82,7 @@ taiEditorOfWidgetsClass::taiEditorOfWidgetsClass(void* base, TypeDef* typ_, bool
   //note: don't register for notification until constr starts
 }
 
-taiEditorOfWidgetsClass::~taiEditorOfWidgetsClass() {
+taiEditorWidgetsOfClass::~taiEditorWidgetsOfClass() {
   membs.Reset(); membs.def_size = 0;
   meth_el.Reset();
   taiMisc::active_edits.RemoveEl(this);
@@ -101,7 +101,7 @@ taiEditorOfWidgetsClass::~taiEditorOfWidgetsClass() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiEditorOfWidgetsClass::InitGuiFields(bool virt) {
+void taiEditorWidgetsOfClass::InitGuiFields(bool virt) {
   if (virt) inherited::InitGuiFields();
   cur_menu = NULL;
   cur_menu_but = NULL;
@@ -109,7 +109,7 @@ void taiEditorOfWidgetsClass::InitGuiFields(bool virt) {
 }
 
 
-void taiEditorOfWidgetsClass::AddMethButton(taiMethodData* mth_rep, const String& label) {
+void taiEditorWidgetsOfClass::AddMethButton(taiMethodData* mth_rep, const String& label) {
   QWidget* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
   if(label.nonempty() && but->inherits("QAbstractButton")) {
@@ -117,7 +117,7 @@ void taiEditorOfWidgetsClass::AddMethButton(taiMethodData* mth_rep, const String
   }
 }
 
-void taiEditorOfWidgetsClass::bgrp_buttonClicked(int id) {
+void taiEditorWidgetsOfClass::bgrp_buttonClicked(int id) {
   // id is an index of the membs
   iCheckBox* chk = qobject_cast<iCheckBox*>(bgrp->button(id));
   if (!chk) return; // shouldn't happen
@@ -126,7 +126,7 @@ void taiEditorOfWidgetsClass::bgrp_buttonClicked(int id) {
   ReShow_Async();
 }
 
-void taiEditorOfWidgetsClass::Cancel_impl() {
+void taiEditorWidgetsOfClass::Cancel_impl() {
 //NOTE: must be ok to call this if was still deferred
   // delete all methods and menu
   if (menu) {
@@ -147,14 +147,14 @@ void taiEditorOfWidgetsClass::Cancel_impl() {
   inherited::Cancel_impl();
 }
 
-void taiEditorOfWidgetsClass::ClearBody_impl() {
+void taiEditorWidgetsOfClass::ClearBody_impl() {
   // delete ALL the data items -- Qt will automatically disconnect the signals/slots
   for (int i = 0; i < membs.size; ++i)
     data_el(i).Reset();
   inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
-void taiEditorOfWidgetsClass::Constr_impl() {
+void taiEditorWidgetsOfClass::Constr_impl() {
   inline_mode = (typ && typ->it->requiresInline());
   if (!inline_mode) {
     Enum_Members();
@@ -162,7 +162,7 @@ void taiEditorOfWidgetsClass::Constr_impl() {
   inherited::Constr_impl();
 }
 
-void taiEditorOfWidgetsClass::Enum_Members() {
+void taiEditorWidgetsOfClass::Enum_Members() {
   if (membs.def_size <= 0) return; // not handling anything
   if (!typ) return; // class browser or such
   MemberSpace& ms = typ->members;
@@ -192,7 +192,7 @@ void taiEditorOfWidgetsClass::Enum_Members() {
   }
 }
 
-void taiEditorOfWidgetsClass::Constr_Body() {
+void taiEditorWidgetsOfClass::Constr_Body() {
   Constr_Body_impl();
   if (inline_mode) {
     dat_cnt = 0;
@@ -202,7 +202,7 @@ void taiEditorOfWidgetsClass::Constr_Body() {
   }
 }
 
-void taiEditorOfWidgetsClass::Constr_Data_Labels() {
+void taiEditorWidgetsOfClass::Constr_Data_Labels() {
   int idx = 0; // basically a row counter
   dat_cnt = 0; // NOT advanced for the section rows
   // Normal members
@@ -230,7 +230,7 @@ void taiEditorOfWidgetsClass::Constr_Data_Labels() {
   }
 }
 
-void taiEditorOfWidgetsClass::Constr_Inline() {
+void taiEditorWidgetsOfClass::Constr_Inline() {
   data_el(0).Reset(); // should already be clear
   // specify inline flag, just to be sure
   taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
@@ -240,7 +240,7 @@ void taiEditorOfWidgetsClass::Constr_Inline() {
   AddData(0, rep, fill_hor);
 }
 
-void taiEditorOfWidgetsClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+void taiEditorWidgetsOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
   taiDataList* dl)
 {
   String name;
@@ -265,7 +265,7 @@ void taiEditorOfWidgetsClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
   }
 }
 
-void taiEditorOfWidgetsClass::Constr_Strings() {
+void taiEditorWidgetsOfClass::Constr_Strings() {
 //NOTE: this is INSANE!
   win_str = String(def_title());
   String desc;
@@ -292,7 +292,7 @@ void taiEditorOfWidgetsClass::Constr_Strings() {
     if (desc.nonempty()) prompt_str +=  ": " + desc;
 }
 
-void taiEditorOfWidgetsClass::Constr_Methods_impl() {
+void taiEditorWidgetsOfClass::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
   if ((typ == NULL) || no_meth_menu) return;
 
@@ -339,22 +339,22 @@ void taiEditorOfWidgetsClass::Constr_Methods_impl() {
   }
 }
 
-void taiEditorOfWidgetsClass::Constr_RegNotifies() {
+void taiEditorWidgetsOfClass::Constr_RegNotifies() {
   taBase* rbase = Base();
   if (rbase) {
     rbase->AddSigClient(this);
   }
 }
-//void taiEditorOfWidgetsClass::Constr_ShowMenu() {
+//void taiEditorWidgetsOfClass::Constr_ShowMenu() {
 // moved to be by the setShow etc. calls, for clarity
 
-void taiEditorOfWidgetsClass::Constr_Final() {
+void taiEditorWidgetsOfClass::Constr_Final() {
   inherited::Constr_Final();
   if(body)
     body->installEventFilter(this); // hopefully everyone below body will get it too!
 }
 
-void taiEditorOfWidgetsClass::DoAddMethButton(QWidget* but) {
+void taiEditorWidgetsOfClass::DoAddMethButton(QWidget* but) {
   show_meth_buttons = true;
   // we use "medium" size for buttons
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
@@ -366,11 +366,11 @@ void taiEditorOfWidgetsClass::DoAddMethButton(QWidget* but) {
   but->show(); // needed when rebuilding
 }
 
-void taiEditorOfWidgetsClass::DoRaise_Panel() {
+void taiEditorWidgetsOfClass::DoRaise_Panel() {
   //TODO
 }
 
-void taiEditorOfWidgetsClass::DoSelectForEdit(QAction* act){
+void taiEditorWidgetsOfClass::DoSelectForEdit(QAction* act){
 //note: this routine is duplicated in the ProgEditor
   taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
@@ -393,7 +393,7 @@ void taiEditorOfWidgetsClass::DoSelectForEdit(QAction* act){
   }
 }
 
-MemberDef* taiEditorOfWidgetsClass::GetMemberPropsForSelect(int sel_idx, taBase** base,
+MemberDef* taiEditorWidgetsOfClass::GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc)
 {
   MemberDef* md = NULL;
@@ -408,7 +408,7 @@ MemberDef* taiEditorOfWidgetsClass::GetMemberPropsForSelect(int sel_idx, taBase*
   return md;
 }
 
-void taiEditorOfWidgetsClass::DoConstr_Dialog(iHostDialog*& dlg) {
+void taiEditorWidgetsOfClass::DoConstr_Dialog(iHostDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
   if(!modal) {
 #ifdef TA_OS_MAC
@@ -420,13 +420,13 @@ void taiEditorOfWidgetsClass::DoConstr_Dialog(iHostDialog*& dlg) {
   }
 }
 
-int taiEditorOfWidgetsClass::Edit(bool modal_, int min_width, int min_height) {
+int taiEditorWidgetsOfClass::Edit(bool modal_, int min_width, int min_height) {
   if (!modal_)
     taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   return inherited::Edit(modal_, min_width, min_height);
 }
 
-EditDataPanel* taiEditorOfWidgetsClass::EditPanel(taiSigLink* link) {
+EditDataPanel* taiEditorWidgetsOfClass::EditPanel(taiSigLink* link) {
   if (state != CONSTRUCTED)
     return NULL;
   if (panel == NULL)
@@ -438,7 +438,7 @@ EditDataPanel* taiEditorOfWidgetsClass::EditPanel(taiSigLink* link) {
   return panel;
 }
 
-EditDataPanel* taiEditorOfWidgetsClass::EditPanelDeferred(taiSigLink* link) {
+EditDataPanel* taiEditorWidgetsOfClass::EditPanelDeferred(taiSigLink* link) {
   panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
 
   return panel;
@@ -448,25 +448,25 @@ void taiEditor::ConstrEditControl() {
   Constr("", "", HT_CONTROL);
 //TEMP
 //TODO: need to deal with the now wrongly based taiEDH stuff in taiMisc
-  taiEditorOfWidgetsClass* edh = dynamic_cast<taiEditorOfWidgetsClass*>(this);
+  taiEditorWidgetsOfClass* edh = dynamic_cast<taiEditorWidgetsOfClass*>(this);
   if (edh) taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
   state = ACTIVE;
 }
 
-void taiEditorOfWidgetsClass::FillLabelContextMenu(QMenu* menu, int& last_id) {
+void taiEditorWidgetsOfClass::FillLabelContextMenu(QMenu* menu, int& last_id) {
   inherited::FillLabelContextMenu(menu, last_id);
   if (sel_edit_mbrs) {
     FillLabelContextMenu_SelEdit(menu, last_id);
   }
 }
 
-void taiEditorOfWidgetsClass::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
+void taiEditorWidgetsOfClass::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 {
   DoFillLabelContextMenu_SelEdit(menu, last_id, sel_item_base, sel_item_mbr, body,
   this, SLOT(DoSelectForEdit(QAction*)));
 }
 
-void taiEditorOfWidgetsClass::GetButtonImage(bool force) {
+void taiEditorWidgetsOfClass::GetButtonImage(bool force) {
   // taMisc::DebugInfo("GetButtonImage", String(force));
   if(!typ || !mwidget || !frmMethButtons)  return;
   if(!force && !frmMethButtons->isVisible()) {
@@ -484,7 +484,7 @@ void taiEditorOfWidgetsClass::GetButtonImage(bool force) {
   }
 }
 
-void taiEditorOfWidgetsClass::GetImage(bool force) {
+void taiEditorWidgetsOfClass::GetImage(bool force) {
   if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
@@ -503,7 +503,7 @@ void taiEditorOfWidgetsClass::GetImage(bool force) {
   --updating;
 }
 
-void taiEditorOfWidgetsClass::GetImage_Membs() {
+void taiEditorWidgetsOfClass::GetImage_Membs() {
   cur_row = 0;
   if (inline_mode) {
     GetImageInline_impl(root);
@@ -532,27 +532,27 @@ void taiEditorOfWidgetsClass::GetImage_Membs() {
   }
 }
 
-void taiEditorOfWidgetsClass::GetImageInline_impl(const void* base) {
+void taiEditorWidgetsOfClass::GetImageInline_impl(const void* base) {
   taiData* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetImage(mb_dat, base);
 }
 
-void taiEditorOfWidgetsClass::GetImage_Membs_def() {
+void taiEditorWidgetsOfClass::GetImage_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
     if (show_set(i) && (data_el(i).size > 0))
       GetImage_impl(&memb_el(i), data_el(i), root);
   }
 }
 
-void taiEditorOfWidgetsClass::GetImage_impl(const Member_List* ms, const taiDataList& dl,
+void taiEditorWidgetsOfClass::GetImage_impl(const Member_List* ms, const taiDataList& dl,
   void* base)
 {
   for (int i = 0; i < dl.size; ++i) {
     MemberDef* md = ms->SafeEl(i);
     taiData* mb_dat = dl.SafeEl(i);
     if ((md == NULL) || (mb_dat == NULL))
-      taMisc::Error("taiEditorOfWidgetsClass::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
+      taMisc::Error("taiEditorWidgetsOfClass::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
       if (typ && typ->IsActualTaBase())
         mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
@@ -564,11 +564,11 @@ void taiEditorOfWidgetsClass::GetImage_impl(const Member_List* ms, const taiData
   }
 }
 
-void taiEditorOfWidgetsClass::GetValue() {
+void taiEditorWidgetsOfClass::GetValue() {
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   if(!mwidget->isVisible()) {
-    taMisc::DebugInfo("taiEditorOfWidgetsClass::GetValue attempt to GetValue with invisible widget!");
+    taMisc::DebugInfo("taiEditorWidgetsOfClass::GetValue attempt to GetValue with invisible widget!");
   }
   if (state > DEFERRED1) {
     GetValue_Membs();
@@ -577,7 +577,7 @@ void taiEditorOfWidgetsClass::GetValue() {
   Unchanged();
 }
 
-void taiEditorOfWidgetsClass::GetValue_Membs() {
+void taiEditorWidgetsOfClass::GetValue_Membs() {
   taBase* rbase = Base();
   if(rbase && root) {
     taProject* proj = (taProject*)((taBase*)root)->GetOwner(&TA_taProject);
@@ -599,14 +599,14 @@ void taiEditorOfWidgetsClass::GetValue_Membs() {
   }
 }
 
-void taiEditorOfWidgetsClass::GetValue_Membs_def() {
+void taiEditorWidgetsOfClass::GetValue_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
     if (show_set(i) && (data_el(i).size > 0))
       GetValue_impl(&memb_el(i), data_el(i), root);
   }
 }
 
-void taiEditorOfWidgetsClass::GetValue_impl(const Member_List* ms, const taiDataList& dl,
+void taiEditorWidgetsOfClass::GetValue_impl(const Member_List* ms, const taiDataList& dl,
   void* base) const
 {
   taBase* rbase = Base();
@@ -615,7 +615,7 @@ void taiEditorOfWidgetsClass::GetValue_impl(const Member_List* ms, const taiData
     MemberDef* md = ms->FastEl(i);
     taiData* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
-      taMisc::Error("taiEditorOfWidgetsClass::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
+      taMisc::Error("taiEditorWidgetsOfClass::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
     else {
       md->im->GetMbrValue(mb_dat, base, first_diff);
       if(rbase) {
@@ -627,34 +627,34 @@ void taiEditorOfWidgetsClass::GetValue_impl(const Member_List* ms, const taiData
     taiMember::EndScript(base);
 }
 
-void taiEditorOfWidgetsClass::GetValueInline_impl(void* base) const {
+void taiEditorWidgetsOfClass::GetValueInline_impl(void* base) const {
   taiData* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetValue(mb_dat, base);
 }
 
-void taiEditorOfWidgetsClass::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
+void taiEditorWidgetsOfClass::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, SLS_RESOLVE_NOW op, etc. etc.
   if (HasChanged()) {
     if(!mwidget->isVisible()) {
-      taMisc::DebugInfo("taiEditorOfWidgetsClass::ResolveChanges attempt to get value with invisible widget!");
+      taMisc::DebugInfo("taiEditorWidgetsOfClass::ResolveChanges attempt to get value with invisible widget!");
     }
     GetValue();
   }
 }
 
-bool taiEditorOfWidgetsClass::ShowMember(MemberDef* md) const {
+bool taiEditorWidgetsOfClass::ShowMember(MemberDef* md) const {
   return (md->ShowMember(show(), TypeItem::SC_EDIT) && (md->im != NULL));
 }
 
-void taiEditorOfWidgetsClass::SetCurMenu(MethodDef* md) {
+void taiEditorWidgetsOfClass::SetCurMenu(MethodDef* md) {
   // note: men_nm will be blank if implicit (i.e. last one)
   // if no explicit name, and no menu yet, we use "Actions"
   String men_nm = md->OptionAfter("MENU_ON_");
   SetCurMenu_Name(men_nm);
 }
 
-void taiEditorOfWidgetsClass::SetCurMenu_Name(String men_nm) {
+void taiEditorWidgetsOfClass::SetCurMenu_Name(String men_nm) {
   if (!menu) {
 #ifdef TA_OS_MAC
     // This shouldn't be necessary but Mac still glitches occasionally.
@@ -695,7 +695,7 @@ void taiEditorOfWidgetsClass::SetCurMenu_Name(String men_nm) {
 }
 
 
-void taiEditorOfWidgetsClass::SetCurMenuButton(MethodDef* md) {
+void taiEditorWidgetsOfClass::SetCurMenuButton(MethodDef* md) {
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {
     cur_menu_but = ta_menu_buttons.FindName(men_nm);
@@ -714,13 +714,13 @@ void taiEditorOfWidgetsClass::SetCurMenuButton(MethodDef* md) {
   ta_menu_buttons.Add(cur_menu_but);
 }
 
-iMainWindowViewer* taiEditorOfWidgetsClass::viewerWindow() const {
+iMainWindowViewer* taiEditorWidgetsOfClass::viewerWindow() const {
   iMainWindowViewer* dv = NULL;
   if (panel) dv = panel->viewerWindow();
   return dv;
 }
 
-bool taiEditorOfWidgetsClass::eventFilter(QObject* obj, QEvent* event) {
+bool taiEditorWidgetsOfClass::eventFilter(QObject* obj, QEvent* event) {
   if(event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }

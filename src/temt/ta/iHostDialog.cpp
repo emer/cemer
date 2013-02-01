@@ -60,11 +60,11 @@ void iHostDialog::closeEvent(QCloseEvent* ev) {
     ev->ignore();
     return;
   } else if (!discarded) {
-    owner->state = taiEditorOfWidgetsMain::ACCEPTED;
+    owner->state = taiEditorWidgetsMain::ACCEPTED;
     return; // not rejected
   }
   // discarded, or didn't have any changes
-  owner->state = taiEditorOfWidgetsMain::CANCELED;
+  owner->state = taiEditorWidgetsMain::CANCELED;
   setResult(Rejected);
 }
 

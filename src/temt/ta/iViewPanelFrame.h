@@ -46,7 +46,7 @@ public:
   };
 
 #ifndef __MAKETA__
-  enum CustomEventType { // note: just copied from taiEditorOfWidgetsMain, not all used
+  enum CustomEventType { // note: just copied from taiEditorWidgetsMain, not all used
     CET_RESHOW          = QEvent::User + 1,  // uses ReShowEvent
     CET_GET_IMAGE,
     CET_APPLY

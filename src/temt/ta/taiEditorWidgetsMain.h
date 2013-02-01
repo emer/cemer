@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiEditorOfWidgetsMain_h
-#define taiEditorOfWidgetsMain_h 1
+#ifndef taiEditorWidgetsMain_h
+#define taiEditorWidgetsMain_h 1
 
 // parent includes:
-#include <taiEditorOfWidgets>
+#include <taiEditorWidgets>
 #include <taPtrList>
 
 // member includes:
@@ -36,11 +36,11 @@ class iEditGrid;   //
 class QSplitter;   //
 class iLabel;      //
 
-TypeDef_Of(taiEditorOfWidgetsMain);
+TypeDef_Of(taiEditorWidgetsMain);
 
-class TA_API taiEditorOfWidgetsMain: public taiEditorOfWidgets {
+class TA_API taiEditorWidgetsMain: public taiEditorWidgets {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using an iFormLayout
-INHERITED(taiEditorOfWidgets)
+INHERITED(taiEditorWidgets)
   Q_OBJECT
 friend class iHostDialog;
 public:
@@ -64,12 +64,12 @@ public:
   override int          curRow() const {return cur_row;}
   override QWidget*     firstTabFocusWidget() { return first_tab_foc; }
 
-  taiEditorOfWidgetsMain(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-  ~taiEditorOfWidgetsMain();
+  taiEditorWidgetsMain(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  ~taiEditorWidgetsMain();
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
-  TypeDef*      GetTypeDef() const {return &TA_taiEditorOfWidgetsMain;} // override
+  TypeDef*      GetTypeDef() const {return &TA_taiEditorWidgetsMain;} // override
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  void                SigLinkDestroying(taSigLink* dl);
@@ -98,13 +98,13 @@ protected:
   override void InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 };
 
-class TA_API taiHostDialog_List : public taPtrList<taiEditorOfWidgetsMain> {
+class TA_API taiHostDialog_List : public taPtrList<taiEditorWidgetsMain> {
   // #IGNORE list of DataHosts that have been dialoged
 protected:
-  void  El_Done_(void* it)      { delete (taiEditorOfWidgetsMain*)it; }
+  void  El_Done_(void* it)      { delete (taiEditorWidgetsMain*)it; }
 
 public:
   ~taiHostDialog_List()            { Reset(); }
 };
 
-#endif // taiEditorOfWidgetsMain_h
+#endif // taiEditorWidgetsMain_h

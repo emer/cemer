@@ -54,7 +54,7 @@
 /* What happens on various Signals
 
   SLS_ITEM_UPDATED
-    taiEditorOfWidgetsClass: does a GetImage
+    taiEditorWidgetsOfClass: does a GetImage
 
   NOTE: you can use the test (sls <= SLS_ITEM_UPDATED_ND) to test for both versions
 

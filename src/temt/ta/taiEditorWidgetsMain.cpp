@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiEditorOfWidgetsMain.h"
+#include "taiEditorWidgetsMain.h"
 #include <iLabel>
 #include <taiData>
 #include <iFormLayout>
@@ -29,7 +29,7 @@
 #define LAYBODY_MARGIN  1
 #define LAYBODY_SPACING 0
 
-iLabel* taiEditorOfWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par,
+iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par,
   int ctrl_size, const String& desc, taiData* buddy,
   QObject* ctx_obj, const char* ctx_slot, int row)
 {
@@ -64,7 +64,7 @@ iLabel* taiEditorOfWidgetsMain::MakeInitEditLabel(const String& name, QWidget* p
 }
 
 
-taiEditorOfWidgetsMain::taiEditorOfWidgetsMain(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
+taiEditorWidgetsMain::taiEditorWidgetsMain(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_, read_only_, modal_, parent)
 {
   InitGuiFields(false);
@@ -74,11 +74,11 @@ taiEditorOfWidgetsMain::taiEditorOfWidgetsMain(TypeDef* typ_, bool read_only_, b
   first_tab_foc = NULL;
 }
 
-taiEditorOfWidgetsMain::~taiEditorOfWidgetsMain() {
+taiEditorWidgetsMain::~taiEditorWidgetsMain() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiEditorOfWidgetsMain::InitGuiFields(bool virt) {
+void taiEditorWidgetsMain::InitGuiFields(bool virt) {
   if (virt)  inherited::InitGuiFields(virt);
   splBody = NULL;
   scrBody = NULL;
@@ -86,7 +86,7 @@ void taiEditorOfWidgetsMain::InitGuiFields(bool virt) {
   first_tab_foc = NULL;
 }
 
-int taiEditorOfWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& desc) {
+int taiEditorWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   if (row < 0)
     row = layBody->rowCount();
   QFont f(taiM->nameFont(ctrl_size));
@@ -126,7 +126,7 @@ int taiEditorOfWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String&
   return row;
 }
 
-int taiEditorOfWidgetsMain::AddNameData(int row, const String& name, const String& desc,
+int taiEditorWidgetsMain::AddNameData(int row, const String& name, const String& desc,
    QWidget* data, taiData* buddy, MemberDef* md, bool fill_hor)
 {
   if (row < 0)
@@ -155,7 +155,7 @@ int taiEditorOfWidgetsMain::AddNameData(int row, const String& name, const Strin
   return row;
 }
 
-int taiEditorOfWidgetsMain::AddData(int row, QWidget* data, bool fill_hor)
+int taiEditorWidgetsMain::AddData(int row, QWidget* data, bool fill_hor)
 {
   if (row < 0)
     row = layBody->rowCount();
@@ -182,7 +182,7 @@ int taiEditorOfWidgetsMain::AddData(int row, QWidget* data, bool fill_hor)
 
   return row;
 }
-void taiEditorOfWidgetsMain::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
+void taiEditorWidgetsMain::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
   SetMultiSize(row + 1, 0); //0 gets set to multi_col
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
@@ -197,7 +197,7 @@ void taiEditorOfWidgetsMain::AddMultiRowName(iEditGrid* multi_body, int row, con
   label->show(); //required to show when rebuilding
 }
 
-void taiEditorOfWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc) {
+void taiEditorWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc) {
   SetMultiSize(0, col + 1); // 0 gets set to multi_rows
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
@@ -209,7 +209,7 @@ void taiEditorOfWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, con
   label->show(); //required to show when rebuilding
 }
 
-void taiEditorOfWidgetsMain::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data) {
+void taiEditorWidgetsMain::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data) {
 //  SetMultiSize(row - 1, col - 1);
   SetMultiSize(row + 1, col + 1);
   QHBoxLayout* hbl = new QHBoxLayout();
@@ -220,7 +220,7 @@ void taiEditorOfWidgetsMain::AddMultiData(iEditGrid* multi_body, int row, int co
   data->show(); //required to show when rebuilding
 }
 
-void taiEditorOfWidgetsMain::Constr_Box() {
+void taiEditorWidgetsMain::Constr_Box() {
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
@@ -246,7 +246,7 @@ void taiEditorOfWidgetsMain::Constr_Box() {
   //note: the layout is added in Constr_Body, because it gets deleted when we change the 'show'
 }
 
-void taiEditorOfWidgetsMain::Constr_Body_impl() {
+void taiEditorWidgetsMain::Constr_Body_impl() {
   first_tab_foc = NULL;         // reset
   layBody = new iFormLayout();
   layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -260,7 +260,7 @@ void taiEditorOfWidgetsMain::Constr_Body_impl() {
   body_vlay->addStretch(1);
 }
 
-void taiEditorOfWidgetsMain::ClearBody_impl() {
+void taiEditorWidgetsMain::ClearBody_impl() {
   if(body) {
     delete body->layout();      // nuke our vboxlayout guy
     taiMisc::DeleteWidgetsLater(body);
@@ -269,7 +269,7 @@ void taiEditorOfWidgetsMain::ClearBody_impl() {
   }
 }
 
-void taiEditorOfWidgetsMain::Constr_Final() {
+void taiEditorWidgetsMain::Constr_Final() {
   inherited::Constr_Final();
   // we put all the stretch factor setting here, so it is easy to make code changes if necessary
   if (splBody) vblDialog->setStretchFactor(splBody, 1);

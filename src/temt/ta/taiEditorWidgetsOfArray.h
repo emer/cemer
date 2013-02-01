@@ -17,15 +17,15 @@
 #define taiEditorWidgetsOfArray_h 1
 
 // parent includes:
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiEditorWidgetsOfArray : public taiEditorOfWidgetsClass {
+class TA_API taiEditorWidgetsOfArray : public taiEditorWidgetsOfClass {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-INHERITED(taiEditorOfWidgetsClass)
+INHERITED(taiEditorWidgetsOfClass)
 public:
   bool          ShowMember(MemberDef* md) const;
 

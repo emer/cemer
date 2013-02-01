@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiEditorOfWidgets; //
+class taiEditorWidgets; //
 class UserDataItem_List; //
 
 TypeDef_Of(iUserDataPanel);
@@ -32,7 +32,7 @@ class TA_API iUserDataPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  taiEditorOfWidgets*     se;
+  taiEditorWidgets*     se;
   UserDataItem_List*    udil() {return (m_link) ? (UserDataItem_List*)(link()->data()) : NULL;}
 
   override bool         HasChanged(); // 'true' if user has unsaved changes

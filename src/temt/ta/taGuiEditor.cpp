@@ -13,29 +13,29 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taGuiDataHost.h"
+#include "taGuiEditor.h"
 #include <taMisc>
 #include <taGuiDialog>
 
 #include <QVBoxLayout>
 
-taBase* taGuiDataHost::Base() const {
+taBase* taGuiEditor::Base() const {
   return gui_owner;
 }
 
-TypeItem::ShowMembs taGuiDataHost::show() const {
+TypeItem::ShowMembs taGuiEditor::show() const {
   return taMisc::show_gui;
 }
 
-taGuiDataHost::taGuiDataHost(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
+taGuiEditor::taGuiEditor(taGuiDialog* own, bool read_only_, bool modal_, QObject* parent)
   : taiEditor(&TA_taGuiDialog, read_only_, modal_, parent) {
   gui_owner = own;
 }
 
-taGuiDataHost::~taGuiDataHost() {
+taGuiEditor::~taGuiEditor() {
 }
 
-void taGuiDataHost::Constr_Body() {
+void taGuiEditor::Constr_Body() {
   if(gui_owner->widgets.size > 0) {
     taGuiWidget* fw = gui_owner->widgets.FastEl(0);
     fw->widget->setParent(mwidget);
@@ -43,17 +43,17 @@ void taGuiDataHost::Constr_Body() {
   }
 }
 
-void taGuiDataHost::GetImage(bool force) {
+void taGuiEditor::GetImage(bool force) {
   ++updating;                   // prevents spurious changed flags from coming in
   gui_owner->GetImage();
   --updating;
 }
 
-void taGuiDataHost::GetValue() {
+void taGuiEditor::GetValue() {
   gui_owner->GetValue();
   gui_owner->GetImage();
 }
 
-void taGuiDataHost::Ok_impl() {
+void taGuiEditor::Ok_impl() {
   GetValue();
 }

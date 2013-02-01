@@ -35,7 +35,7 @@ TypeInst_Of(DynEnum);           // TAI_DynEnum
 
 taiEditorWidgetsOfProgramCtrl::taiEditorWidgetsOfProgramCtrl(Program* prog, bool read_only_,
                                            bool modal_, QObject* parent)
-: taiEditorOfWidgetsClass(prog, prog->GetTypeDef(), read_only_, modal_, parent)
+: taiEditorWidgetsOfClass(prog, prog->GetTypeDef(), read_only_, modal_, parent)
 {
   membs.SetMinSize(MS_CNT); // note: our own MS_CNT
   membs.def_size = 0; // we handle everything

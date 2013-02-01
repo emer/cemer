@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taGuiDataHost_h
-#define taGuiDataHost_h 1
+#ifndef taGuiEditor_h
+#define taGuiEditor_h 1
 
 // parent includes:
 #include <taiEditor>
@@ -26,9 +26,9 @@
 class taGuiDialog;
 TypeDef_Of(taGuiDialog);
 
-TypeDef_Of(taGuiDataHost);
+TypeDef_Of(taGuiEditor);
 
-class TA_API taGuiDataHost : public taiEditor, virtual public IWidgetHost
+class TA_API taGuiEditor : public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditor)
   Q_OBJECT
@@ -36,9 +36,9 @@ friend class iHostDialog;
 public:
   taGuiDialog*  gui_owner;
 
-  taGuiDataHost(taGuiDialog* own, bool read_only_ = false,
+  taGuiEditor(taGuiDialog* own, bool read_only_ = false,
                 bool modal_ = false, QObject* parent = 0);
-  virtual ~taGuiDataHost();
+  virtual ~taGuiEditor();
 
   override void Constr_Body();
   override void GetImage(bool force);
@@ -49,7 +49,7 @@ public: // ISigLinkClient i/f -- note: only registered though for taiEDH and lat
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taGuiDataHost;}
+  override TypeDef*     GetTypeDef() const {return &TA_taGuiEditor;}
 
 public: // IWidgetHost i/f
   override const iColor  colorOfCurRow() const { return bgColor(); }
@@ -69,4 +69,4 @@ public slots:
   void          Apply_Async() {inherited::Apply_Async(); }
 };
 
-#endif // taGuiDataHost_h
+#endif // taGuiEditor_h

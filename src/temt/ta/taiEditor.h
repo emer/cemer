@@ -156,7 +156,7 @@ public: // ISigLinkClient i/f -- note: only registered though for taiEDH and lat
   void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 
-// virtuals for IWidgetHost i/f -- call back to these from taiEditorOfWidgetsMain
+// virtuals for IWidgetHost i/f -- call back to these from taiEditorWidgetsMain
   virtual void          GetImage() {} // IDH brings this in too, we override in EDH
   virtual void          GetImage(bool force) {} // ugly hack
   virtual void          GetValue() {} // IDH brings this in too, we override in EDH

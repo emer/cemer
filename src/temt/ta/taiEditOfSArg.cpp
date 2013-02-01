@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditOfSArg.h"
-#include <SArgEditDataHost>
+#include <taiEditorWidgetsOfSArg>
 
 TypeDef_Of(SArg_Array);
 
@@ -24,6 +24,6 @@ int taiEditOfSArg::BidForEdit(TypeDef* td){
   return 0;
 }
 
-taiEditorOfWidgetsClass* taiEditOfSArg::CreateDataHost(void* base, bool readonly) {
-  return new SArgEditDataHost(base, typ, readonly);
+taiEditorWidgetsOfClass* taiEditOfSArg::CreateDataHost(void* base, bool readonly) {
+  return new taiEditorWidgetsOfSArg(base, typ, readonly);
 }

@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiEditorOfWidgets_h
-#define taiEditorOfWidgets_h 1
+#ifndef taiEditorWidgets_h
+#define taiEditorWidgets_h 1
 
 // parent includes:
 #include <taiEditor>
@@ -32,9 +32,9 @@ class QMenu; //
 class QContextMenuEvent; //
 
 
-TypeDef_Of(taiEditorOfWidgets);
+TypeDef_Of(taiEditorWidgets);
 
-class TA_API taiEditorOfWidgets: public taiEditor, virtual public IWidgetHost
+class TA_API taiEditorWidgets: public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditor)
   Q_OBJECT
@@ -57,8 +57,8 @@ public:
   virtual taBase*       GetMembBase_Flat(int idx); // these are overridden by seledit
   virtual taBase*       GetMethBase_Flat(int idx);
 
-  taiEditorOfWidgets(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-  virtual ~taiEditorOfWidgets();
+  taiEditorWidgets(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  virtual ~taiEditorWidgets();
 
   void                  ClearBody(bool waitproc = true);
    // prepare dialog for rebuilding Body to show new contents
@@ -75,7 +75,7 @@ public:
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
-  TypeDef*      GetTypeDef() const {return &TA_taiEditorOfWidgets;} // override
+  TypeDef*      GetTypeDef() const {return &TA_taiEditorWidgets;} // override
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  void                SigLinkDestroying(taSigLink* dl);
@@ -126,4 +126,4 @@ protected slots:
 };
 
 
-#endif // taiEditorOfWidgets_h
+#endif // taiEditorWidgets_h

@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiWizardDataHost.h"
+#include "taiEditorWidgetsOfWizard.h"
 #include <iTextBrowser>
 #include <NumberedTextView>
 #include <MemberDef>
@@ -33,7 +33,7 @@
 #include <QTabWidget>
 
 
-taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
+taiEditorWidgetsOfWizard::taiEditorWidgetsOfWizard(taWizard* base_, TypeDef* typ_,
              bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
@@ -41,19 +41,19 @@ taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
   tabs = NULL;
 }
 
-taiWizardDataHost::~taiWizardDataHost() {
+taiEditorWidgetsOfWizard::~taiEditorWidgetsOfWizard() {
 }
 
-/*void taiWizardDataHost::Constr(const char* prompt, const char* win_title) {
+/*void taiEditorWidgetsOfWizard::Constr(const char* prompt, const char* win_title) {
   inherited::Constr(prompt, win_title);
 }*/
 
-void taiWizardDataHost::Constr_Box() {
+void taiEditorWidgetsOfWizard::Constr_Box() {
   tabs = new QTabWidget(widget());
   vblDialog->addWidget(tabs, 1);
 }
 
-void taiWizardDataHost::Constr_RegNotifies() {
+void taiEditorWidgetsOfWizard::Constr_RegNotifies() {
 /*TODO  taBase* rbase = Base_(); // cache
   if (rbase) {
     rbase->AddSigClient(this);
@@ -61,7 +61,7 @@ void taiWizardDataHost::Constr_RegNotifies() {
 }
 
 
-void taiWizardDataHost::Constr_Buttons() {
+void taiEditorWidgetsOfWizard::Constr_Buttons() {
   inherited::Constr_Buttons();
 /*TODO  btnPrint = new QPushButton("&Print", widget());
   layButtons->addSpacing(16);
@@ -69,7 +69,7 @@ void taiWizardDataHost::Constr_Buttons() {
   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );*/
 }
 
-void taiWizardDataHost::Constr_Data_Labels()
+void taiEditorWidgetsOfWizard::Constr_Data_Labels()
 {
   // assert all the tabs -- note that the number can never change
   if (tabs->count() == 0) {
@@ -85,16 +85,16 @@ void taiWizardDataHost::Constr_Data_Labels()
   }
 }
 
-void taiWizardDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+void taiEditorWidgetsOfWizard::Constr_Data_Labels_impl(int& idx, Member_List* ms,
      taiDataList* dl)
 {
 }
 
-void taiWizardDataHost::Constr_Strings() {
+void taiEditorWidgetsOfWizard::Constr_Strings() {
 /*TODO*/
 }
 
-void taiWizardDataHost::Enum_Members() {
+void taiEditorWidgetsOfWizard::Enum_Members() {
   if (!typ) return; // class browser or such
   page_names.Reset();
   membs.Reset();
@@ -135,7 +135,7 @@ void taiWizardDataHost::Enum_Members() {
   }
 }
 
-/*void taiWizardDataHost::btnPrint_clicked() {
+/*void taiEditorWidgetsOfWizard::btnPrint_clicked() {
   QPrinter pr;
   QPrintDialog pd(&pr, widget());
   if (pd.exec() != iDialog::Accepted) return;
@@ -143,20 +143,20 @@ void taiWizardDataHost::Enum_Members() {
   edit->document()->print(&pr);
 }*/
 
-/*void taiWizardDataHost::GetImage() {
+/*void taiEditorWidgetsOfWizard::GetImage() {
 }
 
-void taiWizardDataHost::GetValue() {
+void taiEditorWidgetsOfWizard::GetValue() {
 }*/
 
-void taiWizardDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
+void taiEditorWidgetsOfWizard::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, etc. etc.
   if (modified) {
     GetValue();
   }
 }
 
-void taiWizardDataHost::Ok_impl() { //note: only used for Dialogs
+void taiEditorWidgetsOfWizard::Ok_impl() { //note: only used for Dialogs
   inherited::Ok_impl();
   //  if (modified) {
     GetValue();

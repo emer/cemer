@@ -40,7 +40,7 @@ taDoc* taiEditorWidgetsDoc::doc() const {
 }
 
 void taiEditorWidgetsDoc::Constr_Body() {
-  //  taiEditorOfWidgetsMain::Constr_Body();
+  //  taiEditorWidgetsMain::Constr_Body();
 }
 
 void taiEditorWidgetsDoc::Constr_Box() {

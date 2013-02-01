@@ -14,12 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "EditDataPanel.h"
-#include <taiEditorOfWidgetsClass>
+#include <taiEditorWidgetsOfClass>
 
 #include <taiMisc>
 
 
-EditDataPanel::EditDataPanel(taiEditorOfWidgetsClass* owner_, taiSigLink* dl_)
+EditDataPanel::EditDataPanel(taiEditorWidgetsOfClass* owner_, taiSigLink* dl_)
 :inherited(dl_)
 {
   owner = owner_;
@@ -43,11 +43,11 @@ void EditDataPanel::Closing(CancelOp& cancel_op) {
   if (cancel_op == CO_CANCEL) {
     return;
   } else if (!discarded) {
-    owner->state = taiEditorOfWidgetsMain::ACCEPTED;
+    owner->state = taiEditorWidgetsMain::ACCEPTED;
     return;
   }
   // discarded, or didn't have any changes
-  owner->state = taiEditorOfWidgetsMain::CANCELED;
+  owner->state = taiEditorWidgetsMain::CANCELED;
 }
 
 void EditDataPanel::UpdatePanel_impl() {
@@ -82,14 +82,14 @@ void EditDataPanel::UpdatePanel() {
 
 void EditDataPanel::Render_impl() {
   inherited::Render_impl();
-  taiEditorOfWidgetsClass* edh = editDataHost();
-  if (edh->state >= taiEditorOfWidgetsMain::CONSTRUCTED) return;
+  taiEditorWidgetsOfClass* edh = editDataHost();
+  if (edh->state >= taiEditorWidgetsMain::CONSTRUCTED) return;
 
   edh->ConstrDeferred();
   setCentralWidget(edh->widget());
   setButtonsWidget(edh->widButtons);
   taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
-  edh->state = taiEditorOfWidgetsMain::ACTIVE;
+  edh->state = taiEditorWidgetsMain::ACTIVE;
   //prob need to do a refresh!!!
 }
 
@@ -104,8 +104,8 @@ QWidget* EditDataPanel::firstTabFocusWidget() {
 
 void EditDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  taiEditorOfWidgetsClass* edh = editDataHost();
-  if(edh && edh->state >= taiEditorOfWidgetsMain::CONSTRUCTED)  {
+  taiEditorWidgetsOfClass* edh = editDataHost();
+  if(edh && edh->state >= taiEditorWidgetsMain::CONSTRUCTED)  {
     edh->GetButtonImage();              // update buttons whenver we show!
   }
 }

@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiEditorOfWidgets.h"
+#include "taiEditorWidgets.h"
 #include <taProject>
 #include <iLabel>
 #include <taiData>
@@ -33,7 +33,7 @@
 #include <QContextMenuEvent>
 
 
-void taiEditorOfWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
+void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
   QObject* slot_obj, const char* slot)
 {
@@ -77,13 +77,13 @@ void taiEditorOfWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
     sub->setEnabled(false); // show item for usability, but disable
 }
 
-void taiEditorOfWidgets::GetName(MemberDef* md, String& name, String& help_text) {
+void taiEditorWidgets::GetName(MemberDef* md, String& name, String& help_text) {
   name = md->GetLabel();
   help_text = ""; // just in case
   MemberDef::GetMembDesc(md, help_text, "");
 }
 
-taiEditorOfWidgets::taiEditorOfWidgets(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
+taiEditorWidgets::taiEditorWidgets(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_, read_only_, modal_, parent)
 {
   InitGuiFields(false);
@@ -95,18 +95,18 @@ taiEditorOfWidgets::taiEditorOfWidgets(TypeDef* typ_, bool read_only_, bool moda
   sel_edit_mbrs = true; // inherited guys can turn off
 }
 
-taiEditorOfWidgets::~taiEditorOfWidgets() {
+taiEditorWidgets::~taiEditorWidgets() {
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiEditorOfWidgets::InitGuiFields(bool virt) {
+void taiEditorWidgets::InitGuiFields(bool virt) {
   if (virt)  inherited::InitGuiFields(virt);
   frmMethButtons = NULL;
   layMethButtons = NULL;
   show_meth_buttons = false;
 }
 
-const iColor taiEditorOfWidgets::colorOfRow(int row) const {
+const iColor taiEditorWidgets::colorOfRow(int row) const {
   if ((row % 2) == 0) {
     return bg_color;
   } else {
@@ -114,7 +114,7 @@ const iColor taiEditorOfWidgets::colorOfRow(int row) const {
   }
 }
 
-void taiEditorOfWidgets::Cancel_impl() { //note: taiEditorOfWidgetsClass takes care of cancelling panels
+void taiEditorWidgets::Cancel_impl() { //note: taiEditorWidgetsOfClass takes care of cancelling panels
   inherited::Cancel_impl();
   // delete any methods
   if (frmMethButtons) {
@@ -126,11 +126,11 @@ void taiEditorOfWidgets::Cancel_impl() { //note: taiEditorOfWidgetsClass takes c
   warn_clobber = false; // just in case
 }
 
-void taiEditorOfWidgets::Constr_Methods() {
+void taiEditorWidgets::Constr_Methods() {
   Constr_Methods_impl();
 }
 
-void taiEditorOfWidgets::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
+void taiEditorWidgets::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
   QFrame* tmp = frmMethButtons;
   if (!frmMethButtons) {
     show_meth_buttons = false; // set true if any created
@@ -153,16 +153,16 @@ void taiEditorOfWidgets::Constr_Methods_impl() { //note: conditional constructio
   }
 }
 
-taBase* taiEditorOfWidgets::GetMembBase_Flat(int) {
+taBase* taiEditorWidgets::GetMembBase_Flat(int) {
   return (taBase*)root; // pray!
 }
 
-taBase* taiEditorOfWidgets::GetMethBase_Flat(int) {
+taBase* taiEditorWidgets::GetMethBase_Flat(int) {
   return (taBase*)root; // pray!
 }
 
-void taiEditorOfWidgets::Insert_Methods() {
-  //NOTE: for taiEditorOfWidgetsClass, menus are always put in widget() even in deferred
+void taiEditorWidgets::Insert_Methods() {
+  //NOTE: for taiEditorWidgetsOfClass, menus are always put in widget() even in deferred
   if (frmMethButtons && !frmMethButtons->parentWidget()) {
     // meth buttons always at bottom of inner layout
     vblDialog->addSpacing(2);
@@ -171,7 +171,7 @@ void taiEditorOfWidgets::Insert_Methods() {
   }
 }
 
-void taiEditorOfWidgets::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+void taiEditorWidgets::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 //note: nothing in base, by design
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
@@ -202,7 +202,7 @@ void taiEditorOfWidgets::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op
   }
 }
 
-void taiEditorOfWidgets::Refresh_impl(bool reshow) {
+void taiEditorWidgets::Refresh_impl(bool reshow) {
   // if no changes have been made in this instance, then just refresh,
   // otherwise, user will have to decide what to do, i.e., revert
   if (HasChanged()) {
@@ -218,7 +218,7 @@ void taiEditorOfWidgets::Refresh_impl(bool reshow) {
   }
 }
 
-void taiEditorOfWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
+void taiEditorWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
   QMenu* menu = new QMenu(widget());
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
@@ -237,24 +237,24 @@ void taiEditorOfWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEv
   delete menu;
 }
 
-void taiEditorOfWidgets::FillLabelContextMenu(QMenu* menu, int& last_id) {
+void taiEditorWidgets::FillLabelContextMenu(QMenu* menu, int& last_id) {
   // only add member help if exists
   if (sel_item_mbr) {
     menu->addAction("&Help", this, SLOT(helpMenu_triggered()));
   }
 }
 
-void taiEditorOfWidgets::helpMenu_triggered() {
+void taiEditorWidgets::helpMenu_triggered() {
   iHelpBrowser::StatLoadMember(sel_item_mbr);
 }
 
-void taiEditorOfWidgets::Iconify(bool value) {
+void taiEditorWidgets::Iconify(bool value) {
   if (!dialog) return;
   if (value) dialog->iconify();
   else       dialog->deiconify();
 }
 
-void taiEditorOfWidgets::Ok_impl() { //note: only used for Dialogs
+void taiEditorWidgets::Ok_impl() { //note: only used for Dialogs
   // NOTE: we herein might be bypassing the clobber warn, but shouldn't really
   //be possible to modify ourself externally inside a dialog
   inherited::Ok_impl();
@@ -264,7 +264,7 @@ void taiEditorOfWidgets::Ok_impl() { //note: only used for Dialogs
   }
 }
 
-void taiEditorOfWidgets::ClearBody(bool waitproc) {
+void taiEditorWidgets::ClearBody(bool waitproc) {
   StartEndLayout(true);
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
@@ -275,11 +275,11 @@ void taiEditorOfWidgets::ClearBody(bool waitproc) {
   StartEndLayout(false);
 }
 
-void taiEditorOfWidgets::ClearBody_impl() {
+void taiEditorWidgets::ClearBody_impl() {
   taiMisc::DeleteChildrenLater(body);
 }
 
-void taiEditorOfWidgets::ReConstr_Body() {
+void taiEditorWidgets::ReConstr_Body() {
   if (!isConstructed()) return;
   rebuild_body = true;
   ++updating;                   // prevents spurious changed flags from coming in
@@ -295,7 +295,7 @@ void taiEditorOfWidgets::ReConstr_Body() {
   --updating;
 }
 
-bool taiEditorOfWidgets::ReShow(bool force) {
+bool taiEditorWidgets::ReShow(bool force) {
 // if not visible, we may refresh the buttons if visible, otherwise nothing else
   if (!mwidget) return false;//. huh?
   //note: extremely unlikely to be updating if invisible, so we do this test here
@@ -335,7 +335,7 @@ bool taiEditorOfWidgets::ReShow(bool force) {
   return true;
 }
 
-void taiEditorOfWidgets::Revert_force() {
+void taiEditorWidgets::Revert_force() {
   if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
     int chs = taMisc::Choice
       ("Revert: You have edited the data -- apply, or revert and lose changes?",
@@ -351,18 +351,18 @@ void taiEditorOfWidgets::Revert_force() {
   Revert();                     // use real revert to be sure..
 }
 
-TypeItem::ShowMembs taiEditorOfWidgets::show() const {
+TypeItem::ShowMembs taiEditorWidgets::show() const {
   return taMisc::show_gui;
 }
 
-void taiEditorOfWidgets::SetRevert(){
+void taiEditorWidgets::SetRevert(){
   if (updating || (taMisc::is_loading)) return;
   if (!revert_but) return;
   revert_but->setHiLight(true);
   revert_but->setEnabled(true);
 }
 
-void taiEditorOfWidgets::UnSetRevert(){
+void taiEditorWidgets::UnSetRevert(){
   if (!revert_but) return;
   revert_but->setHiLight(false);
   revert_but->setEnabled(false);
