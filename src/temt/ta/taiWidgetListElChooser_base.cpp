@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiWidgetListElsChooser_base.h"
+#include "taiWidgetListElChooser_base.h"
 #include <taList_impl>
 #include <iDialogItemChooser>
 
@@ -21,14 +21,14 @@
 
 
 
-taiWidgetListElsChooser_base::taiWidgetListElsChooser_base(TypeDef* typ_, IWidgetHost* host,
+taiWidgetListElChooser_base::taiWidgetListElChooser_base(TypeDef* typ_, IWidgetHost* host,
 		   taiWidget* par, QWidget* gui_parent_, int flags_,
 		   const String& flt_start_txt)
 :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
-int taiWidgetListElsChooser_base::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst, 
+int taiWidgetListElChooser_base::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst, 
   QTreeWidgetItem* top_item) 
 {
   int rval = 0;
@@ -48,14 +48,14 @@ int taiWidgetListElsChooser_base::BuildChooser_0(iDialogItemChooser* ic, taList_
   return rval;
 }
 
-int taiWidgetListElsChooser_base::columnCount(int view) const {
+int taiWidgetListElChooser_base::columnCount(int view) const {
   switch (view) {
   case 0: return 3;
   default: return 0; // not supposed to happen
   }
 }
 
-const String taiWidgetListElsChooser_base::headerText(int index, int view) const {
+const String taiWidgetListElChooser_base::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
     case 0: return "Name"; 
@@ -67,11 +67,11 @@ const String taiWidgetListElsChooser_base::headerText(int index, int view) const
   return _nilString; // shouldn't happen
 }
 
-const String taiWidgetListElsChooser_base::labelNameNonNull() const {
+const String taiWidgetListElChooser_base::labelNameNonNull() const {
   return item()->GetDisplayName();
 }
 
-const String taiWidgetListElsChooser_base::viewText(int index) const {
+const String taiWidgetListElChooser_base::viewText(int index) const {
   switch (index) {
   case 0: return "Flat List"; 
   default: return _nilString;

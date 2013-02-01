@@ -1013,8 +1013,8 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiWidgetEnumStaticChooser.h
   taiWidgetEnumTypeDefChooser.h
 
-  taiWidgetListElsChooser_base.h
-  taiWidgetListElsChooser.h
+  taiWidgetListElChooser_base.h
+  taiWidgetListElChooser.h
   taiWidgetGroupElChooser.h
   taiWidgetProjTemplateElChooser.h
   taiWidgetProgLibElChooser.h
@@ -1903,8 +1903,8 @@ set(ta_SRCS_NOMAKETA
   taiWidgetLinkGroupEditButton.cpp
   taiWidgetLinkListEditButton.cpp
   taiWidgetArrayEditButton.cpp
-  taiWidgetListElsChooser_base.cpp
-  taiWidgetListElsChooser.cpp
+  taiWidgetListElChooser_base.cpp
+  taiWidgetListElChooser.cpp
   taiWidgetGroupElChooser.cpp
   taiWidgetListElMenu.cpp
   taiWidgetGroupElMenu.cpp

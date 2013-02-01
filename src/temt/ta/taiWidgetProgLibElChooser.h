@@ -17,15 +17,15 @@
 #define taiWidgetProgLibElChooser_h 1
 
 // parent includes:
-#include <taiWidgetListElsChooser>
+#include <taiWidgetListElChooser>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiWidgetProgLibElChooser : public taiWidgetListElsChooser {
+class TA_API taiWidgetProgLibElChooser : public taiWidgetListElChooser {
 // for prog lib items
-INHERITED(taiWidgetListElsChooser)
+INHERITED(taiWidgetListElChooser)
 public:
   override int          columnCount(int view) const;
   override const String headerText(int index, int view) const;

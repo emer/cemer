@@ -15,7 +15,7 @@
 
 #include "taiArgTypeOfFromGroup.h"
 #include <taiWidgetGroupElChooser>
-#include <taiWidgetListElsChooser>
+#include <taiWidgetListElChooser>
 #include <taList_impl>
 
 #include <css_ta.h>
@@ -62,7 +62,7 @@ taiWidget* taiArgTypeOfFromGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget*
      return new taiWidgetGroupElChooser(typ, host_, par, gui_parent_,
                                   (new_flags | taiWidget::flgNoInGroup));
   else
-    return new taiWidgetListElsChooser(typ, host_, par, gui_parent_, new_flags);
+    return new taiWidgetListElChooser(typ, host_, par, gui_parent_, new_flags);
 }
 
 void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
@@ -80,7 +80,7 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
     taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   } else {
-    taiWidgetListElsChooser* els = (taiWidgetListElsChooser*)dat;
+    taiWidgetListElChooser* els = (taiWidgetListElChooser*)dat;
     els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
   }
 }
@@ -88,7 +88,7 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
 void taiArgTypeOfFromGroup::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiWidgetListElsChooser_base* els = (taiWidgetListElsChooser_base*)dat;
+  taiWidgetListElChooser_base* els = (taiWidgetListElChooser_base*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }

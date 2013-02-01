@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiWidgetListElsChooser_base_h
-#define taiWidgetListElsChooser_base_h 1
+#ifndef taiWidgetListElChooser_base_h
+#define taiWidgetListElChooser_base_h 1
 
 // parent includes:
 #include <taiWidgetItemChooser>
@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiWidgetListElsChooser_base : public taiWidgetItemChooser {
+class TA_API taiWidgetListElChooser_base : public taiWidgetItemChooser {
 // for items in a list
 INHERITED(taiWidgetItemChooser)
 public:
@@ -35,7 +35,7 @@ public:
 
   taBase*               GetValue() {return item();}
 
-  taiWidgetListElsChooser_base(TypeDef* typ_, IWidgetHost* host,
+  taiWidgetListElChooser_base(TypeDef* typ_, IWidgetHost* host,
                        taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                        const String& flt_start_txt = "");
 protected:
@@ -46,4 +46,4 @@ protected:
   // we use this recursively, and also in gpi guy
 };
 
-#endif // taiWidgetListElsChooser_base_h
+#endif // taiWidgetListElChooser_base_h

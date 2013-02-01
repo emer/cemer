@@ -26,7 +26,7 @@
 #include <taiWidgetTokenChooserMultiType>
 #include <LocalVars>
 #include <taiWidgetGroupElChooser>
-#include <taiWidgetListElsChooser>
+#include <taiWidgetListElChooser>
 #include <taiWidgetMemberDefChooser>
 #include <taiWidgetMemberMethodDefChooser>
 #include <taiWidgetEnumStaticChooser>
@@ -628,7 +628,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         delete lilkup;
       }
       else {
-        taiWidgetListElsChooser* lilkup = new taiWidgetListElsChooser(lookup_td, NULL, NULL, NULL,
+        taiWidgetListElChooser* lilkup = new taiWidgetListElChooser(lookup_td, NULL, NULL, NULL,
                                                         0, lookup_seed);
         lilkup->GetImage(tal, NULL);
         bool okc = lilkup->OpenChooser();

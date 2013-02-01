@@ -17,7 +17,7 @@
 #define taiWidgetGroupElChooser_h 1
 
 // parent includes:
-#include <taiWidgetListElsChooser_base>
+#include <taiWidgetListElChooser_base>
 
 // member includes:
 
@@ -25,9 +25,9 @@
 class taGroup_impl; //
 
 
-class TA_API taiWidgetGroupElChooser : public taiWidgetListElsChooser_base {
+class TA_API taiWidgetGroupElChooser : public taiWidgetListElChooser_base {
 // for items in a list
-INHERITED(taiWidgetListElsChooser_base)
+INHERITED(taiWidgetListElChooser_base)
 public:
   taGroup_impl*         grp;
 

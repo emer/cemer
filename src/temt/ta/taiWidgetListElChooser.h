@@ -13,19 +13,19 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiWidgetListElsChooser_h
-#define taiWidgetListElsChooser_h 1
+#ifndef taiWidgetListElChooser_h
+#define taiWidgetListElChooser_h 1
 
 // parent includes:
-#include <taiWidgetListElsChooser_base>
+#include <taiWidgetListElChooser_base>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiWidgetListElsChooser : public taiWidgetListElsChooser_base {
+class TA_API taiWidgetListElChooser : public taiWidgetListElChooser_base {
   // for items in a list
-  INHERITED(taiWidgetListElsChooser_base)
+  INHERITED(taiWidgetListElChooser_base)
 public:
   taList_impl*               list;
 
@@ -36,9 +36,9 @@ public:
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
 
-  taiWidgetListElsChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
+  taiWidgetListElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                    QWidget* gui_parent_, int flags_ = 0,
                    const String& flt_start_txt = ""); //note: typ is type of list
 };
 
-#endif // taiWidgetListElsChooser_h
+#endif // taiWidgetListElChooser_h

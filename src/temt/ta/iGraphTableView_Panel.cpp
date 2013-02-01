@@ -20,7 +20,7 @@
 #include <taiWidgetComboBox>
 #include <taiWidgetIncrField>
 #include <taiWidgetField>
-#include <taiWidgetListElsChooser>
+#include <taiWidgetListElChooser>
 #include <taiWidgetPoly>
 #include <iCheckBox>
 #include <BuiltinTypeDefs>
@@ -148,7 +148,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
   layXAxis->addWidget(lblXAxis);
-  lelXAxis = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  lelXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layXAxis->addWidget(lelXAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -169,7 +169,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setToolTip("Column of data to plot for the Z Axis");
   layZAxis->addWidget(lblZAxis);
-  lelZAxis = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  lelZAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layZAxis->addWidget(lelZAxis->GetRep());
   layZAxis->addSpacing(taiM->hsep_c);
 
@@ -199,7 +199,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
     lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
     lblYAxis[i]->setToolTip("Column of data to plot (optional)");
     layYAxis[i]->addWidget(lblYAxis[i]);
-    lelYAxis[i] = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+    lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
     layYAxis[i]->addWidget(lelYAxis[i]->GetRep());
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
@@ -233,7 +233,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
     layErr[rw]->addWidget(lblErr[i]);
     layErr[rw]->addSpacing(taiM->hsep_c);
 
-    lelErr[i] = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+    lelErr[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
     layErr[rw]->addWidget(lelErr[i]->GetRep());
     layErr[rw]->addSpacing(taiM->hsep_c);
 
@@ -261,7 +261,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblCAxis = taiM->NewLabel("Color\nAxis:", widg, font_spec);
   lblCAxis->setToolTip("Column of data for COLOR_AXIS color mode");
   layCAxis->addWidget(lblCAxis);
-  lelCAxis = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  lelCAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layCAxis->addWidget(lelCAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -301,7 +301,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
   layRAxis->addWidget(lblRAxis);
-  lelRAxis = dl.Add(new taiWidgetListElsChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  lelRAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layRAxis->addWidget(lelRAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
