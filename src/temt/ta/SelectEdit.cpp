@@ -18,16 +18,16 @@
 
 TypeDef_Of(taProject);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
 
-void SelectEdit::StatDataChanged_Group(taGroup_impl* grp, int dcr,
+void SelectEdit::StatSigEmit_Group(taGroup_impl* grp, int dcr,
   void* op1, void* op2)
 {
   if (!grp->owner || !grp->owner->InheritsFrom(&TA_SelectEdit)) return;
-  ((SelectEdit*)(grp->owner))->DataChanged_Group(grp, dcr, op1, op2);
+  ((SelectEdit*)(grp->owner))->SigEmit_Group(grp, dcr, op1, op2);
 }
 
 
@@ -91,7 +91,7 @@ void SelectEdit::BaseRemoved(taBase* base) {
   base_refs.RemoveEl(base);
 }
 
-void SelectEdit::DataDestroying_Ref(taBase_RefList* src, taBase* base) {
+void SelectEdit::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
   // note: item will already have been removed from list
   if (m_changing) return;
   m_changing++;
@@ -100,24 +100,24 @@ void SelectEdit::DataDestroying_Ref(taBase_RefList* src, taBase* base) {
   m_changing--;
 }
 
-void SelectEdit::DataChanged_Ref(taBase_RefList* src, taBase* ta,
+void SelectEdit::SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2)
 {
-  // simplest, is to just issue our own DataChanged
-  if(dcr < DCR_UPDATE_VIEWS)
-    DataItemUpdated();
+  // simplest, is to just issue our own SigEmit
+  if(dcr < SLS_UPDATE_VIEWS)
+    SigEmitUpdated();
 }
 
-void SelectEdit::DataChanged_Group(taGroup_impl* grp,
+void SelectEdit::SigEmit_Group(taGroup_impl* grp,
     int dcr, void* op1, void* op2)
 {
   if (m_changing) return;
   if (taMisc::is_loading) return; // note: base's aren't set yet, so we can't add
-  if (dcr == DCR_GROUP_ITEM_REMOVE) {
+  if (dcr == SLS_GROUP_ITEM_REMOVE) {
     SelectEditItem* ei = (SelectEditItem*)op1;
     BaseRemoved(ei->base);
   }
-  else if (dcr == DCR_GROUP_ITEM_INSERT) {
+  else if (dcr == SLS_GROUP_ITEM_INSERT) {
     SelectEditItem* ei = (SelectEditItem*)op1;
     BaseAdded(ei->base); // ignored if null, but shouldn't happen anyway
   }
@@ -150,7 +150,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
     SelectMember_impl(itma, mds[i], nma, _nilString);
     SelectMember_impl(itmb, mds[i], nmb, _nilString);
   }
-  DataItemUpdated(); // so name updates in tree
+  SigEmitUpdated(); // so name updates in tree
   ReShowEdit(true);
   return mds.size;
 }
@@ -187,11 +187,11 @@ bool SelectEdit::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   if (force) { // ugh
-    DataChanged(DCR_STRUCT_UPDATE_BEGIN);
-    DataChanged(DCR_STRUCT_UPDATE_END);
+    SigEmit(SLS_STRUCT_UPDATE_BEGIN);
+    SigEmit(SLS_STRUCT_UPDATE_END);
   }
   else {
-    DataItemUpdated();
+    SigEmitUpdated();
   }
 //  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
 #endif

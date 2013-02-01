@@ -51,8 +51,8 @@ iSelectEditPanel::~iSelectEditPanel() {
   }
 }
 
-void iSelectEditPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+void iSelectEditPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
 }
 
@@ -60,7 +60,7 @@ bool iSelectEditPanel::HasChanged() {
   return se->HasChanged();
 }
 
-bool iSelectEditPanel::ignoreDataChanged() const {
+bool iSelectEditPanel::ignoreSigEmit() const {
   return !isVisible();
 }
 

@@ -55,7 +55,7 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
 }
 
 void T3DataViewer::Initialize() {
-//  link_type = &TA_T3DataLink;
+//  link_type = &TA_T3SigLink;
 }
 
 void T3DataViewer::Destroy() {
@@ -111,7 +111,7 @@ void T3DataViewer::ConstrFrames_impl() {
   }
 }
 
-void T3DataViewer::DataChanged_Child(taBase* child, int dcr, void* op1, void* op2) {
+void T3DataViewer::SigEmit_Child(taBase* child, int dcr, void* op1, void* op2) {
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:if new addition when mapped, then add gui
@@ -161,7 +161,7 @@ void T3DataViewer::GetWinState_impl() {
 //  iT3DataViewer* w = widget();
 //  int view_frame_selected = w->tw->currentIndex();
   SetUserData("view_frame_selected", widget()->isVisible());
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void T3DataViewer::SetWinState_impl() {

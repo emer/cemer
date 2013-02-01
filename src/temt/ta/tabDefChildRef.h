@@ -34,8 +34,8 @@ class TA_API tabDefChildRef: protected ISigLinkClient { // ##NO_INSTANCE ##NO_TO
 public:
   inline taList_impl*   ptr() const {return m_ptr;}
   void                  set(taList_impl* src) {if (src == m_ptr) return;
-    if (m_ptr) m_ptr->RemoveDataClient(this); m_ptr = NULL;
-    if (src && src->AddDataClient(this)) m_ptr = src;}
+    if (m_ptr) m_ptr->RemoveSigClient(this); m_ptr = NULL;
+    if (src && src->AddSigClient(this)) m_ptr = src;}
 
   void                  Init(tabDefChildTreeDataNode* own_, taList_impl* ptr_)
     {m_own = own_; set(ptr_);}
@@ -53,8 +53,8 @@ public: // ITypedObject interface
 public: // ISigLinkClient interface
   override TypeDef*     GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taList_impl;}
-  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2);
+  override void         SigLinkDestroying(taSigLink* dl);
 };
 
 #endif // tabDefChildRef_h

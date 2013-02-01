@@ -67,8 +67,8 @@ protected: //
 
 public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);
-  override void         DataDestroying_Ref(taBase_RefList* src, taBase* ta);
-  override void         DataChanged_Ref(taBase_RefList* src, taBase* ta,
+  override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
+  override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2);
 };
 

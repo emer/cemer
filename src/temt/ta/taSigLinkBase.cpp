@@ -106,7 +106,7 @@ int taSigLinkBase::EditAction_impl(taiMimeSource* ms, int ea) {
 taiSigLink* taSigLinkBase::ownLink() const {
   if (!m_data) return NULL;
   taBase* own = ((taBase*)m_data)->GetOwner();
-  return (own) ? (taiSigLink*)own->GetDataLink() : NULL;
+  return (own) ? (taiSigLink*)own->GetSigLink() : NULL;
 }
 
 /*

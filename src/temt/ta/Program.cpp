@@ -23,7 +23,7 @@
 TypeDef_Of(LocalVars);
 TypeDef_Of(ProgCode);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -278,7 +278,7 @@ void Program::Init() {
   QDateTime tm = QDateTime::currentDateTime();
   global_init_timestamp = tm.toTime_t();
   
-  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
   // with Init code that is designed to configure things so there won't be
   // config errors!!  It exposes init code to the possibility of
@@ -324,7 +324,7 @@ void Program::Init() {
     SetRunState(DONE);
   stop_req = false;  // this does not do full clear, so that information can be queried
   UpdateUi();
-  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
+  SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 void Program::InitScriptObj_impl() {
@@ -369,7 +369,7 @@ int Program::Run_impl() {
     script->SetDebug((int)HasProgFlag(TRACE));
     script->Run();
     // DO NOT DO!
-    // DataChanged(DCR_ITEM_UPDATED_ND);
+    // SigEmit(SLS_ITEM_UPDATED_ND);
   }
   return ret_val;
 }
@@ -384,7 +384,7 @@ int Program::Cont_impl() {
   // note: shared var state likely changed, so update gui
   script_compiled = true; // override any run-generated changes!!
   // do not update this -- too tight -- only at end!
-  // DataChanged(DCR_ITEM_UPDATED_ND);
+  // SigEmit(SLS_ITEM_UPDATED_ND);
   return ret_val;
 }
 
@@ -413,7 +413,7 @@ void Program::Run() {
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
-  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   bool did_struct_updt = false;
   if(!HasProgFlag(OBJS_UPDT_GUI)) {
     objs.StructUpdateEls(true);
@@ -437,7 +437,7 @@ void Program::Run() {
   }
   UpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
-  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
+  SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 void Program::ShowRunError() {
@@ -488,7 +488,7 @@ void Program::Step(Program* step_prg) {
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
-  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   bool did_struct_updt = false;
   if(!HasProgFlag(OBJS_UPDT_GUI)) {
     objs.StructUpdateEls(true);
@@ -513,12 +513,12 @@ void Program::Step(Program* step_prg) {
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
   UpdateUi();
-  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
+  SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 void Program::ToggleTrace() {
   ToggleProgFlag(TRACE);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void Program::ProjDirToCurrent() {
@@ -566,7 +566,7 @@ void Program::Stop_impl() {
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   script->Stop();
 //   setRunState(STOP);
-//   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+//   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
 }
 
 bool Program::IsStepProg() {
@@ -612,7 +612,7 @@ void Program::StepCss() {
   CmdShell();
   taMisc::Busy();
   SetRunState(RUN);
-  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   bool did_struct_updt = false;
   if(!HasProgFlag(OBJS_UPDT_GUI)) {
     objs.StructUpdateEls(true);
@@ -637,7 +637,7 @@ void Program::StepCss() {
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
   UpdateUi();
-  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
+  SigEmit(SLS_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 bool Program::RunFunction(const String& fun_name) {
@@ -722,7 +722,7 @@ void Program::ScriptCompiled() {
   script_compiled = true;
   ret_val = 0;
   m_stale = false;
-  DataChanged(DCR_ITEM_UPDATED_ND); // this will *not* call setDirty
+  SigEmit(SLS_ITEM_UPDATED_ND); // this will *not* call setDirty
 }
 
 void Program::setStale() {
@@ -743,8 +743,8 @@ void Program::setStale() {
   }
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
-//obs    DataChanged(DCR_ITEM_UPDATED_ND); //note: doesn't recurse ud
-    DataItemUpdated(); //note: doesn't recurse ud
+//obs    SigEmit(SLS_ITEM_UPDATED_ND); //note: doesn't recurse ud
+    SigEmitUpdated(); //note: doesn't recurse ud
   }
 }
 
@@ -1343,9 +1343,9 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   prog_type->LoadProgram(this);
 }
 
-void Program::DataChanged(int dcr, void* op1, void* op2) {
+void Program::SigEmit(int dcr, void* op1, void* op2) {
   // just for debug trapping..
-  inherited::DataChanged(dcr, op1, op2);
+  inherited::SigEmit(dcr, op1, op2);
   sub_progs_updtd = false;
 }
 

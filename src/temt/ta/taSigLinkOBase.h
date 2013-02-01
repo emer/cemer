@@ -28,7 +28,7 @@
 
 TypeDef_Of(taSigLinkOBase);
 
-class TA_API taSigLinkOBase: public taSigLinkBase { // DataLink for taOBase objects
+class TA_API taSigLinkOBase: public taSigLinkBase { // SigLink for taOBase objects
 INHERITED(taSigLinkBase)
 public:
   taOBase*              data() {return (taOBase*)m_data;}
@@ -37,13 +37,13 @@ public:
   override MemberDef*   GetDataMemberDef() const;
 
   taSigLinkOBase(taOBase* data_);
-  DL_FUNS(taSigLinkOBase); //
+  SL_FUNS(taSigLinkOBase); //
 
 public: // for taLists, and default children (where defined) in taOBase
   virtual taList_impl*  list() {return ((taOBase*)m_data)->children_();}
   virtual taList_impl*  list() const {return ((taOBase*)m_data)->children_();}
   virtual taiSigLink*  listLink() {taList_impl* lst = list();
-    return (lst) ? (taiSigLink*)lst->GetDataLink() : NULL;}
+    return (lst) ? (taiSigLink*)lst->GetSigLink() : NULL;}
 
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,

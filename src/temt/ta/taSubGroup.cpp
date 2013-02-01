@@ -16,13 +16,13 @@
 #include "taSubGroup.h"
 #include <taGroup_impl>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
-void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
+void taSubGroup::SigEmit(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
-  if ((dcr >= DCR_LIST_ITEM_TO_GROUP_MIN) && (dcr <= DCR_LIST_ITEM_TO_GROUP_MAX))
-    ((taGroup_impl*)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
+  if ((dcr >= SLS_LIST_ITEM_TO_GROUP_MIN) && (dcr <= SLS_LIST_ITEM_TO_GROUP_MAX))
+    ((taGroup_impl*)owner)->SigEmit(dcr + SLS_ListItem_Group_Offset, op1, op2);
 }
 
 bool taSubGroup::Transfer(taBase* it) {

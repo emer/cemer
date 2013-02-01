@@ -36,15 +36,15 @@ void*   EnumSpace::El_Copy_(void* trg, void* src)
 void EnumSpace::Initialize() {
   owner = NULL;
 #ifndef NO_TA_BASE
-  data_link = NULL;
+  sig_link = NULL;
 #endif
 }
 
 EnumSpace::~EnumSpace() {
   Reset();
 #ifndef NO_TA_BASE
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
+  if (sig_link) {
+    sig_link->SigDestroying(); // link NULLs our pointer
   }
 #endif
 }

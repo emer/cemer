@@ -1323,7 +1323,7 @@ void BrainVolumeView::UpdateUnitValues()
   UpdateUnitValues_blocks();
 }
 
-void BrainVolumeView::DataUpdateView_impl()
+void BrainVolumeView::SigRecvUpdateView_impl()
 {
   //do nothing...we don't need to re-render when Network data changes
 }

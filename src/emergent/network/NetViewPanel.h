@@ -144,8 +144,8 @@ public:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;} //
-//  override void               DataLinkDestroying(taSigLink* dl);
-//  override void               DataLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc);
+//  override void               SigLinkDestroying(taSigLink* dl);
+//  override void               SigLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc);
   override TypeDef*     GetTypeDef() const {return &TA_NetViewPanel;}
 
 protected:

@@ -141,7 +141,7 @@ public:
   virtual void          CopyFromViewFrame(T3DataViewFrame* cp);
   // #CAT_Display copy key view information from another view frame (saved views, other view info)
 
-  void  DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
+  void  SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void  InitLinks();
   void  CutLinks();
   TA_DATAVIEWFUNS(T3DataViewFrame, DataViewer)

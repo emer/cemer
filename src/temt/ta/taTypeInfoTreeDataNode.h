@@ -49,7 +49,7 @@ public: // ISigLinkClient interface
 protected:
   override void         willHaveChildren_impl(bool& will) const;
   override void         CreateChildren_impl(); // called by the Node when it needs to create
-//  override void               DataChanged_impl(int dcr, void* op1, void* op2);
+//  override void               SigEmit_impl(int dcr, void* op1, void* op2);
 private:
   void                  init(taSigLinkTypeItem* link_, int flags_); // #IGNORE
 };

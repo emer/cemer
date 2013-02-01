@@ -18,15 +18,15 @@
 IMultiSigLinkClient::~IMultiSigLinkClient() {
   while (dls.size > 0) {
     taSigLink* dl = dls.Pop();
-    dl->RemoveDataClient(this);
+    dl->RemoveSigClient(this);
   }
 }
 
-bool IMultiSigLinkClient::AddDataLink(taSigLink* dl) {
+bool IMultiSigLinkClient::AddSigLink(taSigLink* dl) {
   return dls.AddUnique(dl);
 }
 
-bool IMultiSigLinkClient::RemoveDataLink(taSigLink* dl) {
+bool IMultiSigLinkClient::RemoveSigLink(taSigLink* dl) {
   return dls.RemoveEl(dl);
 }
 

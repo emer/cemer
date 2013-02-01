@@ -215,14 +215,14 @@ void VEStatic::SnapPosToGrid(float grid_size) {
   pos.x = VEWorld::SnapVal(pos.x, grid_size);
   pos.y = VEWorld::SnapVal(pos.y, grid_size);
   pos.z = VEWorld::SnapVal(pos.z, grid_size);
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
 }
 
 void VEStatic::Translate(float dx, float dy, float dz) {
   pos.x += dx;
   pos.y += dy;
   pos.z += dz;
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
 }
 
 void VEStatic::Scale(float sx, float sy, float sz) {
@@ -252,7 +252,7 @@ void VEStatic::Scale(float sx, float sy, float sz) {
   case NO_SHAPE:
     break;
   }
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
 }
 
 void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt) {
@@ -263,14 +263,14 @@ void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt) {
   rot_quat.RotateAxis(x_ax, y_ax, z_ax, rt);
   rot = rot_quat;
   rot_quat.ToEulerVec(rot_euler);
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
 }
 
 void VEStatic::RotateEuler(float euler_x, float euler_y, float euler_z) {
   rot_quat.RotateEuler(euler_x, euler_y, euler_z);
   rot = rot_quat;
   rot_quat.ToEulerVec(rot_euler);
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
 }
 
 void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {

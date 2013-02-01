@@ -45,7 +45,7 @@ public slots:
   virtual void  Toggle_Callback();
 
 protected:
-  override void DataChanged_impl(taiData* chld);
+  override void SigEmit_impl(taiData* chld);
   override void applyNow();
 };
 

@@ -60,7 +60,7 @@ void iDataPanelSetBase::ClosePanel() {
   deleteLater();
 }
 
-void iDataPanelSetBase::DataLinkDestroying(taSigLink* dl) {
+void iDataPanelSetBase::SigLinkDestroying(taSigLink* dl) {
   ClosePanel();
 } // nothing for us; subpanels handle
 

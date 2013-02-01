@@ -21,7 +21,7 @@
 
 
 taSigLinkMemberSpace::taSigLinkMemberSpace(MemberSpace* data_)
-:inherited(TypeItem::TIK_MEMBERSPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_MEMBERSPACE, data_, data_->sig_link)
 {
 }
 
@@ -29,7 +29,7 @@ taiSigLink* taSigLinkMemberSpace::GetListChild(int itm_idx) {
   MemberDef* el = static_cast<MemberDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, &TA_MemberDef);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, &TA_MemberDef);
   return dl;
 }
 

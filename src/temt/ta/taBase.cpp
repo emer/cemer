@@ -33,7 +33,7 @@
 #include <ISigLinkClient>
 #include <iColor>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -325,10 +325,10 @@ void taBase::Destroying() {
   if (HasBaseFlag(DESTROYING)) return; // already done by parent
   SetBaseFlag(DESTROYING);
   //note: following gets called in destructor of higher class, so
-  // its vtable accessor for datalinks will be valid in that context
-  taSigLink* dl = data_link();
+  // its vtable accessor for siglinks will be valid in that context
+  taSigLink* dl = sig_link();
   if (dl) {
-    dl->DataDestroying();
+    dl->SigDestroying();
     delete dl; // NULLs our ref
   }
 }
@@ -1223,7 +1223,7 @@ int taBase::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   Dump_Load_pre();
   int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr);
   StructUpdate(false);
-  DataChanged(DCR_STRUCT_UPDATE_ALL); // during loading, updates are blocked, so now we redo everything
+  SigEmit(SLS_STRUCT_UPDATE_ALL); // during loading, updates are blocked, so now we redo everything
   if(loaded_obj_ptr) {
     if(*loaded_obj_ptr) (*loaded_obj_ptr)->setDirty(false);
   }
@@ -1410,7 +1410,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   if (flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
     // don't notify! very dangerous in middle of save, and also marks Dirty
-   // DataItemUpdated();
+   // SigEmitUpdated();
   }
   return flr;
 }
@@ -1454,7 +1454,7 @@ int taBase::SaveAs(const String& fname) {
     rval = true;
   }
   taRefN::unRefDone(flr);
-  DataChanged(DCR_ITEM_UPDATED_ND);
+  SigEmit(SLS_ITEM_UPDATED_ND);
   return rval;
 }
 
@@ -1683,7 +1683,7 @@ taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef
 void taBase::UpdateAfterEdit() {
   if (isDestroying()) return;
   UpdateAfterEdit_impl();
-  DataItemUpdated();
+  SigEmitUpdated();
   /*TEST */
   taBase* _owner = GetOwner();
   if (_owner ) {
@@ -1702,46 +1702,46 @@ void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   // call notify if it is an owned member object (but not list/group items)
   if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
     handled = true;
-    DataChanged(DCR_CHILD_ITEM_UPDATED);
+    SigEmit(SLS_CHILD_ITEM_UPDATED);
     return;
   }
 }
 
 void taBase::UpdateAfterMove(taBase* old_owner) {
   UpdateAfterMove_impl(old_owner);
-  //  DataItemUpdated();  no extra notify -- list takes care of it.  should
+  //  SigEmitUpdated();  no extra notify -- list takes care of it.  should
   // just _impl doing updating of pointers etc -- just have _impl stuff because it always
   // ends up being needed eventually..
 }
 
 void taBase::UpdateAllViews() {
   if(taMisc::gui_active)
-    DataChanged(DCR_UPDATE_VIEWS);
+    SigEmit(SLS_UPDATE_VIEWS);
 }
 
 void taBase::RebuildAllViews() {
   if(taMisc::gui_active)
-    DataChanged(DCR_REBUILD_VIEWS);
+    SigEmit(SLS_REBUILD_VIEWS);
 }
 
-void taBase::DataChanged(int dcr, void* op1, void* op2) {
+void taBase::SigEmit(int dcr, void* op1, void* op2) {
   if(taMisc::is_loading)  return; // no notifies while loading!!
 
-  if (dcr != DCR_ITEM_UPDATED_ND)
+  if (dcr != SLS_ITEM_UPDATED_ND)
     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   // only assume stale for strict condition:
-  if ((useStale() && (dcr == DCR_ITEM_UPDATED)))
+  if ((useStale() && (dcr == SLS_ITEM_UPDATED)))
     setStale();
-  taSigLink* dl = data_link();
-  if (dl) dl->DataDataChanged(dcr, op1, op2);
+  taSigLink* dl = sig_link();
+  if (dl) dl->SigLinkEmit(dcr, op1, op2);
 }
 
-void taBase::DataItemUpdated() {
-  DataChanged(DCR_ITEM_UPDATED);
+void taBase::SigEmitUpdated() {
+  SigEmit(SLS_ITEM_UPDATED);
 }
 
 bool taBase::InStructUpdate() {
-  taSigLink* dl = data_link(); // doesn't autocreate
+  taSigLink* dl = sig_link(); // doesn't autocreate
   return (dl ? (dl->dbuCnt() > 0) : false);
 }
 
@@ -1762,65 +1762,65 @@ void taBase::setStale() {
 ///////////////////////////////////////////////////////////////////////////
 //      Data Links -- notify other guys when you change
 
-taSigLink* taBase::GetDataLink() {
-  if (!data_link()) {
+taSigLink* taBase::GetSigLink() {
+  if (!sig_link()) {
     if (isDestroying()) {
-      taMisc::DebugInfo("Attempt to GetDataLink on a destructing object");
+      taMisc::DebugInfo("Attempt to GetSigLink on a destructing object");
       return NULL;
     }
     if (taiViewType* iv = GetTypeDef()->iv) {
-      iv->GetDataLink(this, GetTypeDef()); // sets data_link
+      iv->GetSigLink(this, GetTypeDef()); // sets sig_link
     }
   }
-  return data_link();
+  return sig_link();
 }
 
-bool taBase::AddDataClient(ISigLinkClient* dlc) {
+bool taBase::AddSigClient(ISigLinkClient* dlc) {
   // refuse new links while destroying!
   if (isDestroying()) {
-    DebugInfo("AddDataClient","Attempt to add a DataLinkClient to a destructing object");
+    DebugInfo("AddSigClient","Attempt to add a SigLinkClient to a destructing object");
     return false;
   }
-  taSigLink* dl = GetDataLink(); // autocreates if necessary
+  taSigLink* dl = GetSigLink(); // autocreates if necessary
   if (dl != NULL) {
-    dl->AddDataClient(dlc);
+    dl->AddSigClient(dlc);
     return true;
   }
   else {
-    DebugInfo("AddDataClient","Attempt to add a DataLinkClient to an obj with no DataLink!");
+    DebugInfo("AddSigClient","Attempt to add a SigLinkClient to an obj with no SigLink!");
   }
   return false;
 }
 
-bool taBase::RemoveDataClient(ISigLinkClient* dlc) {
-  taSigLink* dl = data_link(); // doesn't autocreate
+bool taBase::RemoveSigClient(ISigLinkClient* dlc) {
+  taSigLink* dl = sig_link(); // doesn't autocreate
   if (dl != NULL) {
-    return dl->RemoveDataClient(dlc);
+    return dl->RemoveSigClient(dlc);
   } else return false;
 }
 
 void taBase::BatchUpdate(bool begin, bool struc) {
-//  taSigLink* dl = data_link(); // doesn't autocreate -- IMPORTANT!
+//  taSigLink* dl = sig_link(); // doesn't autocreate -- IMPORTANT!
 //  if (!dl) return;
   if (begin) {
     if (struc)
-      DataChanged(DCR_STRUCT_UPDATE_BEGIN);
+      SigEmit(SLS_STRUCT_UPDATE_BEGIN);
     else
-      DataChanged(DCR_DATA_UPDATE_BEGIN);
+      SigEmit(SLS_DATA_UPDATE_BEGIN);
   } else {
     if (struc)
-      DataChanged(DCR_STRUCT_UPDATE_END);
+      SigEmit(SLS_STRUCT_UPDATE_END);
     else
-      DataChanged(DCR_DATA_UPDATE_END);
+      SigEmit(SLS_DATA_UPDATE_END);
   }
 }
 
-void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+void taBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
   UpdateAfterEdit();
 }
 
-String& taBase::ListDataClients(String& strm, int indent) {
-  taSigLink* dl = GetDataLink();
+String& taBase::ListSigClients(String& strm, int indent) {
+  taSigLink* dl = GetSigLink();
   if(!dl) return strm;
   dl->ListClients(strm, indent);
   return strm;
@@ -1888,14 +1888,14 @@ bool taBase::CheckConfig_impl(bool quiet) {
     SetBaseFlag(CHILD_INVALID);
   }
   if (cp_flags != base_flags)
-    DataItemUpdated();
+    SigEmitUpdated();
   return (this_rval && child_rval);
 }
 
 void taBase::ClearCheckConfig() {
   if (base_flags & INVALID_MASK) {
     ClearBaseFlag(INVALID_MASK);
-    DataItemUpdated();
+    SigEmitUpdated();
   }
 }
 
@@ -2371,7 +2371,7 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
   if (!rval && force_create) {
     rval = (UserDataItemBase*)ud->New(1, typ);
     rval->name = key;
-    DataChanged(DCR_USER_DATA_UPDATED);
+    SigEmit(SLS_USER_DATA_UPDATED);
   }
   return rval;
 }
@@ -2395,7 +2395,7 @@ bool taBase::RemoveUserData(const String& key) {
     UserDataItemBase* udi = ud->FindLeafName(key);
     if (udi) {
       udi->Close();
-      DataChanged(DCR_USER_DATA_UPDATED);
+      SigEmit(SLS_USER_DATA_UPDATED);
       return true;
     }
   }
@@ -2420,7 +2420,7 @@ void taBase::SetDocLink(taDoc* doc) {
   } else {
     uddl->Close(); // do now, so update is good
   }
-  DataChanged(DCR_USER_DATA_UPDATED);
+  SigEmit(SLS_USER_DATA_UPDATED);
 }
 
 void taBase::PrintMyPath() {
@@ -2453,7 +2453,7 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
   }
   TestWarning(!udi->setValueAsVariant(value),"SetUserData",
               "Attempt to set existing UserData value as Variant, was not supported for", name);
-  if (notify) DataChanged(DCR_USER_DATA_UPDATED);
+  if (notify) SigEmit(SLS_USER_DATA_UPDATED);
   return dynamic_cast<UserDataItem*>(udi); // should succeed!
 }
 
@@ -2546,7 +2546,7 @@ bool taBase::EditDialog(bool modal) {
     edlg->ViewWindow();
     iMainWindowViewer* iwv = edlg->widget();
     iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
-    return iwv->AssertPanel((taiSigLink*)GetDataLink());
+    return iwv->AssertPanel((taiSigLink*)GetSigLink());
     //bool new_tab, bool new_tab_lock)
   }
 #endif
@@ -3091,7 +3091,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     editor->name = "Srch_" + memb_contains;
     editor->desc = "Search of members containing: " + memb_contains
       + " in object: " + GetDisplayName();
-    editor->DataItemUpdated(); // so name updates in treee
+    editor->SigEmitUpdated(); // so name updates in treee
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;

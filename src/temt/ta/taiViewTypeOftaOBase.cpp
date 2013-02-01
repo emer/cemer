@@ -46,7 +46,7 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
     iUserDataPanel* udp = (iUserDataPanel*)pan->GetDataPanelOfType(&TA_iUserDataPanel, start_idx);
     // leave an existing panel if none visible, but don't make one if not
     if (!udp && udi_visible) {
-      udp = new iUserDataPanel((taiSigLink*)udl->GetDataLink());
+      udp = new iUserDataPanel((taiSigLink*)udl->GetSigLink());
       DataPanelCreated(udp);
     }
 
@@ -72,7 +72,7 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
   }
 }
 
-taiSigLink* taiViewTypeOftaOBase::CreateDataLink_impl(taBase* data_) {
+taiSigLink* taiViewTypeOftaOBase::CreateSigLink_impl(taBase* data_) {
   return new taSigLinkOBase((taOBase*)data_);
 }
 
@@ -98,7 +98,7 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
     bool udi_visible = udl->hasVisibleItems();
     // only make one for UserData if any visible
     if (udi_visible) {
-      iUserDataPanel* udp = new iUserDataPanel((taiSigLink*)udl->GetDataLink());
+      iUserDataPanel* udp = new iUserDataPanel((taiSigLink*)udl->GetSigLink());
       DataPanelCreated(udp);
     }
 
@@ -114,9 +114,9 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
   }
 }
 
-taiSigLink* taiViewTypeOftaOBase::GetDataLink(void* data_, TypeDef* el_typ) {
+taiSigLink* taiViewTypeOftaOBase::GetSigLink(void* data_, TypeDef* el_typ) {
   taOBase* data = (taOBase*)data_;
-  taSigLink* dl = *(data->addr_data_link());
+  taSigLink* dl = *(data->addr_sig_link());
   if (dl) return (taiSigLink*)dl;
-  else return CreateDataLink_impl(data);
+  else return CreateSigLink_impl(data);
 }

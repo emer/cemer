@@ -88,8 +88,8 @@ protected:
   override void         UpdateSelectedItems_impl(); //
 
 public: // ISigLinkClient i/f
-  override void         DataLinkDestroying(taSigLink* dl);
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   DataTableRef          m_dt;

@@ -34,11 +34,11 @@ public:
   override int          BidForView(TypeDef*);
   override const iColor GetEditColorInherit(taiSigLink* dl, bool& ok) const;// #IGNORE background color for edit
   override iDataPanel*  CreateDataPanel(taiSigLink* dl_);
-  override taiSigLink* GetDataLink(void* data_, TypeDef* el_typ);
+  override taiSigLink* GetSigLink(void* data_, TypeDef* el_typ);
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  virtual taiSigLink*  CreateDataLink_impl(taBase* data_);
+  virtual taiSigLink*  CreateSigLink_impl(taBase* data_);
   override void         CreateDataPanel_impl(taiSigLink* dl_);
 private:
   EditDataPanel*        edit_panel; // cached during construction

@@ -129,7 +129,7 @@ void Network::Destroy() {
 }
 
 void Network::InitLinks() {
-  GetDataLink(); // forces creation, so we track Updates
+  GetSigLink(); // forces creation, so we track Updates
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
@@ -2403,7 +2403,7 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
     use_prj->spec.SetSpec(ps);
   if(cs)
     use_prj->con_spec.SetSpec(cs);
-  use_prj->DataItemUpdated();
+  use_prj->SigEmitUpdated();
   return use_prj;
 }
 
@@ -2426,7 +2426,7 @@ Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpe
     prj->spec.SetSpec(ps);
   if(cs)
     prj->con_spec.SetSpec(cs);
-  prj->DataItemUpdated();
+  prj->SigEmitUpdated();
   return prj;
 }
 

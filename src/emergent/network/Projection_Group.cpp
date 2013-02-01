@@ -17,7 +17,7 @@
 #include <Network>
 
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 Projection* Projection_Group::ConnectFrom(Layer* lay) {
   if(!lay) return NULL;
@@ -26,10 +26,10 @@ Projection* Projection_Group::ConnectFrom(Layer* lay) {
   return prjn;
 }
 
-void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
+void Projection_Group::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
   if(send_prjns) return;
-  if (dcr == DCR_LIST_ITEM_INSERT) {
+  if (dcr == SLS_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
     if (net)
       net->RebuildAllViews();

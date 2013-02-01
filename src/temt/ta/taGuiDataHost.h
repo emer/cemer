@@ -45,7 +45,7 @@ public:
   override void Ok_impl();
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
-//   void               DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+//   void               SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   override void*        This() {return this;}

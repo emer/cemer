@@ -20,21 +20,21 @@
 ISigLinkClient::~ISigLinkClient() {
   if (m_link) {
     //NOTE: since this is destructor, the 'this' we pass is our *own* virtual v-table
-    // version, therefore, RemoveDataClient may NOT use any of our virtual or pure-virtual methods
-    m_link->RemoveDataClient(this); //nulls our ref
+    // version, therefore, RemoveSigClient may NOT use any of our virtual or pure-virtual methods
+    m_link->RemoveSigClient(this); //nulls our ref
   }
 }
 
-bool ISigLinkClient::AddDataLink(taSigLink* dl) {
+bool ISigLinkClient::AddSigLink(taSigLink* dl) {
   if (m_link && (m_link != dl)) {
-    taMisc::DebugInfo("ISigLinkClient::AddDataLink: a link has already been set!");
+    taMisc::DebugInfo("ISigLinkClient::AddSigLink: a link has already been set!");
   }
   bool r = (0 == m_link);
   m_link = dl;
   return r;
 }
 
-bool ISigLinkClient::RemoveDataLink(taSigLink* dl) {
+bool ISigLinkClient::RemoveSigLink(taSigLink* dl) {
   bool r = (0 != m_link);
   m_link = NULL;
   return r;

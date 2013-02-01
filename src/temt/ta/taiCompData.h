@@ -60,8 +60,8 @@ public:
 
 #ifndef __MAKETA__
 signals:
-  void                  ChildDataChangedNotify(taiData* sender);
-  // emitted whenever a child does DataChangedNotify
+  void                  ChildSigEmitNotify(taiData* sender);
+  // emitted whenever a child does SigEmitNotify
 #endif
 protected:
   QLayout*              lay; // may be ignored/unused by subclasses
@@ -80,8 +80,8 @@ protected:
     int stretch);// default does an add to layout
 
 protected slots:
-  void                  ChildDataChanged(taiData* sender);
-  // connected to DataChanged of all our children
+  void                  ChildSigEmit(taiData* sender);
+  // connected to SigEmit of all our children
 
 private:
   QObjectList*          mwidgets; // list of child widgets

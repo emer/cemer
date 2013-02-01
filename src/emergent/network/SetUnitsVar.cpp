@@ -75,7 +75,7 @@ bool SetUnitsVar::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
-    input_data_var->DataItemUpdated();
+    input_data_var->SigEmitUpdated();
   }
   return true;
 }

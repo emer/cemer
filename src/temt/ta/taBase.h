@@ -903,9 +903,9 @@ public:
   // #CAT_Display called after data changes, to update views
   virtual void          RebuildAllViews();
   // #CAT_Display call after data changes, to rebuild views, typically when a child is added
-  virtual void          DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  // #IGNORE sends the indicated notification to all datalink clients, if any; virtual so we can override to trap/monitor
-  void                  DataItemUpdated();
+  virtual void          SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  // #IGNORE sends the indicated notification to all siglink clients, if any; virtual so we can override to trap/monitor
+  void                  SigEmitUpdated();
   // #CAT_ObjectMgmt send the ITEM_UPDATED data changed signal to indicate to gui elements etc that this item has been updated
   void                  StructUpdate(bool begin) { BatchUpdate(begin, true); }
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
@@ -931,24 +931,24 @@ protected:  // Impl
   // for actions that should be performed after object has been moved from one location to another in the structure hierarchy
 
   ///////////////////////////////////////////////////////////////////////////
-  //    Data Links -- notify other guys when you change
+  //    SigLinks -- notify other guys when you change
 public:
 
-  virtual taSigLink*   data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
-  virtual taSigLink*   GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
-  bool                  AddDataClient(ISigLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
-  bool                  RemoveDataClient(ISigLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
-  virtual String&       ListDataClients(String& strm, int indent = 0);
+  virtual taSigLink*   sig_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(sig_link()) sig_link->SomeFunc(); NOT autocreated by call to this func -- call GetSigLink() to force creation
+  virtual taSigLink*   GetSigLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support siglinks
+  bool                  AddSigClient(ISigLinkClient* dlc); // #IGNORE note: only applicable for classes that implement siglinks
+  bool                  RemoveSigClient(ISigLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
+  virtual String&       ListSigClients(String& strm, int indent = 0);
   // #CAT_ObjectMgmt list all the data clients for this object to string
 protected:      // Impl
   virtual void          BatchUpdate(bool begin, bool struc);
   // #IGNORE bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
-  virtual void          SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+  virtual void          SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
   // #IGNORE the obj (to which we had a ref) is about to destroy (the ref has already been NULL'ed)
-  virtual void          SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+  virtual void          SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_) {}
   // #IGNORE the obj (to which we have a ref) has signalled the indicated data change
-  virtual void          SmartRef_DataRefChanging(taSmartRef* ref,
+  virtual void          SmartRef_SigChanging(taSmartRef* ref,
     taBase* obj, bool setting) {}
   // #IGNORE the obj ref has either been removed (smartref now null) or added (smartref already set to that object)
 

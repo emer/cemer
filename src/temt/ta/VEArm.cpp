@@ -415,7 +415,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   Init();                       // this will attempt to init everything just created..
 
-  DataItemUpdated(); // this will in theory update the display
+  SigEmitUpdated(); // this will in theory update the display
 
   return true;
 }
@@ -651,7 +651,7 @@ humerus->Translate(RotHumCM.FastEl(0),RotHumCM.FastEl(1),RotHumCM.FastEl(2)-(hum
   //elbow->Init_Anchor();
   //CurFromODE(true);
 
-  DataItemUpdated(); // this will in theory update the display
+  SigEmitUpdated(); // this will in theory update the display
 
   return true;
 }

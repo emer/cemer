@@ -164,11 +164,11 @@ int ProgExprBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   return nchg;
 }
 
-void ProgExprBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
-  inherited::SmartRef_DataDestroying(ref, obj); // does UAE
+void ProgExprBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
+  inherited::SmartRef_SigDestroying(ref, obj); // does UAE
 }
 
-void ProgExprBase::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+void ProgExprBase::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                     int dcr, void* op1_, void* op2_)
 {
   // we only update ourself if the schema of a var changed

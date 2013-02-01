@@ -78,7 +78,7 @@ void iBrowseHistory::doEnabling() {
   emit forward_enabled(fe);
 }
 
-void iBrowseHistory::DataLinkDestroying(taSigLink* dl) {
+void iBrowseHistory::SigLinkDestroying(taSigLink* dl) {
   for (int i = items.size - 1; i >= 0; --i) {
     if (dl == items[i]) {
       if (cur_item > i) -- cur_item;
@@ -93,14 +93,14 @@ void iBrowseHistory::itemAdding(taiSigLink* dl) {
   for (int i = 0; i < items.size; ++i) {
     if (dl == items[i]) return;
   }
-  dl->AddDataClient(this);
+  dl->AddSigClient(this);
 }
 
 void iBrowseHistory::itemRemoved(taiSigLink* dl) {
   for (int i = 0; i < items.size; ++i) {
     if (dl == items[i]) return;
   }
-  dl->RemoveDataClient(this);
+  dl->RemoveSigClient(this);
 }
 
 void iBrowseHistory::SelectableHostNotifying(ISelectableHost* src_host, int op)

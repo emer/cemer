@@ -87,7 +87,7 @@ void taiData::SetBase(taBase* base_) const {
   m_base = base_;
 }
 
-void taiData::DataChanged(taiData* chld) {
+void taiData::SigEmit(taiData* chld) {
   // ignore completely if not yet constructed
   if (!isConstructed()) return;
 
@@ -96,15 +96,15 @@ void taiData::DataChanged(taiData* chld) {
   // we might end up committing suicide here so guard..
   QPointer<taiData> ths = this;
   if (mparent != NULL)
-    mparent->DataChanged(this);
+    mparent->SigEmit(this);
   else if (host)
     host->Changed();
 
   if(!ths) return;              // above could have done it
 
-  DataChanged_impl(chld);
+  SigEmit_impl(chld);
   if (!chld)
-    emit DataChangedNotify(this);
+    emit SigEmitNotify(this);
 }
 
 int taiData::defSize() const {
@@ -254,5 +254,5 @@ bool taiData::setVisible(bool value) {
 }
 
 void taiData::repChanged() {
-  DataChanged(NULL);
+  SigEmit(NULL);
 }

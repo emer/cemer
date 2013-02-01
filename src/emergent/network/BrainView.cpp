@@ -220,13 +220,13 @@ void BrainView::UpdateName() {
   }
 }
 
-void BrainView::DataUpdateAfterEdit_impl() {
+void BrainView::SigRecvUpdateAfterEdit_impl() {
   UpdateName();
   InitDisplay(true);
   UpdateDisplay();
 }
 
-void BrainView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
+void BrainView::SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) {
   // called when lays/specs are updated; typically just update spec view
   UpdatePanel();
 }
@@ -850,7 +850,7 @@ void BrainView::UpdateUnitValues() { // *actually* only does unit value updating
   bvv->UpdateUnitValues();
 }
 
-void BrainView::DataUpdateView_impl() {
+void BrainView::SigRecvUpdateView_impl() {
   if (!display) return;
   UpdateUnitValues();
   if(net_text) {

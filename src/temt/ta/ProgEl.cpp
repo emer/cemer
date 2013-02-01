@@ -294,7 +294,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     pv_own->Add(pv);
     pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
     pv->name = var_nm;          // just to be sure
-    pv->DataItemUpdated();
+    pv->SigEmitUpdated();
     pvr.set(pv); // done!!
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from function:", ot_fun->name, "to function:",
@@ -346,7 +346,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
     pv->name = var_nm;          // just to be sure
     pvr.set(pv); // done!!
-    pv->DataItemUpdated();
+    pv->SigEmitUpdated();
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from program:", ot_prg->name, "to program:",
                  my_prg->name, "because copied program element refers to it");
@@ -383,7 +383,7 @@ void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                     int dcr, void* op1_, void* op2_) {
 //NO!!!!! Does a UAE if content of ref changes; otherwise, don't need this
 //  UpdateAfterEdit();          // just do this for all guys -- keeps display updated
@@ -455,42 +455,42 @@ bool ProgEl::ScriptLines(int& start_ln, int& end_ln) {
 
 void ProgEl::SetOffFlag(bool off) {
   SetProgFlagState(OFF, off);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::ToggleOffFlag() {
   ToggleProgFlag(OFF);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::SetNonStdFlag(bool non_std) {
   SetProgFlagState(NON_STD, non_std);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::ToggleNonStdFlag() {
   ToggleProgFlag(NON_STD);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::SetNewElFlag(bool new_el) {
   SetProgFlagState(NEW_EL, new_el);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::ToggleNewElFlag() {
   ToggleProgFlag(NEW_EL);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::SetVerboseFlag(bool new_el) {
   SetProgFlagState(VERBOSE, new_el);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::ToggleVerboseFlag() {
   ToggleProgFlag(VERBOSE);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void ProgEl::ToggleBreakpoint() {
@@ -642,7 +642,7 @@ bool ProgEl::CvtFmCode(const String& code) {
 bool ProgEl::RevertToCode() {
   UpdateProgFlags();		// make sure
   if(!HasProgFlag(CAN_REVERT_TO_CODE)) {
-    DataItemUpdated(); // trigger update of our gui -- obviously out of whack
+    SigEmitUpdated(); // trigger update of our gui -- obviously out of whack
     return false;
   }
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);

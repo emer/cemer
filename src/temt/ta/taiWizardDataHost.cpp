@@ -56,7 +56,7 @@ void taiWizardDataHost::Constr_Box() {
 void taiWizardDataHost::Constr_RegNotifies() {
 /*TODO  taBase* rbase = Base_(); // cache
   if (rbase) {
-    rbase->AddDataClient(this);
+    rbase->AddSigClient(this);
   }*/
 }
 

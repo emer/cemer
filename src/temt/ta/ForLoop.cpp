@@ -134,7 +134,7 @@ void ForLoop::MakeIndexVar(const String& var_nm) {
     var->name = var_nm;
     var->SetInt(0);
     var->ClearVarFlag(ProgVar::CTRL_PANEL);
-    var->DataItemUpdated();
+    var->SigEmitUpdated();
     // get the var ptrs in case someone changes them later!
     init.ParseExpr();
     test.ParseExpr();

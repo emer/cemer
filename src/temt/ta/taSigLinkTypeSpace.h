@@ -27,7 +27,7 @@
 TypeDef_Of(taSigLinkTypeSpace);
 
 class TA_API taSigLinkTypeSpace: public taSigLinkTypeItemSpace {
-  // DataLink for TypeSpace objects -- note that it also manages the ListView nodes
+  // SigLink for TypeSpace objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkTypeItemSpace)
 public:
   enum DisplayMode { // #BITS
@@ -59,7 +59,7 @@ public:
   bool                  ShowChild(TypeDef* td) const; // determine whether to show, based on dm
 
   taSigLinkTypeSpace(TypeSpace* data_);
-  DL_FUNS(taSigLinkTypeSpace) //
+  SL_FUNS(taSigLinkTypeSpace) //
 };
 
 #endif // taSigLinkTypeSpace_h

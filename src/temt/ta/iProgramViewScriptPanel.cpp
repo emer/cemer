@@ -20,7 +20,7 @@
 #include <iTextEdit>
 #include <iDataPanelSet>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <tabMisc>
 
 #include <css_machine.h>
@@ -58,18 +58,18 @@ QWidget* iProgramViewScriptPanel::firstTabFocusWidget() {
   return vs;
 }
 
-bool iProgramViewScriptPanel::ignoreDataChanged() const {
+bool iProgramViewScriptPanel::ignoreSigEmit() const {
   return false; // don't ignore -- we do SmartButComplicatedIgnore(TM)
 //  return !isVisible();
 }
 
-void iProgramViewScriptPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+void iProgramViewScriptPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
   if(vs && vs->isVisible())
     UpdatePanel_impl();
-//   if (dcr <= DCR_ITEM_UPDATED_ND) {
+//   if (dcr <= SLS_ITEM_UPDATED_ND) {
 //     this->m_update_req = true; // so we update next time we show, if hidden
 //   }
-//   inherited::DataChanged_impl(dcr, op1_, op2_);
+//   inherited::SigEmit_impl(dcr, op1_, op2_);
 }
 
 bool iProgramViewScriptPanel::HasChanged() {

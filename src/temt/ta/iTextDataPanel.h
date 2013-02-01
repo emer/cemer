@@ -53,7 +53,7 @@ public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iTextDataPanel;}
 protected:
-  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         SigEmit_impl(int dcr, void* op1, void* op2); //
 //  override int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
 protected slots:

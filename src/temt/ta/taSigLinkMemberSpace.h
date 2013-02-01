@@ -28,7 +28,7 @@ class MemberSpace;
 TypeDef_Of(taSigLinkMemberSpace);
 
 class TA_API taSigLinkMemberSpace: public taSigLinkTypeItemSpace {
-  // DataLink for MemberSpace objects -- note that it also manages the ListView nodes
+  // SigLink for MemberSpace objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkTypeItemSpace)
 public:
   MemberSpace*          data() {return (MemberSpace*)m_data;}
@@ -41,7 +41,7 @@ public:
     int itm_idx = -1) const;
 
   taSigLinkMemberSpace(MemberSpace* data_);
-  DL_FUNS(taSigLinkMemberSpace) //
+  SL_FUNS(taSigLinkMemberSpace) //
 };
 
 #endif // taSigLinkMemberSpace_h

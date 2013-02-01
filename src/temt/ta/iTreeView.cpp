@@ -27,7 +27,7 @@
 #include <iBrowseHistory>
 #include <iVec2i>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 #include <tabMisc>
@@ -763,7 +763,7 @@ void iTreeView::Refresh_impl() {
       // always refresh visible guys
       if (!hide_it) {
         // simulate update notification
-        item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+        item->SigEmit(SLS_ITEM_UPDATED, NULL, NULL);
       }
     }
     ++it;
@@ -787,7 +787,7 @@ void iTreeView::Show_impl() {
         // if we are making shown a hidden item, we also refresh it for safety
         if (!hide_it) {
           // simulate update notification
-          item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+          item->SigEmit(SLS_ITEM_UPDATED, NULL, NULL);
         }
       }
     } else {

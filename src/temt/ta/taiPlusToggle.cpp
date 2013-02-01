@@ -61,10 +61,10 @@ void taiPlusToggle::GetImage(bool chk) {
 void taiPlusToggle::Toggle_Callback() {
   if (host != NULL)
     host->Changed();
-  // DataChanged(); //note: was already remarked out prior to qt port
+  // SigEmit(); //note: was already remarked out prior to qt port
 }
 
-void taiPlusToggle::DataChanged_impl(taiData* chld) {
+void taiPlusToggle::SigEmit_impl(taiData* chld) {
   but_rep->setChecked(true);
 }
 

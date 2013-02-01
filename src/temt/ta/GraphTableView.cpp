@@ -67,7 +67,7 @@ GraphTableView* DataTable::NewGraphView(T3DataViewFrame* fr) {
 }
 
 GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     GraphTableView* el;
@@ -90,7 +90,7 @@ GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
 }
 
 GraphTableView* DataTable::FindGraphView() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     GraphTableView* el;
@@ -676,7 +676,7 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
   Render_impl();
 }
 
-void GraphTableView::DataUpdateView_impl() {
+void GraphTableView::SigRecvUpdateView_impl() {
 //   taMisc::Info("data update view");
   if(!display_on) return;
   int old_rows;

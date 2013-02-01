@@ -487,7 +487,7 @@ void VEJoint::CurFromODE(bool updt_disp) {
   }
 
   if(updt_disp)
-    DataItemUpdated();
+    SigEmitUpdated();
 }
 
 void VEJoint::ApplyForce(float force1, float force2) {

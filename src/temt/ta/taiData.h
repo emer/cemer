@@ -146,8 +146,8 @@ public:
   virtual void          SetMemberDef(MemberDef* mbr_) {mbr = mbr_;} // taiMember sets this
 
   void                  SetThisAsHandler(bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
-  virtual void          DataChanged(taiData* chld = NULL);
-  // indicates something changed in the data from user input, if chld is passed then it called parent->DataChanged(this); ignored if parent or ourself is not fully constructed
+  virtual void          SigEmit(taiData* chld = NULL);
+  // indicates something changed in the data from user input, if chld is passed then it called parent->SigEmit(this); ignored if parent or ourself is not fully constructed
 
   void                  GetImage_(const void* base) {GetImage_impl(base);} // base points to value of type
   void                  GetValue_(void* base) const {GetValue_impl(base);} // base points to value of type
@@ -167,14 +167,14 @@ public:
 signals:
   bool                  settingHighlight(bool setting); // invoked when highlight state changes
   void                  UpdateUi(); // cliphandler callback, to get it to requery the ui items
-  void                  DataChangedNotify(taiData* sender); // raised when data changed for us (but not when invoked by a child)
+  void                  SigEmitNotify(taiData* sender); // raised when data changed for us (but not when invoked by a child)
 #endif
 
 protected:
   virtual void          SetRep(QWidget* val);
   virtual void          ChildAdd(taiData* child) {}
   virtual void          ChildRemove(taiData* child) {}
-  virtual void          DataChanged_impl(taiData* chld) {} // only called if isConstructed
+  virtual void          SigEmit_impl(taiData* chld) {} // only called if isConstructed
   virtual void          GetImage_impl(const void* base) {}
   virtual void          GetValue_impl(void* base) const {}
   virtual void          GetImageVar_impl(const Variant& val) {}

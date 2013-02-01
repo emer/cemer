@@ -221,7 +221,7 @@ void VEWorld::CurFromODE() {
     updt_disp = false;
   objects.CurFromODE();
   if(updt_disp)
-    DataItemUpdated(); // update displays..
+    SigEmitUpdated(); // update displays..
 
   if(updt_display && taMisc::gui_no_win) {
     // normal data changed stuff doesn't work in gui_no_win, so we use a manual call

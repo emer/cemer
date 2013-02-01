@@ -21,7 +21,7 @@
 #include <QAbstractButton>
 #include <QLayout>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taiMisc>
 
 
@@ -133,13 +133,13 @@ void iMethodButtonMgr::Constr_Methods_impl() {
   }
 }
 
-void iMethodButtonMgr::DataLinkDestroying(taSigLink* dl) {
+void iMethodButtonMgr::SigLinkDestroying(taSigLink* dl) {
   base = NULL;
   //TODO: delete the buttons etc.
 }
 
-void iMethodButtonMgr::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
-  if (dcr > DCR_ITEM_UPDATED_ND) return;
+void iMethodButtonMgr::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+  if (dcr > SLS_ITEM_UPDATED_ND) return;
   GetImage();
 }
 
@@ -170,13 +170,13 @@ void iMethodButtonMgr::GetImage() {
 void iMethodButtonMgr::setBase(taBase* ta) {
   if (base == ta) return;
   if (base) {
-    base->RemoveDataClient(this);
+    base->RemoveSigClient(this);
     base = NULL;
     typ = NULL;
   }
   base = ta;
   if (base) {
-    base->AddDataClient(this);
+    base->AddSigClient(this);
     typ = base->GetTypeDef();
   }
 }

@@ -112,8 +112,8 @@ void LayerGroupView::SetHighlightSpec(BaseSpec* spec) {
   }
 }
 
-void LayerGroupView::DataUpdateAfterEdit_impl() {
-  inherited::DataUpdateAfterEdit_impl();
+void LayerGroupView::SigRecvUpdateAfterEdit_impl() {
+  inherited::SigRecvUpdateAfterEdit_impl();
   // always update kids!!
 //   DoActionChildren_impl(RENDER_IMPL);
 
@@ -276,7 +276,7 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lgp->DataItemUpdated();
+  lgp->SigEmitUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -313,7 +313,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(shptrans[0], zfrac, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lgp->DataItemUpdated();
+  lgp->SigEmitUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();

@@ -48,9 +48,9 @@ void DataColView::Unbind_impl() {
   inherited::Unbind_impl();
 }
 
-void DataColView::DataDestroying() {
+void DataColView::SigDestroying() {
   DataColUnlinked();
-  inherited::DataDestroying();
+  inherited::SigDestroying();
 }
 
 void DataColView::setDataCol(DataCol* value, bool first_time) {
@@ -65,7 +65,7 @@ void DataColView::setDataCol(DataCol* value, bool first_time) {
 
 void DataColView::UpdateFromDataCol(bool first) {
   UpdateFromDataCol_impl(first);
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void DataColView::UpdateFromDataCol_impl(bool first) {

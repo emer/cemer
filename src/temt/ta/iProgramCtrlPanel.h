@@ -49,7 +49,7 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_iProgramCtrlPanel;}
 
 protected:
-  override void         DataChanged_impl(int dcr, void* op1, void* op2);
+  override void         SigEmit_impl(int dcr, void* op1, void* op2);
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);

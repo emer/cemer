@@ -164,7 +164,7 @@ void Projection::UpdateName() {
   if(from) {
     String nwnm = "Fm_" + from->name;
     SetName(nwnm);              // setname ensures uniqueness
-    DataItemUpdated();
+    SigEmitUpdated();
   }
 }
 
@@ -291,7 +291,7 @@ void Projection::SetFrom() {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex+1);
       if(from.ptr() == nwly) return;
       from = nwly;
-      DataItemUpdated();
+      SigEmitUpdated();
     }
     break;
   case PREV:
@@ -303,13 +303,13 @@ void Projection::SetFrom() {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex-1);
       if(from.ptr() == nwly) return;
       from = nwly;
-      DataItemUpdated();
+      SigEmitUpdated();
     }
     break;
   case SELF:
     if(from.ptr() == layer) return;
     from = layer;
-    DataItemUpdated();
+    SigEmitUpdated();
     break;
   case CUSTOM:
     TestWarning(!(bool)from, "SetFrom", "CUSTOM projection and from is NULL");

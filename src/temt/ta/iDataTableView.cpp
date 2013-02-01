@@ -168,7 +168,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
   if ((ca == CA_COL_HDR) && (sel.width() == 1)) {
     DataCol* col = tab->GetColData(sel.col_fr, true);
     if (col) {
-      taiSigLink* link = (taiSigLink*)col->GetDataLink();
+      taiSigLink* link = (taiSigLink*)col->GetSigLink();
       if (link) link->FillContextMenu(menu);
     }
   }

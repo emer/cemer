@@ -23,7 +23,7 @@ TypeDef_Of(taMatrix);
 TypeDef_Of(Function);
 TypeDef_Of(taProject);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 #include <css_machine.h>
@@ -104,7 +104,7 @@ void ProgVar::SetFlagsByOwnership() {
 }
 
 bool ProgVar::UpdateUsedFlag() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(!dl) return false;
   int cnt = 0;
   taSigLinkItr itr;
@@ -488,14 +488,14 @@ void ProgVar::Cleanup() {
   //TODO: anything about DynEnums???
 }
 
-void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
+void ProgVar::SigEmit(int dcr, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
-  if ((dcr == DCR_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
-    DataItemUpdated();
+  if ((dcr == SLS_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
+    SigEmitUpdated();
     return; // don't send any further
   }
-  inherited::DataChanged(dcr, op1, op2);
+  inherited::SigEmit(dcr, op1, op2);
 }
 
 String ProgVar::GetDisplayName() const {

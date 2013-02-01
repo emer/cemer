@@ -23,7 +23,7 @@
 #include <iMainWindowViewer>
 #include <taProject>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -282,12 +282,12 @@ void iDocDataPanel::find_prev_clicked() {
   webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 }
 
-bool iDocDataPanel::ignoreDataChanged() const {
+bool iDocDataPanel::ignoreSigEmit() const {
   return false;
   //  return !isVisible(); -- this doesn't seem to be giving accurate results!!!
 }
 
-void iDocDataPanel::DataLinkDestroying(taSigLink* dl) {
+void iDocDataPanel::SigLinkDestroying(taSigLink* dl) {
   setDoc(NULL);
 }
 
@@ -337,9 +337,9 @@ void iDocDataPanel::UpdatePanel_impl() {
   }
 }
 
-void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+void iDocDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     this->m_update_req = true; // so we update next time we show
     UpdatePanel();
   }
@@ -366,14 +366,14 @@ void iDocDataPanel::setDoc(taDoc* doc) {
   // if the doc is NULL, or different (regardless of NULL->val or val1->val2)
   // we will necessarily have to change links, so we always revoke link
   if (m_link) {
-    m_link->RemoveDataClient(this);
+    m_link->RemoveSigClient(this);
   }
 
   m_doc = doc;
   if (doc) {
-    taSigLink* dl = doc->GetDataLink();
+    taSigLink* dl = doc->GetSigLink();
     if (!dl) return; // shouldn't happen!
-    dl->AddDataClient(this);
+    dl->AddSigClient(this);
     UpdatePanel();
   } else {
     webview->setHtml("(no doc set)");

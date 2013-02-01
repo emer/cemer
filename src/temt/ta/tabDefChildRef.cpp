@@ -17,11 +17,11 @@
 #include <tabDefChildTreeDataNode>
 
 
-void tabDefChildRef::DataDataChanged(taSigLink*, int dcr, void* op1, void* op2) {
-  if (m_own) m_own->DefChild_DataChanged(dcr, op1, op2);
+void tabDefChildRef::SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2) {
+  if (m_own) m_own->DefChild_SigEmit(dcr, op1, op2);
 }
 
-void tabDefChildRef::DataLinkDestroying(taSigLink* dl) {
+void tabDefChildRef::SigLinkDestroying(taSigLink* dl) {
 //note: don't need to do anything, since everything is explicitly owned/nested
 }
 

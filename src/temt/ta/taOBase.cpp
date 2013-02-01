@@ -17,16 +17,16 @@
 #include <taSigLink>
 #include <UserDataItem_List>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 void taOBase::Destroy() {
   CutLinks();
 }
 
 void taOBase::CutLinks() {
-  if (m_data_link) {
-    m_data_link->DataDestroying(); // link NULLs our pointer
-    delete m_data_link; // NULLS the ref
+  if (m_sig_link) {
+    m_sig_link->SigDestroying(); // link NULLs our pointer
+    delete m_sig_link; // NULLS the ref
   }
   owner = NULL;
   if (user_data_) {
@@ -52,7 +52,7 @@ UserDataItem_List* taOBase::GetUserDataList(bool force) const {
     taOBase* ths =  const_cast<taOBase*>(this); // note: harmless const casts
     taBase::Own(user_data_, ths);
     user_data_->el_typ = &TA_UserDataItem; // set default type to create
-    ths->DataChanged(DCR_USER_DATA_UPDATED);
+    ths->SigEmit(SLS_USER_DATA_UPDATED);
   }
   return user_data_;
 }

@@ -89,7 +89,7 @@ public slots:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;} //
-  override void         DataLinkDestroying(taSigLink* dl); //note: dl is on the view, not underlying data
+  override void         SigLinkDestroying(taSigLink* dl); //note: dl is on the view, not underlying data
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelFrame;}
 
 public: // IDataHost i/f -- some delegate up to mommy

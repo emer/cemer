@@ -229,9 +229,9 @@ ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
 
 iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
   // String strm;
-  // dt.ListDataClients(strm);
+  // dt.ListSigClients(strm);
   // taMisc::ConsoleOutput(strm);
-  taSigLink* dl = dt.data_link();
+  taSigLink* dl = dt.sig_link();
   if(dl) {
     taSigLinkItr itr;
     iDataTablePanel* el;

@@ -33,7 +33,7 @@ int taiViewTypeOfGroup::BidForView(TypeDef* td) {
   return 0;
 }
 
-taiSigLink* taiViewTypeOfGroup::CreateDataLink_impl(taBase* data_) {
+taiSigLink* taiViewTypeOfGroup::CreateSigLink_impl(taBase* data_) {
   return new taSigLinkGroup((taGroup_impl*)data_);
 }
 

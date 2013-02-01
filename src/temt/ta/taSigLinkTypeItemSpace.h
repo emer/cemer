@@ -27,7 +27,7 @@
 TypeDef_Of(taSigLinkTypeItemSpace);
 
 class TA_API taSigLinkTypeItemSpace: public taSigLinkClass {
-  // DataLink for XxxSpace objects -- note that it also manages the ListView nodes
+  // SigLink for XxxSpace objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkClass)
 public:
   taPtrList_impl*       data() {return (taPtrList_impl*)m_data;}
@@ -35,7 +35,7 @@ public:
 
   taSigLinkTypeItemSpace(TypeItem::TypeInfoKinds tik_, taPtrList_impl* data_,
     taSigLink* &link_ref_);
-  DL_FUNS(taSigLinkTypeItemSpace) //
+  SL_FUNS(taSigLinkTypeItemSpace) //
 protected:
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);

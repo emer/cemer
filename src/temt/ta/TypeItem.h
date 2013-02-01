@@ -104,7 +104,7 @@ public:
   String        desc;           // a description
   String_PArray opts;           // user-spec'd options (#xxx)
   String_PArray lists;          // user-spec'd lists   (#LIST_xxx)
-  taSigLink*   data_link;
+  taSigLink*   sig_link;
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeItem; }

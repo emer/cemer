@@ -70,7 +70,7 @@ public:
   int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
 #endif
 
-  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   void  CutLinks();
   TA_ABSTRACT_BASEFUNS(taArray_base);

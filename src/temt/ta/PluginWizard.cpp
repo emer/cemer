@@ -352,7 +352,7 @@ bool PluginWizard::ShowWiz() {
   MainWindowViewer* vwr = (MainWindowViewer*)tabMisc::root->viewers.SafeEl(0);
   if(!vwr) return false;
 
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
 
   iMainWindowViewer* imwv = vwr->widget();

@@ -39,7 +39,7 @@ void TesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int
   last_make_cmd = "MakeEllipse( half_width=" + String(half_width)
     + ", half_height=" + String(half_height)
     + ", ctr_x=" + String(ctr_x) + ", ctr_y=" + String(ctr_y) + ")";
-  DataItemUpdated();
+  SigEmitUpdated();
   send_offs.Reset();
   int strt_x = ctr_x - half_width;
   int end_x = ctr_x + half_width;
@@ -100,7 +100,7 @@ void TesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int
 void TesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
   last_make_cmd = "MakeRectangle(width=" + String(width) + ", height=" + String(height)
     + ", left=" + String(left) + ", bottom=" + String(bottom) + ")";
-  DataItemUpdated();
+  SigEmitUpdated();
   send_offs.Reset();
   int y;
   for(y = bottom; y < bottom + height; y++) {
@@ -139,7 +139,7 @@ void TesselPrjnSpec::MakeFromNetView(NetView* view) {
 
 void TesselPrjnSpec::WeightsFromDist(float scale) {
   last_weights_cmd = "WeightsFromDist(scale=" + String(scale) + ")";
-  DataItemUpdated();
+  SigEmitUpdated();
   taVector2i zero;
   int i;
   TessEl* te;
@@ -153,7 +153,7 @@ void TesselPrjnSpec::WeightsFromDist(float scale) {
 void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
   last_weights_cmd = "WeightsFromGausDist(scale=" + String(scale)
     + ", sigma=" + String(sigma) + ")";
-  DataItemUpdated();
+  SigEmitUpdated();
   taVector2i zero;
   int i;
   TessEl* te;

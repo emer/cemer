@@ -15,7 +15,7 @@
 
 #include "tabTreeDataNode.h"
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 tabTreeDataNode::tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
@@ -38,18 +38,18 @@ tabTreeDataNode::~tabTreeDataNode()
 {
 }
 
-void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+void tabTreeDataNode::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
   bool do_updt = false;
   taBase* tab = tadata();
   if(tab) {
     TypeDef* base_typ = tab->GetTypeDef();
     if(base_typ->HasOption("HAS_CONDTREE")) {
-      if(dcr == DCR_ITEM_UPDATED)
+      if(dcr == SLS_ITEM_UPDATED)
         do_updt = true;
     }
   }
-  if(do_updt || dcr == DCR_STRUCT_UPDATE_ALL) { // special case for post-loading update
+  if(do_updt || dcr == SLS_STRUCT_UPDATE_ALL) { // special case for post-loading update
     takeChildren();
     CreateChildren();
     iTreeView* itv = treeView();

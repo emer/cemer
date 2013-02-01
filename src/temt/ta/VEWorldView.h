@@ -75,7 +75,7 @@ public:
   // #IGNORE get the output of the given camera number (currently 0 or 1)
 
   bool			isVisible() const;
-  override bool		ignoreDataChanged() const { return !isVisible(); }
+  override bool		ignoreSigEmit() const { return !isVisible(); }
 
   override void		BuildAll();
   
@@ -96,8 +96,8 @@ protected:
 #endif
   bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
 
-  override void		DataUpdateAfterEdit_impl();
-  override void		DataUpdateView_impl();
+  override void		SigRecvUpdateAfterEdit_impl();
+  override void		SigRecvUpdateView_impl();
   override void 	UpdateAfterEdit_impl();
 
   override void		Render_pre();

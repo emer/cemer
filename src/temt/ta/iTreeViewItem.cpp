@@ -20,7 +20,7 @@
 #include <taiClipData>
 #include <taiMenu>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
@@ -54,7 +54,7 @@ void iTreeViewItem::init(const String& tree_name, taiSigLink* link_,
 {
   m_md = md_;
   dn_flags = dn_flags_;
-  link_->AddDataClient(this); // sets link
+  link_->AddSigClient(this); // sets link
 /*OBS: we really aren't using links
   // links get name italicized
   //TODO: to avoid creating a brand new font for each item, we could
@@ -105,8 +105,8 @@ void iTreeViewItem::CreateChildren() {
   DecorateDataNode();
 }
 
-void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr != DCR_ITEM_UPDATED) return;
+void iTreeViewItem::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  if (dcr != SLS_ITEM_UPDATED) return;
   if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
     String nm = link()->GetName();
     if (nm.empty())
@@ -116,7 +116,7 @@ void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   DecorateDataNode();
 }
 
-void iTreeViewItem::DataLinkDestroying(taSigLink*) {
+void iTreeViewItem::SigLinkDestroying(taSigLink*) {
   iTreeView* tv = treeView();
   if(tv) {
     tv->EmitTreeStructToUpdate();

@@ -61,15 +61,15 @@ void*   MemberDefBase_List::El_Copy_(void* trg, void* src)
 void MemberDefBase_List::Initialize() {
   owner = NULL;
 #ifndef NO_TA_BASE
-  data_link = NULL;
+  sig_link = NULL;
 #endif
 }
 
 MemberDefBase_List::~MemberDefBase_List() {
   Reset();
 #ifndef NO_TA_BASE
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
+  if (sig_link) {
+    sig_link->SigDestroying(); // link NULLs our pointer
   }
 #endif
 }

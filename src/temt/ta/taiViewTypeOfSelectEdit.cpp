@@ -32,11 +32,11 @@ void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiSigLink* dl_)
   DataPanelCreated(bldp);
 
   if(ClusterRun* cr = dynamic_cast<ClusterRun *>(dl_->taData())) {
-    if(taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_running.GetDataLink())) {
+    if(taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_running.GetSigLink())) {
       iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
-    if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_done.GetDataLink())) {
+    if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_done.GetSigLink())) {
       iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
       DataPanelCreated(dp);
     }

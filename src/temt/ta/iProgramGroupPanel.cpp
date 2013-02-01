@@ -41,7 +41,7 @@ iProgramGroupPanel::iProgramGroupPanel(taiSigLink* dl_)
   pe->items->AddFilter("ProgGp");
   Program_Group* prog_ = progGroup();
   if (prog_) {
-    taiSigLink* dl = (taiSigLink*)prog_->GetDataLink();
+    taiSigLink* dl = (taiSigLink*)prog_->GetSigLink();
     if (dl) {
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }

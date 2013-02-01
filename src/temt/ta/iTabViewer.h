@@ -35,7 +35,7 @@ class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed
 INHERITED(iFrameViewer)
 friend class iTabView;
 public:
-  virtual taiSigLink*  sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
+  virtual taiSigLink*  sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // siglink of selected item that is controlling the current data panel view, ex. siglink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*    sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
   override int          stretchFactor() const {return 4;} // 3/2 default
   iTabView*             tabView() {return m_curTabView;} // currently active
@@ -50,7 +50,7 @@ public:
 
   virtual void          TabView_Destroying(iTabView* tv); // called when a tabview deletes
   virtual void          TabView_Selected(iTabView* tv); // called when a tabview gets focus
-  override void         UpdateTabNames(); // called by a datalink when a tab name might have changed
+  override void         UpdateTabNames(); // called by a siglink when a tab name might have changed
   iTabViewer(PanelViewer* viewer_, QWidget* parent = NULL); //
   ~iTabViewer();
 

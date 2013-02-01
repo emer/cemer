@@ -45,7 +45,7 @@ taBase* SpecPtr_impl::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old
         new_guy = old_guy->Clone();
         spgp->Add(new_guy);
         new_guy->SetName(og_nm);
-        new_guy->DataItemUpdated();
+        new_guy->SigEmitUpdated();
         taMisc::Info("Note: copied Spec:", og_nm,
                      "into .specs on new network because it was not otherwise found");
       }
@@ -92,7 +92,7 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
       SetSpec(nsp);             // set -- either null or a candidate
       sp = nsp;                 // update our cur ptr guy
-      DataItemUpdated();
+      SigEmitUpdated();
     }
     else {
       SetSpec(NULL);            // get rid of existing -- will try to find new one
@@ -168,7 +168,7 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
     if(spgp) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
       SetSpec(nsp);             // set -- either null or a candidate
-      DataItemUpdated();
+      SigEmitUpdated();
     }
     else {
       SetSpec(NULL);            // get rid of existing -- will try to find new one later
@@ -245,7 +245,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
                          "set spec pointer to existing spec named:", sp->name,
                          "of correct type:", type->name);
     }
-    DataItemUpdated();
+    SigEmitUpdated();
     return;
   }
 
@@ -257,14 +257,14 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
                          "set spec pointer to NEW spec I just created, named:", sp->name,
                          "of type:", type->name);
     }
-    DataItemUpdated();
+    SigEmitUpdated();
   }
 }
 
 // todo: could add the UAE for the relevant smartref_destroy call..
-// void SpecPtr_impl::DataLinkDestroying(taSigLink* dl) {
+// void SpecPtr_impl::SigLinkDestroying(taSigLink* dl) {
 //   if (owner && !owner->isDestroying()) {
-// //     owner->SmartRef_DataDestroying(this, GetSpec());
+// //     owner->SmartRef_SigDestroying(this, GetSpec());
 //     SetSpec(NULL);
 //     owner->UpdateAfterEdit();
 //   } else

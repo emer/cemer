@@ -27,7 +27,7 @@
 
 TypeDef_Of(taSigLinkBase);
 
-class TA_API taSigLinkBase: public taiSigLink { // DataLink for taBase objects
+class TA_API taSigLinkBase: public taiSigLink { // SigLink for taBase objects
 INHERITED(taiSigLink)
 public:
   taBase*               data() {return (taBase*)m_data;}
@@ -54,7 +54,7 @@ public:
   override String       GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
   override const QVariant GetColData(const KeyString& key, int role) const;
 
-  DL_FUNS(taSigLinkBase); //
+  SL_FUNS(taSigLinkBase); //
 
 protected:
   static void           SearchStat(taBase* tab, iSearchDialog* sd, int level = 0); // for searching

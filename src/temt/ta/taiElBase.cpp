@@ -33,10 +33,10 @@ taiElBase::~taiElBase() {
   ta_actions = NULL;
 }
 
-void taiElBase::DataChanged(taiData* chld) {
+void taiElBase::SigEmit(taiData* chld) {
   if (HasFlag(flgAutoApply))
     applyNow();
-  else inherited::DataChanged(chld);
+  else inherited::SigEmit(chld);
 }
 
 void taiElBase::setCur_obj(taBase* value, bool do_chng) {
@@ -49,6 +49,6 @@ void taiElBase::setCur_obj(taBase* value, bool do_chng) {
   else
     ta_actions->setLabel(value->GetName()); */
   if (do_chng)
-    DataChanged(NULL);
+    SigEmit(NULL);
 }
 

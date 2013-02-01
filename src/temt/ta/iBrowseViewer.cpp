@@ -81,7 +81,7 @@ void iBrowseViewer::Init() {
 void iBrowseViewer::ApplyRoot() {
   void* m_root = root(); //cache
   if (!m_root) return;
-  taiSigLink* dl = taiViewType::StatGetDataLink(m_root, root_typ());
+  taiSigLink* dl = taiViewType::StatGetSigLink(m_root, root_typ());
   if (!dl) return; // shouldn't happen...
 
   // by definition, we should always be able to create a new browser on root of a browser

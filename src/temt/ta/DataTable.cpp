@@ -703,7 +703,7 @@ int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
 DataTableModel* DataTable::GetTableModel() {
   if (!table_model && !isDestroying()) {
     table_model = new DataTableModel(this);
-    AddDataClient(table_model);
+    AddSigClient(table_model);
     //table_model->setPat4D(true); // always
   }
   return table_model;
@@ -1310,7 +1310,7 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   // DPF: Shouldn't need this line now that col_nm gets passed into New?
   // Name isn't made unique in New call since owner isn't set, and doesn't
   // happen here either.
-  rval->DataItemUpdated(); // because we set name after creation
+  rval->SigEmitUpdated(); // because we set name after creation
   return rval;
 }
 

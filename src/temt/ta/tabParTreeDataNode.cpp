@@ -16,7 +16,7 @@
 #include "tabParTreeDataNode.h"
 #include <taiViewType>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
@@ -62,7 +62,7 @@ void tabParTreeDataNode::CreateChildren_impl() {
     taBase* el = (taBase*)list->FastEl_(i);
     if (!el) continue; // generally shouldn't happen
     TypeDef* typ = el->GetTypeDef();
-    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
     if (!dl) continue; // shouldn't happen... unless null
 
     tree_nm = dl->GetDisplayName();
@@ -92,7 +92,7 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   if (!el) return NULL;
   taList_impl* list = this->list(); // cache
   TypeDef* typ = el->GetTypeDef();
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
   if (!dl) return NULL; // shouldn't happen unless null...
   //note: we don't make name because it is updated anyway
   int dn_flags_tmp = DNF_UPDATE_NAME | DNF_CAN_BROWSE | DNF_CAN_DRAG;
@@ -118,17 +118,17 @@ bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
   return false;
 }
 
-void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+void tabParTreeDataNode::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
   if (!this->children_created) {
-    if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE) ||
-        (dcr == DCR_STRUCT_UPDATE_END)) {
+    if ((dcr == SLS_LIST_ITEM_INSERT) || (dcr == SLS_LIST_ITEM_REMOVE) ||
+        (dcr == SLS_STRUCT_UPDATE_END)) {
       UpdateLazyChildren(); // updates
     }
     return;
   }
 
-  if(dcr == DCR_ITEM_UPDATED || dcr == DCR_STRUCT_UPDATE_END) {
+  if(dcr == SLS_ITEM_UPDATED || dcr == SLS_STRUCT_UPDATE_END) {
     if(!RebuildChildrenIfNeeded())
       UpdateListNames();
     return;
@@ -136,8 +136,8 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 
   int idx;
   switch (dcr) {
-  case DCR_LIST_INIT: break;
-  case DCR_LIST_ITEM_INSERT: {  // op1=item, op2=item_after, null=at beginning
+  case SLS_LIST_INIT: break;
+  case SLS_LIST_ITEM_INSERT: {  // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (!after_node) after_node = last_member_node; // insert, after
     iTreeView* tv = treeView();
@@ -154,7 +154,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
+  case SLS_LIST_ITEM_REMOVE: {  // op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
@@ -173,7 +173,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_LIST_ITEM_MOVED: {   // op1=item, op2=item_after, null=at beginning
+  case SLS_LIST_ITEM_MOVED: {   // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
     if (!moved_node) break; // shouldn't happen
@@ -194,7 +194,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_LIST_ITEMS_SWAP: {   // op1=item1, op2=item2
+  case SLS_LIST_ITEMS_SWAP: {   // op1=item1, op2=item2
     int n1_idx, n2_idx;
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
@@ -209,7 +209,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_LIST_SORTED: {       // no ops
+  case SLS_LIST_SORTED: {       // no ops
     int nd_idx; // index of the node
     taList_impl* list = this->list(); // cache
     iTreeView* tv = treeView();
@@ -245,7 +245,7 @@ void tabParTreeDataNode::UpdateListNames() {
     taBase* el = (taBase*)list->FastEl_(i);
     if(!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();

@@ -30,9 +30,9 @@ TypeDef_Of(IRefListClient);
 class TA_API IRefListClient: virtual public ITypedObject { // #NO_CSS
 // optional interface so disparate classes can use RefList to get notifies
 public:
-  virtual void          DataDestroying_Ref(taBase_RefList* src, taBase* ta) = 0;
+  virtual void          SigDestroying_Ref(taBase_RefList* src, taBase* ta) = 0;
     // note: item will already have been removed from list
-  virtual void          DataChanged_Ref(taBase_RefList* src, taBase* ta,
+  virtual void          SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2) = 0;
 
 };

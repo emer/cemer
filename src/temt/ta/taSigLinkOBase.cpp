@@ -20,7 +20,7 @@
 
 
 taSigLinkOBase::taSigLinkOBase(taOBase* data_)
-  : inherited((taBase*)data_, *(data_->addr_data_link()))
+  : inherited((taBase*)data_, *(data_->addr_sig_link()))
 {
 }
 
@@ -61,7 +61,7 @@ taiSigLink* taSigLinkOBase::GetListChild(int itm_idx) {
   taBase* el = (taBase*)list()->SafeEl_(itm_idx);
   if (!el) return NULL;
   TypeDef* typ = el->GetTypeDef();
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
   return dl;
 }
 
@@ -76,7 +76,7 @@ taiSigLink* taSigLinkOBase::GetListChild(void* el) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   // get the link
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
   return dl;
 }
 

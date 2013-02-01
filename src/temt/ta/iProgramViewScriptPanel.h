@@ -58,10 +58,10 @@ public slots:
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iProgramViewScriptPanel;}
-  override bool         ignoreDataChanged() const;
+  override bool         ignoreSigEmit() const;
 
 protected:
-  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         SigEmit_impl(int dcr, void* op1, void* op2); //
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);

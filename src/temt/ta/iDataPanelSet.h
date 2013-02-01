@@ -61,10 +61,10 @@ public:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-//  override void               DataLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
+//  override void               SigLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanelSet;}
 protected:
-  override void         DataChanged_impl(int dcr, void* op1, void* op2); // dyn subpanel detection
+  override void         SigEmit_impl(int dcr, void* op1, void* op2); // dyn subpanel detection
 
 protected:
   override void         setCurrentPanelId_impl(int id);

@@ -230,7 +230,7 @@ public:
   virtual int    FindLeafEl(taBase* item) const;
   // #CAT_Access find given leaf element -1 = not here.
 
-  override void  DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void  SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   override void* FindMembeR(const String& nm, MemberDef*& ret_md) const;
 

@@ -86,7 +86,7 @@ protected:
   override void  Render_pre();          // #IGNORE
   override void  Render_impl();         // #IGNORE
   override void  Reset_impl();          // #IGNORE
-  override void  DataUpdateView_impl(); // #IGNORE
+  override void  SigRecvUpdateView_impl(); // #IGNORE
 
 private:
   NOCOPY(BrainVolumeView)

@@ -24,7 +24,7 @@ int taiViewTypeOfDataTable::BidForView(TypeDef* td) {
   return 0;
 }
 
-/*taiSigLink* taiViewTypeOfDataTable::CreateDataLink_impl(taBase* data_) {
+/*taiSigLink* taiViewTypeOfDataTable::CreateSigLink_impl(taBase* data_) {
   return new taSigLinkList((taList_impl*)data_);
 } */
 

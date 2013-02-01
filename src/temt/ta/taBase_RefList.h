@@ -42,8 +42,8 @@ public: // ISigLinkClient i/f
   void*                 This() {return this;}  // #IGNORE
   override TypeDef*     GetTypeDef() const {return &TA_taBase_RefList;} // #IGNORE
 protected: // we actually protect these
-  override void         DataLinkDestroying(taSigLink* dl); // #IGNORE
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkDestroying(taSigLink* dl); // #IGNORE
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
      // #IGNORE
 
 protected:

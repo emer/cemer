@@ -27,7 +27,7 @@ class taSigLink;
 TypeDef_Of(taSigLinkItr);
 
 class TA_API taSigLinkItr {
-  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS iterator for datalink clients -- use as a value type
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS iterator for siglink clients -- use as a value type
 public:
   void*         NextEl(taSigLink* dl, const TypeDef* typ);
   void          Reset() {i = 0;}
@@ -36,7 +36,7 @@ protected:
   int           i;
 };
 
-// iterates through a datalink, returning only object refs to objects of indicated type (or descendant)
+// iterates through a siglink, returning only object refs to objects of indicated type (or descendant)
 #define FOR_DLC_EL_OF_TYPE(T, el, dl, itr) \
 for(itr.Reset(), el = (T*) itr.NextEl(dl, &TA_ ## T); el; el = (T*) itr.NextEl(dl, &TA_ ## T))
 

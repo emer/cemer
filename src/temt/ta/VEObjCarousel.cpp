@@ -39,7 +39,7 @@ bool VEObjCarousel::ViewObjNo(int obj_no) {
     return false;
   cur_obj_no = obj_no;
   obj_fname = obj_table->GetVal("FileName", cur_obj_no);
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
   return true;
 }
 
@@ -52,7 +52,7 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
     return false;
   cur_obj_no = obj_no;
   obj_fname = obj_nm;
-  DataItemUpdated(); // update displays..
+  SigEmitUpdated(); // update displays..
   return true;
 }
 

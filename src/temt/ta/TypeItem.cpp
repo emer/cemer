@@ -57,13 +57,13 @@ TypeItem::TypeItem(const TypeItem& cp) {
 void TypeItem::init()
 {
   idx = 0;
-  data_link = NULL;
+  sig_link = NULL;
 }
 
 TypeItem::~TypeItem() {
 #ifndef NO_TA_BASE
-  if (data_link != NULL) {
-    data_link->DataDestroying(); // link NULLs our pointer
+  if (sig_link != NULL) {
+    sig_link->SigDestroying(); // link NULLs our pointer
   }
 #endif
 }

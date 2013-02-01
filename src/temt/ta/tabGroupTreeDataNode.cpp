@@ -17,7 +17,7 @@
 #include <taGroup_impl>
 #include <taiViewType>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
@@ -50,7 +50,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     taBase* el = tadata()->gp.FastEl(i);
     if (!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();
@@ -76,7 +76,7 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
   if (typ->IsActualTaBase()) {
       typ = ((taBase*)el)->GetTypeDef();
   }
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
   if (!dl) return NULL; // shouldn't happen unless null...
 
   taiTreeDataNode* dn = dl->CreateTreeDataNode(NULL, this, after_node, "",
@@ -99,17 +99,17 @@ bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
   return false;
 }
 
-void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+void tabGroupTreeDataNode::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
   if (!this->children_created) {
-    if ((dcr == DCR_GROUP_INSERT) || (dcr == DCR_GROUP_REMOVE))
+    if ((dcr == SLS_GROUP_INSERT) || (dcr == SLS_GROUP_REMOVE))
       UpdateLazyChildren(); // updates
     return;
   }
   AssertLastListItem();
   int idx;
   switch (dcr) {
-  case DCR_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
+  case SLS_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     iTreeView* tv = treeView();
@@ -125,7 +125,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
+  case SLS_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
@@ -139,7 +139,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
+  case SLS_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
     int fm_idx;
     taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
     if (!moved_node) break; // shouldn't happen
@@ -160,7 +160,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_GROUPS_SWAP: {       // op1=item1, op2=item2
+  case SLS_GROUPS_SWAP: {       // op1=item1, op2=item2
     int n1_idx, n2_idx;
     taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
     taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
@@ -175,7 +175,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
     break;
   }
-  case DCR_GROUPS_SORTED: {     // no ops
+  case SLS_GROUPS_SORTED: {     // no ops
     int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
     int nd_idx; // index of the node
     taGroup_impl* gp = this->tadata(); // cache
@@ -211,7 +211,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     taBase* el = tadata()->gp.FastEl(i);
     if (!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();

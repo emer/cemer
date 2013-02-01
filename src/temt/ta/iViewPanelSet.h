@@ -46,7 +46,7 @@ public:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-//  override void               DataLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
+//  override void               SigLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelSet;}
 
 protected:

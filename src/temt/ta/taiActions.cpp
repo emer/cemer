@@ -251,7 +251,7 @@ void taiActions::child_triggered_toggled(taiAction* act) {
   }
 
   if (act->sel_type & taiActions::update) {
-    DataChanged();              // something was selected..
+    SigEmit();              // something was selected..
   }
 }
 

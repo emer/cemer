@@ -78,8 +78,8 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   TypeDef*      GetTypeDef() const {return &TA_taiDataHost_impl;} // override
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
-//  void                DataLinkDestroying(taSigLink* dl);
-  void          DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+//  void                SigLinkDestroying(taSigLink* dl);
+  void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f
   const iColor   colorOfCurRow() const {return colorOfRow(curRow());}

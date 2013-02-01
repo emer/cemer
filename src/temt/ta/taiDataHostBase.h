@@ -151,9 +151,9 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   TypeDef*      GetTypeDef() const {return &TA_taiDataHostBase;} // override
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
-//  bool                ignoreDataChanged() const; we always accept, but respect hidden
-  void          DataLinkDestroying(taSigLink* dl);
-  void          DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+//  bool                ignoreSigEmit() const; we always accept, but respect hidden
+  void          SigLinkDestroying(taSigLink* dl);
+  void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 
 // virtuals for IDataHost i/f -- call back to these from taiDataHost

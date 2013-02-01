@@ -165,7 +165,7 @@ bool taiItemPtrBase::OpenChooser() {
       if (mflags & flgAutoApply)
         applyNow();
       else
-        DataChanged();
+        SigEmit();
     }
   }
   delete ic;

@@ -27,7 +27,7 @@
 
 TypeDef_Of(taSigLinkClass);
 
-class TA_API taSigLinkClass: public taiSigLink { // DataLink for TypeInfo objects
+class TA_API taSigLinkClass: public taiSigLink { // SigLink for TypeInfo objects
 INHERITED(taiSigLink)
 public:
   const TypeItem::TypeInfoKinds    tik;
@@ -35,7 +35,7 @@ public:
 
   override TypeDef*     GetDataTypeDef() const;
 
-  DL_FUNS(taSigLinkClass); //
+  SL_FUNS(taSigLinkClass); //
 
 protected:
   TypeDef*              m_type;

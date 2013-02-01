@@ -15,7 +15,7 @@
 
 #include "taGroup_impl.h"
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taBase_PtrList>
 #include <taObjDiffRec>
@@ -72,22 +72,22 @@ void taGroup_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
+void taGroup_impl::SigEmit(int dcr, void* op1, void* op2) {
   // group staling
   if (useStale() && (!taMisc::is_loading) &&
-    ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)))
+    ((dcr >= SLS_GROUP_MIN) && (dcr <= SLS_GROUP_MAX)))
     setStale();
-  taList_impl::DataChanged(dcr, op1, op2); // normal processing
+  taList_impl::SigEmit(dcr, op1, op2); // normal processing
   // send LIST events to the root group as a GROUP_ITEM event
-  if (root_gp && (dcr >= DCR_LIST_ITEM_TO_GROUP_ITEM_MIN) &&
-     (dcr <= DCR_LIST_ITEM_TO_GROUP_ITEM_MAX)) {
-    root_gp->DataChanged(dcr + DCR_ListItem_GroupItem_Offset, op1, op2);
+  if (root_gp && (dcr >= SLS_LIST_ITEM_TO_GROUP_ITEM_MIN) &&
+     (dcr <= SLS_LIST_ITEM_TO_GROUP_ITEM_MAX)) {
+    root_gp->SigEmit(dcr + SLS_ListItem_GroupItem_Offset, op1, op2);
   }
   // GROUP_ITEM +/- and GROUP +/- events cause invalidation of the group iteration cache
   // have to trigger on items too, because iteration cache does funky stuff for size==0
-  if ( (dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE)
-    || (dcr == DCR_GROUP_ITEM_INSERT) || (dcr == DCR_GROUP_ITEM_REMOVE)
-    || ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)) )
+  if ( (dcr == SLS_LIST_ITEM_INSERT) || (dcr == SLS_LIST_ITEM_REMOVE)
+    || (dcr == SLS_GROUP_ITEM_INSERT) || (dcr == SLS_GROUP_ITEM_REMOVE)
+    || ((dcr >= SLS_GROUP_MIN) && (dcr <= SLS_GROUP_MAX)) )
   {
     if (leaf_gp) {
       taBase::unRefDone(leaf_gp);

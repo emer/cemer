@@ -18,7 +18,7 @@
 
 TypeDef_Of(DataColTp);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 void DataTableCols::Initialize() {
   SetBaseType(&TA_DataColTp);
@@ -43,10 +43,10 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
   }
 }
 
-void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
+void DataTableCols::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
 
-  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX)) {
+  if ((dcr >= SLS_LIST_ORDER_MIN) && (dcr <= SLS_LIST_ORDER_MAX)) {
     DataTable* dt = GET_MY_OWNER(DataTable); // cache
     if (!dt) return;
     // if last col removed then rows must become 0

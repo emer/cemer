@@ -75,7 +75,7 @@ void taiStringDataHost::Constr_Box() {
 void taiStringDataHost::Constr_RegNotifies() {
   taBase* rbase = Base_(); // cache
   if (rbase) {
-    rbase->AddDataClient(this);
+    rbase->AddSigClient(this);
   }
 }
 
@@ -109,7 +109,7 @@ void taiStringDataHost::btnPrint_clicked() {
   edit->document()->print(&pr);
 }
 
-void taiStringDataHost::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taiStringDataHost::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
 }
 
 void taiStringDataHost::DoConstr_Dialog(iHostDialog*& dlg) {

@@ -117,7 +117,7 @@ class taMatrix_PList; //
 
    Notifications
      Matrix objects maintain two parallel notification mechanisms:
-       * the standard taBase datalink-based notification
+       * the standard taBase siglink-based notification
        * Qt AbstractItemModel notifications
 
      Changes to data do *not* automatically cause data notifications (this would
@@ -538,7 +538,7 @@ public:
   override int          Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
   override int          Dump_Load_Value(std::istream& strm, taBase* par=NULL);
 #endif
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
   override void         InitLinks();
   override void         CutLinks();
   TA_ABSTRACT_BASEFUNS(taMatrix);

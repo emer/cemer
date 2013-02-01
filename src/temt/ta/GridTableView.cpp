@@ -64,7 +64,7 @@ GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
 }
 
 GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     GridTableView* el;
@@ -88,7 +88,7 @@ GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
 }
 
 GridTableView* DataTable::FindGridView() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     GridTableView* el;
@@ -1239,7 +1239,7 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       if(tgv->click_vals) {
         // this causes a crash
 //      if(dcol)
-//        dcol->DataItemUpdated(); // col drives updating
+//        dcol->SigEmitUpdated(); // col drives updating
       }
       else {
         tgv->last_sel_got = true;

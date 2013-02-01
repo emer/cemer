@@ -50,7 +50,7 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_tabGroupTreeDataNode;}
 protected:
   override void         CreateChildren_impl();
-  override void         DataChanged_impl(int dcr, void* op1, void* op2); // handle DCR_GROUP_xxx ops
+  override void         SigEmit_impl(int dcr, void* op1, void* op2); // handle SLS_GROUP_xxx ops
   void                  UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
   override void         willHaveChildren_impl(bool& will) const;
 private:

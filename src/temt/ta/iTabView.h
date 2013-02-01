@@ -96,7 +96,7 @@ public slots:
   void                  AddTab(int tab = -1);
   void                  CloseTab(int tab = -1);
   virtual void          panelSelected(int idx);
-  void                  UpdateTabNames(); // called by a datalink when a tab name might have changed; panels also hook to this
+  void                  UpdateTabNames(); // called by a siglink when a tab name might have changed; panels also hook to this
 
 protected:
   iTabViewer*   m_viewer_win;

@@ -18,7 +18,7 @@
 #include <iDataPanelFrame>
 
 
-taiSigLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
+taiSigLink* taiViewType::StatGetSigLink(void* el, TypeDef* el_typ) {
   if (!el || !el_typ) return NULL; // subclass will have to grok
 
   // handle ptrs by derefing the type and the el
@@ -36,7 +36,7 @@ taiSigLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
   if (!el_typ->iv) return NULL;
   taiSigLink* rval = NULL;
   taiViewType* tiv = el_typ->iv;
-  rval = tiv->GetDataLink(el, el_typ);
+  rval = tiv->GetSigLink(el, el_typ);
   return rval; //NULL if not taBase
 }
 

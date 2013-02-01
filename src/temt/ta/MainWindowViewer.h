@@ -164,7 +164,7 @@ public: // Action methods
 
 protected:
   // from taDataView
-  override void         DataChanged_Child(taBase* child, int dcr, void* op1, void* op2);
+  override void         SigEmit_Child(taBase* child, int dcr, void* op1, void* op2);
   override void         DoActionChildren_impl(DataViewAction act); // just one act
   override void         CloseWindow_impl();
 

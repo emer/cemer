@@ -37,12 +37,12 @@ public:
   mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY #CAT_taBase storage for user data (created if needed)
 
 protected:
-  taSigLink*           m_data_link; //
+  taSigLink*           m_sig_link; //
 
 // Methods:
 public:
-  taSigLink**          addr_data_link() {return &m_data_link;} // #IGNORE
-  override taSigLink*  data_link() {return m_data_link;}       // #IGNORE
+  taSigLink**          addr_sig_link() {return &m_sig_link;} // #IGNORE
+  override taSigLink*  sig_link() {return m_sig_link;}       // #IGNORE
   taBase*               GetOwner() const        { return owner; }
   USING(inherited::GetOwner)
   taBase*               SetOwner(taBase* ta)    { owner = ta; return ta; }
@@ -73,7 +73,7 @@ protected: // all related to taList or DEF_CHILD children_
 
 private:
   void  Copy_(const taOBase& cp);
-  void  Initialize()    { owner = NULL; user_data_ = NULL; m_data_link = NULL; }
+  void  Initialize()    { owner = NULL; user_data_ = NULL; m_sig_link = NULL; }
   void  Destroy();
 };
 

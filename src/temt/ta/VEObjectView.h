@@ -43,7 +43,7 @@ public:
   override void		BuildAll();
   
   bool			isVisible() const;
-  override bool		ignoreDataChanged() const { return !isVisible(); }
+  override bool		ignoreSigEmit() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEObjectView);

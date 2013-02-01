@@ -72,7 +72,7 @@ public:
     // create the proper tree node, with a iTreeView as a parent
 
   taiSigLink(void* data_, taSigLink* &link_ref_);
-  DL_FUNS(taiSigLink) //
+  SL_FUNS(taiSigLink) //
 
 protected:
   taSigLink_QObj*        qobj; // #IGNORE delegate object, when we need to connect or signal

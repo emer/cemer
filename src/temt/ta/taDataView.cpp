@@ -15,7 +15,7 @@
 
 #include "taDataView.h"
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 void taDataView::Initialize() {
@@ -48,7 +48,7 @@ void taDataView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
     if (m_data)
-      m_data->AddDataClient(this);
+      m_data->AddSigClient(this);
   }
 }
 
@@ -59,7 +59,7 @@ void taDataView::ChildAdding(taDataView* child) {
 // arbitrary number, not likely to be higher than this
 #define MAX_VIS_CNT 6
 
-void taDataView::DataUpdateView_impl() {
+void taDataView::SigRecvUpdateView_impl() {
   if(taMisc::gui_active) Render_impl();
 } 
 
@@ -75,9 +75,9 @@ void taDataView::SetVisible_impl(DataViewAction act) {
       // first hide->show: do a defered struct guy if appl
       do_defer_refresh = m_defer_refresh;
       if (do_defer_refresh > 0)
-        DataDataChanged(NULL, DCR_STRUCT_UPDATE_BEGIN, NULL, NULL);
+        SigLinkRecv(NULL, SLS_STRUCT_UPDATE_BEGIN, NULL, NULL);
       else if (do_defer_refresh < 0)
-        DataDataChanged(NULL, DCR_DATA_UPDATE_BEGIN, NULL, NULL);
+        SigLinkRecv(NULL, SLS_DATA_UPDATE_BEGIN, NULL, NULL);
     }
     if(m_vis_cnt > MAX_VIS_CNT) {
       DebugInfo("taDataView::SetVisible_impl",
@@ -99,60 +99,61 @@ void taDataView::SetVisible_impl(DataViewAction act) {
             data()->GetName());
   m_defer_refresh = 0;
   if (do_defer_refresh > 0)
-    DataDataChanged(NULL, DCR_STRUCT_UPDATE_END, NULL, NULL);
+    SigLinkRecv(NULL, SLS_STRUCT_UPDATE_END, NULL, NULL);
   else // (do_defer_rebuild < 0)
-    DataDataChanged(NULL, DCR_DATA_UPDATE_END, NULL, NULL);
+    SigLinkRecv(NULL, SLS_DATA_UPDATE_END, NULL, NULL);
 }
 
 
-void taDataView::IgnoredDataChanged(taSigLink*, int dcr, void* op1_, void* op2_) {
+void taDataView::IgnoredSigEmit(taSigLink*, int dcr, void* op1_, void* op2_) {
   // note: should not need to track anything during loading
   if (taMisc::is_loading) return;
 
   // keep track if we need to update -- struct has priority, and overrides data
-  if ((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
-    (dcr == DCR_REBUILD_VIEWS))
+  if ((dcr == SLS_STRUCT_UPDATE_BEGIN) ||
+    (dcr == SLS_REBUILD_VIEWS))
     m_defer_refresh = 1;
-  else if ((m_defer_refresh == 0) && ((dcr == DCR_DATA_UPDATE_BEGIN) ||
-    (dcr <= DCR_ITEM_UPDATED_ND) || (dcr == DCR_UPDATE_VIEWS)))
+  else if ((m_defer_refresh == 0) && ((dcr == SLS_DATA_UPDATE_BEGIN) ||
+    (dcr <= SLS_ITEM_UPDATED_ND) || (dcr == SLS_UPDATE_VIEWS)))
     m_defer_refresh = -1;
 }
 
 // set this to emit debug messages for the following code..
 // #define DATA_DATA_DEBUG 1
 
-void taDataView::DataDataChanged(taSigLink*, int dcr, void* op1_, void* op2_) {
+void taDataView::SigLinkRecv(taSigLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
 #ifdef DATA_DATA_DEBUG
-  if(dcr <= DCR_ITEM_UPDATED_ND) {
+  if(dcr <= SLS_ITEM_UPDATED_ND) {
     taMisc::Info(GetName(),"iu:", String(m_dbu_cnt));
   }
 #endif
-  if ((m_dbu_cnt == -1) && (dcr <= DCR_ITEM_UPDATED_ND))
-    dcr = DCR_DATA_UPDATE_END;
+  if ((m_dbu_cnt == -1) && (dcr <= SLS_ITEM_UPDATED_ND))
+    dcr = SLS_DATA_UPDATE_END;
   // we need to reinterpret a ITEM_UPDATED if we are in datamode with count=1
   // that is sent instead of the terminal DATA_UPDATE_END
-  if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
+  if (dcr == SLS_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
     taMisc::Info(GetName(),"stru start:", String(m_dbu_cnt));
 #endif
     return;
-  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
+  }
+  else if (dcr == SLS_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
     if (m_dbu_cnt > 0) ++m_dbu_cnt;
     else               --m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
     taMisc::Info(GetName(),"data start:", String(m_dbu_cnt));
 #endif
     return;
-  } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END))
-  {
+  }
+  else if ((dcr == SLS_STRUCT_UPDATE_END) || (dcr == SLS_DATA_UPDATE_END)) {
     bool stru = false;
     if (m_dbu_cnt < 0) ++m_dbu_cnt;
     else {stru = true; --m_dbu_cnt;}
 #ifdef DATA_DATA_DEBUG
-    if(dcr == DCR_DATA_UPDATE_END)
+    if(dcr == SLS_DATA_UPDATE_END)
       taMisc::Info(GetName(),"data end:", String(m_dbu_cnt));
     else
       taMisc::Info(GetName(),"stru end:", String(m_dbu_cnt));
@@ -162,44 +163,50 @@ void taDataView::DataDataChanged(taSigLink*, int dcr, void* op1_, void* op2_) {
       // we will only signal if no parent update, or if parent is data and we are structural
       if (pdbu == 0) {
         if (stru) {
-          DataStructUpdateEnd_impl();
-          DataDataChanged_impl(DCR_STRUCT_UPDATE_END, NULL, NULL);
-        } else {
-          DataUpdateView_impl();
-          DataDataChanged_impl(DCR_DATA_UPDATE_END, NULL, NULL);
+          SigRecvStructUpdateEnd_impl();
+          SigLinkRecv_impl(SLS_STRUCT_UPDATE_END, NULL, NULL);
+        }       
+        else {
+          SigRecvUpdateView_impl();
+          SigLinkRecv_impl(SLS_DATA_UPDATE_END, NULL, NULL);
         }
-      } else if ((pdbu < 0) && stru) {
-          DataStructUpdateEnd_impl();
-          DataDataChanged_impl(DCR_STRUCT_UPDATE_END, NULL, NULL);
+      }
+      else if ((pdbu < 0) && stru) {
+          SigRecvStructUpdateEnd_impl();
+          SigLinkRecv_impl(SLS_STRUCT_UPDATE_END, NULL, NULL);
       }
     }
     return;
   }
-  if ((m_dbu_cnt > 0) || (parDbuCnt() > 0))
+  if ((m_dbu_cnt > 0) || (parDbuCnt() > 0)) {
     return;
-  if (dcr <= DCR_ITEM_UPDATED_ND)
-    DataUpdateAfterEdit();
-  else if (dcr == DCR_UPDATE_VIEWS) {
-    DataUpdateView_impl();
-    DataDataChanged_impl(DCR_UPDATE_VIEWS, NULL, NULL);
-  } else if (dcr == DCR_REBUILD_VIEWS) {
-    DataRebuildView_impl();
-    DataDataChanged_impl(DCR_REBUILD_VIEWS, NULL, NULL);
-  } else {
-    DataDataChanged_impl(dcr, op1_, op2_);
+  }
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
+    SigRecvUpdateAfterEdit();
+  }
+  else if (dcr == SLS_UPDATE_VIEWS) {
+    SigRecvUpdateView_impl();
+    SigLinkRecv_impl(SLS_UPDATE_VIEWS, NULL, NULL);
+  }
+  else if (dcr == SLS_REBUILD_VIEWS) {
+    SigRecvRebuildView_impl();
+    SigLinkRecv_impl(SLS_REBUILD_VIEWS, NULL, NULL);
+  }
+  else {
+    SigLinkRecv_impl(dcr, op1_, op2_);
   }
 }
 
-void taDataView::DataLinkDestroying(taSigLink*) {
+void taDataView::SigLinkDestroying(taSigLink*) {
   m_data = NULL;
-  DataDestroying();
+  SigDestroying();
 }
 
-void taDataView::DataUpdateAfterEdit() {
-  DataUpdateAfterEdit_impl();
+void taDataView::SigRecvUpdateAfterEdit() {
+  SigRecvUpdateAfterEdit_impl();
   taDataView* par = parent();
   if (par)
-    par->DataUpdateAfterEdit_Child(this);
+    par->SigRecvUpdateAfterEdit_Child(this);
 }
 
 void taDataView::DoActions(DataViewAction acts) {
@@ -273,14 +280,14 @@ int taDataView::parDbuCnt() {
 void taDataView::SetData(taBase* ta) {
   if (m_data == ta) return;
   if (m_data) {
-    m_data->RemoveDataClient(this);
+    m_data->RemoveSigClient(this);
     m_data = NULL;
   }
   if (!ta) return;
   if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
     taMisc::Warning("taDataView::m_data must inherit from ", data_base->name);
   } else {
-    ta->AddDataClient(this);
+    ta->AddSigClient(this);
     m_data = ta;
   }
 }

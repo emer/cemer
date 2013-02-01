@@ -28,7 +28,7 @@
 #include <T3Node>
 #include <taFiler>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 #include <Inventor/actions/SoWriteAction.h>
@@ -36,7 +36,7 @@
 
 
 void T3DataViewFrame::Initialize() {
-//  link_type = &TA_T3DataLink;
+//  link_type = &TA_T3SigLink;
   bg_color.setColorName(taMisc::t3d_bg_color);
   text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
@@ -111,16 +111,16 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   int idx;
   PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer, idx);
   iTabViewer* itv = pv->widget();
-  taiSigLink* dl = (taiSigLink*)GetDataLink();
+  taiSigLink* dl = (taiSigLink*)GetSigLink();
   iViewPanelSet* ivps = new iViewPanelSet(dl);
   rval->panel_set = ivps;
   itv->AddPanelNewTab(ivps);
   return rval;
 }
 
-void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+void T3DataViewFrame::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     T3DataViewer* par = GET_MY_OWNER(T3DataViewer);
     if (par) par->FrameChanged(this);
   }

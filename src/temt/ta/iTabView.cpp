@@ -429,7 +429,7 @@ int iTabView::TabIndexByName(const String& nm) const {
 }
 
 
-void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed
+void iTabView::UpdateTabNames() { // called by a siglink when a tab name might have changed
   for (int i = 0; i < tbPanels->count(); ++i ) {
     iDataPanel* pan = tbPanels->panel(i);
     if (pan == NULL) continue; // shouldn't happen...

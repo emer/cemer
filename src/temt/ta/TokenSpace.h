@@ -42,7 +42,7 @@ public:
   bool          keep;           // true if tokens are kept
   taAtomicInt   sub_tokens;     // number of tokens in sub-types
 #ifndef NO_TA_BASE
-  taSigLink*   data_link;
+  taSigLink*   sig_link;
 #endif
 
   virtual void  Initialize();

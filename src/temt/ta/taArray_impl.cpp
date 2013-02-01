@@ -16,7 +16,7 @@
 #include "taArray_impl.h"
 #include <MTRnd>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 void taArray_impl::Clear_Tmp_() {
@@ -34,7 +34,7 @@ void taArray_impl::AddOnly_(const void* it) {
 
 void taArray_impl::Add_(const void* it) {
   AddOnly_(it);
-  DataChanged(DCR_ARY_SIZE_CHANGED);
+  SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 bool taArray_impl::AddUniqueOnly_(const void* it) {
@@ -86,7 +86,7 @@ bool taArray_impl::AllocExact(int sz) {
 }
 
 void taArray_impl::Reset() {
-  Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED);
+  Reset_impl(); SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::AddBlank(int n_els) {
@@ -117,7 +117,7 @@ void taArray_impl::SetSize(int new_size) {
     ReclaimOrphans_(new_size, size - 1);
   }
   size = new_size;
-  DataChanged(DCR_ARY_SIZE_CHANGED);
+  SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 bool taArray_impl::Equal_(const taArray_impl& ar) const {
@@ -152,7 +152,7 @@ void taArray_impl::Insert_(const void* it, int where, int n) {
   if((where==size) || (where < 0)) {
     int i;
     for (i=0; i<n; i++) AddOnly_(it);
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
     return;
   }
   int i;
@@ -164,7 +164,7 @@ void taArray_impl::Insert_(const void* it, int where, int n) {
     El_Copy_(FastEl_(trg_o - i), FastEl_(src_o - i));
   for(i=where; i<where+n; i++)
     El_Copy_(FastEl_(i), it);
-  DataChanged(DCR_ARY_SIZE_CHANGED);
+  SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 bool taArray_impl::MoveIdx(int fm, int to) {
@@ -217,7 +217,7 @@ bool taArray_impl::RemoveIdx(uint i, int n) {
   for(j=i; j < size-n; j++)
     El_Copy_(FastEl_(j), FastEl_(j+n));
   size -= n;
-  DataChanged(DCR_ARY_SIZE_CHANGED);
+  SigEmit(SLS_ARY_SIZE_CHANGED);
   return true;
 }
 
@@ -282,7 +282,7 @@ void taArray_impl::ShiftLeft(int nshift) {
     El_Copy_(FastEl_(i), FastEl_(i+nshift)); // move left..
   }
   size = size - nshift;         // update the size now..
-  DataChanged(DCR_ARY_SIZE_CHANGED);
+  SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::ShiftLeftPct(float pct) {
@@ -307,7 +307,7 @@ int taArray_impl::V_Flip(int width){
     }
   }
   if (size_orig != size)
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
   return true;
 }
 
@@ -317,7 +317,7 @@ void taArray_impl::Duplicate(const taArray_impl& cp) {
   for(i=0; i<cp.size; i++)
     AddOnly_(cp.FastEl_(i));
   if (size_orig != size)
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::DupeUnique(const taArray_impl& cp) {
@@ -326,7 +326,7 @@ void taArray_impl::DupeUnique(const taArray_impl& cp) {
   for(i=0; i<cp.size; i++)
     AddUniqueOnly_(cp.FastEl_(i));
   if (size_orig != size)
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::Copy_Common(const taArray_impl& cp) {
@@ -342,7 +342,7 @@ void taArray_impl::Copy_Duplicate(const taArray_impl& cp) {
   for(int i=size; i<cp.size; i++)
     AddOnly_(cp.FastEl_(i));
   if (size_orig != size)
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at) {
@@ -397,5 +397,5 @@ void taArray_impl::InitFromString(const String& val) {
     El_SetFmStr_(FastEl_(size-1), String(el_val));
   }
   if (size_orig != size)
-    DataChanged(DCR_ARY_SIZE_CHANGED);
+    SigEmit(SLS_ARY_SIZE_CHANGED);
 }

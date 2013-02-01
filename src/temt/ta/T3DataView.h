@@ -100,8 +100,8 @@ public:
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
-  override void         DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
   override void         ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
   override void         ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
 
@@ -141,12 +141,12 @@ protected:
   override void         Render_pre(); //
   override void         Render_impl();
 
-  override void         DataStructUpdateEnd_impl(); // our own customized version, similar to generic base
-  override void         DataRebuildView_impl() {DataStructUpdateEnd_impl();} // same as StructEnd
+  override void         SigRecvStructUpdateEnd_impl(); // our own customized version, similar to generic base
+  override void         SigRecvRebuildView_impl() {SigRecvStructUpdateEnd_impl();} // same as StructEnd
 
 protected:
   T3DataView*           last_child_node; // #IGNORE last child node created, so we can pass to createnode
-  override void         DataUpdateAfterEdit_impl(); // called by data for an UAE
+  override void         SigRecvUpdateAfterEdit_impl(); // called by data for an UAE
   override void         UpdateAfterEdit_impl();
 
 private:

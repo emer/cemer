@@ -190,7 +190,7 @@ public:
 
   virtual TypeDef* GetElType() const {return NULL;}
   // #IGNORE Default type for objects in group
-  virtual void  DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
+  virtual void  SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   inline int    Index(int idx) const { if(idx < 0) idx += size; return idx; }
   // #EXPERT #CAT_Access get actual index from index value that can also be negative, meaning access from end of list

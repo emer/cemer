@@ -16,7 +16,7 @@
 #include "Layer_Group.h"
 #include <Network>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 
 bool Layer_Group::nw_itm_def_arg = false;
@@ -58,9 +58,9 @@ void Layer_Group::AddRelPos2d(taVector2i& rel_pos) {
   }
 }
 
-void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if (dcr == DCR_LIST_ITEM_INSERT) {
+void Layer_Group::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
+  if (dcr == SLS_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
     if (net)
       net->RebuildAllViews();
@@ -205,7 +205,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	    else {
 	      l2->pos.y += (l1e.y + 2) - l2s.y;
 	    }
-	    l2->DataItemUpdated();
+	    l2->SigEmitUpdated();
 	    moved = true;
 	  }
 	  else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
@@ -216,7 +216,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	    else {
 	      l1->pos.y += (l2e.y + 2) - l1s.y;
 	    }
-	    l1->DataItemUpdated();
+	    l1->SigEmitUpdated();
 	    moved = true;
 	  }
 	}
@@ -229,7 +229,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	  else {
 	    l2->pos2d.y += (l1e2d.y + 2) - l2s2d.y;
 	  }
-	  l2->DataItemUpdated();
+	  l2->SigEmitUpdated();
 	  moved = true;
 	}
 	else if(l1s2d.x >= l2s2d.x && l1s2d.x < l2e2d.x &&
@@ -240,7 +240,7 @@ void Layer_Group::LayerPos_Cleanup() {
 	  else {
 	    l1->pos2d.y += (l2e2d.y + 2) - l1s2d.y;
 	  }
-	  l1->DataItemUpdated();
+	  l1->SigEmitUpdated();
 	  moved = true;
 	}
       }

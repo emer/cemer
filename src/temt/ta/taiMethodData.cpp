@@ -25,7 +25,7 @@
 #include <css_basic_types.h>
 #include <css_ta.h>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -227,7 +227,7 @@ void taiMethodData::ApplyBefore() {
   // send the RESOLVE_NOW operator to all clients
   taBase* base = host->Base();
   if (base) {
-    base->DataChanged(DCR_RESOLVE_NOW);
+    base->SigEmit(SLS_RESOLVE_NOW);
   }
   //NOTE: small chance we could be deleted here, so no code here!
 }

@@ -52,8 +52,8 @@ public: // ITypedObject interface
   override TypeDef*     GetTypeDef() const {return &TA_taBase_FunCallList;}
 
 public: // ISigLinkClient interface
-  override void         DataLinkDestroying(taSigLink* dl);
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {}
+  override void         SigLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {}
 
 protected:
   override void El_Done_(void* it); // unref link

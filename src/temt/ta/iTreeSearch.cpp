@@ -106,7 +106,7 @@ void iTreeSearch::search() {
   // expand afterward because otherwise it messes up iterator
   for(int i=0;i<sub_srch.size; i++) {
     taBase* fnd = sub_srch.FastEl(i);
-    taiSigLink* lnk = (taiSigLink*)fnd->GetDataLink();
+    taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
     if(!lnk) continue;
     iTreeViewItem* fitm = tree_view->AssertItem(lnk);
     if(fitm) {

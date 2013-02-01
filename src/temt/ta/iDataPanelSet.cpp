@@ -22,7 +22,7 @@
 #include <iProgramViewScriptPanel>
 #include <NumberedTextView>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -144,10 +144,10 @@ void iDataPanelSet::AllSubPanelsAdded() {
   }
 }
 
-void iDataPanelSet::DataChanged_impl(int dcr, void* op1, void* op2) {
-  inherited::DataChanged_impl(dcr, op1, op2);
+void iDataPanelSet::SigEmit_impl(int dcr, void* op1, void* op2) {
+  inherited::SigEmit_impl(dcr, op1, op2);
   // if UDC then we need to invoke the dyn panel update procedure on the tai guy
-  if (dcr == DCR_USER_DATA_UPDATED) {
+  if (dcr == SLS_USER_DATA_UPDATED) {
     TypeDef* typ = link()->GetDataTypeDef();
     if (typ && typ->iv) {
       typ->iv->CheckUpdateDataPanelSet(this);
@@ -213,7 +213,7 @@ QWidget* iDataPanelSet::firstTabFocusWidget() {
 
 iDataPanelSet* Program::FindMyDataPanelSet() {
   if(!taMisc::gui_active) return NULL;
-  taSigLink* link = data_link();
+  taSigLink* link = sig_link();
   if(!link) return NULL;
   taSigLinkItr itr;
   iDataPanelSet* el;

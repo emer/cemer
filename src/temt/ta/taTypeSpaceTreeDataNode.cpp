@@ -46,7 +46,7 @@ taSigLinkTypeItem* taTypeSpaceTreeDataNode::child_link(int idx) {
   taiSigLink* dl = NULL;
   TypeItem* ti = static_cast<TypeItem*>(data()->PosSafeEl_(idx));
   if (ti != NULL) {
-    dl = taiViewType::StatGetDataLink(ti, ti->GetTypeDef());
+    dl = taiViewType::StatGetSigLink(ti, ti->GetTypeDef());
   }
   return static_cast<taSigLinkTypeItem*>(dl);
 }

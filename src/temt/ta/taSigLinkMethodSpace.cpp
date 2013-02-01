@@ -22,7 +22,7 @@
 
 
 taSigLinkMethodSpace::taSigLinkMethodSpace(MethodSpace* data_)
-:inherited(TypeItem::TIK_METHODSPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_METHODSPACE, data_, data_->sig_link)
 {
 }
 
@@ -30,7 +30,7 @@ taiSigLink* taSigLinkMethodSpace::GetListChild(int itm_idx) {
   MethodDef* el = static_cast<MethodDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, &TA_MethodDef);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, &TA_MethodDef);
   return dl;
 }
 

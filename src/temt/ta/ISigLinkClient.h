@@ -31,7 +31,7 @@ class taSigLink;  //
   which may trigger event loop calls, which can cause deletions, mid-routine
 */
 
-// Mixin interface for Node that uses datalinks, ex. tree node or Inventor node
+// Mixin interface for Node that uses siglinks, ex. tree node or Inventor node
 
 
 TypeDef_Of(ISigLinkClient);
@@ -46,20 +46,21 @@ public:
   inline taSigLink*    link() const {return m_link;}
 #endif
   inline taSigLink*    link_() const {return m_link;}
-  virtual bool          ignoreDataChanged() const {return false;}
+  virtual bool          ignoreSigEmit() const {return false;}
     // hidden guys can ignore changes (but they always get Destroyed)
   virtual bool          isDataView() const {return false;} // true for dataviews
-  virtual void          DataLinkDestroying(taSigLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
-  virtual void          DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) = 0; //
-  virtual void          IgnoredDataChanged(taSigLink* dl, int dcr,
-    void* op1, void* op2) {} // called instead if ignoreDataChanged was true
+  virtual void          SigLinkDestroying(taSigLink* dl) = 0; // called by SigLink when destroying; it will remove siglink ref in dlc upon return
+  virtual void          SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) = 0;
+  // this is how we receive a signal from the siglink
+  virtual void          IgnoredSigEmit(taSigLink* dl, int dcr,
+    void* op1, void* op2) {} // called instead if ignoreSigEmit was true
 
   ISigLinkClient() {m_link = NULL;}
   ~ISigLinkClient();
 protected:
-  virtual bool          AddDataLink(taSigLink* dl);
+  virtual bool          AddSigLink(taSigLink* dl);
     // #IGNORE true if added, false if already set (usually a bug); overridden in Multi
-  virtual bool          RemoveDataLink(taSigLink* dl);
+  virtual bool          RemoveSigLink(taSigLink* dl);
     // #IGNORE true if removed, false if not (likely not a bug, just redunancy) overridden in Multi
 
   taSigLink*           m_link; // NOTE: will always be a taiSigLink or subclass

@@ -413,7 +413,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
     taBase* specs_ = &(dv_->net()->specs);
     MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
     if (specs_) {
-      taiSigLink* dl = (taiSigLink*)specs_->GetDataLink();
+      taiSigLink* dl = (taiSigLink*)specs_->GetSigLink();
       if (dl) {
         dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
       }

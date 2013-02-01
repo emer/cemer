@@ -27,36 +27,36 @@ class taBase;
 /*
  * taSigLink is the interface between data objects, and the object viewing system.
 
- * One DataLink object is created for each data object that has active viewers.
+ * One SigLink object is created for each data object that has active viewers.
  *
  * Any type of object can contain a taSigLink delegate -- it passes the reference to the
- * taSigLink within itself to the datalink when it creates it.
- * A DataLink will only remain alive while there are clients viewing it -- when the last
- * client removes itself, the datalink will destruct. When a DataLink object destructs,
+ * taSigLink within itself to the siglink when it creates it.
+ * A SigLink will only remain alive while there are clients viewing it -- when the last
+ * client removes itself, the siglink will destruct. When a SigLink object destructs,
  * it will remove itself from its data item.
  *
- * A DataLink object of the correct type for a data item is created by the taiViewType
+ * A SigLink object of the correct type for a data item is created by the taiViewType
  * object for the type. Note that the base type for all instances is taiSigLink.
 
  * There are two destruction scenarios, as outlined below:
  * 1) The data object is deleted (ex., user deletes from a menu item)
- *    - data will call taSigLink::DataDestroying() for each DataLink in its list
- *    - each datalink will ISigLinkClient::DataLinkDestroying for each ISigLinkClient in
+ *    - data will call taSigLink::SigDestroying() for each SigLink in its list
+ *    - each siglink will ISigLinkClient::SigLinkDestroying for each ISigLinkClient in
  *      its clients list
- *    - if DataLink has a panel, it will:
+ *    - if SigLink has a panel, it will:
  *       call the Browser's RemovePanel(); clear its Panel ref
  *    - (additional Viewer-dependent deleting, ex. in a tree view)
- *    - taBase will remove DataLink from the list, destroying it
+ *    - taBase will remove SigLink from the list, destroying it
  * 2) Dataclient object is deleted (ex. user closes its viewer)
- *    - CO will call IDataLink::RemoveDataClient()
- *    - if DataLink has no more COs, it will destroy itself per (1) above
+ *    - CO will call ISigLink::RemoveSigClient()
+ *    - if SigLink has no more COs, it will destroy itself per (1) above
  *
  * NOTE: this is an abstract type -- most of the rest of the system uses taiSigLink
  * (see ta_qtviewer.h).
 
 */
 
-#define DL_FUNS(y)      TypeDef* GetTypeDef() const {return &TA_ ## y;} \
+#define SL_FUNS(y)      TypeDef* GetTypeDef() const {return &TA_ ## y;} \
 
 TypeDef_Of(taSigLink);
 
@@ -73,15 +73,16 @@ public:
   inline int            dbuCnt() const {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
   virtual bool          isEnabled() const {return true;} // status of item
 
-  bool                  AddDataClient(ISigLinkClient* dlc); // true if added, and it had not previously been added (false is probably a bug)
-  bool                  RemoveDataClient(ISigLinkClient* dlc); // returns true if removed; false is likely not a bug, just redundancy
+  bool                  AddSigClient(ISigLinkClient* dlc); // true if added, and it had not previously been added (false is probably a bug)
+  bool                  RemoveSigClient(ISigLinkClient* dlc); // returns true if removed; false is likely not a bug, just redundancy
 
   virtual TypeDef*      GetDataTypeDef() const {return NULL;} // TypeDef of the data
   virtual MemberDef*    GetDataMemberDef() const {return NULL;} // if a member in a class, then the MemberDef
   virtual String        GetName() const {return _nilString;}
   virtual String        GetDisplayName() const; // default return Member name if has MemberDef, else GetName
-  void                  DataDestroying(); // called by host when destroying, but it is still responsible for deleting us
-  virtual void          DataDataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void                  SigDestroying(); // called by host when destroying, but it is still responsible for deleting us
+  virtual void          SigLinkEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+  // this is how we emit the signal to the receivers
   virtual bool          HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
 
   virtual int           NumListCols() const {return 1;} // number of columns in a list view for this item type

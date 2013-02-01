@@ -20,18 +20,18 @@
 
 void taBase_FunCallList::El_Done_(void* it_) {
   FunCallItem* it = (FunCallItem*)it_;
-  it->it->RemoveDataClient(this);
+  it->it->RemoveSigClient(this);
   delete it;
 }
 
 bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
   FunCallItem* fci = new FunCallItem(obj, fun_name);
   Add(fci);
-  obj->AddDataClient(this);
+  obj->AddSigClient(this);
   return true;
 }
 
-void taBase_FunCallList::DataLinkDestroying(taSigLink* dl) {
+void taBase_FunCallList::SigLinkDestroying(taSigLink* dl) {
   taBase* obj = dl->taData();
   if (!obj) return; // shouldn't happen;
   bool got_one = false;
@@ -44,6 +44,6 @@ void taBase_FunCallList::DataLinkDestroying(taSigLink* dl) {
   }
 
   if(!got_one) {
-    taMisc::Error("Internal error -- taBase_FunCallList DataDestroying_Ref didn't find base in base_funs!");
+    taMisc::Error("Internal error -- taBase_FunCallList SigDestroying_Ref didn't find base in base_funs!");
   }
 }

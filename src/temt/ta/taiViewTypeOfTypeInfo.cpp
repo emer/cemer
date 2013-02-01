@@ -37,7 +37,7 @@ int taiViewTypeOfTypeInfo::BidForView(TypeDef* td) {
 }
 
 
-taiSigLink* taiViewTypeOfTypeInfo::GetDataLink(void* el, TypeDef* td) {
+taiSigLink* taiViewTypeOfTypeInfo::GetSigLink(void* el, TypeDef* td) {
   if (!el) return NULL; 
 
   TypeItem::TypeInfoKinds tik = taMisc::TypeToTypeInfoKind(td);
@@ -49,27 +49,27 @@ taiSigLink* taiViewTypeOfTypeInfo::GetDataLink(void* el, TypeDef* td) {
   case TypeItem::TIK_METHOD:
   case TypeItem::TIK_TYPE: {
     TypeItem* ti = static_cast<TypeItem*>(el);
-    if (ti->data_link) return static_cast<taiSigLink*>(ti->data_link);
+    if (ti->sig_link) return static_cast<taiSigLink*>(ti->sig_link);
     else return new taSigLinkTypeItem(tik, ti);
     }
   case TypeItem::TIK_MEMBERSPACE: {
     MemberSpace* s = static_cast<MemberSpace*>(el);
-    if (s->data_link != NULL) return static_cast<taiSigLink*>(s->data_link);
+    if (s->sig_link != NULL) return static_cast<taiSigLink*>(s->sig_link);
     else return new taSigLinkMemberSpace(s);
     }
   case TypeItem::TIK_PROPERTYSPACE: {
     PropertySpace* s = static_cast<PropertySpace*>(el);
-    if (s->data_link != NULL) return static_cast<taiSigLink*>(s->data_link);
+    if (s->sig_link != NULL) return static_cast<taiSigLink*>(s->sig_link);
     else return new taSigLinkPropertySpace(s);
     }
   case TypeItem::TIK_METHODSPACE: {
     MethodSpace* s = static_cast<MethodSpace*>(el);
-    if (s->data_link != NULL) return static_cast<taiSigLink*>(s->data_link);
+    if (s->sig_link != NULL) return static_cast<taiSigLink*>(s->sig_link);
     else return new taSigLinkMethodSpace(s);
     }
   case TypeItem::TIK_TYPESPACE: {
     TypeSpace* s = static_cast<TypeSpace*>(el);
-    if (s->data_link != NULL) return static_cast<taiSigLink*>(s->data_link);
+    if (s->sig_link != NULL) return static_cast<taiSigLink*>(s->sig_link);
     else return new taSigLinkTypeSpace(s);
     }
   case TypeItem::TIK_TOKENSPACE:

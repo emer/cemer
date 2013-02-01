@@ -131,7 +131,7 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
       {
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-//      DataItemUpdated();
+//      SigEmitUpdated();
       }
     }
   }

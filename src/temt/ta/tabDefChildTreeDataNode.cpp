@@ -15,7 +15,7 @@
 
 #include "tabDefChildTreeDataNode.h"
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
@@ -42,9 +42,9 @@ tabDefChildTreeDataNode::~tabDefChildTreeDataNode()
 {
 }
 
-void tabDefChildTreeDataNode::DefChild_DataChanged(int dcr, void* op1, void* op2) {
+void tabDefChildTreeDataNode::DefChild_SigEmit(int dcr, void* op1, void* op2) {
   // we only pass on the List notifies
-  if ((!(dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))) return;
-  DataChanged(dcr, op1, op2);
+  if ((!(dcr >= SLS_LIST_MIN) && (dcr <= SLS_LIST_MAX))) return;
+  SigEmit(dcr, op1, op2);
 }
 

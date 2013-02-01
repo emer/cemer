@@ -28,14 +28,14 @@ class taGroup_impl; //
 TypeDef_Of(taSigLinkGroup);
 
 class TA_API taSigLinkGroup: public taSigLinkList {
-  // DataLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups
+  // SigLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups
 INHERITED(taSigLinkList)
 public:
   taGroup_impl*         data() {return (taGroup_impl*)m_data;}
   const taGroup_impl*   data() const {return (taGroup_impl*)m_data;}
 
   taSigLinkGroup(taGroup_impl* data_);
-  DL_FUNS(taSigLinkGroup)
+  SL_FUNS(taSigLinkGroup)
 protected:
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);

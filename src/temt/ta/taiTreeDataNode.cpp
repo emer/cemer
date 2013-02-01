@@ -60,8 +60,8 @@ void taiTreeDataNode::CreateChildren_impl() {
     if (!md->ShowMember(TypeItem::ALL_MEMBS, TypeItem::SC_TREE)) continue;
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     TypeDef* typ = md->type;
-    void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
-    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
+    void* el = md->GetOff(linkData()); //note: GetSigLink automatically derefs typ and el if pointers
+    taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
     //note: we still can't get links for some types, ex. ptrs to NULL
     if (dl) {
       String tree_nm = md->GetLabel();

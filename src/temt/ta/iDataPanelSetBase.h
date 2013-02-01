@@ -65,7 +65,7 @@ public slots:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-  override void         DataLinkDestroying(taSigLink* dl);
+  override void         SigLinkDestroying(taSigLink* dl);
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanelSetBase;}
 
 protected:

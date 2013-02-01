@@ -55,7 +55,7 @@ public:
                                          const QModelIndex& bottomRight); // #IGNORE 
 
 public slots:
-  void                  matDataChanged(int col_idx); // mat editor calls when data changes
+  void                  matSigEmit(int col_idx); // mat editor calls when data changes
 
 protected:
   DataTableModel(DataTable* dt);
@@ -75,9 +75,9 @@ public: // required implementations
 public: // ISigLinkClient i/f
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_DataTableModel;}
-//  override bool               ignoreDataChanged() const;
-  override void         DataLinkDestroying(taSigLink* dl);
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+//  override bool               ignoreSigEmit() const;
+  override void         SigLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   bool                  ValidateIndex(const QModelIndex& index) const;

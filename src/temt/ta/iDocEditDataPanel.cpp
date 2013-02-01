@@ -17,7 +17,7 @@
 #include <taDoc>
 #include <DocEditDataHost>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
@@ -52,16 +52,16 @@ QWidget* iDocEditDataPanel::firstTabFocusWidget() {
   return de->firstTabFocusWidget();
 }
 
-bool iDocEditDataPanel::ignoreDataChanged() const {
+bool iDocEditDataPanel::ignoreSigEmit() const {
   return false; // don't ignore -- we do SmartButComplicatedIgnore(TM)
 //  return !isVisible();
 }
 
-void iDocEditDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+void iDocEditDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     this->m_update_req = true; // so we update next time we show, if hidden
   }
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+  inherited::SigEmit_impl(dcr, op1_, op2_);
 }
 
 bool iDocEditDataPanel::HasChanged() {

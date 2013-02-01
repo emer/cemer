@@ -71,18 +71,18 @@ public:
 
   override QWidget*     firstTabFocusWidget();
 
-  iDocDataPanel(); // NOTE: use the setDoc api to (indirectly) set the DataLink
+  iDocDataPanel(); // NOTE: use the setDoc api to (indirectly) set the SigLink
   ~iDocDataPanel();
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDocDataPanel;}
-  override void         DataLinkDestroying(taSigLink* dl);
-  override bool         ignoreDataChanged() const;
+  override void         SigLinkDestroying(taSigLink* dl);
+  override bool         ignoreSigEmit() const;
 protected:
   taDoc*                m_doc; // ref managed through link; we just put ptr here to detect change
   bool                  is_loading;
-  override void         DataChanged_impl(int dcr, void* op1, void* op2);
+  override void         SigEmit_impl(int dcr, void* op1, void* op2);
   override void         UpdatePanel_impl();
   override bool         eventFilter(QObject *obj, QEvent *event);
   // translate emacs keys..

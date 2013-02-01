@@ -27,7 +27,7 @@
 #include <taObjDiffRec>
 #include <taObjDiff_List>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <tabMisc>
 #include <taMisc>
 
@@ -187,11 +187,11 @@ void DataCol::UpdateAfterEdit_impl() {
   Init();
 }
 
-void DataCol::DataChanged(int dcr, void* op1, void* op2) {
+void DataCol::SigEmit(int dcr, void* op1, void* op2) {
   RemoveHashTable();
-  inherited::DataChanged(dcr, op1, op2);
+  inherited::SigEmit(dcr, op1, op2);
   // treat item changes here as struct changes to the table
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     DataTable* dt = dataTable();
     if (dt) {
       dt->StructUpdate(true);

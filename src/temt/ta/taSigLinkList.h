@@ -27,7 +27,7 @@
 TypeDef_Of(taSigLinkList);
 
 class TA_API taSigLinkList: public taSigLinkOBase {
-  // DataLink for taList objects -- note that it also manages the ListView nodes
+  // SigLink for taList objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkOBase)
 public:
   taList_impl*          list() {return (taList_impl*)m_data;}
@@ -35,7 +35,7 @@ public:
   override taiSigLink* listLink() {return this;}
 
   taSigLinkList(taList_impl* data_);
-  DL_FUNS(taSigLinkList) //
+  SL_FUNS(taSigLinkList) //
 protected:
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,

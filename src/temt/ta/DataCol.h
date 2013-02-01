@@ -380,7 +380,7 @@ public:
   override int  GetIndex() const {return col_idx;}
   override void SetIndex(int value) {col_idx = (short)value;}
   override String GetDesc() const {return desc;}
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
   override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,
                                        TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;

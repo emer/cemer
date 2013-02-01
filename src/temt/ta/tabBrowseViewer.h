@@ -42,7 +42,7 @@ public:
 
   override void*        root() {return (void*)m_root.ptr();}
   override taiSigLink* rootLink() {return (m_root) ?
-    (taiSigLink*)m_root->GetDataLink() : NULL;}
+    (taiSigLink*)m_root->GetSigLink() : NULL;}
 
   void  UpdateAfterEdit(); // if root deletes, our window must die
   void  InitLinks();

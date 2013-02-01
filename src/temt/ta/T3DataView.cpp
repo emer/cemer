@@ -20,7 +20,7 @@
 #include <taiClipData>
 #include <T3ExaminerViewer>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 #include <Inventor/SoPath.h>
@@ -199,26 +199,26 @@ void T3DataView::Close() {
   //NOTE: we may delete at this point -- do not put any more code
 }
 
-void T3DataView::DataDestroying() {
+void T3DataView::SigDestroying() {
   Close();
   //NOTE: we may delete at this point -- do not put any more code
 }
 
-void T3DataView::DataStructUpdateEnd_impl() {
+void T3DataView::SigRecvStructUpdateEnd_impl() {
   Reset(); // note: should be superfluous, since we did one on start
   BuildAll();
   Render();
 }
 
-void T3DataView::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
-  inherited::DataDataChanged(dl, dcr, op1, op2);
+void T3DataView::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
+  inherited::SigLinkRecv(dl, dcr, op1, op2);
   // if we have started a batch op, then Reset, since we will for sure eventually
-  if ((dcr == DCR_STRUCT_UPDATE_BEGIN) && (dbuCnt() == 1))
+  if ((dcr == SLS_STRUCT_UPDATE_BEGIN) && (dbuCnt() == 1))
     Reset();
 }
 
-void T3DataView::DataUpdateAfterEdit_impl() {
-  inherited::DataUpdateAfterEdit_impl();
+void T3DataView::SigRecvUpdateAfterEdit_impl() {
+  inherited::SigRecvUpdateAfterEdit_impl();
   DoActions(RENDER_IMPL);
   // this should be superfluous:
 //   if (m_node_so)
@@ -346,7 +346,7 @@ void T3DataView::UpdateChildNames(T3DataView*) {
 }
 
 taiSigLink* T3DataView::viewLink() const {
-  return (taiSigLink*)const_cast<T3DataView*>(this)->GetDataLink();
+  return (taiSigLink*)const_cast<T3DataView*>(this)->GetSigLink();
 }
 
 

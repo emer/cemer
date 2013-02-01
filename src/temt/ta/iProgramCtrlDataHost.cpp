@@ -27,7 +27,7 @@
 #include <taiBitBox>
 #include <taiMemberOfDynEnum>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -191,30 +191,30 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
   } // j == set
 }
 
-void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList* ref, taBase* base) {
+void iProgramCtrlDataHost::SigDestroying_Ref(taBase_RefList* ref, taBase* base) {
   // we need to rebuild...
   if (ref == &refs)
     ReShow_Async();
   // otherwise, pgp or prog are destroying, so don't bother
 }
 
-void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
+void iProgramCtrlDataHost::SigEmit_Ref(taBase_RefList* ref, taBase* base,
     int dcr, void* op1, void* op2)
 {
-  if (ignoreDataChanged()) return; // not visible, so ignore!
+  if (ignoreSigEmit()) return; // not visible, so ignore!
   Program* prog = this->prog(); //cache
   if (!prog) return;
   // ignore list delete msgs, since the obj itself should notify
   if (ref == &refs_struct) {
     if ((base == &(prog->args)) ||(base == &(prog->vars))) {
-      if ((dcr <= DCR_LIST_INIT) ||  (dcr == DCR_LIST_ITEM_REMOVE) ||
-        (dcr > DCR_LIST_SORTED)
+      if ((dcr <= SLS_LIST_INIT) ||  (dcr == SLS_LIST_ITEM_REMOVE) ||
+        (dcr > SLS_LIST_SORTED)
       ) return;
     }
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     // for step, only interested in group-as-object item update
     if (base == pg) {
-      if ((dcr > DCR_ITEM_UPDATED_ND))
+      if ((dcr > SLS_ITEM_UPDATED_ND))
         return;
     }
   }

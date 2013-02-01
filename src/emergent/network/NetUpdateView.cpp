@@ -53,7 +53,7 @@ void NetUpdateView::GetUpdateVar() {
   if (!update_var) {
     update_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     update_var->name = "update_net_view";
-    update_var->DataItemUpdated();
+    update_var->SigEmitUpdated();
   }
   update_var->var_type = ProgVar::T_Bool;
 }

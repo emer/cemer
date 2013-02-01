@@ -29,7 +29,7 @@
 #include <iMainWindowViewer>
 #include <taiMenuBar>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -90,7 +90,7 @@ taiEditDataHost::~taiEditDataHost() {
   // remove data client -- harmless if already done in Cancel
   taBase* rbase = Base();
   if  (rbase) {
-    rbase->RemoveDataClient(this);
+    rbase->RemoveSigClient(this);
     root = NULL;
   }
   bgrp = NULL;
@@ -135,7 +135,7 @@ void taiEditDataHost::Cancel_impl() {
   }
   taBase* rbase = Base();
   if  (rbase) {
-    rbase->RemoveDataClient(this);
+    rbase->RemoveSigClient(this);
   }
   if (isPanel()) {
     if (panel != NULL)
@@ -342,7 +342,7 @@ void taiEditDataHost::Constr_Methods_impl() {
 void taiEditDataHost::Constr_RegNotifies() {
   taBase* rbase = Base();
   if (rbase) {
-    rbase->AddDataClient(this);
+    rbase->AddSigClient(this);
   }
 }
 //void taiEditDataHost::Constr_ShowMenu() {
@@ -634,7 +634,7 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
 }
 
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
-  // called by root on closing, dialog on closing, DCR_RESOLVE_NOW op, etc. etc.
+  // called by root on closing, dialog on closing, SLS_RESOLVE_NOW op, etc. etc.
   if (HasChanged()) {
     if(!mwidget->isVisible()) {
       taMisc::DebugInfo("taiEditDataHost::ResolveChanges attempt to get value with invisible widget!");

@@ -17,7 +17,7 @@
 #include <DataTable>
 #include <taProject>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -33,7 +33,7 @@ DataTableModel::DataTableModel(DataTable* dt_)
 DataTableModel::~DataTableModel() {
   // note: following shouldn't really execute since table manages our lifetime
   if (m_dt) {
-    m_dt->RemoveDataClient(this);
+    m_dt->RemoveSigClient(this);
     m_dt = NULL;
   }
 }
@@ -42,18 +42,18 @@ int DataTableModel::columnCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->cols() : 0;
 }
 
-void DataTableModel::DataLinkDestroying(taSigLink* dl) {
+void DataTableModel::SigLinkDestroying(taSigLink* dl) {
   m_dt = NULL;
 }
 
-void DataTableModel::DataDataChanged(taSigLink* dl, int dcr,
+void DataTableModel::SigLinkRecv(taSigLink* dl, int dcr,
   void* op1, void* op2)
-{ // called from DataTable::DataChanged
+{ // called from DataTable::SigEmit
   if (notifying) return;
   //this is primarily for code-driven changes
-  if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
-    (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes
-    (dcr == DCR_DATA_UPDATE_END)) // for row insert/deletes
+  if ((dcr <= SLS_ITEM_UPDATED_ND) || // data itself updated
+    (dcr == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (dcr == SLS_DATA_UPDATE_END)) // for row insert/deletes
   {
     emit_layoutChanged();
   }
@@ -186,14 +186,14 @@ int DataTableModel::rowCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->rows : 0;
 }
 
-void DataTableModel::matDataChanged(int col_idx) {
+void DataTableModel::matSigEmit(int col_idx) {
   if (!m_dt) return;
 
   DataCol* col = m_dt->GetColData(col_idx, true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return;
   ++notifying;
-  col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh and other clients
+  col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh and other clients
   --notifying;
 }
 
@@ -217,7 +217,7 @@ bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, i
     m_dt->SetValAsVar(value, index.column(), index.row());
     ++notifying;
     emit_dataChanged(index, index);
-    col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh
+    col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
     --notifying;
     rval = true;
   }

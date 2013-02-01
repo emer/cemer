@@ -48,7 +48,7 @@ public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
 #ifndef NO_TA_BASE
-  taSigLink*   data_link;
+  taSigLink*   sig_link;
 #endif
 
   void          Initialize();

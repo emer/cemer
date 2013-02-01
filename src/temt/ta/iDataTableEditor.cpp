@@ -23,7 +23,7 @@
 #include <taSigLink>
 #include <iMainWindowViewer>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -86,7 +86,7 @@ void iDataTableEditor::ConfigView() {
 }
 
 
-void iDataTableEditor::DataLinkDestroying(taSigLink* dl) {
+void iDataTableEditor::SigLinkDestroying(taSigLink* dl) {
   // note: following should always be true
   if (m_cell_par && (m_cell_par == dl->taData())) {
     // ok, probably the col is deleting, so unlink ourself now!
@@ -95,7 +95,7 @@ void iDataTableEditor::DataLinkDestroying(taSigLink* dl) {
   }
 }
 
-void iDataTableEditor::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
+void iDataTableEditor::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
 //   taMisc::Info("idte:ddc", String(dcr));
 }
 
@@ -119,7 +119,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   m_dt = dt_;
 
   // apparently not needed
-//   dt_->AddDataClient(this);
+//   dt_->AddSigClient(this);
 
   DataTableModel* mod = dtm();
 
@@ -138,14 +138,14 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
 {
   // unlink old parent
   if (m_cell_par) {
-    m_cell_par->RemoveDataClient(this);
+    m_cell_par->RemoveSigClient(this);
     m_cell_par = NULL;
   }
   // link new parent, if any
   if (mat) {
     m_cell_par = mat->slicePar();
     if (m_cell_par) { // should exist!!!
-      m_cell_par->AddDataClient(this);
+      m_cell_par->AddSigClient(this);
     }
   }
 
@@ -161,8 +161,8 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
     mat_model->col_idx = index.column(); // ok if done repeatedly, is always the same
     // connect the magic signal that updates the table -- note that there is just
     // one of these, and it hangs around even when the cell isn't viewed
-    connect(mat_model, SIGNAL(matDataChanged(int)),
-            dtm(), SLOT(matDataChanged(int)) );
+    connect(mat_model, SIGNAL(matSigEmit(int)),
+            dtm(), SLOT(matSigEmit(int)) );
   }
 }
 
@@ -205,7 +205,7 @@ void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
     (m_cell_index.row() >= topLeft.row()) &&
      (m_cell_index.row() <= bottomRight.row()) )
   {
-    m_cell->DataChanged(DCR_ITEM_UPDATED, NULL, NULL); // easiest way
+    m_cell->SigEmit(SLS_ITEM_UPDATED, NULL, NULL); // easiest way
   }
 }
 

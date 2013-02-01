@@ -21,7 +21,7 @@
 
 
 taSigLinkTypeSpace::taSigLinkTypeSpace(TypeSpace* data_)
-:inherited(TypeItem::TIK_TYPESPACE, data_, data_->data_link)
+:inherited(TypeItem::TIK_TYPESPACE, data_, data_->sig_link)
 {
   dm = DM_DefaultRoot; // default for root, generally we override for other cases
 }
@@ -30,7 +30,7 @@ taiSigLink* taSigLinkTypeSpace::GetListChild(int itm_idx) {
   TypeDef* el = static_cast<TypeDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
-  taiSigLink* dl = taiViewType::StatGetDataLink(el, &TA_TypeDef);
+  taiSigLink* dl = taiViewType::StatGetSigLink(el, &TA_TypeDef);
   return dl;
 }
 

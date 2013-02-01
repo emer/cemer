@@ -21,8 +21,8 @@
 #include <tabMisc>
 
 
-void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
+void DataOpList::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
   DataSrcDestProg* own_prog = GET_MY_OWNER(DataSrcDestProg);
   if(own_prog && !own_prog->isDestroying())
     own_prog->UpdateSpecDataTable(); // will update col_lookups from data table
@@ -67,7 +67,7 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     if(dop) continue;
     dop = (DataOpEl*)New(1);
     dop->col_name = da->name;
-    dop->DataItemUpdated();
+    dop->SigEmitUpdated();
   }
   SetDataTable(dt);
 }

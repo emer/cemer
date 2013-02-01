@@ -128,7 +128,7 @@ bool GaussRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   else
     trg_send_geom = ((trg_recv_geom +1) * rf_move);
 
-  DataItemUpdated();
+  SigEmitUpdated();
   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
 }
 
@@ -147,7 +147,7 @@ bool GaussRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   else
     trg_recv_geom = (trg_send_geom / rf_move) - 1;
 
-  DataItemUpdated();
+  SigEmitUpdated();
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 

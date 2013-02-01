@@ -20,7 +20,7 @@
 #include <CellRange>
 #include <taProject>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -41,7 +41,7 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_)
 MatrixTableModel::~MatrixTableModel() {
   // note: following shouldn't really execute since mat manages our lifetime
   if (m_mat) {
-    m_mat->RemoveDataClient(this);
+    m_mat->RemoveSigClient(this);
     m_mat = NULL;
   }
   m_dim_names = NULL;
@@ -85,17 +85,17 @@ Qt::CheckStateRole*/
   return QVariant();
 }
 
-void MatrixTableModel::DataLinkDestroying(taSigLink* dl) {
+void MatrixTableModel::SigLinkDestroying(taSigLink* dl) {
   m_mat = NULL;
 }
 
-void MatrixTableModel::DataDataChanged(taSigLink* dl, int dcr,
+void MatrixTableModel::SigLinkRecv(taSigLink* dl, int dcr,
   void* op1, void* op2)
 {
   if (notifying) return;
-  if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
-    (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes
-    (dcr == DCR_DATA_UPDATE_END)) // for row insert/deletes
+  if ((dcr <= SLS_ITEM_UPDATED_ND) || // data itself updated
+    (dcr == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (dcr == SLS_DATA_UPDATE_END)) // for row insert/deletes
   { 
     emit_layoutChanged();
   }
@@ -108,7 +108,7 @@ void MatrixTableModel::emit_dataChanged(const QModelIndex& topLeft,
   if (!m_mat) return;
   emit dataChanged(topLeft, bottomRight);
   if (col_idx >= 0)
-    emit matDataChanged(col_idx);
+    emit matSigEmit(col_idx);
 }
 
 void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
@@ -278,7 +278,7 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
     m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
     ++notifying;
     emit_dataChanged(index, index);
-    m_mat->DataChanged(DCR_ITEM_UPDATED); // propagates up slice chain, but typically not used, i.e in particular, doesn't affect DataCol
+    m_mat->SigEmit(SLS_ITEM_UPDATED); // propagates up slice chain, but typically not used, i.e in particular, doesn't affect DataCol
     --notifying;
     return true;
   }

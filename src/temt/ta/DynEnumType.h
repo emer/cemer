@@ -62,7 +62,7 @@ public:
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return enums.Elem(idx, mode); }
 
-  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   override taBase*      FindTypeName(const String& nm) const;
   override String       GetDisplayName() const;

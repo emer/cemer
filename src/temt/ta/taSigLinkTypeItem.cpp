@@ -21,7 +21,7 @@
 #include <EditDataPanel>
 
 taSigLinkTypeItem::taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* data_)
-:inherited(tik_, data_, data_->data_link)
+:inherited(tik_, data_, data_->sig_link)
 {
 }
 

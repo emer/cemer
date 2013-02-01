@@ -48,7 +48,7 @@ public:
   virtual void          Hide();
   // #BUTTON #VIEWMENU set this column to be invisible
 
-  override void         DataDestroying();
+  override void         SigDestroying();
 
   void  SetDefaultName() {} // leave it blank
   void  Copy_(const DataColView& cp);

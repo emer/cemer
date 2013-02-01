@@ -77,7 +77,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
         EnumDef* ed = td->enum_vals.FastEl(j);
         //TODO: determine whether to show or not
          
-        dl = taiViewType::StatGetDataLink(ed, &TA_EnumDef);
+        dl = taiViewType::StatGetSigLink(ed, &TA_EnumDef);
 
         if (dl == NULL) continue; // shouldn't happen...
     
@@ -97,7 +97,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     if (td->HasEnumDefs()) {
       TypeSpace* ts = &td->sub_types;
       taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
-        taiViewType::StatGetDataLink(ts, &TA_TypeSpace));
+        taiViewType::StatGetSigLink(ts, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode(NULL, this, 
         last_child_node, "enums", flags); 
       tsdl->dm = taSigLinkTypeSpace::DM_DefaultEnum;
@@ -107,28 +107,28 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     if (td->HasSubTypes()) {
       TypeSpace* st = &td->sub_types;
       taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
-        taiViewType::StatGetDataLink(st, &TA_TypeSpace));
+        taiViewType::StatGetSigLink(st, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode( 
           NULL, this, last_child_node, "sub types", flags);
       tsdl->dm = taSigLinkTypeSpace::DM_DefaultSubTypes;
     }
     // members -- note: don't sort, since they are in a programmer order already
     if (td->members.size > 0) {
-      dl = taiViewType::StatGetDataLink(&td->members, &TA_MemberSpace);
+      dl = taiViewType::StatGetSigLink(&td->members, &TA_MemberSpace);
       last_child_node = dl->CreateTreeDataNode( 
         NULL, this, last_child_node, "members", flags); 
     }
    
     // methods 
     if (td->methods.size > 0) {
-      dl = taiViewType::StatGetDataLink(&td->methods, &TA_MethodSpace);
+      dl = taiViewType::StatGetSigLink(&td->methods, &TA_MethodSpace);
       last_child_node = dl->CreateTreeDataNode( 
         NULL, this, last_child_node, "methods", flags); 
     }
    
     // properties 
     if (td->properties.size > 0) {
-      dl = taiViewType::StatGetDataLink(&td->properties, &TA_PropertySpace);
+      dl = taiViewType::StatGetSigLink(&td->properties, &TA_PropertySpace);
       last_child_node = dl->CreateTreeDataNode( 
         NULL, this, last_child_node, "properties", flags); 
     }
@@ -137,7 +137,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     TypeSpace* ct = &td->children;
     if (ct->size > 0) {
       taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
-        taiViewType::StatGetDataLink(ct, &TA_TypeSpace));
+        taiViewType::StatGetSigLink(ct, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode( 
         NULL, this, last_child_node, "child types", flags); 
       tsdl->dm = taSigLinkTypeSpace::DM_DefaultChildren;

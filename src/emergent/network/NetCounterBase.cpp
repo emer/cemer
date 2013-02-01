@@ -62,7 +62,7 @@ void NetCounterBase::GetLocalCtrVar() {
   if (!local_ctr_var) {
     local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     local_ctr_var->name = counter->name;
-    local_ctr_var->DataItemUpdated();
+    local_ctr_var->SigEmitUpdated();
   }
   local_ctr_var->var_type = ProgVar::T_Int;
 }

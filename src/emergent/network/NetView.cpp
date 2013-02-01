@@ -192,7 +192,7 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
 }
 
 NetView* Network::FindView() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     NetView* el;
@@ -204,7 +204,7 @@ NetView* Network::FindView() {
 }
 
 NetView* Network::FindMakeView(T3DataViewFrame* fr) {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     NetView* el;
@@ -623,13 +623,13 @@ void NetView::UpdateName() {
   }
 }
 
-void NetView::DataUpdateAfterEdit_impl() {
+void NetView::SigRecvUpdateAfterEdit_impl() {
   UpdateName();
   InitDisplay(true);
   UpdateDisplay();
 }
 
-void NetView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
+void NetView::SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) {
   // called when lays/specs are updated; typically just update spec view
   UpdatePanel();
 }
@@ -653,7 +653,7 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
 
 UnitView* NetView::FindUnitView(Unit* unit) {
   UnitView* uv = NULL;
-  taSigLink* dl = unit->data_link();
+  taSigLink* dl = unit->sig_link();
   if (!dl) return NULL;
   taSigLinkItr i;
   FOR_DLC_EL_OF_TYPE(UnitView, uv, dl, i) {
@@ -915,7 +915,7 @@ void NetView::Layer_DataUAE(LayerView* lv) {
   // simplest solution is just to call DataUAE on all prns...
   for (int i = 0; i < prjns.size; ++i) {
     PrjnView* pv = (PrjnView*)prjns.FastEl(i);
-    pv->DataUpdateAfterEdit_impl();
+    pv->SigRecvUpdateAfterEdit_impl();
   }
 }
 
@@ -1680,7 +1680,7 @@ void NetView::SaveCtrHist() {
   }
 }
 
-void NetView::DataUpdateView_impl() {
+void NetView::SigRecvUpdateView_impl() {
   if (!display) return;
   HistFwdAll();			// update to current point in history when updated externally
   UpdateUnitValues();

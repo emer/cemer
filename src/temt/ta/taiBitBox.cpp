@@ -93,7 +93,7 @@ void taiBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
   if (sender->auto_apply)
     applyNow();
   else
-    DataChanged();
+    SigEmit();
 }
 
 void taiBitBox::Clear() {

@@ -76,7 +76,7 @@ void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
 QMimeData* iBaseClipWidgetAction::mimeData() const {
   taiClipData* rval = NULL;
   if (m_inst) {
-    taiSigLink* link = (taiSigLink*)m_inst->GetDataLink();
+    taiSigLink* link = (taiSigLink*)m_inst->GetSigLink();
     if (link) {
       // get readonly clip data -- we don't know if dragging or not, so we always say we are
       taBase* obj = link->taData();

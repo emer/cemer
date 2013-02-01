@@ -120,8 +120,8 @@ public: // ITypedObject i/f
   TypeDef*              GetTypeDef() const {return &TA_iProgramEditor;}
 
 public: // ISigLinkClient i/f
-  void                  DataLinkDestroying(taSigLink* dl);
-  void                  DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+  void                  SigLinkDestroying(taSigLink* dl);
+  void                  SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE

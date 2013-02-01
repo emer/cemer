@@ -48,7 +48,7 @@ public:
   virtual void	AddAllColumns_gui(DataTable* dt);
   // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table
 
-  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void	SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   override String 	GetTypeDecoKey() const { return "ProgArg"; }
 

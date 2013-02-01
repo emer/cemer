@@ -31,8 +31,8 @@ class TA_API DataView_List: public taList<taDataView> {
   // #NO_TOKENS ##CAT_Display
 INHERITED(taList<taDataView>)
 public:
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-    // we send to an owner DataView DataChanged_Child
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
+    // we send to an owner DataView SigEmit_Child
 
   virtual void          DoAction(taDataView::DataViewAction act);
    // do a single action on all items; we also do self->Reset on Reset_impl

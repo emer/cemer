@@ -30,7 +30,7 @@ class TA_API taiElBase: public taiData {
   INHERITED(taiData)
 public:
   taBase*               cur_obj;
-  override void         DataChanged(taiData* chld = NULL); // do autoapply
+  override void         SigEmit(taiData* chld = NULL); // do autoapply
 //  void                GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
   virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void          setCur_obj(taBase* value, bool do_chng = true); // set cur_obj and notifies change if different

@@ -48,8 +48,8 @@ iProgramCtrlPanel::~iProgramCtrlPanel() {
   }
 }
 
-void iProgramCtrlPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+void iProgramCtrlPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
   // not in this case!
 }

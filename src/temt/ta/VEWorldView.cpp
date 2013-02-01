@@ -99,9 +99,9 @@ void VEWorldView::UpdateName() {
   }
 }
 
-void VEWorldView::DataUpdateAfterEdit_impl() {
+void VEWorldView::SigRecvUpdateAfterEdit_impl() {
   UpdateName();
-  inherited::DataUpdateAfterEdit_impl();
+  inherited::SigRecvUpdateAfterEdit_impl();
 }
 
 const String VEWorldView::caption() const {
@@ -142,7 +142,7 @@ void VEWorldView::InitDisplay(bool init_panel) {
 //   }
 }
 
-void VEWorldView::DataUpdateView_impl() {
+void VEWorldView::SigRecvUpdateView_impl() {
   if(!display_on) return;
   UpdateDisplay(true);
 }
@@ -362,7 +362,7 @@ QImage VEWorld::GetCameraImage(int cam_no) {
     return img;
   }
 
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(TestError(!dl, "GetCameraImage", "data link not found -- could not find views (should not happen -- please report as a bug!"))
     return img;
 
@@ -521,7 +521,7 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 //      VEWorld extras
 
 VEWorldView* VEWorld::FindView() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
     VEWorldView* el;

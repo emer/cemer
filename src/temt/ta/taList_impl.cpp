@@ -29,7 +29,7 @@
 #include <MemberDef>
 #include <iTreeViewItem>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 
@@ -126,7 +126,7 @@ void taList_impl::Destroy() {
 }
 
 void taList_impl::CutLinks() {
-  if (m_data_link) m_data_link->DataDestroying(); // do early
+  if (m_sig_link) m_sig_link->SigDestroying(); // do early
   RemoveAll();
   el_view.CutLinks();
   el_view_mode = IDX_UNK;
@@ -299,7 +299,7 @@ void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   inherited_taBase::ChildUpdateAfterEdit(child, handled);
   // otherwise, we assume it is an owned list member
   if (!handled) {
-    DataChanged(DCR_LIST_ITEM_UPDATE, child);
+    SigEmit(SLS_LIST_ITEM_UPDATE, child);
     handled = true;
   }
 }
@@ -515,11 +515,11 @@ String taList_impl::ChildGetColText_impl(taBase* child, const KeyString& key, in
   return child->GetColText(key, itm_idx);
 }
 
-void taList_impl::DataChanged(int dcr, void* op1, void* op2) {
+void taList_impl::SigEmit(int dcr, void* op1, void* op2) {
   //note: set stale before notifies
-  if (useStale() && ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX)))
+  if (useStale() && ((dcr >= SLS_LIST_ORDER_MIN) && (dcr <= SLS_LIST_ORDER_MAX)))
     setStale();
-  inherited_taBase::DataChanged(dcr, op1, op2);
+  inherited_taBase::SigEmit(dcr, op1, op2);
 }
 
 String taList_impl::GetColHeading(const KeyString& key) const {

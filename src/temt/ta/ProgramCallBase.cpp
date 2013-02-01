@@ -83,7 +83,7 @@ void ProgramCallBase::UpdateArgs() {
     ProgVar* var_chk = prg->vars.FindName(pa->name);
     if(!arg_chk && !var_chk) continue;
     pa->expr.SetExpr(pa->name); // we found var of same name; set as arg value
-    pa->DataItemUpdated();
+    pa->SigEmitUpdated();
   }
   if(any_changes && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");

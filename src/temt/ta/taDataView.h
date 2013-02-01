@@ -109,9 +109,9 @@ public:
 
   virtual MemberDef*    GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String        GetLabel() const; // returns a label suitable for tabview tabs, etc.
-  virtual void          DataUpdateAfterEdit(); // note: normally overrride the _impl
-  virtual void          DataUpdateAfterEdit_Child(taDataView* chld)
-    {DataUpdateAfterEdit_Child_impl(chld);}
+  virtual void          SigRecvUpdateAfterEdit(); // note: normally overrride the _impl
+  virtual void          SigRecvUpdateAfterEdit_Child(taDataView* chld)
+    {SigRecvUpdateAfterEdit_Child_impl(chld);}
     // optionally called by child in its DUAE routine; must be added manually
   virtual void          ChildAdding(taDataView* child); // #IGNORE called from list;
   virtual void          ChildRemoving(taDataView* child) {} // #IGNORE called from list;
@@ -130,7 +130,7 @@ public:
   virtual void          DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.)
 
   virtual void          ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
-  virtual void          DataDestroying() {} // called when data is destroying (m_data will already be NULL)
+  virtual void          SigDestroying() {} // called when data is destroying (m_data will already be NULL)
 
   // special clip op queries, including Child_xx that gets forwarded from owned lists -- most view objs are managed by an owner, exception is very top-level objs; so defaults of following basically disallow things like Cut, Paste, and Delete (Copy and Paste Assign are allowed by default) -- all in ta_qtclipdata.cpp
   virtual void          DV_QueryEditActionsS(int& allowed, int& forbidden); // #IGNORE
@@ -157,27 +157,27 @@ public:
   void  UpdateAfterEdit();
   TA_BASEFUNS(taDataView)
 
-public: // IDataLinkCLient
+public: // ISigLinkCLient
   override void*        This() {return (void*)this;}
   override TypeDef*     GetDataTypeDef() const {
     return (m_data) ? m_data->GetTypeDef() : &TA_taBase; } // TypeDef of the data
-  override bool         ignoreDataChanged() const {return (m_vis_cnt <= 0);}
+  override bool         ignoreSigEmit() const {return (m_vis_cnt <= 0);}
   override bool         isDataView() const {return true;}
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
-  override void         IgnoredDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taSigLink* dl); // called by DataLink when destroying; it will remove
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         IgnoredSigEmit(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when destroying; it will remove
 
 protected:
   override void         UpdateAfterEdit_impl();
-  virtual void          DataDataChanged_impl(int dcr, void* op1, void* op2) {}
+  virtual void          SigLinkRecv_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
-  virtual void          DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
-  virtual void          DataUpdateAfterEdit_Child_impl(taDataView* chld) {}
-  virtual void          DataUpdateView_impl();
+  virtual void          SigRecvUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
+  virtual void          SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) {}
+  virtual void          SigRecvUpdateView_impl();
   // called for Update All Views, and at end of a DataUpdate batch
-  virtual void          DataRebuildView_impl() {} // called for Rebuild All Views, clients usually do beg/end both
-  virtual void          DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
-  virtual void          DataChanged_Child(taBase* child, int dcr, void* op1, void* op2) {}
+  virtual void          SigRecvRebuildView_impl() {} // called for Rebuild All Views, clients usually do beg/end both
+  virtual void          SigRecvStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
+  virtual void          SigEmit_Child(taBase* child, int dcr, void* op1, void* op2) {}
    // typically from an owned list
   virtual void          DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
   virtual void          SetVisible_impl(DataViewAction act);

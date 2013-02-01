@@ -666,10 +666,10 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   return true;
 }
 
-void taMatrix::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
+void taMatrix::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
   if (slice_par) {
-    slice_par->DataChanged(dcr, op1, op2);
+    slice_par->SigEmit(dcr, op1, op2);
   }
 }
 
@@ -1280,7 +1280,7 @@ void taMatrix::Slice_Collapse() {
   size = 0;
   // if we have collapsed, so have any of our slices...
   UpdateSlices_Collapse();
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 void taMatrix::Slice_Realloc(ta_intptr_t base_delta) {
@@ -1292,7 +1292,7 @@ void taMatrix::Slice_Realloc(ta_intptr_t base_delta) {
     UpdateSlices_Realloc(base_delta);
   }
   // note: we recursively updated other slices before doing our own notify
-  DataItemUpdated();
+  SigEmitUpdated();
 }
 
 int taMatrix::sliceCount() const {

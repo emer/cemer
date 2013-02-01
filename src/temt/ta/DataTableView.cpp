@@ -20,7 +20,7 @@
 #include <DataColView>
 #include <T3Node>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 
 #include <Inventor/nodes/SoFont.h>
@@ -64,16 +64,16 @@ void DataTableView::UpdateAfterEdit_impl() {
   //note: UAE calls setDirty, which is where we do most of the rejigging
 }
 
-void DataTableView::IgnoredDataChanged(taSigLink* dl, int dcr,
+void DataTableView::IgnoredSigEmit(taSigLink* dl, int dcr,
     void* op1, void* op2)
 {
   // if it is a struct begin or end, we better not ignore it, because
   // it could require us to reset, so we free locked matrix col slices
   // this could reduce our invisible efficiency BUT is necessary!!!
-  if ((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
-      (dcr == DCR_STRUCT_UPDATE_END))
+  if ((dcr == SLS_STRUCT_UPDATE_BEGIN) ||
+      (dcr == SLS_STRUCT_UPDATE_END))
   {
-    DataDataChanged(dl, dcr, op1, op2);
+    SigLinkRecv(dl, dcr, op1, op2);
   }
 }
 
@@ -167,7 +167,7 @@ int DataTableView::CheckRowsChanged(int& orig_rows) {
   return rval;
 }
 
-void DataTableView::DataUpdateView_impl() {
+void DataTableView::SigRecvUpdateView_impl() {
   if(!display_on) return;
   UpdateDisplay(true);
 }
@@ -179,9 +179,9 @@ void DataTableView::DoActionChildren_impl(DataViewAction acts) {
 }
 
 
-void DataTableView::DataDestroying() {
+void DataTableView::SigDestroying() {
   Unbind(); //unlinks everyone
-  inherited::DataDestroying();
+  inherited::SigDestroying();
 }
 
 void DataTableView::DataTableUnlinked() {
@@ -204,9 +204,9 @@ void DataTableView::UpdateName() {
   }
 }
 
-void DataTableView::DataUpdateAfterEdit_impl() {
+void DataTableView::SigRecvUpdateAfterEdit_impl() {
   UpdateName();
-  inherited::DataUpdateAfterEdit_impl();
+  inherited::SigRecvUpdateAfterEdit_impl();
 }
 
 

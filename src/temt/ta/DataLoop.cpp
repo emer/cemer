@@ -44,7 +44,7 @@ void DataLoop::GetOrderVar() {
     if (!order_var) {
       order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       order_var->name = "data_loop_order";
-      order_var->DataItemUpdated();
+      order_var->SigEmitUpdated();
     }
   }
   order_var->var_type = ProgVar::T_HardEnum;
@@ -62,7 +62,7 @@ void DataLoop::GetIndexVar() {
       index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       index_var->name = "data_loop_index";
       index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
-      index_var->DataItemUpdated();
+      index_var->SigEmitUpdated();
     }
   }
   index_var->var_type = ProgVar::T_Int;
@@ -146,7 +146,7 @@ String DataLoop::GetDisplayName() const {
   return "DataTable Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
 }
 
-void DataLoop::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+void DataLoop::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                     int dcr, void* op1_, void* op2_) {
   GetOrderVal();
   UpdateAfterEdit();

@@ -147,7 +147,7 @@ public:
   virtual void          SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
-  // #IGNORE update the USED flag based on datalink refs
+  // #IGNORE update the USED flag based on siglink refs
   virtual bool          UpdateCssObjVal();
   // #IGNORE update cssSmartRef if we are a non-local object pointer
 
@@ -161,7 +161,7 @@ public:
   override bool         BrowserCollapseAll();
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgVar);

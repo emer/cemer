@@ -158,8 +158,8 @@ String& taArray_base::Print(String& strm, int indent) const {
   return strm;
 }
 
-void taArray_base::DataChanged(int dcr, void* op1, void* op2) {
-  taOBase::DataChanged(dcr, op1, op2);
+void taArray_base::SigEmit(int dcr, void* op1, void* op2) {
+  taOBase::SigEmit(dcr, op1, op2);
 }
 
 String taArray_base::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,

@@ -296,9 +296,9 @@ protected:
   override void         UpdateAfterEdit_impl();
   override void         ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void         ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
-  override void         DataUpdateView_impl();
-  override void         DataUpdateAfterEdit_impl(); //
-  override void         DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
+  override void         SigRecvUpdateView_impl();
+  override void         SigRecvUpdateAfterEdit_impl(); //
+  override void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
   override void         OnWindowBind_impl(iT3DataViewFrame* vw);
   override void         Render_pre(); // #IGNORE
   override void         Render_impl(); // #IGNORE

@@ -17,7 +17,7 @@
 #include <DynEnumType>
 #include <Program>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 void DynEnumItem_List::Initialize() {
   SetBaseType(&TA_DynEnumItem);
@@ -39,7 +39,7 @@ void DynEnumItem_List::OrderItems() {
       DynEnumItem* it = FastEl(i);
       if(it->value <= prval) {
 	it->value = prval << 1;
-	it->DataChanged(DCR_ITEM_UPDATED);
+	it->SigEmit(SLS_ITEM_UPDATED);
       }
       prval = it->value;
     }
@@ -50,23 +50,23 @@ void DynEnumItem_List::OrderItems() {
       DynEnumItem* it = FastEl(i);
       if(it->value <= prval) {
 	it->value = prval + 1;
-	it->DataChanged(DCR_ITEM_UPDATED);
+	it->SigEmit(SLS_ITEM_UPDATED);
       }
       prval = it->value;
     }
   }
 }
 
-void DynEnumItem_List::DataChanged(int dcr, void* op1, void* op2) {
+void DynEnumItem_List::SigEmit(int dcr, void* op1, void* op2) {
   OrderItems();
   // we notify owner, so editing items causes related things to update,
   // typically used by ProgVar to make sure the enum list gets updated in gui
   taBase* own = GetOwner();
   if(own) {
-    if(dcr <= DCR_CHILD_ITEM_UPDATED)
-      own->DataChanged(DCR_CHILD_ITEM_UPDATED, (void*)this);
+    if(dcr <= SLS_CHILD_ITEM_UPDATED)
+      own->SigEmit(SLS_CHILD_ITEM_UPDATED, (void*)this);
   }
-  inherited::DataChanged(dcr, op1, op2);
+  inherited::SigEmit(dcr, op1, op2);
 }
 
 bool DynEnumItem_List::BrowserSelectMe() {

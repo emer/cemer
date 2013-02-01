@@ -830,7 +830,7 @@ void iMainWindowViewer::editFind() {
     bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer, idx);
     if (bv) root = bv->rootLink();
   }
-  if (!root) root = (taiSigLink*)tabMisc::root->GetDataLink();
+  if (!root) root = (taiSigLink*)tabMisc::root->GetSigLink();
   Find(root);
 }
 
@@ -1439,7 +1439,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
       tab->CallFun(fun_call);
     }
     else {
-      taiSigLink* link = (taiSigLink*)tab->GetDataLink();
+      taiSigLink* link = (taiSigLink*)tab->GetSigLink();
       if (!link || !iproj_brow) {
         taMisc::Warning("ta: URL",path,"not found as a path to an object!");
         return;
@@ -1949,7 +1949,7 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
 
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;	// shouldn't happen
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;	// shouldn't happen
 
   MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
@@ -1981,7 +1981,7 @@ bool taBase::BrowserSelectMe() {
 
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2002,7 +2002,7 @@ bool taBase::BrowserExpandAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2023,7 +2023,7 @@ bool taBase::BrowserCollapseAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2044,7 +2044,7 @@ bool taBase::GuiFindFromMe(const String& find_str) {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiSigLink* link = (taiSigLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
 
   bool rval = false;

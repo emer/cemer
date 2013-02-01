@@ -45,7 +45,7 @@ class TA_API SelectEdit: public taNBase, public virtual IRefListClient {
   // #STEM_BASE ##EXT_edit ##CAT_Display Selectively edit members from different objects
   INHERITED(taNBase)
 public:
-  static void           StatDataChanged_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
+  static void           StatSigEmit_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
 
   bool                  auto_edit; // automatically bring up edit dialog upon loading
   String                desc;   // #EDIT_DIALOG description of what this edit contains
@@ -177,9 +177,9 @@ public: // public API
 
 public: // IRefListClient i/f
   override void*        This() {return this;}
-  override void         DataDestroying_Ref(taBase_RefList* src, taBase* ta);
+  override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
     // note: item will already have been removed from list
-  override void         DataChanged_Ref(taBase_RefList* src, taBase* ta,
+  override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2);
 
 protected:
@@ -187,7 +187,7 @@ protected:
   taBase_RefList        base_refs; // all bases notify us via this list
 
   override void         UpdateAfterEdit_impl();
-  virtual void          DataChanged_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
+  virtual void          SigEmit_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
   virtual void          BaseAdded(taBase* ta);
   virtual void          BaseRemoved(taBase* ta);
@@ -198,7 +198,7 @@ protected:
   virtual bool          SelectMethod_impl(taBase* base, MethodDef* md,
                                           const String& lbl, const String& desc,
                                           const String& sub_gp_nm = _nilString);
-  bool                  ReShowEdit(bool force = false); // this is just really a synonym for doing a DataChanged
+  bool                  ReShowEdit(bool force = false); // this is just really a synonym for doing a SigEmit
 
 private:
   void  Initialize();

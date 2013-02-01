@@ -84,7 +84,7 @@ public:
   virtual void          RowFwdPg();
   virtual void          RowFwdAll();
 
-  override void         DataDestroying();
+  override void         SigDestroying();
   override void         BuildAll();
 
   virtual void          UpdateName();  // update name from data table
@@ -97,7 +97,7 @@ public:
   T3_DATAVIEWFUNS(DataTableView, T3DataViewMain) //
 
 // ISigLinkClient i/f
-  override void         IgnoredDataChanged(taSigLink* dl, int dcr,
+  override void         IgnoredSigEmit(taSigLink* dl, int dcr,
     void* op1, void* op2); //
 
 // ISelectable i/f
@@ -122,8 +122,8 @@ protected:
 
   override void         Unbind_impl(); // unbinds table
 
-  override void         DataUpdateView_impl();
-  override void         DataUpdateAfterEdit_impl();
+  override void         SigRecvUpdateView_impl();
+  override void         SigRecvUpdateAfterEdit_impl();
   override void         DoActionChildren_impl(DataViewAction acts);
 
   void                  UpdateFromDataTable(bool first_time = false);

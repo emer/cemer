@@ -17,7 +17,7 @@
 #include <iTreeView>
 #include <taiListDataNode>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -68,18 +68,18 @@ void iListDataPanel::ConfigHeader() {
   }
 }
 
-void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr == DCR_LIST_ITEM_REMOVE) {
+void iListDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
+  if (dcr == SLS_LIST_ITEM_REMOVE) {
     // index will now be invalid for followers
     RenumberList();
   }
   // we handle the cases separately, since just refilling the list
-  else if (dcr == DCR_LIST_ITEM_INSERT) {
+  else if (dcr == SLS_LIST_ITEM_INSERT) {
     // insert at end, regardless of sort order
     taiSigLink* item = link()->GetListChild(op1_);
     if (!item) {
-      taMisc::Warning("iListDataPanel::DataChanged_impl: unexpected could not find new list item");
+      taMisc::Warning("iListDataPanel::SigEmit_impl: unexpected could not find new list item");
       return;
     }
     taiListDataNode* last_child = dynamic_cast<taiListDataNode*>(
@@ -89,11 +89,11 @@ void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     RenumberList();
   }
   // note: remember, we already handled insert and remove
-  else if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX)) {
+  else if ((dcr >= SLS_LIST_MIN) && (dcr <= SLS_LIST_MAX)) {
     // for other list ops, esp sort or move, just reorder whole list (easy, harmless)
     RenumberList();
   }
-  else if (dcr == DCR_STRUCT_UPDATE_END) {
+  else if (dcr == SLS_STRUCT_UPDATE_END) {
     ConfigHeader();
   }
 }

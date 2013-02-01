@@ -128,7 +128,7 @@ void iTabViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   if (tab_changing) return;
   //TODO: should actually check if old panel=new panel, since theoretically, two different
-  // gui items can have the same datalink (i.e., underlying data)
+  // gui items can have the same siglink (i.e., underlying data)
   iDataPanel* new_pn = NULL;
   cur_item = src_host->curItem(); // note: could be NULL
   if (!cur_item) goto end; // no selected item, so no change
@@ -173,7 +173,7 @@ void iTabViewer::ShowPanel(iDataPanel* panel) {
   tabView()->ShowPanel(panel);
 }
 
-void iTabViewer::UpdateTabNames() { // called by a datalink when a tab name might have changed
+void iTabViewer::UpdateTabNames() { // called by a siglink when a tab name might have changed
   tabView()->UpdateTabNames();
 }
 

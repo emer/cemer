@@ -68,7 +68,7 @@ public:
 protected:
   override void         UpdateAfterEdit_impl();
   override void         DoHighlightColor(bool apply);
-  override void         DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
+  override void         SigRecvUpdateAfterEdit_impl(); // also invoke for the connected prjns
   override void         Render_pre(); // #IGNORE
   override void         Render_impl(); // #IGNORE
 private:

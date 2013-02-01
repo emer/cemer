@@ -99,8 +99,8 @@ void taiCompData::AddChildMember(MemberDef* md) {
   lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
 
   QWidget* ctrl = mb_dat->GetRep();
-  connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
-          this, SLOT(ChildDataChanged(taiData*)) );
+  connect(mb_dat, SIGNAL(SigEmitNotify(taiData*)),
+          this, SLOT(ChildSigEmit(taiData*)) );
 
   // check for a compatible taiDataHost, and if so, connect context menu
   if (host) {
@@ -185,6 +185,6 @@ int taiCompData::widgetCount() {
   return mwidgets->count();
 }
 
-void taiCompData::ChildDataChanged(taiData* sender) {
-  emit ChildDataChangedNotify(sender);
+void taiCompData::ChildSigEmit(taiData* sender) {
+  emit ChildSigEmitNotify(sender);
 }

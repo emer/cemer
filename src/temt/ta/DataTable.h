@@ -47,9 +47,9 @@ class DataTableModel; // #IGNORE
 /*
   DataTable Notifications
 
-  Structural Changes -- DCR_STRUCT_UPDATE_BEGIN..DCR_STRUCT_UPDATE_END
+  Structural Changes -- SLS_STRUCT_UPDATE_BEGIN..SLS_STRUCT_UPDATE_END
     this includes adding and removing data columns
-  Row Adding/Removing -- DCR_DATA_UPDATE_BEGIN..DCR_DATA_UPDATE_END
+  Row Adding/Removing -- SLS_DATA_UPDATE_BEGIN..SLS_DATA_UPDATE_END
     this includes adding and removing whole rows, or individual items to a row -- if the client
     code calls RowsAdding/RowsAdded
 

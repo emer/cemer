@@ -194,7 +194,7 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
         }
         MemberCopyFrom(memb_no, from);
         // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-//      DataItemUpdated();
+//      SigEmitUpdated();
       }
     }
   }
@@ -258,7 +258,7 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
 
 String BaseSpec::WhereUsed() {
   String rval;
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(!dl) return rval;
   taSmartRef* sref;
   taSigLinkItr i;

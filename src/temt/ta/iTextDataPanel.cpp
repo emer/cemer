@@ -18,7 +18,7 @@
 #include <taiClipData>
 #include <iMainWindowViewer>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 
 iTextDataPanel::iTextDataPanel(taiSigLink* dl_)
@@ -39,9 +39,9 @@ QWidget* iTextDataPanel::firstTabFocusWidget() {
   return txtText;
 }
 
-void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-//TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
+void iTextDataPanel::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  inherited::SigEmit_impl(dcr, op1_, op2_);
+//TODO:  if (dcr <= SLS_ITEM_UPDATED_ND) ;
   //get updated text
 }
 

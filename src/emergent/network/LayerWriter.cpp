@@ -72,21 +72,21 @@ void LayerWriter::AutoConfig(bool remove_unused) {
     }
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name, made_new);
     lrw->SetDataNetwork(data, network);
-    lrw->DataItemUpdated();
+    lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
   int nm_idx = data->GetSourceChannelByName("Name", false);
   if(nm_idx >= 0) {
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name", made_new);
     lrw->net_target = LayerDataEl::TRIAL_NAME;
-    lrw->DataItemUpdated();
+    lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
   int gp_idx = data->GetSourceChannelByName("Group", false);
   if(gp_idx >= 0) {
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group", made_new);
     lrw->net_target = LayerDataEl::GROUP_NAME;
-    lrw->DataItemUpdated();
+    lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
 

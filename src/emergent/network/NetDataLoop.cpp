@@ -57,7 +57,7 @@ void NetDataLoop::GetOrderVar() {
     if (!group_order_var) {
       group_order_var = (ProgVar*) my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
-      group_order_var->DataItemUpdated();
+      group_order_var->SigEmitUpdated();
     }
   }
   group_order_var->var_type = ProgVar::T_HardEnum;
@@ -75,7 +75,7 @@ void NetDataLoop::GetIndexVar() {
     trial->name = "trial";
     trial->var_type = ProgVar::T_Int;
     trial->SetVarFlag(ProgVar::CTRL_READ_ONLY);
-    trial->DataItemUpdated();
+    trial->SigEmitUpdated();
   }
 
   if (!grouped) return;
@@ -86,7 +86,7 @@ void NetDataLoop::GetIndexVar() {
       group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_index_var->name = "group_index";
       group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
-      group_index_var->DataItemUpdated();
+      group_index_var->SigEmitUpdated();
     }
   }
   group_index_var->var_type = ProgVar::T_Int;

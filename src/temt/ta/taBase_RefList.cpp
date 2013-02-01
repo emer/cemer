@@ -28,36 +28,36 @@ taBase_RefList::~taBase_RefList() {
   Reset();
 }
 
-void taBase_RefList::DataLinkDestroying(taSigLink* dl) {
-  // note: dl has already done a RemoveDataLink on us
+void taBase_RefList::SigLinkDestroying(taSigLink* dl) {
+  // note: dl has already done a RemoveSigLink on us
   taBase* tab = dl->taData();
   if (tab) { // should exist!
     // note: we need to remove all instances, in case multiply-added
     while (RemoveEl(tab)) {;}
     if (m_own) {
-      m_own->DataDestroying_Ref(this, tab);
+      m_own->SigDestroying_Ref(this, tab);
     }
   }
   else {
-    taMisc::DebugInfo("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
+    taMisc::DebugInfo("Unexpected taData() NULL in taBase_RefList::SigLinkDestroying()");
   }
 }
 
-void taBase_RefList::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
+void taBase_RefList::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
   if (!m_own) return;
   taBase* tab = dl->taData();
-  m_own->DataChanged_Ref(this, tab, dcr, op1, op2);
+  m_own->SigEmit_Ref(this, tab, dcr, op1, op2);
 }
 
 void* taBase_RefList::El_Ref_(void* it_) {
   taBase* it = (taBase*)it_;
-  it->AddDataClient(this);
+  it->AddSigClient(this);
   return it_;
 }
 
 void* taBase_RefList::El_unRef_(void* it_) {
   taBase* it = (taBase*)it_;
-  it->RemoveDataClient(this);
+  it->RemoveSigClient(this);
   return it_;
 }
 

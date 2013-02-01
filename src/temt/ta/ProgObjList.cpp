@@ -42,7 +42,7 @@ void ProgObjList::GetVarsForObjs() {
       else {
         var->objs_ptr = true;   // make sure
         var->object_type = obj->GetTypeDef();
-        var->DataItemUpdated();
+        var->SigEmitUpdated();
       }
     }
     else {
@@ -55,7 +55,7 @@ void ProgObjList::GetVarsForObjs() {
           tv->objs_ptr = true;  // make sure
           tv->object_type = obj->GetTypeDef();
           tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
-          //      tv->DataItemUpdated();
+          //      tv->SigEmitUpdated();
           break;
         }
       }
@@ -67,7 +67,7 @@ void ProgObjList::GetVarsForObjs() {
         var->objs_ptr = true;
         var->object_type = obj->GetTypeDef();
         var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
-        var->DataItemUpdated();
+        var->SigEmitUpdated();
       }
     }
   }
@@ -81,8 +81,8 @@ void ProgObjList::GetVarsForObjs() {
   }
 }
 
-void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
+void ProgObjList::SigEmit(int dcr, void* op1, void* op2) {
+  inherited::SigEmit(dcr, op1, op2);
   if(!taMisc::is_loading && !taMisc::is_duplicating && !isDestroying())
     GetVarsForObjs();
 }

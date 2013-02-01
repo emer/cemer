@@ -55,7 +55,7 @@ public:
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-  override void         DataLinkDestroying(taSigLink* dl); // called by DataLink when it is destroying --
+  override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when it is destroying --
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanelFrame;}
 
 protected:

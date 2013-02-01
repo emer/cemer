@@ -2584,7 +2584,7 @@ static void Install_Types() {
       }
     }
     else if(tmp->IsEnum()) {
-      if((tmp->name != "DataChangedReason") && (tmp->name != "CancelOp") &&
+      if((tmp->name != "SigLinkSignal") && (tmp->name != "CancelOp") &&
 	 (tmp->name != "NodeBitmapFlags")) {
 	cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
 	for(j=0; j < tmp->enum_vals.size; j++)

@@ -76,6 +76,6 @@ void SArg_Array::SetValue(const String& key, const String& value) {
     Add(value);
   }
 #ifdef DEBUG // helpful when viewing stuff in gui
-  DataItemUpdated();
+  SigEmitUpdated();
 #endif
 }

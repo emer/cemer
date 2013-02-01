@@ -21,7 +21,7 @@
 
 TypeDef_Of(ProgramToolBar);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -63,8 +63,8 @@ iProgramPanelBase::iProgramPanelBase(taiSigLink* dl_)
   connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
 }
 
-void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr == DCR_RESOLVE_NOW)
+void iProgramPanelBase::SigEmit_impl(int dcr, void* op1_, void* op2_) {
+  if (dcr == SLS_RESOLVE_NOW)
   {
     if (pe->HasChanged()) {
       pe->GetValue();
@@ -72,7 +72,7 @@ void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     }
   }
   else
-    inherited::DataChanged_impl(dcr, op1_, op2_);
+    inherited::SigEmit_impl(dcr, op1_, op2_);
     //NOTE: don't need to do anything because DataModel will handle it
 }
 

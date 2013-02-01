@@ -51,7 +51,7 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
 }
 
 int taUndoDiffSrc::UseCount() {
-  taSigLink* dl = data_link();
+  taSigLink* dl = sig_link();
   if(!dl) return 0;
   int cnt = 0;
   taSigLinkItr itr;

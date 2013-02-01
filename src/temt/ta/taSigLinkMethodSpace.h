@@ -28,7 +28,7 @@ class MethodSpace;
 TypeDef_Of(taSigLinkMethodSpace);
 
 class TA_API taSigLinkMethodSpace: public taSigLinkTypeItemSpace {
-  // DataLink for MethodSpace objects -- note that it also manages the ListView nodes
+  // SigLink for MethodSpace objects -- note that it also manages the ListView nodes
 INHERITED(taSigLinkTypeItemSpace)
 public:
   MethodSpace*          data() {return (MethodSpace*)m_data;}
@@ -43,7 +43,7 @@ public:
     int itm_idx = -1) const;
 
   taSigLinkMethodSpace(MethodSpace* data_);
-  DL_FUNS(taSigLinkMethodSpace) //
+  SL_FUNS(taSigLinkMethodSpace) //
 };
 
 #endif // taSigLinkMethodSpace_h

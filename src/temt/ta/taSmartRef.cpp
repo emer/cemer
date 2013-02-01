@@ -16,26 +16,28 @@
 #include "taSmartRef.h"
 #include <taSigLink>
 
-void taSmartRef::DataDataChanged(taSigLink*, int dcr, void* op1, void* op2) {
+void taSmartRef::SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2) {
   if (m_own) {
-    m_own->SmartRef_DataChanged(this, m_ptr, dcr, op1, op2);
+    m_own->SmartRef_SigEmit(this, m_ptr, dcr, op1, op2);
   }
 }
-void taSmartRef::DataLinkDestroying(taSigLink* dl) {
+void taSmartRef::SigLinkDestroying(taSigLink* dl) {
   if (m_own) {
     taBase* tmp_ptr = m_ptr;
     m_ptr = NULL;
     //send a changing ref, in case it only monitors for setting/clearing (not destroying)
-    m_own->SmartRef_DataRefChanging(this, NULL, false);
-    m_own->SmartRef_DataDestroying(this, tmp_ptr);
+    m_own->SmartRef_SigChanging(this, NULL, false);
+    m_own->SmartRef_SigDestroying(this, tmp_ptr);
     //NO MORE CODE HERE -- object may have destroyed itself
-  } else
+  }
+  else {
     m_ptr = NULL;
+  }
 }
 
-void taSmartRef::DataRefChanging(taBase* obj, bool setting) {
+void taSmartRef::SigChanging(taBase* obj, bool setting) {
   if (m_own) {
-    m_own->SmartRef_DataRefChanging(this, obj, setting);
+    m_own->SmartRef_SigChanging(this, obj, setting);
   }
 }
 

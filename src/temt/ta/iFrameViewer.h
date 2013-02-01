@@ -43,7 +43,7 @@ public:
   inline FrameViewer*   viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
   MainWindowViewer*     mainWindowViewer();
 
-//nn??  virtual void            UpdateTabNames(); // called by a datalink when a tab name might have changed
+//nn??  virtual void            UpdateTabNames(); // called by a siglink when a tab name might have changed
   virtual void          GetWinState() {GetWinState_impl();} // when saving view state
   virtual void          SetWinState() {SetWinState_impl();} // when showing, from view state
 

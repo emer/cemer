@@ -412,7 +412,7 @@ public: // XxxGui versions provide feedback to the user
   override int          GetSpecialState() const;
   override String       GetTypeDecoKey() const { return "Program"; }
   override Variant      GetGuiArgVal(const String& fun_name, int arg_idx);
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
   override void         CallFun(const String& fun_name);
 
   void  InitLinks();

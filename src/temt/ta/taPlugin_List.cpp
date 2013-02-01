@@ -146,7 +146,7 @@ void taPlugin_List::InitPlugins() {
       taPlugins::AppendLogEntry(log_entry, true);
       continue;
     }
-    pl->DataItemUpdated();
+    pl->SigEmitUpdated();
   }
 }
 
@@ -198,7 +198,7 @@ void taPlugin_List::ReconcilePlugins() {
       pl->up_to_date = (pli->load_state != taPluginInst::LS_OUT_OF_DATE);
       pl->mod_time = pli->mod_time;
       pl->mod_time_int = pli->mod_time_int;
-      pl->DataItemUpdated();
+      pl->SigEmitUpdated();
     }
   }
 

@@ -15,7 +15,7 @@
 
 #include "iDataPanel.h"
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taiMisc>
 
 #include <QScrollArea>
@@ -43,7 +43,7 @@ iDataPanel::iDataPanel(taiSigLink* dl_)
   layOuter->addWidget(scr, 1);
 
   if (dl_) //note: most classes always pass a link, but ex DocDataPanel doesn't
-    dl_->AddDataClient(this); // sets our m_link variable
+    dl_->AddSigClient(this); // sets our m_link variable
 }
 
 iDataPanel::~iDataPanel() {
@@ -75,8 +75,8 @@ void iDataPanel::customEvent(QEvent* ev_) {
 }
 
 
-void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+void iDataPanel::SigEmit_impl(int dcr, void* op1, void* op2) {
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     if (tabView())
       tabView()->UpdateTabName(this); //in case changed
   }

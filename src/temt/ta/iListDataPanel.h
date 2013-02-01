@@ -56,7 +56,7 @@ public slots:
 protected:
   String                m_custom_name; // used instead of "List View", typically for defchild lists
   void                  ConfigHeader();
-  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         SigEmit_impl(int dcr, void* op1, void* op2); //
   override void         UpdatePanel_impl();
   override void         OnWindowBind_impl(iTabViewer* itv);
 };

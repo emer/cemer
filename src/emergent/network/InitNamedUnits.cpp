@@ -67,7 +67,7 @@ bool InitNamedUnits::GetInputDataVar() {
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
     input_data_var->object_type = &TA_DataTable;
-    input_data_var->DataItemUpdated();
+    input_data_var->SigEmitUpdated();
   }
   return true;
 }
@@ -80,7 +80,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
     if (!unit_names_var) {
       unit_names_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       unit_names_var->name = "unit_names";
-      unit_names_var->DataItemUpdated();
+      unit_names_var->SigEmitUpdated();
     }
   }
   unit_names_var->var_type = ProgVar::T_Object;
@@ -94,14 +94,14 @@ bool InitNamedUnits::GetUnitNamesVar() {
       rval = dgp->NewEl(1, &TA_DataTable);
       rval->name = "UnitNames";
       taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
-      rval->DataItemUpdated();
+      rval->SigEmitUpdated();
       if(taMisc::gui_active) {
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe"); // todo: might be too radical.
       }
     }
     unit_names_var->object_val = rval;
     unit_names_var->object_type = &TA_DataTable;
-    unit_names_var->DataItemUpdated();
+    unit_names_var->SigEmitUpdated();
   }
   return true;
 }
@@ -116,7 +116,7 @@ bool InitNamedUnits::GetNetworkVar() {
   }
   if(!network_var) return false;
   network_var->var_type = ProgVar::T_Object;
-  network_var->DataItemUpdated();
+  network_var->SigEmitUpdated();
   return (bool)network_var->object_val;
 }
 

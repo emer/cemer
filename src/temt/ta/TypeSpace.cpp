@@ -49,15 +49,15 @@ void*   TypeSpace::El_Copy_(void* trg, void* src)
 void TypeSpace::Initialize() {
   owner = NULL;
 #ifndef NO_TA_BASE
-  data_link = NULL;
+  sig_link = NULL;
 #endif
 }
 
 TypeSpace::~TypeSpace() {
   Reset();
 #ifndef NO_TA_BASE
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
+  if (sig_link) {
+    sig_link->SigDestroying(); // link NULLs our pointer
   }
 #endif
 }

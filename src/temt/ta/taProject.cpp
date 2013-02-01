@@ -29,7 +29,7 @@ TypeDef_Of(taDataGen);
 TypeDef_Of(taImageProc);
 TypeDef_Of(ClusterRun);
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
@@ -171,7 +171,7 @@ taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
   if(rval) return rval;
   rval = data_proc.NewEl(1, typ);
   rval->SetName(nm);
-  rval->DataItemUpdated();
+  rval->SigEmitUpdated();
   return rval;
 }
 
@@ -180,7 +180,7 @@ SelectEdit* taProject::FindMakeSelectEdit(const String& nm, TypeDef* type) {
   if(rval) return rval;
   rval = (SelectEdit*)edits.NewEl(1, type);
   rval->SetName(nm);
-  rval->DataItemUpdated();
+  rval->SigEmitUpdated();
   return rval;
 }
 
@@ -298,7 +298,7 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   MainWindowViewer* vwr =  MakeProjectBrowser_impl();
   if (viewer_name != "(default name)") {
     vwr->SetName(viewer_name);
-    vwr->DataItemUpdated();
+    vwr->SigEmitUpdated();
   }
   OpenViewers(); // opens both 2x2 if we made those
 }
@@ -307,7 +307,7 @@ void taProject::OpenNewProjectViewer(String viewer_name) {
   MainWindowViewer* vwr =  MainWindowViewer::NewProjectViewer(this); // added to viewers
   if (viewer_name != "(default name)") {
     vwr->SetName(viewer_name);
-    vwr->DataItemUpdated();
+    vwr->SigEmitUpdated();
   }
   vwr->ViewWindow();
 }
@@ -368,7 +368,7 @@ DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
-    rval->DataItemUpdated();
+    rval->SigEmitUpdated();
   }
   if(msg)
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
@@ -385,7 +385,7 @@ DataTable* taProject::GetNewOutputDataTable(const String& nw_nm, bool msg) {
   rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
-    rval->DataItemUpdated();
+    rval->SigEmitUpdated();
   }
   if(msg)
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.OutputData");
@@ -402,7 +402,7 @@ DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
-    rval->DataItemUpdated();
+    rval->SigEmitUpdated();
   }
   if(msg)
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.AnalysisData");
@@ -485,7 +485,7 @@ int taProject::SaveAs(const String& fname) {
     OpenProjectLog();
   }
   taRefN::unRefDone(flr);
-  DataChanged(DCR_ITEM_UPDATED_ND);
+  SigEmit(SLS_ITEM_UPDATED_ND);
   return rval;
 }
 
@@ -703,7 +703,7 @@ void taProject::UpdateChangeLog() {
       doc->text = hdr + "\n\n" + nw_txt + trl;
     }
     doc->UpdateText();
-    doc->DataItemUpdated();
+    doc->SigEmitUpdated();
   }
   delete dlg;
 #endif

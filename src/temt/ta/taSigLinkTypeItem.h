@@ -27,7 +27,7 @@
 
 TypeDef_Of(taSigLinkTypeItem);
 
-class TA_API taSigLinkTypeItem: public taSigLinkClass { // DataLink for TypeInfo objects
+class TA_API taSigLinkTypeItem: public taSigLinkClass { // SigLink for TypeInfo objects
 INHERITED(taSigLinkClass)
 public:
   TypeItem*             data() {return (TypeItem*)m_data;} //
@@ -40,7 +40,7 @@ public:
   override bool         ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* data_);  //
-  DL_FUNS(taSigLinkTypeItem); //
+  SL_FUNS(taSigLinkTypeItem); //
 
 protected:
   override iDataPanel*  CreateDataPanel_impl();

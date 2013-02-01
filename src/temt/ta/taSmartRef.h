@@ -38,11 +38,11 @@ friend class taDataView; // for access to link
 public:
   inline taBase*        ptr() const {return m_ptr;}
   void                  set(taBase* src) {if (src == m_ptr) return;
-    if (m_ptr) {m_ptr->RemoveDataClient(this);
+    if (m_ptr) {m_ptr->RemoveSigClient(this);
       //note: important to wait to get mptr in case RDC indirectly deleted it
-      taBase* t = m_ptr; m_ptr = NULL; DataRefChanging(t, false);}
-    if (src && src->AddDataClient(this))
-      {m_ptr = src; DataRefChanging(m_ptr, true);} }
+      taBase* t = m_ptr; m_ptr = NULL; SigChanging(t, false);}
+    if (src && src->AddSigClient(this))
+      {m_ptr = src; SigChanging(m_ptr, true);} }
 
   virtual TypeDef*      GetBaseType() const {return &TA_taBase;}
   taBase*               GetOwner() const { return m_own; }
@@ -66,7 +66,7 @@ protected:
   taBase*               m_own;
   mutable taBase*       m_ptr;
 
-  void                  DataRefChanging(taBase* obj, bool setting);
+  void                  SigChanging(taBase* obj, bool setting);
 
 private:
   taSmartRef(const taSmartRef& src); // not defined
@@ -78,8 +78,8 @@ public: // ITypedObject interface
 public: // ISigLinkClient interface
   override TypeDef*     GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taBase;} // TypeDef of the data
-  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink*, int dcr, void* op1, void* op2);
+  override void         SigLinkDestroying(taSigLink* dl);
 };
 
 #endif // taSmartRef_h

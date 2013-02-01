@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taPtrList_impl.h"
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 #include <taHashTable>
 #include <taMisc>
@@ -30,7 +30,7 @@ void taPtrList_impl::InitList_() {
   alloc_size = 0;
   el = NULL;
   size = 0;
-  DataChanged(DCR_LIST_INIT);
+  SigEmit(SLS_LIST_INIT);
 }
 
 taPtrList_impl::~taPtrList_impl() {
@@ -211,7 +211,7 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
   UpdateIndex_(to);
   void* op2 = NULL;
   if (to > 0) op2 = FastEl_(to - 1);
-  DataChanged(DCR_LIST_ITEM_MOVED, itm, op2);
+  SigEmit(SLS_LIST_ITEM_MOVED, itm, op2);
   return true;
 }
 
@@ -234,7 +234,7 @@ bool taPtrList_impl::MoveBeforeIdx(int fm, int to) {
     el[to-1] = itm;
     UpdateIndex_(to-1);
     if (to > 1) op2 = FastEl_(to - 2);
-    DataChanged(DCR_LIST_ITEM_MOVED, itm, op2); // itm, itm_after, NULL at beg
+    SigEmit(SLS_LIST_ITEM_MOVED, itm, op2); // itm, itm_after, NULL at beg
   } else { // fm > to
     for (int j = fm; j > to; j--) {
       el[j] = el[j-1];
@@ -243,7 +243,7 @@ bool taPtrList_impl::MoveBeforeIdx(int fm, int to) {
     el[to] = itm;
     UpdateIndex_(to);
     if (to > 0) op2 = FastEl_(to - 1);
-    DataChanged(DCR_LIST_ITEM_MOVED, itm, op2); // itm, itm_after, NULL at beg
+    SigEmit(SLS_LIST_ITEM_MOVED, itm, op2); // itm, itm_after, NULL at beg
   }
   return true;
 }
@@ -269,7 +269,7 @@ bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
   UpdateIndex_(pos1);
   el[pos2] = tmp;
   UpdateIndex_(pos2);
-  DataChanged(DCR_LIST_ITEMS_SWAP, el[pos2], el[pos1]);
+  SigEmit(SLS_LIST_ITEMS_SWAP, el[pos2], el[pos1]);
   return true;
 }
 
@@ -279,7 +279,7 @@ bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
 /////////////////////////
 
 void taPtrList_impl::AddOnly_(void* it) {
-//TODO: note, the logistics of the DataChanged are wrong, since ex. Add_
+//TODO: note, the logistics of the SigEmit are wrong, since ex. Add_
 // causes the notification before it has set the index and owned the item, renaming it
   if(size+1 >= alloc_size) {
     if(!Alloc(size+1)) return;
@@ -301,7 +301,7 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
   if (no_notify) return;
   void* op2 = NULL;
   if (idx > 0) op2 = FastEl_(idx - 1);
-  DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
+  SigEmit(SLS_LIST_ITEM_INSERT, it, op2);
 }
 
 bool taPtrList_impl::AddUnique_(void* it) {
@@ -344,7 +344,7 @@ bool taPtrList_impl::RemoveIdx(int i) {
   }
   --size;
   ItemRemoved_(); //NOTE: for Groups, we update leaf counts (supercursively) at this point
-  DataChanged(DCR_LIST_ITEM_REMOVE, tel);
+  SigEmit(SLS_LIST_ITEM_REMOVE, tel);
   if (tel) El_disOwn_(tel);
   //WARNING: other modules depends on no more code after this point! (ex. using El_Done to self-delete)
   return true;
@@ -385,7 +385,7 @@ bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
       hash_table->AddHash(El_GetHashVal_(it), where, El_GetHashString_(it));
     void* op2 = NULL;
     if (where > 0) op2 = FastEl_(where - 1);
-    if (!no_notify) DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
+    if (!no_notify) SigEmit(SLS_LIST_ITEM_INSERT, it, op2);
   }
   return true;
 }
@@ -406,7 +406,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
   if(el[ol] != NULL) {
     if(hash_table)
       hash_table->RemoveHash(El_GetHashVal_(el[ol]), El_GetHashString_(el[ol]));
-    DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
+    SigEmit(SLS_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
   el[ol] = nw;
@@ -417,7 +417,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
     if (!no_notify_insert) {
       void* op2 = NULL;
       if (ol > 0) op2 = FastEl_(ol - 1);
-      DataChanged(DCR_LIST_ITEM_INSERT, nw, op2);
+      SigEmit(SLS_LIST_ITEM_INSERT, nw, op2);
     }
   }
   return true;
@@ -449,8 +449,8 @@ void taPtrList_impl::Link_(void* it) {
       hash_table->AddHash(El_GetHashVal_(it), size-1, El_GetHashString_(it));
   }
   void* op2 = NULL;
-  if (size > 1) op2 = FastEl_(size - 2); //for DataChanged
-  DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
+  if (size > 1) op2 = FastEl_(size - 2); //for SigEmit
+  SigEmit(SLS_LIST_ITEM_INSERT, it, op2);
 }
 
 bool taPtrList_impl::LinkUnique_(void* it) {
@@ -498,7 +498,7 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
       hash_table->AddHash(El_GetHashVal_(it), where, El_GetHashString_(it));
     void* op2 = NULL;
     if (where > 0) op2 = FastEl_(where - 1);
-    DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
+    SigEmit(SLS_LIST_ITEM_INSERT, it, op2);
   }
   return true;
 }
@@ -522,7 +522,7 @@ bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
   if(el[ol] != NULL) {
     if(hash_table)
       hash_table->RemoveHash(El_GetHashVal_(el[ol]), El_GetHashString_(el[ol]));
-    DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
+    SigEmit(SLS_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
   el[ol] = nw;
@@ -532,7 +532,7 @@ bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
       hash_table->AddHash(El_GetHashVal_(nw), ol, El_GetHashString_(nw));
     void* op2 = NULL;
     if (ol > 0) op2 = FastEl_(ol - 1);
-    DataChanged(DCR_LIST_ITEM_INSERT, nw, op2);
+    SigEmit(SLS_LIST_ITEM_INSERT, nw, op2);
   }
   return true;
 }
@@ -551,7 +551,7 @@ void taPtrList_impl::Push_(void* it) {
   }
   void* op2 = NULL;
   if (size > 1) op2 = FastEl_(size - 2);
-  DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
+  SigEmit(SLS_LIST_ITEM_INSERT, it, op2);
 }
 
 void* taPtrList_impl::Pop_() {
@@ -560,7 +560,7 @@ void* taPtrList_impl::Pop_() {
   if(rval != NULL) {
     if(hash_table)
       hash_table->RemoveHash(El_GetHashVal_(rval), El_GetHashString_(rval));
-    DataChanged(DCR_LIST_ITEM_REMOVE, rval);
+    SigEmit(SLS_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }
   return rval;
@@ -594,7 +594,7 @@ void taPtrList_impl::Permute() {
 void taPtrList_impl::Sort(bool descending) {
   Sort_(descending);
   UpdateAllIndicies();
-  DataChanged(DCR_LIST_SORTED);
+  SigEmit(SLS_LIST_SORTED);
 }
 
 void taPtrList_impl::Sort_(bool descending) {
@@ -663,7 +663,7 @@ void* taPtrList_impl::DuplicateEl_(void* it) {
   Insert_(nw, idx + 1, true); //defer notify until after copy
   El_Copy_(nw, it); // note: DONT set name, leave as default
   --taMisc::is_duplicating;
-  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(idx));
+  SigEmit(SLS_LIST_ITEM_INSERT, nw, SafeEl_(idx));
   return nw;
 }
 
@@ -701,7 +701,7 @@ void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2));
+      SigEmit(SLS_LIST_ITEM_INSERT, it, SafeEl_(size - 2));
       --taMisc::is_duplicating;
     }
   }
@@ -725,12 +725,12 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
     if (idx >= 0) {
       ReplaceIdx_(idx, it, true); //note: only insert notify is suppressed
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(idx - 1));
+      SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(idx - 1));
     }
     else {
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
+      SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
     }
     --taMisc::is_duplicating;
   }
@@ -748,7 +748,7 @@ void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
+      SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
       --taMisc::is_duplicating;
     }
   }
@@ -820,7 +820,7 @@ void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
     ++taMisc::is_duplicating;
     El_CopyN_(it, cp.el[i]); //+name
     --taMisc::is_duplicating;
-    DataChanged(DCR_LIST_ITEM_UPDATE, it);
+    SigEmit(SLS_LIST_ITEM_UPDATE, it);
   }
 }
 
@@ -843,7 +843,7 @@ void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp_it);
       Add_(it, true);
       El_CopyN_(it, cp_it);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
+      SigEmit(SLS_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
       --taMisc::is_duplicating;
     } break;
     case EK_LINK:
@@ -882,7 +882,7 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
         ++taMisc::is_duplicating;
         El_CopyN_(it, cp_it);
         --taMisc::is_duplicating;
-        DataChanged(DCR_LIST_ITEM_UPDATE, it);
+        SigEmit(SLS_LIST_ITEM_UPDATE, it);
         goto cont;
       } // otherwise fall through
     }

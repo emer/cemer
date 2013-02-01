@@ -1766,7 +1766,7 @@ bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("ReplaceString")) {
     run_startup = false;
     String oldnm = taMisc::FindArgByName("ReplaceString");
-    String newnm = taMisc::FindArgByName("RenameStringTo");
+    String newnm = taMisc::FindArgByName("ReplaceStringTo");
     if(newnm.empty()) {
       taMisc::Error("ReplaceString: no replace_to arg provided for new replace string");
     }

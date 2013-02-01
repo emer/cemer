@@ -52,7 +52,7 @@ void iDataPanelFrame::ClosePanel() {
     deleteLater(); // per Qt specs, defer deletions to avoid issues
 }
 
-void iDataPanelFrame::DataLinkDestroying(taSigLink*) {
+void iDataPanelFrame::SigLinkDestroying(taSigLink*) {
   if (!m_dps) // if in a panelset, we let panelset destroy us
     ClosePanel();
 }

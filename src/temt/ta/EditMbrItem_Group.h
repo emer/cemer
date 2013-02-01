@@ -47,7 +47,7 @@ public:
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
   override String       GetTypeDecoKey() const { return "SelectEdit"; }
-  override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void         SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS_NOCOPY(EditMbrItem_Group);
 #ifdef __MAKETA__ // dummy to supress New
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW

@@ -82,14 +82,14 @@ public: // required implementations
     int role = Qt::EditRole); // override, for editing
 
 signals:
-  void                  matDataChanged(int col_idx); // only emited during dataChanged if col_idx valid
+  void                  matSigEmit(int col_idx); // only emited during dataChanged if col_idx valid
 
 public: // ISigLinkClient i/f
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MatrixTableModel;}
-//  override bool               ignoreDataChanged() const;
-  override void         DataLinkDestroying(taSigLink* dl);
-  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+//  override bool               ignoreSigEmit() const;
+  override void         SigLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   taMatrix*             m_mat;

@@ -18,7 +18,7 @@
 #include <taProject>
 #include <DataTable>
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 
 using namespace std;
 
@@ -36,7 +36,7 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
   it->name = nm;
   it->value = val;
   enums.OrderItems();
-  it->DataItemUpdated();
+  it->SigEmitUpdated();
   return it;
 }
 
@@ -46,7 +46,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
     for(int i=0;i<enums.size;i++) {
       DynEnumItem* it = enums.FastEl(i);
       it->value = val;
-      it->DataItemUpdated();
+      it->SigEmitUpdated();
       val = val << 1;
     }
   }
@@ -55,7 +55,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
     for(int i=0;i<enums.size;i++) {
       DynEnumItem* it = enums.FastEl(i);
       it->value = val;
-      it->DataItemUpdated();
+      it->SigEmitUpdated();
       val++;
     }
   }
@@ -140,14 +140,14 @@ bool DynEnumType::EnumsFromDataTable(DataTable* dt, const Variant& col) {
   return true;
 }
 
-void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
+void DynEnumType::SigEmit(int dcr, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
-  if (dcr == DCR_CHILD_ITEM_UPDATED) {
-    DataItemUpdated();
+  if (dcr == SLS_CHILD_ITEM_UPDATED) {
+    SigEmitUpdated();
     return; // don't send any further
   }
-  inherited::DataChanged(dcr, op1, op2);
+  inherited::SigEmit(dcr, op1, op2);
 }
 
 void DynEnumType::CheckChildConfig_impl(bool quiet, bool& rval) {

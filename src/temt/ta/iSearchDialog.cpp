@@ -135,7 +135,7 @@ void iSearchDialog::AddItem(const String& headline, const String& href,
   m_items.SetVal(path_long, col_path, -1);
 }
 
-void iSearchDialog::DataLinkDestroying(taSigLink* dl) {
+void iSearchDialog::SigLinkDestroying(taSigLink* dl) {
   Reset();
   RootSet(NULL);
 }
@@ -362,8 +362,8 @@ bool iSearchDialog::setFirstSort(int col) {
 
 void iSearchDialog::setRoot(taiSigLink* root, bool update_gui) {
   if (link() != root) {
-    if (link()) link()->RemoveDataClient(this);
-    if (root) root->AddDataClient(this);
+    if (link()) link()->RemoveSigClient(this);
+    if (root) root->AddSigClient(this);
   }
   if (update_gui)
     RootSet(root);

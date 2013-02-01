@@ -94,7 +94,7 @@ public:
   override bool Close_Child(taBase* obj);
   override bool CloseLater_Child(taBase* obj);
   override void ChildUpdateAfterEdit(taBase* child, bool& handled);
-  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void SigEmit(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   override taBase* CopyChildBefore(taBase* src, taBase* child_pos);
 

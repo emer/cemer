@@ -795,7 +795,7 @@ set(ta_HEADS_NOMAKETA
   iFormLayout.h
   iTreeWidgetItem.h
 
-  DataChangedReason.h
+  SigLinkSignal.h
 
   VPUnref.h
   VPUList.h
@@ -1081,7 +1081,7 @@ set(ta_SRCS_MAKETA
   Variant.cpp
   taRefN.cpp
 
-  DataChangedReason.cpp
+  SigLinkSignal.cpp
 
   NameVar.cpp
   MTRndState.cpp

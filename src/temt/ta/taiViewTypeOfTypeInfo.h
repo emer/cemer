@@ -30,7 +30,7 @@ class TA_API taiViewTypeOfTypeInfo: public taiViewType { // for TypeItem types a
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfTypeInfo, taiViewType)
 public:
   override int          BidForView(TypeDef*);
-  override taiSigLink* GetDataLink(void* data_, TypeDef* el_typ);
+  override taiSigLink* GetSigLink(void* data_, TypeDef* el_typ);
   void                  Initialize() {}
   void                  Destroy() {}
 };//

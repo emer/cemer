@@ -56,8 +56,8 @@ public: // ITypedObject interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iBrowseHistory;}
 public: // ISigLinkClient interface
-  override void         DataDataChanged(taSigLink*, int, void*, void*) {}
-  override void         DataLinkDestroying(taSigLink* dl);
+  override void         SigLinkRecv(taSigLink*, int, void*, void*) {}
+  override void         SigLinkDestroying(taSigLink* dl);
 
 #ifndef __MAKETA__
 public slots:

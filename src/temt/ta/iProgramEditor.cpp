@@ -28,7 +28,7 @@
 #include <taProject>
 
 
-#include <DataChangedReason>
+#include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
@@ -220,7 +220,7 @@ bool iProgramEditor::ShowMember(MemberDef* md) {
 }
 
 void iProgramEditor::Base_Add() {
-  base->AddDataClient(this);
+  base->AddSigClient(this);
   // get colors for type
   bool ok;
   const iColor bgc = base->GetEditColorInherit(ok);
@@ -373,7 +373,7 @@ void iProgramEditor::Controls_Add() {
 void iProgramEditor::Base_Remove() {
   first_tab_foc = NULL;
   items->focus_next_widget = NULL; // clear
-  base->RemoveDataClient(this);
+  base->RemoveSigClient(this);
   base = NULL;
   Controls_Remove();
 }
@@ -452,13 +452,13 @@ const iColor iProgramEditor::colorOfCurRow() const {
   }
 }
 
-void iProgramEditor::DataLinkDestroying(taSigLink* dl) {
+void iProgramEditor::SigLinkDestroying(taSigLink* dl) {
   setEditNode(NULL, false);
 }
 
-void iProgramEditor::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
+void iProgramEditor::SigLinkRecv(taSigLink* dl, int dcr, void* op1, void* op2) {
   if (m_changing > 0) return; // gets triggered when we do the GetValue on ctrl0
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+  if (dcr <= SLS_ITEM_UPDATED_ND) {
     // if it has been edited, (maybe??) warn user, else just silently update it
     if (m_modified) {
       warn_clobber = true; // no other visible sign, warned if save

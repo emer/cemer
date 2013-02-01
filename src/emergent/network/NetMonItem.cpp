@@ -977,12 +977,12 @@ void NetMonItem::SetMonVals(taBase* obj, const String& var) {
   UpdateAfterEdit();
 }
 
-void NetMonItem::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+void NetMonItem::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
   ResetMonVals();
-  inherited::SmartRef_DataDestroying(ref, obj);//does UAE
+  inherited::SmartRef_SigDestroying(ref, obj);//does UAE
 }
 
-void NetMonItem::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+void NetMonItem::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_)
 {
 //NOTE: we get these here when script running and any member vars are updated --

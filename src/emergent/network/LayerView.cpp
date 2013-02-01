@@ -89,8 +89,8 @@ void LayerView::UpdateAutoScale(bool& updated) {
     ugrv->UpdateAutoScale(updated);
 }
 
-void LayerView::DataUpdateAfterEdit_impl() {
-  inherited::DataUpdateAfterEdit_impl();
+void LayerView::SigRecvUpdateAfterEdit_impl() {
+  inherited::SigRecvUpdateAfterEdit_impl();
   // always update kids!!
   DoActionChildren_impl(RENDER_IMPL);
 
@@ -240,7 +240,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->DataItemUpdated();
+  lay->SigEmitUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -272,7 +272,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
-  lay->DataItemUpdated();
+  lay->SigEmitUpdated();
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
