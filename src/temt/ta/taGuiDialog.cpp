@@ -20,7 +20,7 @@
 #include <taiWidgetIncrField>
 #include <taiWidgetField>
 #include <taiWidgetToggle>
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 #include <taiWidgetBitBox>
 #include <taiWidgetComboBox>
 #include <iComboBox>
@@ -520,7 +520,7 @@ bool taGuiDialog::AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm, co
   String atts = attributes;
   if(td)
     atts = String("type=") + td->name + "; " + atts;
-  taiWidgetTokenPtr* taidata = new taiWidgetTokenPtr(td, data_host, NULL, par->widget);
+  taiWidgetTokenChooser* taidata = new taiWidgetTokenChooser(td, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "ObjectPtr",
                                   layout, atts,  Variant((void*)obj), _nilString, taidata);
   return (bool)w;

@@ -31,7 +31,7 @@
 #include <taiMisc>
 #include <iDialogEditor>
 #include <taiArgTypeOfStream>
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 #include <HiLightButton>
 #include <taFiler>
 
@@ -529,7 +529,7 @@ int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
       taiWidget* mb_dat = data_el(0).SafeEl(hide_args);
       if (mb_dat == NULL) return false; // shouldn't happen
       art->GetImage(mb_dat, root);
-      taiWidgetTokenPtr* tokbut = (taiWidgetTokenPtr*)mb_dat;
+      taiWidgetTokenChooser* tokbut = (taiWidgetTokenChooser*)mb_dat;
       bool ok = tokbut->OpenChooser(); // call chooser now
       if(ok) {
 	art->GetValue(mb_dat, root);

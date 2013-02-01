@@ -16,7 +16,7 @@
 #include "taiArgTypeOfTypePtr.h"
 #include <taBase>
 #include <MemberDef>
-#include <taiWidgetTypeDefPtr>
+#include <taiWidgetTypeDefChooser>
 
 #include <taMisc>
 
@@ -85,7 +85,7 @@ taiWidget* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* p
 //   TypeDef* init_typ = &TA_taBase;
 //   if (*((TypeDef**)arg_base) != NULL)
 //     init_typ = *((TypeDef**)arg_base);
-  taiWidgetTypeDefPtr* rval = new taiWidgetTypeDefPtr(base_type, host_, par,
+  taiWidgetTypeDefChooser* rval = new taiWidgetTypeDefChooser(base_type, host_, par,
                                                 gui_parent_, flags);
   return rval;
 }
@@ -93,7 +93,7 @@ taiWidget* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* p
 void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)
     return;
-  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
+  taiWidgetTypeDefChooser* rval = (taiWidgetTypeDefChooser*)dat;
   String nulltxt = GetOptionAfter("NULL_TEXT_");
   if(nulltxt.nonempty()) {
     taMisc::SpaceLabel(nulltxt);
@@ -116,6 +116,6 @@ void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
 void taiArgTypeOfTypePtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
+  taiWidgetTypeDefChooser* rval = (taiWidgetTypeDefChooser*)dat;
   *((void**)arg_base) = rval->GetValue();
 }

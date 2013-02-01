@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfFromGroup.h"
-#include <taiGroupElsButton>
-#include <taiListElsButton>
+#include <taiWidgetGroupElChooser>
+#include <taiWidgetListElsChooser>
 #include <taList_impl>
 
 #include <css_ta.h>
@@ -59,10 +59,10 @@ taiWidget* taiArgTypeOfFromGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget*
     new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
   if (from_md->type->DerivesFrom(TA_taGroup_impl))
-     return new taiGroupElsButton(typ, host_, par, gui_parent_,
+     return new taiWidgetGroupElChooser(typ, host_, par, gui_parent_,
                                   (new_flags | taiWidget::flgNoInGroup));
   else
-    return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
+    return new taiWidgetListElsChooser(typ, host_, par, gui_parent_, new_flags);
 }
 
 void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
@@ -77,10 +77,10 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
   if (from_md == NULL)  return;
   taList_impl* lst = GetList(from_md, base);
   if (typ->InheritsFrom(TA_taGroup_impl)) {
-    taiGroupElsButton* els = (taiGroupElsButton*)dat;
+    taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   } else {
-    taiListElsButton* els = (taiListElsButton*)dat;
+    taiWidgetListElsChooser* els = (taiWidgetListElsChooser*)dat;
     els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
   }
 }
@@ -88,7 +88,7 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
 void taiArgTypeOfFromGroup::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
+  taiWidgetListElsChooser_base* els = (taiWidgetListElsChooser_base*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }

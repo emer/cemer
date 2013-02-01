@@ -17,15 +17,15 @@
 #define taiWidgetEnumStaticChooser_h 1
 
 // parent includes:
-#include <taiWidgetItemPtr>
+#include <taiWidgetItemChooser>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiWidgetEnumStaticChooser : public taiWidgetItemPtr {
+class TA_API taiWidgetEnumStaticChooser : public taiWidgetItemChooser {
   // for enums AND static members, methods -- useful for path completion lookup for example
-  INHERITED(taiWidgetItemPtr)
+  INHERITED(taiWidgetItemChooser)
 public:
   inline TypeItem*      md() const {return (TypeItem*)m_sel;}
 
@@ -36,7 +36,7 @@ public:
 
   USING(inherited::GetImage)
   void                  GetImage(MemberDef* cur_sel, TypeDef* targ_typ)
-    {taiWidgetItemPtr::GetImage((void*)cur_sel, targ_typ);}
+    {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*             GetValue() {return md();}
 
   override void         BuildChooser(iDialogItemChooser* ic, int view = 0); //

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfList.h"
-#include <gpiListEditButton>
+#include <taiWidgetListEditButton>
 
 TypeDef_Of(taList_impl);
 
@@ -25,6 +25,6 @@ int taiTypeOfList::BidForType(TypeDef* td) {
 }
 
 taiWidget* taiTypeOfList::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  taiWidgetListEditButton *rval = new taiWidgetListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

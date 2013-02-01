@@ -15,7 +15,7 @@
 
 #include "taiMemberOfEnumTypePtr.h"
 #include <taiWidget>
-#include <taiEnumTypeDefButton>
+#include <taiWidgetEnumTypeDefChooser>
 
 
 
@@ -30,7 +30,7 @@ taiWidget* taiMemberOfEnumTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget
 {
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiWidget::flgNullOk;
-  taiEnumTypeDefButton* rval =
-    new taiEnumTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
+  taiWidgetEnumTypeDefChooser* rval =
+    new taiWidgetEnumTypeDefChooser(mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }

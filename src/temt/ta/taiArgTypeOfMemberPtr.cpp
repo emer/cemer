@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfMemberPtr.h"
-#include <taiWidgetMemberDefPtr>
+#include <taiWidgetMemberDefChooser>
 
 #include <css_ta.h>
 
@@ -38,14 +38,14 @@ taiWidget* taiArgTypeOfMemberPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget*
 {
   flags_ |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
 
-  taiWidgetMemberDefPtr* rval = new taiWidgetMemberDefPtr(typ, host_, par, gui_parent_, flags_);
+  taiWidgetMemberDefChooser* rval = new taiWidgetMemberDefChooser(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiArgTypeOfMemberPtr::GetImage_impl(taiWidget* dat, const void* base) {
   if(arg_base == NULL)
     return;
-  taiWidgetMemberDefPtr* rval = (taiWidgetMemberDefPtr*)dat;
+  taiWidgetMemberDefChooser* rval = (taiWidgetMemberDefChooser*)dat;
   MemberDef* md = (MemberDef*)*((void**)arg_base);
   rval->GetImage(md, typ);
 }
@@ -53,6 +53,6 @@ void taiArgTypeOfMemberPtr::GetImage_impl(taiWidget* dat, const void* base) {
 void taiArgTypeOfMemberPtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiWidgetMemberDefPtr* rval = (taiWidgetMemberDefPtr*)dat;
+  taiWidgetMemberDefChooser* rval = (taiWidgetMemberDefChooser*)dat;
   *((MemberDef**)arg_base) = rval->GetValue();
 }

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfTokenPtr.h"
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 #include <IWidgetHost>
 
 #include <taMisc>
@@ -45,7 +45,7 @@ taiWidget* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* 
   if (GetHasOption("EDIT_OK"))
     token_flags |= taiWidget::flgEditOk;
   token_flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
-  taiWidgetTokenPtr* rval = new taiWidgetTokenPtr(npt, host_, par, gui_parent_, token_flags);
+  taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_, token_flags);
   return rval;
 //   taiWidgetTokenPtrMenu* rval = new taiWidgetTokenPtrMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
 //      token_flags);
@@ -80,7 +80,7 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
       if(tmptd) npt = tmptd;
     }
   }
-  taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
+  taiWidgetTokenChooser* rval = (taiWidgetTokenChooser*)dat;
   //  taiWidgetTokenPtrMenu* rval = (taiWidgetTokenPtrMenu*)dat;
   taBase* scope = NULL;
   if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
@@ -118,7 +118,7 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
 void taiArgTypeOfTokenPtr::GetValue_impl(taiWidget* dat, void*) {
   if(arg_base == NULL)
     return;
-  taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
+  taiWidgetTokenChooser* rval = (taiWidgetTokenChooser*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)rval->GetValue());
 }

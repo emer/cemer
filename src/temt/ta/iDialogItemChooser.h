@@ -27,7 +27,7 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taiWidgetItemPtr; //
+class taiWidgetItemChooser; //
 class QVBoxLayout; // 
 class QComboBox; //
 class QTreeWidget; //
@@ -50,14 +50,14 @@ public:
   static const String   cat_none; // "none" category
   static int            filt_delay; // delay, in msec, to invoke filter after typing
 
-  static iDialogItemChooser* New(const String& caption, taiWidgetItemPtr* client = NULL,
+  static iDialogItemChooser* New(const String& caption, taiWidgetItemChooser* client = NULL,
     int ft = 0, QWidget* par_window_ = NULL);
 
   String                caption;        // current caption at top of chooser
   bool                  multi_cats;     // each item may have multiple categories, separated by commas
   String                init_filter;    // initial filter string -- prefix with ^ for starts-with
 
-  inline taiWidgetItemPtr* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
+  inline taiWidgetItemChooser* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
   void*                 selObj() const {return m_selObj;} // current selected object
   void                  setSelObj(void* value, bool force = false);     //
 
@@ -74,7 +74,7 @@ public:
   QPushButton*              btnCancel;
   QLineEdit*              filter;
 
-  virtual bool          Choose(taiWidgetItemPtr* client);
+  virtual bool          Choose(taiWidgetItemChooser* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
 
   virtual void          Clear();        // reset data
@@ -94,7 +94,7 @@ protected:
   QTreeWidgetItem*      m_selItem; // cached for showEvent
   int                   m_view;
   int                   m_cat_filter;
-  taiWidgetItemPtr*       m_client; // NOTE: only valid in Constr and between Choose...accept/reject
+  taiWidgetItemChooser*       m_client; // NOTE: only valid in Constr and between Choose...accept/reject
   QString               last_filter; // for checking if anything changed
   QTimer*               timFilter; // timer for filter changes
 
@@ -105,7 +105,7 @@ protected:
   bool                  SetCurrentItemByData(void* value);
   bool                  SetInitView(void* sel_val, const String& filt_str);
   bool                  ShowItem(const QTreeWidgetItem* item) const;
-  virtual void          Constr(taiWidgetItemPtr* client_);
+  virtual void          Constr(taiWidgetItemChooser* client_);
    // does constr, called in static, so can extend
 
   iDialogItemChooser(const String& caption, QWidget* par_window_);

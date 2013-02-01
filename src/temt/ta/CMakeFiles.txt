@@ -863,7 +863,7 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetDimEdit.h
   taiWidgetVariantBase.h
   taiWidgetVariant.h
-  taiWidgetItemPtr.h
+  taiWidgetItemChooser.h
   taiWidgetEditButton.h
   taiWidgetFileButton.h
 
@@ -1002,38 +1002,39 @@ set(ta_HEADS_NOMAKETA_NOMOC
   iMenuAction.h
 
   taiWidgetColor.h
-  taiWidgetTokenPtr.h
-  taiWidgetTokenPtrMultiType.h
+  taiWidgetToggle.h
+
+  taiWidgetTokenChooser.h
+  taiWidgetTokenChooserMultiType.h
+  taiWidgetTypeDefChooser.h
+  taiWidgetMemberDefChooser.h
+  taiWidgetMethodDefChooser.h
+  taiWidgetMemberMethodDefChooser.h
+  taiWidgetEnumStaticChooser.h
+  taiWidgetEnumTypeDefChooser.h
+
+  taiWidgetListElsChooser_base.h
+  taiWidgetListElsChooser.h
+  taiWidgetGroupElChooser.h
+  taiWidgetProjTemplateElChooser.h
+  taiWidgetProgLibElChooser.h
 
   taiWidgetTaBaseMenu.h
+  taiWidgetTypeItemMenu.h
+  taiWidgetMethodDefMenu.h
+
+  taiWidgetTypeHierMenu.h
+  taiWidgetListTypeHierMenu.h
 
   taiWidgetMethodMenu.h
   taiWidgetMethodButton.h
 
-  taiWidgetTypeItemMenu.h
-  taiWidgetMethodDefMenu.h
-
-  taiTypeHier.h
-  gpiGroupEditButton.h
-  taiProgLibElsButton.h
-  taiWidgetToggle.h
-  taiWidgetTypeDefPtr.h
-  taiWidgetMemberDefPtr.h
-  taiWidgetMethodDefPtr.h
-  taiMemberMethodDefButton.h
-  taiWidgetEnumStaticChooser.h
-  taiEnumTypeDefButton.h
-  gpiListEditButton.h
-  gpiSubEditButton.h
-  gpiLinkEditButton.h
-  gpiListLinkEditButton.h
-  gpiArrayEditButton.h
-  taiListElsButtonBase.h
-  taiListElsButton.h
-  taiGroupElsButton.h
-
-  gpiElTypes.h
-  taiProjTemplateElsButton.h
+  taiWidgetArrayEditButton.h
+  taiWidgetListEditButton.h
+  taiWidgetLinkListEditButton.h
+  taiWidgetGroupEditButton.h
+  taiWidgetLinkGroupEditButton.h
+  taiWidgetSubGroupEditButton.h
 
   iDialogRegexpPopulator.h
 
@@ -1865,23 +1866,23 @@ set(ta_SRCS_NOMAKETA
 
   iDialogItemChooser.cpp
   iDialogObjChooser.cpp
-  taiWidgetItemPtr.cpp
-  taiWidgetTokenPtr.cpp
+  taiWidgetItemChooser.cpp
+  taiWidgetTokenChooser.cpp
   taiWidgetEditButton.cpp
   taiWidgetTypeItemMenu.cpp
-  taiWidgetTypeDefPtr.cpp
-  taiWidgetMemberDefPtr.cpp
-  taiWidgetMethodDefPtr.cpp
-  taiMemberMethodDefButton.cpp
+  taiWidgetTypeDefChooser.cpp
+  taiWidgetMemberDefChooser.cpp
+  taiWidgetMethodDefChooser.cpp
+  taiWidgetMemberMethodDefChooser.cpp
   taiWidgetEnumStaticChooser.cpp
-  taiEnumTypeDefButton.cpp
-  taiWidgetTokenPtrMultiType.cpp
+  taiWidgetEnumTypeDefChooser.cpp
+  taiWidgetTokenChooserMultiType.cpp
   taiWidgetFileButton.cpp
   taiWidgetTaBaseMenu.cpp
   taiWidgetTokenPtrMenu.cpp
   taiWidgetSubTokenPtrMenu.cpp
   taiWidgetMethodDefMenu.cpp
-  taiTypeHier.cpp
+  taiWidgetTypeHierMenu.cpp
 
   iMenuAction.cpp
   iActionSubMenuEl.cpp
@@ -1896,22 +1897,22 @@ set(ta_SRCS_NOMAKETA
   taiWidgetMethodButton.cpp
   taiWidgetMethodToggle.cpp
 
-  gpiListEditButton.cpp
-  gpiGroupEditButton.cpp
-  gpiSubEditButton.cpp
-  gpiLinkEditButton.cpp
-  gpiListLinkEditButton.cpp
-  gpiArrayEditButton.cpp
-  taiListElsButtonBase.cpp
-  taiListElsButton.cpp
-  taiGroupElsButton.cpp
+  taiWidgetListEditButton.cpp
+  taiWidgetGroupEditButton.cpp
+  taiWidgetSubGroupEditButton.cpp
+  taiWidgetLinkGroupEditButton.cpp
+  taiWidgetLinkListEditButton.cpp
+  taiWidgetArrayEditButton.cpp
+  taiWidgetListElsChooser_base.cpp
+  taiWidgetListElsChooser.cpp
+  taiWidgetGroupElChooser.cpp
   taiWidgetListElMenu.cpp
   taiWidgetGroupElMenu.cpp
   taiWidgetSubGroupMenu.cpp
-  gpiElTypes.cpp
+  taiWidgetListTypeHierMenu.cpp
 
-  taiProjTemplateElsButton.cpp
-  taiProgLibElsButton.cpp
+  taiWidgetProjTemplateElChooser.cpp
+  taiWidgetProgLibElChooser.cpp
   taiProgStepButton.cpp
 
   taiClipData.cpp

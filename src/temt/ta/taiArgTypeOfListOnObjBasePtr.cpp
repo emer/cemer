@@ -15,8 +15,8 @@
 
 #include "taiArgTypeOfListOnObjBasePtr.h"
 #include <taList_impl>
-#include <taiGroupElsButton>
-#include <taiListElsButton>
+#include <taiWidgetGroupElChooser>
+#include <taiWidgetListElsChooser>
 
 #include <css_ta.h>
 
@@ -48,10 +48,10 @@ taiWidget* taiArgTypeOfListOnObjBasePtr::GetDataRep_impl(IWidgetHost* host_, tai
 /*nn  if (GetHasOption("EDIT_OK"))
     new_flags |= taiWidget::flgEditOk; */
   if (typ->InheritsFrom(TA_taGroup_impl))
-    return new taiGroupElsButton(typ, host_, par, gui_parent_,
+    return new taiWidgetGroupElChooser(typ, host_, par, gui_parent_,
       (new_flags | taiWidget::flgNoInGroup));
   else
-    return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
+    return new taiWidgetListElsChooser(typ, host_, par, gui_parent_, new_flags);
 }
 
 void taiArgTypeOfListOnObjBasePtr::GetImage_impl(taiWidget* dat, const void* base) {
@@ -64,10 +64,10 @@ void taiArgTypeOfListOnObjBasePtr::GetImage_impl(taiWidget* dat, const void* bas
     }
   }
   if (typ->InheritsFrom(TA_taGroup_impl)) {
-    taiGroupElsButton* els = (taiGroupElsButton*)dat;
+    taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)base, *((taBase**)arg_base));
   } else {
-    taiListElsButton* els = (taiListElsButton*)dat;
+    taiWidgetListElsChooser* els = (taiWidgetListElsChooser*)dat;
     els->GetImage((taList_impl*)base, *((taBase**)arg_base));
   }
 }
@@ -76,7 +76,7 @@ void taiArgTypeOfListOnObjBasePtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   //note: GetValue is not modal
-  taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
+  taiWidgetListElsChooser_base* els = (taiWidgetListElsChooser_base*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }

@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiWidgetTokenPtrMultiType.h"
+#include "taiWidgetTokenChooserMultiType.h"
 #include <taiEdit>
 #include <iMainWindowViewer>
 #include <taProject>
@@ -27,7 +27,7 @@
 
 
 
-taiWidgetTokenPtrMultiType::taiWidgetTokenPtrMultiType(TypeDef* typ_, IWidgetHost* host,
+taiWidgetTokenChooserMultiType::taiWidgetTokenChooserMultiType(TypeDef* typ_, IWidgetHost* host,
                                      taiWidget* par, QWidget* gui_parent_, int flags_,
                                      const String& flt_start_txt)
   : inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
@@ -35,7 +35,7 @@ taiWidgetTokenPtrMultiType::taiWidgetTokenPtrMultiType(TypeDef* typ_, IWidgetHos
   scope_typ = NULL;
 }
 
-void taiWidgetTokenPtrMultiType::EditDialog() {
+void taiWidgetTokenChooserMultiType::EditDialog() {
   taBase* cur_base = GetValue();
   if (!cur_base) return;
 
@@ -45,7 +45,7 @@ void taiWidgetTokenPtrMultiType::EditDialog() {
   gc->EditDialog(cur_base, false); //TODO: ever read_only???
 }
 
-void taiWidgetTokenPtrMultiType::EditPanel() {
+void taiWidgetTokenChooserMultiType::EditPanel() {
   taBase* cur_base = GetValue();
   if (!cur_base) return;
 
@@ -65,14 +65,14 @@ void taiWidgetTokenPtrMultiType::EditPanel() {
   }
 }
 
-void taiWidgetTokenPtrMultiType::BuildChooser(iDialogItemChooser* ic, int view) {
+void taiWidgetTokenChooserMultiType::BuildChooser(iDialogItemChooser* ic, int view) {
   if(cust_chooser)
     cust_chooser(scope_ref, this);
 
   inherited::BuildChooser(ic, view);
 
   if (!targ_typ) {
-    taMisc::Error("taiWidgetTokenPtrMultiType::BuildChooser: targ_type needed");
+    taMisc::Error("taiWidgetTokenChooserMultiType::BuildChooser: targ_type needed");
     return;
   }
 
@@ -93,7 +93,7 @@ void taiWidgetTokenPtrMultiType::BuildChooser(iDialogItemChooser* ic, int view) 
   ic->items->sortItems(0, Qt::AscendingOrder);
 }
 
-int taiWidgetTokenPtrMultiType::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
+int taiWidgetTokenChooserMultiType::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
   QTreeWidgetItem* top_item)
 {
   if (!td->IsActualTaBase()) return 0;
@@ -126,18 +126,18 @@ int taiWidgetTokenPtrMultiType::BuildChooser_0(iDialogItemChooser* ic, TypeDef* 
   return rval;
 }
 
-int taiWidgetTokenPtrMultiType::columnCount(int view) const {
+int taiWidgetTokenChooserMultiType::columnCount(int view) const {
   return 4;
 }
 
-void taiWidgetTokenPtrMultiType::GetImage(void* cur_sel_, TypeDef* targ_typ_)
+void taiWidgetTokenChooserMultiType::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 {//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
   scope_ref = NULL;
   scope_typ = NULL;
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
-void taiWidgetTokenPtrMultiType::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
+void taiWidgetTokenChooserMultiType::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
   taBase* scope_, TypeDef* scope_type_)
 {
   scope_ref = scope_;
@@ -145,7 +145,7 @@ void taiWidgetTokenPtrMultiType::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
   inherited::GetImage((void*)ths, targ_typ_);
 }
 
-const String taiWidgetTokenPtrMultiType::headerText(int index, int view) const {
+const String taiWidgetTokenChooserMultiType::headerText(int index, int view) const {
   switch (index) {
   case 0: return "Name";
   case 1: return "Type";
@@ -155,19 +155,19 @@ const String taiWidgetTokenPtrMultiType::headerText(int index, int view) const {
   return _nilString; // shouldn't happen
 }
 
-const String taiWidgetTokenPtrMultiType::labelNameNonNull() const {
+const String taiWidgetTokenChooserMultiType::labelNameNonNull() const {
   return token()->GetDisplayName();
 }
 
-bool taiWidgetTokenPtrMultiType::ShowToken(taBase* obj) const {
+bool taiWidgetTokenChooserMultiType::ShowToken(taBase* obj) const {
   return ShowItemFilter(scope_ref, obj, obj->GetName());
 }
 
-int taiWidgetTokenPtrMultiType::viewCount() const {
+int taiWidgetTokenChooserMultiType::viewCount() const {
   return type_list.size + 1;
 }
 
-const String taiWidgetTokenPtrMultiType::viewText(int index) const {
+const String taiWidgetTokenChooserMultiType::viewText(int index) const {
   if(index == 0) return "All Types";
   return type_list.PosSafeEl(index-1)->name;
 }

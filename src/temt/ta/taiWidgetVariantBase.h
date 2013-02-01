@@ -26,7 +26,7 @@ class taiWidgetComboBox; //
 class taiWidgetToggle; //
 class taiWidgetIncrField; //
 class taiWidgetField; //
-class taiWidgetTokenPtr; //
+class taiWidgetTokenChooser; //
 class QStackedWidget; //
 
 
@@ -69,7 +69,7 @@ protected:
   taiWidgetToggle*            togVal; // for: bool
   taiWidgetIncrField*         incVal; // for: ints
   taiWidgetField*             fldVal; // for: char, string, most numbers
-  taiWidgetTokenPtr*    tabVal; // for taBase & Matrix token
+  taiWidgetTokenChooser*    tabVal; // for taBase & Matrix token
   iLabel*               tiVal; // for TypeItem token -- display-only for now
 
   void                  Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls

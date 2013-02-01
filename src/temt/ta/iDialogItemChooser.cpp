@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iDialogItemChooser.h"
-#include <taiWidgetItemPtr>
+#include <taiWidgetItemChooser>
 #include <iLineEdit>
 #include <iTreeWidget>
 
@@ -34,7 +34,7 @@
 const String iDialogItemChooser::cat_none("(none)");
 int iDialogItemChooser::filt_delay = 500;
 
-iDialogItemChooser* iDialogItemChooser::New(const String& caption_, taiWidgetItemPtr* client_,
+iDialogItemChooser* iDialogItemChooser::New(const String& caption_, taiWidgetItemChooser* client_,
   int ft, QWidget* par_window_)
 {
 /*no, let qt choose  if (par_window_ == NULL)
@@ -183,7 +183,7 @@ int iDialogItemChooser::ApplyFiltering() {
   return n_items;
 }
 
-bool iDialogItemChooser::Choose(taiWidgetItemPtr* client_) {
+bool iDialogItemChooser::Choose(taiWidgetItemChooser* client_) {
   // NOTE: current semantics is simple: always rebuild each show
   // more complex caching would require flags etc. to track whether the
   // inputs to the item changed -- cpus are so fast now, this may not be worth it
@@ -228,7 +228,7 @@ void iDialogItemChooser::cmbCat_currentIndexChanged(int index) {
   setCatFilter(index);
 }
 
-void iDialogItemChooser::Constr(taiWidgetItemPtr* client_) {
+void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   m_fully_up = false;
   m_client = client_; // revoked at end
   layOuter = new QVBoxLayout(this);

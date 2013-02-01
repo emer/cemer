@@ -20,7 +20,7 @@
 #include <iTreeViewItem>
 #include <taSigLinkItr>
 #include <taiSigLink>
-#include <taiWidgetTypeDefPtr>
+#include <taiWidgetTypeDefChooser>
 #include <taProject>
 #include <taiClipData>
 #include <taiObjectMimeFactory>
@@ -233,8 +233,8 @@ void iTreeView::InsertEl(bool after) {
   }
   if(!sbo) return;
   if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
-  taiWidgetTypeDefPtr* typlkup =
-    new taiWidgetTypeDefPtr(sbo->el_base, NULL, NULL, NULL, taiWidget::flgAutoApply);
+  taiWidgetTypeDefChooser* typlkup =
+    new taiWidgetTypeDefChooser(sbo->el_base, NULL, NULL, NULL, taiWidget::flgAutoApply);
   TypeDef* td = sbo->el_typ;
   typlkup->GetImage(td, sbo->el_base);
   bool okc = false;

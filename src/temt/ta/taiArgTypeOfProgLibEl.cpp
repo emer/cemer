@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfProgLibEl.h"
-#include <taiProgLibElsButton>
+#include <taiWidgetProgLibElChooser>
 
 TypeDef_Of(ProgLibEl);
 
@@ -39,7 +39,7 @@ taiWidget* taiArgTypeOfProgLibEl::GetDataRep_impl(IWidgetHost* host_, taiWidget*
   if (GetHasOption("NO_GROUP_OPT"))
     new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
-  return new taiProgLibElsButton(typ, host_, par, gui_parent_, new_flags);
+  return new taiWidgetProgLibElChooser(typ, host_, par, gui_parent_, new_flags);
 }
 
 void taiArgTypeOfProgLibEl::GetImage_impl(taiWidget* dat, const void* base) {
@@ -53,14 +53,14 @@ void taiArgTypeOfProgLibEl::GetImage_impl(taiWidget* dat, const void* base) {
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)  return;
   taList_impl* lst = GetList(from_md, base);
-  taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
+  taiWidgetProgLibElChooser* els = (taiWidgetProgLibElChooser*)dat;
   els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }
 
 void taiArgTypeOfProgLibEl::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
+  taiWidgetProgLibElChooser* els = (taiWidgetProgLibElChooser*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }

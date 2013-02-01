@@ -27,7 +27,7 @@ class NetView; //
 class ColorScaleBar; //
 class taiWidgetField; //
 class taiWidgetComboBox; //
-class taiGroupElsButton; //
+class taiWidgetGroupElChooser; //
 class iTreeView; //
 class iTreeViewItem; //
 class iMethodButtonMgr; //
@@ -101,7 +101,7 @@ public:
   QLabel*                   lblWtPrjnKGp;
   taiWidgetField*                 fldWtPrjnKGp;
   QLabel*                   lblWtPrjnLay;
-  taiGroupElsButton*        gelWtPrjnLay;
+  taiWidgetGroupElChooser*        gelWtPrjnLay;
 
   QHBoxLayout*           layColorBar;
   QCheckBox*                chkSnapBord;

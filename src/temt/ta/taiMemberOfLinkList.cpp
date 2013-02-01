@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfLinkList.h"
-#include <gpiListLinkEditButton>
+#include <taiWidgetLinkListEditButton>
 
 TypeDef_Of(taList_impl);
 
@@ -27,12 +27,12 @@ int taiMemberOfLinkList::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiWidget* taiMemberOfLinkList::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListLinkEditButton* rval = new gpiListLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
+  taiWidgetLinkListEditButton* rval = new taiWidgetLinkListEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberOfLinkList::GetImage_impl(taiWidget* dat, const void* base) {
-  gpiListLinkEditButton* rval = (gpiListLinkEditButton*)dat;
+  taiWidgetLinkListEditButton* rval = (taiWidgetLinkListEditButton*)dat;
   rval->GetImage_(mbr->GetOff(base));
 }
 

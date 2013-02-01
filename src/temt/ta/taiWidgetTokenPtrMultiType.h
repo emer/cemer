@@ -13,20 +13,20 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiWidgetTokenPtrMultiType_h
-#define taiWidgetTokenPtrMultiType_h 1
+#ifndef taiWidgetTokenChooserMultiType_h
+#define taiWidgetTokenChooserMultiType_h 1
 
 // parent includes:
-#include <taiWidgetItemPtr>
+#include <taiWidgetItemChooser>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-class TA_API taiWidgetTokenPtrMultiType : public taiWidgetItemPtr {
+class TA_API taiWidgetTokenChooserMultiType : public taiWidgetItemChooser {
   // for tokens of taBase objects of multiple types
-  INHERITED(taiWidgetItemPtr)
+  INHERITED(taiWidgetItemChooser)
 public:
   TypeSpace             type_list; // #LINK_GROUP set of types to generate tokens for -- must be set manually after construction and before GetImage etc -- be sure to only do Link here..
 
@@ -48,7 +48,7 @@ public:
   override void         EditPanel();
   override void         EditDialog();
 
-  taiWidgetTokenPtrMultiType(TypeDef* typ_, IWidgetHost* host,
+  taiWidgetTokenChooserMultiType(TypeDef* typ_, IWidgetHost* host,
                              taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                              const String& flt_start_txt = "");
 protected:
@@ -63,4 +63,4 @@ protected:
   virtual bool          ShowToken(taBase* obj) const;
 };
 
-#endif // taiWidgetTokenPtrMultiType_h
+#endif // taiWidgetTokenChooserMultiType_h

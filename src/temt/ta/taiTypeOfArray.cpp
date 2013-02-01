@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfArray.h"
-#include <gpiArrayEditButton>
+#include <taiWidgetArrayEditButton>
 
 TypeDef_Of(taArray);
 
@@ -26,7 +26,7 @@ int taiTypeOfArray::BidForType(TypeDef* td) {
 }
 
 taiWidget* taiTypeOfArray::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiArrayEditButton *rval =
-    new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
+  taiWidgetArrayEditButton *rval =
+    new taiWidgetArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

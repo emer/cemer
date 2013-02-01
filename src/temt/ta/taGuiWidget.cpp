@@ -21,7 +21,7 @@
 #include <taiWidgetComboBox>
 #include <taiWidgetToggle>
 #include <taGuiDialog>
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 
 #include <iMainWindowViewer>
 #include <iDataTableEditor>
@@ -96,7 +96,7 @@ void taGuiWidget::GetImage() {
     TypeDef* td;
     if(typnm.nonempty()) td = TypeDef::FindGlobalTypeName(typnm);
     if(!td) td = &TA_taOBase;
-    ((taiWidgetTokenPtr*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
+    ((taiWidgetTokenChooser*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }
   if(widget_type == "HardEnum_Enum") {
     ((taiWidgetComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
@@ -130,7 +130,7 @@ void taGuiWidget::GetValue() {
     *((bool*)data.toPtr()) = ((taiWidgetToggle*)tai_data)->GetValue();
   }
   if(widget_type == "ObjectPtr") {
-    *((taBaseRef*)data.toPtr()) = ((taiWidgetTokenPtr*)tai_data)->GetValue();
+    *((taBaseRef*)data.toPtr()) = ((taiWidgetTokenChooser*)tai_data)->GetValue();
   }
   if(widget_type == "HardEnum_Enum") {
     ((taiWidgetComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));

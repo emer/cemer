@@ -16,7 +16,7 @@
 #include "ProgEl.h"
 #include <Program>
 #include <Function>
-#include <taiWidgetItemPtr>
+#include <taiWidgetItemChooser>
 #include <MemberDef>
 #include <ProgExprBase>
 #include <ProgArg_List>
@@ -52,7 +52,7 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   return true;
 }
 
-bool ProgEl::NewProgVarCustChooser(taBase* base, taiWidgetItemPtr* chooser) {
+bool ProgEl::NewProgVarCustChooser(taBase* base, taiWidgetItemChooser* chooser) {
   if(!chooser || !base) return false;
   Program* own_prg = GET_OWNER(base, Program);
   if(!own_prg) return false;

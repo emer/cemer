@@ -22,7 +22,7 @@
 #include <taiWidgetIncrField>
 #include <taiWidgetField>
 #include <iCheckBox>
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 #include <iLineEdit>
 #include <iSpinBox>
 
@@ -124,7 +124,7 @@ void taiWidgetVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
 
-  tabVal = new taiWidgetTokenPtr(&TA_taBase, host, this, NULL, flgEditDialog);
+  tabVal = new taiWidgetTokenChooser(&TA_taBase, host, this, NULL, flgEditDialog);
   stack->addWidget(tabVal->GetRep());
 
   tiVal = MakeLabel("(TypeItem cannot be set)");

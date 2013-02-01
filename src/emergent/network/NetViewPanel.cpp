@@ -19,7 +19,7 @@
 #include <T3ExaminerViewer>
 #include <taiWidgetField>
 #include <taiWidgetComboBox>
-#include <taiGroupElsButton>
+#include <taiWidgetGroupElChooser>
 #include <HColorScaleBar>
 #include <iTreeView>
 #include <iTreeViewItem>
@@ -249,7 +249,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
   lblWtPrjnLay->setToolTip("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update");
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
-  gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
+  gelWtPrjnLay = dl.Add(new taiWidgetGroupElChooser(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
 
   lblWtPrjnKUn = taiM->NewLabel("K un", widg, font_spec);

@@ -15,7 +15,7 @@
 
 #include "taiTypeOfTokenPtr.h"
 #include <taiWidget>
-#include <taiWidgetTokenPtr>
+#include <taiWidgetTokenChooser>
 #include <taSmartPtr>
 
 #include <taMisc>
@@ -50,7 +50,7 @@ taiWidget* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
-  taiWidgetTokenPtr* rval = new taiWidgetTokenPtr(npt, host_, par, gui_parent_, flags_);
+  taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -87,7 +87,7 @@ void taiTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
 //     ebrval->GetImage_(*((void**) base));
 //   }
 //   else {
-    taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
+    taiWidgetTokenChooser* rval = (taiWidgetTokenChooser*)dat;
     rval->GetImage(*((taBase**)base), npt); // default typ, no scope
 //   }
 }
@@ -103,7 +103,7 @@ void taiTypeOfTokenPtr::GetValue_impl(taiWidget* dat, void* base) {
                     "because it is not keeping tokens");
   }
   else {
-    taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
+    taiWidgetTokenChooser* rval = (taiWidgetTokenChooser*)dat;
     if(!no_setpointer)
       taBase::SetPointer((taBase**)base, (taBase*)rval->GetValue());
     else
