@@ -13,25 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiMemberWidgets_List_h
-#define taiMemberWidgets_List_h 1
+#ifndef taiListTypeWidgets_List_h
+#define taiListTypeWidgets_List_h 1
 
 // parent includes:
 #include <taPtrList>
-#include <taiMemberWidgets>
+#include <taiListTypeWidgets>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-class TA_API taiMemberWidgets_List : public taPtrList<taiMemberWidgets> {
+class TA_API taiListTypeWidgets_List : public taPtrList<taiListTypeWidgets> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
-  void  El_Done_(void* it)      { delete (taiMemberWidgets*)it; } //
+  void  El_Done_(void* it)      { delete (taiListTypeWidgets*)it; } //
 
 public:
-  ~taiMemberWidgets_List()        { Reset(); } //
+  ~taiListTypeWidgets_List()        { Reset(); } //
 };
 
-#endif // taiMemberWidgets_List_h
+#endif // taiListTypeWidgets_List_h

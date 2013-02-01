@@ -992,10 +992,10 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiEditorOfSArg.h
   taiEditorOfTypeItem.h
 
-  taiMemberWidgets.h
-  taiMemberWidgets_List.h
-  taiTypeWidgets.h
-  taiTypeWidgets_List.h
+  taiListMemberWidgets.h
+  taiListMemberWidgets_List.h
+  taiListTypeWidgets.h
+  taiListTypeWidgets_List.h
 
   taiWidgetColor.h
   taiWidgetToggle.h
@@ -1974,10 +1974,10 @@ set(ta_SRCS_NOMAKETA
   taTypeSpaceTreeDataNode.cpp
   iClassBrowseViewer.cpp
 
-  taiMemberWidgets.cpp
-  taiMemberWidgets_List.cpp
-  taiTypeWidgets.cpp
-  taiTypeWidgets_List.cpp
+  taiListMemberWidgets.cpp
+  taiListMemberWidgets_List.cpp
+  taiListTypeWidgets.cpp
+  taiListTypeWidgets_List.cpp
 
   iProgramEditor.cpp
   iProgramViewScriptPanel.cpp

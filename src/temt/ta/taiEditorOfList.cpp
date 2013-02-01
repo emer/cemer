@@ -74,7 +74,7 @@ void taiEditorOfList::Constr_ElData() {
     taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new taiMemberWidgets(tmp_td, tmp_lf));
+    lst_data_el.Add(new taiListMemberWidgets(tmp_td, tmp_lf));
     // add to the unique list of all showable members
     for (int i = 0; i < tmp_td->members.size; ++i) {
       MemberDef* md = tmp_td->members.FastEl(i);
@@ -87,7 +87,7 @@ void taiEditorOfList::Constr_ElData() {
 
 void taiEditorOfList::Constr_ListData() {
   for (int lf = 0; lf < lst_data_el.size; ++lf) {
-    taiMemberWidgets* lf_el = lst_data_el.FastEl(lf);
+    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
     String nm = String("[") + String(lf) + "]: (" + lf_el->typ->name + ")";
     AddMultiColName(lf, nm, String(""));
 
@@ -135,7 +135,7 @@ void taiEditorOfList::GetValue_Membs() {
   GetValue_Membs_def();
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
-    taiMemberWidgets* lf_el = lst_data_el.FastEl(lf);
+    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
     GetValue_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
@@ -174,7 +174,7 @@ void taiEditorOfList::GetImage_Membs() {
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-    taiMemberWidgets* lf_el = lst_data_el.FastEl(lf);
+    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
     GetImage_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
   }
 }

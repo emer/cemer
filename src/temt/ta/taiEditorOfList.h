@@ -20,7 +20,7 @@
 #include <taiEditorWidgetsMulti>
 
 // member includes:
-#include <taiMemberWidgets_List>
+#include <taiListMemberWidgets_List>
 #include <String_PArray>
 
 
@@ -30,7 +30,7 @@ class TA_API taiEditorOfList : public taiEditorWidgetsMulti {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditorWidgetsMulti)
 public:
-  taiMemberWidgets_List    lst_data_el;    // list of data elements
+  taiListMemberWidgets_List    lst_data_el;    // list of data elements
   taList_impl*               cur_lst;
 //  MemberSpace         lst_membs;      // list of members
   String_PArray         lst_membs; // list of members, by name

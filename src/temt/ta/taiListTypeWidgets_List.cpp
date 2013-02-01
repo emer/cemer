@@ -13,14 +13,5 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiMemberWidgets.h"
-
-
-taiMemberWidgets::taiMemberWidgets(TypeDef* tp, taBase* base) {
-  typ = tp; cur_base = base;
-}
-
-taiMemberWidgets::~taiMemberWidgets() {
-  data_el.Reset();
-}
+#include "taiListTypeWidgets_List.h"
 

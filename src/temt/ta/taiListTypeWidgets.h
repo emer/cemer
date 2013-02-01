@@ -13,5 +13,28 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTypeWidgets_List.h"
+#ifndef taiListTypeWidgets_h
+#define taiListTypeWidgets_h 1
 
+// parent includes:
+#include "ta_def.h"
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+class TypeDef;
+class taBase;
+class taiWidget;
+
+class TA_API taiListTypeWidgets {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
+public:
+  TypeDef*      typ;
+  taBase*       cur_base;
+  taiWidget*      data_el;        // data element provided by the typ->it
+
+  taiListTypeWidgets(TypeDef* tp, taBase* base, taiWidget* data_el = NULL);
+  virtual ~taiListTypeWidgets();
+};
+
+#endif // taiListTypeWidgets_h
