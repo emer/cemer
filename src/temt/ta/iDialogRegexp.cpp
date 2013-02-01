@@ -17,7 +17,7 @@
 #include <iDialogRegexpPopulator>
 #include <iTableView>
 #include <CellRange>
-#include <taiRegexpField>
+#include <taiWidgetFieldRegexp>
 #include <iLineEdit>
 
 #include <taMisc>
@@ -39,7 +39,7 @@
 
 const QString iDialogRegexp::DOT_STAR(".*");
 
-iDialogRegexp::iDialogRegexp(taiRegexpField* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only,
+iDialogRegexp::iDialogRegexp(taiWidgetFieldRegexp* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only,
                              bool editor_mode)
   : inherited()
   , m_field(regexp_field)

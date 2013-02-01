@@ -24,14 +24,14 @@
 
 // declare all other types mentioned but not required to include:
 class NetView; //
-class ColorScaleBar; //
+class iColorScaleBar; //
 class taiWidgetField; //
 class taiWidgetComboBox; //
 class taiWidgetGroupElChooser; //
 class iTreeView; //
 class iTreeViewItem; //
 class iMethodButtonMgr; //
-class taiRegexpField; //
+class taiWidgetFieldRegexp; //
 class BaseSpec; //
 class QHBoxLayout; // 
 class QCheckBox; //
@@ -103,13 +103,13 @@ public:
   QLabel*                   lblWtPrjnLay;
   taiWidgetGroupElChooser*        gelWtPrjnLay;
 
-  QHBoxLayout*           layColorBar;
+  QHBoxLayout*           layiColorBar;
   QCheckBox*                chkSnapBord;
   QLabel*                   lblSnapBordWdth;
   taiWidgetField*                 fldSnapBordWdth;
   QLabel*                   lblUnitSpacing;
   taiWidgetField*                 fldUnitSpacing;
-  ColorScaleBar*           cbar;              // colorbar
+  iColorScaleBar*           cbar;              // colorbar
   QPushButton*             butSetColor;
 
   QHBoxLayout*           layHistory;

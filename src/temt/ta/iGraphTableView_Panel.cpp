@@ -16,9 +16,9 @@
 #include "iGraphTableView_Panel.h"
 #include <GraphTableView>
 #include <GraphColView>
-#include <HColorScaleBar>
+#include <iHColorScaleBar>
 #include <taiWidgetComboBox>
-#include <taiWidgetIncrField>
+#include <taiWidgetFieldIncr>
 #include <taiWidgetField>
 #include <taiWidgetListElChooser>
 #include <taiWidgetPoly>
@@ -97,7 +97,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
+  fldRows = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
@@ -283,7 +283,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   // second row: color bar + button
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
-  cbar = new HColorScaleBar(&tlv->colorscale, ColorScaleBar::RANGE, true, true, widg);
+  cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space

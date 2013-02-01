@@ -17,8 +17,8 @@
 #include <GridTableView>
 #include <taiWidgetField>
 #include <iLineEdit>
-#include <taiWidgetIncrField>
-#include <HColorScaleBar>
+#include <taiWidgetFieldIncr>
+#include <iHColorScaleBar>
 #include <BuiltinTypeDefs>
 
 #include <taMisc>
@@ -94,13 +94,13 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
+  fldRows = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
   lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
   layVals->addWidget(lblCols);
-  fldCols = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
+  fldCols = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layVals->addWidget(fldCols->GetRep());
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
@@ -170,7 +170,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layColorScale->addWidget(chkAutoScale);
   layColorScale->addSpacing(taiM->hsep_c);
 
-  cbar = new HColorScaleBar(&tlv->colorscale, ColorScaleBar::RANGE, true, true, widg);
+  cbar = new iHColorScaleBar(&tlv->colorscale, iColorScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space

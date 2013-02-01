@@ -20,7 +20,7 @@
 #include "ta_def.h"
 
 #ifndef TA_OS_WIN
-#include <Interceptor>
+#include <iInterceptor>
 #endif
 
 #include <QStringList>
@@ -38,7 +38,7 @@ Q_OBJECT
 INHERITED(QTextEdit)
 public:
   //constructor
-  iConsole(QWidget *parent = NULL, const char *name = NULL, bool initInterceptor = true);
+  iConsole(QWidget *parent = NULL, const char *name = NULL, bool initiInterceptor = true);
   // set the prompt of the console
   virtual void setPrompt(QString prompt, bool display = true);
   // executes the command and displays back its result
@@ -149,8 +149,8 @@ protected:
   QFile logfile;    // log std out/err msgs to this file if open
 
 #ifndef TA_OS_WIN
-  Interceptor *stdoutInterceptor; // Stdout interceptor
-  Interceptor *stderrInterceptor; // Stderr interceptor
+  iInterceptor *stdoutiInterceptor; // Stdout interceptor
+  iInterceptor *stderriInterceptor; // Stderr interceptor
 #endif
 
   // Redefined virtual slots

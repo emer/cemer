@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taRootBase.h"
-#include <taRootBaseAdapter>
+#include <taRootBase_QObj>
 #include <taFiler>
 #include <taPlugin>
 #include <taPluginInst>
@@ -85,7 +85,7 @@ int taRootBase::console_options;
 ContextFlag taRootBase::in_init;
 
 // note: not static class to avoid need qpointer in header
-QPointer<taRootBaseAdapter> root_adapter;
+QPointer<taRootBase_QObj> root_adapter;
 
 taRootBase* taRootBase::instance() {
   if (!tabMisc::root) {
@@ -1857,7 +1857,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) 
 #endif
 
   // just create the adapter obj, whether needed or not
-  root_adapter = new taRootBaseAdapter;
+  root_adapter = new taRootBase_QObj;
   cssMisc::prompt = taMisc::app_name; // the same
   if (taMisc::app_prefs_key.empty())
     taMisc::app_prefs_key = taMisc::app_name;

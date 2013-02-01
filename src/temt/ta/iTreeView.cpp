@@ -22,7 +22,7 @@
 #include <taiSigLink>
 #include <taiWidgetTypeDefChooser>
 #include <taProject>
-#include <taiClipData>
+#include <iClipData>
 #include <taiObjectMimeFactory>
 #include <iBrowseHistory>
 #include <iVec2i>
@@ -505,7 +505,7 @@ QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
 // #ifdef DEBUG
 //     taMisc::Info("get mime data 1 item:", tvi->GetColText(0));
 // #endif
-    return tvi->GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
+    return tvi->GetClipDataSingle(iClipData::EA_SRC_OPS, false);
   } else { // multi case
     ISelectable_PtrList list;
     FillTypedList(items, list);
@@ -513,7 +513,7 @@ QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
 // #ifdef DEBUG
 //     taMisc::Info("get mime data multi item");
 // #endif
-    return list.FastEl(0)->GetClipData(list, taiClipData::EA_SRC_OPS, false);
+    return list.FastEl(0)->GetClipData(list, iClipData::EA_SRC_OPS, false);
   }
 }
 
@@ -591,8 +591,8 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
         if (ISelectableHost *host = si->host()) {
           int ea = 0;
           host->EditActionsEnabled(ea);
-          if (ea & taiClipData::EA_DELETE) {
-            host->EditAction(taiClipData::EA_DELETE);
+          if (ea & iClipData::EA_DELETE) {
+            host->EditAction(iClipData::EA_DELETE);
             //WARNING: we may be deleted at this point!!!
           }
         }

@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 class QObject; // 
-class taGuiActionHelper; // #IGNORE
+class taGuiAction_QObj; // #IGNORE
 
 TypeDef_Of(taGuiAction);
 
@@ -51,7 +51,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(taGuiAction);
 protected:
-  taGuiActionHelper*    m_helper;
+  taGuiAction_QObj*    m_helper;
 
 //   override void              UpdateAfterEdit_impl();
 private:

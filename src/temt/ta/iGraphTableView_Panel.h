@@ -23,8 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class taiWidgetField; //
-class taiWidgetIncrField; //
-class ColorScaleBar; //
+class taiWidgetFieldIncr; //
+class iColorScaleBar; //
 class taiWidgetListElChooser; //
 class taiWidgetPoly; //
 class iCheckBox; //
@@ -57,7 +57,7 @@ public:
 
   QHBoxLayout*            layVals;
   QLabel*                   lblRows;
-  taiWidgetIncrField*             fldRows; // number of rows to display
+  taiWidgetFieldIncr*             fldRows; // number of rows to display
   QLabel*                   lblLineWidth;
   taiWidgetField*                 fldLineWidth;
   QLabel*                   lblPointSpacing;
@@ -109,7 +109,7 @@ public:
   taiWidgetField*                 fldThresh;
 
   QHBoxLayout*            layColorScale;
-  ColorScaleBar*            cbar;             // colorbar
+  iColorScaleBar*            cbar;             // colorbar
   QPushButton*              butSetColor;
 
   QHBoxLayout*            layRAxis;

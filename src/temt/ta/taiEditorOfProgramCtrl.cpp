@@ -22,7 +22,7 @@
 #include <iLabel>
 #include <taiWidgetField>
 #include <taiWidgetComboBox>
-#include <taiWidgetIncrField>
+#include <taiWidgetFieldIncr>
 #include <taiMember>
 #include <taiWidgetBitBox>
 #include <taiMemberOfDynEnum>
@@ -160,7 +160,7 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
         }
       }
       else if (pv->var_type == ProgVar::T_Int) {
-        taiWidgetIncrField* int_rep = new taiWidgetIncrField(NULL, this, NULL, body, flags_);
+        taiWidgetFieldIncr* int_rep = new taiWidgetFieldIncr(NULL, this, NULL, body, flags_);
         int_rep->setMinimum(INT_MIN);
         mb_dat = int_rep;
       }
@@ -309,8 +309,8 @@ void taiEditorOfProgramCtrl::GetValue_Membs_def() {
         }
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
-        taiWidgetIncrField* tmb_dat = dynamic_cast<taiWidgetIncrField*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiWidgetIncrField, not: ",
+        taiWidgetFieldIncr* tmb_dat = dynamic_cast<taiWidgetFieldIncr*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiWidgetFieldIncr, not: ",
           mb_dat->metaObject()->className())) continue;
         pv->int_val = tmb_dat->GetValue();
       }
@@ -401,8 +401,8 @@ void taiEditorOfProgramCtrl::GetImage_Membs()
         }
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
-        taiWidgetIncrField* tmb_dat = dynamic_cast<taiWidgetIncrField*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiWidgetIncrField, not: ",
+        taiWidgetFieldIncr* tmb_dat = dynamic_cast<taiWidgetFieldIncr*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiWidgetFieldIncr, not: ",
           mb_dat->metaObject()->className())) continue;
         tmb_dat->GetImage(pv->int_val);
       }

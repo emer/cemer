@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class UserDataDelegate; //
+class taiWidgetDelegateUserData; //
 class QTableWidget; //
 class QTableWidgetItem; //
 
@@ -50,7 +50,7 @@ public: // ISigLinkClient i/f
 
 protected:
   int                   sel_item_row;
-  UserDataDelegate*     udd;
+  taiWidgetDelegateUserData*     udd;
 
   UserDataItemBase*     GetUserDataItem(int row);
 

@@ -37,7 +37,7 @@
 class taiEditor; //
 class iDialogEditor; //
 class taBase;      // 
-class HiLightButton; //
+class iHiLightButton; //
 class QVBoxLayout; // 
 class QScrollArea; //
 class QHBoxLayout; // 
@@ -100,11 +100,11 @@ public:
   QWidget*      body;           // parent for the body items
   QWidget*      widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
   QHBoxLayout*  layButtons;
-  HiLightButton*  okbut; // is HilightButton for the special mouse button handling
-  HiLightButton*  canbut;// is HilightButton for the special mouse button handling
-  HiLightButton*  apply_but;    // only use for dialogs that wait around
-  HiLightButton*  revert_but;
-  HiLightButton*  help_but;     // help button
+  iHiLightButton*  okbut; // is HilightButton for the special mouse button handling
+  iHiLightButton*  canbut;// is HilightButton for the special mouse button handling
+  iHiLightButton*  apply_but;    // only use for dialogs that wait around
+  iHiLightButton*  revert_but;
+  iHiLightButton*  help_but;     // help button
 
   iColor                bgColor() const {return bg_color;}
   virtual void          setBgColor(const iColor& new_bg);

@@ -23,7 +23,7 @@
 #include <TemtClient_List>
 
 // declare all other types mentioned but not required to include:
-class TemtServerAdapter; // #IGNORE
+class TemtServer_QObj; // #IGNORE
 class QTcpServer;        // #IGNORE
 
 
@@ -37,7 +37,7 @@ public:
   bool			open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
   TemtClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
-  inline TemtServerAdapter* adapter() {return (TemtServerAdapter*)taOABase::adapter;} // #IGNORE
+  inline TemtServer_QObj* adapter() {return (TemtServer_QObj*)taOABase::adapter;} // #IGNORE
   
   bool			isOpen() const {return open;}
 

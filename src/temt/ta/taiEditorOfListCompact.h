@@ -20,7 +20,7 @@
 #include <taiEditorWidgetsMulti>
 
 // member includes:
-#include <gpiCompactList_ElDataList>
+#include <taiTypeWidgets_List>
 
 // declare all other types mentioned but not required to include:
 
@@ -29,7 +29,7 @@ class TA_API taiEditorOfListCompact : public taiEditorWidgetsMulti {
 INHERITED(taiEditorWidgetsMulti)
 public:
   taList_impl*               cur_lst;
-  gpiCompactList_ElDataList     lst_data_el;    // list of (inline) data elements
+  taiTypeWidgets_List     lst_data_el;    // list of (inline) data elements
 
   taiEditorOfListCompact(void* base, TypeDef* typ_, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);

@@ -25,7 +25,7 @@
 class CellRange; //
 class DataTable; //
 class taMatrix; //
-class taiClipData; //
+class iClipData; //
 class QMimeData; //
 
 /*
@@ -82,7 +82,7 @@ public:
     const CellRange& selected, int ea) const;
     // src edit actions; note: this does the requery to insure it is still legal
 
-  taiClipData*          Mat_GetClipData(taMatrix* mat,
+  iClipData*          Mat_GetClipData(taMatrix* mat,
     const CellRange& sel, int src_edit_action, bool for_drag = false) const;
 
   void                  Mat_Clear(taMatrix* mat,
@@ -102,7 +102,7 @@ public:
     const CellRange& selected, int ea) const;
     // src edit actions; note: this does the requery to insure it is still legal
 
-  taiClipData*          Table_GetClipData(DataTable* tab,
+  iClipData*          Table_GetClipData(DataTable* tab,
     const CellRange& sel, int src_edit_action, bool for_drag = false) const;
 
   void                  Table_Clear(DataTable* tab,

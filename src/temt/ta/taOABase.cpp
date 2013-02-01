@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taOABase.h"
-#include <taBaseAdapter>
+#include <taBase_QObj>
 
 void taOABase::CutLinks() {
 #ifdef TA_GUI
@@ -23,7 +23,7 @@ void taOABase::CutLinks() {
   inherited::CutLinks();
 }
 
-void taOABase::SetAdapter(taBaseAdapter* adapter_) {
+void taOABase::SetAdapter(taBase_QObj* adapter_) {
   if (adapter == adapter_) return;
   if (adapter_) { // setting adapter
     if (adapter) { // chaining

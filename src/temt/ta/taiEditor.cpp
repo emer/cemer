@@ -15,7 +15,7 @@
 
 #include "taiEditor.h"
 #include <iDialogEditor>
-#include <HiLightButton>
+#include <iHiLightButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -253,7 +253,7 @@ void taiEditor::Constr_Buttons() {
   QWidget* par = widButtons;
 
   if(!isDialog()) {
-    help_but = new HiLightButton("&Help", par);
+    help_but = new iHiLightButton("&Help", par);
     layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
     connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
   }
@@ -265,9 +265,9 @@ void taiEditor::Constr_Buttons() {
     }
     else {
       if (read_only) {
-        okbut = new HiLightButton("&Close", par); //note: ok to reuse C as accelerator, because effect is same as Cancel
+        okbut = new iHiLightButton("&Close", par); //note: ok to reuse C as accelerator, because effect is same as Cancel
       } else {
-        okbut = new HiLightButton("&Ok", par);
+        okbut = new iHiLightButton("&Ok", par);
       }
       layButtons->addWidget(okbut, 0, (Qt::AlignVCenter));
       connect(okbut, SIGNAL(clicked()),
@@ -277,7 +277,7 @@ void taiEditor::Constr_Buttons() {
       canbut = NULL;
     }
     else {
-      canbut = new HiLightButton("&Cancel", par);
+      canbut = new iHiLightButton("&Cancel", par);
       layButtons->addWidget(canbut, 0, (Qt::AlignVCenter));
       connect(canbut, SIGNAL(clicked()),
           this, SLOT(Cancel()) );
@@ -291,11 +291,11 @@ void taiEditor::Constr_Buttons() {
      // dont' put apply/revert buttons on a readonly dialog!
     if (!read_only) {
       layButtons->addSpacing(20);
-      apply_but = new HiLightButton("&Apply", par);
+      apply_but = new iHiLightButton("&Apply", par);
       layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
       connect(apply_but, SIGNAL(clicked()),
           this, SLOT(Apply()) );
-      revert_but = new HiLightButton("&Revert", par);
+      revert_but = new iHiLightButton("&Revert", par);
       layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
       connect(revert_but, SIGNAL(clicked()),
           this, SLOT(Revert()) );

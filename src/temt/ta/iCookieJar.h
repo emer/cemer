@@ -42,7 +42,7 @@ private:
   iNetworkCookieJarPrivate *d;
 };
 
-class AutoSaver;
+class iAutoSaver;
 class iCookieJar : public iNetworkCookieJar {
   friend class CookieModel;
   Q_OBJECT
@@ -101,7 +101,7 @@ private:
   void purgeOldCookies();
   void load();
   bool m_loaded;
-  AutoSaver *m_saveTimer;
+  iAutoSaver *m_saveTimer;
 
   AcceptPolicy m_acceptCookies;
   KeepPolicy m_keepCookies;

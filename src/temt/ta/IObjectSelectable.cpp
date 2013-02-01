@@ -15,12 +15,12 @@
 
 #include "IObjectSelectable.h"
 #include <taiObjectMimeFactory>
-#include <taiClipData>
+#include <iClipData>
 #include <taBase_PtrList>
 #include <ISelectable_PtrList>
 #include <taiSigLink>
 
-taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
+iClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
   bool for_drag, GuiContext sh_typ) const
 {
   // if it is taBase, we can make an object
@@ -28,15 +28,15 @@ taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
   if (!obj) return NULL;
 
   taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-  taiClipData* rval = new taiClipData(src_edit_action);
+  iClipData* rval = new iClipData(src_edit_action);
   mf->AddSingleObject(rval, obj);
   return rval;
 }
 
-taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items,
+iClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
-  taiClipData* rval = NULL;
+  iClipData* rval = NULL;
   //note: although a bit sleazy, we just do this by optimistically
   // assuming all are taBase (which realistically, they are)
   taBase_PtrList* bl = new taBase_PtrList;
@@ -52,7 +52,7 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
   }
   if (do_it) {
     taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-    rval = new taiClipData(src_edit_action);
+    rval = new iClipData(src_edit_action);
     mf->AddMultiObjects(rval, bl);
   }
   delete bl;
@@ -65,7 +65,7 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
   taiSigLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
   taiSigLink* link = this->effLink(sh_typ);
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   // we have to individually disambiguate the allowed, because we have
   // to make sure the right list or group guy handles things like PasteInto, etc.
   int allowed = 0;
@@ -79,14 +79,14 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
 //no      rval = pdl->ChildEditAction_impl(par_md(), link, ms, eax);
       rval = pdl->ChildEditAction_impl(NULL, link, ms, eax);
   }
-  if (link && (rval == taiClipData::ER_IGNORED)) {
+  if (link && (rval == iClipData::ER_IGNORED)) {
     allowed = forbidden = 0;
     link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden);
     eax = ea & (allowed & (~forbidden));
     if (eax)
       rval = link->ChildEditAction_impl(this->md(), NULL, ms, eax);
 
-    if (rval == taiClipData::ER_IGNORED) {
+    if (rval == iClipData::ER_IGNORED) {
       allowed = forbidden = 0;
       link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
       eax = ea & (allowed & (~forbidden));
@@ -102,14 +102,14 @@ int IObjectSelectable::EditActionS_impl_(int ea, GuiContext sh_typ) {
   taiSigLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
   taiSigLink* link = this->effLink(sh_typ);
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   if (pdl) {
 //no    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
     rval = pdl->ChildEditAction_impl(NULL, link, NULL, ea);
   }
   if (link) {
     //note: item-as-parent does not apply to src context, so we omit it
-    if (rval == taiClipData::ER_IGNORED)
+    if (rval == iClipData::ER_IGNORED)
       rval = link->EditAction_impl(NULL, ea);
   }
   return rval;

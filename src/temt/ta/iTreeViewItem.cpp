@@ -17,7 +17,7 @@
 #include <taiSigLink>
 #include <ViewColor_List>
 #include <iColor>
-#include <taiClipData>
+#include <iClipData>
 #include <taiWidgetMenu>
 
 #include <SigLinkSignal>
@@ -84,7 +84,7 @@ bool iTreeViewItem::canAcceptDrop(const QMimeData* mime) const {
   // would be done all the time
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = QueryEditActions_(ms);
-  bool rval = (ea & taiClipData::EA_DROP_OPS);
+  bool rval = (ea & iClipData::EA_DROP_OPS);
   delete ms;
   return rval;*/
 }
@@ -226,7 +226,7 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
   GuiContext sh_typ) const
 {
   if (dn_flags & DNF_IS_MEMBER) {
-    forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+    forbidden |= (iClipData::EA_CUT | iClipData::EA_DELETE);
   }
   IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
 }
@@ -273,16 +273,16 @@ ISelectableHost* iTreeViewItem::host() const {
   return (tv) ? (ISelectableHost*)tv : NULL;
 }
 
-taiClipData* iTreeViewItem::GetClipDataSingle(int src_edit_action, bool for_drag,
+iClipData* iTreeViewItem::GetClipDataSingle(int src_edit_action, bool for_drag,
                                               GuiContext sh_typ) const {
-  taiClipData* rval = IObjectSelectable::GetClipDataSingle(src_edit_action, for_drag, sh_typ);
+  iClipData* rval = IObjectSelectable::GetClipDataSingle(src_edit_action, for_drag, sh_typ);
 //   treeView()->clearSelection();
   return rval;
 }
 
-taiClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
+iClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
                      int src_edit_action, bool for_drag, GuiContext sh_typ) const {
-  taiClipData* rval = IObjectSelectable::GetClipDataMulti(sel_items, src_edit_action, for_drag, sh_typ);
+  iClipData* rval = IObjectSelectable::GetClipDataMulti(sel_items, src_edit_action, for_drag, sh_typ);
 //   treeView()->clearSelection();
   return rval;
 }

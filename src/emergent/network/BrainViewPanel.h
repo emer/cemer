@@ -24,9 +24,9 @@
 #include <voidptr_Matrix>
 
 // declare all other types mentioned but not required to include:
-class ColorScaleBar;             // 
+class iColorScaleBar;             // 
 class taiWidgetField;                  // 
-class taiRegexpField;            // 
+class taiWidgetFieldRegexp;            // 
 class BrainAtlasRegexpPopulator; // 
 class iMethodButtonMgr;          // 
 class BrainView; //
@@ -61,8 +61,8 @@ public:
   QLabel*               lblUnitTrans;
   taiWidgetField*             fldUnitTrans;
 
-  taiRegexpField*       fldBrainColorRegexp;
-  taiRegexpField*       fldBrainAtlasRegexp;
+  taiWidgetFieldRegexp*       fldBrainColorRegexp;
+  taiWidgetFieldRegexp*       fldBrainAtlasRegexp;
   BrainAtlasRegexpPopulator* atlas_regexp_pop;
   QPushButton*          butEditAtlas;
 
@@ -71,8 +71,8 @@ public:
   QCheckBox*            chkAutoScale;       // autoscale ck_box
   QPushButton*          butScaleDefault;    // revert to default
 
-  QHBoxLayout*          layColorBar;
-  ColorScaleBar*        cbar;         // colorbar
+  QHBoxLayout*          layiColorBar;
+  iColorScaleBar*        cbar;         // colorbar
   QPushButton*          butSetColor;
 
   QTabWidget*           tw;

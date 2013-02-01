@@ -41,7 +41,7 @@ class iStripeWidget; //
 class iMethodButtonMgr; //
 class QHBoxLayout; //
 class QToolBar; //
-class HiLightButton; //
+class iHiLightButton; //
 class iTreeView; //
 class iTreeSearch; //
 class iMainWindowViewer; //
@@ -80,9 +80,9 @@ public:
   iMethodButtonMgr*         meth_but_mgr; // note: not a widget
   QHBoxLayout*            layButtons;
   QToolBar*                 tb; // for the history buttons
-  HiLightButton*            btnHelp;
-  HiLightButton*            btnApply;
-  HiLightButton*            btnRevert;
+  iHiLightButton*            btnHelp;
+  iHiLightButton*            btnApply;
+  iHiLightButton*            btnRevert;
   iTreeView*              items;
   iTreeSearch*            search;
 #ifndef __MAKETA__

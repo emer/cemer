@@ -19,7 +19,7 @@
 #include <taiTabularDataMimeFactory>
 #include <CellRange>
 #include <taiMimeSource>
-#include <taiClipData>
+#include <iClipData>
 
 #include <taMisc>
 #include <taiMisc>
@@ -43,7 +43,7 @@ void iMatrixTableView::EditAction(int ea) {
   taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
   CellRange sel;
   GetSel(sel);
-  if (ea & taiClipData::EA_SRC_OPS) {
+  if (ea & iClipData::EA_SRC_OPS) {
     fact->Mat_EditActionS(mat, sel, ea);
   } else {// dest op
     taiMimeSource* ms = taiMimeSource::NewFromClipboard();

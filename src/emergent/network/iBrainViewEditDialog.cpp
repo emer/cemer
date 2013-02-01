@@ -28,7 +28,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 
-iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
+iBrainViewEditDialog::iBrainViewEditDialog(taiWidgetFieldRegexp* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
   : inherited(regexp_field, field_name, re_populator, fieldOwner, read_only, editor_mode)
 {
   AddButtons();

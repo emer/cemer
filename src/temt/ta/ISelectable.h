@@ -29,7 +29,7 @@ class ISelectableHost; //
 class taBase; // 
 class TypeDef; // 
 class ISelectable_PtrList; // 
-class taiClipData; //
+class iClipData; //
 class taiWidgetActions; //
 class taiMimeSource; //
 
@@ -95,13 +95,13 @@ public: // Interface Properties and Methods
   virtual void          FillContextMenu(ISelectable_PtrList& sel_items,
     taiWidgetActions* menu, GuiContext sh_typ = GC_DEFAULT);
    // #IGNORE for multi or single (normally implement the _impl)
-  virtual taiClipData*  GetClipData(const ISelectable_PtrList& sel_items,
+  virtual iClipData*  GetClipData(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
   // #IGNORE works for single or multi; normally not overridden
-  virtual taiClipData*  GetClipDataSingle(int src_edit_action,
+  virtual iClipData*  GetClipDataSingle(int src_edit_action,
     bool for_drag, GuiContext sh_typ = GC_DEFAULT) const = 0;
   // #IGNORE 
-  virtual taiClipData*  GetClipDataMulti(const ISelectable_PtrList& sel_items,
+  virtual iClipData*  GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const {return NULL;}// #IGNORE only needed if multi is handled
   virtual int           QueryEditActions_(taiMimeSource* ms,
     GuiContext sh_typ = GC_DEFAULT) const; // typically called on single item for canAcceptDrop

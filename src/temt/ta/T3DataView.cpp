@@ -17,7 +17,7 @@
 #include <T3DataViewFrame>
 #include <iT3DataViewFrame>
 #include <T3Node>
-#include <taiClipData>
+#include <iClipData>
 #include <T3ExaminerViewer>
 
 #include <SigLinkSignal>
@@ -241,7 +241,7 @@ void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden,
   GuiContext sh_typ) const
 {
   if ((sh_typ == GC_DUAL_DEF_DATA) && (flags & DNF_IS_MEMBER)) {
-    forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+    forbidden |= (iClipData::EA_CUT | iClipData::EA_DELETE);
   }
   IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
 }

@@ -754,7 +754,7 @@ void iNetworkCookieJar::setSecondLevelDomains(const QStringList &secondLevelDoma
  **
  ****************************************************************************/
 
-#include <AutoSaver>
+#include <iAutoSaver>
 
 #include <QApplication>
 #include <QDesktopServices>
@@ -813,7 +813,7 @@ QT_END_NAMESPACE
 iCookieJar::iCookieJar(QObject *parent)
   : iNetworkCookieJar(parent)
   , m_loaded(false)
-  , m_saveTimer(new AutoSaver(this))
+  , m_saveTimer(new iAutoSaver(this))
   , m_acceptCookies(AcceptOnlyFromSitesNavigatedTo)
 {
 }

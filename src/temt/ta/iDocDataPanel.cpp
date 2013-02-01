@@ -356,7 +356,7 @@ int iDocDataPanel::GetEditActions() {
   int rval = 0;
   QTextCursor tc(txtText->textCursor());
   if (tc.hasSelection())
-    rval |= taiClipData::EA_COPY;
+    rval |= iClipData::EA_COPY;
 //TODO: more, if not readonly
   return rval;
 } */

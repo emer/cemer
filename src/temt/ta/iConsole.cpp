@@ -116,7 +116,7 @@ void iConsole::onQuit() {
 }
 
 //iConsole constructor (init the QTextEdit & the attributes)
-iConsole::iConsole(QWidget *parent, const char *name, bool initInterceptor)
+iConsole::iConsole(QWidget *parent, const char *name, bool initiInterceptor)
   : QTextEdit(parent)
   , cmdColor(Qt::blue)
   , errColor(Qt::red)
@@ -124,22 +124,22 @@ iConsole::iConsole(QWidget *parent, const char *name, bool initInterceptor)
   , completionColor(Qt::green)
   , applicationIsQuitting(false)
 #ifndef TA_OS_WIN
-  , stdoutInterceptor(NULL), stderrInterceptor(NULL)
+  , stdoutiInterceptor(NULL), stderriInterceptor(NULL)
 #endif
 {
   //resets the console
   reset();
 
 #ifndef TA_OS_WIN
-  if(initInterceptor) {
+  if(initiInterceptor) {
     //Initialize the interceptors
-    stdoutInterceptor = new Interceptor(this);
-    stdoutInterceptor->initialize(1);
-    connect(stdoutInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
+    stdoutiInterceptor = new iInterceptor(this);
+    stdoutiInterceptor->initialize(1);
+    connect(stdoutiInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
 
-    stderrInterceptor = new Interceptor(this);
-    stderrInterceptor->initialize(2);
-    connect(stderrInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
+    stderriInterceptor = new iInterceptor(this);
+    stderriInterceptor->initialize(2);
+    connect(stderriInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
   }
 #endif
 }
@@ -159,13 +159,13 @@ void iConsole::flushOutput() {
 #ifndef TA_OS_WIN
   bool waiting = false;
   do {
-    if(stdoutInterceptor) {
+    if(stdoutiInterceptor) {
       setTextColor(outColor);
-      waiting = stdDisplay(stdoutInterceptor->textIStream());
+      waiting = stdDisplay(stdoutiInterceptor->textIStream());
     }
-    if(stderrInterceptor) {
+    if(stderriInterceptor) {
       setTextColor(errColor);
-      waiting = (stdDisplay(stderrInterceptor->textIStream()) || waiting);
+      waiting = (stdDisplay(stderriInterceptor->textIStream()) || waiting);
     }
     if(waiting) {
       QCoreApplication::processEvents();

@@ -15,7 +15,7 @@
 
 #include "taiWidgetText.h"
 #include <iLineEdit>
-#include <taiClipData>
+#include <iClipData>
 
 #include <taMisc>
 #include <taiMisc>
@@ -94,23 +94,23 @@ void taiWidgetText::setMinCharWidth(int num) {
 void taiWidgetText::this_GetEditActionsEnabled(int& ea) {
   if(!rep()) return;
   if (!readOnly())
-    ea |= taiClipData::EA_PASTE;
+    ea |= iClipData::EA_PASTE;
   if (rep()->hasSelectedText()) {
-    ea |= (taiClipData::EA_COPY);
+    ea |= (iClipData::EA_COPY);
     if (!readOnly())
-      ea |= (taiClipData::EA_CUT |  taiClipData::EA_DELETE);
+      ea |= (iClipData::EA_CUT |  iClipData::EA_DELETE);
   }
 }
 
 void taiWidgetText::this_EditAction(int ea) {
   if(!rep()) return;
-  if (ea & taiClipData::EA_CUT) {
+  if (ea & iClipData::EA_CUT) {
     rep()->cut();
-  } else if (ea & taiClipData::EA_COPY) {
+  } else if (ea & iClipData::EA_COPY) {
     rep()->copy();
-  } else if (ea & taiClipData::EA_PASTE) {
+  } else if (ea & iClipData::EA_PASTE) {
     rep()->paste();
-  } else if (ea & taiClipData::EA_DELETE) {
+  } else if (ea & iClipData::EA_DELETE) {
     rep()->del(); //note: assumes we already qualified with hasSelectedText, otherwise it is a BS
   }
 }

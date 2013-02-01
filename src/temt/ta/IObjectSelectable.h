@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiClipData; // #IGNORE
+class iClipData; // #IGNORE
 class ISelectable_PtrList; // 
 
 
@@ -31,9 +31,9 @@ TypeDef_Of(IObjectSelectable);
 class TA_API IObjectSelectable: public ISelectable { // specialized for taBase object items
 INHERITED(ISelectable)
 public: // Interface Properties and Methods
-  override taiClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
+  override iClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
     GuiContext sh_typ = GC_DEFAULT) const;
-  override taiClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
+  override iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
 protected:
   override int          EditActionD_impl_(taiMimeSource* ms, int ea,

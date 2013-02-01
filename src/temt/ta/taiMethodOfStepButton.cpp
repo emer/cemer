@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodOfStepButton.h"
-#include <taiProgStepButton>
+#include <taiWidgetProgStepButton>
 #include <taiWidgetMethodMenu>
 
 
@@ -27,7 +27,7 @@ int taiMethodOfStepButton::BidForMethod(MethodDef* md, TypeDef* td) {
 }
 
 taiWidgetMethod* taiMethodOfStepButton::GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
-  taiProgStepButton* rval = new taiProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
+  taiWidgetProgStepButton* rval = new taiWidgetProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 

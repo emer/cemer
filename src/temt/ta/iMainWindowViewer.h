@@ -312,9 +312,9 @@ public slots:
 
 signals:
   void          EditAction(int ea);
-    // Clipboard server: param is one of the taiClipData editAction values
+    // Clipboard server: param is one of the iClipData editAction values
   void          GetEditActionsEnabled(int& ea);
-    // Clipboard server: param is one of the taiClipData EditAction values
+    // Clipboard server: param is one of the iClipData EditAction values
   void          SetActionsEnabled();
     // Clipboard server: enable/disable actions
 
@@ -357,7 +357,7 @@ protected:
   override bool         eventFilter(QObject *obj, QEvent *event);
   override void         changeEvent(QEvent* ev);
 
-  virtual void          emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
+  virtual void          emit_EditAction(int param); // #IGNORE param is one of the iClipData editAction values; desc can trap this and implement virtually, if desired
   virtual void          Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images
   virtual void          Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
   virtual void          SelectableHostNotifying_impl(ISelectableHost* src_host, int op);

@@ -17,7 +17,7 @@
 #include <DataTable>
 #include <DataTableModel>
 #include <taiTabularDataMimeFactory>
-#include <taiClipData>
+#include <iClipData>
 #include <CellRange>
 #include <taiMimeSource>
 #include <taProject>
@@ -77,7 +77,7 @@ void iDataTableView::EditAction(int ea) {
   gui_edit_op = true;
   taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
   CellRange sel(selectionModel()->selectedIndexes());
-  if (ea & taiClipData::EA_SRC_OPS) {
+  if (ea & iClipData::EA_SRC_OPS) {
     fact->Table_EditActionS(tab, sel, ea);
   } else {// dest op
     taiMimeSource* ms = taiMimeSource::NewFromClipboard();

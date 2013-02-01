@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taPluginBase_List.h"
-#include <taiClipData>
+#include <iClipData>
 
 
 taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
@@ -29,13 +29,13 @@ taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
 void taPluginBase_List::QueryEditActions_impl(const taiMimeSource* ms,
   int& allowed, int& forbidden)
 {
-  allowed = taiClipData::EA_COPY;
-  forbidden = ~taiClipData::EA_COPY;
+  allowed = iClipData::EA_COPY;
+  forbidden = ~iClipData::EA_COPY;
 }
 
 void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
     const taiMimeSource* ms, int& allowed, int& forbidden)
 {
-  allowed = taiClipData::EA_COPY;
-  forbidden = ~taiClipData::EA_COPY;
+  allowed = iClipData::EA_COPY;
+  forbidden = ~iClipData::EA_COPY;
 }

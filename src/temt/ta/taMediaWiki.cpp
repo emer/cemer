@@ -18,7 +18,7 @@
 #include <iNetworkAccessManager>
 #include <DataTable>
 #include <Program>
-#include <SynchronousNetRequest>
+#include <iSynchronousNetRequest>
 
 #include <taMisc>
 
@@ -87,7 +87,7 @@ String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
-  SynchronousNetRequest request;
+  iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
     // Find the <userinfo> tag and check for a non-zero ID.
     QXmlStreamReader reader(reply);
@@ -150,7 +150,7 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
 #endif
 
   // Make the network request, once per stage.
-  SynchronousNetRequest request;
+  iSynchronousNetRequest request;
   for (int stage = 0; stage < 2; ++stage) {
     if (QNetworkReply *reply = request.httpPost(url)) {
       // Find the <login> tag.
@@ -236,7 +236,7 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
 #endif
 
   // Make the network request.
-  SynchronousNetRequest request;
+  iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
     // Default the normalized name to the provided page name;
     // will be changed if normalization was performed by the server.
@@ -424,7 +424,7 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
 #endif
 
   // Make the network request.
-  SynchronousNetRequest request;
+  iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
     // Prepare the datatable.
     results->RemoveAllRows();

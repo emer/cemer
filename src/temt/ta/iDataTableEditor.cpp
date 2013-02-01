@@ -124,7 +124,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   DataTableModel* mod = dtm();
 
   if (mod) {
-//nn    tv->setItemDelegate(new DataTableDelegate(dt_));
+//nn    tv->setItemDelegate(new iDataTableDelegate(dt_));
     tvTable->setModel(mod);
     connect(mod, SIGNAL(layoutChanged()),
             this, SLOT(tvTable_layoutChanged()) );

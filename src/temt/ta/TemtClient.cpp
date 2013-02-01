@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "TemtClient.h"
-#include <TemtClientAdapter>
+#include <TemtClient_QObj>
 #include <MainWindowViewer>
 #include <ProgVar>
 #include <TemtServer>
@@ -31,8 +31,8 @@
 using namespace std;
 
 
-TemtClientAdapter* TemtClient::adapter() {
-  return (TemtClientAdapter*)taOABase::adapter;
+TemtClient_QObj* TemtClient::adapter() {
+  return (TemtClient_QObj*)taOABase::adapter;
 }
 
 String TemtClient::ReadQuotedString(const String& str, int& p, bool& err) {
@@ -129,7 +129,7 @@ String TemtClient::NextToken(const String& str, int& p, bool& err) {
 void TemtClient::Initialize() {
   state = CS_READY; // implicit in fact we were created
   server = NULL;
-  SetAdapter(new TemtClientAdapter(this));
+  SetAdapter(new TemtClient_QObj(this));
 }
 
 void TemtClient::Destroy() {

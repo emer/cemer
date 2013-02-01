@@ -19,7 +19,7 @@
 #include <iLabel>
 #include <iComboBox>
 #include <taiWidgetToggle>
-#include <taiWidgetIncrField>
+#include <taiWidgetFieldIncr>
 #include <taiWidgetField>
 #include <iCheckBox>
 #include <taiWidgetTokenChooser>
@@ -115,7 +115,7 @@ void taiWidgetVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(lbl);
   togVal = new taiWidgetToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
-  incVal = new taiWidgetIncrField(typ, host, this, NULL, mflags);
+  incVal = new taiWidgetFieldIncr(typ, host, this, NULL, mflags);
   incVal->setMinimum(INT_MIN); //note: must be int
   incVal->setMaximum(INT_MAX); //note: must be int
   stack->addWidget(incVal->rep());

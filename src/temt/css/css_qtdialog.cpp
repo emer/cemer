@@ -32,7 +32,7 @@
 #include <iDialogEditor>
 #include <taiArgTypeOfStream>
 #include <taiWidgetTokenChooser>
-#include <HiLightButton>
+#include <iHiLightButton>
 #include <taFiler>
 
 #include <QLabel>

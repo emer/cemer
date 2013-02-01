@@ -31,7 +31,7 @@ class EMERGENT_API iBrainViewEditDialog : public iDialogRegexp {
   INHERITED(iDialogRegexp)
 public:
   iBrainViewEditDialog(
-    taiRegexpField* regexp_field,
+    taiWidgetFieldRegexp* regexp_field,
     const String& field_name,
     iDialogRegexpPopulator *re_populator,
     const void *fieldOwner,

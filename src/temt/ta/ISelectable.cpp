@@ -16,8 +16,8 @@
 #include "ISelectable.h"
 #include <ISelectableHost>
 #include <taiMimeSource>
-#include <taiClipData>
-#include <SelectableHostHelper>
+#include <iClipData>
+#include <ISelectableHost_QObj>
 #include <taiWidgetMenu>
 #include <taiSigLink>
 #include <iMainWindowViewer>
@@ -61,19 +61,19 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   // only honor if user has chosen 1 and only 1 mod
   // and its shortcut ops is ambiguous and available
   if (key_mods == Qt::ShiftModifier) { // Move
-    if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2)
+    if ((ea & iClipData::EA_DROP_MOVE2) == iClipData::EA_DROP_MOVE2)
       goto show_menu;
-    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_MOVE2); // is only one or the other
+    host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_MOVE2); // is only one or the other
     goto exit;
   } else if (key_mods == Qt::ControlModifier) { // Copy
-    if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2)
+    if ((ea & iClipData::EA_DROP_COPY2) == iClipData::EA_DROP_COPY2)
       goto show_menu;
-    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_COPY2); // is only one or the other
+    host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_COPY2); // is only one or the other
     goto exit;
   } else if (key_mods == Qt::AltModifier) { // Link
-    if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2)
+    if ((ea & iClipData::EA_DROP_LINK2) == iClipData::EA_DROP_LINK2)
       goto show_menu;
-    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_LINK2); // is only one or the other
+    host_->helperObj()->DropEditAction(ea & iClipData::EA_DROP_LINK2); // is only one or the other
     goto exit;
   }
 
@@ -94,76 +94,76 @@ show_menu:
 //  typically for a group) because the situation is ambiguous, and
 // the result is not what might be expected, since it gets put into
 // the next item, not as a child of the previous item
-  if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) {
+  if ((ea & iClipData::EA_DROP_MOVE2) == iClipData::EA_DROP_MOVE2) {
     act = menu->AddItem("Move Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_MOVE, QKeySequence());
+      iClipData::EA_DROP_MOVE, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
       act = menu->AddItem("Move Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
+        iClipData::EA_DROP_MOVE_INTO, QKeySequence());
     }
   } else {
-    if (ea & taiClipData::EA_DROP_MOVE)
+    if (ea & iClipData::EA_DROP_MOVE)
       act = menu->AddItem("&Move Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
-    else if (ea & taiClipData::EA_DROP_MOVE_INTO)
+        iClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
+    else if (ea & iClipData::EA_DROP_MOVE_INTO)
       act = menu->AddItem("&Move "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
+        iClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
   }
 
   act = NULL;
-  if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) {
+  if ((ea & iClipData::EA_DROP_COPY2) == iClipData::EA_DROP_COPY2) {
     act = menu->AddItem("Copy Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_COPY, QKeySequence());
+      iClipData::EA_DROP_COPY, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
       act = menu->AddItem("Copy Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_COPY_INTO, QKeySequence());
+        iClipData::EA_DROP_COPY_INTO, QKeySequence());
     }
   } else {
-    if (ea & taiClipData::EA_DROP_COPY)
+    if (ea & iClipData::EA_DROP_COPY)
       act = menu->AddItem("&Copy Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
-    else if (ea & taiClipData::EA_DROP_COPY_INTO)
+        iClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
+    else if (ea & iClipData::EA_DROP_COPY_INTO)
       act = menu->AddItem("&Copy "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
+        iClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
   }
 
   act = NULL;
   // Assign only applicable for "On" drops
   if ((where == iTreeWidgetItem::WI_ON) &&
-     (ea & taiClipData::EA_DROP_ASSIGN))
+     (ea & iClipData::EA_DROP_ASSIGN))
   {
     act = menu->AddItem("Assign To", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_ASSIGN, QKeySequence());
+      iClipData::EA_DROP_ASSIGN, QKeySequence());
   }
 
   act = NULL;
-  if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) {
+  if ((ea & iClipData::EA_DROP_LINK2) == iClipData::EA_DROP_LINK2) {
     act = menu->AddItem("Link Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_LINK, QKeySequence());
+      iClipData::EA_DROP_LINK, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
       act = menu->AddItem("Link Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_LINK_INTO, QKeySequence());
+        iClipData::EA_DROP_LINK_INTO, QKeySequence());
     }
   } else {
-    if (ea & taiClipData::EA_DROP_LINK)
+    if (ea & iClipData::EA_DROP_LINK)
       act = menu->AddItem("&Link Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_LINK, QKeySequence("Alt+"));
-    else if (ea & taiClipData::EA_DROP_LINK_INTO)
+        iClipData::EA_DROP_LINK, QKeySequence("Alt+"));
+    else if (ea & iClipData::EA_DROP_LINK_INTO)
       act = menu->AddItem("&Link "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
-        taiClipData::EA_DROP_LINK_INTO, QKeySequence("Alt+"));
+        iClipData::EA_DROP_LINK_INTO, QKeySequence("Alt+"));
   }
 
   // if any appropriate drop actions, then add them!
@@ -215,102 +215,102 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
     menu->AddSep();
 //  cut copy paste link delete
   iAction* mel;
-  if (ea & taiClipData::EA_CUT) {
+  if (ea & iClipData::EA_CUT) {
     mel = menu->AddItem("Cu&t", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_CUT;
+    mel->usr_data = iClipData::EA_CUT;
     mel->setData(sh_typ);
   }
-  if (ea & taiClipData::EA_COPY) {
+  if (ea & iClipData::EA_COPY) {
     mel = menu->AddItem("&Copy", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_COPY;
+    mel->usr_data = iClipData::EA_COPY;
     mel->setData(sh_typ);
   }
-  if (ea & taiClipData::EA_DUPE) {
+  if (ea & iClipData::EA_DUPE) {
     mel = menu->AddItem("Duplicate  (Ctrl+M)", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_DUPE;
+    mel->usr_data = iClipData::EA_DUPE;
     mel->setData(sh_typ);
   }
 
   // Paste and Link guys are slightly complicated, because we can have
   // OP/OP_INTO variants, so we can't have shortcuts with both
   int paste_cnt = 0;
-  if (ea & taiClipData::EA_PASTE) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_INTO) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_ASSIGN) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_APPEND) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_INTO) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_ASSIGN) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
   String txt;
-  if (ea & taiClipData::EA_PASTE) {
+  if (ea & iClipData::EA_PASTE) {
     if (paste_cnt > 1) txt = "Paste"; else txt = "&Paste";
     mel = menu->AddItem(txt, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE;
+    mel->usr_data = iClipData::EA_PASTE;
     mel->setData(sh_typ);
   }
-  if (ea & taiClipData::EA_PASTE_INTO) {
+  if (ea & iClipData::EA_PASTE_INTO) {
     if (paste_cnt > 1) txt = "Paste Into"; else txt = "&Paste Into";
     mel = menu->AddItem(txt, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE_INTO;
+    mel->usr_data = iClipData::EA_PASTE_INTO;
     mel->setData(sh_typ);
   }
-  if (ea & taiClipData::EA_PASTE_ASSIGN) {
+  if (ea & iClipData::EA_PASTE_ASSIGN) {
     if (paste_cnt > 1) txt = "Paste Assign"; else txt = "&Paste Assign";
     mel = menu->AddItem(txt, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE_ASSIGN;
+    mel->usr_data = iClipData::EA_PASTE_ASSIGN;
     mel->setData(sh_typ);
   }
-  if (ea & taiClipData::EA_PASTE_APPEND) {
+  if (ea & iClipData::EA_PASTE_APPEND) {
     if (paste_cnt > 1) txt = "Paste Append"; else txt = "&Paste Append";
     mel = menu->AddItem(txt, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE_APPEND;
+    mel->usr_data = iClipData::EA_PASTE_APPEND;
     mel->setData(sh_typ);
   }
 
-  if (ea & taiClipData::EA_DELETE) {
+  if (ea & iClipData::EA_DELETE) {
     mel = menu->AddItem("&Delete  (Ctrl+D)", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_DELETE;
+    mel->usr_data = iClipData::EA_DELETE;
     mel->setData(sh_typ);
   }
-  if ((ea & taiClipData::EA_LINK) == taiClipData::EA_LINK) {
+  if ((ea & iClipData::EA_LINK) == iClipData::EA_LINK) {
     mel = menu->AddItem("Link", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_LINK;
+    mel->usr_data = iClipData::EA_LINK;
     mel->setData(sh_typ);
     mel = menu->AddItem("Link Into", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_LINK_INTO;
+    mel->usr_data = iClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
   }
-  else if (ea & taiClipData::EA_LINK) {
+  else if (ea & iClipData::EA_LINK) {
     mel = menu->AddItem("&Link", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_LINK;
+    mel->usr_data = iClipData::EA_LINK;
     mel->setData(sh_typ);
   }
-  else if (ea & taiClipData::EA_LINK_INTO) {
+  else if (ea & iClipData::EA_LINK_INTO) {
     mel = menu->AddItem("&Link Into", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_LINK_INTO;
+    mel->usr_data = iClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
   }
 
-  if (ea & taiClipData::EA_UNLINK) {
+  if (ea & iClipData::EA_UNLINK) {
     mel = menu->AddItem("&Unlink", taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
-    mel->usr_data = taiClipData::EA_UNLINK;
+    mel->usr_data = iClipData::EA_UNLINK;
     mel->setData(sh_typ);
   }
   taiSigLink* link = this->effLink(sh_typ);
   if (link) link->FillContextMenu_EditItems(menu, ea);
 }
 
-taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items,
+iClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items,
   int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
   if (sel_items.size <= 1) {
@@ -366,18 +366,18 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
   GuiContext sh_typ)
 {
   taiMimeSource* ms = NULL;
-  taiClipData* cd = NULL;
-  int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
+  iClipData* cd = NULL;
+  int rval = iClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
 
   // get the appropriate data, either clipboard data, or item data, depending on op
-  if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
+  if  (ea & (iClipData::EA_SRC_OPS)) { // no clipboard data
     // we handle cut and copy
-    if ((ea & (taiClipData::EA_CUT | taiClipData::EA_COPY))) { // copy-like op, get item data
-      cd = GetClipData(sel_items, taiClipData::ClipOpToSrcCode(ea), false, sh_typ);
+    if ((ea & (iClipData::EA_CUT | iClipData::EA_COPY))) { // copy-like op, get item data
+      cd = GetClipData(sel_items, iClipData::ClipOpToSrcCode(ea), false, sh_typ);
       // note that a Cut is a Copy, possibly followed later by a xxx_data_taken command, if client pastes it
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
-      rval = taiClipData::ER_OK;
+      rval = iClipData::ER_OK;
       // clear the emacs-like extended selection after copy -- makes it clear that copy
       // took effect too
       iMainWindowViewer* imwv = host()->mainWindow();
@@ -437,8 +437,8 @@ int ISelectable::QueryEditActions_(taiMimeSource* ms, GuiContext sh_typ) const {
   int allowed = 0;
   int forbidden = 0;
   // if src is readonly, then forbid certain dst ops
-  if (ms->srcAction() & taiClipData::EA_SRC_READONLY)
-    forbidden |= taiClipData::EA_FORB_ON_SRC_READONLY;
+  if (ms->srcAction() & iClipData::EA_SRC_READONLY)
+    forbidden |= iClipData::EA_FORB_ON_SRC_READONLY;
   QueryEditActionsD_impl_(ms, allowed, forbidden, sh_typ);
   return (allowed & (~forbidden));
 }

@@ -30,7 +30,7 @@
 
 
 // declare all other types mentioned but not required to include:
-class TemtClientAdapter; // #IGNORE
+class TemtClient_QObj; // #IGNORE
 class TemtServer; //
 class DataTable; //
 class Program; //
@@ -54,7 +54,7 @@ public:
   
   bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
-  TemtClientAdapter* adapter(); // #IGNORE
+  TemtClient_QObj* adapter(); // #IGNORE
   TA_BASEFUNS(TemtClient);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.

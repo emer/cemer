@@ -20,7 +20,7 @@
 #include <taiWidgetField>
 #include <taiWidgetComboBox>
 #include <taiWidgetGroupElChooser>
-#include <HColorScaleBar>
+#include <iHColorScaleBar>
 #include <iTreeView>
 #include <iTreeViewItem>
 #include <iMethodButtonMgr>
@@ -271,29 +271,29 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  layColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layColorBar);
+  layiColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layiColorBar);
 
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
   chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layColorBar->addWidget(chkAutoScale);
+  layiColorBar->addWidget(chkAutoScale);
 
   butScaleDefault = new QPushButton("Defaults", widg);
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
-  layColorBar->addWidget(butScaleDefault);
+  layiColorBar->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
 
-  cbar = new HColorScaleBar(&(dv_->scale), ColorScaleBar::RANGE, true, true, widg);
+  cbar = new iHColorScaleBar(&(dv_->scale), iColorScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
 //  cbar->setMaximumWidth(30);
 //   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
-  layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+  layiColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
 
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
-  layColorBar->addWidget(butSetColor);
+  layiColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 //  layDisplayValues->addStretch();
 

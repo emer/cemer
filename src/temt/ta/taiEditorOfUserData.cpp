@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditorOfUserData.h"
-#include <UserDataDelegate>
+#include <taiWidgetDelegateUserData>
 #include <UserDataItem>
 #include <UserDataItem_List>
 #include <MemberDef>
@@ -48,7 +48,7 @@ void taiEditorOfUserData::Initialize()
   udil = NULL;
   sel_edit_mbrs = true; // note: we don't actually select members, just for removal
   tw = NULL;
-  udd = new UserDataDelegate(udil, this);
+  udd = new taiWidgetDelegateUserData(udil, this);
   sel_item_row = -1;
 }
 

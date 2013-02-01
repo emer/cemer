@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMimeSource.h"
-#include <taiClipData>
+#include <iClipData>
 #include <taiObjectMimeFactory>
 #include <taProject>
 #include <iMainWindowViewer>
@@ -137,7 +137,7 @@ taBase* taiMimeSource::tabObject() const {
 
 void taiMimeSource::Decode() {
   String str;
-  if (data(taiClipData::tacss_common, str) > 0) {
+  if (data(iClipData::tacss_common, str) > 0) {
     Decode_common(str);
   }
   objects(); // asserts
@@ -238,11 +238,11 @@ void taBase::QueryEditActions(taiMimeSource* ms,
   //DST
   // ASSIGN not allowed for multi srcs
   if (ms->isMulti())
-    forbidden |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
+    forbidden |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN);
   // not allowed on ro
   if (isGuiReadOnly()) {
-    forbidden |= (taiClipData::EA_PASTE_ASSIGN | 
-      taiClipData::EA_DROP_ASSIGN);
+    forbidden |= (iClipData::EA_PASTE_ASSIGN | 
+      iClipData::EA_DROP_ASSIGN);
   }  
   // note: single is just the degenerate case here
   // for multi, a bit more complicated, since we need to not allow something
@@ -262,13 +262,13 @@ void taBase::QueryEditActions(taiMimeSource* ms,
   
 void taBase::QueryEditActionsS_impl(int& allowed, int& forbidden)
 {
-  allowed |= taiClipData::EA_COPY;
+  allowed |= iClipData::EA_COPY;
   if (isGuiReadOnly()) {
-    forbidden |= (taiClipData::EA_CLEAR);
+    forbidden |= (iClipData::EA_CLEAR);
   }
   // simple convention to forbid clip ops for things like Wizards: 
   if (HasUserData("NO_CLIP")) 
-    forbidden |= taiClipData::EA_SRC_OPS;  
+    forbidden |= iClipData::EA_SRC_OPS;  
 }
 
 void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbidden)
@@ -281,18 +281,18 @@ void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbid
     // note: validation checks for the parent/child scenario
     taBase* obj = ms->tabObject();
     if (CanCopy(obj))
-      allowed |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
+      allowed |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN);
   }
 }
 
 int taBase::EditAction(taiMimeSource* ms, int ea)
 { 
-  if (ea & taiClipData::EA_SRC_OPS) {
+  if (ea & iClipData::EA_SRC_OPS) {
     return EditActionS_impl(ea);
   }
   
   // DST
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   if (!ms) return rval; // shouldn't happen
   // note: single is just the degenerate case here
   // we requery to be absolutely sure 
@@ -301,7 +301,7 @@ int taBase::EditAction(taiMimeSource* ms, int ea)
   QueryEditActions(ms, allowed, forbidden);
   int eax = ea & (allowed & (~forbidden));
   if (!eax) {
-    return taiClipData::ER_ERROR; // prob an error!
+    return iClipData::ER_ERROR; // prob an error!
   } 
   bool multi = false;
   bool multi_off = false;
@@ -318,7 +318,7 @@ int taBase::EditAction(taiMimeSource* ms, int ea)
     // do it for every item 
     rval = EditActionD_impl(ms, eax);
     // keep looping as long as stuff ok
-    if (rval != taiClipData::ER_OK)
+    if (rval != iClipData::ER_OK)
       return rval;
   }
   if(multi && !multi_off) // didn't reach end
@@ -328,19 +328,19 @@ int taBase::EditAction(taiMimeSource* ms, int ea)
 
 int taBase::EditActionS_impl(int ea) {
   //note: follows same logic as the Query
-  if (ea & taiClipData::EA_COPY) return 1; //note: Ui actually puts the data on the clipboard, when it sees the 1
+  if (ea & iClipData::EA_COPY) return 1; //note: Ui actually puts the data on the clipboard, when it sees the 1
 
   return 0;
 }
 
 int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
   //TODO: decode AssignTo
-  if (ea & (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN)) {
+  if (ea & (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN)) {
     taBase* obj = ms->tabObject();
     bool ok; // dummy
     if (CheckError((!obj), false, ok,
       "Could not retrieve object from clipboard"))
-      return taiClipData::ER_ERROR;
+      return iClipData::ER_ERROR;
     this->Copy(obj);
     UpdateAfterEdit();
   }
@@ -376,32 +376,32 @@ void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child
   // SRC
   // duplicate: note, don't test for parent-only query (child=NULL)
   if (child && ChildCanDuplicate(child))
-    allowed |= taiClipData::EA_DUPE;
+    allowed |= iClipData::EA_DUPE;
 
   if (ms == NULL) return; // querying for src ops only
 
   // DST
   // if src action was Cut, that limits the Dst ops
-  if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
-   forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
+  if (ms->srcAction() & (iClipData::EA_SRC_CUT))
+   forbidden |= iClipData::EA_FORB_ON_SRC_CUT;
 
   if (isGuiReadOnly()) {
-    forbidden |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_DROP_ASSIGN |
-      taiClipData::EA_DROP_COPY_INTO | taiClipData::EA_DROP_MOVE_INTO);
+    forbidden |= (iClipData::EA_PASTE_INTO | iClipData::EA_DROP_ASSIGN |
+      iClipData::EA_DROP_COPY_INTO | iClipData::EA_DROP_MOVE_INTO);
   }  
   // can't link etc. if not in this process
   if (!ms->isThisProcess())
-    forbidden |= taiClipData::EA_IN_PROC_OPS;
+    forbidden |= iClipData::EA_IN_PROC_OPS;
 }
 
 int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea)
 { 
   // determine the list-only operations allowed/forbidden, and apply to ea
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   
   // SRC
-  if (ea & taiClipData::EA_SRC_OPS) { // dispatch on full ea, but only pass eax
+  if (ea & iClipData::EA_SRC_OPS) { // dispatch on full ea, but only pass eax
     return ChildEditAction_impl(md, child, ms, ea);
   }
   
@@ -435,7 +435,7 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
     // keep looping as long as stuff ok
-    if (rval != taiClipData::ER_OK)
+    if (rval != iClipData::ER_OK)
       break;
   }
   if(multi && !multi_off) // didn't reach end
@@ -455,15 +455,15 @@ int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea) 
 {
     // op implementation (non-list/grp)
-  if (ea & taiClipData::EA_DUPE) {
+  if (ea & iClipData::EA_DUPE) {
     taProject* proj = (taProject*)GetOwner(&TA_taProject);
     if(proj) {
       proj->undo_mgr.SaveUndo(child, "Duplicate", NULL, false, this);
       // list is save_undo_owner
     }
     if (ChildDuplicate(child) != NULL)
-      return taiClipData::ER_OK;
-    else return taiClipData::ER_ERROR;
+      return iClipData::ER_OK;
+    else return iClipData::ER_ERROR;
   }
   
   return 0;
@@ -506,14 +506,14 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (lst_itm) {
     if (lst_itm->GetOwner() == list) {
       // only allow CUT in own list, otherwise can be confusing
-      allowed |= taiClipData::EA_CUT;
+      allowed |= iClipData::EA_CUT;
       // Delete only allowed if we are the owner
-      allowed |= taiClipData::EA_DELETE;
+      allowed |= iClipData::EA_DELETE;
       // in general, allow duplicate
       //TODO: any forbidden cases? ex. read only?
-//not yet implemented      allowed |= taiClipData::EA_DUPE;
+//not yet implemented      allowed |= iClipData::EA_DUPE;
     } else { // otherwise, it is unlinking, not deleting
-      allowed |= taiClipData::EA_UNLINK;
+      allowed |= iClipData::EA_UNLINK;
     }
   }
 
@@ -527,17 +527,17 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
     taBase* obj = ms->tabObject();
     if (this->IsChildOf(obj)) {
       // forbid both kinds of cases
-      forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
-        taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
+      forbidden |= (iClipData::EA_DROP_COPY2 | iClipData::EA_DROP_MOVE2 |
+        iClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
     // confusing to allow move of an obj on itself
     if (lst_itm && (lst_itm == obj)) {
-      forbidden |= (taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
-      if ((ms->srcAction() & taiClipData::EA_SRC_CUT))
-        forbidden |= taiClipData::EA_PASTE;
+      forbidden |= (iClipData::EA_DROP_COPY | iClipData::EA_DROP_MOVE);
+      if ((ms->srcAction() & iClipData::EA_SRC_CUT))
+        forbidden |= iClipData::EA_PASTE;
     }
   } else {
-    forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
+    forbidden |= iClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
   }
   
   // generic list paste allows any subtype of the base type
@@ -548,17 +548,17 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   //note: we no longer allow linking generally, only into LINK_GROUPs
   if (md && md->HasOption("LINK_GROUP")) {
     if (lst_itm) {
-      op |= (taiClipData::EA_LINK | taiClipData::EA_DROP_LINK);
+      op |= (iClipData::EA_LINK | iClipData::EA_DROP_LINK);
     } else {
-      op |= (taiClipData::EA_LINK_INTO | taiClipData::EA_DROP_LINK_INTO);
+      op |= (iClipData::EA_LINK_INTO | iClipData::EA_DROP_LINK_INTO);
     }
   } else {
     if (lst_itm) {
-      op |= (taiClipData::EA_PASTE | taiClipData::EA_DROP_COPY |
-        taiClipData::EA_DROP_MOVE);
+      op |= (iClipData::EA_PASTE | iClipData::EA_DROP_COPY |
+        iClipData::EA_DROP_MOVE);
     } else {
-      op |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_DROP_COPY_INTO |
-        taiClipData::EA_DROP_MOVE_INTO);
+      op |= (iClipData::EA_PASTE_INTO | iClipData::EA_DROP_COPY_INTO |
+        iClipData::EA_DROP_MOVE_INTO);
     }
   }
 
@@ -573,7 +573,7 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
 int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea)
 { 
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   int allowed = 0;
   int forbidden = 0;
   // we will want list idx of child (if exists)
@@ -589,7 +589,7 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
       int eax = (ea & (allowed & (~forbidden)));
       if (eax) { // some list op to do...
         // SRC -- not need to decode SRC on full ea, not the eax
-        if (ea & taiClipData::EA_SRC_OPS) {
+        if (ea & iClipData::EA_SRC_OPS) {
           return ChildEditActionLS_impl(md, child, eax);
         } else { // DST
           if (!ms) return rval; // shouldn't happen
@@ -612,39 +612,39 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
 int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
 //only called if list valid and enabled
   taList_impl* list = children_();
-  if (!list) return taiClipData::ER_IGNORED;
-  if (lst_itm == NULL) return taiClipData::ER_IGNORED;
-  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
+  if (!list) return iClipData::ER_IGNORED;
+  if (lst_itm == NULL) return iClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return iClipData::ER_IGNORED;
   
-  switch (ea & taiClipData::EA_OP_MASK) {
+  switch (ea & iClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself, or outer controller if multi
-  case taiClipData::EA_UNLINK: {
+  case iClipData::EA_UNLINK: {
     taProject* proj = (taProject*)list->GetOwner(&TA_taProject);
     if(proj) {
       proj->undo_mgr.SaveUndo(lst_itm, "Remove", NULL, false, this);
       // list is save_undo_owner
     }
     list->RemoveEl(lst_itm);
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
   // for COPY, CUT, DELETE, and DRAG, nothing more for us to do; just ack
   // (either handled by outer controller, or dest)
-  case taiClipData::EA_COPY:
-  case taiClipData::EA_CUT:
-  case taiClipData::EA_DELETE: //note: handled by controller
-  case taiClipData::EA_DRAG:
-    return taiClipData::ER_OK;
+  case iClipData::EA_COPY:
+  case iClipData::EA_CUT:
+  case iClipData::EA_DELETE: //note: handled by controller
+  case iClipData::EA_DRAG:
+    return iClipData::ER_OK;
   default: break; // compiler food
   }
-  return taiClipData::ER_IGNORED;
+  return iClipData::ER_IGNORED;
 }
 
 int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
   taBase* lst_itm, taiMimeSource* ms, int ea)
 {
   taList_impl* list = children_();
-  if (!list) return taiClipData::ER_IGNORED;
-  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
+  if (!list) return iClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return iClipData::ER_IGNORED;
   int itm_idx = list->FindEl(lst_itm); // -1 if NULL ie at end
 
   taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
@@ -656,12 +656,12 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
 //NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so 
 //  we always lump the two variants together (OP2)
   // only fetch obj for ops that require it
-  if (ea & (taiClipData::EA_PASTE2 | taiClipData::EA_LINK2  | taiClipData::EA_DROP_COPY2 |
-    taiClipData::EA_DROP_LINK2 | taiClipData::EA_DROP_MOVE2))
+  if (ea & (iClipData::EA_PASTE2 | iClipData::EA_LINK2  | iClipData::EA_DROP_COPY2 |
+    iClipData::EA_DROP_LINK2 | iClipData::EA_DROP_MOVE2))
   {
     obj = ms->tabObject();
     if(TestError(!obj, "ChildEditActionLD_impl_inproc",
-		 "Could not retrieve object for operation")) return taiClipData::ER_ERROR;
+		 "Could not retrieve object for operation")) return iClipData::ER_ERROR;
     // already in this list? (affects how we do drops/copies, etc.)
     obj_idx = list->FindEl(obj);
   }
@@ -669,9 +669,9 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     
   // All non-move paste ops (i.e., copy an object)
   if (
-    (ea & (taiClipData::EA_DROP_COPY2)) ||
+    (ea & (iClipData::EA_DROP_COPY2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
+    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
   ) {
     if(proj) {
       proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, this);
@@ -698,14 +698,14 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
       tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
     }
 
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
   
   // All Move-like ops
   if (
-    (ea & (taiClipData::EA_DROP_MOVE2)) ||
+    (ea & (iClipData::EA_DROP_MOVE2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
+    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_CUT))
   ) {
     if (obj == lst_itm) return 1; // nop
     if(proj) {
@@ -714,7 +714,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     }
     if (obj_idx >= 0) { // in this list: just do a list move
       list->MoveBeforeIdx(obj_idx, itm_idx); // noop for self ops
-      return taiClipData::ER_OK; // do nothing case of drop on self
+      return iClipData::ER_OK; // do nothing case of drop on self
     } else { // not in this list, need to do a transfer
       if (list->Transfer(obj)) { // should always succeed -- only fails if we already own item
         // was added at end, fix up location, if necessary
@@ -727,14 +727,14 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
 	   !list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
 	  tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
 	}
-      } else return taiClipData::ER_ERROR;
+      } else return iClipData::ER_ERROR;
     }
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
 
   // Link ops
   if (ea &
-    (taiClipData::EA_LINK2 | taiClipData::EA_DROP_LINK2))
+    (iClipData::EA_LINK2 | iClipData::EA_DROP_LINK2))
   {
     if (obj_idx >= 0) return -1; // in this list: link forbidden
     if(proj) {
@@ -744,24 +744,24 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     if (itm_idx < 0) 
       itm_idx = list->size; 
     list->InsertLink(obj, itm_idx);
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
-  return taiClipData::ER_IGNORED;
+  return iClipData::ER_IGNORED;
 }
 
 int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md,
   taBase* lst_itm, taiMimeSource* ms, int ea) 
 {
   taList_impl* list = children_();
-  if (!list) return taiClipData::ER_IGNORED;
-  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
+  if (!list) return iClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return iClipData::ER_IGNORED;
   // if src is not even a taBase, we just stop
-  if (!ms->isBase()) return taiClipData::ER_IGNORED;
+  if (!ms->isBase()) return iClipData::ER_IGNORED;
 //Note: the OP/OP_INTO is actually encoded in lst_itm NULL or not, so we lump together
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
-  if (ea & (taiClipData::EA_DROP_COPY2 |
-    // taiClipData::EA_DROP_MOVE | //can't do move across processes
-     taiClipData::EA_PASTE2))
+  if (ea & (iClipData::EA_DROP_COPY2 |
+    // iClipData::EA_DROP_MOVE | //can't do move across processes
+     iClipData::EA_PASTE2))
   {
     istringstream istr;
     if (ms->objectData(istr) > 0) {
@@ -775,20 +775,20 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md,
       int dump_val = td->Dump_Load(istr, list, list, &new_el_);
       if (dump_val == 0) {
         //TODO: error output
-        return taiClipData::ER_ERROR; // load failed
+        return iClipData::ER_ERROR; // load failed
       }
       // ok, now move the guy into the right place
       taBase* new_el = (taBase*)new_el_;
       list->MoveBefore(lst_itm, new_el);
       // call UAE to trigger associate update code, esp in parent lists etc.
       new_el->UpdateAfterEdit();
-      return taiClipData::ER_OK;
+      return iClipData::ER_OK;
     } else { // no data
         //TODO: error output
-      return taiClipData::ER_ERROR;
+      return iClipData::ER_ERROR;
     }
   }
-  return taiClipData::ER_IGNORED;
+  return iClipData::ER_IGNORED;
 }
 
 
@@ -818,10 +818,10 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
     // Delete only allowed if we are the owner
     if (subgrp->GetOwner() == &gp) {
       // only allow CUT in own context, to avoid confusion
-      allowed |= taiClipData::EA_CUT;
-      allowed |= taiClipData::EA_DELETE;
+      allowed |= iClipData::EA_CUT;
+      allowed |= iClipData::EA_DELETE;
     } else { // otherwise, it is unlinking, not deleting
-      allowed |= taiClipData::EA_UNLINK;
+      allowed |= iClipData::EA_UNLINK;
     }
   }
 
@@ -831,7 +831,7 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
   if (!ms->isThisProcess())
-    forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
+    forbidden |= iClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
   
   if (ms->isThisProcess()) {
     // cannot allow a group to be copied or moved into one of its own subgroups
@@ -839,17 +839,17 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
     // the grp must not be this one, or parent to it
     if (this->IsChildOf(grp)) {
       // forbid both kinds of cases
-      forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
-        taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
+      forbidden |= (iClipData::EA_DROP_COPY2 | iClipData::EA_DROP_MOVE2 |
+        iClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
     // confusing to allow move of an obj on itself
     if (subgrp && (subgrp == grp)) {
-      forbidden |= (taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
-      if ((ms->srcAction() & taiClipData::EA_SRC_CUT))
-        forbidden |= taiClipData::EA_PASTE;
+      forbidden |= (iClipData::EA_DROP_COPY | iClipData::EA_DROP_MOVE);
+      if ((ms->srcAction() & iClipData::EA_SRC_CUT))
+        forbidden |= iClipData::EA_PASTE;
     }
   } else {
-    forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
+    forbidden |= iClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
   }
 //NOTE: relaxed, 10/14/08 by BA
   // generic group paste only allows exact type, so we check for each inheriting from the other, which means same
@@ -860,11 +860,11 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
   // find relevant ops 
   int op = 0;
   if (subgrp) {
-    op |= (taiClipData::EA_PASTE | taiClipData::EA_DROP_COPY |
-      taiClipData::EA_DROP_MOVE);
+    op |= (iClipData::EA_PASTE | iClipData::EA_DROP_COPY |
+      iClipData::EA_DROP_MOVE);
   } else {
-    op |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_DROP_COPY_INTO |
-      taiClipData::EA_DROP_MOVE_INTO);
+    op |= (iClipData::EA_PASTE_INTO | iClipData::EA_DROP_COPY_INTO |
+      iClipData::EA_DROP_MOVE_INTO);
   }
   if (right_gptype) {
     allowed |= op;
@@ -875,7 +875,7 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
 int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea) 
 {
-  int rval = taiClipData::ER_IGNORED;
+  int rval = iClipData::ER_IGNORED;
   // if child exists, but is not a group item, then just delegate down to base
   int subgrp_idx = -1;
   if (child)
@@ -892,10 +892,10 @@ int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child,
     int eax = (ea & (allowed & (~forbidden)));
   
     if (eax) { // ok, it is a group operation
-      if (ea & taiClipData::EA_SRC_OPS) { // note: must use original ea to decode SRC
+      if (ea & iClipData::EA_SRC_OPS) { // note: must use original ea to decode SRC
         rval = ChildEditActionGS_impl(md, (taGroup_impl*)child, eax);
       } else {
-        if (ms == NULL) return taiClipData::ER_IGNORED; // shouldn't happen
+        if (ms == NULL) return iClipData::ER_IGNORED; // shouldn't happen
         // decode src location
         if (ms->isThisProcess())
           rval = ChildEditActionGD_impl_inproc(md, (taGroup_impl*)child, ms, eax);
@@ -913,10 +913,10 @@ int taGroup_impl::ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subg
 {
   int subgrp_idx = gp.FindEl(subgrp);
   // if the child is a group, we handle it, otherwise we let base class handle it
-  switch (ea & taiClipData::EA_OP_MASK) {
+  switch (ea & iClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself
-  case taiClipData::EA_CUT: return 1; //nothing to do, just acknowledge -- deletion triggered by the dst, whether local or remote
-  case taiClipData::EA_DELETE: {
+  case iClipData::EA_CUT: return 1; //nothing to do, just acknowledge -- deletion triggered by the dst, whether local or remote
+  case iClipData::EA_DELETE: {
     if (subgrp) {
       taProject* proj = dynamic_cast<taProject*>(GetThisOrOwner(&TA_taProject));
       if(proj) {
@@ -924,13 +924,13 @@ int taGroup_impl::ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subg
 	// list is save_undo_owner
       }
       RemoveGpIdx(subgrp_idx);
-      return taiClipData::ER_OK;
-    } else return taiClipData::ER_ERROR; // error TODO: error message
+      return iClipData::ER_OK;
+    } else return iClipData::ER_ERROR; // error TODO: error message
   }
-  case taiClipData::EA_DRAG: return taiClipData::ER_OK; // nothing for us to do on the drag
+  case iClipData::EA_DRAG: return iClipData::ER_OK; // nothing for us to do on the drag
   default: break; // compiler food
   }
-  return taiClipData::ER_IGNORED; // this function never calls down to List
+  return iClipData::ER_IGNORED; // this function never calls down to List
 }
 
 int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_impl* subgrp,
@@ -938,7 +938,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
 {
   int subgrp_idx = gp.FindEl(subgrp);
   // if src is not even a taBase, we just stop
-  if (!ms->isBase()) return taiClipData::ER_IGNORED;
+  if (!ms->isBase()) return iClipData::ER_IGNORED;
   int srcgrp_idx = -1; // -1 means not in this group
   taBase* srcobj = NULL;
 
@@ -947,13 +947,13 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
 //NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so 
 //  we always lump the two variants together (OP2)
   // only fetch obj for ops that require it
-  if (ea & (taiClipData::EA_PASTE2 | taiClipData::EA_LINK2  | taiClipData::EA_DROP_COPY2 |
-    taiClipData::EA_DROP_LINK2 | taiClipData::EA_DROP_MOVE2))
+  if (ea & (iClipData::EA_PASTE2 | iClipData::EA_LINK2  | iClipData::EA_DROP_COPY2 |
+    iClipData::EA_DROP_LINK2 | iClipData::EA_DROP_MOVE2))
   {
     srcobj = ms->tabObject();
     if (srcobj == NULL) {
       taMisc::Error("Could not retrieve object for operation.");
-      return taiClipData::ER_ERROR;
+      return iClipData::ER_ERROR;
     }
     // already in this list? (affects how we do drops/copies, etc.)
     srcgrp_idx = gp.FindEl(srcobj);
@@ -961,9 +961,9 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
 
   // All non-move paste ops (i.e., copy an object)
   if (
-    (ea & (taiClipData::EA_DROP_COPY2)) ||
+    (ea & (iClipData::EA_DROP_COPY2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
+    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
   ) {
     if(proj) {
       proj->undo_mgr.SaveUndo(this, "Paste/Copy", NULL, false, this);
@@ -981,39 +981,39 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
       new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj 
     // do a full UAE (not just DC) so associated update code gets retriggered
 //nn for gps    new_obj->UpdateAfterEdit();
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   } 
   
   // All Move-like ops
   if (
-    (ea & (taiClipData::EA_DROP_MOVE2)) ||
+    (ea & (iClipData::EA_DROP_MOVE2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
+    ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_CUT))
   ) {
-    if (srcobj == subgrp) return taiClipData::ER_OK; // nop
+    if (srcobj == subgrp) return iClipData::ER_OK; // nop
     if(proj) {
       proj->undo_mgr.SaveUndo(srcobj, "Move", NULL, false, this);
       // list is save_undo_owner
     }
     if (srcgrp_idx >= 0) { // in this group: just do a group move
       gp.MoveBeforeIdx(srcgrp_idx, subgrp_idx); // ok if -1, means end
-      return taiClipData::ER_OK; // do nothing case of drop on self
+      return iClipData::ER_OK; // do nothing case of drop on self
     } else { // not directly in this group, need to do a transfer
       if (gp.Transfer(srcobj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
         if (subgrp_idx >= 0) { // if <0, then means "at end" already
           gp.MoveIdx(gp.size - 1, subgrp_idx);
         }
-      } else return taiClipData::ER_ERROR; //TODO: error message
+      } else return iClipData::ER_ERROR; //TODO: error message
     }
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
 
   // Link ops
   if (ea &
-    (taiClipData::EA_LINK2 | taiClipData::EA_DROP_LINK2))
+    (iClipData::EA_LINK2 | iClipData::EA_DROP_LINK2))
   {
-    if (srcgrp_idx >= 0) return taiClipData::ER_FORBIDDEN; // in this list: link forbidden
+    if (srcgrp_idx >= 0) return iClipData::ER_FORBIDDEN; // in this list: link forbidden
     if(proj) {
       proj->undo_mgr.SaveUndo(srcobj, "Insert Link", NULL, false, this);
       // list is save_undo_owner
@@ -1021,23 +1021,23 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
     if (subgrp_idx < 0) 
       subgrp_idx = gp.size; 
     gp.InsertLink(srcobj, subgrp_idx);
-    return taiClipData::ER_OK;
+    return iClipData::ER_OK;
   }
-  return taiClipData::ER_IGNORED;
+  return iClipData::ER_IGNORED;
 }
 
 int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* subgrp, taiMimeSource* ms, int ea)
 {
   // if src is not even a taBase, we just stop
-  if (!ms->isBase()) return taiClipData::ER_IGNORED;
+  if (!ms->isBase()) return iClipData::ER_IGNORED;
 
 // Note on streaming:
 // For Paste Here, we have to stream into ourself
 //Note: the OP/OP_INTO is actually encoded in lst_itm NULL or not, so we lump together
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
-  if (ea & (taiClipData::EA_DROP_COPY2 |
-    // taiClipData::EA_DROP_MOVE | //can't do move across processes
-     taiClipData::EA_PASTE2))
+  if (ea & (iClipData::EA_DROP_COPY2 |
+    // iClipData::EA_DROP_MOVE | //can't do move across processes
+     iClipData::EA_PASTE2))
   {
     istringstream istr;
     if (ms->objectData(istr) > 0) {
@@ -1047,7 +1047,7 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
       bool ok; // dummy
       if (CheckError((!new_gp), false, ok,
         "Could not make new group for TypeDef:", td->name)) 
-        return taiClipData::ER_ERROR; // load failed
+        return iClipData::ER_ERROR; // load failed
       // move it now, before the load
       taProject* proj = (taProject*)GetOwner(&TA_taProject);
       if(proj) {
@@ -1060,13 +1060,13 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
       
       if (CheckError((dump_val == 0), false, ok,
         "Load error for TypeDef:" + td->name)) 
-        return taiClipData::ER_ERROR; // load failed
-      return taiClipData::ER_OK;
+        return iClipData::ER_ERROR; // load failed
+      return iClipData::ER_OK;
     } else { // no data
-      return taiClipData::ER_ERROR; //TODO: error message
+      return iClipData::ER_ERROR; //TODO: error message
     }
   }
-  return taiClipData::ER_IGNORED;
+  return iClipData::ER_IGNORED;
 }
 
 //////////////////////////
@@ -1075,9 +1075,9 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
 void taDataView::DV_QueryEditActionsS(int& allowed, int& forbidden)
 {
   if (!isTopLevelView()) {
-    forbidden |= (taiClipData::EA_CUT | 
-      taiClipData::EA_DUPE | taiClipData::EA_DELETE | 
-      taiClipData::EA_CLEAR | taiClipData::EA_UNLINK);
+    forbidden |= (iClipData::EA_CUT | 
+      iClipData::EA_DUPE | iClipData::EA_DELETE | 
+      iClipData::EA_CLEAR | iClipData::EA_UNLINK);
   }
 }
  
@@ -1126,13 +1126,13 @@ void DataView_List::DV_ChildQueryEditActionsL_impl(const MemberDef* md,
   // note that refusing to forbid will still require the normal type
   // checks, so that only compatible guys can get pasted
   if (!is_root_level_view) {
-    forbidden |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_PASTE_APPEND |
-      taiClipData::EA_LINK_INTO | taiClipData::EA_DROP_COPY_INTO |
-      taiClipData::EA_DROP_LINK_INTO | taiClipData::EA_DROP_MOVE_INTO);
+    forbidden |= (iClipData::EA_PASTE_INTO | iClipData::EA_PASTE_APPEND |
+      iClipData::EA_LINK_INTO | iClipData::EA_DROP_COPY_INTO |
+      iClipData::EA_DROP_LINK_INTO | iClipData::EA_DROP_MOVE_INTO);
     if (lst_itm) // forbid on top of guys too
-      forbidden |= (taiClipData::EA_PASTE | taiClipData::EA_PASTE_APPEND |
-        taiClipData::EA_LINK | taiClipData::EA_DROP_COPY |
-        taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE);
+      forbidden |= (iClipData::EA_PASTE | iClipData::EA_PASTE_APPEND |
+        iClipData::EA_LINK | iClipData::EA_DROP_COPY |
+        iClipData::EA_DROP_LINK | iClipData::EA_DROP_MOVE);
   }
 }
 

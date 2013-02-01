@@ -788,23 +788,24 @@ set(ta_HEADS_MAKETA_MOC
 )
 
 set(ta_HEADS_NOMAKETA_MOC
-  AutoSaver.h
+  iAutoSaver.h
+  iInterceptor.h
+  iCookieJar.h
+  iNetworkAccessManager.h
+  iSynchronousNetRequest.h
+
   iMenuButton.h
+  iHiLightButton.h
   iContextMenuButton.h
   iColorButton.h
   iCheckBox.h
-  iClipWidgetAction.h
-  iClipToolWidget.h
   iComboBox.h
-  iCookieJar.h
   iDialog.h
   iDialogTextEdit.h
   iDimEdit.h
   iEditGrid.h
   iLabel.h
   iLineEdit.h
-  iNetworkAccessManager.h
-  Interceptor.h
   iScrollArea.h
   iSplitter.h
   iSplitterHandle.h
@@ -816,29 +817,43 @@ set(ta_HEADS_NOMAKETA_MOC
   iNumberedTextView.h
   iThumbWheel.h
   iConsole.h
+  iColorScaleBar.h
+  iHColorScaleBar.h
+  iVColorScaleBar.h
+  iColorBar.h
+  iHColorBar.h
+  iVColorBar.h
+  iColorMatrixGrid.h
+  iColorPad.h
+  iTableWidget.h
+  iWebView.h
+  iToolBar.h
+
+  iTabBarBase.h
+  iTabBar.h
+  iTabBarEx.h
+  iTabWidget.h
+
+  iClipWidgetAction.h
+  iBaseClipWidgetAction.h
+  iClipToolWidget.h
+  iClipData.h
+  iActionSubMenuEl.h
 
   taPluginInst.h
   iPluginEditor.h
 
-  taBaseAdapter.h
-  taRootBaseAdapter.h
-  TemtClientAdapter.h
-  TemtServerAdapter.h
+  taBase_QObj.h
+  taRootBase_QObj.h
+  TemtClient_QObj.h
+  TemtServer_QObj.h
+  taGuiWidget_QObj.h
+  taGuiAction_QObj.h
+  taSigLink_QObj.h
+  ISelectableHost_QObj.h
 
   taiMisc.h
-
   taApplication.h
-
-  iDialogPublishDocs.h
-
-  taiProgStepButton.h
-  taiClipData.h
-  SynchronousNetRequest.h
-
-  taGuiWidgetHelper.h
-  taGuiActionHelper.h
-
-  taSigLink_QObj.h
 
   taiEditorOfDoc.h
   taiEditorOfWizard.h
@@ -847,7 +862,9 @@ set(ta_HEADS_NOMAKETA_MOC
   taiEditorOfSelectEditFull.h
   taiEditorOfSelectEditFast.h
 
-  iActionSubMenuEl.h
+  taiWidgetDelegate.h
+  taiWidgetDelegateSelectEdit.h
+  taiWidgetDelegateUserData.h
 
   taiWidgetActions.h
   taiWidgetComposite.h
@@ -855,7 +872,8 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetDeck.h
   taiWidgetText.h
   taiWidgetField.h
-  taiWidgetIncrField.h
+  taiWidgetFieldIncr.h
+  taiWidgetFieldRegexp.h
   taiWidgetFieldFile.h
   taiWidgetPlusToggle.h
   taiWidgetComboBox.h
@@ -866,6 +884,7 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetItemChooser.h
   taiWidgetEditButton.h
   taiWidgetFileButton.h
+  taiWidgetProgStepButton.h
 
   taiWidgetTokenPtrMenu.h
   taiWidgetSubTokenPtrMenu.h
@@ -880,18 +899,17 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetMethod.h
   taiWidgetMethodToggle.h
 
-
-  taiRegexpField.h
-
   iDialogEditor.h
   iDialogChoice.h
   iDialogWidgetField.h
   iDialogItemChooser.h
   iDialogObjChooser.h
   iDialogRegexp.h
+  iDialogPublishDocs.h
+  iDialogObjDiffFilter.h
+  iDialogObjDiffBrowser.h
 
-  iBaseClipWidgetAction.h
-  taiEditTableWidget.h
+  iDataPanelSetButton.h
 
   iFrameViewer.h
   iBrowseViewer.h
@@ -899,50 +917,24 @@ set(ta_HEADS_NOMAKETA_MOC
   iMainWindowViewer.h
   iDockViewer.h
   iToolBoxDockViewer.h
-  iTabBarBase.h
-  iTabBar.h
+  iMatrixEditor.h
+
+  iDataTableDelegate.h
+  iDataTablePanel_Mbr.h
+
   iTabView.h
-  iToolBar.h
-
-  iWebView.h
-
   iTreeView.h
   iTreeSearch.h
-  SelectableHostHelper.h
-  iDataPanelSetButton.h
-  iHelpBrowser.h
-
   iTableView.h
   iMatrixTableView.h
-  iMatrixEditor.h
-  iClassBrowseViewer.h
-
-  taiWidgetDelegate.h
-  SelectEditDelegate.h
-
-  iDialogObjDiffFilter.h
-  iDialogObjDiffBrowser.h
-
-  UserDataDelegate.h
-
-  ColorScaleBar.h
-  HColorScaleBar.h
-  VColorScaleBar.h
-  ColorBar.h
-  HColorBar.h
-  VColorBar.h
-  ColorMatrixGrid.h
-  ColorPad.h
-
   iDataTableView.h
-  DataTableDelegate.h
-  iDataTablePanel_Mbr.h
+
+  iHelpBrowser.h
+  iClassBrowseViewer.h
 
   T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
-  iTabBarEx.h
-  iTabWidget.h
   iT3DataViewer.h
   iT3DataViewFrame.h
 )
@@ -952,16 +944,23 @@ set(ta_HEADS_NOMAKETA_NOMOC
   ta_def.h
   ta_type_constr.h
 
-  SoPtr.h
-  SoOffscreenRendererQt.h
+  SigLinkSignal.h
 
   iStripeWidget.h
   iFlowLayout.h
   iFormLayout.h
   iTreeWidgetItem.h
+  iMenuAction.h
+  iApplicationToolBar.h
+  iProgramToolBar.h
 
-  SigLinkSignal.h
+  iWidget_List.h
+  iTopLevelWindow_List.h
+  iToolBar_List.h
+  iTabView_PtrList.h
+  iAction_List.h
 
+  gzstream.h
   VPUnref.h
   VPUList.h
   DumpPathSub.h
@@ -969,7 +968,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   DumpPathToken.h
   DumpPathTokenList.h
   dumpMisc.h
-  gzstream.h
+  taGenDoc.h
   Tokenizer.h
 
   IPlugin.h
@@ -977,11 +976,9 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taPlugins.h
 
   ISelectableHost.h
+  IDataViewWidget.h
 
   DynMethod_PtrList.h
-  iTopLevelWindow_List.h
-  Widget_List.h
-  iAction_List.h
   taiWidgetActions_List.h
 
   ClusterManager.h
@@ -995,11 +992,10 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiEditorOfSArg.h
   taiEditorOfTypeItem.h
 
-  taGenDoc.h
-  T3Misc.h
-  iSoSelectionEvent.h
-
-  iMenuAction.h
+  taiMemberWidgets.h
+  taiMemberWidgets_List.h
+  taiTypeWidgets.h
+  taiTypeWidgets_List.h
 
   taiWidgetColor.h
   taiWidgetToggle.h
@@ -1038,24 +1034,14 @@ set(ta_HEADS_NOMAKETA_NOMOC
 
   iDialogRegexpPopulator.h
 
-  HiLightButton.h
-  IDataViewWidget.h
-
-  iApplicationToolBar.h
-  iToolBar_List.h
-  iTabView_PtrList.h
-
-  gpiList_ElData.h
-  gpiList_ElDataList.h
-  gpiCompactList_ElData.h
-  gpiCompactList_ElDataList.h
-
-  iProgramToolBar.h
-
   MembSet.h
 
+  T3Misc.h
+  iSoSelectionEvent.h
   SoBase.h
   SoGroup.h
+  SoPtr.h
+  SoOffscreenRendererQt.h
 )
 
 # all headers that need maketa run on them
@@ -1143,7 +1129,7 @@ set(ta_SRCS_MAKETA
   taSmartPtr.cpp
   taOBase.cpp
   taOABase.cpp
-  taBaseAdapter.cpp
+  taBase_QObj.cpp
   taNBase.cpp
   taFBase.cpp
 
@@ -1549,9 +1535,9 @@ set(ta_SRCS_MAKETA
   TestWizard.cpp
 
   TemtClient.cpp
-  TemtClientAdapter.cpp
+  TemtClient_QObj.cpp
   TemtServer.cpp
-  TemtServerAdapter.cpp
+  TemtServer_QObj.cpp
   TemtClient_List.cpp
 
   taiMimeItem.cpp
@@ -1573,7 +1559,7 @@ set(ta_SRCS_MAKETA
   taiTableDataMimeItem.cpp
 
   taRootBase.cpp
-  taRootBaseAdapter.cpp
+  taRootBase_QObj.cpp
   tabMisc.cpp
 
   taAudioProc.cpp
@@ -1716,8 +1702,8 @@ set(ta_SRCS_MAKETA
   taGuiAction_List.cpp
   taGuiEditor.cpp
   taGuiDialog.cpp
-  taGuiWidgetHelper.cpp
-  taGuiActionHelper.cpp
+  taGuiWidget_QObj.cpp
+  taGuiAction_QObj.cpp
 
   T3DataViewFrame.cpp
   T3DataViewFrame_List.cpp
@@ -1757,7 +1743,7 @@ set(ta_SRCS_MAKETA
 
 # these correspond to TA_HEADS_NOMAKETA
 set(ta_SRCS_NOMAKETA
-  AutoSaver.cpp
+  iAutoSaver.cpp
   iMenuButton.cpp
   iContextMenuButton.cpp
   iColorButton.cpp
@@ -1782,7 +1768,7 @@ set(ta_SRCS_NOMAKETA
   iLineEdit.cpp
   iDialogTextEdit.cpp
   iNetworkAccessManager.cpp
-  Interceptor.cpp
+  iInterceptor.cpp
   SoOffscreenRendererQt.cpp
   iScrollArea.cpp
   iSplitter.cpp
@@ -1807,7 +1793,7 @@ set(ta_SRCS_NOMAKETA
   dumpMisc.cpp
 
   gzstream.cpp
-  UserDataDelegate.cpp
+  taiWidgetDelegateUserData.cpp
   Tokenizer.cpp
   FunLookupND.cpp
   FunLookup.cpp
@@ -1843,7 +1829,7 @@ set(ta_SRCS_NOMAKETA
   taiEditorOfProgramCtrl.cpp
 
   iDialogChoice.cpp
-  HiLightButton.cpp
+  iHiLightButton.cpp
   MembSet.cpp
 
   taiWidgetActions.cpp
@@ -1853,7 +1839,7 @@ set(ta_SRCS_NOMAKETA
   taiWidgetToggle.cpp
   taiWidgetText.cpp
   taiWidgetField.cpp
-  taiWidgetIncrField.cpp
+  taiWidgetFieldIncr.cpp
   iDialogWidgetField.cpp
   taiWidgetFieldFile.cpp
   taiWidgetPlusToggle.cpp
@@ -1913,17 +1899,17 @@ set(ta_SRCS_NOMAKETA
 
   taiWidgetProjTemplateElChooser.cpp
   taiWidgetProgLibElChooser.cpp
-  taiProgStepButton.cpp
+  taiWidgetProgStepButton.cpp
 
-  taiClipData.cpp
-  SynchronousNetRequest.cpp
+  iClipData.cpp
+  iSynchronousNetRequest.cpp
   taiWidgetDelegate.cpp
 
-  SelectEditDelegate.cpp
+  taiWidgetDelegateSelectEdit.cpp
 
   iDialogRegexpPopulator.cpp
   iDialogRegexp.cpp
-  taiRegexpField.cpp
+  taiWidgetFieldRegexp.cpp
 
   iDialogEditor.cpp
   EditDataPanel.cpp
@@ -1932,7 +1918,7 @@ set(ta_SRCS_NOMAKETA
   iDocDataPanel.cpp
 
   ISelectableHost.cpp
-  Widget_List.cpp
+  iWidget_List.cpp
   iBaseClipWidgetAction.cpp
 
   IDataViewWidget.cpp
@@ -1962,7 +1948,7 @@ set(ta_SRCS_NOMAKETA
   ISelectable_PtrList.cpp
   tabDefChildTreeDataNode.cpp
   tabListTreeDataNode.cpp
-  SelectableHostHelper.cpp
+  ISelectableHost_QObj.cpp
   tabGroupTreeDataNode.cpp
   iApplicationToolBar.cpp
   iToolBar_List.cpp
@@ -1978,7 +1964,7 @@ set(ta_SRCS_NOMAKETA
   iHelpBrowser.cpp
 
   iDataTableEditor.cpp
-  taiEditTableWidget.cpp
+  iTableWidget.cpp
   iTableView.cpp
   iMatrixTableView.cpp
   iMatrixEditor.cpp
@@ -1988,10 +1974,10 @@ set(ta_SRCS_NOMAKETA
   taTypeSpaceTreeDataNode.cpp
   iClassBrowseViewer.cpp
 
-  gpiList_ElData.cpp
-  gpiList_ElDataList.cpp
-  gpiCompactList_ElData.cpp
-  gpiCompactList_ElDataList.cpp
+  taiMemberWidgets.cpp
+  taiMemberWidgets_List.cpp
+  taiTypeWidgets.cpp
+  taiTypeWidgets_List.cpp
 
   iProgramEditor.cpp
   iProgramViewScriptPanel.cpp
@@ -2009,14 +1995,14 @@ set(ta_SRCS_NOMAKETA
 
   iUserDataPanel.cpp
 
-  ColorScaleBar.cpp
-  HColorScaleBar.cpp
-  VColorScaleBar.cpp
-  ColorBar.cpp
-  HColorBar.cpp
-  VColorBar.cpp
-  ColorMatrixGrid.cpp
-  ColorPad.cpp
+  iColorScaleBar.cpp
+  iHColorScaleBar.cpp
+  iVColorScaleBar.cpp
+  iColorBar.cpp
+  iHColorBar.cpp
+  iVColorBar.cpp
+  iColorMatrixGrid.cpp
+  iColorPad.cpp
   T3ColorBar.cpp
 
   MatrixTableModel.cpp
@@ -2027,7 +2013,7 @@ set(ta_SRCS_NOMAKETA
   taiViewTypeOfDataTable.cpp
   iDataTableView.cpp
   iDataTablePanel.cpp
-  DataTableDelegate.cpp
+  iDataTableDelegate.cpp
   iDataTablePanel_Mbr.cpp
 
   T3Misc.cpp

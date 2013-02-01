@@ -14,10 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "ISelectableHost.h"
-#include <SelectableHostHelper>
+#include <ISelectableHost_QObj>
 #include <taiWidgetActions>
 #include <taiMimeSource>
-#include <taiClipData>
+#include <iClipData>
 #include <taBase_RefList>
 #include <taProject>
 #include <taiSigLink>
@@ -50,7 +50,7 @@ const char* ISelectableHost::update_ui_signal; // currently NULL
 
 ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
-  helper = new SelectableHostHelper(this);
+  helper = new ISelectableHost_QObj(this);
   dyn_idx = 0;
   ctxt_ms = 0;
   ctxt_ms = NULL;
@@ -130,7 +130,7 @@ void ISelectableHost::EditAction(int ea,
   ISelectable* ci = curItem();
   if (!ci) return;
   // delete is a special case
-  if (ea & taiClipData::EA_DELETE) {
+  if (ea & iClipData::EA_DELETE) {
     if(taMisc::delete_prompts) {
       int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
                                "&No", "&Yes");
@@ -181,7 +181,7 @@ void ISelectableHost::EditActionsEnabled(int& ea) {
   int rval = ci->QueryEditActions_(items);
   // certain things disallowed if more than one item selected
   if (items.size > 1) {
-    rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
+    rval &= ~(iClipData::EA_FORB_ON_MUL_SEL);
   }
   ea = rval;
 }

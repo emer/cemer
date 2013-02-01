@@ -23,8 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 class taiWidgetField; //
-class taiWidgetIncrField; //
-class ColorScaleBar; //
+class taiWidgetFieldIncr; //
+class iColorScaleBar; //
 class GridTableView; //
 class QCheckBox; //
 class QPushButton; //
@@ -52,9 +52,9 @@ public:
 
   QHBoxLayout*            layVals;
   QLabel*                   lblRows;
-  taiWidgetIncrField*             fldRows; // number of rows to display
+  taiWidgetFieldIncr*             fldRows; // number of rows to display
   QLabel*                   lblCols;
-  taiWidgetIncrField*             fldCols; // number of cols to display
+  taiWidgetFieldIncr*             fldCols; // number of cols to display
   QLabel*                   lblWidth;
   taiWidgetField*                 fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblTxtMin;
@@ -74,7 +74,7 @@ public:
 
   QHBoxLayout*            layColorScale;
   QCheckBox*                chkAutoScale;
-  ColorScaleBar*                 cbar;             // colorbar
+  iColorScaleBar*                 cbar;             // colorbar
   QPushButton*              butSetColor;
 
   QHBoxLayout*            layClickVals;

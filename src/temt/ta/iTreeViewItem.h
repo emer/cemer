@@ -123,9 +123,9 @@ public: // ISelectable interface
   override MemberDef*   md() const {return m_md;}
   override ISelectable* par() const;
   override ISelectableHost* host() const;
-  override taiClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
+  override iClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
     GuiContext sh_typ = GC_DEFAULT) const;
-  override taiClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
+  override iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
 //  override int                GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:

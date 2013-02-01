@@ -17,7 +17,7 @@
 #include <taGuiEditor>
 #include <Program>
 #include <ProgVar>
-#include <taiWidgetIncrField>
+#include <taiWidgetFieldIncr>
 #include <taiWidgetField>
 #include <taiWidgetToggle>
 #include <taiWidgetTokenChooser>
@@ -452,7 +452,7 @@ bool taGuiDialog::AddIntField(int* int_var, const String& nm, const String& pare
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiWidgetIncrField* taidata = new taiWidgetIncrField(&TA_int, data_host, NULL, par->widget);
+  taiWidgetFieldIncr* taidata = new taiWidgetFieldIncr(&TA_int, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "IntField", layout, attributes,
                                   Variant((void*)int_var), _nilString, taidata);
   return (bool)w;

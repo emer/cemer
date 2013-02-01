@@ -15,7 +15,7 @@
 
 #include "iViewPanelFrame.h"
 #include <iViewPanelSet>
-#include <HiLightButton>
+#include <iHiLightButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -157,16 +157,16 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
     layButtons = new QHBoxLayout(par);
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
-  btnCopyFrom = new HiLightButton("&Copy From", par);
+  btnCopyFrom = new iHiLightButton("&Copy From", par);
   layButtons->addWidget(btnCopyFrom);
   //  layButtons->addSpacing(4);
 
   layButtons->addStretch();
-  btnApply = new HiLightButton("&Apply", par);
+  btnApply = new iHiLightButton("&Apply", par);
   layButtons->addWidget(btnApply);
   layButtons->addSpacing(4);
 
-  btnRevert = new HiLightButton("&Revert", par);
+  btnRevert = new iHiLightButton("&Revert", par);
   layButtons->addWidget(btnRevert);
   layButtons->addSpacing(4);
   if (lay)

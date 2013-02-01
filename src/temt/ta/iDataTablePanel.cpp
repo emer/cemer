@@ -16,7 +16,7 @@
 #include "iDataTablePanel.h"
 #include <iDataTableEditor>
 #include <iMatrixEditor>
-#include <taiClipData>
+#include <iClipData>
 #include <iDataTableView>
 #include <iMainWindowViewer>
 #include <taSigLinkItr>
@@ -74,7 +74,7 @@ int iDataTablePanel::GetEditActions() {
     rval = ci->QueryEditActions_(sel_list);
     // certain things disallowed if more than one item selected
     if (sel_list.size > 1) {
-      rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
+      rval &= ~(iClipData::EA_FORB_ON_MUL_SEL);
     }
   }
   return rval;

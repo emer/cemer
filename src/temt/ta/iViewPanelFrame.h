@@ -24,7 +24,7 @@
 #include <taiWidget_List>
 
 // declare all other types mentioned but not required to include:
-class HiLightButton; //
+class iHiLightButton; //
 class iViewPanelSet; //
 class taDataView; //
 class QBoxLayout; //
@@ -54,9 +54,9 @@ public:
 #endif
 
 //QHBoxLayout*          layButtons;
-  HiLightButton*          btnApply; //note: only if created
-  HiLightButton*          btnRevert;
-  HiLightButton*          btnCopyFrom;
+  iHiLightButton*          btnApply; //note: only if created
+  iHiLightButton*          btnRevert;
+  iHiLightButton*          btnCopyFrom;
 
   int                   vp_flags;
   bool                  read_only; // set true if we are

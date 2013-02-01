@@ -16,7 +16,7 @@
 #include "iBaseClipWidgetAction.h"
 #include <taiSigLink>
 #include <taiObjectMimeFactory>
-#include <taiClipData>
+#include <iClipData>
 
 
 iBaseClipWidgetAction::iBaseClipWidgetAction(taBase* inst_, QObject* parent)
@@ -74,7 +74,7 @@ void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
 }
 
 QMimeData* iBaseClipWidgetAction::mimeData() const {
-  taiClipData* rval = NULL;
+  iClipData* rval = NULL;
   if (m_inst) {
     taiSigLink* link = (taiSigLink*)m_inst->GetSigLink();
     if (link) {
@@ -82,8 +82,8 @@ QMimeData* iBaseClipWidgetAction::mimeData() const {
       taBase* obj = link->taData();
       if (obj) {
         taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-        rval = new taiClipData(
-          (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
+        rval = new iClipData(
+          (iClipData::EA_SRC_COPY | iClipData::EA_SRC_DRAG | iClipData::EA_SRC_READONLY));
         mf->AddSingleObject(rval, obj);
       }
     }

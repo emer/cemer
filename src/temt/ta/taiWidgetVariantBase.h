@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class taiWidgetComboBox; //
 class taiWidgetToggle; //
-class taiWidgetIncrField; //
+class taiWidgetFieldIncr; //
 class taiWidgetField; //
 class taiWidgetTokenChooser; //
 class QStackedWidget; //
@@ -67,7 +67,7 @@ protected:
   QStackedWidget*       stack; // holds the subfields for different types
 
   taiWidgetToggle*            togVal; // for: bool
-  taiWidgetIncrField*         incVal; // for: ints
+  taiWidgetFieldIncr*         incVal; // for: ints
   taiWidgetField*             fldVal; // for: char, string, most numbers
   taiWidgetTokenChooser*    tabVal; // for taBase & Matrix token
   iLabel*               tiVal; // for TypeItem token -- display-only for now

@@ -17,7 +17,7 @@
 #include <ProgVar>
 
 #include <taiWidgetDeck>
-#include <taiWidgetIncrField>
+#include <taiWidgetFieldIncr>
 #include <taiWidgetComboBox>
 #include <taiWidgetBitBox>
 #include <iComboBox>
@@ -39,7 +39,7 @@ taiWidget* taiMemberOfProgVarIntVal::GetDataRep_impl(IWidgetHost* host_, taiWidg
   taiWidgetDeck* rval = new taiWidgetDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
-  taiWidgetIncrField* int_rep = new taiWidgetIncrField(typ, host_, rval, gui_parent_, flags_);
+  taiWidgetFieldIncr* int_rep = new taiWidgetFieldIncr(typ, host_, rval, gui_parent_, flags_);
   int_rep->setMinimum(INT_MIN);
   taiWidgetComboBox*  enum_rep = new taiWidgetComboBox(true, NULL, host_, rval, gui_parent_, flags_);
   taiWidgetBitBox* bit_rep = new taiWidgetBitBox(typ, host_, rval, gui_parent_, flags_);
@@ -76,7 +76,7 @@ void taiMemberOfProgVarIntVal::GetImage_impl(taiWidget* dat, const void* base) {
   }
   else {
     rval->GetImage(0);
-    taiWidgetIncrField* int_rep = dynamic_cast<taiWidgetIncrField*>(rval->data_el.SafeEl(0));
+    taiWidgetFieldIncr* int_rep = dynamic_cast<taiWidgetFieldIncr*>(rval->data_el.SafeEl(0));
     if (!int_rep) return; // shouldn't happen
     int_rep->GetImage(val);
   }
@@ -101,7 +101,7 @@ void taiMemberOfProgVarIntVal::GetMbrValue_impl(taiWidget* dat, void* base) {
     }
   }
   else {
-    taiWidgetIncrField* int_rep = dynamic_cast<taiWidgetIncrField*>(rval->data_el.SafeEl(0));
+    taiWidgetFieldIncr* int_rep = dynamic_cast<taiWidgetFieldIncr*>(rval->data_el.SafeEl(0));
     if (!int_rep) return; // shouldn't happen
     val = int_rep->GetValue();
   }

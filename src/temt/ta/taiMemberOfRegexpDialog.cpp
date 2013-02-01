@@ -15,7 +15,7 @@
 
 #include "taiMemberOfRegexpDialog.h"
 #include <iDialogRegexpPopulator>
-#include <taiRegexpField>
+#include <taiWidgetFieldRegexp>
 
 #include <taMisc>
 
@@ -38,12 +38,12 @@ taiWidget* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiWidge
     }
   }
 
-  return new taiRegexpField(mbr->type, host_, par, gui_parent_, flags_, populator);
+  return new taiWidgetFieldRegexp(mbr->type, host_, par, gui_parent_, flags_, populator);
 }
 
 void taiMemberOfRegexpDialog::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiRegexpField* rval = (taiRegexpField*)dat;
+  taiWidgetFieldRegexp* rval = (taiWidgetFieldRegexp*)dat;
   // The 'base' pointer is the owner of the regexp field.
   rval->SetFieldOwner(base);
   rval->GetImage(*((String*)new_base));
@@ -51,6 +51,6 @@ void taiMemberOfRegexpDialog::GetImage_impl(taiWidget* dat, const void* base){
 
 void taiMemberOfRegexpDialog::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiRegexpField* rval = (taiRegexpField*)dat;
+  taiWidgetFieldRegexp* rval = (taiWidgetFieldRegexp*)dat;
   *((String*)new_base) = rval->GetValue();
 }

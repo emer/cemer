@@ -15,7 +15,7 @@
 
 #include "iTableView.h"
 #include <iMainWindowViewer>
-#include <taiClipData>
+#include <iClipData>
 #include <CellRange>
 #include <iVec2i>
 
@@ -255,18 +255,18 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   GetEditActionsEnabled(ea);
     
   act = menu->AddItem("&Copy", taiWidgetMenu::normal, iAction::int_act,
-    this, SLOT(EditAction(int)), taiClipData::EA_COPY );
+    this, SLOT(EditAction(int)), iClipData::EA_COPY );
   act->setShortcut(QKeySequence("Ctrl+C"));
-  if (!(ea & taiClipData::EA_COPY))
+  if (!(ea & iClipData::EA_COPY))
     act->setEnabled(false);
   act = menu->AddItem("&Paste", taiWidgetMenu::normal,
-      iAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
+      iAction::int_act, this, SLOT(EditAction(int)), iClipData::EA_PASTE);
   act->setShortcut(QKeySequence("Ctrl+V"));
-  if (!(ea & taiClipData::EA_PASTE)) 
+  if (!(ea & iClipData::EA_PASTE)) 
     act->setEnabled(false);
   act = menu->AddItem("Clear", taiWidgetMenu::normal,
-      iAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_CLEAR);
-  if (!(ea & taiClipData::EA_CLEAR)) 
+      iAction::int_act, this, SLOT(EditAction(int)), iClipData::EA_CLEAR);
+  if (!(ea & iClipData::EA_CLEAR)) 
     act->setEnabled(false);
     
   menu->AddSep();

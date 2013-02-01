@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "TemtServer.h"
-#include <TemtServerAdapter>
+#include <TemtServer_QObj>
 
 #include <taMisc>
 
@@ -26,7 +26,7 @@ void TemtServer::Initialize() {
   port = 5360;
   open = false;
   server = NULL;
-  SetAdapter(new TemtServerAdapter(this));
+  SetAdapter(new TemtServer_QObj(this));
 }
 
 void TemtServer::Destroy() {

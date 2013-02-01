@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiWidget.h"
-#include <taGuiWidgetHelper>
-#include <taiWidgetIncrField>
+#include <taGuiWidget_QObj>
+#include <taiWidgetFieldIncr>
 #include <taiWidgetField>
 #include <taiWidgetBitBox>
 #include <taiWidgetComboBox>
@@ -37,7 +37,7 @@
 
 
 void taGuiWidget::Initialize() {
-  m_helper = new taGuiWidgetHelper(this);
+  m_helper = new taGuiWidget_QObj(this);
   tai_data = NULL;
 }
 
@@ -77,7 +77,7 @@ void taGuiWidget::GetImage() {
   }
   if(!tai_data || data.isNull()) return;
   if(widget_type == "IntField") {
-    ((taiWidgetIncrField*)tai_data)->GetImage((String)*((int*)data.toPtr()));
+    ((taiWidgetFieldIncr*)tai_data)->GetImage((String)*((int*)data.toPtr()));
   }
   if(widget_type == "DoubleField") {
     ((taiWidgetField*)tai_data)->GetImage((String)*((double*)data.toPtr()));
@@ -115,7 +115,7 @@ void taGuiWidget::GetImage() {
 void taGuiWidget::GetValue() {
   if(!tai_data || data.isNull()) return;
   if(widget_type == "IntField") {
-    *((int*)data.toPtr()) = (int)((taiWidgetIncrField*)tai_data)->GetValue();
+    *((int*)data.toPtr()) = (int)((taiWidgetFieldIncr*)tai_data)->GetValue();
   }
   if(widget_type == "DoubleField") {
     *((double*)data.toPtr()) = (double)((taiWidgetField*)tai_data)->GetValue();

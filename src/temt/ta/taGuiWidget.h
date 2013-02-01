@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 class QObject; // 
-class taGuiWidgetHelper; // #IGNORE
+class taGuiWidget_QObj; // #IGNORE
 class taiWidget; //
 
 
@@ -59,7 +59,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(taGuiWidget);
 protected:
-  taGuiWidgetHelper*    m_helper;
+  taGuiWidget_QObj*    m_helper;
 
 //   override void              UpdateAfterEdit_impl();
 private:

@@ -22,8 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiEditTableWidget;
-class SelectEditDelegate;
+class iTableWidget;
+class taiWidgetDelegateSelectEdit;
 
 
 class TA_API taiEditorOfSelectEditFast : public taiEditorOfSelectEditBase {
@@ -31,7 +31,7 @@ class TA_API taiEditorOfSelectEditFast : public taiEditorOfSelectEditBase {
 INHERITED(taiEditorOfSelectEditBase)
   Q_OBJECT
 public:
-  taiEditTableWidget*   tw;
+  iTableWidget*   tw;
 
   override void         Constr_Box();
   override void         GetImage_Item(int row); // called from GetImage and ed->GetValue
@@ -48,7 +48,7 @@ protected slots:
   void                  tw_customContextMenuRequested(const QPoint& pos);
 
 protected:
-  SelectEditDelegate*   sed;
+  taiWidgetDelegateSelectEdit*   sed;
 
   override void         Constr_Body_impl();
   override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them

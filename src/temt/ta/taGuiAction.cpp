@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taGuiAction.h"
-#include <taGuiActionHelper>
+#include <taGuiAction_QObj>
 #include <iMainWindowViewer>
 
 #include <taiMisc>
@@ -24,7 +24,7 @@
 
 
 void taGuiAction::Initialize() {
-  m_helper = new taGuiActionHelper(this);
+  m_helper = new taGuiAction_QObj(this);
 }
 
 void taGuiAction::Destroy() {

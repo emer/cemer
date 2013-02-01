@@ -24,7 +24,7 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class taiRegexpField; //
+class taiWidgetFieldRegexp; //
 class iDialogRegexpPopulator; //
 class QStandardItem; //
 class QDialogButtonBox; //
@@ -42,7 +42,7 @@ class TA_API iDialogRegexp : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-    iDialogRegexp(taiRegexpField* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only,
+    iDialogRegexp(taiWidgetFieldRegexp* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only,
                   bool editor_mode = false);
 
   bool          isReadOnly()    { return m_read_only; }
@@ -112,7 +112,7 @@ protected:
 protected:
   static const QString DOT_STAR;
 
-  taiRegexpField*       m_field;
+  taiWidgetFieldRegexp*       m_field;
   iDialogRegexpPopulator*      m_populator;
   const void *          m_fieldOwner;
   bool                  m_read_only;

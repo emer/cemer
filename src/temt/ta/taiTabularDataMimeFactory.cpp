@@ -16,7 +16,7 @@
 #include "taiTabularDataMimeFactory.h"
 #include <CellRange>
 #include <DataTable>
-#include <taiClipData>
+#include <iClipData>
 #include <taiMatrixDataMimeItem>
 #include <taiTableDataMimeItem>
 #include <taiMimeSource>
@@ -72,18 +72,18 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   int& allowed, int& forbidden) const
 {
   // ops that are never allowed on mats
-  forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  forbidden |= (iClipData::EA_CUT | iClipData::EA_DELETE);
   // forbidden on ro
   if (mat->isGuiReadOnly())
-    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
+    forbidden |= iClipData::EA_FORB_ON_DST_READONLY;
   // src ops
   if (sel.nonempty())
-    allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
+    allowed |= (iClipData::EA_COPY | iClipData::EA_CLEAR);
 
   if (!ms) return;
   // dst ops -- none allowed if no selection
   if (sel.empty()) {
-    forbidden = taiClipData::EA_DST_OPS;
+    forbidden = iClipData::EA_DST_OPS;
     return;
   }
 
@@ -91,21 +91,21 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
      ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
     return;
   }}
   // Table
   {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
      ms->GetMimeItem(&TA_taiTableDataMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
     return;
   }}
   // TSV
   {taiTsvMimeItem* mi = (taiTsvMimeItem*)
     ms->GetMimeItem(&TA_taiTsvMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
   }}
 }
 
@@ -117,7 +117,7 @@ void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
   Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
 
-  if (ea & taiClipData::EA_PASTE) {
+  if (ea & iClipData::EA_PASTE) {
     taProject* proj = dynamic_cast<taProject*>(mat->GetThisOrOwner(&TA_taProject));
     if(proj) {
       proj->undo_mgr.SaveUndo(mat, "Paste/Copy", mat);
@@ -160,12 +160,12 @@ void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat,
   Mat_QueryEditActions(mat, sel, NULL, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
 
-  if (ea & taiClipData::EA_COPY) {
-    taiClipData* cd = Mat_GetClipData(mat,
-      sel, taiClipData::EA_SRC_COPY, false);
+  if (ea & iClipData::EA_COPY) {
+    iClipData* cd = Mat_GetClipData(mat,
+      sel, iClipData::EA_SRC_COPY, false);
     QApplication::clipboard()->setMimeData(cd); //cb takes ownership
   } else
-  if (ea & taiClipData::EA_CLEAR) {
+  if (ea & iClipData::EA_CLEAR) {
     taProject* proj = dynamic_cast<taProject*>(mat->GetThisOrOwner(&TA_taProject));
     if(proj) {
       proj->undo_mgr.SaveUndo(mat, "Clear", mat);
@@ -174,10 +174,10 @@ void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat,
   }
 }
 
-taiClipData* taiTabularDataMimeFactory::Mat_GetClipData(taMatrix* mat,
+iClipData* taiTabularDataMimeFactory::Mat_GetClipData(taMatrix* mat,
     const CellRange& sel, int src_edit_action, bool for_drag) const
 {
-  taiClipData* cd = new taiClipData(src_edit_action);
+  iClipData* cd = new iClipData(src_edit_action);
   AddMatDesc(cd, mat, sel);
   String str = mat->FlatRangeToTSV(sel);
   cd->setTextFromStr(str);
@@ -224,10 +224,10 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   int& allowed, int& forbidden) const
 {
   // ops that are never allowed on mats
-  forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  forbidden |= (iClipData::EA_CUT | iClipData::EA_DELETE);
   // forbidden on ro -- whole table
   if (isGuiReadOnly())
-    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
+    forbidden |= iClipData::EA_FORB_ON_DST_READONLY;
   // selected cols
   bool sel_ro = false; // we'll or in
   for (int col = sel.col_fr; (col <= sel.col_to) && !sel_ro; ++col) {
@@ -235,17 +235,17 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
     sel_ro = sel_ro || (da->col_flags & DataCol::READ_ONLY);
   }
   if (sel_ro) {
-    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
+    forbidden |= iClipData::EA_FORB_ON_DST_READONLY;
   }
 
   // src ops
   if (sel.nonempty())
-    allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
+    allowed |= (iClipData::EA_COPY | iClipData::EA_CLEAR);
 
   if (!ms) return;
   // dst ops -- none allowed if no selection
   if (sel.empty()) {
-    forbidden = taiClipData::EA_DST_OPS;
+    forbidden = iClipData::EA_DST_OPS;
     return;
   }
 
@@ -254,21 +254,21 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
      ms->GetMimeItem(&TA_taiTableDataMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
     return;
   }}
   // Matrx
   {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
      ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
     return;
   }}
   // TSV
   {taiTsvMimeItem* mi = (taiTsvMimeItem*)
     ms->GetMimeItem(&TA_taiTsvMimeItem);
   if (mi) {
-    allowed |= taiClipData::EA_PASTE;
+    allowed |= iClipData::EA_PASTE;
   }}
 }
 
@@ -280,7 +280,7 @@ void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab,
   Table_QueryEditActions(tab, sel, ms, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
 
-  if (ea & taiClipData::EA_PASTE) {
+  if (ea & iClipData::EA_PASTE) {
     taProject* proj = dynamic_cast<taProject*>(tab->GetThisOrOwner(&TA_taProject));
     if(proj) {
       proj->undo_mgr.SaveUndo(tab, "Paste/Copy", tab);
@@ -322,13 +322,13 @@ void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab,
   Table_QueryEditActions(tab, sel, NULL, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
 
-  if (ea & taiClipData::EA_COPY) {
-    taiClipData* cd = Table_GetClipData(tab,
-      sel, taiClipData::EA_SRC_COPY, false);
+  if (ea & iClipData::EA_COPY) {
+    iClipData* cd = Table_GetClipData(tab,
+      sel, iClipData::EA_SRC_COPY, false);
     QApplication::clipboard()->setMimeData(cd); //cb takes ownership
     return;
   } else
-  if (ea & taiClipData::EA_CLEAR) {
+  if (ea & iClipData::EA_CLEAR) {
     taProject* proj = dynamic_cast<taProject*>(tab->GetThisOrOwner(&TA_taProject));
     if(proj) {
       proj->undo_mgr.SaveUndo(tab, "Clear", tab);
@@ -338,10 +338,10 @@ void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab,
   }
 }
 
-taiClipData* taiTabularDataMimeFactory::Table_GetClipData(DataTable* tab,
+iClipData* taiTabularDataMimeFactory::Table_GetClipData(DataTable* tab,
     const CellRange& sel, int src_edit_action, bool for_drag) const
 {
-  taiClipData* cd = new taiClipData(src_edit_action);
+  iClipData* cd = new iClipData(src_edit_action);
   AddTableDesc(cd, tab, sel);
   String str = tab->RangeToTSV(sel);
   cd->setTextFromStr(str);

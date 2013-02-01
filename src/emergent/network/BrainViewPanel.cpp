@@ -20,9 +20,9 @@
 #include <NiftiReader>
 #include <iFlowLayout>
 #include <T3ExaminerViewer>
-#include <taiRegexpField>
+#include <taiWidgetFieldRegexp>
 #include <iLineEdit>
-#include <HColorScaleBar>
+#include <iHColorScaleBar>
 
 #include <taMisc>
 #include <taiMisc>
@@ -228,7 +228,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label->setToolTip("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas.");
   bvControls->addWidget(label);
 
-  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
+  fldBrainColorRegexp = dl.Add(new taiWidgetFieldRegexp(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
   fldBrainColorRegexp->SetFieldOwner(net);
 
   // GetRep() returns the widget that holds the line edit and the edit button.
@@ -269,7 +269,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label->setToolTip("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow");
   bvControls->addWidget(label);
 
-  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
+  fldBrainAtlasRegexp = dl.Add(new taiWidgetFieldRegexp(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
   fldBrainAtlasRegexp->SetFieldOwner(net);
   bvControls->addWidget(fldBrainAtlasRegexp->GetRep());
   if (iLineEdit* theLineEdit = dynamic_cast<iLineEdit*>(fldBrainAtlasRegexp->rep())) {
@@ -308,25 +308,25 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layDisplayValues->setSpacing(2);
   layDisplayValues->setMargin(0);
 
-  layColorBar = new QHBoxLayout();
-  layDisplayValues->addLayout(layColorBar);
+  layiColorBar = new QHBoxLayout();
+  layDisplayValues->addLayout(layiColorBar);
 
   butScaleDefault = new QPushButton("Defaults", widg);
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
-  layColorBar->addWidget(butScaleDefault);
-  layColorBar->addSpacing(taiM->hsep_c);
+  layiColorBar->addWidget(butScaleDefault);
+  layiColorBar->addSpacing(taiM->hsep_c);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()));
 
-  cbar = new HColorScaleBar(&(dv_->scale), ColorScaleBar::RANGE, true, true, widg);
+  cbar = new iHColorScaleBar(&(dv_->scale), iColorScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()));
-  layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
-  layColorBar->addSpacing(taiM->hsep_c);
+  layiColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+  layiColorBar->addSpacing(taiM->hsep_c);
 
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
-  layColorBar->addWidget(butSetColor);
+  layiColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()));
 
   ////////////////////////////////////////////////////////////////////////////

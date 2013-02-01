@@ -28,7 +28,7 @@
 #include <iTabViewer>
 #include <ISelectableHost>
 #include <taiWidgetMenuBar>
-#include <taiClipData>
+#include <iClipData>
 #include <DockViewer>
 #include <taGuiDialog>
 #include <BrowseViewer>
@@ -503,28 +503,28 @@ void iMainWindowViewer::Constr_EditMenu()
   editRedoAction = AddAction(new iAction("&Redo", QKeySequence(cmd_str + "Shift+Z"), "editRedoAction"));
   editRedoAction->setIcon(QIcon(QPixmap(":/images/editredo.png")));
 
-  editCutAction = AddAction(new iAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str + "X"), "editCutAction"));
+  editCutAction = AddAction(new iAction(iClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str + "X"), "editCutAction"));
   editCutAction->setIcon(QIcon(QPixmap(":/images/editcut.png")));
-  editCopyAction = AddAction(new iAction(taiClipData::EA_COPY, "&Copy", QKeySequence(cmd_str + "C"), "editCopyAction"));
+  editCopyAction = AddAction(new iAction(iClipData::EA_COPY, "&Copy", QKeySequence(cmd_str + "C"), "editCopyAction"));
   editCopyAction->setIcon(QIcon(QPixmap(":/images/editcopy.png")));
 
   // Note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
-  editDupeAction = AddAction(new iAction(taiClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction"));
+  editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction"));
   QPixmap editpaste(":/images/editpaste.png");
-  editPasteAction = AddAction(new iAction(taiClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str + "V"), "editPasteAction"));
+  editPasteAction = AddAction(new iAction(iClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str + "V"), "editPasteAction"));
   editPasteAction->setIcon(QIcon(editpaste));
-  editPasteIntoAction = AddAction(new iAction(taiClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str + "V"), "editPasteIntoAction"));
+  editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str + "V"), "editPasteIntoAction"));
   editPasteIntoAction->setIcon(QIcon(editpaste));
-  editPasteAssignAction = AddAction(new iAction(taiClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(cmd_str + "V"), "editPasteAssignAction"));
+  editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(cmd_str + "V"), "editPasteAssignAction"));
   editPasteAssignAction->setIcon(QIcon(editpaste));
-  editPasteAppendAction = AddAction(new iAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str + "V"), "editPasteAppendAction"));
+  editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str + "V"), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
-  editDeleteAction = AddAction(new iAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), "editDeleteAction"));
+  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), "editDeleteAction"));
   // editDeleteAction->setIcon(QIcon(editpaste));
 
-  editLinkAction = AddAction(new iAction(taiClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
-  editLinkIntoAction = AddAction(new iAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction"));
-  editUnlinkAction = AddAction(new iAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
+  editLinkAction = AddAction(new iAction(iClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
+  editLinkIntoAction = AddAction(new iAction(iClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction"));
+  editUnlinkAction = AddAction(new iAction(iClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
 
   editFindAction = AddAction(new iAction(0, "&Find...", QKeySequence(), "editFindAction"));
   editFindNextAction = AddAction(new iAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
@@ -1578,7 +1578,7 @@ void iMainWindowViewer::helpAbout() {
 }
 
 void iMainWindowViewer::mnuEditAction(iAction* mel) {
-   // called from context; cast obj to an taiClipData::EditAction
+   // called from context; cast obj to an iClipData::EditAction
   emit_EditAction(mel->usr_data.toInt());
 }
 
@@ -1825,24 +1825,24 @@ void iMainWindowViewer::toolsTypeBrowser() {
 void iMainWindowViewer::UpdateUi() {
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
-  // editCutAction->setEnabled(ea & taiClipData::EA_CUT);
-  // editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
-  // editDupeAction->setVisible(ea & taiClipData::EA_DUPE);
+  // editCutAction->setEnabled(ea & iClipData::EA_CUT);
+  // editCopyAction->setEnabled(ea & iClipData::EA_COPY);
+  // editDupeAction->setVisible(ea & iClipData::EA_DUPE);
   editCutAction->setEnabled(true);
   editCopyAction->setEnabled(true);
   editDupeAction->setVisible(true);
   // we always show the plainjane Paste (enable or disable)
   // if more than one paste guy is enabled, no shortcuts/accelerators
   int paste_cnt = 0;
-  if (ea & taiClipData::EA_PASTE) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_INTO) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_ASSIGN) ++paste_cnt;
-  if (ea & taiClipData::EA_PASTE_APPEND) ++paste_cnt;
-  editPasteAction->setEnabled(ea & taiClipData::EA_PASTE);
-  editPasteIntoAction->setVisible(ea & taiClipData::EA_PASTE_INTO);
-  editPasteAssignAction->setVisible(ea & taiClipData::EA_PASTE_ASSIGN);
-  editPasteAppendAction->setVisible(ea & taiClipData::EA_PASTE_APPEND);
-  if (ea & taiClipData::EA_PASTE_INTO) {
+  if (ea & iClipData::EA_PASTE) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_INTO) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_ASSIGN) ++paste_cnt;
+  if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
+  editPasteAction->setEnabled(ea & iClipData::EA_PASTE);
+  editPasteIntoAction->setVisible(ea & iClipData::EA_PASTE_INTO);
+  editPasteAssignAction->setVisible(ea & iClipData::EA_PASTE_ASSIGN);
+  editPasteAppendAction->setVisible(ea & iClipData::EA_PASTE_APPEND);
+  if (ea & iClipData::EA_PASTE_INTO) {
     if (paste_cnt > 1) {
       editPasteIntoAction->setText("Paste Into");
       editPasteIntoAction->setShortcut(QKeySequence());
@@ -1851,7 +1851,7 @@ void iMainWindowViewer::UpdateUi() {
       editPasteIntoAction->setShortcut(QKeySequence(cmd_str + "V"));
     }
   }
-  if (ea & taiClipData::EA_PASTE_ASSIGN)  {
+  if (ea & iClipData::EA_PASTE_ASSIGN)  {
     if (paste_cnt > 1) {
       editPasteAssignAction->setText("Paste Assign");
       editPasteAssignAction->setShortcut(QKeySequence());
@@ -1860,7 +1860,7 @@ void iMainWindowViewer::UpdateUi() {
       editPasteAssignAction->setShortcut(QKeySequence(cmd_str + "V"));
     }
   }
-  if (ea & taiClipData::EA_PASTE_APPEND)  {
+  if (ea & iClipData::EA_PASTE_APPEND)  {
     if (paste_cnt > 1) {
       editPasteAppendAction->setText("Paste Append");
       editPasteAppendAction->setShortcut(QKeySequence());
@@ -1870,15 +1870,15 @@ void iMainWindowViewer::UpdateUi() {
     }
   }
 
-  editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
+  editDeleteAction->setEnabled(ea & iClipData::EA_DELETE);
 
   // linking is currently not really used, so we'll not show by default
   // if we later add more linking capability, we may want to always enable,
   // just to hint user that it is sometimes available
-  editLinkAction->setVisible(ea & taiClipData::EA_LINK);
-  editLinkIntoAction->setVisible(ea & taiClipData::EA_LINK_INTO);
+  editLinkAction->setVisible(ea & iClipData::EA_LINK);
+  editLinkIntoAction->setVisible(ea & iClipData::EA_LINK_INTO);
 
-  if ((ea & taiClipData::EA_LINK2) == taiClipData::EA_LINK2) {
+  if ((ea & iClipData::EA_LINK2) == iClipData::EA_LINK2) {
     // need to remove accelerators
     editLinkAction->setText("Link");
     editLinkAction->setShortcut(QKeySequence());
@@ -1892,7 +1892,7 @@ void iMainWindowViewer::UpdateUi() {
     editLinkIntoAction->setShortcut(QKeySequence());
   }
 
-  editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
+  editUnlinkAction->setVisible(ea & iClipData::EA_UNLINK);
 
   taProject* proj = myProject();
   if(proj) {

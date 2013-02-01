@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taBaseAdapter; // #IGNORE
+class taBase_QObj; // #IGNORE
 
 
 TypeDef_Of(taOABase);
@@ -30,11 +30,11 @@ TypeDef_Of(taOABase);
 class TA_API taOABase : public taOBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class with QObject adapter for signals/slots
 INHERITED(taOBase)
-friend class taBaseAdapter;
+friend class taBase_QObj;
 public:
 #ifdef TA_USE_QT
-  taBaseAdapter*        adapter; // #IGNORE
-  void                  SetAdapter(taBaseAdapter* adapter_); // #IGNORE
+  taBase_QObj*        adapter; // #IGNORE
+  void                  SetAdapter(taBase_QObj* adapter_); // #IGNORE
   void  Initialize()    {adapter = NULL;}
 #else
   void  Initialize()    {}

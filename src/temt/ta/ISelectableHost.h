@@ -30,11 +30,11 @@ class iMainWindowViewer; //
 class taProject; // 
 class ISelectable_PtrList; // 
 class QWidget; // 
-class SelectableHostHelper; // #IGNORE
+class ISelectableHost_QObj; // #IGNORE
 class taiMimeSource; //
 
 class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
-friend class SelectableHostHelper;
+friend class ISelectableHost_QObj;
 friend class ISelectable;
 public:
   enum NotifyOp { // notify ops for the NotifySignal -- note, passed as int in the sig/slot
@@ -58,7 +58,7 @@ public:
   QObject*              clipHandlerObj() const;
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
   virtual bool          hasMultiSelect() const = 0; // true if supports multi select
-  SelectableHostHelper* helperObj() const {return helper;} // for attaching slots
+  ISelectableHost_QObj* helperObj() const {return helper;} // for attaching slots
   iMainWindowViewer*    mainWindow() const; // returns main window we are embedded in
   taProject*            myProject() const; // project of which this viewer is a part
   taProject*            curProject() const; // only if we are a projviewer
@@ -130,7 +130,7 @@ protected:
     // updates the dyn methods/actions
 
 private:
-  SelectableHostHelper* helper;
+  ISelectableHost_QObj* helper;
 };
 
 #endif // ISelectableHost_h

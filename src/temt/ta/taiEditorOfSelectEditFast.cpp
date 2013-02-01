@@ -15,8 +15,8 @@
 
 #include "taiEditorOfSelectEditFast.h"
 #include <SelectEdit>
-#include <SelectEditDelegate>
-#include <taiEditTableWidget>
+#include <taiWidgetDelegateSelectEdit>
+#include <iTableWidget>
 #include <iFlowLayout>
 #include <taiWidgetMenuBar>
 
@@ -44,7 +44,7 @@ void taiEditorOfSelectEditFast::Initialize()
   tw = NULL;
   sele = NULL;
   sel_edit_mbrs = true; // note: we don't actually select members, just for removal
-  sed = new SelectEditDelegate(sele, this);
+  sed = new taiWidgetDelegateSelectEdit(sele, this);
 }
 
 void taiEditorOfSelectEditFast::Constr_Body_impl() {
@@ -53,7 +53,7 @@ void taiEditorOfSelectEditFast::Constr_Body_impl() {
 void taiEditorOfSelectEditFast::Constr_Box() {
   row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if
   if (tw) return;
-  tw = new taiEditTableWidget(widget());
+  tw = new iTableWidget(widget());
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis

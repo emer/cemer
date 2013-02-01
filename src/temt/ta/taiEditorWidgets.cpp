@@ -21,7 +21,7 @@
 #include <iTextBrowser>
 #include <iHelpBrowser>
 #include <iDialogEditor>
-#include <HiLightButton>
+#include <iHiLightButton>
 
 #include <SigLinkSignal>
 #include <taMisc>

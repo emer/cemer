@@ -169,7 +169,7 @@ void taBrainAtlas::LoadAtlas(const String& filename) {
 void taBrainAtlas::EditAtlas() {
   BrainAtlasRegexpPopulator* atlas_regexp_pop = new BrainAtlasRegexpPopulator();
 
-  // taiRegexpField* rfield = new taiRegexpField(&TA_taString, NULL, NULL, NULL, 0,
+  // taiWidgetFieldRegexp* rfield = new taiWidgetFieldRegexp(&TA_taString, NULL, NULL, NULL, 0,
   // 					      atlas_regexp_pop);
   // atlas_regexp_pop->setSource(this);
   // rfield->SetFieldOwner(rfield);

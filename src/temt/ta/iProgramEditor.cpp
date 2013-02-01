@@ -17,7 +17,7 @@
 #include <iBrowseHistory>
 #include <iStripeWidget>
 #include <iMethodButtonMgr>
-#include <HiLightButton>
+#include <iHiLightButton>
 #include <iTreeView>
 #include <iTreeViewItem>
 #include <iTreeSearch>
@@ -107,16 +107,16 @@ void iProgramEditor::Init() {
   layButtons->addWidget(tb);
   layButtons->addSpacing(4);
 
-  btnHelp = new HiLightButton("&Help", this);
+  btnHelp = new iHiLightButton("&Help", this);
   layButtons->addWidget(btnHelp);
   connect(btnHelp, SIGNAL(clicked()), this, SLOT(Help()) );
 
   layButtons->addStretch();
-  btnApply = new HiLightButton("&Apply", this);
+  btnApply = new iHiLightButton("&Apply", this);
   layButtons->addWidget(btnApply);
   layButtons->addSpacing(4);
 
-  btnRevert = new HiLightButton("&Revert", this);
+  btnRevert = new iHiLightButton("&Revert", this);
   layButtons->addWidget(btnRevert);
   layButtons->addSpacing(4);
   layOuter->addLayout(layButtons);

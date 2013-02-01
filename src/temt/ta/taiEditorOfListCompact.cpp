@@ -65,7 +65,7 @@ void taiEditorOfListCompact::Constr_ElData() {
     taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new gpiCompactList_ElData(tmp_td, tmp_lf));
+    lst_data_el.Add(new taiTypeWidgets(tmp_td, tmp_lf));
   }
 } 
 
@@ -83,7 +83,7 @@ void taiEditorOfListCompact::Constr_MultiBody() {
 
 void taiEditorOfListCompact::Constr_ListData() {
   for (int i = 0; i < lst_data_el.size; ++i) {
-    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(i);
+    taiTypeWidgets* lf_el = lst_data_el.FastEl(i);
     String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
     AddMultiRowName(i, nm, String(""));
     // note: the type better grok INLINE!!!!
@@ -115,7 +115,7 @@ void taiEditorOfListCompact::GetValue_Membs() {
   GetValue_Membs_def();
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
-    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
+    taiTypeWidgets* lf_el = lst_data_el.FastEl(lf);
     lf_el->typ->it->GetValue(lf_el->data_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
@@ -144,7 +144,7 @@ void taiEditorOfListCompact::GetImage_Membs() {
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-    gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
+    taiTypeWidgets* lf_el = lst_data_el.FastEl(lf);
     lf_el->typ->it->GetImage(lf_el->data_el, lf_el->cur_base);
   }
 }
