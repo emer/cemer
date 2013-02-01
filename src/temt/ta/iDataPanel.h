@@ -17,7 +17,7 @@
 #define iDataPanel_h 1
 
 // parent includes:
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 #ifndef __MAKETA__
 #include <QFrame>
 #endif
@@ -48,11 +48,11 @@ class QShowEvent; //
 
 TypeDef_Of(iDataPanel);
 
-class TA_API iDataPanel: public QFrame, public IDataLinkClient {
+class TA_API iDataPanel: public QFrame, public ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels -- basic element that can appear in a tabbed viewing context (note: use iDataPanelFrame or iViewPanelFrame)
   Q_OBJECT
 INHERITED(QFrame)
-friend class taDataLink;
+friend class taSigLink;
 friend class iPanelTab;
 friend class iDataPanel_PtrList;
 friend class iDataPanelSetBase;
@@ -75,7 +75,7 @@ public:
     // true if panel should not be replaced
   virtual String        panel_type() const {return _nilString;}
    //  this string is on the subpanel button for a panel (n/a to panelsets)
-  virtual taiDataLink*  par_link() const = 0; // *current* visual parent link of this data panel; this could change dynamically, if a datapanel is shared across all referring instances, ex. link lists, references, etc. -- return NULL if unknown, not set, or not applicable -- controls things like clip enabling etc.
+  virtual taiSigLink*  par_link() const = 0; // *current* visual parent link of this data panel; this could change dynamically, if a datapanel is shared across all referring instances, ex. link lists, references, etc. -- return NULL if unknown, not set, or not applicable -- controls things like clip enabling etc.
   virtual MemberDef*    par_md() const = 0; // as for par_link
   inline bool           pinned() const {return m_pinned;}
   inline bool           rendered() const {return m_rendered;}
@@ -139,20 +139,20 @@ public:
   virtual int           MapToPanelV(QWidget* widg, int pt_y);
   // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
 
-  iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
+  iDataPanel(taiSigLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
 
 public slots:
     void                Pin() {setPinned(true);}
     void                Unpin() {setPinned(false);}
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanel;}
   override bool         ignoreDataChanged() const {return (!isVisible());}
-  override void         DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
+  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
-  override void         DataLinkDestroying(taDataLink* dl) {} // called by DataLink when it is destroying --
+  override void         DataLinkDestroying(taSigLink* dl) {} // called by DataLink when it is destroying --
 
 protected:
   bool                  m_pinned;

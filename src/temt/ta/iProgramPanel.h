@@ -37,9 +37,9 @@ public:
 
   void                  FillList();
 
-  iProgramPanel(taiDataLink* dl_);
+  iProgramPanel(taiSigLink* dl_);
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iProgramPanel;}
 

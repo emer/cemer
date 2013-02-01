@@ -30,14 +30,14 @@
 #include <taList_impl>
 #include <taFiler>
 #include <taiMimeSource>
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 #include <iColor>
 
 #include <DataChangedReason>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
-#include <taDataLink>
+#include <taSigLink>
 #include <TypeDefault>
 #include <int_Matrix>
 #include <byte_Matrix>
@@ -73,7 +73,7 @@ using namespace std;
     \section1 Change Notifications
 
     The taBase class provides a data update/change mechanism in conjunction
-    with the taDataLink class. Note that the term "attributes" is used to
+    with the taSigLink class. Note that the term "attributes" is used to
     refer to any member that controls the way the object behaves or looks;
     "dynamic state" on the other hand, is the set of members that describe
     the object's current parameters, ex. activation for a neuron. State
@@ -326,7 +326,7 @@ void taBase::Destroying() {
   SetBaseFlag(DESTROYING);
   //note: following gets called in destructor of higher class, so
   // its vtable accessor for datalinks will be valid in that context
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if (dl) {
     dl->DataDestroying();
     delete dl; // NULLs our ref
@@ -1732,7 +1732,7 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
   // only assume stale for strict condition:
   if ((useStale() && (dcr == DCR_ITEM_UPDATED)))
     setStale();
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
 
@@ -1741,7 +1741,7 @@ void taBase::DataItemUpdated() {
 }
 
 bool taBase::InStructUpdate() {
-  taDataLink* dl = data_link(); // doesn't autocreate
+  taSigLink* dl = data_link(); // doesn't autocreate
   return (dl ? (dl->dbuCnt() > 0) : false);
 }
 
@@ -1762,7 +1762,7 @@ void taBase::setStale() {
 ///////////////////////////////////////////////////////////////////////////
 //      Data Links -- notify other guys when you change
 
-taDataLink* taBase::GetDataLink() {
+taSigLink* taBase::GetDataLink() {
   if (!data_link()) {
     if (isDestroying()) {
       taMisc::DebugInfo("Attempt to GetDataLink on a destructing object");
@@ -1775,13 +1775,13 @@ taDataLink* taBase::GetDataLink() {
   return data_link();
 }
 
-bool taBase::AddDataClient(IDataLinkClient* dlc) {
+bool taBase::AddDataClient(ISigLinkClient* dlc) {
   // refuse new links while destroying!
   if (isDestroying()) {
     DebugInfo("AddDataClient","Attempt to add a DataLinkClient to a destructing object");
     return false;
   }
-  taDataLink* dl = GetDataLink(); // autocreates if necessary
+  taSigLink* dl = GetDataLink(); // autocreates if necessary
   if (dl != NULL) {
     dl->AddDataClient(dlc);
     return true;
@@ -1792,15 +1792,15 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
   return false;
 }
 
-bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
-  taDataLink* dl = data_link(); // doesn't autocreate
+bool taBase::RemoveDataClient(ISigLinkClient* dlc) {
+  taSigLink* dl = data_link(); // doesn't autocreate
   if (dl != NULL) {
     return dl->RemoveDataClient(dlc);
   } else return false;
 }
 
 void taBase::BatchUpdate(bool begin, bool struc) {
-//  taDataLink* dl = data_link(); // doesn't autocreate -- IMPORTANT!
+//  taSigLink* dl = data_link(); // doesn't autocreate -- IMPORTANT!
 //  if (!dl) return;
   if (begin) {
     if (struc)
@@ -1820,7 +1820,7 @@ void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 }
 
 String& taBase::ListDataClients(String& strm, int indent) {
-  taDataLink* dl = GetDataLink();
+  taSigLink* dl = GetDataLink();
   if(!dl) return strm;
   dl->ListClients(strm, indent);
   return strm;
@@ -2546,7 +2546,7 @@ bool taBase::EditDialog(bool modal) {
     edlg->ViewWindow();
     iMainWindowViewer* iwv = edlg->widget();
     iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
-    return iwv->AssertPanel((taiDataLink*)GetDataLink());
+    return iwv->AssertPanel((taiSigLink*)GetDataLink());
     //bool new_tab, bool new_tab_lock)
   }
 #endif

@@ -20,7 +20,7 @@
 #include <taiClipData>
 #include <taBase_RefList>
 #include <taProject>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <iMainWindowViewer>
 
 
@@ -326,7 +326,7 @@ void ISelectableHost::DoDynAction(int idx) {
       cssEl* rval = NULL; // ignored
       int i;
       ISelectable* itN;
-      taiDataLink* link = NULL;
+      taiSigLink* link = NULL;
       if (dmd->dmd_type == DynMethod_PtrList::Type_1N) { // same for all
         while (sel_items_cp.size > 0) {
           itN = sel_items_cp.TakeItem(0);

@@ -43,10 +43,10 @@ public:
 
   override QWidget*     firstTabFocusWidget();
 
-  iDocEditDataPanel(taiDataLink* dl_);
+  iDocEditDataPanel(taiSigLink* dl_);
   ~iDocEditDataPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDocEditDataPanel;}
   override bool         ignoreDataChanged() const;

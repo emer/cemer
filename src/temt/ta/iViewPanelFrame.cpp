@@ -30,7 +30,7 @@ TypeItem::ShowMembs iViewPanelFrame::show() const {
 }
 
 iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
-:inherited((taiDataLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
+:inherited((taiSigLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
 {
   m_dps = NULL;
   vp_flags = 0;
@@ -39,7 +39,7 @@ iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
   updating = 0;
   m_modified = false;
   apply_req = false;
-  taDataLink* dl = dv_->GetDataLink();
+  taSigLink* dl = dv_->GetDataLink();
   dl->AddDataClient(this);
   btnApply = NULL;
   btnRevert = NULL;
@@ -116,7 +116,7 @@ void iViewPanelFrame::customEvent(QEvent* ev_) {
   ev_->accept();
 }
 
-void iViewPanelFrame::DataLinkDestroying(taDataLink*) {
+void iViewPanelFrame::DataLinkDestroying(taSigLink*) {
   m_dv = NULL;
   ClosePanel();
 }

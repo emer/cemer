@@ -20,7 +20,7 @@
 #include <iMatrixEditor>
 #include <MatrixTableModel>
 #include <DataTableModel>
-#include <taDataLink>
+#include <taSigLink>
 #include <iMainWindowViewer>
 
 #include <DataChangedReason>
@@ -86,7 +86,7 @@ void iDataTableEditor::ConfigView() {
 }
 
 
-void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
+void iDataTableEditor::DataLinkDestroying(taSigLink* dl) {
   // note: following should always be true
   if (m_cell_par && (m_cell_par == dl->taData())) {
     // ok, probably the col is deleting, so unlink ourself now!
@@ -95,7 +95,7 @@ void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
   }
 }
 
-void iDataTableEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void iDataTableEditor::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
 //   taMisc::Info("idte:ddc", String(dcr));
 }
 

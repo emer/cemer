@@ -105,7 +105,7 @@ void taDataView::SetVisible_impl(DataViewAction act) {
 }
 
 
-void taDataView::IgnoredDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
+void taDataView::IgnoredDataChanged(taSigLink*, int dcr, void* op1_, void* op2_) {
   // note: should not need to track anything during loading
   if (taMisc::is_loading) return;
 
@@ -121,7 +121,7 @@ void taDataView::IgnoredDataChanged(taDataLink*, int dcr, void* op1_, void* op2_
 // set this to emit debug messages for the following code..
 // #define DATA_DATA_DEBUG 1
 
-void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
+void taDataView::DataDataChanged(taSigLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
 #ifdef DATA_DATA_DEBUG
   if(dcr <= DCR_ITEM_UPDATED_ND) {
@@ -190,7 +190,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   }
 }
 
-void taDataView::DataLinkDestroying(taDataLink*) {
+void taDataView::DataLinkDestroying(taSigLink*) {
   m_data = NULL;
   DataDestroying();
 }

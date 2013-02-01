@@ -20,7 +20,7 @@
 #include <QStackedWidget>
 
 
-iDataPanelSetBase::iDataPanelSetBase(taiDataLink* link_)
+iDataPanelSetBase::iDataPanelSetBase(taiSigLink* link_)
 :inherited(link_)
 {
   cur_panel_id = -1;
@@ -60,7 +60,7 @@ void iDataPanelSetBase::ClosePanel() {
   deleteLater();
 }
 
-void iDataPanelSetBase::DataLinkDestroying(taDataLink* dl) {
+void iDataPanelSetBase::DataLinkDestroying(taSigLink* dl) {
   ClosePanel();
 } // nothing for us; subpanels handle
 

@@ -33,7 +33,7 @@ public:
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override void         CreateDataPanel_impl(taiDataLink* dl_);
+  override void         CreateDataPanel_impl(taiSigLink* dl_);
 };
 
 #endif // taiViewTypeOfMatrix_h

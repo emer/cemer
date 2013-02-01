@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 #ifndef NO_TA_BASE
-class taDataLink; //
+class taSigLink; //
 #endif
 
 TypeDef_Of(TokenSpace);
@@ -42,7 +42,7 @@ public:
   bool          keep;           // true if tokens are kept
   taAtomicInt   sub_tokens;     // number of tokens in sub-types
 #ifndef NO_TA_BASE
-  taDataLink*   data_link;
+  taSigLink*   data_link;
 #endif
 
   virtual void  Initialize();

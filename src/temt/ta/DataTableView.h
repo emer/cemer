@@ -26,7 +26,7 @@
 #endif
 
 // declare all other types mentioned but not required to include:
-class taDataLink; // 
+class taSigLink; // 
 class DataTable; // 
 class DataColView; // 
 class iDataTableView_Panel; //
@@ -96,8 +96,8 @@ public:
   void  Copy_(const DataTableView& cp);
   T3_DATAVIEWFUNS(DataTableView, T3DataViewMain) //
 
-// IDataLinkClient i/f
-  override void         IgnoredDataChanged(taDataLink* dl, int dcr,
+// ISigLinkClient i/f
+  override void         IgnoredDataChanged(taSigLink* dl, int dcr,
     void* op1, void* op2); //
 
 // ISelectable i/f

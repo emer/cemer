@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iBaseClipWidgetAction.h"
-#include <taiDataLink>
+#include <taiSigLink>
 #include <taiObjectMimeFactory>
 #include <taiClipData>
 
@@ -76,7 +76,7 @@ void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
 QMimeData* iBaseClipWidgetAction::mimeData() const {
   taiClipData* rval = NULL;
   if (m_inst) {
-    taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
+    taiSigLink* link = (taiSigLink*)m_inst->GetDataLink();
     if (link) {
       // get readonly clip data -- we don't know if dragging or not, so we always say we are
       taBase* obj = link->taData();

@@ -15,7 +15,7 @@
 
 #include "taUndoDiffSrc.h"
 #include <taUndoRec>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 
 #include <taMisc>
 
@@ -51,10 +51,10 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
 }
 
 int taUndoDiffSrc::UseCount() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(!dl) return 0;
   int cnt = 0;
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   taSmartRef* el;
   FOR_DLC_EL_OF_TYPE(taSmartRef, el, dl, itr) {
     taBase* spo = el->GetOwner();

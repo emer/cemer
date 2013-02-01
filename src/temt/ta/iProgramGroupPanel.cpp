@@ -26,7 +26,7 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
   if (level < 1) return; // always expand root level
   // by default, we don't expand code and objs,  but do expand
   // the args, and vars.
-  taiDataLink* dl = item->link();
+  taiSigLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
   if (typ->DerivesFrom(&TA_ProgEl_List) ||
     typ->DerivesFrom(&TA_ProgObjList)
@@ -35,13 +35,13 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
   }
 }
 
-iProgramGroupPanel::iProgramGroupPanel(taiDataLink* dl_)
+iProgramGroupPanel::iProgramGroupPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   pe->items->AddFilter("ProgGp");
   Program_Group* prog_ = progGroup();
   if (prog_) {
-    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    taiSigLink* dl = (taiSigLink*)prog_->GetDataLink();
     if (dl) {
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }

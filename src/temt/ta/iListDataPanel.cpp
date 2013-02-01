@@ -23,7 +23,7 @@
 
 
 
-iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
+iListDataPanel::iListDataPanel(taiSigLink* dl_, const String& custom_name_)
 :inherited(dl_)
 {
   m_custom_name = custom_name_; // optional
@@ -77,7 +77,7 @@ void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   // we handle the cases separately, since just refilling the list
   else if (dcr == DCR_LIST_ITEM_INSERT) {
     // insert at end, regardless of sort order
-    taiDataLink* item = link()->GetListChild(op1_);
+    taiSigLink* item = link()->GetListChild(op1_);
     if (!item) {
       taMisc::Warning("iListDataPanel::DataChanged_impl: unexpected could not find new list item");
       return;
@@ -103,7 +103,7 @@ void iListDataPanel::FillList() {
   taiListDataNode* last_child = NULL;
   int i = 0;
   while (true) { // break when NULL child encountered
-    taiDataLink* child = link()->GetListChild(i);
+    taiSigLink* child = link()->GetListChild(i);
     if (!child) break;
     taiListDataNode* dn = new taiListDataNode(i, this, child, list,
       last_child, (iTreeViewItem::DNF_CAN_DRAG));
@@ -125,7 +125,7 @@ void iListDataPanel::RenumberList() {
 
   // we have to iterate in proper link order, then find child, since items maybe
   // be sorted by some other column now
-  for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
+  for (taiSigLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
     if (!child) break;
     // find the item for the link
     for (int j = 0; j < list->itemCount(); ++j) {

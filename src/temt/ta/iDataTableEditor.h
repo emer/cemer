@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <ISelectableHost>
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #ifndef __MAKETA__
@@ -39,8 +39,8 @@ class taProject; //
 class ISelectable_PtrList; // 
 class QWidget; //  
 class TypeDef; // 
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 class DataTable; // 
 class DataTableModel; // 
 class QModelIndex; //
@@ -50,7 +50,7 @@ class QEvent; //
 TypeDef_Of(iDataTableEditor);
 
 class TA_API iDataTableEditor: public QWidget,  public virtual ISelectableHost,
-                               public virtual IDataLinkClient {
+                               public virtual ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS editor for data tables
   Q_OBJECT
 INHERITED(QWidget)
@@ -87,9 +87,9 @@ public: // ISelectableHost i/f
 protected:
   override void         UpdateSelectedItems_impl(); //
 
-public: // IDataLinkClient i/f
-  override void         DataLinkDestroying(taDataLink* dl);
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f
+  override void         DataLinkDestroying(taSigLink* dl);
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   DataTableRef          m_dt;

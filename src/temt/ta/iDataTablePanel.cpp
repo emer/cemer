@@ -19,13 +19,13 @@
 #include <taiClipData>
 #include <iDataTableView>
 #include <iMainWindowViewer>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <iMatrixTableView>
 
 #include <taMisc>
 
 
-iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
+iDataTablePanel::iDataTablePanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   dte = NULL;
@@ -167,9 +167,9 @@ void iDataTablePanel::tv_hasFocus(iTableView* sender) {
 
 void DataTable::ScrollEditorsToBottom() {
   if(!taMisc::gui_active) return;
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     iDataTablePanel* el;
     FOR_DLC_EL_OF_TYPE(iDataTablePanel, el, dl, itr) {
       el->dte->ScrollToBottom();

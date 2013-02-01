@@ -23,7 +23,7 @@
 #include <QScrollBar>
 
 
-iDataPanel::iDataPanel(taiDataLink* dl_)
+iDataPanel::iDataPanel(taiSigLink* dl_)
 :QFrame(NULL)
 {
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset

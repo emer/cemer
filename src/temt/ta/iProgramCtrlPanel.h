@@ -41,10 +41,10 @@ public:
   override bool         HasChanged_impl(); // 'true' if user has unsaved changes
   void                  FillList();
 
-  iProgramCtrlPanel(taiDataLink* dl_);
+  iProgramCtrlPanel(taiSigLink* dl_);
   ~iProgramCtrlPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iProgramCtrlPanel;}
 

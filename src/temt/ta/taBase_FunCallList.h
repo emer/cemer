@@ -19,15 +19,15 @@
 // parent includes:
 #include <FunCallItem>
 #include <taPtrList>
-#include <IMultiDataLinkClient>
+#include <IMultiSigLinkClient>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class taPtrList_impl; // 
 class TypeDef; // 
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 class taBase; // 
 
 
@@ -35,7 +35,7 @@ TypeDef_Of(taBase_FunCallList);
 
 class TA_API taBase_FunCallList: public taPtrList<FunCallItem>
 #ifndef __MAKETA__
-, public IMultiDataLinkClient
+, public IMultiSigLinkClient
 #endif
 {
   // #INSTANCE function call list manager
@@ -51,9 +51,9 @@ public: // ITypedObject interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_taBase_FunCallList;}
 
-public: // IDataLinkClient interface
-  override void         DataLinkDestroying(taDataLink* dl);
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {}
+public: // ISigLinkClient interface
+  override void         DataLinkDestroying(taSigLink* dl);
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {}
 
 protected:
   override void El_Done_(void* it); // unref link

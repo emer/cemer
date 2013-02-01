@@ -33,7 +33,7 @@ public:
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override taiDataLink* CreateDataLink_impl(taBase* data_);
+  override taiSigLink* CreateDataLink_impl(taBase* data_);
 };
 
 #endif // taiViewTypeOfGroup_h

@@ -17,7 +17,7 @@
 #include <GraphColView>
 #include <DataTable>
 #include <iGraphTableView_Panel>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <T3DataViewFrame>
 #include <MainWindowViewer>
 #include <NewViewHelper>
@@ -67,9 +67,9 @@ GraphTableView* DataTable::NewGraphView(T3DataViewFrame* fr) {
 }
 
 GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     GraphTableView* el;
     FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
       // update from user stuff
@@ -90,9 +90,9 @@ GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
 }
 
 GraphTableView* DataTable::FindGraphView() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     GraphTableView* el;
     FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
       return el;

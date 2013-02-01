@@ -37,7 +37,7 @@ public:
   QWidget*              minibarCtrls() const {return m_minibar_ctrls;}
     //non-null if any have been added
   inline bool           hasMinibarCtrls() const {return (m_minibar_ctrls);}
-  override taiDataLink* par_link() const; // taken from dps if any, else from tabview
+  override taiSigLink* par_link() const; // taken from dps if any, else from tabview
   override MemberDef*   par_md() const;
   override iTabViewer*  tabViewerWin() const;
 
@@ -50,12 +50,12 @@ public:
   void                  AddMinibarWidget(QWidget* ctrl);
     // adds the ctrl (typically a tool button) to the minibar (area to right of PanelSet selector buttons); note: right-justified, and fills inward; ctrl should be parentless; can force the DPF to be put into a set, if wouldn't have been otherwise
 
-  iDataPanelFrame(taiDataLink* dl_);
+  iDataPanelFrame(taiSigLink* dl_);
   ~iDataPanelFrame();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-  override void         DataLinkDestroying(taDataLink* dl); // called by DataLink when it is destroying --
+  override void         DataLinkDestroying(taSigLink* dl); // called by DataLink when it is destroying --
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanelFrame;}
 
 protected:

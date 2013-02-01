@@ -15,12 +15,12 @@
 
 #include "taTypeInfoTreeDataNode.h"
 #include <taiViewType>
-#include <taTypeInfoDataLink>
-#include <taTypeSpaceDataLink>
+#include <taSigLinkTypeItem>
+#include <taSigLinkTypeSpace>
 
 TypeDef_Of(EnumDef);
 
-taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md,
+taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md,
   taiTreeDataNode* parent_, 
   taiTreeDataNode* last_child_,  const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
@@ -28,7 +28,7 @@ taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, Member
   init(link_, flags_);
 }
 
-taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md,
+taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md,
   iTreeView* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
@@ -36,7 +36,7 @@ taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, Member
   init(link_, flags_);
 }
 
-void taTypeInfoTreeDataNode::init(taTypeInfoDataLink* link_, int flags_) {
+void taTypeInfoTreeDataNode::init(taSigLinkTypeItem* link_, int flags_) {
 }
 
 taTypeInfoTreeDataNode::~taTypeInfoTreeDataNode() {
@@ -59,7 +59,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
   case TypeItem::TIK_METHOD: {
     // /*MethodDef* md */ static_cast<MethodDef*>(data());
     //TODO: enumerate params
-    //taiDataLink* dl = NULL;
+    //taiSigLink* dl = NULL;
     }
     break;
   case TypeItem::TIK_TYPE: {
@@ -67,7 +67,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     // if (td->internal && !td->IsTemplate()) {
     //   break;
     // }
-    taiDataLink* dl = NULL;
+    taiSigLink* dl = NULL;
     // if we are an enum, we handle differently (only showing enums, and directly under us)
     // don't sort them
     if (td->enum_vals.size > 0) {
@@ -96,21 +96,21 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     // enums -- we don't sort them, just in programmer order
     if (td->HasEnumDefs()) {
       TypeSpace* ts = &td->sub_types;
-      taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(
+      taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
         taiViewType::StatGetDataLink(ts, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode(NULL, this, 
         last_child_node, "enums", flags); 
-      tsdl->dm = taTypeSpaceDataLink::DM_DefaultEnum;
+      tsdl->dm = taSigLinkTypeSpace::DM_DefaultEnum;
     }
    
     // true (non-enum) subtypes
     if (td->HasSubTypes()) {
       TypeSpace* st = &td->sub_types;
-      taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(
+      taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
         taiViewType::StatGetDataLink(st, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode( 
           NULL, this, last_child_node, "sub types", flags);
-      tsdl->dm = taTypeSpaceDataLink::DM_DefaultSubTypes;
+      tsdl->dm = taSigLinkTypeSpace::DM_DefaultSubTypes;
     }
     // members -- note: don't sort, since they are in a programmer order already
     if (td->members.size > 0) {
@@ -136,11 +136,11 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     // child types
     TypeSpace* ct = &td->children;
     if (ct->size > 0) {
-      taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(
+      taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(
         taiViewType::StatGetDataLink(ct, &TA_TypeSpace));
       last_child_node = tsdl->CreateTreeDataNode( 
         NULL, this, last_child_node, "child types", flags); 
-      tsdl->dm = taTypeSpaceDataLink::DM_DefaultChildren;
+      tsdl->dm = taSigLinkTypeSpace::DM_DefaultChildren;
     }
    
     }

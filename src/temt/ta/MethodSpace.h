@@ -27,7 +27,7 @@ class String_PArray; //
 class TypeDef; //
 
 #ifndef NO_TA_BASE
-class taDataLink; //
+class taSigLink; //
 #endif
 
 
@@ -53,7 +53,7 @@ public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
 #ifndef NO_TA_BASE
-  taDataLink*   data_link;
+  taSigLink*   data_link;
 #endif
 
   void          Initialize();

@@ -34,9 +34,9 @@ iBrowseHistory::~iBrowseHistory() {
   reset();
 }
 
-void iBrowseHistory::addItem(taiDataLink* dl) {
+void iBrowseHistory::addItem(taiSigLink* dl) {
   if (items.size >= max_items) {
-    taiDataLink* it = items[0];
+    taiSigLink* it = items[0];
     items.RemoveIdx(0);
     itemRemoved(it);
   }
@@ -51,7 +51,7 @@ void iBrowseHistory::back() {
   --cur_item;
   if (cur_item >= items.size) goto exit;
   ++navigating; {
-    taiDataLink* dl = items[cur_item];
+    taiSigLink* dl = items[cur_item];
     emit select_item(dl);
   } --navigating;
 
@@ -64,7 +64,7 @@ void iBrowseHistory::forward() {
   ++cur_item;
   if (cur_item >= items.size) goto exit;
   ++navigating; {
-    taiDataLink* dl = items[cur_item];
+    taiSigLink* dl = items[cur_item];
     emit select_item(dl);
   } --navigating;
 exit:
@@ -78,7 +78,7 @@ void iBrowseHistory::doEnabling() {
   emit forward_enabled(fe);
 }
 
-void iBrowseHistory::DataLinkDestroying(taDataLink* dl) {
+void iBrowseHistory::DataLinkDestroying(taSigLink* dl) {
   for (int i = items.size - 1; i >= 0; --i) {
     if (dl == items[i]) {
       if (cur_item > i) -- cur_item;
@@ -89,14 +89,14 @@ void iBrowseHistory::DataLinkDestroying(taDataLink* dl) {
   doEnabling();
 }
 
-void iBrowseHistory::itemAdding(taiDataLink* dl) {
+void iBrowseHistory::itemAdding(taiSigLink* dl) {
   for (int i = 0; i < items.size; ++i) {
     if (dl == items[i]) return;
   }
   dl->AddDataClient(this);
 }
 
-void iBrowseHistory::itemRemoved(taiDataLink* dl) {
+void iBrowseHistory::itemRemoved(taiSigLink* dl) {
   for (int i = 0; i < items.size; ++i) {
     if (dl == items[i]) return;
   }
@@ -116,14 +116,14 @@ void iBrowseHistory::SelectableHostNotifying(ISelectableHost* src_host, int op)
 
 void iBrowseHistory::ItemSelected(iTreeViewItem* tvi) {
   if (navigating) return;
-  taiDataLink* dl = tvi->link();
+  taiSigLink* dl = tvi->link();
   if (!dl) return;
   addItem(dl);
 }
 
 void iBrowseHistory::reset() {
   for (int i = items.size - 1; i >= 0; --i) {
-    taiDataLink* dl = items[i];
+    taiSigLink* dl = items[i];
     items.RemoveIdx(i);
     itemRemoved(dl);
   }

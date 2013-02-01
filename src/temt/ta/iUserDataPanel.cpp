@@ -22,7 +22,7 @@
 
 
 
-iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
+iUserDataPanel::iUserDataPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   UserDataItem_List* se_ = udil();

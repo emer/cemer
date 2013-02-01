@@ -18,7 +18,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
-#include <taDataLink>
+#include <taSigLink>
 #endif
 
 String  TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }

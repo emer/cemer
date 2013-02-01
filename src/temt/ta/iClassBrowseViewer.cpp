@@ -15,7 +15,7 @@
 
 #include "iClassBrowseViewer.h"
 #include <taiTreeDataNode>
-#include <taClassDataLink>
+#include <taSigLinkClass>
 #include <MainWindowViewer>
 
 
@@ -31,7 +31,7 @@ iClassBrowseViewer::~iClassBrowseViewer()
 
 void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
-  taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
+  taSigLinkClass* dl = static_cast<taSigLinkClass*>(node->link());
   MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(dl->data(),
      dl->GetDataTypeDef(), dl->GetDataMemberDef());
   if (!brows) return;

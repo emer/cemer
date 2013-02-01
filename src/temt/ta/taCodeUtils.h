@@ -44,6 +44,13 @@ public:
                            const String& top_path, const String& src_dir);
   // #CAT_File rename type name to new name, replacing string in all files in given directory (WARNING: just does a very basic gsub string replacement, so type name better be unique!), and doing an svn mv on the file name for that type (does this before replace) -- recommend svn commit prior to doing this!
 
+  static bool	ReplaceInDir(const String& search_nm, const String& repl_nm,
+                             const String& top_path, const String& src_dir);
+  // #CAT_File replace string in all files in given directory (WARNING: just does a very basic gsub string replacement, so caveat emptor on unwanted side effects!) -- definitely recommend svn commit prior to doing this!
+  static bool	ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
+                                  const String& top_path);
+  // #CAT_File replace string in all files in emergent code base (WARNING: just does a very basic gsub string replacement, so caveat emptor on unwanted side effects!) -- definitely recommend svn commit prior to doing this!
+
   static bool	RemoveType(const String& type_nm, 
                            const String& top_path, const String& src_dir);
   // #CAT_File removes a given type -- svn rm files that define the type (assumes one type per file!) including the include files, and reports on all the files that reference this type in the rest of the code

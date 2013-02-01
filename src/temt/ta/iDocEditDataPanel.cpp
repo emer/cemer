@@ -22,7 +22,7 @@
 
 
 
-iDocEditDataPanel::iDocEditDataPanel(taiDataLink* dl_)
+iDocEditDataPanel::iDocEditDataPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   taDoc* doc_ = doc();

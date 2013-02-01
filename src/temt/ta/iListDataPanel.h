@@ -42,10 +42,10 @@ public:
 
   override QWidget*     firstTabFocusWidget();
 
-  iListDataPanel(taiDataLink* dl_, const String& custom_name = _nilString);
+  iListDataPanel(taiSigLink* dl_, const String& custom_name = _nilString);
   ~iListDataPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iListDataPanel;}
 

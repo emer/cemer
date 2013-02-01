@@ -216,7 +216,7 @@ iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
   return tv->widget();
 }
 
-void iMainWindowViewer::EditItem(taiDataLink* link, bool not_in_cur) {
+void iMainWindowViewer::EditItem(taiSigLink* link, bool not_in_cur) {
   iTabViewer* itv = GetTabViewer(true);
   itv->ShowLink(link, not_in_cur);
 }
@@ -361,8 +361,8 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   show_menu = menu->AddSubMenu("&Show");
   ctrlMenu = menu->AddSubMenu("&Control");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
-  if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
-    toolsMenu = menu->AddSubMenu("&Tools");
+  // if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
+  toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()),
     this, SLOT(windowMenu_aboutToShow()));
@@ -612,8 +612,8 @@ void iMainWindowViewer::Constr_ViewMenu()
 
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
     brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
-  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
-    this, SLOT(slot_AssertBrowserItem(taiDataLink*)));
+  connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
 
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
   connect(viewSaveViewAction, SIGNAL(Action()), this, SLOT(viewSaveView()));
@@ -730,7 +730,7 @@ void iMainWindowViewer::emit_EditAction(int param) {
   emit selectionChanged();
 } */
 
-void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
+void iMainWindowViewer::Find(taiSigLink* root, const String& find_str) {
   // if an instance doesn't exist, need to make one; we tie it to ourself
   if (!search_dialog) {
     search_dialog = iSearchDialog::New(0, this);
@@ -745,7 +745,7 @@ void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
     dlg->setSearchStr(find_str);
 }
 
-void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_items,
+void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items,
                                 const String& srch, const String& repl) {
 
   taGuiDialog Dlg1;
@@ -821,7 +821,7 @@ void iMainWindowViewer::editRedo() {
 
 void iMainWindowViewer::editFind() {
   // assume root of this window's browser
-  taiDataLink* root = NULL;
+  taiSigLink* root = NULL;
 
   MainWindowViewer* db = viewer();
   BrowseViewer* bv = NULL;
@@ -830,7 +830,7 @@ void iMainWindowViewer::editFind() {
     bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer, idx);
     if (bv) root = bv->rootLink();
   }
-  if (!root) root = (taiDataLink*)tabMisc::root->GetDataLink();
+  if (!root) root = (taiSigLink*)tabMisc::root->GetDataLink();
   Find(root);
 }
 
@@ -1244,7 +1244,7 @@ bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e) {
   return false;
 }
 
-iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
+iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
@@ -1277,7 +1277,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   return rval;
 }
 
-iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
+iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiSigLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
@@ -1299,7 +1299,7 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
   return rval;
 }
 
-iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
+iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiSigLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
   // make sure previous operations are finished
@@ -1320,7 +1320,7 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
   return rval;
 }
 
-bool iMainWindowViewer::AssertPanel(taiDataLink* link,
+bool iMainWindowViewer::AssertPanel(taiSigLink* link,
   bool new_tab, bool new_tab_lock)
 {
   if (!new_tab) new_tab_lock = false;
@@ -1439,7 +1439,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
       tab->CallFun(fun_call);
     }
     else {
-      taiDataLink* link = (taiDataLink*)tab->GetDataLink();
+      taiSigLink* link = (taiSigLink*)tab->GetDataLink();
       if (!link || !iproj_brow) {
         taMisc::Warning("ta: URL",path,"not found as a path to an object!");
         return;
@@ -1949,7 +1949,7 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
 
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;	// shouldn't happen
-  taiDataLink* link = (taiDataLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetDataLink();
   if (!link) return false;	// shouldn't happen
 
   MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
@@ -1981,7 +1981,7 @@ bool taBase::BrowserSelectMe() {
 
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiDataLink* link = (taiDataLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetDataLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2002,7 +2002,7 @@ bool taBase::BrowserExpandAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiDataLink* link = (taiDataLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetDataLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2023,7 +2023,7 @@ bool taBase::BrowserCollapseAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiDataLink* link = (taiDataLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetDataLink();
   if (!link) return false;
 
   bool rval = false;
@@ -2044,7 +2044,7 @@ bool taBase::GuiFindFromMe(const String& find_str) {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  taiDataLink* link = (taiDataLink*)GetDataLink();
+  taiSigLink* link = (taiSigLink*)GetDataLink();
   if (!link) return false;
 
   bool rval = false;

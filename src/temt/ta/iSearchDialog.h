@@ -17,7 +17,7 @@
 #define iSearchDialog_h 1
 
 // parent includes:
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 #ifndef __MAKETA__
 #include <QDialog>
 #endif
@@ -30,8 +30,8 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 class taiBitBox; //
 class iMainWindowViewer; //
 class QVBoxLayout; // 
@@ -43,7 +43,7 @@ class QStatusBar; //
 
 TypeDef_Of(iSearchDialog);
 
-class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {
+class TA_API iSearchDialog: public QDialog, public virtual ISigLinkClient {
 //   search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
@@ -96,7 +96,7 @@ public:
   QTime                   proc_events_timer;
 
   int                   options() const {return m_options;}
-  void                  setRoot(taiDataLink* root, bool update_gui = true); // set or reset the root and window used for the search; sets caption and clears
+  void                  setRoot(taiSigLink* root, bool update_gui = true); // set or reset the root and window used for the search; sets caption and clears
   void                  setSearchStr(const String& srch_str);
   // set the search string to given value (erases any that might be there already -- if non-empty, starts the search going too!
   String                searchStr() const;
@@ -120,12 +120,12 @@ public:
     const String& path_long,int level = 0, int relev = 0);
   void                  End(); // end all and display results
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iSearchDialog;}
   override bool         ignoreDataChanged() const {return true;}
-  override void         DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {}
-  override void         DataLinkDestroying(taDataLink* dl);
+  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2) {}
+  override void         DataLinkDestroying(taSigLink* dl);
 
 
 protected:
@@ -145,7 +145,7 @@ protected:
 
   virtual void          Constr();
    // does constr, called in static, so can extend
-  void                  RootSet(taiDataLink* root); // called when root changes
+  void                  RootSet(taiSigLink* root); // called when root changes
   void                  ParseSearchString();
   void                  Render();
   void                  RenderItem(int level, const String& headline,

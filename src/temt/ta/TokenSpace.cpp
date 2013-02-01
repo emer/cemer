@@ -19,7 +19,7 @@
 
 #ifndef NO_TA_BASE
 #include <taBase>
-#include <taDataLink>
+#include <taSigLink>
 #endif
 
 String TokenSpace::tmp_el_name;

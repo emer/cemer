@@ -20,11 +20,11 @@
 #ifndef __MAKETA__
 #include <QObject>
 #endif
-#include <IMultiDataLinkClient>
+#include <IMultiSigLinkClient>
 
 // member includes:
 #include <taPtrList>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
@@ -32,11 +32,11 @@ class iTreeViewItem; //
 class ISelectableHost; //
 
 
-typedef taPtrList<taiDataLink> taiDataLink_PList; // list of taiDataLink
+typedef taPtrList<taiSigLink> taiSigLink_PList; // list of taiSigLink
 
 TypeDef_Of(iBrowseHistory);
 
-class TA_API iBrowseHistory: public QObject, public IMultiDataLinkClient {
+class TA_API iBrowseHistory: public QObject, public IMultiSigLinkClient {
   // #NO_INSTANCE #NO_CSS retains browsing history
 INHERITED(QObject)
   Q_OBJECT
@@ -44,10 +44,10 @@ public:
   int                   max_items; // #DEF_20 number of history items
   int                   cur_item; // -1 when empty; max_items when off the end
 
-  taiDataLink_PList     items;
+  taiSigLink_PList     items;
   void                  reset(); // esp used to put all signals etc. in correct place
 
-  void                  addItem(taiDataLink* link);
+  void                  addItem(taiSigLink* link);
 
   iBrowseHistory(QObject* parent = NULL);
   ~iBrowseHistory();
@@ -55,9 +55,9 @@ public:
 public: // ITypedObject interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iBrowseHistory;}
-public: // IDataLinkClient interface
-  override void         DataDataChanged(taDataLink*, int, void*, void*) {}
-  override void         DataLinkDestroying(taDataLink* dl);
+public: // ISigLinkClient interface
+  override void         DataDataChanged(taSigLink*, int, void*, void*) {}
+  override void         DataLinkDestroying(taSigLink* dl);
 
 #ifndef __MAKETA__
 public slots:
@@ -69,15 +69,15 @@ public slots:
 signals:
   void                  back_enabled(bool);
   void                  forward_enabled(bool);
-  void                  select_item(taiDataLink* dl);
+  void                  select_item(taiSigLink* dl);
 #endif
 
 protected:
   ContextFlag           navigating; // so we ignore the callback
 
   void                  doEnabling();
-  void                  itemAdding(taiDataLink* link); // link if no refs
-  void                  itemRemoved(taiDataLink* link); // unlink if no more refs
+  void                  itemAdding(taiSigLink* link); // link if no refs
+  void                  itemRemoved(taiSigLink* link); // unlink if no more refs
 };
 
 #endif // iBrowseHistory_h

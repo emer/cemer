@@ -59,7 +59,7 @@ void taiTokenPtrMultiTypeButton::EditPanel() {
       imw = vwr->widget();
   }
 
-  taiDataLink* dl = (taiDataLink*)cur_base->GetDataLink();
+  taiSigLink* dl = (taiSigLink*)cur_base->GetDataLink();
   if (dl) {
     imw->EditItem(dl, true); // edit, but not in this tab
   }

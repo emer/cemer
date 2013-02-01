@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <taBase_PtrList>
-#include <IMultiDataLinkClient>
+#include <IMultiSigLinkClient>
 
 // member includes:
 
@@ -28,7 +28,7 @@ class IRefListClient; //
 TypeDef_Of(taBase_RefList);
 
 class TA_API taBase_RefList: public taPtrList<taBase>,
-   virtual public IMultiDataLinkClient {
+   virtual public IMultiSigLinkClient {
   // ##NO_TOKENS ##NO_MEMBERS ##NO_CSS a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
   void                  setOwner(IRefListClient* own_);
@@ -38,12 +38,12 @@ public:
 
   int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
 
-public: // IDataLinkClient i/f
+public: // ISigLinkClient i/f
   void*                 This() {return this;}  // #IGNORE
   override TypeDef*     GetTypeDef() const {return &TA_taBase_RefList;} // #IGNORE
 protected: // we actually protect these
-  override void         DataLinkDestroying(taDataLink* dl); // #IGNORE
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  override void         DataLinkDestroying(taSigLink* dl); // #IGNORE
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
      // #IGNORE
 
 protected:

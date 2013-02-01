@@ -43,10 +43,10 @@ public:
   override void         UpdatePanel(); // always do it, even when hidden; the edit sorts it out
   override QWidget*     firstTabFocusWidget();
 
-  EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_);
+  EditDataPanel(taiEditDataHost* owner_, taiSigLink* dl_);
   ~EditDataPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_EditDataPanel;}
 
 protected:

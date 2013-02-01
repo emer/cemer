@@ -20,7 +20,7 @@
 #include <T3GridViewNode>
 #include <T3GridColViewNode>
 #include <T3DataViewFrame>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <MainWindowViewer>
 #include <NewViewHelper>
 #include <T3Misc>
@@ -64,9 +64,9 @@ GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
 }
 
 GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     GridTableView* el;
     FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
       // update from user stuff
@@ -88,9 +88,9 @@ GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
 }
 
 GridTableView* DataTable::FindGridView() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     GridTableView* el;
     FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
       return el;

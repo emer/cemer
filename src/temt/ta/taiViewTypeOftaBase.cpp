@@ -24,11 +24,11 @@ int taiViewTypeOftaBase::BidForView(TypeDef* td) {
   return 0; //no taBase implementation for now
 }
 
-taiDataLink* taiViewTypeOftaBase::CreateDataLink_impl(taBase* data_) {
+taiSigLink* taiViewTypeOftaBase::CreateDataLink_impl(taBase* data_) {
   return NULL; //no taBase implementation for now
 }
 
-iDataPanel* taiViewTypeOftaBase::CreateDataPanel(taiDataLink* dl_) {
+iDataPanel* taiViewTypeOftaBase::CreateDataPanel(taiSigLink* dl_) {
   iDataPanel* rval = inherited::CreateDataPanel(dl_);
   // if more than one panel, then move the edit menu and methods to outside panelset
   if (m_dps) {
@@ -41,7 +41,7 @@ iDataPanel* taiViewTypeOftaBase::CreateDataPanel(taiDataLink* dl_) {
   return rval;
 }
 
-void taiViewTypeOftaBase::CreateDataPanel_impl(taiDataLink* dl)
+void taiViewTypeOftaBase::CreateDataPanel_impl(taiSigLink* dl)
 {
   //NOTE: taiViewTypeOfList calls this directly to get the property panel --
   // if this method is changed substantially, make sure to check taiViewTypeOfList, and change
@@ -60,14 +60,14 @@ void taiViewTypeOftaBase::CreateDataPanel_impl(taiDataLink* dl)
   DataPanelCreated(edit_panel);
 }
 
-taiDataLink* taiViewTypeOftaBase::GetDataLink(void* data_, TypeDef* el_typ) {
+taiSigLink* taiViewTypeOftaBase::GetDataLink(void* data_, TypeDef* el_typ) {
   //NOTE: replaced in taiViewTypeOftaOBase with an optimized version
   taBase* data = (taBase*)data_;
-  taDataLink* dl = data->data_link();
-  if (dl) return (taiDataLink*)dl;
+  taSigLink* dl = data->data_link();
+  if (dl) return (taiSigLink*)dl;
   else return CreateDataLink_impl(data);
 }
 
-const iColor taiViewTypeOftaBase::GetEditColorInherit(taiDataLink* dl, bool& ok) const {
+const iColor taiViewTypeOftaBase::GetEditColorInherit(taiSigLink* dl, bool& ok) const {
   return ((taBase*)dl->data())->GetEditColorInherit(ok);
 }

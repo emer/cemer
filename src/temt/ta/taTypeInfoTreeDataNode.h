@@ -21,7 +21,7 @@
 
 // member includes:
 #include <TypeItem>
-#include <taTypeInfoDataLink>
+#include <taSigLinkTypeItem>
 
 // declare all other types mentioned but not required to include:
 
@@ -34,16 +34,16 @@ public:
   const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
-  TypeItem*             data() {return ((taTypeInfoDataLink*)m_link)->data();}
-  taTypeInfoDataLink*   link() const {return (taTypeInfoDataLink*)m_link;}
+  TypeItem*             data() {return ((taSigLinkTypeItem*)m_link)->data();}
+  taSigLinkTypeItem*   link() const {return (taSigLinkTypeItem*)m_link;}
 
 
-  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md, taiTreeDataNode* parent_,
+  taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeInfoTreeDataNode(taTypeInfoDataLink* link_, MemberDef* md, iTreeView* parent_,
+  taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md, iTreeView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeInfoTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_taTypeInfoTreeDataNode;}
 protected:
@@ -51,7 +51,7 @@ protected:
   override void         CreateChildren_impl(); // called by the Node when it needs to create
 //  override void               DataChanged_impl(int dcr, void* op1, void* op2);
 private:
-  void                  init(taTypeInfoDataLink* link_, int flags_); // #IGNORE
+  void                  init(taSigLinkTypeItem* link_, int flags_); // #IGNORE
 };
 
 #endif // taTypeInfoTreeDataNode_h

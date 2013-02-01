@@ -21,7 +21,7 @@
 #include <DataChangedReason>
 
 
-iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
+iTextDataPanel::iTextDataPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   txtText = new iTextEdit(this);

@@ -18,7 +18,7 @@
 #include <iDataPanelSetButton>
 #include <taiViewType>
 #include <Program>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <iProgramViewScriptPanel>
 #include <NumberedTextView>
 
@@ -31,7 +31,7 @@
 #include <QStackedWidget>
 #include <QStackedLayout>
 
-iDataPanelSet::iDataPanelSet(taiDataLink* link_)
+iDataPanelSet::iDataPanelSet(taiSigLink* link_)
 :inherited(link_)
 {
   layMinibar = NULL;
@@ -213,9 +213,9 @@ QWidget* iDataPanelSet::firstTabFocusWidget() {
 
 iDataPanelSet* Program::FindMyDataPanelSet() {
   if(!taMisc::gui_active) return NULL;
-  taDataLink* link = data_link();
+  taSigLink* link = data_link();
   if(!link) return NULL;
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   iDataPanelSet* el;
   FOR_DLC_EL_OF_TYPE(iDataPanelSet, el, link, itr) {
 //     if (el->data() == this) {

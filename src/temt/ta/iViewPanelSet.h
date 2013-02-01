@@ -41,12 +41,12 @@ public:
   override void         UpdatePanel(); // update tab names too
   void                  PanelDestroying(iViewPanelFrame* pn); // so we remove tab
 
-  iViewPanelSet(taiDataLink* dl_);
+  iViewPanelSet(taiSigLink* dl_);
   ~iViewPanelSet();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-//  override void               DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
+//  override void               DataLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelSet;}
 
 protected:

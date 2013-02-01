@@ -31,13 +31,13 @@ class TA_API taiViewTypeOftaOBase: public taiViewTypeOftaBase { // for taOBase a
 public:
   override bool         needSet() const {return true;} // always, so we can do dyn panels
   override int          BidForView(TypeDef*);
-  override taiDataLink* GetDataLink(void* data_, TypeDef* el_typ); // optimized version of taiViewTypeOftaBase
+  override taiSigLink* GetDataLink(void* data_, TypeDef* el_typ); // optimized version of taiViewTypeOftaBase
   override void         CheckUpdateDataPanelSet(iDataPanelSet* pan);
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override taiDataLink* CreateDataLink_impl(taBase* data_);
-  override void         CreateDataPanel_impl(taiDataLink* dl_);
+  override taiSigLink* CreateDataLink_impl(taBase* data_);
+  override void         CreateDataPanel_impl(taiSigLink* dl_);
 };
 
 #endif // taiViewTypeOftaOBase_h

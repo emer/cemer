@@ -23,7 +23,7 @@
 
 
 
-iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
+iProgramCtrlPanel::iProgramCtrlPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   Program* prog_ = prog();

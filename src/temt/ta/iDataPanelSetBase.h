@@ -39,7 +39,7 @@ public:
   int                   cur_panel_id; // -1 if none
   iDataPanel_PtrList    panels;
 
-  override taiDataLink* par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
+  override taiSigLink* par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*   par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
   override iTabViewer* tabViewerWin() const {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
@@ -57,15 +57,15 @@ public:
   override void         GetWinState(); // when saving view state
   override void         SetWinState(); // when showing, from view state
 
-  iDataPanelSetBase(taiDataLink* dl_);
+  iDataPanelSetBase(taiSigLink* dl_);
   ~iDataPanelSetBase();
 
 public slots:
   void                  setCurrentPanelId(int id);
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
-  override void         DataLinkDestroying(taDataLink* dl);
+  override void         DataLinkDestroying(taSigLink* dl);
   override TypeDef*     GetTypeDef() const {return &TA_iDataPanelSetBase;}
 
 protected:

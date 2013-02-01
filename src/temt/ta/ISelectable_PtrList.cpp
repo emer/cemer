@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ISelectable_PtrList.h"
-#include <taiDataLink>
+#include <taiSigLink>
 #include <TypeDef>
 
 
@@ -49,7 +49,7 @@ ISelectable_PtrList::~ISelectable_PtrList() {
 TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ)
 {
   if (size == 0) return NULL;
-  taiDataLink* link = FastEl(0)->effLink(gc_typ);
+  taiSigLink* link = FastEl(0)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 1; (rval && (i < size)); ++i) {
@@ -64,7 +64,7 @@ TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ)
 TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ)
 {
   if (size <= 1) return NULL;
-  taiDataLink* link = FastEl(1)->effLink(gc_typ);
+  taiSigLink* link = FastEl(1)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 2; (rval && (i < size)); ++i) {
@@ -78,7 +78,7 @@ TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ)
 TypeDef* ISelectable_PtrList::Type1(ISelectable::GuiContext gc_typ) {
   if (size == 0) return NULL;
   else {
-    taiDataLink* link = FastEl(0)->effLink(gc_typ);
+    taiSigLink* link = FastEl(0)->effLink(gc_typ);
     if (link) return link->GetDataTypeDef();
     else      return NULL; // gui-only object, no ref
   }

@@ -25,7 +25,7 @@
 class TypeDef; // 
 class MemberDef; // 
 class iBrowseViewer; // #IGNORE
-class taiDataLink; // 
+class taiSigLink; // 
 
 
 TypeDef_Of(BrowseViewer);
@@ -42,7 +42,7 @@ public:
   virtual void*         root() {return NULL;} // subtype must supply
   inline TypeDef*       rootType() {return root_typ;}
   inline MemberDef*     rootMemb() {return root_md;}
-  virtual taiDataLink*  rootLink() {return NULL;}
+  virtual taiSigLink*  rootLink() {return NULL;}
 
   inline iBrowseViewer* widget() {return (iBrowseViewer*)inherited::widget();}
   // #IGNORE

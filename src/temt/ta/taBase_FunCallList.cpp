@@ -15,7 +15,7 @@
 
 #include "taBase_FunCallList.h"
 #include <taBase>
-#include <taDataLink>
+#include <taSigLink>
 #include <taMisc>
 
 void taBase_FunCallList::El_Done_(void* it_) {
@@ -31,7 +31,7 @@ bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
   return true;
 }
 
-void taBase_FunCallList::DataLinkDestroying(taDataLink* dl) {
+void taBase_FunCallList::DataLinkDestroying(taSigLink* dl) {
   taBase* obj = dl->taData();
   if (!obj) return; // shouldn't happen;
   bool got_one = false;

@@ -147,8 +147,7 @@ bool taCodeUtils::RenameType(const String& type_nm, const String& new_nm,
                              const String& top_path, const String& src_dir) {
   TypeDef* td = TypeDef::FindGlobalTypeName(type_nm);
   if(!td) {
-    taMisc::Error("type not found:", type_nm);
-    return false;
+    taMisc::Warning("type not found:", type_nm);
   }
   TypeDef* new_td = TypeDef::FindGlobalTypeName(new_nm, false);
   if(new_td) {
@@ -159,28 +158,50 @@ bool taCodeUtils::RenameType(const String& type_nm, const String& new_nm,
   String src_path = top_path + "/" + src_dir + "/";
   String inc_path = top_path + "/include/";
 
-  String fnmo = taMisc::GetFileFmPath(td->source_file);
-  if(fnmo.startsWith(td->name)) {
-    RenameFileSVN(src_path + td->name + ".h", src_path + new_nm + ".h");
-    RenameFileSVN(src_path + td->name + ".cpp", src_path + new_nm + ".cpp");
-    RenameFileSVN(inc_path + td->name + ".h", inc_path + new_nm + ".h");
-    RenameFileSVN(inc_path + td->name, inc_path + new_nm);
+  if(taMisc::FileExists(src_path + type_nm + ".h")) {
+    RenameFileSVN(src_path + type_nm + ".h", src_path + new_nm + ".h");
+    RenameFileSVN(src_path + type_nm + ".cpp", src_path + new_nm + ".cpp");
+    RenameFileSVN(inc_path + type_nm + ".h", inc_path + new_nm + ".h");
+    RenameFileSVN(inc_path + type_nm, inc_path + new_nm);
 
     taMisc::ReplaceStringInFile(inc_path + new_nm, type_nm, new_nm); // update include
     taMisc::ReplaceStringInFile(inc_path + new_nm + ".h", type_nm, new_nm); // update include
   }
+  else {
+    taMisc::Warning("Type file name not found:", src_path + type_nm + ".h");
+  }
+  return ReplaceInAllFiles(type_nm, new_nm, top_path);
+}
+
+bool taCodeUtils::ReplaceInDir(const String& search_nm, const String& repl_nm,
+                               const String& top_path, const String& src_dir) {
+  String src_path = top_path + "/" + src_dir + "/";
 
   QDir dir(src_path);
   QStringList filters;
-  filters << "*.cpp" << "*.h" << "CMakeFiles.txt";
+  filters << "*.cpp" << "*.h" << "CMakeFiles.txt" << "CMakeLists.txt";
   QStringList files = dir.entryList(filters);
   for(int i=0; i<files.count(); i++) {
     String fnm = files[i];
-    int rpl = taMisc::ReplaceStringInFile(fnm, type_nm, new_nm);
+    int rpl = taMisc::ReplaceStringInFile(src_path + fnm, search_nm, repl_nm);
     if(rpl > 0) {
-      taMisc::Info("replaced:", type_nm,"->",new_nm,"in:",fnm,"count:",String(rpl));
+      taMisc::Info("replaced:", search_nm,"->",repl_nm,"in:",fnm,"count:",String(rpl));
     }
   }
+  return true;
+}
+
+bool taCodeUtils::ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
+                                    const String& top_path) {
+
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/css");
+  ReplaceInDir(search_nm, repl_nm, top_path, "include");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/network");
+  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/leabra");
+  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/bp");
+  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/cs");
+  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/so");
   return true;
 }
 
@@ -196,11 +217,11 @@ bool taCodeUtils::RemoveType(const String& type_nm,
   String inc_path = top_path + "/include/";
 
   String fnmo = taMisc::GetFileFmPath(td->source_file);
-  if(fnmo.startsWith(td->name)) {
-    RemoveFileSVN(src_path + td->name + ".h");
-    RemoveFileSVN(src_path + td->name + ".cpp");
-    RemoveFileSVN(inc_path + td->name + ".h");
-    RemoveFileSVN(inc_path + td->name);
+  if(fnmo.startsWith(type_nm)) {
+    RemoveFileSVN(src_path + type_nm + ".h");
+    RemoveFileSVN(src_path + type_nm + ".cpp");
+    RemoveFileSVN(inc_path + type_nm + ".h");
+    RemoveFileSVN(inc_path + type_nm);
   }
 
   taMisc::ReplaceStringInFile("CMakeFiles.txt", type_nm + ".h\n", "");

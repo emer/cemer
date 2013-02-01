@@ -16,7 +16,7 @@
 #include "BaseSpec.h"
 #include <SpecMemberBase>
 #include <MemberDef>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <SpecPtr>
 
 #include <taMisc>
@@ -258,10 +258,10 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
 
 String BaseSpec::WhereUsed() {
   String rval;
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(!dl) return rval;
   taSmartRef* sref;
-  taDataLinkItr i;
+  taSigLinkItr i;
   FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
     taBase* sown = sref->GetOwner();
     if(!sown) continue;

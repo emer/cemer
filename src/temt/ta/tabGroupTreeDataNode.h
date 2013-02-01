@@ -20,7 +20,7 @@
 #include <tabListTreeDataNode>
 
 // member includes:
-#include <tabGroupDataLink>
+#include <taSigLinkGroup>
 
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
@@ -31,8 +31,8 @@ TypeDef_Of(tabGroupTreeDataNode);
 class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
 INHERITED(tabListTreeDataNode)
 public:
-  taGroup_impl*         tadata() const {return ((tabGroupDataLink*)m_link)->data();}
-  tabGroupDataLink*     link() const {return (tabGroupDataLink*)m_link;}
+  taGroup_impl*         tadata() const {return ((taSigLinkGroup*)m_link)->data();}
+  taSigLinkGroup*     link() const {return (taSigLinkGroup*)m_link;}
 
   override bool         RebuildChildrenIfNeeded();
 
@@ -40,12 +40,12 @@ public:
     // for dynamic changes to tree
   override void         UpdateChildNames(); // #IGNORE
 
-  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabGroupTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_tabGroupTreeDataNode;}
 protected:
@@ -54,7 +54,7 @@ protected:
   void                  UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
   override void         willHaveChildren_impl(bool& will) const;
 private:
-  void                  init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkGroup* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // tabGroupTreeDataNode_h

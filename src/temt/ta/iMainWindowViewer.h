@@ -49,7 +49,7 @@ class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
 INHERITED(QMainWindow)
-friend class taDataLink;
+friend class taSigLink;
 friend class MainWindowViewer;
 public:
 #ifndef __MAKETA__
@@ -167,9 +167,9 @@ public:
   QPointer<iSearchDialog> search_dialog;
   QPointer<iTreeView>   cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
 
-  void                  Find(taiDataLink* root, const String& find_str="");
+  void                  Find(taiSigLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds
-  void                  Replace(taiDataLink* root, ISelectable_PtrList& sel_items,
+  void                  Replace(taiSigLink* root, ISelectable_PtrList& sel_items,
                                 const String& srch="", const String& repl="");
   // replace called by main menu, and context menu
 #endif
@@ -211,14 +211,14 @@ public:
   virtual bool          KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e);
   // process window navigation key events (Ctrl/Alt J, L, Tab) -- returns true if processed
 
-  iTreeViewItem*        AssertBrowserItem(taiDataLink* link);
-  iTreeViewItem*        BrowserExpandAllItem(taiDataLink* link);
-  iTreeViewItem*        BrowserCollapseAllItem(taiDataLink* link);
+  iTreeViewItem*        AssertBrowserItem(taiSigLink* link);
+  iTreeViewItem*        BrowserExpandAllItem(taiSigLink* link);
+  iTreeViewItem*        BrowserCollapseAllItem(taiSigLink* link);
 
-  bool                  AssertPanel(taiDataLink* link, bool new_tab = false,
+  bool                  AssertPanel(taiSigLink* link, bool new_tab = false,
                                     bool new_tab_lock = true);
   // used for things like wizards and edits; note: ntl ignored if !nt
-  void                  EditItem(taiDataLink* link, bool not_in_cur = false);
+  void                  EditItem(taiSigLink* link, bool not_in_cur = false);
   // edit this guy in a new panel, making a tab viewer if necessary
   int                   GetEditActions();
   // after a change in selection, update the available edit actions (cut, copy, etc.)
@@ -242,7 +242,7 @@ public:
   ~iMainWindowViewer();
 
 public slots:
-  void slot_AssertBrowserItem(taiDataLink* link) {
+  void slot_AssertBrowserItem(taiSigLink* link) {
     AssertBrowserItem(link);
   }
 

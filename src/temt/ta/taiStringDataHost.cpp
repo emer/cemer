@@ -109,7 +109,7 @@ void taiStringDataHost::btnPrint_clicked() {
   edit->document()->print(&pr);
 }
 
-void taiStringDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void taiStringDataHost::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
 }
 
 void taiStringDataHost::DoConstr_Dialog(iHostDialog*& dlg) {

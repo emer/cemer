@@ -19,7 +19,7 @@
 #include <QHBoxLayout>
 
 
-iDataPanelFrame::iDataPanelFrame(taiDataLink* dl_)
+iDataPanelFrame::iDataPanelFrame(taiSigLink* dl_)
 :inherited(dl_)
 {
   m_dps = NULL;
@@ -52,7 +52,7 @@ void iDataPanelFrame::ClosePanel() {
     deleteLater(); // per Qt specs, defer deletions to avoid issues
 }
 
-void iDataPanelFrame::DataLinkDestroying(taDataLink*) {
+void iDataPanelFrame::DataLinkDestroying(taSigLink*) {
   if (!m_dps) // if in a panelset, we let panelset destroy us
     ClosePanel();
 }
@@ -62,7 +62,7 @@ void iDataPanelFrame::UpdatePanel() {
     inherited::UpdatePanel();
 }
 
-taiDataLink* iDataPanelFrame::par_link() const {
+taiSigLink* iDataPanelFrame::par_link() const {
   if (m_dps) return m_dps->par_link();
   else       return (tabView()) ? tabView()->par_link() : NULL;
 }

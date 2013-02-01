@@ -21,7 +21,7 @@
 #include <CellRange>
 #include <taiMimeSource>
 #include <taProject>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <taiMenu>
 
 #include <taMisc>
@@ -168,7 +168,7 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
   if ((ca == CA_COL_HDR) && (sel.width() == 1)) {
     DataCol* col = tab->GetColData(sel.col_fr, true);
     if (col) {
-      taiDataLink* link = (taiDataLink*)col->GetDataLink();
+      taiSigLink* link = (taiSigLink*)col->GetDataLink();
       if (link) link->FillContextMenu(menu);
     }
   }

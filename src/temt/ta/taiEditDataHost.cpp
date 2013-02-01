@@ -426,7 +426,7 @@ int taiEditDataHost::Edit(bool modal_, int min_width, int min_height) {
   return inherited::Edit(modal_, min_width, min_height);
 }
 
-EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
+EditDataPanel* taiEditDataHost::EditPanel(taiSigLink* link) {
   if (state != CONSTRUCTED)
     return NULL;
   if (panel == NULL)
@@ -438,7 +438,7 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   return panel;
 }
 
-EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
+EditDataPanel* taiEditDataHost::EditPanelDeferred(taiSigLink* link) {
   panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
 
   return panel;
@@ -705,7 +705,7 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
 
   if (men_nm == "")
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
-       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
+       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
             NULL, this, NULL, widget());

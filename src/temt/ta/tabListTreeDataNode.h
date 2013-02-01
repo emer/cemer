@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class tabListDataLink;
+class taSigLinkList;
 
 
 TypeDef_Of(tabListTreeDataNode);
@@ -30,16 +30,16 @@ TypeDef_Of(tabListTreeDataNode);
 class TA_API tabListTreeDataNode: public tabParTreeDataNode {
 INHERITED(tabParTreeDataNode)
 public:
-  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabListTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_tabListTreeDataNode;}
 private:
-  void                  init(tabListDataLink* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkList* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // tabListTreeDataNode_h

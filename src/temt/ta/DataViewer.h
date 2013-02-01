@@ -38,7 +38,7 @@ TypeDef_Of(DataViewer);
 class TA_API DataViewer : public taDataView {
   // #NO_TOKENS #VIRT_BASE ##DEF_NAME_STYLE_1 the base type for objects with a gui window rep of some kind
 INHERITED(taDataView)
-friend class taDataLink;
+friend class taSigLink;
 friend class DataViewer_List;
 friend class MainWindowViewer;
 //friend class WindowState;

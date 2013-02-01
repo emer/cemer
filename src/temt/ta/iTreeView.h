@@ -116,7 +116,7 @@ public:
 
   void                  AddFilter(const String& value);
     // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
-  iTreeViewItem*        AssertItem(taiDataLink* link, bool super = true);
+  iTreeViewItem*        AssertItem(taiSigLink* link, bool super = true);
     // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be assertedtaMisc::
   bool                  HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list

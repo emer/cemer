@@ -23,7 +23,7 @@
 #endif
 
 // member includes:
-#include <taiDataLink>
+#include <taiSigLink>
 #include <iDataPanel_PtrList>
 #include <iTabViewer>
 #include <MemberDef>
@@ -58,24 +58,24 @@ public:
   int                   tabCount() const; // number of tabs
   iDataPanel*           tabPanel(int tab_idx); // panel from indicated tab (can be NULL)
   iTabBarBase*          tabBar() { return tbPanels; }
-  taiDataLink*          par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
+  taiSigLink*          par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*            par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
   iTabViewer*           tabViewerWin() {return m_viewer_win;}
   iMainWindowViewer*    viewerWindow() {return (m_viewer_win) ? m_viewer_win->viewerWindow() : NULL;}
 
   void                  Activated(bool val); // called by parent to indicate if we are active tabview or not
-  bool                  ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
+  bool                  ActivatePanel(taiSigLink* dl); // if a panel exists for the link, make it active and return true
   bool                  AddPanel(iDataPanel* panel); // adds a panel if not already, true if newly added
   void                  AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a panel in a new tab
   void                  Closing(CancelOp& cancel_op);
   void                  DataPanelDestroying(iDataPanel* panel);
   void                  FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1);
-  iDataPanel*           GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
+  iDataPanel*           GetDataPanel(taiSigLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void                  RemoveDataPanel(iDataPanel* panel);
   void                  Refresh(); // manually refresh; just delegates to all
   void                  ResolveChanges(CancelOp& cancel_op);
   void                  OnWindowBind(iTabViewer* itv); // called at constr_post time
-  void                  ShowLink(taiDataLink* link, bool not_in_cur = false);
+  void                  ShowLink(taiSigLink* link, bool not_in_cur = false);
   void                  ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
   bool                  SetCurrentTab(int tab_idx);
   // focus indicated tab, but usually not if current is lockInPlace -- returns success

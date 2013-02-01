@@ -18,7 +18,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
-#include <taDataLink>
+#include <taSigLink>
 #endif
 
 String  EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }

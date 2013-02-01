@@ -25,18 +25,18 @@ int taiViewTypeOfSelectEdit::BidForView(TypeDef* td) {
   return 0;
 }
 
-void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiDataLink* dl_)
+void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
   iSelectEditPanel* bldp = new iSelectEditPanel(dl_);
   DataPanelCreated(bldp);
 
   if(ClusterRun* cr = dynamic_cast<ClusterRun *>(dl_->taData())) {
-    if(taiDataLink *datatableLink = dynamic_cast<taiDataLink *>(cr->jobs_running.GetDataLink())) {
+    if(taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_running.GetDataLink())) {
       iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
-    if (taiDataLink *datatableLink = dynamic_cast<taiDataLink *>(cr->jobs_done.GetDataLink())) {
+    if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_done.GetDataLink())) {
       iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
       DataPanelCreated(dp);
     }

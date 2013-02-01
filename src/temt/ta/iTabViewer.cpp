@@ -133,7 +133,7 @@ void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   cur_item = src_host->curItem(); // note: could be NULL
   if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
-    taiDataLink* link = cur_item->effLink();
+    taiSigLink* link = cur_item->effLink();
     if (link) {
       new_pn = m_curTabView->GetDataPanel(link);
       m_curTabView->ShowPanel(new_pn);
@@ -165,7 +165,7 @@ void iTabViewer::TabView_Selected(iTabView* tv) {
   }
 }
 
-void iTabViewer::ShowLink(taiDataLink* link, bool not_in_cur) {
+void iTabViewer::ShowLink(taiSigLink* link, bool not_in_cur) {
   tabView()->ShowLink(link, not_in_cur);
 }
 

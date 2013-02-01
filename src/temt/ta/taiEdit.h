@@ -25,7 +25,7 @@
 class EditDataPanel; //
 class taiEditDataHost; //
 class iMainWindowViewer; //
-class taiDataLink; //
+class taiSigLink; //
 
 TypeDef_Of(taiEdit);
 
@@ -41,11 +41,11 @@ public:
                                    int min_width=-1, int min_height=-1);
   // edit in a Dialog (note: rarely overridden) -- finds existing if non-modal else makes new
 
-  virtual EditDataPanel* EditNewPanel(taiDataLink* link, void* base=NULL,
+  virtual EditDataPanel* EditNewPanel(taiSigLink* link, void* base=NULL,
     bool read_only = false, const iColor& bgcol = def_color);
   //edit in a new panel (note: rarely overridden)
 
-  virtual EditDataPanel* EditPanel(taiDataLink* link, void* base=NULL,
+  virtual EditDataPanel* EditPanel(taiSigLink* link, void* base=NULL,
     bool read_only = false, iMainWindowViewer* not_in_win = NULL,
     const iColor& bgcol = def_color);
   //edit in a panel, prefer existing, else created new (note: rarely overridden)

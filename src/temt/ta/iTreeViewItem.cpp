@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iTreeViewItem.h"
-#include <taiDataLink>
+#include <taiSigLink>
 #include <ViewColor_List>
 #include <iColor>
 #include <taiClipData>
@@ -32,14 +32,14 @@ public:
   ~DataNodeDeleter() {delete node;}
 };
 
-iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* node,
+iTreeViewItem::iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeViewItem* node,
   iTreeViewItem* after, const String& tree_name, int dn_flags_)
 :inherited(node, after)
 {
   init(tree_name, link_, md_, dn_flags_);
 }
 
-iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* parent,
+iTreeViewItem::iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeView* parent,
   iTreeViewItem* after, const String& tree_name, int dn_flags_)
 :inherited(parent, after)
 {
@@ -49,7 +49,7 @@ iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* pare
   init(tree_name, link_, md_, dn_flags_);
 }
 
-void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
+void iTreeViewItem::init(const String& tree_name, taiSigLink* link_,
   MemberDef* md_, int dn_flags_)
 {
   m_md = md_;
@@ -116,7 +116,7 @@ void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   DecorateDataNode();
 }
 
-void iTreeViewItem::DataLinkDestroying(taDataLink*) {
+void iTreeViewItem::DataLinkDestroying(taSigLink*) {
   iTreeView* tv = treeView();
   if(tv) {
     tv->EmitTreeStructToUpdate();
@@ -134,7 +134,7 @@ void iTreeViewItem::DecorateDataNode() {
 
   int bmf = 0;
   int dn_flags_supported = 0;
-  taiDataLink* link = this->link(); // local cache
+  taiSigLink* link = this->link(); // local cache
   QIcon ic;
   if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
   bool has_ic = link->GetIcon(bmf, dn_flags_supported, ic);
@@ -248,7 +248,7 @@ void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
 const String iTreeViewItem::GetColText(int col, const String& def) const
 {
   iTreeView* tv = treeView();
-  taiDataLink* link = this->link(); // local cache
+  taiSigLink* link = this->link(); // local cache
   String rval;
   if (tv && link) {
     KeyString key = tv->colKey(col);

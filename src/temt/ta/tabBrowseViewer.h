@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class taBase; // 
 class MemberDef; // 
-class taiDataLink; // 
+class taiSigLink; // 
 
 
 TypeDef_Of(tabBrowseViewer);
@@ -41,8 +41,8 @@ public:
   taSmartRef            m_root;
 
   override void*        root() {return (void*)m_root.ptr();}
-  override taiDataLink* rootLink() {return (m_root) ?
-    (taiDataLink*)m_root->GetDataLink() : NULL;}
+  override taiSigLink* rootLink() {return (m_root) ?
+    (taiSigLink*)m_root->GetDataLink() : NULL;}
 
   void  UpdateAfterEdit(); // if root deletes, our window must die
   void  InitLinks();

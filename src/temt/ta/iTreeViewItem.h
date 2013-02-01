@@ -23,7 +23,7 @@
 class iTreeWidgetItem; // #IGNORE
 #endif
 
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 #include <IObjectSelectable>
 
 // member includes:
@@ -52,7 +52,7 @@ enum NodeBitmapFlags {
 TypeDef_Of(iTreeViewItem);
 
 class TA_API iTreeViewItem: public iTreeWidgetItem,
-  public virtual IDataLinkClient, public virtual IObjectSelectable {
+  public virtual ISigLinkClient, public virtual IObjectSelectable {
   //  ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
 friend class iTreeView;
@@ -91,9 +91,9 @@ public:
   bool                  ShowNode(int show, const String& context) const
     {return ShowNode_impl(show, context);}
 
-  iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
+  iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
-  iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeView* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
   ~iTreeViewItem();
 
@@ -113,13 +113,13 @@ public: // ITypedObject interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iTreeViewItem;}
 
-public: // IDataLinkClient interface
-  override void         DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
+public: // ISigLinkClient interface
+  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2)
     {DataChanged(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
-  override void         DataLinkDestroying(taDataLink* dl); // called by DataLink when it is destroying --
+  override void         DataLinkDestroying(taSigLink* dl); // called by DataLink when it is destroying --
 
 public: // ISelectable interface
-  override taiDataLink* link() const {return IDataLinkClient::link();}
+  override taiSigLink* link() const {return ISigLinkClient::link();}
   override MemberDef*   md() const {return m_md;}
   override ISelectable* par() const;
   override ISelectableHost* host() const;
@@ -146,7 +146,7 @@ protected:
 
   virtual bool          ShowNode_impl(int show, const String& context) const;
 private:
-  void                  init(const String& tree_name, taiDataLink* link_,
+  void                  init(const String& tree_name, taiSigLink* link_,
     MemberDef* md_, int dn_flags_); // #IGNORE
 #endif
 };

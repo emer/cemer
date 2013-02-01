@@ -18,7 +18,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
-#include <taDataLink>
+#include <taSigLink>
 #endif
 
 String  MethodSpace::El_GetName_(void* it) const { return ((MethodDef*)it)->name; }

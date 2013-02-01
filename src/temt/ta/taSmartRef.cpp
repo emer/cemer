@@ -14,14 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "taSmartRef.h"
-#include <taDataLink>
+#include <taSigLink>
 
-void taSmartRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
+void taSmartRef::DataDataChanged(taSigLink*, int dcr, void* op1, void* op2) {
   if (m_own) {
     m_own->SmartRef_DataChanged(this, m_ptr, dcr, op1, op2);
   }
 }
-void taSmartRef::DataLinkDestroying(taDataLink* dl) {
+void taSmartRef::DataLinkDestroying(taSigLink* dl) {
   if (m_own) {
     taBase* tmp_ptr = m_ptr;
     m_ptr = NULL;

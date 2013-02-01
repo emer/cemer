@@ -18,7 +18,7 @@
 #include <taiClipData>
 #include <taBase_PtrList>
 #include <ISelectable_PtrList>
-#include <taiDataLink>
+#include <taiSigLink>
 
 taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
   bool for_drag, GuiContext sh_typ) const
@@ -62,9 +62,9 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
 int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
   int ea, GuiContext sh_typ)
 {//note: follows same logic as the Query
-  taiDataLink* pdl = clipParLink(sh_typ);
+  taiSigLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   int rval = taiClipData::ER_IGNORED;
   // we have to individually disambiguate the allowed, because we have
   // to make sure the right list or group guy handles things like PasteInto, etc.
@@ -99,9 +99,9 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
 
 int IObjectSelectable::EditActionS_impl_(int ea, GuiContext sh_typ) {
 //note: follows same logic as the Query
-  taiDataLink* pdl = clipParLink(sh_typ);
+  taiSigLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   int rval = taiClipData::ER_IGNORED;
   if (pdl) {
 //no    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
@@ -120,8 +120,8 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
 {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = clipParLink(sh_typ);
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* pdl = clipParLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   if (pdl)
     pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
   if (link) {
@@ -135,8 +135,8 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden,
 {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = clipParLink(sh_typ);
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* pdl = clipParLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   if (pdl)
     pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {

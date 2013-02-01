@@ -44,8 +44,8 @@ public:
   override void GetImage(bool force);
   override void Ok_impl();
 
-public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
-//   void               DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
+//   void               DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   override void*        This() {return this;}

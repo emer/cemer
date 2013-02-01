@@ -15,7 +15,7 @@
 
 #include "ClusterRun.h"
 #include <ClusterManager>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <iDataTableEditor>
 #include <iDataTablePanel>
 #include <iDataTableView>
@@ -231,9 +231,9 @@ iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
   // String strm;
   // dt.ListDataClients(strm);
   // taMisc::ConsoleOutput(strm);
-  taDataLink* dl = dt.data_link();
+  taSigLink* dl = dt.data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     iDataTablePanel* el;
     FOR_DLC_EL_OF_TYPE(iDataTablePanel, el, dl, itr) {
       return el->dte;

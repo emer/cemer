@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class MemberDef; // 
-class taiDataLink; // 
+class taiSigLink; // 
 
 
 TypeDef_Of(ClassBrowseViewer);
@@ -40,8 +40,8 @@ public:
 
   override void*        root() {return m_root;}
   void                  setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root
-  override taiDataLink* rootLink()
-    {return (m_root) ? (taiDataLink*)((TypeItem*)m_root)->data_link : NULL;}
+  override taiSigLink* rootLink()
+    {return (m_root) ? (taiSigLink*)((TypeItem*)m_root)->data_link : NULL;}
 
   void  UpdateAfterEdit();
   TA_DATAVIEWFUNS(ClassBrowseViewer, BrowseViewer) //

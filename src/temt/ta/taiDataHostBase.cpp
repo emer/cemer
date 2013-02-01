@@ -306,14 +306,14 @@ void taiDataHostBase::Constr_Buttons() {
 }
 
 
-void taiDataHostBase::DataLinkDestroying(taDataLink* dl) {
+void taiDataHostBase::DataLinkDestroying(taSigLink* dl) {
 // TENT, TODO: confirm this is right...
 //NO!  if (!isConstructed()) return;
   Cancel();
   root = NULL;
 }
 
-void taiDataHostBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void taiDataHostBase::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
 //inherited class completely implements
 }
 

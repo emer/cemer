@@ -100,8 +100,8 @@ public:
 
   override int          Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
   // for dialogs -- add to list of active_edit dialogs too
-  EditDataPanel*        EditPanel(taiDataLink* link); // for panels
-  EditDataPanel*        EditPanelDeferred(taiDataLink* link); // for panels
+  EditDataPanel*        EditPanel(taiSigLink* link); // for panels
+  EditDataPanel*        EditPanelDeferred(taiSigLink* link); // for panels
   USING(inherited::GetImage)
   void                  GetImage(bool force); //override
   void                  GetValue(); //override

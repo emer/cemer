@@ -45,8 +45,8 @@ public:
   iUserDataDataHost()   { Initialize();};
   ~iUserDataDataHost();
 
-public: // IDataLinkClient i/f
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   int                   sel_item_row;

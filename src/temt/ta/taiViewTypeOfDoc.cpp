@@ -25,7 +25,7 @@ int taiViewTypeOfDoc::BidForView(TypeDef* td) {
   return 0;
 }
 
-void taiViewTypeOfDoc::CreateDataPanel_impl(taiDataLink* dl_)
+void taiViewTypeOfDoc::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // doc view is default
   iDocDataPanel* cp = new iDocDataPanel();

@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <IDataHost>
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #include <MembSet>
@@ -47,8 +47,8 @@ class iTreeSearch; //
 class iMainWindowViewer; //
 class taBase; // 
 class TypeDef; // 
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 class iTreeViewItem; //
 class QWidget; //
 class ISelectableHost; //
@@ -57,7 +57,7 @@ class ISelectableHost; //
 TypeDef_Of(iProgramEditor);
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
-                             public virtual IDataLinkClient {
+                             public virtual ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget for editing entire programs
   INHERITED(QWidget)
   Q_OBJECT
@@ -99,7 +99,7 @@ public:
   void                  setEditBgColor(const iColor& value); // set bg for edit, null for default
   void                  defEditBgColor(); // set default color
   void                  setShow(int value); // only used by expert toggle
-  iTreeViewItem*        AssertBrowserItem(taiDataLink* link);
+  iTreeViewItem*        AssertBrowserItem(taiSigLink* link);
   virtual void          Refresh(); // manual refresh
   virtual QWidget*      firstTabFocusWidget();
 
@@ -111,7 +111,7 @@ public slots:
   void                  Revert();
   void                  Help();
   void                  ExpandAll(); // expands all, and resizes columns
-  void                  slot_AssertBrowserItem(taiDataLink* link)
+  void                  slot_AssertBrowserItem(taiSigLink* link)
     {AssertBrowserItem(link);}
 
 
@@ -119,9 +119,9 @@ public: // ITypedObject i/f
   void*                 This() {return this;}
   TypeDef*              GetTypeDef() const {return &TA_iProgramEditor;}
 
-public: // IDataLinkClient i/f
-  void                  DataLinkDestroying(taDataLink* dl);
-  void                  DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f
+  void                  DataLinkDestroying(taSigLink* dl);
+  void                  DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE

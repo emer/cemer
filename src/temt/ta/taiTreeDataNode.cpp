@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTreeDataNode.h"
-#include <taiDataLink>
+#include <taiSigLink>
 #include <taiViewType>
 
 #include <taMisc>
@@ -22,21 +22,21 @@
 
 
 
-taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+taiTreeDataNode::taiTreeDataNode(taiSigLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+taiTreeDataNode::taiTreeDataNode(taiSigLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void taiTreeDataNode::init(taiDataLink* link_, int dn_flags_) {
+void taiTreeDataNode::init(taiSigLink* link_, int dn_flags_) {
   last_child_node = NULL;
   last_member_node = NULL;
 }
@@ -61,7 +61,7 @@ void taiTreeDataNode::CreateChildren_impl() {
     if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
-    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
     //note: we still can't get links for some types, ex. ptrs to NULL
     if (dl) {
       String tree_nm = md->GetLabel();
@@ -105,7 +105,7 @@ taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
   return NULL;
 }
 
-/*nn taiDataLink* taiTreeDataNode::par_link() const {
+/*nn taiSigLink* taiTreeDataNode::par_link() const {
   taiTreeDataNode* par = parent();
   return (par) ? par->link() : NULL;
 } */

@@ -42,7 +42,7 @@ public:
   void*                 root() {return (browser()) ? browser()->root() : NULL;}
   TypeDef*              root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
   MemberDef*            root_md() {return (browser()) ? browser()->root_md : NULL;} //
-  taiDataLink*          rootLink() {return (browser()) ? browser()->rootLink() : NULL;}
+  taiSigLink*          rootLink() {return (browser()) ? browser()->rootLink() : NULL;}
   override int          stretchFactor() const {return 1;} //  1/2 default
 
   void                  Reset();

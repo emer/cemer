@@ -20,7 +20,7 @@
 #include <taiTreeDataNode>
 
 // member includes:
-#include <tabDataLink>
+#include <taSigLinkBase>
 
 // declare all other types mentioned but not required to include:
 
@@ -29,21 +29,21 @@ TypeDef_Of(tabTreeDataNode);
 class TA_API tabTreeDataNode: public taiTreeDataNode {
 INHERITED(taiTreeDataNode)
 public:
-  taBase*               tadata() {return ((tabDataLink*)m_link)->data();}
-  tabDataLink*          link() const {return (tabDataLink*)m_link;}
+  taBase*               tadata() {return ((taSigLinkBase*)m_link)->data();}
+  taSigLinkBase*          link() const {return (taSigLinkBase*)m_link;}
 
-  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_tabTreeDataNode;}
 protected:
   override void         DataChanged_impl(int dcr, void* op1, void* op2);
 private:
-  void                  init(tabDataLink* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkBase* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // tabTreeDataNode_h

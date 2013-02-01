@@ -17,7 +17,7 @@
 #include <ISelectable_PtrList>
 #include <TypeDef>
 #include <MethodDef>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <taiObjectsMimeItem>
 #include <taiMimeSource>
 
@@ -52,7 +52,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
   }
 
   if (sel_items.size == 1) return;
-  taiDataLink* link = sel_items.FastEl(0)->effLink(gc_typ);
+  taiSigLink* link = sel_items.FastEl(0)->effLink(gc_typ);
   if (!link) return; // gui only obj
   TypeDef* t1 = link->GetDataTypeDef(); // type of 1st item
   TypeDef* t2n = sel_items.CommonSubtype2N(gc_typ); // greatest common subtype of items 2-N

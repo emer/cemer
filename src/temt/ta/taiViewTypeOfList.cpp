@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfList.h"
-#include <tabListDataLink>
+#include <taSigLinkList>
 #include <iListDataPanel>
 
 
@@ -25,11 +25,11 @@ int taiViewTypeOfList::BidForView(TypeDef* td) {
   return 0;
 }
 
-taiDataLink* taiViewTypeOfList::CreateDataLink_impl(taBase* data_) {
-  return new tabListDataLink((taList_impl*)data_);
+taiSigLink* taiViewTypeOfList::CreateDataLink_impl(taBase* data_) {
+  return new taSigLinkList((taList_impl*)data_);
 }
 
-void taiViewTypeOfList::CreateDataPanel_impl(taiDataLink* dl_)
+void taiViewTypeOfList::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
   iListDataPanel* bldp = new iListDataPanel(dl_);

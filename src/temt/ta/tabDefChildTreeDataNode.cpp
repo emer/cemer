@@ -17,7 +17,7 @@
 
 #include <DataChangedReason>
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name,
@@ -26,7 +26,7 @@ tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef*
   init(link_, dn_flags_);
 }
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
   iTreeView* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
@@ -34,7 +34,7 @@ tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef*
   init(link_, dn_flags_);
 }
 
-void tabDefChildTreeDataNode::init(tabODataLink*, int) {
+void tabDefChildTreeDataNode::init(taSigLinkOBase*, int) {
   m_def_child.Init(this, list());
 }
 

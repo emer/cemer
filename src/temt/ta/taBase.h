@@ -47,7 +47,7 @@ class taSmartPtr; //
 class taList_impl; //
 class taFiler; //
 class taiMimeSource; //
-class IDataLinkClient; //
+class ISigLinkClient; //
 class QVariant; // #IGNORE
 class iColor;
 
@@ -934,10 +934,10 @@ protected:  // Impl
   //    Data Links -- notify other guys when you change
 public:
 
-  virtual taDataLink*   data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
-  virtual taDataLink*   GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
-  bool                  AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
-  bool                  RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
+  virtual taSigLink*   data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
+  virtual taSigLink*   GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
+  bool                  AddDataClient(ISigLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
+  bool                  RemoveDataClient(ISigLinkClient* dlc); // #IGNORE WARNING: link is undefined after this
   virtual String&       ListDataClients(String& strm, int indent = 0);
   // #CAT_ObjectMgmt list all the data clients for this object to string
 protected:      // Impl

@@ -41,7 +41,7 @@ public:
 
   override QWidget*     firstTabFocusWidget();
 
-  iMatrixPanel(taiDataLink* dl_);
+  iMatrixPanel(taiSigLink* dl_);
   ~iMatrixPanel();
 
 protected:
@@ -50,7 +50,7 @@ protected:
 protected slots:
   void                  tv_hasFocus(iTableView* sender);
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iMatrixPanel;}
 protected:

@@ -111,7 +111,7 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   int idx;
   PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer, idx);
   iTabViewer* itv = pv->widget();
-  taiDataLink* dl = (taiDataLink*)GetDataLink();
+  taiSigLink* dl = (taiSigLink*)GetDataLink();
   iViewPanelSet* ivps = new iViewPanelSet(dl);
   rval->panel_set = ivps;
   itv->AddPanelNewTab(ivps);

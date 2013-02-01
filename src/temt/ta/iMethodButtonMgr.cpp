@@ -133,12 +133,12 @@ void iMethodButtonMgr::Constr_Methods_impl() {
   }
 }
 
-void iMethodButtonMgr::DataLinkDestroying(taDataLink* dl) {
+void iMethodButtonMgr::DataLinkDestroying(taSigLink* dl) {
   base = NULL;
   //TODO: delete the buttons etc.
 }
 
-void iMethodButtonMgr::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void iMethodButtonMgr::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
   if (dcr > DCR_ITEM_UPDATED_ND) return;
   GetImage();
 }
@@ -191,7 +191,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 
   if (men_nm == "")
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
-       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
+       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
             NULL, host, NULL, widg);

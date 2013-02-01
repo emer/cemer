@@ -28,7 +28,7 @@
 #include <QScrollBar>
 #include <QToolTip>
 
-iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
+iProgramViewScriptPanel::iProgramViewScriptPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   Program* prg_ = prog();

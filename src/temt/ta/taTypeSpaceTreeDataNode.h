@@ -21,11 +21,11 @@
 
 // member includes:
 #include <TypeItem>
-#include <taTypeSpaceDataLink_Base>
+#include <taSigLinkTypeItemSpace>
 
 
 // declare all other types mentioned but not required to include:
-class taTypeInfoDataLink;
+class taSigLinkTypeItem;
 
 
 TypeDef_Of(taTypeSpaceTreeDataNode);
@@ -36,9 +36,9 @@ public:
   const TypeItem::TypeInfoKinds    tik;
 
   USING(inherited::data)
-  taPtrList_impl*       data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
-  taTypeInfoDataLink*   child_link(int idx);
-  taTypeSpaceDataLink_Base*     link() const {return (taTypeSpaceDataLink_Base*)m_link;}
+  taPtrList_impl*       data() {return ((taSigLinkTypeItemSpace*)m_link)->data();}
+  taSigLinkTypeItem*   child_link(int idx);
+  taSigLinkTypeItemSpace*     link() const {return (taSigLinkTypeItemSpace*)m_link;}
   bool                  ShowItem(TypeItem* ti) const;
     // determine whether to show, ex. based on a filter
   bool                  ShowType(TypeDef* td) const;
@@ -48,12 +48,12 @@ public:
   bool                  ShowMethod(MethodDef* md) const;
     // determine whether to show, ex. based on a filter
 
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, taiTreeDataNode* parent_,
+  taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, MemberDef* md, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
-  taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, iTreeView* parent_,
+  taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, MemberDef* md, iTreeView* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeSpaceTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_taTypeSpaceTreeDataNode;}
 protected:
@@ -61,7 +61,7 @@ protected:
   override void         CreateChildren_impl(); // called by the Node when it needs to create its children
   void                  CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
 private:
-  void                  init(taTypeSpaceDataLink_Base* link_, int flags_); // #IGNORE
+  void                  init(taSigLinkTypeItemSpace* link_, int flags_); // #IGNORE
 };
 
 #endif // taTypeSpaceTreeDataNode_h

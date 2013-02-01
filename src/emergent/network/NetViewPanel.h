@@ -142,10 +142,10 @@ public:
   NetViewPanel(NetView* dv_);
   ~NetViewPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;} //
-//  override void               DataLinkDestroying(taDataLink* dl);
-//  override void               DataLinkClientRemoving(taDataLink* dl, IDataLinkClient* dlc);
+//  override void               DataLinkDestroying(taSigLink* dl);
+//  override void               DataLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc);
   override TypeDef*     GetTypeDef() const {return &TA_NetViewPanel;}
 
 protected:

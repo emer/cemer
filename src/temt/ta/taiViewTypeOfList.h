@@ -33,8 +33,8 @@ public:
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override taiDataLink* CreateDataLink_impl(taBase* data_);
-  override void         CreateDataPanel_impl(taiDataLink* dl_);
+  override taiSigLink* CreateDataLink_impl(taBase* data_);
+  override void         CreateDataPanel_impl(taiSigLink* dl_);
 };
 
 #endif // taiViewTypeOfList_h

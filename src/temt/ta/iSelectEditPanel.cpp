@@ -22,7 +22,7 @@
 #include <taiMisc>
 
 
-iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)
+iSelectEditPanel::iSelectEditPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   SelectEdit* se_ = sele();

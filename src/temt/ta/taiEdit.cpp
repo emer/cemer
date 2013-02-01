@@ -87,7 +87,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
   return host->Edit(modal, min_width, min_height);
 }
 
-EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
+EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
    bool read_only, const iColor& bgcol)
 {
   taiEditDataHost* host = CreateDataHost(base, read_only);
@@ -110,7 +110,7 @@ EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
   return rval;
 }
 
-EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
+EditDataPanel* taiEdit::EditPanel(taiSigLink* link, void* base,
    bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol)
 {
   taiEditDataHost* host = NULL;

@@ -20,7 +20,7 @@
 
 
 
-iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
+iMatrixPanel::iMatrixPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   me = NULL;

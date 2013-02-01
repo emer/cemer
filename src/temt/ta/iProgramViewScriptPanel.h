@@ -46,7 +46,7 @@ public:
 
   override QWidget*     firstTabFocusWidget();
 
-  iProgramViewScriptPanel(taiDataLink* dl_);
+  iProgramViewScriptPanel(taiSigLink* dl_);
   ~iProgramViewScriptPanel();
 
 public slots:
@@ -55,7 +55,7 @@ public slots:
   void     viewSource(int lineno);
   void     mouseHover(const QPoint &pos, int lineno, const QString& word);
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iProgramViewScriptPanel;}
   override bool         ignoreDataChanged() const;

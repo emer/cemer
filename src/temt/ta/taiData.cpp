@@ -17,7 +17,7 @@
 #include <IDataHost>
 #include <iLabel>
 #include <taiDataDeck>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <taiMisc>
 
 // NOTE: this is for maketa only

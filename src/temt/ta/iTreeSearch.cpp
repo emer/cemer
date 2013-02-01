@@ -19,7 +19,7 @@
 #include <iTreeView>
 #include <iTreeViewItem>
 #include <taBase_PtrList>
-#include <taiDataLink>
+#include <taiSigLink>
 
 
 #include <QHBoxLayout>
@@ -93,7 +93,7 @@ void iTreeSearch::search() {
         }
       }
       if(!tree_view->isItemExpanded(item)) {
-        taiDataLink* dl = item->link();
+        taiSigLink* dl = item->link();
         if(dl->isBase()) {
           taBase* tab = (taBase*)dl->data();
           tab->Search(ftxt, sub_srch, &sub_srch_own); // go with defaults for now
@@ -106,7 +106,7 @@ void iTreeSearch::search() {
   // expand afterward because otherwise it messes up iterator
   for(int i=0;i<sub_srch.size; i++) {
     taBase* fnd = sub_srch.FastEl(i);
-    taiDataLink* lnk = (taiDataLink*)fnd->GetDataLink();
+    taiSigLink* lnk = (taiSigLink*)fnd->GetDataLink();
     if(!lnk) continue;
     iTreeViewItem* fitm = tree_view->AssertItem(lnk);
     if(fitm) {

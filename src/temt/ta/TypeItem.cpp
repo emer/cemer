@@ -20,7 +20,7 @@
 #include <MemberDef>
 
 #ifndef NO_TA_BASE
-#include <taDataLink>
+#include <taSigLink>
 #endif
 
 const String TypeItem::opt_show("SHOW");

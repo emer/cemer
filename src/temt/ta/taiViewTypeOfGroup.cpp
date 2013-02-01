@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfGroup.h"
-#include <tabGroupDataLink>
+#include <taSigLinkGroup>
 #include <taiType>
 #include <taiEdit>
 #include <taiMember>
@@ -33,8 +33,8 @@ int taiViewTypeOfGroup::BidForView(TypeDef* td) {
   return 0;
 }
 
-taiDataLink* taiViewTypeOfGroup::CreateDataLink_impl(taBase* data_) {
-  return new tabGroupDataLink((taGroup_impl*)data_);
+taiSigLink* taiViewTypeOfGroup::CreateDataLink_impl(taBase* data_) {
+  return new taSigLinkGroup((taGroup_impl*)data_);
 }
 
 void taiTypeBase::InitializeTypes(bool gui) {

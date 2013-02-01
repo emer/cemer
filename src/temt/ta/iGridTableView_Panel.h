@@ -122,7 +122,7 @@ protected:
   override void         GetValue_impl();
   override void         CopyFrom_impl();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iGridTableView_Panel;}
 

@@ -175,7 +175,7 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   }
 }
 
-taiDataLink* T3DataView::clipParLink(GuiContext sh_typ) const {
+taiSigLink* T3DataView::clipParLink(GuiContext sh_typ) const {
   return own_link(sh_typ);
 }
 
@@ -210,7 +210,7 @@ void T3DataView::DataStructUpdateEnd_impl() {
   Render();
 }
 
-void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void T3DataView::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
   inherited::DataDataChanged(dl, dcr, op1, op2);
   // if we have started a batch op, then Reset, since we will for sure eventually
   if ((dcr == DCR_STRUCT_UPDATE_BEGIN) && (dbuCnt() == 1))
@@ -283,7 +283,7 @@ ISelectable* T3DataView::par() const {
   else return NULL;
 }
 
-/* taiDataLink* T3DataView::par_link() const {
+/* taiSigLink* T3DataView::par_link() const {
   if (hasParent()) return parent()->link();
   else     return NULL;
 }*/
@@ -345,8 +345,8 @@ void T3DataView::UpdateChildNames(T3DataView*) {
   //nothing
 }
 
-taiDataLink* T3DataView::viewLink() const {
-  return (taiDataLink*)const_cast<T3DataView*>(this)->GetDataLink();
+taiSigLink* T3DataView::viewLink() const {
+  return (taiSigLink*)const_cast<T3DataView*>(this)->GetDataLink();
 }
 
 

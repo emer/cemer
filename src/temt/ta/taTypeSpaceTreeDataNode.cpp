@@ -15,12 +15,12 @@
 
 #include "taTypeSpaceTreeDataNode.h"
 #include <taiViewType>
-#include <taTypeInfoDataLink>
+#include <taSigLinkTypeItem>
 #include <MethodDef>
-#include <taTypeSpaceDataLink>
+#include <taSigLinkTypeSpace>
 
 
-taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, 
+taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, 
   MemberDef* md, taiTreeDataNode* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
@@ -28,7 +28,7 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
   init(link_, flags_);
 }
 
-taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, 
+taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, 
   MemberDef* md, iTreeView* parent_, 
   taiTreeDataNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
@@ -36,19 +36,19 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
   init(link_, flags_);
 }
 
-void taTypeSpaceTreeDataNode::init(taTypeSpaceDataLink_Base* link_, int flags_) {
+void taTypeSpaceTreeDataNode::init(taSigLinkTypeItemSpace* link_, int flags_) {
 }
 
 taTypeSpaceTreeDataNode::~taTypeSpaceTreeDataNode() {
 }
 
-taTypeInfoDataLink* taTypeSpaceTreeDataNode::child_link(int idx) {
-  taiDataLink* dl = NULL;
+taSigLinkTypeItem* taTypeSpaceTreeDataNode::child_link(int idx) {
+  taiSigLink* dl = NULL;
   TypeItem* ti = static_cast<TypeItem*>(data()->PosSafeEl_(idx));
   if (ti != NULL) {
     dl = taiViewType::StatGetDataLink(ti, ti->GetTypeDef());
   }
-  return static_cast<taTypeInfoDataLink*>(dl);
+  return static_cast<taSigLinkTypeItem*>(dl);
 }
 
 void taTypeSpaceTreeDataNode::CreateChildren_impl() {
@@ -88,7 +88,7 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
     default: break;
     }
     
-    taTypeInfoDataLink* dl = child_link(i);
+    taSigLinkTypeItem* dl = child_link(i);
     if (dl == NULL) continue; // shouldn't happen...
 
     tree_nm = dl->GetDisplayName();
@@ -126,7 +126,7 @@ return true;
  
 bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
   // first, check with dm of link
-  taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(link());
+  taSigLinkTypeSpace* tsdl = static_cast<taSigLinkTypeSpace*>(link());
   if (!tsdl->ShowChild(td)) return false;
   if (!ShowItem(td)) return false;
   // basic behavior is that we don't show derivitive types, ex. consts, refs, ptrs, etc.

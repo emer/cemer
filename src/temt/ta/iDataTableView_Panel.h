@@ -42,7 +42,7 @@ public:
   iDataTableView_Panel(DataTableView* lv);
   ~iDataTableView_Panel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDataTableView_Panel;}
 

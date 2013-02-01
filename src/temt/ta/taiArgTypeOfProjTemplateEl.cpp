@@ -15,7 +15,7 @@
 
 #include "taiArgTypeOfProjTemplateEl.h"
 #include <taiProjTemplateElsButton>
-#include <taTypeInfoDataLink>
+#include <taSigLinkTypeItem>
 
 TypeDef_Of(ProjTemplateEl);
 

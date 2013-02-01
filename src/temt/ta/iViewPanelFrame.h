@@ -64,7 +64,7 @@ public:
   taDataView*           dv() {return m_dv;} // can be statically replaced with subclass
   override bool         lockInPlace() const {return true;}
     // true if panel should not be replaced, ex. if dirty, or viewpanel
-  override taiDataLink* par_link() const {return NULL;} // n/a
+  override taiSigLink* par_link() const {return NULL;} // n/a
   override MemberDef*   par_md() const {return NULL;}
   override iTabViewer*  tabViewerWin() const;
   override bool         isViewPanelFrame() const {return true;}
@@ -87,9 +87,9 @@ public slots:
   void                  Revert();
   void                  CopyFrom();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;} //
-  override void         DataLinkDestroying(taDataLink* dl); //note: dl is on the view, not underlying data
+  override void         DataLinkDestroying(taSigLink* dl); //note: dl is on the view, not underlying data
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelFrame;}
 
 public: // IDataHost i/f -- some delegate up to mommy

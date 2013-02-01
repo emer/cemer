@@ -17,19 +17,19 @@
 #define taSmartRef_h 1
 
 // parent includes:
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #include <taBase>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taDataLink; // 
+class taSigLink; // 
 
 
 TypeDef_Of(taSmartRef);
 
-class TA_API taSmartRef: protected IDataLinkClient {
+class TA_API taSmartRef: protected ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##SMART_POINTER safe reference for taBase objects -- does not ref count, but is a data link client so it tracks changes and automatically sets ptr to NULL when object dies
 friend class taBase;
 friend class TypeDef; // for various
@@ -75,11 +75,11 @@ public: // ITypedObject interface
   override void*        This() {return (void*)this;} //
   override TypeDef*     GetTypeDef() const {return &TA_taSmartRef;} //note: only one typedef for all
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override TypeDef*     GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taBase;} // TypeDef of the data
-  override void         DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taDataLink* dl);
+  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2);
+  override void         DataLinkDestroying(taSigLink* dl);
 };
 
 #endif // taSmartRef_h

@@ -15,24 +15,24 @@
 
 #include "tabListTreeDataNode.h"
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
+tabListTreeDataNode::tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name,
+:inherited((taSigLinkOBase*)link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
 }
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
+tabListTreeDataNode::tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_,
   iTreeView* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited((taSigLinkOBase*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabListTreeDataNode::init(tabListDataLink*, int) {
+void tabListTreeDataNode::init(taSigLinkList*, int) {
 }
 
 tabListTreeDataNode::~tabListTreeDataNode()

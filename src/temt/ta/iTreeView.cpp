@@ -18,8 +18,8 @@
 #include <iMainWindowViewer>
 #include <String_PArray>
 #include <iTreeViewItem>
-#include <taDataLinkItr>
-#include <taiDataLink>
+#include <taSigLinkItr>
+#include <taiSigLink>
 #include <taiTypeDefButton>
 #include <taProject>
 #include <taiClipData>
@@ -167,9 +167,9 @@ void iTreeView::AddFilter(const String& value) {
   m_filters->AddUnique(value);
 }
 
-iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
+iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
   // first, check if already an item in our tree
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   iTreeViewItem* el;
   FOR_DLC_EL_OF_TYPE(iTreeViewItem, el, link, itr) {
     if (el->treeWidget() == this) {
@@ -178,7 +178,7 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
   }
   if (!super) return NULL; // when we are called by ourself
   // failed, so try to assert the owner
-  taiDataLink* own_link = link->ownLink();
+  taiSigLink* own_link = link->ownLink();
   if (!own_link) return NULL;
   iTreeViewItem* own_el = AssertItem(own_link);
   // note: don't bial if no own_el, because could be a defchild parent
@@ -604,7 +604,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
     ISelectable* si = curItem();
     if(si && si->link()) {
-      taiDataLink* link = si->link();
+      taiSigLink* link = si->link();
       iMainWindowViewer* imw = mainWindow();
       if(imw) imw->Find(link);
     }
@@ -614,7 +614,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_R) {
     ISelectable* si = curItem();
     if(si && si->link()) {
-      taiDataLink* link = si->link();
+      taiSigLink* link = si->link();
       iMainWindowViewer* imw = mainWindow();
       if(imw) imw->Replace(link, selItems());
     }
@@ -651,7 +651,7 @@ void iTreeView::mnuFindFromHere(taiAction* mel) {
   iMainWindowViewer* imw = mainWindow();
   if (!imw) return;
   iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
-  taiDataLink* dl = node->link();
+  taiSigLink* dl = node->link();
   imw->Find(dl);
 }
 
@@ -659,7 +659,7 @@ void iTreeView::mnuReplaceFromHere(taiAction* mel) {
   iMainWindowViewer* imw = mainWindow();
   if (!imw) return;
   iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
-  taiDataLink* dl = node->link();
+  taiSigLink* dl = node->link();
   imw->Replace(dl, selItems());
 }
 

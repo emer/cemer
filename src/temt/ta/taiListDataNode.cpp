@@ -18,7 +18,7 @@
 
 
 taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
-   taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
+   taiSigLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
 :inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
 {
   num = num_;
@@ -48,9 +48,9 @@ void taiListDataNode::DecorateDataNode() {
   setText(0, String(num)); // in case changed via renumber
 }
 
-taiDataLink* taiListDataNode::par_link() const {
+taiSigLink* taiListDataNode::par_link() const {
   // in case we decide to support trees in list views, check for an item parent:
-  taiDataLink* rval = inherited::par_link();
+  taiSigLink* rval = inherited::par_link();
   if (rval) return rval;
   if (panel) return panel->link();
   return NULL;

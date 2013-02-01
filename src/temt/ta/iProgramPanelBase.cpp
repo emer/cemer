@@ -30,7 +30,7 @@ TypeDef_Of(ProgramToolBar);
 #include <QCheckBox>
 
 
-iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
+iProgramPanelBase::iProgramPanelBase(taiSigLink* dl_)
 :inherited(dl_)
 {
   pe = new iProgramEditor();

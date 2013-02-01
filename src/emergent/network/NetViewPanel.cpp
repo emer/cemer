@@ -413,7 +413,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
     taBase* specs_ = &(dv_->net()->specs);
     MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
     if (specs_) {
-      taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
+      taiSigLink* dl = (taiSigLink*)specs_->GetDataLink();
       if (dl) {
         dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
       }
@@ -742,7 +742,7 @@ void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
   if (level < 1) return; // always expand root level
   // by default, we only expand specs themselves, not the args, objs, etc.
   // and then ONLY if that spec itself has child specs
-  taiDataLink* dl = item->link();
+  taiSigLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
   // check for spec itself (DEF_CHILD) and children list
   if (typ->InheritsFrom(&TA_BaseSpec)) {

@@ -18,7 +18,7 @@
 #include <iDataPanelFrame>
 
 
-taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
+taiSigLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
   if (!el || !el_typ) return NULL; // subclass will have to grok
 
   // handle ptrs by derefing the type and the el
@@ -34,7 +34,7 @@ taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
 
   if (!el || !el_typ) return NULL;
   if (!el_typ->iv) return NULL;
-  taiDataLink* rval = NULL;
+  taiSigLink* rval = NULL;
   taiViewType* tiv = el_typ->iv;
   rval = tiv->GetDataLink(el, el_typ);
   return rval; //NULL if not taBase
@@ -50,7 +50,7 @@ void taiViewType::AddView(TypeDef* td) {
   InsertThisIntoBidList(td->iv);
 }
 
-iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
+iDataPanel* taiViewType::CreateDataPanel(taiSigLink* dl_) {
   m_dp = NULL;
   m_dps = NULL;
   m_need_set = false;

@@ -21,21 +21,21 @@
 #include <taMisc>
 
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_,
+tabGroupTreeDataNode::tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited((taSigLinkList*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
+tabGroupTreeDataNode::tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited((taSigLinkList*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabGroupTreeDataNode::init(tabGroupDataLink* link_, int dn_flags_) {
+void tabGroupTreeDataNode::init(taSigLinkGroup* link_, int dn_flags_) {
 }
 
 tabGroupTreeDataNode::~tabGroupTreeDataNode()
@@ -50,7 +50,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     taBase* el = tadata()->gp.FastEl(i);
     if (!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();
@@ -76,7 +76,7 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
   if (typ->IsActualTaBase()) {
       typ = ((taBase*)el)->GetTypeDef();
   }
-  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (!dl) return NULL; // shouldn't happen unless null...
 
   taiTreeDataNode* dn = dl->CreateTreeDataNode(NULL, this, after_node, "",
@@ -211,7 +211,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     taBase* el = tadata()->gp.FastEl(i);
     if (!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();

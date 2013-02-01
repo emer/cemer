@@ -19,7 +19,7 @@
 #include <taiMisc>
 
 
-EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
+EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiSigLink* dl_)
 :inherited(dl_)
 {
   owner = owner_;

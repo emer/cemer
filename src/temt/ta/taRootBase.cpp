@@ -764,6 +764,13 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("RenameType", "\
  -- rename type to a new name -- renames file, include file, renames all references in current directory -- must run in directory where you want to do the rename -- must pass rename_to as the target name to rename type to");
 
+  taMisc::AddArgName("--replace_string", "ReplaceString");
+  taMisc::AddArgName("replace_string=", "ReplaceString");
+  taMisc::AddArgName("--replace_to", "ReplaceStringTo");
+  taMisc::AddArgName("replace_to=", "ReplaceStringTo");
+  taMisc::AddArgNameDesc("ReplaceString", "\
+ -- replace string to new replacement value in all files in entire codebase -- must run in a subdir within code base -- must pass replace_to as the replacement string");
+
   taMisc::AddArgName("--remove_type", "RemoveType");
   taMisc::AddArgName("remove_type=", "RemoveType");
   taMisc::AddArgNameDesc("RemoveType", "\
@@ -801,6 +808,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("MakeSystemPlugin")
      || taMisc::CheckArgByName("CreateNewSrc")
      || taMisc::CheckArgByName("RenameType")
+     || taMisc::CheckArgByName("ReplaceString")
      || taMisc::CheckArgByName("RemoveType")
      ) { // auto nogui by default
     taMisc::use_plugins = false;                      // don't use if making
@@ -1752,6 +1760,22 @@ bool taRootBase::Startup_ProcessArgs() {
       taMisc::Info("renaming type from old name:", oldnm,"to new name:",newnm,
                    "in top path:", top_path,"src_path:", src_path);
       taCodeUtils::RenameType(oldnm, newnm, top_path, src_path);
+      run_startup = false;
+    }
+  }
+  if(taMisc::CheckArgByName("ReplaceString")) {
+    run_startup = false;
+    String oldnm = taMisc::FindArgByName("ReplaceString");
+    String newnm = taMisc::FindArgByName("RenameStringTo");
+    if(newnm.empty()) {
+      taMisc::Error("ReplaceString: no replace_to arg provided for new replace string");
+    }
+    else {
+      String curpath = QDir::currentPath();
+      String top_path = curpath.before("/src/",-1);
+      taMisc::Info("replacing string from:", oldnm,"to new replacement:",newnm,
+                   "in top path:", top_path);
+      taCodeUtils::ReplaceInAllFiles(oldnm, newnm, top_path);
       run_startup = false;
     }
   }

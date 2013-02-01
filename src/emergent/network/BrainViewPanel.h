@@ -90,7 +90,7 @@ public:
   BrainViewPanel(BrainView* dv_);
   ~BrainViewPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This();
   override TypeDef*     GetTypeDef() const;
 

@@ -26,7 +26,7 @@
 #include <iT3DataViewFrame>
 #include <iT3ViewspaceWidget>
 #include <T3ExaminerViewer>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <MemberDef>
 #include <taMath_float>
 #include <MainWindowViewer>
@@ -192,9 +192,9 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
 }
 
 NetView* Network::FindView() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     NetView* el;
     FOR_DLC_EL_OF_TYPE(NetView, el, dl, itr) {
       return el;
@@ -204,9 +204,9 @@ NetView* Network::FindView() {
 }
 
 NetView* Network::FindMakeView(T3DataViewFrame* fr) {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     NetView* el;
     FOR_DLC_EL_OF_TYPE(NetView, el, dl, itr) {
       el->InitDisplay();
@@ -653,9 +653,9 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
 
 UnitView* NetView::FindUnitView(Unit* unit) {
   UnitView* uv = NULL;
-  taDataLink* dl = unit->data_link();
+  taSigLink* dl = unit->data_link();
   if (!dl) return NULL;
-  taDataLinkItr i;
+  taSigLinkItr i;
   FOR_DLC_EL_OF_TYPE(UnitView, uv, dl, i) {
     if (uv->GetOwner(&TA_NetView) == this)
       return uv;

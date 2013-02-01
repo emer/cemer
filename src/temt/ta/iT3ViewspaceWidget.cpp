@@ -19,7 +19,7 @@
 #include <iT3DataViewFrame>
 #include <iVec2i>
 #include <T3DataView>
-#include <taiDataLink>
+#include <taiSigLink>
 
 #include <taMisc>
 #include <taiMisc>
@@ -355,7 +355,7 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
 
   if (ev->is_selected) {
     AddSelectedItem(t3node);
-    taiDataLink* link = t3node->effLink(ISelectable::GC_DEFAULT);
+    taiSigLink* link = t3node->effLink(ISelectable::GC_DEFAULT);
     if(link) {
       taBase* obj = (taBase*)link->data();
       if(obj)

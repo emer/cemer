@@ -64,7 +64,7 @@ void DataTableView::UpdateAfterEdit_impl() {
   //note: UAE calls setDirty, which is where we do most of the rejigging
 }
 
-void DataTableView::IgnoredDataChanged(taDataLink* dl, int dcr,
+void DataTableView::IgnoredDataChanged(taSigLink* dl, int dcr,
     void* op1, void* op2)
 {
   // if it is a struct begin or end, we better not ignore it, because

@@ -46,7 +46,7 @@ TypeDef_Of(MainWindowViewer);
 class TA_API MainWindowViewer : public TopLevelViewer {
   // ##DEF_NAME_ROOT_Browser the uber controller for main windows
 INHERITED(TopLevelViewer)
-friend class taDataLink;
+friend class taSigLink;
 friend class ToolBar_List;
 friend class FrameView_List;
 friend class DockView_List;

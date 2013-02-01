@@ -29,7 +29,7 @@ class TA_API iDataTablePanel_Mbr : public iDataTablePanel {
 INHERITED(iDataTablePanel)
 public:
   override String       panel_type() const; // this string is on the subpanel button for this panel
- iDataTablePanel_Mbr(taiDataLink* dl_) : iDataTablePanel(dl_) { };
+ iDataTablePanel_Mbr(taiSigLink* dl_) : iDataTablePanel(dl_) { };
   ~iDataTablePanel_Mbr();
 };
 

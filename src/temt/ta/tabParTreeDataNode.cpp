@@ -20,23 +20,23 @@
 #include <taMisc>
 
 
-tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_,
+tabParTreeDataNode::tabParTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
     const String& tree_name, int dn_flags_)
-:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name,
+:inherited((taSigLinkBase*)link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
 }
 
-tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_, iTreeView* parent_,
+tabParTreeDataNode::tabParTreeDataNode(taSigLinkOBase* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
-:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited((taSigLinkBase*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabParTreeDataNode::init(tabODataLink* link_, int dn_flags_) {
+void tabParTreeDataNode::init(taSigLinkOBase* link_, int dn_flags_) {
   last_list_items_node = NULL;
 }
 
@@ -62,7 +62,7 @@ void tabParTreeDataNode::CreateChildren_impl() {
     taBase* el = (taBase*)list->FastEl_(i);
     if (!el) continue; // generally shouldn't happen
     TypeDef* typ = el->GetTypeDef();
-    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen... unless null
 
     tree_nm = dl->GetDisplayName();
@@ -92,7 +92,7 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   if (!el) return NULL;
   taList_impl* list = this->list(); // cache
   TypeDef* typ = el->GetTypeDef();
-  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+  taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (!dl) return NULL; // shouldn't happen unless null...
   //note: we don't make name because it is updated anyway
   int dn_flags_tmp = DNF_UPDATE_NAME | DNF_CAN_BROWSE | DNF_CAN_DRAG;
@@ -245,7 +245,7 @@ void tabParTreeDataNode::UpdateListNames() {
     taBase* el = (taBase*)list->FastEl_(i);
     if(!el) continue;
     TypeDef* typ = el->GetTypeDef();
-    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    taiSigLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
     tree_nm = dl->GetDisplayName();

@@ -34,16 +34,16 @@ public:
   taiTreeDataNode*      FindChildForData(void* data, int& idx); // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
   virtual void          UpdateChildNames() {} // #IGNORE update child names of this node
 
-  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode(taiSigLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  taiTreeDataNode(taiDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode(taiSigLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeDataNode();
 public: // ITypedObject interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_taiTreeDataNode;}
 public: // ISelectable interface
-//obs  override taiDataLink* par_link() const;
+//obs  override taiSigLink* par_link() const;
 //obs  override MemberDef*      par_md() const; //provided at create time
 //  override ISelectableHost* host() const;
 protected:
@@ -52,7 +52,7 @@ protected:
   override void         willHaveChildren_impl(bool& will) const;
   override void         CreateChildren_impl();
 private:
-  void                  init(taiDataLink* link_, int dn_flags_); // #IGNORE
+  void                  init(taiSigLink* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // taiTreeDataNode_h

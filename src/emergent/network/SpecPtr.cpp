@@ -262,7 +262,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
 }
 
 // todo: could add the UAE for the relevant smartref_destroy call..
-// void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
+// void SpecPtr_impl::DataLinkDestroying(taSigLink* dl) {
 //   if (owner && !owner->isDestroying()) {
 // //     owner->SmartRef_DataDestroying(this, GetSpec());
 //     SetSpec(NULL);

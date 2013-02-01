@@ -15,7 +15,7 @@
 
 #include "taBase_RefList.h"
 
-#include <taDataLink>
+#include <taSigLink>
 #include <IRefListClient>
 #include <taMisc>
 
@@ -28,7 +28,7 @@ taBase_RefList::~taBase_RefList() {
   Reset();
 }
 
-void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
+void taBase_RefList::DataLinkDestroying(taSigLink* dl) {
   // note: dl has already done a RemoveDataLink on us
   taBase* tab = dl->taData();
   if (tab) { // should exist!
@@ -43,7 +43,7 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
   }
 }
 
-void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void taBase_RefList::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
   if (!m_own) return;
   taBase* tab = dl->taData();
   m_own->DataChanged_Ref(this, tab, dcr, op1, op2);

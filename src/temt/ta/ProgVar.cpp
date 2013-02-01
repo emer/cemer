@@ -16,7 +16,7 @@
 #include "ProgVar.h"
 #include <Program>
 #include <ProgVar_List>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <MemberDef>
 
 TypeDef_Of(taMatrix);
@@ -104,10 +104,10 @@ void ProgVar::SetFlagsByOwnership() {
 }
 
 bool ProgVar::UpdateUsedFlag() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(!dl) return false;
   int cnt = 0;
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   taSmartRef* el;
   FOR_DLC_EL_OF_TYPE(taSmartRef, el, dl, itr) {
     taBase* spo = el->GetOwner();

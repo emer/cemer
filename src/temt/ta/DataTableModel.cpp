@@ -42,11 +42,11 @@ int DataTableModel::columnCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->cols() : 0;
 }
 
-void DataTableModel::DataLinkDestroying(taDataLink* dl) {
+void DataTableModel::DataLinkDestroying(taSigLink* dl) {
   m_dt = NULL;
 }
 
-void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
+void DataTableModel::DataDataChanged(taSigLink* dl, int dcr,
   void* op1, void* op2)
 { // called from DataTable::DataChanged
   if (notifying) return;

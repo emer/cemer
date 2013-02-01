@@ -171,7 +171,7 @@ void taiDataHost_impl::Insert_Methods() {
   }
 }
 
-void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void taiDataHost_impl::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
 //note: nothing in base, by design
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies

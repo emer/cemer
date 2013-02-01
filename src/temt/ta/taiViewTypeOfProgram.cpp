@@ -27,11 +27,11 @@ int taiViewTypeOfProgram::BidForView(TypeDef* td) {
   return 0;
 }
 
-/*taiDataLink* taiViewTypeOfDataTable::CreateDataLink_impl(taBase* data_) {
-  return new tabListDataLink((taList_impl*)data_);
+/*taiSigLink* taiViewTypeOfDataTable::CreateDataLink_impl(taBase* data_) {
+  return new taSigLinkList((taList_impl*)data_);
 } */
 
-void taiViewTypeOfProgram::CreateDataPanel_impl(taiDataLink* dl_)
+void taiViewTypeOfProgram::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // control panel is default
   iProgramCtrlPanel* cp = new iProgramCtrlPanel(dl_);

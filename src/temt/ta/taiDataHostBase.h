@@ -21,7 +21,7 @@
 #ifndef __MAKETA__
 #include <QObject>
 #endif
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 #include <taPtrList>
 
 // member includes:
@@ -55,7 +55,7 @@ public:
 
 TypeDef_Of(taiDataHostBase);
 
-class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient {
+class TA_API taiDataHostBase: public QObject, virtual public ISigLinkClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
   Q_OBJECT
@@ -150,10 +150,10 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
   TypeDef*      GetTypeDef() const {return &TA_taiDataHostBase;} // override
 
-public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  bool                ignoreDataChanged() const; we always accept, but respect hidden
-  void          DataLinkDestroying(taDataLink* dl);
-  void          DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  void          DataLinkDestroying(taSigLink* dl);
+  void          DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 
 // virtuals for IDataHost i/f -- call back to these from taiDataHost

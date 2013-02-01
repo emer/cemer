@@ -20,7 +20,7 @@
 #include <iTreeViewItem>
 #include <iMainWindowViewer>
 #include <ProgramToolBar>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <iDataPanelSet>
 
 TypeDef_Of(ProgCode);
@@ -31,12 +31,12 @@ TypeDef_Of(ProgCode);
 #include <QKeyEvent>
 
 
-iProgramPanel::iProgramPanel(taiDataLink* dl_)
+iProgramPanel::iProgramPanel(taiSigLink* dl_)
 :inherited(dl_)
 {
   Program* prog_ = prog();
   if (prog_) {
-    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    taiSigLink* dl = (taiSigLink*)prog_->GetDataLink();
     if (dl) {
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
@@ -52,7 +52,7 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
 {
   if (level < 1) return; // always expand root level
   // by default, expand code guys throughout, plus top-level args, vars and objs
-  taiDataLink* dl = item->link();
+  taiSigLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
   if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
                       typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
@@ -95,9 +95,9 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
 
 iProgramPanel* Program::FindMyProgramPanel() {
   if(!taMisc::gui_active) return NULL;
-  taDataLink* link = data_link();
+  taSigLink* link = data_link();
   if(!link) return NULL;
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   iProgramPanel* el;
   FOR_DLC_EL_OF_TYPE(iProgramPanel, el, link, itr) {
     if (el->prog() == this) {
@@ -117,7 +117,7 @@ iProgramPanel* Program::FindMyProgramPanel() {
 
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
-  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  taiSigLink* link = (taiSigLink*)itm->GetDataLink();
   if(!link) return false;
 
   iProgramPanel* mwv = FindMyProgramPanel();
@@ -141,7 +141,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
 
 bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
-  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  taiSigLink* link = (taiSigLink*)itm->GetDataLink();
   if(!link) return false;
 
   iProgramPanel* mwv = FindMyProgramPanel();
@@ -159,7 +159,7 @@ bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
 
 bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
-  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  taiSigLink* link = (taiSigLink*)itm->GetDataLink();
   if(!link) return false;
 
   iProgramPanel* mwv = FindMyProgramPanel();

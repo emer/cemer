@@ -17,20 +17,20 @@
 #define tabDefChildRef_h 1
 
 // parent includes:
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #include <taList_impl>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taDataLink; // 
+class taSigLink; // 
 class tabDefChildTreeDataNode; // 
 
 
 TypeDef_Of(tabDefChildRef);
 
-class TA_API tabDefChildRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taList objects -- does not ref count, but is a dlc so it tracks changes etc.
+class TA_API tabDefChildRef: protected ISigLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taList objects -- does not ref count, but is a dlc so it tracks changes etc.
 public:
   inline taList_impl*   ptr() const {return m_ptr;}
   void                  set(taList_impl* src) {if (src == m_ptr) return;
@@ -50,11 +50,11 @@ public: // ITypedObject interface
   override void*        This() {return (void*)this;} //
   override TypeDef*     GetTypeDef() const {return &TA_tabDefChildRef;}
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override TypeDef*     GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taList_impl;}
-  override void         DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taDataLink* dl);
+  override void         DataDataChanged(taSigLink*, int dcr, void* op1, void* op2);
+  override void         DataLinkDestroying(taSigLink* dl);
 };
 
 #endif // tabDefChildRef_h

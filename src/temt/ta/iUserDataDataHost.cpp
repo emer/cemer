@@ -251,7 +251,7 @@ void iUserDataDataHost::Constr_Methods_impl() {
   Insert_Methods();
 }
 
-void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void iUserDataDataHost::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
 //note: we completely replace default, and basically rebuild on any Group notify,
 // and ignore the other notifies (i.e the List guys, which will be echoes of a Group
 

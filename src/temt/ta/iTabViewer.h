@@ -35,7 +35,7 @@ class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed
 INHERITED(iFrameViewer)
 friend class iTabView;
 public:
-  virtual taiDataLink*  sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
+  virtual taiSigLink*  sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*    sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
   override int          stretchFactor() const {return 4;} // 3/2 default
   iTabView*             tabView() {return m_curTabView;} // currently active
@@ -45,7 +45,7 @@ public:
   virtual void          AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void                  AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a new tab, sets panel active in it, locks if requested
 //obs  virtual iTabView*        AddTabView(QWidget* parCtrl); // adds a new tab view
-  void                  ShowLink(taiDataLink* link, bool not_in_cur = false);
+  void                  ShowLink(taiSigLink* link, bool not_in_cur = false);
   void                  ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
 
   virtual void          TabView_Destroying(iTabView* tv); // called when a tabview deletes

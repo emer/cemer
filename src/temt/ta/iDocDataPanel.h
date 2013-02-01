@@ -74,10 +74,10 @@ public:
   iDocDataPanel(); // NOTE: use the setDoc api to (indirectly) set the DataLink
   ~iDocDataPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iDocDataPanel;}
-  override void         DataLinkDestroying(taDataLink* dl);
+  override void         DataLinkDestroying(taSigLink* dl);
   override bool         ignoreDataChanged() const;
 protected:
   taDoc*                m_doc; // ref managed through link; we just put ptr here to detect change

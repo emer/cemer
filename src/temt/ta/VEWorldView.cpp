@@ -21,7 +21,7 @@
 #include <iT3DataViewFrame>
 #include <T3ExaminerViewer>
 #include <T3VEWorld>
-#include <taDataLinkItr>
+#include <taSigLinkItr>
 #include <taImage>
 #include <NewViewHelper>
 #include <T3DataViewFrame>
@@ -362,11 +362,11 @@ QImage VEWorld::GetCameraImage(int cam_no) {
     return img;
   }
 
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(TestError(!dl, "GetCameraImage", "data link not found -- could not find views (should not happen -- please report as a bug!"))
     return img;
 
-  taDataLinkItr itr;
+  taSigLinkItr itr;
   VEWorldView* el;
   FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
     return el->GetCameraImage(cam_no);
@@ -521,9 +521,9 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 //      VEWorld extras
 
 VEWorldView* VEWorld::FindView() {
-  taDataLink* dl = data_link();
+  taSigLink* dl = data_link();
   if(dl) {
-    taDataLinkItr itr;
+    taSigLinkItr itr;
     VEWorldView* el;
     FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
 //       if(!el->node_so()) continue;

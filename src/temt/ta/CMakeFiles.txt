@@ -162,25 +162,27 @@ set(ta_HEADS_MAKETA_LOCAL
   FunCallItem.h
   taBase_FunCallList.h
 
-  IDataLinkProxy.h
-  IDataLinkClient.h
-  IMultiDataLinkClient.h
-  IDataLinkClient_PtrList.h
-  taDataLink.h
-  taDataLinkItr.h
-  taiDataLink.h
-  tabDataLink.h
-  tabODataLink.h
-  tabListDataLink.h
-  tabGroupDataLink.h
+  taSigLink.h
+  taSigLinkItr.h
+  taiSigLink.h
+  taSigLinkBase.h
+  taSigLinkOBase.h
+  taSigLinkList.h
+  taSigLinkGroup.h
+  taSigLinkClass.h
+  taSigLinkTypeItemSpace.h
+  taSigLinkTypeItem.h
+  taSigLinkTypeSpace.h
+  taSigLinkMethodSpace.h
+  taSigLinkMemberSpace.h
+  taSigLinkPropertySpace.h
+
+  ISigLinkProxy.h
+  ISigLinkClient.h
+  ISigLinkClient_PtrList.h
+  IMultiSigLinkClient.h
+
   IRefListClient.h
-  taClassDataLink.h
-  taTypeSpaceDataLink_Base.h
-  taTypeInfoDataLink.h
-  taTypeSpaceDataLink.h
-  taMethodSpaceDataLink.h
-  taMemberSpaceDataLink.h
-  taPropertySpaceDataLink.h
 
   taStringDiffData.h
   taStringDiffItem.h
@@ -937,7 +939,7 @@ set(ta_HEADS_NOMAKETA_MOC
   taGuiWidgetHelper.h
   taGuiActionHelper.h
 
-  DataLink_QObj.h
+  taSigLink_QObj.h
 
   DocEditDataHost.h
 
@@ -1216,15 +1218,27 @@ set(ta_SRCS_MAKETA
   FunCallItem.cpp
   taBase_FunCallList.cpp
 
-  IDataLinkProxy.cpp
-  IDataLinkClient.cpp
-  IMultiDataLinkClient.cpp
-  IDataLinkClient_PtrList.cpp
-  taDataLink.cpp
-  taDataLinkItr.cpp
-  taiDataLink.cpp
-  tabDataLink.cpp
-  DataLink_QObj.cpp
+  taSigLink.cpp
+  taSigLinkItr.cpp
+  taiSigLink.cpp
+  taSigLinkBase.cpp
+  taSigLinkOBase.cpp
+  taSigLinkList.cpp
+  taSigLinkGroup.cpp
+  taSigLinkClass.cpp
+  taSigLinkTypeItemSpace.cpp
+  taSigLinkTypeItem.cpp
+  taSigLinkTypeSpace.cpp
+  taSigLinkMethodSpace.cpp
+  taSigLinkMemberSpace.cpp
+  taSigLinkPropertySpace.cpp
+
+  taSigLink_QObj.cpp
+
+  ISigLinkProxy.cpp
+  ISigLinkClient.cpp
+  ISigLinkClient_PtrList.cpp
+  IMultiSigLinkClient.cpp
   IRefListClient.cpp
 
   taStringDiffData.cpp
@@ -1928,9 +1942,6 @@ set(ta_SRCS_NOMAKETA
   iTreeSearch.cpp
   iListDataPanel.cpp
   iSearchDialog.cpp
-  tabODataLink.cpp
-  tabListDataLink.cpp
-  tabGroupDataLink.cpp
   iTreeViewItem.cpp
   taiTreeDataNode.cpp
   taiListDataNode.cpp
@@ -1960,14 +1971,7 @@ set(ta_SRCS_NOMAKETA
   iMatrixTableView.cpp
   iMatrixEditor.cpp
   iMatrixPanel.cpp
-  taClassDataLink.cpp
 
-  taTypeSpaceDataLink_Base.cpp
-  taTypeInfoDataLink.cpp
-  taTypeSpaceDataLink.cpp
-  taMethodSpaceDataLink.cpp
-  taMemberSpaceDataLink.cpp
-  taPropertySpaceDataLink.cpp
   taTypeInfoTreeDataNode.cpp
   taTypeSpaceTreeDataNode.cpp
   iClassBrowseViewer.cpp

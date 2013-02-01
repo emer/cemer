@@ -17,14 +17,14 @@
 #define ISelectable_h 1
 
 // parent includes:
-#include <IDataLinkProxy>
+#include <ISigLinkProxy>
 
 // member includes:
 #include <taString>
 
 // declare all other types mentioned but not required to include:
 class MemberDef; // 
-class taiDataLink; // 
+class taiSigLink; // 
 class ISelectableHost; // 
 class taBase; // 
 class TypeDef; // 
@@ -61,8 +61,8 @@ class QPoint; //
 
 TypeDef_Of(ISelectable);
 
-class TA_API ISelectable: public virtual IDataLinkProxy { //
-INHERITED(IDataLinkProxy)
+class TA_API ISelectable: public virtual ISigLinkProxy { //
+INHERITED(ISigLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
   enum GuiContext { // primarily for the T3 guys that have dual identities (don't reorder these)
@@ -73,12 +73,12 @@ public: // Interface Properties and Methods
   };
 
   virtual MemberDef*    md() const {return NULL;} // memberdef in data parent, if any, of the selected item
-  virtual taiDataLink*  own_link(GuiContext sh_typ = GC_DEFAULT) const; // owner item's link -- this is the *eff_data* parent (not the gui parent)
+  virtual taiSigLink*  own_link(GuiContext sh_typ = GC_DEFAULT) const; // owner item's link -- this is the *eff_data* parent (not the gui parent)
   virtual ISelectable*  par() const = 0; // gui parent, if any
-  virtual taiDataLink*  par_link() const; // parent item's link -- this is the *gui* parent (not the data parent/owner)
-  virtual taiDataLink*  viewLink() const {return NULL;} // only defined for T3 guys
-  taiDataLink*          effLink(GuiContext sh_typ = GC_DEFAULT) const; // for trees and things like layers, we just just use the data, for things like graphs (where view==data) we use the view itself (override shType)
-  virtual taiDataLink*  clipParLink(GuiContext sh_typ) const;
+  virtual taiSigLink*  par_link() const; // parent item's link -- this is the *gui* parent (not the data parent/owner)
+  virtual taiSigLink*  viewLink() const {return NULL;} // only defined for T3 guys
+  taiSigLink*          effLink(GuiContext sh_typ = GC_DEFAULT) const; // for trees and things like layers, we just just use the data, for things like graphs (where view==data) we use the view itself (override shType)
+  virtual taiSigLink*  clipParLink(GuiContext sh_typ) const;
     // for tree stuff, we use the gui parent for clip ops; for t3 we use the eff_data owner
   virtual MemberDef*    par_md() const;// eff_data parent item's (if any) md
   virtual ISelectableHost* host() const = 0; // #IGNORE

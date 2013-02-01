@@ -19,7 +19,7 @@
 #include <taiClipData>
 #include <SelectableHostHelper>
 #include <taiMenu>
-#include <taiDataLink>
+#include <taiSigLink>
 #include <iMainWindowViewer>
 #include <taProject>
 #include <taMisc>
@@ -39,7 +39,7 @@ QObject* ISelectable::clipHandlerObj() const {
   return (host_) ? host_->clipHandlerObj() : NULL;
 }
 
-taiDataLink* ISelectable::clipParLink(GuiContext sh_typ) const {
+taiSigLink* ISelectable::clipParLink(GuiContext sh_typ) const {
   return par_link();
 }
 
@@ -188,7 +188,7 @@ exit:
   delete ms;
 }
 
-taiDataLink* ISelectable::effLink(GuiContext sh_typ) const {
+taiSigLink* ISelectable::effLink(GuiContext sh_typ) const {
   if (sh_typ == GC_DEFAULT)
     sh_typ = shType();
   if (sh_typ <= GC_DUAL_DEF_DATA) return link();
@@ -202,7 +202,7 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
   int allowed = QueryEditActions_(sel_items, sh_typ);
   FillContextMenu_EditItems_impl(menu, allowed, sh_typ);
   if (sel_items.size == 1) {
-    taiDataLink* link = this->effLink(sh_typ);
+    taiSigLink* link = this->effLink(sh_typ);
     if (link) link->FillContextMenu(menu);
   }
 }
@@ -306,7 +306,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
     mel->usr_data = taiClipData::EA_UNLINK;
     mel->setData(sh_typ);
   }
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   if (link) link->FillContextMenu_EditItems(menu, ea);
 }
 
@@ -328,12 +328,12 @@ void ISelectable::GetContextCaptions(String& view_cap, String& obj_cap) {
 }
 
 TypeDef* ISelectable::GetEffDataTypeDef(GuiContext sh_typ) const {
-  taDataLink* link_ = (taDataLink*)effLink(sh_typ);
+  taSigLink* link_ = (taSigLink*)effLink(sh_typ);
   return (link_) ? link_->GetDataTypeDef() : NULL;
 }
 
-taiDataLink* ISelectable::own_link(GuiContext sh_typ) const {
-  taiDataLink* link = this->effLink(sh_typ);
+taiSigLink* ISelectable::own_link(GuiContext sh_typ) const {
+  taiSigLink* link = this->effLink(sh_typ);
   return (link) ? link->ownLink() : NULL;
 }
 
@@ -342,7 +342,7 @@ MemberDef* ISelectable::par_md() const {
   MemberDef* rval = NULL;
   taBase* par_tab = NULL; //note: still only got the guy, not par
   taBase* gpar_tab = NULL;
-  taiDataLink* link = this->effLink();
+  taiSigLink* link = this->effLink();
   if (!link) goto exit;
   par_tab = link->taData(); //note: still only got the guy, not par
   if (!par_tab) goto exit;
@@ -355,7 +355,7 @@ exit:
    return rval;
 }
 
-taiDataLink* ISelectable::par_link() const {
+taiSigLink* ISelectable::par_link() const {
   ISelectable* par = this->par();
   if (par) return par->link();
   else     return NULL;
@@ -472,7 +472,7 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items,
 }
 
 taBase* ISelectable::taData(GuiContext sh_typ) const {
-  taiDataLink* link = this->effLink(sh_typ);
+  taiSigLink* link = this->effLink(sh_typ);
   if (link)
     return link->taData();
   else return NULL;

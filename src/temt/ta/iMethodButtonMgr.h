@@ -20,7 +20,7 @@
 #ifndef __MAKETA__
 #include <QObject>
 #endif
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #include <taString>
@@ -42,7 +42,7 @@ class IDataHost; //
 
 TypeDef_Of(iMethodButtonMgr);
 
-class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient
+class TA_API iMethodButtonMgr: public QObject, virtual public ISigLinkClient
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IDataHost and gui objects
 INHERITED(QObject)
   Q_OBJECT
@@ -85,9 +85,9 @@ protected:
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
   TypeDef*      GetTypeDef() const {return &TA_iMethodButtonMgr;} // override
-public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
-  void          DataLinkDestroying(taDataLink* dl);
-  void          DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
+  void          DataLinkDestroying(taSigLink* dl);
+  void          DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 private:
   void          Init();

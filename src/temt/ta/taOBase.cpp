@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taOBase.h"
-#include <taDataLink>
+#include <taSigLink>
 #include <UserDataItem_List>
 
 #include <DataChangedReason>

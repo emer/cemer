@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; //
-class taDataLink; //
+class taSigLink; //
 
 TypeDef_Of(TypeItem);
 
@@ -104,7 +104,7 @@ public:
   String        desc;           // a description
   String_PArray opts;           // user-spec'd options (#xxx)
   String_PArray lists;          // user-spec'd lists   (#LIST_xxx)
-  taDataLink*   data_link;
+  taSigLink*   data_link;
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeItem; }

@@ -22,15 +22,15 @@
 #else
 class QAbstractTableModel; // #IGNORE
 #endif
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // member includes:
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 class DataTable; // 
 class QModelIndex; //
 
@@ -38,7 +38,7 @@ class QModelIndex; //
 TypeDef_Of(DataTableModel);
 
 class TA_API DataTableModel: public QAbstractTableModel,
-  public IDataLinkClient {
+  public ISigLinkClient {
 // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
@@ -72,12 +72,12 @@ public: // required implementations
   bool                  setData(const QModelIndex& index, const QVariant& value,
     int role = Qt::EditRole); // override, for editing
 
-public: // IDataLinkClient i/f
+public: // ISigLinkClient i/f
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_DataTableModel;}
 //  override bool               ignoreDataChanged() const;
-  override void         DataLinkDestroying(taDataLink* dl);
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  override void         DataLinkDestroying(taSigLink* dl);
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   bool                  ValidateIndex(const QModelIndex& index) const;

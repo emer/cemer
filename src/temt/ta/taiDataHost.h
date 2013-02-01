@@ -71,9 +71,9 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
   TypeDef*      GetTypeDef() const {return &TA_taiDataHost;} // override
 
-public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
-//  void                DataLinkDestroying(taDataLink* dl);
-//  void                DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
+//  void                DataLinkDestroying(taSigLink* dl);
+//  void                DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
 
 protected:
 

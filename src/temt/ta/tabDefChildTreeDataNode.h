@@ -31,21 +31,21 @@ class TA_API tabDefChildTreeDataNode: public tabParTreeDataNode {
 INHERITED(tabParTreeDataNode)
 friend class tabDefChildRef;
 public:
-  tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+  tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
     taiTreeDataNode* parent_, taiTreeDataNode* after,
     const String& tree_name, int dn_flags_ = 0);
-  tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
+  tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
     iTreeView* parent_, taiTreeDataNode* after,
     const String& tree_name, int dn_flags_ = 0);
   ~tabDefChildTreeDataNode();
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_tabDefChildTreeDataNode;}
 protected:
   tabDefChildRef        m_def_child; // for list notifies
   virtual void          DefChild_DataChanged(int dcr, void* op1, void* op2);
 private:
-  void                  init(tabODataLink* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkOBase* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // tabDefChildTreeDataNode_h

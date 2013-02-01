@@ -167,8 +167,8 @@ void iProgramEditor::Init() {
     historyForwardAction, SLOT(setEnabled(bool)) );
   items->Connect_SelectableHostNotifySignal(brow_hist,
     SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
-  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
-    this, SLOT(slot_AssertBrowserItem(taiDataLink*)) );
+  connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
   // no history, just manually disable
   historyBackAction->setEnabled(false);
   historyForwardAction->setEnabled(false);
@@ -428,7 +428,7 @@ void iProgramEditor::Help() {
     base->Help();
 }
 
-iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
+iTreeViewItem* iProgramEditor::AssertBrowserItem(taiSigLink* link)
 {
   // note: waitproc is insulated against recurrent calls..
   taiMiscCore::ProcessEvents();
@@ -452,11 +452,11 @@ const iColor iProgramEditor::colorOfCurRow() const {
   }
 }
 
-void iProgramEditor::DataLinkDestroying(taDataLink* dl) {
+void iProgramEditor::DataLinkDestroying(taSigLink* dl) {
   setEditNode(NULL, false);
 }
 
-void iProgramEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void iProgramEditor::DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2) {
   if (m_changing > 0) return; // gets triggered when we do the GetValue on ctrl0
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     // if it has been edited, (maybe??) warn user, else just silently update it

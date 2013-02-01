@@ -63,7 +63,7 @@ public:
   VEWorldViewPanel(VEWorldView* dv_);
   ~VEWorldViewPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*	This() {return (void*)this;} //
   override TypeDef*	GetTypeDef() const {return &TA_VEWorldViewPanel;}
 

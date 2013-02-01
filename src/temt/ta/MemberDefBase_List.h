@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class MemberDefBase; //
 #ifndef NO_TA_BASE
-class taDataLink; //
+class taSigLink; //
 #endif
 
 TypeDef_Of(MemberDefBase_List);
@@ -35,7 +35,7 @@ public:
   String        name;           // of the space
   TypeDef*      owner;          // owner is a typedef
 #ifndef NO_TA_BASE
-  taDataLink*   data_link;
+  taSigLink*   data_link;
 #endif
 
   MemberDefBase_List() {Initialize();}

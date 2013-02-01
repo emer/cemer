@@ -22,7 +22,7 @@
 #include <iMainWindowViewer>
 #include <taiViewType>
 #include <taiTreeDataNode>
-#include <taiDataLink>
+#include <taiSigLink>
 
 #include <tabMisc>
 #include <taRootBase>
@@ -81,7 +81,7 @@ void iBrowseViewer::Init() {
 void iBrowseViewer::ApplyRoot() {
   void* m_root = root(); //cache
   if (!m_root) return;
-  taiDataLink* dl = taiViewType::StatGetDataLink(m_root, root_typ());
+  taiSigLink* dl = taiViewType::StatGetDataLink(m_root, root_typ());
   if (!dl) return; // shouldn't happen...
 
   // by definition, we should always be able to create a new browser on root of a browser

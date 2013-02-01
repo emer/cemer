@@ -80,7 +80,7 @@ void iTabView::Activated(bool val) {
   tbPanels->setFont(f);
 }
 
-bool iTabView::ActivatePanel(taiDataLink* dl) {
+bool iTabView::ActivatePanel(taiSigLink* dl) {
   for (int i = 0; i < tbPanels->count(); ++i) {
     iDataPanel* panel = tbPanels->panel(i);
     if (!panel) continue;
@@ -183,13 +183,13 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   contextMenu->addAction(act);
 }
 
-void iTabView::ShowLink(taiDataLink* link, bool not_in_cur) {
+void iTabView::ShowLink(taiSigLink* link, bool not_in_cur) {
   iDataPanel* pan = GetDataPanel(link);
   ShowPanel(pan, not_in_cur);
 }
 
 //TODO
-iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
+iDataPanel* iTabView::GetDataPanel(taiSigLink* link) {
   iDataPanel* rval;
   for (int i = 0; i < panels.size; ++i) {
     rval = panels.FastEl(i);

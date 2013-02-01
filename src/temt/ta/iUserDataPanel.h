@@ -39,10 +39,10 @@ public:
 
   override String       panel_type() const {return "User Data";}
 
-  iUserDataPanel(taiDataLink* dl_);
+  iUserDataPanel(taiSigLink* dl_);
   ~iUserDataPanel();
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_iUserDataPanel;}
   override bool         ignoreDataChanged() const;

@@ -21,7 +21,7 @@
 #include <QStackedWidget>
 
 
-iViewPanelSet::iViewPanelSet(taiDataLink* link_)
+iViewPanelSet::iViewPanelSet(taiSigLink* link_)
 :inherited(link_)
 {
   layDetail->addWidget(wsSubPanels, 1);

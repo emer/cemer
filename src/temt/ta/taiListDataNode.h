@@ -40,17 +40,17 @@ public:
   bool                  operator<(const QTreeWidgetItem& item) const; // override
 
   override void         DecorateDataNode();
-  taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
+  taiListDataNode(int num_, iListDataPanel* panel_, taiSigLink* link_,
     iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListDataNode(); //
 
-public: // IDataLinkClient interface
+public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
   override TypeDef*     GetTypeDef() const {return &TA_taiListDataNode;}
 
 public: // ISelectable interface
-  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
+  override taiSigLink* par_link() const; // we get from the panel, which gets from the viewer window
 //obs  override MemberDef*      par_md() const; // as for par_link
 };
 

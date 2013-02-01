@@ -20,7 +20,7 @@
 #include <iMainWindowViewer>
 //#include <iHelpBrowser>
 #include <iTextBrowser>
-#include <taiDataLink>
+#include <taiSigLink>
 
 #include <taMisc>
 #include <taiMisc>
@@ -135,7 +135,7 @@ void iSearchDialog::AddItem(const String& headline, const String& href,
   m_items.SetVal(path_long, col_path, -1);
 }
 
-void iSearchDialog::DataLinkDestroying(taDataLink* dl) {
+void iSearchDialog::DataLinkDestroying(taSigLink* dl) {
   Reset();
   RootSet(NULL);
 }
@@ -168,7 +168,7 @@ void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
   // link clicking to cause us to change our source page
 }
 
-void iSearchDialog::RootSet(taiDataLink* root) {
+void iSearchDialog::RootSet(taiSigLink* root) {
   String cap = "Find in: ";
   if (root) {
     root_path = root->GetPathNames();
@@ -360,7 +360,7 @@ bool iSearchDialog::setFirstSort(int col) {
   return true;
 }
 
-void iSearchDialog::setRoot(taiDataLink* root, bool update_gui) {
+void iSearchDialog::setRoot(taiSigLink* root, bool update_gui) {
   if (link() != root) {
     if (link()) link()->RemoveDataClient(this);
     if (root) root->AddDataClient(this);

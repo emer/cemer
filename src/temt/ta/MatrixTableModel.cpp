@@ -85,11 +85,11 @@ Qt::CheckStateRole*/
   return QVariant();
 }
 
-void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
+void MatrixTableModel::DataLinkDestroying(taSigLink* dl) {
   m_mat = NULL;
 }
 
-void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
+void MatrixTableModel::DataDataChanged(taSigLink* dl, int dcr,
   void* op1, void* op2)
 {
   if (notifying) return;

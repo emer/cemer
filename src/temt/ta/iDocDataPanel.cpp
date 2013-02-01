@@ -287,7 +287,7 @@ bool iDocDataPanel::ignoreDataChanged() const {
   //  return !isVisible(); -- this doesn't seem to be giving accurate results!!!
 }
 
-void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
+void iDocDataPanel::DataLinkDestroying(taSigLink* dl) {
   setDoc(NULL);
 }
 
@@ -371,7 +371,7 @@ void iDocDataPanel::setDoc(taDoc* doc) {
 
   m_doc = doc;
   if (doc) {
-    taDataLink* dl = doc->GetDataLink();
+    taSigLink* dl = doc->GetDataLink();
     if (!dl) return; // shouldn't happen!
     dl->AddDataClient(this);
     UpdatePanel();

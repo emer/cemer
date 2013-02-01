@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <taNBase>
-#include <IDataLinkClient>
+#include <ISigLinkClient>
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -27,8 +27,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiDataLink; // 
-class taDataLink; // 
+class taiSigLink; // 
+class taSigLink; // 
 
 /* taDataView -- exemplar base class of a view of an object, of class taOBase or later
 
@@ -47,7 +47,7 @@ class taDataLink; //
 
 TypeDef_Of(taDataView);
 
-class TA_API taDataView: public taNBase, public virtual IDataLinkClient {
+class TA_API taDataView: public taNBase, public virtual ISigLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object
 INHERITED(taNBase)
 friend class DataView_List;
@@ -163,9 +163,9 @@ public: // IDataLinkCLient
     return (m_data) ? m_data->GetTypeDef() : &TA_taBase; } // TypeDef of the data
   override bool         ignoreDataChanged() const {return (m_vis_cnt <= 0);}
   override bool         isDataView() const {return true;}
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-  override void         IgnoredDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-  override void         DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         IgnoredDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
+  override void         DataLinkDestroying(taSigLink* dl); // called by DataLink when destroying; it will remove
 
 protected:
   override void         UpdateAfterEdit_impl();

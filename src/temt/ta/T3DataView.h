@@ -100,7 +100,7 @@ public:
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
-  override void         DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  override void         DataDataChanged(taSigLink* dl, int dcr, void* op1, void* op2);
   override void         DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
   override void         ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
   override void         ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
@@ -115,13 +115,13 @@ public:
   override void         CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
-public: // ISelectable interface (only not in IDataLinkClient)
+public: // ISelectable interface (only not in ISigLinkClient)
   override ISelectableHost* host() const; //
   override MemberDef*   md() const {return m_md;}
   override ISelectable* par() const;
-  override taiDataLink* viewLink() const; // data of the link
+  override taiSigLink* viewLink() const; // data of the link
   override GuiContext   shType() const {return GC_DUAL_DEF_DATA;}
-  override taiDataLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const; // not par_link
+  override taiSigLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const; // not par_link
 protected:
   override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
     GuiContext sh_typ) const;
