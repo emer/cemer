@@ -25,7 +25,7 @@ TypeDef_Of(taGroup_impl);
 int taiArgTypeOfListOnObjBasePtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&
       (argt->IsPointer()) && argt->IsTaBase() && (md->HasOption("ARG_ON_OBJ")))
-    return taiArgTypeOftaBasePtr::BidForArgType(aidx,argt,md,td)+1;
+    return taiArgTypeOfListBasePtr::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }
 

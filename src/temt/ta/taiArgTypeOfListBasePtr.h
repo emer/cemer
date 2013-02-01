@@ -13,33 +13,28 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiArgTypeOfListOnObjBasePtr_h
-#define taiArgTypeOfListOnObjBasePtr_h 1
+#ifndef taiArgTypeOfListBasePtr_h
+#define taiArgTypeOfListBasePtr_h 1
 
 // parent includes:
-#include <taiArgTypeOfListBasePtr>
+#include <taiArgTypeOfTokenPtr>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfListOnObjBasePtr);
+TypeDef_Of(taiArgTypeOfListBasePtr);
 
-class TA_API taiArgTypeOfListOnObjBasePtr : public taiArgTypeOfListBasePtr {
-  // for taBase pointers in groups with ARG_IN_OBJ
-  TAI_ARGTYPE_SUBCLASS(taiArgTypeOfListOnObjBasePtr, taiArgTypeOfListBasePtr);
+class TA_API taiArgTypeOfListBasePtr : public taiArgTypeOfTokenPtr {
+  // for taBase pointers in groups, sets the typedef to be the right one..
+  TAI_ARGTYPE_SUBCLASS(taiArgTypeOfListBasePtr, taiArgTypeOfTokenPtr);
 public:
   int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*        GetElFromArg(const char* arg_nm, void* base);
-  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
-
 private:
   void          Initialize() {}
   void          Destroy() {}
 };
 
-#endif // taiArgTypeOfListOnObjBasePtr_h
+#endif // taiArgTypeOfListBasePtr_h

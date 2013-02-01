@@ -554,15 +554,9 @@ set(ta_HEADS_MAKETA_LOCAL
   taiDataList.h
 
   taiTypeBase.h
-  taiViewType.h
-
-  taiType.h
-  taiMember.h
-  taiEdit.h
-  taiMethod.h
-  taiArgType.h
   taiType_List.h
 
+  taiType.h
   taiTypeOfInt.h
   taiTypeOfInt64.h
   taiTypeOfReal.h
@@ -581,6 +575,7 @@ set(ta_HEADS_MAKETA_LOCAL
   taiTypeOfTypePtr.h
   taiTypeOfFilePtr.h
 
+  taiMember.h
   taiMemberOfTokenPtr.h
   taiMemberOfDefaultToken.h
   taiMemberOfSubTokenPtr.h
@@ -599,39 +594,42 @@ set(ta_HEADS_MAKETA_LOCAL
   taiMemberOfDynEnum.h
   taiMemberOfProgVarIntVal.h
 
+  taiMethod.h
   taiMethodOfActuator.h
+  taiMethodOfStepButton.h
+
+  taiArgType.h
   taiArgTypeOfStream.h
   taiArgTypeOfTokenPtr.h
   taiArgTypeOfTypePtr.h
   taiArgTypeOfMemberPtr.h
   taiArgTypeOfMethodPtr.h
   taiArgTypeOfFileDialog.h
-  taiArgTypeOftaBasePtr.h
+  taiArgTypeOfListBasePtr.h
   taiArgTypeOfListOnObjBasePtr.h
   taiArgTypeOfFromGroup.h
+  taiArgTypeOfProjTemplateEl.h
+  taiArgTypeOfProgLibEl.h
 
+  taiEdit.h
   taiEditOfDefault.h
   taiEditOfList.h
   taiEditOfArray.h
   taiEditOfSArg.h
 
-  tabViewType.h
-  tabOViewType.h
-  tabListViewType.h
-  tabGroupViewType.h
-
-  tabMatrixViewType.h
-  tabDataTableViewType.h
-  taTypeInfoViewType.h
-  tabDocViewType.h
-  tabWizardViewType.h
-  tabSelectEditViewType.h
-
-  taiArgTypeOfProjTemplateEl.h
-  tabProgramViewType.h
-  tabProgramGroupViewType.h
-  taiArgTypeOfProgLibEl.h
-  taiMethodOfStepButton.h
+  taiViewType.h
+  taiViewTypeOftaBase.h
+  taiViewTypeOftaOBase.h
+  taiViewTypeOfList.h
+  taiViewTypeOfGroup.h
+  taiViewTypeOfMatrix.h
+  taiViewTypeOfDataTable.h
+  taiViewTypeOfTypeInfo.h
+  taiViewTypeOfDoc.h
+  taiViewTypeOfWizard.h
+  taiViewTypeOfSelectEdit.h
+  taiViewTypeOfProgram.h
+  taiViewTypeOfProgramGroup.h
 
   taGuiWidget.h
   taGuiWidget_List.h
@@ -847,7 +845,7 @@ set(ta_HEADS_NOMAKETA
   taiMenuAction.h
   taiMethMenu.h
   taiMethButton.h
-  taigpiListEdittButton.h
+  gpiListEditButton.h
   gpiSubEditButton.h
   gpiLinkEditButton.h
   gpiListLinkEditButton.h
@@ -1611,14 +1609,9 @@ set(ta_SRCS_MAKETA
   taiDataList.cpp
 
   taiTypeBase.cpp
-  taiViewType.cpp
-  taiType.cpp
-  taiMember.cpp
-  taiEdit.cpp
-  taiMethod.cpp
-  taiArgType.cpp
   taiType_List.cpp
 
+  taiType.cpp
   taiTypeOfInt.cpp
   taiTypeOfInt64.cpp
   taiTypeOfReal.cpp
@@ -1637,6 +1630,7 @@ set(ta_SRCS_MAKETA
   taiTypeOfTypePtr.cpp
   taiTypeOfFilePtr.cpp
 
+  taiMember.cpp
   taiMemberOfTokenPtr.cpp
   taiMemberOfDefaultToken.cpp
   taiMemberOfSubTokenPtr.cpp
@@ -1655,38 +1649,41 @@ set(ta_SRCS_MAKETA
   taiMemberOfDynEnum.cpp
   taiMemberOfProgVarIntVal.cpp
 
+  taiMethod.cpp
   taiMethodOfActuator.cpp
+  taiMethodOfStepButton.cpp
+
+  taiArgType.cpp
   taiArgTypeOfStream.cpp
   taiArgTypeOfTokenPtr.cpp
   taiArgTypeOfTypePtr.cpp
   taiArgTypeOfMemberPtr.cpp
   taiArgTypeOfMethodPtr.cpp
   taiArgTypeOfFileDialog.cpp
-  taiArgTypeOftaBasePtr.cpp
+  taiArgTypeOfListBasePtr.cpp
   taiArgTypeOfListOnObjBasePtr.cpp
   taiArgTypeOfFromGroup.cpp
+  taiArgTypeOfProjTemplateEl.cpp
+  taiArgTypeOfProgLibEl.cpp
 
+  taiEdit.cpp
   taiEditOfDefault.cpp
   taiEditOfList.cpp
   taiEditOfArray.cpp
   taiEditOfSArg.cpp
 
-  tabViewType.cpp
-  tabOViewType.cpp
-  tabListViewType.cpp
-  tabGroupViewType.cpp
-
-  tabMatrixViewType.cpp
-  taTypeInfoViewType.cpp
-  tabDocViewType.cpp
-  tabWizardViewType.cpp
-  tabSelectEditViewType.cpp
-
-  taiArgTypeOfProjTemplateEl.cpp
-  tabProgramViewType.cpp
-  tabProgramGroupViewType.cpp
-  taiArgTypeOfProgLibEl.cpp
-  taiMethodOfStepButton.cpp
+  taiViewType.cpp
+  taiViewTypeOftaBase.cpp
+  taiViewTypeOftaOBase.cpp
+  taiViewTypeOfList.cpp
+  taiViewTypeOfGroup.cpp
+  taiViewTypeOfMatrix.cpp
+  taiViewTypeOfTypeInfo.cpp
+  taiViewTypeOfDoc.cpp
+  taiViewTypeOfWizard.cpp
+  taiViewTypeOfSelectEdit.cpp
+  taiViewTypeOfProgram.cpp
+  taiViewTypeOfProgramGroup.cpp
 
   taGuiWidget.cpp
   taGuiWidget_List.cpp
@@ -2013,7 +2010,7 @@ set(ta_SRCS_NOMAKETA
   iDataTableView_Panel.cpp
   iGridTableView_Panel.cpp
   iGraphTableView_Panel.cpp
-  tabDataTableViewType.cpp
+  taiViewTypeOfDataTable.cpp
   iDataTableView.cpp
   iDataTablePanel.cpp
   DataTableDelegate.cpp
