@@ -17,7 +17,7 @@
 #define taiToolBar_h 1
 
 // parent includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // member includes:
 
@@ -25,9 +25,9 @@
 class QToolBar; //
 
 
-class TA_API taiToolBar: public taiActions { // a toolbar, in which the actions appear as toolbuttons or button menus
+class TA_API taiToolBar: public taiWidgetActions { // a toolbar, in which the actions appear as toolbuttons or button menus
   Q_OBJECT
-  INHERITED(taiActions)
+  INHERITED(taiWidgetActions)
 public:
   inline QToolBar*      rep() {return (QToolBar*)(QWidget*)m_rep;}
 

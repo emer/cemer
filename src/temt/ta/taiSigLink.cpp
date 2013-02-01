@@ -85,7 +85,7 @@ taiTreeDataNode* taiSigLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* 
   return rval;
 }
 
-void taiSigLink::FillContextMenu(taiActions* menu) {
+void taiSigLink::FillContextMenu(taiWidgetActions* menu) {
   FillContextMenu_impl(menu);
 }
 

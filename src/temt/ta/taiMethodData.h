@@ -17,19 +17,19 @@
 #define taiMethodData_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiActions;
+class taiWidgetActions;
 class cssClass;                 // #IGNORE
 class cssiArgDialog;            // #IGNORE
 
-// unlike real taiData, functions are not subject to updating
+// unlike real taiWidget, functions are not subject to updating
 // so the constructor is the one that does all the work..
 
-class TA_API taiMethodData : public taiData {
+class TA_API taiMethodData : public taiWidget {
   // all representations of member functions must inherit from this one -- note, the CallFun calls can make an inst of this guy
   Q_OBJECT
 public:
@@ -40,7 +40,7 @@ public:
   cssiArgDialog* arg_dlg;
   int           use_argc;
 
-  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);
 
   virtual QWidget*      GetButtonRep() {return buttonRep;}
@@ -53,7 +53,7 @@ public:
 
   virtual void  GenerateScript(); // output script code equivalent if recording
 
-  virtual void  AddToMenu(taiActions* mnu);
+  virtual void  AddToMenu(taiWidgetActions* mnu);
 
 public slots:
   virtual void  CallFun() {CallFun_impl();} // call the function (button callback)

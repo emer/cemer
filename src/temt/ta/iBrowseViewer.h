@@ -27,7 +27,7 @@
 class iTreeView; //
 class iTreeSearch; //
 class ISelectable_PtrList; //
-class taiActions; //
+class taiWidgetActions; //
 
 
 class TA_API iBrowseViewer : public iFrameViewer { // base of viewer window used for object and class browsing
@@ -57,7 +57,7 @@ public slots:
 
 protected slots:
   virtual void          lvwDataTree_FillContextMenuHookPost(
-    ISelectable_PtrList& sel_items, taiActions* menu);
+    ISelectable_PtrList& sel_items, taiWidgetActions* menu);
 
 protected: // IDataViewWidget i/f
   override void         Refresh_impl();

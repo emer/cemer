@@ -15,12 +15,12 @@
 
 #include "SelectEditDelegate.h"
 #include <SelectEdit>
-#include <taiField>
+#include <taiWidgetField>
 #include <taiMember>
 #include <taiEditTableWidget>
 
 #include <taiEditorOfSelectEditFast>
-#include <taiDataDelegate>
+#include <taiWidgetDelegate>
 
 #include <QTableWidget>
 #include <QHBoxLayout>
@@ -57,7 +57,7 @@ QWidget* SelectEditDelegate::createEditor(QWidget* parent,
 
       hbl->addWidget(ps_rep);
       // some controls do better without stretch
-      if (!(dynamic_cast<taiField*>((taiData*)ps_dat)))
+      if (!(dynamic_cast<taiWidgetField*>((taiWidget*)ps_dat)))
         hbl->addStretch();
       connect(ps_rep, SIGNAL(destroyed(QObject*)),
               ps_dat, SLOT(deleteLater()) );

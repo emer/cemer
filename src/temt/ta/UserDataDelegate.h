@@ -17,7 +17,7 @@
 #define UserDataDelegate_h 1
 
 // parent includes:
-#include <taiDataDelegate>
+#include <taiWidgetDelegate>
 
 // member includes:
 
@@ -26,8 +26,8 @@ class UserDataItem_List;
 class taiEditorOfUserData;
 
 
-class TA_API UserDataDelegate: public taiDataDelegate {
-INHERITED(taiDataDelegate)
+class TA_API UserDataDelegate: public taiWidgetDelegate {
+INHERITED(taiWidgetDelegate)
 Q_OBJECT
 public:
   UserDataItem_List*    udil;

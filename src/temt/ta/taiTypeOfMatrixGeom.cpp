@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfMatrixGeom.h"
-#include <taiDimEdit>
+#include <taiWidgetDimEdit>
 
 TypeDef_Of(MatrixGeom);
 
@@ -24,7 +24,7 @@ int taiTypeOfMatrixGeom::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfMatrixGeom::GetDataRepInline_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  taiDimEdit *rval = new taiDimEdit(typ, host_, par, gui_parent_, flags_);
+taiWidget* taiTypeOfMatrixGeom::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  taiWidgetDimEdit *rval = new taiWidgetDimEdit(typ, host_, par, gui_parent_, flags_);
   return rval;
 }

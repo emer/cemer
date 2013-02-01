@@ -17,18 +17,18 @@
 #define taiToggle_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class iCheckBox; //
 
-class TA_API taiToggle : public taiData {
+class TA_API taiToggle : public taiWidget {
 public:
   inline iCheckBox*     rep() const { return (iCheckBox*)(QWidget*)m_rep; }
 
-  taiToggle(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  taiToggle(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
 //  ~taiToggle() {}
 
   void  GetImage(bool val);

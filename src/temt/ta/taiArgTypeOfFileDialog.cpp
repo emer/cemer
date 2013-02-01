@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfFileDialog.h"
-#include <taiFileDialogField>
+#include <taiWidgetFieldFile>
 
 #include <css_basic_types.h>
 
@@ -37,29 +37,29 @@ cssEl* taiArgTypeOfFileDialog::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiArgTypeOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
                                                QWidget* gui_parent_, int flags_, MemberDef*) {
   String file_act = GetOptionAfter("FILE_DIALOG_");
-  taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
+  taiWidgetFieldFile::FileActionType fact = taiWidgetFieldFile::FA_LOAD;
   if(file_act == "SAVE")
-    fact = taiFileDialogField::FA_SAVE;
+    fact = taiWidgetFieldFile::FA_SAVE;
   else if(file_act == "APPEND")
-    fact = taiFileDialogField::FA_APPEND;
+    fact = taiWidgetFieldFile::FA_APPEND;
 
   String fext = String(".") + GetOptionAfter("EXT_");
   String ftyp = GetOptionAfter("FILETYPE_");
   int cmpr = GetHasOption("COMPRESS")? 1 : -1;
 
-  return new taiFileDialogField(meth->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
+  return new taiWidgetFieldFile(meth->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
 }
 
-void taiArgTypeOfFileDialog::GetImage_impl(taiData* dat, const void* base){
-  taiFileDialogField* rval = (taiFileDialogField*)dat;
+void taiArgTypeOfFileDialog::GetImage_impl(taiWidget* dat, const void* base){
+  taiWidgetFieldFile* rval = (taiWidgetFieldFile*)dat;
   rval->base_obj = (taBase*)base;
   rval->GetImage(*((String*)arg_base));
 }
 
-void taiArgTypeOfFileDialog::GetValue_impl(taiData* dat, void*) {
-  taiFileDialogField* rval = (taiFileDialogField*)dat;
+void taiArgTypeOfFileDialog::GetValue_impl(taiWidget* dat, void*) {
+  taiWidgetFieldFile* rval = (taiWidgetFieldFile*)dat;
   *((String*)arg_base) = rval->GetValue();
 }

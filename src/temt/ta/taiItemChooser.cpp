@@ -350,7 +350,7 @@ void taiItemChooser::Refresh() {
         tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(1)->data(0, ObjDataRole));
       }
       else if(items->topLevelItemCount() > 0) {
-        if(!m_client->HasFlag(taiData::flgNullOk)) {
+        if(!m_client->HasFlag(taiWidget::flgNullOk)) {
           tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
         }
       }

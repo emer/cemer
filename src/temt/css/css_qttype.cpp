@@ -22,8 +22,8 @@
 #include "css_qtdialog.h"
 
 #include <taiTypeOfTokenPtr>
-#include <taiField>
-#include <taiComboBox>
+#include <taiWidgetField>
+#include <taiWidgetComboBox>
 #include <taiButtonMenu>
 #include <BuiltinTypeDefs>
 
@@ -77,7 +77,7 @@ void  cssiType::Assert_QObj() {
   }
 }
 
-taiData* cssiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* cssiType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                               taiType*, int, MemberDef*)
 {
   if (use_it)
@@ -86,14 +86,14 @@ taiData* cssiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_par
     return typ->it->GetDataRep(host_, par, gui_parent_);
 }
 
-void cssiType::GetImage(taiData* dat, const void* base) {
+void cssiType::GetImage(taiWidget* dat, const void* base) {
   if (use_it)
     use_it->GetImage(dat, base);
   else
     typ->it->GetImage(dat, base);
 }
 
-void cssiType::GetValue(taiData* dat, void* base) {
+void cssiType::GetValue(taiWidget* dat, void* base) {
   if (use_it)
     use_it->GetValue(dat, base);
   else
@@ -111,15 +111,15 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 {
 }
 
-taiData* cssiROType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* cssiROType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                 taiType*, int, MemberDef*)
 {
-  taiField* rval = new taiField(typ, host_, par, gui_parent_, true);
+  taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, true);
   return rval;
 }
 
-void cssiROType::GetImage(taiData* dat, const void* base) {
-  taiField* rval = (taiField*)dat;
+void cssiROType::GetImage(taiWidget* dat, const void* base) {
+  taiWidgetField* rval = (taiWidgetField*)dat;
   String strval = typ->GetValStr(base);
   rval->GetImage(strval);
 }
@@ -134,18 +134,18 @@ cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
   enum_type = enum_typ;
 }
 
-taiData* cssiEnumType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* cssiEnumType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                   taiType*, int, MemberDef*)
 {
-  taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent_);
+  taiWidgetComboBox* rval = new taiWidgetComboBox(typ, host_, par, gui_parent_);
   for (int i = 0; i < enum_type->enums->size; ++i) {
     rval->AddItem(enum_type->enums->FastEl(i)->name);
   }
   return rval;
 }
 
-void cssiEnumType::GetImage(taiData* dat, const void* base) {
-  taiComboBox* rval = (taiComboBox*)dat;
+void cssiEnumType::GetImage(taiWidget* dat, const void* base) {
+  taiWidgetComboBox* rval = (taiWidgetComboBox*)dat;
   int enm_val = *((int*)base);
   for (int i = 0; i < enum_type->enums->size; ++i) {
     if (((cssInt*)enum_type->enums->FastEl(i))->val == enm_val) {
@@ -155,8 +155,8 @@ void cssiEnumType::GetImage(taiData* dat, const void* base) {
   }
 }
 
-void cssiEnumType::GetValue(taiData* dat, void* base) {
-  taiComboBox* rval = (taiComboBox*)dat;
+void cssiEnumType::GetValue(taiWidget* dat, void* base) {
+  taiWidgetComboBox* rval = (taiWidgetComboBox*)dat;
   int itm_no = -1;
   rval->GetValue(itm_no);
 
@@ -176,7 +176,7 @@ cssiClassType::cssiClassType(cssEl* orgo, void* bs)
 {
 }
 
-taiData* cssiClassType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* cssiClassType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   cssClassInst* obj = (cssClassInst*) cur_base;
@@ -198,7 +198,7 @@ taiData* cssiClassType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gu
   }
 }
 
-void cssiClassType::GetImage(taiData* dat, const void* base) {
+void cssiClassType::GetImage(taiWidget* dat, const void* base) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
                                  || obj->type_def->HasOption("EDIT_INLINE"))) {
@@ -207,7 +207,7 @@ void cssiClassType::GetImage(taiData* dat, const void* base) {
   }
 }
 
-void cssiClassType::GetValue(taiData* dat, void* base) {
+void cssiClassType::GetValue(taiWidget* dat, void* base) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if ((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
          || obj->type_def->HasOption("EDIT_INLINE")))
@@ -232,7 +232,7 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 {
 }
 
-taiData* cssiArrayType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* cssiArrayType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   taiButtonMenu* rval = new taiButtonMenu

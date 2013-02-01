@@ -32,7 +32,7 @@ class TA_API taiMemberOfEnumTypePtr : public taiMemberOfTypePtr {
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 protected:
-  taiData*     GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*     GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 private:
   void          Initialize() {}

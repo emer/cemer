@@ -26,15 +26,15 @@ int taiMemberOfLinkGroup::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfLinkGroup::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfLinkGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiLinkEditButton* rval = new gpiLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiMemberOfLinkGroup::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfLinkGroup::GetImage_impl(taiWidget* dat, const void* base) {
   gpiLinkEditButton* rval = (gpiLinkEditButton*)dat;
   rval->GetImage_(mbr->GetOff(base));
 }
 
-void taiMemberOfLinkGroup::GetMbrValue(taiData*, void*, bool&) {
+void taiMemberOfLinkGroup::GetMbrValue(taiWidget*, void*, bool&) {
 }

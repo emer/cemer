@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiData;
+class taiWidget;
 class IWidgetHost;
 
 
@@ -44,13 +44,13 @@ public:
   virtual int           BidForType(TypeDef*) { return 1; }
   // bid for (appropriateness) for given type
 
-  virtual taiData*      GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+  virtual taiWidget*      GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
-  // get taiData rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
+  // get taiWidget rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
 
-  virtual void          GetImage(taiData* dat, const void* base);
+  virtual void          GetImage(taiWidget* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  virtual void          GetValue(taiData* dat, void* base);
+  virtual void          GetValue(taiWidget* dat, void* base);
   // get the value from the representation -- same rules as GetDataRep
 
   void                  SetCurParObjType(void* par_obj_base, TypeDef* pob_typ) {
@@ -72,17 +72,17 @@ public:
   void                  Destroy();
 
 protected:
-  virtual bool          isReadOnly(taiData* dat, IWidgetHost* host_ = NULL);
+  virtual bool          isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL);
   // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
-  virtual taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
-  // default behavior uses a taiField type
-  virtual taiData*      GetDataRepInline_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  virtual taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  // default behavior uses a taiWidgetField type
+  virtual taiWidget*      GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior same as GetDataRep_impl
 
-  virtual void          GetImage_impl(taiData* dat, const void* base);
-  // generate the gui representation of the data --  default behavior uses a taiField type
-  virtual void          GetValue_impl(taiData* dat, void* base);
-  // get the value from the representation --  default behavior uses a taiField type
+  virtual void          GetImage_impl(taiWidget* dat, const void* base);
+  // generate the gui representation of the data --  default behavior uses a taiWidgetField type
+  virtual void          GetValue_impl(taiWidget* dat, void* base);
+  // get the value from the representation --  default behavior uses a taiWidgetField type
 
   void*                 m_par_obj_base;
   // if GetImage/Value is called by a taiMember, it will set this to point to parent object's base

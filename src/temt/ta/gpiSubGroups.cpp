@@ -21,19 +21,19 @@
 #include <taMisc>
 
 
-gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, 
-  taiData* par,	QWidget* gui_parent_, int flags_)
+gpiSubGroups::gpiSubGroups(taiWidgetActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, 
+  taiWidget* par,	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   ths = gp;
 //  ta_actions = new taiMenu(rt, taiMenu::radio_update, ft, (void*)ths, typ, host_, this, gui_parent_);
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   over_max = false;
 }
 
 gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_,
-	IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   ths = gp;
@@ -99,7 +99,7 @@ void gpiSubGroups::Choose() {
   delete chs;
 }
 
-void gpiSubGroups::GetMenu(taiActions* menu, taiMenuAction* actn) {
+void gpiSubGroups::GetMenu(taiWidgetActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
     menu->AddItem("NULL", taiMenu::use_default, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
@@ -123,7 +123,7 @@ void gpiSubGroups::UpdateMenu(taiMenuAction* actn) {
   GetMenu(actn);
 }
 
-void gpiSubGroups::GetMenu_impl(taGroup_impl* gp, taiActions* menu, taiMenuAction* actn) {
+void gpiSubGroups::GetMenu_impl(taGroup_impl* gp, taiWidgetActions* menu, taiMenuAction* actn) {
   if (gp == NULL) return;
   if (gp->gp.size >= taMisc::max_menu) {
     taiAction* mnel = menu->AddItem

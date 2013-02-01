@@ -17,8 +17,8 @@
 #include <NetView>
 #include <Network>
 #include <T3ExaminerViewer>
-#include <taiField>
-#include <taiComboBox>
+#include <taiWidgetField>
+#include <taiWidgetComboBox>
 #include <taiGroupElsButton>
 #include <HColorScaleBar>
 #include <iTreeView>
@@ -74,9 +74,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblLayLayout = taiM->NewLabel("2/3D:", widg, font_spec);
   lblLayLayout->setToolTip("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)");
   layDispCheck->addWidget(lblLayLayout);
-  cmbLayLayout = dl.Add(new taiComboBox(true, 
+  cmbLayLayout = dl.Add(new taiWidgetComboBox(true, 
 		TA_NetView.sub_types.FindName("LayerLayout"),
-                               this, NULL, widg, taiData::flgAutoApply));
+                               this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbLayLayout->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -95,7 +95,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   // lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
   // lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
   // layDispCheck->addWidget(lblTextRot);
-  // fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  // fldTextRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   // layDispCheck->addWidget(fldTextRot->GetRep());
   // ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
   // layDispCheck->addSpacing(taiM->hsep_c);
@@ -103,8 +103,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
-  cmbUnitText = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-                                this, NULL, widg, taiData::flgAutoApply));
+  cmbUnitText = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
+                                this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -112,8 +112,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
  for maximum speed.");
   layDispCheck->addWidget(lblDispMode);
-  cmbDispMode = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    this, NULL, widg, taiData::flgAutoApply));
+  cmbDispMode = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
+    this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -123,8 +123,8 @@ L_R_F: Left = sender, Right = receiver, all arrows at the Front of the layer\n\
 L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
 B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addWidget(lblPrjnDisp);
-  cmbPrjnDisp = dl.Add(new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-                                this, NULL, widg, taiData::flgAutoApply));
+  cmbPrjnDisp = dl.Add(new taiWidgetComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
+                                this, NULL, widg, taiWidget::flgAutoApply));
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
   layDispCheck->addStretch();
 
@@ -139,7 +139,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
   layFontsEtc->addWidget(lblPrjnWdth);
-  fldPrjnWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldPrjnWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
   ((iLineEdit*)fldPrjnWdth->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
@@ -147,14 +147,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layFontsEtc->addWidget(lblUnitTrans);
-  fldUnitTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldUnitTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
   ((iLineEdit*)fldUnitTrans->GetRep())->setCharWidth(6);  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layFontsEtc->addWidget(lblUnitFont);
-  fldUnitFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldUnitFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitFont->GetRep());
   ((iLineEdit*)fldUnitFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
@@ -162,7 +162,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
   lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
   layFontsEtc->addWidget(lblLayFont);
-  fldLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldLayFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldLayFont->GetRep());
   ((iLineEdit*)fldLayFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
@@ -170,7 +170,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblMinLayFont = taiM->NewLabel("Min Sz", widg, font_spec);
   lblMinLayFont->setToolTip("Minimum layer name font size (as a proportion of entire network display) -- prevents font from shrinking too small for small layers. .01 is default.");
   layFontsEtc->addWidget(lblMinLayFont);
-  fldMinLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldMinLayFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldMinLayFont->GetRep());
   ((iLineEdit*)fldMinLayFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
@@ -203,7 +203,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
   lblSnapBordWdth->setToolTip("Width of snap border lines");
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
-  fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldSnapBordWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
   ((iLineEdit*)fldSnapBordWdth->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
@@ -211,7 +211,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
   lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box");
   layColorScaleCtrls->addWidget(lblUnitSpacing);
-  fldUnitSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldUnitSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
   ((iLineEdit*)fldUnitSpacing->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
@@ -231,7 +231,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
   lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)");
   layColorScaleCtrls->addWidget(lblWtLineWdth);
-  fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWtLineWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
   ((iLineEdit*)fldWtLineWdth->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
@@ -239,12 +239,12 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
   lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown -- if a layer to project onto is selected (Wt Prjn) then if this value is < 0, intermediate units in the weight projection that are below the K un threshold will be zeroed.");
   layColorScaleCtrls->addWidget(lblWtLineThr);
-  fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWtLineThr = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
   ((iLineEdit*)fldWtLineThr->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
-  int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
+  int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply;
 
   lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
   lblWtPrjnLay->setToolTip("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update");
@@ -255,7 +255,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtPrjnKUn = taiM->NewLabel("K un", widg, font_spec);
   lblWtPrjnKUn->setToolTip("Number of top K strongest units to propagate weight projection values through to other layers -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
   layColorScaleCtrls->addWidget(lblWtPrjnKUn);
-  fldWtPrjnKUn = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWtPrjnKUn = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtPrjnKUn->GetRep());
   ((iLineEdit*)fldWtPrjnKUn->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
@@ -263,7 +263,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtPrjnKGp = taiM->NewLabel("K gp", widg, font_spec);
   lblWtPrjnKGp->setToolTip("Number of top K strongest unit groups (where groups are present) to propagate weight projection values through to other layers (-1 or 0 to turn off this feature) -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
   layColorScaleCtrls->addWidget(lblWtPrjnKGp);
-  fldWtPrjnKGp = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWtPrjnKGp = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtPrjnKGp->GetRep());
   ((iLineEdit*)fldWtPrjnKGp->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
@@ -311,7 +311,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(chkHist, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   histTB->addWidget(chkHist);
 
-  fldHistMax = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldHistMax = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   fldHistMax->rep()->setCharWidth(4);
   histTB->addWidget(fldHistMax->GetRep());
 
@@ -357,7 +357,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblff->setToolTip("number of steps to take when going fast-forward or fast-back through history");
   histTB->addWidget(lblff);
 
-  fldHistFF = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldHistFF = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   fldHistFF->rep()->setCharWidth(4);
   histTB->addWidget(fldHistFF->GetRep());
 

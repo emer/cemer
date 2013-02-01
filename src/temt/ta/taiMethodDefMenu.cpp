@@ -24,8 +24,8 @@
 //      taiMemberDefMenu        //
 //////////////////////////////////
 
-taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_,
-  MemberDef* memb_md_, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiMemberDefMenu::taiMemberDefMenu(taiWidgetActions::RepType rt, int ft, MemberDef* md_,
+  MemberDef* memb_md_, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_)
 : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
@@ -76,9 +76,9 @@ void taiMemberDefMenu::GetMenu() {
 //      taiMethodDefMenu        //
 //////////////////////////////////
 
-taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_,
+taiMethodDefMenu::taiMethodDefMenu(taiWidgetActions::RepType rt, int ft, MethodDef* md_,
                                    MemberDef* memb_md_, TypeDef* typ_,
-                                   IWidgetHost* host_, taiData* par,
+                                   IWidgetHost* host_, taiWidget* par,
                                    QWidget* gui_parent_, int flags_)
   : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {

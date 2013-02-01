@@ -68,7 +68,7 @@ protected:
      taiMimeSource* ms,  int& allowed, int& forbidden);
   override int          ChildEditAction_impl(const MemberDef* par_md, taiSigLink* child,
     taiMimeSource* ms, int ea);
-  override void         FillContextMenu_impl(taiActions* menu);
+  override void         FillContextMenu_impl(taiWidgetActions* menu);
 };
 
 #endif // taSigLinkBase_h

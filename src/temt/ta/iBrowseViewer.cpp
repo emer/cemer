@@ -72,8 +72,8 @@ void iBrowseViewer::Init() {
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree
 */
-  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)),
-      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)) );
+  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiWidgetActions*)),
+      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiWidgetActions*)) );
   lvwDataTree->Connect_SelectableHostNotifySignal(this,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
@@ -113,7 +113,7 @@ void iBrowseViewer::ApplyRoot() {
 }
 
 void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
-   taiActions* menu)
+   taiWidgetActions* menu)
 {
 //note: nothing
 }

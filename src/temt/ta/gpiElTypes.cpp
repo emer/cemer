@@ -16,21 +16,21 @@
 #include "gpiElTypes.h"
 
 
-gpiElTypes::gpiElTypes(taiActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_, 
-  taiData* par, QWidget* gui_parent_, int flags_)
+gpiElTypes::gpiElTypes(taiWidgetActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_, 
+  taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(rt, ft, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = lstd;
 }
 
 gpiElTypes::gpiElTypes
-(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = gtd;
 }
 
-void gpiElTypes::GetMenu(taiActions* menu, taiMenuAction* nact) {
+void gpiElTypes::GetMenu(taiWidgetActions* menu, taiMenuAction* nact) {
   GetMenu_impl(menu, typ, nact);
   menu->AddSep(); //note: won't add a spurious separator if not needed
   GetMenu_impl(menu, lst_typd, nact);	// get group types for this type

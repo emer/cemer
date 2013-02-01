@@ -17,7 +17,7 @@
 #define taiItemPtrBase_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
 
@@ -32,10 +32,10 @@ class QTreeWidgetItem; //
 typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in ITEM_FILTER_xxx
 typedef bool (*cust_chooser_fun)(taBase*, taiItemPtrBase*); // optional custom config, spec'ed in CUST_CHOOSER_xxx
 
-class TA_API taiItemPtrBase : public taiData {
+class TA_API taiItemPtrBase : public taiWidget {
   // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT
-  INHERITED(taiData)
+  INHERITED(taiWidget)
 public:
   item_filter_fun       item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
   cust_chooser_fun      cust_chooser; // #IGNORE customization call, in CUST_CHOOSER_xxx
@@ -109,7 +109,7 @@ protected:
   virtual void          UpdateImage(void* cur_sel);
 
   taiItemPtrBase(TypeDef* typ_, IWidgetHost* host,
-                 taiData* par, QWidget* gui_parent_, int flags_ = 0,
+                 taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                  const String& flt_start_txt = ""); // typ_
 };
 

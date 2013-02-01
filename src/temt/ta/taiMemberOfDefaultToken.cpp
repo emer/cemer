@@ -27,14 +27,14 @@ int taiMemberOfDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfDefaultToken::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfDefaultToken::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiEditOfDefault* tde = new taiEditOfDefault(mbr->type->GetNonPtrType());
   taiEditButton *rval = taiEditButton::New(NULL, tde, mbr->type->GetNonPtrType(),
      host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiMemberOfDefaultToken::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfDefaultToken::GetImage_impl(taiWidget* dat, const void* base) {
   taiEditButton* rval = (taiEditButton*)dat;
   taBase* token_ptr = GetTokenPtr(base);
   rval->GetImage_(token_ptr);
@@ -43,5 +43,5 @@ void taiMemberOfDefaultToken::GetImage_impl(taiData* dat, const void* base) {
   }
 }
 
-void taiMemberOfDefaultToken::GetMbrValue_impl(taiData*, void*) {
+void taiMemberOfDefaultToken::GetMbrValue_impl(taiWidget*, void*) {
 }

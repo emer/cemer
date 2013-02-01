@@ -35,10 +35,10 @@ public:
 
   int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*        GetElFromArg(const char* arg_nm, void* base);
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
   virtual void  GetValueFromGF(); // actually get the value from the getfile
 
 private:

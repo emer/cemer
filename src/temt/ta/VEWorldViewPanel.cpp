@@ -16,7 +16,7 @@
 #include "VEWorldViewPanel.h"
 #include <VEWorld>
 #include <VEWorldView>
-#include <taiField>
+#include <taiWidgetField>
 #include <iFlowLayout>
 #include <iMethodButtonMgr>
 #include <BuiltinTypeDefs>
@@ -60,7 +60,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   lblDragSize = taiM->NewLabel("Drag Size: ", widg, font_spec);
   lblDragSize->setToolTip("Size of the 'dragger' controls for manipulating the position, size, and rotation of objects.");
   layDispCheck->addWidget(lblDragSize);
-  fldDragSize = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldDragSize = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layDispCheck->addWidget(fldDragSize->GetRep());
   //  layDispCheck->addSpacing(taiM->hspc_c);
 

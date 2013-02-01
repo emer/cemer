@@ -37,14 +37,14 @@ cssEl* taiArgTypeOfTokenPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))
-    token_flags |= taiData::flgNullOk;
+    token_flags |= taiWidget::flgNullOk;
   if (GetHasOption("EDIT_OK"))
-    token_flags |= taiData::flgEditOk;
-  token_flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+    token_flags |= taiWidget::flgEditOk;
+  token_flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, token_flags);
   return rval;
 //   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
@@ -52,7 +52,7 @@ taiData* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
   return rval;
 }
 
-void taiArgTypeOfTokenPtr::GetImage_impl(taiData* dat, const void* base){
+void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
   if(arg_base == NULL)
     return;
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
@@ -115,7 +115,7 @@ void taiArgTypeOfTokenPtr::GetImage_impl(taiData* dat, const void* base){
   rval->GetImageScoped(*((taBase**)arg_base), npt, scope, scope_type);
 }
 
-void taiArgTypeOfTokenPtr::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfTokenPtr::GetValue_impl(taiWidget* dat, void*) {
   if(arg_base == NULL)
     return;
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;

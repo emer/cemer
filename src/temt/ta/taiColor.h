@@ -17,7 +17,7 @@
 #define taiColor_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
 
@@ -26,15 +26,15 @@ class iColorButton; //
 
 
 
-class TA_API taiColor : public taiData {
-  INHERITED(taiData)
+class TA_API taiColor : public taiWidget {
+  INHERITED(taiWidget)
 public:
   iColorButton*         rep() const {return (iColorButton*)(QWidget*)m_rep;}
 
   void                  GetImage(const iColor& val);
   iColor                GetValue() const;
 
-  taiColor(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_,
+  taiColor(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_,
     int flags = 0);
 
 };

@@ -21,19 +21,19 @@
 #include <taMisc>
 
 
-gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_,
-	taiData* par, QWidget* gui_parent_, int flags_)
+gpiListEls::gpiListEls(taiWidgetActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_,
+	taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   ths = lst;
 //  ta_actions = new taiMenu(rt, taiMenu::radio_update, ft, typ, (void*)ths, host_, this, gui_parent_);
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   over_max = false;
 }
 
 gpiListEls::gpiListEls(taiMenu* existing_menu, taList_impl* lst, TypeDef* typ_,
-	IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+	IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_) {
   ths = lst;
   over_max = false;
@@ -103,7 +103,7 @@ void gpiListEls::Choose() {
   delete chs;
 }
 
-void gpiListEls::GetMenu(taiActions* menu, taiMenuAction* actn) {
+void gpiListEls::GetMenu(taiWidgetActions* menu, taiMenuAction* actn) {
   if (HasFlag(flgNullOk))
     menu->AddItem("NULL", taiMenu::radio_update, actn, (void*)NULL);
   if (HasFlag(flgEditOk))
@@ -126,7 +126,7 @@ void gpiListEls::UpdateMenu(taiMenuAction* actn) {
   GetMenu(ta_actions, actn);
 }
 
-void gpiListEls::GetMenu_impl(taList_impl* cur_lst, taiActions* menu, taiMenuAction* actn) {
+void gpiListEls::GetMenu_impl(taList_impl* cur_lst, taiWidgetActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL)	return;
   if (cur_lst->size >= taMisc::max_menu) 
   {

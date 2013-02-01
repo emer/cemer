@@ -34,7 +34,7 @@ class QMenu; //
 class TA_API taiAction: public QAction {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS holds menu and/or toolbar item data -- can be the root item of a submenu
   Q_OBJECT
-  friend class taiActions;
+  friend class taiWidgetActions;
   friend class taiAction_List;
 public:
   enum CallbackType {

@@ -17,11 +17,11 @@
 #include <GraphTableView>
 #include <GraphColView>
 #include <HColorScaleBar>
-#include <taiComboBox>
-#include <taiIncrField>
-#include <taiField>
+#include <taiWidgetComboBox>
+#include <taiWidgetIncrField>
+#include <taiWidgetField>
 #include <taiListElsButton>
-#include <taiPolyData>
+#include <taiWidgetPoly>
 #include <iCheckBox>
 #include <BuiltinTypeDefs>
 
@@ -61,16 +61,16 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblGraphType = taiM->NewLabel("Graph", widg, font_spec);
   lblGraphType->setToolTip("How to display the graph");
   layTopCtrls->addWidget(lblGraphType);
-  cmbGraphType = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
-                                 this, NULL, widg, taiData::flgAutoApply));
+  cmbGraphType = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
+                                 this, NULL, widg, taiWidget::flgAutoApply));
   layTopCtrls->addWidget(cmbGraphType->GetRep());
   layTopCtrls->addSpacing(taiM->hsep_c);
 
   lblPlotStyle = taiM->NewLabel("Style", widg, font_spec);
   lblPlotStyle->setToolTip("How to plot the lines");
   layTopCtrls->addWidget(lblPlotStyle);
-  cmbPlotStyle = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
-                                 this, NULL, widg, taiData::flgAutoApply));
+  cmbPlotStyle = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
+                                 this, NULL, widg, taiWidget::flgAutoApply));
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   layTopCtrls->addSpacing(taiM->hsep_c);
 
@@ -97,42 +97,42 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
+  fldRows = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
   lblLineWidth->setToolTip("Width to draw lines with.");
   layVals->addWidget(lblLineWidth);
-  fldLineWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldLineWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLineWidth->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblPointSpacing = taiM->NewLabel("Pt\nSpc", widg, font_spec);
   lblPointSpacing->setToolTip("Spacing of points drawn relative to underlying data points.");
   layVals->addWidget(lblPointSpacing);
-  fldPointSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldPointSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldPointSpacing->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
   lblLabelSpacing->setToolTip("Spacing of text labels of data point values. -1 means no text labels.");
   layVals->addWidget(lblLabelSpacing);
-  fldLabelSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldLabelSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
-  fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblDepth = taiM->NewLabel("Depth", widg, font_spec);
   lblDepth->setToolTip("Depth of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblDepth);
-  fldDepth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldDepth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldDepth->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
@@ -143,7 +143,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // X AXis
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
 
-  int list_flags = taiData::flgNullOk | taiData::flgAutoApply | taiData::flgNoHelp;
+  int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply | taiWidget::flgNoHelp;
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
@@ -158,7 +158,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layXAxis->addWidget(rncXAxis);
   layXAxis->addSpacing(taiM->hsep_c);
 
-  pdtXAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
+  pdtXAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
   layXAxis->addWidget(pdtXAxis->GetRep());
 
   layXAxis->addStretch();
@@ -185,7 +185,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layZAxis->addWidget(rncZAxis);
   layZAxis->addSpacing(taiM->hsep_c);
 
-  pdtZAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
+  pdtZAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
   layZAxis->addWidget(pdtZAxis->GetRep());
 
   layZAxis->addStretch();
@@ -215,7 +215,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
     layYAxis[i]->addWidget(chkYAltY[i]);
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
-    pdtYAxis[i] = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
+    pdtYAxis[i] = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
     layYAxis[i]->addWidget(pdtYAxis[i]->GetRep());
 
     layYAxis[i]->addStretch();
@@ -253,8 +253,8 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
-  cmbColorMode = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
-        this, NULL, widg, taiData::flgAutoApply));
+  cmbColorMode = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
+        this, NULL, widg, taiWidget::flgAutoApply));
   layCAxis->addWidget(cmbColorMode->GetRep());
   //  layColorScale->addSpacing(taiM->hsep_c);
 
@@ -268,7 +268,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
   lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold.");
   layCAxis->addWidget(lblThresh);
-  fldThresh = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldThresh = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldThresh->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
@@ -276,7 +276,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
   lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
   layCAxis->addWidget(lblErrSpacing);
-  fldErrSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldErrSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldErrSpacing->GetRep());
 
   layCAxis->addStretch();
@@ -305,7 +305,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layRAxis->addWidget(lelRAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  pdtRAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
+  pdtRAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
   layRAxis->addWidget(pdtRAxis->GetRep());
 
   layRAxis->addStretch();
@@ -352,17 +352,17 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   rncZAxis->setChecked(glv->z_axis.row_num);
   pdtZAxis->GetImage_(&(glv->z_axis.fixed_range));
 
-  lelZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
+  lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
-  pdtZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
+  pdtZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
 
   for(int i=0;i<max_plots; i++) {
     lelYAxis[i]->GetImage(&(glv->children), glv->all_plots[i]->GetColPtr());
     oncYAxis[i]->setReadOnly(glv->all_plots[i]->GetColPtr() == NULL);
     oncYAxis[i]->setChecked(glv->all_plots[i]->on);
     pdtYAxis[i]->GetImage_(&(glv->all_plots[i]->fixed_range));
-    lelYAxis[i]->SetFlag(taiData::flgReadOnly, !glv->all_plots[i]->on);
-    pdtYAxis[i]->SetFlag(taiData::flgReadOnly, !glv->all_plots[i]->on);
+    lelYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
+    pdtYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
     chkYAltY[i]->setChecked(glv->all_plots[i]->alt_y);
   }
 
@@ -376,7 +376,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
 
   cmbColorMode->GetImage(glv->color_mode);
   lelCAxis->GetImage(&(glv->children), glv->color_axis.GetColPtr());
-  lelCAxis->SetFlag(taiData::flgReadOnly, glv->color_mode != GraphTableView::COLOR_AXIS);
+  lelCAxis->SetFlag(taiWidget::flgReadOnly, glv->color_mode != GraphTableView::COLOR_AXIS);
 
   fldThresh->GetImage((String)glv->thresh);
 
@@ -385,8 +385,8 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   lelRAxis->GetImage(&(glv->children), glv->raster_axis.GetColPtr());
   pdtRAxis->GetImage_(&(glv->raster_axis.fixed_range));
 
-  lelRAxis->SetFlag(taiData::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
-  pdtRAxis->SetFlag(taiData::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
+  lelRAxis->SetFlag(taiWidget::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
+  pdtRAxis->SetFlag(taiWidget::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
 }
 
 void iGraphTableView_Panel::GetValue_impl() {

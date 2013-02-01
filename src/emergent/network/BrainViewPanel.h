@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class ColorScaleBar;             // 
-class taiField;                  // 
+class taiWidgetField;                  // 
 class taiRegexpField;            // 
 class BrainAtlasRegexpPopulator; // 
 class iMethodButtonMgr;          // 
@@ -59,7 +59,7 @@ public:
 
   QHBoxLayout*          layFontsEtc;
   QLabel*               lblUnitTrans;
-  taiField*             fldUnitTrans;
+  taiWidgetField*             fldUnitTrans;
 
   taiRegexpField*       fldBrainColorRegexp;
   taiRegexpField*       fldBrainAtlasRegexp;

@@ -25,7 +25,7 @@ int taiTypeOfArray::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfArray::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfArray::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiArrayEditButton *rval =
     new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;

@@ -41,20 +41,20 @@ cssEl* taiArgTypeOfListOnObjBasePtr::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfListOnObjBasePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  int new_flags = (flags_ & ~taiData::flgNoList); //note: exclude flgNoList
+taiWidget* taiArgTypeOfListOnObjBasePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  int new_flags = (flags_ & ~taiWidget::flgNoList); //note: exclude flgNoList
   if (GetHasOption("NULL_OK"))
-    new_flags |= taiData::flgNullOk;
+    new_flags |= taiWidget::flgNullOk;
 /*nn  if (GetHasOption("EDIT_OK"))
-    new_flags |= taiData::flgEditOk; */
+    new_flags |= taiWidget::flgEditOk; */
   if (typ->InheritsFrom(TA_taGroup_impl))
     return new taiGroupElsButton(typ, host_, par, gui_parent_,
-      (new_flags | taiData::flgNoInGroup));
+      (new_flags | taiWidget::flgNoInGroup));
   else
     return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
 }
 
-void taiArgTypeOfListOnObjBasePtr::GetImage_impl(taiData* dat, const void* base) {
+void taiArgTypeOfListOnObjBasePtr::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)
     return;
   if (GetHasOption("ARG_VAL_FM_FUN")) {
@@ -72,7 +72,7 @@ void taiArgTypeOfListOnObjBasePtr::GetImage_impl(taiData* dat, const void* base)
   }
 }
 
-void taiArgTypeOfListOnObjBasePtr::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfListOnObjBasePtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   //note: GetValue is not modal

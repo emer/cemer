@@ -196,7 +196,7 @@ taiSigLink* ISelectable::effLink(GuiContext sh_typ) const {
 }
 
 void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
-  taiActions* menu, GuiContext sh_typ)
+  taiWidgetActions* menu, GuiContext sh_typ)
 {
   FillContextMenu_impl(menu, sh_typ);
   int allowed = QueryEditActions_(sel_items, sh_typ);
@@ -207,7 +207,7 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
   }
 }
 
-void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
+void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   int ea, GuiContext sh_typ)
 {
   if (ea == 0) return;

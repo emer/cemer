@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfFileDialog.h"
-#include <taiFileDialogField>
+#include <taiWidgetFieldFile>
 
 
 int taiMemberOfFileDialog::BidForMember(MemberDef* md, TypeDef* td) {
@@ -23,30 +23,30 @@ int taiMemberOfFileDialog::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfFileDialog::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   String file_act = mbr->OptionAfter("FILE_DIALOG_");
-  taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
+  taiWidgetFieldFile::FileActionType fact = taiWidgetFieldFile::FA_LOAD;
   if(file_act == "SAVE")
-    fact = taiFileDialogField::FA_SAVE;
+    fact = taiWidgetFieldFile::FA_SAVE;
   else if(file_act == "APPEND")
-    fact = taiFileDialogField::FA_APPEND;
+    fact = taiWidgetFieldFile::FA_APPEND;
 
   String fext = String(".") + mbr->OptionAfter("EXT_");
   String ftyp = mbr->OptionAfter("FILETYPE_");
   int cmpr = mbr->HasOption("COMPRESS") ? 1 : -1;
 
-  return new taiFileDialogField(mbr->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
+  return new taiWidgetFieldFile(mbr->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
 }
 
-void taiMemberOfFileDialog::GetImage_impl(taiData* dat, const void* base){
+void taiMemberOfFileDialog::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  taiWidgetFieldFile* rval = (taiWidgetFieldFile*)dat;
   rval->GetImage(*((String*)new_base));
 }
 
-void taiMemberOfFileDialog::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfFileDialog::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  taiWidgetFieldFile* rval = (taiWidgetFieldFile*)dat;
   *((String*)new_base) = rval->GetValue();
 }
 

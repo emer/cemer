@@ -15,11 +15,11 @@
 
 #include "taiTypeOfEnum.h"
 #include <EnumDef>
-#include <taiData>
-#include <taiComboBox>
+#include <taiWidget>
+#include <taiWidgetComboBox>
 #include <iComboBox>
-#include <taiBitBox>
-#include <taiField>
+#include <taiWidgetBitBox>
+#include <taiWidgetField>
 
 
 void taiTypeOfEnum::Initialize() {
@@ -31,7 +31,7 @@ int taiTypeOfEnum::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfEnum::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiTypeOfEnum::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   isBit = ((typ != NULL) && (typ->HasOption("BITS")));
@@ -50,28 +50,28 @@ taiData* taiTypeOfEnum::GetDataRep_impl(IWidgetHost* host_, taiData* par,
     }
   }
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED)) {
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   }
   if (isBit) {
-    return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
+    return new taiWidgetBitBox(true, typ, host_, par, gui_parent_, flags_);
   }
-  else if (flags_ & taiData::flgReadOnly) {
-    return new taiField(typ, host_, par, gui_parent_, flags_);
+  else if (flags_ & taiWidget::flgReadOnly) {
+    return new taiWidgetField(typ, host_, par, gui_parent_, flags_);
   }
   else {
-    taiComboBox* rval = new taiComboBox(true, typ,host_, par, gui_parent_, flags_);
+    taiWidgetComboBox* rval = new taiWidgetComboBox(true, typ,host_, par, gui_parent_, flags_);
     return rval;
   }
 }
 
-void taiTypeOfEnum::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfEnum::GetImage_impl(taiWidget* dat, const void* base) {
   if (isBit) {
-    taiBitBox* rval = (taiBitBox*)dat;
+    taiWidgetBitBox* rval = (taiWidgetBitBox*)dat;
     rval->m_par_obj_base = GetCurParObjBase(); // note: hack to pass things to bitbox for condshow
     rval->GetImage(*((int*)base));
   }
   else if (isReadOnly(dat)) {
-    taiField* rval = (taiField*)(dat);
+    taiWidgetField* rval = (taiWidgetField*)(dat);
     String str;
     EnumDef* ed = typ->enum_vals.FindNo(*((int*)base));
     if (ed != NULL) {
@@ -83,18 +83,18 @@ void taiTypeOfEnum::GetImage_impl(taiData* dat, const void* base) {
     rval->GetImage(str);
   }
   else {
-    taiComboBox* rval = (taiComboBox*)dat;
+    taiWidgetComboBox* rval = (taiWidgetComboBox*)dat;
     int enum_val = *((int*)base);
     rval->GetEnumImage(enum_val);
   }
 }
 
-void taiTypeOfEnum::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfEnum::GetValue_impl(taiWidget* dat, void* base) {
   if (isBit) {
-    taiBitBox* rval = dynamic_cast<taiBitBox*>(dat);
+    taiWidgetBitBox* rval = dynamic_cast<taiWidgetBitBox*>(dat);
     if (rval) rval->GetValue(*((int*)base));
   } else if (!isReadOnly(dat)) {
-    taiComboBox* rval = dynamic_cast<taiComboBox*>(dat);
+    taiWidgetComboBox* rval = dynamic_cast<taiWidgetComboBox*>(dat);
     if (rval) rval->GetEnumValue(*((int*)base));
   }
 }

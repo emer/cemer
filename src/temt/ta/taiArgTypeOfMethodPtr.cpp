@@ -15,7 +15,7 @@
 
 #include "taiArgTypeOfMethodPtr.h"
 #include <taiMethodDefMenu>
-#include <taiActions>
+#include <taiWidgetActions>
 #include <taiMenu>
 #include <taiMisc>
 
@@ -35,18 +35,18 @@ cssEl* taiArgTypeOfMethodPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfMethodPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfMethodPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MethodDef* init_md = typ->methods.FindName("Load");
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);
-  flags_ |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+  flags_ |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
   taiMethodDefMenu* rval = new taiMethodDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
         init_md, NULL, typ, host_, par, gui_parent_, flags_);
   rval->GetMenu();
   return rval;
 }
 
-void taiArgTypeOfMethodPtr::GetImage_impl(taiData* dat, const void*) {
+void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
   if(arg_base == NULL)
     return;
   taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
@@ -70,7 +70,7 @@ void taiArgTypeOfMethodPtr::GetImage_impl(taiData* dat, const void*) {
     rval->ta_actions->GetImageByIndex(0);       // just get first on list
 }
 
-void taiArgTypeOfMethodPtr::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfMethodPtr::GetValue_impl(taiWidget* dat, void*) {
   if(arg_base == NULL)
     return;
   taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;

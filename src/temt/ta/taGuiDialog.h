@@ -174,7 +174,7 @@ public:
                                const String& typ, const String& layout = _nilString,
                                const String& attributes = _nilString,
                                Variant data = _nilVariant, const String& url = _nilString,
-                               taiData* taidata = NULL);
+                               taiWidget* taidata = NULL);
   // #IGNORE add a widget, implementation -- must have already parsed parent and used that for creating widget
   virtual taGuiAction*  AddAction_impl(QAction* act, const String& nm,
                                        const String& toolbar = _nilString,

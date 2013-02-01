@@ -24,14 +24,14 @@ int taiTypeOftaColor::BidForType(TypeDef* td) {
   return 0;
 }
 
-void taiTypeOftaColor::GetImage_impl(taiData* dat_, const void* base) {
+void taiTypeOftaColor::GetImage_impl(taiWidget* dat_, const void* base) {
   taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
   if (!dat) return;
   const taColor* col = static_cast<const taColor*>(base);
   dat->GetImage(iColor(col->r, col->g, col->b, col->a));
 }
 
-void taiTypeOftaColor::GetValue_impl(taiData* dat_, void* base) {
+void taiTypeOftaColor::GetValue_impl(taiWidget* dat_, void* base) {
   taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
   if (!dat) return;
   iColor icol = dat->GetValue();

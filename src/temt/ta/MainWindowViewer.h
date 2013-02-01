@@ -38,7 +38,7 @@ class PanelViewer; //
 class T3DataViewer; // 
 class taiMenu_List; //
 class taiMenuBar; // #IGNORE
-class taiActions; //
+class taiWidgetActions; //
 
 
 TypeDef_Of(MainWindowViewer);
@@ -81,7 +81,7 @@ public:
 #ifdef TA_GUI
   taiMenu_List*         ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
   taiMenuBar*           menu; // #IGNORE menu bar -- note: partially managed by the window
-  taiActions*           cur_menu; // #IGNORE for building menu
+  taiWidgetActions*           cur_menu; // #IGNORE for building menu
 #endif
   ToolBar_List          toolbars; // #EXPERT
   FrameViewer_List      frames; // the frames shown in the center splitter area

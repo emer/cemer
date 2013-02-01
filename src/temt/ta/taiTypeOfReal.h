@@ -31,9 +31,9 @@ class TA_API taiTypeOfReal : public taiType { // handles real types, provides va
 public:
   int           BidForType(TypeDef* td);
 protected:
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
 };
 
 #endif // taiTypeOfReal_h

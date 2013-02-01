@@ -25,7 +25,7 @@
 
 
 taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
-  IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+  IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 {
   if (typ_ && (!typ_->IsActualTaBase() || typ_->HasOption("EDIT_ONLY")))
     flags_ |= flgEditOnly;
@@ -35,7 +35,7 @@ taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
 }
 
 taiEditButton::taiEditButton(void* base, taiEdit *taie, TypeDef* typ_,
-                             IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+                             IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
   : taiButtonMenu(taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   cur_base = base;

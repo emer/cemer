@@ -22,8 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiComboBox; // #IGNORE
-class taiBitBox; // #IGNORE
+class taiWidgetComboBox; // #IGNORE
+class taiWidgetBitBox; // #IGNORE
 class DynEnum; //
 
 
@@ -34,17 +34,17 @@ class TA_API taiMemberOfDynEnum : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfDynEnum, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
-  static void   UpdateDynEnumCombo(taiComboBox* cb, DynEnum& de);
+  static void   UpdateDynEnumCombo(taiWidgetComboBox* cb, DynEnum& de);
   // helper function for populating combobox with dyn enum values
-  static void   UpdateDynEnumBits(taiBitBox* cb, DynEnum& de);
+  static void   UpdateDynEnumBits(taiWidgetBitBox* cb, DynEnum& de);
   // helper function for populating bit box with dyn enum values
 
 protected:
-  override void GetImage_impl(taiData* dat, const void* base);
-  override void GetMbrValue_impl(taiData* dat, void* base);
+  override void GetImage_impl(taiWidget* dat, const void* base);
+  override void GetMbrValue_impl(taiWidget* dat, void* base);
 
   bool          isBit; // true if a bits type enum
 

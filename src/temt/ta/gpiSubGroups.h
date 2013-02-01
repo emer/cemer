@@ -20,7 +20,7 @@
 #include <taiElBase>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
@@ -35,23 +35,23 @@ public:
 //  taGroup_impl*      chs_obj;        // object chosen by the chooser
 
   void          GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
-  override void GetMenu(taiActions* menu, taiMenuAction* actn = NULL);
+  override void GetMenu(taiWidgetActions* menu, taiMenuAction* actn = NULL);
   virtual void  UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*      GetRep();
   void          GetImage(taGroup_impl* base_gp, taGroup_impl* gp);
   taGroup_impl*        GetValue();
 
-  gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+  gpiSubGroups(taiWidgetActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
-  gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_ = NULL, IWidgetHost* host_ = NULL, taiData* par = NULL,
+  gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_ = NULL, IWidgetHost* host_ = NULL, taiWidget* par = NULL,
       QWidget* gui_parent_ = NULL, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
 public slots:
   virtual void  Edit();         // edit callback
   virtual void  Choose();       // chooser callback
 
 protected:
-  virtual void  GetMenu_impl(taGroup_impl* gp, taiActions* menu, taiMenuAction* actn = NULL);
+  virtual void  GetMenu_impl(taGroup_impl* gp, taiWidgetActions* menu, taiMenuAction* actn = NULL);
 };
 
 #endif // gpiSubGroups_h

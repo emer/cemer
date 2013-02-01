@@ -15,7 +15,7 @@
 
 #include "taiAction.h"
 #include <taiMenu>
-#include <taiActions>
+#include <taiWidgetActions>
 #include <taiMenuAction>
 
 taiAction::taiAction(int sel_type_, const String& label_)
@@ -58,7 +58,7 @@ void taiAction::init(int sel_type_)
   sel_type = sel_type_;
   //note: we do this here, but also at AddAction time in case we create default here,
   // and it only gets its true sel_type when added
-  if (sel_type & (taiActions::radio | taiActions::toggle)) {
+  if (sel_type & (taiWidgetActions::radio | taiWidgetActions::toggle)) {
     setCheckable(true);
   }
   nref = 0;

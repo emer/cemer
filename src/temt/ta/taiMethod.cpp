@@ -24,7 +24,7 @@ void taiMethod::AddMethod(MethodDef* md) {
   meth = md;
 }
 
-taiMethodData* taiMethod::GetButtonMethodRep(void* base, IWidgetHost* host_, taiData* par,
+taiMethodData* taiMethod::GetButtonMethodRep(void* base, IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_)
 {
   taiMethodData* rval = GetButtonMethodRep_impl(base, host_, par, gui_parent_, 0);
@@ -32,7 +32,7 @@ taiMethodData* taiMethod::GetButtonMethodRep(void* base, IWidgetHost* host_, tai
   return rval;
 }
 
-taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
+taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiWidget* par) {
   // this case is ONLY called by the CallFun() function, on methods, typically via
   // a taBase->CallFun call
 //   taiMethodData* rval = new taiMethodData(base, meth, meth->type, NULL, par, NULL, 0);
@@ -42,7 +42,7 @@ taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
   return rval;
 }
 
-taiMethodData* taiMethod::GetMenuMethodRep(void* base, IWidgetHost* host_, taiData* par,
+taiMethodData* taiMethod::GetMenuMethodRep(void* base, IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_)
 {
   taiMethodData* rval = GetMenuMethodRep_impl(base, host_, par, gui_parent_, 0);

@@ -15,9 +15,9 @@
 
 #include "iGridTableView_Panel.h"
 #include <GridTableView>
-#include <taiField>
+#include <taiWidgetField>
 #include <iLineEdit>
-#include <taiIncrField>
+#include <taiWidgetIncrField>
 #include <HColorScaleBar>
 #include <BuiltinTypeDefs>
 
@@ -77,7 +77,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
   lblFontScale->setToolTip("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked");
   layTopCtrls->addWidget(lblFontScale);
-  fldFontScale = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldFontScale = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layTopCtrls->addWidget(fldFontScale->GetRep());
   ((iLineEdit*)fldFontScale->GetRep())->setCharWidth(8);
 
@@ -94,33 +94,33 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
+  fldRows = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
   lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
   layVals->addWidget(lblCols);
-  fldCols = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
+  fldCols = dl.Add(new taiWidgetIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldCols->GetRep());
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
-  fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
   ((iLineEdit*)fldWidth->GetRep())->setCharWidth(8);
 
   lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
   lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
   layVals->addWidget(lblTxtMin);
-  fldTxtMin = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldTxtMin = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMin->GetRep());
   ((iLineEdit*)fldTxtMin->GetRep())->setCharWidth(8);
 
   lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
   lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
   layVals->addWidget(lblTxtMax);
-  fldTxtMax = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldTxtMax = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
   ((iLineEdit*)fldTxtMax->GetRep())->setCharWidth(8);
 
@@ -141,21 +141,21 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
   lblTrans->setToolTip("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent.");
   layMatrix->addWidget(lblTrans);
-  fldTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldTrans->GetRep());
   ((iLineEdit*)fldTrans->GetRep())->setCharWidth(8);
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
   layMatrix->addWidget(lblRot);
-  fldRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldRot->GetRep());
   ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
 
   lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
   lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
   layMatrix->addWidget(lblBlockHeight);
-  fldBlockHeight = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldBlockHeight = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldBlockHeight->GetRep());
   ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
 
@@ -194,14 +194,14 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblLMBVal = taiM->NewLabel("Left Click\nValue", widg, font_spec);
   lblLMBVal->setToolTip("Value that will be set in the cell if you click with the left mouse button (if Click Vals is on).");
   layClickVals->addWidget(lblLMBVal);
-  fldLMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldLMBVal = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layClickVals->addWidget(fldLMBVal->GetRep());
   ((iLineEdit*)fldLMBVal->GetRep())->setCharWidth(8);
 
   lblMMBVal = taiM->NewLabel("Middle Click\nValue", widg, font_spec);
   lblMMBVal->setToolTip("Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on).");
   layClickVals->addWidget(lblMMBVal);
-  fldMMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  fldMMBVal = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layClickVals->addWidget(fldMMBVal->GetRep());
   ((iLineEdit*)fldMMBVal->GetRep())->setCharWidth(8);
 
@@ -217,7 +217,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblRowGoto = taiM->NewLabel("Row: 00000 Goto", widg, font_spec);
   lblRowGoto->setToolTip("Row number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible row in grid view");
   rowNavTB->addWidget(lblRowGoto);
-  fldRowGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldRowGoto = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   rowNavTB->addWidget(fldRowGoto->GetRep());
   ((iLineEdit*)fldRowGoto->GetRep())->setCharWidth(6);
   connect(fldRowGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butRowGoto_pressed()) );
@@ -264,7 +264,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblColGoto = taiM->NewLabel("Col: 000 Goto", widg, font_spec);
   lblColGoto->setToolTip("Col number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible col in grid view");
   colNavTB->addWidget(lblColGoto);
-  fldColGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldColGoto = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   colNavTB->addWidget(fldColGoto->GetRep());
   ((iLineEdit*)fldColGoto->GetRep())->setCharWidth(6);
   connect(fldColGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butColGoto_pressed()) );

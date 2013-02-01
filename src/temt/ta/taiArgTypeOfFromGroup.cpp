@@ -45,27 +45,27 @@ cssEl* taiArgTypeOfFromGroup::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfFromGroup::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfFromGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
-    new_flags |= taiData::flgNullOk;
+    new_flags |= taiWidget::flgNullOk;
   if (GetHasOption("EDIT_OK"))
-    new_flags |= taiData::flgEditOk;
-  new_flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+    new_flags |= taiWidget::flgEditOk;
+  new_flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
 
   if (GetHasOption("NO_GROUP_OPT"))
-    new_flags |= taiData::flgNoGroup; //aka flagNoList
+    new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
   if (from_md->type->DerivesFrom(TA_taGroup_impl))
      return new taiGroupElsButton(typ, host_, par, gui_parent_,
-                                  (new_flags | taiData::flgNoInGroup));
+                                  (new_flags | taiWidget::flgNoInGroup));
   else
     return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
 }
 
-void taiArgTypeOfFromGroup::GetImage_impl(taiData* dat, const void* base) {
+void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)  return;
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
@@ -85,7 +85,7 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiData* dat, const void* base) {
   }
 }
 
-void taiArgTypeOfFromGroup::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfFromGroup::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;

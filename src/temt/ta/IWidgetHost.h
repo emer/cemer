@@ -26,7 +26,7 @@
 class iMainWindowViewer; // 
 class taBase; // 
 class TypeDef; // 
-class taiData; //
+class taiWidget; //
 class iColor; //
 
 
@@ -45,7 +45,7 @@ public:
   virtual void          GetValue() = 0; // copy gui to value
   virtual void          GetImage() = 0; // copy value to gui
   virtual void          Changed() {} // called by embedded item to indicate contents have changed
-  virtual void          SetItemAsHandler(taiData* item, bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset); in ta_qtviewer.cpp
+  virtual void          SetItemAsHandler(taiWidget* item, bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset); in ta_qtviewer.cpp
   virtual void          Apply_Async() = 0; // provided for the APPLY_IMMED functionality
 
   IWidgetHost() {}

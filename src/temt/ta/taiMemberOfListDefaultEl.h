@@ -30,10 +30,10 @@ class TA_API taiMemberOfListDefaultEl : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfListDefaultEl, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiData* dat, const void* base);
-  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  override void GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
 
 private:
   void          Initialize() {}

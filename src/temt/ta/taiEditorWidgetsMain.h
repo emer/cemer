@@ -45,7 +45,7 @@ INHERITED(taiEditorWidgets)
 friend class iHostDialog;
 public:
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
-    const String& desc, taiData* buddy = NULL,
+    const String& desc, taiWidget* buddy = NULL,
     QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0);
     // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
 
@@ -81,7 +81,7 @@ protected:
   int           AddSectionLabel(int row, QWidget* wid, const String& desc);
   // add a widget, usually a label or checkbox, that will span both columns (no data)
   int           AddNameData(int row, const String& name, const String& desc,
-                            QWidget* data_wid, taiData* data_dat = NULL,
+                            QWidget* data_wid, taiWidget* data_dat = NULL,
                             MemberDef* md = NULL, bool fill_hor = false);
   // add a label item in first column, data item in second column; row<0 means "next row"; returns row
   int           AddData(int row, QWidget* data_wid, bool fill_hor = false);

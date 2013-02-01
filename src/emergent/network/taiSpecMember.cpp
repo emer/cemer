@@ -16,7 +16,7 @@
 #include "taiSpecMember.h"
 #include <BaseSpec>
 #include <BaseSubSpec>
-#include <taiPlusToggle>
+#include <taiWidgetPlusToggle>
 #include <IWidgetHost>
 
 #include <taMisc>
@@ -69,13 +69,13 @@ bool taiSpecMember::NoCheckBox(IWidgetHost* host_) const {
   return true;                  // default is to not have box...
 }
 
-taiData* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
+taiWidget* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent, int flags_, MemberDef* mbr_)
 {
   if (!mbr_) mbr_ = mbr;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
-    taiData* rdat;
+    taiWidget* rdat;
     if (HasLowerBidder())
       rdat = LowerBidder()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
     else
@@ -83,9 +83,9 @@ taiData* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
     return rdat;
   }
   else {
-    taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
+    taiWidgetPlusToggle* rval = new taiWidgetPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
-    taiData* rdat;
+    taiWidget* rdat;
     if (HasLowerBidder())
       rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else
@@ -97,7 +97,7 @@ taiData* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
   }
 }
 
-void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
+void taiSpecMember::GetArbitrateImage(taiWidget* dat, const void* base) {
   IWidgetHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
@@ -107,7 +107,7 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
       taiMember::GetImage_impl(dat, base);
   }
   else {
-    taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
+    taiWidgetPlusToggle* rval = dynamic_cast<taiWidgetPlusToggle*>(dat);
     if(!rval || !rval->data) {
       taMisc::Error("spec mbr bug: null data in:", mbr->name);
       return;
@@ -133,7 +133,7 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
   }
 }
 
-void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiSpecMember::GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   IWidgetHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
@@ -144,7 +144,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
     return;
   }
 
-  taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
+  taiWidgetPlusToggle* rval = dynamic_cast<taiWidgetPlusToggle*>(dat);
   if(!rval || !rval->data) {
     taMisc::Error("spec mbr bug: null data in:", mbr->name);
     return;
@@ -173,7 +173,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
     taiMember::GetMbrValue(rval->data, base, first_diff);
 }
 
-void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
+void taiSpecMember::CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff) {
   if(!taMisc::record_on || !typ->IsActualTaBase())
     return;
   String new_val;

@@ -16,10 +16,10 @@
 #include "taiMember.h"
 #include <taBase>
 #include <MemberDef>
-#include <taiData>
-#include <taiDataDeck>
+#include <taiWidget>
+#include <taiWidgetDeck>
 #include <taiSigLink>
-#include <taiBitBox>
+#include <taiWidgetBitBox>
 #include <EnumDef>
 #include <taiTypeOfEnum>
 
@@ -47,7 +47,7 @@ void taiMember::EndScript(const void* base) {
   taMisc::record_script << "}" << "\n";
 }
 
-bool taiMember::isReadOnly(taiData* dat, IWidgetHost* host_) {
+bool taiMember::isReadOnly(taiWidget* dat, IWidgetHost* host_) {
   // ReadOnly if parent type is RO, or par is RO, OR directives state RO
   bool rval = taiType::isReadOnly(dat, host_);
   rval = rval || mbr->HasOption("READ_ONLY") || //note: 'IV' only for legacy support
@@ -59,66 +59,66 @@ bool taiMember::handlesReadOnly() const {
   return mbr->type->it->handlesReadOnly();
 }
 
-taiData* taiMember::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* taiMember::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                taiType* parent_type_, int flags_, MemberDef*)
 {//note: we ignore MemberDef because we use our own
   bool ro = isReadOnly(par, host_);
   // we must communicate read_only when getting item
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
-    flags_ |= taiData::flgReadOnly;
+    flags_ |= taiWidget::flgReadOnly;
   if (((mbr->HasOption(TypeItem::opt_inline)) ||
        (mbr->HasOption(TypeItem::opt_edit_inline)))
     && mbr->type->it->allowsInline())
-    flags_ |= taiData::flgInline;
+    flags_ |= taiWidget::flgInline;
   if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
-    flags_ |= taiData::flgEditDialog;
+    flags_ |= taiWidget::flgEditDialog;
   if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply;
+    flags_ |= taiWidget::flgAutoApply;
   if (mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ = flags_ & ~taiData::flgAutoApply;
+    flags_ = flags_ & ~taiWidget::flgAutoApply;
   if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
-    flags_ |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
+    flags_ |= taiWidget::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
-    flags_ |= taiData::flgNoAlpha; // just in case this is needed
+    flags_ |= taiWidget::flgNoAlpha; // just in case this is needed
 
-  ro = (flags_ & taiData::flgReadOnly); // just for clarity and parity with Image/Value
-  taiData* rval = NULL;
+  ro = (flags_ & taiWidget::flgReadOnly); // just for clarity and parity with Image/Value
+  taiWidget* rval = NULL;
   if (ro || !isCondEdit()) { // condedit is irrelevant
     rval = GetArbitrateDataRep(host_, par, gui_parent_, flags_, mbr);
   }
   else { // rw && condEdit
-    taiDataDeck* deck = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
+    taiWidgetDeck* deck = new taiWidgetDeck(typ, host_, par, gui_parent_, flags_);
 
     deck->InitLayout();
     // rw child -- always the impl of this guy
     gui_parent_ = deck->GetRep();
-    taiData* child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);
+    taiWidget* child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);
     deck->AddChildWidget(child->GetRep());
-    child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+    child->SetMemberDef(mbr); // not used much, ex. used by taiWidgetField for edit dialog info
 
     // ro child, either ro of this guy, or default if we don't handle ro
-    flags_ |= taiData::flgReadOnly;
+    flags_ |= taiWidget::flgReadOnly;
     child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);
     deck->AddChildWidget(child->GetRep());
-    child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+    child->SetMemberDef(mbr); // not used much, ex. used by taiWidgetField for edit dialog info
     deck->EndLayout();
     rval = deck;
   }
-  rval->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+  rval->SetMemberDef(mbr); // not used much, ex. used by taiWidgetField for edit dialog info
   return rval;
 }
 
-taiData* taiMember::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiMember::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_, mbr);
+  taiWidget* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_, mbr);
   return dat;
 }
 
 //NOTE: we always delegate to _impl because those do the readonly delegation by
 // calling the non-impl version of their functions
-void taiMember::GetImage(taiData* dat, const void* base) {
+void taiMember::GetImage(taiWidget* dat, const void* base) {
   bool is_visible = true;
   if (isCondShow()) {
     //note: we don't care if processed or not -- flag defaults make it editable
@@ -129,13 +129,13 @@ void taiMember::GetImage(taiData* dat, const void* base) {
   // when we change visibility, so the result is valid
 
   // note: must use identical criteria for ro here as when we did GetDataRep
-  bool ro = dat->HasFlag(taiData::flgReadOnly) ;
+  bool ro = dat->HasFlag(taiWidget::flgReadOnly) ;
 
   if (ro || !isCondEdit()) { // condedit is irrelevant
     GetArbitrateImage(dat, base);
   }
   else { // rw && condEdit
-    QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
+    QCAST_MBR_SAFE_EXIT(taiWidgetDeck*, deck, dat)
     int img = !mbr->GetCondOptTest("CONDEDIT", typ, base);
     deck->GetImage(img); // this is the one that is visible
     // NOTE: we must *always* get both images, so the val img is valid if we switch to rw
@@ -144,10 +144,10 @@ void taiMember::GetImage(taiData* dat, const void* base) {
   }
 }
 
-void taiMember::CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat,
+void taiMember::CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat,
     const void* base)
 {
-  taiBitBox* bb = dynamic_cast<taiBitBox*>(dat); // should be, except maybe if ro
+  taiWidgetBitBox* bb = dynamic_cast<taiWidgetBitBox*>(dat); // should be, except maybe if ro
   if (!bb) return;
   for (int i = 0; i < mbr->type->enum_vals.size; ++i) {
     EnumDef* ed = mbr->type->enum_vals.FastEl(i);
@@ -169,7 +169,7 @@ void taiMember::CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat,
   }
 }
 
-void taiMember::GetImage_impl(taiData* dat, const void* base) {
+void taiMember::GetImage_impl(taiWidget* dat, const void* base) {
   mbr->type->it->SetCurParObjType((void*)base, typ);
   // special: if enum type, do the detailed bit-level COND processing
   taiTypeOfEnum* et = dynamic_cast<taiTypeOfEnum*>(mbr->type->it);
@@ -181,7 +181,7 @@ void taiMember::GetImage_impl(taiData* dat, const void* base) {
   GetOrigVal(dat, base);
 }
 
-void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMember::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   bool is_visible = true;
   if (isCondShow()) {
     is_visible = mbr->GetCondOptTest("CONDSHOW", typ, base);
@@ -191,14 +191,14 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   // when we change visibility, so the result is actually saved!
 
   // note: must use identical criteria for ro here as when we did GetDataRep
-  bool ro = dat->HasFlag(taiData::flgReadOnly);
+  bool ro = dat->HasFlag(taiWidget::flgReadOnly);
   if (ro) return; // duh!
 
   if (!isCondEdit()) {
     // can never be ro! so it was always this one:
     GetArbitrateMbrValue(dat, base, first_diff);
   } else { // note: we only do this if we aren't RO, otherwise there is no point
-    QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
+    QCAST_MBR_SAFE_EXIT(taiWidgetDeck*, deck, dat)
     // NOTE: we must *always* get the rw val in case we had switched editability
     dat = deck->data_el.FastEl(0);
     GetArbitrateMbrValue(dat, base, first_diff);
@@ -219,7 +219,7 @@ taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
   return (memb_val == defval) ? EQU_DEF : NOT_DEF;
 }
 
-void taiMember::GetOrigVal(taiData* dat, const void* base) {
+void taiMember::GetOrigVal(taiWidget* dat, const void* base) {
   dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
   // if a default value was specified, compare and set the highlight accordingly
   switch (mbr->GetDefaultStatus(base)) {
@@ -229,7 +229,7 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
   }
 }
 
-void taiMember::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMember::GetMbrValue_impl(taiWidget* dat, void* base) {
   mbr->type->it->SetCurParObjType(base, typ);
   mbr->type->it->GetValue(dat, mbr->GetOff(base));
   mbr->type->it->ClearCurParObjType();
@@ -256,7 +256,7 @@ void taiMember::StartScript(const void* base) {
                         << tab->GetPathNames() << ";" << "\n";
 }
 
-void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
+void taiMember::CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff) {
   if(!taMisc::record_on || !typ->IsActualTaBase())
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
@@ -315,17 +315,17 @@ TypeDef* taiMember::GetTargetType(const void* base) {
   return targ_typ;
 }
 
-taiData* taiMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
+taiWidget* taiMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  taiData* rval = NULL;
+  taiWidget* rval = NULL;
 
 //  if (HasLowerBidder()) {
 //    rval = LowerBidder()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
 //  }
 //  else
   {
-    bool ro = (flags_ & taiData::flgReadOnly);
+    bool ro = (flags_ & taiWidget::flgReadOnly);
     if (ro && !handlesReadOnly()) {
       rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
     } else {
@@ -335,13 +335,13 @@ taiData* taiMember::GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
   return rval;
 }
 
-void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
+void taiMember::GetArbitrateImage(taiWidget* dat, const void* base) {
 //  if (HasLowerBidder()) {
 //    LowerBidder()->GetImage(dat, base);
 //  }
 //  else
   {
-    bool ro = (dat->HasFlag(taiData::flgReadOnly));
+    bool ro = (dat->HasFlag(taiWidget::flgReadOnly));
     if (ro && !handlesReadOnly()) {
       taiMember::GetImage_impl(dat, base);
     } else {
@@ -350,13 +350,13 @@ void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
   }
 }
 
-void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMember::GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff) {
 //  if (HasLowerBidder()) {
 //    LowerBidder()->GetMbrValue(dat, base, first_diff);
 //  }
 //  else
   {
-    bool ro = (dat->HasFlag(taiData::flgReadOnly));
+    bool ro = (dat->HasFlag(taiWidget::flgReadOnly));
     if (ro && !handlesReadOnly()) {
       taiMember::GetMbrValue_impl(dat, base);
     } else {

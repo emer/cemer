@@ -20,7 +20,7 @@
 #include <taiButtonMenu>
 
 // member includes:
-#include <taiDataList>
+#include <taiWidget_List>
 
 // declare all other types mentioned but not required to include:
 
@@ -29,7 +29,7 @@ class TA_API taiEditButton : public taiButtonMenu {
   Q_OBJECT
   INHERITED(taiButtonMenu)
 public:
-  static taiEditButton* New(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+  static taiEditButton* New(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgReadOnly, flgEditOnly -- internally sets flgEditOnly if appropriate
 
   ~taiEditButton();
@@ -40,14 +40,14 @@ public slots:
 protected:
   void*         cur_base;
   taiEdit*      ie;
-  taiDataList   meth_el;        // method elements
+  taiWidget_List   meth_el;        // method elements
 
   USING(inherited::GetImage_impl)
   override void         GetImage_impl(const void* base);
   virtual void          GetMethMenus();
   virtual void          SetLabel();
 
-  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+  taiEditButton(void* base, taiEdit *taie, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);
 };
 

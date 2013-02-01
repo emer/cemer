@@ -24,18 +24,18 @@ int taiTypeOfFilePtr::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfFilePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfFilePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   return new taiFileButton(typ,  host_, par, gui_parent_, flags_);
 }
 
-void taiTypeOfFilePtr::GetImage_impl(taiData* dat, const void* base){
+void taiTypeOfFilePtr::GetImage_impl(taiWidget* dat, const void* base){
   taiFileButton* fbut = (taiFileButton*) dat;
   // note: we are a taFiler*
   fbut->SetFiler(*((taFiler**)base));
   fbut->GetImage();
 }
 
-void taiTypeOfFilePtr::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfFilePtr::GetValue_impl(taiWidget* dat, void* base) {
   taiFileButton* rval = (taiFileButton*)dat;
   // safely replace filer, using ref counting
   taRefN::SetRefDone(*((taRefN**)base), rval->GetFiler());

@@ -24,7 +24,7 @@
 #include <MemberDef>
 
 // declare all other types mentioned but not required to include:
-class taiActions; //
+class taiWidgetActions; //
 class iSearchDialog; //
 class iDataPanel; //
 class taiTreeDataNode; //
@@ -47,8 +47,8 @@ public:
     // taBase::THIS_INVALID|CHILD_INVALID
   virtual taiSigLink*  ownLink() const {return NULL;} // owner link (NOT gui par)
 
-  virtual void          FillContextMenu(taiActions* menu); // only override to prepend to menu
-  virtual void          FillContextMenu_EditItems(taiActions* menu, int allowed) {}
+  virtual void          FillContextMenu(taiWidgetActions* menu); // only override to prepend to menu
+  virtual void          FillContextMenu_EditItems(taiWidgetActions* menu, int allowed) {}
   virtual bool          GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiSigLink*  GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiSigLink*  GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
@@ -78,7 +78,7 @@ protected:
   taSigLink_QObj*        qobj; // #IGNORE delegate object, when we need to connect or signal
 
   virtual void          Assert_QObj(); // makes sure the qobj is created
-  virtual void          FillContextMenu_impl(taiActions* menu) {} // this is usually the one to override
+  virtual void          FillContextMenu_impl(taiWidgetActions* menu) {} // this is usually the one to override
   virtual iDataPanel*   CreateDataPanel_impl(); // default uses taiView
   taiTreeDataNode*      CreateTreeDataNode(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,

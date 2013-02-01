@@ -74,7 +74,7 @@ void taiEditorOfSelectEditBase::Constr_Methods_impl() {
         men_nm = "Actions";
       cur_menu_but = ta_menu_buttons.FindName(men_nm);
       if (cur_menu_but == NULL) {
-        cur_menu_but = taiActions::New
+        cur_menu_but = taiWidgetActions::New
           (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
                   NULL, this, NULL, widget());
         cur_menu_but->setLabel(men_nm);

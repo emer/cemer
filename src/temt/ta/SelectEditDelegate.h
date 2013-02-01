@@ -17,7 +17,7 @@
 #define SelectEditDelegate_h 1
 
 // parent includes:
-#include <taiDataDelegate>
+#include <taiWidgetDelegate>
 
 // member includes:
 
@@ -27,8 +27,8 @@ class SelectEdit;
 class EditMbrItem;
 
 
-class TA_API SelectEditDelegate: public taiDataDelegate {
-INHERITED(taiDataDelegate)
+class TA_API SelectEditDelegate: public taiWidgetDelegate {
+INHERITED(taiWidgetDelegate)
 Q_OBJECT
 public:
   SelectEdit*           sele;
@@ -47,7 +47,7 @@ public:
 
  protected:
   mutable EditMbrItem*   emi;
-  mutable QPointer<taiData> ps_dat; // most recently created
+  mutable QPointer<taiWidget> ps_dat; // most recently created
   mutable QPointer<QWidget> ps_rep; // most recently created
 };
 

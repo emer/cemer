@@ -16,7 +16,7 @@
 #include "iFieldEditDialog.h"
 #include <iLabel>
 #include <iTextEdit>
-#include <taiField>
+#include <taiWidgetField>
 #include <iLineEdit>
 
 #include <taMisc>
@@ -27,7 +27,7 @@
 
 
 iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_,
-  const String& desc, taiField* parent)
+  const String& desc, taiWidgetField* parent)
 :inherited()
 {
   field = parent;
@@ -130,7 +130,7 @@ void iFieldEditDialog::setText(const QString& value) {
 void iFieldEditDialog::btnApply_clicked() {
   field->rep()->setText(txtText->toPlainText());
   // unless explicitly overridden, we always do an autoapply
-  if (!(field->flags() & taiData::flgNoEditDialogAutoApply)) {
+  if (!(field->flags() & taiWidget::flgNoEditDialogAutoApply)) {
     field->applyNow();
   }
   setApplyEnabled(false);

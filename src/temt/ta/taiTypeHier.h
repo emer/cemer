@@ -17,17 +17,17 @@
 #define taiTypeHier_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiTypeHier : public taiData {
+class TA_API taiTypeHier : public taiWidget {
   // for menus of type hierarchy
 public:
-  taiActions*   ta_actions;
+  taiWidgetActions*   ta_actions;
   bool          ownflag;
   bool          enum_mode; // when set, creates a hier of enum TypeDefs, for picking an enum type
 
@@ -40,9 +40,9 @@ public:
   virtual void          GetImage(TypeDef* ths);
   virtual TypeDef*      GetValue();
 
-  taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiTypeHier(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
-  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
   ~taiTypeHier(); //
 protected:
@@ -50,8 +50,8 @@ protected:
   bool          AddType_Class(TypeDef* typ_);
   int           CountChildren(TypeDef* typ_);
   int           CountEnums(TypeDef* typ_);
-  virtual void  GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn);
-  void  GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn); //
+  virtual void  GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn);
+  void  GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn); //
 };
 
 #endif // taiTypeHier_h

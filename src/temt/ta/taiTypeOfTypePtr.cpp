@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfTypePtr.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiTypeDefButton>
 
 
@@ -32,9 +32,9 @@ int taiTypeOfTypePtr::BidForType(TypeDef* td) {
 // and can't therefore figure out what kind of datarep to use..
 // need to have a datarep that is a "string or type menu" kind of thing..
 
-taiData* taiTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
+taiWidget* taiTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   if (orig_typ == NULL)
     return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
@@ -44,7 +44,7 @@ taiData* taiTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWi
   return rval;
 }
 
-void taiTypeOfTypePtr::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
   if (orig_typ == NULL) {
     taiType::GetImage_impl(dat, base);
     return;
@@ -55,7 +55,7 @@ void taiTypeOfTypePtr::GetImage_impl(taiData* dat, const void* base) {
   rval->GetImage((TypeDef*)*((void**)base), typ_);
 }
 
-void taiTypeOfTypePtr::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfTypePtr::GetValue_impl(taiWidget* dat, void* base) {
   if (orig_typ == NULL) {
     taiType::GetValue_impl(dat, base);
     return;

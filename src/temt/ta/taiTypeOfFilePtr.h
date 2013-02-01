@@ -30,10 +30,10 @@ class TA_API taiTypeOfFilePtr : public taiType {// ptr to tai_getFiles
   TAI_TYPEBASE_SUBCLASS(taiTypeOfFilePtr, taiType);
 public:
   int           BidForType(TypeDef* td);
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
 };
 
 #endif // taiTypeOfFilePtr_h

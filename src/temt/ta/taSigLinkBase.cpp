@@ -143,7 +143,7 @@ Browser/gui framework items
 ------
 
 */
-void taSigLinkBase::FillContextMenu_impl(taiActions* menu) {
+void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
   inherited::FillContextMenu_impl(menu);
 
   TypeDef* typ = GetDataTypeDef();
@@ -190,7 +190,7 @@ void taSigLinkBase::FillContextMenu_impl(taiActions* menu) {
     }
     else { // has to be "MENU_BUTTON"
       // create the submenus when needed, and locate -- default is last created one
-      taiActions *cur_menu = ta_menus.FindName(men_nm);
+      taiWidgetActions *cur_menu = ta_menus.FindName(men_nm);
       if (!cur_menu) {
         cur_menu = menu->AddSubMenu(men_nm);
         ta_menus.Add(cur_menu);
@@ -222,7 +222,7 @@ void taSigLinkBase::FillContextMenu_impl(taiActions* menu) {
     if (cnt == 0) menu->AddSep();
 
     // create the submenus when needed, and locate -- default is last created one
-    taiActions *cur_menu = ta_menus.FindName(men_nm);
+    taiWidgetActions *cur_menu = ta_menus.FindName(men_nm);
     if (!cur_menu) {
       cur_menu = menu->AddSubMenu(men_nm);
       ta_menus.Add(cur_menu);

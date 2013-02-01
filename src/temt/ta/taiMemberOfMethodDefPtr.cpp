@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfMethodDefPtr.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiMethodDefButton>
 #include <MethodDef>
 
@@ -24,17 +24,17 @@ int taiMemberOfMethodDefPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfMethodDefPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiMemberOfMethodDefPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   taiMethodDefButton* rval = new taiMethodDefButton(typ, host_,
     par, gui_parent_, flags_);
   return rval;
 }
 
-void taiMemberOfMethodDefPtr::GetImage_impl(taiData* dat, const void* base){
+void taiMemberOfMethodDefPtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
   taiMethodDefButton* rval = (taiMethodDefButton*)dat;
   MethodDef* cur_sel = *((MethodDef**)(new_base));
@@ -42,7 +42,7 @@ void taiMemberOfMethodDefPtr::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfMethodDefPtr::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfMethodDefPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiMethodDefButton* rval = (taiMethodDefButton*)dat;
   *((MethodDef**)new_base) = rval->GetValue();

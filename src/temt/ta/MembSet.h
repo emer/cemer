@@ -21,7 +21,7 @@
 
 // member includes:
 #include <Member_List>
-#include <taiDataList>
+#include <taiWidget_List>
 #include <taString>
 
 // declare all other types mentioned but not required to include:
@@ -29,7 +29,7 @@
 class TA_API MembSet { // #IGNORE
 public:
   Member_List           memb_el; // member elements (1:1 with data_el), empty in inline mode
-  taiDataList           data_el; // data elements (1:1 with memb_el WHEN section shown)
+  taiWidget_List           data_el; // data elements (1:1 with memb_el WHEN section shown)
   String                text; // for non-default guys, the text in the label or checkbox
   String                desc; // for non-default guys, the tooltip text
   bool                  show; // flag to help by indicating whether to show or not
@@ -46,9 +46,9 @@ public:
   int                   def_size; // set to how many you want to use default processing
   void                  SetMinSize(int n); // make sure there are at least n sets
   void                  ResetItems(bool data_only = false); // calls Reset on all lists
-  bool                  GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat = NULL);
+  bool                  GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat = NULL);
    // get the dat and/or mbr (both optional) from a flat idx
-  int                   GetFlatDataIndex(taiData* dat);
+  int                   GetFlatDataIndex(taiWidget* dat);
   int                   GetFlatDataIndex(MemberDef* mbr, taBase* base);
    // get the flat idx from a mbr/dat, -1 if not found
   int                   GetDataSize() const; // # data items

@@ -19,16 +19,16 @@
 
 #include <taMisc>
 
-taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
+taiTypeInfoBase::taiTypeInfoBase(taiWidgetActions::RepType rt, int ft,
                                  MemberDef* memb_md_, TypeDef* typ_,
-                                 IWidgetHost* host_, taiData* par,
+                                 IWidgetHost* host_, taiWidget* par,
                                  QWidget* gui_parent_, int flags_)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+  : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   targ_typ = NULL; // gets set later
   memb_md = memb_md_;
   menubase = NULL;
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
 }
 
 taiTypeInfoBase::~taiTypeInfoBase() {

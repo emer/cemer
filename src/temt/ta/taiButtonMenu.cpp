@@ -20,9 +20,9 @@
 
 
 
-taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
-                             QWidget* gui_parent_, int flags_, taiActions* par_menu_)
-  : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
+taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
+                             QWidget* gui_parent_, int flags_, taiWidgetActions* par_menu_)
+  : taiWidgetActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
   init();
 }

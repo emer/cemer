@@ -20,7 +20,7 @@
 #include <taiElBase>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 
@@ -45,13 +45,13 @@ public:
     // gets or updates the menu
 
 private: //test for usage
-  taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiToken(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);
 protected:
   taBase*               scope_ref;      // reference object for scoping, default is none
 
-  virtual void  GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
+  virtual void  GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
 
 protected slots:
   virtual void  Edit();         // for edit callback

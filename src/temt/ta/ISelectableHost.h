@@ -67,9 +67,9 @@ public:
   virtual ISelectable_PtrList&  selItems() {return sel_items;} // currently selected items
   virtual QWidget*      widget() = 0; // provides a gui parent for things like context menus
 
-  virtual void          FillContextMenu(taiActions* menu);
+  virtual void          FillContextMenu(taiWidgetActions* menu);
     // s/b called by desc class, to put dynaction items onto menu
-  virtual void          AddDynActions(taiActions* menu, int dyn_list,
+  virtual void          AddDynActions(taiWidgetActions* menu, int dyn_list,
     ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT);
    // add the dynamic guys to the given menu (note: FillContextMenu does this too)
 
@@ -112,11 +112,11 @@ protected:
   ISelectable*          ctxt_item; // during drop, holds the item dropped on; for context, holds the item
 
   virtual void          FillContextMenu_pre(ISelectable_PtrList& sel_items,
-    taiActions* menu) {} // hook
+    taiWidgetActions* menu) {} // hook
   void                  FillContextMenu_int(ISelectable_PtrList& sel_items,
-    taiActions* menu, int dyn_list, ISelectable::GuiContext sh_typ);
+    taiWidgetActions* menu, int dyn_list, ISelectable::GuiContext sh_typ);
   virtual void          FillContextMenu_post(ISelectable_PtrList& sel_items,
-    taiActions* menu) {} // hook
+    taiWidgetActions* menu) {} // hook
 
   virtual void          EditAction_Delete(ISelectable::GuiContext gc_typ); // actually does the Edit/Delete
   virtual void          UpdateSelectedItems_impl() = 0;

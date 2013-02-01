@@ -233,7 +233,7 @@ void taiEditorOfClass::Constr_Data_Labels() {
 void taiEditorOfClass::Constr_Inline() {
   data_el(0).Reset(); // should already be clear
   // specify inline flag, just to be sure
-  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
+  taiWidget* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiWidget::flgInline);
   data_el(0).Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   bool fill_hor = mb_dat->fillHor();
@@ -241,7 +241,7 @@ void taiEditorOfClass::Constr_Inline() {
 }
 
 void taiEditorOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
-  taiDataList* dl)
+  taiWidget_List* dl)
 {
   String name;
   String desc;
@@ -249,7 +249,7 @@ void taiEditorOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     MemberDef* md = ms->FastEl(i);
 
     // Create data widget
-    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body);
     dl->Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
@@ -533,7 +533,7 @@ void taiEditorOfClass::GetImage_Membs() {
 }
 
 void taiEditorOfClass::GetImageInline_impl(const void* base) {
-  taiData* mb_dat = data_el(0).SafeEl(0);
+  taiWidget* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetImage(mb_dat, base);
 }
@@ -545,12 +545,12 @@ void taiEditorOfClass::GetImage_Membs_def() {
   }
 }
 
-void taiEditorOfClass::GetImage_impl(const Member_List* ms, const taiDataList& dl,
+void taiEditorOfClass::GetImage_impl(const Member_List* ms, const taiWidget_List& dl,
   void* base)
 {
   for (int i = 0; i < dl.size; ++i) {
     MemberDef* md = ms->SafeEl(i);
-    taiData* mb_dat = dl.SafeEl(i);
+    taiWidget* mb_dat = dl.SafeEl(i);
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditorOfClass::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
@@ -606,14 +606,14 @@ void taiEditorOfClass::GetValue_Membs_def() {
   }
 }
 
-void taiEditorOfClass::GetValue_impl(const Member_List* ms, const taiDataList& dl,
+void taiEditorOfClass::GetValue_impl(const Member_List* ms, const taiWidget_List& dl,
   void* base) const
 {
   taBase* rbase = Base();
   bool first_diff = true;
   for (int i = 0; i < ms->size; ++i) {
     MemberDef* md = ms->FastEl(i);
-    taiData* mb_dat = dl.SafeEl(i);
+    taiWidget* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
       taMisc::Error("taiEditorOfClass::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
     else {
@@ -628,7 +628,7 @@ void taiEditorOfClass::GetValue_impl(const Member_List* ms, const taiDataList& d
 }
 
 void taiEditorOfClass::GetValueInline_impl(void* base) const {
-  taiData* mb_dat = data_el(0).SafeEl(0);
+  taiWidget* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetValue(mb_dat, base);
 }
@@ -707,7 +707,7 @@ void taiEditorOfClass::SetCurMenuButton(MethodDef* md) {
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
-  cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+  cur_menu_but = taiWidgetActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
             NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu

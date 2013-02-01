@@ -26,9 +26,9 @@
 #include <taString>
 #ifndef __MAKETA__
 #include <taiMenu_List>
-#include <taiDataList>
+#include <taiWidget_List>
 #else
-class taiDataList;
+class taiWidget_List;
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -36,7 +36,7 @@ class taiMenu_List; //
 class taBase; //
 class IWidgetHost; //
 class taiMethodData; //
-class taiActions; //
+class taiWidgetActions; //
 class QLayout; //
 class IWidgetHost; //
 
@@ -74,8 +74,8 @@ protected:
   taBase*               base; // the object that has the methods
   TypeDef*              typ;
   taiMenu_List          ta_menu_buttons; // menu representations (from methods -- menubuttons only)
-  taiActions*           cur_menu_but; // current menu button to add to (if not otherwise
-  taiDataList           meth_el;        // method elements
+  taiWidgetActions*           cur_menu_but; // current menu button to add to (if not otherwise
+  taiWidget_List           meth_el;        // method elements
 
   void                  Constr_impl(taBase* base, IWidgetHost* host); // #IGNORE
   virtual void          Constr_Methods_impl(); // #IGNORE

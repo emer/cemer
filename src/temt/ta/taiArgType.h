@@ -48,15 +48,15 @@ public:
   virtual int   BidForArgType(int, TypeDef*, MethodDef*, TypeDef*)      { return 1; }
   // bid for (appropriateness) for given type of method and argument type
 
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 
   virtual cssEl* GetElFromArg(const char* arg_nm, void* base);
   // this is responsible for setting arg_base and arg_val (base is parent base)
 
   // base passed here is of the parent object(!)
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
 
   virtual bool  GetHasOption(const String& opt, MethodDef* md = NULL, int aidx = -1);
   // check the meth->HasOption, also taking into account a possible restriction to a particular argument index, specified as opt_n_xxx where n = arg idx

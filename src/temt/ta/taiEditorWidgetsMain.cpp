@@ -15,7 +15,7 @@
 
 #include "taiEditorWidgetsMain.h"
 #include <iLabel>
-#include <taiData>
+#include <taiWidget>
 #include <iFormLayout>
 #include <iEditGrid>
 #include <iScrollArea>
@@ -30,7 +30,7 @@
 #define LAYBODY_SPACING 0
 
 iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par,
-  int ctrl_size, const String& desc, taiData* buddy,
+  int ctrl_size, const String& desc, taiWidget* buddy,
   QObject* ctx_obj, const char* ctx_slot, int row)
 {
   iLabel* label = new iLabel(row, name, par);
@@ -42,7 +42,7 @@ iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par
       (label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
        ctx_obj, ctx_slot );
   }
-  // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
+  // if it is an iLabel connecting a taiWidget, then connect the highlighting for non-default values
   QWidget* buddy_widg = NULL;
   if (buddy) {
     buddy->setLabel(label);
@@ -127,7 +127,7 @@ int taiEditorWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& d
 }
 
 int taiEditorWidgetsMain::AddNameData(int row, const String& name, const String& desc,
-   QWidget* data, taiData* buddy, MemberDef* md, bool fill_hor)
+   QWidget* data, taiWidget* buddy, MemberDef* md, bool fill_hor)
 {
   if (row < 0)
     row = layBody->rowCount();

@@ -19,7 +19,7 @@ MembSet_List::~MembSet_List() {
   Reset();
 }
 
-bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
+bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat) {
   for (int i = 0; i < size; ++i) {
     MembSet* ms = FastEl(i);
     int msd_size = ms->data_el.size;
@@ -37,7 +37,7 @@ bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
   return false;
 }
 
-int MembSet_List::GetFlatDataIndex(taiData* dat) {
+int MembSet_List::GetFlatDataIndex(taiWidget* dat) {
   if (!dat) return -1;
   int rval = 0;
   for (int i = 0; i < size; ++i) {

@@ -15,10 +15,10 @@
 
 #include "taGuiWidget.h"
 #include <taGuiWidgetHelper>
-#include <taiIncrField>
-#include <taiField>
-#include <taiBitBox>
-#include <taiComboBox>
+#include <taiWidgetIncrField>
+#include <taiWidgetField>
+#include <taiWidgetBitBox>
+#include <taiWidgetComboBox>
 #include <taiToggle>
 #include <taGuiDialog>
 #include <taiTokenPtrButton>
@@ -77,16 +77,16 @@ void taGuiWidget::GetImage() {
   }
   if(!tai_data || data.isNull()) return;
   if(widget_type == "IntField") {
-    ((taiIncrField*)tai_data)->GetImage((String)*((int*)data.toPtr()));
+    ((taiWidgetIncrField*)tai_data)->GetImage((String)*((int*)data.toPtr()));
   }
   if(widget_type == "DoubleField") {
-    ((taiField*)tai_data)->GetImage((String)*((double*)data.toPtr()));
+    ((taiWidgetField*)tai_data)->GetImage((String)*((double*)data.toPtr()));
   }
   if(widget_type == "FloatField") {
-    ((taiField*)tai_data)->GetImage((String)*((float*)data.toPtr()));
+    ((taiWidgetField*)tai_data)->GetImage((String)*((float*)data.toPtr()));
   }
   if(widget_type == "StringField") {
-    ((taiField*)tai_data)->GetImage(*((String*)data.toPtr()));
+    ((taiWidgetField*)tai_data)->GetImage(*((String*)data.toPtr()));
   }
   if(widget_type == "BoolCheckbox") {
     ((taiToggle*)tai_data)->GetImage(*((bool*)data.toPtr()));
@@ -99,32 +99,32 @@ void taGuiWidget::GetImage() {
     ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }
   if(widget_type == "HardEnum_Enum") {
-    ((taiComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+    ((taiWidgetComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
   }
   if(widget_type == "HardEnum_Bits") {
-    ((taiBitBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+    ((taiWidgetBitBox*)tai_data)->GetImage(*((int*)data.toPtr()));
   }
   if(widget_type == "DynEnum_Enum") {
-    ((taiComboBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+    ((taiWidgetComboBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
   }
   if(widget_type == "DynEnum_Bits") {
-    ((taiBitBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+    ((taiWidgetBitBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
   }
 }
 
 void taGuiWidget::GetValue() {
   if(!tai_data || data.isNull()) return;
   if(widget_type == "IntField") {
-    *((int*)data.toPtr()) = (int)((taiIncrField*)tai_data)->GetValue();
+    *((int*)data.toPtr()) = (int)((taiWidgetIncrField*)tai_data)->GetValue();
   }
   if(widget_type == "DoubleField") {
-    *((double*)data.toPtr()) = (double)((taiField*)tai_data)->GetValue();
+    *((double*)data.toPtr()) = (double)((taiWidgetField*)tai_data)->GetValue();
   }
   if(widget_type == "FloatField") {
-    *((float*)data.toPtr()) = (float)((taiField*)tai_data)->GetValue();
+    *((float*)data.toPtr()) = (float)((taiWidgetField*)tai_data)->GetValue();
   }
   if(widget_type == "StringField") {
-    *((String*)data.toPtr()) = ((taiField*)tai_data)->GetValue();
+    *((String*)data.toPtr()) = ((taiWidgetField*)tai_data)->GetValue();
   }
   if(widget_type == "BoolCheckbox") {
     *((bool*)data.toPtr()) = ((taiToggle*)tai_data)->GetValue();
@@ -133,16 +133,16 @@ void taGuiWidget::GetValue() {
     *((taBaseRef*)data.toPtr()) = ((taiTokenPtrButton*)tai_data)->GetValue();
   }
   if(widget_type == "HardEnum_Enum") {
-    ((taiComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+    ((taiWidgetComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));
   }
   if(widget_type == "HardEnum_Bits") {
-    ((taiBitBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+    ((taiWidgetBitBox*)tai_data)->GetValue(*((int*)data.toPtr()));
   }
   if(widget_type == "DynEnum_Enum") {
-    ((taiComboBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
+    ((taiWidgetComboBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
   }
   if(widget_type == "DynEnum_Bits") {
-    ((taiBitBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
+    ((taiWidgetBitBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
   }
 //   if(widget_type == "DataTable") {
 //     iDataTableEditor* edt = (iDataTableEditor*)widget;

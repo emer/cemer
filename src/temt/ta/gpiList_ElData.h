@@ -20,7 +20,7 @@
 #include "ta_def.h"
 
 // member includes:
-#include <taiDataList>
+#include <taiWidget_List>
 #include <Member_List>
 
 // declare all other types mentioned but not required to include:
@@ -32,7 +32,7 @@ public:
   TypeDef*      typ;
   taBase*               cur_base;
   Member_List   memb_el; // members
-  taiDataList   data_el; // data elements for members
+  taiWidget_List   data_el; // data elements for members
 
   gpiList_ElData(TypeDef* tp, taBase* base);
   virtual ~gpiList_ElData();

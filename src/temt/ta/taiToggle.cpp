@@ -19,8 +19,8 @@
 #include <taiMisc>
 
 
-taiToggle::taiToggle(TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
-       taiData(typ_, host_, par, gui_parent_, flags_)
+taiToggle::taiToggle(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) :
+       taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep( new iCheckBox(gui_parent_) );
   rep()->setFixedHeight(taiM->label_height(defSize()));

@@ -17,23 +17,23 @@
 #define taiTypeInfoBase_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 
 
 
-class TA_API taiTypeInfoBase : public taiData {
+class TA_API taiTypeInfoBase : public taiWidget {
   // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option
-  INHERITED(taiData)
+  INHERITED(taiWidget)
 public:
   MemberDef*    memb_md; // MemberDef of the member that will get the target pointer
   TypeDef*      targ_typ;       // target type from which to get list of items -- may be same as typ, but could differ
   void*         menubase;       // the address of the object
-  taiActions*   ta_actions;
+  taiWidgetActions*   ta_actions;
 
   override QWidget* GetRep();
 
@@ -41,8 +41,8 @@ public:
   virtual void          GetMenu() = 0;
   virtual void          GetImage(const void* base, bool get_menu = true, void* cur_sel = NULL);
 
-  taiTypeInfoBase(taiActions::RepType rt, int ft, MemberDef* memb_md_,
-    TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiTypeInfoBase(taiWidgetActions::RepType rt, int ft, MemberDef* memb_md_,
+    TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0); // if targ_type is null, it will be determined
   ~taiTypeInfoBase();
 protected:

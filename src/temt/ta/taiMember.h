@@ -58,25 +58,25 @@ public:
 //
 //   // default member action is to pass thru to the type
 //
-  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiWidget*     GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
-  // get taiData rep of type -- delegates to mbr's it
+  // get taiWidget rep of type -- delegates to mbr's it
   DefaultStatus         GetDefaultStatus(String memb_val);
     // get status of value, if is default value or not
-  override void         GetImage(taiData* dat, const void* base);
+  override void         GetImage(taiWidget* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  virtual void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  virtual void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
   // this is the one to call to get a member value (GetValue is not used)
-  // TODO: should this class override void GetValue(taiData* dat, void * base); as a noop?
+  // TODO: should this class override void GetValue(taiWidget* dat, void * base); as a noop?
 
   virtual TypeDef*      GetTargetType(const void* base);
   // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
 
   // script-generation code
-  virtual void  GetOrigVal(taiData* dat, const void* base);
+  virtual void  GetOrigVal(taiWidget* dat, const void* base);
         // gets original value and adds it to the orig_vals list
   virtual void  StartScript(const void* base);
-  virtual void  CmpOrigVal(taiData* dat, const void* base, bool& first_diff);
+  virtual void  CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff);
         // compares to original value and generates script code to change it
 
   taiMember(MemberDef* mb, TypeDef* td) : taiType(td)   { mbr = mb; }
@@ -92,19 +92,19 @@ public:
 protected:
   // the "Arbitrate routines all apply the same logic of ro, and subtype, to call
   // either that guy, or our own -- only SpecPtr overrides these
-  virtual taiData*      GetArbitrateDataRep(IWidgetHost* host_, taiData* par,
+  virtual taiWidget*      GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr); // gets sub or this, and factors ro
-  virtual void          GetArbitrateImage(taiData* dat, const void* base);
+  virtual void          GetArbitrateImage(taiWidget* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  virtual void          GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
+  virtual void          GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
 
-  override taiData*     GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  override taiWidget*     GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  override void         GetImage_impl(taiData* dat, const void* base);
+  override void         GetImage_impl(taiWidget* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  virtual void          GetMbrValue_impl(taiData* dat, void* base);
-  override bool         isReadOnly(taiData* dat, IWidgetHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
-  void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiData* dat, const void* base);
+  virtual void          GetMbrValue_impl(taiWidget* dat, void* base);
+  override bool         isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
+  void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat, const void* base);
 };
 
 

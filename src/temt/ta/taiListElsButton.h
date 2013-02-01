@@ -36,7 +36,7 @@ public:
 
   void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
 
-  taiListElsButton(TypeDef* typ, IWidgetHost* host, taiData* par,
+  taiListElsButton(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                    QWidget* gui_parent_, int flags_ = 0,
                    const String& flt_start_txt = ""); //note: typ is type of list
 };

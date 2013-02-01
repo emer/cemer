@@ -86,7 +86,7 @@ void taiEditorOfWizard::Constr_Data_Labels()
 }
 
 void taiEditorOfWizard::Constr_Data_Labels_impl(int& idx, Member_List* ms,
-     taiDataList* dl)
+     taiWidget_List* dl)
 {
 }
 

@@ -17,12 +17,12 @@
 #include <taGuiEditor>
 #include <Program>
 #include <ProgVar>
-#include <taiIncrField>
-#include <taiField>
+#include <taiWidgetIncrField>
+#include <taiWidgetField>
 #include <taiToggle>
 #include <taiTokenPtrButton>
-#include <taiBitBox>
-#include <taiComboBox>
+#include <taiWidgetBitBox>
+#include <taiWidgetComboBox>
 #include <iComboBox>
 #include <taiMemberOfDynEnum>
 #include <iDataTableEditor>
@@ -122,7 +122,7 @@ String taGuiDialog::GetAttribute(const String& key, const String& attributes) {
 
 taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const String& typ,
                                          const String& layout, const String& attributes,
-                                         Variant data, const String& url, taiData* taidata) {
+                                         Variant data, const String& url, taiWidget* taidata) {
   if(!data_host) Reset();               // make sure constructed!
   if(!widg) return NULL;
   if(layout.nonempty()) {
@@ -452,7 +452,7 @@ bool taGuiDialog::AddIntField(int* int_var, const String& nm, const String& pare
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiIncrField* taidata = new taiIncrField(&TA_int, data_host, NULL, par->widget);
+  taiWidgetIncrField* taidata = new taiWidgetIncrField(&TA_int, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "IntField", layout, attributes,
                                   Variant((void*)int_var), _nilString, taidata);
   return (bool)w;
@@ -465,7 +465,7 @@ bool taGuiDialog::AddDoubleField(double* dvar, const String& nm, const String& p
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
+  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "DoubleField", layout, attributes,
                                   Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
@@ -478,7 +478,7 @@ bool taGuiDialog::AddFloatField(float* dvar, const String& nm, const String& par
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
+  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "FloatField", layout, attributes,
                                   Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
@@ -491,7 +491,7 @@ bool taGuiDialog::AddStringField(String* dvar, const String& nm, const String& p
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiField* taidata = new taiField(&TA_int, data_host, NULL, par->widget);
+  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "StringField", layout, attributes,
                                   Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
@@ -537,12 +537,12 @@ bool taGuiDialog::AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
   atts = String("enum_type=") + enum_td->name + "; " + atts;
   taGuiWidget* w = NULL;
   if(enum_td->HasOption("BITS")) {
-    taiBitBox* taidata = new taiBitBox(true, enum_td, data_host, NULL, par->widget);
+    taiWidgetBitBox* taidata = new taiWidgetBitBox(true, enum_td, data_host, NULL, par->widget);
     w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Bits",
                        layout, atts, Variant((void*)iptr), _nilString, taidata);
   }
   else {
-    taiComboBox* taidata = new taiComboBox(true, enum_td, data_host, NULL, par->widget);
+    taiWidgetComboBox* taidata = new taiWidgetComboBox(true, enum_td, data_host, NULL, par->widget);
     w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Enum",
                        layout, atts, Variant((void*)iptr), _nilString, taidata);
   }
@@ -560,13 +560,13 @@ bool taGuiDialog::AddDynEnum(DynEnum* deptr, const String& nm,
 //   atts = String("enum_type=") + enum_td->name + "; " + atts;
   taGuiWidget* w = NULL;
   if(deptr->enum_type->bits) {
-    taiBitBox* taidata = new taiBitBox(&TA_DynEnum, data_host, NULL, par->widget);
+    taiWidgetBitBox* taidata = new taiWidgetBitBox(&TA_DynEnum, data_host, NULL, par->widget);
     taiMemberOfDynEnum::UpdateDynEnumBits(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Bits",
                        layout, atts, Variant((void*)deptr), _nilString, taidata);
   }
   else {
-    taiComboBox* taidata = new taiComboBox(&TA_DynEnum, data_host, NULL, par->widget);
+    taiWidgetComboBox* taidata = new taiWidgetComboBox(&TA_DynEnum, data_host, NULL, par->widget);
     taiMemberOfDynEnum::UpdateDynEnumCombo(taidata, *deptr);
     w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Enum",
                        layout, atts, Variant((void*)deptr), _nilString, taidata);

@@ -19,17 +19,17 @@
 #include <taiEdit>
 
 
-taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiSubToken::taiSubToken(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                          QWidget* gui_parent_, int flags_)
   : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   menubase = NULL;
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_); //note: only needs taiMenu, but this doesn't hurt
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_); //note: only needs taiMenu, but this doesn't hurt
   ownflag = true;
 }
 
 taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host_,
-                         taiData* par, QWidget* gui_parent_, int flags_)
+                         taiWidget* par, QWidget* gui_parent_, int flags_)
   : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   menubase = NULL;

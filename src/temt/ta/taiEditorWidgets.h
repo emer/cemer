@@ -102,7 +102,7 @@ public slots:
 protected:
   bool                  show_meth_buttons; // true if any are created
   bool                  sel_edit_mbrs; // support right-click for seledit of mbrs
-  taiData*              sel_item_dat; // ONLY used/valid in handling of context menu for select edits
+  taiWidget*              sel_item_dat; // ONLY used/valid in handling of context menu for select edits
   MemberDef*            sel_item_mbr; // ONLY used/valid in handling of context menu for select edits
   taBase*               sel_item_base; // ONLY used/valid in handling of context menu for select edits
   bool                  rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)

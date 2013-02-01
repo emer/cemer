@@ -33,16 +33,16 @@ cssEl* taiArgTypeOfMemberPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfMemberPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiArgTypeOfMemberPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  flags_ |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+  flags_ |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
 
   taiMemberDefButton* rval = new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiArgTypeOfMemberPtr::GetImage_impl(taiData* dat, const void* base) {
+void taiArgTypeOfMemberPtr::GetImage_impl(taiWidget* dat, const void* base) {
   if(arg_base == NULL)
     return;
   taiMemberDefButton* rval = (taiMemberDefButton*)dat;
@@ -50,7 +50,7 @@ void taiArgTypeOfMemberPtr::GetImage_impl(taiData* dat, const void* base) {
   rval->GetImage(md, typ);
 }
 
-void taiArgTypeOfMemberPtr::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfMemberPtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   taiMemberDefButton* rval = (taiMemberDefButton*)dat;

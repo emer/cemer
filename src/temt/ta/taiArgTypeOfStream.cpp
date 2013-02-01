@@ -53,7 +53,7 @@ cssEl* taiArgTypeOfStream::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfStream::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfStream::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (!gf) {
     // we get and initialize the filer once
     gf = taBase::StatGetFiler(meth);
@@ -66,7 +66,7 @@ taiData* taiArgTypeOfStream::GetDataRep_impl(IWidgetHost* host_, taiData* par, Q
   return new taiFileButton(NULL, host_, par, gui_parent_, flags_);
 }
 
-void taiArgTypeOfStream::GetImage_impl(taiData* dat, const void* base){
+void taiArgTypeOfStream::GetImage_impl(taiWidget* dat, const void* base){
   if (arg_base == NULL)
     return;
   taiFileButton* fbut = (taiFileButton*) dat;
@@ -74,7 +74,7 @@ void taiArgTypeOfStream::GetImage_impl(taiData* dat, const void* base){
   fbut->GetImage();
 }
 
-void taiArgTypeOfStream::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfStream::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   GetValueFromGF();

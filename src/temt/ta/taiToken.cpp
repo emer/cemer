@@ -24,11 +24,11 @@
 
 
 
-taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiToken::taiToken(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                    QWidget* gui_parent_, int flags_)
   : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ_, host_, this, gui_parent_);
   ownflag = true;
   scope_ref = NULL;
 }
@@ -91,7 +91,7 @@ taBase* taiToken::GetValue() {
   return cur_obj;
 }
 
-void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* actn) {
+void taiToken::GetMenu_impl(taiWidgetActions* menu, TypeDef* td, const taiMenuAction* actn) {
   if (!td->IsActualTaBase()) return; // sanity check, so we don't crash...
 
   if (!td->tokens.keep) {

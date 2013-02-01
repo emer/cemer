@@ -28,13 +28,13 @@ int taiMemberOfListDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
-        NULL, typ, host_, par, gui_parent_, (flags_ | taiData::flgNullOk | taiData::flgNoList));
+        NULL, typ, host_, par, gui_parent_, (flags_ | taiWidget::flgNullOk | taiWidget::flgNoList));
   return rval;
 }
 
-void taiMemberOfListDefaultEl::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfListDefaultEl::GetImage_impl(taiWidget* dat, const void* base) {
   taList_impl* tl = (taList_impl*)base;
   taBase* tmp_ptr = tl->DefaultEl_();
   gpiListEls* rval = (gpiListEls*)dat;
@@ -42,7 +42,7 @@ void taiMemberOfListDefaultEl::GetImage_impl(taiData* dat, const void* base) {
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfListDefaultEl::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMemberOfListDefaultEl::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   taList_impl* tl = (taList_impl*)base;
   gpiListEls* rval = (gpiListEls*)dat;
   taBase* tmp_ptr = rval->GetValue();

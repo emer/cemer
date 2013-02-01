@@ -17,23 +17,23 @@
 #define taiButtonMenu_h 1
 
 // parent includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class QAbstractButton;
 
-class TA_API taiButtonMenu: public taiActions {
+class TA_API taiButtonMenu: public taiWidgetActions {
   // a button, in which the actions appear as a popup menu; can also just be an Edit button, with no menu (pass flgEditOnly)
   Q_OBJECT
-  INHERITED(taiActions)
+  INHERITED(taiWidgetActions)
 public:
   inline QAbstractButton* rep() {return (QAbstractButton*)(QWidget*)m_rep;}
 
   override void         Delete(); // should delete the menu if we didn't use it
   taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
-      taiData* par, QWidget* gui_parent_, int flags_ = 0, taiActions* par_menu_ = NULL);
+      taiWidget* par, QWidget* gui_parent_, int flags_ = 0, taiWidgetActions* par_menu_ = NULL);
 private:
   void                  init();
 };

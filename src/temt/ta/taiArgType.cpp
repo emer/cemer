@@ -59,7 +59,7 @@ taiArgType::~taiArgType() {
   }
 }
 
-void taiArgType::GetImage_impl(taiData* dat, const void* base) {
+void taiArgType::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)  return;
 
   if (arg_val && GetHasOption("ARG_VAL_FM_FUN")) {
@@ -75,7 +75,7 @@ void taiArgType::GetImage_impl(taiData* dat, const void* base) {
     arg_typ->it->GetImage(dat, arg_base);
 }
 
-void taiArgType::GetValue_impl(taiData* dat, void*) {
+void taiArgType::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL) return;
 
   if (use_it)
@@ -84,10 +84,10 @@ void taiArgType::GetValue_impl(taiData* dat, void*) {
     arg_typ->it->GetValue(dat, arg_base);
 }
 
-taiData* taiArgType::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgType::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (arg_base == NULL) return NULL;
 
-  taiData* rval;
+  taiWidget* rval;
   if (use_it)
     rval = use_it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
   else

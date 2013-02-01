@@ -15,7 +15,7 @@
 
 #include "ISelectableHost.h"
 #include <SelectableHostHelper>
-#include <taiActions>
+#include <taiWidgetActions>
 #include <taiMimeSource>
 #include <taiClipData>
 #include <taBase_RefList>
@@ -69,7 +69,7 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
     SelectionChanged(forced);
 }
 
-void ISelectableHost::AddDynActions(taiActions* menu, int dyn_list,
+void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
   ISelectable::GuiContext gc_typ)
 {
   if (dyn_actions[dyn_list].count() == 0) return;
@@ -190,7 +190,7 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
   helper->Emit_NotifySignal(op);
 }
 
-void ISelectableHost::FillContextMenu(taiActions* menu) {
+void ISelectableHost::FillContextMenu(taiWidgetActions* menu) {
   if (sel_items.size == 0) return; // shouldn't happen
   QObject::connect(menu, SIGNAL(destroyed()), helper, SLOT(ctxtMenu_destroyed()) );
   ISelectable_PtrList& sel_items = selItems();
@@ -228,7 +228,7 @@ void ISelectableHost::FillContextMenu(taiActions* menu) {
 }
 
 void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& sel_items,
-  taiActions* menu, int dyn_list, ISelectable::GuiContext sh_typ)
+  taiWidgetActions* menu, int dyn_list, ISelectable::GuiContext sh_typ)
 {
   UpdateMethodsActions(dyn_list, sh_typ);
 

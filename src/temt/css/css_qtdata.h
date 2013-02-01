@@ -20,10 +20,10 @@
 #define CSS_QTDATA_H
 
 #include "css_def.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiType_List>
-#include <taiDataList>
-#include <taiActions>
+#include <taiWidget_List>
+#include <taiWidgetActions>
 #include <taiMethMenu>
 
 // forward declarations
@@ -34,17 +34,17 @@ class cssProgSpace;
 
 
 //////////////////////////////
-//   taiData for css        //
+//   taiWidget for css        //
 //////////////////////////////
 
-class CSS_API cssiPolyData : public taiData {
+class CSS_API cssiPolyData : public taiWidget {
   // supports INLINE members for css
 public:
   cssClassInst* obj;
-  taiDataList   data_el;
+  taiWidget_List   data_el;
   taiType_List  type_el; // type elements (not stored on classes, so kept here)
 
-  cssiPolyData(cssClassInst* ob, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+  cssiPolyData(cssClassInst* ob, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                QWidget* gui_parent, int flags_ = 0);
   ~cssiPolyData();
 
@@ -69,7 +69,7 @@ public:
   cssClassInst*         arg_obj;        // argument object (if necc)
 
   cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-        TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
+        TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_ = 0);
 //  ~cssiMethMenu();
 
   void          ShowReturnVal(cssEl* rval);
@@ -78,7 +78,7 @@ public:
 
   void          GenerateScript(); // output script code equivalent if recording
 
-  override void         AddToMenu(taiActions* menu);
+  override void         AddToMenu(taiWidgetActions* menu);
 
 public slots:
   void          CallFun();      // (override) call the function..

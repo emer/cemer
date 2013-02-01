@@ -32,7 +32,7 @@
 class TypeDef; // 
 class taiSigLink; // 
 class taSigLink; // 
-class taiBitBox; //
+class taiWidgetBitBox; //
 class iMainWindowViewer; //
 class QVBoxLayout; // 
 class iLineEdit; //
@@ -87,7 +87,7 @@ public:
   static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
   QVBoxLayout*          layOuter;
-  taiBitBox*              bbOptions;
+  taiWidgetBitBox*              bbOptions;
   iLineEdit*                search;
   QAbstractButton*          btnGo;
   QAbstractButton*          btnStop;

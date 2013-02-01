@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfVariant.h"
-#include <taiVariant>
+#include <taiWidgetVariant>
 #include <QVariant>
 
 
@@ -24,9 +24,9 @@ int taiTypeOfVariant::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfVariant::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
+taiWidget* taiTypeOfVariant::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
   // todo: this needs to be in GetImage I guess -- and variant needs meth to not show type
-  // AND it needs to be a taiVariantMember instead of taiTypeOfVariant.  ugh.
+  // AND it needs to be a taiWidgetVariantMember instead of taiTypeOfVariant.  ugh.
 //   if(md) {
 //     String fixtyp = md->OptionAfter("FIXTYPE_ON_");
 //     if(fixtyp.nonempty()) {
@@ -36,25 +36,25 @@ taiData* taiTypeOfVariant::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWi
 //                                                    fixtyp, false); // no warn
 //       if (tdmd && (tdmd->type == &TA_bool)) {
 //      if(*((bool*)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off)))) {
-//        flags_ |= taiVariantBase::flgFixedType;
+//        flags_ |= taiWidgetVariantBase::flgFixedType;
 //      }
 //       }
 
 //     }
 //   }
-  taiVariant* rval = new taiVariant(host_, par, gui_parent_, flags_);
+  taiWidgetVariant* rval = new taiWidgetVariant(host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiTypeOfVariant::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfVariant::GetImage_impl(taiWidget* dat, const void* base) {
   if (!base) return; // error
-  taiVariant* rval = (taiVariant*)dat;
+  taiWidgetVariant* rval = (taiWidgetVariant*)dat;
   rval->GetImage(*(Variant*)base);
 }
 
-void taiTypeOfVariant::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfVariant::GetValue_impl(taiWidget* dat, void* base) {
   if (!base) return; // error
-  taiVariant* rval = (taiVariant*)dat;
+  taiWidgetVariant* rval = (taiWidgetVariant*)dat;
 
   rval->GetValue(*(Variant*)base);
 }

@@ -26,7 +26,7 @@ int taiMemberOfRegexpDialog::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   // Get the iRegexpDialogPopulator instance that should be used for this field.
   iRegexpDialogPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");
@@ -41,7 +41,7 @@ taiData* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiData* p
   return new taiRegexpField(mbr->type, host_, par, gui_parent_, flags_, populator);
 }
 
-void taiMemberOfRegexpDialog::GetImage_impl(taiData* dat, const void* base){
+void taiMemberOfRegexpDialog::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
   taiRegexpField* rval = (taiRegexpField*)dat;
   // The 'base' pointer is the owner of the regexp field.
@@ -49,7 +49,7 @@ void taiMemberOfRegexpDialog::GetImage_impl(taiData* dat, const void* base){
   rval->GetImage(*((String*)new_base));
 }
 
-void taiMemberOfRegexpDialog::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfRegexpDialog::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiRegexpField* rval = (taiRegexpField*)dat;
   *((String*)new_base) = rval->GetValue();

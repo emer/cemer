@@ -21,7 +21,7 @@
 #include <IWidgetHost>
 
 // member includes:
-#include <taiDataList>
+#include <taiWidget_List>
 
 // declare all other types mentioned but not required to include:
 class HiLightButton; //
@@ -34,7 +34,7 @@ class QKeyEvent; //
 TypeDef_Of(iViewPanelFrame);
 
 class TA_API iViewPanelFrame: public iDataPanel, public virtual IWidgetHost {
-  // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IWidgetHost and Apply/Revert services, so you can use taiData ctrls
+  // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IWidgetHost and Apply/Revert services, so you can use taiWidget ctrls
   Q_OBJECT
   INHERITED(iDataPanel)
   friend class iViewPanelSet;
@@ -111,7 +111,7 @@ public slots:
   void                  Apply_Async();
 
 protected:
-  taiDataList           dl; // add any taiData guys you make to this, so they get deleted
+  taiWidget_List           dl; // add any taiWidget guys you make to this, so they get deleted
   iViewPanelSet*        m_dps; // set if we are in a viewpanelset
   taDataView*           m_dv;
   int                   updating; // #IGNORE >0 used to suppress update-related widget signals

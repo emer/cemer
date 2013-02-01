@@ -15,8 +15,8 @@
 
 #include "taiMemberOfTypeDefault.h"
 #include <TypeDefault>
-#include <taiPlusToggle>
-#include <taiData>
+#include <taiWidgetPlusToggle>
+#include <taiWidget>
 
 #include <taMisc>
 
@@ -26,12 +26,12 @@ int taiMemberOfTypeDefault::BidForMember(MemberDef*, TypeDef*) {
   return 0;
 }
 
-taiData* taiMemberOfTypeDefault::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* taiMemberOfTypeDefault::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                        taiType*, int flags_, MemberDef* mbr)
 {
-  taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
+  taiWidgetPlusToggle* rval = new taiWidgetPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
-  taiData* rdat;
+  taiWidget* rdat;
   if (HasLowerBidder()) {
     rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
   }
@@ -44,8 +44,8 @@ taiData* taiMemberOfTypeDefault::GetDataRep(IWidgetHost* host_, taiData* par, QW
   return rval;
 }
 
-void taiMemberOfTypeDefault::GetImage(taiData* dat, const void* base) {
-  QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
+void taiMemberOfTypeDefault::GetImage(taiWidget* dat, const void* base) {
+  QCAST_MBR_SAFE_EXIT(taiWidgetPlusToggle*, rval, dat)
   if (HasLowerBidder()) {
     LowerBidder()->GetImage(rval->data, base);
   }
@@ -68,9 +68,9 @@ void taiMemberOfTypeDefault::GetImage(taiData* dat, const void* base) {
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfTypeDefault::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMemberOfTypeDefault::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   //note: we don't call the inherited, or use the impls
-  QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
+  QCAST_MBR_SAFE_EXIT(taiWidgetPlusToggle*, rval, dat)
   if (HasLowerBidder()) {
     LowerBidder()->GetMbrValue(rval->data, base, first_diff);
   }

@@ -17,21 +17,21 @@
 #include <iVec2i>
 
 
-taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiData* par,
-                 QWidget* gui_parent_, int flags_, taiActions* par_menu_)
-  : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
+taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
+                 QWidget* gui_parent_, int flags_, taiWidgetActions* par_menu_)
+  : taiWidgetActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
   init();
 }
 
 /*nbg taiMenu::taiMenu(int rt, int st, int ft, QWidget* gui_parent_)
-: taiData(NULL, NULL, NULL, gui_parent_, 0)
+: taiWidget(NULL, NULL, NULL, gui_parent_, 0)
 {
   init(rt, st, ft, gui_parent_, NULL);
 } */
 
 taiMenu::taiMenu(QWidget* gui_parent_, int st, int ft, QMenu* exist_menu)
-  : taiActions(st, ft, NULL, NULL, NULL, gui_parent_, 0, NULL, true, exist_menu)
+  : taiWidgetActions(st, ft, NULL, NULL, NULL, gui_parent_, 0, NULL, true, exist_menu)
 {
   init();
 }

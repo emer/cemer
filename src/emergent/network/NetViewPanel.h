@@ -25,8 +25,8 @@
 // declare all other types mentioned but not required to include:
 class NetView; //
 class ColorScaleBar; //
-class taiField; //
-class taiComboBox; //
+class taiWidgetField; //
+class taiWidgetComboBox; //
 class taiGroupElsButton; //
 class iTreeView; //
 class iTreeViewItem; //
@@ -61,28 +61,28 @@ public:
   QCheckBox*                chkLayMove;
   QCheckBox*                chkNetText;
   QLabel*                   lblLayLayout;
-  taiComboBox*              cmbLayLayout;
+  taiWidgetComboBox*              cmbLayLayout;
   QLabel*                   lblTextRot;
-  taiField*                 fldTextRot;
+  taiWidgetField*                 fldTextRot;
   QLabel*                   lblUnitText;
-  taiComboBox*              cmbUnitText;
+  taiWidgetComboBox*              cmbUnitText;
   QLabel*                   lblDispMode;
-  taiComboBox*              cmbDispMode;
+  taiWidgetComboBox*              cmbDispMode;
   QLabel*                   lblPrjnDisp;
-  taiComboBox*              cmbPrjnDisp;
+  taiWidgetComboBox*              cmbPrjnDisp;
 
   QHBoxLayout*            layFontsEtc;
   QCheckBox*                chkShowIconified;
   QLabel*                   lblPrjnWdth;
-  taiField*                 fldPrjnWdth;
+  taiWidgetField*                 fldPrjnWdth;
   QLabel*                   lblUnitTrans;
-  taiField*                 fldUnitTrans;
+  taiWidgetField*                 fldUnitTrans;
   QLabel*                   lblUnitFont;
-  taiField*                 fldUnitFont;
+  taiWidgetField*                 fldUnitFont;
   QLabel*                   lblLayFont;
-  taiField*                 fldLayFont;
+  taiWidgetField*                 fldLayFont;
   QLabel*                   lblMinLayFont;
-  taiField*                 fldMinLayFont;
+  taiWidgetField*                 fldMinLayFont;
   QCheckBox*                chkXYSquare;
   QCheckBox*                chkLayGp;
 
@@ -93,30 +93,30 @@ public:
   QCheckBox*                chkWtLines;
   QCheckBox*                chkWtLineSwt;
   QLabel*                   lblWtLineWdth;
-  taiField*                 fldWtLineWdth;
+  taiWidgetField*                 fldWtLineWdth;
   QLabel*                   lblWtLineThr;
-  taiField*                 fldWtLineThr;
+  taiWidgetField*                 fldWtLineThr;
   QLabel*                   lblWtPrjnKUn;
-  taiField*                 fldWtPrjnKUn;
+  taiWidgetField*                 fldWtPrjnKUn;
   QLabel*                   lblWtPrjnKGp;
-  taiField*                 fldWtPrjnKGp;
+  taiWidgetField*                 fldWtPrjnKGp;
   QLabel*                   lblWtPrjnLay;
   taiGroupElsButton*        gelWtPrjnLay;
 
   QHBoxLayout*           layColorBar;
   QCheckBox*                chkSnapBord;
   QLabel*                   lblSnapBordWdth;
-  taiField*                 fldSnapBordWdth;
+  taiWidgetField*                 fldSnapBordWdth;
   QLabel*                   lblUnitSpacing;
-  taiField*                 fldUnitSpacing;
+  taiWidgetField*                 fldUnitSpacing;
   ColorScaleBar*           cbar;              // colorbar
   QPushButton*             butSetColor;
 
   QHBoxLayout*           layHistory;
   QToolBar*                histTB;
   QCheckBox*               chkHist;
-  taiField*                fldHistMax;
-  taiField*                fldHistFF;
+  taiWidgetField*                fldHistMax;
+  taiWidgetField*                fldHistFF;
   QAction*                 actBack_All;
   QAction*                 actBack_F;
   QAction*                 actBack;

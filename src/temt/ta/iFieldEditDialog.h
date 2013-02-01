@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 class iTextEdit; // 
 class QPushButton; // 
-class taiField;
+class taiWidgetField;
 
 
 class TA_API iFieldEditDialog : public iDialog {
@@ -42,7 +42,7 @@ public:
   bool          isReadOnly() { return m_read_only; }
   virtual void  setText(const QString& value);
 
-  iFieldEditDialog(bool modal_, bool read_only, const String& desc, taiField* parent);
+  iFieldEditDialog(bool modal_, bool read_only, const String& desc, taiWidgetField* parent);
   ~iFieldEditDialog();
 
 public slots:
@@ -50,7 +50,7 @@ public slots:
   override void reject();
 
 protected:
-  taiField*     field;
+  taiWidgetField*     field;
   bool          m_read_only;
 
   void          setApplyEnabled(bool enabled); // set apply/revert enabled or not

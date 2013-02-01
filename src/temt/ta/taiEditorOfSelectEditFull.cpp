@@ -89,7 +89,7 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL)) continue; // should only happen if created manually (Bad!)
-      taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+      taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body);
       memb_set->memb_el.Add(md);
       memb_set->data_el.Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
@@ -130,7 +130,7 @@ void taiEditorOfSelectEditFull::GetImage_Membs_def() {
   for (int j = 0; j < membs.size; ++j) {
     MembSet* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
-      taiData* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
@@ -149,7 +149,7 @@ void taiEditorOfSelectEditFull::GetValue_Membs_def() {
   for (int j = 0; j < membs.size; ++j) {
     MembSet* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
-      taiData* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {

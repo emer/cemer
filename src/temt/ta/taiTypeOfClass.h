@@ -34,15 +34,15 @@ public:
   override bool CanBrowse() const;
 
   int           BidForType(TypeDef* td);
-  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiWidget*     GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
          // add in req for inline
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
 protected:
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  taiData*      GetDataRepInline_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 };
 

@@ -231,7 +231,7 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
   IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
 }
 
-void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
+void iTreeViewItem::FillContextMenu_impl(taiWidgetActions* menu,
   GuiContext sh_typ) {
   //taiAction* mel =
   menu->AddItem("Find from here (Alt+F)...", taiMenu::use_default,

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfEnumTypePtr.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiEnumTypeDefButton>
 
 
@@ -25,11 +25,11 @@ int taiMemberOfEnumTypePtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfEnumTypePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* taiMemberOfEnumTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
   int flags_, MemberDef*)
 {
   if (mbr->HasOption("NULL_OK"))
-    flags_ |= taiData::flgNullOk;
+    flags_ |= taiWidget::flgNullOk;
   taiEnumTypeDefButton* rval =
     new taiEnumTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
   return rval;

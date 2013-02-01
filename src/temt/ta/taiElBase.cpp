@@ -14,12 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiElBase.h"
-#include <taiActions>
+#include <taiWidgetActions>
 
 
-taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IWidgetHost* host_, taiData* par,
+taiElBase::taiElBase(taiWidgetActions* actions_, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
                      QWidget* gui_parent_, int flags_)
-  : taiData(tp, host_, par, gui_parent_, flags_)
+  : taiWidget(tp, host_, par, gui_parent_, flags_)
 {
   cur_obj = NULL;
   ta_actions = actions_;
@@ -33,7 +33,7 @@ taiElBase::~taiElBase() {
   ta_actions = NULL;
 }
 
-void taiElBase::SigEmit(taiData* chld) {
+void taiElBase::SigEmit(taiWidget* chld) {
   if (HasFlag(flgAutoApply))
     applyNow();
   else inherited::SigEmit(chld);

@@ -99,7 +99,7 @@ void cssiEditDialog::Constr_Data_Labels() {
 
     type_el.Add(cit);
     // get the widget representation of the data
-    taiData* mb_dat = cit->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = cit->GetDataRep(this, NULL, body);
     data_el(0).Add(mb_dat);
     //AddData(index, mb_dat->GetRep());
     
@@ -130,7 +130,7 @@ int cssiEditDialog::Edit(bool modal_, int min_width, int min_height) {
 void cssiEditDialog::GetValue() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     cit->GetValue(mb_dat);
     cit->orig_obj->UpdateAfterEdit();
@@ -142,7 +142,7 @@ void cssiEditDialog::GetValue() {
 void cssiEditDialog::GetImage_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     cit->GetImage(mb_dat);
   }
@@ -452,7 +452,7 @@ void cssiArgDialog::Constr_Data_Labels() {
   for (int i = hide_args; i < type_el.size; ++i) {
     int j = i - hide_args;
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiData* mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
+    taiWidget* mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
 
     data_el(0).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
@@ -468,7 +468,7 @@ void cssiArgDialog::GetValue() {
   err_flag = false;
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetValue(mb_dat, root);
     if (art->err_flag)
@@ -491,7 +491,7 @@ void cssiArgDialog::GetValue() {
 void cssiArgDialog::GetImage(bool) {
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetImage(mb_dat, root);
   }
@@ -526,7 +526,7 @@ int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
     }
     else if(argt->IsBasePointerType()) {
       taiArgType* art = (taiArgType*)type_el.FastEl(hide_args);
-      taiData* mb_dat = data_el(0).SafeEl(hide_args);
+      taiWidget* mb_dat = data_el(0).SafeEl(hide_args);
       if (mb_dat == NULL) return false; // shouldn't happen
       art->GetImage(mb_dat, root);
       taiTokenPtrButton* tokbut = (taiTokenPtrButton*)mb_dat;

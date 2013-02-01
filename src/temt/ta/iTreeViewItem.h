@@ -31,10 +31,10 @@ class iTreeWidgetItem; // #IGNORE
 // declare all other types mentioned but not required to include:
 #ifndef __MAKETA__
 #include <iTreeView>
-#include <taiActions>
+#include <taiWidgetActions>
 #else
 class iTreeView;
-class taiActions;
+class taiWidgetActions;
 #endif
 
 /* Node Bitmap flags
@@ -130,8 +130,8 @@ public: // ISelectable interface
 //  override int                GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:
 //  override int                EditAction_impl(taiMimeSource* ms, int ea);
-//  override void               FillContextMenu_EditItems_impl(taiActions* menu, int allowed);
-  override void         FillContextMenu_impl(taiActions* menu,
+//  override void               FillContextMenu_EditItems_impl(taiWidgetActions* menu, int allowed);
+  override void         FillContextMenu_impl(taiWidgetActions* menu,
     GuiContext sh_typ); // this is the one to extend in inherited classes
   override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
     GuiContext sh_typ) const;  // OR's in allowed; OR's in forbidden

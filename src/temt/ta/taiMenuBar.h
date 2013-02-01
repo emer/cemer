@@ -17,7 +17,7 @@
 #define taiMenuBar_h 1
 
 // parent includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // member includes:
 
@@ -25,10 +25,10 @@
 class QMenuBar; //
 
 
-class TA_API taiMenuBar : public taiActions {
+class TA_API taiMenuBar : public taiWidgetActions {
   // top level menu bar
   Q_OBJECT
-  INHERITED(taiActions)
+  INHERITED(taiWidgetActions)
   friend class taiMenu_List; // hack because lists return refs to strings, not values
 public:
   inline QMenuBar*      rep_bar() {return (QMenuBar*)(QWidget*)m_rep;}
@@ -36,7 +36,7 @@ public:
   override void         AddSep(bool new_radio_grp = false) {} // no seps or groups allowed in a menubar
 
   taiMenuBar(int font_spec_, TypeDef* typ_, IWidgetHost* host,
-      taiData* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorOfClass
+      taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorOfClass
   taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by iDataViewer
   ~taiMenuBar();
 protected:

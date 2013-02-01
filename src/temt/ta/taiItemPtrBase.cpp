@@ -26,10 +26,10 @@
 
 
 taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
-                               IWidgetHost* host_, taiData* par,
+                               IWidgetHost* host_, taiWidget* par,
                                QWidget* gui_parent_, int flags_,
                                const String& flt_start_txt)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+  : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   item_filter = NULL;
   cust_chooser = NULL;

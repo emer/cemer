@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfInt.h"
-#include <taiIncrField>
+#include <taiWidgetIncrField>
 #include <MemberDef>
 #include <BuiltinTypeDefs>
 
@@ -39,10 +39,10 @@ int taiTypeOfInt::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfInt::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
-//TODO: the taiIncrField control can only handle int values, so can't handle uint range
+taiWidget* taiTypeOfInt::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
+//TODO: the taiWidgetIncrField control can only handle int values, so can't handle uint range
 // should either replace with a DoubleSpin, or longlongspin
-  taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
+  taiWidgetIncrField* rval = new taiWidgetIncrField(typ, host_, par, gui_parent_, flags_);
   // put limits on values -- start w/ explicit ones, them limit them by datatype
   int min = INT_MIN;
   if (mbr && mbr->HasOption("POS_ONLY")) // do this one first, then max of min
@@ -89,7 +89,7 @@ taiData* taiTypeOfInt::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget
   return rval;
 }
 
-void taiTypeOfInt::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfInt::GetImage_impl(taiWidget* dat, const void* base) {
   int val = 0;
   if (typ->DerivesFrom(&TA_int)) {
     val = *((int*)base);
@@ -116,12 +116,12 @@ void taiTypeOfInt::GetImage_impl(taiData* dat, const void* base) {
     // should never happen
   }
 
-  taiIncrField* rval = (taiIncrField*)dat;
+  taiWidgetIncrField* rval = (taiWidgetIncrField*)dat;
   rval->GetImage(val);
 }
 
-void taiTypeOfInt::GetValue_impl(taiData* dat, void* base) {
-  taiIncrField* rval = (taiIncrField*)dat;
+void taiTypeOfInt::GetValue_impl(taiWidget* dat, void* base) {
+  taiWidgetIncrField* rval = (taiWidgetIncrField*)dat;
   int val = rval->GetValue();
   if (typ->DerivesFrom(&TA_int)) {
     *((int*)base) = val;

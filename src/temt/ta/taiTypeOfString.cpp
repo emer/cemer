@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfString.h"
-#include <taiField>
+#include <taiWidgetField>
 #include <MemberDef>
 
 
@@ -24,8 +24,8 @@ int taiTypeOfString::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfString::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
-  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+taiWidget* taiTypeOfString::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
+  taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
   rval->lookupfun_md = md;              // for lookup function
   if(md) {
     String ew = md->OptionAfter("EDIT_WIDTH_");
@@ -39,11 +39,11 @@ taiData* taiTypeOfString::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWid
   return rval;
 }
 
-void taiTypeOfString::GetImage_impl(taiData* dat, const void* base) {
-  ((taiField*)dat)->lookupfun_base = GetCurParObjBase(); // for lookup function
+void taiTypeOfString::GetImage_impl(taiWidget* dat, const void* base) {
+  ((taiWidgetField*)dat)->lookupfun_base = GetCurParObjBase(); // for lookup function
   dat->GetImage_(base);
 }
 
-void taiTypeOfString::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfString::GetValue_impl(taiWidget* dat, void* base) {
   dat->GetValue_(base); //noop for taiEditButton
 }

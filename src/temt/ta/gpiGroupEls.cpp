@@ -24,13 +24,13 @@
 
 
 
-gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_, 
-  taiData* par, QWidget* gui_parent_, int flags_)
+gpiGroupEls::gpiGroupEls(taiWidgetActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IWidgetHost* host_, 
+  taiWidget* par, QWidget* gui_parent_, int flags_)
 : gpiListEls(rt,ft,lst, typ_, host_,par, gui_parent_, flags_)
 {
 }
 
-gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiData* par,
+gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_) // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 : gpiListEls(existing_menu, gp, tp, host_,par, gui_parent_, flags_)
 {
@@ -59,7 +59,7 @@ void gpiGroupEls::ChooseGp() {
   delete chs;
 }
 
-void gpiGroupEls::GetMenu_impl(taList_impl* cur_lst, taiActions* menu, taiMenuAction* actn) {
+void gpiGroupEls::GetMenu_impl(taList_impl* cur_lst, taiWidgetActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL) return;
   taGroup_impl* cur_gp = (taGroup_impl*)cur_lst;
   if (cur_gp->size >= taMisc::max_menu) {

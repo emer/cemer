@@ -27,7 +27,7 @@ class taiMenu;
 
 class TA_API taiSubMenuEl: public taiAction { // an action used exclusively to hold a submenu
   Q_OBJECT
-  friend class taiActions;
+  friend class taiWidgetActions;
 public:
   taiMenu*              sub_menu_data; // the taiMenu for this submenu
 

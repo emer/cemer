@@ -553,7 +553,7 @@ set(ta_HEADS_MAKETA_LOCAL
   VEObjCarousel.h
   VEHeightField.h
 
-  taiDataList.h
+  taiWidget_List.h
 
   taiTypeBase.h
   taiType_List.h
@@ -732,7 +732,7 @@ set(ta_HEADS_MAKETA_MOC
   taiMimeSource.h
 
   taiAction.h
-  taiData.h
+  taiWidget.h
   iMethodButtonMgr.h
 
   taiEditor.h
@@ -953,21 +953,21 @@ set(ta_HEADS_NOMAKETA_MOC
   taiEditorOfSelectEditFull.h
   taiEditorOfSelectEditFast.h
 
-  taiActions.h
-  taiCompData.h
-  taiPolyData.h
-  taiDataDeck.h
-  taiText.h
-  taiField.h
-  taiIncrField.h
+  taiWidgetActions.h
+  taiWidgetComposite.h
+  taiWidgetPoly.h
+  taiWidgetDeck.h
+  taiWidgetText.h
+  taiWidgetField.h
+  taiWidgetIncrField.h
   iFieldEditDialog.h
-  taiFileDialogField.h
-  taiPlusToggle.h
-  taiComboBox.h
-  taiBitBox.h
-  taiDimEdit.h
-  taiVariantBase.h
-  taiVariant.h
+  taiWidgetFieldFile.h
+  taiWidgetPlusToggle.h
+  taiWidgetComboBox.h
+  taiWidgetBitBox.h
+  taiWidgetDimEdit.h
+  taiWidgetVariantBase.h
+  taiWidgetVariant.h
 
   taiItemChooser.h
   taiObjChooser.h
@@ -1022,7 +1022,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iMatrixEditor.h
   iClassBrowseViewer.h
 
-  taiDataDelegate.h
+  taiWidgetDelegate.h
   SelectEditDelegate.h
 
   taiObjDiffBrowserFilter.h
@@ -1623,8 +1623,8 @@ set(ta_SRCS_MAKETA
   VEHeightField.cpp
 
   taiAction.cpp
-  taiData.cpp
-  taiDataList.cpp
+  taiWidget.cpp
+  taiWidget_List.cpp
 
   taiTypeBase.cpp
   taiType_List.cpp
@@ -1841,23 +1841,23 @@ set(ta_SRCS_NOMAKETA
   HiLightButton.cpp
   MembSet.cpp
 
-  taiActions.cpp
-  taiCompData.cpp
-  taiPolyData.cpp
-  taiDataDeck.cpp
+  taiWidgetActions.cpp
+  taiWidgetComposite.cpp
+  taiWidgetPoly.cpp
+  taiWidgetDeck.cpp
   taiToggle.cpp
-  taiText.cpp
-  taiField.cpp
-  taiIncrField.cpp
+  taiWidgetText.cpp
+  taiWidgetField.cpp
+  taiWidgetIncrField.cpp
   iFieldEditDialog.cpp
-  taiFileDialogField.cpp
-  taiPlusToggle.cpp
-  taiComboBox.cpp
-  taiBitBox.cpp
-  taiDimEdit.cpp
+  taiWidgetFieldFile.cpp
+  taiWidgetPlusToggle.cpp
+  taiWidgetComboBox.cpp
+  taiWidgetBitBox.cpp
+  taiWidgetDimEdit.cpp
   taiColor.cpp
-  taiVariantBase.cpp
-  taiVariant.cpp
+  taiWidgetVariantBase.cpp
+  taiWidgetVariant.cpp
 
   taiItemChooser.cpp
   taiObjChooser.cpp
@@ -1912,7 +1912,7 @@ set(ta_SRCS_NOMAKETA
 
   taiClipData.cpp
   SynchronousNetRequest.cpp
-  taiDataDelegate.cpp
+  taiWidgetDelegate.cpp
 
   SelectEditDelegate.cpp
 

@@ -39,7 +39,7 @@ void taiEditorOfSArg::Constr_AryData() {
   taiType* it = eldm->type->GetNonPtrType()->it;
   QWidget* rep;
   for (int i=0; i < cur_ary->size; ++i) {
-    taiData* mb_dat = it->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = it->GetDataRep(this, NULL, body);
     data_el(array_set).Add(mb_dat);
     rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();

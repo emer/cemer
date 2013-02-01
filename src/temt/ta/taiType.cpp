@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiType.h"
-#include <taiData>
-#include <taiField>
+#include <taiWidget>
+#include <taiWidgetField>
 #include <IWidgetHost>
 
 
@@ -41,7 +41,7 @@ void taiType::AddToType(TypeDef* td) {
 //   GetDataRep_impl()       // from this class, as a default
 //   GetDataRep_impl()       // virtual
 //   GetDataRepInline_impl() // virtual
-taiData* taiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+taiWidget* taiType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                              taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   // Note: user can pass in flgReadOnly to force readonly, but we can also set it.
@@ -49,20 +49,20 @@ taiData* taiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_pare
   if (isReadOnly(par, host_)
       || (parent_type_ && parent_type_->isReadOnly(par)))
   {
-    flags_ |= taiData::flgReadOnly;
+    flags_ |= taiWidget::flgReadOnly;
   }
   if (requiresInline())
   {
-    flags_ |= taiData::flgInline;
+    flags_ |= taiWidget::flgInline;
   }
-  taiData* rval = NULL;
-  if ((flags_ & taiData::flgReadOnly) && !handlesReadOnly()) {
+  taiWidget* rval = NULL;
+  if ((flags_ & taiWidget::flgReadOnly) && !handlesReadOnly()) {
     // The field needs to be displayed read-only, but the subclass isn't able
     // to handle it as a read-only field, so let taiType take care of things.
     // Note: this is not a virtual function call due to the taiType:: scoping.
     rval = taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
   }
-  else if ((flags_ & taiData::flgInline) && allowsInline()) {
+  else if ((flags_ & taiWidget::flgInline) && allowsInline()) {
     rval = GetDataRepInline_impl(host_, par, gui_parent_, flags_, mbr);
   }
   else {
@@ -72,16 +72,16 @@ taiData* taiType::GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_pare
   return rval;
 }
 
-taiData* taiType::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiType::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
                                   QWidget* gui_parent_, int flags_,
                                   MemberDef*)
 {
-  // taiField: your friend when all else fails...
-  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+  // taiWidgetField: your friend when all else fails...
+  taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiData* taiType::GetDataRepInline_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiType::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
                                         QWidget* gui_parent, int flags_,
                                         MemberDef* mbr_)
 {
@@ -89,7 +89,7 @@ taiData* taiType::GetDataRepInline_impl(IWidgetHost* host_, taiData* par,
   return GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
 }
 
-void taiType::GetImage(taiData* dat, const void* base) {
+void taiType::GetImage(taiWidget* dat, const void* base) {
   // Use similar critera as in GetDataRep() to determine whether the
   // subclass can handle this field as read-only.
   //
@@ -97,8 +97,8 @@ void taiType::GetImage(taiData* dat, const void* base) {
   //   // use the exact criteria we used in the GetRep
   // The logic in this function isn't *exactly* the same, since it
   // doesn't call isReadOnly(dat), which would additionally check if
-  // the taiData's parent or host are read only.
-  bool ro = dat->HasFlag(taiData::flgReadOnly);
+  // the taiWidget's parent or host are read only.
+  bool ro = dat->HasFlag(taiWidget::flgReadOnly);
   if (ro && !handlesReadOnly()) {
     taiType::GetImage_impl(dat, base);
   }
@@ -107,31 +107,31 @@ void taiType::GetImage(taiData* dat, const void* base) {
   }
 }
 
-void taiType::GetImage_impl(taiData* dat, const void* base) {
+void taiType::GetImage_impl(taiWidget* dat, const void* base) {
   //TODO: shouldn't this strval follow same logic as the one in GetDataRep
   String strval = typ->GetValStr(base);
-  taiField* rval = (taiField*)dat;
+  taiWidgetField* rval = (taiWidgetField*)dat;
   rval->GetImage(strval);
 }
 
-void taiType::GetValue(taiData* dat, void* base) {
+void taiType::GetValue(taiWidget* dat, void* base) {
   // TODO: see comment in taiType::GetImage().
 //  bool ro = isReadOnly(dat);
   // use the exact criteria we used in the GetRep
-  bool ro = dat->HasFlag(taiData::flgReadOnly);
+  bool ro = dat->HasFlag(taiWidget::flgReadOnly);
   if (!ro || handlesReadOnly()) {
     GetValue_impl(dat, base);
   }
   //note: we don't do anything if ro and type doesn't handle it!
 }
 
-void taiType::GetValue_impl(taiData* dat, void* base) {
-  taiField* rval = (taiField*)dat;
+void taiType::GetValue_impl(taiWidget* dat, void* base) {
+  taiWidgetField* rval = (taiWidgetField*)dat;
   String strval(rval->GetValue());
   typ->SetValStr(strval, base);
 }
 
-bool taiType::isReadOnly(taiData* dat, IWidgetHost* host_) {
+bool taiType::isReadOnly(taiWidget* dat, IWidgetHost* host_) {
   // ReadOnly if host_ is RO, OR par is RO, OR directives state RO
   if (dat && dat->readOnly()) {
     return true;

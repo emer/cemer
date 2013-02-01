@@ -17,18 +17,18 @@
 #include <taiMenu>
 
 
-taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_,
-                         taiData* par, QWidget* gui_parent_, int flags_)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+taiTypeHier::taiTypeHier(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_,
+                         taiWidget* par, QWidget* gui_parent_, int flags_)
+  : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
-  ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   enum_mode = false;
 }
 
 taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
-                         IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+                         IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
+  : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   ta_actions = existing_menu;
   ownflag = false;
@@ -103,7 +103,7 @@ QWidget* taiTypeHier::GetRep() {
   return ta_actions->GetRep();
 }
 
-void taiTypeHier::GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
+void taiTypeHier::GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
   // add Enums of this type
   for (int i = 0; i < typ_->sub_types.size; ++i) {
     TypeDef* chld = typ_->sub_types.FastEl(i);
@@ -126,7 +126,7 @@ void taiTypeHier::GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMe
   }
 }
 
-void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
+void taiTypeHier::GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
   // it is hard to do recursive menus, so we just build optimistically, then delete empties
   if (AddType_Class(typ_)) {
     menu->AddItem((char*)typ_->name, taiMenu::use_default, acn, (void*)typ_);

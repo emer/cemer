@@ -34,10 +34,10 @@ public:
   TypeDefault*  tpdflt;
 
   virtual int           BidForMember(MemberDef* md, TypeDef* td);//
-  override taiData*     GetDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_,
+  override taiWidget*     GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
-  override void         GetImage(taiData* dat, const void* base);
-  override void         GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void         GetImage(taiWidget* dat, const void* base);
+  override void         GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
 
 private:
   void          Initialize()    { tpdflt = NULL; }

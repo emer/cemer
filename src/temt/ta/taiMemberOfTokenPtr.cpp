@@ -15,7 +15,7 @@
 
 #include "taiMemberOfTokenPtr.h"
 #include <MethodDef>
-#include <taiData>
+#include <taiWidget>
 #include <taiTokenPtrButton>
 #include <taSmartPtr>
 
@@ -27,7 +27,7 @@ int taiMemberOfTokenPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiMemberOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   // setting mode now is good for rest of life
@@ -40,23 +40,23 @@ taiData* taiMemberOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
 
   TypeDef* npt = GetMinType(NULL); // note: this will only be a min type
   if (!mbr->HasOption("NO_NULL"))
-    flags_ |= taiData::flgNullOk;
+    flags_ |= taiWidget::flgNullOk;
   // options that require non-readonly
-  if (!(flags_ & taiData::flgReadOnly)) {
+  if (!(flags_ & taiWidget::flgReadOnly)) {
     if (!mbr->HasOption("NO_EDIT")) //note: #EDIT is the default
-      flags_ |= taiData::flgEditOk;
+      flags_ |= taiWidget::flgEditOk;
 
-    if (flags_ & taiData::flgEditOk)
-      flags_ |= taiData::flgEditDialog;
+    if (flags_ & taiWidget::flgEditOk)
+      flags_ |= taiWidget::flgEditDialog;
   }
 
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
 /*TODO: prob can't have disabling for no keep tokens, because sometimes
   we don't know the type
   if (!npt->tokens.keep)
-    flags_ |= taiData::flgNoTokenDlg; // no dialog */
+    flags_ |= taiWidget::flgNoTokenDlg; // no dialog */
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
         flags_);
   String filt_nm = mbr->OptionAfter("ITEM_FILTER_");
@@ -147,7 +147,7 @@ taBase* taiMemberOfTokenPtr::GetTokenPtr(const void* base) const {
   return tok_ptr;
 }
 
-void taiMemberOfTokenPtr::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
   taBase* tok_ptr = GetTokenPtr(base); // this is the addr of the token, in the member
   TypeDef* targ_typ = GetMinType(base);
 
@@ -171,7 +171,7 @@ void taiMemberOfTokenPtr::GetImage_impl(taiData* dat, const void* base) {
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfTokenPtr::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfTokenPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
 //note: in 3.2 we bailed if not keeping tokens, but that is complicated to test
 // and could modally depend on dynamic type directives, so we just always set
 

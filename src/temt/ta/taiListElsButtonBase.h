@@ -36,7 +36,7 @@ public:
   taBase*               GetValue() {return item();}
 
   taiListElsButtonBase(TypeDef* typ_, IWidgetHost* host,
-                       taiData* par, QWidget* gui_parent_, int flags_ = 0,
+                       taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                        const String& flt_start_txt = "");
 protected:
   const String          labelNameNonNull() const;

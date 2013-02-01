@@ -31,7 +31,7 @@ public:
   override const String headerText(int index, int view) const;
   override const String titleText();
 
-  taiProgLibElsButton(TypeDef* typ, IWidgetHost* host, taiData* par,
+  taiProgLibElsButton(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                       QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
 protected:
   override void         BuildCategories_impl();

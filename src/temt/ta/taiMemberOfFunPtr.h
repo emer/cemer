@@ -31,11 +31,11 @@ class TA_API taiMemberOfFunPtr : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfFunPtr, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiData*      GetDataRep_impl(IWidgetHost* host_, taiData* par,
+  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 protected:
-  override void GetImage_impl(taiData* dat, const void* base);
-  override void GetMbrValue_impl(taiData* dat, void* base);
+  override void GetImage_impl(taiWidget* dat, const void* base);
+  override void GetMbrValue_impl(taiWidget* dat, void* base);
 private:
   void          Initialize() {}
   void          Destroy() {}

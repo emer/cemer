@@ -22,13 +22,13 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiField; //
-class taiIncrField; //
+class taiWidgetField; //
+class taiWidgetIncrField; //
 class ColorScaleBar; //
 class taiListElsButton; //
-class taiPolyData; //
+class taiWidgetPoly; //
 class iCheckBox; //
-class taiComboBox; //
+class taiWidgetComboBox; //
 class GraphTableView; //
 class QHBoxLayout; // 
 class QCheckBox; //
@@ -49,47 +49,47 @@ public:
   QCheckBox*                chkDisplay;
   QCheckBox*                chkManip;
   QLabel*                   lblGraphType;
-  taiComboBox*              cmbGraphType;
+  taiWidgetComboBox*              cmbGraphType;
   QLabel*                   lblPlotStyle;
-  taiComboBox*              cmbPlotStyle;
+  taiWidgetComboBox*              cmbPlotStyle;
 
   QPushButton*              butRefresh;
 
   QHBoxLayout*            layVals;
   QLabel*                   lblRows;
-  taiIncrField*             fldRows; // number of rows to display
+  taiWidgetIncrField*             fldRows; // number of rows to display
   QLabel*                   lblLineWidth;
-  taiField*                 fldLineWidth;
+  taiWidgetField*                 fldLineWidth;
   QLabel*                   lblPointSpacing;
-  taiField*                 fldPointSpacing;
+  taiWidgetField*                 fldPointSpacing;
   QLabel*                   lblLabelSpacing;
-  taiField*                 fldLabelSpacing;
+  taiWidgetField*                 fldLabelSpacing;
   QCheckBox*                chkNegDraw;
   QCheckBox*                chkNegDrawZ;
 
   QLabel*                   lblWidth;
-  taiField*                 fldWidth; // width of the display (height is always 1.0)
+  taiWidgetField*                 fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblDepth;
-  taiField*                 fldDepth; // depth of the display (height is always 1.0)
+  taiWidgetField*                 fldDepth; // depth of the display (height is always 1.0)
 
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;
   taiListElsButton*         lelXAxis; // list element chooser
   QCheckBox*                rncXAxis; // row number checkbox
-  taiPolyData*              pdtXAxis; // fixed_range polydata (inline)
+  taiWidgetPoly*              pdtXAxis; // fixed_range polydata (inline)
 
   QHBoxLayout*            layZAxis;
   iCheckBox*                oncZAxis; // on checkbox
   QLabel*                   lblZAxis;
   taiListElsButton*         lelZAxis; // list element chooser
   QCheckBox*                rncZAxis; // row number checkbox
-  taiPolyData*              pdtZAxis; // fixed_range polydata (inline)
+  taiWidgetPoly*              pdtZAxis; // fixed_range polydata (inline)
 
   QHBoxLayout*            layYAxis[max_plots];
   iCheckBox*                oncYAxis[max_plots];
   QLabel*                   lblYAxis[max_plots];
   taiListElsButton*         lelYAxis[max_plots]; // list element chooser
-  taiPolyData*              pdtYAxis[max_plots]; // fixed_range polydata (inline)
+  taiWidgetPoly*              pdtYAxis[max_plots]; // fixed_range polydata (inline)
   QCheckBox*                chkYAltY[max_plots];
 
   QHBoxLayout*            layErr[2]; // two rows
@@ -98,15 +98,15 @@ public:
   iCheckBox*                oncErr[max_plots]; // on checkbox
 
   QLabel*                   lblErrSpacing;
-  taiField*                 fldErrSpacing;
+  taiWidgetField*                 fldErrSpacing;
 
   QHBoxLayout*            layCAxis;
   QLabel*                   lblColorMode;
-  taiComboBox*              cmbColorMode;
+  taiWidgetComboBox*              cmbColorMode;
   QLabel*                   lblCAxis;
   taiListElsButton*         lelCAxis; // list element chooser
   QLabel*                   lblThresh;
-  taiField*                 fldThresh;
+  taiWidgetField*                 fldThresh;
 
   QHBoxLayout*            layColorScale;
   ColorScaleBar*            cbar;             // colorbar
@@ -115,7 +115,7 @@ public:
   QHBoxLayout*            layRAxis;
   QLabel*                   lblRAxis;
   taiListElsButton*         lelRAxis; // list element chooser
-  taiPolyData*              pdtRAxis; // fixed_range polydata (inline)
+  taiWidgetPoly*              pdtRAxis; // fixed_range polydata (inline)
 
   override String       panel_type() const; // this string is on the subpanel button for this panel
   GraphTableView*       glv() {return (GraphTableView*)m_dv;}

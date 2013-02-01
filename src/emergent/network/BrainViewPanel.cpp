@@ -228,11 +228,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label->setToolTip("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas.");
   bvControls->addWidget(label);
 
-  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
+  fldBrainColorRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
   fldBrainColorRegexp->SetFieldOwner(net);
 
   // GetRep() returns the widget that holds the line edit and the edit button.
-  // (See code in taiText::taiText(), if (needs_edit_button), for details.)
+  // (See code in taiWidgetText::taiWidgetText(), if (needs_edit_button), for details.)
   // That is the correct widget to add to the BV panel.
   bvControls->addWidget(fldBrainColorRegexp->GetRep());
   // rep() returns the line edit itself, which is what we want to set the
@@ -269,7 +269,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   label->setToolTip("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow");
   bvControls->addWidget(label);
 
-  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiData*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
+  fldBrainAtlasRegexp = dl.Add(new taiRegexpField(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iRegexpDialogPopulator*>(atlas_regexp_pop)));
   fldBrainAtlasRegexp->SetFieldOwner(net);
   bvControls->addWidget(fldBrainAtlasRegexp->GetRep());
   if (iLineEdit* theLineEdit = dynamic_cast<iLineEdit*>(fldBrainAtlasRegexp->rep())) {

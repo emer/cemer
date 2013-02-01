@@ -17,8 +17,8 @@
 #include <UserDataItemBase>
 #include <taiEditorOfUserData>
 #include <taiMember>
-#include <taiField>
-#include <taiPolyData>
+#include <taiWidgetField>
+#include <taiWidgetPoly>
 
 #include <QHBoxLayout>
 #include <QTableWidget>
@@ -56,7 +56,7 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
         hbl->setSpacing(0);
         hbl->addWidget(rep);
         // some controls do better without stretch
-        if (!(dynamic_cast<taiField*>((taiData*)dat)))
+        if (!(dynamic_cast<taiWidgetField*>((taiWidget*)dat)))
           hbl->addStretch();
         rep = rep_par;
       }
@@ -65,7 +65,7 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
       QHBoxLayout* hbl = new QHBoxLayout(rep_par);
       hbl->setMargin(0);
       hbl->setSpacing(0);
-      dat = taiPolyData::New(true, base->GetTypeDef(), edh, NULL,
+      dat = taiWidgetPoly::New(true, base->GetTypeDef(), edh, NULL,
         rep_par);
       rep = dat->GetRep();
       hbl->addWidget(rep);

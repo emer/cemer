@@ -76,11 +76,11 @@ cssEl* taiArgTypeOfTypePtr::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   int flags = flags_;
   if (GetHasOption("NULL_OK"))
-    flags |= taiData::flgNullOk;
-  flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+    flags |= taiWidget::flgNullOk;
+  flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
 
 //   TypeDef* init_typ = &TA_taBase;
 //   if (*((TypeDef**)arg_base) != NULL)
@@ -90,7 +90,7 @@ taiData* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, 
   return rval;
 }
 
-void taiArgTypeOfTypePtr::GetImage_impl(taiData* dat, const void* base) {
+void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)
     return;
   taiTypeDefButton* rval = (taiTypeDefButton*)dat;
@@ -113,7 +113,7 @@ void taiArgTypeOfTypePtr::GetImage_impl(taiData* dat, const void* base) {
   rval->GetImage(typ_, base_type);
 }
 
-void taiArgTypeOfTypePtr::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfTypePtr::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   taiTypeDefButton* rval = (taiTypeDefButton*)dat;

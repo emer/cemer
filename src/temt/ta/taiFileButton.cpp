@@ -20,7 +20,7 @@
 #include <taMisc>
 #include <taiMisc>
 
-taiFileButton::taiFileButton(TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiFileButton::taiFileButton(TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                              QWidget* gui_parent_, int flags_, bool rd_only, bool wrt_only)
   : taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {

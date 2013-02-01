@@ -17,19 +17,19 @@
 #define taiRegexpField_h 1
 
 // parent includes:
-#include <taiText>
+#include <taiWidgetText>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class iRegexpDialogPopulator;
 
-class TA_API taiRegexpField : public taiText {
+class TA_API taiRegexpField : public taiWidgetText {
   // A text field with a "..." button to bring up a context-specific regular expression editor.
   Q_OBJECT
-  INHERITED(taiText)
+  INHERITED(taiWidgetText)
 public:
-  taiRegexpField(TypeDef* typ_, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
+  taiRegexpField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
 
   void                  SetFieldOwner(const void *fieldOwner);
 

@@ -49,7 +49,7 @@ public:
   override void         EditDialog();
 
   taiTokenPtrMultiTypeButton(TypeDef* typ_, IWidgetHost* host,
-                             taiData* par, QWidget* gui_parent_, int flags_ = 0,
+                             taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                              const String& flt_start_txt = "");
 protected:
   taSmartRef            scope_ref;      // reference object for scoping, default is none

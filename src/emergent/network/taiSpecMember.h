@@ -32,14 +32,14 @@ class EMERGENT_API taiSpecMember : public taiMember {
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 
-  void          CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
+  void          CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff); // replaces
 
   virtual bool  NoCheckBox(IWidgetHost* host_) const; // deterimine if check box should be used
 
 protected:
-  override taiData*     GetArbitrateDataRep(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  override void         GetArbitrateImage(taiData* dat, const void* base);
-  override void         GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
+  override taiWidget*     GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  override void         GetArbitrateImage(taiWidget* dat, const void* base);
+  override void         GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
 };
 
 #endif // taiSpecMember_h

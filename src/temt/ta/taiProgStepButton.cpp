@@ -16,7 +16,7 @@
 #include "taiProgStepButton.h"
 #include <taProject>
 #include <MethodDef>
-#include <taiActions>
+#include <taiWidgetActions>
 
 #include <taMisc>
 #include <taiMisc>
@@ -28,7 +28,7 @@
 #include <QToolButton>
 
 
-taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_)
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
@@ -196,7 +196,7 @@ QWidget* taiProgStepButton::GetButtonRep() {
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
     QToolButton* tbut = new QToolButton(stpwidg);
-    taiAction* act = new taiAction(taiActions::normal, sp->short_nm);
+    taiAction* act = new taiAction(taiWidgetActions::normal, sp->short_nm);
     act->usr_data = (void*)sp;
     act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
     act->setToolTip(sp->name);

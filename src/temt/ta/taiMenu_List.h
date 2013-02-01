@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <taPtrList>
-#include <taiActions>
+#include <taiWidgetActions>
 
 // member includes:
 #include <taiMenu>
@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-class TA_API taiMenu_List : public taPtrList<taiActions> {
+class TA_API taiMenu_List : public taPtrList<taiWidgetActions> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 protected:
   void  El_Done_(void* it)      { if (own_items) delete (taiMenu*)it; }
@@ -35,7 +35,7 @@ public:
   bool own_items; //generally false
   taiMenu_List()            { own_items = false; }
   ~taiMenu_List()            { Reset(); }
-  virtual String El_GetName_(void* it) const { return (((taiActions*)it)->mlabel); }
+  virtual String El_GetName_(void* it) const { return (((taiWidgetActions*)it)->mlabel); }
 };
 
 #endif // taiMenu_List_h

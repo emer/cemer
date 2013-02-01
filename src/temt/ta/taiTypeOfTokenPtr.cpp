@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfTokenPtr.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiTokenPtrButton>
 #include <taSmartPtr>
 
@@ -26,7 +26,7 @@ int taiTypeOfTokenPtr::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   // setting mode now is good for rest of life
@@ -40,15 +40,15 @@ taiData* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par,
   TypeDef* npt = GetMinType(NULL); // only a min type
   bool ro = isReadOnly(par, host_);
   if (ro)
-    flags_ |= taiData::flgReadOnly;
+    flags_ |= taiWidget::flgReadOnly;
   else
-    flags_ |= (taiData::flgEditOk | taiData::flgEditDialog);
+    flags_ |= (taiWidget::flgEditOk | taiWidget::flgEditDialog);
   if (!npt->tokens.keep)
-    flags_ |= taiData::flgNoTokenDlg; // no dialog
-  flags_ |= (taiData::flgNullOk);
+    flags_ |= taiWidget::flgNoTokenDlg; // no dialog
+  flags_ |= (taiWidget::flgNullOk);
 
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
   return rval;
@@ -78,7 +78,7 @@ TypeDef* taiTypeOfTokenPtr::GetMinType(const void* base) {
   return rval;
 }
 
-void taiTypeOfTokenPtr::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
   TypeDef* npt = typ->GetNonPtrType();
   // this seems out of date:
 //   bool ro = isReadOnly(dat);
@@ -92,7 +92,7 @@ void taiTypeOfTokenPtr::GetImage_impl(taiData* dat, const void* base) {
 //   }
 }
 
-void taiTypeOfTokenPtr::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfTokenPtr::GetValue_impl(taiWidget* dat, void* base) {
   TypeDef* npt = typ->GetNonPtrType();
   bool ro = isReadOnly(dat);
   if(ro) {

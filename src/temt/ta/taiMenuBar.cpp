@@ -21,14 +21,14 @@
 
 
 taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IWidgetHost* host_,
-                       taiData* par_, QWidget* gui_parent_, int flags_)
-  : taiActions(normal, ft, typ_, host_, par_, gui_parent_, flags_)
+                       taiWidget* par_, QWidget* gui_parent_, int flags_)
+  : taiWidgetActions(normal, ft, typ_, host_, par_, gui_parent_, flags_)
 {
   init(NULL);
 }
 
 taiMenuBar::taiMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu)
-  : taiActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
+  : taiWidgetActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
 {
   init(exist_menu);
 }

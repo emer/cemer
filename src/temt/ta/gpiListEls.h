@@ -20,7 +20,7 @@
 #include <taiElBase>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 class taList_impl; //
@@ -34,16 +34,16 @@ public:
   taList_impl*       ths;
 
   void          GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
-  override void  GetMenu(taiActions* menu, taiMenuAction* actn = NULL); // variant provided for MenuGroup_impl in winbase
+  override void  GetMenu(taiWidgetActions* menu, taiMenuAction* actn = NULL); // variant provided for MenuGroup_impl in winbase
   virtual void  UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*      GetRep();
   void          GetImage(taList_impl* base_lst, taBase* it);
   taBase*       GetValue();
 
-  gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IWidgetHost* host_, taiData* par,
+  gpiListEls(taiWidgetActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
-  gpiListEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiData* par,
+  gpiListEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
 
 public slots:
@@ -51,7 +51,7 @@ public slots:
   virtual void  Choose();       // chooser callback
 
 protected:
-  virtual void  GetMenu_impl(taList_impl* lst, taiActions* menu, taiMenuAction* actn = NULL);
+  virtual void  GetMenu_impl(taList_impl* lst, taiWidgetActions* menu, taiMenuAction* actn = NULL);
 };
 
 #endif // gpiListEls_h

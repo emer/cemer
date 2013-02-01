@@ -76,7 +76,7 @@ public:
 
   QVBoxLayout*          layOuter;
   QScrollArea*            scrBody;
-  iStripeWidget*          body; // container for the actual taiData items
+  iStripeWidget*          body; // container for the actual taiWidget items
   iMethodButtonMgr*         meth_but_mgr; // note: not a widget
   QHBoxLayout*            layButtons;
   QToolBar*                 tb; // for the history buttons

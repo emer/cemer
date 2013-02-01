@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfBool.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiToggle>
 
 
@@ -25,20 +25,20 @@ int taiTypeOfBool::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiTypeOfBool::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
+taiWidget* taiTypeOfBool::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*){
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiTypeOfBool::GetImage_impl(taiData* dat, const void* base) {
+void taiTypeOfBool::GetImage_impl(taiWidget* dat, const void* base) {
   bool val = *((bool*)base);
   taiToggle* rval = (taiToggle*)dat;
   rval->GetImage(val);
 }
 
-void taiTypeOfBool::GetValue_impl(taiData* dat, void* base) {
+void taiTypeOfBool::GetValue_impl(taiWidget* dat, void* base) {
   taiToggle* rval = (taiToggle*)dat;
   *((bool*)base) = rval->GetValue();
 }

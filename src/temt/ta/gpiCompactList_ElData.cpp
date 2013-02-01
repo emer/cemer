@@ -16,7 +16,7 @@
 #include "gpiCompactList_ElData.h"
 
 
-gpiCompactList_ElData::gpiCompactList_ElData(TypeDef* typ_, taBase* base, taiData* data_el_) {
+gpiCompactList_ElData::gpiCompactList_ElData(TypeDef* typ_, taBase* base, taiWidget* data_el_) {
   typ = typ_;
   cur_base = base;
   data_el = data_el_;

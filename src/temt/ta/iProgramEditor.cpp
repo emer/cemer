@@ -24,7 +24,7 @@
 #include <iMainWindowViewer>
 #include <taiMember>
 #include <iLabel>
-#include <taiPolyData>
+#include <taiWidgetPoly>
 #include <taProject>
 
 
@@ -216,7 +216,7 @@ QWidget* iProgramEditor::firstTabFocusWidget() {
 }
 
 bool iProgramEditor::ShowMember(MemberDef* md) {
-  return taiPolyData::ShowMemberStat(md, show());
+  return taiWidgetPoly::ShowMemberStat(md, show());
 }
 
 void iProgramEditor::Base_Add() {
@@ -304,8 +304,8 @@ void iProgramEditor::Controls_Add() {
   }
 
   // add main inline controls
-  int flags = taiData::flgInline ;
-  if (read_only) flags |= taiData::flgReadOnly;
+  int flags = taiWidget::flgInline ;
+  if (read_only) flags |= taiWidget::flgReadOnly;
   const int ctrl_size = taiM->ctrl_size;
   for (int j = 0; j < membs.size; ++j) {
     MembSet* ms = membs.FastEl(j);
@@ -321,7 +321,7 @@ void iProgramEditor::Controls_Add() {
       if (i > 0)
         hbl->addSpacing(taiM->hspc_c);
       MemberDef* md = ms->memb_el.FastEl(i);
-      taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
       ms->data_el.Add(mb_dat);
 
 //obs      QLabel* lbl = taiM->NewLabel(, body);
@@ -508,7 +508,7 @@ void iProgramEditor::GetValue() {
     MembSet* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
-      taiData* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->data_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetMbrValue(mb_dat, base, first_diff);
       }
@@ -531,7 +531,7 @@ void iProgramEditor::GetImage() {
     MembSet* ms = membs.FastEl(j);
     for (int i = 0; i < ms->data_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
-      taiData* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->data_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetImage(mb_dat, base);
       }
@@ -602,7 +602,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
-  taiData* sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  taiWidget* sel_item_dat = (taiWidget*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
   if (sel_item_dat) {
     sel_item_mbr = sel_item_dat->mbr;
     sel_item_base = sel_item_dat->Base();

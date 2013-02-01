@@ -20,7 +20,7 @@
 #include <taiElBase>
 
 // member includes:
-#include <taiActions>
+#include <taiWidgetActions>
 
 // declare all other types mentioned but not required to include:
 
@@ -41,9 +41,9 @@ public:
   virtual void  GetImage(const void* ths, void* sel=NULL);
   virtual void* GetValue();
 
-  taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiSubToken(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = flgEditOk); // uses flgNullOk, and flgEditOk
-  taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = flgEditOk); // uses flgNullOk, and flgEditOk
 
 public slots:

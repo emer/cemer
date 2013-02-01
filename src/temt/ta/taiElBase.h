@@ -17,27 +17,27 @@
 #define taiElBase_h 1
 
 // parent includes:
-#include <taiData>
+#include <taiWidget>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiActions; //
+class taiWidgetActions; //
 class taiMenuAction; // #IGNORE
 
-// base class for sundry taiData items that use a menu, and have a taBase-derived current item
-class TA_API taiElBase: public taiData {
-  INHERITED(taiData)
+// base class for sundry taiWidget items that use a menu, and have a taBase-derived current item
+class TA_API taiElBase: public taiWidget {
+  INHERITED(taiWidget)
 public:
   taBase*               cur_obj;
-  override void         SigEmit(taiData* chld = NULL); // do autoapply
+  override void         SigEmit(taiWidget* chld = NULL); // do autoapply
 //  void                GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
-  virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
+  virtual void  GetMenu(taiWidgetActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void          setCur_obj(taBase* value, bool do_chng = true); // set cur_obj and notifies change if different
-  taiElBase(taiActions* actions_, TypeDef* tp, IWidgetHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
+  taiElBase(taiWidgetActions* actions_, TypeDef* tp, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiElBase();
 protected:
-  taiActions*   ta_actions;
+  taiWidgetActions*   ta_actions;
   bool          ownflag;
 };
 

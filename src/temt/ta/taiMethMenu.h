@@ -27,7 +27,7 @@ class TA_API taiMethMenu : public taiMethodData {
   // all representations of member functions must inherit from this one
   // NOTE: gui_parent is the parent of the Button, since the menu item is already parented in menu
 public:
-  taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiData* par,
+  taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);
 
   override QWidget* GetButtonRep() {return MakeButton();}

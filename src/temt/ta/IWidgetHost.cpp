@@ -15,10 +15,10 @@
 
 #include "IWidgetHost.h"
 #include <iMainWindowViewer>
-#include <taiData>
+#include <taiWidget>
 
 
-void IWidgetHost::SetItemAsHandler(taiData* item, bool set_it) {
+void IWidgetHost::SetItemAsHandler(taiWidget* item, bool set_it) {
   iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
   //TODO: we really should check to make sure our class expresses these,

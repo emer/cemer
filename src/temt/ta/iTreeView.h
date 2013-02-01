@@ -156,10 +156,10 @@ signals:
   void                  CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
     // invoked when we want our mummy to do custom filtering, expand=true by default
   void                  FillContextMenuHookPre(ISelectable_PtrList& sel_items,
-     taiActions* menu);
+     taiWidgetActions* menu);
     // hook to allow client to add items to start of context menu before it shows
   void                  FillContextMenuHookPost(ISelectable_PtrList& sel_items,
-     taiActions* menu);
+     taiWidgetActions* menu);
     // hook to allow client to add items to end of context menu before it shows
   void                  ItemSelected(iTreeViewItem* item);
     // NULL if none -- NOTE: the preferred way is to use ISelectableHost::Notify signal
@@ -191,9 +191,9 @@ public: // ISelectableHost i/f
   override QWidget*     widget() {return this;}
 protected:
   override void         FillContextMenu_pre(ISelectable_PtrList& sel_items,
-    taiActions* menu);
+    taiWidgetActions* menu);
   override void         FillContextMenu_post(ISelectable_PtrList& sel_items,
-    taiActions* menu);
+    taiWidgetActions* menu);
 
   override void         UpdateSelectedItems_impl();
 

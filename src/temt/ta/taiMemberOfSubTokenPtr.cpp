@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfSubTokenPtr.h"
-#include <taiData>
+#include <taiWidget>
 #include <taiSubToken>
 #include <taiMenu>
 
@@ -28,7 +28,7 @@ int taiMemberOfSubTokenPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfSubTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfSubTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* td = NULL;
   String typ_nm = mbr->OptionAfter("SUBTYPE_");
   if (!typ_nm.empty())
@@ -36,17 +36,17 @@ taiData* taiMemberOfSubTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiData* pa
   if (td == NULL)
     td = mbr->type;
   if (mbr->HasOption("NULL_OK"))
-    flags_ |= taiData::flgNullOk;
+    flags_ |= taiWidget::flgNullOk;
   if (!mbr->HasOption("NO_EDIT"))
-    flags_ |= taiData::flgEditOk;
+    flags_ |= taiWidget::flgEditOk;
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+    flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
   taiSubToken* rval =
     new taiSubToken( taiMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-void taiMemberOfSubTokenPtr::GetImage_impl(taiData* dat, const void* base){
+void taiMemberOfSubTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
   taiSubToken* rval = (taiSubToken*)dat;
 //nn, done in GetImage  rval->UpdateMenu();
@@ -54,7 +54,7 @@ void taiMemberOfSubTokenPtr::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfSubTokenPtr::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfSubTokenPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiSubToken* rval = (taiSubToken*)dat;
   if (!no_setpointer && mbr->type->IsTaBase())

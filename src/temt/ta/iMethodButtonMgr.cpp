@@ -66,11 +66,11 @@ void iMethodButtonMgr::AddMethButton(taiMethodData* mth_rep, const String& label
 void iMethodButtonMgr::Reset() {
   cur_menu_but = NULL;
   while (meth_el.size > 0) {
-    taiData* dat = meth_el.Pop();
+    taiWidget* dat = meth_el.Pop();
     dat->Delete();
   }
   while (ta_menu_buttons.size > 0) {
-    taiData* dat = ta_menu_buttons.Pop();
+    taiWidget* dat = ta_menu_buttons.Pop();
     dat->Delete();
   }
   setBase(NULL);
@@ -193,7 +193,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
-  cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+  cur_menu_but = taiWidgetActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
             NULL, host, NULL, widg);
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu

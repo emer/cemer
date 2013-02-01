@@ -25,24 +25,24 @@ int taiArgTypeOfProjTemplateEl::BidForArgType(int aidx, TypeDef* argt, MethodDef
   return taiArgTypeOfFromGroup::BidForArgType(aidx,argt,md,td)+1;
 }
 
-taiData* taiArgTypeOfProjTemplateEl::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiArgTypeOfProjTemplateEl::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
   int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
-    new_flags |= taiData::flgNullOk;
+    new_flags |= taiWidget::flgNullOk;
   if (GetHasOption("EDIT_OK"))
-    new_flags |= taiData::flgEditOk;
+    new_flags |= taiWidget::flgEditOk;
 
   if (GetHasOption("NO_GROUP_OPT"))
-    new_flags |= taiData::flgNoGroup; //aka flagNoList
+    new_flags |= taiWidget::flgNoGroup; //aka flagNoList
 
   return new taiProjTemplateElsButton(typ, host_, par, gui_parent_, new_flags);
 }
 
-void taiArgTypeOfProjTemplateEl::GetImage_impl(taiData* dat, const void* base) {
+void taiArgTypeOfProjTemplateEl::GetImage_impl(taiWidget* dat, const void* base) {
   if (arg_base == NULL)  return;
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
@@ -57,7 +57,7 @@ void taiArgTypeOfProjTemplateEl::GetImage_impl(taiData* dat, const void* base) {
   els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }
 
-void taiArgTypeOfProjTemplateEl::GetValue_impl(taiData* dat, void*) {
+void taiArgTypeOfProjTemplateEl::GetValue_impl(taiWidget* dat, void*) {
   if (arg_base == NULL)
     return;
   taiProjTemplateElsButton* els = (taiProjTemplateElsButton*)dat;

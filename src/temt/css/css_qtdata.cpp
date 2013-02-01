@@ -31,9 +31,9 @@
 // 		cssiPolyData			//
 //////////////////////////////////////////////////
 
-cssiPolyData::cssiPolyData(cssClassInst* ob, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+cssiPolyData::cssiPolyData(cssClassInst* ob, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent, int flags_)
-: taiData(typ_, host_, par, gui_parent, flags_) {
+: taiWidget(typ_, host_, par, gui_parent, flags_) {
   obj = ob;
 }
 
@@ -61,7 +61,7 @@ void cssiPolyData::Constr(QWidget* gui_parent_) {
     if((tv == NULL) || (tv->cur_base == NULL))
       continue;
     type_el.Add(tv);
-    taiData* mb_dat = tv->GetDataRep(ih, host_, this);
+    taiWidget* mb_dat = tv->GetDataRep(ih, host_, this);
     data_el.Add(mb_dat);
     String nm = md->GetName();
     rep->append(taiM->layout->center(taiM->wkit->label(nm), 0, 0));
@@ -75,7 +75,7 @@ void cssiPolyData::Constr(QWidget* gui_parent_) {
 void cssiPolyData::GetImage_impl(const void*) {
   for (int i = 0; i <type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiWidget* mb_dat = data_el.FastEl(i);
     cit->GetImage(mb_dat);
   }
 }
@@ -83,7 +83,7 @@ void cssiPolyData::GetImage_impl(const void*) {
 void cssiPolyData::GetValue_impl(void*) const {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiWidget* mb_dat = data_el.FastEl(i);
     cit->GetValue(mb_dat);
   }
 }
@@ -94,7 +94,7 @@ void cssiPolyData::GetValue_impl(void*) const {
 //////////////////////////////////////////////////
 
 cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-	TypeDef* typ_, IWidgetHost* host_, taiData* par, QWidget* gui_parent, int flags_)
+	TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_)
 : taiMethMenu(NULL, (MethodDef*)NULL, typ_, host_, par, gui_parent, flags_)
 {
   obj = ob;
@@ -111,7 +111,7 @@ cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* 
   }
 }
 
-void cssiMethMenu::AddToMenu(taiActions* menu) {
+void cssiMethMenu::AddToMenu(taiWidgetActions* menu) {
   if (css_fun->HasOption("MENU_SEP_BEFORE"))
     menu->AddSep();
   menu->AddItem(css_fun->name, taiMenu::use_default,

@@ -15,7 +15,7 @@
 
 #include "iSearchDialog.h"
 #include <QTreeWidget>
-#include <taiBitBox>
+#include <taiWidgetBitBox>
 #include <iLineEdit>
 #include <iMainWindowViewer>
 //#include <iHelpBrowser>
@@ -82,7 +82,7 @@ void iSearchDialog::Constr() {
   layOuter->setSpacing(taiM->vspc_c);
 
   TypeDef* typ = TA_iSearchDialog.sub_types.FindName("SearchOptions");
-  bbOptions = new taiBitBox(true, typ, NULL, NULL, this);
+  bbOptions = new taiWidgetBitBox(true, typ, NULL, NULL, this);
   bbOptions->GetImage(m_options);
   layOuter->addWidget(bbOptions->GetRep());
 

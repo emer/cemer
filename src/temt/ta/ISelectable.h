@@ -30,7 +30,7 @@ class taBase; //
 class TypeDef; // 
 class ISelectable_PtrList; // 
 class taiClipData; //
-class taiActions; //
+class taiWidgetActions; //
 class taiMimeSource; //
 
 class QWidget; //
@@ -93,7 +93,7 @@ public: // Interface Properties and Methods
     GuiContext sh_typ = GC_DEFAULT);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
   virtual void          FillContextMenu(ISelectable_PtrList& sel_items,
-    taiActions* menu, GuiContext sh_typ = GC_DEFAULT);
+    taiWidgetActions* menu, GuiContext sh_typ = GC_DEFAULT);
    // #IGNORE for multi or single (normally implement the _impl)
   virtual taiClipData*  GetClipData(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
@@ -121,9 +121,9 @@ protected:
     // do Dst op for single selected item; generally doesn't need extending
   virtual int           EditActionS_impl_(int ea, GuiContext sh_typ) = 0;
     // do Src op for single or one of multi selected items; CUT and COPY usually just a 1 return code; we actually implement the actual clipboard transfer
-  virtual void          FillContextMenu_EditItems_impl(taiActions* menu,
+  virtual void          FillContextMenu_EditItems_impl(taiWidgetActions* menu,
     int allowed, GuiContext sh_typ); // might be extended
-  virtual void          FillContextMenu_impl(taiActions* menu,
+  virtual void          FillContextMenu_impl(taiWidgetActions* menu,
     GuiContext sh_typ) {} // link handles most, called in FCM
   virtual void          GetContextCaptions(String& view_cap, String& obj_cap);
   virtual void          QueryEditActionsD_impl_(taiMimeSource* ms,

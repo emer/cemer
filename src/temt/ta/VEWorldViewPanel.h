@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class taiField; //
+class taiWidgetField; //
 class iMethodButtonMgr; //
 class VEWorldView; //
 class QHBoxLayout; // 
@@ -44,7 +44,7 @@ public:
   QCheckBox*		  chkDragObjs;
   QCheckBox*		  chkShowJoints;
   QLabel*                   lblDragSize;
-  taiField*                 fldDragSize;
+  taiWidgetField*                 fldDragSize;
 
   QHBoxLayout*		 layCams;
   QVBoxLayout*		  layCam0;

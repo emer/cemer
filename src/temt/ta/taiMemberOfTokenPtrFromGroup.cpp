@@ -31,7 +31,7 @@ int taiMemberOfTokenPtrFromGroup::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiMemberOfTokenPtrFromGroup::GetDataRep_impl(IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfTokenPtrFromGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return NULL;
 
@@ -45,25 +45,25 @@ taiData* taiMemberOfTokenPtrFromGroup::GetDataRep_impl(IWidgetHost* host_, taiDa
 
   int new_flags = flags_;
   if(!mbr->HasOption("NO_NULL"))
-    new_flags |= taiData::flgNullOk;
+    new_flags |= taiWidget::flgNullOk;
   if(!mbr->HasOption("NO_EDIT"))
-    new_flags |= taiData::flgEditOk;
+    new_flags |= taiWidget::flgEditOk;
   if(!mbr->HasOption("GROUP_OPT_OK"))
-    new_flags |= taiData::flgNoList;
+    new_flags |= taiWidget::flgNoList;
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
-    new_flags |= taiData::flgAutoApply; // default is to auto-apply!
+    new_flags |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   if (mbr->type->DerivesFrom(&TA_taGroup_impl))
     return new gpiSubGroups(taiMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
   else if (from_md->type->DerivesFrom(TA_taGroup_impl))
     return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
-                typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
+                typ, host_, par, gui_parent_, (new_flags | taiWidget::flgNoInGroup));
   else
     return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, new_flags);
 }
 
-void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return;
 
@@ -92,7 +92,7 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiData* dat, const void* base)
   GetOrigVal(dat, base);
 }
 
-void taiMemberOfTokenPtrFromGroup::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMemberOfTokenPtrFromGroup::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   taBase* tabval = NULL;
   if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
     gpiSubGroups* rval = (gpiSubGroups*)dat;

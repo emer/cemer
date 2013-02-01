@@ -26,12 +26,12 @@ int taiMethodOfStepButton::BidForMethod(MethodDef* md, TypeDef* td) {
   return 0;
 }
 
-taiMethodData* taiMethodOfStepButton::GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiMethodData* taiMethodOfStepButton::GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
   taiProgStepButton* rval = new taiProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiMethodData* taiMethodOfStepButton::GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiMethodData* taiMethodOfStepButton::GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
   taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

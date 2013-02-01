@@ -31,7 +31,7 @@ taiEditorOfTypeItem::taiEditorOfTypeItem(TypeItem* ti_, TypeItem::TypeInfoKinds 
 }
 
 void taiEditorOfTypeItem::Constr_Data_Labels() {
-//  taiData* dat;
+//  taiWidget* dat;
   int row = 0; // makes following more generic
   
   // name

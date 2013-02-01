@@ -31,8 +31,8 @@ class TA_API taiTypeOftaColor : public taiTypeOfColor { // special editor for co
 public:
   int           BidForType(TypeDef* td);
 protected:
-  void          GetImage_impl(taiData* dat, const void* base);
-  void          GetValue_impl(taiData* dat, void* base);
+  void          GetImage_impl(taiWidget* dat, const void* base);
+  void          GetValue_impl(taiWidget* dat, void* base);
 };
 
 #endif // taiTypeOftaColor_h

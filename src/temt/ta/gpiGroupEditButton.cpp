@@ -18,7 +18,7 @@
 
 
 gpiGroupEditButton::gpiGroupEditButton
-(void* base, TypeDef* tp, IWidgetHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+(void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }

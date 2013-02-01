@@ -16,7 +16,7 @@
 #include "taiEditorWidgets.h"
 #include <taProject>
 #include <iLabel>
-#include <taiData>
+#include <taiWidget>
 #include <iFlowLayout>
 #include <iTextBrowser>
 #include <iHelpBrowser>
@@ -223,7 +223,7 @@ void taiEditorWidgets::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
-  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  sel_item_dat = (taiWidget*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
   if (sel_item_dat) {
     sel_item_mbr = sel_item_dat->mbr;
     sel_item_base = sel_item_dat->Base();

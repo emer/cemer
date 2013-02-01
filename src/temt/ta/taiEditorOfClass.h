@@ -24,15 +24,15 @@
 #ifndef __MAKETA__
 #include <taiMenu_List>
 #include <MembSet>
-#include <taiDataList>
+#include <taiWidget_List>
 #else
 class taiMenu_List;
 class MembSet;
-class taiDataList;
+class taiWidget_List;
 #endif
 
 // declare all other types mentioned but not required to include:
-class taiActions; //
+class taiWidgetActions; //
 class QButtonGroup; //
 class EditDataPanel; //
 class taiMethodData; //
@@ -59,19 +59,19 @@ public:
 
   taiMenu_List          ta_menus;       // menu representations (from methods, non-menubuttons only)
   taiMenu_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
-  taiActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
-  taiActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
+  taiWidgetActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
+  taiWidgetActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
 
 #ifdef TA_OS_MAC
   // See bug 1518.
-  taiActions*           menu; // menu bar
+  taiWidgetActions*           menu; // menu bar
 #else
   taiMenuBar*           menu; // menu bar
 #endif
 
   MembSet_List          membs;
   QButtonGroup*         bgrp; // group used for set checkboxes
-  taiDataList           meth_el;        // method elements
+  taiWidget_List           meth_el;        // method elements
 
   //NOTE: we provide indexed access to references here for convenience, but be careful!
   const bool&           show_set(int i) const // whether the set is shown
@@ -82,9 +82,9 @@ public:
     {return membs.FastEl(i)->memb_el;}
   Member_List&          memb_el(int i) // the member defs, typically enumerated once
     {return membs.FastEl(i)->memb_el;}
-  const taiDataList&    data_el(int i) const // data items, typically rebuilt each reshow
+  const taiWidget_List&    data_el(int i) const // data items, typically rebuilt each reshow
     {return membs.FastEl(i)->data_el;}
-  taiDataList&          data_el(int i) // data items, typically rebuilt each reshow
+  taiWidget_List&          data_el(int i) // data items, typically rebuilt each reshow
     {return membs.FastEl(i)->data_el;}
 
   EditDataPanel*        dataPanel() {return panel;} // #IGNORE
@@ -139,7 +139,7 @@ protected:
   virtual void          Constr_Data_Labels(); // calls Data then Labels -- override to do your own
   virtual void          Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
   virtual void          Constr_Data_Labels_impl(int& idx, Member_List* ms,
-     taiDataList* dl);
+     taiWidget_List* dl);
   void                  Constr_MethButtons();
   override void         Constr_RegNotifies();
   override void         Constr_Final();
@@ -152,9 +152,9 @@ protected:
   virtual void          GetImage_Membs_def(); // calls GetImage_impl for all our lists
   virtual void          GetValue_Membs();
   virtual void          GetValue_Membs_def(); // calls GetValue_impl for all our lists
-  virtual void          GetImage_impl(const Member_List* ms, const taiDataList& dl, void* base);
+  virtual void          GetImage_impl(const Member_List* ms, const taiWidget_List& dl, void* base);
   virtual void          GetImageInline_impl(const void* base);
-  virtual void          GetValue_impl(const Member_List* ms, const taiDataList& dl, void* base) const;
+  virtual void          GetValue_impl(const Member_List* ms, const taiWidget_List& dl, void* base) const;
   virtual void          GetValueInline_impl(void* base) const;
   void                  AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed

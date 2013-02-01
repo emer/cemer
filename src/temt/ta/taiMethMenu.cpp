@@ -15,7 +15,7 @@
 
 #include "taiMethMenu.h"
 
-taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                          QWidget* gui_parent_, int flags_)
   : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {

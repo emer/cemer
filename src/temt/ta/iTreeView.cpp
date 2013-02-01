@@ -234,7 +234,7 @@ void iTreeView::InsertEl(bool after) {
   if(!sbo) return;
   if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
   taiTypeDefButton* typlkup =
-    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
+    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiWidget::flgAutoApply);
   TypeDef* td = sbo->el_typ;
   typlkup->GetImage(td, sbo->el_base);
   bool okc = false;
@@ -820,7 +820,7 @@ bool iTreeView::ShowNode(iTreeViewItem* item) const {
   return item->ShowNode(show(), m_show_context);
 }
 
-void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiActions* menu) {
+void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiWidgetActions* menu) {
   emit FillContextMenuHookPre(sel_items, menu);
 }
 
@@ -838,7 +838,7 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
   delete menu;
 }
 
-void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiActions* menu) {
+void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetActions* menu) {
   menu->AddSep();
   taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
   men_exp->AddItem("Expand Default", taiMenu::normal, taiAction::action,

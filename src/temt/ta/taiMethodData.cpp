@@ -15,7 +15,7 @@
 
 #include "taiMethodData.h"
 #include <IWidgetHost>
-#include <taiActions>
+#include <taiWidgetActions>
 #include <taProject>
 #include <taiArgType>
 #include <taFiler>
@@ -51,9 +51,9 @@ void taiMethodData::ShowReturnVal(cssEl* rval, IWidgetHost* host,
   taMisc::Confirm(val);
 }
 
-taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiData* par,
+taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
                              QWidget* gui_parent_, int flags_)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+  : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
   base = bs;
   meth = md;
@@ -68,7 +68,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost
   buttonRep = NULL;
 }
 
-void taiMethodData::AddToMenu(taiActions* mnu) {
+void taiMethodData::AddToMenu(taiWidgetActions* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
   taiAction* act = mnu->AddItem(meth->GetLabel(), taiMenu::use_default,

@@ -16,10 +16,10 @@
 #include "taiMemberOfProgVarIntVal.h"
 #include <ProgVar>
 
-#include <taiDataDeck>
-#include <taiIncrField>
-#include <taiComboBox>
-#include <taiBitBox>
+#include <taiWidgetDeck>
+#include <taiWidgetIncrField>
+#include <taiWidgetComboBox>
+#include <taiWidgetBitBox>
 #include <iComboBox>
 #include <iSpinBox>
 
@@ -34,15 +34,15 @@ int taiMemberOfProgVarIntVal::BidForMember(MemberDef* md, TypeDef* td){
   return 0;
 }
 
-taiData* taiMemberOfProgVarIntVal::GetDataRep_impl(IWidgetHost* host_, taiData* par,
+taiWidget* taiMemberOfProgVarIntVal::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
-  taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
+  taiWidgetDeck* rval = new taiWidgetDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
-  taiIncrField* int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
+  taiWidgetIncrField* int_rep = new taiWidgetIncrField(typ, host_, rval, gui_parent_, flags_);
   int_rep->setMinimum(INT_MIN);
-  taiComboBox*  enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
-  taiBitBox* bit_rep = new taiBitBox(typ, host_, rval, gui_parent_, flags_);
+  taiWidgetComboBox*  enum_rep = new taiWidgetComboBox(true, NULL, host_, rval, gui_parent_, flags_);
+  taiWidgetBitBox* bit_rep = new taiWidgetBitBox(typ, host_, rval, gui_parent_, flags_);
   rval->data_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());
   rval->data_el.Add(enum_rep);
@@ -53,22 +53,22 @@ taiData* taiMemberOfProgVarIntVal::GetDataRep_impl(IWidgetHost* host_, taiData* 
   return rval;
 }
 
-void taiMemberOfProgVarIntVal::GetImage_impl(taiData* dat, const void* base) {
+void taiMemberOfProgVarIntVal::GetImage_impl(taiWidget* dat, const void* base) {
   ProgVar* pv = (ProgVar*)base;
   int val =  *((int*)mbr->GetOff(base));
-  taiDataDeck* rval = (taiDataDeck*)dat;
+  taiWidgetDeck* rval = (taiWidgetDeck*)dat;
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
     if(pv->hard_enum_type->HasOption("BITS")) {
       rval->GetImage(2);
-      taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(2));
+      taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->data_el.SafeEl(2));
       if (!bit_rep) return; // shouldn't happen
       bit_rep->SetEnumType(pv->hard_enum_type);
       bit_rep->GetImage(val);
     }
     else {
       rval->GetImage(1);
-      taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+      taiWidgetComboBox* enum_rep = dynamic_cast<taiWidgetComboBox*>(rval->data_el.SafeEl(1));
       if (!enum_rep) return; // shouldn't happen
       enum_rep->SetEnumType(pv->hard_enum_type);
       enum_rep->GetEnumImage(val);
@@ -76,32 +76,32 @@ void taiMemberOfProgVarIntVal::GetImage_impl(taiData* dat, const void* base) {
   }
   else {
     rval->GetImage(0);
-    taiIncrField* int_rep = dynamic_cast<taiIncrField*>(rval->data_el.SafeEl(0));
+    taiWidgetIncrField* int_rep = dynamic_cast<taiWidgetIncrField*>(rval->data_el.SafeEl(0));
     if (!int_rep) return; // shouldn't happen
     int_rep->GetImage(val);
   }
 }
 
-void taiMemberOfProgVarIntVal::GetMbrValue_impl(taiData* dat, void* base) {
+void taiMemberOfProgVarIntVal::GetMbrValue_impl(taiWidget* dat, void* base) {
   ProgVar* pv = (ProgVar*)base;
   int& val =  *((int*)mbr->GetOff(base));
-  taiDataDeck* rval = (taiDataDeck*)dat;
+  taiWidgetDeck* rval = (taiWidgetDeck*)dat;
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
     if(pv->hard_enum_type->HasOption("BITS")) {
-      taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(2));
+      taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->data_el.SafeEl(2));
       if (!bit_rep) return; // shouldn't happen
       bit_rep->GetValue(val);
     }
     else {
       int itm_no = -1;
-      taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+      taiWidgetComboBox* enum_rep = dynamic_cast<taiWidgetComboBox*>(rval->data_el.SafeEl(1));
       if (!enum_rep) return; // shouldn't happen
       enum_rep->GetEnumValue(val);
     }
   }
   else {
-    taiIncrField* int_rep = dynamic_cast<taiIncrField*>(rval->data_el.SafeEl(0));
+    taiWidgetIncrField* int_rep = dynamic_cast<taiWidgetIncrField*>(rval->data_el.SafeEl(0));
     if (!int_rep) return; // shouldn't happen
     val = int_rep->GetValue();
   }
