@@ -22,9 +22,9 @@
 
 #include <QObject>
 #include <QPushButton>
-#include <taiMenu>
+#include <taiWidgetMenu>
 #include <IWidgetHost>
-#include <taiChoiceDialog>
+#include <iDialogChoice>
 #include <taMisc>
 
 //////////////////////////////////////////////////
@@ -95,7 +95,7 @@ void cssiPolyData::GetValue_impl(void*) const {
 
 cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
 	TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_)
-: taiMethMenu(NULL, (MethodDef*)NULL, typ_, host_, par, gui_parent, flags_)
+: taiWidgetMethodMenu(NULL, (MethodDef*)NULL, typ_, host_, par, gui_parent, flags_)
 {
   obj = ob;
   top = tp;
@@ -114,8 +114,8 @@ cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* 
 void cssiMethMenu::AddToMenu(taiWidgetActions* menu) {
   if (css_fun->HasOption("MENU_SEP_BEFORE"))
     menu->AddSep();
-  menu->AddItem(css_fun->name, taiMenu::use_default,
-	taiAction::action, this, SLOT(CallFun), (void*)NULL);
+  menu->AddItem(css_fun->name, taiWidgetMenu::use_default,
+	iAction::action, this, SLOT(CallFun), (void*)NULL);
   if (css_fun->HasOption("MENU_SEP_AFTER"))
     menu->AddSep();
 }
@@ -216,7 +216,7 @@ void cssiMethMenu::ShowReturnVal(cssEl* rval) {
   }
   String val = css_fun->name + " Return Value: ";
   val += rval->PrintStr();
-  taiChoiceDialog::information(NULL, "Return Value", val);
+  iDialogChoice::information(NULL, "Return Value", val);
 }
 
 void cssiMethMenu::ApplyBefore() {

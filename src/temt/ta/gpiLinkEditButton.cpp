@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "gpiLinkEditButton.h"
-#include <taiMethodData>
+#include <taiWidgetMethod>
 #include <taiMethod>
 
 
@@ -43,7 +43,7 @@ void gpiLinkEditButton::GetMethMenus() {
     if((md->name == "DuplicateEl") || (md->name == "Transfer"))
       continue;
     lst_men_nm = men_nm;
-    taiMethodData* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
+    taiWidgetMethod* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);

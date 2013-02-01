@@ -28,7 +28,7 @@ void SelectableHostHelper::customEvent(QEvent* ev) {
   }
 }
 
-void SelectableHostHelper::EditAction(taiAction* act) {
+void SelectableHostHelper::EditAction(iAction* act) {
   int ea = act->usr_data.toInt();
   ISelectable::GuiContext gc = (ISelectable::GuiContext)act->data().toInt();
   host->EditAction(ea, gc);

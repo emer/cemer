@@ -64,11 +64,10 @@ class QEvent; //
 */
 
 class TA_API taiWidget: public QObject {
-  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
   Q_OBJECT
   INHERITED(QObject)
   friend class taiWidgetComposite; // for parenting
-
 public:
   enum Flags { // flags are so we don't have to keep adding parameters to constructor... flags >= 10000 are custom per type
     flgReadOnly         = 0x0001,
@@ -77,7 +76,7 @@ public:
     flgEditOk           = 0x0008,  // used typically by menus to allow Edit of item
     flgNoList           = 0x0010,  // used typically by menus to include lists of item
     flgNoGroup          = 0x0010,  // used typically by menus to include groups of items -- note this is the same as NoList
-    flgNoInGroup        = 0x0020,  // used by gpiGroupEls
+    flgNoInGroup        = 0x0020,  // used by taiWidgetGroupElMenu
     flgEditOnly         = 0x0040,  // used by EditButton
     flgInline           = 0x0080,  // used by types and members that support INLINE directive, esp. Array
     flgEditDialog       = 0x0100,  // for taiWidgetField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
@@ -87,7 +86,7 @@ public:
     flgFlowLayout       = 0x1000,  // for polyguys (inline) us a flowlayout, not hboxlayout
     flgCondEditUseRO    = 0x2000,  // for taiCondEditMember, used to keep its use_ro flag
     flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
-    flgNoAlpha          = 0x10000, // for taiColor, don't use the alpha channel
+    flgNoAlpha          = 0x10000, // for taiWidgetColor, don't use the alpha channel
     flgNoHelp           = 0x20000, // for taiPtr guys, don't add a Help button
 #ifndef __MAKETA__
     flg_INHERIT_MASK    = (flgReadOnly) // flags to pass on to nested children, in inline

@@ -20,7 +20,7 @@
 #include <taProject>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
-#include <taiMenu>
+#include <taiWidgetMenu>
 #include <iTabBarBase>
 
 #include <taMisc>

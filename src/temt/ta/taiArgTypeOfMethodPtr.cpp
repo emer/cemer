@@ -14,9 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiArgTypeOfMethodPtr.h"
-#include <taiMethodDefMenu>
+#include <taiWidgetMethodDefMenu>
 #include <taiWidgetActions>
-#include <taiMenu>
+#include <taiWidgetMenu>
 #include <taiMisc>
 
 #include <css_ta.h>
@@ -40,7 +40,7 @@ taiWidget* taiArgTypeOfMethodPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget*
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);
   flags_ |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
-  taiMethodDefMenu* rval = new taiMethodDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
+  taiWidgetMethodDefMenu* rval = new taiWidgetMethodDefMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall,
         init_md, NULL, typ, host_, par, gui_parent_, flags_);
   rval->GetMenu();
   return rval;
@@ -49,7 +49,7 @@ taiWidget* taiArgTypeOfMethodPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget*
 void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
   if(arg_base == NULL)
     return;
-  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  taiWidgetMethodDefMenu* rval = (taiWidgetMethodDefMenu*)dat;
   rval->md = (MethodDef*)*((void**)arg_base);
   rval->menubase = typ;
   rval->ta_actions->Reset();
@@ -73,6 +73,6 @@ void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
 void taiArgTypeOfMethodPtr::GetValue_impl(taiWidget* dat, void*) {
   if(arg_base == NULL)
     return;
-  taiMethodDefMenu* rval = (taiMethodDefMenu*)dat;
+  taiWidgetMethodDefMenu* rval = (taiWidgetMethodDefMenu*)dat;
   *((void**)arg_base) = rval->GetValue();
 }

@@ -155,29 +155,29 @@ void iTabView::DataPanelDestroying(iDataPanel* panel) {
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iDataPanel* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
-  taiAction* act = new taiAction(tab_idx, "&Add Tab",  QKeySequence());
-  act->connect(taiAction::int_act, this,  SLOT(AddTab(int)));
+  iAction* act = new iAction(tab_idx, "&Add Tab",  QKeySequence());
+  act->connect(iAction::int_act, this,  SLOT(AddTab(int)));
   act->setParent(contextMenu);
   contextMenu->addAction(act);
   // only add Close if on a tab
   if (tab_idx >= 0) {
     // always add for consistency, even if on an empty or locked guy
-    act = new taiAction(tab_idx, "&Close Tab", QKeySequence());
+    act = new iAction(tab_idx, "&Close Tab", QKeySequence());
     act->setParent(contextMenu);
     contextMenu->addAction(act);
     if (dp && dp->lockInPlace())
       act->setEnabled(false);
     else
-      act->connect(taiAction::int_act, this,  SLOT(CloseTab(int)));
+      act->connect(iAction::int_act, this,  SLOT(CloseTab(int)));
   }
   // pinning/unpinning only if not lockInPlace guy
   if (tab_idx < 0) return;
   if (!dp || dp->lockInPlace()) return;
   contextMenu->addSeparator();
   if (dp->pinned()) {
-    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), Qt::CTRL+Qt::Key_P );
+    act = new iAction("&Unpin",  dp, SLOT(Unpin()), Qt::CTRL+Qt::Key_P );
   } else {
-    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), Qt::CTRL+Qt::Key_P );
+    act = new iAction("&Pin in place",  dp, SLOT(Pin()), Qt::CTRL+Qt::Key_P );
   }//TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);

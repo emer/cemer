@@ -19,8 +19,8 @@
 #include <ProgVar>
 #include <taiWidgetIncrField>
 #include <taiWidgetField>
-#include <taiToggle>
-#include <taiTokenPtrButton>
+#include <taiWidgetToggle>
+#include <taiWidgetTokenPtr>
 #include <taiWidgetBitBox>
 #include <taiWidgetComboBox>
 #include <iComboBox>
@@ -504,7 +504,7 @@ bool taGuiDialog::AddBoolCheckbox(bool* dvar, const String& nm, const String& pa
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiToggle* taidata = new taiToggle(&TA_bool, data_host, NULL, par->widget);
+  taiWidgetToggle* taidata = new taiWidgetToggle(&TA_bool, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "BoolCheckbox", layout, attributes,
                                   Variant((void*)dvar), _nilString, taidata);
   return (bool)w;
@@ -520,7 +520,7 @@ bool taGuiDialog::AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm, co
   String atts = attributes;
   if(td)
     atts = String("type=") + td->name + "; " + atts;
-  taiTokenPtrButton* taidata = new taiTokenPtrButton(td, data_host, NULL, par->widget);
+  taiWidgetTokenPtr* taidata = new taiWidgetTokenPtr(td, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "ObjectPtr",
                                   layout, atts,  Variant((void*)obj), _nilString, taidata);
   return (bool)w;

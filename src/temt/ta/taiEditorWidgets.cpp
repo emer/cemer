@@ -20,7 +20,7 @@
 #include <iFlowLayout>
 #include <iTextBrowser>
 #include <iHelpBrowser>
-#include <iHostDialog>
+#include <iDialogEditor>
 #include <HiLightButton>
 
 #include <SigLinkSignal>

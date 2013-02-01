@@ -155,12 +155,12 @@ void iProgramEditor::Init() {
     SLOT(items_Notify(ISelectableHost*, int)) );
 
   // browse history
-  historyBackAction = new taiAction("Back", QKeySequence(), "historyBackAction" );
+  historyBackAction = new iAction("Back", QKeySequence(), "historyBackAction" );
   historyBackAction->setParent(this); // for shortcut functionality, and to delete
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
   connect(brow_hist, SIGNAL(back_enabled(bool)),
     historyBackAction, SLOT(setEnabled(bool)) );
-  historyForwardAction = new taiAction("Forward", QKeySequence(), "historyForwardAction" );
+  historyForwardAction = new iAction("Forward", QKeySequence(), "historyForwardAction" );
   historyForwardAction->setParent(this); // for shortcut functionality, and to delete
   connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
   connect(brow_hist, SIGNAL(forward_enabled(bool)),

@@ -17,7 +17,7 @@
 #define taiProgStepButton_h 1
 
 // parent includes:
-#include <taiMethodData>
+#include <taiWidgetMethod>
 
 // member includes:
 
@@ -27,7 +27,7 @@ class QToolBar; //
 class QRadioButton; //
 
 
-class TA_API taiProgStepButton : public taiMethodData {
+class TA_API taiProgStepButton : public taiWidgetMethod {
   // one method with a list of buttons for args
   Q_OBJECT
 public:

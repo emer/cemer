@@ -15,7 +15,7 @@
 
 #include "iBrainViewEditDialog.h"
 #include <BrainAtlasRegexpPopulator>
-#include <taiObjChooser>
+#include <iDialogObjChooser>
 #include <ColorScaleSpec>
 #include <ColorScaleColor_List>
 #include <int_Array>
@@ -28,7 +28,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 
-iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iRegexpDialogPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
+iBrainViewEditDialog::iBrainViewEditDialog(taiRegexpField* regexp_field, const String& field_name, iDialogRegexpPopulator *re_populator, const void *fieldOwner, bool read_only, bool editor_mode)
   : inherited(regexp_field, field_name, re_populator, fieldOwner, read_only, editor_mode)
 {
   AddButtons();
@@ -109,7 +109,7 @@ void iBrainViewEditDialog::AddButtons()
 
 void iBrainViewEditDialog::btnColorsFromScale_clicked()
 {
-  taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
+  iDialogObjChooser* chs = iDialogObjChooser::createInstance(&TA_ColorScaleSpec,
                                                      "select a colorscale to apply to the currently-selected labels");
   bool rval = chs->Choose();
   if(!rval) return;
@@ -144,7 +144,7 @@ void iBrainViewEditDialog::btnColorsFromScale_clicked()
 
 void iBrainViewEditDialog::btnRandomColors_clicked()
 {
-  taiObjChooser* chs = taiObjChooser::createInstance(&TA_ColorScaleSpec,
+  iDialogObjChooser* chs = iDialogObjChooser::createInstance(&TA_ColorScaleSpec,
                                                      "select a colorscale to select random colors from -- Rainbow is generally a good choice");
   bool rval = chs->Choose();
   if(!rval) return;

@@ -14,19 +14,19 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeHier.h"
-#include <taiMenu>
+#include <taiWidgetMenu>
 
 
 taiTypeHier::taiTypeHier(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host_,
                          taiWidget* par, QWidget* gui_parent_, int flags_)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
-  ta_actions = taiWidgetActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
+  ta_actions = taiWidgetActions::New(rt, taiWidgetMenu::radio_update, ft, typ, host_, this, gui_parent_);
   ownflag = true;
   enum_mode = false;
 }
 
-taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
+taiTypeHier::taiTypeHier(taiWidgetMenu* existing_menu, TypeDef* typ_,
                          IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
   : taiWidget(typ_, host_, par, gui_parent_, flags_)
 {
@@ -90,9 +90,9 @@ void taiTypeHier::GetImage(TypeDef* ths) {
   ta_actions->GetImageByData(Variant((void*)ths));
 }
 
-void taiTypeHier::GetMenu(const taiMenuAction* acn) {
+void taiTypeHier::GetMenu(const iMenuAction* acn) {
   if (HasFlag(flgNullOk))
-    ta_actions->AddItem(String::con_NULL, taiMenu::use_default, acn, (void*)NULL);
+    ta_actions->AddItem(String::con_NULL, taiWidgetMenu::use_default, acn, (void*)NULL);
   if (enum_mode)
     GetMenu_Enum_impl(ta_actions, typ, acn);
   else
@@ -103,12 +103,12 @@ QWidget* taiTypeHier::GetRep() {
   return ta_actions->GetRep();
 }
 
-void taiTypeHier::GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
+void taiTypeHier::GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const iMenuAction* acn) {
   // add Enums of this type
   for (int i = 0; i < typ_->sub_types.size; ++i) {
     TypeDef* chld = typ_->sub_types.FastEl(i);
     if (AddType_Enum(chld)) {
-      menu->AddItem(typ_->name + "::" + chld->name, taiMenu::use_default, acn, (void*)chld);
+      menu->AddItem(typ_->name + "::" + chld->name, taiWidgetMenu::use_default, acn, (void*)chld);
     }
   }
   menu->AddSep(false);
@@ -120,16 +120,16 @@ void taiTypeHier::GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const
 
     if ((CountChildren(chld) > 0) || (CountEnums(chld) > 0))
     {
-      taiMenu* chld_menu = menu->AddSubMenu((char*)chld->name);
+      taiWidgetMenu* chld_menu = menu->AddSubMenu((char*)chld->name);
       GetMenu_Enum_impl(chld_menu, chld, acn);
     }
   }
 }
 
-void taiTypeHier::GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn) {
+void taiTypeHier::GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const iMenuAction* acn) {
   // it is hard to do recursive menus, so we just build optimistically, then delete empties
   if (AddType_Class(typ_)) {
-    menu->AddItem((char*)typ_->name, taiMenu::use_default, acn, (void*)typ_);
+    menu->AddItem((char*)typ_->name, taiWidgetMenu::use_default, acn, (void*)typ_);
     menu->AddSep(false); //don't start new radio group
   }
   for (int i = 0; i < typ_->children.size; ++i) {
@@ -144,19 +144,19 @@ void taiTypeHier::GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiM
     }
 
     if (CountChildren(chld) > 0) {
-      taiMenu* chld_menu = menu->AddSubMenu((char*)chld->name);
+      taiWidgetMenu* chld_menu = menu->AddSubMenu((char*)chld->name);
       GetMenu_impl(chld_menu, chld, acn);
     }  else
-      menu->AddItem((char*)chld->name, taiMenu::use_default, acn, (void*)chld);
+      menu->AddItem((char*)chld->name, taiWidgetMenu::use_default, acn, (void*)chld);
   }
 }
 
 TypeDef* taiTypeHier::GetValue() {
-  taiAction* cur = ta_actions->curSel();
+  iAction* cur = ta_actions->curSel();
   if (cur) return (TypeDef*)cur->usr_data.toPtr(); return NULL;
 }
 
-void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
+void taiTypeHier::UpdateMenu(const iMenuAction* acn) {
   ta_actions->Reset();
   GetMenu(acn);
 }

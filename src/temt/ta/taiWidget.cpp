@@ -65,7 +65,7 @@ void taiWidget::Destroy() {
 }
 
 void taiWidget::applyNow() {
-  // we send this up via parents, to let them trap first, ex taiToggle
+  // we send this up via parents, to let them trap first, ex taiWidgetToggle
   if (mparent)
     mparent->applyNow();
   else if (host) {

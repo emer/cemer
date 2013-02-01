@@ -20,7 +20,7 @@
 #include <iTreeViewItem>
 #include <taSigLinkItr>
 #include <taiSigLink>
-#include <taiTypeDefButton>
+#include <taiWidgetTypeDefPtr>
 #include <taProject>
 #include <taiClipData>
 #include <taiObjectMimeFactory>
@@ -233,8 +233,8 @@ void iTreeView::InsertEl(bool after) {
   }
   if(!sbo) return;
   if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
-  taiTypeDefButton* typlkup =
-    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiWidget::flgAutoApply);
+  taiWidgetTypeDefPtr* typlkup =
+    new taiWidgetTypeDefPtr(sbo->el_base, NULL, NULL, NULL, taiWidget::flgAutoApply);
   TypeDef* td = sbo->el_typ;
   typlkup->GetImage(td, sbo->el_base);
   bool okc = false;
@@ -647,7 +647,7 @@ bool iTreeView::focusNextPrevChild(bool next) {
   return inherited::focusNextPrevChild(next);
 }
 
-void iTreeView::mnuFindFromHere(taiAction* mel) {
+void iTreeView::mnuFindFromHere(iAction* mel) {
   iMainWindowViewer* imw = mainWindow();
   if (!imw) return;
   iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
@@ -655,7 +655,7 @@ void iTreeView::mnuFindFromHere(taiAction* mel) {
   imw->Find(dl);
 }
 
-void iTreeView::mnuReplaceFromHere(taiAction* mel) {
+void iTreeView::mnuReplaceFromHere(iAction* mel) {
   iMainWindowViewer* imw = mainWindow();
   if (!imw) return;
   iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
@@ -826,7 +826,7 @@ void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiWidgetAct
 
 void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos,
  int col ) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   // note: we must force the sel_item to be the item, otherwise we frequently
   // are refering to the wrong item (not what user right clicked on)
   // this seems to be the easiest way:
@@ -840,20 +840,20 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
 
 void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiWidgetActions* menu) {
   menu->AddSep();
-  taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
-  men_exp->AddItem("Expand Default", taiMenu::normal, taiAction::action,
+  taiWidgetMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
+  men_exp->AddItem("Expand Default", taiWidgetMenu::normal, iAction::action,
     this, SLOT(ExpandDefault()) );
-  men_exp->AddItem("Expand All", taiMenu::normal, taiAction::action,
+  men_exp->AddItem("Expand All", taiWidgetMenu::normal, iAction::action,
     this, SLOT(ExpandAll()) );
-  men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
+  men_exp->AddItem("Collapse All", taiWidgetMenu::normal, iAction::action,
     this, SLOT(CollapseAll()) );
   if (sel_items.size == 1) {
     ISelectable* si = sel_items.FastEl(0);
     if (si && si->GetTypeDef()->InheritsFrom(&TA_iTreeViewItem)) {
       void* nd = si->This(); // don't need to detype, because we pass as void anyway
-      men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
+      men_exp->AddItem("Expand All From Here", taiWidgetMenu::normal, iAction::ptr_act,
         this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
-      men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
+      men_exp->AddItem("Collapse All From Here", taiWidgetMenu::normal, iAction::ptr_act,
         this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
     }
   }

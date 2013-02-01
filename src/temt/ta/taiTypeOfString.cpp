@@ -45,5 +45,5 @@ void taiTypeOfString::GetImage_impl(taiWidget* dat, const void* base) {
 }
 
 void taiTypeOfString::GetValue_impl(taiWidget* dat, void* base) {
-  dat->GetValue_(base); //noop for taiEditButton
+  dat->GetValue_(base); //noop for taiWidgetEditButton
 }

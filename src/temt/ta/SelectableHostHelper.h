@@ -23,7 +23,7 @@
 #include <ISelectableHost>
 
 // declare all other types mentioned but not required to include:
-class taiAction; // 
+class iAction; // 
 
 
 class TA_API SelectableHostHelper: public QObject {
@@ -40,7 +40,7 @@ public slots:
   void          EditAction(int ea) {host->EditAction(ea);} //  callback for when we are ClipHandler
   void          ctxtMenu_destroyed() {host->ctxtMenu_destroyed();}
    // attached to ctxt menu so we can clean up the mimesource
-  void          EditAction(taiAction*); //  callback for context menu
+  void          EditAction(iAction*); //  callback for context menu
 
 #ifndef __MAKETA__
 signals:

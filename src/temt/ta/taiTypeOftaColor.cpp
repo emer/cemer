@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOftaColor.h"
-#include <taiColor>
+#include <taiWidgetColor>
 #include <taColor>
 
 
@@ -25,14 +25,14 @@ int taiTypeOftaColor::BidForType(TypeDef* td) {
 }
 
 void taiTypeOftaColor::GetImage_impl(taiWidget* dat_, const void* base) {
-  taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
+  taiWidgetColor* dat = dynamic_cast<taiWidgetColor*>(dat_); // for safety
   if (!dat) return;
   const taColor* col = static_cast<const taColor*>(base);
   dat->GetImage(iColor(col->r, col->g, col->b, col->a));
 }
 
 void taiTypeOftaColor::GetValue_impl(taiWidget* dat_, void* base) {
-  taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
+  taiWidgetColor* dat = dynamic_cast<taiWidgetColor*>(dat_); // for safety
   if (!dat) return;
   iColor icol = dat->GetValue();
   taColor* col = static_cast<taColor*>(base);

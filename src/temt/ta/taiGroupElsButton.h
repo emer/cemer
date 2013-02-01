@@ -35,13 +35,13 @@ public:
   USING(inherited::GetImage)
   void                  GetImage(taGroup_impl* base_grp, taBase* it);
 
-  void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
 
   taiGroupElsButton(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                     QWidget* gui_parent_, int flags_ = 0,
                     const String& flt_start_txt = ""); //note: typ is type of grp
 protected:
-  int                   BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp,
+  int                   BuildChooser_1(iDialogItemChooser* ic, taGroup_impl* top_grp,
     QTreeWidgetItem* top_item); // we use this recursively, and also in gpi guy
 };
 

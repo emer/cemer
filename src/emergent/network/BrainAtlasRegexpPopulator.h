@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "network_def.h"
-#include <iRegexpDialogPopulator>
+#include <iDialogRegexpPopulator>
 
 // member includes:
 #ifndef __MAKETA__
@@ -32,7 +32,7 @@ class taBrainAtlas; //
 
 TypeDef_Of(BrainAtlasRegexpPopulator);
 
-class EMERGENT_API BrainAtlasRegexpPopulator : public iRegexpDialogPopulator {
+class EMERGENT_API BrainAtlasRegexpPopulator : public iDialogRegexpPopulator {
 public:
   BrainAtlasRegexpPopulator();
   override QStringList getHeadings(bool editor_mode, int& extra_cols) const;

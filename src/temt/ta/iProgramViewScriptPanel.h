@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 #ifndef __MAKETA__
-class NumberedTextView;
+class iNumberedTextView;
 #endif
 class Program; 
 
@@ -35,7 +35,7 @@ class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
 public:
 #ifndef __MAKETA__
-  NumberedTextView*     vs; // the view script widget
+  iNumberedTextView*     vs; // the view script widget
 #endif
 
   Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
@@ -50,7 +50,7 @@ public:
   ~iProgramViewScriptPanel();
 
 public slots:
-  // these all connect from corresponding signals on the NumberBar or NumberedTextView
+  // these all connect from corresponding signals on the iNumberBar or iNumberedTextView
   void     lineFlagsUpdated(int lineno, int flags);
   void     viewSource(int lineno);
   void     mouseHover(const QPoint &pos, int lineno, const QString& word);

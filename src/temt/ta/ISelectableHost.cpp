@@ -44,7 +44,7 @@ void ISelectableHost::ItemDeleting(ISelectable* item) {
 
 const char* ISelectableHost::edit_enabled_slot = SLOT(EditActionsEnabled(int&));
 const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int));
-const char* ISelectableHost::edit_menu_action_slot = SLOT(EditAction(taiAction*));
+const char* ISelectableHost::edit_menu_action_slot = SLOT(EditAction(iAction*));
 const char* ISelectableHost::actions_enabled_slot; // currently NULL
 const char* ISelectableHost::update_ui_signal; // currently NULL
 
@@ -75,7 +75,7 @@ void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
   if (dyn_actions[dyn_list].count() == 0) return;
 //nn,at top  menu->AddSep();
   for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
-    taiAction* act = dyn_actions[dyn_list].FastEl(i);
+    iAction* act = dyn_actions[dyn_list].FastEl(i);
     menu->AddAction(act);
   }
 }
@@ -212,7 +212,7 @@ void ISelectableHost::FillContextMenu(taiWidgetActions* menu) {
     String view_cap = "View";
     String obj_cap = "Object";
     item->GetContextCaptions(view_cap, obj_cap);
-    taiMenu* sub = menu->AddSubMenu(view_cap);
+    taiWidgetMenu* sub = menu->AddSubMenu(view_cap);
     FillContextMenu_int(sel_items, sub, 0, ISelectable::GC_DUAL_DEF_VIEW);
     sub = menu->AddSubMenu(obj_cap);
     FillContextMenu_int(sel_items, sub, 1, ISelectable::GC_DUAL_DEF_DATA);
@@ -253,7 +253,7 @@ void ISelectableHost::DoDynAction(int idx) {
     list++;
   }
   DynMethod_PtrList& dyn_methods = this->dyn_methods[list];
-//nn  taiAction_List&    dyn_actions = this->dyn_actions[list];
+//nn  iAction_List&    dyn_actions = this->dyn_actions[list];
   ISelectable::GuiContext gui_ctxt = dyn_context[list];
 
   //note: we really won't have been called if any items don't have links,
@@ -504,7 +504,7 @@ void ISelectableHost::UpdateMethodsActions(int dyn_list, ISelectable::GuiContext
   dyn_actions[dyn_list].Reset(); // note: items ref deleted if needed
   for (int i = 0; i < dyn_methods[dyn_list].size; ++i) {
     DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
-    taiAction* act = new taiAction(dyn_idx, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
+    iAction* act = new iAction(dyn_idx, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
     QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
     dyn_actions[dyn_list].Add(act);
     dyn_idx++;
@@ -522,7 +522,7 @@ void ISelectableHost::UpdateMethodsActionsForDrop() {
   // dynamically create actions
   for (int i = 0; i < dyn_methods[0].size; ++i) {
     DynMethodDesc* dmd = dyn_methods[0].FastEl(i);
-    taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
+    iAction* act = new iAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
     QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
     dyn_actions[0].Add(act);
     dyn_idx++;

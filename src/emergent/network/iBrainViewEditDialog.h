@@ -18,7 +18,7 @@
 
 // parent includes:
 #include "network_def.h"
-#include <iRegexpDialog>
+#include <iDialogRegexp>
 
 // member includes:
 
@@ -26,14 +26,14 @@
 class QModelIndex; //
 
 
-class EMERGENT_API iBrainViewEditDialog : public iRegexpDialog {
+class EMERGENT_API iBrainViewEditDialog : public iDialogRegexp {
   Q_OBJECT
-  INHERITED(iRegexpDialog)
+  INHERITED(iDialogRegexp)
 public:
   iBrainViewEditDialog(
     taiRegexpField* regexp_field,
     const String& field_name,
-    iRegexpDialogPopulator *re_populator,
+    iDialogRegexpPopulator *re_populator,
     const void *fieldOwner,
     bool read_only,
     bool editor_mode = true

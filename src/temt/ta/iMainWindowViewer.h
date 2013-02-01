@@ -25,16 +25,16 @@
 
 // member includes:
 #include <MainWindowViewer>
-#include <taiAction_List>
+#include <iAction_List>
 
 // declare all other types mentioned but not required to include:
-class taiMenu; //
-class taiAction; //
+class taiWidgetMenu; //
+class iAction; //
 class iBrowseHistory; //
 class iToolBar; //
 class iFrameViewer; //
 class iDockViewer; //
-class iSearchDialog; //
+class iDialogSearch; //
 class iTreeView; //
 class ISelectable_PtrList; //
 class iTreeViewItem; //
@@ -76,72 +76,72 @@ public:
   MainWinLocs           cur_main_focus; // where is our current major focus located?
   WinSubLocs            cur_sub_focus; // where is our current sub focus within main?
 
-  taiAction_List        actions; // our own list of all created actions
+  iAction_List        actions; // our own list of all created actions
   iBrowseHistory*       brow_hist;
-  taiMenuBar*           menu;           // menu bar -- note: we use the window's built-in QMenu
+  taiWidgetMenuBar*           menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
 
-  taiMenu*              fileMenu;
-  taiMenu*              fileOpenRecentMenu;
-  taiMenu*              fileExportMenu; // submenu -- empty and disabled in base
-  taiMenu*              editMenu;
-  taiMenu*              viewMenu;
-  taiMenu*              show_menu;
-  taiMenu*              ctrlMenu;
-  taiMenu*              frameMenu; // enumeration of all Frame guys
-  taiMenu*              toolBarMenu; // enumeration of all ToolBar guys
-  taiMenu*              dockMenu; // enumeration of all Dock guys
-  taiMenu*              toolsMenu;
-  taiMenu*              windowMenu; // on-demand
-  taiMenu*              helpMenu;
-  taiAction*            historyBackAction;
-  taiAction*            historyForwardAction;
-  taiAction*            fileNewAction;
-  taiAction*            fileOpenAction;
-  taiAction*            fileSaveAction;
-  taiAction*            fileSaveAsAction;
-  taiAction*            fileSaveNotesAction;
-  taiAction*            fileSaveAsTemplateAction;
-  taiAction*            fileUpdateChangeLogAction;
-  taiAction*            fileSaveAllAction;
-  taiMenu*              fileOpenFromWebMenu;
-  taiMenu*              filePublishDocsOnWebMenu;
-  taiAction*            filePublishProjectOnWebAction;
-  taiAction*            fileCloseAction;
-  taiAction*            fileOptionsAction;
-  taiAction*            filePrintAction;
-  taiAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
-  taiAction*            fileQuitAction; //note: only on app window, except on all in Mac
-  taiAction*            editUndoAction;
-  taiAction*            editRedoAction;
-  taiAction*            editCutAction;
-  taiAction*            editCopyAction;
-  taiAction*            editDupeAction;
-  taiAction*            editDeleteAction;
-  taiAction*            editPasteAction;
-  taiAction*            editPasteIntoAction;
-  taiAction*            editPasteAssignAction;
-  taiAction*            editPasteAppendAction;
-  taiAction*            editLinkAction;
-  taiAction*            editLinkIntoAction;
-  taiAction*            editUnlinkAction;
-  taiAction*            editFindAction;
-  taiAction*            editFindNextAction;
+  taiWidgetMenu*              fileMenu;
+  taiWidgetMenu*              fileOpenRecentMenu;
+  taiWidgetMenu*              fileExportMenu; // submenu -- empty and disabled in base
+  taiWidgetMenu*              editMenu;
+  taiWidgetMenu*              viewMenu;
+  taiWidgetMenu*              show_menu;
+  taiWidgetMenu*              ctrlMenu;
+  taiWidgetMenu*              frameMenu; // enumeration of all Frame guys
+  taiWidgetMenu*              toolBarMenu; // enumeration of all ToolBar guys
+  taiWidgetMenu*              dockMenu; // enumeration of all Dock guys
+  taiWidgetMenu*              toolsMenu;
+  taiWidgetMenu*              windowMenu; // on-demand
+  taiWidgetMenu*              helpMenu;
+  iAction*            historyBackAction;
+  iAction*            historyForwardAction;
+  iAction*            fileNewAction;
+  iAction*            fileOpenAction;
+  iAction*            fileSaveAction;
+  iAction*            fileSaveAsAction;
+  iAction*            fileSaveNotesAction;
+  iAction*            fileSaveAsTemplateAction;
+  iAction*            fileUpdateChangeLogAction;
+  iAction*            fileSaveAllAction;
+  taiWidgetMenu*              fileOpenFromWebMenu;
+  taiWidgetMenu*              filePublishDocsOnWebMenu;
+  iAction*            filePublishProjectOnWebAction;
+  iAction*            fileCloseAction;
+  iAction*            fileOptionsAction;
+  iAction*            filePrintAction;
+  iAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
+  iAction*            fileQuitAction; //note: only on app window, except on all in Mac
+  iAction*            editUndoAction;
+  iAction*            editRedoAction;
+  iAction*            editCutAction;
+  iAction*            editCopyAction;
+  iAction*            editDupeAction;
+  iAction*            editDeleteAction;
+  iAction*            editPasteAction;
+  iAction*            editPasteIntoAction;
+  iAction*            editPasteAssignAction;
+  iAction*            editPasteAppendAction;
+  iAction*            editLinkAction;
+  iAction*            editLinkIntoAction;
+  iAction*            editUnlinkAction;
+  iAction*            editFindAction;
+  iAction*            editFindNextAction;
 
-  taiAction*            viewRefreshAction;
-  taiAction*            viewSplitVerticalAction;
-  taiAction*            viewSplitHorizontalAction;
-  taiAction*            viewCloseCurrentViewAction;
-  taiAction*            viewSaveViewAction;
+  iAction*            viewRefreshAction;
+  iAction*            viewSplitVerticalAction;
+  iAction*            viewSplitHorizontalAction;
+  iAction*            viewCloseCurrentViewAction;
+  iAction*            viewSaveViewAction;
 
-  taiAction*            toolsClassBrowseAction;
-  taiAction*            toolsTypeBrowseAction;
+  iAction*            toolsClassBrowseAction;
+  iAction*            toolsTypeBrowseAction;
 
-  taiAction*            ctrlStopAction;
-  taiAction*            ctrlContAction;
+  iAction*            ctrlStopAction;
+  iAction*            ctrlContAction;
 
-  taiAction*            helpHelpAction;
-  taiAction*            helpAboutAction;
+  iAction*            helpHelpAction;
+  iAction*            helpAboutAction;
 
   QObject*              clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
@@ -156,7 +156,7 @@ public:
   int                   uniqueId() const {return m_unique_id;} // for urls
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;}
 
-  virtual taiAction*    AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
+  virtual iAction*    AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
   void                  AddPanel(iDataPanel* panel, bool new_tab = true);
     // insures we have a iTabViewer; adds panel; if requested, adds a new tab, sets panel active in it
   virtual void          AddToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
@@ -164,7 +164,7 @@ public:
 #ifndef __MAKETA__
   virtual void          AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea);
-  QPointer<iSearchDialog> search_dialog;
+  QPointer<iDialogSearch> search_dialog;
   QPointer<iTreeView>   cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
 
   void                  Find(taiSigLink* root, const String& find_str="");
@@ -275,7 +275,7 @@ public slots:
   void          viewSaveView(); // save view state
 
   virtual void  showMenu_aboutToShow();
-  virtual void  ShowChange(taiAction* sender);  // when show/hide menu changes
+  virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 
   void          toolsClassBrowser();
   void          toolsTypeBrowser();
@@ -289,7 +289,7 @@ public slots:
   virtual void  helpHelp();
   virtual void  helpAbout();
 
-  virtual void  mnuEditAction(taiAction* mel);
+  virtual void  mnuEditAction(iAction* mel);
 //nn  void              actionsMenu_aboutToShow(); // populates dynamic items
 
   void          SetClipboardHandler(QObject* handler_obj,
@@ -334,9 +334,9 @@ protected:
 protected slots:
   void                  ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
 
-  virtual void          this_FrameSelect(taiAction* me); // user has selected or unselected one of the frames
-  virtual void          this_ToolBarSelect(taiAction* me); // user has selected or unselected one of the toolbars
-  virtual void          this_DockSelect(taiAction* me); // user has selected or unselected one of the docks
+  virtual void          this_FrameSelect(iAction* me); // user has selected or unselected one of the frames
+  virtual void          this_ToolBarSelect(iAction* me); // user has selected or unselected one of the toolbars
+  virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
 
 protected:
   static int            s_next_unique_id;

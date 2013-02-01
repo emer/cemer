@@ -20,7 +20,7 @@
 #include <taiMiscCore>
 #include <iTreeView>
 #include <taFiler>
-#include <PublishDocsDialog>
+#include <iDialogPublishDocs>
 #include <taiEditorOfString>
 
 TypeDef_Of(taDataProc);
@@ -491,7 +491,7 @@ int taProject::SaveAs(const String& fname) {
 
 void taProject::PublishDocsOnWeb(const String &repositoryName)
 {
-  PublishDocsDialog dialog(repositoryName);
+  iDialogPublishDocs dialog(repositoryName);
   if (dialog.exec()) {
     // User clicked OK.
     QString name = dialog.getName();

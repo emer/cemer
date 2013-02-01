@@ -23,10 +23,10 @@
 #include "css_console.h"
 #include "css_machine.h"
 
-#include <QConsole>
+#include <iConsole>
 
-class CSS_API QcssConsole : public QConsole {
-  INHERITED(QConsole)
+class CSS_API QcssConsole : public iConsole {
+  INHERITED(iConsole)
   Q_OBJECT
  public:
 

@@ -16,8 +16,8 @@
 #include "taiMisc.h"
 #include <iNetworkAccessManager>
 #include <iCookieJar>
-#include <iTextEditDialog>
-#include <taiChoiceDialog>
+#include <iDialogTextEdit>
+#include <iDialogChoice>
 #include <Widget_List>
 #include <EditDataPanel>
 #include <TopLevelViewer>
@@ -76,7 +76,7 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
-taiHostDialog_List      taiMisc::active_dialogs;
+taiDialogEditor_List      taiMisc::active_dialogs;
 taiEditorOfClass_List    taiMisc::active_edits;
 taiEditorOfClass_List    taiMisc::css_active_edits;
 iTopLevelWindow_List    taiMisc::active_wins;
@@ -182,11 +182,11 @@ void taiMisc::CheckConfigResult_(bool ok) {
   }
 
   if (ok) {
-    taiChoiceDialog::ConfirmDialog(QApplication::activeWindow(),
+    iDialogChoice::ConfirmDialog(QApplication::activeWindow(),
       "No configuration errors were found.",
       "Check Succeeded", false);
   } else {
-    iTextEditDialog* td = new iTextEditDialog(true);
+    iDialogTextEdit* td = new iDialogTextEdit(true);
     td->setWindowTitle("Check Failed");
     td->setText(taMisc::last_check_msg);
     td->exec();

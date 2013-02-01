@@ -29,9 +29,9 @@
 #include <tabMisc>
 #include <int_Matrix>
 #include <taiMisc>
-#include <iHostDialog>
+#include <iDialogEditor>
 #include <taiArgTypeOfStream>
-#include <taiTokenPtrButton>
+#include <taiWidgetTokenPtr>
 #include <HiLightButton>
 #include <taFiler>
 
@@ -309,7 +309,7 @@ void cssiEditDialog::GetMenuRep(cssMbrScriptFun* md) {
   if(men_nm == "")
     men_nm = "Actions";
   cur_menu = new
-    taiMenu(taiMenu::menuitem, taiMenu::normal, taiMenu::small,
+    taiWidgetMenu(taiWidgetMenu::menuitem, taiWidgetMenu::normal, taiWidgetMenu::small,
 	      men_nm);
   menu->append_item(cur_menu->GetMenuItem());
   ta_menus.Add(cur_menu);
@@ -529,7 +529,7 @@ int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
       taiWidget* mb_dat = data_el(0).SafeEl(hide_args);
       if (mb_dat == NULL) return false; // shouldn't happen
       art->GetImage(mb_dat, root);
-      taiTokenPtrButton* tokbut = (taiTokenPtrButton*)mb_dat;
+      taiWidgetTokenPtr* tokbut = (taiWidgetTokenPtr*)mb_dat;
       bool ok = tokbut->OpenChooser(); // call chooser now
       if(ok) {
 	art->GetValue(mb_dat, root);

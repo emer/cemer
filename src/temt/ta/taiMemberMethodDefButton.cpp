@@ -19,7 +19,7 @@
 #include <iTextBrowser>
 #include <String_Array>
 #include <MemberDef>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <taMisc>
 #include <taiMisc>
@@ -72,7 +72,7 @@ void taiMemberMethodDefButton::BuildCategories_impl() {
   cats->Sort(); // empty, if any, should sort to top
 }
 
-void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
+void taiMemberMethodDefButton::BuildChooser(iDialogItemChooser* ic, int view) {
   inherited::BuildChooser(ic, view);
 
   if (!targ_typ) {
@@ -100,7 +100,7 @@ void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
   }
 }
 
-void taiMemberMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
+void taiMemberMethodDefButton::BuildChooser_0(iDialogItemChooser* ic) {
   String cat;
   MemberSpace* mbs = &targ_typ->members;
   for (int i = 0; i < mbs->size; ++i) {
@@ -122,7 +122,7 @@ void taiMemberMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   }
 }
 
-void taiMemberMethodDefButton::BuildChooser_1(taiItemChooser* ic) {
+void taiMemberMethodDefButton::BuildChooser_1(iDialogItemChooser* ic) {
   String cat;
   MemberSpace* mbs = &targ_typ->members;
   for (int i = 0; i < mbs->size; ++i) {
@@ -134,7 +134,7 @@ void taiMemberMethodDefButton::BuildChooser_1(taiItemChooser* ic) {
   }
 }
 
-void taiMemberMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
+void taiMemberMethodDefButton::BuildChooser_2(iDialogItemChooser* ic) {
   String cat;
   MethodSpace* mts = &targ_typ->methods;
   for (int i = 0; i < mts->size; ++i) {
@@ -147,7 +147,7 @@ void taiMemberMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
   }
 }
 
-void taiMemberMethodDefButton::BuildChooser_3(taiItemChooser* ic) {
+void taiMemberMethodDefButton::BuildChooser_3(iDialogItemChooser* ic) {
   String cat;
   MemberSpace* mbs = &targ_typ->members;
   for (int i = 0; i < mbs->size; ++i) {

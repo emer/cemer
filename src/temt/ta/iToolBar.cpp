@@ -16,9 +16,9 @@
 #include "iToolBar.h"
 #include <ToolBar>
 #include <iApplicationToolBar>
-#include <taiAction>
+#include <iAction>
 #include <iMainWindowViewer>
-#include <taiMenu>
+#include <taiWidgetMenu>
 
 #include <taMisc>
 
@@ -58,7 +58,7 @@ void iToolBar::showEvent(QShowEvent* e) {
 void iToolBar::Showing(bool showing) {
   iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
-  taiAction* me = dv->toolBarMenu->FindActionByData((void*)this);
+  iAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
   if(showing && taMisc::viewer_options & taMisc::VO_NO_TOOLBAR) {
     me->setChecked(false); //note: triggers event

@@ -35,7 +35,7 @@
 
 // declare all other types mentioned but not required to include:
 class taiEditor; //
-class iHostDialog; //
+class iDialogEditor; //
 class taBase;      // 
 class HiLightButton; //
 class QVBoxLayout; // 
@@ -59,7 +59,7 @@ class TA_API taiEditor: public QObject, virtual public ISigLinkClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
   Q_OBJECT
-friend class iHostDialog;
+friend class iDialogEditor;
 public:
   enum Dlg_State {
     EXISTS              = 0x01,
@@ -74,7 +74,7 @@ public:
   };
 
   enum HostType {
-    HT_DIALOG,          // host/owner is an iHostDialog (legacy "Edit" behavior)
+    HT_DIALOG,          // host/owner is an iDialogEditor (legacy "Edit" behavior)
     HT_PANEL,           // host/owner is an EditPanel ("properties" panel)
     HT_CONTROL          // host/owner is a control -- we won't show menus or obj buttons
   };
@@ -132,7 +132,7 @@ public:
   void  ConstrDeferred(); // finish deferred construction
   void                  ConstrEditControl();
   virtual int           Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
-  // for dialogs -- creates iHostDialog
+  // for dialogs -- creates iDialogEditor
   virtual void          Unchanged();    // call when data has been saved or reverted
   virtual void          Refresh(); // does a GetImage or defered Reshow
   virtual bool          ReShow(bool force = false) { return false; } // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
@@ -180,7 +180,7 @@ protected:
   bool                  modified;
   bool                  warn_clobber; // was changed elsewhere while edited here; warn user before saving
   QWidget*              mwidget;        // outer container for all widgets
-  iHostDialog*          dialog; // dialog, when using Edit, NULL otherwise
+  iDialogEditor*          dialog; // dialog, when using Edit, NULL otherwise
   HostType              host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   iColor                bg_color; // background color of host -- set via setBgColor
   iColor                bg_color_dark;  // background color of dialog, darkened (calculated when bg_color set)
@@ -218,8 +218,8 @@ protected:
   virtual void  Ok_impl(); // for dialogs
   virtual void  Refresh_impl(bool reshow) {}
 
-  virtual void          DoConstr_Dialog(iHostDialog*& dlg); // common sub-code for constructing a dialog instance
-  void                  DoDestr_Dialog(iHostDialog*& dlg); // common sub-code for destructing a dialog instance
+  virtual void          DoConstr_Dialog(iDialogEditor*& dlg); // common sub-code for constructing a dialog instance
+  void                  DoDestr_Dialog(iDialogEditor*& dlg); // common sub-code for destructing a dialog instance
   void                  DoRaise_Dialog(); // what Raise() calls for dialogs
 
   virtual void          InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor

@@ -18,7 +18,7 @@
 #include <EditDataPanel>
 #include <iDataPanelSet>
 #include <taiEdit>
-#include <taiMenuBar>
+#include <taiWidgetMenuBar>
 
 int taiViewTypeOftaBase::BidForView(TypeDef* td) {
   return 0; //no taBase implementation for now

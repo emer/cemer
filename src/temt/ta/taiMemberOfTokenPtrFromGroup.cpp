@@ -14,10 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfTokenPtrFromGroup.h"
-#include <gpiSubGroups>
-#include <gpiGroupEls>
-#include <gpiListEls>
-#include <taiMenu>
+#include <taiWidgetSubGroupMenu>
+#include <taiWidgetGroupElMenu>
+#include <taiWidgetListElMenu>
+#include <taiWidgetMenu>
 
 #include <taiMisc>
 
@@ -54,12 +54,12 @@ taiWidget* taiMemberOfTokenPtrFromGroup::GetDataRep_impl(IWidgetHost* host_, tai
     new_flags |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   if (mbr->type->DerivesFrom(&TA_taGroup_impl))
-    return new gpiSubGroups(taiMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
+    return new taiWidgetSubGroupMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);
   else if (from_md->type->DerivesFrom(TA_taGroup_impl))
-    return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+    return new taiWidgetGroupElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, (new_flags | taiWidget::flgNoInGroup));
   else
-    return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
+    return new taiWidgetListElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, NULL,
                 typ, host_, par, gui_parent_, new_flags);
 }
 
@@ -81,11 +81,11 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
   }
 
   if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
-    gpiSubGroups* rval = (gpiSubGroups*)dat;
+    taiWidgetSubGroupMenu* rval = (taiWidgetSubGroupMenu*)dat;
     taGroup_impl* lst = (taGroup_impl*)GetList(from_md, base);
     rval->GetImage(lst, (taGroup_impl*)tok_ptr);
   } else {
-    gpiListEls* rval = (gpiListEls*)dat;
+    taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
     taList_impl* lst = GetList(from_md, base);
     rval->GetImage(lst, tok_ptr);
   }
@@ -95,10 +95,10 @@ void taiMemberOfTokenPtrFromGroup::GetImage_impl(taiWidget* dat, const void* bas
 void taiMemberOfTokenPtrFromGroup::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   taBase* tabval = NULL;
   if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
-    gpiSubGroups* rval = (gpiSubGroups*)dat;
+    taiWidgetSubGroupMenu* rval = (taiWidgetSubGroupMenu*)dat;
     tabval = (taBase*)rval->GetValue();
   } else {
-    gpiListEls* rval = (gpiListEls*)dat;
+    taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
     tabval = (taBase*)rval->GetValue();
   }
 

@@ -17,15 +17,15 @@
 #define taiMemberMethodDefButton_h 1
 
 // parent includes:
-#include <taiItemPtrBase>
+#include <taiWidgetItemPtr>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiMemberMethodDefButton : public taiItemPtrBase {
+class TA_API taiMemberMethodDefButton : public taiWidgetItemPtr {
   // for MemberDefs AND MethodDefs -- useful for path completion lookup for example
-  INHERITED(taiItemPtrBase)
+  INHERITED(taiWidgetItemPtr)
 public:
   inline TypeItem*      md() const {return (TypeItem*)m_sel;}
 
@@ -36,10 +36,10 @@ public:
 
   USING(inherited::GetImage)
   void                  GetImage(MemberDef* cur_sel, TypeDef* targ_typ)
-    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
+    {taiWidgetItemPtr::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*             GetValue() {return md();}
 
-  override void         BuildChooser(taiItemChooser* ic, int view = 0); //
+  override void         BuildChooser(iDialogItemChooser* ic, int view = 0); //
 
   virtual bool          ShowMember(MemberDef* mbr);
   virtual bool          ShowMethod(MethodDef* mth);
@@ -53,10 +53,10 @@ protected:
   const String          labelNameNonNull() const;
 
   override void         BuildCategories_impl();
-  void                  BuildChooser_0(taiItemChooser* ic); // all
-  void                  BuildChooser_1(taiItemChooser* ic); // just mbr
-  void                  BuildChooser_2(taiItemChooser* ic); // just mth
-  void                  BuildChooser_3(taiItemChooser* ic); // expert
+  void                  BuildChooser_0(iDialogItemChooser* ic); // all
+  void                  BuildChooser_1(iDialogItemChooser* ic); // just mbr
+  void                  BuildChooser_2(iDialogItemChooser* ic); // just mth
+  void                  BuildChooser_3(iDialogItemChooser* ic); // expert
 };
 
 #endif // taiMemberMethodDefButton_h

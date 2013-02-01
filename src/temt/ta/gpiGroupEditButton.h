@@ -17,13 +17,13 @@
 #define gpiGroupEditButton_h 1
 
 // parent includes:
-#include <taiEditButton>
+#include <taiWidgetEditButton>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API gpiGroupEditButton : public taiEditButton {
+class TA_API gpiGroupEditButton : public taiWidgetEditButton {
 public:
   gpiGroupEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);

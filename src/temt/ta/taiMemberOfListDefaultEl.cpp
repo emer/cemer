@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfListDefaultEl.h"
-#include <gpiListEls>
+#include <taiWidgetListElMenu>
 #include <taList_impl>
 #include <taGroup_impl>
 
@@ -29,7 +29,7 @@ int taiMemberOfListDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiWidget* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
+  taiWidgetListElMenu *rval = new taiWidgetListElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall,
         NULL, typ, host_, par, gui_parent_, (flags_ | taiWidget::flgNullOk | taiWidget::flgNoList));
   return rval;
 }
@@ -37,14 +37,14 @@ taiWidget* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiWidg
 void taiMemberOfListDefaultEl::GetImage_impl(taiWidget* dat, const void* base) {
   taList_impl* tl = (taList_impl*)base;
   taBase* tmp_ptr = tl->DefaultEl_();
-  gpiListEls* rval = (gpiListEls*)dat;
+  taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
   rval->GetImage((taGroup_impl*)base, tmp_ptr);
   GetOrigVal(dat, base);
 }
 
 void taiMemberOfListDefaultEl::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   taList_impl* tl = (taList_impl*)base;
-  gpiListEls* rval = (gpiListEls*)dat;
+  taiWidgetListElMenu* rval = (taiWidgetListElMenu*)dat;
   taBase* tmp_ptr = rval->GetValue();
   tl->SetDefaultEl(tmp_ptr);
   CmpOrigVal(dat, base, first_diff);

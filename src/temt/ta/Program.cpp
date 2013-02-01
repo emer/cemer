@@ -18,7 +18,7 @@
 #include <taProject>
 #include <ProgramCallBase>
 #include <taiEditorOfString>
-#include <taiChoiceDialog>
+#include <iDialogChoice>
 
 TypeDef_Of(LocalVars);
 TypeDef_Of(ProgCode);
@@ -693,7 +693,7 @@ void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
   pl->SetError();
   // css does not otherwise pull up an error dialog, so we can..
   if (taMisc::gui_active) {
-    bool cancel = taiChoiceDialog::ErrorDialog(NULL, err_msg);
+    bool cancel = iDialogChoice::ErrorDialog(NULL, err_msg);
     taMisc::ErrorCancelSet(cancel);
   }
 }

@@ -26,7 +26,7 @@
 class Program; // 
 TypeDef_Of(Program);
 class LocalVars; // 
-class taiItemPtrBase; // #IGNORE
+class taiWidgetItemPtr; // #IGNORE
 
 
 /////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ INHERITED(taOBase)
 public:
   // Signature of following functions must match that of the item_filter_fun typedef.
   static bool           StdProgVarFilter(void* base, void* var); // #IGNORE generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
-  static bool            NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser); 
+  static bool            NewProgVarCustChooser(taBase* base, taiWidgetItemPtr* chooser); 
   // #IGNORE add NewGlobalVar and NewLocalVar options to the chooser
   static bool           ObjProgVarFilter(void* base, void* var); // #IGNORE Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
   static bool           DataProgVarFilter(void* base, void* var); // #IGNORE data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive

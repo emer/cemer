@@ -24,7 +24,7 @@
 #include <taiTypeOfTokenPtr>
 #include <taiWidgetField>
 #include <taiWidgetComboBox>
-#include <taiButtonMenu>
+#include <taiWidgetMenuButton>
 #include <BuiltinTypeDefs>
 
 #include <taiMisc>
@@ -187,10 +187,10 @@ taiWidget* cssiClassType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget
     return rval;
   }
   else {
-    taiButtonMenu* rval = new taiButtonMenu
-      (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
+    taiWidgetMenuButton* rval = new taiWidgetMenuButton
+      (taiWidgetMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
     Assert_QObj();
-    rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
+    rval->AddItem("Edit", taiWidgetMenu::use_default, iAction::action,
         qobj, SLOT(CallEdit()), (void*)NULL);
     String lbl = String(obj->GetTypeName()) + ": Actions";
     rval->setLabel(lbl);
@@ -235,10 +235,10 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 taiWidget* cssiArrayType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
-  taiButtonMenu* rval = new taiButtonMenu
-    (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
+  taiWidgetMenuButton* rval = new taiWidgetMenuButton
+    (taiWidgetMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
   Assert_QObj();
-  rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
+  rval->AddItem("Edit", taiWidgetMenu::use_default, iAction::action,
         qobj, SLOT(CallEdit), (void*)NULL);
   cssArray* obj = (cssArray*) cur_base;
   String lbl = String(obj->GetTypeName()) + ": Actions";

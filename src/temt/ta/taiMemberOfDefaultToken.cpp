@@ -16,7 +16,7 @@
 #include "taiMemberOfDefaultToken.h"
 #include <MemberDef>
 #include <taiEditOfDefault>
-#include <taiEditButton>
+#include <taiWidgetEditButton>
 
 
 int taiMemberOfDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
@@ -29,13 +29,13 @@ int taiMemberOfDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
 
 taiWidget* taiMemberOfDefaultToken::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiEditOfDefault* tde = new taiEditOfDefault(mbr->type->GetNonPtrType());
-  taiEditButton *rval = taiEditButton::New(NULL, tde, mbr->type->GetNonPtrType(),
+  taiWidgetEditButton *rval = taiWidgetEditButton::New(NULL, tde, mbr->type->GetNonPtrType(),
      host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberOfDefaultToken::GetImage_impl(taiWidget* dat, const void* base) {
-  taiEditButton* rval = (taiEditButton*)dat;
+  taiWidgetEditButton* rval = (taiWidgetEditButton*)dat;
   taBase* token_ptr = GetTokenPtr(base);
   rval->GetImage_(token_ptr);
   if (token_ptr) {

@@ -20,7 +20,7 @@
 #include <Program>
 #include <taSigLinkItr>
 #include <iProgramViewScriptPanel>
-#include <NumberedTextView>
+#include <iNumberedTextView>
 
 #include <SigLinkSignal>
 #include <taMisc>

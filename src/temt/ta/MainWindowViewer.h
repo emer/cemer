@@ -36,8 +36,8 @@ class ToolBar; //
 class BrowseViewer; // 
 class PanelViewer; // 
 class T3DataViewer; // 
-class taiMenu_List; //
-class taiMenuBar; // #IGNORE
+class taiWidgetActions_List; //
+class taiWidgetMenuBar; // #IGNORE
 class taiWidgetActions; //
 
 
@@ -79,8 +79,8 @@ public:
   bool                  m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
 
 #ifdef TA_GUI
-  taiMenu_List*         ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
-  taiMenuBar*           menu; // #IGNORE menu bar -- note: partially managed by the window
+  taiWidgetActions_List*         ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
+  taiWidgetMenuBar*           menu; // #IGNORE menu bar -- note: partially managed by the window
   taiWidgetActions*           cur_menu; // #IGNORE for building menu
 #endif
   ToolBar_List          toolbars; // #EXPERT

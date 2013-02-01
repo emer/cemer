@@ -15,11 +15,11 @@
 
 #include "taiEditorOfString.h"
 #include <iTextBrowser>
-#include <NumberedTextView>
+#include <iNumberedTextView>
 #include <MemberDef>
 #include <iTextEdit>
 #include <iDialog>
-#include <iHostDialog>
+#include <iDialogEditor>
 
 #include <taMisc>
 #include <taiMisc>
@@ -54,7 +54,7 @@ void taiEditorOfString::Constr(const char* prompt, const char* win_title) {
 
 void taiEditorOfString::Constr_Box() {
   if(line_nos) {
-    NumberedTextView* ntv = new NumberedTextView(widget());
+    iNumberedTextView* ntv = new iNumberedTextView(widget());
     edit = ntv->textEdit();
     vblDialog->addWidget(ntv, 1);
   }
@@ -112,7 +112,7 @@ void taiEditorOfString::btnPrint_clicked() {
 void taiEditorOfString::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 }
 
-void taiEditorOfString::DoConstr_Dialog(iHostDialog*& dlg) {
+void taiEditorOfString::DoConstr_Dialog(iDialogEditor*& dlg) {
   inherited::DoConstr_Dialog(dlg);
   dlg->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
 }

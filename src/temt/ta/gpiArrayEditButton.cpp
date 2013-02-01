@@ -19,14 +19,14 @@
 
 gpiArrayEditButton::gpiArrayEditButton
 (void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
-: taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
+: taiWidgetEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }
 
 void gpiArrayEditButton::SetLabel() {
   taArray_base* gp = (taArray_base*)cur_base;
   if(gp == NULL) {
-    taiEditButton::SetLabel();
+    taiWidgetEditButton::SetLabel();
     return;
   }
   String nm = " Size: " + String(gp->size);

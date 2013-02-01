@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <taiType>
-#include <taiMethMenu>
+#include <taiWidgetMethodMenu>
 
 // forward declarations
 class cssEl; //

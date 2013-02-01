@@ -18,7 +18,7 @@
 #include <iLabel>
 #include <iFlowLayout>
 #include <taiMember>
-#include <taiMenuBar>
+#include <taiWidgetMenuBar>
 
 #include <taMisc>
 #include <taiMisc>

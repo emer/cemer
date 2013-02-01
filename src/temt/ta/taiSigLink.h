@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class taiWidgetActions; //
-class iSearchDialog; //
+class iDialogSearch; //
 class iDataPanel; //
 class taiTreeDataNode; //
 class iTreeView; //
@@ -59,7 +59,7 @@ public:
   virtual String        GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const
     {return QVariant();} // for getting things like status text, tooltip text, etc.
-  virtual void          Search(iSearchDialog* dlg) {} // called to do a search
+  virtual void          Search(iDialogSearch* dlg) {} // called to do a search
   virtual bool          ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
     {return false;} // asks this type if we should show the md member
 

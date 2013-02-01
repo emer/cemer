@@ -15,7 +15,7 @@
 
 #include "taiMemberOfTypePtr.h"
 #include <taiWidget>
-#include <taiTypeDefButton>
+#include <taiWidgetTypeDefPtr>
 
 #include <taMisc>
 
@@ -35,14 +35,14 @@ taiWidget* taiMemberOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* pa
     flags_ |= taiWidget::flgNullOk;
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
-  taiTypeDefButton* rval =
-    new taiTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
+  taiWidgetTypeDefPtr* rval =
+    new taiWidgetTypeDefPtr(mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberOfTypePtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
   TypeDef* td = NULL;
   String mb_nm = mbr->OptionAfter("TYPE_ON_");
   if (mb_nm != "") {
@@ -68,7 +68,7 @@ void taiMemberOfTypePtr::GetImage_impl(taiWidget* dat, const void* base){
 
 void taiMemberOfTypePtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
   TypeDef* nw_typ = (TypeDef*)rval->GetValue();
   if (mbr->HasOption("NULL_OK"))
     *((void**)new_base) = nw_typ;

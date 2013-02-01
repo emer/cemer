@@ -15,8 +15,8 @@
 
 #include "iProgramViewScriptPanel.h"
 #include <Program>
-#include <NumberedTextView>
-#include <NumberBar>
+#include <iNumberedTextView>
+#include <iNumberBar>
 #include <iTextEdit>
 #include <iDataPanelSet>
 
@@ -35,12 +35,12 @@ iProgramViewScriptPanel::iProgramViewScriptPanel(taiSigLink* dl_)
   vs = NULL;
   if (prg_) {
     prg_->ViewScriptUpdate();
-    vs = new NumberedTextView(NULL, true); // enable icons
+    vs = new iNumberedTextView(NULL, true); // enable icons
     vs->textEdit()->setReadOnly(true);
     vs->textEdit()->setHtml(prg_->view_script);
     setCentralWidget(vs);
 
-    NumberBar* nb = vs->numberBar();
+    iNumberBar* nb = vs->numberBar();
     connect(nb, SIGNAL(lineFlagsUpdated(int, int)), this,
             SLOT(lineFlagsUpdated(int, int)));
     connect(nb, SIGNAL(viewSource(int)), this,
@@ -86,17 +86,17 @@ void iProgramViewScriptPanel::UpdatePanel_impl() {
   Program* prg_ = prog();
   if(!prg_) return;
 
-  NumberBar* nb = vs->numberBar();
+  iNumberBar* nb = vs->numberBar();
   nb->clearAllLineFlags();
   for(int i=1;i<prg_->script_list.size;i++) {
     ProgLine* pl = prg_->script_list.FastEl(i);
-    int pflg = NumberBar::LF_NONE;
+    int pflg = iNumberBar::LF_NONE;
     if(pl->HasPLineFlag(ProgLine::BREAKPOINT))
-      pflg |= NumberBar::LF_BREAK;
+      pflg |= iNumberBar::LF_BREAK;
     if(pl->HasPLineFlag(ProgLine::PROG_ERROR))
-      pflg |= NumberBar::LF_ERROR;
+      pflg |= iNumberBar::LF_ERROR;
     if(pl->HasPLineFlag(ProgLine::WARNING))
-      pflg |= NumberBar::LF_WARNING;
+      pflg |= iNumberBar::LF_WARNING;
     nb->setLineFlags(i, pflg);
   }
 
@@ -117,7 +117,7 @@ void iProgramViewScriptPanel::lineFlagsUpdated(int lineno, int flags) {
   if(!pl) return;
 
   // this is the only flag that is user-settable
-  if(flags & NumberBar::LF_BREAK)
+  if(flags & iNumberBar::LF_BREAK)
     pl->SetBreakpoint();
   else
     pl->ClearBreakpoint();

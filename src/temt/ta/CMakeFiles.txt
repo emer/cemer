@@ -75,7 +75,6 @@ set(ta_HEADS_MAKETA_LOCAL
   DumpFileCvtList.h
   ContextFlag.h
   taMisc.h
-  taiMiscCore.h
 
   taBase.h
   taBaseItr.h
@@ -729,9 +728,10 @@ set(ta_HEADS_MAKETA_LOCAL
 
 # need both maketa and moc -- relatively rare
 set(ta_HEADS_MAKETA_MOC
+  taiMiscCore.h
   taiMimeSource.h
 
-  taiAction.h
+  iAction.h
   taiWidget.h
   iMethodButtonMgr.h
 
@@ -741,6 +741,7 @@ set(ta_HEADS_MAKETA_MOC
 
   taiEditorOfClass.h
   taiEditorOfString.h
+  taiEditorOfProgramCtrl.h
 
   taGuiEditor.h
 
@@ -770,7 +771,7 @@ set(ta_HEADS_MAKETA_MOC
   iDocEditDataPanel.h
   iDocDataPanel.h
 
-  iSearchDialog.h
+  iDialogSearch.h
 
   MatrixTableModel.h
   DataTableModel.h
@@ -786,114 +787,6 @@ set(ta_HEADS_MAKETA_MOC
   VEWorldViewPanel.h
 )
 
-# this is no-moc
-set(ta_HEADS_NOMAKETA
-  ta_stdef.h
-  ta_def.h
-
-  SoPtr.h
-  SoOffscreenRendererQt.h
-  iStripeWidget.h
-  iFlowLayout.h
-  iFormLayout.h
-  iTreeWidgetItem.h
-
-  SigLinkSignal.h
-
-  VPUnref.h
-  VPUList.h
-  DumpPathSub.h
-  DumpPathSubList.h
-  DumpPathToken.h
-  DumpPathTokenList.h
-  dumpMisc.h
-  ta_type_constr.h
-  gzstream.h
-  Tokenizer.h
-  taBaseAdapter.h
-
-  IPlugin.h
-  taPluginInst_PList.h
-  taPlugins.h
-
-  ISelectableHost.h
-
-  DynMethod_PtrList.h
-  iTopLevelWindow_List.h
-  Widget_List.h
-  taiAction_List.h
-  taiMenu_List.h
-
-  ClusterManager.h
-  SubversionClient.h
-
-  IWidgetHost.h
-  taiEditorWidgetsMulti.h
-  taiEditorOfList.h
-  taiEditorOfListCompact.h
-  taiEditorOfArray.h
-  taiEditorOfSArg.h
-  taiEditorOfTypeItem.h
-  taiEditorOfProgramCtrl.h
-
-  taGenDoc.h
-  T3Misc.h
-  iSoSelectionEvent.h
-
-  taiTypeInfoBase.h
-  taiElBase.h
-  taiTypeHier.h
-  gpiGroupEditButton.h
-  taiProgLibElsButton.h
-  taiToggle.h
-  taiColor.h
-  taiTokenPtrButton.h
-  taiTypeDefButton.h
-  taiMemberDefButton.h
-  taiMethodDefButton.h
-  taiMemberMethodDefButton.h
-  taiEnumStaticButton.h
-  taiEnumTypeDefButton.h
-  taiTokenPtrMultiTypeButton.h
-  taiMethodDefMenu.h
-  taiMenuAction.h
-  taiMethMenu.h
-  taiMethButton.h
-  gpiListEditButton.h
-  gpiSubEditButton.h
-  gpiLinkEditButton.h
-  gpiListLinkEditButton.h
-  gpiArrayEditButton.h
-  taiListElsButtonBase.h
-  taiListElsButton.h
-  taiGroupElsButton.h
-
-  gpiElTypes.h
-  taiProjTemplateElsButton.h
-
-
-  iRegexpDialogPopulator.h
-
-  HiLightButton.h
-  IDataViewWidget.h
-
-  iApplicationToolBar.h
-  iToolBar_List.h
-  iTabView_PtrList.h
-
-  gpiList_ElData.h
-  gpiList_ElDataList.h
-  gpiCompactList_ElData.h
-  gpiCompactList_ElDataList.h
-
-  iProgramToolBar.h
-
-  MembSet.h
-
-  SoBase.h
-  SoGroup.h
-)
-
 set(ta_HEADS_NOMAKETA_MOC
   AutoSaver.h
   iMenuButton.h
@@ -905,11 +798,11 @@ set(ta_HEADS_NOMAKETA_MOC
   iComboBox.h
   iCookieJar.h
   iDialog.h
+  iDialogTextEdit.h
   iDimEdit.h
   iEditGrid.h
   iLabel.h
   iLineEdit.h
-  iTextEditDialog.h
   iNetworkAccessManager.h
   Interceptor.h
   iScrollArea.h
@@ -919,23 +812,24 @@ set(ta_HEADS_NOMAKETA_MOC
   iTextBrowser.h
   iTextEdit.h
   iTreeWidget.h
-  NumberBar.h
-  NumberedTextView.h
-  QtThumbWheel.h
-  QConsole.h
+  iNumberBar.h
+  iNumberedTextView.h
+  iThumbWheel.h
+  iConsole.h
 
   taPluginInst.h
   iPluginEditor.h
 
+  taBaseAdapter.h
+  taRootBaseAdapter.h
   TemtClientAdapter.h
   TemtServerAdapter.h
-  taRootBaseAdapter.h
 
   taiMisc.h
 
   taApplication.h
 
-  PublishDocsDialog.h
+  iDialogPublishDocs.h
 
   taiProgStepButton.h
   taiClipData.h
@@ -953,6 +847,8 @@ set(ta_HEADS_NOMAKETA_MOC
   taiEditorOfSelectEditFull.h
   taiEditorOfSelectEditFast.h
 
+  iActionSubMenuEl.h
+
   taiWidgetActions.h
   taiWidgetComposite.h
   taiWidgetPoly.h
@@ -960,7 +856,6 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetText.h
   taiWidgetField.h
   taiWidgetIncrField.h
-  iFieldEditDialog.h
   taiWidgetFieldFile.h
   taiWidgetPlusToggle.h
   taiWidgetComboBox.h
@@ -968,32 +863,32 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetDimEdit.h
   taiWidgetVariantBase.h
   taiWidgetVariant.h
+  taiWidgetItemPtr.h
+  taiWidgetEditButton.h
+  taiWidgetFileButton.h
 
-  taiItemChooser.h
-  taiObjChooser.h
-  taiItemPtrBase.h
-  taiEditButton.h
-  taiFileButton.h
-  taiToken.h
-  taiSubToken.h
+  taiWidgetTokenPtrMenu.h
+  taiWidgetSubTokenPtrMenu.h
+  taiWidgetListElMenu.h
+  taiWidgetGroupElMenu.h
+  taiWidgetSubGroupMenu.h
 
-  taiSubMenuEl.h
-  taiMenu.h
-  taiButtonMenu.h
-  taiMenuBar.h
-  taiToolBar.h
-  taiMethodData.h
-  taiMethToggle.h
+  taiWidgetMenu.h
+  taiWidgetMenuButton.h
+  taiWidgetMenuBar.h
+  taiWidgetToolBar.h
+  taiWidgetMethod.h
+  taiWidgetMethodToggle.h
 
-  gpiListEls.h
-  gpiGroupEls.h
-  gpiSubGroups.h
 
-  iRegexpDialog.h
   taiRegexpField.h
 
-  iHostDialog.h
-  taiChoiceDialog.h
+  iDialogEditor.h
+  iDialogChoice.h
+  iDialogWidgetField.h
+  iDialogItemChooser.h
+  iDialogObjChooser.h
+  iDialogRegexp.h
 
   iBaseClipWidgetAction.h
   taiEditTableWidget.h
@@ -1025,8 +920,8 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetDelegate.h
   SelectEditDelegate.h
 
-  taiObjDiffBrowserFilter.h
-  taiObjDiffBrowser.h
+  iDialogObjDiffFilter.h
+  iDialogObjDiffBrowser.h
 
   UserDataDelegate.h
 
@@ -1052,6 +947,116 @@ set(ta_HEADS_NOMAKETA_MOC
   iT3DataViewFrame.h
 )
 
+set(ta_HEADS_NOMAKETA_NOMOC
+  ta_stdef.h
+  ta_def.h
+  ta_type_constr.h
+
+  SoPtr.h
+  SoOffscreenRendererQt.h
+
+  iStripeWidget.h
+  iFlowLayout.h
+  iFormLayout.h
+  iTreeWidgetItem.h
+
+  SigLinkSignal.h
+
+  VPUnref.h
+  VPUList.h
+  DumpPathSub.h
+  DumpPathSubList.h
+  DumpPathToken.h
+  DumpPathTokenList.h
+  dumpMisc.h
+  gzstream.h
+  Tokenizer.h
+
+  IPlugin.h
+  taPluginInst_PList.h
+  taPlugins.h
+
+  ISelectableHost.h
+
+  DynMethod_PtrList.h
+  iTopLevelWindow_List.h
+  Widget_List.h
+  iAction_List.h
+  taiWidgetActions_List.h
+
+  ClusterManager.h
+  SubversionClient.h
+
+  IWidgetHost.h
+  taiEditorWidgetsMulti.h
+  taiEditorOfList.h
+  taiEditorOfListCompact.h
+  taiEditorOfArray.h
+  taiEditorOfSArg.h
+  taiEditorOfTypeItem.h
+
+  taGenDoc.h
+  T3Misc.h
+  iSoSelectionEvent.h
+
+  iMenuAction.h
+
+  taiWidgetColor.h
+  taiWidgetTokenPtr.h
+  taiWidgetTokenPtrMultiType.h
+
+  taiWidgetTaBaseMenu.h
+
+  taiWidgetMethodMenu.h
+  taiWidgetMethodButton.h
+
+  taiWidgetTypeItemMenu.h
+  taiWidgetMethodDefMenu.h
+
+  taiTypeHier.h
+  gpiGroupEditButton.h
+  taiProgLibElsButton.h
+  taiWidgetToggle.h
+  taiWidgetTypeDefPtr.h
+  taiWidgetMemberDefPtr.h
+  taiWidgetMethodDefPtr.h
+  taiMemberMethodDefButton.h
+  taiWidgetEnumStaticChooser.h
+  taiEnumTypeDefButton.h
+  gpiListEditButton.h
+  gpiSubEditButton.h
+  gpiLinkEditButton.h
+  gpiListLinkEditButton.h
+  gpiArrayEditButton.h
+  taiListElsButtonBase.h
+  taiListElsButton.h
+  taiGroupElsButton.h
+
+  gpiElTypes.h
+  taiProjTemplateElsButton.h
+
+  iDialogRegexpPopulator.h
+
+  HiLightButton.h
+  IDataViewWidget.h
+
+  iApplicationToolBar.h
+  iToolBar_List.h
+  iTabView_PtrList.h
+
+  gpiList_ElData.h
+  gpiList_ElDataList.h
+  gpiCompactList_ElData.h
+  gpiCompactList_ElDataList.h
+
+  iProgramToolBar.h
+
+  MembSet.h
+
+  SoBase.h
+  SoGroup.h
+)
+
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
   ${ta_HEADS_MAKETA_LOCAL}
@@ -1064,13 +1069,12 @@ set(ta_HEADS
   NewViewHelper.h
   ta_maketa_defs.h
   ta_type_constr.h
-  ${ta_HEADS_NOMAKETA}
+  ${ta_HEADS_NOMAKETA_NOMOC}
   ${ta_HEADS_NOMAKETA_MOC}
 )
 
 # headers that need Qt moc run
 set(ta_HEADS_MOC
-  taiMiscCore.h			# maketa order prevents listing in _MOC list
   ${ta_HEADS_MAKETA_MOC}
   ${ta_HEADS_NOMAKETA_MOC}
 )
@@ -1622,7 +1626,7 @@ set(ta_SRCS_MAKETA
   VEObjCarousel.cpp
   VEHeightField.cpp
 
-  taiAction.cpp
+  iAction.cpp
   taiWidget.cpp
   taiWidget_List.cpp
 
@@ -1775,7 +1779,7 @@ set(ta_SRCS_NOMAKETA
   iBox3f.cpp
   iLabel.cpp
   iLineEdit.cpp
-  iTextEditDialog.cpp
+  iDialogTextEdit.cpp
   iNetworkAccessManager.cpp
   Interceptor.cpp
   SoOffscreenRendererQt.cpp
@@ -1787,10 +1791,10 @@ set(ta_SRCS_NOMAKETA
   iTextEdit.cpp
   iTreeWidgetItem.cpp
   iTreeWidget.cpp
-  NumberBar.cpp
-  NumberedTextView.cpp
-  QtThumbWheel.cpp
-  QConsole.cpp
+  iNumberBar.cpp
+  iNumberedTextView.cpp
+  iThumbWheel.cpp
+  iConsole.cpp
   SoPtr.cpp
 
   VPUnref.cpp
@@ -1813,7 +1817,7 @@ set(ta_SRCS_NOMAKETA
   taiMisc.cpp
   iTopLevelWindow_List.cpp
 
-  PublishDocsDialog.cpp
+  iDialogPublishDocs.cpp
   taApplication.cpp
 
   IWidgetHost.cpp
@@ -1837,7 +1841,7 @@ set(ta_SRCS_NOMAKETA
   taiEditorOfWizard.cpp
   taiEditorOfProgramCtrl.cpp
 
-  taiChoiceDialog.cpp
+  iDialogChoice.cpp
   HiLightButton.cpp
   MembSet.cpp
 
@@ -1845,52 +1849,52 @@ set(ta_SRCS_NOMAKETA
   taiWidgetComposite.cpp
   taiWidgetPoly.cpp
   taiWidgetDeck.cpp
-  taiToggle.cpp
+  taiWidgetToggle.cpp
   taiWidgetText.cpp
   taiWidgetField.cpp
   taiWidgetIncrField.cpp
-  iFieldEditDialog.cpp
+  iDialogWidgetField.cpp
   taiWidgetFieldFile.cpp
   taiWidgetPlusToggle.cpp
   taiWidgetComboBox.cpp
   taiWidgetBitBox.cpp
   taiWidgetDimEdit.cpp
-  taiColor.cpp
+  taiWidgetColor.cpp
   taiWidgetVariantBase.cpp
   taiWidgetVariant.cpp
 
-  taiItemChooser.cpp
-  taiObjChooser.cpp
-  taiItemPtrBase.cpp
-  taiTokenPtrButton.cpp
-  taiEditButton.cpp
-  taiTypeInfoBase.cpp
-  taiTypeDefButton.cpp
-  taiMemberDefButton.cpp
-  taiMethodDefButton.cpp
+  iDialogItemChooser.cpp
+  iDialogObjChooser.cpp
+  taiWidgetItemPtr.cpp
+  taiWidgetTokenPtr.cpp
+  taiWidgetEditButton.cpp
+  taiWidgetTypeItemMenu.cpp
+  taiWidgetTypeDefPtr.cpp
+  taiWidgetMemberDefPtr.cpp
+  taiWidgetMethodDefPtr.cpp
   taiMemberMethodDefButton.cpp
-  taiEnumStaticButton.cpp
+  taiWidgetEnumStaticChooser.cpp
   taiEnumTypeDefButton.cpp
-  taiTokenPtrMultiTypeButton.cpp
-  taiFileButton.cpp
-  taiElBase.cpp
-  taiToken.cpp
-  taiSubToken.cpp
-  taiMethodDefMenu.cpp
+  taiWidgetTokenPtrMultiType.cpp
+  taiWidgetFileButton.cpp
+  taiWidgetTaBaseMenu.cpp
+  taiWidgetTokenPtrMenu.cpp
+  taiWidgetSubTokenPtrMenu.cpp
+  taiWidgetMethodDefMenu.cpp
   taiTypeHier.cpp
 
-  taiMenuAction.cpp
-  taiSubMenuEl.cpp
-  taiAction_List.cpp
-  taiMenu_List.cpp
-  taiMenu.cpp
-  taiButtonMenu.cpp
-  taiMenuBar.cpp
-  taiToolBar.cpp
-  taiMethodData.cpp
-  taiMethMenu.cpp
-  taiMethButton.cpp
-  taiMethToggle.cpp
+  iMenuAction.cpp
+  iActionSubMenuEl.cpp
+  iAction_List.cpp
+  taiWidgetActions_List.cpp
+  taiWidgetMenu.cpp
+  taiWidgetMenuButton.cpp
+  taiWidgetMenuBar.cpp
+  taiWidgetToolBar.cpp
+  taiWidgetMethod.cpp
+  taiWidgetMethodMenu.cpp
+  taiWidgetMethodButton.cpp
+  taiWidgetMethodToggle.cpp
 
   gpiListEditButton.cpp
   gpiGroupEditButton.cpp
@@ -1901,9 +1905,9 @@ set(ta_SRCS_NOMAKETA
   taiListElsButtonBase.cpp
   taiListElsButton.cpp
   taiGroupElsButton.cpp
-  gpiListEls.cpp
-  gpiGroupEls.cpp
-  gpiSubGroups.cpp
+  taiWidgetListElMenu.cpp
+  taiWidgetGroupElMenu.cpp
+  taiWidgetSubGroupMenu.cpp
   gpiElTypes.cpp
 
   taiProjTemplateElsButton.cpp
@@ -1916,11 +1920,11 @@ set(ta_SRCS_NOMAKETA
 
   SelectEditDelegate.cpp
 
-  iRegexpDialogPopulator.cpp
-  iRegexpDialog.cpp
+  iDialogRegexpPopulator.cpp
+  iDialogRegexp.cpp
   taiRegexpField.cpp
 
-  iHostDialog.cpp
+  iDialogEditor.cpp
   EditDataPanel.cpp
   iMethodButtonMgr.cpp
   iDataPanelFrame.cpp
@@ -1948,7 +1952,7 @@ set(ta_SRCS_NOMAKETA
   iTreeView.cpp
   iTreeSearch.cpp
   iListDataPanel.cpp
-  iSearchDialog.cpp
+  iDialogSearch.cpp
   iTreeViewItem.cpp
   taiTreeDataNode.cpp
   taiListDataNode.cpp
@@ -1999,8 +2003,8 @@ set(ta_SRCS_NOMAKETA
   iSelectEditPanel.cpp
   iDocEditDataPanel.cpp
 
-  taiObjDiffBrowserFilter.cpp
-  taiObjDiffBrowser.cpp
+  iDialogObjDiffFilter.cpp
+  iDialogObjDiffBrowser.cpp
 
   iUserDataPanel.cpp
 

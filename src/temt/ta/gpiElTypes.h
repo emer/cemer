@@ -31,12 +31,12 @@ public:
 
   gpiElTypes(taiWidgetActions::RepType rt, int ft, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0); // no flags
-  gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_,
+  gpiElTypes(taiWidgetMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_,
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
   USING(inherited::GetMenu)
-  void          GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
-  override void         GetMenu(taiWidgetActions* menu, taiMenuAction* nact = NULL);
+  void          GetMenu(iMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
+  override void         GetMenu(taiWidgetActions* menu, iMenuAction* nact = NULL);
 };
 
 #endif // gpiElTypes_h

@@ -22,12 +22,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iFieldEditDialog;
+class iDialogWidgetField;
 
 class TA_API taiWidgetField : public taiWidgetText {
   Q_OBJECT
   INHERITED(taiWidgetText)
-  friend class iFieldEditDialog;
+  friend class iDialogWidgetField;
 public:
   taiWidgetField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
   ~taiWidgetField();
@@ -42,7 +42,7 @@ public:
   void*                 lookupfun_base; // for lookup function, base of owner
 
 protected:
-  iFieldEditDialog*     edit_dialog;    // an edit dialog, if created
+  iDialogWidgetField*     edit_dialog;    // an edit dialog, if created
 };
 
 #endif // taiWidgetField_h

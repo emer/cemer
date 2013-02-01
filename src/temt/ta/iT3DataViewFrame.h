@@ -51,7 +51,7 @@ public:
 #ifndef __MAKETA__
   QPointer<iViewPanelSet> panel_set; // contains ctrl panels for all our guys
 #endif
-//  taiMenu*            fileExportInventorMenu;
+//  taiWidgetMenu*            fileExportInventorMenu;
 
   iT3ViewspaceWidget*   t3vs;
 

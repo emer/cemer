@@ -15,7 +15,7 @@
 
 #include "taiGroupElsButton.h"
 #include <taGroup_impl>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <taMisc>
 
@@ -35,7 +35,7 @@ const String taiGroupElsButton::titleText() {
   return chs_title;
 }
 
-void taiGroupElsButton::BuildChooser(taiItemChooser* ic, int view) {
+void taiGroupElsButton::BuildChooser(iDialogItemChooser* ic, int view) {
   //assume only called if needed
   
   if (!grp) {
@@ -55,7 +55,7 @@ void taiGroupElsButton::BuildChooser(taiItemChooser* ic, int view) {
   }
 }
 
-int taiGroupElsButton::BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp, 
+int taiGroupElsButton::BuildChooser_1(iDialogItemChooser* ic, taGroup_impl* top_grp, 
   QTreeWidgetItem* top_item) 
 {
   int rval = 0;

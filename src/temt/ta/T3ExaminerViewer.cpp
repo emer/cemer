@@ -20,7 +20,7 @@
 #include <T3DataViewFrame>
 #include <iContextMenuButton>
 
-#include <QtThumbWheel>
+#include <iThumbWheel>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -62,7 +62,7 @@
 
 const int T3ExaminerViewer::n_views = 6;
 
-static void t3ev_config_wheel(QtThumbWheel* whl) {
+static void t3ev_config_wheel(iThumbWheel* whl) {
   whl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   whl->setWrapsAround(true);
   whl->setLimitedDrag(false);
@@ -115,31 +115,31 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   ///// make wheels all together
 
-  hrot_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
+  hrot_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hrot_wheel);
   hrot_start_val = THUMB_INIT_VAL;
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
 
-  vrot_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
+  vrot_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vrot_wheel);
   vrot_start_val = THUMB_INIT_VAL;
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
 
-  zoom_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
+  zoom_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(zoom_wheel);
   zoom_start_val = THUMB_INIT_VAL;
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
 
-  hpan_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
+  hpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hpan_wheel);
   hpan_start_val = THUMB_INIT_VAL;
   hpan_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(hpanwheelChanged(int)));
 
-  vpan_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
+  vpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vpan_wheel);
   vpan_start_val = THUMB_INIT_VAL;
   vpan_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
@@ -290,8 +290,8 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
 
     QToolButton* view_button = new iContextMenuButton(this);
 
-    taiAction* view_act = new taiAction(i, nm, QKeySequence());
-    view_act->connect(taiAction::int_act, this,  SLOT(gotoviewbuttonClicked(int)));
+    iAction* view_act = new iAction(i, nm, QKeySequence());
+    view_act->connect(iAction::int_act, this,  SLOT(gotoviewbuttonClicked(int)));
     view_act->setParent(view_button);
     view_act->setCheckable(true);
     view_act->setChecked(sv->view_saved);
@@ -307,21 +307,21 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     QMenu* view_menu = new QMenu(this);
     view_menu->setFont(taiM->menuFont(taiMisc::fonMedium));
 
-    taiAction* save_act = new taiAction(i, "&Save View", QKeySequence());
+    iAction* save_act = new iAction(i, "&Save View", QKeySequence());
     save_act->setStatusTip("Save the current view settings to this view button");
-    save_act->connect(taiAction::int_act, this,  SLOT(saveviewTriggered(int)));
+    save_act->connect(iAction::int_act, this,  SLOT(saveviewTriggered(int)));
     save_act->setParent(view_menu);
     view_menu->addAction(save_act);
 
-    taiAction* name_act = new taiAction(i, "&Name View", QKeySequence());
+    iAction* name_act = new iAction(i, "&Name View", QKeySequence());
     name_act->setStatusTip("Name this view button");
-    name_act->connect(taiAction::int_act, this,  SLOT(nameviewTriggered(int)));
+    name_act->connect(iAction::int_act, this,  SLOT(nameviewTriggered(int)));
     name_act->setParent(view_menu);
     view_menu->addAction(name_act);
 
-    taiAction* sname_act = new taiAction(i, "&Save + Name", QKeySequence());
+    iAction* sname_act = new iAction(i, "&Save + Name", QKeySequence());
     sname_act->setStatusTip("Save the current view settings to this view button, and then name it");
-    sname_act->connect(taiAction::int_act, this,  SLOT(savenameviewTriggered(int)));
+    sname_act->connect(iAction::int_act, this,  SLOT(savenameviewTriggered(int)));
     sname_act->setParent(view_menu);
     view_menu->addAction(sname_act);
 
@@ -341,8 +341,8 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   // make them all the same size
   QSizePolicy sp(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
   dyn_button->setSizePolicy(sp);
-  taiAction* dyn_act = new taiAction(but_no, label, QKeySequence());
-  dyn_act->connect(taiAction::int_act, this,  SLOT(dynbuttonClicked(int)));
+  iAction* dyn_act = new iAction(but_no, label, QKeySequence());
+  dyn_act->connect(iAction::int_act, this,  SLOT(dynbuttonClicked(int)));
   dyn_act->setParent(dyn_button);
 //   dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   dyn_button->setDefaultAction(dyn_act);
@@ -353,11 +353,11 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   return but_no;
 }
 
-taiAction* T3ExaminerViewer::getDynButton(int but_no) {
+iAction* T3ExaminerViewer::getDynButton(int but_no) {
   return dyn_actions.SafeEl(but_no);
 }
 
-taiAction* T3ExaminerViewer::getDynButtonName(const String& label) {
+iAction* T3ExaminerViewer::getDynButtonName(const String& label) {
   int but_no = dyn_buttons.FindName(label);
   if(but_no < 0) return NULL;
   return getDynButton(but_no);
@@ -367,13 +367,13 @@ void T3ExaminerViewer::setDynButtonChecked(int but_no, bool onoff, bool mutex) {
   if(but_no < 0 || but_no >= dyn_actions.size) return;
   if(mutex) {
     for(int i=0;i<dyn_actions.size; i++) {
-      taiAction* da = dyn_actions[i];
+      iAction* da = dyn_actions[i];
       da->setCheckable(true);
       da->setChecked(false);
     }
   }
 
-  taiAction* da = dyn_actions[but_no];
+  iAction* da = dyn_actions[but_no];
   da->setCheckable(true);
   da->setChecked(onoff);
 }

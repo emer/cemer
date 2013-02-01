@@ -24,13 +24,13 @@ gpiElTypes::gpiElTypes(taiWidgetActions::RepType rt, int ft, TypeDef* lstd, Type
 }
 
 gpiElTypes::gpiElTypes
-(taiMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
+(taiWidgetMenu* existing_menu, TypeDef* gtd, TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 : taiTypeHier(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   lst_typd = gtd;
 }
 
-void gpiElTypes::GetMenu(taiWidgetActions* menu, taiMenuAction* nact) {
+void gpiElTypes::GetMenu(taiWidgetActions* menu, iMenuAction* nact) {
   GetMenu_impl(menu, typ, nact);
   menu->AddSep(); //note: won't add a spurious separator if not needed
   GetMenu_impl(menu, lst_typd, nact);	// get group types for this type

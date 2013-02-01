@@ -170,8 +170,8 @@ signals:
 #endif
 
 public slots:
-  virtual void          mnuFindFromHere(taiAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
-  virtual void          mnuReplaceFromHere(taiAction* mel); // called from context 'Replace from here'; cast obj to iTreeViewItem*
+  virtual void          mnuFindFromHere(iAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
+  virtual void          mnuReplaceFromHere(iAction* mel); // called from context 'Replace from here'; cast obj to iTreeViewItem*
   virtual void          ExpandDefault();
   // expand to the default level specified for this tree, or invokes CustomExpand if set
   virtual void          ExpandAll(int max_levels = 6);

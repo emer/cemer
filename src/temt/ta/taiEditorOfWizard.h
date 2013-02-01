@@ -57,7 +57,7 @@ protected:
   override void         Constr_Data_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl);
   override void         Constr_RegNotifies();
-//  override void       DoConstr_Dialog(iHostDialog*& dlg);
+//  override void       DoConstr_Dialog(iDialogEditor*& dlg);
   override void         Enum_Members(); // called by Constr_impl to fill memb_el[]
   override void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void         Ok_impl();

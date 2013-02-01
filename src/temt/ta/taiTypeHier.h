@@ -32,9 +32,9 @@ public:
   bool          enum_mode; // when set, creates a hier of enum TypeDefs, for picking an enum type
 
   virtual void  GetMenu() {GetMenu(NULL);}
-  virtual void  GetMenu(const taiMenuAction* acn);
+  virtual void  GetMenu(const iMenuAction* acn);
   virtual void  UpdateMenu() {UpdateMenu(NULL);}
-  virtual void  UpdateMenu(const taiMenuAction* acn);
+  virtual void  UpdateMenu(const iMenuAction* acn);
 
   override QWidget* GetRep();
   virtual void          GetImage(TypeDef* ths);
@@ -42,7 +42,7 @@ public:
 
   taiTypeHier(taiWidgetActions::RepType rt, int ft, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
-  taiTypeHier(taiMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
+  taiTypeHier(taiWidgetMenu* existing_menu, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
   ~taiTypeHier(); //
 protected:
@@ -50,8 +50,8 @@ protected:
   bool          AddType_Class(TypeDef* typ_);
   int           CountChildren(TypeDef* typ_);
   int           CountEnums(TypeDef* typ_);
-  virtual void  GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn);
-  void  GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const taiMenuAction* acn); //
+  virtual void  GetMenu_impl(taiWidgetActions* menu, TypeDef* typ_, const iMenuAction* acn);
+  void  GetMenu_Enum_impl(taiWidgetActions* menu, TypeDef* typ_, const iMenuAction* acn); //
 };
 
 #endif // taiTypeHier_h

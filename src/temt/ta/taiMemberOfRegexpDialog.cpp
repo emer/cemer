@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiMemberOfRegexpDialog.h"
-#include <iRegexpDialogPopulator>
+#include <iDialogRegexpPopulator>
 #include <taiRegexpField>
 
 #include <taMisc>
@@ -27,13 +27,13 @@ int taiMemberOfRegexpDialog::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiWidget* taiMemberOfRegexpDialog::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  // Get the iRegexpDialogPopulator instance that should be used for this field.
-  iRegexpDialogPopulator *populator = 0;
+  // Get the iDialogRegexpPopulator instance that should be used for this field.
+  iDialogRegexpPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");
   if (!pop_type.empty()) {
     if (TypeDef *type = TypeDef::FindGlobalTypeName(pop_type, false)) {
       if (void *pv_inst = type->GetInstance()) {
-        populator = reinterpret_cast<iRegexpDialogPopulator *>(pv_inst);
+        populator = reinterpret_cast<iDialogRegexpPopulator *>(pv_inst);
       }
     }
   }

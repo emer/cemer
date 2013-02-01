@@ -15,7 +15,7 @@
 
 #include "taiListElsButton.h"
 #include <taList_impl>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <taMisc>
 #include <taiMisc>
@@ -37,7 +37,7 @@ const String taiListElsButton::titleText() {
   return chs_title;
 }
 
-void taiListElsButton::BuildChooser(taiItemChooser* ic, int view) {
+void taiListElsButton::BuildChooser(iDialogItemChooser* ic, int view) {
   //assume only called if needed
   
   if (!list) {

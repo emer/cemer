@@ -17,13 +17,13 @@
 #include <taBase>
 #include <TypeDef>
 #include <MethodDef>
-#include <taiMethodData>
+#include <taiWidgetMethod>
 #include <taiMethod>
-#include <taiMenu_List>
+#include <taiWidgetActions_List>
 #include <iTreeViewItem>
 #include <iTreeView>
 #include <tabTreeDataNode>
-#include <iSearchDialog>
+#include <iDialogSearch>
 #include <taMisc>
 #include <taList_impl>
 #include <taGroup_impl>
@@ -156,7 +156,7 @@ void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
     if (!(md->HasOption("MENU_CONTEXT"))) continue;
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
-    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
+    taiWidgetMethod* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
     mth_rep->AddToMenu(menu);
@@ -165,7 +165,7 @@ void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
 
   // add the BUTTON and MENU_BUTTON items
   cnt = 0;
-  taiMenu_List ta_menus;
+  taiWidgetActions_List ta_menus;
   String men_nm = "Misc";  //see note in taiEditorOfClass::SetCurMenuButton
   String on_nm;
   for (int i = 0; i < typ->methods.size; ++i) {
@@ -180,7 +180,7 @@ void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
     //note: we request the Menu guy because we put it in menu even if BUTTON
-    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
+    taiWidgetMethod* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
 
@@ -217,7 +217,7 @@ void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
     // standard test
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
-    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
+    taiWidgetMethod* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
 
@@ -321,17 +321,17 @@ static bool IsHit(const String_PArray& targs, const String_PArray& kicks, String
 static void AddHit(int item_type, const String& probedx, String& hits) {
   if (hits.nonempty()) hits += "<br>";
   switch (item_type) {
-  case iSearchDialog::SO_OBJ_NAME: hits += "name:"; break;
-  case iSearchDialog::SO_OBJ_TYPE: hits += "type:"; break;
-  case iSearchDialog::SO_OBJ_DESC: hits += "desc:"; break;
-  case iSearchDialog::SO_MEMB_NAME: hits += "memb name:"; break;
-  case iSearchDialog::SO_MEMB_VAL: hits += "memb val:"; break;
+  case iDialogSearch::SO_OBJ_NAME: hits += "name:"; break;
+  case iDialogSearch::SO_OBJ_TYPE: hits += "type:"; break;
+  case iDialogSearch::SO_OBJ_DESC: hits += "desc:"; break;
+  case iDialogSearch::SO_MEMB_NAME: hits += "memb name:"; break;
+  case iDialogSearch::SO_MEMB_VAL: hits += "memb val:"; break;
   default: break; // huh?
   }
   hits += probedx;
 }
 
-void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
+void taSigLinkBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   if (sd->stop()) return; // user hit stop
   const String_PArray& targs = sd->targets();
   const String_PArray& kicks = sd->kickers();
@@ -339,11 +339,11 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   String hits; // cumulative hits guy
   int n = 0; // hits counter, to know to call Add
   bool ci = true;               // case independent
-  if(sd->options() & iSearchDialog::SO_MATCH_CASE)
+  if(sd->options() & iDialogSearch::SO_MATCH_CASE)
     ci = false;
 
   // NAME
-  int item_type = iSearchDialog::SO_OBJ_NAME;
+  int item_type = iDialogSearch::SO_OBJ_NAME;
   if (sd->options() & item_type) {
     probed = tab->GetName();
     if (IsHit(targs, kicks, probed, ci))
@@ -351,14 +351,14 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   }
 
   // TYPE
-  item_type = iSearchDialog::SO_OBJ_TYPE;
+  item_type = iDialogSearch::SO_OBJ_TYPE;
   if (sd->options() & item_type) {
     probed = tab->GetTypeDef()->name;
     if (IsHit(targs, kicks, probed, ci)) {
       ++n; AddHit(item_type, probed, hits);
     }
     else {
-      if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
+      if(sd->options() & iDialogSearch::SO_TYPE_DESC) {
         probed = tab->GetTypeDef()->desc;
         if (IsHit(targs, kicks, probed, ci)) {
           ++n; AddHit(item_type, probed, hits);
@@ -368,7 +368,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   }
 
   // DESC
-  item_type = iSearchDialog::SO_OBJ_DESC;
+  item_type = iDialogSearch::SO_OBJ_DESC;
   if (sd->options() & item_type) {
     probed = tab->GetColText(taBase::key_desc);
     if (IsHit(targs, kicks, probed, ci)) {
@@ -384,17 +384,17 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
 
   TypeDef* td = tab->GetTypeDef();
   // MEMB NAME (note: NO_SEARCH not applicable to name search)
-  item_type = iSearchDialog::SO_MEMB_NAME;
+  item_type = iDialogSearch::SO_MEMB_NAME;
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
+      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       probed = md->name;
       if (IsHit(targs, kicks, probed, ci)) {
         ++n; AddHit(item_type, probed, hits);
       }
       else {
-        if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
+        if(sd->options() & iDialogSearch::SO_TYPE_DESC) {
           probed = md->desc;
           if (IsHit(targs, kicks, probed, ci)) {
             ++n; AddHit(item_type, probed, hits);
@@ -409,11 +409,11 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
 
   // first pass: "value" members:
   // non-ptrs, non-owned taBase values, owned no-browse taBase values
-  item_type = iSearchDialog::SO_MEMB_VAL;
+  item_type = iDialogSearch::SO_MEMB_VAL;
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
+      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       if (md->is_static) continue;
       if (md->HasOption("NO_SEARCH")) continue;
       if (md->type->IsNotPtr()) {
@@ -459,7 +459,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) {
+    if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) {
       // def children are excluded from show, but should not be from search!!
       if (md->name != def_child)
         continue;
@@ -473,7 +473,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       continue;
     // if guy is not a list or greater, must be browsable taBase
     if (!md->type->InheritsFrom(TA_taList_impl)) {
-      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) &&            
+      if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) &&            
           !md->ShowMember(TypeItem::USE_SHOW_GUI_DEF,
           TypeItem::SC_TREE)) continue;
     }
@@ -516,7 +516,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
 }
 
 
-void taSigLinkBase::Search(iSearchDialog* dlg) {
+void taSigLinkBase::Search(iDialogSearch* dlg) {
   taSigLinkBase::SearchStat(data(), dlg);
 }
 

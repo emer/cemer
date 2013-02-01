@@ -24,7 +24,7 @@
 
 
 BrainAtlasRegexpPopulator::BrainAtlasRegexpPopulator()
-: iRegexpDialogPopulator()
+: iDialogRegexpPopulator()
 , m_labels()
 , m_headings()
 , m_filepath("")

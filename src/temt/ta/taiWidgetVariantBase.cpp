@@ -18,11 +18,11 @@
 #include <taiWidgetComboBox>
 #include <iLabel>
 #include <iComboBox>
-#include <taiToggle>
+#include <taiWidgetToggle>
 #include <taiWidgetIncrField>
 #include <taiWidgetField>
 #include <iCheckBox>
-#include <taiTokenPtrButton>
+#include <taiWidgetTokenPtr>
 #include <iLineEdit>
 #include <iSpinBox>
 
@@ -113,7 +113,7 @@ void taiWidgetVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   // created in order of StackControls
   lbl = MakeLabel("(no value for type Invalid)");
   stack->addWidget(lbl);
-  togVal = new taiToggle(typ, host, this, NULL);
+  togVal = new taiWidgetToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
   incVal = new taiWidgetIncrField(typ, host, this, NULL, mflags);
   incVal->setMinimum(INT_MIN); //note: must be int
@@ -124,7 +124,7 @@ void taiWidgetVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
 
-  tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL, flgEditDialog);
+  tabVal = new taiWidgetTokenPtr(&TA_taBase, host, this, NULL, flgEditDialog);
   stack->addWidget(tabVal->GetRep());
 
   tiVal = MakeLabel("(TypeItem cannot be set)");

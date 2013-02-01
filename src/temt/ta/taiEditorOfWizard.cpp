@@ -15,11 +15,11 @@
 
 #include "taiEditorOfWizard.h"
 #include <iTextBrowser>
-#include <NumberedTextView>
+#include <iNumberedTextView>
 #include <MemberDef>
 #include <iTextEdit>
 #include <iDialog>
-#include <iHostDialog>
+#include <iDialogEditor>
 #include <iStripeWidget>
 
 #include <taMisc>

@@ -115,7 +115,7 @@ public:
   static const int      FONT_SM;  // #DEF_2 pts to subtract frm BIG
 
 
-  static taiHostDialog_List     active_dialogs; // #IGNORE list of active (NoBlock) dialogs
+  static taiDialogEditor_List     active_dialogs; // #IGNORE list of active (NoBlock) dialogs
   static taiEditorOfClass_List   active_edits;   // #IGNORE list of active edit dialogs
   static taiEditorOfClass_List   css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
   static iTopLevelWindow_List   active_wins; // #IGNORE currently open windows

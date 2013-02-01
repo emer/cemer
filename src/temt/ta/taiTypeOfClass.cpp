@@ -16,7 +16,7 @@
 #include "taiTypeOfClass.h"
 #include <taiWidget>
 #include <taiWidgetPoly>
-#include <taiEditButton>
+#include <taiWidgetEditButton>
 
 
 int taiTypeOfClass::BidForType(TypeDef* td) {
@@ -34,7 +34,7 @@ taiWidget* taiTypeOfClass::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidge
 }
 
 taiWidget* taiTypeOfClass::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  taiEditButton* rval = taiEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
+  taiWidgetEditButton* rval = taiWidgetEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -48,7 +48,7 @@ void taiTypeOfClass::GetImage_impl(taiWidget* dat, const void* base) {
 }
 
 void taiTypeOfClass::GetValue_impl(taiWidget* dat, void* base) {
-  dat->GetValue_(base); //noop for taiEditButton
+  dat->GetValue_(base); //noop for taiWidgetEditButton
 }
 
 bool taiTypeOfClass::CanBrowse() const {

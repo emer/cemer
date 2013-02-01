@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfFilePtr.h"
-#include <taiFileButton>
+#include <taiWidgetFileButton>
 #include <taFiler>
 
 
@@ -25,18 +25,18 @@ int taiTypeOfFilePtr::BidForType(TypeDef* td) {
 }
 
 taiWidget* taiTypeOfFilePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  return new taiFileButton(typ,  host_, par, gui_parent_, flags_);
+  return new taiWidgetFileButton(typ,  host_, par, gui_parent_, flags_);
 }
 
 void taiTypeOfFilePtr::GetImage_impl(taiWidget* dat, const void* base){
-  taiFileButton* fbut = (taiFileButton*) dat;
+  taiWidgetFileButton* fbut = (taiWidgetFileButton*) dat;
   // note: we are a taFiler*
   fbut->SetFiler(*((taFiler**)base));
   fbut->GetImage();
 }
 
 void taiTypeOfFilePtr::GetValue_impl(taiWidget* dat, void* base) {
-  taiFileButton* rval = (taiFileButton*)dat;
+  taiWidgetFileButton* rval = (taiWidgetFileButton*)dat;
   // safely replace filer, using ref counting
   taRefN::SetRefDone(*((taRefN**)base), rval->GetFiler());
 }

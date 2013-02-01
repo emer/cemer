@@ -16,7 +16,7 @@
 #include "taiMemberOfTokenPtr.h"
 #include <MethodDef>
 #include <taiWidget>
-#include <taiTokenPtrButton>
+#include <taiWidgetTokenPtr>
 #include <taSmartPtr>
 
 #include <taMisc>
@@ -57,7 +57,7 @@ taiWidget* taiMemberOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* p
   we don't know the type
   if (!npt->tokens.keep)
     flags_ |= taiWidget::flgNoTokenDlg; // no dialog */
-  taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
+  taiWidgetTokenPtr* rval = new taiWidgetTokenPtr(npt, host_, par, gui_parent_,
         flags_);
   String filt_nm = mbr->OptionAfter("ITEM_FILTER_");
   if (filt_nm.nonempty()) {
@@ -166,7 +166,7 @@ void taiMemberOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
     }
   }
 
-  taiTokenPtrButton* tpb = (taiTokenPtrButton*)dat;
+  taiWidgetTokenPtr* tpb = (taiWidgetTokenPtr*)dat;
   tpb->GetImageScoped(tok_ptr, targ_typ, scope, scope_type);
   GetOrigVal(dat, base);
 }
@@ -175,7 +175,7 @@ void taiMemberOfTokenPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
 //note: in 3.2 we bailed if not keeping tokens, but that is complicated to test
 // and could modally depend on dynamic type directives, so we just always set
 
-  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+  taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
   switch (mode) {
   case MD_BASE:
     if (no_setpointer)

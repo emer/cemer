@@ -51,7 +51,7 @@
 #include <UserData_DocLink>
 #include <iMainWindowViewer>
 #include <taiMisc>
-#include <taiObjDiffBrowser>
+#include <iDialogObjDiffBrowser>
 #include <iHelpBrowser>
 
 #include <QVariant>
@@ -2722,7 +2722,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
 
   diffs->Diff();
 
-  taiObjDiffBrowser* odb = taiObjDiffBrowser::New(diffs, taiMisc::defFontSize);
+  iDialogObjDiffBrowser* odb = iDialogObjDiffBrowser::New(diffs, taiMisc::defFontSize);
   bool rval = odb->Browse();
 
   // browser is not modal and will return immediately

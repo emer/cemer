@@ -15,7 +15,7 @@
 
 #include "taiListElsButtonBase.h"
 #include <taList_impl>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <QTreeWidgetItem>
 
@@ -28,7 +28,7 @@ taiListElsButtonBase::taiListElsButtonBase(TypeDef* typ_, IWidgetHost* host,
 {
 }
 
-int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
+int taiListElsButtonBase::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst, 
   QTreeWidgetItem* top_item) 
 {
   int rval = 0;

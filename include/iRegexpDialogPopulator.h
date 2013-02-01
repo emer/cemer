@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iRegexpDialogPopulator.h"
+#include "../src/temt/ta/iDialogRegexpPopulator.h"

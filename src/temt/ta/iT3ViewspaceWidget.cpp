@@ -335,7 +335,7 @@ QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
 }
 
 void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
 
   FillContextMenu(menu);
 

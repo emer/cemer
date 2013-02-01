@@ -20,7 +20,7 @@
 #include <T3DataViewFrame>
 #include <iT3ViewspaceWidget>
 #include <iTabBarBase>
-#include <taiMenu>
+#include <taiWidgetMenu>
 #include <iMainWindowViewer>
 #include <MainWindowViewer>
 #include <iVec2i>
@@ -99,18 +99,18 @@ void iT3DataViewer::FrameProperties(int tab_idx) {
   fr->EditDialog(true);
 }
 
-void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
-  taiAction*
-  act = menu->AddItem("&Add Frame", taiAction::action,
+void iT3DataViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
+  iAction*
+  act = menu->AddItem("&Add Frame", iAction::action,
     this, SLOT(AddFrame()),_nilVariant);
 
   if (tab_idx >= 0) {
-    act = menu->AddItem("&Delete Frame", taiAction::int_act,
+    act = menu->AddItem("&Delete Frame", iAction::int_act,
       this, SLOT(DeleteFrame(int)), tab_idx);
 
     menu->AddSep();
     // should always be at bottom:
-    act = menu->AddItem("Frame &Properties...", taiAction::int_act,
+    act = menu->AddItem("Frame &Properties...", iAction::int_act,
       this, SLOT(FrameProperties(int)), tab_idx);
 
   }
@@ -128,7 +128,7 @@ void iT3DataViewer::FocusFirstTab() {
 }
 
 void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_idx) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   FillContextMenu_impl(menu, tab_idx);
   if (menu->count() > 0) { //only show if any items!
     menu->exec(pos);

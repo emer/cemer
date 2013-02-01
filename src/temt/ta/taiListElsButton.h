@@ -34,7 +34,7 @@ public:
   USING(inherited::GetImage)
   void                  GetImage(taList_impl* base_lst, taBase* it);
 
-  void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
 
   taiListElsButton(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                    QWidget* gui_parent_, int flags_ = 0,

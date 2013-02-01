@@ -33,7 +33,7 @@ TypeDef_Of(EnumDef);
 #include <tabMisc>
 #include <taRootBase>
 #include <taStringDiff>
-#include <taiChoiceDialog>
+#include <iDialogChoice>
 
 #include <ViewColor_List> 
 #include <QDir>
@@ -2947,7 +2947,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }
   if (taMisc::gui_active && !taMisc::is_loading) {
-    bool cancel = taiChoiceDialog::ErrorDialog(NULL, taMisc::last_err_msg);
+    bool cancel = iDialogChoice::ErrorDialog(NULL, taMisc::last_err_msg);
     taMisc::ErrorCancelSet(cancel);
   }
 #endif
@@ -2962,7 +2962,7 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 #endif
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
-    String delimiter = taiChoiceDialog::delimiter;
+    String delimiter = iDialogChoice::delimiter;
     int   chn = 0;
     String chstr = delimiter;
     if (a) { chstr += String(a) + delimiter; chn++; }
@@ -2974,7 +2974,7 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     if (g) { chstr += String(g) + delimiter; chn++; }
     if (h) { chstr += String(h) + delimiter; chn++; }
     if (i) { chstr += String(i) + delimiter; chn++; }
-    m = taiChoiceDialog::ChoiceDialog(NULL, text, chstr);
+    m = iDialogChoice::ChoiceDialog(NULL, text, chstr);
   } else
 #endif
   {
@@ -3015,7 +3015,7 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
   taMisc::ConsoleOutput(msg, false, false);
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
-    taiChoiceDialog::ConfirmDialog(NULL, msg);
+    iDialogChoice::ConfirmDialog(NULL, msg);
   }
 #endif
 }

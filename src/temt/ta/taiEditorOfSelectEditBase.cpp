@@ -16,8 +16,8 @@
 #include "taiEditorOfSelectEditBase.h"
 #include <SelectEdit>
 #include <taiMethod>
-#include <taiAction>
-#include <taiMethodData>
+#include <iAction>
+#include <taiWidgetMethod>
 
 #include <taMisc>
 #include <taiMisc>
@@ -75,7 +75,7 @@ void taiEditorOfSelectEditBase::Constr_Methods_impl() {
       cur_menu_but = ta_menu_buttons.FindName(men_nm);
       if (cur_menu_but == NULL) {
         cur_menu_but = taiWidgetActions::New
-          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+          (taiWidgetMenu::buttonmenu, taiWidgetMenu::normal, taiMisc::fonSmall,
                   NULL, this, NULL, widget());
         cur_menu_but->setLabel(men_nm);
         DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
@@ -97,7 +97,7 @@ void taiEditorOfSelectEditBase::Constr_Methods_impl() {
       // make no sense -- the label specifies the place, or Actions if no label
       String mth_cap = item->caption();
       String statustip = item->desc;
-      taiMethodData* mth_rep = NULL;
+      taiWidgetMethod* mth_rep = NULL;
       switch (group_type) {
       case EditMthItem_Group::GT_BUTTONS:  {
         mth_rep = im->GetButtonMethodRep(base, this, NULL, frmMethButtons);
@@ -106,16 +106,16 @@ void taiEditorOfSelectEditBase::Constr_Methods_impl() {
       case EditMthItem_Group::GT_MENU: {
         mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu);
-        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
+        iAction* act = cur_menu->AddItem(mth_cap, taiWidgetMenu::use_default,
+              iAction::action, mth_rep, SLOT(CallFun()) );
         if (statustip.nonempty())
           act->setStatusTip(statustip);
       } break;
       case EditMthItem_Group::GT_MENU_BUTTON: {
         mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu_but);
-        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
+        iAction* act = cur_menu_but->AddItem(mth_cap, taiWidgetMenu::use_default,
+              iAction::action, mth_rep, SLOT(CallFun()) );
         if (statustip.nonempty())
           act->setStatusTip(statustip);
       } break;

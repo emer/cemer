@@ -14,12 +14,12 @@
 //   Lesser General Public License for more details.
 
 #include "taiRegexpField.h"
-#include <iRegexpDialog>
+#include <iDialogRegexp>
 #include <iLineEdit>
 #include <MemberDef>
 
 
-taiRegexpField::taiRegexpField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, iRegexpDialogPopulator *re_populator)
+taiRegexpField::taiRegexpField(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, iDialogRegexpPopulator *re_populator)
   : taiWidgetText(typ_, host_, par, gui_parent_, flags_,
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
@@ -36,7 +36,7 @@ void taiRegexpField::SetFieldOwner(const void *fieldOwner)
 
 void taiRegexpField::btnEdit_clicked(bool)
 {
-  iRegexpDialog edit_dialog(this, mbr == NULL ? "" : mbr->name, m_populator, m_fieldOwner, readOnly());
+  iDialogRegexp edit_dialog(this, mbr == NULL ? "" : mbr->name, m_populator, m_fieldOwner, readOnly());
   edit_dialog.exec();
 
   // Unless explicitly overridden, do an autoapply.

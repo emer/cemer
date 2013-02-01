@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iMethodButtonMgr.h"
-#include <taiMethodData>
+#include <taiWidgetMethod>
 #include <MethodDef>
 #include <taiMethod>
 
@@ -55,7 +55,7 @@ void iMethodButtonMgr::Init() {
 //  m_lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
 }
 
-void iMethodButtonMgr::AddMethButton(taiMethodData* mth_rep, const String& label) {
+void iMethodButtonMgr::AddMethButton(taiWidgetMethod* mth_rep, const String& label) {
   QWidget* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
   if (label.nonempty() && but->inherits("QAbstractButton")) {
@@ -111,7 +111,7 @@ void iMethodButtonMgr::Constr_Methods_impl() {
     if (im == NULL)
       continue;
 
-    taiMethodData* mth_rep = NULL;
+    taiWidgetMethod* mth_rep = NULL;
     if (md->HasOption("MENU_BUTTON")) {
       SetCurMenuButton(md);
       mth_rep = im->GetMenuMethodRep(base, host, NULL, NULL);
@@ -159,7 +159,7 @@ void iMethodButtonMgr::GetImage() {
   if(!widg || !widg->isVisible()) return;
 
   for (int i = 0; i < meth_el.size; ++i) {
-    taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
+    taiWidgetMethod* mth_rep = (taiWidgetMethod*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
 
@@ -193,7 +193,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
-  cur_menu_but = taiWidgetActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+  cur_menu_but = taiWidgetActions::New(taiWidgetMenu::buttonmenu, taiWidgetMenu::normal, taiMisc::fonSmall,
             NULL, host, NULL, widg);
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu

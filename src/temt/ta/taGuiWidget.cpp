@@ -19,9 +19,9 @@
 #include <taiWidgetField>
 #include <taiWidgetBitBox>
 #include <taiWidgetComboBox>
-#include <taiToggle>
+#include <taiWidgetToggle>
 #include <taGuiDialog>
-#include <taiTokenPtrButton>
+#include <taiWidgetTokenPtr>
 
 #include <iMainWindowViewer>
 #include <iDataTableEditor>
@@ -89,14 +89,14 @@ void taGuiWidget::GetImage() {
     ((taiWidgetField*)tai_data)->GetImage(*((String*)data.toPtr()));
   }
   if(widget_type == "BoolCheckbox") {
-    ((taiToggle*)tai_data)->GetImage(*((bool*)data.toPtr()));
+    ((taiWidgetToggle*)tai_data)->GetImage(*((bool*)data.toPtr()));
   }
   if(widget_type == "ObjectPtr") {
     String typnm = taGuiDialog::GetAttribute("type=", attributes);
     TypeDef* td;
     if(typnm.nonempty()) td = TypeDef::FindGlobalTypeName(typnm);
     if(!td) td = &TA_taOBase;
-    ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
+    ((taiWidgetTokenPtr*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }
   if(widget_type == "HardEnum_Enum") {
     ((taiWidgetComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
@@ -127,10 +127,10 @@ void taGuiWidget::GetValue() {
     *((String*)data.toPtr()) = ((taiWidgetField*)tai_data)->GetValue();
   }
   if(widget_type == "BoolCheckbox") {
-    *((bool*)data.toPtr()) = ((taiToggle*)tai_data)->GetValue();
+    *((bool*)data.toPtr()) = ((taiWidgetToggle*)tai_data)->GetValue();
   }
   if(widget_type == "ObjectPtr") {
-    *((taBaseRef*)data.toPtr()) = ((taiTokenPtrButton*)tai_data)->GetValue();
+    *((taBaseRef*)data.toPtr()) = ((taiWidgetTokenPtr*)tai_data)->GetValue();
   }
   if(widget_type == "HardEnum_Enum") {
     ((taiWidgetComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));

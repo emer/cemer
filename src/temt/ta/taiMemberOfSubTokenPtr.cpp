@@ -15,8 +15,8 @@
 
 #include "taiMemberOfSubTokenPtr.h"
 #include <taiWidget>
-#include <taiSubToken>
-#include <taiMenu>
+#include <taiWidgetSubTokenPtrMenu>
+#include <taiWidgetMenu>
 
 #include <taMisc>
 #include <taiMisc>
@@ -41,14 +41,14 @@ taiWidget* taiMemberOfSubTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget
     flags_ |= taiWidget::flgEditOk;
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
-  taiSubToken* rval =
-    new taiSubToken( taiMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
+  taiWidgetSubTokenPtrMenu* rval =
+    new taiWidgetSubTokenPtrMenu( taiWidgetMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberOfSubTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiSubToken* rval = (taiSubToken*)dat;
+  taiWidgetSubTokenPtrMenu* rval = (taiWidgetSubTokenPtrMenu*)dat;
 //nn, done in GetImage  rval->UpdateMenu();
   rval->GetImage(base,*((void **)new_base));
   GetOrigVal(dat, base);
@@ -56,7 +56,7 @@ void taiMemberOfSubTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
 
 void taiMemberOfSubTokenPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiSubToken* rval = (taiSubToken*)dat;
+  taiWidgetSubTokenPtrMenu* rval = (taiWidgetSubTokenPtrMenu*)dat;
   if (!no_setpointer && mbr->type->IsTaBase())
     taBase::SetPointer((taBase**)new_base, (taBase*)rval->GetValue());
   else

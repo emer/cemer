@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 class iSplitter; //
-class NumberedTextView; //
+class iNumberedTextView; //
 class QVBoxLayout; // 
 class QHBoxLayout; // 
 
@@ -61,8 +61,8 @@ public:
   QWidget*              main_widg;
   QVBoxLayout*          main_vbox;
   iSplitter*            split;
-  NumberedTextView*     hfile_view; // header file
-  NumberedTextView*     cfile_view; // cpp file
+  iNumberedTextView*     hfile_view; // header file
+  iNumberedTextView*     cfile_view; // cpp file
   QHBoxLayout*          tool_box;
   QToolBar*             tool_bar;
   QAction*                actSave;

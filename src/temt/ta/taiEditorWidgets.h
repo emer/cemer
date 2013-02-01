@@ -38,7 +38,7 @@ class TA_API taiEditorWidgets: public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditor)
   Q_OBJECT
-friend class iHostDialog;
+friend class iDialogEditor;
 public:
   static void           DoFillLabelContextMenu_SelEdit(QMenu* menu,
     int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,

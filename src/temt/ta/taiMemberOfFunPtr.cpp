@@ -15,9 +15,9 @@
 
 #include "taiMemberOfFunPtr.h"
 #include <taiWidget>
-#include <taiButtonMenu>
+#include <taiWidgetMenuButton>
 #include <MethodDef>
-#include <taiMenu>
+#include <taiWidgetMenu>
 
 #include <taMisc>
 #include <taiMisc>
@@ -32,7 +32,7 @@ int taiMemberOfFunPtr::BidForMember(MemberDef* md, TypeDef* td) {
 taiWidget* taiMemberOfFunPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
-  taiButtonMenu* rval = new taiButtonMenu(taiMenu::radio_update, taiMisc::fonSmall,
+  taiWidgetMenuButton* rval = new taiWidgetMenuButton(taiWidgetMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
   rval->AddItem("NULL");
   rval->AddSep();
@@ -49,7 +49,7 @@ taiWidget* taiMemberOfFunPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par
 
 void taiMemberOfFunPtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiButtonMenu* rval = (taiButtonMenu*)dat;
+  taiWidgetMenuButton* rval = (taiWidgetMenuButton*)dat;
   if(*((void**)new_base) == NULL) {
     rval->GetImageByData(Variant(0));
     return;
@@ -64,8 +64,8 @@ void taiMemberOfFunPtr::GetImage_impl(taiWidget* dat, const void* base){
 
 void taiMemberOfFunPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiButtonMenu* rval = (taiButtonMenu*)dat;
-  taiAction* cur = rval->curSel();
+  taiWidgetMenuButton* rval = (taiWidgetMenuButton*)dat;
+  iAction* cur = rval->curSel();
   if (cur != NULL)
     *((void**)new_base) = cur->usr_data.toPtr();
 }

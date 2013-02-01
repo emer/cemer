@@ -23,10 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 class taiWidgetComboBox; //
-class taiToggle; //
+class taiWidgetToggle; //
 class taiWidgetIncrField; //
 class taiWidgetField; //
-class taiTokenPtrButton; //
+class taiWidgetTokenPtr; //
 class QStackedWidget; //
 
 
@@ -66,10 +66,10 @@ protected:
   taiWidgetComboBox*          cmbVarType;
   QStackedWidget*       stack; // holds the subfields for different types
 
-  taiToggle*            togVal; // for: bool
+  taiWidgetToggle*            togVal; // for: bool
   taiWidgetIncrField*         incVal; // for: ints
   taiWidgetField*             fldVal; // for: char, string, most numbers
-  taiTokenPtrButton*    tabVal; // for taBase & Matrix token
+  taiWidgetTokenPtr*    tabVal; // for taBase & Matrix token
   iLabel*               tiVal; // for TypeItem token -- display-only for now
 
   void                  Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls

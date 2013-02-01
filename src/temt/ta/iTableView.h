@@ -29,7 +29,7 @@
 class QWidget; //
 class QPoint; //
 class iMainWindowViewer; //
-class taiMenu; //
+class taiWidgetMenu; //
 class CellRange; //
 
 
@@ -109,7 +109,7 @@ protected:
   override void         keyPressEvent(QKeyEvent* e);
   override bool         eventFilter(QObject* obj, QEvent* event);
   void                  ContextMenuRequested(ContextArea ca, const QPoint& global_pos);
-  virtual void          FillContextMenu_impl(ContextArea ca, taiMenu* menu,
+  virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
                                              const CellRange& sel);
   virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
 

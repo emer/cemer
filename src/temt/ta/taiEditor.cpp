@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditor.h"
-#include <iHostDialog>
+#include <iDialogEditor>
 #include <HiLightButton>
 
 #include <taMisc>
@@ -124,7 +124,7 @@ void taiEditor::Revert() {
   Unchanged();
 }
 
-void taiEditor::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destructing a dialog instance
+void taiEditor::DoDestr_Dialog(iDialogEditor*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
     if(!taMisc::in_shutdown) {
@@ -317,13 +317,13 @@ void taiEditor::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
 //inherited class completely implements
 }
 
-void taiEditor::DoConstr_Dialog(iHostDialog*& dlg) {
-  // common subcode for creating a dialog -- used by the taiHostDialog and taiEditDialog cousin classes
+void taiEditor::DoConstr_Dialog(iDialogEditor*& dlg) {
+  // common subcode for creating a dialog -- used by the taiDialogEditor and taiEditDialog cousin classes
   if (dlg) return; // already constructed
   if (modal) // s/b parented to current win
-    dlg = new iHostDialog(this, QApplication::activeWindow());
+    dlg = new iDialogEditor(this, QApplication::activeWindow());
   else
-    dlg = new iHostDialog(this, NULL, Qt::WindowMinimizeButtonHint);
+    dlg = new iDialogEditor(this, NULL, Qt::WindowMinimizeButtonHint);
   // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
   // BUT it is also highly unusable to make them owned, since then they obscure parent window
   dlg->setWindowTitle(win_str);

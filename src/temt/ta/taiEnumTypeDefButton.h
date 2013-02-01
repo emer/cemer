@@ -17,20 +17,20 @@
 #define taiEnumTypeDefButton_h 1
 
 // parent includes:
-#include <taiTypeDefButton>
+#include <taiWidgetTypeDefPtr>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiEnumTypeDefButton : public taiTypeDefButton {
+class TA_API taiEnumTypeDefButton : public taiWidgetTypeDefPtr {
 //
-INHERITED(taiTypeDefButton)
+INHERITED(taiWidgetTypeDefPtr)
 public:
   int                   columnCount(int view) const; // override
   const String          headerText(int index, int view) const; // override
 
-  void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
   override void         btnHelp_clicked();
 
   taiEnumTypeDefButton(TypeDef* typ_, IWidgetHost* host,
@@ -40,7 +40,7 @@ protected:
   const String          itemTag() const {return "Enum Type: ";}
 
   bool                  AddType_Enum(TypeDef* typ_, TypeDef* par_typ); // true if should be shown to user
-  int                   BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
+  int                   BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively
 };
 

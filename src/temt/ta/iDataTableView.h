@@ -62,7 +62,7 @@ protected:
                                     const QModelIndex & bottomRight);
 #endif
   // refresh mat cell if in here
-  override void         FillContextMenu_impl(ContextArea ca, taiMenu* menu,
+  override void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
                                              const CellRange& sel);
   override void         RowColOp_impl(int op_code, const CellRange& sel);
 };

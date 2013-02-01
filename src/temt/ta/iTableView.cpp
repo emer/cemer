@@ -206,7 +206,7 @@ bool iTableView::event(QEvent* ev) {
 }
 
 void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
   if(!selectionModel()) return;
   CellRange sel(selectionModel()->selectedIndexes());
   FillContextMenu_impl(ca, menu, sel);
@@ -217,19 +217,19 @@ void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) 
 }
 
 void iTableView::FillContextMenu_impl(ContextArea ca,
-  taiMenu* menu, const CellRange& sel)
+  taiWidgetMenu* menu, const CellRange& sel)
 {
-  taiAction* act = NULL;
+  iAction* act = NULL;
   // generic col guys
   if (ca == CA_COL_HDR) {
     if (!isFixedColCount()) {
 //note: not include these yet, because fairly complicated semantics, ex
 // popping up col editor etc. etc.
-/*      act = menu->AddItem("Append Columns", taiMenu::normal, taiAction::int_act,
+/*      act = menu->AddItem("Append Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
-      act = menu->AddItem("Insert Columns", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Insert Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );*/
-      act = menu->AddItem("Delete Columns", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
       menu->AddSep();
     }
@@ -238,13 +238,13 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   // generic row guys
   if (ca == CA_ROW_HDR) {
     if (!isFixedRowCount()) {
-      act = menu->AddItem("Append Rows", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Append Rows", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
-      act = menu->AddItem("Insert Rows (Ctrl+I)", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Insert Rows (Ctrl+I)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
-      act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
-      act = menu->AddItem("Delete Rows (Ctrl+D)", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
     }
     menu->AddSep();
@@ -254,23 +254,23 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   int ea = 0;
   GetEditActionsEnabled(ea);
     
-  act = menu->AddItem("&Copy", taiMenu::normal, taiAction::int_act,
+  act = menu->AddItem("&Copy", taiWidgetMenu::normal, iAction::int_act,
     this, SLOT(EditAction(int)), taiClipData::EA_COPY );
   act->setShortcut(QKeySequence("Ctrl+C"));
   if (!(ea & taiClipData::EA_COPY))
     act->setEnabled(false);
-  act = menu->AddItem("&Paste", taiMenu::normal,
-      taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
+  act = menu->AddItem("&Paste", taiWidgetMenu::normal,
+      iAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
   act->setShortcut(QKeySequence("Ctrl+V"));
   if (!(ea & taiClipData::EA_PASTE)) 
     act->setEnabled(false);
-  act = menu->AddItem("Clear", taiMenu::normal,
-      taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_CLEAR);
+  act = menu->AddItem("Clear", taiWidgetMenu::normal,
+      iAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_CLEAR);
   if (!(ea & taiClipData::EA_CLEAR)) 
     act->setEnabled(false);
     
   menu->AddSep();
-  act = menu->AddItem("Select &All", taiAction::action,
+  act = menu->AddItem("Select &All", iAction::action,
     this, SLOT(selectAll()),_nilVariant,
       QKeySequence("Ctrl+A"));
 }

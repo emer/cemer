@@ -15,7 +15,7 @@
 
 #include "taiMemberOfMemberDefPtr.h"
 #include <taiWidget>
-#include <taiMemberDefButton>
+#include <taiWidgetMemberDefPtr>
 
 
 int taiMemberOfMemberDefPtr::BidForMember(MemberDef* md, TypeDef* td) {
@@ -29,13 +29,13 @@ taiWidget* taiMemberOfMemberDefPtr::GetDataRep_impl(IWidgetHost* host_, taiWidge
 {
   if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
-  taiMemberDefButton* rval =  new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
+  taiWidgetMemberDefPtr* rval =  new taiWidgetMemberDefPtr(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
 void taiMemberOfMemberDefPtr::GetImage_impl(taiWidget* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  taiWidgetMemberDefPtr* rval = (taiWidgetMemberDefPtr*)dat;
   MemberDef* cur_sel = *((MemberDef**)(new_base));
   rval->GetImage(cur_sel, GetTargetType(base));
   GetOrigVal(dat, base);
@@ -43,6 +43,6 @@ void taiMemberOfMemberDefPtr::GetImage_impl(taiWidget* dat, const void* base){
 
 void taiMemberOfMemberDefPtr::GetMbrValue_impl(taiWidget* dat, void* base) {
   void* new_base = mbr->GetOff(base);
-  taiMemberDefButton* rval = (taiMemberDefButton*)dat;
+  taiWidgetMemberDefPtr* rval = (taiWidgetMemberDefPtr*)dat;
   *((MemberDef**)new_base) = rval->GetValue();
 }

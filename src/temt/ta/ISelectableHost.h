@@ -22,7 +22,7 @@
 #include <ISelectable>
 #include <ISelectable_PtrList>
 #include <DynMethod_PtrList>
-#include <taiAction_List>
+#include <iAction_List>
 
 // declare all other types mentioned but not required to include:
 class QObject; // 
@@ -51,7 +51,7 @@ public:
 
   ISelectable*          curItem() {return selItems().SafeEl(0);} // convenience
   virtual void          setCurItem(ISelectable* item, bool forceUpdate = false);
-//  virtual taiAction_List& dynActions() {return dyn_actions;}
+//  virtual iAction_List& dynActions() {return dyn_actions;}
     // Action list, of current dynamic actions available
 //  virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
    // -- list of current dynamic methods availableselectionChanged
@@ -105,7 +105,7 @@ protected:
    // counter to track batch selection changes; -ve means we are in Update (prog calls ignored)
   ISelectable_PtrList   sel_items;
   DynMethod_PtrList     dyn_methods[2]; // available dynamic methods; 0=single/view 1=obj
-  taiAction_List        dyn_actions[2]; // actions corresponding to methods (always 1:1)
+  iAction_List        dyn_actions[2]; // actions corresponding to methods (always 1:1)
   ISelectable::GuiContext dyn_context[2];
   int                   dyn_idx; // the current dyn index (of all [])
   taiMimeSource*        ctxt_ms; // during a drop and context holds the ms used for dyn and edit actions

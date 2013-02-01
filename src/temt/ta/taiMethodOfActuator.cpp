@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiMethodOfActuator.h"
-#include <taiMethButton>
-#include <taiMethMenu>
+#include <taiWidgetMethodButton>
+#include <taiWidgetMethodMenu>
 #include <iMenuButton>
 
 
@@ -27,12 +27,12 @@ int taiMethodOfActuator::BidForMethod(MethodDef* md, TypeDef* td) {
   return 0;
 }
 
-taiMethodData* taiMethodOfActuator::GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
-  taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
+taiWidgetMethod* taiMethodOfActuator::GetButtonMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
+  taiWidgetMethodButton* rval = new taiWidgetMethodButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiMethodData* taiMethodOfActuator::GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
-  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+taiWidgetMethod* taiMethodOfActuator::GetMenuMethodRep_impl(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_) {
+  taiWidgetMethodMenu* rval = new taiWidgetMethodMenu(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

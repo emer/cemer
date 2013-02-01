@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iRegexpDialogPopulator_h
-#define iRegexpDialogPopulator_h 1
+#ifndef iDialogRegexpPopulator_h
+#define iDialogRegexpPopulator_h 1
 
 // parent includes:
 #include "ta_def.h"
@@ -26,7 +26,7 @@ class QStringList; //
 class QString; // 
 
 
-class TA_API iRegexpDialogPopulator {
+class TA_API iDialogRegexpPopulator {
   // ##INSTANCE #NO_INSTANCE #VIRT_BASE helper class that populates regexp dialog information
 public:
   virtual QStringList getHeadings(bool editor_mode, int& extra_cols) const = 0;
@@ -35,7 +35,7 @@ public:
   virtual QString getSeparator() const = 0;
   virtual void    setSource(const void *fieldOwner) = 0;
   virtual void adjustTitle(QString &title, const void *fieldOwner) const { }
-  virtual ~iRegexpDialogPopulator() { }
+  virtual ~iDialogRegexpPopulator() { }
 };
 
-#endif // iRegexpDialogPopulator_h
+#endif // iDialogRegexpPopulator_h

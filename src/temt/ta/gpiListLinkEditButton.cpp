@@ -15,7 +15,7 @@
 
 #include "gpiListLinkEditButton.h"
 #include <taiMethod>
-#include <taiMethodData>
+#include <taiWidgetMethod>
 
 
 gpiListLinkEditButton::gpiListLinkEditButton
@@ -43,7 +43,7 @@ void gpiListLinkEditButton::GetMethMenus() {
     if ((md->name == "DuplicateEl") || (md->name == "Transfer"))
       continue;
     lst_men_nm = men_nm;
-    taiMethodData* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
+    taiWidgetMethod* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);

@@ -18,7 +18,7 @@
 #include <taiMimeSource>
 #include <taiClipData>
 #include <SelectableHostHelper>
-#include <taiMenu>
+#include <taiWidgetMenu>
 #include <taiSigLink>
 #include <iMainWindowViewer>
 #include <taProject>
@@ -82,7 +82,7 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   // all following implicitly use the GC_DEFAULT code
 show_menu:
   { // block for jump
-  taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
+  taiWidgetMenu* menu = new taiWidgetMenu(widget(), taiWidgetMenu::normal, 0);
   QAction* act = NULL;
   // when dropping "at end", we force the term "here" instead of "into"
   // but we still use the INTO semantics
@@ -95,42 +95,42 @@ show_menu:
 // the result is not what might be expected, since it gets put into
 // the next item, not as a child of the previous item
   if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) {
-    act = menu->AddItem("Move Here", taiAction::int_act,
+    act = menu->AddItem("Move Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_MOVE, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
-      act = menu->AddItem("Move Into", taiAction::int_act,
+      act = menu->AddItem("Move Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
     }
   } else {
     if (ea & taiClipData::EA_DROP_MOVE)
-      act = menu->AddItem("&Move Here", taiAction::int_act,
+      act = menu->AddItem("&Move Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
     else if (ea & taiClipData::EA_DROP_MOVE_INTO)
-      act = menu->AddItem("&Move "+IntoOrHere, taiAction::int_act,
+      act = menu->AddItem("&Move "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
   }
 
   act = NULL;
   if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) {
-    act = menu->AddItem("Copy Here", taiAction::int_act,
+    act = menu->AddItem("Copy Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_COPY, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
-      act = menu->AddItem("Copy Into", taiAction::int_act,
+      act = menu->AddItem("Copy Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY_INTO, QKeySequence());
     }
   } else {
     if (ea & taiClipData::EA_DROP_COPY)
-      act = menu->AddItem("&Copy Here", taiAction::int_act,
+      act = menu->AddItem("&Copy Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
     else if (ea & taiClipData::EA_DROP_COPY_INTO)
-      act = menu->AddItem("&Copy "+IntoOrHere, taiAction::int_act,
+      act = menu->AddItem("&Copy "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
   }
@@ -140,28 +140,28 @@ show_menu:
   if ((where == iTreeWidgetItem::WI_ON) &&
      (ea & taiClipData::EA_DROP_ASSIGN))
   {
-    act = menu->AddItem("Assign To", taiAction::int_act,
+    act = menu->AddItem("Assign To", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_ASSIGN, QKeySequence());
   }
 
   act = NULL;
   if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) {
-    act = menu->AddItem("Link Here", taiAction::int_act,
+    act = menu->AddItem("Link Here", iAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_LINK, QKeySequence());
     if (where == iTreeWidgetItem::WI_ON) {
-      act = menu->AddItem("Link Into", taiAction::int_act,
+      act = menu->AddItem("Link Into", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_LINK_INTO, QKeySequence());
     }
   } else {
     if (ea & taiClipData::EA_DROP_LINK)
-      act = menu->AddItem("&Link Here", taiAction::int_act,
+      act = menu->AddItem("&Link Here", iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_LINK, QKeySequence("Alt+"));
     else if (ea & taiClipData::EA_DROP_LINK_INTO)
-      act = menu->AddItem("&Link "+IntoOrHere, taiAction::int_act,
+      act = menu->AddItem("&Link "+IntoOrHere, iAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_LINK_INTO, QKeySequence("Alt+"));
   }
@@ -214,22 +214,22 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   if (menu->count() > 0)
     menu->AddSep();
 //  cut copy paste link delete
-  taiAction* mel;
+  iAction* mel;
   if (ea & taiClipData::EA_CUT) {
-    mel = menu->AddItem("Cu&t", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("Cu&t", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_CUT;
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_COPY) {
-    mel = menu->AddItem("&Copy", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("&Copy", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_COPY;
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_DUPE) {
-    mel = menu->AddItem("Duplicate  (Ctrl+M)", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("Duplicate  (Ctrl+M)", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DUPE;
     mel->setData(sh_typ);
   }
@@ -244,65 +244,65 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   String txt;
   if (ea & taiClipData::EA_PASTE) {
     if (paste_cnt > 1) txt = "Paste"; else txt = "&Paste";
-    mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem(txt, taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE;
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_PASTE_INTO) {
     if (paste_cnt > 1) txt = "Paste Into"; else txt = "&Paste Into";
-    mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem(txt, taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_INTO;
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_PASTE_ASSIGN) {
     if (paste_cnt > 1) txt = "Paste Assign"; else txt = "&Paste Assign";
-    mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem(txt, taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_ASSIGN;
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_PASTE_APPEND) {
     if (paste_cnt > 1) txt = "Paste Append"; else txt = "&Paste Append";
-    mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem(txt, taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_APPEND;
     mel->setData(sh_typ);
   }
 
   if (ea & taiClipData::EA_DELETE) {
-    mel = menu->AddItem("&Delete  (Ctrl+D)", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("&Delete  (Ctrl+D)", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DELETE;
     mel->setData(sh_typ);
   }
   if ((ea & taiClipData::EA_LINK) == taiClipData::EA_LINK) {
-    mel = menu->AddItem("Link", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("Link", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
     mel->setData(sh_typ);
-    mel = menu->AddItem("Link Into", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("Link Into", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
   }
   else if (ea & taiClipData::EA_LINK) {
-    mel = menu->AddItem("&Link", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("&Link", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
     mel->setData(sh_typ);
   }
   else if (ea & taiClipData::EA_LINK_INTO) {
-    mel = menu->AddItem("&Link Into", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("&Link Into", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
     mel->setData(sh_typ);
   }
 
   if (ea & taiClipData::EA_UNLINK) {
-    mel = menu->AddItem("&Unlink", taiMenu::use_default,
-        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
+    mel = menu->AddItem("&Unlink", taiWidgetMenu::use_default,
+        iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_UNLINK;
     mel->setData(sh_typ);
   }

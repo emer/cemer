@@ -15,7 +15,7 @@
 
 #include "iLineEdit.h"
 
-#include <iTextEditDialog>
+#include <iDialogTextEdit>
 
 #include <taiMisc>
 #include <QDesktopWidget>
@@ -47,7 +47,7 @@ void iLineEdit::init() {
 }
 
 void iLineEdit::editInEditor() {
-  iTextEditDialog* dlg = new iTextEditDialog(); // no parent needed for modals
+  iDialogTextEdit* dlg = new iDialogTextEdit(); // no parent needed for modals
   // set to be ~3/4 of screen
   QDesktopWidget *d = QApplication::desktop();
   int primaryScreen = d->primaryScreen();

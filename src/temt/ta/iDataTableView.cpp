@@ -22,7 +22,7 @@
 #include <taiMimeSource>
 #include <taProject>
 #include <taiSigLink>
-#include <taiMenu>
+#include <taiWidgetMenu>
 
 #include <taMisc>
 
@@ -159,7 +159,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
 }
 
 void iDataTableView::FillContextMenu_impl(ContextArea ca,
-  taiMenu* menu, const CellRange& sel)
+  taiWidgetMenu* menu, const CellRange& sel)
 {
   inherited::FillContextMenu_impl(ca, menu, sel);
   DataTable* tab = this->dataTable(); // may not exist

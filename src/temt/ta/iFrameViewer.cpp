@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "iFrameViewer.h"
-#include <taiAction>
-#include <taiMenu>
+#include <iAction>
+#include <taiWidgetMenu>
 #include <iMainWindowViewer>
 #include <ISelectableHost>
 
@@ -48,7 +48,7 @@ void iFrameViewer::showEvent(QShowEvent* e) {
 void iFrameViewer::Showing(bool showing) {
   iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
-  taiAction* me = dv->frameMenu->FindActionByData((void*)this);
+  iAction* me = dv->frameMenu->FindActionByData((void*)this);
   if (!me) return;
   if (showing == me->isChecked()) return;
   me->setChecked(showing); //note: triggers event

@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 class SoCamera; // #IGNORE
-class taiAction; //
+class iAction; //
 class QToolButton; // #IGNORE
 
 
@@ -60,7 +60,7 @@ public:
   // #CAT_Display set camera focal distance
 
   QToolButton*  view_button;    // #IGNORE view button for this view
-  taiAction*    view_action;    // #IGNORE action for the gotoview function
+  iAction*    view_action;    // #IGNORE action for the gotoview function
 
   TA_SIMPLE_BASEFUNS(T3SavedView);
 private:

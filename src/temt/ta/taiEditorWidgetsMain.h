@@ -42,7 +42,7 @@ class TA_API taiEditorWidgetsMain: public taiEditorWidgets {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using an iFormLayout
 INHERITED(taiEditorWidgets)
   Q_OBJECT
-friend class iHostDialog;
+friend class iDialogEditor;
 public:
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
     const String& desc, taiWidget* buddy = NULL,
@@ -98,13 +98,13 @@ protected:
   override void InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 };
 
-class TA_API taiHostDialog_List : public taPtrList<taiEditorWidgetsMain> {
+class TA_API taiDialogEditor_List : public taPtrList<taiEditorWidgetsMain> {
   // #IGNORE list of DataHosts that have been dialoged
 protected:
   void  El_Done_(void* it)      { delete (taiEditorWidgetsMain*)it; }
 
 public:
-  ~taiHostDialog_List()            { Reset(); }
+  ~taiDialogEditor_List()            { Reset(); }
 };
 
 #endif // taiEditorWidgetsMain_h

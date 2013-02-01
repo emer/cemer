@@ -21,7 +21,7 @@
 #include <T3DataViewFrame>
 #include <iContextMenuButton>
 #include <iViewPanelSet>
-#include <taiChoiceDialog>
+#include <iDialogChoice>
 
 #include <taMisc>
 #include <taiMisc>
@@ -73,7 +73,7 @@ void iT3DataViewFrame::fileExportInventor() {
   static QFileDialog* fd = NULL;
   SoNode* scene = m_t3viewer->quarter->getSceneGraph();
   if (!scene) {
-    taiChoiceDialog::ErrorDialog(this, "No scene exists yet.", "No scene", false);
+    iDialogChoice::ErrorDialog(this, "No scene exists yet.", "No scene", false);
     return;
   }
 
@@ -96,14 +96,14 @@ void iT3DataViewFrame::fileExportInventor() {
   // check if exists, to warn user
   QFile f(fileName.toLatin1());
   if (f.exists()) {
-    if (taiChoiceDialog::ChoiceDialog(this,
+    if (iDialogChoice::ChoiceDialog(this,
       "That file already exists, overwrite it?",
       "Confirm file overwrite",
-      "&Ok" + taiChoiceDialog::delimiter + "&Cancel") != 0) return;
+      "&Ok" + iDialogChoice::delimiter + "&Cancel") != 0) return;
   }
   SoOutput out;
   if (!out.openFile(fileName.toLatin1())) {
-    taiChoiceDialog::ErrorDialog(this, "Could not open file.", "File error", false);
+    iDialogChoice::ErrorDialog(this, "Could not open file.", "File error", false);
     return;
   }
   SoWriteAction wa(&out);

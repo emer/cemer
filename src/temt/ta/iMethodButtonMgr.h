@@ -25,17 +25,17 @@
 // member includes:
 #include <taString>
 #ifndef __MAKETA__
-#include <taiMenu_List>
+#include <taiWidgetActions_List>
 #include <taiWidget_List>
 #else
 class taiWidget_List;
 #endif
 
 // declare all other types mentioned but not required to include:
-class taiMenu_List; //
+class taiWidgetActions_List; //
 class taBase; //
 class IWidgetHost; //
-class taiMethodData; //
+class taiWidgetMethod; //
 class taiWidgetActions; //
 class QLayout; //
 class IWidgetHost; //
@@ -58,7 +58,7 @@ public:
     IWidgetHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
   void                  Constr(QWidget* widg, QLayout* lay, taBase* base,
     IWidgetHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
-  void                  AddMethButton(taiMethodData* mth_rep,
+  void                  AddMethButton(taiWidgetMethod* mth_rep,
     const String& label = _nilString);
   void                  GetImage();
   void                  Reset();
@@ -73,7 +73,7 @@ protected:
   IWidgetHost*    host; // must have outer lifetime to us!
   taBase*               base; // the object that has the methods
   TypeDef*              typ;
-  taiMenu_List          ta_menu_buttons; // menu representations (from methods -- menubuttons only)
+  taiWidgetActions_List          ta_menu_buttons; // menu representations (from methods -- menubuttons only)
   taiWidgetActions*           cur_menu_but; // current menu button to add to (if not otherwise
   taiWidget_List           meth_el;        // method elements
 

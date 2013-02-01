@@ -231,7 +231,7 @@ void MainWindowViewer::Initialize() {
   m_is_dialog = false;
   menu = NULL;
   cur_menu = NULL;
-  ta_menus = new taiMenu_List;
+  ta_menus = new taiWidgetActions_List;
 }
 
 void MainWindowViewer::Destroy() {

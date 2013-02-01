@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiTypeOfColor.h"
-#include <taiColor>
+#include <taiWidgetColor>
 
 TypeDef_Of(taColor);
 
@@ -28,6 +28,6 @@ int taiTypeOfColor::BidForType(TypeDef* td) {
 taiWidget* taiTypeOfColor::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
  QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  taiColor *rval = new taiColor(typ, host_, par, gui_parent_, flags_);
+  taiWidgetColor *rval = new taiWidgetColor(typ, host_, par, gui_parent_, flags_);
   return rval;
 }

@@ -15,7 +15,7 @@
 
 #include "taiTypeOfTypePtr.h"
 #include <taiWidget>
-#include <taiTypeDefButton>
+#include <taiWidgetTypeDefPtr>
 
 
 void taiTypeOfTypePtr::Initialize() {
@@ -39,8 +39,8 @@ taiWidget* taiTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   if (orig_typ == NULL)
     return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
 
-  taiTypeDefButton* rval =
-    new taiTypeDefButton(typ, host_, par, gui_parent_, flags_);
+  taiWidgetTypeDefPtr* rval =
+    new taiWidgetTypeDefPtr(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -50,7 +50,7 @@ void taiTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
     return;
   }
 
-  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
   TypeDef* typ_ = (TypeDef*)*((void**)base);
   rval->GetImage((TypeDef*)*((void**)base), typ_);
 }
@@ -61,6 +61,6 @@ void taiTypeOfTypePtr::GetValue_impl(taiWidget* dat, void* base) {
     return;
   }
 
-  taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  taiWidgetTypeDefPtr* rval = (taiWidgetTypeDefPtr*)dat;
   *((void**)base) = rval->GetValue();
 }

@@ -20,7 +20,7 @@
 
 #ifndef NO_TA_BASE
 #include <taiMethod>
-#include <taiMethodData>
+#include <taiWidgetMethod>
 #include <css_machine.h>
 #endif
 
@@ -140,7 +140,7 @@ bool MethodDef::CompareArgs(MethodDef* it) const {
 
 void MethodDef::CallFun(void* base) const {
 #if !defined(NO_TA_BASE) && defined(TA_GUI)
-  taiMethodData* mth_rep = NULL;
+  taiWidgetMethod* mth_rep = NULL;
   if (taMisc::gui_active && (im != NULL)) {
     //TODO: following may not work, because it doesn't have enough context to pass to the routine
     mth_rep = im->GetGenericMethodRep(base, NULL);

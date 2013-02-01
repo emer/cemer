@@ -64,7 +64,7 @@ protected:
   override void         Constr_Strings();
   override void         Constr_Box();
   override void         Constr_RegNotifies();
-  override void         DoConstr_Dialog(iHostDialog*& dlg);
+  override void         DoConstr_Dialog(iDialogEditor*& dlg);
   override void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void         Ok_impl();
 };

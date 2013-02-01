@@ -23,14 +23,14 @@
 #include <css_machine.h>
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
-#include <taiTokenPtrMultiTypeButton>
+#include <taiWidgetTokenPtrMultiType>
 #include <LocalVars>
 #include <taiGroupElsButton>
 #include <taiListElsButton>
-#include <taiMemberDefButton>
+#include <taiWidgetMemberDefPtr>
 #include <taiMemberMethodDefButton>
-#include <taiEnumStaticButton>
-#include <taiTokenPtrButton>
+#include <taiWidgetEnumStaticChooser>
+#include <taiWidgetTokenPtr>
 #include <MemberProgEl>
 
 
@@ -504,7 +504,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 
   switch(lookup_type) {
   case 1: {// lookup variables
-    taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
+    taiWidgetTokenPtrMultiType* varlkup =  new taiWidgetTokenPtrMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
     varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
     if(expr_base) {
@@ -645,7 +645,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else if(lookup_td) {
       TypeItem* lookup_md = NULL;
       if(path_base || path_base_typ) {          // can only lookup members, not methods
-        taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
+        taiWidgetMemberDefPtr* mdlkup = new taiWidgetMemberDefPtr(lookup_td, NULL, NULL,
                                                             NULL, 0, lookup_seed);
         mdlkup->GetImage((MemberDef*)NULL, lookup_td);
         bool okc = mdlkup->OpenChooser();
@@ -681,7 +681,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   case 3: {
     TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
     if(lookup_td) {
-      taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
+      taiWidgetEnumStaticChooser* eslkup =  new taiWidgetEnumStaticChooser(lookup_td, NULL, NULL,
                                                              NULL, 0, lookup_seed);
       eslkup->GetImage((MemberDef*)NULL, lookup_td);
       bool okc = eslkup->OpenChooser();
@@ -697,7 +697,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else {                      // now try for local enums
       ProgType* pt = own_prg->types.FindName(base_path);
       if(pt && pt->InheritsFrom(&TA_DynEnumType)) {
-        taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
+        taiWidgetTokenPtr* varlkup =  new taiWidgetTokenPtr(&TA_DynEnumItem, NULL, NULL,
                                                             NULL, 0, lookup_seed);
         varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
         bool okc = varlkup->OpenChooser();

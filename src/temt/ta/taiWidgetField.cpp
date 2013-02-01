@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiWidgetField.h"
-#include <iFieldEditDialog>
+#include <iDialogWidgetField>
 #include <iLineEdit>
 #include <MemberDef>
 #include <iTextEdit>
@@ -58,7 +58,7 @@ void taiWidgetField::btnEdit_clicked(bool) {
       wintxt = "Editing field";
       //desc =
     }
-    edit_dialog = new iFieldEditDialog(true, readOnly(), desc, this);
+    edit_dialog = new iDialogWidgetField(true, readOnly(), desc, this);
     // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
     edit_dialog->setText(rep()->text());
     edit_dialog->setWindowTitle(wintxt);

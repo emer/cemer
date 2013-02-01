@@ -27,7 +27,7 @@ class T3DataViewer;
 class iT3DataViewFrame;
 class T3DataViewFrame;
 class iTabBarBase;
-class taiMenu;
+class taiWidgetMenu;
 
 class TA_API iT3DataViewer : public iFrameViewer {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
@@ -64,7 +64,7 @@ protected: // IDataViewWidget i/f
   int                   last_idx;
   override void         Refresh_impl();
 
-  virtual void          FillContextMenu_impl(taiMenu* menu, int tab_idx);
+  virtual void          FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx);
 
 protected slots:
   void                  tw_customContextMenuRequested2(const QPoint& pos, int tab_idx);

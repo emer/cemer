@@ -19,14 +19,14 @@
 
 gpiListEditButton::gpiListEditButton
 (void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
-: taiEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
+: taiWidgetEditButton(base, NULL, tp, host_, par, gui_parent_, flags_)
 {
 }
 
 void gpiListEditButton::SetLabel() {
   taList_impl* lst = (taList_impl*)cur_base;
   if(lst == NULL) {
-    taiEditButton::SetLabel();
+    taiWidgetEditButton::SetLabel();
     return;
   }
   String nm = " Size: ";

@@ -32,7 +32,7 @@ class TA_API taGuiEditor : public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditor)
   Q_OBJECT
-friend class iHostDialog;
+friend class iDialogEditor;
 public:
   taGuiDialog*  gui_owner;
 

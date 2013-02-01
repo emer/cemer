@@ -811,7 +811,7 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
   T3ExaminerViewer* vw = nv->GetViewer();
   if (!vw) return;
 
-  taiAction* dyb = vw->getDynButton(but_no);
+  iAction* dyb = vw->getDynButton(but_no);
   if (!dyb) return;
 
   String nm = dyb->text();

@@ -17,13 +17,13 @@
 #define gpiSubEditButton_h 1
 
 // parent includes:
-#include <taiEditButton>
+#include <taiWidgetEditButton>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API gpiSubEditButton : public taiEditButton {
+class TA_API gpiSubEditButton : public taiWidgetEditButton {
 // this one sets the name of the sub group..
 public:
   String        label;

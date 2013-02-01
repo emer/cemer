@@ -16,7 +16,7 @@
 #include "taiArgTypeOfStream.h"
 #include <taFiler>
 #include <taBase>
-#include <taiFileButton>
+#include <taiWidgetFileButton>
 
 #include <css_ta.h>
 
@@ -60,16 +60,16 @@ taiWidget* taiArgTypeOfStream::GetDataRep_impl(IWidgetHost* host_, taiWidget* pa
     taRefN::Ref(gf);
   }
   if (arg_typ->InheritsFrom(TA_istream))
-    return new taiFileButton(NULL, host_, par, gui_parent_, flags_, true);
+    return new taiWidgetFileButton(NULL, host_, par, gui_parent_, flags_, true);
   else if(arg_typ->InheritsFrom(TA_ostream))
-    return new taiFileButton(NULL, host_, par, gui_parent_, flags_, false, true);
-  return new taiFileButton(NULL, host_, par, gui_parent_, flags_);
+    return new taiWidgetFileButton(NULL, host_, par, gui_parent_, flags_, false, true);
+  return new taiWidgetFileButton(NULL, host_, par, gui_parent_, flags_);
 }
 
 void taiArgTypeOfStream::GetImage_impl(taiWidget* dat, const void* base){
   if (arg_base == NULL)
     return;
-  taiFileButton* fbut = (taiFileButton*) dat;
+  taiWidgetFileButton* fbut = (taiWidgetFileButton*) dat;
   fbut->SetFiler(gf);
   fbut->GetImage();
 }

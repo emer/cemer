@@ -34,7 +34,7 @@ class QAction; //
 
 // declare all other types mentioned but not required to include:
 class iBrowseHistory; //
-class taiAction; //
+class iAction; //
 class QVBoxLayout; //
 class QScrollArea; //
 class iStripeWidget; //
@@ -71,8 +71,8 @@ public:
 #endif
 
   iBrowseHistory*       brow_hist;
-  taiAction*            historyBackAction;
-  taiAction*            historyForwardAction;
+  iAction*            historyBackAction;
+  iAction*            historyForwardAction;
 
   QVBoxLayout*          layOuter;
   QScrollArea*            scrBody;

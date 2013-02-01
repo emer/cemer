@@ -22,7 +22,7 @@
 #include <QAction>
 #include <iSplitter>
 #include <iMainWindowViewer>
-#include <NumberedTextView>
+#include <iNumberedTextView>
 #include <iDataPanel>
 #include <iTextEdit>
 #include <taPlugins>
@@ -83,8 +83,8 @@ void iPluginEditor::init() {
   split = new iSplitter(main_widg);
   main_vbox->addWidget(split);
 
-  hfile_view = new NumberedTextView;
-  cfile_view = new NumberedTextView;
+  hfile_view = new iNumberedTextView;
+  cfile_view = new iNumberedTextView;
 
   hfile_view->installEventFilter(this);
   cfile_view->installEventFilter(this);

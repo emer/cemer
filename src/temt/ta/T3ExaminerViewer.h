@@ -25,14 +25,14 @@
 // member includes:
 #include <T3SavedView_List>
 #include <NameVar_PArray>
-#include <taiAction_List>
+#include <iAction_List>
 
 // declare all other types mentioned but not required to include:
 class iT3ViewspaceWidget; //
 class T3DataViewFrame; //
 class SoCamera; //
 class SbViewportRegion; //
-class QtThumbWheel; //
+class iThumbWheel; //
 class QVBoxLayout; // 
 class QHBoxLayout; // 
 class QLabel; //
@@ -81,11 +81,11 @@ public:
   //////////////////////////////////////////////
   //   Thumbwheels
 
-  QtThumbWheel*   zoom_wheel;   // the zoom wheel (dolly in SoQt)
-  QtThumbWheel*   vrot_wheel;   // the vertical rotation wheel (Rotx in SoQt)
-  QtThumbWheel*   hrot_wheel;   // the horizontal rotation wheel (Roty in SoQt)
-  QtThumbWheel*   vpan_wheel;   // the vertical panning wheel
-  QtThumbWheel*   hpan_wheel;   // the horizontal panning wheel
+  iThumbWheel*   zoom_wheel;   // the zoom wheel (dolly in SoQt)
+  iThumbWheel*   vrot_wheel;   // the vertical rotation wheel (Rotx in SoQt)
+  iThumbWheel*   hrot_wheel;   // the horizontal rotation wheel (Roty in SoQt)
+  iThumbWheel*   vpan_wheel;   // the vertical panning wheel
+  iThumbWheel*   hpan_wheel;   // the horizontal panning wheel
   QLabel*         zoom_lbl;     // labels
   QLabel*         vrot_lbl;
   QLabel*         hrot_lbl;
@@ -106,7 +106,7 @@ public:
   T3SavedView_List saved_views; // saved view information
   int              cur_view_no; // current view number -- last one to have gotoView called -- -1 if not done yet
   NameVar_PArray     dyn_buttons; // dynamic button names
-  taiAction_List     dyn_actions; // dynamic button actions -- has all the relevant properties
+  iAction_List     dyn_actions; // dynamic button actions -- has all the relevant properties
 
   //////////////////////////////////////////////
   //   Constructor helper methods
@@ -117,9 +117,9 @@ public:
 
   int     addDynButton(const String& label, const String& tooltip);
   // add a new dynamic button -- returns button number (may already exist)
-  taiAction* getDynButton(int but_no);
+  iAction* getDynButton(int but_no);
   // get given dynamic button action -- has all the relevant info
-  taiAction* getDynButtonName(const String& label);
+  iAction* getDynButtonName(const String& label);
   // get dynamic button action by name -- has all the relevant info
   void    setDynButtonChecked(int but_no, bool onoff, bool mutex = true);
   // set the "checked" status of the dyn button to given state -- if mutex is true, then all other buttons are turned off when current one is changed (regardless of on/off state, all are off)

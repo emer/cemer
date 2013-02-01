@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditorOfClass.h"
-#include <taiMethodData>
+#include <taiWidgetMethod>
 #include <iCheckBox>
 #include <EditDataPanel>
 #include <taiType>
@@ -23,11 +23,11 @@
 #include <taiMethod>
 #include <iFlowLayout>
 #include <taProject>
-#include <iHostDialog>
+#include <iDialogEditor>
 #include <iFormLayout>
-#include <taiToolBar>
+#include <taiWidgetToolBar>
 #include <iMainWindowViewer>
-#include <taiMenuBar>
+#include <taiWidgetMenuBar>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -109,7 +109,7 @@ void taiEditorOfClass::InitGuiFields(bool virt) {
 }
 
 
-void taiEditorOfClass::AddMethButton(taiMethodData* mth_rep, const String& label) {
+void taiEditorOfClass::AddMethButton(taiWidgetMethod* mth_rep, const String& label) {
   QWidget* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
   if(label.nonempty() && but->inherits("QAbstractButton")) {
@@ -302,11 +302,11 @@ void taiEditorOfClass::Constr_Methods_impl() {
       continue;
     if (!md->ShowMethod()) continue;
     taiMethod* im = md->im;
-//    taiMethodData* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
+//    taiWidgetMethod* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
     if (im == NULL)
       continue;
 
-    taiMethodData* mth_rep = NULL;
+    taiWidgetMethod* mth_rep = NULL;
     if (md->HasOption("MENU_BUTTON")) {
       SetCurMenuButton(md);
       mth_rep = im->GetMenuMethodRep(root, this, NULL, NULL/*frmMethButtons*/);
@@ -408,7 +408,7 @@ MemberDef* taiEditorOfClass::GetMemberPropsForSelect(int sel_idx, taBase** base,
   return md;
 }
 
-void taiEditorOfClass::DoConstr_Dialog(iHostDialog*& dlg) {
+void taiEditorOfClass::DoConstr_Dialog(iDialogEditor*& dlg) {
   inherited::DoConstr_Dialog(dlg);
   if(!modal) {
 #ifdef TA_OS_MAC
@@ -476,7 +476,7 @@ void taiEditorOfClass::GetButtonImage(bool force) {
   // taMisc::DebugInfo("GetButtonImage", "visible");
 
   for (int i = 0; i < meth_el.size; ++i) {
-    taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
+    taiWidgetMethod* mth_rep = (taiWidgetMethod*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
 
@@ -659,11 +659,11 @@ void taiEditorOfClass::SetCurMenu_Name(String men_nm) {
 #ifdef TA_OS_MAC
     // This shouldn't be necessary but Mac still glitches occasionally.
     // See bug 1518.
-    menu = new taiToolBar(widget(), taiMisc::fonSmall, NULL);
+    menu = new taiWidgetToolBar(widget(), taiMisc::fonSmall, NULL);
     vblDialog->insertWidget(0, menu->GetRep());
     vblDialog->insertSpacing(1, 2);
 #else
-    menu = new taiMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
+    menu = new taiWidgetMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
     QMenuBar *qmb = menu->rep_bar();
     vblDialog->setMenuBar(qmb);
 
@@ -707,7 +707,7 @@ void taiEditorOfClass::SetCurMenuButton(MethodDef* md) {
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
        // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
-  cur_menu_but = taiWidgetActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+  cur_menu_but = taiWidgetActions::New(taiWidgetMenu::buttonmenu, taiWidgetMenu::normal, taiMisc::fonSmall,
             NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
   DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu

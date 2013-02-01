@@ -22,14 +22,14 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iRegexpDialogPopulator;
+class iDialogRegexpPopulator;
 
 class TA_API taiRegexpField : public taiWidgetText {
   // A text field with a "..." button to bring up a context-specific regular expression editor.
   Q_OBJECT
   INHERITED(taiWidgetText)
 public:
-  taiRegexpField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags, iRegexpDialogPopulator *re_populator);
+  taiRegexpField(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags, iDialogRegexpPopulator *re_populator);
 
   void                  SetFieldOwner(const void *fieldOwner);
 
@@ -38,7 +38,7 @@ protected slots:
   override void         lookupKeyPressed();     // Same as clicking the "..." button.
 
 private:
-  iRegexpDialogPopulator* m_populator;
+  iDialogRegexpPopulator* m_populator;
   const void *          m_fieldOwner;
 };
 

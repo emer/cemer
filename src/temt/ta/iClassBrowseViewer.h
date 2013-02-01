@@ -23,7 +23,7 @@
 #include <ClassBrowseViewer>
 
 // declare all other types mentioned but not required to include:
-class taiAction;
+class iAction;
 
 
 class TA_API iClassBrowseViewer: public iBrowseViewer { // viewer window used for class browsing
@@ -37,7 +37,7 @@ public:
   ~iClassBrowseViewer();
 
 public slots:
-  virtual void          mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+  virtual void          mnuNewBrowser(iAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
 };
 
 #endif // iClassBrowseViewer_h

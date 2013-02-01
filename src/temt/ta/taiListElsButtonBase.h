@@ -17,15 +17,15 @@
 #define taiListElsButtonBase_h 1
 
 // parent includes:
-#include <taiItemPtrBase>
+#include <taiWidgetItemPtr>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-class TA_API taiListElsButtonBase : public taiItemPtrBase {
+class TA_API taiListElsButtonBase : public taiWidgetItemPtr {
 // for items in a list
-INHERITED(taiItemPtrBase)
+INHERITED(taiWidgetItemPtr)
 public:
   inline taBase*        item() const {return (taBase*)m_sel;}
   int                   columnCount(int view) const; // override
@@ -41,7 +41,7 @@ public:
 protected:
   const String          labelNameNonNull() const;
 
-  virtual int           BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
+  virtual int           BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
                                        QTreeWidgetItem* top_item);
   // we use this recursively, and also in gpi guy
 };

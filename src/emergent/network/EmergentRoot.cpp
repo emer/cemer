@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "EmergentRoot.h"
-#include <taiObjChooser>
+#include <iDialogObjChooser>
 #include <iToolBoxDockViewer>
 #include <ViewColor_List>
 #include <iBaseClipWidgetAction>
@@ -98,7 +98,7 @@ taBase* EmergentRoot::Browse(const char* init_path) {
     if(!iob) iob = this;
   }
 
-  taiObjChooser* chs = new taiObjChooser((taBase*)iob, "Browse for Object", false, NULL);
+  iDialogObjChooser* chs = new iDialogObjChooser((taBase*)iob, "Browse for Object", false, NULL);
   chs->Choose();
   taBase* retv = chs->sel_obj();
   delete chs;

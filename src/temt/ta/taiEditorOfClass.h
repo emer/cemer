@@ -22,11 +22,11 @@
 
 // member includes:
 #ifndef __MAKETA__
-#include <taiMenu_List>
+#include <taiWidgetActions_List>
 #include <MembSet>
 #include <taiWidget_List>
 #else
-class taiMenu_List;
+class taiWidgetActions_List;
 class MembSet;
 class taiWidget_List;
 #endif
@@ -35,10 +35,10 @@ class taiWidget_List;
 class taiWidgetActions; //
 class QButtonGroup; //
 class EditDataPanel; //
-class taiMethodData; //
-class taiMenu_List; //
+class taiWidgetMethod; //
+class taiWidgetActions_List; //
 class MembSet_List; //
-class taiMenuBar; //
+class taiWidgetMenuBar; //
 class QAction; //
 
 TypeDef_Of(taiEditorOfClass);
@@ -57,8 +57,8 @@ public:
     MS_CNT      = 3 // number of default members
   };
 
-  taiMenu_List          ta_menus;       // menu representations (from methods, non-menubuttons only)
-  taiMenu_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
+  taiWidgetActions_List          ta_menus;       // menu representations (from methods, non-menubuttons only)
+  taiWidgetActions_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
   taiWidgetActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
   taiWidgetActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
 
@@ -66,7 +66,7 @@ public:
   // See bug 1518.
   taiWidgetActions*           menu; // menu bar
 #else
-  taiMenuBar*           menu; // menu bar
+  taiWidgetMenuBar*           menu; // menu bar
 #endif
 
   MembSet_List          membs;
@@ -156,11 +156,11 @@ protected:
   virtual void          GetImageInline_impl(const void* base);
   virtual void          GetValue_impl(const Member_List* ms, const taiWidget_List& dl, void* base) const;
   virtual void          GetValueInline_impl(void* base) const;
-  void                  AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
+  void                  AddMethButton(taiWidgetMethod* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed
   void                  DoAddMethButton(QWidget* but);
   void                  DoRaise_Panel(); // what Raise() calls for panels
-  override void         DoConstr_Dialog(iHostDialog*& dlg);
+  override void         DoConstr_Dialog(iDialogEditor*& dlg);
 
   override bool         eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return

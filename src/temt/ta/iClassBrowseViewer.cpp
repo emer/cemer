@@ -29,7 +29,7 @@ iClassBrowseViewer::~iClassBrowseViewer()
 {
 }
 
-void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
+void iClassBrowseViewer::mnuNewBrowser(iAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taSigLinkClass* dl = static_cast<taSigLinkClass*>(node->link());
   MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(dl->data(),

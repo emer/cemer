@@ -15,7 +15,7 @@
 
 #include "taiTypeOfTokenPtr.h"
 #include <taiWidget>
-#include <taiTokenPtrButton>
+#include <taiWidgetTokenPtr>
 #include <taSmartPtr>
 
 #include <taMisc>
@@ -50,7 +50,7 @@ taiWidget* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
-  taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
+  taiWidgetTokenPtr* rval = new taiWidgetTokenPtr(npt, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -83,11 +83,11 @@ void taiTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base) {
   // this seems out of date:
 //   bool ro = isReadOnly(dat);
 //   if (ro || !npt->tokens.keep) {
-//     taiEditButton *ebrval = (taiEditButton*) dat;
+//     taiWidgetEditButton *ebrval = (taiWidgetEditButton*) dat;
 //     ebrval->GetImage_(*((void**) base));
 //   }
 //   else {
-    taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+    taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
     rval->GetImage(*((taBase**)base), npt); // default typ, no scope
 //   }
 }
@@ -103,7 +103,7 @@ void taiTypeOfTokenPtr::GetValue_impl(taiWidget* dat, void* base) {
                     "because it is not keeping tokens");
   }
   else {
-    taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+    taiWidgetTokenPtr* rval = (taiWidgetTokenPtr*)dat;
     if(!no_setpointer)
       taBase::SetPointer((taBase**)base, (taBase*)rval->GetValue());
     else

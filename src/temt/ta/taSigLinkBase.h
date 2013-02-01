@@ -49,7 +49,7 @@ public:
   override String       GetStateDecoKey() const;
   override String       GetName() const;
   override String       GetDisplayName() const;
-  override void         Search(iSearchDialog* dlg);
+  override void         Search(iDialogSearch* dlg);
   override bool         ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String       GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
   override const QVariant GetColData(const KeyString& key, int role) const;
@@ -57,7 +57,7 @@ public:
   SL_FUNS(taSigLinkBase); //
 
 protected:
-  static void           SearchStat(taBase* tab, iSearchDialog* sd, int level = 0); // for searching
+  static void           SearchStat(taBase* tab, iDialogSearch* sd, int level = 0); // for searching
 
   taSigLinkBase(taBase* data_, taSigLink* &link_ref_);
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,

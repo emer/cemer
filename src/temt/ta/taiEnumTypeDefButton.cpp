@@ -19,7 +19,7 @@
 #include <iTextBrowser>
 #include <String_Array>
 #include <MemberDef>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <taMisc>
 #include <taiMisc>
@@ -59,7 +59,7 @@ void taiEnumTypeDefButton::btnHelp_clicked() {
   iHelpBrowser::StatLoadEnum(typ);
 }
 
-void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
+void taiEnumTypeDefButton::BuildChooser(iDialogItemChooser* ic, int view) {
   inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiEnumTypeDefButton::BuildChooser: targ_type needed");
@@ -79,7 +79,7 @@ void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   }
 }
 
-int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
+int taiEnumTypeDefButton::BuildChooser_0(iDialogItemChooser* ic, TypeDef* top_typ,
   QTreeWidgetItem* top_item)
 {
   int rval = 0;

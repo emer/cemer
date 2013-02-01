@@ -24,7 +24,7 @@
 #include <taiType_List>
 #include <taiWidget_List>
 #include <taiWidgetActions>
-#include <taiMethMenu>
+#include <taiWidgetMethodMenu>
 
 // forward declarations
 class cssClassInst;
@@ -59,7 +59,7 @@ protected:
   virtual void  GetValue_impl(void* base) const;
 };
 
-class CSS_API cssiMethMenu : public taiMethMenu {
+class CSS_API cssiMethMenu : public taiWidgetMethodMenu {
   // css member functions of css classes
   Q_OBJECT
 public:

@@ -30,7 +30,7 @@
 
 taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_)
-: taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
+: taiWidgetMethod(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
   is_menu_item = false;
   tool_bar = NULL;
@@ -196,9 +196,9 @@ QWidget* taiProgStepButton::GetButtonRep() {
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
     QToolButton* tbut = new QToolButton(stpwidg);
-    taiAction* act = new taiAction(taiWidgetActions::normal, sp->short_nm);
+    iAction* act = new iAction(taiWidgetActions::normal, sp->short_nm);
     act->usr_data = (void*)sp;
-    act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
+    act->connect(iAction::ptr_act, this, SLOT(CallFunList(void*)));
     act->setToolTip(sp->name);
     act->setFont(taiM->menuFont(defSize()));
     tbut->setDefaultAction(act);
@@ -224,6 +224,6 @@ QWidget* taiProgStepButton::GetButtonRep() {
 bool taiProgStepButton::UpdateButtonRep() {
   if(!base || !buttonRep) return false;
   GetButtonRep();
-  taiMethodData::UpdateButtonRep();
+  taiWidgetMethod::UpdateButtonRep();
   return true;
 }

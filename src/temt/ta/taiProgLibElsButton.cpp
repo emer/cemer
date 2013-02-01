@@ -16,7 +16,7 @@
 #include "taiProgLibElsButton.h"
 #include <String_Array>
 #include <ProgLib>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 #include <QTreeWidgetItem>
 
@@ -70,7 +70,7 @@ void taiProgLibElsButton::BuildCategories_impl() {
   cats->Sort(); // empty, if any, should sort to top
 }
 
-int taiProgLibElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
+int taiProgLibElsButton::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
                                         QTreeWidgetItem* top_item)
 {
   int rval = 0;

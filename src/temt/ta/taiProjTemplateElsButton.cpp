@@ -16,7 +16,7 @@
 #include "taiProjTemplateElsButton.h"
 #include <ProjTemplates>
 #include <String_Array>
-#include <taiItemChooser>
+#include <iDialogItemChooser>
 
 
 #include <QTreeWidgetItem>
@@ -72,7 +72,7 @@ void taiProjTemplateElsButton::BuildCategories_impl() {
   cats->Sort(); // empty, if any, should sort to top
 }
 
-int taiProjTemplateElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
+int taiProjTemplateElsButton::BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst, 
 					QTreeWidgetItem* top_item) 
 {
   int rval = 0;
