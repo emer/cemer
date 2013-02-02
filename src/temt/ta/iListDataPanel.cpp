@@ -15,7 +15,7 @@
 
 #include "iListDataPanel.h"
 #include <iTreeView>
-#include <taiTreeNodeList>
+#include <taiListNode>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -82,9 +82,9 @@ void iListDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
       taMisc::Warning("iListDataPanel::SigEmit_impl: unexpected could not find new list item");
       return;
     }
-    taiTreeNodeList* last_child = dynamic_cast<taiTreeNodeList*>(
+    taiListNode* last_child = dynamic_cast<taiListNode*>(
       list->item(list->itemCount() - 1));
-    /*taiTreeNodeList* dn = */new taiTreeNodeList(-1, this, item, list,
+    /*taiListNode* dn = */new taiListNode(-1, this, item, list,
       last_child, (iTreeViewItem::DNF_CAN_DRAG)); // numbered/decorated in Renumber call
     RenumberList();
   }
@@ -100,12 +100,12 @@ void iListDataPanel::SigEmit_impl(int sls, void* op1_, void* op2_) {
 
 void iListDataPanel::FillList() {
   if (!link()) return; // zombie
-  taiTreeNodeList* last_child = NULL;
+  taiListNode* last_child = NULL;
   int i = 0;
   while (true) { // break when NULL child encountered
     taiSigLink* child = link()->GetListChild(i);
     if (!child) break;
-    taiTreeNodeList* dn = new taiTreeNodeList(i, this, child, list,
+    taiListNode* dn = new taiListNode(i, this, child, list,
       last_child, (iTreeViewItem::DNF_CAN_DRAG));
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
@@ -118,7 +118,7 @@ void iListDataPanel::RenumberList() {
   // mark all the items first, because this is the easiest, safest way/place
   // to remove items that are stale, ex. moved from our list to another list
   for (int j = 0; j < list->itemCount(); ++j) {
-    taiTreeNodeList* dn = dynamic_cast<taiTreeNodeList*>(
+    taiListNode* dn = dynamic_cast<taiListNode*>(
       list->item(j));
     dn->num = -1;
   }
@@ -129,7 +129,7 @@ void iListDataPanel::RenumberList() {
     if (!child) break;
     // find the item for the link
     for (int j = 0; j < list->itemCount(); ++j) {
-      taiTreeNodeList* dn = dynamic_cast<taiTreeNodeList*>(
+      taiListNode* dn = dynamic_cast<taiListNode*>(
         list->item(j));
       if (dn && (dn->link() == child)) {
         dn->num = i;
@@ -142,14 +142,14 @@ void iListDataPanel::RenumberList() {
   // now delete stales -- note: an item that is deleting would have deleted
   // its node, but doing so now is harmless
   for (int j = list->itemCount() - 1; j >=0; --j) {
-    taiTreeNodeList* dn = dynamic_cast<taiTreeNodeList*>(
+    taiListNode* dn = dynamic_cast<taiListNode*>(
       list->item(j));
     if (dn && (dn->num == -1)) delete dn;
   }
 }
 
 void iListDataPanel::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
-  taiTreeNodeList* item = dynamic_cast<taiTreeNodeList*>(item_);
+  taiListNode* item = dynamic_cast<taiListNode*>(item_);
   if (!item) return;
   taBase* ta = item->taData(); // null if n/a
   if (ta) {

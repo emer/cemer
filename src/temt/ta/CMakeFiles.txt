@@ -683,7 +683,7 @@ set(ta_HEADS_MAKETA_LOCAL
   taiTreeNodeGroup.h
 
   tabDefChildRef.h
-  taiTreeNodeList.h
+  taiListNode.h
   tabDefChildTreeDataNode.h
   tabListTreeDataNode.h
   taTypeInfoTreeDataNode.h
@@ -1941,7 +1941,7 @@ set(ta_SRCS_NOMAKETA
   iDialogSearch.cpp
   iTreeViewItem.cpp
   taiTreeNode.cpp
-  taiTreeNodeList.cpp
+  taiListNode.cpp
   taiTreeNodeTaBase.cpp
   taiTreeNodeTaBasePar.cpp
   ISelectable_PtrList.cpp
