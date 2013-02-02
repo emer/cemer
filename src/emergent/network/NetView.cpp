@@ -15,7 +15,7 @@
 
 #include "NetView.h"
 #include <T3NetNode>
-#include <iPanelOfNetView>
+#include <iViewPanelOfNetwork>
 #include <LayerGroupView>
 #include <PrjnView>
 #include <NetViewObjView>
@@ -954,7 +954,7 @@ void NetView::GetMaxSize() {
 void NetView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
-    nvp = new iPanelOfNetView(this);
+    nvp = new iViewPanelOfNetwork(this);
     vw->RegisterPanel(nvp);
     vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
       SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );

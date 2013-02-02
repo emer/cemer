@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef iPanelOfNetView_h
-#define iPanelOfNetView_h 1
+#ifndef iViewPanelOfNetwork_h
+#define iViewPanelOfNetwork_h 1
 
 // parent includes:
 #include "network_def.h"
@@ -44,9 +44,9 @@ class QTreeWidget; //
 class ISelectableHost; //
 
 
-TypeDef_Of(iPanelOfNetView);
+TypeDef_Of(iViewPanelOfNetwork);
 
-class EMERGENT_API iPanelOfNetView: public iViewPanel {
+class EMERGENT_API iViewPanelOfNetwork: public iViewPanel {
   // frame for gui interface to a NetView -- usually posted by the netview
 INHERITED(iViewPanel)
   Q_OBJECT
@@ -139,14 +139,14 @@ public:
   virtual void          GetVars();
   virtual void          InitPanel();
 
-  iPanelOfNetView(NetView* dv_);
-  ~iPanelOfNetView();
+  iViewPanelOfNetwork(NetView* dv_);
+  ~iViewPanelOfNetwork();
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;} //
 //  override void               SigLinkDestroying(taSigLink* dl);
 //  override void               SigLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc);
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfNetView;}
+  override TypeDef*     GetTypeDef() const {return &TA_iViewPanelOfNetwork;}
 
 protected:
   int                   cmd_x; // current coords of where to place next button/ctrl
@@ -184,4 +184,4 @@ protected slots:
 
 };
 
-#endif // iPanelOfNetView_h
+#endif // iViewPanelOfNetwork_h

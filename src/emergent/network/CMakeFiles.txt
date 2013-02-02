@@ -119,7 +119,7 @@ set(network_HEADS_MAKETA_LOCAL
   LayerGroupView.h
   NetViewObjView.h
   NetView.h
-  iPanelOfNetView.h
+  iViewPanelOfNetwork.h
 
   BrainView.h
   BrainVolumeView.h
@@ -182,7 +182,7 @@ set(network_HEADS
 
 # headers that need Qt moc run
 set(network_HEADS_MOC
-  iPanelOfNetView.h
+  iViewPanelOfNetwork.h
   iBrainViewEditDialog.h
   iViewPanelOfBrain.h
 )
@@ -308,7 +308,7 @@ set(network_SRCS_LOCAL
   LayerGroupView.cpp
   NetViewObjView.cpp
   NetView.cpp
-  iPanelOfNetView.cpp
+  iViewPanelOfNetwork.cpp
 
   BrainAtlas.cpp
   BrainAtlasFileParser.cpp

@@ -32,7 +32,7 @@ class T3DataView; //
 TypeDef_Of(T3PanelViewer);
 
 class TA_API T3PanelViewer : public FrameViewer {
-  // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 #AKA_T3taViewer top-level FrameViewer object that manges tabs of panels that contain 3D views
+  // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 #AKA_T3DataViewer top-level FrameViewer object that manges tabs of panels that contain 3D views
 INHERITED(FrameViewer)
 friend class T3DataView;
 public:

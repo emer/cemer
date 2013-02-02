@@ -486,7 +486,7 @@ QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
   if (fontSpec == 0) fontSpec = ctrl_size;
   QLabel* rval = new QLabel(text, parent);
   // This line is commented out because it causes problems on the
-  // iPanelOfNetView dialog (two-line text labels get clipped).
+  // iViewPanelOfNetwork dialog (two-line text labels get clipped).
   //rval->setFixedHeight(label_height(fontSpec));
   rval->setFont(nameFont(fontSpec));
   return rval;

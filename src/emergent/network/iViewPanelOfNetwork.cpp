@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "iPanelOfNetView.h"
+#include "iViewPanelOfNetwork.h"
 #include <NetView>
 #include <Network>
 #include <T3ExaminerViewer>
@@ -37,11 +37,11 @@
 #include <QTabWidget>
 #include <QPushButton>
 
-NetView* iPanelOfNetView::getNetView() {
+NetView* iViewPanelOfNetwork::getNetView() {
   return static_cast<NetView *>(m_dv);
 }
 
-iPanelOfNetView::iPanelOfNetView(NetView* dv_)
+iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
 :inherited(dv_)
 {
   int font_spec = taiMisc::fonMedium;
@@ -453,14 +453,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   MakeButtons(layOuter);
 }
 
-iPanelOfNetView::~iPanelOfNetView()
+iViewPanelOfNetwork::~iViewPanelOfNetwork()
 {
   if (NetView *nv = getNetView()) {
     nv->nvp = NULL;
   }
 }
 
-void iPanelOfNetView::UpdatePanel_impl() {
+void iViewPanelOfNetwork::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   ++updating;
   NetView* nv = getNetView(); // cache
@@ -533,7 +533,7 @@ void iPanelOfNetView::UpdatePanel_impl() {
   --updating;
 }
 
-void iPanelOfNetView::GetValue_impl() {
+void iViewPanelOfNetwork::GetValue_impl() {
   inherited::GetValue_impl();
   NetView* nv = getNetView(); // cache
   if (!nv) return;
@@ -593,13 +593,13 @@ void iPanelOfNetView::GetValue_impl() {
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
 
-void iPanelOfNetView::CopyFrom_impl() {
+void iViewPanelOfNetwork::CopyFrom_impl() {
   if (NetView *nv = getNetView()) {
     nv->CallFun("CopyFromView");
   }
 }
 
-void iPanelOfNetView::butScaleDefault_pressed() {
+void iViewPanelOfNetwork::butScaleDefault_pressed() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->SetScaleDefault();
@@ -607,63 +607,63 @@ void iPanelOfNetView::butScaleDefault_pressed() {
   }
 }
 
-void iPanelOfNetView::butSetColor_pressed() {
+void iViewPanelOfNetwork::butSetColor_pressed() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->CallFun("SetColorSpec");
   }
 }
 
-void iPanelOfNetView::hist_back_all() {
+void iViewPanelOfNetwork::hist_back_all() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistBackAll();
   }
 }
 
-void iPanelOfNetView::hist_back_f() {
+void iViewPanelOfNetwork::hist_back_f() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistBackF();
   }
 }
 
-void iPanelOfNetView::hist_back() {
+void iViewPanelOfNetwork::hist_back() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistBack1();
   }
 }
 
-void iPanelOfNetView::hist_fwd() {
+void iViewPanelOfNetwork::hist_fwd() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistFwd1();
   }
 }
 
-void iPanelOfNetView::hist_fwd_f() {
+void iViewPanelOfNetwork::hist_fwd_f() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistFwdF();
   }
 }
 
-void iPanelOfNetView::hist_fwd_all() {
+void iViewPanelOfNetwork::hist_fwd_all() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistFwdAll();
   }
 }
 
-void iPanelOfNetView::hist_movie() {
+void iViewPanelOfNetwork::hist_movie() {
   if (updating) return;
   if (NetView *nv = getNetView()) {
     nv->HistMovie();
   }
 }
 
-void iPanelOfNetView::ColorScaleFromData() {
+void iViewPanelOfNetwork::ColorScaleFromData() {
   if (NetView *nv = getNetView()) {
     ++updating;
     cbar->UpdateScaleValues();
@@ -675,7 +675,7 @@ void iPanelOfNetView::ColorScaleFromData() {
   }
 }
 
-void iPanelOfNetView::GetVars() {
+void iViewPanelOfNetwork::GetVars() {
   NetView *nv = getNetView();
   if (!nv) return;
 
@@ -694,7 +694,7 @@ void iPanelOfNetView::GetVars() {
   lvDisplayValues->resizeColumnToContents(0);
 }
 
-void iPanelOfNetView::InitPanel() {
+void iViewPanelOfNetwork::InitPanel() {
   if (NetView *nv = getNetView()) {
     ++updating;
     // fill monitor values
@@ -703,7 +703,7 @@ void iPanelOfNetView::InitPanel() {
   }
 }
 
-void iPanelOfNetView::lvDisplayValues_selectionChanged() {
+void iViewPanelOfNetwork::lvDisplayValues_selectionChanged() {
   if (updating) return;
 
   NetView *nv = getNetView();
@@ -728,7 +728,7 @@ void iPanelOfNetView::lvDisplayValues_selectionChanged() {
   nv->UpdateDisplay(false);
 }
 
-void iPanelOfNetView::setHighlightSpec(BaseSpec* spec, bool force) {
+void iViewPanelOfNetwork::setHighlightSpec(BaseSpec* spec, bool force) {
   if ((spec == m_cur_spec) && !force) return;
   m_cur_spec = spec;
   if (NetView *nv = getNetView()) {
@@ -736,7 +736,7 @@ void iPanelOfNetView::setHighlightSpec(BaseSpec* spec, bool force) {
   }
 }
 
-void iPanelOfNetView::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
+void iViewPanelOfNetwork::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
   int level, bool& expand)
 {
   if (level < 1) return; // always expand root level
@@ -754,7 +754,7 @@ void iPanelOfNetView::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
   expand = false;
 }
 
-void iPanelOfNetView::tvSpecs_Notify(ISelectableHost* src, int op) {
+void iViewPanelOfNetwork::tvSpecs_Notify(ISelectableHost* src, int op) {
   NetView *nv = getNetView();
   if (!nv) return;
 
@@ -783,7 +783,7 @@ void iPanelOfNetView::tvSpecs_Notify(ISelectableHost* src, int op) {
   }
 }
 
-void iPanelOfNetView::tvSpecs_ItemSelected(iTreeViewItem* item) {
+void iViewPanelOfNetwork::tvSpecs_ItemSelected(iTreeViewItem* item) {
   NetView *nv = getNetView();
   if (!nv) return;
 
@@ -798,13 +798,13 @@ void iPanelOfNetView::tvSpecs_ItemSelected(iTreeViewItem* item) {
 }
 
 
-void iPanelOfNetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
+void iViewPanelOfNetwork::viewWin_NotifySignal(ISelectableHost* src, int op) {
   if (NetView *nv = getNetView()) {
     nv->viewWin_NotifySignal(src, op);
   }
 }
 
-void iPanelOfNetView::dynbuttonActivated(int but_no) {
+void iViewPanelOfNetwork::dynbuttonActivated(int but_no) {
   NetView *nv = getNetView();
   if (!nv) return;
 
@@ -828,7 +828,7 @@ void iPanelOfNetView::dynbuttonActivated(int but_no) {
   nv->UpdateDisplay(true);     // update panel
 }
 
-void iPanelOfNetView::unTrappedKeyPressEvent(QKeyEvent* e) {
+void iViewPanelOfNetwork::unTrappedKeyPressEvent(QKeyEvent* e) {
   if (NetView *nv = getNetView()) {
     nv->unTrappedKeyPressEvent(e);
   }
