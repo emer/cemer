@@ -17,7 +17,7 @@
 #define taSigLinkList_h 1
 
 // parent includes:
-#include <taSigLinkOBase>
+#include <taSigLinkTaOBase>
 
 // member includes:
 
@@ -26,9 +26,9 @@
 
 TypeDef_Of(taSigLinkList);
 
-class TA_API taSigLinkList: public taSigLinkOBase {
+class TA_API taSigLinkList: public taSigLinkTaOBase {
   // SigLink for taList objects -- note that it also manages the ListView nodes
-INHERITED(taSigLinkOBase)
+INHERITED(taSigLinkTaOBase)
 public:
   taList_impl*          list() {return (taList_impl*)m_data;}
   taList_impl*          list() const {return (taList_impl*)m_data;}
@@ -37,8 +37,8 @@ public:
   taSigLinkList(taList_impl* data_);
   SL_FUNS(taSigLinkList) //
 protected:
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
-    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags);
 };
 

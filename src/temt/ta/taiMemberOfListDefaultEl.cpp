@@ -28,7 +28,7 @@ int taiMemberOfListDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfListDefaultEl::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfListDefaultEl::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetListElMenu *rval = new taiWidgetListElMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall,
         NULL, typ, host_, par, gui_parent_, (flags_ | taiWidget::flgNullOk | taiWidget::flgNoList));
   return rval;

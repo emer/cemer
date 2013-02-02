@@ -41,7 +41,7 @@ cssEl* taiArgTypeOfListOnObjBasePtr::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiWidget* taiArgTypeOfListOnObjBasePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfListOnObjBasePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   int new_flags = (flags_ & ~taiWidget::flgNoList); //note: exclude flgNoList
   if (GetHasOption("NULL_OK"))
     new_flags |= taiWidget::flgNullOk;

@@ -24,7 +24,7 @@ int taiTypeOfString::BidForType(TypeDef* td){
   return 0;
 }
 
-taiWidget* taiTypeOfString::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
+taiWidget* taiTypeOfString::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
   taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
   rval->lookupfun_md = md;              // for lookup function
   if(md) {

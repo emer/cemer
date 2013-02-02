@@ -44,8 +44,8 @@ public:
 
 protected:
   override iDataPanel*  CreateDataPanel_impl();
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
+  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
 };
 
 #endif // taSigLinkTypeItem_h

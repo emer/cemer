@@ -19,7 +19,7 @@
 #include <iUserDataPanel>
 #include <iDocDataPanel>
 #include <taDoc>
-#include <taSigLinkOBase>
+#include <taSigLinkTaOBase>
 #include <iListDataPanel>
 
 
@@ -73,7 +73,7 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
 }
 
 taiSigLink* taiViewTypeOftaOBase::CreateSigLink_impl(taBase* data_) {
-  return new taSigLinkOBase((taOBase*)data_);
+  return new taSigLinkTaOBase((taOBase*)data_);
 }
 
 void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
@@ -86,7 +86,7 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
   if (typ && typ->OptionAfter("DEF_CHILD_").nonempty()) {
     String custom_name = typ->OptionAfter("DEF_CHILDNAME_"); // optional
     custom_name.gsub("_", " ");
-    dl_ = dynamic_cast<taSigLinkOBase*>(dl_)->listLink();
+    dl_ = dynamic_cast<taSigLinkTaOBase*>(dl_)->listLink();
     iListDataPanel* bldp = new iListDataPanel(dl_, custom_name);
     DataPanelCreated(bldp);
   }

@@ -53,7 +53,7 @@ cssEl* taiArgTypeOfStream::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiWidget* taiArgTypeOfStream::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfStream::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (!gf) {
     // we get and initialize the filer once
     gf = taBase::StatGetFiler(meth);

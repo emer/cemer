@@ -31,7 +31,7 @@ int taiMemberOfTokenPtrFromGroup::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfTokenPtrFromGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfTokenPtrFromGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return NULL;
 

@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiListDataNode_h
-#define taiListDataNode_h 1
+#ifndef taiTreeNodeList_h
+#define taiTreeNodeList_h 1
 
 // parent includes:
 #include <iTreeViewItem>
@@ -26,9 +26,9 @@ class iListDataPanel; //
 class iTreeView; //
 class QTreeWidgetItem; //
 
-TypeDef_Of(taiListDataNode);
+TypeDef_Of(taiTreeNodeList);
 
-class TA_API taiListDataNode: public iTreeViewItem {
+class TA_API taiTreeNodeList: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:
   int                   num; // item number, starting from 0
@@ -40,18 +40,18 @@ public:
   bool                  operator<(const QTreeWidgetItem& item) const; // override
 
   override void         DecorateDataNode();
-  taiListDataNode(int num_, iListDataPanel* panel_, taiSigLink* link_,
-    iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
+  taiTreeNodeList(int num_, iListDataPanel* panel_, taiSigLink* link_,
+    iTreeView* parent_, taiTreeNodeList* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
-  ~taiListDataNode(); //
+  ~taiTreeNodeList(); //
 
 public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taiListDataNode;}
+  override TypeDef*     GetTypeDef() const {return &TA_taiTreeNodeList;}
 
 public: // ISelectable interface
   override taiSigLink* par_link() const; // we get from the panel, which gets from the viewer window
 //obs  override MemberDef*      par_md() const; // as for par_link
 };
 
-#endif // taiListDataNode_h
+#endif // taiTreeNodeList_h

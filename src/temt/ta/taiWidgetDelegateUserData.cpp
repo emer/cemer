@@ -47,7 +47,7 @@ QWidget* taiWidgetDelegateUserData::createEditor(QWidget* parent,
       bool wrap = true;
       QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
 
-      dat = md->im->GetDataRep(edh, NULL, rep_par);
+      dat = md->im->GetWidgetRep(edh, NULL, rep_par);
       dat->SetMemberDef(md);
       rep = dat->GetRep(); // note: rep may get replaced by rep_par
       if (wrap) {

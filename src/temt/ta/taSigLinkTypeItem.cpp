@@ -25,10 +25,10 @@ taSigLinkTypeItem::taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* dat
 {
 }
 
-taiTreeDataNode* taSigLinkTypeItem::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taSigLinkTypeItem::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
-  taiTreeDataNode* rval = NULL;
+  taiTreeNode* rval = NULL;
   if (nodePar)
     rval = new taTypeInfoTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
   else

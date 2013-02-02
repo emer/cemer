@@ -28,7 +28,7 @@ int taiTypeOfReal::BidForType(TypeDef* td){
   return 0;
 }
 
-taiWidget* taiTypeOfReal::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
+taiWidget* taiTypeOfReal::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
   taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, flags_);
   // now, decorate with a validator, and init
   QDoubleValidator* dv = new QDoubleValidator(rval->rep());

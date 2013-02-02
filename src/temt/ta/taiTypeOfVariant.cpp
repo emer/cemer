@@ -24,7 +24,7 @@ int taiTypeOfVariant::BidForType(TypeDef* td){
   return 0;
 }
 
-taiWidget* taiTypeOfVariant::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
+taiWidget* taiTypeOfVariant::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
   // todo: this needs to be in GetImage I guess -- and variant needs meth to not show type
   // AND it needs to be a taiWidgetVariantMember instead of taiTypeOfVariant.  ugh.
 //   if(md) {

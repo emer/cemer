@@ -35,7 +35,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
   int row = 0; // makes following more generic
   
   // name
-//  mb_dat = md->im->GetDataRep(this, NULL, body);
+//  mb_dat = md->im->GetWidgetRep(this, NULL, body);
 //  data_el->Add(mb_dat);
 //    rep = mb_dat->GetRep();
   iCheckBox* chk = NULL;

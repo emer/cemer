@@ -321,7 +321,7 @@ void iProgramEditor::Controls_Add() {
       if (i > 0)
         hbl->addSpacing(taiM->hspc_c);
       MemberDef* md = ms->memb_el.FastEl(i);
-      taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body, NULL, flags);
       ms->data_el.Add(mb_dat);
 
 //obs      QLabel* lbl = taiM->NewLabel(, body);

@@ -19,7 +19,7 @@
 #include <taiViewType>
 #include <iTreeViewItem>
 #include <iTreeView>
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 
 String taiSigLink::AnonymousItemName(const String& type_name, int index) {
   // makes name in form [index]:TypeName
@@ -59,26 +59,26 @@ iDataPanel* taiSigLink::CreateDataPanel_impl() {
 }
 
 
-taiTreeDataNode* taiSigLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
-  taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taiSigLink::CreateTreeDataNode(MemberDef* md, taiTreeNode* parent,
+  taiTreeNode* after, const String& node_name, int dn_flags)
 {
   return CreateTreeDataNode(md, parent, NULL, after, node_name, dn_flags);
 }
 
-taiTreeDataNode* taiSigLink::CreateTreeDataNode(MemberDef* md, iTreeView* parent,
-  taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taiSigLink::CreateTreeDataNode(MemberDef* md, iTreeView* parent,
+  taiTreeNode* after, const String& node_name, int dn_flags)
 {
   return CreateTreeDataNode(md, NULL, parent, after, node_name, dn_flags);
 }
 
-taiTreeDataNode* taiSigLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taiSigLink::CreateTreeDataNode(MemberDef* md, taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
   if (HasChildItems()) {
     //note: the list item automatically enables lazy children
     dn_flags |= iTreeViewItem::DNF_LAZY_CHILDREN;
   }
-  taiTreeDataNode* rval = CreateTreeDataNode_impl(md, nodePar, tvPar, after, node_name, dn_flags);
+  taiTreeNode* rval = CreateTreeDataNode_impl(md, nodePar, tvPar, after, node_name, dn_flags);
   if (rval) {
     rval->DecorateDataNode();
   }

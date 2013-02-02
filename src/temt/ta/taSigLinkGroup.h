@@ -37,8 +37,8 @@ public:
   taSigLinkGroup(taGroup_impl* data_);
   SL_FUNS(taSigLinkGroup)
 protected:
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
+  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
 };
 
 #endif // taSigLinkGroup_h

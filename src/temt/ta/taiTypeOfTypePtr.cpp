@@ -32,12 +32,12 @@ int taiTypeOfTypePtr::BidForType(TypeDef* td) {
 // and can't therefore figure out what kind of datarep to use..
 // need to have a datarep that is a "string or type menu" kind of thing..
 
-taiWidget* taiTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
+taiWidget* taiTypeOfTypePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiWidget::flgAutoApply; // default is to auto-apply!
 
   if (orig_typ == NULL)
-    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
+    return taiType::GetWidgetRep_impl(host_, par, gui_parent_, flags_, mbr_);
 
   taiWidgetTypeDefChooser* rval =
     new taiWidgetTypeDefChooser(typ, host_, par, gui_parent_, flags_);

@@ -48,7 +48,7 @@ public:
   virtual int   BidForArgType(int, TypeDef*, MethodDef*, TypeDef*)      { return 1; }
   // bid for (appropriateness) for given type of method and argument type
 
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 
   virtual cssEl* GetElFromArg(const char* arg_nm, void* base);

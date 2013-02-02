@@ -49,7 +49,7 @@ QWidget* taiWidgetDelegate::createEditor(QWidget* parent,
     bool wrap = true;           // NOTE: wrap is always true!!
     QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
 
-    dat = md->im->GetDataRep(edh, NULL, rep_par);
+    dat = md->im->GetWidgetRep(edh, NULL, rep_par);
     m_dat_row = index.row();
     dat->SetBase(base);
     dat->SetMemberDef(md);

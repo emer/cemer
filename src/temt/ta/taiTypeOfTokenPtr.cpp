@@ -26,7 +26,7 @@ int taiTypeOfTokenPtr::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   // setting mode now is good for rest of life

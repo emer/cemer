@@ -191,7 +191,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 
   if (men_nm == "")
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
-       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
+       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkTaBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiWidgetActions::New(taiWidgetMenu::buttonmenu, taiWidgetMenu::normal, taiMisc::fonSmall,
             NULL, host, NULL, widg);

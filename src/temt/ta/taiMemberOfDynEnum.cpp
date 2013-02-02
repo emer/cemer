@@ -39,7 +39,7 @@ int taiMemberOfDynEnum::BidForMember(MemberDef* md, TypeDef* td){
   return 0;
 }
 
-taiWidget* taiMemberOfDynEnum::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiMemberOfDynEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   flags_ |= taiWidget::flgAutoApply; // always auto-apply
   isBit = false;                // oops -- we don't have base and can't find out!

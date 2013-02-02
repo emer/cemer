@@ -38,10 +38,10 @@ void taiType::AddToType(TypeDef* td) {
 }
 
 // Based on various flags, this function calls one of the following:
-//   GetDataRep_impl()       // from this class, as a default
-//   GetDataRep_impl()       // virtual
-//   GetDataRepInline_impl() // virtual
-taiWidget* taiType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+//   GetWidgetRep_impl()       // from this class, as a default
+//   GetWidgetRep_impl()       // virtual
+//   GetWidgetRepInline_impl() // virtual
+taiWidget* taiType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                              taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   // Note: user can pass in flgReadOnly to force readonly, but we can also set it.
@@ -60,19 +60,19 @@ taiWidget* taiType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_
     // The field needs to be displayed read-only, but the subclass isn't able
     // to handle it as a read-only field, so let taiType take care of things.
     // Note: this is not a virtual function call due to the taiType:: scoping.
-    rval = taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
+    rval = taiType::GetWidgetRep_impl(host_, par, gui_parent_, flags_, mbr);
   }
   else if ((flags_ & taiWidget::flgInline) && allowsInline()) {
-    rval = GetDataRepInline_impl(host_, par, gui_parent_, flags_, mbr);
+    rval = GetWidgetRepInline_impl(host_, par, gui_parent_, flags_, mbr);
   }
   else {
-    rval = GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
+    rval = GetWidgetRep_impl(host_, par, gui_parent_, flags_, mbr);
   }
   rval->mbr = mbr;
   return rval;
 }
 
-taiWidget* taiType::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiType::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
                                   QWidget* gui_parent_, int flags_,
                                   MemberDef*)
 {
@@ -81,16 +81,16 @@ taiWidget* taiType::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
   return rval;
 }
 
-taiWidget* taiType::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiType::GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,
                                         QWidget* gui_parent, int flags_,
                                         MemberDef* mbr_)
 {
   // base type doesn't know what to do for inline, so just returns the basic guy
-  return GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
+  return GetWidgetRep_impl(host_, par, gui_parent, flags_, mbr_);
 }
 
 void taiType::GetImage(taiWidget* dat, const void* base) {
-  // Use similar critera as in GetDataRep() to determine whether the
+  // Use similar critera as in GetWidgetRep() to determine whether the
   // subclass can handle this field as read-only.
   //
   // TODO: The old comment said:
@@ -108,7 +108,7 @@ void taiType::GetImage(taiWidget* dat, const void* base) {
 }
 
 void taiType::GetImage_impl(taiWidget* dat, const void* base) {
-  //TODO: shouldn't this strval follow same logic as the one in GetDataRep
+  //TODO: shouldn't this strval follow same logic as the one in GetWidgetRep
   String strval = typ->GetValStr(base);
   taiWidgetField* rval = (taiWidgetField*)dat;
   rval->GetImage(strval);

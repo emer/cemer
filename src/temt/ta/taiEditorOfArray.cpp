@@ -59,7 +59,7 @@ void taiEditorOfArray::Constr_AryData_Labels() {
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
-    taiWidget* mb_dat = tit->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = tit->GetWidgetRep(this, NULL, body);
     data_el(array_set).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();

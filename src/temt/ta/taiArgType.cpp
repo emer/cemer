@@ -84,14 +84,14 @@ void taiArgType::GetValue_impl(taiWidget* dat, void*) {
     arg_typ->it->GetValue(dat, arg_base);
 }
 
-taiWidget* taiArgType::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgType::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (arg_base == NULL) return NULL;
 
   taiWidget* rval;
   if (use_it)
-    rval = use_it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+    rval = use_it->GetWidgetRep(host_, par, gui_parent_, NULL, flags_);
   else
-    rval = arg_typ->it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+    rval = arg_typ->it->GetWidgetRep(host_, par, gui_parent_, NULL, flags_);
   return rval;
 }
 

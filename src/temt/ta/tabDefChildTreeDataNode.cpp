@@ -17,8 +17,8 @@
 
 #include <SigLinkSignal>
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
-  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkTaOBase* link_, MemberDef* md_,
+  taiTreeNode* parent_, taiTreeNode* last_child_,
   const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name,
   dn_flags_ | DNF_LAZY_CHILDREN)
@@ -26,15 +26,15 @@ tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDe
   init(link_, dn_flags_);
 }
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
-  iTreeView* parent_, taiTreeDataNode* last_child_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(taSigLinkTaOBase* link_, MemberDef* md_,
+  iTreeView* parent_, taiTreeNode* last_child_,
   const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabDefChildTreeDataNode::init(taSigLinkOBase*, int) {
+void tabDefChildTreeDataNode::init(taSigLinkTaOBase*, int) {
   m_def_child.Init(this, list());
 }
 

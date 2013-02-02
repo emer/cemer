@@ -32,7 +32,7 @@ public:
   override bool requiresInline() const { return true; }
   int           BidForType(TypeDef* td);
 protected:
-  taiWidget*      GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 };
 

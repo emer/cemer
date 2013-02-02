@@ -33,7 +33,7 @@ public:
 
   inline bool   isCond() const {return m_is_cond;} // true if a BIT, and has any CONDxxxx bits
   int           BidForType(TypeDef* td);
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiWidget* dat, const void* base);
   void          GetValue_impl(taiWidget* dat, void* base);

@@ -77,13 +77,13 @@ void  cssiType::Assert_QObj() {
   }
 }
 
-taiWidget* cssiType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* cssiType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                               taiType*, int, MemberDef*)
 {
   if (use_it)
-    return use_it->GetDataRep(host_, par, gui_parent_);
+    return use_it->GetWidgetRep(host_, par, gui_parent_);
   else
-    return typ->it->GetDataRep(host_, par, gui_parent_);
+    return typ->it->GetWidgetRep(host_, par, gui_parent_);
 }
 
 void cssiType::GetImage(taiWidget* dat, const void* base) {
@@ -111,7 +111,7 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 {
 }
 
-taiWidget* cssiROType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* cssiROType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                 taiType*, int, MemberDef*)
 {
   taiWidgetField* rval = new taiWidgetField(typ, host_, par, gui_parent_, true);
@@ -134,7 +134,7 @@ cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
   enum_type = enum_typ;
 }
 
-taiWidget* cssiEnumType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* cssiEnumType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                   taiType*, int, MemberDef*)
 {
   taiWidgetComboBox* rval = new taiWidgetComboBox(typ, host_, par, gui_parent_);
@@ -176,7 +176,7 @@ cssiClassType::cssiClassType(cssEl* orgo, void* bs)
 {
 }
 
-taiWidget* cssiClassType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* cssiClassType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   cssClassInst* obj = (cssClassInst*) cur_base;
@@ -232,7 +232,7 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 {
 }
 
-taiWidget* cssiArrayType::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* cssiArrayType::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType*, int, MemberDef*)
 {
   taiWidgetMenuButton* rval = new taiWidgetMenuButton

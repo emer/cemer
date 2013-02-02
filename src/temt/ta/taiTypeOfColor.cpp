@@ -25,7 +25,7 @@ int taiTypeOfColor::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfColor::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiTypeOfColor::GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,
  QWidget* gui_parent_, int flags_, MemberDef*)
 {
   taiWidgetColor *rval = new taiWidgetColor(typ, host_, par, gui_parent_, flags_);

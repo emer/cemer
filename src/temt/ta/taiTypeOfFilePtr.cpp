@@ -24,7 +24,7 @@ int taiTypeOfFilePtr::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfFilePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfFilePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   return new taiWidgetFileButton(typ,  host_, par, gui_parent_, flags_);
 }
 

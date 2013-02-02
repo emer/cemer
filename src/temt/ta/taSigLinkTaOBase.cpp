@@ -13,29 +13,29 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taSigLinkOBase.h"
+#include "taSigLinkTaOBase.h"
 
 #include <tabDefChildTreeDataNode>
 #include <taiViewType>
 
 
-taSigLinkOBase::taSigLinkOBase(taOBase* data_)
+taSigLinkTaOBase::taSigLinkTaOBase(taOBase* data_)
   : inherited((taBase*)data_, *(data_->addr_sig_link()))
 {
 }
 
-String taSigLinkOBase::ChildGetColText(taSigLink* child, const KeyString& key, int itm_idx) const
+String taSigLinkTaOBase::ChildGetColText(taSigLink* child, const KeyString& key, int itm_idx) const
 {
   if (!list()) return inherited::ChildGetColText(child, key, itm_idx);
   return list()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
 }
 
-taiTreeDataNode* taSigLinkOBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taSigLinkTaOBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
   if (!list()) return inherited::CreateTreeDataNode_impl(md, nodePar,
     tvPar, after, node_name, dn_flags);
-  taiTreeDataNode* rval = NULL;
+  taiTreeNode* rval = NULL;
   if (nodePar)
     rval = new tabDefChildTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
   else
@@ -44,17 +44,17 @@ taiTreeDataNode* taSigLinkOBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeD
 }
 
 
-String taSigLinkOBase::GetColHeading(const KeyString& key) const {
+String taSigLinkTaOBase::GetColHeading(const KeyString& key) const {
   if (!list()) return inherited::GetColHeading(key);
   return list()->GetColHeading(key);
 }
 
-const KeyString taSigLinkOBase::GetListColKey(int col) const {
+const KeyString taSigLinkTaOBase::GetListColKey(int col) const {
   if (!list()) return inherited::GetListColKey(col);
   return list()->GetListColKey(col);
 }
 
-taiSigLink* taSigLinkOBase::GetListChild(int itm_idx) {
+taiSigLink* taSigLinkTaOBase::GetListChild(int itm_idx) {
   if (!list()) return inherited::GetListChild(itm_idx);
   if ((itm_idx < 0) || (itm_idx >= list()->size))
     return NULL;
@@ -65,7 +65,7 @@ taiSigLink* taSigLinkOBase::GetListChild(int itm_idx) {
   return dl;
 }
 
-taiSigLink* taSigLinkOBase::GetListChild(void* el) {
+taiSigLink* taSigLinkTaOBase::GetListChild(void* el) {
   if (!list()) return inherited::GetListChild(el);
   if (!el) return NULL;
   TypeDef* typ = list()->El_GetType_(el);
@@ -80,12 +80,12 @@ taiSigLink* taSigLinkOBase::GetListChild(void* el) {
   return dl;
 }
 
-int taSigLinkOBase::NumListCols() const {
+int taSigLinkTaOBase::NumListCols() const {
   if (!list()) return inherited::NumListCols();
   return list()->NumListCols();
 }
 
-MemberDef* taSigLinkOBase::GetDataMemberDef() const {
+MemberDef* taSigLinkTaOBase::GetDataMemberDef() const {
   if (!m_data) return NULL;
   taBase* owner = data()->GetOwner();
   if (owner) return owner->FindMember(data());

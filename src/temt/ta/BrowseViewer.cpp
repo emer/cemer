@@ -31,7 +31,7 @@ void BrowseViewer::Render_pre() {
   widget()->ApplyRoot();
 }
 
-/* nn void BrowseViewer::TreeNodeDestroying(taiTreeDataNode* item) {
+/* nn void BrowseViewer::TreeNodeDestroying(taiTreeNode* item) {
   if (!m_window) return;
   browser_win()->TreeNodeDestroying(item);
 } */

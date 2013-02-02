@@ -25,7 +25,7 @@ int taiMemberOfEnumTypePtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfEnumTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* taiMemberOfEnumTypePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
   int flags_, MemberDef*)
 {
   if (mbr->HasOption("NULL_OK"))

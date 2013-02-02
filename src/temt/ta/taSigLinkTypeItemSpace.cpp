@@ -23,11 +23,11 @@ taSigLinkTypeItemSpace::taSigLinkTypeItemSpace(TypeItem::TypeInfoKinds tik_,
 {
 }
 
-taiTreeDataNode* taSigLinkTypeItemSpace::CreateTreeDataNode_impl(MemberDef* md, 
-  taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taSigLinkTypeItemSpace::CreateTreeDataNode_impl(MemberDef* md, 
+  taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
-  taiTreeDataNode* rval = NULL;
+  taiTreeNode* rval = NULL;
   if (nodePar)
     rval = new taTypeSpaceTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
   else

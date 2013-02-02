@@ -13,32 +13,32 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "tabTreeDataNode.h"
+#include "taiTreeNodeTaBase.h"
 
 #include <SigLinkSignal>
 
-tabTreeDataNode::tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+taiTreeNodeTaBase::taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, taiTreeNode* parent_,
+  taiTreeNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((taiSigLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-tabTreeDataNode::tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, iTreeView* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+taiTreeNodeTaBase::taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((taiSigLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabTreeDataNode::init(taSigLinkBase* link_, int dn_flags_) {
+void taiTreeNodeTaBase::init(taSigLinkTaBase* link_, int dn_flags_) {
 }
 
-tabTreeDataNode::~tabTreeDataNode()
+taiTreeNodeTaBase::~taiTreeNodeTaBase()
 {
 }
 
-void tabTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
+void taiTreeNodeTaBase::SigEmit_impl(int sls, void* op1_, void* op2_) {
   inherited::SigEmit_impl(sls, op1_, op2_);
   bool do_updt = false;
   taBase* tab = tadata();

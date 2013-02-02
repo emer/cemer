@@ -28,7 +28,7 @@ int taiMemberOfSubTokenPtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfSubTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfSubTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* td = NULL;
   String typ_nm = mbr->OptionAfter("SUBTYPE_");
   if (!typ_nm.empty())

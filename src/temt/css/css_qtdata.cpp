@@ -61,7 +61,7 @@ void cssiPolyData::Constr(QWidget* gui_parent_) {
     if((tv == NULL) || (tv->cur_base == NULL))
       continue;
     type_el.Add(tv);
-    taiWidget* mb_dat = tv->GetDataRep(ih, host_, this);
+    taiWidget* mb_dat = tv->GetWidgetRep(ih, host_, this);
     data_el.Add(mb_dat);
     String nm = md->GetName();
     rep->append(taiM->layout->center(taiM->wkit->label(nm), 0, 0));

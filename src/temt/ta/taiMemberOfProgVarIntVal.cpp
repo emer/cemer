@@ -34,7 +34,7 @@ int taiMemberOfProgVarIntVal::BidForMember(MemberDef* md, TypeDef* td){
   return 0;
 }
 
-taiWidget* taiMemberOfProgVarIntVal::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiMemberOfProgVarIntVal::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   taiWidgetDeck* rval = new taiWidgetDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();

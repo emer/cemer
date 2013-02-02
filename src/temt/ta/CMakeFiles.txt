@@ -166,8 +166,8 @@ set(ta_HEADS_MAKETA_LOCAL
   taSigLink.h
   taSigLinkItr.h
   taiSigLink.h
-  taSigLinkBase.h
-  taSigLinkOBase.h
+  taSigLinkTaBase.h
+  taSigLinkTaOBase.h
   taSigLinkList.h
   taSigLinkGroup.h
   taSigLinkClass.h
@@ -676,15 +676,16 @@ set(ta_HEADS_MAKETA_LOCAL
   FunLookupND.h
   FunLookup.h
 
-  tabDefChildRef.h
   iTreeViewItem.h
-  tabTreeDataNode.h
-  taiTreeDataNode.h
-  taiListDataNode.h
-  tabParTreeDataNode.h
+  taiTreeNode.h
+  taiTreeNodeTaBase.h
+  taiTreeNodeTaBasePar.h
+  taiTreeNodeGroup.h
+
+  tabDefChildRef.h
+  taiTreeNodeList.h
   tabDefChildTreeDataNode.h
   tabListTreeDataNode.h
-  tabGroupTreeDataNode.h
   taTypeInfoTreeDataNode.h
   taTypeSpaceTreeDataNode.h
 
@@ -1215,8 +1216,8 @@ set(ta_SRCS_MAKETA
   taSigLink.cpp
   taSigLinkItr.cpp
   taiSigLink.cpp
-  taSigLinkBase.cpp
-  taSigLinkOBase.cpp
+  taSigLinkTaBase.cpp
+  taSigLinkTaOBase.cpp
   taSigLinkList.cpp
   taSigLinkGroup.cpp
   taSigLinkClass.cpp
@@ -1939,15 +1940,15 @@ set(ta_SRCS_NOMAKETA
   iListDataPanel.cpp
   iDialogSearch.cpp
   iTreeViewItem.cpp
-  taiTreeDataNode.cpp
-  taiListDataNode.cpp
-  tabTreeDataNode.cpp
-  tabParTreeDataNode.cpp
+  taiTreeNode.cpp
+  taiTreeNodeList.cpp
+  taiTreeNodeTaBase.cpp
+  taiTreeNodeTaBasePar.cpp
   ISelectable_PtrList.cpp
   tabDefChildTreeDataNode.cpp
   tabListTreeDataNode.cpp
   ISelectableHost_QObj.cpp
-  tabGroupTreeDataNode.cpp
+  taiTreeNodeGroup.cpp
   iApplicationToolBar.cpp
   iToolBar_List.cpp
   iBrowseHistory.cpp

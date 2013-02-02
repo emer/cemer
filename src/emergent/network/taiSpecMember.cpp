@@ -77,9 +77,9 @@ taiWidget* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par
   if (no_check_box) {
     taiWidget* rdat;
     if (HasLowerBidder())
-      rdat = LowerBidder()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
+      rdat = LowerBidder()->GetWidgetRep(host_, par, gui_parent, NULL, flags_, mbr_);
     else
-      rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
+      rdat = taiMember::GetWidgetRep_impl(host_, par, gui_parent, flags_, mbr_);
     return rdat;
   }
   else {
@@ -87,9 +87,9 @@ taiWidget* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par
     rval->InitLayout();
     taiWidget* rdat;
     if (HasLowerBidder())
-      rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
+      rdat = LowerBidder()->GetWidgetRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else
-      rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
+      rdat = taiMember::GetWidgetRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
     rval->data = rdat;
     rval->AddChildWidget(rdat->GetRep());
     rval->EndLayout();

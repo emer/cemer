@@ -33,7 +33,7 @@ cssEl* taiArgTypeOfMemberPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiWidget* taiArgTypeOfMemberPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiArgTypeOfMemberPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   flags_ |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs

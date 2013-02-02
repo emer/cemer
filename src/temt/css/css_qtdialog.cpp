@@ -99,7 +99,7 @@ void cssiEditDialog::Constr_Data_Labels() {
 
     type_el.Add(cit);
     // get the widget representation of the data
-    taiWidget* mb_dat = cit->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = cit->GetWidgetRep(this, NULL, body);
     data_el(0).Add(mb_dat);
     //AddData(index, mb_dat->GetRep());
     
@@ -452,7 +452,7 @@ void cssiArgDialog::Constr_Data_Labels() {
   for (int i = hide_args; i < type_el.size; ++i) {
     int j = i - hide_args;
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiWidget* mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
+    taiWidget* mb_dat = art->GetWidgetRep(this, NULL, (QWidget*)body);
 
     data_el(0).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();

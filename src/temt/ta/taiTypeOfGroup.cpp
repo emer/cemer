@@ -25,7 +25,7 @@ int taiTypeOfGroup::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetGroupEditButton *rval = new taiWidgetGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

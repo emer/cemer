@@ -28,7 +28,7 @@ int taiMemberOfTypePtr::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* taiMemberOfTypePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
   int flags_, MemberDef*)
 {
   if (mbr->HasOption("NULL_OK"))

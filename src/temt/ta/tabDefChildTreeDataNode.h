@@ -17,7 +17,7 @@
 #define tabDefChildTreeDataNode_h 1
 
 // parent includes:
-#include <tabParTreeDataNode>
+#include <taiTreeNodeTaBasePar>
 
 // member includes:
 #include <tabDefChildRef>
@@ -27,15 +27,15 @@
 
 TypeDef_Of(tabDefChildTreeDataNode);
 
-class TA_API tabDefChildTreeDataNode: public tabParTreeDataNode {
-INHERITED(tabParTreeDataNode)
+class TA_API tabDefChildTreeDataNode: public taiTreeNodeTaBasePar {
+INHERITED(taiTreeNodeTaBasePar)
 friend class tabDefChildRef;
 public:
-  tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
-    taiTreeDataNode* parent_, taiTreeDataNode* after,
+  tabDefChildTreeDataNode(taSigLinkTaOBase* link_, MemberDef* md_,
+    taiTreeNode* parent_, taiTreeNode* after,
     const String& tree_name, int dn_flags_ = 0);
-  tabDefChildTreeDataNode(taSigLinkOBase* link_, MemberDef* md_,
-    iTreeView* parent_, taiTreeDataNode* after,
+  tabDefChildTreeDataNode(taSigLinkTaOBase* link_, MemberDef* md_,
+    iTreeView* parent_, taiTreeNode* after,
     const String& tree_name, int dn_flags_ = 0);
   ~tabDefChildTreeDataNode();
 public: // ISigLinkClient interface
@@ -45,7 +45,7 @@ protected:
   tabDefChildRef        m_def_child; // for list notifies
   virtual void          DefChild_SigEmit(int sls, void* op1, void* op2);
 private:
-  void                  init(taSigLinkOBase* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkTaOBase* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // tabDefChildTreeDataNode_h

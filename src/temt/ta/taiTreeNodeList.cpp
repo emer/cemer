@@ -13,12 +13,12 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiListDataNode.h"
+#include "taiTreeNodeList.h"
 #include <iListDataPanel>
 
 
-taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
-   taiSigLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
+taiTreeNodeList::taiTreeNodeList(int num_, iListDataPanel* panel_,
+   taiSigLink* link_, iTreeView* parent_, taiTreeNodeList* after, int dn_flags_)
 :inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
 {
   num = num_;
@@ -26,11 +26,11 @@ taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
   setData(0, Qt::TextAlignmentRole, Qt::AlignRight);
 }
 
-taiListDataNode::~taiListDataNode() {
+taiTreeNodeList::~taiTreeNodeList() {
 }
 
 
-bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
+bool taiTreeNodeList::operator<(const QTreeWidgetItem& item) const
 { //NOTE: it was tried to set display data as an int QVariant, but sorting was still lexographic
   QTreeWidget* tw = treeWidget();
   if (!tw) return false; // shouldn't happen
@@ -38,17 +38,17 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
   if (col > 0)
     return inherited::operator<(item);
   else {
-    taiListDataNode* ldn = (taiListDataNode*)&item;
+    taiTreeNodeList* ldn = (taiTreeNodeList*)&item;
     return (num < ldn->num);
   }
 }
 
-void taiListDataNode::DecorateDataNode() {
+void taiTreeNodeList::DecorateDataNode() {
   inherited::DecorateDataNode();
   setText(0, String(num)); // in case changed via renumber
 }
 
-taiSigLink* taiListDataNode::par_link() const {
+taiSigLink* taiTreeNodeList::par_link() const {
   // in case we decide to support trees in list views, check for an item parent:
   taiSigLink* rval = inherited::par_link();
   if (rval) return rval;
@@ -56,12 +56,12 @@ taiSigLink* taiListDataNode::par_link() const {
   return NULL;
 }
 
-void taiListDataNode::setName(const String& value) {
+void taiTreeNodeList::setName(const String& value) {
   if (columnCount() >= 2) // s/always be true!
     this->setText(1, value);
 }
 
-QString taiListDataNode::text(int col) const {
+QString taiTreeNodeList::text(int col) const {
   if (col > 0)
     return inherited::text(col);
   else

@@ -26,7 +26,7 @@ int taiMemberOfLinkGroup::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiMemberOfLinkGroup::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiMemberOfLinkGroup::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetLinkGroupEditButton* rval = new taiWidgetLinkGroupEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }

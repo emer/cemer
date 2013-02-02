@@ -87,7 +87,7 @@ void taiEditorOfListCompact::Constr_ListData() {
     String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
     AddMultiRowName(i, nm, String(""));
     // note: the type better grok INLINE!!!!
-    taiWidget* mb_dat = lf_el->typ->it->GetDataRep(this, NULL, multi_body->dataGridWidget(), NULL, taiWidget::flgInline);
+    taiWidget* mb_dat = lf_el->typ->it->GetWidgetRep(this, NULL, multi_body->dataGridWidget(), NULL, taiWidget::flgInline);
     lf_el->data_el = mb_dat;
     AddMultiData(i, 1, mb_dat->GetRep());
   }

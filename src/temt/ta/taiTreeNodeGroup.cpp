@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "tabGroupTreeDataNode.h"
+#include "taiTreeNodeGroup.h"
 #include <taGroup_impl>
 #include <taiViewType>
 
@@ -21,28 +21,28 @@
 #include <taMisc>
 
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_,
-  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+taiTreeNodeGroup::taiTreeNodeGroup(taSigLinkGroup* link_, MemberDef* md_,
+  taiTreeNode* parent_, taiTreeNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((taSigLinkList*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-tabGroupTreeDataNode::tabGroupTreeDataNode(taSigLinkGroup* link_, MemberDef* md_, iTreeView* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+taiTreeNodeGroup::taiTreeNodeGroup(taSigLinkGroup* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((taSigLinkList*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabGroupTreeDataNode::init(taSigLinkGroup* link_, int dn_flags_) {
+void taiTreeNodeGroup::init(taSigLinkGroup* link_, int dn_flags_) {
 }
 
-tabGroupTreeDataNode::~tabGroupTreeDataNode()
+taiTreeNodeGroup::~taiTreeNodeGroup()
 {
 }
 
-void tabGroupTreeDataNode::CreateChildren_impl() {
+void taiTreeNodeGroup::CreateChildren_impl() {
   inherited::CreateChildren_impl();
   String tree_nm;
   for (int i = 0; i < tadata()->gp.size; ++i) {
@@ -64,7 +64,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
   }
 }
 
-taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node,
+taiTreeNode* taiTreeNodeGroup::CreateSubGroup(taiTreeNode* after_node,
   void* el)
 {
   taSubGroup* gp = &tadata()->gp;
@@ -79,13 +79,13 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
   taiSigLink* dl = taiViewType::StatGetSigLink(el, typ);
   if (!dl) return NULL; // shouldn't happen unless null...
 
-  taiTreeDataNode* dn = dl->CreateTreeDataNode(NULL, this, after_node, "",
+  taiTreeNode* dn = dl->CreateTreeDataNode(NULL, this, after_node, "",
     (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));
      //gets its name in rename
   return dn;
 }
 
-bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
+bool taiTreeNodeGroup::RebuildChildrenIfNeeded() {
   int st_idx = 0;
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
@@ -99,7 +99,7 @@ bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
   return false;
 }
 
-void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
+void taiTreeNodeGroup::SigEmit_impl(int sls, void* op1_, void* op2_) {
   inherited::SigEmit_impl(sls, op1_, op2_);
   if (!this->children_created) {
     if ((sls == SLS_GROUP_INSERT) || (sls == SLS_GROUP_REMOVE))
@@ -110,13 +110,13 @@ void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
   int idx;
   switch (sls) {
   case SLS_GROUP_INSERT: {      // op1=item, op2=item_after, null=at beginning
-    taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
+    taiTreeNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     iTreeView* tv = treeView();
     if(tv) {
       tv->EmitTreeStructToUpdate();
     }
-    taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
+    taiTreeNode* new_node = CreateSubGroup(after_node, op1_);
     // only scroll to it if parent is visible
     if(tv) {
       if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
@@ -126,7 +126,7 @@ void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
     break;
   }
   case SLS_GROUP_REMOVE: {      // op1=item -- note, item not DisOwned yet, but has been removed from list
-    taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
+    taiTreeNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
       if(tv) {
@@ -141,10 +141,10 @@ void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
   }
   case SLS_GROUP_MOVED: {       // op1=item, op2=item_after, null=at beginning
     int fm_idx;
-    taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
+    taiTreeNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
     if (!moved_node) break; // shouldn't happen
     int to_idx;
-    taiTreeDataNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
+    taiTreeNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
     if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
     ++to_idx; // after
     iTreeView* tv = treeView();
@@ -162,8 +162,8 @@ void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
   }
   case SLS_GROUPS_SWAP: {       // op1=item1, op2=item2
     int n1_idx, n2_idx;
-    taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
-    taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
+    taiTreeNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
+    taiTreeNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
     if ((!node1) || (!node2)) break; // shouldn't happen
     iTreeView* tv = treeView();
     if(tv) {
@@ -199,12 +199,12 @@ void tabGroupTreeDataNode::SigEmit_impl(int sls, void* op1_, void* op2_) {
   UpdateGroupNames();
 }
 
-void tabGroupTreeDataNode::UpdateChildNames() {
+void taiTreeNodeGroup::UpdateChildNames() {
   inherited::UpdateChildNames();
   UpdateGroupNames();
 }
 
-void tabGroupTreeDataNode::UpdateGroupNames() {
+void taiTreeNodeGroup::UpdateGroupNames() {
   String tree_nm;
   for (int i = 0; i < tadata()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
@@ -225,7 +225,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
   }
 }
 
-void tabGroupTreeDataNode::willHaveChildren_impl(bool& will) const {
+void taiTreeNodeGroup::willHaveChildren_impl(bool& will) const {
   if (tadata()->gp.size > 0) will = true;
   if (!will)
     inherited::willHaveChildren_impl(will);

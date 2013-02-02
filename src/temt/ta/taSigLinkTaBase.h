@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taSigLinkBase_h
-#define taSigLinkBase_h 1
+#ifndef taSigLinkTaBase_h
+#define taSigLinkTaBase_h 1
 
 // parent includes:
 #include <taiSigLink>
@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkBase);
+TypeDef_Of(taSigLinkTaBase);
 
-class TA_API taSigLinkBase: public taiSigLink { // SigLink for taBase objects
+class TA_API taSigLinkTaBase: public taiSigLink { // SigLink for taBase objects
 INHERITED(taiSigLink)
 public:
   taBase*               data() {return (taBase*)m_data;}
@@ -54,14 +54,14 @@ public:
   override String       GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
   override const QVariant GetColData(const KeyString& key, int role) const;
 
-  SL_FUNS(taSigLinkBase); //
+  SL_FUNS(taSigLinkTaBase); //
 
 protected:
   static void           SearchStat(taBase* tab, iDialogSearch* sd, int level = 0); // for searching
 
-  taSigLinkBase(taBase* data_, taSigLink* &link_ref_);
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
+  taSigLinkTaBase(taBase* data_, taSigLink* &link_ref_);
+  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
   override void         QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);
   override int          EditAction_impl(taiMimeSource* ms, int ea);
   override void         ChildQueryEditActions_impl(const MemberDef* par_md, taiSigLink* child,
@@ -71,4 +71,4 @@ protected:
   override void         FillContextMenu_impl(taiWidgetActions* menu);
 };
 
-#endif // taSigLinkBase_h
+#endif // taSigLinkTaBase_h

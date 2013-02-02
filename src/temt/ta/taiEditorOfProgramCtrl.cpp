@@ -165,7 +165,7 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
         mb_dat = int_rep;
       }
       else {
-        mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags_);
+        mb_dat = md->im->GetWidgetRep(this, NULL, body, NULL, flags_);
       }
       // we need to manually set the md into the dat...
       // need to check for enums, because md is the type, not the val

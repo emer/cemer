@@ -59,7 +59,7 @@ bool taiMember::handlesReadOnly() const {
   return mbr->type->it->handlesReadOnly();
 }
 
-taiWidget* taiMember::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* taiMember::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                taiType* parent_type_, int flags_, MemberDef*)
 {//note: we ignore MemberDef because we use our own
   bool ro = isReadOnly(par, host_);
@@ -109,10 +109,10 @@ taiWidget* taiMember::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gu
   return rval;
 }
 
-taiWidget* taiMember::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiMember::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  taiWidget* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_, mbr);
+  taiWidget* dat = mbr->type->it->GetWidgetRep(host_, par, gui_parent_, this, flags_, mbr);
   return dat;
 }
 
@@ -128,7 +128,7 @@ void taiMember::GetImage(taiWidget* dat, const void* base) {
   // note: we must always fall through and get image, even when invisible, for
   // when we change visibility, so the result is valid
 
-  // note: must use identical criteria for ro here as when we did GetDataRep
+  // note: must use identical criteria for ro here as when we did GetWidgetRep
   bool ro = dat->HasFlag(taiWidget::flgReadOnly) ;
 
   if (ro || !isCondEdit()) { // condedit is irrelevant
@@ -190,7 +190,7 @@ void taiMember::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   // note: we must always fall through and get value, even when invisible, for
   // when we change visibility, so the result is actually saved!
 
-  // note: must use identical criteria for ro here as when we did GetDataRep
+  // note: must use identical criteria for ro here as when we did GetWidgetRep
   bool ro = dat->HasFlag(taiWidget::flgReadOnly);
   if (ro) return; // duh!
 
@@ -321,15 +321,15 @@ taiWidget* taiMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par,
   taiWidget* rval = NULL;
 
 //  if (HasLowerBidder()) {
-//    rval = LowerBidder()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
+//    rval = LowerBidder()->GetWidgetRep(host_, rval, gui_parent_, NULL, flags_);
 //  }
 //  else
   {
     bool ro = (flags_ & taiWidget::flgReadOnly);
     if (ro && !handlesReadOnly()) {
-      rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
+      rval = taiMember::GetWidgetRep_impl(host_, par, gui_parent_, flags_, mbr);
     } else {
-      rval = GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
+      rval = GetWidgetRep_impl(host_, par, gui_parent_, flags_, mbr);
     }
   }
   return rval;

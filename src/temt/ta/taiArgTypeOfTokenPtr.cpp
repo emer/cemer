@@ -37,7 +37,7 @@ cssEl* taiArgTypeOfTokenPtr::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiWidget* taiArgTypeOfTokenPtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))

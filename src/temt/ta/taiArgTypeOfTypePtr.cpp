@@ -76,7 +76,7 @@ cssEl* taiArgTypeOfTypePtr::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiWidget* taiArgTypeOfTypePtr::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiArgTypeOfTypePtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   int flags = flags_;
   if (GetHasOption("NULL_OK"))
     flags |= taiWidget::flgNullOk;

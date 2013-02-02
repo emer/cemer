@@ -89,7 +89,7 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL)) continue; // should only happen if created manually (Bad!)
-      taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body);
+      taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
       memb_set->memb_el.Add(md);
       memb_set->data_el.Add(mb_dat);
       QWidget* data = mb_dat->GetRep();

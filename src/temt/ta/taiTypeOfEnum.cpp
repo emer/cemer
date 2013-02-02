@@ -31,7 +31,7 @@ int taiTypeOfEnum::BidForType(TypeDef* td){
   return 0;
 }
 
-taiWidget* taiTypeOfEnum::GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+taiWidget* taiTypeOfEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
   isBit = ((typ != NULL) && (typ->HasOption("BITS")));

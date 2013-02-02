@@ -17,7 +17,7 @@
 #define taTypeInfoTreeDataNode_h 1
 
 // parent includes:
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 
 // member includes:
 #include <TypeItem>
@@ -28,8 +28,8 @@
 
 TypeDef_Of(taTypeInfoTreeDataNode);
 
-class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
-INHERITED(taiTreeDataNode)
+class TA_API taTypeInfoTreeDataNode: public taiTreeNode { // node for type info, like type, enum, method, etc.
+INHERITED(taiTreeNode)
 public:
   const TypeItem::TypeInfoKinds    tik;
 
@@ -38,10 +38,10 @@ public:
   taSigLinkTypeItem*   link() const {return (taSigLinkTypeItem*)m_link;}
 
 
-  taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md, taiTreeDataNode* parent_,
-    taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+  taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md, taiTreeNode* parent_,
+    taiTreeNode* last_child_, const String& tree_name, int flags_ = 0);
   taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md, iTreeView* parent_,
-    taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+    taiTreeNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeInfoTreeDataNode();
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}

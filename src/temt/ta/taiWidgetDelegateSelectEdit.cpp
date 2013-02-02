@@ -50,7 +50,7 @@ QWidget* taiWidgetDelegateSelectEdit::createEditor(QWidget* parent,
   if(emi && emi->is_numeric) {
     MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
     if(psmd) {
-      ps_dat = psmd->im->GetDataRep(edh, NULL, rep);
+      ps_dat = psmd->im->GetWidgetRep(edh, NULL, rep);
       ps_dat->SetBase(emi);
       ps_dat->SetMemberDef(psmd);
       ps_rep = ps_dat->GetRep(); // note: rep may get replaced by rep_par

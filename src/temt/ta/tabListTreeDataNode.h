@@ -17,7 +17,7 @@
 #define tabListTreeDataNode_h 1
 
 // parent includes:
-#include <tabParTreeDataNode>
+#include <taiTreeNodeTaBasePar>
 
 // member includes:
 
@@ -27,13 +27,13 @@ class taSigLinkList;
 
 TypeDef_Of(tabListTreeDataNode);
 
-class TA_API tabListTreeDataNode: public tabParTreeDataNode {
-INHERITED(tabParTreeDataNode)
+class TA_API tabListTreeDataNode: public taiTreeNodeTaBasePar {
+INHERITED(taiTreeNodeTaBasePar)
 public:
-  tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_, taiTreeDataNode* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_, taiTreeNode* parent_,
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   tabListTreeDataNode(taSigLinkList* link_, MemberDef* md_, iTreeView* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabListTreeDataNode();
 public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}

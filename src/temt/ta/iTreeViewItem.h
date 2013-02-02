@@ -83,13 +83,15 @@ public:
 
   override void         CreateChildren();
   void                  SigEmit(int sls, void* op1, void* op2)
-    {SigEmit_impl(sls, op1, op2);} // primarily to support Refresh
-  virtual void          DecorateDataNode(); // sets icon and other visual attributes, based on state of node
+  { SigEmit_impl(sls, op1, op2); }
+  // primarily to support Refresh
+  virtual void          DecorateDataNode();
+  // sets icon and other visual attributes, based on state of node
   bool                  ShowNode(int show) const
-    {return ShowNode_impl(show, _nilString);}
-    // whether to show the node, given the context
+  { return ShowNode_impl(show, _nilString); }
+  // whether to show the node, given the context
   bool                  ShowNode(int show, const String& context) const
-    {return ShowNode_impl(show, context);}
+  { return ShowNode_impl(show, context); }
 
   iTreeViewItem(taiSigLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
@@ -115,22 +117,21 @@ public: // ITypedObject interface
 
 public: // ISigLinkClient interface
   override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2)
-    {SigEmit(sls, op1, op2);} // called when the data item has changed, esp. ex lists and groups
-  override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when it is destroying --
+  { SigEmit(sls, op1, op2); }
+  // called when the data item has changed, esp. ex lists and groups -- relays it onward
+  override void         SigLinkDestroying(taSigLink* dl);
+  // called by SigLink when it is destroying --
 
 public: // ISelectable interface
-  override taiSigLink* link() const {return ISigLinkClient::link();}
+  override taiSigLink*  link() const {return ISigLinkClient::link();}
   override MemberDef*   md() const {return m_md;}
   override ISelectable* par() const;
   override ISelectableHost* host() const;
-  override iClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
-    GuiContext sh_typ = GC_DEFAULT) const;
+  override iClipData*   GetClipDataSingle(int src_edit_action, bool for_drag,
+                                          GuiContext sh_typ = GC_DEFAULT) const;
   override iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
-//  override int                GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:
-//  override int                EditAction_impl(taiMimeSource* ms, int ea);
-//  override void               FillContextMenu_EditItems_impl(taiWidgetActions* menu, int allowed);
   override void         FillContextMenu_impl(taiWidgetActions* menu,
     GuiContext sh_typ); // this is the one to extend in inherited classes
   override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
@@ -139,9 +140,11 @@ protected:
 #ifndef __MAKETA__
 protected:
   MemberDef*            m_md; // for members, the MemberDef (otherwise NULL)
+
   override void         dropped(const QMimeData* mime, const QPoint& pos,
-    int key_mods, WhereIndicator where);
-  virtual void          SigEmit_impl(int sls, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
+                                int key_mods, WhereIndicator where);
+  virtual void          SigEmit_impl(int sls, void* op1, void* op2);
+  // called for each node when the data item has changed, esp. ex lists and groups
   override void         itemExpanded(bool value);
 
   virtual bool          ShowNode_impl(int show, const String& context) const;

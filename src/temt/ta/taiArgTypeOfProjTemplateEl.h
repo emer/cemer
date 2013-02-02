@@ -31,7 +31,7 @@ class TA_API taiArgTypeOfProjTemplateEl : public taiArgTypeOfFromGroup {
   TAI_ARGTYPE_SUBCLASS(taiArgTypeOfProjTemplateEl, taiArgTypeOfFromGroup);
 public:
   int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
   void          GetImage_impl(taiWidget* dat, const void* base);
   void          GetValue_impl(taiWidget* dat, void* base);

@@ -25,20 +25,20 @@ int taiTypeOfClass::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfClass::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* taiTypeOfClass::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                   taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
     flags_ |= taiWidget::flgInline;
-  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_, mbr);
+  return inherited::GetWidgetRep(host_, par, gui_parent_, parent_type_, flags_, mbr);
 }
 
-taiWidget* taiTypeOfClass::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfClass::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetEditButton* rval = taiWidgetEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiWidget* taiTypeOfClass::GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfClass::GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetPoly* rval = taiWidgetPoly::New(true, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

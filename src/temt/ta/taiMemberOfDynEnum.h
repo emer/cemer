@@ -34,7 +34,7 @@ class TA_API taiMemberOfDynEnum : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfDynEnum, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
   static void   UpdateDynEnumCombo(taiWidgetComboBox* cb, DynEnum& de);

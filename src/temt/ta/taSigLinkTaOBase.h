@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taSigLinkOBase_h
-#define taSigLinkOBase_h 1
+#ifndef taSigLinkTaOBase_h
+#define taSigLinkTaOBase_h 1
 
 // parent includes:
-#include <taSigLinkBase>
+#include <taSigLinkTaBase>
 
 // member includes:
 #include <taOBase>
@@ -26,18 +26,18 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkOBase);
+TypeDef_Of(taSigLinkTaOBase);
 
-class TA_API taSigLinkOBase: public taSigLinkBase { // SigLink for taOBase objects
-INHERITED(taSigLinkBase)
+class TA_API taSigLinkTaOBase: public taSigLinkTaBase { // SigLink for taOBase objects
+INHERITED(taSigLinkTaBase)
 public:
   taOBase*              data() {return (taOBase*)m_data;}
   taOBase*              data() const {return (taOBase*)m_data;}
 
   override MemberDef*   GetDataMemberDef() const;
 
-  taSigLinkOBase(taOBase* data_);
-  SL_FUNS(taSigLinkOBase); //
+  taSigLinkTaOBase(taOBase* data_);
+  SL_FUNS(taSigLinkTaOBase); //
 
 public: // for taLists, and default children (where defined) in taOBase
   virtual taList_impl*  list() {return ((taOBase*)m_data)->children_();}
@@ -45,8 +45,8 @@ public: // for taLists, and default children (where defined) in taOBase
   virtual taiSigLink*  listLink() {taList_impl* lst = list();
     return (lst) ? (taiSigLink*)lst->GetSigLink() : NULL;}
 
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
-    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags);
   override taiSigLink* GetListChild(int itm_idx);
   override taiSigLink* GetListChild(void* el);
@@ -59,4 +59,4 @@ public: // for taLists, and default children (where defined) in taOBase
 
 };
 
-#endif // taSigLinkOBase_h
+#endif // taSigLinkTaOBase_h

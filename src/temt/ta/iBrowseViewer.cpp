@@ -21,7 +21,7 @@
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 #include <taiViewType>
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 #include <taiSigLink>
 
 #include <tabMisc>
@@ -89,7 +89,7 @@ void iBrowseViewer::ApplyRoot() {
 
   // we treat root slightly different if it is true root, or is just a subsidiary named item
   // also, we assume this guy is visible, so we don't apply the filter
-  taiTreeDataNode* node;
+  taiTreeNode* node;
   if (m_root == tabMisc::root)
     node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, "root",
       dn_flags_ | iTreeViewItem::DNF_IS_MEMBER | iTreeViewItem::DNF_NO_UPDATE_NAME);

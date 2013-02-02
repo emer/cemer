@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSigLinkGroup.h"
-#include <tabGroupTreeDataNode>
+#include <taiTreeNodeGroup>
 
 
 taSigLinkGroup::taSigLinkGroup(taGroup_impl* data_)
@@ -22,14 +22,14 @@ taSigLinkGroup::taSigLinkGroup(taGroup_impl* data_)
 {
 }
 
-taiTreeDataNode* taSigLinkGroup::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taSigLinkGroup::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
-  taiTreeDataNode* rval = NULL;
+  taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new tabGroupTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeGroup(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new tabGroupTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeGroup(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

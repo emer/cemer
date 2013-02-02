@@ -32,7 +32,7 @@ class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
   TAI_TYPEBASE_SUBCLASS(taiType, taiTypeBase);
 public:
-  virtual bool          allowsInline() const    { return false; } // the type allows inline reps, obtained GetDataRepInline
+  virtual bool          allowsInline() const    { return false; } // the type allows inline reps, obtained GetWidgetRepInline
   virtual bool          requiresInline() const  { return false; } // only inline reps allowed, no member-by-member reps
   virtual bool          handlesReadOnly() const { return false; } // for types like taiString and taiInt whose editors handle readOnly
   virtual bool          isCompound() const      { return false; } // true if requires multiple edit fields
@@ -44,14 +44,14 @@ public:
   virtual int           BidForType(TypeDef*) { return 1; }
   // bid for (appropriateness) for given type
 
-  virtual taiWidget*      GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+  virtual taiWidget*      GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                    taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
   // get taiWidget rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
 
   virtual void          GetImage(taiWidget* dat, const void* base);
-  // generate the gui representation of the data -- same rules as GetDataRep
+  // generate the gui representation of the data -- same rules as GetWidgetRep
   virtual void          GetValue(taiWidget* dat, void* base);
-  // get the value from the representation -- same rules as GetDataRep
+  // get the value from the representation -- same rules as GetWidgetRep
 
   void                  SetCurParObjType(void* par_obj_base, TypeDef* pob_typ) {
     m_par_obj_base = par_obj_base;
@@ -73,11 +73,11 @@ public:
 
 protected:
   virtual bool          isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL);
-  // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
-  virtual taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  // works in both GetWidgetRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
+  virtual taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior uses a taiWidgetField type
-  virtual taiWidget*      GetDataRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
-  // default behavior same as GetDataRep_impl
+  virtual taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
+  // default behavior same as GetWidgetRep_impl
 
   virtual void          GetImage_impl(taiWidget* dat, const void* base);
   // generate the gui representation of the data --  default behavior uses a taiWidgetField type

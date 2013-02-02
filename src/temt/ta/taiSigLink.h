@@ -27,7 +27,7 @@
 class taiWidgetActions; //
 class iDialogSearch; //
 class iDataPanel; //
-class taiTreeDataNode; //
+class taiTreeNode; //
 class iTreeView; //
 class taSigLink_QObj; //
 class taiMimeSource; //
@@ -64,11 +64,11 @@ public:
     {return false;} // asks this type if we should show the md member
 
   iDataPanel*           CreateDataPanel();
-  taiTreeDataNode*      CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
-    taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
+  taiTreeNode*      CreateTreeDataNode(MemberDef* md, taiTreeNode* parent,
+    taiTreeNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a tree node as a parent
-  taiTreeDataNode*      CreateTreeDataNode(MemberDef* md, iTreeView* parent,
-    taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
+  taiTreeNode*      CreateTreeDataNode(MemberDef* md, iTreeView* parent,
+    taiTreeNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a iTreeView as a parent
 
   taiSigLink(void* data_, taSigLink* &link_ref_);
@@ -80,11 +80,11 @@ protected:
   virtual void          Assert_QObj(); // makes sure the qobj is created
   virtual void          FillContextMenu_impl(taiWidgetActions* menu) {} // this is usually the one to override
   virtual iDataPanel*   CreateDataPanel_impl(); // default uses taiView
-  taiTreeDataNode*      CreateTreeDataNode(MemberDef* md,
-    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+  taiTreeNode*      CreateTreeDataNode(MemberDef* md,
+    taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags); // combined version, only 1 xxPar is set
-  virtual taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
-    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+  virtual taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags) = 0; // NOTE: only 1 of the parents is non-null -- use that version of the taiTreeNode constructor
 
   virtual ~taiSigLink(); // we only ever implicitly destroy, when 0 clients

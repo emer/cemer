@@ -233,7 +233,7 @@ void taiEditorOfClass::Constr_Data_Labels() {
 void taiEditorOfClass::Constr_Inline() {
   data_el(0).Reset(); // should already be clear
   // specify inline flag, just to be sure
-  taiWidget* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiWidget::flgInline);
+  taiWidget* mb_dat = typ->it->GetWidgetRep(this, NULL, body, NULL, taiWidget::flgInline);
   data_el(0).Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   bool fill_hor = mb_dat->fillHor();
@@ -249,7 +249,7 @@ void taiEditorOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     MemberDef* md = ms->FastEl(i);
 
     // Create data widget
-    taiWidget* mb_dat = md->im->GetDataRep(this, NULL, body);
+    taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
     dl->Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
@@ -705,7 +705,7 @@ void taiEditorOfClass::SetCurMenuButton(MethodDef* md) {
 
   if (men_nm == "")
     men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
-       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkBase::FillContextMenu_impl
+       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also taSigLinkTaBase::FillContextMenu_impl
       // also, must work when it appears before the other label (ex "Misc", then "Actions" )
   cur_menu_but = taiWidgetActions::New(taiWidgetMenu::buttonmenu, taiWidgetMenu::normal, taiMisc::fonSmall,
             NULL, this, NULL, widget());

@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taiTreeDataNode.h"
+#include "taiTreeNode.h"
 #include <taiSigLink>
 #include <taiViewType>
 
@@ -22,30 +22,30 @@
 
 
 
-taiTreeDataNode::taiTreeDataNode(taiSigLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+taiTreeNode::taiTreeNode(taiSigLink* link_, MemberDef* md_, taiTreeNode* parent_,
+  taiTreeNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-taiTreeDataNode::taiTreeDataNode(taiSigLink* link_, MemberDef* md_, iTreeView* parent_,
-  taiTreeDataNode* last_child_, const String& tree_name, int dn_flags_)
+taiTreeNode::taiTreeNode(taiSigLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeNode* last_child_, const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void taiTreeDataNode::init(taiSigLink* link_, int dn_flags_) {
+void taiTreeNode::init(taiSigLink* link_, int dn_flags_) {
   last_child_node = NULL;
   last_member_node = NULL;
 }
 
 
-taiTreeDataNode::~taiTreeDataNode() {
+taiTreeNode::~taiTreeNode() {
 }
 
-void taiTreeDataNode::CreateChildren_impl() {
+void taiTreeNode::CreateChildren_impl() {
 //NOTE: keep willHaveChildren_impl in sync with this code
   TypeDef* base_typ = link()->GetDataTypeDef();
   MemberSpace* ms = &(base_typ->members);
@@ -74,7 +74,7 @@ void taiTreeDataNode::CreateChildren_impl() {
   last_member_node = last_child_node; //note: will be NULL if no members issued
 }
 
-void taiTreeDataNode::willHaveChildren_impl(bool& will) const {
+void taiTreeNode::willHaveChildren_impl(bool& will) const {
 //NOTE: keep CreateChildren_impl in sync with this code
 //NOTE: this typically doesn't execute for listish nodes with children
   TypeDef* base_typ = link()->GetDataTypeDef();
@@ -93,9 +93,9 @@ void taiTreeDataNode::willHaveChildren_impl(bool& will) const {
     inherited::willHaveChildren_impl(will);
 }
 
-taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
+taiTreeNode* taiTreeNode::FindChildForData(void* data, int& idx) {
   for (int i = 0; i < childCount(); ++i) {
-      taiTreeDataNode* rval = (taiTreeDataNode*)child(i);
+      taiTreeNode* rval = (taiTreeNode*)child(i);
       if (rval->link()->data() == data) {
         idx = i;
         return rval;
@@ -105,16 +105,16 @@ taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
   return NULL;
 }
 
-/*nn taiSigLink* taiTreeDataNode::par_link() const {
-  taiTreeDataNode* par = parent();
+/*nn taiSigLink* taiTreeNode::par_link() const {
+  taiTreeNode* par = parent();
   return (par) ? par->link() : NULL;
 } */
 
-/*MemberDef* taiTreeDataNode::par_md() const {
+/*MemberDef* taiTreeNode::par_md() const {
 //TODO: this is a fairly broken concept -- i don't even think the clip system
 // needs to know about par mds
 //TODO: following is the gui one, we should be returning the data one
-  taiTreeDataNode* par = parent();
+  taiTreeNode* par = parent();
   return (par) ? par->md() : NULL;
 } */
 

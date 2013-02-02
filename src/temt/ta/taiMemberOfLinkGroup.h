@@ -30,7 +30,7 @@ class TA_API taiMemberOfLinkGroup : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfLinkGroup, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiWidget* dat, const void* base);
   override void GetMbrValue(taiWidget* dat, void* base, bool& first_diff);

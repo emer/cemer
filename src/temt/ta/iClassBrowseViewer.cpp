@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iClassBrowseViewer.h"
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 #include <taSigLinkClass>
 #include <MainWindowViewer>
 
@@ -30,7 +30,7 @@ iClassBrowseViewer::~iClassBrowseViewer()
 }
 
 void iClassBrowseViewer::mnuNewBrowser(iAction* mel) {
-  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
+  taiTreeNode* node = (taiTreeNode*)(mel->usr_data.toPtr());
   taSigLinkClass* dl = static_cast<taSigLinkClass*>(node->link());
   MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(dl->data(),
      dl->GetDataTypeDef(), dl->GetDataMemberDef());

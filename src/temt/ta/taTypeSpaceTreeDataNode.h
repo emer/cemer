@@ -17,7 +17,7 @@
 #define taTypeSpaceTreeDataNode_h 1
 
 // parent includes:
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 
 // member includes:
 #include <TypeItem>
@@ -30,8 +30,8 @@ class taSigLinkTypeItem;
 
 TypeDef_Of(taTypeSpaceTreeDataNode);
 
-class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
-INHERITED(taiTreeDataNode)
+class TA_API taTypeSpaceTreeDataNode: public taiTreeNode { // node for spaces, ex. enumspace, typespace, etc.
+INHERITED(taiTreeNode)
 public:
   const TypeItem::TypeInfoKinds    tik;
 
@@ -48,10 +48,10 @@ public:
   bool                  ShowMethod(MethodDef* md) const;
     // determine whether to show, ex. based on a filter
 
-  taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, MemberDef* md, taiTreeDataNode* parent_,
-    taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+  taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, MemberDef* md, taiTreeNode* parent_,
+    taiTreeNode* last_child_, const String& tree_name, int flags_ = 0);
   taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, MemberDef* md, iTreeView* parent_,
-    taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+    taiTreeNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taTypeSpaceTreeDataNode();
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}
@@ -59,7 +59,7 @@ public: // ISigLinkClient interface
 protected:
   override void         willHaveChildren_impl(bool& will) const;
   override void         CreateChildren_impl(); // called by the Node when it needs to create its children
-  void                  CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
+  void                  CreateListItem(taiTreeNode* par_node, taiTreeNode* after_node, void* el);
 private:
   void                  init(taSigLinkTypeItemSpace* link_, int flags_); // #IGNORE
 };

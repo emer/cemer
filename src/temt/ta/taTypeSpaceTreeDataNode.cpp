@@ -21,8 +21,8 @@
 
 
 taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, 
-  MemberDef* md, taiTreeDataNode* parent_, 
-  taiTreeDataNode* last_child_, const String& tree_name, int flags_)
+  MemberDef* md, taiTreeNode* parent_, 
+  taiTreeNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
   init(link_, flags_);
@@ -30,7 +30,7 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_,
 
 taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taSigLinkTypeItemSpace* link_, 
   MemberDef* md, iTreeView* parent_, 
-  taiTreeDataNode* last_child_, const String& tree_name, int flags_)
+  taiTreeNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
   init(link_, flags_);
@@ -54,7 +54,7 @@ taSigLinkTypeItem* taTypeSpaceTreeDataNode::child_link(int idx) {
 void taTypeSpaceTreeDataNode::CreateChildren_impl() {
 //  inherited::CreateChildren();
   String tree_nm;
-  taiTreeDataNode* last_child_node = NULL;
+  taiTreeNode* last_child_node = NULL;
   int flags = 0;
     switch (tik) {
     case TypeItem::TIK_MEMBERSPACE:

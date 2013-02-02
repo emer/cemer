@@ -31,7 +31,7 @@ class TA_API taiTypeOfList : public taiTypeOfClass {
 public:
   int           BidForType(TypeDef* td);
 protected:
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
 };
 

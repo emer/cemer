@@ -26,17 +26,17 @@ int taiMemberOfTypeDefault::BidForMember(MemberDef*, TypeDef*) {
   return 0;
 }
 
-taiWidget* taiMemberOfTypeDefault::GetDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+taiWidget* taiMemberOfTypeDefault::GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
                                        taiType*, int flags_, MemberDef* mbr)
 {
   taiWidgetPlusToggle* rval = new taiWidgetPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   taiWidget* rdat;
   if (HasLowerBidder()) {
-    rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
+    rdat = LowerBidder()->GetWidgetRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
   }
   else {
-    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr);
+    rdat = taiMember::GetWidgetRep_impl(host_, rval, rval->GetRep(), flags_, mbr);
   }
   rval->data = rdat;
   rval->AddChildWidget(rdat->GetRep());

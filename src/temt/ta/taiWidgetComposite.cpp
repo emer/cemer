@@ -88,7 +88,7 @@ void taiWidgetComposite::AddChildMember(MemberDef* md) {
   }
   // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
-  taiWidget* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
+  taiWidget* mb_dat = md->im->GetWidgetRep(host, this, wid, NULL, child_flags); //adds to list
   //nn, done by im mb_dat->SetMemberDef(md);
 
   // get caption

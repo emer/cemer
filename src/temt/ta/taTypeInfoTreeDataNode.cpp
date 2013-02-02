@@ -21,8 +21,8 @@
 TypeDef_Of(EnumDef);
 
 taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md,
-  taiTreeDataNode* parent_, 
-  taiTreeDataNode* last_child_,  const String& tree_name, int flags_)
+  taiTreeNode* parent_, 
+  taiTreeNode* last_child_,  const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
   init(link_, flags_);
@@ -30,7 +30,7 @@ taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberD
 
 taTypeInfoTreeDataNode::taTypeInfoTreeDataNode(taSigLinkTypeItem* link_, MemberDef* md,
   iTreeView* parent_, 
-  taiTreeDataNode* last_child_, const String& tree_name, int flags_)
+  taiTreeNode* last_child_, const String& tree_name, int flags_)
 :inherited(link_, md, parent_, last_child_, tree_name, flags_), tik(link_->tik)
 {
   init(link_, flags_);

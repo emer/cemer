@@ -24,7 +24,7 @@ int taiTypeOfList::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiWidget* taiTypeOfList::GetDataRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiWidget* taiTypeOfList::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiWidgetListEditButton *rval = new taiWidgetListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

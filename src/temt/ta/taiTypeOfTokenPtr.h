@@ -39,12 +39,12 @@ public:
   TypeDef*      GetMinType(const void* base);
   int           BidForType(TypeDef* td);
 protected:
-  taiWidget*      GetDataRep_impl(IWidgetHost* host_, taiWidget* par,
+  taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiWidget* dat, const void* base);
   void          GetValue_impl(taiWidget* dat, void* base);
 
-  Mode          mode; // set during first GetDataRep (is garbage until then)
+  Mode          mode; // set during first GetWidgetRep (is garbage until then)
 };
 
 #endif // taiTypeOfTokenPtr_h

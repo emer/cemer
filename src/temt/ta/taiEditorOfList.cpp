@@ -97,7 +97,7 @@ void taiEditorOfList::Constr_ListData() {
       int lst_idx = lst_membs.FindEl(md->name);
       if (lst_idx < 0) continue; //note: shouldn't happen!!!
       cur_row = lst_idx; 
-      taiWidget* mb_dat = md->im->GetDataRep(this, NULL, multi_body->dataGridWidget());
+      taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, multi_body->dataGridWidget());
       lf_el->memb_el.Add(md);
       lf_el->data_el.Add(mb_dat);
       //TODO: should get desc for this member, to add to tooltip for rep

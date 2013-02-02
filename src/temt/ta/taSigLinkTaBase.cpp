@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taSigLinkBase.h"
+#include "taSigLinkTaBase.h"
 #include <taBase>
 #include <TypeDef>
 #include <MethodDef>
@@ -22,19 +22,19 @@
 #include <taiWidgetActions_List>
 #include <iTreeViewItem>
 #include <iTreeView>
-#include <tabTreeDataNode>
+#include <taiTreeNodeTaBase>
 #include <iDialogSearch>
 #include <taMisc>
 #include <taList_impl>
 #include <taGroup_impl>
 #include <taArray_impl>
 
-taSigLinkBase::taSigLinkBase(taBase* data_, taSigLink* &link_ref_)
+taSigLinkTaBase::taSigLinkTaBase(taBase* data_, taSigLink* &link_ref_)
   : inherited((void*)data_, link_ref_)
 {
 }
 
-void taSigLinkBase::ChildQueryEditActions_impl(const MemberDef* par_md, taiSigLink* child,
+void taSigLinkTaBase::ChildQueryEditActions_impl(const MemberDef* par_md, taiSigLink* child,
   taiMimeSource* ms,  int& allowed, int& forbidden)
 {
   if (child) {
@@ -47,7 +47,7 @@ void taSigLinkBase::ChildQueryEditActions_impl(const MemberDef* par_md, taiSigLi
     data()->ChildQueryEditActions(par_md, NULL, ms, allowed, forbidden);
 }
 
-int taSigLinkBase::ChildEditAction_impl(const MemberDef* par_md, taiSigLink* child,
+int taSigLinkTaBase::ChildEditAction_impl(const MemberDef* par_md, taiSigLink* child,
   taiMimeSource* ms, int ea)
 {
   int rval = 0;
@@ -64,65 +64,65 @@ int taSigLinkBase::ChildEditAction_impl(const MemberDef* par_md, taiSigLink* chi
   return rval;
 }
 
-taiTreeDataNode* taSigLinkBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+taiTreeNode* taSigLinkTaBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+  iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
-  taiTreeDataNode* rval = NULL;
+  taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new tabTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTaBase(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new tabTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTaBase(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 
-String taSigLinkBase::GetColText(const KeyString& key, int itm_idx) const {
+String taSigLinkTaBase::GetColText(const KeyString& key, int itm_idx) const {
   return data()->GetColText(key, itm_idx);
 }
 
-const QVariant taSigLinkBase::GetColData(const KeyString& key, int role) const {
+const QVariant taSigLinkTaBase::GetColData(const KeyString& key, int role) const {
   return data()->GetColData(key, role);
 }
 
-String taSigLinkBase::GetTypeDecoKey() const {
+String taSigLinkTaBase::GetTypeDecoKey() const {
   return data()->GetTypeDecoKey();
 }
 
-String taSigLinkBase::GetStateDecoKey() const {
+String taSigLinkTaBase::GetStateDecoKey() const {
   return data()->GetStateDecoKey();
 }
 
-bool taSigLinkBase::isEnabled() const {
+bool taSigLinkTaBase::isEnabled() const {
   return data()->GetEnabled();
 }
 
-void taSigLinkBase::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) {
+void taSigLinkTaBase::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) {
   data()->QueryEditActions(ms, allowed, forbidden);
 }
 
-int taSigLinkBase::EditAction_impl(taiMimeSource* ms, int ea) {
+int taSigLinkTaBase::EditAction_impl(taiMimeSource* ms, int ea) {
   return data()->EditAction(ms, ea);
 }
 
-taiSigLink* taSigLinkBase::ownLink() const {
+taiSigLink* taSigLinkTaBase::ownLink() const {
   if (!m_data) return NULL;
   taBase* own = ((taBase*)m_data)->GetOwner();
   return (own) ? (taiSigLink*)own->GetSigLink() : NULL;
 }
 
 /*
-void taSigLinkBase::fileClose() {
+void taSigLinkTaBase::fileClose() {
   data()->Close();
 }
 
-void taSigLinkBase::fileOpen() {
+void taSigLinkTaBase::fileOpen() {
   data()->CallFun("Load");
 }
 
-void taSigLinkBase::fileSave() {
+void taSigLinkTaBase::fileSave() {
   data()->CallFun("Save");
 }
 
-void taSigLinkBase::fileSaveAs() {
+void taSigLinkTaBase::fileSaveAs() {
   data()->CallFun("SaveAs");
 }*/
 
@@ -143,7 +143,7 @@ Browser/gui framework items
 ------
 
 */
-void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
+void taSigLinkTaBase::FillContextMenu_impl(taiWidgetActions* menu) {
   inherited::FillContextMenu_impl(menu);
 
   TypeDef* typ = GetDataTypeDef();
@@ -233,11 +233,11 @@ void taSigLinkBase::FillContextMenu_impl(taiWidgetActions* menu) {
 
 }
 
-TypeDef* taSigLinkBase::GetDataTypeDef() const {
+TypeDef* taSigLinkTaBase::GetDataTypeDef() const {
   return data()->GetTypeDef();
 }
 
-bool taSigLinkBase::GetIcon(int bmf, int& flags_supported, QIcon& ic) {
+bool taSigLinkTaBase::GetIcon(int bmf, int& flags_supported, QIcon& ic) {
   const QPixmap* pm = data()->GetDataNodeBitmap(bmf, flags_supported);
   if (pm) {
     QIcon tmp(*pm);
@@ -246,17 +246,17 @@ bool taSigLinkBase::GetIcon(int bmf, int& flags_supported, QIcon& ic) {
   } else return false;
 }
 
-String taSigLinkBase::GetName() const {
+String taSigLinkTaBase::GetName() const {
   return data()->GetName();
 }
 
-String taSigLinkBase::GetDisplayName() const {
+String taSigLinkTaBase::GetDisplayName() const {
   MemberDef* md = GetDataMemberDef();
   if (md) return md->name;
   else    return data()->GetDisplayName();
 }
 
-bool taSigLinkBase::HasChildItems() {
+bool taSigLinkTaBase::HasChildItems() {
   // we only search up until we can say yes...
   MemberSpace* ms = &GetDataTypeDef()->members;
   for (int i = 0; i < ms->size; ++ i) {
@@ -266,7 +266,7 @@ bool taSigLinkBase::HasChildItems() {
   return false;
 }
 
-int taSigLinkBase::checkConfigFlags() const {
+int taSigLinkTaBase::checkConfigFlags() const {
   return (data()->baseFlags() & taBase::INVALID_MASK);
 }
 
@@ -331,7 +331,7 @@ static void AddHit(int item_type, const String& probedx, String& hits) {
   hits += probedx;
 }
 
-void taSigLinkBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
+void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
   if (sd->stop()) return; // user hit stop
   const String_PArray& targs = sd->targets();
   const String_PArray& kicks = sd->kickers();
@@ -487,7 +487,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
       if (chld->GetOwner() != tab) continue;
     }
     // note: chld will have a value by here
-    taSigLinkBase::SearchStat(chld, sd, level+1);
+    taSigLinkTaBase::SearchStat(chld, sd, level+1);
   }
 
   // only for Lists:
@@ -499,7 +499,7 @@ void taSigLinkBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
       if(!itm) continue;
        // for guys we own (not links; prevents loops)
       if (itm->GetOwner() != tab) continue;
-      taSigLinkBase::SearchStat(itm, sd, level+1);
+      taSigLinkTaBase::SearchStat(itm, sd, level+1);
     }
 
     // only for Groups:
@@ -509,18 +509,18 @@ void taSigLinkBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
         if (sd->stop()) return; // user hit stop
         taGroup_impl* gp = tag->gp.FastEl(i);
         if(!gp) continue;
-        taSigLinkBase::SearchStat(gp, sd, level+1);
+        taSigLinkTaBase::SearchStat(gp, sd, level+1);
       }
     }
   }
 }
 
 
-void taSigLinkBase::Search(iDialogSearch* dlg) {
-  taSigLinkBase::SearchStat(data(), dlg);
+void taSigLinkTaBase::Search(iDialogSearch* dlg) {
+  taSigLinkTaBase::SearchStat(data(), dlg);
 }
 
-bool taSigLinkBase::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
+bool taSigLinkTaBase::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
   TypeDef* td = md->type;
   if (td == NULL) return false; // shouldn't happen...
   // should just be able to completely delegate to the memberdef...

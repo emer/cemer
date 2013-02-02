@@ -13,25 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef tabParTreeDataNode_h
-#define tabParTreeDataNode_h 1
+#ifndef taiTreeNodeTaBasePar_h
+#define taiTreeNodeTaBasePar_h 1
 
 // parent includes:
-#include <tabTreeDataNode>
+#include <taiTreeNodeTaBase>
 
 // member includes:
-#include <taSigLinkOBase>
+#include <taSigLinkTaOBase>
 
 // declare all other types mentioned but not required to include:
-class taiTreeDataNode; //
+class taiTreeNode; //
 
 
-TypeDef_Of(tabParTreeDataNode);
+TypeDef_Of(taiTreeNodeTaBasePar);
 
-class TA_API tabParTreeDataNode: public tabTreeDataNode {
-INHERITED(tabTreeDataNode)
+class TA_API taiTreeNodeTaBasePar: public taiTreeNodeTaBase {
+INHERITED(taiTreeNodeTaBase)
 public:
-  taList_impl*          list() const {return ((taSigLinkOBase*)m_link)->list();}
+  taList_impl*          list() const {return ((taSigLinkTaOBase*)m_link)->list();}
 
   void                  AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
   override void         UpdateChildNames(); // #IGNORE update child names of the indicated node
@@ -39,24 +39,24 @@ public:
   virtual bool          RebuildChildrenIfNeeded();
   // checks if child count != list count, and rebuilds children if so
 
-  tabParTreeDataNode(taSigLinkOBase* link_, MemberDef* md_, taiTreeDataNode* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabParTreeDataNode(taSigLinkOBase* link_, MemberDef* md_, iTreeView* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  ~tabParTreeDataNode();
+  taiTreeNodeTaBasePar(taSigLinkTaOBase* link_, MemberDef* md_, taiTreeNode* parent_,
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
+  taiTreeNodeTaBasePar(taSigLinkTaOBase* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~taiTreeNodeTaBasePar();
 public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_tabParTreeDataNode;}
+  override TypeDef*     GetTypeDef() const {return &TA_taiTreeNodeTaBasePar;}
 protected:
-  taiTreeDataNode*      last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
+  taiTreeNode*      last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
   override void         SigEmit_impl(int sls, void* op1, void* op2);
   override void         CreateChildren_impl();
-  taiTreeDataNode*      CreateListItem(taiTreeDataNode* par_node,
-    taiTreeDataNode* after, taBase* el);
+  taiTreeNode*      CreateListItem(taiTreeNode* par_node,
+    taiTreeNode* after, taBase* el);
   void                  UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
   override void         willHaveChildren_impl(bool& will) const;
 private:
-  void                  init(taSigLinkOBase* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkTaOBase* link_, int dn_flags_); // #IGNORE
 };
 
-#endif // tabParTreeDataNode_h
+#endif // taiTreeNodeTaBasePar_h

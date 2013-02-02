@@ -13,37 +13,37 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef tabTreeDataNode_h
-#define tabTreeDataNode_h 1
+#ifndef taiTreeNodeTaBase_h
+#define taiTreeNodeTaBase_h 1
 
 // parent includes:
-#include <taiTreeDataNode>
+#include <taiTreeNode>
 
 // member includes:
-#include <taSigLinkBase>
+#include <taSigLinkTaBase>
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(tabTreeDataNode);
+TypeDef_Of(taiTreeNodeTaBase);
 
-class TA_API tabTreeDataNode: public taiTreeDataNode {
-INHERITED(taiTreeDataNode)
+class TA_API taiTreeNodeTaBase: public taiTreeNode {
+INHERITED(taiTreeNode)
 public:
-  taBase*               tadata() {return ((taSigLinkBase*)m_link)->data();}
-  taSigLinkBase*          link() const {return (taSigLinkBase*)m_link;}
+  taBase*               tadata() {return ((taSigLinkTaBase*)m_link)->data();}
+  taSigLinkTaBase*          link() const {return (taSigLinkTaBase*)m_link;}
 
-  tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, taiTreeDataNode* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabTreeDataNode(taSigLinkBase* link_, MemberDef* md_, iTreeView* parent_,
-    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  ~tabTreeDataNode();
+  taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, taiTreeNode* parent_,
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
+  taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~taiTreeNodeTaBase();
 public: // ISigLinkClient interface
 //  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_tabTreeDataNode;}
+  override TypeDef*     GetTypeDef() const {return &TA_taiTreeNodeTaBase;}
 protected:
   override void         SigEmit_impl(int sls, void* op1, void* op2);
 private:
-  void                  init(taSigLinkBase* link_, int dn_flags_); // #IGNORE
+  void                  init(taSigLinkTaBase* link_, int dn_flags_); // #IGNORE
 };
 
-#endif // tabTreeDataNode_h
+#endif // taiTreeNodeTaBase_h
