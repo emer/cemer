@@ -16,7 +16,7 @@
 #include "iT3ViewspaceWidget.h"
 #include <iSoSelectionEvent>
 #include <T3ExaminerViewer>
-#include <iT3DataViewFrame>
+#include <iT3Panel>
 #include <iVec2i>
 #include <T3DataView>
 #include <taiSigLink>
@@ -50,7 +50,7 @@ void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
   t3dv->sel_so->touch(); // to redraw
 }
 
-iT3ViewspaceWidget::iT3ViewspaceWidget(iT3DataViewFrame* parent)
+iT3ViewspaceWidget::iT3ViewspaceWidget(iT3Panel* parent)
 :QWidget(parent)
 {
   m_i_data_frame = parent;

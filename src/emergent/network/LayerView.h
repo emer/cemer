@@ -56,7 +56,7 @@ public:
   virtual void  DispOutputName();
   // #BUTTON #VIEWMENU display contents of output_name on layer instead of unit values
   virtual void  UseViewer(T3DataViewMain* viewer);
-  // #BUTTON #VIEWMENU #SCOPE_T3DataViewFrame replace usual unit view display with display from viewer (only displays frame of layer, and aligns given viewer with layer)
+  // #BUTTON #VIEWMENU #SCOPE_T3Panel replace usual unit view display with display from viewer (only displays frame of layer, and aligns given viewer with layer)
 
   virtual void          UpdateAutoScale(bool& updated);
   virtual void          SetHighlightSpec(BaseSpec* spec);

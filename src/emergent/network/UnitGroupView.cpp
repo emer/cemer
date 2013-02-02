@@ -22,7 +22,7 @@
 #include <LayerView>
 #include <T3Color>
 #include <MemberDef>
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <T3ExaminerViewer>
 
 #include <taMisc>
@@ -516,7 +516,7 @@ void UnitGroupView::Render_impl_blocks() {
       un_txt = node_so->getUnitText();
       build_text = true;
       node_so->addChild(un_txt);
-      T3DataViewFrame* fr = GetFrame();
+      T3Panel* fr = GetFrame();
       iColor txtcolr = fr->GetTextColor();
       SoBaseColor* bc = new SoBaseColor;
       bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
@@ -874,7 +874,7 @@ void UnitGroupView::Render_impl_outnm() {
   if(!un_txt) {
     un_txt = node_so->getUnitText();
     node_so->addChild(un_txt);
-    T3DataViewFrame* fr = GetFrame();
+    T3Panel* fr = GetFrame();
     iColor txtcolr = fr->GetTextColor();
     SoBaseColor* bc = new SoBaseColor;
     bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());

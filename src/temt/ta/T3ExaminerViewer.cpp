@@ -16,8 +16,8 @@
 #include "T3ExaminerViewer.h"
 #include <iT3ViewspaceWidget>
 #include <T3QuarterWidget>
-#include <iT3DataViewFrame>
-#include <T3DataViewFrame>
+#include <iT3Panel>
+#include <T3Panel>
 #include <iContextMenuButton>
 
 #include <iThumbWheel>
@@ -217,11 +217,11 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 
 }
 
-T3DataViewFrame* T3ExaminerViewer::GetFrame() {
+T3Panel* T3ExaminerViewer::GetFrame() {
   if(!t3vw) return NULL;
-  iT3DataViewFrame* idvf = t3vw->i_data_frame();
+  iT3Panel* idvf = t3vw->i_data_frame();
   if(!idvf) return NULL;
-  T3DataViewFrame* dvf = idvf->viewer();
+  T3Panel* dvf = idvf->viewer();
   return dvf;
 }
 
@@ -484,13 +484,13 @@ void T3ExaminerViewer::seekbuttonClicked() {
 }
 
 void T3ExaminerViewer::snapshotbuttonClicked() {
-  T3DataViewFrame* dvf = GetFrame();
+  T3Panel* dvf = GetFrame();
   if(!dvf) return;
   dvf->CallFun("SaveImageAs");
 }
 
 void T3ExaminerViewer::printbuttonClicked() {
-  T3DataViewFrame* dvf = GetFrame();
+  T3Panel* dvf = GetFrame();
   if(!dvf) return;
   dvf->PrintImage();
 }
@@ -760,7 +760,7 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
 //     taMisc::Info("set interact to:", String(onoff));
 // #endif
     if(re_render) {
-      T3DataViewFrame* dvf = GetFrame();
+      T3Panel* dvf = GetFrame();
       if(dvf) {
         dvf->Render();
       }

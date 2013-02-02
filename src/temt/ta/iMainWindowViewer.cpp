@@ -40,7 +40,7 @@
 #include <taProject>
 #include <iSplitter>
 #include <iTabView>
-#include <T3DataViewer>
+#include <T3TabViewer>
 #include <iHelpBrowser>
 #include <iTextBrowser>
 #include <iWidget_List>
@@ -659,20 +659,20 @@ void iMainWindowViewer::Constr_ControlMenu()
 
 void iMainWindowViewer::Constr_ToolsMenu()
 {
-  toolsClassBrowseAction = AddAction(new iAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
-  toolsTypeBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsTypeBrowseAction"));
+  toolsHelpBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsHelpBrowseAction"));
+  toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
 
   // Build menu items.
   if (toolsMenu) {
-    toolsMenu->AddAction(toolsClassBrowseAction);
-    toolsMenu->AddAction(toolsTypeBrowseAction);
+    toolsMenu->AddAction(toolsHelpBrowseAction);
+    toolsMenu->AddAction(toolsTypeInfoBrowseAction);
   }
 
   // Make connetions.
-  connect(toolsClassBrowseAction, SIGNAL(triggered()),
-    this, SLOT(toolsClassBrowser()));
-  connect(toolsTypeBrowseAction, SIGNAL(triggered()),
-    this, SLOT(toolsTypeBrowser()));
+  connect(toolsHelpBrowseAction, SIGNAL(triggered()),
+    this, SLOT(toolsHelpBrowser()));
+  connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
+    this, SLOT(toolsTypeInfoBrowser()));
 }
 
 void iMainWindowViewer::Constr_HelpMenu()
@@ -1127,7 +1127,7 @@ bool iMainWindowViewer::FocusMiddlePanel() {
 bool iMainWindowViewer::FocusRightViewer() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
-  T3DataViewer* pv = db->GetRightViewer();
+  T3TabViewer* pv = db->GetRightViewer();
   if(!pv || !pv->widget()) return false;
   if(pv->tabBar())
     pv->tabBar()->setFocus();
@@ -1179,7 +1179,7 @@ bool iMainWindowViewer::ShiftCurTabRight() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
   if(cur_main_focus == RIGHT_VIEWER) {
-    T3DataViewer* pv = db->GetRightViewer();
+    T3TabViewer* pv = db->GetRightViewer();
     if(pv && pv->tabBar()) {
       pv->tabBar()->selectNextTab();
     }
@@ -1197,7 +1197,7 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
   if(cur_main_focus == RIGHT_VIEWER) {
-    T3DataViewer* pv = db->GetRightViewer();
+    T3TabViewer* pv = db->GetRightViewer();
     if(pv && pv->tabBar()) {
       pv->tabBar()->selectPrevTab();
     }
@@ -1811,13 +1811,13 @@ void iMainWindowViewer::this_ToolBarSelect(iAction* me) {
   }
 }
 
-void iMainWindowViewer::toolsClassBrowser() {
-  MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(&taMisc::types, &TA_TypeSpace);
+void iMainWindowViewer::toolsTypeInfoBrowser() {
+  MainWindowViewer* brows = MainWindowViewer::NewTypeInfoBrowser(&taMisc::types, &TA_TypeSpace);
   if (brows == NULL) return;
   brows->ViewWindow();
 }
 
-void iMainWindowViewer::toolsTypeBrowser() {
+void iMainWindowViewer::toolsHelpBrowser() {
  // iHelpBrowser* tdd =
   iHelpBrowser::instance();
 }

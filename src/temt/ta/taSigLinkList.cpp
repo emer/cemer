@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSigLinkList.h"
-#include <tabListTreeDataNode>
+#include <taiTreeNodeList>
 
 
 taSigLinkList::taSigLinkList(taList_impl* data_)
@@ -27,9 +27,9 @@ taiTreeNode* taSigLinkList::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* 
 {
   taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new tabListTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeList(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new tabListTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeList(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

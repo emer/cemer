@@ -15,9 +15,9 @@
 
 #include "NewViewHelper.h"
 
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <T3DataView>
-#include <T3DataViewer>
+#include <T3TabViewer>
 #include <taBase>
 
 TypeDef_Of(taProject);
@@ -28,7 +28,7 @@ TypeDef_Of(taProject);
 
 // Ctor
 NewViewHelper::NewViewHelper(
-  T3DataViewFrame *&fr, taBase *obj, const char *objName)
+  T3Panel *&fr, taBase *obj, const char *objName)
   : fr_(fr)
   , obj_(obj)
   , objName_(objName)
@@ -95,7 +95,7 @@ bool NewViewHelper::getFrame() {
   // If an existing frame wasn't provided,
   if (!fr_) {
     // Then create a new one to put the object in.
-    fr_ = T3DataViewer::GetBlankOrNewT3DataViewFrame(obj_);
+    fr_ = T3TabViewer::GetBlankOrNewT3Panel(obj_);
   }
   
   // Return true to indicate that a frame was successfully identified

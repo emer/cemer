@@ -55,7 +55,7 @@ void T3DataViewPar::InsertItem(T3DataView* item, T3DataView* after) {
   children.Insert(item, where);
 } */
 
-void T3DataViewPar::OnWindowBind(iT3DataViewFrame* vw) {
+void T3DataViewPar::OnWindowBind(iT3Panel* vw) {
   inherited::OnWindowBind(vw);
   for (int i = 0; i < children.size; ++i) {
     T3DataView* item = children.FastEl(i);

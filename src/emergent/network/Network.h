@@ -49,7 +49,7 @@
 class ProjectBase; //
 class NetView; //
 class BrainView; //
-class T3DataViewFrame; //
+class T3Panel; //
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -355,9 +355,9 @@ public:
   // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of given variable (if empty, currently viewed variable in netview is used): assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
 
 #ifdef TA_GUI
-  virtual NetView* NewView(T3DataViewFrame* fr = NULL);
+  virtual NetView* NewView(T3Panel* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
-  virtual NetView* FindMakeView(T3DataViewFrame* fr = NULL);
+  virtual NetView* FindMakeView(T3Panel* fr = NULL);
   // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
   virtual NetView* FindView();
   // #CAT_Display find (first) existing viewer of this network
@@ -377,7 +377,7 @@ public:
   // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
   virtual NetViewObj* NewGlassBrain();
   // #MENU #MENU_ON_Structure #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
-  virtual BrainView* NewBrainView(T3DataViewFrame* fr = NULL);
+  virtual BrainView* NewBrainView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display Create an fMRI-style brain visualization to show activations in defined brain areas.
   virtual void  AssignVoxels();
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display assign voxel coordinates to units in the network according to current atlas_name on the Network and brain_area specifications on the Layers

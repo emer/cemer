@@ -30,8 +30,8 @@ class TA_API T3DataViewRoot: public T3DataViewPar {
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
-friend class iT3DataViewFrame;
-friend class T3DataViewFrame;
+friend class iT3Panel;
+friend class T3Panel;
 public:
   ISelectableHost*      host; // #IGNORE ss/b set by owner
 

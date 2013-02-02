@@ -30,7 +30,7 @@
 // declare all other types mentioned but not required to include:
 class SoSeparator; //
 class T3ExaminerViewer; //
-class iT3DataViewFrame; //
+class iT3Panel; //
 class SoNode; //
 class iSoSelectionEvent; //
 class QScrollBar; //
@@ -70,9 +70,9 @@ public:
   void                  deleteScene(); // deletes the scene -- usually only called internally, not by clients of this component
   void                  ContextMenuRequested(const QPoint& pos); // #IGNORE called from render area
 
-  inline iT3DataViewFrame* i_data_frame() const {return m_i_data_frame;}
+  inline iT3Panel* i_data_frame() const {return m_i_data_frame;}
 
-  iT3ViewspaceWidget(iT3DataViewFrame* parent);
+  iT3ViewspaceWidget(iT3Panel* parent);
   iT3ViewspaceWidget(QWidget* parent = NULL);
   ~iT3ViewspaceWidget();
 
@@ -98,7 +98,7 @@ protected:
   SoSeparatorPtr        m_root_so; //
   SoNode*               m_scene; // actual top item set by user
   SelectionMode         m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
-  iT3DataViewFrame*     m_i_data_frame; // #IGNORE our parent object
+  iT3Panel*     m_i_data_frame; // #IGNORE our parent object
   taDataViewRef         m_top_view; // #IGNORE topmost view obj, for show/hide ctrl
   signed char           m_last_vis; // #IGNORE keeps track of last hide/show state, to avoid spurious calls when several in a row: -1=hide, 0=init, 1=show
 

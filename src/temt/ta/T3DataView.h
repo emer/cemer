@@ -29,10 +29,10 @@
 class T3Node; // 
 class T3DataViewRoot; //
 class T3ExaminerViewer; // #IGNORE
-class iT3DataViewFrame; // #IGNORE
+class iT3Panel; // #IGNORE
 class T3NodePtr; //
 class SoPath; // #IGNORE
-class T3DataViewFrame;
+class T3Panel;
 
 SoPtr_Of(T3Node);
 
@@ -53,7 +53,7 @@ TypeDef_Of(T3DataView);
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // #NO_TOKENS #VIRT_BASE base class for 3d-based DataView objects
 INHERITED(taDataView)
-friend class T3DataViewer;
+friend class T3TabViewer;
 friend class T3DataView_List;
 friend class T3DataViewPar;
 public:
@@ -89,8 +89,8 @@ public:
   override bool         isMapped() const; // only true if in gui mode and gui stuff exists
   T3Node*               node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
-  virtual T3DataViewFrame* GetFrame() const;
-  // get the T3DataViewFrame that owns us
+  virtual T3Panel* GetFrame() const;
+  // get the T3Panel that owns us
   virtual T3ExaminerViewer* GetViewer() const;
   // #IGNORE get the Viewer that contains us
 
@@ -105,7 +105,7 @@ public:
   override void         ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
   override void         ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
 
-  virtual void          OnWindowBind(iT3DataViewFrame* vw);
+  virtual void          OnWindowBind(iT3Panel* vw);
   // #IGNORE called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
   virtual void          ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void          UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
@@ -135,7 +135,7 @@ protected:
   override void         ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
-  virtual void          OnWindowBind_impl(iT3DataViewFrame* vw) {} // override for something this class
+  virtual void          OnWindowBind_impl(iT3Panel* vw) {} // override for something this class
   override void         Clear_impl();
   virtual void          ReInit_impl(); // default just calls clear() on the so, if it exists
   override void         Render_pre(); //

@@ -18,13 +18,13 @@
 #include <DataTable>
 #include <iGraphTableView_Panel>
 #include <taSigLinkItr>
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <MainWindowViewer>
 #include <NewViewHelper>
 #include <T3ExaminerViewer>
 #include <T3GraphLine>
 #include <T3GraphViewNode>
-#include <iT3DataViewFrame>
+#include <iT3Panel>
 #include <T3Axis>
 #include <T3Color>
 #include <SoLineBox3d>
@@ -62,11 +62,11 @@
 float GraphTableView::tick_size = 0.05f;
 
 
-GraphTableView* DataTable::NewGraphView(T3DataViewFrame* fr) {
+GraphTableView* DataTable::NewGraphView(T3Panel* fr) {
   return GraphTableView::New(this, fr);
 }
 
-GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
+GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr) {
   taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
@@ -109,7 +109,7 @@ bool DataTable::GraphViewGotoRow(int row_no) {
 }
 
 // Add a new GraphTableView object to the frame for the given DataTable.
-GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
+GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, dt, "table");
   if (!new_net_view.isValid()) return NULL;
 
@@ -555,7 +555,7 @@ const String GraphTableView::caption() const {
 
 void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
   GraphTableView* nv = (GraphTableView*)userData;
-  T3DataViewFrame* fr = nv->GetFrame();
+  T3Panel* fr = nv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
@@ -774,7 +774,7 @@ void GraphTableView::Clear_impl() {
   inherited::Clear_impl();
 }
 
-void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
+void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGraphTableView_Panel(this);

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSigLinkTypeItem.h"
-#include <taTypeInfoTreeDataNode>
+#include <taiTreeNodeTypeItem>
 #include <TypeDef>
 #include <taiEditorOfClass>
 #include <taiEditorOfTypeItem>
@@ -30,9 +30,9 @@ taiTreeNode* taSigLinkTypeItem::CreateTreeDataNode_impl(MemberDef* md, taiTreeNo
 {
   taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new taTypeInfoTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTypeItem(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new taTypeInfoTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTypeItem(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

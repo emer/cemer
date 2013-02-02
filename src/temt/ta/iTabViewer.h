@@ -39,12 +39,10 @@ public:
   virtual MemberDef*    sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
   override int          stretchFactor() const {return 4;} // 3/2 default
   iTabView*             tabView() {return m_curTabView;} // currently active
-//  iTabView_PtrList*   tabViews() {return m_tabViews;} // currently active
   iTabBarBase*          tabBar();
 
   virtual void          AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void                  AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a new tab, sets panel active in it, locks if requested
-//obs  virtual iTabView*        AddTabView(QWidget* parCtrl); // adds a new tab view
   void                  ShowLink(taiSigLink* link, bool not_in_cur = false);
   void                  ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
 
@@ -63,7 +61,6 @@ protected: // IDataViewWidget i/f
   override void         Refresh_impl();
 
 protected:
-//  iTabView_PtrList*   m_tabViews; // all created tab views
   iTabView*             m_curTabView; // tab view (split) that currently has the focus
   ISelectable*          cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   ContextFlag           tab_changing; // lets us ignore spurious re-entrant tab changes, ex. bugID:817

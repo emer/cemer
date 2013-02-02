@@ -28,7 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
-class T3DataViewFrame; // 
+class T3Panel; // 
 class T3GridViewNode; //
 class GridColView; // 
 class ColorScaleSpec; // 
@@ -41,7 +41,7 @@ class TA_API GridTableView: public DataTableView {
   // the master view guy for entire grid view
 INHERITED(DataTableView)
 public:
-  static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
+  static GridTableView* New(DataTable* dt, T3Panel*& fr);
 
   int           col_n;          // number of columns to display: determines sizes of everything automatically from this
   int_Array     vis_cols;       // #READ_ONLY #NO_SAVE indicies of visible columns
@@ -158,7 +158,7 @@ protected:
   override void         ClearViewRange();
   override void         MakeViewRangeValid();
 
-  override void         OnWindowBind_impl(iT3DataViewFrame* vw);
+  override void         OnWindowBind_impl(iT3Panel* vw);
   override void         Clear_impl();
   override void         Render_pre(); // #IGNORE
   override void         Render_impl(); // #IGNORE

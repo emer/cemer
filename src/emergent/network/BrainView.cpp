@@ -21,8 +21,8 @@
 #include <BrainVolumeView>
 #include <NiftiReader>
 #include <iMethodButtonMgr>
-#include <T3DataViewFrame>
-#include <iT3DataViewFrame>
+#include <T3Panel>
+#include <iT3Panel>
 #include <T3ExaminerViewer>
 #include <iT3ViewspaceWidget>
 #include <taMath_float>
@@ -75,7 +75,7 @@ BrainView::hasViewProperties() const {
   return true;
 }
 
-BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
+BrainView* BrainView::New(Network* net, T3Panel*& fr) {
   NewViewHelper newNetView(fr, net, "network");
   if (!newNetView.isValid()) return NULL;
 
@@ -468,7 +468,7 @@ void BrainView::InitScaleRange(ScaleRange& sr) {
   sr.max =  1.0f;
 }
 
-void BrainView::OnWindowBind_impl(iT3DataViewFrame* vw) {
+void BrainView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!bvp) {
     bvp = new BrainViewPanel(this);
@@ -489,7 +489,7 @@ const iColor BrainView::bgColor(bool& ok) const {
 
 void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
   BrainView* bv = (BrainView*)userData;
-  T3DataViewFrame* fr = bv->GetFrame();
+  T3Panel* fr = bv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
@@ -650,7 +650,7 @@ void BrainView::Render_net_text() {
   bool build_text = false;
 
   if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
-    T3DataViewFrame* fr = GetFrame();
+    T3Panel* fr = GetFrame();
     iColor txtcolr = fr->GetTextColor();
     build_text = true;
     SoBaseColor* bc = new SoBaseColor;

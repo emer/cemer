@@ -18,13 +18,13 @@
 #include <VEWorldViewPanel>
 #include <VESpaceView>
 #include <VESpace>
-#include <iT3DataViewFrame>
+#include <iT3Panel>
 #include <T3ExaminerViewer>
 #include <T3VEWorld>
 #include <taSigLinkItr>
 #include <taImage>
 #include <NewViewHelper>
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <taMath_float>
 
 #include <VEObjectView>
@@ -123,7 +123,7 @@ void VEWorldView::SetWorld(VEWorld* wl) {
   }
 }
 
-void VEWorldView::OnWindowBind_impl(iT3DataViewFrame* vw) {
+void VEWorldView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_wvp) {
     m_wvp = new VEWorldViewPanel(this);
@@ -497,12 +497,12 @@ bool VEWorld::GetCameraTaImage(taImage& ta_img, int cam_no) {
 }
 
 
-VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
+VEWorldView* VEWorld::NewView(T3Panel* fr) {
   return VEWorldView::New(this, fr);
 }
 
 // Add a new VEWorldView object to the frame for the given VEWorld.
-VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
+VEWorldView* VEWorldView::New(VEWorld* wl, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, wl, "world");
   if (!new_net_view.isValid()) return NULL;
 

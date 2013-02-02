@@ -29,7 +29,7 @@
 
 // declare all other types mentioned but not required to include:
 class iT3ViewspaceWidget; //
-class T3DataViewFrame; //
+class T3Panel; //
 class SoCamera; //
 class SbViewportRegion; //
 class iThumbWheel; //
@@ -63,7 +63,7 @@ public:
   ViewerMode            viewer_mode;    // our current viewer mode -- used to make sure that quarter is in appropriate state
 
   iT3ViewspaceWidget*   t3vw;           // owner widget
-  T3DataViewFrame*      GetFrame();     // get my owning frame, from t3vw
+  T3Panel*      GetFrame();     // get my owning frame, from t3vw
 
   //////////////////////////////////////////////
   //   Overall widget structure

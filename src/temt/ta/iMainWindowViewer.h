@@ -134,8 +134,8 @@ public:
   iAction*            viewCloseCurrentViewAction;
   iAction*            viewSaveViewAction;
 
-  iAction*            toolsClassBrowseAction;
-  iAction*            toolsTypeBrowseAction;
+  iAction*            toolsTypeInfoBrowseAction;
+  iAction*            toolsHelpBrowseAction;
 
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
@@ -277,20 +277,18 @@ public slots:
   virtual void  showMenu_aboutToShow();
   virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 
-  void          toolsClassBrowser();
-  void          toolsTypeBrowser();
+  void          toolsTypeInfoBrowser();
+  void          toolsHelpBrowser();
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();
 
   virtual void  windowMenu_aboutToShow();
   void          windowActivate(int win); // activate the indicated win
-/*  virtual void helpIndex();*/
   virtual void  helpHelp();
   virtual void  helpAbout();
 
   virtual void  mnuEditAction(iAction* mel);
-//nn  void              actionsMenu_aboutToShow(); // populates dynamic items
 
   void          SetClipboardHandler(QObject* handler_obj,
     const char* edit_enabled_slot = NULL,

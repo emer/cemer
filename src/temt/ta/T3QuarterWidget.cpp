@@ -17,10 +17,10 @@
 
 #include <T3ExaminerViewer>
 #include <iT3ViewspaceWidget>
-#include <T3DataViewFrame>
-#include <iT3DataViewFrame>
-#include <T3DataViewer>
-#include <iT3DataViewer>
+#include <T3Panel>
+#include <iT3Panel>
+#include <T3TabViewer>
+#include <iT3TabViewer>
 
 
 
@@ -46,12 +46,12 @@ void T3QuarterWidget::paintEvent(QPaintEvent * event) {
   T3ExaminerViewer* t3v = (T3ExaminerViewer*)parent();
   if(!t3v) return;
   iT3ViewspaceWidget* vsw = t3v->t3vw;
-  T3DataViewFrame* vf = t3v->GetFrame();
+  T3Panel* vf = t3v->GetFrame();
   if(!vsw || !vf) return;
 
-  iT3DataViewer* idv = vf->widget()->viewerWidget();
+  iT3TabViewer* idv = vf->widget()->viewerWidget();
   if(!idv) return;
-  T3DataViewer* dv = idv->viewer();
+  T3TabViewer* dv = idv->viewer();
   if(!dv || !dv->isMapped()) return;
 
   inherited::paintEvent(event);

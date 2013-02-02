@@ -15,7 +15,7 @@
 
 #include "taSigLinkTaOBase.h"
 
-#include <tabDefChildTreeDataNode>
+#include <taiTreeNodeDefChild>
 #include <taiViewType>
 
 
@@ -37,9 +37,9 @@ taiTreeNode* taSigLinkTaOBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeNod
     tvPar, after, node_name, dn_flags);
   taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new tabDefChildTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeDefChild(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new tabDefChildTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeDefChild(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

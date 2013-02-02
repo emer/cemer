@@ -90,7 +90,7 @@ public:
   
   void                  AsyncRenderUpdate();
 
-  static BrainView*     New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
+  static BrainView*     New(Network* net, T3Panel*& fr); // create a new instance and add to viewer
 
   bool                  display;        // whether to update the display when values change (under control of programs)
   bool                  lay_mv;         // keep this..
@@ -247,7 +247,7 @@ protected:
   override void         SigRecvUpdateView_impl();
   override void         SigRecvUpdateAfterEdit_impl(); //
   override void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
-  override void         OnWindowBind_impl(iT3DataViewFrame* vw);
+  override void         OnWindowBind_impl(iT3Panel* vw);
   override void         Render_pre(); // #IGNORE
   override void         Render_impl(); // #IGNORE
   void                  Render_net_text();

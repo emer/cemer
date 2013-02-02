@@ -31,7 +31,7 @@
 class DataTable; // 
 class ColorScaleSpec; // 
 class iGraphTableView_Panel; // 
-class T3DataViewFrame; //
+class T3Panel; //
 class T3GraphViewNode; //
 class T3GraphLine; //
 
@@ -42,7 +42,7 @@ class TA_API GraphTableView: public DataTableView {
   // the master view guy for entire graph view
 INHERITED(DataTableView)
 public:
-  static GraphTableView* New(DataTable* dt, T3DataViewFrame*& fr);
+  static GraphTableView* New(DataTable* dt, T3Panel*& fr);
 
   enum GraphType {
     XY,                         // standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well, if turned on)
@@ -239,7 +239,7 @@ protected:
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y, T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
 
-  override void         OnWindowBind_impl(iT3DataViewFrame* vw);
+  override void         OnWindowBind_impl(iT3Panel* vw);
   override void         Clear_impl();
   override void         Render_pre(); // #IGNORE
   override void         Render_impl(); // #IGNORE

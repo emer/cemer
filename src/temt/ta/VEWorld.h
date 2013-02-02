@@ -36,7 +36,7 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
-class T3DataViewFrame; // 
+class T3Panel; // 
 class QImage; // 
 class taImage; // 
 
@@ -126,7 +126,7 @@ public:
   virtual void  SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of all bodies and static objects to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
-  VEWorldView*  NewView(T3DataViewFrame* fr = NULL);
+  VEWorldView*  NewView(T3Panel* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
   VEWorldView*  FindView();
   // #CAT_Display find first existing viewer of this world (if it exists)

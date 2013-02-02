@@ -593,7 +593,7 @@ void Network::LinkPtrCons() {
 }
 
 #ifdef TA_GUI
-NetView* Network::NewView(T3DataViewFrame* fr) {
+NetView* Network::NewView(T3Panel* fr) {
   return NetView::New(this, fr);
 }
 #endif
@@ -634,7 +634,7 @@ NetViewObj* Network::NewGlassBrain() {
 // Create an fMRI-style brain visualization to show activations
 // in defined brain areas.  If no frame is specified, a new one
 // will be created.
-BrainView* Network::NewBrainView(T3DataViewFrame* fr) {
+BrainView* Network::NewBrainView(T3Panel* fr) {
   // Assign voxel coordinates to the network's units.
   NetworkVoxelMapper nvm(this);
   nvm.AssignVoxels();

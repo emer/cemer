@@ -22,8 +22,8 @@
 #include <UnitGroupView>
 #include <UnitView>
 #include <NewViewHelper>
-#include <T3DataViewFrame>
-#include <iT3DataViewFrame>
+#include <T3Panel>
+#include <iT3Panel>
 #include <iT3ViewspaceWidget>
 #include <T3ExaminerViewer>
 #include <taSigLinkItr>
@@ -82,7 +82,7 @@ void NetViewParams::Initialize() {
 
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
-  T3DataViewFrame* fr = nv->GetFrame();
+  T3Panel* fr = nv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
@@ -172,7 +172,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 */
 
 // Add a new NetView object to the frame for the given Network.
-NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
+NetView* NetView::New(Network* net, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, net, "network");
   // true == Allow only one NetView instances in a frame
   // for a given network.
@@ -203,7 +203,7 @@ NetView* Network::FindView() {
   return NULL;
 }
 
-NetView* Network::FindMakeView(T3DataViewFrame* fr) {
+NetView* Network::FindMakeView(T3Panel* fr) {
   taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
@@ -455,7 +455,7 @@ bool NetView::HistFwdAll() {
 }
 
 void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
-  T3DataViewFrame* fr = GetFrame();
+  T3Panel* fr = GetFrame();
   if(!fr) return;
   fr->SetImageSize(x_size, y_size);
   taMisc::ProcessEvents();
@@ -951,7 +951,7 @@ void NetView::GetMaxSize() {
   }
 }
 
-void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
+void NetView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
     nvp = new NetViewPanel(this);
@@ -1201,7 +1201,7 @@ void NetView::Render_net_text() {
   bool build_text = false;
 
   if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
-    T3DataViewFrame* fr = GetFrame();
+    T3Panel* fr = GetFrame();
     iColor txtcolr = fr->GetTextColor();
     build_text = true;
     SoBaseColor* bc = new SoBaseColor;

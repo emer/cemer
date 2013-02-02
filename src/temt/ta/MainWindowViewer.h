@@ -35,7 +35,7 @@ class FrameViewer; //
 class ToolBar; // 
 class BrowseViewer; // 
 class PanelViewer; // 
-class T3DataViewer; // 
+class T3TabViewer; // 
 class taiWidgetActions_List; //
 class taiWidgetMenuBar; // #IGNORE
 class taiWidgetActions; //
@@ -57,7 +57,7 @@ public:
 
   static MainWindowViewer* NewBrowser(taBase* root, MemberDef* root_md = NULL, bool is_root = false);
     // makes a standard 2-pane taBase browser
-  static MainWindowViewer* NewClassBrowser(void* root, TypeDef* root_typ, MemberDef* root_md = NULL);
+  static MainWindowViewer* NewTypeInfoBrowser(void* root, TypeDef* root_typ, MemberDef* root_md = NULL);
     // convenience class: makes a 2-pane class browser (browse+panels)
   static MainWindowViewer* NewProjectBrowser(taProject* proj);
     // makes a standard 3-pane project viewer (3-view) or 2 (2x2) -- returns the guy with tree
@@ -120,16 +120,16 @@ public:
   // select PanelViewer  (middle edit panel) tab by name
 
   bool                  SelectT3ViewTabNo(int tab_no);
-  // select T3DataViewer (3d view) (right view panel) tab by number
+  // select T3TabViewer (3d view) (right view panel) tab by number
   bool                  SelectT3ViewTabName(const String& tab_name);
-  // select T3DataViewer (3d view) (right view panel) tab by name
+  // select T3TabViewer (3d view) (right view panel) tab by name
 
   BrowseViewer*         GetLeftBrowser();
   // get the BrowseViewer (left browser panel)
   PanelViewer*          GetMiddlePanel();
   // get the PanelViewer (middle edit panel)
-  T3DataViewer*         GetRightViewer();
-  // get the T3DataViewer (right viewer panel)
+  T3TabViewer*         GetRightViewer();
+  // get the T3TabViewer (right viewer panel)
 
   override void         FrameSizeToSize(iSize& sz);
   override bool         GetWinState();

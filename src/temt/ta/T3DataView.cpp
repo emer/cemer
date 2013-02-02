@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "T3DataView.h"
-#include <T3DataViewFrame>
-#include <iT3DataViewFrame>
+#include <T3Panel>
+#include <iT3Panel>
 #include <T3Node>
 #include <iClipData>
 #include <T3ExaminerViewer>
@@ -182,8 +182,8 @@ taiSigLink* T3DataView::clipParLink(GuiContext sh_typ) const {
 void T3DataView::setNode(T3Node* node_) {
   if (m_node_so.ptr() == node_) return; // generally shouldn't happen
   if (m_node_so.ptr()) {
-    if (T3DataViewFrame *dvf = GetFrame()) {
-      if (iT3DataViewFrame *idvf = dvf->widget()) {
+    if (T3Panel *dvf = GetFrame()) {
+      if (iT3Panel *idvf = dvf->widget()) {
         idvf->NodeDeleting(m_node_so); // just desels all, for now
       }
     }
@@ -225,13 +225,13 @@ void T3DataView::SigRecvUpdateAfterEdit_impl() {
 //     m_node_so->touch();
 }
 
-T3DataViewFrame* T3DataView::GetFrame() const {
-  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+T3Panel* T3DataView::GetFrame() const {
+  T3Panel* frame = GET_MY_OWNER(T3Panel);
   return frame;
 }
 
 T3ExaminerViewer* T3DataView::GetViewer() const {
-  T3DataViewFrame* frame = GetFrame();
+  T3Panel* frame = GetFrame();
   if(!frame || !frame->widget()) return NULL;
   T3ExaminerViewer* viewer = frame->widget()->t3viewer();
   return viewer;
@@ -273,7 +273,7 @@ bool T3DataView::isMapped() const {
   return true;
 }
 
-void T3DataView::OnWindowBind(iT3DataViewFrame* vw) {
+void T3DataView::OnWindowBind(iT3Panel* vw) {
   OnWindowBind_impl(vw);
 }
 

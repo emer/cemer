@@ -24,7 +24,7 @@
 #include <T3ExaminerViewer>
 #include <T3Misc>
 #include <taProject>
-#include <T3DataViewFrame>
+#include <T3Panel>
 
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/SbLinear.h>
@@ -344,7 +344,7 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   nw_rot.getValue(axis, angle);
   viewer->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
 
-  T3DataViewFrame* fr = GetFrame();
+  T3Panel* fr = GetFrame();
   if(fr) fr->Render();
 }
 

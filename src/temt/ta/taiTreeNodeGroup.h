@@ -17,7 +17,7 @@
 #define taiTreeNodeGroup_h 1
 
 // parent includes:
-#include <tabListTreeDataNode>
+#include <taiTreeNodeList>
 
 // member includes:
 #include <taSigLinkGroup>
@@ -28,8 +28,8 @@ class taGroup_impl; //
 
 TypeDef_Of(taiTreeNodeGroup);
 
-class TA_API taiTreeNodeGroup: public tabListTreeDataNode {
-INHERITED(tabListTreeDataNode)
+class TA_API taiTreeNodeGroup: public taiTreeNodeList {
+INHERITED(taiTreeNodeList)
 public:
   taGroup_impl*         tadata() const {return ((taSigLinkGroup*)m_link)->data();}
   taSigLinkGroup*     link() const {return (taSigLinkGroup*)m_link;}

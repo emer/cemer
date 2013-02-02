@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3DataViewFrame_List.h"
+#include "../src/temt/ta/T3Panel_List.h"

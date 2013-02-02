@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorld; // 
-class T3DataViewFrame; // 
+class T3Panel; // 
 class QImage; //  #IGNORE
-class iT3DataViewFrame; // #IGNORE
+class iT3Panel; // #IGNORE
 class VEWorldViewPanel; //
 class SoOffscreenRendererQt; // #IGNORE
 
@@ -39,7 +39,7 @@ class TA_API VEWorldView : public T3DataViewMain {
 INHERITED(T3DataViewMain)
 friend class VEWorldViewPanel;
 public:
-  static VEWorldView* New(VEWorld* wl, T3DataViewFrame*& fr);
+  static VEWorldView* New(VEWorld* wl, T3Panel*& fr);
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		drag_objs;	// allow user to drag/rotate/rescale objects
@@ -80,7 +80,7 @@ public:
   override void		BuildAll();
   
   virtual void		UpdateName();
-  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
+  override void		OnWindowBind_impl(iT3Panel* vw);
   // #IGNORE
 
   void 	Initialize();

@@ -16,7 +16,7 @@
 #include "T3Node.h"
 #include <T3DataView>
 #include <iColor>
-#include <T3DataViewFrame>
+#include <T3Panel>
 
 #include <Inventor/errors/SoDebugError.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -124,7 +124,7 @@ SoAsciiText* T3Node::captionNode(bool auto_create) {
   SoBaseColor* bc = new SoBaseColor;
 
   if (T3DataView* dview = dataView()) {
-    T3DataViewFrame* fr = dview->GetFrame();
+    T3Panel* fr = dview->GetFrame();
     iColor txtcolr = fr->GetTextColor();
     bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
   }

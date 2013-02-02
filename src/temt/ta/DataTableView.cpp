@@ -15,7 +15,7 @@
 
 #include "DataTableView.h"
 #include <DataTable>
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <iDataTableView_Panel>
 #include <DataColView>
 #include <T3Node>
@@ -117,7 +117,7 @@ void DataTableView::setDataTable(DataTable* dt) {
     int u_view_rows = dt->GetUserDataAsInt("VIEW_ROWS");
     if (u_view_rows > 0) view_rows = u_view_rows;
     UpdateFromDataTable(first);
-    T3DataViewFrame* frame = GetFrame();
+    T3Panel* frame = GetFrame();
     if(frame) {
       main_xform.translate.y = 1.3f * (frame->root_view.children.size - 1); // move to unique position (up)
     }

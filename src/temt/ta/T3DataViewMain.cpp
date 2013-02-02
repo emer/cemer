@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "T3DataViewMain.h"
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <T3ExaminerViewer>
 
 
@@ -29,9 +29,9 @@ void T3DataViewMain::Copy_(const T3DataViewMain& cp) {
 
 
 void T3DataViewMain::CopyFromViewFrame(T3DataViewPar* cp) {
-  T3DataViewFrame* vwr = GetFrame();
+  T3Panel* vwr = GetFrame();
   if(!vwr) return;
-  T3DataViewFrame* cp_vwr = cp->GetFrame();
+  T3Panel* cp_vwr = cp->GetFrame();
   if(!cp_vwr || vwr == cp_vwr) return;
 
   vwr->CopyFromViewFrame(cp_vwr);

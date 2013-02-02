@@ -35,7 +35,7 @@ public:
   T3DataView_List       children; // #SHOW #READ_ONLY #SHOW_TREE
   override bool         hasChildren() const {return (children.size > 0);}
 
-  override void         OnWindowBind(iT3DataViewFrame* vw);
+  override void         OnWindowBind(iT3Panel* vw);
   override void         CloseChild(taDataView* child);
   override void         ReInit(); //note: does a depth-first calls to children, before self
 

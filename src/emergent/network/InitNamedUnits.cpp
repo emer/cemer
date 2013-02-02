@@ -17,7 +17,7 @@
 #include <taProject>
 #include <Network>
 #include <GridTableView>
-#include <T3DataViewFrame>
+#include <T3Panel>
 
 #include <tabMisc>
 #include <taMisc>
@@ -232,7 +232,7 @@ bool InitNamedUnits::ViewDataLegend() {
 
   idat->SetUserData("N_ROWS", 5);
   GridTableView* igtv = idat->NewGridView();
-  T3DataViewFrame* frame = igtv->GetFrame();
+  T3Panel* frame = igtv->GetFrame();
 
   ndat->SetUserData("N_ROWS", 1);
   ndat->SetUserData("MAT_VAL_TEXT", 1);

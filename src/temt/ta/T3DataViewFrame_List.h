@@ -13,29 +13,29 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef T3DataViewFrame_List_h
-#define T3DataViewFrame_List_h 1
+#ifndef T3Panel_List_h
+#define T3Panel_List_h 1
 
 // parent includes:
 #include <DataViewer_List>
 
 // member includes:
-#include <T3DataViewFrame>
+#include <T3Panel>
 
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3DataViewFrame_List);
+TypeDef_Of(T3Panel_List);
 
-class TA_API T3DataViewFrame_List: public DataViewer_List { // #NO_TOKENS
+class TA_API T3Panel_List: public DataViewer_List { // #NO_TOKENS
 INHERITED(DataViewer_List)
 public:
-  TA_DATAVIEWLISTFUNS(T3DataViewFrame_List, DataViewer_List, T3DataViewFrame)
+  TA_DATAVIEWLISTFUNS(T3Panel_List, DataViewer_List, T3Panel)
 private:
-  NOCOPY(T3DataViewFrame_List)
-  void  Initialize() { SetBaseType(&TA_T3DataViewFrame);}
+  NOCOPY(T3Panel_List)
+  void  Initialize() { SetBaseType(&TA_T3Panel);}
   void  Destroy() {}
 };
 
 
-#endif // T3DataViewFrame_List_h
+#endif // T3Panel_List_h

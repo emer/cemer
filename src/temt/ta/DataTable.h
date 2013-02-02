@@ -40,7 +40,7 @@ class float_Data; //
 class int_Data; // 
 class String_Data; // 
 class GridTableView; // 
-class T3DataViewFrame; // 
+class T3Panel; // 
 class GraphTableView; // 
 class DataTableModel; // #IGNORE
 
@@ -808,14 +808,14 @@ public:
   /////////////////////////////////////////////////////////
   // misc funs
 
-  virtual GridTableView* NewGridView(T3DataViewFrame* fr = NULL);
+  virtual GridTableView* NewGridView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
-  virtual GraphTableView* NewGraphView(T3DataViewFrame* fr = NULL);
+  virtual GraphTableView* NewGraphView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
-  virtual GridTableView* FindMakeGridView(T3DataViewFrame* fr = NULL);
+  virtual GridTableView* FindMakeGridView(T3Panel* fr = NULL);
   // #CAT_Display find existing or make a new grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
-  virtual GraphTableView* FindMakeGraphView(T3DataViewFrame* fr = NULL);
+  virtual GraphTableView* FindMakeGraphView(T3Panel* fr = NULL);
   // #CAT_Display find existing or make a new graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
   virtual GridTableView* FindGridView();

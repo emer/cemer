@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSigLinkTypeItemSpace.h"
-#include <taTypeSpaceTreeDataNode>
+#include <taiTreeNodeTypeSpace>
 
 
 taSigLinkTypeItemSpace::taSigLinkTypeItemSpace(TypeItem::TypeInfoKinds tik_, 
@@ -29,9 +29,9 @@ taiTreeNode* taSigLinkTypeItemSpace::CreateTreeDataNode_impl(MemberDef* md,
 {
   taiTreeNode* rval = NULL;
   if (nodePar)
-    rval = new taTypeSpaceTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTypeSpace(this, md, nodePar, after, node_name, dn_flags);
   else
-    rval = new taTypeSpaceTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+    rval = new taiTreeNodeTypeSpace(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

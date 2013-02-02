@@ -19,13 +19,13 @@
 #include <T3ExaminerViewer>
 #include <T3GridViewNode>
 #include <T3GridColViewNode>
-#include <T3DataViewFrame>
+#include <T3Panel>
 #include <taSigLinkItr>
 #include <MainWindowViewer>
 #include <NewViewHelper>
 #include <T3Misc>
 #include <iGridTableView_Panel>
-#include <iT3DataViewFrame>
+#include <iT3Panel>
 #include <taMath_float>
 #include <taProject>
 
@@ -59,11 +59,11 @@
 #include <Inventor/SoEventManager.h>
 
 
-GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
+GridTableView* DataTable::NewGridView(T3Panel* fr) {
   return GridTableView::New(this, fr);
 }
 
-GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
+GridTableView* DataTable::FindMakeGridView(T3Panel* fr) {
   taSigLink* dl = sig_link();
   if(dl) {
     taSigLinkItr itr;
@@ -106,7 +106,7 @@ bool DataTable::GridViewGotoRow(int row_no) {
   return true;
 }
 
-GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
+GridTableView* GridTableView::New(DataTable* dt, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, dt, "table");
   if (!new_net_view.isValid()) return NULL;
 
@@ -581,7 +581,7 @@ void GridTableView::Clear_impl() {
   inherited::Clear_impl();
 }
 
-void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
+void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
@@ -711,7 +711,7 @@ void GridTableView::RenderHeader() {
     fnt->size.setValue(font_scale);
   hdr->addChild(fnt);
 
-  T3DataViewFrame* fr = GetFrame();
+  T3Panel* fr = GetFrame();
   iColor txtcolr = fr->GetTextColor();
 
   float gr_mg_sz = grid_margin;
@@ -814,7 +814,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
   float text_ht = font_scale;
 
-  T3DataViewFrame* fr = GetFrame();
+  T3Panel* fr = GetFrame();
   iColor txtcolr = fr->GetTextColor();
 
   int col_idx = 0;
@@ -1155,7 +1155,7 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 
 void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   GridTableView* gv = (GridTableView*)userData;
-  T3DataViewFrame* fr = gv->GetFrame();
+  T3Panel* fr = gv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases

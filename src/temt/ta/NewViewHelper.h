@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class T3DataViewFrame;
+class T3Panel;
 class taBase;
 
 
@@ -33,7 +33,7 @@ public:
   // object will be represented in, the object, and the generic
   // name of the object (e.g., "network" or "world").
   // TODO: obj probably should be a const taBase *.
-  NewViewHelper(T3DataViewFrame *&fr, taBase *obj, const char *objName);
+  NewViewHelper(T3Panel *&fr, taBase *obj, const char *objName);
   
   // Run a series of validity checks on the parameters.  The bool
   // parameter specifies if there should only be one instance of
@@ -56,7 +56,7 @@ private:
   // Creates a new frame if not.
   bool getFrame();
 
-  T3DataViewFrame *&fr_;
+  T3Panel *&fr_;
   taBase *obj_;
   const char *objName_;
 };
