@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class EditDataPanel; //
+class iPanelOfEditor; //
 class taiEditorOfClass; //
 class iMainWindowViewer; //
 class taiSigLink; //
@@ -41,11 +41,11 @@ public:
                                    int min_width=-1, int min_height=-1);
   // edit in a Dialog (note: rarely overridden) -- finds existing if non-modal else makes new
 
-  virtual EditDataPanel* EditNewPanel(taiSigLink* link, void* base=NULL,
+  virtual iPanelOfEditor* EditNewPanel(taiSigLink* link, void* base=NULL,
     bool read_only = false, const iColor& bgcol = def_color);
   //edit in a new panel (note: rarely overridden)
 
-  virtual EditDataPanel* EditPanel(taiSigLink* link, void* base=NULL,
+  virtual iPanelOfEditor* EditPanel(taiSigLink* link, void* base=NULL,
     bool read_only = false, iMainWindowViewer* not_in_win = NULL,
     const iColor& bgcol = def_color);
   //edit in a panel, prefer existing, else created new (note: rarely overridden)

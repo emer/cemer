@@ -32,7 +32,7 @@ class T3Panel; //
 class T3GridViewNode; //
 class GridColView; // 
 class ColorScaleSpec; // 
-class iGridTableView_Panel; // 
+class iViewPanelOfGridTable; // 
 
 
 TypeDef_Of(GridTableView);
@@ -109,7 +109,7 @@ public:
   virtual void          ColFwdPg();
   virtual void          ColFwdAll();
 
-  iGridTableView_Panel* lvp();
+  iViewPanelOfGridTable* lvp();
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
 
   virtual void          InitFromUserData();

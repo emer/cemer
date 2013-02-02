@@ -59,7 +59,7 @@ protected slots:
   virtual void          lvwDataTree_FillContextMenuHookPost(
     ISelectable_PtrList& sel_items, taiWidgetActions* menu);
 
-protected: // IDataViewWidget i/f
+protected: // IViewerWidget i/f
   override void         Refresh_impl();
 
 protected:

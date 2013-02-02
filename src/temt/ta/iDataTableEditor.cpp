@@ -18,8 +18,8 @@
 #include <iDataTableView>
 #include <iSplitter>
 #include <iMatrixEditor>
-#include <MatrixTableModel>
-#include <DataTableModel>
+#include <iMatrixTableModel>
+#include <iDataTableModel>
 #include <taSigLink>
 #include <iMainWindowViewer>
 
@@ -99,14 +99,14 @@ void iDataTableEditor::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2)
 //   taMisc::Info("idte:ddc", String(sls));
 }
 
-DataTableModel* iDataTableEditor::dtm() const {
+iDataTableModel* iDataTableEditor::dtm() const {
   if (m_dt)
     return m_dt->GetTableModel();
   return NULL;
 }
 
 void iDataTableEditor::Refresh() {
-  DataTableModel* dtm = this->dtm();
+  iDataTableModel* dtm = this->dtm();
   if (dtm)
     dtm->refreshViews();
   if (m_cell)
@@ -121,7 +121,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   // apparently not needed
 //   dt_->AddSigClient(this);
 
-  DataTableModel* mod = dtm();
+  iDataTableModel* mod = dtm();
 
   if (mod) {
 //nn    tv->setItemDelegate(new iDataTableDelegate(dt_));
@@ -155,7 +155,7 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
   // actually set mat last, because gui immediately calls back
   tvCell->setMatrix(mat, pat_4d);
   if (mat) {
-    MatrixTableModel* mat_model = mat->GetTableModel();
+    iMatrixTableModel* mat_model = mat->GetTableModel();
     if(m_cell_par)
       mat_model->setDataCol((DataCol*)m_cell_par->owner);
     mat_model->col_idx = index.column(); // ok if done repeatedly, is always the same
@@ -171,7 +171,7 @@ void iDataTableEditor::tvTable_layoutChanged() {
   ConfigView();
 //no-causes recursive invocation!  Refresh();
   if ((bool)m_cell) {
-    MatrixTableModel* mat_model = m_cell->GetTableModel();
+    iMatrixTableModel* mat_model = m_cell->GetTableModel();
     mat_model->emit_layoutChanged(); // hacky but works
   }
 }
@@ -187,7 +187,7 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
       bool pat_4d = (col->HasColFlag(DataCol::PAT_4D) && tcell->dims() >= 4);
       setCellMat(tcell, index, pat_4d);
 
-      MatrixTableModel* mat_model = tcell->GetTableModel();
+      iMatrixTableModel* mat_model = tcell->GetTableModel();
       mat_model->setDimNames(&col->dim_names);
       tvCell->setVisible(true);
       return;

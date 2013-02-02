@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewType.h"
-#include <iDataPanelSet>
-#include <iDataPanelFrame>
+#include <iPanelSet>
+#include <iPanel>
 
 
 taiSigLink* taiViewType::StatGetSigLink(void* el, TypeDef* el_typ) {
@@ -50,7 +50,7 @@ void taiViewType::AddView(TypeDef* td) {
   InsertThisIntoBidList(td->iv);
 }
 
-iDataPanel* taiViewType::CreateDataPanel(taiSigLink* dl_) {
+iPanelBase* taiViewType::CreateDataPanel(taiSigLink* dl_) {
   m_dp = NULL;
   m_dps = NULL;
   m_need_set = false;
@@ -62,7 +62,7 @@ iDataPanel* taiViewType::CreateDataPanel(taiSigLink* dl_) {
   } else return m_dp;
 }
 
-void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
+void taiViewType::DataPanelCreated(iPanel* dp) {
   // we will need to create a set if > 1 panel, or 1st-only uses minibar
   m_need_set = m_need_set || (m_dp != NULL) || dp->hasMinibarCtrls();
   if (!m_dp) {
@@ -72,7 +72,7 @@ void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
   // using or need a set
   if (!m_dps) {
 //     // note: use first link for set, in case, ex. this is a Doc panel, which is nonstandard
-    m_dps = new iDataPanelSet(m_dp->link());
+    m_dps = new iPanelSet(m_dp->link());
     m_dps->AddSubPanel(m_dp);
     // if adding first because of minibar, don't add again
     if (m_dp == dp) return;

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DataTable.h"
-#include <DataTableModel>
+#include <iDataTableModel>
 #include <taFiler>
 #include <ChannelSpec>
 #include <CellRange>
@@ -700,9 +700,9 @@ int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
   return -1;
 }
 
-DataTableModel* DataTable::GetTableModel() {
+iDataTableModel* DataTable::GetTableModel() {
   if (!table_model && !isDestroying()) {
-    table_model = new DataTableModel(this);
+    table_model = new iDataTableModel(this);
     AddSigClient(table_model);
     //table_model->setPat4D(true); // always
   }

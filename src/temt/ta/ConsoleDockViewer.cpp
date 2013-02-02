@@ -23,7 +23,7 @@ void ConsoleDockViewer::Initialize() {
   dock_flags = (DockViewerFlags)(DV_MOVABLE | DV_FLOATABLE);
 }
 
-IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   iDockViewer* dv = new iDockViewer(this, gui_parent); // par usually NULL
 
   QScrollArea* sa = new QScrollArea;

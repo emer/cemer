@@ -25,7 +25,7 @@
 #include <iTreeView>
 #include <ISelectable_PtrList>
 #include <iTreeViewItem>
-#include <iTabViewer>
+#include <iPanelViewer>
 #include <ISelectableHost>
 #include <taiWidgetMenuBar>
 #include <iClipData>
@@ -33,14 +33,14 @@
 #include <taGuiDialog>
 #include <BrowseViewer>
 #include <iBrowseViewer>
-#include <iDataPanel>
+#include <iPanelBase>
 #include <taFiler>
 #include <PanelViewer>
 #include <ToolBar>
 #include <taProject>
 #include <iSplitter>
 #include <iTabView>
-#include <T3TabViewer>
+#include <T3PanelViewer>
 #include <iHelpBrowser>
 #include <iTextBrowser>
 #include <iWidget_List>
@@ -69,7 +69,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
                        | Qt::WindowCloseButtonHint
 #endif
                        ))
-  , IDataViewWidget(viewer_)
+  , IViewerWidget(viewer_)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
@@ -195,8 +195,8 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
 
 // this guy exists because we must always be able to add a panel,
 // so if there isn't already a panel viewer, we have to add one
-void iMainWindowViewer::AddPanel(iDataPanel* panel, bool new_tab) {
-  iTabViewer* itv = GetTabViewer(true);
+void iMainWindowViewer::AddPanel(iPanelBase* panel, bool new_tab) {
+  iPanelViewer* itv = GetTabViewer(true);
   if (new_tab) {
     itv->AddPanelNewTab(panel);
   } else {
@@ -204,7 +204,7 @@ void iMainWindowViewer::AddPanel(iDataPanel* panel, bool new_tab) {
   }
 }
 
-iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
+iPanelViewer* iMainWindowViewer::GetTabViewer(bool force) {
   int idx;
   PanelViewer* tv = (PanelViewer*)viewer()->FindFrameByType(&TA_PanelViewer, idx);
   if (!tv) {
@@ -217,7 +217,7 @@ iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
 }
 
 void iMainWindowViewer::EditItem(taiSigLink* link, bool not_in_cur) {
-  iTabViewer* itv = GetTabViewer(true);
+  iPanelViewer* itv = GetTabViewer(true);
   itv->ShowLink(link, not_in_cur);
 }
 
@@ -1107,8 +1107,8 @@ bool iMainWindowViewer::FocusMiddlePanel() {
   if(!db) return false;
   PanelViewer* pv = db->GetMiddlePanel();
   if(!pv || !pv->widget()) return false;
-  iTabViewer* itv = pv->widget();
-  iDataPanel* idp = itv->tabView()->curPanel();
+  iPanelViewer* itv = pv->widget();
+  iPanelBase* idp = itv->tabView()->curPanel();
   if(idp) {
     QWidget* ffwid = idp->firstTabFocusWidget();
     if(ffwid) {
@@ -1127,7 +1127,7 @@ bool iMainWindowViewer::FocusMiddlePanel() {
 bool iMainWindowViewer::FocusRightViewer() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
-  T3TabViewer* pv = db->GetRightViewer();
+  T3PanelViewer* pv = db->GetRightViewer();
   if(!pv || !pv->widget()) return false;
   if(pv->tabBar())
     pv->tabBar()->setFocus();
@@ -1179,13 +1179,13 @@ bool iMainWindowViewer::ShiftCurTabRight() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
   if(cur_main_focus == RIGHT_VIEWER) {
-    T3TabViewer* pv = db->GetRightViewer();
+    T3PanelViewer* pv = db->GetRightViewer();
     if(pv && pv->tabBar()) {
       pv->tabBar()->selectNextTab();
     }
   }
   else {
-    iTabViewer* itv = GetTabViewer();
+    iPanelViewer* itv = GetTabViewer();
     if(itv) {
       itv->tabBar()->selectNextTab();
     }
@@ -1197,13 +1197,13 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
   MainWindowViewer* db = viewer();
   if(!db) return false;
   if(cur_main_focus == RIGHT_VIEWER) {
-    T3TabViewer* pv = db->GetRightViewer();
+    T3PanelViewer* pv = db->GetRightViewer();
     if(pv && pv->tabBar()) {
       pv->tabBar()->selectPrevTab();
     }
   }
   else {
-    iTabViewer* itv = GetTabViewer();
+    iPanelViewer* itv = GetTabViewer();
     if(itv) {
       itv->tabBar()->selectPrevTab();
     }
@@ -1324,10 +1324,10 @@ bool iMainWindowViewer::AssertPanel(taiSigLink* link,
   bool new_tab, bool new_tab_lock)
 {
   if (!new_tab) new_tab_lock = false;
-  iTabViewer* itv = GetTabViewer(); // should exist
+  iPanelViewer* itv = GetTabViewer(); // should exist
   if (!itv) return false;
 
-  iDataPanel* pan = itv->tabView()->GetDataPanel(link);
+  iPanelBase* pan = itv->tabView()->GetDataPanel(link);
   if (!pan) return false; // shouldn't happen
 
   if (new_tab) {
@@ -1591,7 +1591,7 @@ void iMainWindowViewer::SelectableHostNotifying_impl(ISelectableHost* src_host, 
 void iMainWindowViewer::Refresh_impl() {
   QObject* obj;
   foreach (obj, body->children()) {
-    IDataViewWidget* dvw = dynamic_cast<IDataViewWidget*>(obj); // null if not type
+    IViewerWidget* dvw = dynamic_cast<IViewerWidget*>(obj); // null if not type
     if (dvw) {
       dvw->Refresh();
     }

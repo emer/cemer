@@ -25,7 +25,7 @@
 #include <QToolBar>
 
 
-IDataViewWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* ToolBoxDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
     return new iToolBoxDockViewer(this, gui_parent); // usually parented later
 }
 

@@ -15,7 +15,7 @@
 
 #include "NetView.h"
 #include <T3NetNode>
-#include <NetViewPanel>
+#include <iPanelOfNetView>
 #include <LayerGroupView>
 #include <PrjnView>
 #include <NetViewObjView>
@@ -462,7 +462,7 @@ void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
   int ctr = 0;
   while(hist_idx > 0) {
     String fnm = fname_stub + taMisc::LeadingZeros(ctr, 5) + ".png";
-    fr->SaveImageAs(fnm, DataViewer::PNG);
+    fr->SaveImageAs(fnm, taViewer::PNG);
     hist_idx--;
     UpdateDisplay(false);
     taMisc::ProcessEvents();
@@ -954,7 +954,7 @@ void NetView::GetMaxSize() {
 void NetView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
-    nvp = new NetViewPanel(this);
+    nvp = new iPanelOfNetView(this);
     vw->RegisterPanel(nvp);
     vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
       SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );

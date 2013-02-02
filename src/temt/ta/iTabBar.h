@@ -25,7 +25,7 @@
 #endif
 
 // declare all other types mentioned but not required to include:
-class iDataPanel; //
+class iPanelBase; //
 class iTabView; //
 
 
@@ -44,15 +44,15 @@ public:
 
   static void           InitClass(); // auto executed
 
-  iDataPanel*           panel(int tab_idx); // #IGNORE gets the current panel, if any
+  iPanelBase*           panel(int tab_idx); // #IGNORE gets the current panel, if any
   iTabView*             tabView() {return (iTabView*)parent();} // #IGNORE
 
 #ifndef __MAKETA__
   using                 QTabBar::addTab; // bring also into scope
 #endif
-  int                   addTab(iDataPanel* panel); //#IGNORE puts at end if locked else inserts at end of unlocked
+  int                   addTab(iPanelBase* panel); //#IGNORE puts at end if locked else inserts at end of unlocked
   void                  setTabIcon(int idx, TabIcon ti);
-  void                  SetPanel(int idx, iDataPanel* value, bool force = false); //#IGNORE set or remove (NULL) a panel
+  void                  SetPanel(int idx, iPanelBase* value, bool force = false); //#IGNORE set or remove (NULL) a panel
 
   iTabBar(iTabView* parent_ = NULL);
   ~iTabBar();

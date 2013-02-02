@@ -19,8 +19,8 @@
 #include <iT3ViewspaceWidget>
 #include <T3Panel>
 #include <iT3Panel>
-#include <T3TabViewer>
-#include <iT3TabViewer>
+#include <T3PanelViewer>
+#include <iT3PanelViewer>
 
 
 
@@ -49,9 +49,9 @@ void T3QuarterWidget::paintEvent(QPaintEvent * event) {
   T3Panel* vf = t3v->GetFrame();
   if(!vsw || !vf) return;
 
-  iT3TabViewer* idv = vf->widget()->viewerWidget();
+  iT3PanelViewer* idv = vf->widget()->viewerWidget();
   if(!idv) return;
-  T3TabViewer* dv = idv->viewer();
+  T3PanelViewer* dv = idv->viewer();
   if(!dv || !dv->isMapped()) return;
 
   inherited::paintEvent(event);

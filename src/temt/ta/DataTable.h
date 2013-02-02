@@ -42,7 +42,7 @@ class String_Data; //
 class GridTableView; // 
 class T3Panel; // 
 class GraphTableView; // 
-class DataTableModel; // #IGNORE
+class iDataTableModel; // #IGNORE
 
 /*
   DataTable Notifications
@@ -66,7 +66,7 @@ class TA_API DataTable : public DataBlock_Idx {
   // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
-friend class DataTableModel;
+friend class iDataTableModel;
 public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
@@ -259,7 +259,7 @@ public:
   //    protected Load/Save and other implementation code
 protected:
 
-  DataTableModel*       table_model; // #IGNORE for gui view/model stuff
+  iDataTableModel*       table_model; // #IGNORE for gui view/model stuff
   static int_Array      load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array      load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
@@ -742,7 +742,7 @@ public:
   int                   GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void                  GetFlatGeom(const CellRange& cr, int& tot_cols,
    int& max_cell_rows); // #IGNORE get the total flat cols and max rows per cell; used for TSV output
-  DataTableModel*       GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
+  iDataTableModel*       GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
 
   String                HeaderToTSV(); // #IGNORE for tsv save
   String                RangeToTSV(const CellRange& cr); // #IGNORE for clip operations

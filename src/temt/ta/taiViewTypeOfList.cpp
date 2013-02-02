@@ -15,7 +15,7 @@
 
 #include "taiViewTypeOfList.h"
 #include <taSigLinkList>
-#include <iListDataPanel>
+#include <iPanelOfList>
 
 
 
@@ -32,7 +32,7 @@ taiSigLink* taiViewTypeOfList::CreateSigLink_impl(taBase* data_) {
 void taiViewTypeOfList::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
-  iListDataPanel* bldp = new iListDataPanel(dl_);
+  iPanelOfList* bldp = new iPanelOfList(dl_);
   DataPanelCreated(bldp);
   inherited::CreateDataPanel_impl(dl_);
 }

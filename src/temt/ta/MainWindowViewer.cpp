@@ -16,15 +16,15 @@
 #include "MainWindowViewer.h"
 #include <iMainWindowViewer>
 #include <taProject>
-#include <tabBrowseViewer>
+#include <BrowseViewerTaBase>
 #include <PanelViewer>
-#include <TypeInfoBrowseViewer>
+#include <TypeInfoBrowser>
 #include <ToolBoxDockViewer>
 #include <ToolBar>
-#include <iTabViewer>
-#include <T3TabViewer>
+#include <iPanelViewer>
+#include <T3PanelViewer>
 #include <iTabView>
-#include <iT3TabViewer>
+#include <iT3PanelViewer>
 
 #include <taMisc>
 #include <taiMisc>
@@ -85,7 +85,7 @@ MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
   rval->SetData(root);
   rval->m_is_root = is_root;
-  tabBrowseViewer* cb = tabBrowseViewer::New(root, root_md);
+  BrowseViewerTaBase* cb = BrowseViewerTaBase::New(root, root_md);
   rval->frames.Add(cb);
   PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
@@ -109,7 +109,7 @@ MainWindowViewer* MainWindowViewer::NewTypeInfoBrowser(void* root, TypeDef* root
   MemberDef* root_md)
 {
   MainWindowViewer* rval = new MainWindowViewer;
-  TypeInfoBrowseViewer* cb = TypeInfoBrowseViewer::New(root, root_typ, root_md);
+  TypeInfoBrowser* cb = TypeInfoBrowser::New(root, root_typ, root_md);
   rval->frames.Add(cb);
   PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
@@ -143,7 +143,7 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
 }
 
 MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
-  DataViewer_List* vwrs = NULL;
+  taViewer_List* vwrs = NULL;
   taProject* proj = GET_OWNER(root, taProject);
   if(proj) {
     vwrs = &(proj->viewers_tmp);
@@ -171,7 +171,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   rval->SetData(proj);
   // tree guy
-  tabBrowseViewer* cb = tabBrowseViewer::New(proj);
+  BrowseViewerTaBase* cb = BrowseViewerTaBase::New(proj);
   rval->frames.Add(cb);
   // panel guy
   fv = rval->AddFrameByType(&TA_PanelViewer);
@@ -181,7 +181,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
     rval->setBrowserViewer(true, false);
     viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
     fv = viewer->AddFrameByType(&TA_PanelViewer);
-    fv = viewer->AddFrameByType(&TA_T3TabViewer);
+    fv = viewer->AddFrameByType(&TA_T3PanelViewer);
     viewer->SetData(proj);
     viewer->setBrowserViewer(false, true);
     // twiddle sizes a bit, to get overlap
@@ -191,7 +191,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   } break;
   case taMisc::PVP_3PANE: {
     rval->setBrowserViewer(true, true);
-    fv = rval->AddFrameByType(&TA_T3TabViewer);
+    fv = rval->AddFrameByType(&TA_T3PanelViewer);
   } break;
   // no default, must handle all cases
   }
@@ -214,7 +214,7 @@ MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
 
   MainWindowViewer* viewer  = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
-  fv = viewer->AddFrameByType(&TA_T3TabViewer);
+  fv = viewer->AddFrameByType(&TA_T3PanelViewer);
   viewer->SetData(proj);
   viewer->setBrowserViewer(false, true);
   // twiddle sizes a bit, to get overlap
@@ -365,7 +365,7 @@ void MainWindowViewer::ConstrDocks_impl() {
     DockViewer* dv = docks.FastEl(i);
     if (!dv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
-    ((DataViewer*)dv)->Constr_impl(NULL);
+    ((taViewer*)dv)->Constr_impl(NULL);
     win->AddDockViewer(dv->widget(), (Qt::DockWidgetArea)dv->dock_area);
   }
 }
@@ -376,17 +376,17 @@ void MainWindowViewer::ConstrFrames_impl() {
     FrameViewer* fv = frames.FastEl(i);
     if (!fv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
-    ((DataViewer*)fv)->Constr_impl(NULL);
+    ((taViewer*)fv)->Constr_impl(NULL);
     win->AddFrameViewer(fv->widget());
     // no effect:
-//     if(frames.size >= 2 && i == frames.size -1 && fv->InheritsFrom(&TA_T3TabViewer)) {
+//     if(frames.size >= 2 && i == frames.size -1 && fv->InheritsFrom(&TA_T3PanelViewer)) {
 //       // do not include the T3 guy in the tab order -- it is rather deadly
 //       fv->widget()->setFocusPolicy(Qt::NoFocus); // not tab focus! -- note: not having any effect
 //     }
   }
   // do not include the T3 guy in the tab order -- it is rather deadly
   // this doesn't seem to have any effect at all!
-//   if(frames.size >= 2 && frames.SafeEl(-1)->InheritsFrom(&TA_T3TabViewer)) {
+//   if(frames.size >= 2 && frames.SafeEl(-1)->InheritsFrom(&TA_T3PanelViewer)) {
 //     for (int i = 0; i < frames.size-2; ++i) {
 //       FrameViewer* fv = frames.FastEl(i);
 //       FrameViewer* fvn = frames.FastEl(i+1);
@@ -405,7 +405,7 @@ void MainWindowViewer::ConstrToolBars_impl() {
   }
 }
 
-IDataViewWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iMainWindowViewer(this, gui_parent);
 }
 
@@ -507,12 +507,12 @@ void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
 //TODO: just nuke the post_constr variable --
   iMainWindowViewer* win = viewerWindow(); //cache
   //note: always costructed, even if not visible
-  ((DataViewer*)tb)->Constr_impl(NULL);
+  ((taViewer*)tb)->Constr_impl(NULL);
 
   // add to the toolbar view menu
   win->AddToolBar(tb->widget());
   if (post_constr) {
-    ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
+    ((taViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
   }
 }
 
@@ -542,7 +542,7 @@ bool MainWindowViewer::SelectPanelTabNo(int tab_no) {
   int idx;
   PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer, idx);
   if (pv && pv->widget()) {
-    iTabViewer* itv = pv->widget();
+    iPanelViewer* itv = pv->widget();
     return itv->tabView()->SetCurrentTab(tab_no);
   }
   return false;
@@ -552,7 +552,7 @@ bool MainWindowViewer::SelectPanelTabName(const String& tab_nm) {
   int idx;
   PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer, idx);
   if (pv && pv->widget()) {
-    iTabViewer* itv = pv->widget();
+    iPanelViewer* itv = pv->widget();
     return itv->tabView()->SetCurrentTabName(tab_nm);
   }
   return false;
@@ -560,9 +560,9 @@ bool MainWindowViewer::SelectPanelTabName(const String& tab_nm) {
 
 bool MainWindowViewer::SelectT3ViewTabNo(int tab_no) {
   int idx;
-  T3TabViewer* pv = (T3TabViewer*)FindFrameByType(&TA_T3TabViewer, idx);
+  T3PanelViewer* pv = (T3PanelViewer*)FindFrameByType(&TA_T3PanelViewer, idx);
   if (pv && pv->widget()) {
-    iT3TabViewer* itv = pv->widget();
+    iT3PanelViewer* itv = pv->widget();
     return itv->SetCurrentTab(tab_no);
   }
   return false;
@@ -570,9 +570,9 @@ bool MainWindowViewer::SelectT3ViewTabNo(int tab_no) {
 
 bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
   int idx;
-  T3TabViewer* pv = (T3TabViewer*)FindFrameByType(&TA_T3TabViewer, idx);
+  T3PanelViewer* pv = (T3PanelViewer*)FindFrameByType(&TA_T3PanelViewer, idx);
   if (pv && pv->widget()) {
-    iT3TabViewer* itv = pv->widget();
+    iT3PanelViewer* itv = pv->widget();
     return itv->SetCurrentTabName(tab_nm);
   }
   return false;
@@ -590,9 +590,9 @@ PanelViewer* MainWindowViewer::GetMiddlePanel() {
   return pv;
 }
 
-T3TabViewer* MainWindowViewer::GetRightViewer() {
+T3PanelViewer* MainWindowViewer::GetRightViewer() {
   int idx;
-  T3TabViewer* pv = (T3TabViewer*)FindFrameByType(&TA_T3TabViewer, idx);
+  T3PanelViewer* pv = (T3PanelViewer*)FindFrameByType(&TA_T3PanelViewer, idx);
   return pv;
 }
 

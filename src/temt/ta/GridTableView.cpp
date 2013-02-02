@@ -24,7 +24,7 @@
 #include <MainWindowViewer>
 #include <NewViewHelper>
 #include <T3Misc>
-#include <iGridTableView_Panel>
+#include <iViewPanelOfGridTable>
 #include <iT3Panel>
 #include <taMath_float>
 #include <taProject>
@@ -121,8 +121,8 @@ GridTableView* GridTableView::New(DataTable* dt, T3Panel*& fr) {
   return vw;
 }
 
-iGridTableView_Panel* GridTableView::lvp() {
-  return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;
+iViewPanelOfGridTable* GridTableView::lvp() {
+  return (iViewPanelOfGridTable*)(iViewPanelOfDataTable*)m_lvp;
 }
 
 void GridTableView::Initialize() {
@@ -584,7 +584,7 @@ void GridTableView::Clear_impl() {
 void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iGridTableView_Panel(this);
+    m_lvp = new iViewPanelOfGridTable(this);
     vw->RegisterPanel(m_lvp);
   }
 }

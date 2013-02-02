@@ -14,9 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfSelectEdit.h"
-#include <iSelectEditPanel>
+#include <iPanelOfSelectEdit>
 #include <ClusterRun>
-#include <iDataTablePanel_Mbr>
+#include <iPanelOfDataTable_Mbr>
 
 
 int taiViewTypeOfSelectEdit::BidForView(TypeDef* td) {
@@ -28,16 +28,16 @@ int taiViewTypeOfSelectEdit::BidForView(TypeDef* td) {
 void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
-  iSelectEditPanel* bldp = new iSelectEditPanel(dl_);
+  iPanelOfSelectEdit* bldp = new iPanelOfSelectEdit(dl_);
   DataPanelCreated(bldp);
 
   if(ClusterRun* cr = dynamic_cast<ClusterRun *>(dl_->taData())) {
     if(taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_running.GetSigLink())) {
-      iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
+      iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
     if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_done.GetSigLink())) {
-      iDataTablePanel_Mbr* dp = new iDataTablePanel_Mbr(datatableLink);
+      iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
   }

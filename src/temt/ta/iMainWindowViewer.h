@@ -17,7 +17,7 @@
 #define iMainWindowViewer_h 1
 
 // parent includes:
-#include <IDataViewWidget>
+#include <IViewerWidget>
 #ifndef __MAKETA__
 #include <QMainWindow>
 #include <QPointer>
@@ -38,15 +38,15 @@ class iDialogSearch; //
 class iTreeView; //
 class ISelectable_PtrList; //
 class iTreeViewItem; //
-class iTabViewer; //
+class iPanelViewer; //
 class ISelectableHost; //
-class iDataPanel; //
+class iPanelBase; //
 class QSplitter; //
 class iRect; //
 
 
-class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
-// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
+class TA_API iMainWindowViewer: public QMainWindow, public IViewerWidget {
+// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the taViewer
   Q_OBJECT
 INHERITED(QMainWindow)
 friend class taSigLink;
@@ -157,8 +157,8 @@ public:
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;}
 
   virtual iAction*    AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
-  void                  AddPanel(iDataPanel* panel, bool new_tab = true);
-    // insures we have a iTabViewer; adds panel; if requested, adds a new tab, sets panel active in it
+  void                  AddPanel(iPanelBase* panel, bool new_tab = true);
+    // insures we have a iPanelViewer; adds panel; if requested, adds a new tab, sets panel active in it
   virtual void          AddToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
   virtual void          AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
 #ifndef __MAKETA__
@@ -222,7 +222,7 @@ public:
   // edit this guy in a new panel, making a tab viewer if necessary
   int                   GetEditActions();
   // after a change in selection, update the available edit actions (cut, copy, etc.)
-  iTabViewer*           GetTabViewer(bool force = false);
+  iPanelViewer*           GetTabViewer(bool force = false);
   // get the tab viewer, or make one if force
 
   void                  setFrameGeometry(const iRect& r);
@@ -320,7 +320,7 @@ signals:
     // see "Selection Handling" in .cpp
 #endif
 
-public: // IDataViewWidget i/f
+public: // IViewerWidget i/f
   override bool         isDirty() const;
   override QWidget*     widget() {return this;}
   override void         SaveData();

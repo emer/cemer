@@ -33,7 +33,7 @@
 #include <SelectEdit_Group>
 #include <DataTable_Group>
 #include <Program_Group>
-#include <DataViewer_List>
+#include <taViewer_List>
 #include <taUndoMgr>
 #include <TimeUsed>
 
@@ -83,8 +83,8 @@ public:
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group         programs; // Gui-based programs to run simulations and other processing
-  DataViewer_List       viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
-  DataViewer_List       viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
+  taViewer_List       viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
+  taViewer_List       viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr             undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
   bool                  auto_name; // #DEF_true automatically update the name of the project based on the file name used when saving -- useful because this name is typically neglected yet useful for distinguishing different projects when comparing or choosing objects

@@ -19,7 +19,7 @@
 
 void ISelectableHost_QObj::customEvent(QEvent* ev) {
   switch ((int)ev->type()) {
-  case iDataViewer_SelectionChanged_EventType:
+  case itaViewer_SelectionChanged_EventType:
     emit NotifySignal(host, ISelectableHost::OP_SELECTION_CHANGED);
     break;
   default:
@@ -37,7 +37,7 @@ void ISelectableHost_QObj::EditAction(iAction* act) {
 void ISelectableHost_QObj::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
   // selection ops need to go through the event loop or things get weird and nasty...
   if (op == ISelectableHost::OP_SELECTION_CHANGED) {
-    QEvent* ev = new QEvent((QEvent::Type)iDataViewer_SelectionChanged_EventType);
+    QEvent* ev = new QEvent((QEvent::Type)itaViewer_SelectionChanged_EventType);
     QCoreApplication::postEvent(this, ev); // returns immediately
   } else
     emit NotifySignal(host, op);

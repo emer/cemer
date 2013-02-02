@@ -17,7 +17,7 @@
 #define DockViewer_List_h 1
 
 // parent includes:
-#include <DataViewer_List>
+#include <taViewer_List>
 
 // member includes:
 
@@ -27,10 +27,10 @@ TypeDef_Of(DockViewer);
 
 TypeDef_Of(DockViewer_List);
 
-class TA_API DockViewer_List: public DataViewer_List { // #NO_TOKENS
-INHERITED(DataViewer_List)
+class TA_API DockViewer_List: public taViewer_List { // #NO_TOKENS
+INHERITED(taViewer_List)
 public:
-  TA_DATAVIEWLISTFUNS(DockViewer_List, DataViewer_List, DockViewer)
+  TA_DATAVIEWLISTFUNS(DockViewer_List, taViewer_List, DockViewer)
 private:
   NOCOPY(DockViewer_List)
   void  Initialize() { SetBaseType(&TA_DockViewer);}

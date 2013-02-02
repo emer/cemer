@@ -43,7 +43,7 @@ public:
   SL_FUNS(taSigLinkTypeItem); //
 
 protected:
-  override iDataPanel*  CreateDataPanel_impl();
+  override iPanelBase*  CreateDataPanel_impl();
   override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
     iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
 };

@@ -34,7 +34,7 @@ void T3DataViewMain::CopyFromViewFrame(T3DataViewPar* cp) {
   T3Panel* cp_vwr = cp->GetFrame();
   if(!cp_vwr || vwr == cp_vwr) return;
 
-  vwr->CopyFromViewFrame(cp_vwr);
+  vwr->CopyFromViewPanel(cp_vwr);
 }
 
 void T3DataViewMain::setInteractionModeOn(bool on_off, bool re_render) {

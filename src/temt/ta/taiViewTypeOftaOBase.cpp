@@ -14,13 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOftaOBase.h"
-#include <iDataPanelSet>
+#include <iPanelSet>
 #include <UserDataItem_List>
-#include <iUserDataPanel>
-#include <iDocDataPanel>
+#include <iPanelOfUserData>
+#include <iPanelOfDocView>
 #include <taDoc>
 #include <taSigLinkTaOBase>
-#include <iListDataPanel>
+#include <iPanelOfList>
 
 
 
@@ -30,7 +30,7 @@ int taiViewTypeOftaOBase::BidForView(TypeDef* td) {
   return 0;
 }
 
-void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
+void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iPanelSet* pan) {
   // TODO (4.1): check for new UserData
   // TODO: check for a new DocLink
   // if we have UserData, make a panel for it
@@ -43,10 +43,10 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
     // get or make a panel for Userdata, if any visible
     int start_idx = 0;
     bool udi_visible = udl->hasVisibleItems();
-    iUserDataPanel* udp = (iUserDataPanel*)pan->GetDataPanelOfType(&TA_iUserDataPanel, start_idx);
+    iPanelOfUserData* udp = (iPanelOfUserData*)pan->GetDataPanelOfType(&TA_iPanelOfUserData, start_idx);
     // leave an existing panel if none visible, but don't make one if not
     if (!udp && udi_visible) {
-      udp = new iUserDataPanel((taiSigLink*)udl->GetSigLink());
+      udp = new iPanelOfUserData((taiSigLink*)udl->GetSigLink());
       DataPanelCreated(udp);
     }
 
@@ -56,10 +56,10 @@ void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
     taDoc* doc = tab->GetDocLink();
     // get an existing DocPanel, if any -- don't force yet...
     start_idx = 0;
-    iDocDataPanel* dp = (iDocDataPanel*)pan->GetDataPanelOfType(&TA_iDocDataPanel, start_idx);
+    iPanelOfDocView* dp = (iPanelOfDocView*)pan->GetDataPanelOfType(&TA_iPanelOfDocView, start_idx);
     if (doc) {
       if (!dp) { // need to create one
-        dp = new iDocDataPanel; // note special case: no ctor link
+        dp = new iPanelOfDocView; // note special case: no ctor link
         DataPanelCreated(dp);
       }
       dp->setDoc(doc); // sets link
@@ -87,7 +87,7 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
     String custom_name = typ->OptionAfter("DEF_CHILDNAME_"); // optional
     custom_name.gsub("_", " ");
     dl_ = dynamic_cast<taSigLinkTaOBase*>(dl_)->listLink();
-    iListDataPanel* bldp = new iListDataPanel(dl_, custom_name);
+    iPanelOfList* bldp = new iPanelOfList(dl_, custom_name);
     DataPanelCreated(bldp);
   }
   // if we have UserData, make a panel for it
@@ -98,7 +98,7 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
     bool udi_visible = udl->hasVisibleItems();
     // only make one for UserData if any visible
     if (udi_visible) {
-      iUserDataPanel* udp = new iUserDataPanel((taiSigLink*)udl->GetSigLink());
+      iPanelOfUserData* udp = new iPanelOfUserData((taiSigLink*)udl->GetSigLink());
       DataPanelCreated(udp);
     }
 
@@ -107,7 +107,7 @@ void taiViewTypeOftaOBase::CreateDataPanel_impl(taiSigLink* dl_)
     // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it
     taDoc* doc = tab->GetDocLink();
     if (doc) {
-      iDocDataPanel* dp = new iDocDataPanel; // note special case: no ctor link
+      iPanelOfDocView* dp = new iPanelOfDocView; // note special case: no ctor link
       DataPanelCreated(dp);
       dp->setDoc(doc); // sets link
     }

@@ -15,7 +15,7 @@
 
 #include "iTabBar.h"
 #include <iTabView>
-#include <iDataPanel>
+#include <iPanelBase>
 
 #include <QIcon>
 #include <QMenu>
@@ -40,7 +40,7 @@ iTabBar::iTabBar(iTabView* parent_)
 iTabBar::~iTabBar() {
 }
 
-int iTabBar::addTab(iDataPanel* pan) {
+int iTabBar::addTab(iPanelBase* pan) {
   // if it is a lock guy, add to end, otherwise insert before lock guys
   int idx = 0;
   if (pan && pan->lockInPlace()) {
@@ -48,7 +48,7 @@ int iTabBar::addTab(iDataPanel* pan) {
   }
   else {
     while (idx < count()) {
-      iDataPanel* tpan = panel(idx);
+      iPanelBase* tpan = panel(idx);
       if (tpan && tpan->lockInPlace()) break; // found 1st guy
       ++idx;
     }
@@ -83,7 +83,7 @@ bool iTabBar::focusNextPrevChild(bool next) {
   if(!next) return inherited::focusNextPrevChild(next);
 
   int idx = currentIndex();
-  iDataPanel* tpan = panel(idx);
+  iPanelBase* tpan = panel(idx);
   if(!tpan) return inherited::focusNextPrevChild(next);
   QWidget* nxt = tpan->firstTabFocusWidget();
   if(!nxt) return inherited::focusNextPrevChild(next);
@@ -91,11 +91,11 @@ bool iTabBar::focusNextPrevChild(bool next) {
   return true;
 }
 
-iDataPanel* iTabBar::panel(int idx) {
+iPanelBase* iTabBar::panel(int idx) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
   if (data.isNull() || !data.isValid()) return NULL;
   ta_intptr_t rval = data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
-  return (iDataPanel*)rval;
+  return (iPanelBase*)rval;
 
 }
 
@@ -109,11 +109,11 @@ void iTabBar::setTabIcon(int idx, TabIcon ti) {
     inherited::setTabIcon(idx, QIcon());
 }
 
-void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
+void iTabBar::SetPanel(int idx, iPanelBase* value, bool force) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
-  iDataPanel* m_panel = NULL;
+  iPanelBase* m_panel = NULL;
   if (!data.isNull() && data.isValid())
-    m_panel = (iDataPanel*)data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
+    m_panel = (iPanelBase*)data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
 
   if ((m_panel == value) && !force) goto set_cur;
   m_panel = value;

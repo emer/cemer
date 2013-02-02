@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iListDataPanel; //
+class iPanelOfList; //
 class iTreeView; //
 class QTreeWidgetItem; //
 
@@ -32,7 +32,7 @@ class TA_API taiListNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:
   int                   num; // item number, starting from 0
-  iListDataPanel*       panel; // logical parent node of the list items
+  iPanelOfList*       panel; // logical parent node of the list items
 
   QString               text(int col) const; // override
   override void         setName(const String& value); // 2nd col for us
@@ -40,7 +40,7 @@ public:
   bool                  operator<(const QTreeWidgetItem& item) const; // override
 
   override void         DecorateDataNode();
-  taiListNode(int num_, iListDataPanel* panel_, taiSigLink* link_,
+  taiListNode(int num_, iPanelOfList* panel_, taiSigLink* link_,
     iTreeView* parent_, taiListNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListNode(); //

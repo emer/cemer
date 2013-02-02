@@ -24,7 +24,7 @@
 
 
 
-IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
   if (name == "Application")
     return new iApplicationToolBar(this, gui_parent); // usually parented later
   else
@@ -32,7 +32,7 @@ IDataViewWidget* ToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 }
 
 iToolBar::iToolBar(ToolBar* viewer_, QWidget* parent)
-  : inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IViewerWidget(viewer_)
 {
   Init();
 }

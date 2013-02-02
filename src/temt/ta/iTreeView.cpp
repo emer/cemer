@@ -684,7 +684,7 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
     ExpandAllUnder(item);
 
   emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
-  // i.e., the iListDataPanel
+  // i.e., the iPanelOfList
 }
 
 void iTreeView::mousePressEvent(QMouseEvent* event) {

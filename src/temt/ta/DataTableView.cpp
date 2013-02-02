@@ -16,7 +16,7 @@
 #include "DataTableView.h"
 #include <DataTable>
 #include <T3Panel>
-#include <iDataTableView_Panel>
+#include <iViewPanelOfDataTable>
 #include <DataColView>
 #include <T3Node>
 

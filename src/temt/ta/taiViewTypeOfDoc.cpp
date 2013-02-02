@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfDoc.h"
-#include <iDocDataPanel>
-#include <iDocEditDataPanel>
+#include <iPanelOfDocView>
+#include <iPanelOfDocEdit>
 
 TypeDef_Of(taDoc);
 
@@ -28,13 +28,13 @@ int taiViewTypeOfDoc::BidForView(TypeDef* td) {
 void taiViewTypeOfDoc::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // doc view is default
-  iDocDataPanel* cp = new iDocDataPanel();
+  iPanelOfDocView* cp = new iPanelOfDocView();
   cp->setUpdateOnShow(false); // no way -- user must refresh
   cp->setDoc((taDoc*)dl_->data());
   DataPanelCreated(cp);
 
   // then source editor
-  iDocEditDataPanel* dp = new iDocEditDataPanel(dl_);
+  iPanelOfDocEdit* dp = new iPanelOfDocEdit(dl_);
   dp->setUpdateOnShow(false); // no way -- leave where it is
   DataPanelCreated(dp);
 

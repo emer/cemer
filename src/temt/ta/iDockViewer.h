@@ -17,7 +17,7 @@
 #define iDockViewer_h 1
 
 // parent includes:
-#include <IDataViewWidget>
+#include <IViewerWidget>
 #ifndef __MAKETA__
 #include <QDockWidget>
 #endif
@@ -28,7 +28,7 @@
 class DockViewer; //
 
 
-class TA_API iDockViewer: public QDockWidget, public IDataViewWidget {
+class TA_API iDockViewer: public QDockWidget, public IViewerWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DockViewer
   Q_OBJECT
 INHERITED(QDockWidget)
@@ -38,7 +38,7 @@ public:
   iDockViewer(DockViewer* viewer_, QWidget* parent = NULL);
   ~iDockViewer();
 
-public: // IDataViewerWidget i/f
+public: // ItaViewerWidget i/f
   override QWidget*     widget() {return this;}
 protected:
 //  override void               Constr_impl();

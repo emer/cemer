@@ -16,13 +16,13 @@
 #include "T3Panel.h"
 #include <iT3Panel>
 #include <iT3ViewspaceWidget>
-#include <T3TabViewer>
+#include <T3PanelViewer>
 #include <T3DataViewMain>
-#include <iT3TabViewer>
+#include <iT3PanelViewer>
 #include <T3ExaminerViewer>
 #include <T3DataView>
 #include <PanelViewer>
-#include <iTabViewer>
+#include <iPanelViewer>
 #include <iViewPanelSet>
 #include <iMainWindowViewer>
 #include <T3Node>
@@ -104,13 +104,13 @@ void T3Panel::Constr_post() {
 //   SetCameraPosOrient();
 }
 
-IDataViewWidget* T3Panel::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* T3Panel::ConstrWidget_impl(QWidget* gui_parent) {
   iT3Panel* rval = new iT3Panel(this, gui_parent);
   // make the corresponding viewpanelset
   MainWindowViewer* mwv = GET_MY_OWNER(MainWindowViewer);
   int idx;
   PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer, idx);
-  iTabViewer* itv = pv->widget();
+  iPanelViewer* itv = pv->widget();
   taiSigLink* dl = (taiSigLink*)GetSigLink();
   iViewPanelSet* ivps = new iViewPanelSet(dl);
   rval->panel_set = ivps;
@@ -121,7 +121,7 @@ IDataViewWidget* T3Panel::ConstrWidget_impl(QWidget* gui_parent) {
 void T3Panel::SigEmit(int sls, void* op1, void* op2) {
   inherited::SigEmit(sls, op1, op2);
   if (sls <= SLS_ITEM_UPDATED_ND) {
-    T3TabViewer* par = GET_MY_OWNER(T3TabViewer);
+    T3PanelViewer* par = GET_MY_OWNER(T3PanelViewer);
     if (par) par->PanelChanged(this);
   }
 }

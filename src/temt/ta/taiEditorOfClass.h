@@ -34,7 +34,7 @@ class taiWidget_List;
 // declare all other types mentioned but not required to include:
 class taiWidgetActions; //
 class QButtonGroup; //
-class EditDataPanel; //
+class iPanelOfEditor; //
 class taiWidgetMethod; //
 class taiWidgetActions_List; //
 class taiMemberWidgets_List; //
@@ -44,10 +44,10 @@ class QAction; //
 TypeDef_Of(taiEditorOfClass);
 
 class TA_API taiEditorOfClass : public taiEditorWidgetsMain {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a iPanelOfEditor as the widget, but the Edit subclasses override that
   Q_OBJECT
 INHERITED(taiEditorWidgetsMain)
-friend class EditDataPanel;
+friend class iPanelOfEditor;
 public:
   enum DeftaiMemberWidgets { // keys for default members sets -- always created
     MS_NORM,    // normal members, always shown
@@ -87,7 +87,7 @@ public:
   taiWidget_List&          data_el(int i) // data items, typically rebuilt each reshow
     {return membs.FastEl(i)->data_el;}
 
-  EditDataPanel*        dataPanel() {return panel;} // #IGNORE
+  iPanelOfEditor*        dataPanel() {return panel;} // #IGNORE
   override void         guiParentDestroying() {panel = NULL;}
 
   bool                  SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
@@ -100,8 +100,8 @@ public:
 
   override int          Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
   // for dialogs -- add to list of active_edit dialogs too
-  EditDataPanel*        EditPanel(taiSigLink* link); // for panels
-  EditDataPanel*        EditPanelDeferred(taiSigLink* link); // for panels
+  iPanelOfEditor*        EditPanel(taiSigLink* link); // for panels
+  iPanelOfEditor*        EditPanelDeferred(taiSigLink* link); // for panels
   USING(inherited::GetImage)
   void                  GetImage(bool force); //override
   void                  GetValue(); //override
@@ -125,7 +125,7 @@ public slots:
   override iMainWindowViewer* viewerWindow() const;
 
 protected:
-  EditDataPanel* panel; //NOTE: not used when invoked by Edit()
+  iPanelOfEditor* panel; //NOTE: not used when invoked by Edit()
   bool                  inline_mode; // true when doing inline, set early in constr
   bool                  no_meth_menu; // for Seledit guys, don't use meth menus
 

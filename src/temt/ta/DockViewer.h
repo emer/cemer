@@ -49,7 +49,7 @@ public:
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
 
 protected:
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent);
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent);
   //override void               MakeWinName_impl(); each subguy will need this
   override void         GetWinState_impl();
   override void         SetWinState_impl();

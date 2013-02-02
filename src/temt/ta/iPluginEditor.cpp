@@ -23,7 +23,7 @@
 #include <iSplitter>
 #include <iMainWindowViewer>
 #include <iNumberedTextView>
-#include <iDataPanel>
+#include <iPanelBase>
 #include <iTextEdit>
 #include <taPlugins>
 #include <QKeyEvent>

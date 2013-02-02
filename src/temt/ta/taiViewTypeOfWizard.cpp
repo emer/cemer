@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfWizard.h"
-#include <iDocDataPanel>
+#include <iPanelOfDocView>
 #include <taWizard>
 
 TypeDef_Of(PluginWizard);
@@ -29,7 +29,7 @@ int taiViewTypeOfWizard::BidForView(TypeDef* td) {
 void taiViewTypeOfWizard::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // doc view is default
-  iDocDataPanel* cp = new iDocDataPanel();
+  iPanelOfDocView* cp = new iPanelOfDocView();
   cp->setUpdateOnShow(false); // no way -- user must refresh
   taWizard* wiz = (taWizard*)dl_->data();
   cp->setDoc(&(wiz->wiz_doc));

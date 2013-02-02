@@ -31,7 +31,7 @@ class TA_API taiWidgetToolBar: public taiWidgetActions { // a toolbar, in which 
 public:
   inline QToolBar*      rep() {return (QToolBar*)(QWidget*)m_rep;}
 
-  taiWidgetToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar); // used by iDataViewer
+  taiWidgetToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar); // used by itaViewer
 protected:
   void                  init(QToolBar* exist_bar);
 };

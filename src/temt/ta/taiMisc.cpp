@@ -19,7 +19,7 @@
 #include <iDialogTextEdit>
 #include <iDialogChoice>
 #include <iWidget_List>
-#include <EditDataPanel>
+#include <iPanelOfEditor>
 #include <TopLevelViewer>
 #include <iMainWindowViewer>
 #include <AbstractScriptBase>
@@ -486,7 +486,7 @@ QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
   if (fontSpec == 0) fontSpec = ctrl_size;
   QLabel* rval = new QLabel(text, parent);
   // This line is commented out because it causes problems on the
-  // NetViewPanel dialog (two-line text labels get clipped).
+  // iPanelOfNetView dialog (two-line text labels get clipped).
   //rval->setFixedHeight(label_height(fontSpec));
   rval->setFont(nameFont(fontSpec));
   return rval;
@@ -525,7 +525,7 @@ void taiMisc::ResolveEditChanges(CancelOp& cancel_op) {
 
 void taiMisc::ResolveViewerChanges(CancelOp& cancel_op) {
   for (int i = 0; i < taiMisc::active_wins.size; ++i) {
-    IDataViewWidget* dvw = taiMisc::active_wins.FastEl(i);
+    IViewerWidget* dvw = taiMisc::active_wins.FastEl(i);
     dvw->ResolveChanges(cancel_op);
     if (cancel_op == CO_CANCEL) return;
   }
@@ -695,7 +695,7 @@ void taiMisc::WaitProc() {
 
 void taiMisc::ScriptIconify(void*, int) {
 // do nothing, use script win pos to record final iconify status
-//  DataViewer* wb = (DataViewer *) obj;
+//  taViewer* wb = (taViewer *) obj;
 //   if(onoff)
 //     taiMisc::RecordScript(wb->GetPathNames() + ".Iconify();\n");
 //   else

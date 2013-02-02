@@ -44,12 +44,12 @@ void taiSigLink::Assert_QObj() {
   }
 }
 
-iDataPanel* taiSigLink::CreateDataPanel() {
+iPanelBase* taiSigLink::CreateDataPanel() {
   return CreateDataPanel_impl();
 }
 
-iDataPanel* taiSigLink::CreateDataPanel_impl() {
-  iDataPanel* rval = NULL;
+iPanelBase* taiSigLink::CreateDataPanel_impl() {
+  iPanelBase* rval = NULL;
   TypeDef* typ = GetDataTypeDef();
   //typ can be null for non-taBase classes
   if ((typ == NULL) || (typ->iv == NULL)) return NULL;

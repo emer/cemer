@@ -17,7 +17,7 @@
 #define ToolBar_List_h 1
 
 // parent includes:
-#include <DataViewer_List>
+#include <taViewer_List>
 
 // member includes:
 
@@ -27,10 +27,10 @@ TypeDef_Of(ToolBar);
 
 TypeDef_Of(ToolBar_List);
 
-class TA_API ToolBar_List: public DataViewer_List {
-INHERITED(DataViewer_List)
+class TA_API ToolBar_List: public taViewer_List {
+INHERITED(taViewer_List)
 public:
-  TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
+  TA_DATAVIEWLISTFUNS(ToolBar_List, taViewer_List, ToolBar)
 private:
   NOCOPY(ToolBar_List)
   void                  Initialize() {SetBaseType(&TA_ToolBar);}

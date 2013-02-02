@@ -17,7 +17,7 @@
 #define iTopLevelWindow_List_h 1
 
 // parent includes:
-#include <IDataViewWidget>
+#include <IViewerWidget>
 #include <taPtrList>
 
 // member includes:
@@ -27,7 +27,7 @@ class iMainWindowViewer; //
 class iDockViewer; // 
 
 
-class TA_API iTopLevelWindow_List: public taPtrList<IDataViewWidget> {
+class TA_API iTopLevelWindow_List: public taPtrList<IViewerWidget> {
 public:
   iMainWindowViewer*    SafeElAsMainWindow(int i);
     // returns item cast as requested, or NULL if not of that type

@@ -331,7 +331,7 @@ typedef unsigned long long    ta_uint64_t;
 enum CustomEventType {
   FirstEvent            = 1000, //note: QT's custom events start at 1000
   cssMisc_StartupShell_EventType, // css_machine.h
-  iDataViewer_SelectionChanged_EventType // ta_qtviewer.h
+  itaViewer_SelectionChanged_EventType // ta_qtviewer.h
 };
 #endif
 

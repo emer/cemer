@@ -24,8 +24,8 @@
 
 // member includes:
 #include <taiSigLink>
-#include <iDataPanel_PtrList>
-#include <iTabViewer>
+#include <iPanelBase_PtrList>
+#include <iPanelViewer>
 #include <MemberDef>
 #include <iTabBar>
 
@@ -45,51 +45,51 @@ class TA_API iTabView: public QWidget {
   Q_OBJECT
 friend class iTabBar;
 friend class iTabView_PtrList;
-friend class iDataPanel;
+friend class iPanelBase;
 public:
   QVBoxLayout*          layDetail;
     iTabBar*            tbPanels; //note: we always maintain at least one tab
     QStackedWidget*     wsPanels; //
 
   bool                  autoCommit() const {return true;} // if we should autocommit dirty panels when browsing (NOTE: currently always true, could be made a user option)
-  iDataPanel*           curPanel() const; // currently active panel
+  iPanelBase*           curPanel() const; // currently active panel
   int                   panelCount() const; // total number of panels (not just in tabs)
-  iDataPanel*           panel(int pan_idx = 0); // implementation-independent way to access panels
+  iPanelBase*           panel(int pan_idx = 0); // implementation-independent way to access panels
   int                   tabCount() const; // number of tabs
-  iDataPanel*           tabPanel(int tab_idx); // panel from indicated tab (can be NULL)
+  iPanelBase*           tabPanel(int tab_idx); // panel from indicated tab (can be NULL)
   iTabBarBase*          tabBar() { return tbPanels; }
   taiSigLink*          par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*            par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
-  iTabViewer*           tabViewerWin() {return m_viewer_win;}
+  iPanelViewer*           tabViewerWin() {return m_viewer_win;}
   iMainWindowViewer*    viewerWindow() {return (m_viewer_win) ? m_viewer_win->viewerWindow() : NULL;}
 
   void                  Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool                  ActivatePanel(taiSigLink* dl); // if a panel exists for the link, make it active and return true
-  bool                  AddPanel(iDataPanel* panel); // adds a panel if not already, true if newly added
-  void                  AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a panel in a new tab
+  bool                  AddPanel(iPanelBase* panel); // adds a panel if not already, true if newly added
+  void                  AddPanelNewTab(iPanelBase* panel, bool lock = false); // adds a panel in a new tab
   void                  Closing(CancelOp& cancel_op);
-  void                  DataPanelDestroying(iDataPanel* panel);
+  void                  DataPanelDestroying(iPanelBase* panel);
   void                  FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1);
-  iDataPanel*           GetDataPanel(taiSigLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
-  void                  RemoveDataPanel(iDataPanel* panel);
+  iPanelBase*           GetDataPanel(taiSigLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
+  void                  RemoveDataPanel(iPanelBase* panel);
   void                  Refresh(); // manually refresh; just delegates to all
   void                  ResolveChanges(CancelOp& cancel_op);
-  void                  OnWindowBind(iTabViewer* itv); // called at constr_post time
+  void                  OnWindowBind(iPanelViewer* itv); // called at constr_post time
   void                  ShowLink(taiSigLink* link, bool not_in_cur = false);
-  void                  ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
+  void                  ShowPanel(iPanelBase* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
   bool                  SetCurrentTab(int tab_idx);
   // focus indicated tab, but usually not if current is lockInPlace -- returns success
   bool                  SetCurrentTabName(const String& tab_nm);
   // focus indicated tab, but usually not if current is lockInPlace -- returns success
-  void                  ShowTab(iDataPanel* panel, bool show, bool focus = false); // show/hide tab, esp for ctrl panel in visible frame
-  int                   TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
+  void                  ShowTab(iPanelBase* panel, bool show, bool focus = false); // show/hide tab, esp for ctrl panel in visible frame
+  int                   TabIndexOfPanel(iPanelBase* panel) const; // or -1 if not showing in a tab
   int                   TabIndexByName(const String& nm) const;
-  void                  UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
+  void                  UpdateTabName(iPanelBase* pan); // called only by individual panel when its name may have changed
   void                  GetWinState();
   void                  SetWinState();
 
   iTabView(QWidget* parent = NULL);
-  iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
+  iTabView(iPanelViewer* data_viewer_, QWidget* parent = NULL);
   ~iTabView();
 
 public slots:
@@ -99,12 +99,12 @@ public slots:
   void                  UpdateTabNames(); // called by a siglink when a tab name might have changed; panels also hook to this
 
 protected:
-  iTabViewer*   m_viewer_win;
+  iPanelViewer*   m_viewer_win;
 
   override void keyPressEvent(QKeyEvent* e);
 
 private:
-  iDataPanel_PtrList    panels; // no external hanky-panky with this puppie
+  iPanelBase_PtrList    panels; // no external hanky-panky with this puppie
   void                  Init();
 };
 

@@ -15,7 +15,7 @@
 
 #include "taiViewTypeOfProgramGroup.h"
 #include <iTreeView>
-#include <iProgramGroupPanel>
+#include <iPanelOfProgramGroup>
 
 TypeDef_Of(Program_Group);
 
@@ -32,7 +32,7 @@ int taiViewTypeOfProgramGroup::BidForView(TypeDef* td) {
 void taiViewTypeOfProgramGroup::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
-  iProgramGroupPanel* dp = new iProgramGroupPanel(dl_);
+  iPanelOfProgramGroup* dp = new iPanelOfProgramGroup(dl_);
   DataPanelCreated(dp);
   inherited::CreateDataPanel_impl(dl_);
 }

@@ -14,14 +14,14 @@
 //   Lesser General Public License for more details.
 
 #include "PanelViewer.h"
-#include <iTabViewer>
+#include <iPanelViewer>
 
 
 void PanelViewer::Initialize() {
 }
 
-IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
-  return new iTabViewer(this, gui_parent);
+IViewerWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  return new iPanelViewer(this, gui_parent);
 }
 
 iTabBarBase* PanelViewer::tabBar() {

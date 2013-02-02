@@ -119,11 +119,11 @@ set(network_HEADS_MAKETA_LOCAL
   LayerGroupView.h
   NetViewObjView.h
   NetView.h
-  NetViewPanel.h
+  iPanelOfNetView.h
 
   BrainView.h
   BrainVolumeView.h
-  BrainViewPanel.h
+  iViewPanelOfBrain.h
 
   T3UnitNode.h
   T3UnitNode_Cylinder.h
@@ -182,9 +182,9 @@ set(network_HEADS
 
 # headers that need Qt moc run
 set(network_HEADS_MOC
-  NetViewPanel.h
+  iPanelOfNetView.h
   iBrainViewEditDialog.h
-  BrainViewPanel.h
+  iViewPanelOfBrain.h
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -308,7 +308,7 @@ set(network_SRCS_LOCAL
   LayerGroupView.cpp
   NetViewObjView.cpp
   NetView.cpp
-  NetViewPanel.cpp
+  iPanelOfNetView.cpp
 
   BrainAtlas.cpp
   BrainAtlasFileParser.cpp
@@ -328,7 +328,7 @@ set(network_SRCS_LOCAL
   LayerRef.cpp
   ProjectionRef.cpp
   T3BrainNode.cpp
-  BrainViewPanel.cpp
+  iViewPanelOfBrain.cpp
   iBrainViewEditDialog.cpp
   NetworkVoxelMapper.cpp
   NiftiReader.cpp

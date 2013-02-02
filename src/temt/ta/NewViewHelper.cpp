@@ -17,7 +17,7 @@
 
 #include <T3Panel>
 #include <T3DataView>
-#include <T3TabViewer>
+#include <T3PanelViewer>
 #include <taBase>
 
 TypeDef_Of(taProject);
@@ -95,7 +95,7 @@ bool NewViewHelper::getFrame() {
   // If an existing frame wasn't provided,
   if (!fr_) {
     // Then create a new one to put the object in.
-    fr_ = T3TabViewer::GetBlankOrNewT3Panel(obj_);
+    fr_ = T3PanelViewer::GetBlankOrNewT3Panel(obj_);
   }
   
   // Return true to indicate that a frame was successfully identified

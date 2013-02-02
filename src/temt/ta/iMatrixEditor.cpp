@@ -15,7 +15,7 @@
 
 #include "iMatrixEditor.h"
 #include <taMatrix>
-#include <MatrixTableModel>
+#include <iMatrixTableModel>
 #include <iMatrixTableView>
 
 #include <QVBoxLayout>
@@ -46,15 +46,15 @@ void iMatrixEditor::init() {
   return m_mat;
 }
 
-MatrixTableModel* iMatrixEditor::model() const {
+iMatrixTableModel* iMatrixEditor::model() const {
   if (m_mat) 
     return m_mat->GetTableModel();
   return NULL;
 }*/
 
 void iMatrixEditor::Refresh() {
- // MatrixTableModel* mod = q_objectcast<>(model();
-  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(tv->model());
+ // iMatrixTableModel* mod = q_objectcast<>(model();
+  iMatrixTableModel* mod = qobject_cast<iMatrixTableModel*>(tv->model());
   if (mod)
     mod->emit_layoutChanged(); // default values mean entire table
 }

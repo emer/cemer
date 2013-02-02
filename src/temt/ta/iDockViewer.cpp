@@ -15,7 +15,7 @@
 
 #include "iDockViewer.h"
 #include <DockViewer>
-#include <IDataViewWidget>
+#include <IViewerWidget>
 #include <iAction>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
@@ -26,7 +26,7 @@ TypeDef_Of(ToolBoxDockViewer);
 #include <taiMisc>
 
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
-  : inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IViewerWidget(viewer_)
 {
   setAttribute(Qt::WA_DeleteOnClose, true);
   Init();

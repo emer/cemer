@@ -17,7 +17,7 @@
 #define ToolBar_h 1
 
 // parent includes:
-#include <DataViewer>
+#include <taViewer>
 
 // member includes:
 
@@ -27,10 +27,10 @@ class iToolBar; // #IGNORE
 
 TypeDef_Of(ToolBar);
 
-class TA_API ToolBar: public DataViewer {// ##NO_TOKENS proxy for Toolbars
+class TA_API ToolBar: public taViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;
 //nn? friend class MainWindowViewer;
-INHERITED(DataViewer)
+INHERITED(taViewer)
 public:
   float                 lft;    // #HIDDEN when undocked, fractional position on screen
   float                 top;    // #HIDDEN when undocked, fractional position on screen
@@ -38,12 +38,12 @@ public:
 
   inline iToolBar*      widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
 
-  TA_DATAVIEWFUNS(ToolBar, DataViewer)
+  TA_DATAVIEWFUNS(ToolBar, taViewer)
 
 protected:
   override void          Constr_impl(QWidget* gui_parent);
 #ifdef TA_GUI
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in qt file
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // in qt file
 #endif
   override void         WidgetDeleting_impl();
   override void         GetWinState_impl();

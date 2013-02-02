@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfMatrix.h"
-#include <iMatrixPanel>
+#include <iPanelOfMatrix>
 
 TypeDef_Of(taMatrix);
 
@@ -31,7 +31,7 @@ int taiViewTypeOfMatrix::BidForView(TypeDef* td) {
 void taiViewTypeOfMatrix::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
-  iMatrixPanel* dp = new iMatrixPanel(dl_);
+  iPanelOfMatrix* dp = new iPanelOfMatrix(dl_);
   DataPanelCreated(dp);
   inherited::CreateDataPanel_impl(dl_);
 }

@@ -53,7 +53,7 @@ TypeDef_Of(T3DataView);
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // #NO_TOKENS #VIRT_BASE base class for 3d-based DataView objects
 INHERITED(taDataView)
-friend class T3TabViewer;
+friend class T3PanelViewer;
 friend class T3DataView_List;
 friend class T3DataViewPar;
 public:
@@ -132,7 +132,7 @@ protected:
   void                  setNode(T3Node* node); // make changes via this
 
   virtual void          AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
-  override void         ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
+  override void         ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to taViewer; we also remove visually
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
   virtual void          OnWindowBind_impl(iT3Panel* vw) {} // override for something this class

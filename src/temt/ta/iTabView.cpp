@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iTabView.h"
-#include <iDataPanel>
+#include <iPanelBase>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 
@@ -34,7 +34,7 @@ iTabView::iTabView(QWidget* parent)
   Init();
 }
 
-iTabView::iTabView(iTabViewer* data_viewer_, QWidget* parent)
+iTabView::iTabView(iPanelViewer* data_viewer_, QWidget* parent)
 :QWidget(parent)
 {
   m_viewer_win = data_viewer_;
@@ -82,7 +82,7 @@ void iTabView::Activated(bool val) {
 
 bool iTabView::ActivatePanel(taiSigLink* dl) {
   for (int i = 0; i < tbPanels->count(); ++i) {
-    iDataPanel* panel = tbPanels->panel(i);
+    iPanelBase* panel = tbPanels->panel(i);
     if (!panel) continue;
     if (panel->link() == dl) {
       SetCurrentTab(i);
@@ -92,16 +92,16 @@ bool iTabView::ActivatePanel(taiSigLink* dl) {
   return false;
 }
 
-bool iTabView::AddPanel(iDataPanel* panel) {
+bool iTabView::AddPanel(iPanelBase* panel) {
   if (!panels.AddUnique(panel)) return false; // refs us on add
   wsPanels->addWidget(panel);
   if (panels.size == 1) wsPanels->setCurrentWidget(panel); // always show first
-  iTabViewer* itv = tabViewerWin();
+  iPanelViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
   return true;
 }
 
-void iTabView::AddPanelNewTab(iDataPanel* panel, bool lock) {
+void iTabView::AddPanelNewTab(iPanelBase* panel, bool lock) {
   AddPanel(panel); //noop if already added
   if (lock) panel->Pin();
   int tab_idx = TabIndexOfPanel(panel);
@@ -111,7 +111,7 @@ void iTabView::AddPanelNewTab(iDataPanel* panel, bool lock) {
 }
 
 void iTabView::AddTab(int tab_idx) {
-  iDataPanel* pan = NULL;
+  iPanelBase* pan = NULL;
   if (tab_idx >= 0)
     pan = tbPanels->panel(tab_idx);
   // "AddTab" on a view guy just makes a blank tab
@@ -135,7 +135,7 @@ void iTabView::CloseTab(int tab) {
 void iTabView::Closing(CancelOp& cancel_op) {
   // close all panels
   for (int i = panels.size - 1; i >= 0; --i) {
-    iDataPanel* panel = panels.FastEl(i);
+    iPanelBase* panel = panels.FastEl(i);
     panel->Closing(cancel_op);
     if (cancel_op == CO_CANCEL) return; // can stop now
 
@@ -143,17 +143,17 @@ void iTabView::Closing(CancelOp& cancel_op) {
   }
 }
 
-iDataPanel* iTabView::curPanel() const {
-  iDataPanel* rval = tbPanels->panel(tbPanels->currentIndex());
+iPanelBase* iTabView::curPanel() const {
+  iPanelBase* rval = tbPanels->panel(tbPanels->currentIndex());
   return rval; // could be NULL if empty
 }
 
-void iTabView::DataPanelDestroying(iDataPanel* panel) {
+void iTabView::DataPanelDestroying(iPanelBase* panel) {
   RemoveDataPanel(panel);//TODO
 }
 
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
-  iDataPanel* dp = tabPanel(tab_idx); // always safe, NULL if no tab
+  iPanelBase* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
   iAction* act = new iAction(tab_idx, "&Add Tab",  QKeySequence());
   act->connect(iAction::int_act, this,  SLOT(AddTab(int)));
@@ -184,13 +184,13 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
 }
 
 void iTabView::ShowLink(taiSigLink* link, bool not_in_cur) {
-  iDataPanel* pan = GetDataPanel(link);
+  iPanelBase* pan = GetDataPanel(link);
   ShowPanel(pan, not_in_cur);
 }
 
 //TODO
-iDataPanel* iTabView::GetDataPanel(taiSigLink* link) {
-  iDataPanel* rval;
+iPanelBase* iTabView::GetDataPanel(taiSigLink* link) {
+  iPanelBase* rval;
   for (int i = 0; i < panels.size; ++i) {
     rval = panels.FastEl(i);
     if (rval->link() == link) return rval;
@@ -208,7 +208,7 @@ iDataPanel* iTabView::GetDataPanel(taiSigLink* link) {
 void iTabView::GetWinState() {
 //TODO: may want to save state of what panels are active
   for (int i = 0; i < panelCount(); ++i) {
-    iDataPanel* pn = panel(i);
+    iPanelBase* pn = panel(i);
     if (pn) pn->GetWinState();
   }
 }
@@ -216,12 +216,12 @@ void iTabView::GetWinState() {
 void iTabView::SetWinState() {
 //TODO: may want to get state of what panels are active
   for (int i = 0; i < panelCount(); ++i) {
-    iDataPanel* pn = panel(i);
+    iPanelBase* pn = panel(i);
     if (pn) pn->SetWinState();
   }
 }
 
-void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
+void iTabView::ShowTab(iPanelBase* panel, bool show, bool focus) {
 // this is for ctrl panel frames that go visible, to show their ctrl panel tabs
 // note that we are assuming for simplicity that we can focus the default or 0th tab
 // when removing a tab for a visible ctrl guy
@@ -229,7 +229,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
     // may be there already, prob most recent...
     int tb = -1;
     for (int i = tabCount() - 1; i >= 0; --i) {
-      iDataPanel* tpan = tabPanel(i);
+      iPanelBase* tpan = tabPanel(i);
       if (tpan == panel) {
         tb = i;
         break;
@@ -243,7 +243,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
       SetCurrentTab(tb);
   } else {
     for (int i = tabCount() - 1; i >= 0; --i) {
-      iDataPanel* tpan = tabPanel(i);
+      iPanelBase* tpan = tabPanel(i);
       if (tpan == panel) {
         tbPanels->removeTab(i);
         if (tpan->isVisible()) {
@@ -255,7 +255,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
   }
 }
 
-iDataPanel* iTabView::panel(int pan_idx) {
+iPanelBase* iTabView::panel(int pan_idx) {
   return panels.PosSafeEl(pan_idx);
 }
 
@@ -264,7 +264,7 @@ int iTabView::panelCount() const {
 }
 
 void iTabView::panelSelected(int idx) {
-  iDataPanel* panel = NULL;
+  iPanelBase* panel = NULL;
   if (idx >= 0) panel = tbPanels->panel(idx);
   ++(tabViewerWin()->tab_changing);
   if (panel) {
@@ -277,9 +277,9 @@ void iTabView::panelSelected(int idx) {
   --(tabViewerWin()->tab_changing);
 }
 
-void iTabView::OnWindowBind(iTabViewer* itv) {
+void iTabView::OnWindowBind(iPanelViewer* itv) {
   for (int i = 0; i < tbPanels->count(); ++i ) {
-    iDataPanel* pan = tbPanels->panel(i);
+    iPanelBase* pan = tbPanels->panel(i);
     if (!pan) continue; // can happen!!!
     pan->OnWindowBind(itv);
   }
@@ -287,20 +287,20 @@ void iTabView::OnWindowBind(iTabViewer* itv) {
 
 void iTabView::Refresh() {
   for (int i = panels.size - 1; i >= 0; --i) {
-    iDataPanel* panel = panels.FastEl(i);
+    iPanelBase* panel = panels.FastEl(i);
     panel->UpdatePanel();
   }
   UpdateTabNames();
 }
 
-void iTabView::RemoveDataPanel(iDataPanel* panel) {
+void iTabView::RemoveDataPanel(iPanelBase* panel) {
   // we guard for destructing case by clearing panels, so don't detect it
   if (panels.RemoveEl(panel)) { // Remove unrefs us in panel
     wsPanels->removeWidget(panel); // superfluous, but safe, if panel is destroying
     // remove any associated tabs, except leave last non-locked tab (will get deleted anyway if we are
     // destructing)
     for (int i = tbPanels->count() - 1; i >= 0; --i) {
-      iDataPanel* dp = tbPanels->panel(i);
+      iPanelBase* dp = tbPanels->panel(i);
       if (dp == panel) {
         if ((i > 0) || (tbPanels->count() > 1)) {
           tbPanels->removeTab(i);
@@ -320,7 +320,7 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
 
 void iTabView::ResolveChanges(CancelOp& cancel_op) {
   for (int i = panels.size - 1; i >= 0; --i) {
-    iDataPanel* panel = panels.FastEl(i);
+    iPanelBase* panel = panels.FastEl(i);
     panel->ResolveChanges(cancel_op);
     if (cancel_op == CO_CANCEL) return; // can stop now
   }
@@ -328,7 +328,7 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
 
 bool iTabView::SetCurrentTab(int tab_idx) {
   if (tab_idx < 0 || tab_idx >= tbPanels->count()) return false;
-  iDataPanel* pan = tabPanel(tab_idx);
+  iPanelBase* pan = tabPanel(tab_idx);
   if (!pan) return false;
   ++(tabViewerWin()->tab_changing);
   tbPanels->setCurrentIndex(tab_idx);
@@ -346,11 +346,11 @@ bool iTabView::SetCurrentTabName(const String& tab_nm) {
   return false;
 }
 
-void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
+void iTabView::ShowPanel(iPanelBase* panel, bool not_in_cur) {
   if (!panel) return;
   //note: panel has typically been added already, but we double check
 
-  iDataPanel* cur_pn = curPanel(); //note: can be null
+  iPanelBase* cur_pn = curPanel(); //note: can be null
 
   // first, see if we have a tab for guy already -- don't create more than 1 per guy
   if (ActivatePanel(panel->link())) return;
@@ -382,7 +382,7 @@ void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
 
   // try switching to another eligible panel
   for (int i = 0; i < tbPanels->count(); ++i) {
-    iDataPanel* pn = tbPanels->panel(i);
+    iPanelBase* pn = tbPanels->panel(i);
     if (pn) {
       if (pn == cur_pn) continue;
       if (pn->lockInPlace() || (pn->dirty() && !autoCommit()) || pn->pinned()) continue;
@@ -408,13 +408,13 @@ int iTabView::tabCount() const {
   return tbPanels->count();
 }
 
-iDataPanel* iTabView::tabPanel(int tab_idx) {
+iPanelBase* iTabView::tabPanel(int tab_idx) {
   int ct = tabCount();
   if ((tab_idx < 0) || (tab_idx >= ct)) return NULL;
   return tbPanels->panel(tab_idx);
 }
 
-int iTabView::TabIndexOfPanel(iDataPanel* panel) const {
+int iTabView::TabIndexOfPanel(iPanelBase* panel) const {
   for (int i = 0; i < tbPanels->count(); ++i) {
     if (tbPanels->panel(i) == panel) return i;
   }
@@ -431,7 +431,7 @@ int iTabView::TabIndexByName(const String& nm) const {
 
 void iTabView::UpdateTabNames() { // called by a siglink when a tab name might have changed
   for (int i = 0; i < tbPanels->count(); ++i ) {
-    iDataPanel* pan = tbPanels->panel(i);
+    iPanelBase* pan = tbPanels->panel(i);
     if (pan == NULL) continue; // shouldn't happen...
     tbPanels->setTabText(i, pan->TabText());
     tbPanels->setTabToolTip(i, pan->TabText()); // esp for when elided
@@ -439,9 +439,9 @@ void iTabView::UpdateTabNames() { // called by a siglink when a tab name might h
   }
 }
 
-void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its tab name may have changed
+void iTabView::UpdateTabName(iPanelBase* pan) { // called by a panel when its tab name may have changed
   for (int i = 0; i < tbPanels->count(); ++i ) {
-    iDataPanel* pani = tbPanels->panel(i);
+    iPanelBase* pani = tbPanels->panel(i);
     if (pan != pani) continue; // shouldn't happen...
     tbPanels->setTabText(i, pan->TabText());
     tbPanels->setTabToolTip(i, pan->TabText()); // esp for when elided
@@ -453,7 +453,7 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_P) {
-      iDataPanel* dp = curPanel();
+      iPanelBase* dp = curPanel();
       if(dp) {
         if(dp->pinned())
           dp->Unpin();

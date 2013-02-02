@@ -41,7 +41,7 @@ public:
   iMatrixTableView*       tv;
 
  // taMatrix*           mat() const;
- // MatrixTableModel*   model() const;
+ // iMatrixTableModel*   model() const;
   void                  setMatrix(taMatrix* mat, bool pat_4d = false);
 
   void                  Refresh(); // for manual refresh -- note, this also updates all other mat editors too

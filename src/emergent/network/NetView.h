@@ -31,7 +31,7 @@
 #include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
-class NetViewPanel; //
+class iPanelOfNetView; //
 class UnitView; //
 class UnitGroupView; //
 class LayerView; //
@@ -106,7 +106,7 @@ TypeDef_Of(NetView);
 class EMERGENT_API NetView: public T3DataViewMain {
 // ##DUMP_LOAD_POST #INSTANCE network view main object -- represents the network in view, manages all sub-types
 INHERITED(T3DataViewMain)
-friend class NetViewPanel;
+friend class iPanelOfNetView;
 public:
   enum MDFlags { // indicates type that unit.disp_base points to
     MD_FLOAT            = 0x0000,
@@ -289,7 +289,7 @@ public:
 
 protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
-  NetViewPanel*         nvp; // created during first Render
+  iPanelOfNetView*         nvp; // created during first Render
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
   LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 

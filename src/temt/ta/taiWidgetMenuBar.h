@@ -37,7 +37,7 @@ public:
 
   taiWidgetMenuBar(int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorOfClass
-  taiWidgetMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by iDataViewer
+  taiWidgetMenuBar(QWidget* gui_parent_, int ft, QMenuBar* exist_menu); // used by itaViewer
   ~taiWidgetMenuBar();
 protected:
   void                  init(QMenuBar* exist_menu); // #IGNORE

@@ -16,7 +16,7 @@
 #include "taiEditorOfClass.h"
 #include <taiWidgetMethod>
 #include <iCheckBox>
-#include <EditDataPanel>
+#include <iPanelOfEditor>
 #include <taiType>
 #include <MethodDef>
 #include <taiMember>
@@ -426,11 +426,11 @@ int taiEditorOfClass::Edit(bool modal_, int min_width, int min_height) {
   return inherited::Edit(modal_, min_width, min_height);
 }
 
-EditDataPanel* taiEditorOfClass::EditPanel(taiSigLink* link) {
+iPanelOfEditor* taiEditorOfClass::EditPanel(taiSigLink* link) {
   if (state != CONSTRUCTED)
     return NULL;
   if (panel == NULL)
-    panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
+    panel = new iPanelOfEditor(this, link); //TODO: make sure this conversion is always valid!!!
   panel->setCentralWidget(widget());
   panel->setButtonsWidget(widButtons);
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
@@ -438,8 +438,8 @@ EditDataPanel* taiEditorOfClass::EditPanel(taiSigLink* link) {
   return panel;
 }
 
-EditDataPanel* taiEditorOfClass::EditPanelDeferred(taiSigLink* link) {
-  panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
+iPanelOfEditor* taiEditorOfClass::EditPanelDeferred(taiSigLink* link) {
+  panel = new iPanelOfEditor(this, link); //TODO: make sure this conversion is always valid!!!
 
   return panel;
 }

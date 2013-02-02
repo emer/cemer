@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfDataTable.h"
-#include <iDataTablePanel>
+#include <iPanelOfDataTable>
 
 TypeDef_Of(DataTable);
 
@@ -31,7 +31,7 @@ int taiViewTypeOfDataTable::BidForView(TypeDef* td) {
 void taiViewTypeOfDataTable::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // we create ours first, because it should be the default
-  iDataTablePanel* dp = new iDataTablePanel(dl_);
+  iPanelOfDataTable* dp = new iPanelOfDataTable(dl_);
   DataPanelCreated(dp);
   inherited::CreateDataPanel_impl(dl_);
 }

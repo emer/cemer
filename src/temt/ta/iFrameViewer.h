@@ -21,7 +21,7 @@
 #include <QWidget>
 #endif
 
-#include <IDataViewWidget>
+#include <IViewerWidget>
 
 // member includes:
 #include <FrameViewer>
@@ -30,7 +30,7 @@
 class ISelectableHost; //
 
 
-class TA_API iFrameViewer: public QWidget, public IDataViewWidget {
+class TA_API iFrameViewer: public QWidget, public IViewerWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for things in the center splitter of main
   Q_OBJECT
 INHERITED(QWidget)
@@ -62,7 +62,7 @@ signals:
     // forwarder, from all internal guys
 #endif
 
-public: // IDataViewerWidget i/f
+public: // ItaViewerWidget i/f
   override QWidget*     widget() {return this;}
 protected:
 //  override void               Constr_impl(); // called virtually, after new

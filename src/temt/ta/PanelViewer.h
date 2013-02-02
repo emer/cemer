@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iTabViewer; // 
+class iPanelViewer; // 
 class iTabBarBase; // 
 
 
@@ -31,16 +31,16 @@ TypeDef_Of(PanelViewer);
 class TA_API PanelViewer : public FrameViewer {
   // #NO_TOKENS ##DEF_NAME_ROOT_Panels ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
-friend class iDataPanel;
+friend class iPanelBase;
 public:
 
-  inline iTabViewer*    widget() {return (iTabViewer*)inherited::widget();}
+  inline iPanelViewer*    widget() {return (iPanelViewer*)inherited::widget();}
   // #IGNORE
   iTabBarBase*          tabBar(); // #IGNORE
 
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
   NOCOPY(PanelViewer)
   void                  Initialize();

@@ -16,12 +16,12 @@
 #include "DataTableCols.h"
 #include <DataTable>
 
-TypeDef_Of(DataColTp);
+TypeDef_Of(DataColT);
 
 #include <SigLinkSignal>
 
 void DataTableCols::Initialize() {
-  SetBaseType(&TA_DataColTp);
+  SetBaseType(&TA_DataColT);
 }
 
 void DataTableCols::Copy_NoData(const DataTableCols& cp) {

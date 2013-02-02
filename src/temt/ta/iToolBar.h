@@ -21,7 +21,7 @@
 #include <QToolBar>
 #endif
 
-#include <IDataViewWidget>
+#include <IViewerWidget>
 
 // member includes:
 
@@ -29,7 +29,7 @@
 class ToolBar;
 
 
-class TA_API iToolBar: public QToolBar, public IDataViewWidget {
+class TA_API iToolBar: public QToolBar, public IViewerWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(QToolBar)
 friend class ToolBar;
@@ -41,7 +41,7 @@ public:
   iToolBar(ToolBar* viewer, QWidget* parent = NULL);
   ~iToolBar();
 
-public: // IDataViewerWidget i/f
+public: // ItaViewerWidget i/f
   override QWidget*     widget() {return this;}
 protected:
 //  override void               Constr_impl();

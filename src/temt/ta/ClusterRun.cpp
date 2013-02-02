@@ -17,7 +17,7 @@
 #include <ClusterManager>
 #include <taSigLinkItr>
 #include <iDataTableEditor>
-#include <iDataTablePanel>
+#include <iPanelOfDataTable>
 #include <iDataTableView>
 
 #include <taMisc>
@@ -234,8 +234,8 @@ iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
   taSigLink* dl = dt.sig_link();
   if(dl) {
     taSigLinkItr itr;
-    iDataTablePanel* el;
-    FOR_DLC_EL_OF_TYPE(iDataTablePanel, el, dl, itr) {
+    iPanelOfDataTable* el;
+    FOR_DLC_EL_OF_TYPE(iPanelOfDataTable, el, dl, itr) {
       return el->dte;
     }
   }

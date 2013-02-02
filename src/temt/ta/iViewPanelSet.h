@@ -17,29 +17,29 @@
 #define iViewPanelSet_h 1
 
 // parent includes:
-#include <iDataPanelSetBase>
+#include <iPanelSetBase>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class iTabBarBase;  //
-class iViewPanelFrame; //
+class iViewPanel; //
 
 
 TypeDef_Of(iViewPanelSet);
 
-class TA_API iViewPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
+class TA_API iViewPanelSet: public iPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
   Q_OBJECT
-INHERITED(iDataPanelSetBase)
+INHERITED(iPanelSetBase)
 public:
   iTabBarBase*            tbSubPanels;
 
   override bool         lockInPlace() const {return true;}
 
-  void                  AddSubPanel(iViewPanelFrame* pn);
+  void                  AddSubPanel(iViewPanel* pn);
 
   override void         UpdatePanel(); // update tab names too
-  void                  PanelDestroying(iViewPanelFrame* pn); // so we remove tab
+  void                  PanelDestroying(iViewPanel* pn); // so we remove tab
 
   iViewPanelSet(taiSigLink* dl_);
   ~iViewPanelSet();

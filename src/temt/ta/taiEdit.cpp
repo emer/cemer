@@ -87,7 +87,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
   return host->Edit(modal, min_width, min_height);
 }
 
-EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
+iPanelOfEditor* taiEdit::EditNewPanel(taiSigLink* link, void* base,
    bool read_only, const iColor& bgcol)
 {
   taiEditorOfClass* host = CreateDataHost(base, read_only);
@@ -106,11 +106,11 @@ EditDataPanel* taiEdit::EditNewPanel(taiSigLink* link, void* base,
   }
 
   host->Constr("", "", taiEditorWidgetsMain::HT_PANEL, true);
-  EditDataPanel* rval = host->EditPanelDeferred(link);
+  iPanelOfEditor* rval = host->EditPanelDeferred(link);
   return rval;
 }
 
-EditDataPanel* taiEdit::EditPanel(taiSigLink* link, void* base,
+iPanelOfEditor* taiEdit::EditPanel(taiSigLink* link, void* base,
    bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol)
 {
   taiEditorOfClass* host = NULL;

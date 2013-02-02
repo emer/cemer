@@ -17,7 +17,7 @@
 
 #include <iT3ViewspaceWidget>
 #include <T3ExaminerViewer>
-#include <iT3TabViewer>
+#include <iT3PanelViewer>
 #include <T3Panel>
 #include <iContextMenuButton>
 #include <iViewPanelSet>
@@ -35,7 +35,7 @@
 
 
 iT3Panel::iT3Panel(T3Panel* viewer_, QWidget* parent)
-:inherited(parent), IDataViewWidget(viewer_)
+:inherited(parent), IViewerWidget(viewer_)
 {
   Init();
 }
@@ -164,7 +164,7 @@ void iT3Panel::Refresh_impl() {
   viewRefresh();
 }
 
-void iT3Panel::RegisterPanel(iViewPanelFrame* pan) {
+void iT3Panel::RegisterPanel(iViewPanel* pan) {
     if (panel_set) {
       panel_set->AddSubPanel(pan);
     }
@@ -186,11 +186,11 @@ void iT3Panel::setSceneTop(SoNode* node) {
 void iT3Panel::T3DataViewClosing(T3DataView* node) {
 }
 
-iT3TabViewer* iT3Panel::viewerWidget() const {
+iT3PanelViewer* iT3Panel::viewerWidget() const {
 //note: this fun not called much, usually only once on constr, so not cached
   QWidget* par = const_cast<iT3Panel*>(this); // ok to cast away constness
   while ((par = par->parentWidget())) {
-    iT3TabViewer* rval = qobject_cast<iT3TabViewer*>(par);
+    iT3PanelViewer* rval = qobject_cast<iT3PanelViewer*>(par);
     if (rval) return rval;
   }
   return NULL;

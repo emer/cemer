@@ -21,7 +21,7 @@
 
 
 iFrameViewer::iFrameViewer(FrameViewer* viewer_, QWidget* parent)
-  : inherited(parent), IDataViewWidget(viewer_)
+  : inherited(parent), IViewerWidget(viewer_)
 {
   Init();
   // note: caller will still do a virtual Constr() on us after new

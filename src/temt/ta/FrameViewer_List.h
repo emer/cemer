@@ -17,7 +17,7 @@
 #define FrameViewer_List_h 1
 
 // parent includes:
-#include <DataViewer_List>
+#include <taViewer_List>
 
 // member includes:
 
@@ -27,10 +27,10 @@ TypeDef_Of(FrameViewer);
 
 TypeDef_Of(FrameViewer_List);
 
-class TA_API FrameViewer_List: public DataViewer_List { // #NO_TOKENS
-INHERITED(DataViewer_List)
+class TA_API FrameViewer_List: public taViewer_List { // #NO_TOKENS
+INHERITED(taViewer_List)
 public:
-  TA_DATAVIEWLISTFUNS(FrameViewer_List, DataViewer_List, FrameViewer)
+  TA_DATAVIEWLISTFUNS(FrameViewer_List, taViewer_List, FrameViewer)
 private:
   NOCOPY(FrameViewer_List)
   void  Initialize() { SetBaseType(&TA_FrameViewer);}

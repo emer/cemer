@@ -29,7 +29,7 @@
 class taSigLink; // 
 class DataTable; // 
 class DataColView; // 
-class iDataTableView_Panel; //
+class iViewPanelOfDataTable; //
 
 
 TypeDef_Of(DataTableView);
@@ -105,7 +105,7 @@ public:
 
 protected:
 #ifndef __MAKETA__
-  QPointer<iDataTableView_Panel> m_lvp; //note: will be a subclass of this, per the log type
+  QPointer<iViewPanelOfDataTable> m_lvp; //note: will be a subclass of this, per the log type
 #endif
   int                   m_rows; // cached rows, we use to calc deltas etc.
   int                   updating; // to prevent recursion

@@ -20,7 +20,7 @@
 #include <DataTable>
 #include <T3Axis>
 #include <taMath_float>
-#include <iGraphTableView_Panel>
+#include <iViewPanelOfGraphTable>
 
 #include <taMisc>
 

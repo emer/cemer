@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <double_Matrix>
-#include <DataColTp>
+#include <DataColT>
 
 // member includes:
 
@@ -28,9 +28,9 @@ class TypeDef; //
 
 TypeDef_Of(double_Data);
 
-class TA_API double_Data : public DataColTp<double_Matrix> {
+class TA_API double_Data : public DataColT<double_Matrix> {
   // doubleing point data
-INHERITED(DataColTp<double_Matrix>)
+INHERITED(DataColT<double_Matrix>)
 friend class DataTable;
 public:
   override bool         isNumeric() const {return true;}

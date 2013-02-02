@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <String_Matrix>
-#include <DataColTp>
+#include <DataColT>
 
 // member includes:
 
@@ -28,9 +28,9 @@ class TypeDef; //
 
 TypeDef_Of(String_Data);
 
-class TA_API String_Data : public DataColTp<String_Matrix> {
+class TA_API String_Data : public DataColT<String_Matrix> {
   // string data
-INHERITED(DataColTp<String_Matrix>)
+INHERITED(DataColT<String_Matrix>)
 friend class DataTable;
 public:
   override bool         isString() const {return true;}

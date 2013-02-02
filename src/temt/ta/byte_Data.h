@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <byte_Matrix>
-#include <DataColTp>
+#include <DataColT>
 
 // member includes:
 
@@ -28,9 +28,9 @@ TypeDef_Of(byte);
 
 TypeDef_Of(byte_Data);
 
-class TA_API byte_Data : public DataColTp<byte_Matrix> {
+class TA_API byte_Data : public DataColT<byte_Matrix> {
   // byte data
-INHERITED(DataColTp<byte_Matrix>)
+INHERITED(DataColT<byte_Matrix>)
 friend class DataTable;
 public:
   override bool         isNumeric() const {return true;} //

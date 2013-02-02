@@ -15,7 +15,7 @@
 
 #include "iMatrixTableView.h"
 #include <taMatrix>
-#include <MatrixTableModel>
+#include <iMatrixTableModel>
 #include <taiTabularDataMimeFactory>
 #include <CellRange>
 #include <taiMimeSource>
@@ -32,7 +32,7 @@ iMatrixTableView::iMatrixTableView(QWidget* parent)
 }
 
 taMatrix* iMatrixTableView::mat() const {
-  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
+  iMatrixTableModel* mod = qobject_cast<iMatrixTableModel*>(model());
   if (mod) return mod->mat();
   else return NULL; 
 }
@@ -68,7 +68,7 @@ void iMatrixTableView::GetEditActionsEnabled(int& ea) {
 }
 
 void iMatrixTableView::GetSel(CellRange& sel) {
-  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
+  iMatrixTableModel* mod = qobject_cast<iMatrixTableModel*>(model());
   if (!mod || !selectionModel()) return;
   // first, get the sel assuming no BOT_0
   sel.SetFromModel(selectionModel()->selectedIndexes());

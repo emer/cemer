@@ -23,9 +23,9 @@
 #include <iColor>
 
 // declare all other types mentioned but not required to include:
-class iDataPanelSet; //
-class iDataPanelFrame; //
-class iDataPanel; //
+class iPanelSet; //
+class iPanel; //
+class iPanelBase; //
 class taiSigLink; //
 
 TypeDef_Of(taiViewType);
@@ -40,27 +40,27 @@ public:
   virtual bool          needSet() const {return m_need_set;} // only valid during constr of panels
   void                  AddView(TypeDef* td);   // add an instance to a type
   virtual int           BidForView(TypeDef*) {return 1;}
-  virtual iDataPanel*   CreateDataPanel(taiSigLink* dl_); // creates a new data panel; normally override _impl
-  virtual void          CheckUpdateDataPanelSet(iDataPanelSet* pan) {} // dynamically updates a data panel set; currently only called when set gets a USER_DATA_UPDATED notify
+  virtual iPanelBase*   CreateDataPanel(taiSigLink* dl_); // creates a new data panel; normally override _impl
+  virtual void          CheckUpdateDataPanelSet(iPanelSet* pan) {} // dynamically updates a data panel set; currently only called when set gets a USER_DATA_UPDATED notify
   virtual taiSigLink*  GetSigLink(void* data_, TypeDef* el_typ) {return NULL;}
     // get an existing, or create new if needed
   virtual const iColor  GetEditColorInherit(taiSigLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
 
-  virtual iDataPanelSet* GetDataPanelSet() { return m_dps; }
+  virtual iPanelSet* GetDataPanelSet() { return m_dps; }
   // return the data panel set that contains multiple data panels if present -- use to control flipping between them..
 
   void                  Initialize();
   void                  Destroy() {}
 
 protected:
-  void                  DataPanelCreated(iDataPanelFrame* dp); // call in CreateDataPanel_impl for each dp frame created
+  void                  DataPanelCreated(iPanel* dp); // call in CreateDataPanel_impl for each dp frame created
   virtual void          CreateDataPanel_impl(taiSigLink* dl_) {} // create one or more dp's
 
   bool                  m_need_set;
-  iDataPanelSet*        m_dps; // #IGNORE created automatically if more than one datapanel is created
+  iPanelSet*        m_dps; // #IGNORE created automatically if more than one datapanel is created
 
 private:
-  iDataPanelFrame*      m_dp; // #IGNORE single instance created for a call
+  iPanel*      m_dp; // #IGNORE single instance created for a call
 };
 
 #endif // taiViewType_h

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iViewPanelSet.h"
-#include <iViewPanelFrame>
+#include <iViewPanel>
 
 
 #include <QVBoxLayout>
@@ -36,18 +36,18 @@ iViewPanelSet::~iViewPanelSet() {
 //  panels.Reset(); // don't need/want to find any when child panels deleting
 }
 
-void iViewPanelSet::AddSubPanel(iViewPanelFrame* pn) {
+void iViewPanelSet::AddSubPanel(iViewPanel* pn) {
   pn->m_dps = this;
   panels.Add(pn);
   wsSubPanels->addWidget(pn);
   tbSubPanels->addTab(pn->TabText());
 
   pn->AddedToPanelSet();
-  iTabViewer* itv = tabViewerWin();
+  iPanelViewer* itv = tabViewerWin();
   if (itv) pn->OnWindowBind(itv);
 }
 
-void iViewPanelSet::PanelDestroying(iViewPanelFrame* pn) {
+void iViewPanelSet::PanelDestroying(iViewPanel* pn) {
   int id = panels.FindEl(pn);
   if (id < 0) return;
   panels.RemoveIdx(id); // do 1st in case the gui gets triggered by:
@@ -56,7 +56,7 @@ void iViewPanelSet::PanelDestroying(iViewPanelFrame* pn) {
 }
 
 void iViewPanelSet::setCurrentPanelId_impl(int id) {
-  iDataPanel* pn = panels.PosSafeEl(id);
+  iPanelBase* pn = panels.PosSafeEl(id);
   if (!pn) return; //shouldn't happen
   wsSubPanels->setCurrentWidget(pn);
   tbSubPanels->setCurrentIndex(id);
@@ -65,7 +65,7 @@ void iViewPanelSet::setCurrentPanelId_impl(int id) {
 void iViewPanelSet::UpdatePanel() {
   inherited::UpdatePanel();
   for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
+    iPanelBase* pn = panels.FastEl(i);
     tbSubPanels->setTabText(i, pn->TabText());
     tbSubPanels->setTabToolTip(i, pn->TabText());
   }

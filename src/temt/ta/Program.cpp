@@ -1606,7 +1606,7 @@ bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_labe
 
 #ifndef TA_GUI
 // see ta_program_qt.cpp
-iProgramPanel* Program::FindMyProgramPanel() {
+iPanelOfProgram* Program::FindMyProgramPanel() {
   return NULL;
 }
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {

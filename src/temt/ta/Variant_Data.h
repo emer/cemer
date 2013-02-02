@@ -18,7 +18,7 @@
 
 // parent includes:
 #include <Variant_Matrix>
-#include <DataColTp>
+#include <DataColT>
 
 // member includes:
 
@@ -28,9 +28,9 @@ class TypeDef; //
 
 TypeDef_Of(Variant_Data);
 
-class TA_API Variant_Data : public DataColTp<Variant_Matrix> {
+class TA_API Variant_Data : public DataColT<Variant_Matrix> {
   // Variant data
-INHERITED(DataColTp<Variant_Matrix>)
+INHERITED(DataColT<Variant_Matrix>)
 friend class DataTable;
 public:
   override ValType      valType() const  {return VT_VARIANT;}

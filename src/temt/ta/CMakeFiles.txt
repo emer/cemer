@@ -241,26 +241,27 @@ set(ta_HEADS_MAKETA_LOCAL
 
   taDataView.h
   DataView_List.h
-  DataViewer.h
-  DataViewer_List.h
+
+  taViewer.h
+  taViewer_List.h
+  TopLevelViewer.h
+  MainWindowViewer.h
   FrameViewer.h
   FrameViewer_List.h
-  TopLevelViewer.h
   BrowseViewer.h
-  tabBrowseViewer.h
-  TypeInfoBrowseViewer.h
+  BrowseViewerTaBase.h
   PanelViewer.h
-  ToolBoxRegistrar.h
   ToolBar.h
   ToolBar_List.h
   DockViewer.h
   DockViewer_List.h
   ToolBoxDockViewer.h
   ConsoleDockViewer.h
+  ToolBoxRegistrar.h
   ToolBoxRegistrar_PtrList.h
   TreeDecorationSpec.h
   TreeDecorationSpec_List.h
-  MainWindowViewer.h
+  TypeInfoBrowser.h
 
   ProgramRef.h
   ProgVarRef.h
@@ -367,7 +368,7 @@ set(ta_HEADS_MAKETA_LOCAL
   DataBlock_Idx.h
   ColCalcExpr.h
   DataCol.h
-  DataColTp.h
+  DataColT.h
   DataTableCols.h
   DataTable.h
   DataTable_Group.h
@@ -640,16 +641,18 @@ set(ta_HEADS_MAKETA_LOCAL
   taGuiAction_List.h
   taGuiDialog.h
 
-  T3SavedView.h
-  T3SavedView_List.h
+  T3PanelViewer.h
+  T3Panel.h
+  T3Panel_List.h
+
   T3DataView.h
   T3DataView_List.h
   T3DataViewPar.h
-  T3DataViewRoot.h
   T3DataViewMain.h
-  T3Panel.h
-  T3Panel_List.h
-  T3TabViewer.h
+  T3DataViewRoot.h
+
+  T3SavedView.h
+  T3SavedView_List.h
 
   DataColView.h
   DataTableView.h
@@ -687,8 +690,8 @@ set(ta_HEADS_MAKETA_LOCAL
 
   taiListNode.h
 
-  EditDataPanel.h
-  iDataPanel_PtrList.h
+  iPanelOfEditor.h
+  iPanelBase_PtrList.h
 
   T3Node.h
   T3NodeLeaf.h
@@ -745,45 +748,45 @@ set(ta_HEADS_MAKETA_MOC
   taGuiEditor.h
 
   iBrowseHistory.h
-
-  iDataPanel.h
-  iDataPanelFrame.h
-  iViewPanelFrame.h
-  iDataPanelSetBase.h
-  iViewPanelSet.h
-  iDataPanelSet.h
-
-  iListDataPanel.h
-  iUserDataPanel.h
-
-  iTextDataPanel.h
-
-  iProgramPanelBase.h
-  iProgramPanel.h
-  iProgramGroupPanel.h
-  iProgramCtrlPanel.h
-  iProgramEditor.h
-  iProgramViewScriptPanel.h
-
-  iSelectEditPanel.h
-
-  iDocEditDataPanel.h
-  iDocDataPanel.h
-
   iDialogSearch.h
 
-  MatrixTableModel.h
-  DataTableModel.h
+  iPanelBase.h
+  iPanel.h
+  iPanelSetBase.h
+  iPanelSet.h
 
-  iMatrixPanel.h
+  iViewPanel.h
+  iViewPanelSet.h
 
-  iDataTablePanel.h
-  iDataTableView_Panel.h
-  iGridTableView_Panel.h
-  iGraphTableView_Panel.h
+  iPanelOfList.h
+  iPanelOfUserData.h
+  iPanelOfText.h
+
+  iPanelOfProgramBase.h
+  iPanelOfProgram.h
+  iPanelOfProgramGroup.h
+  iPanelOfProgramCtrl.h
+  iPanelOfProgramScript.h
+  iProgramEditor.h
+
+  iPanelOfSelectEdit.h
+
+  iPanelOfDocView.h
+  iPanelOfDocEdit.h
+
+  iPanelOfMatrix.h
+  iPanelOfDataTable.h
+
+  iMatrixTableModel.h
+  iMatrixEditor.h
+  iDataTableModel.h
   iDataTableEditor.h
 
-  VEWorldViewPanel.h
+  iViewPanelOfDataTable.h
+  iViewPanelOfGridTable.h
+  iViewPanelOfGraphTable.h
+
+  iViewPanelOfVEWorld.h
 )
 
 set(ta_HEADS_NOMAKETA_MOC
@@ -908,18 +911,17 @@ set(ta_HEADS_NOMAKETA_MOC
   iDialogObjDiffFilter.h
   iDialogObjDiffBrowser.h
 
-  iDataPanelSetButton.h
+  iPanelSetButton.h
 
   iFrameViewer.h
   iBrowseViewer.h
-  iTabViewer.h
+  iPanelViewer.h
   iMainWindowViewer.h
   iDockViewer.h
   iToolBoxDockViewer.h
-  iMatrixEditor.h
 
   iDataTableDelegate.h
-  iDataTablePanel_Mbr.h
+  iPanelOfDataTable_Mbr.h
 
   iTabView.h
   iTreeView.h
@@ -929,13 +931,14 @@ set(ta_HEADS_NOMAKETA_MOC
   iDataTableView.h
 
   iHelpBrowser.h
-  iTypeInfoBrowseViewer.h
+  iTypeInfoBrowser.h
+
+  iT3PanelViewer.h
+  iT3Panel.h
 
   T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
-  iT3TabViewer.h
-  iT3Panel.h
 )
 
 set(ta_HEADS_NOMAKETA_NOMOC
@@ -975,7 +978,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taPlugins.h
 
   ISelectableHost.h
-  IDataViewWidget.h
+  IViewerWidget.h
 
   DynMethod_PtrList.h
   taiWidgetActions_List.h
@@ -1289,14 +1292,14 @@ set(ta_SRCS_MAKETA
   ISelectable.cpp
   IObjectSelectable.cpp
 
-  DataViewer.cpp
-  DataViewer_List.cpp
+  taViewer.cpp
+  taViewer_List.cpp
   FrameViewer.cpp
   FrameViewer_List.cpp
   TopLevelViewer.cpp
   BrowseViewer.cpp
-  tabBrowseViewer.cpp
-  TypeInfoBrowseViewer.cpp
+  BrowseViewerTaBase.cpp
+  TypeInfoBrowser.cpp
   PanelViewer.cpp
   MainWindowViewer.cpp
   ToolBoxRegistrar.cpp
@@ -1413,7 +1416,7 @@ set(ta_SRCS_MAKETA
   DataBlock_Idx.cpp
   ColCalcExpr.cpp
   DataCol.cpp
-  DataColTp.cpp
+  DataColT.cpp
   DataTableCols.cpp
   DataTable.cpp
   DataTable_Group.cpp
@@ -1700,16 +1703,17 @@ set(ta_SRCS_MAKETA
   taGuiWidget_QObj.cpp
   taGuiAction_QObj.cpp
 
+  T3PanelViewer.cpp
   T3Panel.cpp
   T3Panel_List.cpp
-  T3SavedView.cpp
-  T3SavedView_List.cpp
   T3DataView.cpp
   T3DataView_List.cpp
   T3DataViewPar.cpp
-  T3DataViewRoot.cpp
   T3DataViewMain.cpp
-  T3TabViewer.cpp
+  T3DataViewRoot.cpp
+  T3SavedView.cpp
+  T3SavedView_List.cpp
+
   DataColView.cpp
   DataTableView.cpp
 
@@ -1730,7 +1734,7 @@ set(ta_SRCS_MAKETA
   VEObjectView.cpp
   VESpaceView.cpp
 
-  iDataPanel_PtrList.cpp
+  iPanelBase_PtrList.cpp
   NewViewHelper.cpp
   BuiltinTypeDefs.cpp
   taCodeUtils.cpp
@@ -1907,33 +1911,33 @@ set(ta_SRCS_NOMAKETA
   taiWidgetFieldRegexp.cpp
 
   iDialogEditor.cpp
-  EditDataPanel.cpp
+  iPanelOfEditor.cpp
   iMethodButtonMgr.cpp
-  iDataPanelFrame.cpp
-  iDocDataPanel.cpp
+  iPanel.cpp
+  iPanelOfDocView.cpp
 
   ISelectableHost.cpp
   iWidget_List.cpp
   iBaseClipWidgetAction.cpp
 
-  IDataViewWidget.cpp
+  IViewerWidget.cpp
   iFrameViewer.cpp
   iBrowseViewer.cpp
-  iTabViewer.cpp
+  iPanelViewer.cpp
   iMainWindowViewer.cpp
   iDockViewer.cpp
   iToolBoxDockViewer.cpp
   iTabBarBase.cpp
   iTabBar.cpp
   iTabView.cpp
-  iDataPanel.cpp
+  iPanelBase.cpp
   iToolBar.cpp
 
   iWebView.cpp
 
   iTreeView.cpp
   iTreeSearch.cpp
-  iListDataPanel.cpp
+  iPanelOfList.cpp
   iDialogSearch.cpp
   iTreeViewItem.cpp
   taiTreeNode.cpp
@@ -1949,12 +1953,12 @@ set(ta_SRCS_NOMAKETA
   iToolBar_List.cpp
   iBrowseHistory.cpp
   iTabView_PtrList.cpp
-  iViewPanelFrame.cpp
-  iDataPanelSetBase.cpp
-  iDataPanelSetButton.cpp
+  iViewPanel.cpp
+  iPanelSetBase.cpp
+  iPanelSetButton.cpp
   iViewPanelSet.cpp
-  iDataPanelSet.cpp
-  iTextDataPanel.cpp
+  iPanelSet.cpp
+  iPanelOfText.cpp
   taiTreeNodeDefChild_ElRef.cpp
   iHelpBrowser.cpp
 
@@ -1963,11 +1967,11 @@ set(ta_SRCS_NOMAKETA
   iTableView.cpp
   iMatrixTableView.cpp
   iMatrixEditor.cpp
-  iMatrixPanel.cpp
+  iPanelOfMatrix.cpp
 
   taiTreeNodeTypeItem.cpp
   taiTreeNodeTypeSpace.cpp
-  iTypeInfoBrowseViewer.cpp
+  iTypeInfoBrowser.cpp
 
   taiListMemberWidgets.cpp
   taiListMemberWidgets_List.cpp
@@ -1975,20 +1979,20 @@ set(ta_SRCS_NOMAKETA
   taiListTypeWidgets_List.cpp
 
   iProgramEditor.cpp
-  iProgramViewScriptPanel.cpp
-  iProgramPanelBase.cpp
-  iProgramGroupPanel.cpp
-  iProgramPanel.cpp
+  iPanelOfProgramScript.cpp
+  iPanelOfProgramBase.cpp
+  iPanelOfProgramGroup.cpp
+  iPanelOfProgram.cpp
   iProgramToolBar.cpp
-  iProgramCtrlPanel.cpp
+  iPanelOfProgramCtrl.cpp
 
-  iSelectEditPanel.cpp
-  iDocEditDataPanel.cpp
+  iPanelOfSelectEdit.cpp
+  iPanelOfDocEdit.cpp
 
   iDialogObjDiffFilter.cpp
   iDialogObjDiffBrowser.cpp
 
-  iUserDataPanel.cpp
+  iPanelOfUserData.cpp
 
   iColorScaleBar.cpp
   iHColorScaleBar.cpp
@@ -2000,16 +2004,16 @@ set(ta_SRCS_NOMAKETA
   iColorPad.cpp
   T3ColorBar.cpp
 
-  MatrixTableModel.cpp
-  DataTableModel.cpp
-  iDataTableView_Panel.cpp
-  iGridTableView_Panel.cpp
-  iGraphTableView_Panel.cpp
+  iMatrixTableModel.cpp
+  iDataTableModel.cpp
+  iViewPanelOfDataTable.cpp
+  iViewPanelOfGridTable.cpp
+  iViewPanelOfGraphTable.cpp
   taiViewTypeOfDataTable.cpp
   iDataTableView.cpp
-  iDataTablePanel.cpp
+  iPanelOfDataTable.cpp
   iDataTableDelegate.cpp
-  iDataTablePanel_Mbr.cpp
+  iPanelOfDataTable_Mbr.cpp
 
   T3Misc.cpp
   T3QuarterWidget.cpp
@@ -2019,7 +2023,7 @@ set(ta_SRCS_NOMAKETA
   iT3Panel.cpp
   iTabBarEx.cpp
   iTabWidget.cpp
-  iT3TabViewer.cpp
+  iT3PanelViewer.cpp
 
   T3Node.cpp
   T3NodeLeaf.cpp
@@ -2037,7 +2041,7 @@ set(ta_SRCS_NOMAKETA
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
-  VEWorldViewPanel.cpp
+  iViewPanelOfVEWorld.cpp
 
   NewViewHelper.cpp
 

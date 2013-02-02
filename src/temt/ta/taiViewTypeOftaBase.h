@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class taBase; //
-class EditDataPanel; //
+class iPanelOfEditor; //
 
 
 TypeDef_Of(taiViewTypeOftaBase);
@@ -33,7 +33,7 @@ class TA_API taiViewTypeOftaBase: public taiViewType { // for taBase and descend
 public:
   override int          BidForView(TypeDef*);
   override const iColor GetEditColorInherit(taiSigLink* dl, bool& ok) const;// #IGNORE background color for edit
-  override iDataPanel*  CreateDataPanel(taiSigLink* dl_);
+  override iPanelBase*  CreateDataPanel(taiSigLink* dl_);
   override taiSigLink* GetSigLink(void* data_, TypeDef* el_typ);
   void                  Initialize() {}
   void                  Destroy() {}
@@ -41,7 +41,7 @@ protected:
   virtual taiSigLink*  CreateSigLink_impl(taBase* data_);
   override void         CreateDataPanel_impl(taiSigLink* dl_);
 private:
-  EditDataPanel*        edit_panel; // cached during construction
+  iPanelOfEditor*        edit_panel; // cached during construction
 };
 
 #endif // taiViewTypeOftaBase_h

@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 class taiWidgetActions; //
 class iDialogSearch; //
-class iDataPanel; //
+class iPanelBase; //
 class taiTreeNode; //
 class iTreeView; //
 class taSigLink_QObj; //
@@ -63,7 +63,7 @@ public:
   virtual bool          ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
     {return false;} // asks this type if we should show the md member
 
-  iDataPanel*           CreateDataPanel();
+  iPanelBase*           CreateDataPanel();
   taiTreeNode*      CreateTreeDataNode(MemberDef* md, taiTreeNode* parent,
     taiTreeNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a tree node as a parent
@@ -79,7 +79,7 @@ protected:
 
   virtual void          Assert_QObj(); // makes sure the qobj is created
   virtual void          FillContextMenu_impl(taiWidgetActions* menu) {} // this is usually the one to override
-  virtual iDataPanel*   CreateDataPanel_impl(); // default uses taiView
+  virtual iPanelBase*   CreateDataPanel_impl(); // default uses taiView
   taiTreeNode*      CreateTreeDataNode(MemberDef* md,
     taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
     const String& node_name, int dn_flags); // combined version, only 1 xxPar is set

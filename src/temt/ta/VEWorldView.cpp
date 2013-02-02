@@ -15,7 +15,7 @@
 
 #include "VEWorldView.h"
 #include <VEWorld>
-#include <VEWorldViewPanel>
+#include <iViewPanelOfVEWorld>
 #include <VESpaceView>
 #include <VESpace>
 #include <iT3Panel>
@@ -126,7 +126,7 @@ void VEWorldView::SetWorld(VEWorld* wl) {
 void VEWorldView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_wvp) {
-    m_wvp = new VEWorldViewPanel(this);
+    m_wvp = new iViewPanelOfVEWorld(this);
     vw->RegisterPanel(m_wvp);
   }
 }

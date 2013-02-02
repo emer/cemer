@@ -35,7 +35,7 @@ class FrameViewer; //
 class ToolBar; // 
 class BrowseViewer; // 
 class PanelViewer; // 
-class T3TabViewer; // 
+class T3PanelViewer; // 
 class taiWidgetActions_List; //
 class taiWidgetMenuBar; // #IGNORE
 class taiWidgetActions; //
@@ -120,16 +120,16 @@ public:
   // select PanelViewer  (middle edit panel) tab by name
 
   bool                  SelectT3ViewTabNo(int tab_no);
-  // select T3TabViewer (3d view) (right view panel) tab by number
+  // select T3PanelViewer (3d view) (right view panel) tab by number
   bool                  SelectT3ViewTabName(const String& tab_name);
-  // select T3TabViewer (3d view) (right view panel) tab by name
+  // select T3PanelViewer (3d view) (right view panel) tab by name
 
   BrowseViewer*         GetLeftBrowser();
   // get the BrowseViewer (left browser panel)
   PanelViewer*          GetMiddlePanel();
   // get the PanelViewer (middle edit panel)
-  T3TabViewer*         GetRightViewer();
-  // get the T3TabViewer (right viewer panel)
+  T3PanelViewer*         GetRightViewer();
+  // get the T3PanelViewer (right viewer panel)
 
   override void         FrameSizeToSize(iSize& sz);
   override bool         GetWinState();
@@ -170,7 +170,7 @@ protected:
 
   //from DataView
   override void         Constr_impl(QWidget* gui_parent);
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent);
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent);
   override void         WidgetDeleting_impl();
   override void         Show_impl(); // only called if mapped; de-iconifies
   override void         Hide_impl(); // only called if mapped; iconifies

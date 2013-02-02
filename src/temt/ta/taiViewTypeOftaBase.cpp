@@ -15,8 +15,8 @@
 
 #include "taiViewTypeOftaBase.h"
 #include <taiEditorOfClass>
-#include <EditDataPanel>
-#include <iDataPanelSet>
+#include <iPanelOfEditor>
+#include <iPanelSet>
 #include <taiEdit>
 #include <taiWidgetMenuBar>
 
@@ -28,8 +28,8 @@ taiSigLink* taiViewTypeOftaBase::CreateSigLink_impl(taBase* data_) {
   return NULL; //no taBase implementation for now
 }
 
-iDataPanel* taiViewTypeOftaBase::CreateDataPanel(taiSigLink* dl_) {
-  iDataPanel* rval = inherited::CreateDataPanel(dl_);
+iPanelBase* taiViewTypeOftaBase::CreateDataPanel(taiSigLink* dl_) {
+  iPanelBase* rval = inherited::CreateDataPanel(dl_);
   // if more than one panel, then move the edit menu and methods to outside panelset
   if (m_dps) {
     taiEditorOfClass* edh = edit_panel->editDataHost();

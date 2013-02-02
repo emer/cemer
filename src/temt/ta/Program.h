@@ -41,8 +41,8 @@ class MemberDef; //
 class ProgLibEl; // 
 class ProgVar; // 
 class ProgramCallBase; //
-class iProgramPanel; //
-class iDataPanelSet; //
+class iPanelOfProgram; //
+class iPanelSet; //
 
 
 TypeDef_Of(Program);
@@ -359,9 +359,9 @@ public: // XxxGui versions provide feedback to the user
               const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the program control functions (Init, Run, Step, Stop) to a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.   extra_label is prepended to item names, and if sub_gp_nm is specified, items will be put in this sub-group (new one will be made if it does not yet exist)
 
-  virtual iProgramPanel* FindMyProgramPanel();
+  virtual iPanelOfProgram* FindMyProgramPanel();
   // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
-  virtual iDataPanelSet* FindMyDataPanelSet();
+  virtual iPanelSet* FindMyDataPanelSet();
   // #IGNORE find my data panel set, which contains all the more specific data panels
 
   virtual bool          BrowserSelectMe_ProgItem(taOBase* itm);

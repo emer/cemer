@@ -17,7 +17,7 @@
 #define TopLevelViewer_h 1
 
 // parent includes:
-#include <DataViewer>
+#include <taViewer>
 
 // member includes:
 
@@ -26,9 +26,9 @@
 
 TypeDef_Of(TopLevelViewer);
 
-class TA_API TopLevelViewer : public DataViewer {
+class TA_API TopLevelViewer : public taViewer {
   // #NO_TOKENS #VIRT_BASE stuff that is common to anything that can be a top-level window
-INHERITED(DataViewer)
+INHERITED(taViewer)
 public:
     // can be provided to put msg up on closing
   override bool         deleteOnWinClose() const;
@@ -50,7 +50,7 @@ public:
 
   void  InitLinks();
   void  CutLinks();
-  TA_DATAVIEWFUNS(TopLevelViewer, DataViewer) //
+  TA_DATAVIEWFUNS(TopLevelViewer, taViewer) //
 protected:
   String                win_name;
 

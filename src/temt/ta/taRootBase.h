@@ -24,7 +24,7 @@
 #include <Doc_Group>
 #include <Wizard_Group>
 #include <Project_Group>
-#include <DataViewer_List>
+#include <taViewer_List>
 #include <taPlugin_List>
 #include <taPluginBase_List>
 #include <taiMimeFactory_List>
@@ -52,8 +52,8 @@ public:
   Doc_Group             docs;           // #NO_SAVE documents, typically linked to other objects
   Wizard_Group          wizards;        // #NO_SAVE global wizards -- see each project for project-specific wizards
   Project_Group         projects;       // #NO_SAVE The projects
-  DataViewer_List       viewers;        // #NO_SAVE viewer display settings for the root object only
-  DataViewer_List       viewers_tmp;    // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
+  taViewer_List       viewers;        // #NO_SAVE viewer display settings for the root object only
+  taViewer_List       viewers_tmp;    // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
   taPlugin_List         plugins;        // available plugins
   taBase_List           plugin_state;   // #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
   taPluginBase_List     plugin_deps;    // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave

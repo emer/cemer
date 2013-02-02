@@ -18,7 +18,7 @@
 #include <TypeDef>
 #include <taiEditorOfClass>
 #include <taiEditorOfTypeItem>
-#include <EditDataPanel>
+#include <iPanelOfEditor>
 
 taSigLinkTypeItem::taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* data_)
 :inherited(tik_, data_, data_->sig_link)
@@ -63,11 +63,11 @@ String taSigLinkTypeItem::GetDisplayName() const {
   return data()->name;
 }
 
-iDataPanel* taSigLinkTypeItem::CreateDataPanel_impl() {
+iPanelBase* taSigLinkTypeItem::CreateDataPanel_impl() {
   taiEditorOfTypeItem* tidh = 
     new taiEditorOfTypeItem(data(), tik, true, false);
   tidh->Constr("", "", taiEditorWidgetsMain::HT_PANEL);
-  EditDataPanel* dp = tidh->EditPanel(this);
+  iPanelOfEditor* dp = tidh->EditPanel(this);
   return dp;
 } 
 

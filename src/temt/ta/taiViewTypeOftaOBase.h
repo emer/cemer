@@ -32,7 +32,7 @@ public:
   override bool         needSet() const {return true;} // always, so we can do dyn panels
   override int          BidForView(TypeDef*);
   override taiSigLink* GetSigLink(void* data_, TypeDef* el_typ); // optimized version of taiViewTypeOftaBase
-  override void         CheckUpdateDataPanelSet(iDataPanelSet* pan);
+  override void         CheckUpdateDataPanelSet(iPanelSet* pan);
   void                  Initialize() {}
   void                  Destroy() {}
 protected:

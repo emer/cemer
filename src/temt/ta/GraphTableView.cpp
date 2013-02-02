@@ -16,7 +16,7 @@
 #include "GraphTableView.h"
 #include <GraphColView>
 #include <DataTable>
-#include <iGraphTableView_Panel>
+#include <iViewPanelOfGraphTable>
 #include <taSigLinkItr>
 #include <T3Panel>
 #include <MainWindowViewer>
@@ -777,7 +777,7 @@ void GraphTableView::Clear_impl() {
 void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iGraphTableView_Panel(this);
+    m_lvp = new iViewPanelOfGraphTable(this);
     vw->RegisterPanel(m_lvp);
   }
 }
@@ -1957,8 +1957,8 @@ void GraphTableView::setScaleData(bool auto_scale_, float min_, float max_) {
   UpdateDisplay(true);
 }
 
-iGraphTableView_Panel* GraphTableView::lvp() {
-  return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;
+iViewPanelOfGraphTable* GraphTableView::lvp() {
+  return (iViewPanelOfGraphTable*)(iViewPanelOfDataTable*)m_lvp;
 }
 
 // callback for view transformer dragger

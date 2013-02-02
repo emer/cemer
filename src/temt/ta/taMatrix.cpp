@@ -17,7 +17,7 @@
 
 #include <int_Matrix>
 #include <MatrixIndex>
-#include <MatrixTableModel>
+#include <iMatrixTableModel>
 #include <CellRange>
 #include <taMatrix_PList>
 #include <byte_Matrix>
@@ -1191,9 +1191,9 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   return true;
 }
 
-MatrixTableModel* taMatrix::GetTableModel() {
+iMatrixTableModel* taMatrix::GetTableModel() {
   if (!table_model && !isDestroying()) {
-    table_model = new MatrixTableModel(this);
+    table_model = new iMatrixTableModel(this);
     table_model->setPat4D(true); // always
   }
   return table_model;

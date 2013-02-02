@@ -15,7 +15,7 @@
 
 #include "GraphAxisView.h"
 #include <GraphTableView>
-#include <iGraphTableView_Panel>
+#include <iViewPanelOfGraphTable>
 #include <T3GraphLine>
 
 #include <Inventor/nodes/SoComplexity.h>

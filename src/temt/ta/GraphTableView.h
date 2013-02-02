@@ -30,7 +30,7 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 class ColorScaleSpec; // 
-class iGraphTableView_Panel; // 
+class iViewPanelOfGraphTable; // 
 class T3Panel; //
 class T3GraphViewNode; //
 class T3GraphLine; //
@@ -162,7 +162,7 @@ public:
   // updates the values in us and the stored ones in the colorscale list
 
 
-  iGraphTableView_Panel*        lvp();
+  iViewPanelOfGraphTable*        lvp();
   // #IGNORE
   
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}

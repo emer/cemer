@@ -17,7 +17,7 @@
 #define T3Panel_h 1
 
 // parent includes:
-#include <DataViewer>
+#include <taViewer>
 
 // member includes:
 #include <T3DataViewRoot>
@@ -45,11 +45,11 @@ class QPixmap; //
 
 TypeDef_Of(T3Panel);
 
-class TA_API T3Panel : public DataViewer {
-  // ##DEF_NAME_ROOT_Panel top-level taDataViewer object that contains one 3D data view of multiple objects
-INHERITED(DataViewer)
+class TA_API T3Panel : public taViewer {
+  // ##DEF_NAME_ROOT_Panel #AKA_T3DataViewFrame a panel within set of 3d view panels containing one or more 3D view elements organize within a common overall scenegraph
+INHERITED(taViewer)
 friend class T3DataView;
-friend class T3TabViewer;
+friend class T3PanelViewer;
 public:
   enum StereoView {
     STEREO_NONE,                // use monoscopic rendering (default)
@@ -144,7 +144,7 @@ public:
   void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void  InitLinks();
   void  CutLinks();
-  TA_DATAVIEWFUNS(T3Panel, DataViewer)
+  TA_DATAVIEWFUNS(T3Panel, taViewer)
 
 protected:
   static void           SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
@@ -152,7 +152,7 @@ protected:
 
 
   override void         Constr_impl(QWidget* gui_parent = NULL);
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
   override void         Constr_post();
   override void         WindowClosing(CancelOp& cancel_op); // #IGNORE
   override void         Clear_impl(); // #IGNORE

@@ -30,7 +30,7 @@
 // declare all other types mentioned but not required to include:
 class int_Matrix; // 
 class MatrixIndex; // 
-class MatrixTableModel; // #IGNORE
+class iMatrixTableModel; // #IGNORE
 class CellRange; //
 class taMatrix_PList; //
 
@@ -579,7 +579,7 @@ public:
   virtual void          El_SetFmVar_(void*, const Variant&) { };
   // #IGNORE
 
-  MatrixTableModel*     GetTableModel(); // gets the table model, making if needed
+  iMatrixTableModel*     GetTableModel(); // gets the table model, making if needed
 
 public:
   ///////////////////////////////////////////////////////////////////
@@ -689,7 +689,7 @@ protected:
   taMatrix_PList*       slices; // list of extant slices -- created on first slice
   taMatrix*             slice_par; // slice parent -- we ref/unref it
   fixed_dealloc_fun     fixed_dealloc; // optional dealloc fun passed in on FixedData
-  MatrixTableModel*     table_model; // created on-demand, then persists for lifetime
+  iMatrixTableModel*     table_model; // created on-demand, then persists for lifetime
 
   virtual bool          fastAlloc() const {return true;}
   // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants

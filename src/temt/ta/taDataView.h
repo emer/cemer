@@ -53,12 +53,12 @@ INHERITED(taNBase)
 friend class DataView_List;
 public:
   enum DataViewAction { // #BITS enum used to (safely) manually invoke one or more _impl actions
-    CONSTR_POST         = 0x001, // #BIT (only used by DataViewer)
+    CONSTR_POST         = 0x001, // #BIT (only used by taViewer)
     CLEAR_IMPL          = 0x002, // #BIT (only used by T3DataView)
     RENDER_PRE          = 0x004, // #BIT
     RENDER_IMPL         = 0x008, // #BIT
     RENDER_POST         = 0x010, // #BIT
-    CLOSE_WIN_IMPL      = 0x020,  // #BIT (only used by DataViewer)
+    CLOSE_WIN_IMPL      = 0x020,  // #BIT (only used by taViewer)
     RESET_IMPL          = 0x040, // #BIT
     UNBIND_IMPL         = 0x080, // #BIT disconnect everyone from a data source
     SHOWING_IMPL        = 0x100, // #BIT

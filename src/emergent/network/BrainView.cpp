@@ -17,7 +17,7 @@
 #include <NewViewHelper>
 #include <T3BrainNode>
 #include <T3NetNode>
-#include <BrainViewPanel>
+#include <iViewPanelOfBrain>
 #include <BrainVolumeView>
 #include <NiftiReader>
 #include <iMethodButtonMgr>
@@ -471,7 +471,7 @@ void BrainView::InitScaleRange(ScaleRange& sr) {
 void BrainView::OnWindowBind_impl(iT3Panel* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!bvp) {
-    bvp = new BrainViewPanel(this);
+    bvp = new iViewPanelOfBrain(this);
     vw->RegisterPanel(bvp);
     vw->t3vs->Connect_SelectableHostNotifySignal(bvp,
       SLOT(viewWin_NotifySignal(ISelectableHost*, int)));
@@ -1266,13 +1266,13 @@ void BrainView::ValidateState()
 
 void BrainView::EmitAndClearState()
 {
-  // BrainViewPanel listens...
+  // iViewPanelOfBrain listens...
   if (bvp) bvp->EmitStateChanged(last_state_change);
   last_state_change = NONE;
 }
 void BrainView::EmitAll()
 {
-  // this allows us to update BrainViewPanel with our state
+  // this allows us to update iViewPanelOfBrain with our state
   if (bvp) {
     bvp->EmitViewPlaneChanged(view_plane);
     bvp->EmitSliceStartChanged(slice_start);

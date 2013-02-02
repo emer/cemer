@@ -1284,7 +1284,9 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   // go through all types and create list of AKA typedefs
   for (int i = 0; i < types.size; ++i) {
     TypeDef* typ = types.FastEl(i);
-    if(typ->OptionAfter("AKA_").nonempty()) {
+    String aka = typ->OptionAfter("AKA_");
+    if(aka.nonempty()) {
+      taMisc::Info("aka type: ", typ->name, "aka:", aka);
       aka_types.Link(typ);
     }
   }

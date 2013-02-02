@@ -29,7 +29,7 @@ class VEWorld; //
 class T3Panel; // 
 class QImage; //  #IGNORE
 class iT3Panel; // #IGNORE
-class VEWorldViewPanel; //
+class iViewPanelOfVEWorld; //
 class SoOffscreenRendererQt; // #IGNORE
 
 TypeDef_Of(VEWorldView);
@@ -37,7 +37,7 @@ TypeDef_Of(VEWorldView);
 class TA_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
 INHERITED(T3DataViewMain)
-friend class VEWorldViewPanel;
+friend class iViewPanelOfVEWorld;
 public:
   static VEWorldView* New(VEWorld* wl, T3Panel*& fr);
 
@@ -91,7 +91,7 @@ public:
   T3_DATAVIEWFUNS(VEWorldView, T3DataViewMain) // 
 protected:
 #ifndef __MAKETA__
-  QPointer<VEWorldViewPanel> m_wvp;
+  QPointer<iViewPanelOfVEWorld> m_wvp;
   SoOffscreenRendererQt*	cam_renderer;
 #endif
   bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once

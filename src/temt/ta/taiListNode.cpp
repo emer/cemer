@@ -14,10 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiListNode.h"
-#include <iListDataPanel>
+#include <iPanelOfList>
 
 
-taiListNode::taiListNode(int num_, iListDataPanel* panel_,
+taiListNode::taiListNode(int num_, iPanelOfList* panel_,
    taiSigLink* link_, iTreeView* parent_, taiListNode* after, int dn_flags_)
 :inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
 {

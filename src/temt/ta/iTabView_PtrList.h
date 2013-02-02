@@ -23,12 +23,12 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iDataPanel; // 
+class iPanelBase; // 
 
 
 class TA_API iTabView_PtrList: public taPtrList<iTabView> {
 public:
-  void                  DataPanelDestroying(iDataPanel* panel); // dispatch to all
+  void                  DataPanelDestroying(iPanelBase* panel); // dispatch to all
   iTabView_PtrList() {}
   ~iTabView_PtrList();
 };

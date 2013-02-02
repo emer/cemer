@@ -33,7 +33,7 @@ public:
   TA_DATAVIEWFUNS(ProgramToolBar, ToolBar) //
 protected:
 #ifdef TA_GUI
-  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in _qt file
+  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // in _qt file
 #endif
 private:
   NOCOPY(ProgramToolBar)

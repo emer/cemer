@@ -21,7 +21,7 @@ void DockViewer::Initialize() {
   dock_area = Qt::BottomDockWidgetArea;
 }
 
-IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 //TODO: maybe we don't even need a generic one, but it does enable us to
 // make a purely taBase guy that doesn't need its own special gui guy
   return new iDockViewer(this, gui_parent);

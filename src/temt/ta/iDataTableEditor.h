@@ -42,7 +42,7 @@ class TypeDef; //
 class taiSigLink; // 
 class taSigLink; // 
 class DataTable; // 
-class DataTableModel; // 
+class iDataTableModel; // 
 class QModelIndex; //
 class QEvent; //
 
@@ -62,7 +62,7 @@ public:
 
   DataTable*            dt() const {return m_dt;}
   void                  setDataTable(DataTable* dt); // only called once
-  DataTableModel*       dtm() const;
+  iDataTableModel*       dtm() const;
 
   virtual void          ScrollToBottom(); // scroll table to last row
 

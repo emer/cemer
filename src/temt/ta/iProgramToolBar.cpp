@@ -15,7 +15,7 @@
 
 #include "iProgramToolBar.h"
 #include <ProgramToolBar>
-#include <IDataViewWidget>
+#include <IViewerWidget>
 #include <ViewColor_List>
 #include <iColor>
 #include <ProgEl>
@@ -102,7 +102,7 @@ TypeDef_Of(DataCalcSetSrcRow);
 TypeDef_Of(DataCalcCopyCommonCols);
 
 
-IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
+IViewerWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
   return new iProgramToolBar(this, gui_parent); // usually parented later
 }
 

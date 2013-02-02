@@ -15,7 +15,7 @@
 
 #include "iDataTableView.h"
 #include <DataTable>
-#include <DataTableModel>
+#include <iDataTableModel>
 #include <taiTabularDataMimeFactory>
 #include <iClipData>
 #include <CellRange>
@@ -66,7 +66,7 @@ void iDataTableView::dataChanged(const QModelIndex& topLeft,
 }
 
 DataTable* iDataTableView::dataTable() const {
-  DataTableModel* mod = qobject_cast<DataTableModel*>(model());
+  iDataTableModel* mod = qobject_cast<iDataTableModel*>(model());
   if (mod) return mod->dataTable();
   else return NULL;
 }

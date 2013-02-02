@@ -30,7 +30,7 @@
 #include <taVector3i>
 
 // declare all other types mentioned but not required to include:
-class BrainViewPanel; //
+class iViewPanelOfBrain; //
 class BrainVolumeView; //
 class NiftiReader; // #IGNORE
 class TalairachAtlas; // #IGNORE
@@ -63,7 +63,7 @@ class EMERGENT_API BrainView : public T3DataViewMain {
   // ##DUMP_LOAD_POST #INSTANCE main view object for glass brain view
 INHERITED(T3DataViewMain)
 
-  friend class BrainViewPanel;
+  friend class iViewPanelOfBrain;
   friend class BrainVolumeView;
 
 public:
@@ -243,7 +243,7 @@ public:
 
 protected:
   T3DataView_List       prjns;          // #IGNORE list of prjn objects under us
-  BrainViewPanel*       bvp; // created during first Render
+  iViewPanelOfBrain*       bvp; // created during first Render
   override void         SigRecvUpdateView_impl();
   override void         SigRecvUpdateAfterEdit_impl(); //
   override void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns

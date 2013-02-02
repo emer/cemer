@@ -47,7 +47,7 @@ public:
   iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent = NULL);
   ~iToolBoxDockViewer(); //
 
-public: // IDataViewerWidget i/f
+public: // ItaViewerWidget i/f
 //  override QWidget*   widget() {return this;}
 protected:
 //  override void               Constr_impl();

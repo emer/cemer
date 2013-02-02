@@ -17,7 +17,7 @@
 #define FrameViewer_h 1
 
 // parent includes:
-#include <DataViewer>
+#include <taViewer>
 
 // member includes:
 
@@ -28,9 +28,9 @@ class MainWindowViewer; //
 
 TypeDef_Of(FrameViewer);
 
-class TA_API FrameViewer : public DataViewer {
+class TA_API FrameViewer : public taViewer {
   // #NO_TOKENS #VIRT_BASE for views that can be in the splitter of a MainWindowViewer
-INHERITED(DataViewer)
+INHERITED(taViewer)
 public:
 
   inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();}
@@ -41,7 +41,7 @@ public:
 //  void        InitLinks();
 //  void        CutLinks(); //
 //  void        Copy_(const FrameViewer& cp);
-  TA_DATAVIEWFUNS(FrameViewer, DataViewer) //
+  TA_DATAVIEWFUNS(FrameViewer, taViewer) //
 protected:
   override void         GetWinState_impl(); // set gui state; only called if mapped
   override void         SetWinState_impl(); // fetch gui state; only called if mapped

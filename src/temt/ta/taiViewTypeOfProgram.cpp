@@ -14,10 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taiViewTypeOfProgram.h"
-#include <iProgramCtrlPanel>
+#include <iPanelOfProgramCtrl>
 #include <iTreeView>
-#include <iProgramPanel>
-#include <iProgramViewScriptPanel>
+#include <iPanelOfProgram>
+#include <iPanelOfProgramScript>
 
 TypeDef_Of(Program);
 
@@ -34,15 +34,15 @@ int taiViewTypeOfProgram::BidForView(TypeDef* td) {
 void taiViewTypeOfProgram::CreateDataPanel_impl(taiSigLink* dl_)
 {
   // control panel is default
-  iProgramCtrlPanel* cp = new iProgramCtrlPanel(dl_);
+  iPanelOfProgramCtrl* cp = new iPanelOfProgramCtrl(dl_);
   DataPanelCreated(cp);
 
   // then editor
-  iProgramPanel* dp = new iProgramPanel(dl_);
+  iPanelOfProgram* dp = new iPanelOfProgram(dl_);
   DataPanelCreated(dp);
 
   // then view script
-  iProgramViewScriptPanel* vp = new iProgramViewScriptPanel(dl_);
+  iPanelOfProgramScript* vp = new iPanelOfProgramScript(dl_);
   DataPanelCreated(vp);
   inherited::CreateDataPanel_impl(dl_);
 }
