@@ -24,30 +24,12 @@ bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
   // 	Filters! Returns true if you should filter this TypeDef
 
-//   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
-//   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
-
   // We only want "actual" types, not pointers or references to types, etc...
-  if (td->IsNotActual())
+  if(td->IsNotActual())
     return true;
 
   if(!td->IsClass())
     return true;
-
-  // exclude template instances (of any sort!)  //  && (td->children.size == 1)) 
-  if (td->IsTemplInst())
-    return true;
-
-//   // exclude low-level non-instance guys, except for the ones we want..
-//   if((td->HasOption("NO_INSTANCE") || td->HasOption("NO_CSS"))
-//      && !(td->HasOption("VIRT_BASE") || td->HasOption("SMART_POINTER")
-// 	  || td->name == "taMisc"))
-//     return true;
-
-//   // no builtin guys
-//   if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
-//      || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def)))
-//     return true;
 
   return false;
 }

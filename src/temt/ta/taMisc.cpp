@@ -1286,7 +1286,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
     TypeDef* typ = types.FastEl(i);
     String aka = typ->OptionAfter("AKA_");
     if(aka.nonempty()) {
-      taMisc::Info("aka type: ", typ->name, "aka:", aka);
+      // taMisc::Info("aka type: ", typ->name, "aka:", aka);
       aka_types.Link(typ);
     }
   }

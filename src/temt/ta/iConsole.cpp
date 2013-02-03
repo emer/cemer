@@ -121,7 +121,7 @@ iConsole::iConsole(QWidget *parent, const char *name, bool initiInterceptor)
   , cmdColor(Qt::blue)
   , errColor(Qt::red)
   , outColor(Qt::black)
-  , completionColor(Qt::green)
+  , completionColor(Qt::darkGreen)
   , applicationIsQuitting(false)
 #ifndef TA_OS_WIN
   , stdoutiInterceptor(NULL), stderriInterceptor(NULL)

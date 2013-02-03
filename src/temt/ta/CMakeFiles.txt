@@ -255,8 +255,8 @@ set(ta_HEADS_MAKETA_LOCAL
   ToolBar_List.h
   DockViewer.h
   DockViewer_List.h
-  ToolBoxDockViewer.h
   ConsoleDockViewer.h
+  ToolBoxDockViewer.h
   ToolBoxRegistrar.h
   ToolBoxRegistrar_PtrList.h
   TreeDecorationSpec.h
@@ -875,8 +875,8 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetText.h
   taiWidgetField.h
   taiWidgetFieldIncr.h
-  taiWidgetFieldRegexp.h
   taiWidgetFieldFile.h
+  taiWidgetFieldRegexp.h
   taiWidgetPlusToggle.h
   taiWidgetComboBox.h
   taiWidgetBitBox.h
@@ -913,10 +913,10 @@ set(ta_HEADS_NOMAKETA_MOC
 
   iPanelSetButton.h
 
+  iMainWindowViewer.h
   iFrameViewer.h
   iBrowseViewer.h
   iPanelViewer.h
-  iMainWindowViewer.h
   iDockViewer.h
   iToolBoxDockViewer.h
 
@@ -970,8 +970,12 @@ set(ta_HEADS_NOMAKETA_NOMOC
   DumpPathToken.h
   DumpPathTokenList.h
   dumpMisc.h
+
   taGenDoc.h
   Tokenizer.h
+
+  ClusterManager.h
+  SubversionClient.h
 
   IPlugin.h
   taPluginInst_PList.h
@@ -979,12 +983,10 @@ set(ta_HEADS_NOMAKETA_NOMOC
 
   ISelectableHost.h
   IViewerWidget.h
+  NewViewHelper.h
 
   DynMethod_PtrList.h
   taiWidgetActions_List.h
-
-  ClusterManager.h
-  SubversionClient.h
 
   IWidgetHost.h
   taiEditorWidgetsMulti.h
@@ -1054,9 +1056,6 @@ set(ta_HEADS_MAKETA
 # all heads
 set(ta_HEADS
   ${ta_HEADS_MAKETA_LOCAL}
-  NewViewHelper.h
-  ta_maketa_defs.h
-  ta_type_constr.h
   ${ta_HEADS_NOMAKETA_NOMOC}
   ${ta_HEADS_NOMAKETA_MOC}
 )
@@ -1069,15 +1068,21 @@ set(ta_HEADS_MOC
 
 # NOTE: do NOT include .moc files -- auto generated
 # these should correspond directly to the files in the ta_HEADS_MAKETA files
-
 set(ta_SRCS_MAKETA
+  BuiltinTypeDefs.cpp
+
+  iVec2i.cpp
+  iSize.cpp
+  iRect.cpp
+  iVec3i.cpp
+  iVec3f.cpp
+  iBox3f.cpp
+
   taBasicAtomicInt.cpp
   taAtomicInt.cpp
   taString.cpp
   Variant.cpp
   taRefN.cpp
-
-  SigLinkSignal.cpp
 
   NameVar.cpp
   MTRndState.cpp
@@ -1117,6 +1122,7 @@ set(ta_SRCS_MAKETA
   TypeDef.cpp
 
   taVersion.cpp
+  taLicense.cpp
   taThreadDefaults.cpp
   NamedURL.cpp
   DumpFileCvt.cpp
@@ -1130,7 +1136,6 @@ set(ta_SRCS_MAKETA
   taSmartPtr.cpp
   taOBase.cpp
   taOABase.cpp
-  taBase_QObj.cpp
   taNBase.cpp
   taFBase.cpp
 
@@ -1148,8 +1153,6 @@ set(ta_SRCS_MAKETA
   taGroup_impl.cpp
   taGroup.cpp
   taBase_Group.cpp
-  ta_dump.cpp
-  ta_type_constr.cpp
 
   taArray_base.cpp
   taArray.cpp
@@ -1204,10 +1207,6 @@ set(ta_SRCS_MAKETA
   ValIdx.cpp
   ValIdx_Array.cpp
 
-  taiMiscCore.cpp
-
-  taDataView.cpp
-  DataView_List.cpp
   UserDataItemBase.cpp
   UserDataItem.cpp
   UserDataItem_List.cpp
@@ -1229,12 +1228,11 @@ set(ta_SRCS_MAKETA
   taSigLinkMemberSpace.cpp
   taSigLinkPropertySpace.cpp
 
-  taSigLink_QObj.cpp
-
   ISigLinkProxy.cpp
   ISigLinkClient.cpp
   ISigLinkClient_PtrList.cpp
   IMultiSigLinkClient.cpp
+
   IRefListClient.cpp
 
   taStringDiffData.cpp
@@ -1290,31 +1288,36 @@ set(ta_SRCS_MAKETA
   ScriptBase_List.cpp
 
   ISelectable.cpp
+  ISelectable_PtrList.cpp
   IObjectSelectable.cpp
+
+  taDataView.cpp
+  DataView_List.cpp
 
   taViewer.cpp
   taViewer_List.cpp
+  TopLevelViewer.cpp
+  MainWindowViewer.cpp
   FrameViewer.cpp
   FrameViewer_List.cpp
-  TopLevelViewer.cpp
   BrowseViewer.cpp
   BrowseViewerTaBase.cpp
-  TypeInfoBrowser.cpp
   PanelViewer.cpp
-  MainWindowViewer.cpp
-  ToolBoxRegistrar.cpp
   ToolBar.cpp
   ToolBar_List.cpp
   DockViewer.cpp
   DockViewer_List.cpp
   ConsoleDockViewer.cpp
   ToolBoxDockViewer.cpp
+  ToolBoxRegistrar.cpp
   ToolBoxRegistrar_PtrList.cpp
   TreeDecorationSpec.cpp
   TreeDecorationSpec_List.cpp
+  TypeInfoBrowser.cpp
 
   ProgramRef.cpp
   ProgVarRef.cpp
+
   ProgLine.cpp
   ProgLine_List.cpp
   ProgType.cpp
@@ -1355,6 +1358,7 @@ set(ta_SRCS_MAKETA
   FunctionCall.cpp
   CodeBlock.cpp
   UserScript.cpp
+
   Loop.cpp
   WhileLoop.cpp
   DoLoop.cpp
@@ -1482,12 +1486,6 @@ set(ta_SRCS_MAKETA
   taPlugin.cpp
   taPlugin_List.cpp
 
-  IPlugin.cpp
-  iPluginEditor.cpp
-  taPluginInst.cpp
-  taPluginInst_PList.cpp
-  taPlugins.cpp
-
   SelectEditItem.cpp
   EditParamSearch.cpp
   EditMbrItem.cpp
@@ -1502,9 +1500,8 @@ set(ta_SRCS_MAKETA
   ParamSearchAlgo_List.cpp
   GridSearch.cpp
   ClusterRun.cpp
-  ClusterManager.cpp
+
   Subversion.cpp
-  SubversionClient.cpp
   taMediaWiki.cpp
 
   taWizard.cpp
@@ -1522,7 +1519,6 @@ set(ta_SRCS_MAKETA
   taUndoMgr.cpp
 
   taProjVersion.cpp
-  taLicense.cpp
 
   ProjTemplateEl.cpp
   ProjTemplateEl_List.cpp
@@ -1530,21 +1526,19 @@ set(ta_SRCS_MAKETA
   taProject.cpp
   Project_Group.cpp
   CssProject.cpp
+
   PluginWizard.cpp
   TestWizard.cpp
 
   TemtClient.cpp
-  TemtClient_QObj.cpp
-  TemtServer.cpp
-  TemtServer_QObj.cpp
   TemtClient_List.cpp
+  TemtServer.cpp
 
   taiMimeItem.cpp
   taiMimeItem_List.cpp
   taiMultiMimeItem.cpp
   taiObjectMimeItem.cpp
   taiObjectsMimeItem.cpp
-  taiMimeSource.cpp
   taiMimeFactory.cpp
   taiMimeFactory_List.cpp
   taiObjectMimeFactory.cpp
@@ -1558,16 +1552,17 @@ set(ta_SRCS_MAKETA
   taiTableDataMimeItem.cpp
 
   taRootBase.cpp
-  taRootBase_QObj.cpp
   tabMisc.cpp
+  taCodeUtils.cpp
 
   taAudioProc.cpp
 
   taImage.cpp
   taCanvas.cpp
-  ImageProcCall.cpp
+
   ImgProcCallThreadMgr.cpp
   ImgProcThreadBase.cpp
+  ImageProcCall.cpp
 
   DoGFilter.cpp
   GaborFilter.cpp
@@ -1577,7 +1572,6 @@ set(ta_SRCS_MAKETA
   VisRegionSpecBase.cpp
   VisRegionSpecBaseList.cpp
   DoGRegionSpec.cpp
-
   V1KwtaSpec.cpp
   V1RegionSpec.cpp
   RetinaProc.cpp
@@ -1611,8 +1605,6 @@ set(ta_SRCS_MAKETA
   VEObjCarousel.cpp
   VEHeightField.cpp
 
-  iAction.cpp
-  taiWidget.cpp
   taiWidget_List.cpp
 
   taiTypeBase.cpp
@@ -1685,6 +1677,7 @@ set(ta_SRCS_MAKETA
   taiViewTypeOfList.cpp
   taiViewTypeOfGroup.cpp
   taiViewTypeOfMatrix.cpp
+  taiViewTypeOfDataTable.cpp
   taiViewTypeOfTypeInfo.cpp
   taiViewTypeOfDoc.cpp
   taiViewTypeOfWizard.cpp
@@ -1698,19 +1691,18 @@ set(ta_SRCS_MAKETA
   taGuiLayout_List.cpp
   taGuiAction.cpp
   taGuiAction_List.cpp
-  taGuiEditor.cpp
   taGuiDialog.cpp
-  taGuiWidget_QObj.cpp
-  taGuiAction_QObj.cpp
 
   T3PanelViewer.cpp
   T3Panel.cpp
   T3Panel_List.cpp
+
   T3DataView.cpp
   T3DataView_List.cpp
   T3DataViewPar.cpp
   T3DataViewMain.cpp
   T3DataViewRoot.cpp
+
   T3SavedView.cpp
   T3SavedView_List.cpp
 
@@ -1734,300 +1726,31 @@ set(ta_SRCS_MAKETA
   VEObjectView.cpp
   VESpaceView.cpp
 
-  iPanelBase_PtrList.cpp
-  NewViewHelper.cpp
-  BuiltinTypeDefs.cpp
-  taCodeUtils.cpp
-)
-
-# these correspond to TA_HEADS_NOMAKETA
-set(ta_SRCS_NOMAKETA
-  iAutoSaver.cpp
-  iMenuButton.cpp
-  iContextMenuButton.cpp
-  iColorButton.cpp
-  iCheckBox.cpp
-  iClipWidgetAction.cpp
-  iClipToolWidget.cpp
-  iComboBox.cpp
-  iCookieJar.cpp
-  iDialog.cpp
-  iDimEdit.cpp
-  iStripeWidget.cpp
-  iEditGrid.cpp
-  iFlowLayout.cpp
-  iFormLayout.cpp
-  iVec2i.cpp
-  iSize.cpp
-  iRect.cpp
-  iVec3i.cpp
-  iVec3f.cpp
-  iBox3f.cpp
-  iLabel.cpp
-  iLineEdit.cpp
-  iDialogTextEdit.cpp
-  iNetworkAccessManager.cpp
-  iInterceptor.cpp
-  SoOffscreenRendererQt.cpp
-  iScrollArea.cpp
-  iSplitter.cpp
-  iSplitterHandle.cpp
-  iSpinBox.cpp
-  iTextBrowser.cpp
-  iTextEdit.cpp
-  iTreeWidgetItem.cpp
-  iTreeWidget.cpp
-  iNumberBar.cpp
-  iNumberedTextView.cpp
-  iThumbWheel.cpp
-  iConsole.cpp
-  SoPtr.cpp
-
-  VPUnref.cpp
-  VPUList.cpp
-  DumpPathSub.cpp
-  DumpPathSubList.cpp
-  DumpPathToken.cpp
-  DumpPathTokenList.cpp
-  dumpMisc.cpp
-
-  gzstream.cpp
-  taiWidgetDelegateUserData.cpp
-  Tokenizer.cpp
   FunLookupND.cpp
   FunLookup.cpp
-  taGenDoc.cpp
 
-  DynMethod_PtrList.cpp
-
-  taiMisc.cpp
-  iTopLevelWindow_List.cpp
-
-  iDialogPublishDocs.cpp
-  taApplication.cpp
-
-  IWidgetHost.cpp
-  taiEditor.cpp
-  taiEditorWidgets.cpp
-  taiEditorWidgetsMain.cpp
-  taiEditorWidgetsMulti.cpp
-
-  taiEditorOfClass.cpp
-  taiEditorOfString.cpp
-  taiEditorOfList.cpp
-  taiEditorOfListCompact.cpp
-  taiEditorOfArray.cpp
-  taiEditorOfSArg.cpp
-  taiEditorOfUserData.cpp
-  taiEditorOfTypeItem.cpp
-  taiEditorOfSelectEditBase.cpp
-  taiEditorOfSelectEditFull.cpp
-  taiEditorOfSelectEditFast.cpp
-  taiEditorOfDoc.cpp
-  taiEditorOfWizard.cpp
-  taiEditorOfProgramCtrl.cpp
-
-  iDialogChoice.cpp
-  iHiLightButton.cpp
-  taiMemberWidgets.cpp
-
-  taiWidgetActions.cpp
-  taiWidgetComposite.cpp
-  taiWidgetPoly.cpp
-  taiWidgetDeck.cpp
-  taiWidgetToggle.cpp
-  taiWidgetText.cpp
-  taiWidgetField.cpp
-  taiWidgetFieldIncr.cpp
-  iDialogWidgetField.cpp
-  taiWidgetFieldFile.cpp
-  taiWidgetPlusToggle.cpp
-  taiWidgetComboBox.cpp
-  taiWidgetBitBox.cpp
-  taiWidgetDimEdit.cpp
-  taiWidgetColor.cpp
-  taiWidgetVariantBase.cpp
-  taiWidgetVariant.cpp
-
-  iDialogItemChooser.cpp
-  iDialogObjChooser.cpp
-  taiWidgetItemChooser.cpp
-  taiWidgetTokenChooser.cpp
-  taiWidgetEditButton.cpp
-  taiWidgetTypeItemMenu.cpp
-  taiWidgetTypeDefChooser.cpp
-  taiWidgetMemberDefChooser.cpp
-  taiWidgetMethodDefChooser.cpp
-  taiWidgetMemberMethodDefChooser.cpp
-  taiWidgetEnumStaticChooser.cpp
-  taiWidgetEnumTypeDefChooser.cpp
-  taiWidgetTokenChooserMultiType.cpp
-  taiWidgetFileButton.cpp
-  taiWidgetTaBaseMenu.cpp
-  taiWidgetTokenPtrMenu.cpp
-  taiWidgetSubTokenPtrMenu.cpp
-  taiWidgetMethodDefMenu.cpp
-  taiWidgetTypeHierMenu.cpp
-
-  iMenuAction.cpp
-  iActionSubMenuEl.cpp
-  iAction_List.cpp
-  taiWidgetActions_List.cpp
-  taiWidgetMenu.cpp
-  taiWidgetMenuButton.cpp
-  taiWidgetMenuBar.cpp
-  taiWidgetToolBar.cpp
-  taiWidgetMethod.cpp
-  taiWidgetMethodMenu.cpp
-  taiWidgetMethodButton.cpp
-  taiWidgetMethodToggle.cpp
-
-  taiWidgetListEditButton.cpp
-  taiWidgetGroupEditButton.cpp
-  taiWidgetSubGroupEditButton.cpp
-  taiWidgetLinkGroupEditButton.cpp
-  taiWidgetLinkListEditButton.cpp
-  taiWidgetArrayEditButton.cpp
-  taiWidgetListElChooser_base.cpp
-  taiWidgetListElChooser.cpp
-  taiWidgetGroupElChooser.cpp
-  taiWidgetListElMenu.cpp
-  taiWidgetGroupElMenu.cpp
-  taiWidgetSubGroupMenu.cpp
-  taiWidgetListTypeHierMenu.cpp
-
-  taiWidgetProjTemplateElChooser.cpp
-  taiWidgetProgLibElChooser.cpp
-  taiWidgetProgStepButton.cpp
-
-  iClipData.cpp
-  iSynchronousNetRequest.cpp
-  taiWidgetDelegate.cpp
-
-  taiWidgetDelegateSelectEdit.cpp
-
-  iDialogRegexpPopulator.cpp
-  iDialogRegexp.cpp
-  taiWidgetFieldRegexp.cpp
-
-  iDialogEditor.cpp
-  iPanelOfEditor.cpp
-  iMethodButtonMgr.cpp
-  iPanel.cpp
-  iPanelOfDocView.cpp
-
-  ISelectableHost.cpp
-  iWidget_List.cpp
-  iBaseClipWidgetAction.cpp
-
-  IViewerWidget.cpp
-  iFrameViewer.cpp
-  iBrowseViewer.cpp
-  iPanelViewer.cpp
-  iMainWindowViewer.cpp
-  iDockViewer.cpp
-  iToolBoxDockViewer.cpp
-  iTabBarBase.cpp
-  iTabBar.cpp
-  iTabView.cpp
-  iPanelBase.cpp
-  iToolBar.cpp
-
-  iWebView.cpp
-
-  iTreeView.cpp
-  iTreeSearch.cpp
-  iPanelOfList.cpp
-  iDialogSearch.cpp
   iTreeViewItem.cpp
   taiTreeNode.cpp
-  taiListNode.cpp
   taiTreeNodeTaBase.cpp
   taiTreeNodeTaBasePar.cpp
-  ISelectable_PtrList.cpp
-  taiTreeNodeDefChild.cpp
   taiTreeNodeList.cpp
-  ISelectableHost_QObj.cpp
   taiTreeNodeGroup.cpp
-  iApplicationToolBar.cpp
-  iToolBar_List.cpp
-  iBrowseHistory.cpp
-  iTabView_PtrList.cpp
-  iViewPanel.cpp
-  iPanelSetBase.cpp
-  iPanelSetButton.cpp
-  iViewPanelSet.cpp
-  iPanelSet.cpp
-  iPanelOfText.cpp
+  taiTreeNodeDefChild.cpp
   taiTreeNodeDefChild_ElRef.cpp
-  iHelpBrowser.cpp
-
-  iDataTableEditor.cpp
-  iTableWidget.cpp
-  iTableView.cpp
-  iMatrixTableView.cpp
-  iMatrixEditor.cpp
-  iPanelOfMatrix.cpp
-
   taiTreeNodeTypeItem.cpp
   taiTreeNodeTypeSpace.cpp
-  iTypeInfoBrowser.cpp
 
-  taiListMemberWidgets.cpp
-  taiListMemberWidgets_List.cpp
-  taiListTypeWidgets.cpp
-  taiListTypeWidgets_List.cpp
+  taiListNode.cpp
 
-  iProgramEditor.cpp
-  iPanelOfProgramScript.cpp
-  iPanelOfProgramBase.cpp
-  iPanelOfProgramGroup.cpp
-  iPanelOfProgram.cpp
-  iProgramToolBar.cpp
-  iPanelOfProgramCtrl.cpp
-
-  iPanelOfSelectEdit.cpp
-  iPanelOfDocEdit.cpp
-
-  iDialogObjDiffFilter.cpp
-  iDialogObjDiffBrowser.cpp
-
-  iPanelOfUserData.cpp
-
-  iColorScaleBar.cpp
-  iHColorScaleBar.cpp
-  iVColorScaleBar.cpp
-  iColorBar.cpp
-  iHColorBar.cpp
-  iVColorBar.cpp
-  iColorMatrixGrid.cpp
-  iColorPad.cpp
-  T3ColorBar.cpp
-
-  iMatrixTableModel.cpp
-  iDataTableModel.cpp
-  iViewPanelOfDataTable.cpp
-  iViewPanelOfGridTable.cpp
-  iViewPanelOfGraphTable.cpp
-  taiViewTypeOfDataTable.cpp
-  iDataTableView.cpp
-  iPanelOfDataTable.cpp
-  iDataTableDelegate.cpp
-  iPanelOfDataTable_Mbr.cpp
-
-  T3Misc.cpp
-  T3QuarterWidget.cpp
-  T3ExaminerViewer.cpp
-  iSoSelectionEvent.cpp
-  iT3ViewspaceWidget.cpp
-  iT3Panel.cpp
-  iTabBarEx.cpp
-  iTabWidget.cpp
-  iT3PanelViewer.cpp
+  iPanelOfEditor.cpp
+  iPanelBase_PtrList.cpp
 
   T3Node.cpp
   T3NodeLeaf.cpp
   T3NodeParent.cpp
+
+  T3Color.cpp
+  T3ColorBar.cpp
 
   T3GridColViewNode.cpp
   T3GridViewNode.cpp
@@ -2041,12 +1764,8 @@ set(ta_SRCS_NOMAKETA
   T3VEJoint.cpp
   T3VESpace.cpp
   T3VEStatic.cpp
-  iViewPanelOfVEWorld.cpp
 
-  NewViewHelper.cpp
-
-  SoBase.cpp
-  SoGroup.cpp
+  SoCapsule.cpp
   SoFrame.cpp
   SoRect.cpp
   SoLineBox3d.cpp
@@ -2059,8 +1778,320 @@ set(ta_SRCS_NOMAKETA
   T3Translate1Translator.cpp
   T3Translate2Translator.cpp
   SoScrollBar.cpp
-  T3Color.cpp
-  SoCapsule.cpp
+
+  taiMiscCore.cpp
+  taiMimeSource.cpp
+
+  iAction.cpp
+  taiWidget.cpp
+  iMethodButtonMgr.cpp
+
+  taiEditor.cpp
+  taiEditorWidgets.cpp
+  taiEditorWidgetsMain.cpp
+
+  taiEditorOfClass.cpp
+  taiEditorOfString.cpp
+  taiEditorOfProgramCtrl.cpp
+
+  taGuiEditor.cpp
+
+  iBrowseHistory.cpp
+  iDialogSearch.cpp
+
+  iPanelBase.cpp
+  iPanel.cpp
+  iPanelSetBase.cpp
+  iPanelSet.cpp
+
+  iViewPanel.cpp
+  iViewPanelSet.cpp
+
+  iPanelOfList.cpp
+  iPanelOfUserData.cpp
+  iPanelOfText.cpp
+
+  iPanelOfProgramBase.cpp
+  iPanelOfProgram.cpp
+  iPanelOfProgramGroup.cpp
+  iPanelOfProgramCtrl.cpp
+  iPanelOfProgramScript.cpp
+  iProgramEditor.cpp
+
+  iPanelOfSelectEdit.cpp
+
+  iPanelOfDocView.cpp
+  iPanelOfDocEdit.cpp
+
+  iPanelOfMatrix.cpp
+  iPanelOfDataTable.cpp
+
+  iMatrixTableModel.cpp
+  iMatrixEditor.cpp
+  iDataTableModel.cpp
+  iDataTableEditor.cpp
+
+  iViewPanelOfDataTable.cpp
+  iViewPanelOfGridTable.cpp
+  iViewPanelOfGraphTable.cpp
+
+  iViewPanelOfVEWorld.cpp
+)
+
+# these correspond to TA_HEADS_NOMAKETA*
+set(ta_SRCS_NOMAKETA
+  iAutoSaver.cpp
+  iInterceptor.cpp
+  iCookieJar.cpp
+  iNetworkAccessManager.cpp
+  iSynchronousNetRequest.cpp
+
+  iMenuButton.cpp
+  iHiLightButton.cpp
+  iContextMenuButton.cpp
+  iColorButton.cpp
+  iCheckBox.cpp
+  iComboBox.cpp
+  iDialog.cpp
+  iDialogTextEdit.cpp
+  iDimEdit.cpp
+  iEditGrid.cpp
+  iLabel.cpp
+  iLineEdit.cpp
+  iScrollArea.cpp
+  iSplitter.cpp
+  iSplitterHandle.cpp
+  iSpinBox.cpp
+  iTextBrowser.cpp
+  iTextEdit.cpp
+  iTreeWidget.cpp
+  iNumberBar.cpp
+  iNumberedTextView.cpp
+  iThumbWheel.cpp
+  iConsole.cpp
+  iColorScaleBar.cpp
+  iHColorScaleBar.cpp
+  iVColorScaleBar.cpp
+  iColorBar.cpp
+  iHColorBar.cpp
+  iVColorBar.cpp
+  iColorMatrixGrid.cpp
+  iColorPad.cpp
+  iTableWidget.cpp
+  iWebView.cpp
+  iToolBar.cpp
+
+  iTabBarBase.cpp
+  iTabBar.cpp
+  iTabBarEx.cpp
+  iTabWidget.cpp
+
+  iClipWidgetAction.cpp
+  iBaseClipWidgetAction.cpp
+  iClipToolWidget.cpp
+  iClipData.cpp
+  iActionSubMenuEl.cpp
+
+  iPluginEditor.cpp
+  taPluginInst.cpp
+
+  taBase_QObj.cpp
+  taRootBase_QObj.cpp
+  TemtClient_QObj.cpp
+  TemtServer_QObj.cpp
+  taGuiWidget_QObj.cpp
+  taGuiAction_QObj.cpp
+  taSigLink_QObj.cpp
+  ISelectableHost_QObj.cpp
+
+  taiMisc.cpp
+  taApplication.cpp
+
+  taiEditorOfDoc.cpp
+  taiEditorOfWizard.cpp
+  taiEditorOfUserData.cpp
+  taiEditorOfSelectEditBase.cpp
+  taiEditorOfSelectEditFull.cpp
+  taiEditorOfSelectEditFast.cpp
+
+  taiWidgetDelegate.cpp
+  taiWidgetDelegateSelectEdit.cpp
+  taiWidgetDelegateUserData.cpp
+
+  taiWidgetActions.cpp
+  taiWidgetComposite.cpp
+  taiWidgetPoly.cpp
+  taiWidgetDeck.cpp
+  taiWidgetText.cpp
+  taiWidgetField.cpp
+  taiWidgetFieldIncr.cpp
+  taiWidgetFieldFile.cpp
+  taiWidgetFieldRegexp.cpp
+  taiWidgetPlusToggle.cpp
+  taiWidgetComboBox.cpp
+  taiWidgetBitBox.cpp
+  taiWidgetDimEdit.cpp
+  taiWidgetVariantBase.cpp
+  taiWidgetVariant.cpp
+  taiWidgetItemChooser.cpp
+  taiWidgetEditButton.cpp
+  taiWidgetFileButton.cpp
+  taiWidgetProgStepButton.cpp
+
+  taiWidgetTokenPtrMenu.cpp
+  taiWidgetSubTokenPtrMenu.cpp
+  taiWidgetListElMenu.cpp
+  taiWidgetGroupElMenu.cpp
+  taiWidgetSubGroupMenu.cpp
+
+  taiWidgetMenu.cpp
+  taiWidgetMenuButton.cpp
+  taiWidgetMenuBar.cpp
+  taiWidgetToolBar.cpp
+  taiWidgetMethod.cpp
+  taiWidgetMethodToggle.cpp
+
+  iDialogEditor.cpp
+  iDialogChoice.cpp
+  iDialogWidgetField.cpp
+  iDialogItemChooser.cpp
+  iDialogObjChooser.cpp
+  iDialogRegexp.cpp
+  iDialogPublishDocs.cpp
+  iDialogObjDiffFilter.cpp
+  iDialogObjDiffBrowser.cpp
+
+  iPanelSetButton.cpp
+
+  iMainWindowViewer.cpp
+  iFrameViewer.cpp
+  iBrowseViewer.cpp
+  iPanelViewer.cpp
+  iDockViewer.cpp
+  iToolBoxDockViewer.cpp
+
+  iDataTableDelegate.cpp
+  iPanelOfDataTable_Mbr.cpp
+
+  iTabView.cpp
+  iTreeView.cpp
+  iTreeSearch.cpp
+  iTableView.cpp
+  iMatrixTableView.cpp
+  iDataTableView.cpp
+
+  iHelpBrowser.cpp
+  iTypeInfoBrowser.cpp
+
+  iT3PanelViewer.cpp
+  iT3Panel.cpp
+
+  T3QuarterWidget.cpp
+  T3ExaminerViewer.cpp
+  iT3ViewspaceWidget.cpp
+
+  ta_type_constr.cpp
+
+  SigLinkSignal.cpp
+
+  iStripeWidget.cpp
+  iFlowLayout.cpp
+  iFormLayout.cpp
+  iTreeWidgetItem.cpp
+  iMenuAction.cpp
+  iApplicationToolBar.cpp
+  iProgramToolBar.cpp
+
+  iWidget_List.cpp
+  iTopLevelWindow_List.cpp
+  iToolBar_List.cpp
+  iTabView_PtrList.cpp
+  iAction_List.cpp
+
+  gzstream.cpp
+  VPUnref.cpp
+  VPUList.cpp
+  DumpPathSub.cpp
+  DumpPathSubList.cpp
+  DumpPathToken.cpp
+  DumpPathTokenList.cpp
+  dumpMisc.cpp
+  ta_dump.cpp
+
+  taGenDoc.cpp
+  Tokenizer.cpp
+
+  ClusterManager.cpp
+  SubversionClient.cpp
+
+  IPlugin.cpp
+  taPluginInst_PList.cpp
+  taPlugins.cpp
+
+  ISelectableHost.cpp
+  IViewerWidget.cpp
+  NewViewHelper.cpp
+
+  DynMethod_PtrList.cpp
+  taiWidgetActions_List.cpp
+
+  IWidgetHost.cpp
+  taiEditorWidgetsMulti.cpp
+  taiEditorOfList.cpp
+  taiEditorOfListCompact.cpp
+  taiEditorOfArray.cpp
+  taiEditorOfSArg.cpp
+  taiEditorOfTypeItem.cpp
+
+  taiMemberWidgets.cpp
+  taiListMemberWidgets.cpp
+  taiListMemberWidgets_List.cpp
+  taiListTypeWidgets.cpp
+  taiListTypeWidgets_List.cpp
+
+  taiWidgetColor.cpp
+  taiWidgetToggle.cpp
+
+  taiWidgetTokenChooser.cpp
+  taiWidgetTokenChooserMultiType.cpp
+  taiWidgetTypeDefChooser.cpp
+  taiWidgetMemberDefChooser.cpp
+  taiWidgetMethodDefChooser.cpp
+  taiWidgetMemberMethodDefChooser.cpp
+  taiWidgetEnumStaticChooser.cpp
+  taiWidgetEnumTypeDefChooser.cpp
+
+  taiWidgetListElChooser_base.cpp
+  taiWidgetListElChooser.cpp
+  taiWidgetGroupElChooser.cpp
+  taiWidgetProjTemplateElChooser.cpp
+  taiWidgetProgLibElChooser.cpp
+
+  taiWidgetTaBaseMenu.cpp
+  taiWidgetTypeItemMenu.cpp
+  taiWidgetMethodMenu.cpp
+
+  taiWidgetTypeHierMenu.cpp
+  taiWidgetListTypeHierMenu.cpp
+
+  taiWidgetMethodDefMenu.cpp
+  taiWidgetMethodButton.cpp
+
+  taiWidgetArrayEditButton.cpp
+  taiWidgetListEditButton.cpp
+  taiWidgetLinkListEditButton.cpp
+  taiWidgetGroupEditButton.cpp
+  taiWidgetLinkGroupEditButton.cpp
+  taiWidgetSubGroupEditButton.cpp
+
+  iDialogRegexpPopulator.cpp
+
+  T3Misc.cpp
+  iSoSelectionEvent.cpp
+  SoBase.cpp
+  SoGroup.cpp
+  SoPtr.cpp
+  SoOffscreenRendererQt.cpp
 )
 
 set(ta_SRCS_UI

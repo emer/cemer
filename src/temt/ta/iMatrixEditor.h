@@ -36,12 +36,10 @@ class TA_API iMatrixEditor: public QWidget {
 INHERITED(QWidget)
   Q_OBJECT
 public:
-  QVBoxLayout*          layOuter;
-  QHBoxLayout*            layDims;
-  iMatrixTableView*       tv;
+  QVBoxLayout*          layOuter; // #IGNORE 
+  QHBoxLayout*            layDims; // #IGNORE
+  iMatrixTableView*       tv; // #IGNORE
 
- // taMatrix*           mat() const;
- // iMatrixTableModel*   model() const;
   void                  setMatrix(taMatrix* mat, bool pat_4d = false);
 
   void                  Refresh(); // for manual refresh -- note, this also updates all other mat editors too

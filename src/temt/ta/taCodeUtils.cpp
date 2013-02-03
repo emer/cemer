@@ -401,6 +401,11 @@ void taCodeUtils::CreateAllNewSrcFiles() {
       i++;
       continue;
     }
+    if(typ->HasOption("INLINE")) {
+      if(dbg) taMisc::Info("fail inline");
+      i++;
+      continue;
+    }
     int chs = taMisc::Choice("Fix new source file for: " + typ->name,
 			     "Yes", "No", "Back", "Cancel");
     if(chs == 3) break;

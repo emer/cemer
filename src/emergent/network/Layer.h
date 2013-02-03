@@ -36,6 +36,26 @@ class ProjectBase; //
 class DataCol; //
 class DMemShare; //
 
+// use this macro for iterating over either unit groups one-by-one, or the 
+// global layer, and applying 'code' to either
+// code uses acc_md and gpidx plus the lay->UnitAccess(acc_md, idx, gpidx) function
+// to access units -- e.g., calling a _ugp function as such:
+//
+// UNIT_GP_ITR(lay, MySpecialFun_ugp(lay, acc_md, gpidx););
+
+#define UNIT_GP_ITR(lay, code) \
+  if(lay->unit_groups) { \
+    for(int gpidx=0; gpidx < lay->gp_geom.n; gpidx++) { \
+      Layer::AccessMode acc_md = Layer::ACC_GP; \
+      code \
+    } \
+  } \
+  else { \
+    Layer::AccessMode acc_md = Layer::ACC_LAY;  int gpidx = 0; \
+    code \
+  } 
+
+
 TypeDef_Of(LayerDistances);
 
 class EMERGENT_API LayerDistances : public taOBase {
