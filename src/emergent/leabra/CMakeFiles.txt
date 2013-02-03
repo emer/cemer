@@ -11,32 +11,44 @@
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
   LeabraCon.h
+  LeabraSRAvgCon.h
   LeabraConSpec.h
   LeabraBiasSpec.h
   LeabraRecvCons.h
   LeabraSendCons.h
+
+  DtSpec.h
   LeabraUnitSpec.h
   LeabraUnit.h
   LeabraUnit_Group.h
+
   LeabraPrjn.h
+
+  AvgMaxVals.h
+  CtSRAvgVals.h
   LeabraInhib.h
-  LeabraLayerSpec.h
-  LeabraLayer.h
-  KwtaSortBuff.h
-  KwtaSortBuff_List.h
-  LeabraNetwork.h
-  LeabraProject.h
-  LeabraSRAvgCon.h
-  LeabraSort.h
   LeabraUnGpData.h
   LeabraUnGpData_List.h
-  MarkerConSpec.h
+  LeabraLayerSpec.h
+  LeabraLayer.h
+  LeabraSort.h
+  KwtaSortBuff.h
+  KwtaSortBuff_List.h
+
+  LeabraNetwork.h
+  LeabraProject.h
+
+  LeabraWizard.h
+
   LayerActUnitSpec.h
-  LeabraContextLayerSpec.h
-  LeabraTILayerSpec.h
-  LeabraMultCopyLayerSpec.h
   LeabraLinUnitSpec.h
-  LeabraNegBiasSpec.h
+  LeabraExtOnlyUnitSpec.h
+
+  LeabraTILayerSpec.h
+  LeabraContextLayerSpec.h
+  LeabraMultCopyLayerSpec.h
+
+  MarkerConSpec.h
   XCalSRAvgConSpec.h
   XCalHebbConSpec.h
   TrialSynDepCon.h
@@ -55,13 +67,16 @@ set(leabra_HEADS_MAKETA
   LeabraXCALSpikeConSpec.h
   LeabraLimPrecConSpec.h
   LeabraDaNoiseConSpec.h
+
+  LeabraNegBiasSpec.h
+
   ScalarValLayerSpec.h
   ScalarValSelfPrjnSpec.h
   MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
   TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
-  LeabraExtOnlyUnitSpec.h
+
   SaliencyPrjnSpec.h
   V1LateralContourPrjnSpec.h
   V2BoLateralPrjnSpec.h
@@ -75,6 +90,7 @@ set(leabra_HEADS_MAKETA
   V2toV4DepthPrjnSpec.h
   LeabraV1LayerSpec.h
   CerebConj2PrjnSpec.h
+
   DaModUnit.h
   DaModUnitSpec.h
   LeabraTdUnit.h
@@ -84,6 +100,7 @@ set(leabra_HEADS_MAKETA
   TDRewPredLayerSpec.h
   TDRewIntegLayerSpec.h
   TdLayerSpec.h
+
   PVLVLayerSpec.h
   PVConSpec.h
   PViLayerSpec.h
@@ -95,6 +112,7 @@ set(leabra_HEADS_MAKETA
   NVLayerSpec.h
   PVLVDaLayerSpec.h
   PVLVTonicDaLayerSpec.h
+
   PBWMUnGpData.h
   SNrThalLayerSpec.h
   MatrixCon.h
@@ -106,11 +124,13 @@ set(leabra_HEADS_MAKETA
   PFCDeepGatedConSpec.h
   PFCsUnitSpec.h
   PFCLayerSpec.h
+
   GpCustomPrjnSpecBase.h
   PFCLVPrjnSpec.h
   SNrPrjnSpec.h
   PVrToMatrixGoPrjnSpec.h
   TopoWtsPrjnSpec.h
+
   ThetaPhaseLayerSpec.h
   ECinLayerSpec.h
   CA3LayerSpec.h
@@ -119,10 +139,6 @@ set(leabra_HEADS_MAKETA
   SubiculumLayerSpec.h
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
-  DtSpec.h
-  AvgMaxVals.h
-  CtSRAvgVals.h
-  LeabraWizard.h
 )
 
 set(leabra_HEADS_NOMAKETA

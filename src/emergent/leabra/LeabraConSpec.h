@@ -361,7 +361,7 @@ public:
 
   inline void 	C_Compute_dWt(LeabraCon* cn, LeabraUnit* su, float heb, float err);
   // #CAT_Learning combine associative and error-driven weight change, actually update dwt
-  inline void 	C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* su, float err);
+  // inline void 	C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* su, float err);
   // #CAT_Learning just error-driven weight change, actually update dwt
   virtual void 	Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning Leabra/CHL weight changes

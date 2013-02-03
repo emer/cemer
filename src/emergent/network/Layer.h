@@ -242,7 +242,7 @@ public:
 
   taVector2i     UnitGpPosFmIdx(int gpidx) const
   { taVector2i rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
-  // #CAT_Access get unit group *logical* position from index
+  // #CAT_Access #IGNORE get unit group *logical* position from index
   int           UnitGpIdxFmPos(taVector2i& pos) const
   { return pos.y * gp_geom.x + pos.x; }
   // #CAT_Access get unit group index from position

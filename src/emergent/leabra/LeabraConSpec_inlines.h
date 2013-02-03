@@ -103,10 +103,10 @@ inline void LeabraConSpec::C_Compute_dWt(LeabraCon* cn, LeabraUnit*,
 }
 
 // combine hebbian and error-driven
-inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit*,
-						float err) {
-  cn->dwt += cur_lrate * err;
-}
+// inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit*,
+// 						float err) {
+//   cn->dwt += cur_lrate * err;
+// }
 
 inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
   Compute_SAvgCor(cg, su);
