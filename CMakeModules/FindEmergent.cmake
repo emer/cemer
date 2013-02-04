@@ -14,7 +14,7 @@ if (WIN32)
   #shortcut: we already found everything in Find(temt)
   set(EMERGENT_INCLUDE_DIR ${TEMT_INCLUDE_DIR})
 else (WIN32)
-  FIND_PATH(EMERGENT_INCLUDE_DIR ta_type.h
+  FIND_PATH(EMERGENT_INCLUDE_DIR taBase.h
     $ENV{EMERGENT_INCLUDE_DIR}
     $ENV{EMERGENT_PREFIX_DIR}/include/Emergent
     /usr/local/include/Emergent

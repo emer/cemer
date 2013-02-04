@@ -18,5 +18,5 @@ ADD_CUSTOM_TARGET(make_css_parse
 
 ########### install files ###############
 
-install(FILES ${css_HEADS} DESTINATION ${EMERGENT_INCLUDE_DEST})
+EMERGENT_INSTALL_HEADERS(${css_HEADS})
 

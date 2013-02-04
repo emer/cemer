@@ -29,24 +29,16 @@ set(leabra_HEADS_MAKETA
   LeabraInhib.h
   LeabraUnGpData.h
   LeabraUnGpData_List.h
-  LeabraLayerSpec.h
-  LeabraLayer.h
   LeabraSort.h
   KwtaSortBuff.h
   KwtaSortBuff_List.h
+  LeabraLayerSpec.h
+  LeabraLayer.h
 
   LeabraNetwork.h
   LeabraProject.h
 
   LeabraWizard.h
-
-  LayerActUnitSpec.h
-  LeabraLinUnitSpec.h
-  LeabraExtOnlyUnitSpec.h
-
-  LeabraTILayerSpec.h
-  LeabraContextLayerSpec.h
-  LeabraMultCopyLayerSpec.h
 
   MarkerConSpec.h
   XCalSRAvgConSpec.h
@@ -70,13 +62,21 @@ set(leabra_HEADS_MAKETA
 
   LeabraNegBiasSpec.h
 
+  LayerActUnitSpec.h
+  LeabraLinUnitSpec.h
+  LeabraExtOnlyUnitSpec.h
+
+  LeabraTILayerSpec.h
+  LeabraContextLayerSpec.h
+  LeabraMultCopyLayerSpec.h
   ScalarValLayerSpec.h
-  ScalarValSelfPrjnSpec.h
   MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
   TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
+  LeabraV1LayerSpec.h
 
+  ScalarValSelfPrjnSpec.h
   SaliencyPrjnSpec.h
   V1LateralContourPrjnSpec.h
   V2BoLateralPrjnSpec.h
@@ -88,7 +88,6 @@ set(leabra_HEADS_MAKETA
   TiledGpRFOneToOnePrjnSpec.h
   TiledGpRFOneToOneWtsPrjnSpec.h
   V2toV4DepthPrjnSpec.h
-  LeabraV1LayerSpec.h
   CerebConj2PrjnSpec.h
 
   DaModUnit.h
@@ -156,37 +155,36 @@ set(leabra_HEADS
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(leabra_SRCS
   LeabraCon.cpp
+  LeabraSRAvgCon.cpp
   LeabraConSpec.cpp
   LeabraBiasSpec.cpp
   LeabraRecvCons.cpp
   LeabraSendCons.cpp
 
+  DtSpec.cpp
   LeabraUnitSpec.cpp
   LeabraUnit.cpp
   LeabraUnit_Group.cpp
 
   LeabraPrjn.cpp
 
+  AvgMaxVals.cpp
+  CtSRAvgVals.cpp
   LeabraInhib.cpp
-  LeabraLayerSpec.cpp
-  LeabraLayer.cpp
+  LeabraUnGpData.cpp
+  LeabraUnGpData_List.cpp
+  LeabraSort.cpp
   KwtaSortBuff.cpp
   KwtaSortBuff_List.cpp
+  LeabraLayerSpec.cpp
+  LeabraLayer.cpp
 
   LeabraNetwork.cpp
   LeabraProject.cpp
 
-  LeabraSRAvgCon.cpp
-  LeabraSort.cpp
-  LeabraUnGpData.cpp
-  LeabraUnGpData_List.cpp
+  LeabraWizard.cpp
+
   MarkerConSpec.cpp
-  LayerActUnitSpec.cpp
-  LeabraContextLayerSpec.cpp
-  LeabraTILayerSpec.cpp
-  LeabraMultCopyLayerSpec.cpp
-  LeabraLinUnitSpec.cpp
-  LeabraNegBiasSpec.cpp
   XCalSRAvgConSpec.cpp
   XCalHebbConSpec.cpp
   TrialSynDepCon.cpp
@@ -205,13 +203,24 @@ set(leabra_SRCS
   LeabraXCALSpikeConSpec.cpp
   LeabraLimPrecConSpec.cpp
   LeabraDaNoiseConSpec.cpp
+
+  LeabraNegBiasSpec.cpp
+
+  LayerActUnitSpec.cpp
+  LeabraLinUnitSpec.cpp
+  LeabraExtOnlyUnitSpec.cpp
+
+  LeabraTILayerSpec.cpp
+  LeabraContextLayerSpec.cpp
+  LeabraMultCopyLayerSpec.cpp
   ScalarValLayerSpec.cpp
-  ScalarValSelfPrjnSpec.cpp
   MotorForceLayerSpec.cpp
   TwoDValLeabraLayer.cpp
   TwoDValLayerSpec.cpp
   DecodeTwoDValLayerSpec.cpp
-  LeabraExtOnlyUnitSpec.cpp
+  LeabraV1LayerSpec.cpp
+
+  ScalarValSelfPrjnSpec.cpp
   SaliencyPrjnSpec.cpp
   V1LateralContourPrjnSpec.cpp
   V2BoLateralPrjnSpec.cpp
@@ -223,8 +232,8 @@ set(leabra_SRCS
   TiledGpRFOneToOnePrjnSpec.cpp
   TiledGpRFOneToOneWtsPrjnSpec.cpp
   V2toV4DepthPrjnSpec.cpp
-  LeabraV1LayerSpec.cpp
   CerebConj2PrjnSpec.cpp
+
   DaModUnit.cpp
   DaModUnitSpec.cpp
   LeabraTdUnit.cpp
@@ -234,6 +243,7 @@ set(leabra_SRCS
   TDRewPredLayerSpec.cpp
   TDRewIntegLayerSpec.cpp
   TdLayerSpec.cpp
+
   PVLVLayerSpec.cpp
   PVConSpec.cpp
   PViLayerSpec.cpp
@@ -245,6 +255,7 @@ set(leabra_SRCS
   NVLayerSpec.cpp
   PVLVDaLayerSpec.cpp
   PVLVTonicDaLayerSpec.cpp
+
   PBWMUnGpData.cpp
   SNrThalLayerSpec.cpp
   MatrixCon.cpp
@@ -256,11 +267,13 @@ set(leabra_SRCS
   PFCDeepGatedConSpec.cpp
   PFCsUnitSpec.cpp
   PFCLayerSpec.cpp
+
   GpCustomPrjnSpecBase.cpp
   PFCLVPrjnSpec.cpp
   SNrPrjnSpec.cpp
   PVrToMatrixGoPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp
+
   ThetaPhaseLayerSpec.cpp
   ECinLayerSpec.cpp
   CA3LayerSpec.cpp
@@ -269,8 +282,4 @@ set(leabra_SRCS
   SubiculumLayerSpec.cpp
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
-  DtSpec.cpp
-  AvgMaxVals.cpp
-  CtSRAvgVals.cpp
-  LeabraWizard.cpp
 )

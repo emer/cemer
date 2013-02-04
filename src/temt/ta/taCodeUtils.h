@@ -55,6 +55,8 @@ public:
                            const String& top_path, const String& src_dir);
   // #CAT_File removes a given type -- svn rm files that define the type (assumes one type per file!) including the include files, and reports on all the files that reference this type in the rest of the code
 
+  static bool   FixIncludes(const String& top_path);
+
   static bool	ListAllInherits(const String& type_nm);
   // #CAT_File List all of the types that inherit from the given type -- goes beyond the direct parentage lists to see subclasses of subclasses
 

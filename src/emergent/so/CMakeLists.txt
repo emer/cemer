@@ -10,5 +10,5 @@ CREATE_MAKETA_COMMAND(so ${mypath} "${so_HEADS_MAKETA}")
 
 ########### install files ###############
 
-install(FILES ${so_HEADS} DESTINATION ${EMERGENT_INCLUDE_DEST})
+EMERGENT_INSTALL_HEADERS(${so_HEADS})
 

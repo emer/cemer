@@ -10,4 +10,5 @@ CREATE_MAKETA_COMMAND(network ${mypath} "${network_HEADS_MAKETA}")
 
 ########### install files ###############
 
-install(FILES ${network_HEADS} DESTINATION ${EMERGENT_INCLUDE_DEST})
+EMERGENT_INSTALL_HEADERS(${network_HEADS})
+

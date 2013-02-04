@@ -7,12 +7,12 @@
 QT4_WRAP_CPP(plugin_SRCS_MOC ${plugin_HEADS_MOC})
 
 # this sets up system to scan header files for type information using maketa
-CREATE_MAKETA_COMMAND(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}" "${plugin_HEADS_MAKETA}")
+MAKETA_WRAP_H(plugin_SRCS_MAKETA ${plugin_HEADS_MAKETA} OPTIONS plugin)
 
-# set the full set of sources including auto-built ones here -- important that
-# _TA.cpp file is first one to make sure maketa is run first
+# set the full set of sources including auto-built ones here
 set(plugin_full_SRCS
-  ${PROJECT_NAME}_TA.cpp ${plugin_SRCS}
+  ${plugin_SRCS}
+  ${plugin_SRCS_MAKETA}
   ${plugin_SRCS_MOC}
 )
 

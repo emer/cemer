@@ -2,13 +2,18 @@
 #define TEMPLATE_H
 
 #include "template_def.h"
-#include "ta_base.h" // TODO: replace with the temt/emergent file that contains your base class
-//TODO: add any headers of additional types that are used in your class, such as ta_geometry.h 
+#include <taNBase> // TODO: replace with the temt/emergent file that contains
+// your base class -- use <ClassName> to include any class by name
+//TODO: add any headers of additional types that are used in your class
 
 // The following is an example class -- replace with actual object name you want to use
 
-class TEMPLATE_API TemplateClass : public taNBase {
-  // TODO: describe your class
+TypeDef_Of(Template); // this declares the TA_Template type access object that
+// will be generated automatically by maketa -- provides type info for gui and script
+// interface to automatically interact with your new objects
+
+class TEMPLATE_API Template : public taNBase {
+  // TODO: describe your object
   INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
   String		example_member1; // TODO: replace these and add your own members
@@ -28,7 +33,7 @@ public:
   void			MyCodeMethod(); // example of a method that will be used by your code, but not available to the user in a menu -- it will be availabe in the CSS scripting language
 
 
-  TA_SIMPLE_BASEFUNS(TemplateClass);
+  TA_SIMPLE_BASEFUNS(Template);
   // defines a default set of constructors and copy code -- all the infrastructure 
 protected:
   // use the 'override' pseudo-keyword to indicate overridden virtual methods

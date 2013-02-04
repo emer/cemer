@@ -3,22 +3,22 @@
 #include "ta_project.h"
 
 /////////////////////////////////////////////////////
-//  TemplateClass
+//  Template
 /////////////////////////////////////////////////////
 
-void TemplateClass::Initialize() {
+void Template::Initialize() {
 // TODO: delete following and add your own member initializations
   a = 2;
   b = 4;
   sum_a_b = a + b;
 }
 
-void TemplateClass::Destroy() {
+void Template::Destroy() {
   CutLinks(); // unlinks any owned objects -- always put this in Destroy
   // TODO: release any manually allocated resources, if any
 }
 
-void TemplateClass::UpdateAfterEdit_impl() {
+void Template::UpdateAfterEdit_impl() {
   // by using the 'inherited' pseudo-keyword we always call the right base class
   inherited::UpdateAfterEdit_impl();
 //TODO: delete following lines, add any update code you may have, or leave empty
@@ -28,17 +28,17 @@ void TemplateClass::UpdateAfterEdit_impl() {
 
 
 //TODO: replace the methods below with your own methods
-void TemplateClass::Hello() {
-  taMisc::Info("Hello from TemplateClass!");
+void Template::Hello() {
+  taMisc::Info("Hello from Template!");
 }
 
-void TemplateClass::AddToAandB(int add_to_a, int add_to_b) {
+void Template::AddToAandB(int add_to_a, int add_to_b) {
   a += add_to_a;
   b += add_to_b;
   UpdateAfterEdit(); // updates any associated members, refreshes display, and notifies clients of this class
 }
 
-void TemplateClass::MyCodeMethod() {
+void Template::MyCodeMethod() {
    // example, does nothing
 }
 

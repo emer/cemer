@@ -10,6 +10,22 @@ macro(ADD_PATH_TO_FILES _result _path _file_list)
    ENDFOREACH(_current ${_file_list})
 endmacro(ADD_PATH_TO_FILES)
 
+macro(GET_NO_H_HEADERS _result _file_list)
+   SET(${_result})
+   FOREACH(_current ${_file_list})
+     get_filename_component(_fileo ${_current} NAME)
+     get_filename_component(_noh ${_fileo} NAME_WE)
+     SET(${_result} ${${_result}} "${_noh}")
+   ENDFOREACH(_current ${_file_list})
+endmacro(GET_NO_H_HEADERS)
+
+macro(EMERGENT_INSTALL_HEADERS _file_list)
+  install(FILES ${_file_list} DESTINATION ${EMERGENT_INCLUDE_DEST})
+  GET_NO_H_HEADERS(_nohs "${_file_list}")
+  ADD_PATH_TO_FILES(_fulls "${PROJECT_SOURCE_DIR}/include" "${_nohs}")
+  install(FILES ${_fulls} DESTINATION ${EMERGENT_INCLUDE_DEST})
+endmacro(EMERGENT_INSTALL_HEADERS)
+
 # Use these instead of ADD_EXECUTABLE and ADD_LIBRARY, except for maketa.
 # These versions take care of the CMAKE_DEPENDENCY_HACK.
 macro (EMERGENT_ADD_EXECUTABLE target)

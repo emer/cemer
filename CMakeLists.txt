@@ -241,15 +241,6 @@ endif (false)
 
 # dependencies
 add_dependencies(temt maketa)
-# add_dependencies(temt ta_TA)
-# add_dependencies(css temt)
-# #note: we have to make n_TA dep on temt otherwise VS will build all the TAs first (slow)
-# add_dependencies(network_TA temt)
-# #add_dependencies(network_TA ta_TA)
-# add_dependencies(bp_TA network_TA)
-# add_dependencies(cs_TA network_TA)
-# add_dependencies(leabra_TA network_TA)
-# add_dependencies(so_TA network_TA)
 add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 
@@ -326,15 +317,6 @@ if (NOT WIN32)
   # use this to remove all ta files from source tree
   ADD_CUSTOM_TARGET(clean_ta_all
     DEPENDS clean_ta_ta clean_ta_network clean_ta_bp clean_ta_leabra clean_ta_cs clean_ta_so
-    )
-
-  # use this to build all ta files from source tree
-  ADD_CUSTOM_TARGET(force_ta 
-    DEPENDS force_ta_ta force_ta_network force_ta_bp force_ta_leabra force_ta_cs force_ta_so
-    )
-  # ta files are only things built in source tree so this is effectively distclean
-  ADD_CUSTOM_TARGET(distclean
-    DEPENDS clean_ta_all
     )
 endif (NOT WIN32)
 

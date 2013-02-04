@@ -15,7 +15,7 @@
 //   Lesser General Public License for more details.
 
 
-#include "ta_global.h"
+#include "ta_stdef.h"
 
 // The following ifdef block is the standard way of creating macros for exporting from
 // a Windows dll. You must decorate your classes and static functions with the
@@ -38,6 +38,5 @@
 #endif
 
 #undef QT_SHARED                             // Already defined in config.h.
-#include "template_TA_type.h" 
 
 #endif // TEMPLATE_DEF_H

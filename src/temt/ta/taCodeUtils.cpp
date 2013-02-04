@@ -243,6 +243,31 @@ bool taCodeUtils::RemoveType(const String& type_nm,
   return true;
 }
 
+bool taCodeUtils::FixIncludes(const String& top_path) {
+  String inc_path = top_path + "/include/";
+
+  QDir dir(inc_path);
+  QStringList filters;
+  filters << "*";
+  QStringList files = dir.entryList(filters);
+  for(int i=0; i<files.count(); i++) {
+    String fnm = files[i];
+    if(fnm.endsWith(".h")) continue; // only not-h guys
+    int rpl = 0;
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/css/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/network/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/bp/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/cs/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/so/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/leabra/", "./");
+    if(rpl > 0) {
+      taMisc::Info("replaced in:",fnm,"count:",String(rpl));
+    }
+  }
+  return true;
+}
+
 bool taCodeUtils::ListAllInherits(const String& type_nm) {
   TypeDef* trgtp = TypeDef::FindGlobalTypeName(type_nm);
   if(!trgtp) return false;

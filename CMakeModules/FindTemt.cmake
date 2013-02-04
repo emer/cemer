@@ -12,7 +12,7 @@ if (WIN32)
   endif (NOT EXISTS "${EMERGENTDIR}/include/ta_type.h")
   set(TEMT_INCLUDE_DIR "${EMERGENTDIR}/include")
 else (WIN32)
-  FIND_PATH(TEMT_INCLUDE_DIR ta_type.h
+  FIND_PATH(TEMT_INCLUDE_DIR taBase.h
     $ENV{EMERGENT_INCLUDE_DIR}
     $ENV{EMERGENT_PREFIX_DIR}/include/Emergent
     /usr/local/include/Emergent

@@ -10,4 +10,4 @@ CREATE_MAKETA_COMMAND(leabra ${mypath} "${leabra_HEADS_MAKETA}")
 
 ########### install files ###############
 
-install(FILES ${leabra_HEADS} DESTINATION ${EMERGENT_INCLUDE_DEST})
+EMERGENT_INSTALL_HEADERS(${leabra_HEADS})
