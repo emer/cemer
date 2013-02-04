@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorOfSelectEditFast.h"
+#include "./taiEditorOfSelectEditFast.h"

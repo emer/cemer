@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iProgramEditor.h"
+#include "./iProgramEditor.h"

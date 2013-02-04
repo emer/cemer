@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/ScalarValLayerSpec.h"
+#include "./ScalarValLayerSpec.h"

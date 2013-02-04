@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MemberMethodCall.h"
+#include "./MemberMethodCall.h"

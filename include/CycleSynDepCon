@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/CycleSynDepCon.h"
+#include "./CycleSynDepCon.h"

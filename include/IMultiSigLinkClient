@@ -1,1 +1,1 @@
-#include "../src/temt/ta/IMultiSigLinkClient.h"
+#include "./IMultiSigLinkClient.h"

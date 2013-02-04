@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TDRewPredConSpec.h"
+#include "./TDRewPredConSpec.h"

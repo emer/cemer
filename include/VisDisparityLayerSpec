@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/VisDisparityLayerSpec.h"
+#include "./VisDisparityLayerSpec.h"

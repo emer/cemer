@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TDRewIntegLayerSpec.h"
+#include "./TDRewIntegLayerSpec.h"

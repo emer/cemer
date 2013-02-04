@@ -16,5 +16,5 @@ ADD_CUSTOM_TARGET(make_ta_qrc
 
 ########### install files ###############
 
-EMERGENT_INSTALL_HEADERS(${ta_HEADS})
+EMERGENT_INSTALL_HEADERS("${ta_HEADS}")
 

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/LayerWriterEl.h"
+#include "./LayerWriterEl.h"

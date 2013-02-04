@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taDataProc.h"
+#include "./taDataProc.h"

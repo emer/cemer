@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VEWorldView.h"
+#include "./VEWorldView.h"

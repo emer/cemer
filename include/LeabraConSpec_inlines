@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraConSpec_inlines.h"
+#include "./LeabraConSpec_inlines.h"

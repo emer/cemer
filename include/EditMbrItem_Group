@@ -1,1 +1,1 @@
-#include "../src/temt/ta/EditMbrItem_Group.h"
+#include "./EditMbrItem_Group.h"

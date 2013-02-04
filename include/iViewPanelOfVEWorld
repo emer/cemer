@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iViewPanelOfVEWorld.h"
+#include "./iViewPanelOfVEWorld.h"

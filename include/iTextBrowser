@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iTextBrowser.h"
+#include "./iTextBrowser.h"

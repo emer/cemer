@@ -1,1 +1,1 @@
-#include "../src/emergent/network/taBrainAtlas.h"
+#include "./taBrainAtlas.h"

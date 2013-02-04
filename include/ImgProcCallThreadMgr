@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ImgProcCallThreadMgr.h"
+#include "./ImgProcCallThreadMgr.h"

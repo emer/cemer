@@ -1,1 +1,1 @@
-#include "../src/temt/ta/NewViewHelper.h"
+#include "./NewViewHelper.h"

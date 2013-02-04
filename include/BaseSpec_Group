@@ -1,1 +1,1 @@
-#include "../src/emergent/network/BaseSpec_Group.h"
+#include "./BaseSpec_Group.h"

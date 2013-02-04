@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taMath.h"
+#include "./taMath.h"

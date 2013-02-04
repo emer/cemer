@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3PanelViewer.h"
+#include "./T3PanelViewer.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NetBaseProgEl.h"
+#include "./NetBaseProgEl.h"

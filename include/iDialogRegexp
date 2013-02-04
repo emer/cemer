@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogRegexp.h"
+#include "./iDialogRegexp.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VEMuscleJoint.h"
+#include "./VEMuscleJoint.h"

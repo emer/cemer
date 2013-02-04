@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MethodCall.h"
+#include "./MethodCall.h"

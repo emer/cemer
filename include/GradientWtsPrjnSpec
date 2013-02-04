@@ -1,1 +1,1 @@
-#include "../src/emergent/network/GradientWtsPrjnSpec.h"
+#include "./GradientWtsPrjnSpec.h"

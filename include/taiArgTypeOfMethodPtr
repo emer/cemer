@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfMethodPtr.h"
+#include "./taiArgTypeOfMethodPtr.h"

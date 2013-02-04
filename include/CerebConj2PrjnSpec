@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/CerebConj2PrjnSpec.h"
+#include "./CerebConj2PrjnSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/KwtaSortBuff_List.h"
+#include "./KwtaSortBuff_List.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMemberOfRegexpDialog.h"
+#include "./taiMemberOfRegexpDialog.h"

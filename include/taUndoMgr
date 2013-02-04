@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taUndoMgr.h"
+#include "./taUndoMgr.h"

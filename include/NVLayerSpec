@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/NVLayerSpec.h"
+#include "./NVLayerSpec.h"

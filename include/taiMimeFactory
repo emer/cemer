@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMimeFactory.h"
+#include "./taiMimeFactory.h"

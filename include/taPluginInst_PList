@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taPluginInst_PList.h"
+#include "./taPluginInst_PList.h"

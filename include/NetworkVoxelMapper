@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NetworkVoxelMapper.h"
+#include "./NetworkVoxelMapper.h"

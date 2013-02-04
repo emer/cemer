@@ -1,1 +1,1 @@
-#include "../src/emergent/network/SymmetricPrjnSpec.h"
+#include "./SymmetricPrjnSpec.h"

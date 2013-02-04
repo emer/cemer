@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VEObjCarousel.h"
+#include "./VEObjCarousel.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeBase.h"
+#include "./taiTypeBase.h"

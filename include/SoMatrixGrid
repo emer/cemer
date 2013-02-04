@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoMatrixGrid.h"
+#include "./SoMatrixGrid.h"

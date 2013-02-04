@@ -1,1 +1,1 @@
-#include "../src/temt/ta/StaticMethodCall.h"
+#include "./StaticMethodCall.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/TiledGpRFPrjnSpec.h"
+#include "./TiledGpRFPrjnSpec.h"

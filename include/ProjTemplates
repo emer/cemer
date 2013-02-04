@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProjTemplates.h"
+#include "./ProjTemplates.h"

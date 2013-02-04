@@ -1,1 +1,1 @@
-#include "../src/emergent/network/FullPrjnSpec.h"
+#include "./FullPrjnSpec.h"

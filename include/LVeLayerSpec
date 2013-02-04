@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LVeLayerSpec.h"
+#include "./LVeLayerSpec.h"

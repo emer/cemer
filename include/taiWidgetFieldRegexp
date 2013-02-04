@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetFieldRegexp.h"
+#include "./taiWidgetFieldRegexp.h"

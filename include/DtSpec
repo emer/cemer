@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/DtSpec.h"
+#include "./DtSpec.h"

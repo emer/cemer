@@ -1,1 +1,1 @@
-#include "../src/temt/ta/NameVar_Array.h"
+#include "./NameVar_Array.h"

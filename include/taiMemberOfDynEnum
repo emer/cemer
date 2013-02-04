@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMemberOfDynEnum.h"
+#include "./taiMemberOfDynEnum.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/CA3LayerSpec.h"
+#include "./CA3LayerSpec.h"

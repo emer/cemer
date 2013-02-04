@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/SubiculumLayerSpec.h"
+#include "./SubiculumLayerSpec.h"

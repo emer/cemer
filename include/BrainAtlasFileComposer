@@ -1,1 +1,1 @@
-#include "../src/emergent/network/BrainAtlasFileComposer.h"
+#include "./BrainAtlasFileComposer.h"

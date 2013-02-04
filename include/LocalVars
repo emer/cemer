@@ -1,1 +1,1 @@
-#include "../src/temt/ta/LocalVars.h"
+#include "./LocalVars.h"

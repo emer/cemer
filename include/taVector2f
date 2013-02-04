@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taVector2f.h"
+#include "./taVector2f.h"

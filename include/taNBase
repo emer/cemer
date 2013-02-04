@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taNBase.h"
+#include "./taNBase.h"

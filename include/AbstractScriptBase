@@ -1,1 +1,1 @@
-#include "../src/temt/ta/AbstractScriptBase.h"
+#include "./AbstractScriptBase.h"

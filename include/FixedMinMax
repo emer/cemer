@@ -1,1 +1,1 @@
-#include "../src/temt/ta/FixedMinMax.h"
+#include "./FixedMinMax.h"

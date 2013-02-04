@@ -1,1 +1,1 @@
-#include "../src/temt/ta/RndSeed.h"
+#include "./RndSeed.h"

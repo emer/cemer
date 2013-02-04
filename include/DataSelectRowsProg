@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataSelectRowsProg.h"
+#include "./DataSelectRowsProg.h"

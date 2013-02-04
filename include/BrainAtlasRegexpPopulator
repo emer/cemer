@@ -1,1 +1,1 @@
-#include "../src/emergent/network/BrainAtlasRegexpPopulator.h"
+#include "./BrainAtlasRegexpPopulator.h"

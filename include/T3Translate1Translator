@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3Translate1Translator.h"
+#include "./T3Translate1Translator.h"

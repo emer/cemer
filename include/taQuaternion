@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taQuaternion.h"
+#include "./taQuaternion.h"

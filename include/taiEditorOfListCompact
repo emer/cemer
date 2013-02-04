@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorOfListCompact.h"
+#include "./taiEditorOfListCompact.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/GridSearch.h"
+#include "./GridSearch.h"

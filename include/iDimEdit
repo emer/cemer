@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDimEdit.h"
+#include "./iDimEdit.h"

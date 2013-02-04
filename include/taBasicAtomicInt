@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taBasicAtomicInt.h"
+#include "./taBasicAtomicInt.h"

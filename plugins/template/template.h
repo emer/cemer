@@ -52,6 +52,9 @@ private:
   is automatically created in the .root.plugin_state collections.
   Note: if you rename your plugin you MUST fix up this class name accordingly.
 */
+
+TypeDef_Of(TemplatePluginState);
+
 class TEMPLATE_API TemplatePluginState : public taFBase {
   // this class is used to hold and save/restore user options and internal state for the TemplatePlugin 
   INHERITED(taFBase)

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NetViewObjView.h"
+#include "./NetViewObjView.h"

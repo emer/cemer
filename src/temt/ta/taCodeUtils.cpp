@@ -88,7 +88,7 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
   }
   else {
     String str;
-    str << "#include \"../" << src_dir << "/" << type_nm << ".h\"\n";
+    str << "#include \"" << type_nm << ".h\"\n";
     str.SaveToFile(incfile);
     taMisc::ExecuteCommand("svn add " + incfile);
     got_one = true;

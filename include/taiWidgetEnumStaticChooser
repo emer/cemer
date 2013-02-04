@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetEnumStaticChooser.h"
+#include "./taiWidgetEnumStaticChooser.h"

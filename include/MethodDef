@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MethodDef.h"
+#include "./MethodDef.h"

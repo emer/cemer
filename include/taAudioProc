@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taAudioProc.h"
+#include "./taAudioProc.h"

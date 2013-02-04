@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfListBasePtr.h"
+#include "./taiArgTypeOfListBasePtr.h"

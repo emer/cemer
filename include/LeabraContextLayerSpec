@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraContextLayerSpec.h"
+#include "./LeabraContextLayerSpec.h"

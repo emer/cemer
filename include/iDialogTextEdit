@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogTextEdit.h"
+#include "./iDialogTextEdit.h"

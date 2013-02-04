@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoImageEx.h"
+#include "./SoImageEx.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOftaOBase.h"
+#include "./taiViewTypeOftaOBase.h"

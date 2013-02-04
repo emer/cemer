@@ -1,1 +1,1 @@
-#include "../src/temt/ta/IPlugin.h"
+#include "./IPlugin.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfSelectEdit.h"
+#include "./taiViewTypeOfSelectEdit.h"

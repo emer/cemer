@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraDeltaConSpec.h"
+#include "./LeabraDeltaConSpec.h"

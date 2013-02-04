@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3GraphLine.h"
+#include "./T3GraphLine.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/BrainView.h"
+#include "./BrainView.h"

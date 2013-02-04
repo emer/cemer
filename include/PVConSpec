@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/PVConSpec.h"
+#include "./PVConSpec.h"

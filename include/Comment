@@ -1,1 +1,1 @@
-#include "../src/temt/ta/Comment.h"
+#include "./Comment.h"

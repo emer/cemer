@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MemberDef.h"
+#include "./MemberDef.h"

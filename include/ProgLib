@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProgLib.h"
+#include "./ProgLib.h"

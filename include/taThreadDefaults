@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taThreadDefaults.h"
+#include "./taThreadDefaults.h"

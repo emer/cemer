@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iTextEdit.h"
+#include "./iTextEdit.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/XYNGeom.h"
+#include "./XYNGeom.h"

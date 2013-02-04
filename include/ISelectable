@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ISelectable.h"
+#include "./ISelectable.h"

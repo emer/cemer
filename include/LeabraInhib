@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraInhib.h"
+#include "./LeabraInhib.h"

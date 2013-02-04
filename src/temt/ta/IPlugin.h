@@ -18,9 +18,11 @@
 
 // parent includes:
 #include <ITypedObject>
+#include <taVersion>
 
 #ifndef __MAKETA__
-#include <QObject>
+# include <QObject> // for clients of this file, since they will inherit an obj from QObject
+# include <QPluginLoader>
 #endif
 
 // member includes:

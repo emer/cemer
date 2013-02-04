@@ -1,1 +1,1 @@
-#include "../src/emergent/network/GpMapDivergePrjnSpec.h"
+#include "./GpMapDivergePrjnSpec.h"

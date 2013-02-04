@@ -1,1 +1,1 @@
-#include "../src/emergent/network/TiledNovlpPrjnSpec.h"
+#include "./TiledNovlpPrjnSpec.h"

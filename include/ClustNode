@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ClustNode.h"
+#include "./ClustNode.h"

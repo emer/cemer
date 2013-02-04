@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTreeNodeDefChild.h"
+#include "./taiTreeNodeDefChild.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/V1KwtaSpec.h"
+#include "./V1KwtaSpec.h"

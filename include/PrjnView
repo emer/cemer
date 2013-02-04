@@ -1,1 +1,1 @@
-#include "../src/emergent/network/PrjnView.h"
+#include "./PrjnView.h"

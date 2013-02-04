@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfBool.h"
+#include "./taiTypeOfBool.h"

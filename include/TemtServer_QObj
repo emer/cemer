@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TemtServer_QObj.h"
+#include "./TemtServer_QObj.h"

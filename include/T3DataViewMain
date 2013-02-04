@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3DataViewMain.h"
+#include "./T3DataViewMain.h"

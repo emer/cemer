@@ -1,1 +1,1 @@
-#include "../src/emergent/network/ConSpec_inlines.h"
+#include "./ConSpec_inlines.h"

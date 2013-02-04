@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/XCalSRAvgConSpec.h"
+#include "./XCalSRAvgConSpec.h"

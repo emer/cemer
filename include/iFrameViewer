@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iFrameViewer.h"
+#include "./iFrameViewer.h"

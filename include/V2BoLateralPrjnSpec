@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/V2BoLateralPrjnSpec.h"
+#include "./V2BoLateralPrjnSpec.h"

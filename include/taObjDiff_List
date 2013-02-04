@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taObjDiff_List.h"
+#include "./taObjDiff_List.h"

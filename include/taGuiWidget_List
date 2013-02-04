@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taGuiWidget_List.h"
+#include "./taGuiWidget_List.h"

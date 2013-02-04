@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataCol.h"
+#include "./DataCol.h"

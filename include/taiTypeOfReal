@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfReal.h"
+#include "./taiTypeOfReal.h"

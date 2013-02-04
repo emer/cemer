@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SelectEdit.h"
+#include "./SelectEdit.h"

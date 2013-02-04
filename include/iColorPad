@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iColorPad.h"
+#include "./iColorPad.h"

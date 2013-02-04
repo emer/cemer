@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraPrjn.h"
+#include "./LeabraPrjn.h"

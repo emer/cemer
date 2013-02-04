@@ -1,1 +1,1 @@
-#include "../src/temt/ta/GraphAxisBase.h"
+#include "./GraphAxisBase.h"

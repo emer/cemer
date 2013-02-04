@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/ExtRewLayerSpec.h"
+#include "./ExtRewLayerSpec.h"

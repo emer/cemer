@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraNegBiasSpec.h"
+#include "./LeabraNegBiasSpec.h"

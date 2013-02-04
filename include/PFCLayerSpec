@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/PFCLayerSpec.h"
+#include "./PFCLayerSpec.h"

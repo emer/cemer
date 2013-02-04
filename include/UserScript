@@ -1,1 +1,1 @@
-#include "../src/temt/ta/UserScript.h"
+#include "./UserScript.h"

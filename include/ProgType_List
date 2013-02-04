@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProgType_List.h"
+#include "./ProgType_List.h"

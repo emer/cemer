@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorOfSelectEditBase.h"
+#include "./taiEditorOfSelectEditBase.h"

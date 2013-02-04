@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taMediaWiki.h"
+#include "./taMediaWiki.h"

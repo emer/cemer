@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetComboBox.h"
+#include "./taiWidgetComboBox.h"

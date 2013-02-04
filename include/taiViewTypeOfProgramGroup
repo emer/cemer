@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfProgramGroup.h"
+#include "./taiViewTypeOfProgramGroup.h"

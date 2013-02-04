@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MatrixIndex.h"
+#include "./MatrixIndex.h"

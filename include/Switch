@@ -1,1 +1,1 @@
-#include "../src/temt/ta/Switch.h"
+#include "./Switch.h"

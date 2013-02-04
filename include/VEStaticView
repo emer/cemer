@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VEStaticView.h"
+#include "./VEStaticView.h"

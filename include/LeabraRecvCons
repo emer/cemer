@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraRecvCons.h"
+#include "./LeabraRecvCons.h"

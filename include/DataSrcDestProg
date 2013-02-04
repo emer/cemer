@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataSrcDestProg.h"
+#include "./DataSrcDestProg.h"

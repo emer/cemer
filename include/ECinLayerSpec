@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/ECinLayerSpec.h"
+#include "./ECinLayerSpec.h"

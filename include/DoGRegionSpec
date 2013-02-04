@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DoGRegionSpec.h"
+#include "./DoGRegionSpec.h"

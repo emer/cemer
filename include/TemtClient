@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TemtClient.h"
+#include "./TemtClient.h"

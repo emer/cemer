@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraUnit_Group.h"
+#include "./LeabraUnit_Group.h"

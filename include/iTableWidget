@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iTableWidget.h"
+#include "./iTableWidget.h"

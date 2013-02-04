@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMemberOfTokenPtr.h"
+#include "./taiMemberOfTokenPtr.h"

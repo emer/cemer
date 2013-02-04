@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TypeDefault.h"
+#include "./TypeDefault.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfFileDialog.h"
+#include "./taiArgTypeOfFileDialog.h"

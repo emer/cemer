@@ -1,1 +1,1 @@
-#include "../src/temt/ta/GraphAxisView.h"
+#include "./GraphAxisView.h"

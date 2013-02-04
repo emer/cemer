@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taHashTable.h"
+#include "./taHashTable.h"

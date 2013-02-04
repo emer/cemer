@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iMatrixTableModel.h"
+#include "./iMatrixTableModel.h"

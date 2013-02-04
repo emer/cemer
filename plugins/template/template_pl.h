@@ -2,11 +2,15 @@
 #define TEMPLATE_PL_H
 
 #include "template_def.h" // defines win macro, and includes ta_global and our own maketa types
-#include "ta_plugin.h"    // Defines the plugin architecture.
+#include <IPlugin>    // Defines the plugin architecture.
 
 // forward or external declarations
 class TemplatePlugin;
 class TemplatePluginState; //
+
+TypeDef_Of(TemplatePlugin);
+TypeDef_Of(TemplatePluginState);
+
 
 // you can replace these with your own version
 // TODO: if you change these values, change them in CMakeLists.txt as well

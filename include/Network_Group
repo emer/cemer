@@ -1,1 +1,1 @@
-#include "../src/emergent/network/Network_Group.h"
+#include "./Network_Group.h"

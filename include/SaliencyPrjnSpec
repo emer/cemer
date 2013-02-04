@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/SaliencyPrjnSpec.h"
+#include "./SaliencyPrjnSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelOfMatrix.h"
+#include "./iPanelOfMatrix.h"

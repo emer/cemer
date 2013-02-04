@@ -1,1 +1,1 @@
-#include "../src/emergent/network/taiSpecMember.h"
+#include "./taiSpecMember.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDockViewer.h"
+#include "./iDockViewer.h"

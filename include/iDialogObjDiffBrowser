@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogObjDiffBrowser.h"
+#include "./iDialogObjDiffBrowser.h"

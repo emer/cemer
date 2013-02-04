@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iClipToolWidget.h"
+#include "./iClipToolWidget.h"

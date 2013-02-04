@@ -1,1 +1,1 @@
-#include "../src/emergent/network/WtInitPrompt.h"
+#include "./WtInitPrompt.h"

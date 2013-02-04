@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/TDRewPredLayerSpec.h"
+#include "./TDRewPredLayerSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/emergent/network/iViewPanelOfBrain.h"
+#include "./iViewPanelOfBrain.h"

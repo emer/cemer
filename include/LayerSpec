@@ -1,1 +1,1 @@
-#include "../src/emergent/network/LayerSpec.h"
+#include "./LayerSpec.h"

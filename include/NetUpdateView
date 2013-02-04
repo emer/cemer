@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NetUpdateView.h"
+#include "./NetUpdateView.h"

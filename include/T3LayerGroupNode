@@ -1,1 +1,1 @@
-#include "../src/emergent/network/T3LayerGroupNode.h"
+#include "./T3LayerGroupNode.h"

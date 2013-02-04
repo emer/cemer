@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelOfProgram.h"
+#include "./iPanelOfProgram.h"

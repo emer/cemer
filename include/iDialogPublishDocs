@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogPublishDocs.h"
+#include "./iDialogPublishDocs.h"

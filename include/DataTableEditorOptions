@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataTableEditorOptions.h"
+#include "./DataTableEditorOptions.h"

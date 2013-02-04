@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/PVrToMatrixGoPrjnSpec.h"
+#include "./PVrToMatrixGoPrjnSpec.h"

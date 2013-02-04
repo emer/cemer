@@ -1,1 +1,1 @@
-#include "../src/temt/ta/StopStepPoint.h"
+#include "./StopStepPoint.h"

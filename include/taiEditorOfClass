@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorOfClass.h"
+#include "./taiEditorOfClass.h"

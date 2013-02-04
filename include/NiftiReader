@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NiftiReader.h"
+#include "./NiftiReader.h"

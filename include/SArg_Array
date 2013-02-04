@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SArg_Array.h"
+#include "./SArg_Array.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3GridColViewNode.h"
+#include "./T3GridColViewNode.h"

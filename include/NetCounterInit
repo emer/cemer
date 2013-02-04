@@ -1,1 +1,1 @@
-#include "../src/emergent/network/NetCounterInit.h"
+#include "./NetCounterInit.h"

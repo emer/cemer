@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ChannelSpec.h"
+#include "./ChannelSpec.h"

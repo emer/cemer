@@ -10,6 +10,6 @@ CREATE_MAKETA_COMMAND(bp ${mypath} "${bp_HEADS_MAKETA}")
 
 ########### install files ###############
 
-EMERGENT_INSTALL_HEADERS(${bp_HEADS})
+EMERGENT_INSTALL_HEADERS("${bp_HEADS}")
 
 

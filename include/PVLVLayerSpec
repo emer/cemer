@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/PVLVLayerSpec.h"
+#include "./PVLVLayerSpec.h"

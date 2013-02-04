@@ -1,1 +1,1 @@
-#include "../src/temt/ta/PluginWizard.h"
+#include "./PluginWizard.h"

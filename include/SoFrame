@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoFrame.h"
+#include "./SoFrame.h"

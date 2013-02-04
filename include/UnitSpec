@@ -1,1 +1,1 @@
-#include "../src/emergent/network/UnitSpec.h"
+#include "./UnitSpec.h"

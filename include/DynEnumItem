@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DynEnumItem.h"
+#include "./DynEnumItem.h"

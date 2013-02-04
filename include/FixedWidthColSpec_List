@@ -1,1 +1,1 @@
-#include "../src/temt/ta/FixedWidthColSpec_List.h"
+#include "./FixedWidthColSpec_List.h"

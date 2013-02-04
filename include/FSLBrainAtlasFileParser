@@ -1,1 +1,1 @@
-#include "../src/emergent/network/FSLBrainAtlasFileParser.h"
+#include "./FSLBrainAtlasFileParser.h"

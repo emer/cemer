@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DirectoryCatalog.h"
+#include "./DirectoryCatalog.h"

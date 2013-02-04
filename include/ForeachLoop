@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ForeachLoop.h"
+#include "./ForeachLoop.h"

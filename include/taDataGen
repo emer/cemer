@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taDataGen.h"
+#include "./taDataGen.h"

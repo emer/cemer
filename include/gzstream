@@ -1,1 +1,1 @@
-#include "../src/temt/ta/gzstream.h"
+#include "./gzstream.h"

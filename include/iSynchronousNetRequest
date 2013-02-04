@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSynchronousNetRequest.h"
+#include "./iSynchronousNetRequest.h"

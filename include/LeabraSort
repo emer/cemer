@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraSort.h"
+#include "./LeabraSort.h"

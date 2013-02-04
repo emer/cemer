@@ -18,5 +18,5 @@ ADD_CUSTOM_TARGET(make_css_parse
 
 ########### install files ###############
 
-EMERGENT_INSTALL_HEADERS(${css_HEADS})
+EMERGENT_INSTALL_HEADERS("${css_HEADS}")
 

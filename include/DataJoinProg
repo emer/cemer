@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataJoinProg.h"
+#include "./DataJoinProg.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProgObjList.h"
+#include "./ProgObjList.h"

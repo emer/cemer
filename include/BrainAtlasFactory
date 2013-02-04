@@ -1,1 +1,1 @@
-#include "../src/emergent/network/BrainAtlasFactory.h"
+#include "./BrainAtlasFactory.h"

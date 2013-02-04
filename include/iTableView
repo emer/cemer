@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iTableView.h"
+#include "./iTableView.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taSigLinkTypeItem.h"
+#include "./taSigLinkTypeItem.h"

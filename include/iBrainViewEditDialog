@@ -1,1 +1,1 @@
-#include "../src/emergent/network/iBrainViewEditDialog.h"
+#include "./iBrainViewEditDialog.h"

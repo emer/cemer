@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogObjDiffFilter.h"
+#include "./iDialogObjDiffFilter.h"

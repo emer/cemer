@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VELinearMuscle.h"
+#include "./VELinearMuscle.h"

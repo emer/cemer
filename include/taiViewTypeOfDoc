@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfDoc.h"
+#include "./taiViewTypeOfDoc.h"

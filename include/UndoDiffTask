@@ -1,1 +1,1 @@
-#include "../src/temt/ta/UndoDiffTask.h"
+#include "./UndoDiffTask.h"

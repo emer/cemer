@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/LeabraExtOnlyUnitSpec.h"
+#include "./LeabraExtOnlyUnitSpec.h"

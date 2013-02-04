@@ -1,1 +1,1 @@
-#include "../src/emergent/network/LayerGroupView.h"
+#include "./LayerGroupView.h"

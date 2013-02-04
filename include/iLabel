@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iLabel.h"
+#include "./iLabel.h"

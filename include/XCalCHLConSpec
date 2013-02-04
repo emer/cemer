@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/XCalCHLConSpec.h"
+#include "./XCalCHLConSpec.h"

@@ -97,7 +97,6 @@ set(CMAKE_MODULE_PATH "${EMERGENT_SHARE_DIR}/CMakeModules")
 # list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate)
 # do not list any included files, only new files that are in this folder
 # note: do NOT change the name "plugin" here or below
-# note: do *not* add the generated template_TA_*.h files
 set(plugin_HEADS
   template_def.h
   template_pl.h
@@ -108,7 +107,6 @@ set(plugin_HEADS
 )
 
 # list all the .cpp source files that will be compiled into the plugin
-# note: do *not* add the generated template_TA.cpp file
 set(plugin_SRCS
   template_pl.cpp
   template.cpp
@@ -120,11 +118,6 @@ set(plugin_SRCS
 # list the project headers that are run through maketa (the Emergent
 # type scanning system) 
 set(plugin_HEADS_MAKETA
-  "${EMERGENT_INCLUDE_DIR}/ta_TA_type.h"
-# IMPORTANT: if your plugin uses network code, add the appropriate
-# headers after the ta_TA, ex, for a Leabra-based plugin, add these:
-# "${EMERGENT_INCLUDE_DIR}/network_TA_type.h" 
-# "${EMERGENT_INCLUDE_DIR}/leabra_TA_type.h" 
   ${plugin_HEADS}
 )
 

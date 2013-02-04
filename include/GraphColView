@@ -1,1 +1,1 @@
-#include "../src/temt/ta/GraphColView.h"
+#include "./GraphColView.h"

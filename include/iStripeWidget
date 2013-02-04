@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iStripeWidget.h"
+#include "./iStripeWidget.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfProgLibEl.h"
+#include "./taiArgTypeOfProgLibEl.h"

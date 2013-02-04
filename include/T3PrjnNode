@@ -1,1 +1,1 @@
-#include "../src/emergent/network/T3PrjnNode.h"
+#include "./T3PrjnNode.h"

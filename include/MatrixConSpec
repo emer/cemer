@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/MatrixConSpec.h"
+#include "./MatrixConSpec.h"

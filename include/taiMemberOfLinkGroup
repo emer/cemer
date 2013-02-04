@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMemberOfLinkGroup.h"
+#include "./taiMemberOfLinkGroup.h"

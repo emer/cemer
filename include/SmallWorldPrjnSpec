@@ -1,1 +1,1 @@
-#include "../src/emergent/network/SmallWorldPrjnSpec.h"
+#include "./SmallWorldPrjnSpec.h"

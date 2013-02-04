@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DataSortSpec.h"
+#include "./DataSortSpec.h"

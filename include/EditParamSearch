@@ -1,1 +1,1 @@
-#include "../src/temt/ta/EditParamSearch.h"
+#include "./EditParamSearch.h"

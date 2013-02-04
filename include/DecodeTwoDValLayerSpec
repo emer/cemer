@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/DecodeTwoDValLayerSpec.h"
+#include "./DecodeTwoDValLayerSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/OtherProgramVar.h"
+#include "./OtherProgramVar.h"

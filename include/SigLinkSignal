@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SigLinkSignal.h"
+#include "./SigLinkSignal.h"

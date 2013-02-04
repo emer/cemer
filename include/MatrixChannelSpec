@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MatrixChannelSpec.h"
+#include "./MatrixChannelSpec.h"

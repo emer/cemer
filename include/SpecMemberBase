@@ -1,1 +1,1 @@
-#include "../src/emergent/network/SpecMemberBase.h"
+#include "./SpecMemberBase.h"

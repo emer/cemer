@@ -1,1 +1,1 @@
-#include "../src/emergent/network/T3BrainNode.h"
+#include "./T3BrainNode.h"

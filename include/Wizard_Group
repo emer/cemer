@@ -1,1 +1,1 @@
-#include "../src/temt/ta/Wizard_Group.h"
+#include "./Wizard_Group.h"

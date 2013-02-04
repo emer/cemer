@@ -1,1 +1,1 @@
-#include "../src/temt/ta/VEStatic_Group.h"
+#include "./VEStatic_Group.h"

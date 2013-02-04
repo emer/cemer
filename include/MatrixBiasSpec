@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/MatrixBiasSpec.h"
+#include "./MatrixBiasSpec.h"

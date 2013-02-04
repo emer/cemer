@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/ScalarValSelfPrjnSpec.h"
+#include "./ScalarValSelfPrjnSpec.h"

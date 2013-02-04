@@ -1,1 +1,1 @@
-#include "../src/emergent/leabra/SNrPrjnSpec.h"
+#include "./SNrPrjnSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3VEJoint.h"
+#include "./T3VEJoint.h"

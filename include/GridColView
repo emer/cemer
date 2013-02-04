@@ -1,1 +1,1 @@
-#include "../src/temt/ta/GridColView.h"
+#include "./GridColView.h"

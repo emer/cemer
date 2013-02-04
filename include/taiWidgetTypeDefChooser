@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetTypeDefChooser.h"
+#include "./taiWidgetTypeDefChooser.h"
