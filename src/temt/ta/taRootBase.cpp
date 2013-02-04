@@ -30,7 +30,6 @@
 #include <ConsoleDockViewer>
 #include <iNetworkAccessManager>
 #include <taGenDoc>
-#include "ta_type_constr.h"
 #include <taCodeUtils>
 
 TypeDef_Of(PluginWizard);
@@ -1244,25 +1243,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
 
 bool taRootBase::Startup_InitTA() {
   // first initialize the type data from maketa generated files, registered here:
-  taMisc::Initialize();
-  tac_AddBuiltinTypeDefs();    // adds to taMisc::types
-  TypeDefInitRegistrar::CallAllTypeInitFuns();
-  TypeDefInitRegistrar::CallAllDataInitFuns();
-
-  for(int i=0; i< taMisc::types.size; i++) {
-    TypeDef* td = taMisc::types[i];
-    td->AddParentData();        // recursive, adds in right order..
-  }
-
-  // only call inst once all the type information is fully in place!
-  TypeDefInitRegistrar::CallAllInstInitFuns();
-
-  // finally, once the base offsets are in place, update the member base offsets
-  for(int i=0; i< taMisc::types.size; i++) {
-    TypeDef* td = taMisc::types[i];
-    if(!td->IsActualClass()) continue;
-    td->ComputeMembBaseOff();
-  }
+  taMisc::Init_Types();
 
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
@@ -1409,11 +1390,6 @@ bool taRootBase::Startup_LoadPlugins() {
   if (!tabMisc::root) return false; // should be made
   if (!taMisc::use_plugins) return true;
   tabMisc::root->plugins.LoadPlugins();
-  return true;
-}
-
-bool taRootBase::Startup_InitTypes() {
-  taMisc::Init_Types();
   return true;
 }
 
@@ -1866,7 +1842,6 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) 
   if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
   if(!Startup_InitApp(argc, argv)) goto startup_failed;
   if(!Startup_InitTA()) goto startup_failed;
-  if(!Startup_InitTypes()) goto startup_failed;
   if(!Startup_EnumeratePlugins()) goto startup_failed;
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration
   if(!Startup_InitCss()) goto startup_failed;

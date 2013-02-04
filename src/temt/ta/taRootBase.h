@@ -111,8 +111,6 @@ public:
   // #IGNORE process args into more usable form
   static bool   Startup_InitTA();
   // #IGNORE basic type-access system intializaton
-  static bool   Startup_InitTypes();
-  // #IGNORE final init of typedefs
   static bool   Startup_EnumeratePlugins();
   // #IGNORE enumeration of plugins
   static bool   Startup_LoadPlugins();

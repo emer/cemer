@@ -35,6 +35,8 @@ TypeDef_Of(EnumDef);
 #include <taStringDiff>
 #include <iDialogChoice>
 
+#include "ta_type_constr.h"
+
 #include <ViewColor_List> 
 #include <QDir>
 #include <QPointer>
@@ -1268,10 +1270,34 @@ static void init_inventor_type(TypeDef* typ) {
 }
 
 
-void taMisc::Init_Types() {// called after all type info has been loaded into types
+void taMisc::Init_Types() {
+  // does full loading of types -- first check for first run
+  if(TypeDefInitRegistrar::instances_already_processed == 0) {
+    taMisc::Initialize();
+    tac_AddBuiltinTypeDefs();    // adds to taMisc::types
+  }
+
+  TypeDefInitRegistrar::CallAllTypeInitFuns();
+  TypeDefInitRegistrar::CallAllDataInitFuns();
+
+  for(int i=TypeDefInitRegistrar::types_list_last_size; i< taMisc::types.size; i++) {
+    TypeDef* td = taMisc::types[i];
+    td->AddParentData();        // recursive, adds in right order..
+  }
+
+  // only call inst once all the type information is fully in place!
+  TypeDefInitRegistrar::CallAllInstInitFuns();
+
+  // finally, once the base offsets are in place, update the member base offsets
+  for(int i=TypeDefInitRegistrar::types_list_last_size; i< taMisc::types.size; i++) {
+    TypeDef* td = taMisc::types[i];
+    if(!td->IsActualClass()) continue;
+    td->ComputeMembBaseOff();
+  }
+
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
   if(taMisc::use_gui) {
-    for (int i = 0; i < types.size; ++i) {
+    for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);
       if(!typ->IsActualClassNoEff()) continue;
       init_inventor_type(typ);
@@ -1282,7 +1308,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   // other stuff could happen here..
 
   // go through all types and create list of AKA typedefs
-  for (int i = 0; i < types.size; ++i) {
+  for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     TypeDef* typ = types.FastEl(i);
     String aka = typ->OptionAfter("AKA_");
     if(aka.nonempty()) {
@@ -1290,6 +1316,10 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
       aka_types.Link(typ);
     }
   }
+  
+  TypeDefInitRegistrar::types_list_last_size = types.size;
+  TypeDefInitRegistrar::instances_already_processed =
+    TypeDefInitRegistrar::instances->size;
 }
 
 void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) {
@@ -1297,13 +1327,13 @@ void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) 
   // are created (static data gets created in "random" order in C++)
   // so we will add now if the type exists, otherwise we add to a deferred list
   TypeDef* typ = NULL;
-  //TODO: gcc complains that &types is always true!
   if (&types) {
     typ = types.FindName(type_name);
   }
   if (typ) {
     typ->AddUserDataSchema(item);
-  } else { // too early, or bad type_name
+  }
+  else { // too early, or bad type_name
     if (!deferred_schema_names) {
       deferred_schema_names = new String_PArray;
       deferred_schema_items = new UserDataItem_List;
@@ -1324,7 +1354,8 @@ void taMisc::AddDeferredUserDataSchema() {
     TypeDef* typ = types.FindName(type_name);
     if (typ) {
       typ->AddUserDataSchema(item);
-    } else {
+    }
+    else {
       Warning("Type:", type_name, " not found trying to add UserDataSchema for key:",
         item->name);
     }

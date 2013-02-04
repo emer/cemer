@@ -1,6 +1,7 @@
 #include "template_pl.h"
 
 #include <QtPlugin>
+#include <taMisc>
 
 //TODO: you can update your Plugin's version here
 const taVersion TemplatePlugin::version(
@@ -12,7 +13,7 @@ const taVersion TemplatePlugin::version(
 TemplatePlugin::TemplatePlugin(QObject*){}
 
 int TemplatePlugin::InitializeTypes() {
-  ta_Init_template();  // call the maketa-generated type initialization routine
+  taMisc::Init_Types(); // loads all the type information for this plugin
   return 0;
 }
 

@@ -46,6 +46,10 @@ class TA_API TypeDefInitRegistrar {
 public:
   static TypeDefInitRegistrar_PtrList* instances;
   // this is the list of all the instances of this class, which get added to the list automatically in their constructors
+  static int    instances_already_processed;
+  // how many instances have already been processed (e.g., at startup) -- allows multiple iterative calls, e.g., when loading plugins, etc.
+  static int    types_list_last_size;
+  // corresponding last size in taMisc::types for the last round of instances processed
 
   static bool CallAllTypeInitFuns();
   // call all the type initialization functions that have been registered in instances

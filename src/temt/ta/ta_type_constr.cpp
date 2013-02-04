@@ -32,6 +32,8 @@
 //        Registrar for keeping track of all init funs
 
 TypeDefInitRegistrar_PtrList* TypeDefInitRegistrar::instances = NULL;
+int     TypeDefInitRegistrar::instances_already_processed = 0;
+int     TypeDefInitRegistrar::types_list_last_size = 0;
 
 TypeDefInitRegistrar::TypeDefInitRegistrar(TypeDefInitFun types_init_fun_,
                                            TypeDefInitFun data_init_fun_,
@@ -50,7 +52,7 @@ bool TypeDefInitRegistrar::CallAllTypeInitFuns() {
     taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
     return false;
   }
-  for(int i=0; i<instances->size; i++) {
+  for(int i=instances_already_processed; i<instances->size; i++) {
     TypeDefInitRegistrar* it = instances->FastEl(i);
     (*(it->types_init_fun))();  // call method
   }
@@ -62,7 +64,7 @@ bool TypeDefInitRegistrar::CallAllDataInitFuns() {
     taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
     return false;
   }
-  for(int i=0; i<instances->size; i++) {
+  for(int i=instances_already_processed; i<instances->size; i++) {
     TypeDefInitRegistrar* it = instances->FastEl(i);
     (*(it->data_init_fun))();  // call method
   }
@@ -74,7 +76,7 @@ bool TypeDefInitRegistrar::CallAllInstInitFuns() {
     taMisc::Error("TypeDefInitRegistrar: no instances found -- something badly wrong!");
     return false;
   }
-  for(int i=0; i<instances->size; i++) {
+  for(int i=instances_already_processed; i<instances->size; i++) {
     TypeDefInitRegistrar* it = instances->FastEl(i);
     (*(it->inst_init_fun))();  // call method
   }
