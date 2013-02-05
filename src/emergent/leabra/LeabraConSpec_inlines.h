@@ -385,30 +385,5 @@ inline void LeabraConSpec::B_Compute_Leabra_dWt(LeabraCon* cn, LeabraUnit* ru, L
   }
 }
 
-/////////////////////////////////////////
-//	LeabraBiasSpec real ones
-
-// todo: note that this is very wasteful replication of code for just one last line..
-
-inline void LeabraBiasSpec::B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
-  float err = ru->act_p - ru->act_m;
-  if(fabsf(err) >= dwt_thresh)
-    cn->dwt += cur_lrate * err;
-}
-
-inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
-						      LeabraLayer* rlay) {
-  // cal only for bias weights: only err is useful contributor to this learning
-  float dw = ru->avg_s - ru->avg_m;
-  if(fabsf(dw) >= dwt_thresh)
-    cn->dwt += cur_lrate * dw;
-}
-
-inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
-						     LeabraLayer* rlay) {
-  float dw = ru->avg_s - ru->avg_m;
-  if(fabsf(dw) >= dwt_thresh)
-    cn->dwt += cur_lrate * dw;
-}
 
 #endif // LeabraConSpec_inlines_h
