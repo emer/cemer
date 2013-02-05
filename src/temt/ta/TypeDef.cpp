@@ -2875,6 +2875,9 @@ String TypeDef::GetHTML(bool gendoc) const {
   if(!taMisc::in_dev_exe) {
     srcpath = taMisc::app_dir.before("/share/") + "/include/" +
       taMisc::default_app_install_folder_name + "/" + srconly;
+    // hack for grey
+    if(srcpath.contains("/mnt/raid/grey/"))
+      srcpath.gsub("/mnt/raid/grey/", "/usr/");
   }
 
   rval.cat("<pre> #include ").cat(incnm).cat("</pre>\n");
