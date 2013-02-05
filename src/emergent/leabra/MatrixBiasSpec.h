@@ -56,4 +56,9 @@ private:
   void	Defaults_init();
 };
 
+#ifdef __TA_COMPILE__
+// get the inlines
+#include <LeabraNetwork>
+#endif
+
 #endif // MatrixBiasSpec_h
