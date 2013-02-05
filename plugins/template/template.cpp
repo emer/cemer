@@ -1,6 +1,10 @@
 #include "template.h"
 
-#include "ta_project.h"
+// following two needed for PluginState
+#include <tabMisc>
+#include <taRootBase>
+
+#include <taMisc> // has many useful utility functions
 
 /////////////////////////////////////////////////////
 //  Template

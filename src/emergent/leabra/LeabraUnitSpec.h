@@ -589,16 +589,17 @@ public:
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
 
   inline float Compute_EThresh(LeabraUnit* u);
-  // #CAT_Activation compute excitatory value that would place unit directly at threshold
+  // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
   inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val);
-  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance
-  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraNetwork*, float inhib_thr,
+  // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance
+  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraNetwork*,
+                                             float inhib_thr,
 					     float inhib_top, float inhib_loser);
-  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance -- when eff_loser_gain in effect
+  // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance -- when eff_loser_gain in effect
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -615,7 +616,7 @@ public:
     virtual void Compute_Vm(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 2: compute the membrane potential from input conductances
       inline float Compute_EqVm(LeabraUnit* u);
-      // #CAT_Activation compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
+      // #CAT_Activation #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
 
     virtual void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 2: compute the activation from membrane potential

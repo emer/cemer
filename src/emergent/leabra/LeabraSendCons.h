@@ -69,10 +69,10 @@ public:
 
   void	Compute_Leabra_dWt(LeabraUnit* su)
   { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_dWt(this, su); }
-  // #CAT_Learning overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #CAT_Learning #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
   void	Compute_Leabra_Weights(LeabraUnit* su)
   { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_Weights(this, su); }
-  // #CAT_Learning overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #CAT_Learning #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   void	Compute_CycSynDep(LeabraUnit* su)
   { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, su); }

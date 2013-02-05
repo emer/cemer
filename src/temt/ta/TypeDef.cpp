@@ -2871,9 +2871,15 @@ String TypeDef::GetHTML(bool gendoc) const {
   if(!srconly.startsWith(name))
     incnm = "\"" + srconly + "\"";
 
+  String srcpath = source_file;
+  if(!taMisc::in_dev_exe) {
+    srcpath = taMisc::app_dir.before("/share/") + "/include/" +
+      taMisc::default_app_install_folder_name + "/" + srconly;
+  }
+
   rval.cat("<pre> #include ").cat(incnm).cat("</pre>\n");
-  rval.cat("<p>(defined at: ").cat(source_file).cat(":")
-    .cat((String)source_start).cat("-").cat((String)source_end).cat("</p>\n");
+  rval.cat("<p>defined at: <a href=\"file://").cat(srcpath).cat("\">").cat(srcpath).cat("</a> ");
+  rval.cat(":").cat((String)source_start).cat("-").cat((String)source_end).cat("</p>\n");
 
   if(par_cache.size > 0) {
     int inhi = 0;

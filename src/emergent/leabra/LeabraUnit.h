@@ -214,18 +214,18 @@ public:
   // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
   float Compute_EThresh()
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_EThresh(this); }
-  // #CAT_Activation compute excitatory value that would place unit directly at threshold
+  // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
   void	Compute_ApplyInhib(LeabraNetwork* net, float inhib_val)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, net, inhib_val); }
-  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance
+  // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance
   void	Compute_ApplyInhib_LoserGain(LeabraNetwork* net, float inhib_thr,
 				     float inhib_top, float inhib_loser)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_top, inhib_loser); }
-  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance -- when eff_loser_gain in effect
+  // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance -- when eff_loser_gain in effect
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation

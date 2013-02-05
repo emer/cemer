@@ -268,7 +268,7 @@ void MTA::TypeDef_Gen_TypeDefs_impl(TypeDef* ths, ostream& strm) {
   strm << "  " << ths->GetTypeEnumString() << ", ";
 
   // size:
-  if(ths->IsTemplate()) {
+  if(ths->IsTemplate() || ths->IsFunction()) {
     strm << "0, 0";
   }
   else {

@@ -331,15 +331,19 @@ public:
 
   inline void 	C_Send_NetinDelta_Thrd(Connection* cn, float* send_netin_vec,
 				      LeabraUnit* ru, float su_act_delta_eff);
+  // #IGNORE
   inline void 	C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
 					float su_act_delta_eff);
+  // #IGNORE
   virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,
 				float su_act_delta);
   // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
   inline float 	C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su);
+  // #IGNORE
   inline float 	Compute_Netin(RecvCons* cg, Unit* ru);
+  // #IGNORE
 
   ///////////////////////////////////////////////////////////////
   //	Learning
@@ -348,26 +352,26 @@ public:
   // LeabraCHL code
 
   inline void 	Compute_SAvgCor(LeabraSendCons* cg, LeabraUnit* su);
-  // #CAT_Learning compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
+  // #CAT_Learning #IGNORE compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
 
   inline float	C_Compute_Hebb(LeabraCon* cn, LeabraSendCons* cg, float lin_wt,
 			       float ru_act, float su_act);
-  // #CAT_Learning compute Hebbian associative learning
+  // #CAT_Learning #IGNORE compute Hebbian associative learning
 
   inline float 	C_Compute_Err_LeabraCHL(LeabraCon* cn, float lin_wt,
 					float ru_act_p, float ru_act_m,
 					float su_act_p, float su_act_m);
-  // #CAT_Learning compute generec error term, sigmoid case
+  // #CAT_Learning #IGNORE compute generec error term, sigmoid case
 
   inline void 	C_Compute_dWt(LeabraCon* cn, LeabraUnit* su, float heb, float err);
-  // #CAT_Learning combine associative and error-driven weight change, actually update dwt
-  // inline void 	C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* su, float err);
-  // #CAT_Learning just error-driven weight change, actually update dwt
+  // #CAT_Learning #IGNORE combine associative and error-driven weight change, actually update dwt
+  inline void 	C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* su, float err);
+  // #CAT_Learning #IGNORE just error-driven weight change, actually update dwt
   virtual void 	Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning Leabra/CHL weight changes
 
   inline void	C_Compute_Weights_LeabraCHL(LeabraCon* cn);
-  // #CAT_Learning compute weights for LeabraCHL learning rule
+  // #CAT_Learning #IGNORE compute weights for LeabraCHL learning rule
   virtual void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning overall compute weights for LeabraCHL learning rule
 
@@ -376,12 +380,12 @@ public:
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
 				 float su_avg_s, float su_avg_m, float su_act_mult);
-  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
+  // #CAT_Learning #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning CtLeabraXCAL weight changes
 
   inline void	C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn);
-  // #CAT_Learning overall compute weights for CtLeabraXCAL learning rule
+  // #CAT_Learning #IGNORE overall compute weights for CtLeabraXCAL learning rule
   virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning overall compute weights for CtLeabraXCAL learning rule
 
@@ -390,7 +394,7 @@ public:
   // CtLeabraXCalC code -- note that this is RECEIVER BASED due to triggered nature of learning
 
   inline void 	C_Compute_dWt_CtLeabraXCalC(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
-  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
+  // #CAT_Learning #IGNORE compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
   virtual void 	Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
 
@@ -398,25 +402,25 @@ public:
   // CtLeabraCAL code
 
   inline void C_Compute_SRAvg_m(LeabraSRAvgCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average -- medium (trial-level) time scale
+  // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraSRAvgCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
+  // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
   virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
   // accumulate sender-receiver activation product average -- only for CtLeabraCAL
 
   inline void C_Trial_Init_SRAvg(LeabraSRAvgCon* cn);
-  // initialize sender-receiver activation product averages for trial and below 
+  // #IGNORE initialize sender-receiver activation product averages for trial and below 
   virtual void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su);
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
   inline void 	C_Compute_dWt_CtLeabraCAL(LeabraSRAvgCon* cn,
 					  float sravg_s_nrm, float sravg_m_nrm);
-  // #CAT_Learning compute Contrastive Attractor Learning (CAL)
+  // #CAT_Learning #IGNORE compute Contrastive Attractor Learning (CAL)
   virtual void 	Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning CtLeabraCAL weight changes
 
   inline void	C_Compute_Weights_CtLeabraCAL(LeabraSRAvgCon* cn);
-  // #CAT_Learning overall compute weights for CtLeabraCAL learning rule
+  // #CAT_Learning #IGNORE overall compute weights for CtLeabraCAL learning rule
   virtual void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning overall compute weights for CtLeabraCAL learning rule
 
@@ -424,10 +428,10 @@ public:
   // Master dWt, Weights functions
 
   inline void	Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su);
-  // #CAT_Learning overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #CAT_Learning #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su);
-  // #CAT_Learning overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #CAT_Learning #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning compute dwt normalization
@@ -446,10 +450,10 @@ public:
   // #CAT_Learning compute bias weight change for CAL rule
 
   inline void	B_Compute_Leabra_dWt(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay);
-  // #CAT_Learning overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #CAT_Learning #IGNORE overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   virtual void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru);
-  // #CAT_Learning update weights for bias connection (same for all algos)
+  // #CAT_Learning #IGNORE update weights for bias connection (same for all algos)
 
   /////////////////////////////////////
   // General 
@@ -475,8 +479,8 @@ public:
   virtual void	GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
 
-  virtual void 	WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100, int n_recv_cons=5,
-			   bool norm_con_n=true);
+  virtual void 	WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100,
+                           int n_recv_cons=5, bool norm_con_n=true);
   // #BUTTON helper for converting from old wt_scale computation to new one -- enter parameters for the sending layer kwta pct (overall layer activit), number of receiving connections, and whether the norm_con_n flag was on or off (effectively always on in new version) -- it reports what the effective weight scaling was in the old version, what it is in the new version, and what you should set the wt_scale.abs to to get equivalent performance, assuming wt_scale.abs reflects what was set previously
 
   override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);

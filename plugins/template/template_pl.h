@@ -19,18 +19,17 @@ TypeDef_Of(TemplatePluginState);
 #define PLUGIN_VERSION_MINOR @PLUGIN_VERSION_MINOR@
 #define PLUGIN_VERSION_PATCH @PLUGIN_VERSION_PATCH@
 
-#ifndef __MAKETA__
 // The TemplatePlugin class allows this to be a plugin. It usually won't
-// need to be modified. It is not seen by `maketa' because its base classes
-// have not been scanned, and no programmatic access to this class is needed.
+// need to be modified.
 
 class TEMPLATE_API TemplatePlugin : public QObject,
   public IPlugin
 { // #NO_CSS #NO_MEMBERS
   Q_OBJECT
-
+#ifndef __MAKETA__
   // Tells Qt which interfaces are implemented by this class
   Q_INTERFACES(IPlugin)
+#endif
 public:
   static const taVersion	version;
   
@@ -52,7 +51,5 @@ public: // IPlugin interface
 
 // Associates a string with the interface TemplatePlugin
 Q_DECLARE_INTERFACE(TemplatePlugin, "emergent.TemplatePlugin/1.0")
-#endif // !__MAKETA__
-
    
 #endif

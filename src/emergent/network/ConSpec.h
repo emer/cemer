@@ -109,7 +109,6 @@ public:
   inline virtual void   Init_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
   inline virtual void   C_Init_Weights_post(BaseCons*, Connection*, Unit*, Unit*) { };
-  // #IGNORE
   inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void   C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
@@ -119,17 +118,20 @@ public:
   // #CAT_Learning initialize weight-change variables for whole set
 
   inline float          C_Compute_Netin(Connection* cn, Unit* ru, Unit* su);
+  // #IGNORE 
   inline virtual float  Compute_Netin(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net input for weights in this con group
 
   inline void           C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru,
                                      float su_act);
+  // #IGNORE 
   inline virtual void   Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su);
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
   inline virtual void   Send_Netin_PerPrjn(SendCons* cg, Network* net, int thread_no, Unit* su);
   // #CAT_Activation sender-based net input, keeping projections separate, for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
   inline float          C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
+  // #IGNORE 
   inline virtual float  Compute_Dist(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net distance for con group (ie. euclidean distance)
   inline void           C_Compute_dWt(Connection*, Unit*, Unit*)        { };

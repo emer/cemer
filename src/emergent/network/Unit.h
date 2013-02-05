@@ -127,7 +127,7 @@ public: //
   inline bool   lay_lesioned() const;
   // #CAT_Structure #IGNORE is the layer this unit is in lesioned?
   inline Layer* own_lay() const;
-  // #CAT_Structure get the owning layer of this unit
+  // #CAT_Structure #IGNORE get the owning layer of this unit
   Network*      own_net() const;
   // #CAT_Structure get the owning network of this unit
   Unit_Group*   own_subgp() const;

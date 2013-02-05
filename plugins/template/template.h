@@ -2,6 +2,7 @@
 #define TEMPLATE_H
 
 #include "template_def.h"
+#include <taFBase> // needed for plugin state
 #include <taNBase> // TODO: replace with the temt/emergent file that contains
 // your base class -- use <ClassName> to include any class by name
 //TODO: add any headers of additional types that are used in your class

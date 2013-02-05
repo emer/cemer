@@ -19,14 +19,13 @@ set(plugin_full_SRCS
 # adds the library as an official target to compile
 EMERGENT_ADD_LIBRARY(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
-# dependencies
-add_dependencies(${PROJECT_NAME} "${PROJECT_NAME}_TA")
-
 # does all the stuff to make the library link against all the right other libraries
 # final arg is for any extra libraries this plugin might want
 EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} 
   "${EMERGENT_PLUGIN_EXTRA_LIBRARIES}")
 
+# add source dir as include, needed for TA_ compiling
+include_directories(${PROJECT_SOURCE_DIR})
 
 ####################################
 #  report on status after building
