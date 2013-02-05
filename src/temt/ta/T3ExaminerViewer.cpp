@@ -30,6 +30,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QKeyEvent>
+#include <QPainter>
 
 #include <taMisc>
 #include <taiMisc>
