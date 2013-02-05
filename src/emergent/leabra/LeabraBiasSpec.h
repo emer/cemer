@@ -35,10 +35,13 @@ public:
   float		dwt_thresh;  // #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline override void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru);
+  // #IGNORE
   inline override void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						   LeabraLayer* rlay);
+  // #IGNORE
   inline override void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						   LeabraLayer* rlay);
+  // #IGNORE
 
   bool	CheckObjectType_impl(taBase* obj);
 
