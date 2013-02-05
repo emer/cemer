@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "LeabraUnit.h"
-#include <Unit_Group>
+#include <LeabraNetwork>
 
 void LeabraUnitChans::Initialize() {
   l = i = h = a = 0.0f;
