@@ -109,10 +109,12 @@ void VEObjCarouselView::Render_impl() {
   ob->obj_xform.CopyTo(shtx);
 
   SoSwitch* sw = ob->obj_switch;
-  if(sw->getNumChildren() > 0) {
-    sw->whichChild = ob->cur_obj_no;
-  }
-  else {
-    sw->whichChild = -1;
+  if(sw) {
+    if(sw->getNumChildren() > 0) {
+      sw->whichChild = ob->cur_obj_no;
+    }
+    else {
+      sw->whichChild = -1;
+    }
   }
 }
