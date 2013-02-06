@@ -17,6 +17,9 @@
 
 #ifdef DMEM_COMPILE
 
+#include <taMisc>
+#include <DMemShare>
+
 void DMemComm::Initialize() {
   comm = MPI_COMM_WORLD;
   group = MPI_GROUP_NULL;

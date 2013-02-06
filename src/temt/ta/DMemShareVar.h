@@ -26,6 +26,10 @@
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 
+#include <voidptr_Array>
+#include <int_Array>
+#include <double_Array>
+#include <float_Array>
 
 TypeDef_Of(DMemShareVar);
 

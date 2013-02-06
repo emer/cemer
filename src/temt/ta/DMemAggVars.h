@@ -30,6 +30,7 @@
 #include <double_Array>
 #include <int_Array>
 #include <voidptr_Array>
+#include <DMemShare>
 
 TypeDef_Of(DMemAggVars);
 

@@ -28,6 +28,10 @@
 #include <MethodSpace>
 #include <TypeSpace>
 
+#ifdef DMEM_COMPILE
+#include <mpi.h>
+#endif
+
 // declare all other types mentioned but not required to include:
 class taBase_List; //
 class taiType; //

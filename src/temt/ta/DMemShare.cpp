@@ -18,6 +18,16 @@
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 
+#include <taMisc>
+#include <taiMiscCore>
+#include <MemberDef>
+#include <BuiltinTypeDefs>
+#include <DMemShareVar>
+
+#include <sstream>
+
+using namespace std;
+
 static String dmem_mpi_decode_err(int ercd) {
   char errstr[MPI_MAX_ERROR_STRING];
   int errlen;
@@ -125,7 +135,7 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
     else if (md->type->InheritsFrom(TA_int)) {
       new_type = MPI_INT;
     }
-    else if (md->type->InheritsFrom(TA_enum)) {
+    else if (md->type->IsEnum()) {
       new_type = MPI_INT;
     }
     else {

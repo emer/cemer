@@ -26,6 +26,8 @@
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 
+#include <int_Array>
+
 /////////////////////////////////////////////////////////////////
 //	communicator: use this to define groups of communicating units
 

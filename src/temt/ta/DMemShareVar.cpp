@@ -17,6 +17,17 @@
 
 #ifdef DMEM_COMPILE
 
+#include <taMisc>
+#include <DMemShare>
+using namespace std;
+
+static String dmem_mpi_decode_err(int ercd) {
+  char errstr[MPI_MAX_ERROR_STRING];
+  int errlen;
+  MPI_Error_string(ercd, errstr, &errlen);
+  return String(ercd) + " msg: " + String(errstr);
+}
+
 void DMemShareVar::Initialize() {
   comm = MPI_COMM_NULL;
   mpi_type = MPI_DATATYPE_NULL;

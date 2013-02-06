@@ -79,7 +79,7 @@ public:
   MPI_Comm	comm;		// #IGNORE communicator associated with these shared objs
 
 #ifndef __MAKETA__
-  static stringstream*	cmdstream;	// #IGNORE command stream: communicating commands across dmem procs
+  static std::stringstream*	cmdstream;	// #IGNORE command stream: communicating commands across dmem procs
 #endif
 
   static void 	InitCmdStream();	// #IGNORE initialize command stream

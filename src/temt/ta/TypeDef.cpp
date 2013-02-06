@@ -33,6 +33,10 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <dumpMisc>
+
+#ifdef DMEM_COMPILE
+#include <DMemShare>
+#endif
 #endif
 
 // what's this all about!?
@@ -2466,7 +2470,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
     else if (md->type->InheritsFrom(TA_int)) {
       primitives[curr_prim] = MPI_INT;
     }
-    else if (md->type->InheritsFrom(TA_enum)) {
+    else if (md->type->IsEnum()) {
       primitives[curr_prim] = MPI_INT;
     }
     else if (md->type->InheritsFrom(TA_long)) {

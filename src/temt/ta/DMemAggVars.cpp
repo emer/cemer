@@ -17,6 +17,10 @@
 
 #ifdef DMEM_COMPILE
 
+#include <MemberDef>
+#include <BuiltinTypeDefs>
+#include <taMisc>
+
 void DMemAggVars::Initialize() {
   comm = MPI_COMM_NULL;
   agg_op = MPI_OP_NULL;
@@ -105,7 +109,7 @@ void DMemAggVars::ScanMembers_impl(TypeDef* td, void* base) {
     else if(md->type->InheritsFrom(TA_int)) {
       new_type = MPI_INT;
     }
-    else if(md->type->InheritsFrom(TA_enum)) {
+    else if(md->type->IsEnum()) {
       new_type = MPI_INT;
     }
     else {
