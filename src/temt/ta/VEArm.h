@@ -22,7 +22,7 @@
 // member includes:
 #include <VEBody>
 #include <float_Matrix>
-#include <VELinMuscle_List>
+#include <VEMuscle_List>
 
 // declare all other types mentioned but not required to include:
 

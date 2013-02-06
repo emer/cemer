@@ -548,8 +548,7 @@ set(ta_HEADS_MAKETA_LOCAL
   VEMuscle_List.h
   VEMuscle.h
   VELinearMuscle.h
-  VELinMuscle_List.h
-  VELambdaMuscle.h
+    VELambdaMuscle.h
   VEMuscleJoint.h
   VEArm.h
 
@@ -1603,8 +1602,7 @@ set(ta_SRCS_MAKETA
   VEMuscle_List.cpp
   VEHillMuscle.cpp
   VELinearMuscle.cpp
-  VELinMuscle_List.cpp
-  VELambdaMuscle.cpp
+    VELambdaMuscle.cpp
   VEMuscleJoint.cpp
   VEArm.cpp
 

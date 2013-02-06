@@ -23,6 +23,7 @@
 #include <float_CircBuffer>
 
 // declare all other types mentioned but not required to include:
+class VEArm; //
 
 TypeDef_Of(VEHillMuscle);
 
@@ -51,7 +52,7 @@ public:
   float r;        // [m] resting length
 
   taVector3f 	Contract(float stim);
-  // Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
+  // #IGNORE Returns the force vector (pointing towards the proximal insertion point) resulting from a given stimulation of the muscle;
 
   float Length();       // Returns current length of muscle
   float Speed();  	// Returns muscle's contraction speed one world stepsize ago
@@ -66,9 +67,8 @@ private:
 
   void Initialize();
   void Destroy();
-  virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 };
 
-SmartRef_Of(VEHillMuscle,TA_VEHillMuscle); // VEHillMuscleRef
+SmartRef_Of(VEHillMuscle); // VEHillMuscleRef
 
 #endif // VEHillMuscle_h

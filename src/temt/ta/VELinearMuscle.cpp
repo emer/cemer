@@ -46,10 +46,6 @@ void VELinearMuscle::Init(taVector3f prox, taVector3f dist, float MrG, taVector3
 
 void VELinearMuscle::Destroy() { }
 
-VEArm* VELinearMuscle::GetArm() {
-  return GET_MY_OWNER(VEArm); // somehow Randy's macro does the trick
-}
-
 taVector3f VELinearMuscle::Contract(float stim) {
   taVector3f force_vec;
   if(bend)
@@ -71,7 +67,26 @@ float VELinearMuscle::Length() {
 float VELinearMuscle::Speed() {
   float length = Length();
   VEArm* army = GetArm();
-  float step = army->WorldStep; // copy of VEWorld stepsize
+  float step = army->world_step; // copy of VEWorld stepsize
   return (length - old_length2)/(2*step);  // 3 point rule
 }
+
+void VELinearMuscle::UpOld() { 
+    old_length2 = old_length1;
+    old_length1 = Length();
+}
+
+void VELinearMuscle::InitBuffs() {
+   old_length2 = old_length1 = Length();
+}
+
+float VELinearMuscle::Old_Length() { 
+// this function has no use in VELinearMuscle
+  return Length();
+}
+
+float VELinearMuscle::Old_Speed() { 
+// this function has no use in VELinearMuscle
+  return Speed();
+} 
 

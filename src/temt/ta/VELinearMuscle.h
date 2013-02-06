@@ -17,29 +17,20 @@
 #define VELinearMuscle_h 1
 
 // parent includes:
-#include <taNBase>
-
-// smartptr, ref includes
-#include <taSmartRefT>
+#include <VEMuscle>
 
 // member includes:
-#include <taVector3f>
 
 // declare all other types mentioned but not required to include:
 class VEArm; //
 
 TypeDef_Of(VELinearMuscle);
 
-class TA_API VELinearMuscle : public taNBase {
+class TA_API VELinearMuscle : public VEMuscle {
   // A muscle that exerts force proportional to its input
-  INHERITED(taNBase)
+  INHERITED(VEMuscle)
 public:
-
-  taVector3f 	IPprox;    // proximal/medial insertion point
-  taVector3f 	IPdist;    // distal/lateral insertion point
-  taVector3f 	p3;        // point of intersection with the bending line
   float 	gain;
-  bool 		bend;      // true if the muscle is currently bending
   float 	old_length1;
   float 	old_length2; // past lengths, used to obtain contraction speed with the 3 point method. UpdateIPs keeps them actualized. old_length2 is the length 2 timesteps ago.
 
@@ -48,6 +39,10 @@ public:
 
   float Length();       // Returns current length of muscle
   float Speed();  	// Returns muscle's contraction speed one world stepsize ago
+  void UpOld();		// update past values stored
+  void InitBuffs();     // Initialize the buffers that store past values
+  float Old_Length();   // Delayed value of muscle length
+  float Old_Speed();    // Delayed value of muscle speed
 
   TA_SIMPLE_BASEFUNS(VELinearMuscle);
 private:
@@ -56,7 +51,6 @@ private:
   void Init(taVector3f prox, taVector3f dist, float MrG);
   void Init(taVector3f prox, taVector3f dist, float MrG, taVector3f pp3, bool bending);
   void Destroy();
-  virtual VEArm* GetArm(); // Get pointer to VEArm containing muscle
 };
 
 SmartRef_Of(VELinearMuscle); // VELinearMuscleRef
