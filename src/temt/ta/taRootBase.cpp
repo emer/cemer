@@ -38,7 +38,7 @@ TypeDef_Of(PluginWizard);
 #include <tabMisc>
 #include <taRootBase>
 #include <taiMisc>
-
+#include <DMemShare>
 
 #include <QPointer>
 #include <QFileInfo>
@@ -1983,7 +1983,7 @@ bool taRootBase::Run_GuiDMem() {
     DMemShare::InitCmdStream();
     // need to have some initial string in the stream, otherwise it goes EOF and is bad!
     *(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
-    taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
+    taMisc::StartRecording();
     taiMC_->Exec();  // normal run..
     DMemShare::CloseCmdStream();
     cerr << "proc: 0 quitting!" << endl;

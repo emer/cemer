@@ -17,6 +17,8 @@
 #include <MTRnd>
 #include <taMisc>
 
+#include <DMemShare>
+
 void RndSeed::Initialize() {
   GetCurrent();
 }

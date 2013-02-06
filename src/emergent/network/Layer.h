@@ -29,6 +29,7 @@
 #include <PRerrVals>
 #include <String_Matrix>
 #include <LayerSpec>
+#include <DMemShare>
 
 // declare all other types mentioned but not required to include:
 class Network; //

@@ -38,6 +38,15 @@ TypeDef_Of(Variant_Data);
 
 #include <QFileInfo>
 
+#ifdef DMEM_COMPILE
+#include <char_Array>
+#include <DMemShare>
+#include <float_Matrix>
+#include <double_Matrix>
+#include <int_Matrix>
+#include <byte_Matrix>
+#endif
+
 #include <css_machine.h>
 #include <css_ta.h>
 

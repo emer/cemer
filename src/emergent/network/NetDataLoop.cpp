@@ -15,6 +15,7 @@
 
 #include "NetDataLoop.h"
 #include <DataTable>
+#include <Network>
 
 void NetDataLoop::Initialize() {
   order = SEQUENTIAL;

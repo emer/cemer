@@ -29,6 +29,8 @@
 #include <UnitCallThreadMgr>
 #include <UnitPtrList>
 #include <float_Matrix>
+#include <DMemComm>
+#include <DMemAggVars>
 
 // NOTE: by including network, you end up including all the network code:
 // #include <Connection>
