@@ -21,6 +21,7 @@
 #include <Projection>
 
 // member includes:
+#include <DMemAggVars>
 
 // declare all other types mentioned but not required to include:
 class LeabraNetwork; // 
