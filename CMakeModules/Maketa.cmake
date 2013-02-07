@@ -1,6 +1,52 @@
 #####################################
 ##	MAKETA suport for cmake
 
+# this is just a copy of QT4_EXTRACT_OPTIONS -- needed to not conflict with qt5
+# from  Qt4Macros.cmake
+macro (MAKETA_EXTRACT_OPTIONS _maketa_files _maketa_options)
+  set(${_maketa_files})
+  set(${_maketa_options})
+  set(_MAKETA_DOING_OPTIONS FALSE)
+  foreach(_currentArg ${ARGN})
+    if ("${_currentArg}" STREQUAL "OPTIONS")
+      set(_MAKETA_DOING_OPTIONS TRUE)
+    else ()
+      if(_MAKETA_DOING_OPTIONS)
+        list(APPEND ${_maketa_options} "${_currentArg}")
+      else()
+        list(APPEND ${_maketa_files} "${_currentArg}")
+      endif()
+    endif ()
+  endforeach()
+endmacro ()
+
+# copy of QT4_MAKE_OUTPUT_FILE from Qt4Macros.cmake
+macro (MAKETA_MAKE_OUTPUT_FILE infile prefix ext outfile )
+  string(LENGTH ${CMAKE_CURRENT_BINARY_DIR} _binlength)
+  string(LENGTH ${infile} _infileLength)
+  set(_checkinfile ${CMAKE_CURRENT_SOURCE_DIR})
+  if(_infileLength GREATER _binlength)
+    string(SUBSTRING "${infile}" 0 ${_binlength} _checkinfile)
+    if(_checkinfile STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
+      file(RELATIVE_PATH rel ${CMAKE_CURRENT_BINARY_DIR} ${infile})
+    else()
+      file(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${infile})
+    endif()
+  else()
+    file(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${infile})
+  endif()
+  if(WIN32 AND rel MATCHES "^[a-zA-Z]:") # absolute path
+    string(REGEX REPLACE "^([a-zA-Z]):(.*)$" "\\1_\\2" rel "${rel}")
+  endif()
+  set(_outfile "${CMAKE_CURRENT_BINARY_DIR}/${rel}")
+  string(REPLACE ".." "__" _outfile ${_outfile})
+  get_filename_component(outpath ${_outfile} PATH)
+  get_filename_component(_outfile ${_outfile} NAME_WE)
+  file(MAKE_DIRECTORY ${outpath})
+  set(${outfile} ${outpath}/${prefix}${_outfile}.${ext})
+endmacro ()
+
+
 macro (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)
   set(${_MAKETA_INC_DIRS})
   get_directory_property(_inc_DIRS INCLUDE_DIRECTORIES)
@@ -48,16 +94,16 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
 endmacro (CREATE_MAKETA_COMMAND)
 
 # new maketa command -- based directly on QT4_WRAP_CPP in Qt4Macros.cmake
-# uses QT4 macros directly
 # MUST call with OPTIONS and the tag name for the clean_ta_xx command
 macro(MAKETA_WRAP_H outfiles)
-  QT4_EXTRACT_OPTIONS(mta_files mta_options ${ARGN})
+  MAKETA_EXTRACT_OPTIONS(mta_files mta_options ${ARGN})
   if(mta_options STREQUAL "")
     message(ERROR "MAKETA_WRAP_H must be called with OPTIONS xxx where xxx is code name for make clean target (clean_ta_xxx)")
   endif()
   foreach (it ${mta_files})
     get_filename_component(it ${it} ABSOLUTE)
-    QT4_MAKE_OUTPUT_FILE(${it} TA_ cxx outfile)
+    
+    MAKETA_MAKE_OUTPUT_FILE(${it} TA_ cxx outfile)
     CREATE_MAKETA_COMMAND(${it} ${outfile})
     set(${outfiles} ${${outfiles}} ${outfile})
   endforeach()

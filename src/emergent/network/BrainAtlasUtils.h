@@ -22,10 +22,10 @@
 // member includes:
 #include <QSet>
 #include <QList>
+#include <QString>
 
 // declare all other types mentioned but not required to include:
 class QColor;
-class QString;
 class QStringList;
 class BrainAtlasInfo;
 class BrainAtlas;

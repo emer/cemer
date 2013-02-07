@@ -35,6 +35,9 @@
 #include <QDesktopServices>
 #include <QKeyEvent>
 
+#if (QT_VERSION >= 0x050000)
+#include <QUrlQuery>
+#endif
 
 iPanelOfDocView::iPanelOfDocView()
 :inherited(NULL) // usual case: we dynamically set the link, via setDoc

@@ -20,6 +20,7 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QDataStream>
 
 
 void TemtServer::Initialize() {
