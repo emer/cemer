@@ -93,9 +93,11 @@ void T3Panel::Clear_impl() {
 
 void T3Panel::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
-  root_view.host = widget()->t3vs;
-  // note: set top view to the root, not us, because we don't pass doactions down
-  widget()->t3vs->setTopView(&root_view);
+  if(widget() && widget()->t3vs) {
+    root_view.host = widget()->t3vs;
+    // note: set top view to the root, not us, because we don't pass doactions down
+    widget()->t3vs->setTopView(&root_view);
+  }
 }
 
 void T3Panel::Constr_post() {

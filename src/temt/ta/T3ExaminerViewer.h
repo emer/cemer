@@ -63,7 +63,7 @@ public:
   ViewerMode            viewer_mode;    // our current viewer mode -- used to make sure that quarter is in appropriate state
 
   iT3ViewspaceWidget*   t3vw;           // owner widget
-  T3Panel*      GetFrame();     // get my owning frame, from t3vw
+  T3Panel*      GetPanel();     // get my owning panel, from t3vw
 
   //////////////////////////////////////////////
   //   Overall widget structure
@@ -107,6 +107,9 @@ public:
   int              cur_view_no; // current view number -- last one to have gotoView called -- -1 if not done yet
   NameVar_PArray     dyn_buttons; // dynamic button names
   iAction_List     dyn_actions; // dynamic button actions -- has all the relevant properties
+
+  static bool     so_scrollbar_is_dragging;
+  // SoScrollbar sets this when it is being dragged -- keeps everything inside a tight event loop until dragging completes
 
   //////////////////////////////////////////////
   //   Constructor helper methods

@@ -956,8 +956,10 @@ void NetView::OnWindowBind_impl(iT3Panel* vw) {
   if (!nvp) {
     nvp = new iViewPanelOfNetwork(this);
     vw->RegisterPanel(nvp);
-    vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
-      SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
+    if(vw->t3vs) {
+      vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
+        SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
+    }
   }
 }
 

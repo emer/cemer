@@ -53,10 +53,6 @@ public:
   SoSelectionPtr        sel_so; //#IGNORE
 
   SoSeparator*          root_so() {return m_root_so.ptr();} // always valid -- you can add your own lights, camera, etc.
-  QScrollBar*           horScrollBar(bool auto_create = false);
-  void                  setHasHorScrollBar(bool value);
-  QScrollBar*           verScrollBar(bool auto_create = false);
-  void                  setHasVerScrollBar(bool value);
 
   SelectionMode         selMode() {return m_selMode;}
     // #IGNORE true adds a SoSelection node, and selection call back
@@ -76,24 +72,15 @@ public:
   iT3ViewspaceWidget(QWidget* parent = NULL);
   ~iT3ViewspaceWidget();
 
-#ifndef __MAKETA__
-signals:
-  void                  initScrollBar(QScrollBar* sb); // orientation will be in sb
-#endif
-
 public: // ISelectableHost i/f
   override bool         hasMultiSelect() const {return true;} // always
   override QWidget*     widget() {return this;}
-protected:
-//  override void       EditAction_Delete(ISelectable::GuiContext gc_typ);
   override void         UpdateSelectedItems_impl();
 
 protected:
   static void           SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void           SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 
-  QScrollBar*           m_horScrollBar;
-  QScrollBar*           m_verScrollBar;
   T3ExaminerViewer*     m_t3viewer;
   SoSeparatorPtr        m_root_so; //
   SoNode*               m_scene; // actual top item set by user
@@ -106,8 +93,6 @@ protected:
   override void         hideEvent(QHideEvent* ev);
 
   void                  SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
-  void                  LayoutComponents(); // called on resize or when comps change (ex scrollers)
-  QScrollBar*           MakeScrollBar(bool ver);
   void                  resizeEvent(QResizeEvent* ev); // override
 
 private:

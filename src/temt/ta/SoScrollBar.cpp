@@ -16,6 +16,7 @@
 #include "SoScrollBar.h"
 #include <T3Misc>
 #include <taMath_float>
+#include <T3ExaminerViewer>
 
 #include <Inventor/draggers/SoTranslate1Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
@@ -24,8 +25,6 @@
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoTransform.h>
-
-
 
 
 SO_NODE_SOURCE(SoScrollBar);
@@ -225,12 +224,9 @@ void SoScrollBar::valueChangedCB() {
     (*valueChanged_cb_)(this, value_, valueChanged_ud_);
 }
 
-// defined in t3viewer.cpp
-extern bool so_scrollbar_is_dragging;
-
 void SoScrollBar::DragStartCB(SoTranslate1Dragger* dragger) {
   start_val_ = value_;
-  so_scrollbar_is_dragging = true;
+  T3ExaminerViewer::so_scrollbar_is_dragging = true;
 }
 
 void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
@@ -264,6 +260,6 @@ void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
   repositionSlider();
 
   valueChangedCB();
-  so_scrollbar_is_dragging = false; // this drops us out of the event loop!!
+  T3ExaminerViewer::so_scrollbar_is_dragging = false; // this drops us out of the event loop!!
 }
 

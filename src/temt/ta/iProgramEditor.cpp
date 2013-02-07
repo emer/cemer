@@ -80,11 +80,8 @@ void iProgramEditor::Init() {
   scrBody = new QScrollArea(this);
   scrBody->setWidgetResizable(true);
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   body = new iStripeWidget;
   scrBody->setWidget(body);
-//  body = new iStripeWidget(this);
   body->installEventFilter(this);
 
   line_ht = ln_sz + (2 * ln_vmargin);
@@ -92,7 +89,6 @@ void iProgramEditor::Init() {
   int body_ht = line_ht * editLines();
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
   layOuter->addWidget(scrBody);
-//  layOuter->addWidget(body);
 
   meth_but_mgr = new iMethodButtonMgr(this);
 

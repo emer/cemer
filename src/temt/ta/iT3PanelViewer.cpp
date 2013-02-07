@@ -68,50 +68,52 @@ void iT3PanelViewer::Init() {
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
 }
 
-void iT3PanelViewer::AddT3Panel(iT3Panel* idvf, int idx) {
-  T3Panel* dvf = idvf->viewer();
-  String tab_label = dvf->GetName();
+void iT3PanelViewer::AddT3Panel(iT3Panel* ipanl, int idx) {
+  T3Panel* panl = ipanl->viewer();
+  String tab_label = panl->GetName();
   if (idx < 0)
-    idx = tw->addTab(idvf, tab_label);
+    idx = tw->addTab(ipanl, tab_label);
   else
-    tw->insertTab(idx, idvf, tab_label);
+    tw->insertTab(idx, ipanl, tab_label);
   tw->setTabToolTip(idx, tab_label);
-  idvf->t3vs->Connect_SelectableHostNotifySignal(this,
-    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  if(ipanl->t3vs) {
+    ipanl->t3vs->Connect_SelectableHostNotifySignal(this,
+      SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  }
   tw->setCurrentIndex(idx); // not selected automatically
 }
 
-void iT3PanelViewer::AddFrame() {
+void iT3PanelViewer::AddPanel() {
 // T3Panel* fr  =
  viewer()->NewT3Panel();
 }
 
-void iT3PanelViewer::DeleteFrame(int tab_idx) {
-  T3Panel* fr = viewFrame(tab_idx);
+void iT3PanelViewer::DeletePanel(int tab_idx) {
+  T3Panel* fr = viewPanel(tab_idx);
   if (!fr) return;
   fr->Close();
   //NOTE: do not place any code here -- we are deleted!
 }
 
-void iT3PanelViewer::FrameProperties(int tab_idx) {
-  T3Panel* fr = viewFrame(tab_idx);
+void iT3PanelViewer::PanelProperties(int tab_idx) {
+  T3Panel* fr = viewPanel(tab_idx);
   if (!fr) return;
   fr->EditDialog(true);
 }
 
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
   iAction*
-  act = menu->AddItem("&Add Frame", iAction::action,
-    this, SLOT(AddFrame()),_nilVariant);
+  act = menu->AddItem("&Add Panel", iAction::action,
+    this, SLOT(AddPanel()),_nilVariant);
 
   if (tab_idx >= 0) {
-    act = menu->AddItem("&Delete Frame", iAction::int_act,
-      this, SLOT(DeleteFrame(int)), tab_idx);
+    act = menu->AddItem("&Delete Panel", iAction::int_act,
+      this, SLOT(DeletePanel(int)), tab_idx);
 
     menu->AddSep();
     // should always be at bottom:
-    act = menu->AddItem("Frame &Properties...", iAction::int_act,
-      this, SLOT(FrameProperties(int)), tab_idx);
+    act = menu->AddItem("Panel &Properties...", iAction::int_act,
+      this, SLOT(PanelProperties(int)), tab_idx);
 
   }
 }
@@ -140,27 +142,27 @@ void iT3PanelViewer::tw_currentChanged(int tab_idx) {
 //note: the backwards order below fulfills two competing requirements:
 // 1) have a hide/show insures we don't get multiple tabs
 // 2) but show/hide order prevents panel tab switching away
-// TODO: known bug: when you delete a frame, it switches from CtrlPanel tab
+// TODO: known bug: when you delete a panel, it switches from CtrlPanel tab
 // different logic required when tab numbers are the same!
-  iT3Panel* idvf;
+  iT3Panel* ipanl;
   if(tab_idx == last_idx) {
-    idvf = iViewFrame(tab_idx);
-    idvf->Showing(true);
+    ipanl = iViewPanel(tab_idx);
+    ipanl->Showing(true);
   }
   else {
-    idvf = iViewFrame(tab_idx);
-    if (idvf) { // should exist
-      idvf->Showing(true);
-      idvf = iViewFrame(last_idx);
-      if (idvf) {
-        idvf->Showing(false);
+    ipanl = iViewPanel(tab_idx);
+    if (ipanl) { // should exist
+      ipanl->Showing(true);
+      ipanl = iViewPanel(last_idx);
+      if (ipanl) {
+        ipanl->Showing(false);
       }
     }
   }
   last_idx = tab_idx;
 }
 
-iT3Panel* iT3PanelViewer::iViewFrame(int idx) const {
+iT3Panel* iT3PanelViewer::iViewPanel(int idx) const {
   iT3Panel* rval = NULL;
   if ((idx >= 0) && (idx < tw->count())) {
     rval = qobject_cast<iT3Panel*>(tw->widget(idx));
@@ -168,19 +170,19 @@ iT3Panel* iT3PanelViewer::iViewFrame(int idx) const {
   return rval;
 }
 
-T3Panel* iT3PanelViewer::viewFrame(int idx) const {
-  iT3Panel* idvf = iViewFrame(idx);
-  if (idvf) return idvf->viewer();
+T3Panel* iT3PanelViewer::viewPanel(int idx) const {
+  iT3Panel* ipanl = iViewPanel(idx);
+  if (ipanl) return ipanl->viewer();
   else return NULL;
 }
 
 
 void iT3PanelViewer::Refresh_impl() {
   for (int i = 0; i < viewer()->panels.size; ++i) {
-    T3Panel* dvf = viewer()->panels.FastEl(i);
-    iT3Panel* idvf = dvf->widget();
-    if (!idvf) continue;
-    idvf->Refresh();
+    T3Panel* panl = viewer()->panels.FastEl(i);
+    iT3Panel* ipanl = panl->widget();
+    if (!ipanl) continue;
+    ipanl->Refresh();
   }
   UpdateTabNames();
   inherited::Refresh_impl(); // prob nothing
@@ -188,13 +190,13 @@ void iT3PanelViewer::Refresh_impl() {
 
 void iT3PanelViewer::UpdateTabNames() {
   for (int i = 0; i < viewer()->panels.size; ++i) {
-    T3Panel* dvf = viewer()->panels.FastEl(i);
-    iT3Panel* idvf = dvf->widget();
-    if (!idvf) continue;
-    int idx = tw->indexOf(idvf);
+    T3Panel* panl = viewer()->panels.FastEl(i);
+    iT3Panel* ipanl = panl->widget();
+    if (!ipanl) continue;
+    int idx = tw->indexOf(ipanl);
     if (idx >= 0) {
-      tw->setTabText(idx, dvf->GetName());
-      tw->setTabToolTip(idx, dvf->GetName());
+      tw->setTabText(idx, panl->GetName());
+      tw->setTabToolTip(idx, panl->GetName());
     }
   }
 }

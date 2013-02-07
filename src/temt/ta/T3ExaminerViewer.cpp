@@ -63,6 +63,8 @@
 
 const int T3ExaminerViewer::n_views = 6;
 
+bool T3ExaminerViewer::so_scrollbar_is_dragging = false;
+
 static void t3ev_config_wheel(iThumbWheel* whl) {
   whl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   whl->setWrapsAround(true);
@@ -218,12 +220,12 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 
 }
 
-T3Panel* T3ExaminerViewer::GetFrame() {
+T3Panel* T3ExaminerViewer::GetPanel() {
   if(!t3vw) return NULL;
-  iT3Panel* idvf = t3vw->i_data_frame();
-  if(!idvf) return NULL;
-  T3Panel* dvf = idvf->viewer();
-  return dvf;
+  iT3Panel* ipanl = t3vw->i_data_frame();
+  if(!ipanl) return NULL;
+  T3Panel* panl = ipanl->viewer();
+  return panl;
 }
 
 void T3ExaminerViewer::Constr_RHS_Buttons() {
@@ -485,15 +487,15 @@ void T3ExaminerViewer::seekbuttonClicked() {
 }
 
 void T3ExaminerViewer::snapshotbuttonClicked() {
-  T3Panel* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->CallFun("SaveImageAs");
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  panl->CallFun("SaveImageAs");
 }
 
 void T3ExaminerViewer::printbuttonClicked() {
-  T3Panel* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->PrintImage();
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  panl->PrintImage();
 }
 
 void T3ExaminerViewer::gotoviewbuttonClicked(int view_no) {
@@ -761,9 +763,9 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
 //     taMisc::Info("set interact to:", String(onoff));
 // #endif
     if(re_render) {
-      T3Panel* dvf = GetFrame();
-      if(dvf) {
-        dvf->Render();
+      T3Panel* panl = GetPanel();
+      if(panl) {
+        panl->Render();
       }
     }
   }
@@ -835,8 +837,6 @@ void T3ExaminerViewer::printImage() {
     p.drawImage(0, 0, img);
   }
 }
-
-bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
   static bool inside_event_loop = false;

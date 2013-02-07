@@ -38,8 +38,8 @@ public:
   iTabWidget*           tw;
 
   inline T3PanelViewer*  viewer() {return (T3PanelViewer*)m_viewer;}
-  iT3Panel*     iViewFrame(int idx) const; // the frame in indicated tab
-  T3Panel*      viewFrame(int idx) const; // view of frame in indicate tab -- NOT necessarily same as view idx if all frames not viewed in frames
+  iT3Panel*     iViewPanel(int idx) const; // the panel in indicated tab
+  T3Panel*      viewPanel(int idx) const; // view of panel in indicate tab -- NOT necessarily same as view idx if all panels not viewed in panels
 
   iTabBarBase*          tabBar() { if(!tw) return NULL; return tw->GetTabBar(); }
   int                   TabIndexByName(const String& nm) const;
@@ -55,9 +55,9 @@ public:
   ~iT3PanelViewer(); //
 
 public slots:
-  void                  AddFrame();
-  void                  DeleteFrame(int tab_idx);
-  void                  FrameProperties(int tab_idx);
+  void                  AddPanel();
+  void                  DeletePanel(int tab_idx);
+  void                  PanelProperties(int tab_idx);
   void                  FocusFirstTab(); // hack to get first tab focussed on load
 
 protected: // IViewerWidget i/f

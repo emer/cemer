@@ -46,13 +46,13 @@ void T3QuarterWidget::paintEvent(QPaintEvent * event) {
   T3ExaminerViewer* t3v = (T3ExaminerViewer*)parent();
   if(!t3v) return;
   iT3ViewspaceWidget* vsw = t3v->t3vw;
-  T3Panel* vf = t3v->GetFrame();
-  if(!vsw || !vf) return;
+  T3Panel* panl = t3v->GetPanel();
+  if(!vsw || !panl) return;
 
-  iT3PanelViewer* idv = vf->widget()->viewerWidget();
-  if(!idv) return;
-  T3PanelViewer* dv = idv->viewer();
-  if(!dv || !dv->isMapped()) return;
+  iT3PanelViewer* ipv = panl->widget()->viewerWidget();
+  if(!ipv) return;
+  T3PanelViewer* pv = ipv->viewer();
+  if(!pv || !pv->isMapped()) return;
 
   inherited::paintEvent(event);
 }

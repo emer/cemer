@@ -28,7 +28,6 @@
 
 
 #include <QGLWidget>
-#include <QScrollBar>
 
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
@@ -65,25 +64,19 @@ iT3ViewspaceWidget::iT3ViewspaceWidget(QWidget* parent)
 }
 
 iT3ViewspaceWidget::~iT3ViewspaceWidget() {
-//  setViewspace(NULL);
   sel_so = NULL;
   m_scene = NULL;
   m_root_so = NULL; // unref's/deletes
   setT3viewer(NULL);
-  m_horScrollBar = NULL;
-  m_verScrollBar = NULL;
   m_i_data_frame = NULL;
 }
 
 void iT3ViewspaceWidget::init() {
   m_t3viewer = NULL;
-  m_horScrollBar = NULL;
-  m_verScrollBar = NULL;
   m_root_so = new SoSeparator(); // refs
   m_selMode = SM_NONE;
   m_scene = NULL;
   m_last_vis = 0;
-//TEST
   setMinimumSize(320, 320);
 }
 
@@ -94,38 +87,10 @@ void iT3ViewspaceWidget::deleteScene() {
   }
 }
 
-QScrollBar* iT3ViewspaceWidget::horScrollBar(bool auto_create) {
-  if (auto_create && !(m_horScrollBar))
-    setHasHorScrollBar(true);
-  return m_horScrollBar;
-}
-
-void iT3ViewspaceWidget::LayoutComponents() {
-return;//TEMP
-  QSize sz = size(); // already valid
-  int ra_wd = (m_verScrollBar) ? sz.width() - m_verScrollBar->width() : sz.width();
-  int ra_ht = (m_horScrollBar) ? sz.height() - m_horScrollBar->height() : sz.height();
-  if (m_t3viewer) {
-    //NOTE: presumably has 0,0 origin, and could change by changing baseWidget()
-    // todo: do this in SoEentManager guy
-    m_t3viewer->setMinimumSize(ra_wd, ra_ht);
-  }
-  if (m_horScrollBar) {
-    m_horScrollBar->setGeometry(0, ra_ht, ra_wd, m_horScrollBar->height());
-  }
-  if (m_verScrollBar) {
-    m_verScrollBar->setGeometry(ra_wd, 0, m_verScrollBar->width(), ra_ht);
-  }
-}
-
 void iT3ViewspaceWidget::resizeEvent(QResizeEvent* ev) {
   inherited::resizeEvent(ev);
-//TEMP  LayoutComponents();
-//TEMP:
   QSize sz = size(); // already valid
   if (m_t3viewer) {
-    //NOTE: presumably has 0,0 origin, and could change by changing baseWidget()
-    // todo: do this in SoEentManager guy
     m_t3viewer->resize(sz);
   }
 }
@@ -191,37 +156,9 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     glDisable(GL_MULTISAMPLE);
   }
 
-#ifdef DEBUG
-  // as of 6/28/09 -- this stuff no longer seems to be the problem -- just crashes
-  // in low-level Qt gl code around direct rendering.
-  // todo: try fmt->setDirectRendering(false) to test for remote viewing
-
-  // apparently the key problem e.g., with remote X into mac X server
-  // is this code, GL_TEXTURE_3D:
-  //     void
-  //       SoGLTexture3EnabledElement::updategl(void)
-  //     {
-  //       const cc_glglue * glw = sogl_glue_instance(this->state);
-
-  //       if (SoGLDriverDatabase::isSupported(glw, SO_GL_3D_TEXTURES)) {
-  //    if (this->data) glEnable(GL_TEXTURE_3D);
-  //    else glDisable(GL_TEXTURE_3D);
-  //       }
-  //     }
-
-  // but the glxinfo suggests that it should be supported, and doing it
-  // directly here does NOT cause a problem
-
-  // this extension is also used quite a bit, but apparently is not the problem:
-  //    CheckExtension("GL_EXT_texture_rectangle");
-
-  // this will tell you what version is running for debugging purposes:
-  //     String gl_vers = (int)QGLFormat::openGLVersionFlags();
-  //     taMisc::Error("GL version:", gl_vers);
-#endif
-
-  if (m_selMode == SM_NONE)
+  if (m_selMode == SM_NONE) {
     m_t3viewer->quarter->setSceneGraph(m_root_so);
+  }
   else {
     sel_so = new SoSelection();
     switch (m_selMode) {
@@ -243,34 +180,6 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     m_t3viewer->quarter->setTransparencyType(QuarterWidget::BLEND);
     // make sure it has the transparency set for new guy
   }
-  LayoutComponents();
-  // m_t3viewer->quarter->setUpdatesEnabled(true);
-}
-
-void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
-return;//TEMP  if ((m_horScrollBar != NULL) == value) return;
-  if (m_horScrollBar) {
-    m_horScrollBar->deleteLater();
-    m_horScrollBar = NULL;
-  } else {
-    m_horScrollBar = new QScrollBar(Qt::Horizontal, this);
-    m_horScrollBar->show();
-    emit initScrollBar(m_horScrollBar);
-  }
-  LayoutComponents();
-}
-
-void iT3ViewspaceWidget::setHasVerScrollBar(bool value) {
-return;//TEMP  if ((m_verScrollBar != NULL) == value) return;
-  if (m_verScrollBar) {
-    m_verScrollBar->deleteLater();
-    m_verScrollBar = NULL;
-  } else {
-    m_verScrollBar = new QScrollBar(Qt::Vertical, this);
-    m_verScrollBar->show();
-    emit initScrollBar(m_verScrollBar);
-  }
-  LayoutComponents();
 }
 
 void iT3ViewspaceWidget::setSceneGraph(SoNode* sg) {
@@ -328,12 +237,6 @@ void iT3ViewspaceWidget::hideEvent(QHideEvent* ev) {
   inherited::hideEvent(ev);
 }
 
-QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
-  if (auto_create && !(m_verScrollBar))
-    setHasVerScrollBar(true);
-  return m_verScrollBar;
-}
-
 void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
   taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
 
@@ -344,10 +247,6 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
   }
   delete menu;
 }
-
-/*void iT3ViewspaceWidget::EditAction_Delete(ISelectable::GuiContext gc_typ) {
-  ISelectableHost::EditAction_Delete();
-}*/
 
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
@@ -372,7 +271,6 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   Emit_GotFocusSignal();
 }
 
-
 void iT3ViewspaceWidget::UpdateSelectedItems_impl() {
-  // note: prolly not needed
+  // note: not needed
 }

@@ -101,7 +101,6 @@ void iPanelOfProgramBase::OnWindowBind_impl(iPanelViewer* itv) {
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   pe->m_window = itv->viewerWindow();
   pe->items->main_window = pe->m_window;
-
   pe->items->installEventFilter(pe->m_window);
 
   // make sure the Program toolbar is created

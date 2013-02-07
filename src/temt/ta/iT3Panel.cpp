@@ -120,20 +120,9 @@ void iT3Panel::NodeDeleting(T3Node* node) {
   }
 }
 
-/*void iT3Panel::hideEvent(QHideEvent* ev) {
-  inherited::hideEvent(ev);
-  Showing(false);
-}*/
-
 void iT3Panel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   Refresh();
-/*// #ifdef TA_OS_MAC
-  // this was needed on Mac as of 4.0.19 Qt 4.4.1+ to prevent
-  // the occasional "white screen of death" that was occurring
-//   taiMiscCore::ProcessEvents();
-// #endif
-  Showing(true);*/
 }
 
 void iT3Panel::Showing(bool showing) {
