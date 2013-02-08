@@ -199,12 +199,12 @@ String MTA::lexCanonical(const String& in) {
   //NOTE: this routine will probably fail if server shares are used -- use mapped drive letters instead
   // ex. \\myserver\myshare\myfile.xx --> map \\myserver\myshare to Z: -> Z:\myfile
   // first, remove any double backslashes
-  String rval = unescapeBackslash(in);
+  String rval = in; rval.gsub("\\\\", "\\");
   // then, convert all forward slashes to Windows backslashes
   //  (this is the safest common-denominator)
   rval.gsub("/", "\\");
   // remove any double backslashes AGAIN -- this happens with gcc/maketa/mingw funky: dir\\/file
-  rval = unescapeBackslash(rval);
+  rval.gsub("\\\\", "\\");
   // note: we assume that pathing is case-exact (even though win filenames are case-insensitive)
   // but we do convert drive letter to upper case
   String drv = rval.before(":");

@@ -52,6 +52,10 @@ class UserDataItem_List; //
   #undef SC_DEFAULT
 #endif
 
+#ifdef VOID
+#undef VOID
+#endif
+
 TypeDef_Of(TypeDef);
 
 class TA_API TypeDef : public TypeItem {

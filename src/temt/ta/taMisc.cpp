@@ -56,9 +56,13 @@ TypeDef_Of(EnumDef);
 #include <QList>
 #endif
 
+#include <ctime>
+#include <csignal>
+
 #ifdef TA_OS_WIN
 #include "windows.h"
 #include <errno.h>
+
 #ifndef NO_TA_BASE
 # include "shlobj.h"
 #endif
@@ -67,7 +71,7 @@ TypeDef_Of(EnumDef);
 
 #include <unistd.h>
 #include <time.h>
-#include <csignal>
+
 
 #ifdef TA_OS_MAC
 # include <sys/types.h>
@@ -2128,7 +2132,7 @@ String taMisc::GetTemporaryPath() {
   static char tmpbuf[1024];
 #ifdef TA_OS_WIN
   String rval;
-  DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
+  DWORD retVal = GetTempPath(1024, tmpbuf);
   if (retVal != 0)
     rval = String(tmpbuf);
   return rval;

@@ -220,7 +220,12 @@ typedef unsigned char   byte;
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
 # ifdef _MSC_VER
+#pragma warning(disable: 4800 4522) // disable super annoying bool conversion warning
+  typedef signed char			int8_t;
   typedef unsigned char         uint8_t;
+  typedef short					int16_t;
+  typedef unsigned short		uint16_t;
+  typedef int					int32_t;
   typedef unsigned int          uint;
   typedef unsigned int          uint32_t;
   typedef long long             int64_t;
