@@ -35,7 +35,7 @@ public:
   override const iColor GetEditColorInherit(taiSigLink* dl, bool& ok) const;// #IGNORE background color for edit
   override iPanelBase*  CreateDataPanel(taiSigLink* dl_);
   override taiSigLink* GetSigLink(void* data_, TypeDef* el_typ);
-  void                  Initialize() {}
+  void                  Initialize() { edit_panel = NULL; }
   void                  Destroy() {}
 protected:
   virtual taiSigLink*  CreateSigLink_impl(taBase* data_);

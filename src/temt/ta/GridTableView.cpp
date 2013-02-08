@@ -425,6 +425,7 @@ void GridTableView::CalcViewMetrics() {
   row_height_raw = 1.0f;
   for(int col = col_range.min; col<=col_range.max; ++col) {
     GridColView* cvs = (GridColView*)colVis(col);
+    if(!cvs) continue;
     if(cvs->dataCol()->is_matrix)
       has_mat = true;
     col_widths_raw.Add(cvs->col_width);

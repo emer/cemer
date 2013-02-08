@@ -87,6 +87,7 @@ public:
     inline void init()
     {
         Q_Q(iThumbWheel);
+        mustGenerateBackground = false;
         wrapsAround = false;
         limitedDrag = true;
         q->setAttribute(Qt::WA_NoBackground, true);

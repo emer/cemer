@@ -42,13 +42,11 @@ taiEditorOfProgramCtrl::taiEditorOfProgramCtrl(Program* prog, bool read_only_,
   //  use_show = false;
   refs.setOwner(this); // these update frequently
   refs_struct.setOwner(this); // these are same for prog lifetime
-  if (prog) { // better have a value!
-    refs_struct.Add(prog);
-    // note: we deftly solve the problem of reacting to new vars/args
-    // by simply putting those lists on our ref list, which notifies us
-    refs_struct.Add(&(prog->args));
-    refs_struct.Add(&(prog->vars));
-  }
+  refs_struct.Add(prog);
+  // note: we deftly solve the problem of reacting to new vars/args
+  // by simply putting those lists on our ref list, which notifies us
+  refs_struct.Add(&(prog->args));
+  refs_struct.Add(&(prog->vars));
   Program_Group* pg = GET_OWNER(prog, Program_Group);
   if (pg) { // better exist!
     refs_struct.Add(pg);
@@ -133,9 +131,7 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
       lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl, ms->desc.chars());
       } break;
-    default: continue; // shouldn't happen!
     }
-
 
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);

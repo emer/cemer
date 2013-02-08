@@ -27,7 +27,7 @@
 taiWidgetEditButton* taiWidgetEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
   IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_)
 {
-  if (typ_ && (!typ_->IsActualTaBase() || typ_->HasOption("EDIT_ONLY")))
+  if (!typ_->IsActualTaBase() || typ_->HasOption("EDIT_ONLY"))
     flags_ |= flgEditOnly;
   taiWidgetEditButton* rval = new taiWidgetEditButton(base, taie, typ_,
     host_, par, gui_parent_, flags_);

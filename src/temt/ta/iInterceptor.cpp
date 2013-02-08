@@ -43,6 +43,10 @@ QObject(parent),
     m_stream(0),
     m_notifier(0)
 {
+  m_origFd = 0;
+  m_origFdCopy = 0;
+  m_pipeFd[0] = 0;
+  m_pipeFd[1] = 0;
 }
 
 iInterceptor::~iInterceptor()

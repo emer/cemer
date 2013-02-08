@@ -54,6 +54,7 @@ iNumberBar::iNumberBar( QWidget *parent, bool enable_icons)
   : QWidget( parent ), edit(0), currentLine(-1)
 {
   // Make room for 4 digits and the breakpoint icon
+  cur_lineno = 0;
   icons_enabled = enable_icons;
   text_width = fontMetrics().width( QString("0000"));
   text_height = fontMetrics().height();

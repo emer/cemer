@@ -120,6 +120,7 @@ void taiMiscCore::WaitProc() {
 taiMiscCore::taiMiscCore(QObject* parent)
 :inherited(parent)
 {
+  timer = NULL;
 }
 
 taiMiscCore::~taiMiscCore() {

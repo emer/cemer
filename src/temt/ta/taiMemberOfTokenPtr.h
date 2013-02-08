@@ -48,7 +48,7 @@ protected:
   override void GetImage_impl(taiWidget* dat, const void* base);
   override void GetMbrValue_impl(taiWidget* dat, void* base);
 private:
-  void          Initialize() {}
+  void          Initialize() { mode = MD_BASE; }
   void          Destroy() {}
 };
 

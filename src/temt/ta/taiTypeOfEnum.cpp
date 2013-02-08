@@ -23,6 +23,8 @@
 
 
 void taiTypeOfEnum::Initialize() {
+  isBit = false;
+  m_is_cond = false;
 }
 
 int taiTypeOfEnum::BidForType(TypeDef* td){
@@ -34,7 +36,7 @@ int taiTypeOfEnum::BidForType(TypeDef* td){
 taiWidget* taiTypeOfEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
   QWidget* gui_parent_, int flags_, MemberDef*)
 {
-  isBit = ((typ != NULL) && (typ->HasOption("BITS")));
+  isBit = typ->HasOption("BITS");
   m_is_cond = false;
   // determine if has any CONDxxx guys
   if (isBit) {

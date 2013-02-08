@@ -1042,8 +1042,8 @@ bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {
     nclrs = img1.dim(2);
   }
 
-  int xoff = img1.dim(0)*0.5f - img2.dim(0)*0.5f; // center of x dim, 0 if both are the same
-  int yoff = img1.dim(1)*0.5f - img2.dim(1)*0.5f; // center of x dim, 0 if both are the same
+  int xoff = (int)(img1.dim(0)*0.5f - img2.dim(0)*0.5f); // center of x dim, 0 if both are the same
+  int yoff = (int)(img1.dim(1)*0.5f - img2.dim(1)*0.5f); // center of x dim, 0 if both are the same
   
   for(int yi=0; yi< img2.dim(1); yi++) {
     for(int xi=0; xi< img2.dim(0); xi++) {

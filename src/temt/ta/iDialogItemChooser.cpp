@@ -355,6 +355,7 @@ void iDialogItemChooser::Refresh() {
         }
       }
     }
+    m_client->GetImage(tsel, NULL); // no targ type
   }
   --m_changing;
 }

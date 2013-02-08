@@ -35,7 +35,7 @@ public:
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
   USING(inherited::GetMenu)
-  void          GetMenu(iMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
+  void          GetMenu(iMenuAction* actn) {GetMenu(ta_actions, actn);}
   override void         GetMenu(taiWidgetActions* menu, iMenuAction* nact = NULL);
 };
 

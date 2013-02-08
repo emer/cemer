@@ -640,13 +640,13 @@ void TypeDef::MakeMainDerivedTypes() {
 void TypeDef::MakeMainDerivedTypes_impl(TypeSpace& make_spc) {
   TypeDef* ptr = GetPtrType_impl(make_spc);
   if(!ptr->IsPtrPtr()) {
-    TypeDef* ptr_ptr = ptr->GetPtrType_impl(make_spc);
+    ptr->GetPtrType_impl(make_spc);
   }
   TypeDef* ref = GetRefType_impl(make_spc);
-  TypeDef* ptr_ref = ptr->GetRefType_impl(make_spc);
-  TypeDef* cnst = GetConstType_impl(make_spc);
-  TypeDef* cnst_ref = ref->GetConstType_impl(make_spc);
-  TypeDef* cnst_ptr = ptr->GetConstType_impl(make_spc);
+  ptr->GetRefType_impl(make_spc);
+  GetConstType_impl(make_spc);
+  ref->GetConstType_impl(make_spc);
+  ptr->GetConstType_impl(make_spc);
 }
 
 

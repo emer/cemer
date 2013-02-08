@@ -42,6 +42,18 @@
 #include <QKeyEvent>
 
 
+taiEditorOfClass::taiEditorOfClass()
+  : cur_menu(NULL)
+  , cur_menu_but(NULL)
+  , menu(NULL)
+  , bgrp(NULL)
+  , panel(NULL)
+  , inline_mode(false)
+  , no_meth_menu(false)
+{
+
+}
+
 taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
         bool modal_, QObject* parent)
 :taiEditorWidgetsMain(typ_, read_only_, modal_, parent)
@@ -65,10 +77,8 @@ taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
       ms->text = "Hidden Items";
       ms->desc = "show member items that are rarely needed by most users";
       break;
-    default: continue; // shouldn't happen!
     }
   }
-
 
   inline_mode = false;
   no_meth_menu = false;

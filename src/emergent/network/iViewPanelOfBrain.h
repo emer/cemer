@@ -53,13 +53,8 @@ public:
   QVBoxLayout*          layTopCtrls;
   QVBoxLayout*          layViewParams;
   QHBoxLayout*          layDispCheck;
-  QCheckBox*            chkDisplay;
   QCheckBox*            chkLayMove;
   QCheckBox*            chkNetText;
-
-  QHBoxLayout*          layFontsEtc;
-  QLabel*               lblUnitTrans;
-  taiWidgetField*             fldUnitTrans;
 
   taiWidgetFieldRegexp*       fldBrainColorRegexp;
   taiWidgetFieldRegexp*       fldBrainAtlasRegexp;
@@ -67,7 +62,6 @@ public:
   QPushButton*          butEditAtlas;
 
   QVBoxLayout*          layDisplayValues;
-  QHBoxLayout*          layColorScaleCtrls;
   QCheckBox*            chkAutoScale;       // autoscale ck_box
   QPushButton*          butScaleDefault;    // revert to default
 
@@ -77,9 +71,6 @@ public:
 
   QTabWidget*           tw;
   QTreeWidget*          lvDisplayValues;
-
-  iMethodButtonMgr*     meth_but_mgr;
-  QWidget*              widCmdButtons;
 
   BrainView*            getBrainView();
 
@@ -95,8 +86,6 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const;
 
 protected:
-  int                   cmd_x; // current coords of where to place next button/ctrl
-  int                   cmd_y;
   bool                  req_full_render; // when updating, call Render on netview
   bool                  req_full_build;  // when updating, call Build on netview
   override void         UpdatePanel_impl();

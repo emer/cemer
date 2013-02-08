@@ -150,11 +150,7 @@ void iViewPanel::MakeButtons(QBoxLayout* lay, QWidget* par) {
   if (!lay) return; // bug
   if (!par) par = this;
 
-  QHBoxLayout* layButtons = NULL;
-  if (lay)
-    layButtons = new QHBoxLayout();
-  else
-    layButtons = new QHBoxLayout(par);
+  QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   btnCopyFrom = new iHiLightButton("&Copy From", par);

@@ -45,11 +45,11 @@ taiWidget* taiArgTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget
   if (GetHasOption("EDIT_OK"))
     token_flags |= taiWidget::flgEditOk;
   token_flags |= taiWidget::flgNoHelp; // help not avail on modal arg dialogs
-  taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_, token_flags);
+  taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_,
+                                                          token_flags);
   return rval;
 //   taiWidgetTokenPtrMenu* rval = new taiWidgetTokenPtrMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
 //      token_flags);
-  return rval;
 }
 
 void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){

@@ -102,26 +102,25 @@ void taiTreeNodeTypeSpace::CreateChildren_impl() {
 }
 
 bool taiTreeNodeTypeSpace::ShowItem(TypeItem* ti) const {
-return true;
-  // default doesn't show hidden items
-  if (ti->HasOption("HIDDEN") || ti->HasOption("NO_SHOW"))
-    return false;
+  // // default doesn't show hidden items
+  // if (ti->HasOption("HIDDEN") || ti->HasOption("NO_SHOW"))
+  //   return false;
   return true;
 }
 
 bool taiTreeNodeTypeSpace::ShowMember(MemberDef* md) const {
-return true;
+  return true;
 //  if (!ShowItem(md)) return false;
 //  return true;
-  return md->ShowMember(treeView()->show(), 
-    TypeItem::SC_ANY); // note: don't say "tree" because this is a meta context
+  // return md->ShowMember(treeView()->show(), 
+  //   TypeItem::SC_ANY); // note: don't say "tree" because this is a meta context
 }
 
 bool taiTreeNodeTypeSpace::ShowMethod(MethodDef* md) const {
-return true;
+  return true;
 //  if (!ShowItem(md)) return false;
 //  return true;
-  return md->ShowMethod(treeView()->show());
+  // return md->ShowMethod(treeView()->show());
 }
  
 bool taiTreeNodeTypeSpace::ShowType(TypeDef* td) const {

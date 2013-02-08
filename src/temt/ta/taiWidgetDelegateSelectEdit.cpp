@@ -40,6 +40,7 @@ taiWidgetDelegateSelectEdit::taiWidgetDelegateSelectEdit(SelectEdit* sele_,
 {
   sele = sele_;
   sedh = sedh_;
+  emi = NULL;
 }
 
 QWidget* taiWidgetDelegateSelectEdit::createEditor(QWidget* parent,

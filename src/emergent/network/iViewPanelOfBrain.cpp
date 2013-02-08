@@ -66,10 +66,8 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   // set a safe default if no BrainViewState yet...
   int max_slices(1);
   Network* net = NULL;
-  if (NULL != dv_) {
-    max_slices = dv_->MaxSlices();
-    net = dv_->net();
-  }
+  max_slices = dv_->MaxSlices();
+  net = dv_->net();
 
   int font_spec = taiMisc::fonMedium;
   req_full_render = true;
@@ -81,9 +79,8 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   if(vw)
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)));
 
-  QWidget* widg = new QWidget();
+  widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg);
-  //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(2);
   layTopCtrls->setMargin(2);
 
@@ -682,12 +679,11 @@ void iViewPanelOfBrain::GetVars()
   if (bv->membs.size == 0) return;
 
   MemberDef* md;
-  QTreeWidgetItem* lvi = NULL;
   for (int i = 0; i < bv->membs.size; i++) {
     md = bv->membs[i];
     QStringList itm;
     itm << md->name << md->desc;
-    lvi = new QTreeWidgetItem(lvDisplayValues, itm);
+    new QTreeWidgetItem(lvDisplayValues, itm);
   }
   lvDisplayValues->resizeColumnToContents(0);
 }

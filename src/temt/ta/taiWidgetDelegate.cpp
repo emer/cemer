@@ -46,36 +46,23 @@ QWidget* taiWidgetDelegate::createEditor(QWidget* parent,
     if (md->im == NULL) goto exit; // shouldn't happen
     // we create a wrap widget for many of these guys, mostly so that smaller
     // guys like Combo don't try to be stretched the whole way
-    bool wrap = true;           // NOTE: wrap is always true!!
-    QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
+    QWidget* rep_par = new QWidget(parent);
 
     dat = md->im->GetWidgetRep(edh, NULL, rep_par);
     m_dat_row = index.row();
     dat->SetBase(base);
     dat->SetMemberDef(md);
     rep = dat->GetRep(); // note: rep may get replaced by rep_par
-    // color stuff
-    // by default, the table color shines through widget, which is weird
-    // so we will shut that off if it isn't merely a container widget
-    String cn(rep->metaObject()->className());
-//TODO: FIGURE THIS OUT!!! wasn't any of these:
-    if (cn != "QWidget") {
-      //rep->setAutoFillBackground(false);
-      //rep->setAttribute(Qt::WA_NoSystemBackground);
-      //rep->setAttribute(Qt::WA_OpaquePaintEvent);
-    }
-    if (wrap) {
-      hbl = new QHBoxLayout(rep_par);
-      hbl->setMargin(0);
-      hbl->setSpacing(0);
-      hbl->addWidget(rep);
-      // some controls do better without stretch
-      if (!(dynamic_cast<taiWidgetField*>((taiWidget*)dat)))
-        hbl->addStretch();
-      rep = rep_par;
-    }
-    connect(rep, SIGNAL(destroyed(QObject*)),
-      dat, SLOT(deleteLater()) );
+    hbl = new QHBoxLayout(rep_par);
+    hbl->setMargin(0);
+    hbl->setSpacing(0);
+    hbl->addWidget(rep);
+    // some controls do better without stretch
+    if (!(dynamic_cast<taiWidgetField*>((taiWidget*)dat)))
+      hbl->addStretch();
+    rep = rep_par;
+
+    connect(rep, SIGNAL(destroyed(QObject*)), dat, SLOT(deleteLater()) );
 
     EditorCreated(parent, rep, option, index);
     return rep;

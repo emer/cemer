@@ -44,12 +44,8 @@ bool taSigLinkTypeItem::HasChildItems() {
   case TypeItem::TIK_PROPERTY: break;
   case TypeItem::TIK_METHOD: break;
   case TypeItem::TIK_TYPE: {
-    TypeDef* td = static_cast<TypeDef*>(data());
-    // if (td->internal && !td->IsTemplate()) {
-    //   break;
-    // }
     rval = true;
-    }
+  }
   default:break; // compiler food
   }
   return rval;

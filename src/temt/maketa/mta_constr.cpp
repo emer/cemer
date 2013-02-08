@@ -1370,16 +1370,7 @@ void MTA::TypeDef_Gen_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
 
   if(ths->parents.size == 0)
     return;
-
-  int cnt=0;
-  // see if there are any parents, and also check for too many for us to handle!
-  for (int i=0; i < ths->parents.size; i++) {
-    TypeDef* ptd = ths->parents.FastEl(i);
-    cnt++;
-  }
-  if (cnt == 0)
-    return;
-  if (cnt > PAR_ARG_COUNT) {
+  if (ths->parents.size > PAR_ARG_COUNT) {
     taMisc::Error("AddParents(): parents.size > ", String(PAR_ARG_COUNT),
       ", increase number of args to AddParents()", "type name:", ths->name);
     return;

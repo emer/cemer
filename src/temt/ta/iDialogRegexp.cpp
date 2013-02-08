@@ -54,6 +54,8 @@ iDialogRegexp::iDialogRegexp(taiWidgetFieldRegexp* regexp_field, const String& f
   , m_regexp_combos()
   , m_table_model(NULL)
   , m_table_view(NULL)
+  , m_num_parts(0)
+  , m_extra_cols(0)
   , btnAdd(0)
   , btnDel(0)
   , btnApply(0)

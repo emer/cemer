@@ -55,7 +55,7 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
     connect(vw, SIGNAL(unTrappedKeyPressEvent(QKeyEvent*)), this, SLOT(unTrappedKeyPressEvent(QKeyEvent*)) );
   }
 
-  QWidget* widg = new QWidget();
+  widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(2);
   layTopCtrls->setMargin(2);
@@ -91,14 +91,6 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
-
-  // lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
-  // lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
-  // layDispCheck->addWidget(lblTextRot);
-  // fldTextRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
-  // layDispCheck->addWidget(fldTextRot->GetRep());
-  // ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
-  // layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -545,20 +537,23 @@ void iViewPanelOfNetwork::GetValue_impl() {
   nv->net_text = chkNetText->isChecked();
   // nv->net_text_rot = (float)fldTextRot->GetValue();
 
-  int i;
-  cmbLayLayout->GetEnumValue(i);
-  nv->lay_layout = (NetView::LayerLayout)i;
+  int ll;
+  cmbLayLayout->GetEnumValue(ll);
+  nv->lay_layout = (NetView::LayerLayout)ll;
 
-  cmbUnitText->GetEnumValue(i);
-  nv->unit_text_disp = (NetView::UnitTextDisplay)i;
+  int utd;
+  cmbUnitText->GetEnumValue(utd);
+  nv->unit_text_disp = (NetView::UnitTextDisplay)utd;
 
   // unit disp mode is only guy requiring full build!
-  cmbDispMode->GetEnumValue(i);
-  req_full_build = req_full_build || (nv->unit_disp_mode != i);
-  nv->unit_disp_mode = (NetView::UnitDisplayMode)i;
+  int udm;
+  cmbDispMode->GetEnumValue(udm);
+  req_full_build = req_full_build || (nv->unit_disp_mode != udm);
+  nv->unit_disp_mode = (NetView::UnitDisplayMode)udm;
 
-  cmbPrjnDisp->GetEnumValue(i);
-  nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)i;
+  int pd;
+  cmbPrjnDisp->GetEnumValue(pd);
+  nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)pd;
 
   nv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
 
@@ -683,13 +678,12 @@ void iViewPanelOfNetwork::GetVars() {
   if (nv->membs.size == 0) return;
 
   MemberDef* md;
-  QTreeWidgetItem* lvi = NULL;
   for (int i=0; i < nv->membs.size; i++) {
     md = nv->membs[i];
     if (md->HasOption("NO_VIEW")) continue;
     QStringList itm;
     itm << md->name << md->desc;
-    lvi = new QTreeWidgetItem(lvDisplayValues, itm);
+    new QTreeWidgetItem(lvDisplayValues, itm);
   }
   lvDisplayValues->resizeColumnToContents(0);
 }

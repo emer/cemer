@@ -36,6 +36,7 @@ iMatrixTableModel::iMatrixTableModel(taMatrix* mat_)
   m_mat_col = NULL;
   m_pat_4d = false;
   m_dim_names = NULL;
+  m_view_layout = taMisc::TOP_ZERO;
 }
 
 iMatrixTableModel::~iMatrixTableModel() {

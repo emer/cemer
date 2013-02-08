@@ -61,8 +61,9 @@ String taSigLinkTypeSpace::ChildGetColText(taSigLink* child, const KeyString& ke
     TypeDef* el = static_cast<TypeDef*>(static_cast<taSigLinkTypeItem*>(child)->data());
     if (key == taBase::key_name) return el->GetPathName();
     else if (key == taBase::key_desc) return el->desc;
+    return inherited::ChildGetColText(child, key, itm_idx);
   }
-  return inherited::ChildGetColText(child, key, itm_idx);
+  return _nilString;
 }
 
 bool taSigLinkTypeSpace::ShowChild(TypeDef* td) const {

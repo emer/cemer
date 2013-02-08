@@ -107,7 +107,7 @@ int MTA::skipline() {
 }
 
 int MTA::skiplines(int n_lines) {
-  int c;
+  int c = '\0';
   for(int i=0; i<n_lines; i++) {
     c = skipline();
     if(c == EOF) break;

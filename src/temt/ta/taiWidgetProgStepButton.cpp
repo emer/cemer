@@ -39,6 +39,9 @@ taiWidgetProgStepButton::taiWidgetProgStepButton(void* bs, MethodDef* md, TypeDe
   step10_val = 10;
   n_step_progs = 0;
   last_step = NULL;             // reset when switching
+  stp1 = NULL;
+  stp5 = NULL;
+  stp10 = NULL;
 }
 
 void taiWidgetProgStepButton::CallFunList(void* itm) {

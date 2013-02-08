@@ -37,6 +37,14 @@ TypeDef_Of(taMatrix);
 taiWidgetVariantBase::taiWidgetVariantBase(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags)
   : taiWidgetComposite(typ_, host_, par, gui_parent_, flags)
 {
+  m_updating = 0;
+  cmbVarType = NULL;
+  stack = NULL;
+  togVal = NULL;
+  incVal = NULL;
+  fldVal = NULL;
+  tabVal = NULL;
+  tiVal = NULL;
   //note: call Constr in your own class' constructor
 }
 

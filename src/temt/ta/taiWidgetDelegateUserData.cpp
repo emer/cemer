@@ -44,23 +44,21 @@ QWidget* taiWidgetDelegateUserData::createEditor(QWidget* parent,
       if (md->im == NULL) goto exit; // shouldn't happen
       // we create a wrap widget for many of these guys, mostly so that smaller
       // guys like Combo don't try to be stretched the whole way
-      bool wrap = true;
-      QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
+      QWidget* rep_par = new QWidget(parent);
 
       dat = md->im->GetWidgetRep(edh, NULL, rep_par);
       dat->SetMemberDef(md);
       rep = dat->GetRep(); // note: rep may get replaced by rep_par
-      if (wrap) {
-        QHBoxLayout* hbl = new QHBoxLayout(rep_par);
-        hbl->setMargin(0);
-        hbl->setSpacing(0);
-        hbl->addWidget(rep);
-        // some controls do better without stretch
-        if (!(dynamic_cast<taiWidgetField*>((taiWidget*)dat)))
-          hbl->addStretch();
-        rep = rep_par;
-      }
-    } else { // an inline taBase -- always wrap so we can stretch for longer guys
+      QHBoxLayout* hbl = new QHBoxLayout(rep_par);
+      hbl->setMargin(0);
+      hbl->setSpacing(0);
+      hbl->addWidget(rep);
+      // some controls do better without stretch
+      if (!(dynamic_cast<taiWidgetField*>((taiWidget*)dat)))
+        hbl->addStretch();
+      rep = rep_par;
+    }
+    else { // an inline taBase -- always wrap so we can stretch for longer guys
       QWidget* rep_par = new QWidget(parent);
       QHBoxLayout* hbl = new QHBoxLayout(rep_par);
       hbl->setMargin(0);

@@ -102,18 +102,17 @@ void iT3PanelViewer::PanelProperties(int tab_idx) {
 }
 
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
-  iAction*
-  act = menu->AddItem("&Add Panel", iAction::action,
-    this, SLOT(AddPanel()),_nilVariant);
+   menu->AddItem("&Add Panel", iAction::action,
+                 this, SLOT(AddPanel()),_nilVariant);
 
   if (tab_idx >= 0) {
-    act = menu->AddItem("&Delete Panel", iAction::int_act,
-      this, SLOT(DeletePanel(int)), tab_idx);
+     menu->AddItem("&Delete Panel", iAction::int_act,
+                   this, SLOT(DeletePanel(int)), tab_idx);
 
     menu->AddSep();
     // should always be at bottom:
-    act = menu->AddItem("Panel &Properties...", iAction::int_act,
-      this, SLOT(PanelProperties(int)), tab_idx);
+    menu->AddItem("Panel &Properties...", iAction::int_act,
+                  this, SLOT(PanelProperties(int)), tab_idx);
 
   }
 }

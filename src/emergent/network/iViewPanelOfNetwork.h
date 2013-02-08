@@ -52,7 +52,6 @@ INHERITED(iViewPanel)
   Q_OBJECT
 public:
   QWidget*              widg;
-//  QVBoxLayout*                layWidg;
 
   QVBoxLayout*          layTopCtrls;
   QVBoxLayout*          layViewParams;
@@ -62,8 +61,6 @@ public:
   QCheckBox*                chkNetText;
   QLabel*                   lblLayLayout;
   taiWidgetComboBox*              cmbLayLayout;
-  QLabel*                   lblTextRot;
-  taiWidgetField*                 fldTextRot;
   QLabel*                   lblUnitText;
   taiWidgetComboBox*              cmbUnitText;
   QLabel*                   lblDispMode;
@@ -149,8 +146,6 @@ public: // ISigLinkClient interface
   override TypeDef*     GetTypeDef() const {return &TA_iViewPanelOfNetwork;}
 
 protected:
-  int                   cmd_x; // current coords of where to place next button/ctrl
-  int                   cmd_y;
   BaseSpec*             m_cur_spec; // cur spec chosen -- only compared, so ok if stale
   bool                  req_full_render; // when updating, call Render on netview
   bool                  req_full_build;  // when updating, call Build on netview

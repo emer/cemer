@@ -370,10 +370,12 @@ void iDialogSearch::setRoot(taiSigLink* root, bool update_gui) {
 }
 
 void iDialogSearch::setSearchStr(const String& srch_str) {
-  stop();
-  search->setText(srch_str);
-  if(srch_str.nonempty())
-    Search();
+  stop_clicked();
+  if(stop()) {
+    search->setText(srch_str);
+    if(srch_str.nonempty())
+      Search();
+  }
 }
 
 String iDialogSearch::searchStr() const {

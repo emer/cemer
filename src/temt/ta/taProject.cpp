@@ -249,11 +249,12 @@ void taProject::Dump_Load_post() {
 void taProject::DoView() {
   if (!taMisc::gui_active || taMisc::is_undo_loading) return;
   MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
+  if(!vwr) return;
   // allow to process new window before asserting default items
   // debug mode still doesn't work here tho.. 
   taMisc::ProcessEvents();
   // note: we want a doc to be the default item, if possible
-  if(vwr && vwr->widget()) {
+  if(vwr->widget()) {
     vwr->widget()->GetMainTreeView()->ExpandDefault();
   }
   docs.AutoEdit();

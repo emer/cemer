@@ -80,7 +80,7 @@ bool iAction::isGrouped() {
 
 void iAction::connect(CallbackType ct_, const QObject *receiver, const char* member) {
   // connect callback to given
-  if ((ct_ == none) || (receiver == NULL) || (member == NULL)) return;
+  if ((receiver == NULL) || (member == NULL)) return;
 
   switch (ct_) {
   case none:

@@ -94,7 +94,7 @@ public:
 
   taiEditorOfClass(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);
-  taiEditorOfClass()             { };
+  taiEditorOfClass();
   ~taiEditorOfClass();
 
 

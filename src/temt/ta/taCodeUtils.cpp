@@ -415,19 +415,19 @@ void taCodeUtils::CreateAllNewSrcFiles() {
   int i=0;
   while(i < taMisc::types.size) {
     TypeDef* typ = taMisc::types.FastEl(i);
-    bool dbg = false;
+    // bool dbg = false;
     if(!typ->IsActualClass()) {
-      if(dbg) taMisc::Info("fail class, anchor");
+      // if(dbg) taMisc::Info("fail class, anchor");
       i++;
       continue;
     }
     if(!typ->source_file.contains("emergent/leabra")) {
-      if(dbg) taMisc::Info("fail src file");
+      // if(dbg) taMisc::Info("fail src file");
       i++;
       continue;
     }
     if(typ->HasOption("INLINE")) {
-      if(dbg) taMisc::Info("fail inline");
+      // if(dbg) taMisc::Info("fail inline");
       i++;
       continue;
     }

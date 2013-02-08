@@ -32,7 +32,24 @@ iDialogObjDiffFilter* iDialogObjDiffFilter::New(int font_type,
 }
 
 iDialogObjDiffFilter::iDialogObjDiffFilter(QWidget* par_window_)
-:inherited(par_window_)
+  :inherited(par_window_)
+  , action_on(true)
+  , add(true)
+  , del(true)
+  , chg(true)
+  , nm_not(false)
+  , val_not(false)
+  , layOuter(NULL)
+  , chkActionOn(NULL)
+  , chkAdd(NULL)
+  , chkDel(NULL)
+  , chkChg(NULL)
+  , chkNmNot(NULL)
+  , editNm(NULL)
+  , chkValNot(NULL)
+  , editVal(NULL)
+  , btnOk(NULL)
+  , btnCancel(NULL)
 {
   setModal(true);
   setWindowTitle("Set Diff Actions Filter Dialog");

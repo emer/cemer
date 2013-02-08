@@ -106,7 +106,7 @@ void iPanelOfList::FillList() {
     taiSigLink* child = link()->GetListChild(i);
     if (!child) break;
     taiListNode* dn = new taiListNode(i, this, child, list,
-      last_child, (iTreeViewItem::DNF_CAN_DRAG));
+                                      last_child, (iTreeViewItem::DNF_CAN_DRAG));
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
     ++i;
@@ -118,19 +118,17 @@ void iPanelOfList::RenumberList() {
   // mark all the items first, because this is the easiest, safest way/place
   // to remove items that are stale, ex. moved from our list to another list
   for (int j = 0; j < list->itemCount(); ++j) {
-    taiListNode* dn = dynamic_cast<taiListNode*>(
-      list->item(j));
-    dn->num = -1;
+    taiListNode* dn = dynamic_cast<taiListNode*>(list->item(j));
+    if(dn)
+      dn->num = -1;
   }
 
   // we have to iterate in proper link order, then find child, since items maybe
   // be sorted by some other column now
   for (taiSigLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
-    if (!child) break;
     // find the item for the link
     for (int j = 0; j < list->itemCount(); ++j) {
-      taiListNode* dn = dynamic_cast<taiListNode*>(
-        list->item(j));
+      taiListNode* dn = dynamic_cast<taiListNode*>(list->item(j));
       if (dn && (dn->link() == child)) {
         dn->num = i;
         dn->DecorateDataNode(); // fills in remaining columns
@@ -142,8 +140,7 @@ void iPanelOfList::RenumberList() {
   // now delete stales -- note: an item that is deleting would have deleted
   // its node, but doing so now is harmless
   for (int j = list->itemCount() - 1; j >=0; --j) {
-    taiListNode* dn = dynamic_cast<taiListNode*>(
-      list->item(j));
+    taiListNode* dn = dynamic_cast<taiListNode*>(list->item(j));
     if (dn && (dn->num == -1)) delete dn;
   }
 }

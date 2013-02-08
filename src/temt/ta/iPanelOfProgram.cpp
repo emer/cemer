@@ -80,13 +80,7 @@ void iPanelOfProgram::OnWindowBind_impl(iPanelViewer* itv) {
   inherited::OnWindowBind_impl(itv);
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
-  ProgramToolBar* ptb =
-  (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
-    "Program");
-/*TODO: re-enable once the program toolbar is defined
-  if (!ptb)
-    ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
-    "Program");*/
+  mvw->FindToolBarByType(&TA_ProgramToolBar,"Program");
 }
 
 

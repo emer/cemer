@@ -83,6 +83,7 @@ void taiEditorWidgetsMain::InitGuiFields(bool virt) {
   splBody = NULL;
   scrBody = NULL;
   layBody = NULL;
+  body_vlay = NULL;
   first_tab_foc = NULL;
 }
 
