@@ -1416,7 +1416,7 @@ bool taRootBase::Startup_InitGui() {
   else
 #endif // TA_GUI
   {
-    taiMC_ = taiMiscCore::New();
+    taiMC_ = taiMiscCore::New(); // this calls taiTypeBase::InitializeTypes
   }
   milestone |= SM_APP_OBJ;
   return true;

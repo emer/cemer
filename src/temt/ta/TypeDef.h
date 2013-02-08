@@ -100,6 +100,12 @@ public:
 #endif
   };
 
+  enum InitFlags {               // #BITS stages of initialization 
+    IF_NONE = 0x0000,            // #NO_BIT nothing initialized
+    IF_PARENT_DATA_ADDED = 0x0001, // AddParentData() has been called -- all parent data now incorporated into this typedef
+    IF_MEMBER_BASE_OFFS = 0x0002,  // ComputeMembBaseOff() has been called -- member base offsets updated to include parent multiple-inheritance offsets
+    IF_
+
   enum StrContext { // context for getting or setting a string value
     SC_DEFAULT,         // default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
     SC_STREAMING,       // value is being used for streaming, ex. strings are quoted/escaped

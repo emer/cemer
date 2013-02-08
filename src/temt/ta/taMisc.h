@@ -639,6 +639,8 @@ public:
   // #IGNORE initialize taMisc startup argument information (note: arg_names must be initialized prior to this!)
   static void   Init_Types();
   // #IGNORE orchestrates the loading of type info (for both first startup and plugin loading) -- calls initClass methods on So Coin3d classes (and possibly other type post-init info)
+  static void   Init_Types_Gui(bool gui);
+  // #IGNORE does the taiType* bidding and allocating process to assign gui representations to types, members, methods, args, editors, and viewers for each different type
   static void   Init_DMem(int& argc, const char* argv[]);
   // #IGNORE initialize distributed memory stuff
 

@@ -31,8 +31,6 @@ TypeDef_Of(taiTypeBase);
 class TA_API taiTypeBase: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
-  static void InitializeTypes(bool gui);  // called at startup to initialize the type system
-
   taiTypeBase(TypeDef* typ_);
   taiTypeBase();
   virtual ~taiTypeBase();

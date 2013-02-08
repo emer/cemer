@@ -66,3 +66,4 @@ void taiTypeBase::InsertThisIntoBidList_impl(taiTypeBase *&pHead) {
   taRefN::Ref(this);
   *ppCurr = this;
 }
+
