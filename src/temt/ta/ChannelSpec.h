@@ -37,11 +37,10 @@ public:
   //String              disp_opts;      // viewer display options
 
   virtual bool          isMatrix() const {return false;}
-  virtual const MatrixGeom& cellGeom() const;
+  virtual const MatrixGeom& cellGeom() const; // #IGNORE
   virtual bool          usesCellNames() const {return false;}
-  virtual const String_Matrix& cellNames() const;//
+  virtual const String_Matrix& cellNames() const; // #IGNORE
 
-//obs  String GetColText(int col, int);
   TA_BASEFUNS(ChannelSpec);
 private:
   void  Copy_(const ChannelSpec& cp);

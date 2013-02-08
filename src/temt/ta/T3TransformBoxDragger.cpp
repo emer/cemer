@@ -80,7 +80,7 @@ T3TransformBoxDragger::T3TransformBoxDragger(float half_size, float cube_size, f
 //     new T3Translate2Translator(false, half_size, .5 * line_width, line_width,
 // 			       line_width * 2.0f);
   T3Translate2Translator* act_trans = 
-    new T3Translate2Translator(true, 4.0 * half_size, .2 * line_width, .5 * line_width,
+    new T3Translate2Translator(true, 4.0f * half_size, .2f * line_width, .5f * line_width,
 			       line_width);
 
   // super-size me so stuff is actually grabable!

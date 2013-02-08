@@ -56,6 +56,10 @@ class UserDataItem_List; //
 #undef VOID
 #endif
 
+#ifdef CONST
+#undef CONST
+#endif
+
 TypeDef_Of(TypeDef);
 
 class TA_API TypeDef : public TypeItem {

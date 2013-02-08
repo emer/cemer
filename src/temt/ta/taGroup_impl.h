@@ -29,6 +29,10 @@ class SelectEdit; //
 class taBase; // 
 class TypeDef; // 
 
+#ifdef SC_DEFAULT
+#undef SC_DEFAULT
+#endif
+
 TypeDef_Of(taGroup_impl);
 
 class TA_API taGroup_impl : public taList_impl {

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taAudioProc.h"
-
+#include <taMisc>
 
 void taAudioProc::Initialize() {
 }

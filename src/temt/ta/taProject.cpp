@@ -23,6 +23,8 @@
 #include <iDialogPublishDocs>
 #include <taiEditorOfString>
 
+#include <ctime>
+
 TypeDef_Of(taDataProc);
 TypeDef_Of(taDataAnal);
 TypeDef_Of(taDataGen);

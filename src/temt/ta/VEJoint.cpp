@@ -423,8 +423,12 @@ void VEJoint::Init_ODEParams() {
 }
 
 static inline float get_val_no_nan(float val) {
-  if (std::isnan(val)) return 0.0f;
-  return val;
+#ifdef TA_OS_WIN
+	if(isnan(val)) return 0.0f;
+#else
+	if (std::isnan(val)) return 0.0f;
+#endif
+	return val;
 }
 
 void VEJoint::CurFromODE(bool updt_disp) {

@@ -32,6 +32,11 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 
+// from: http://doc.trolltech.com/4.3/opengl-samplebuffers-glwidget-cpp.html
+#ifndef GL_MULTISAMPLE
+# define GL_MULTISAMPLE  0x809D
+#endif
+
 
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(true, path);

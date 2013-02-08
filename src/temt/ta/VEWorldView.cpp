@@ -576,6 +576,12 @@ bool VETexture::UpdateTexture() {
   return rval;
 }
 
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
 
 void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);

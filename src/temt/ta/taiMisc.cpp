@@ -754,7 +754,7 @@ void taiMisc::RemoveLoadDialog(){
 void taiMisc::Cleanup(int) {
 #ifndef __GNUG__
   String cmd = "/bin/rm ";
-  cmd += taPlatform::getTempPath() + "/tai_gf." + String((int)taPlatform::processId()) + ".* >/dev/null 2>&1";
+  cmd += taMisc::GetTemporaryPath() + "/tai_gf." + String((int)taMisc::ProcessId()) + ".* >/dev/null 2>&1";
   system(cmd);                  // get rid of any remaining temp files
 #endif
 }

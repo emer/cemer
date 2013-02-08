@@ -18,6 +18,7 @@
 #include "css_console.h"
 #ifdef TA_OS_WIN
 
+#include "css_machine.h"
 #include <windows.h>
 
 #include <iostream>

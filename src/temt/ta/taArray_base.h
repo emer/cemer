@@ -26,6 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef SC_DEFAULT
+#undef SC_DEFAULT
+#endif
 
 TypeDef_Of(taArray_base);
 
