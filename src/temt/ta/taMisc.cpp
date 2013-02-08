@@ -35,6 +35,14 @@ TypeDef_Of(EnumDef);
 #include <taStringDiff>
 #include <iDialogChoice>
 
+#include <taiMisc>
+#include <taiType>
+#include <taiEdit>
+#include <taiMember>
+#include <taiMethod>
+#include <taiArgType>
+#include <taiViewType>
+
 #include "ta_type_constr.h"
 
 #include <ViewColor_List> 
@@ -1257,19 +1265,6 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
   UpdateArgs();
 }
 
-static void init_inventor_type(TypeDef* typ) {
-  // look for an initClass method
-  MethodDef* md = typ->methods.FindName("initClass");
-  if (!md)
-    md = typ->methods.FindName("InitClass");
-  if (!md) return;
-  if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) return;
-  // call the init function
-  md->addr();
-  md->addr = NULL;          // reset so it isn't run again!
-}
-
-
 void taMisc::Init_Types() {
   // does full loading of types -- first check for first run
   if(TypeDefInitRegistrar::instances_already_processed == 0) {
@@ -1300,14 +1295,15 @@ void taMisc::Init_Types() {
     for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);
       if(!typ->IsActualClassNoEff()) continue;
-      init_inventor_type(typ);
+      typ->CallInitClass();
     }
   }
+
   // add any Schema that couldn't be added earlier
   AddDeferredUserDataSchema();
   // other stuff could happen here..
 
-  // go through all types and create list of AKA typedefs
+  // go through all types and create list of AKA typedefs, and optimize stuff
   for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
     TypeDef* typ = types.FastEl(i);
     String aka = typ->OptionAfter("AKA_");
@@ -1315,7 +1311,13 @@ void taMisc::Init_Types() {
       // taMisc::Info("aka type: ", typ->name, "aka:", aka);
       aka_types.Link(typ);
     }
+
+    typ->members.BuildHashTable(typ->members.size);
+    typ->methods.BuildHashTable(typ->methods.size);
+    typ->CacheParents();
   }
+
+  Init_Types_Gui(taMisc::use_gui);
   
   TypeDefInitRegistrar::types_list_last_size = types.size;
   TypeDefInitRegistrar::instances_already_processed =
@@ -1334,12 +1336,6 @@ void taMisc::Init_Types_Gui(bool gui) {
 
   for (i=0; i < taMisc::types.size; ++i) {
     td = taMisc::types.FastEl(i);
-
-    // todo: move this to above
-    // make the hash tables to optimize css ops, path finding, etc
-    td->CacheParents();
-    td->members.BuildHashTable(td->members.size + td->members.size / 4);
-    td->methods.BuildHashTable(td->methods.size + td->methods.size / 4);
 
     // generate a list of all the qt types
     if (td->instance) {
@@ -1371,16 +1367,14 @@ void taMisc::Init_Types_Gui(bool gui) {
   }
 
   if (gui && (i_type_space.size == 0))
-    taMisc::Error("taiInit: warning: no taiType's found with instance != NULL");
+    taMisc::Error("taMisc::Init_Types_Gui: warning: no taiType's found with instance != NULL");
   if (gui && (i_memb_space.size == 0))
-    taMisc::Error("taiInit: warning: no taiMembers's found with instance != NULL");
+    taMisc::Error("taMisc::Init_Types_Gui: warning: no taiMembers's found with instance != NULL");
   if (gui && (i_edit_space.size == 0))
-    taMisc::Error("taiInit: warning: no taiEdit's found with instance != NULL");
+    taMisc::Error("taMisc::Init_Types_Gui: warning: no taiEdit's found with instance != NULL");
 
-  // go through all the types and assign the highest bid for
-  //   the it, iv, and ie
+  // go through all the types and assign the highest bid for the it, iv, and ie
   int bid;
-
   for (i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
     td = taMisc::types.FastEl(i);
     if (gui) {
@@ -1473,7 +1467,8 @@ void taMisc::Init_Types_Gui(bool gui) {
 
   // link in compatible members as properties of every type
   // "compatible" means that it isn't already a property, and is otherwise accessible
-  for (i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i){
+  for (i=TypeDefInitRegistrar::types_list_last_size; i < taMisc::types.size; ++i) {
+    td->SetInitFlag(TypeDef::IF_GUI_INIT);
     td = taMisc::types.FastEl(i);
     for (int j = 0; j < td->members.size; ++j) {
       MemberDef* md = td->members.FastEl(j);
@@ -1697,7 +1692,7 @@ String taMisc::FindArgValContains(const String& vl) {
   return args.FastEl(idx).value.toString();
 }
 
-#endif // NO_TA_BASE for al startup/args functions
+#endif // NO_TA_BASE for all startup/args functions
 
 /////////////////////////////////////////////////
 //      Commonly used utility functions on strings/arrays/values

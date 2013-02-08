@@ -15,17 +15,8 @@
 
 #include "taiViewTypeOfGroup.h"
 #include <taSigLinkGroup>
-#include <taiType>
-#include <taiEdit>
-#include <taiMember>
-#include <taiMethod>
 
-#include <taMisc>
-#include <taiMisc>
-
-TypeDef_Of(taGroup_impl);
-TypeDef_Of(taiArgType);
-
+#include <taGroup_impl>
 
 int taiViewTypeOfGroup::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taGroup_impl))

@@ -104,7 +104,10 @@ public:
     IF_NONE = 0x0000,            // #NO_BIT nothing initialized
     IF_PARENT_DATA_ADDED = 0x0001, // AddParentData() has been called -- all parent data now incorporated into this typedef
     IF_MEMBER_BASE_OFFS = 0x0002,  // ComputeMembBaseOff() has been called -- member base offsets updated to include parent multiple-inheritance offsets
-    IF_
+    IF_INIT_CLASS = 0x0004,        // initClass methods called on inventor types
+    IF_CACHE_HASH = 0x0008,        // CacheParents and hash tables constructed
+    IF_GUI_INIT = 0x0010,          // gui elements, it, ie, iv, etc bid and constructed
+  };
 
   enum StrContext { // context for getting or setting a string value
     SC_DEFAULT,         // default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
@@ -115,6 +118,7 @@ public:
 
 
   TypeType      type;           // type information about this type -- what do we have here?
+  InitFlags     init_flag;      // indicates various stages of initialization -- some are recursive so it is important to know if it has been done yet
   TypeSpace*    owner;          // the owner of this one
   uint          size;           // size (in bytes) of item
 #ifndef NO_TA_BASE
@@ -151,7 +155,6 @@ public:
   String	source_file;	// source file name where defined -- no path information, just file name
   int		source_start;	// starting source code line number
   int		source_end;	// ending source code line number
-  bool          inited;         // has this type been fully initialized yet?
 
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
   void*         dmem_type; // actually ptr to: MPI_Datatype_PArray
@@ -230,6 +233,16 @@ public:
 
   /////////////////////////////////////////////////////////////
   //            Constructors and misc industrial
+
+  inline void           SetInitFlag(InitFlags iflg)
+  { init_flag = (InitFlags)(init_flag | iflg); }
+  // set init_flag state on
+  inline void           ClearInitFlag(InitFlags iflg)
+  { init_flag = (InitFlags)(init_flag & ~iflg); }
+  // clear init_flag state (set off)
+  inline bool           HasInitFlag(InitFlags iflg) const
+  { return (init_flag & iflg); }
+  // check if init_flag is set
 
 #ifndef __MAKETA__
   override      TypeInfoKinds TypeInfoKind() const {return TIK_TYPE;}
@@ -404,6 +417,8 @@ public:
 
   void          ComputeMembBaseOff();
   // only for MI types, after adding parents, get new members & compute base_off
+  void          CallInitClass();
+  // call the initClass or InitClass static method on this type (making sure parents have also been initialized already) -- needed for Coin3d Inventor objects
   bool          IgnoreMeth(const String& nm) const;
   // check if given method should be ignored (also checks parents, etc)
 

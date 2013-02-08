@@ -51,11 +51,11 @@ using namespace std;
 
 void TypeDef::Initialize() {
   type = VOID;
+  init_flag = IF_NONE;
   owner = NULL;
   size = 0;
   source_start = -1;
   source_end = -1;
-  inited = false;
 
 #ifdef TA_GUI
   it = NULL;
@@ -876,7 +876,7 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
 void TypeDef::AddParentData() {
   for(int i=0; i< parents.size; i++) {
     TypeDef* par = parents[i];
-    if(!par->inited) {
+    if(!par->HasInitFlag(IF_PARENT_DATA_ADDED)) {
       par->AddParentData();
     }
 
@@ -887,7 +887,7 @@ void TypeDef::AddParentData() {
     properties.BorrowUniqNameOldFirst(par->properties);
     methods.BorrowUniqNameOldFirst(par->methods);
   }
-  inited = true;                // we are now good
+  SetInitFlag(IF_PARENT_DATA_ADDED);
 }
 
 void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
@@ -976,6 +976,7 @@ void TypeDef::CacheParents() {
     parents.FastEl(i)->CacheParents_impl(this);
   }
   par_cache.BuildHashTable(par_cache.size + 2, taHashTable::KT_PTR); // little extra, cache on pointer vals
+  SetInitFlag(IF_CACHE_HASH);
 }
 
 void TypeDef::CacheParents_impl(TypeDef* src_typ) {
@@ -986,8 +987,7 @@ void TypeDef::CacheParents_impl(TypeDef* src_typ) {
 }
 
 void TypeDef::ComputeMembBaseOff() {
-  int i;
-  for(i=0; i<members.size; i++) {
+  for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     TypeDef* mo = md->GetOwnerType();
 
@@ -1005,6 +1005,32 @@ void TypeDef::ComputeMembBaseOff() {
                      "in type of:", name);
     }
   }
+  SetInitFlag(IF_MEMBER_BASE_OFFS);
+}
+
+void TypeDef::CallInitClass() {
+  if(HasInitFlag(IF_INIT_CLASS)) return; // already done
+
+  for(int i=0; i< parents.size; i++) {
+    TypeDef* par = parents[i];
+    if(!par->HasInitFlag(IF_INIT_CLASS)) {
+      par->CallInitClass();
+    }
+  }
+  
+  SetInitFlag(IF_INIT_CLASS);   // we're doing it one way or another
+
+  MethodDef* md = methods.FindName("initClass");
+  if(!md)
+    md = methods.FindName("InitClass");
+  if(!md) {
+    return;
+  }
+  if(!(md->is_static && md->addr && (md->arg_types.size == 0) )) {
+    return;
+  }
+  // call the init function
+  md->addr();
 }
 
 bool TypeDef::IgnoreMeth(const String& nm) const {

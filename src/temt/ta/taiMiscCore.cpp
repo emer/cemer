@@ -194,9 +194,6 @@ void taiMiscCore::Init(bool gui) {
 
   connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
     this, SLOT(app_aboutToQuit()) );
-
-  // initialize the type system
-  taiTypeBase::InitializeTypes(gui);
 }
 
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
