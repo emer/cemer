@@ -1011,7 +1011,7 @@ void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
 
   if (n_non_statics > 0) {
     mbr_off_nm = String("TA_") + ownr->name + "_MbrOff";
-    strm << "static int " << ownr->Get_C_Name() << "::* " << mbr_off_nm << ";\n";
+    strm << "static char " << ownr->Get_C_Name() << "::* " << mbr_off_nm << ";\n";
   }
 
   strm << "\nstatic MemberDef_data TA_" << ownr->name << "_MemberDef[]={\n";
@@ -1034,7 +1034,7 @@ void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
     }
     else {
       strm << "  *((ta_memb_ptr*)&(" << mbr_off_nm
-            << "=(int " << ownr->Get_C_Name() << "::*)(&"
+            << "=(char " << ownr->Get_C_Name() << "::*)(&"
             << ownr->Get_C_Name() << "::" << md->name << ")))";
       strm << ",0,NULL";
     }
