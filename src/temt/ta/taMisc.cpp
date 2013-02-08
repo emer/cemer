@@ -2080,6 +2080,21 @@ String taMisc::GetDirFmPath(const String& path, int n_up) {
 #endif
 }
 
+String taMisc::PathToUnixSep(const String& path) {
+#ifdef TA_OS_WIN
+#ifdef NO_TA_BASE
+  String pth = UnescapeBackslash(path);
+  pth.gsub("\\", "/");
+#else
+  String pth = QDir::fromNativeSeparators(path);
+#endif
+  return pth;
+#else
+  return path;
+#endif
+}
+
+
 bool taMisc::IsQualifiedPath(const String& fname) {
   //NOTE: we just check the union of Unix and Win -- we aren't asked if it 
   // is valid for the platform, so ok to check all cases here

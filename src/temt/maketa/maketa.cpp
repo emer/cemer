@@ -124,7 +124,7 @@ void MTA::Class_UpdateLastPtrs() {
 }
 
 void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
-  td->source_file = cur_fname;
+  td->source_file = taMisc::PathToUnixSep(cur_fname);
   if(use_defn_st_line) {
     td->source_start = defn_st_line;
   }
@@ -202,7 +202,7 @@ void MTA::FixClassTypes(TypeDef* td) {
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
   String typstr = typ;
   if(typstr != "class" && typstr != "enum" && typstr != "template") {
-    td->source_file = cur_fname;
+    td->source_file = taMisc::PathToUnixSep(cur_fname);
     td->source_start = line-1;
     td->source_end = line-1;
   }

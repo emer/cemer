@@ -757,6 +757,8 @@ public:
   // #CAT_File get file name component from full path
   static String GetDirFmPath(const String& path, int n_up = 0);
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
+  static String PathToUnixSep(const String& path);
+  // #CAT_File convert path to unix-style / separators, which can be read on windows in any case, and don't cause escaping issues
   static bool	IsQualifiedPath(const String& fname);
   // #CAT_File true if the fname is already an absolute or qualified relative path
 
