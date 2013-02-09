@@ -202,6 +202,7 @@ public:
   // generate the type name as a string for string lookup in Data fields
   String TypeDef_Gen_TypeDef_Ptr(TypeDef* ths);
   // generate a string expression for a pointer to this typedef -- e.g., &TA_taBase
+  // deals with issues on on windows, etc
   String TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths);
   // generate a reference to this typedef -- helper impl
   String TypeDef_Gen_TypeDef_Ptr_Path(TypeDef* ths);

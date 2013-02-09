@@ -74,6 +74,10 @@ String MTA::TypeDef_Gen_TypeName(TypeDef* ths) {
 String MTA::TypeDef_Gen_TypeDef_Ptr(TypeDef* ths) {
   String rval = TypeDef_Gen_TypeDef_Ptr_impl(ths);
   if(!ths->IsSubType()) {
+#ifdef TA_OS_WIN
+    if(ths->source_file.empty())
+      return rval;
+#endif
     return String("&") + rval;
   }
   return rval;
@@ -90,12 +94,23 @@ String MTA::TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths) {
     return rval;
   }
   else {
-    return "TA_" + ths->name;
+#ifdef TA_OS_WIN
+    if(ths->source_file.empty()) {
+      return "TypeDef::FindGlobalTypeName(\"" + ths->name + "\")";
+    }
+    else
+#endif
+      return "TA_" + ths->name;
   }
 }
 
 String MTA::TypeDef_Gen_TypeDef_Ptr_Path(TypeDef* ths) {
   String rval = TypeDef_Gen_TypeDef_Ptr_impl(ths);
+#ifdef TA_OS_WIN
+  if(ths->source_file.empty()) {
+    return rval + "->";
+  }
+#endif
   if(ths->IsSubType()) {
     return rval + "->";
   }
@@ -336,12 +351,21 @@ void MTA::TypeSpace_Gen_TypeDefOf(TypeSpace* ths, ostream& strm) {
 }
 
 void MTA::TypeDef_Gen_TypeDefOf(TypeDef* ths, ostream& strm) {
-  if(ths->source_file.contains("src/temt"))
+  if(ths->source_file.contains("src/temt")) {
     strm << "taTypeDef_Of(" << ths->name << ");\n";
-  else if(ths->source_file.contains("src/emergent"))
+  }
+  else if(ths->source_file.contains("src/emergent")) {
     strm << "eTypeDef_Of(" << ths->name << ");\n";
-  else
+  }
+  else {
+#ifdef TA_OS_WIN
+    // windows can only refer to types it positively knows, due to ridiculous dllexport
+#else
+    // cerr << ths->name << " source: " << ths->source_file << " empty: "
+    //      << ths->source_file.empty() << endl;
     strm << "TypeDef_Of(" << ths->name << ");\n";
+#endif
+  }
 }
 
 void MTA::MethodSpace_Gen_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm,
@@ -482,7 +506,6 @@ String MTA::MethodDef_GetCSSType(TypeDef* td) {
   return String("");
 }
 
-
 void MTA::MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm,
                                bool add_typedefs) {
   int args_idx = j + stub_arg_off;
@@ -561,7 +584,7 @@ void MTA::MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& str
     }
     else {
       strm << "*(" << argt->Get_C_Name() << "*)arg[" << args_idx << "]"
-           << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
+           << "->GetVoidPtrOfType(" << TypeDef_Gen_TypeDef_Ptr(argt) << ")";
     }
   }
   else if((argt->IsPointer()) && (argt->DerivesFrom(TA_char))) {
@@ -581,7 +604,7 @@ void MTA::MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& str
     }
     else {
       strm << "(" << argt->Get_C_Name() << ")arg[" << args_idx << "]"
-           << "->GetVoidPtrOfType(&TA_" << class_typ->name << ")";
+           << "->GetVoidPtrOfType(" << TypeDef_Gen_TypeDef_Ptr(class_typ) << ")";
     }
   }
   else if(argt->IsAnyPtr()) {
