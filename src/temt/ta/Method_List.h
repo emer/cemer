@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(Method_List);
+taTypeDef_Of(Method_List);
 
 class TA_API Method_List: public taPtrList<MethodDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS simple list of methods

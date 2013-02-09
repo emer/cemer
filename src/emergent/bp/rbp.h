@@ -47,9 +47,9 @@ class RBpUnitSpec;//
 // backward passes: do Compute_Error, then Compute_Send_dEdNet, the Step_Back
 // and iterate..
 
-TypeDef_Of(RBpConSpec);
+eTypeDef_Of(RBpConSpec);
 
-class BP_API RBpConSpec : public BpConSpec {
+class E_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 INHERITED(BpConSpec)
 public:
@@ -63,9 +63,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(SymRBpConSpec);
+eTypeDef_Of(SymRBpConSpec);
 
-class BP_API SymRBpConSpec : public RBpConSpec {
+class E_API SymRBpConSpec : public RBpConSpec {
   // Recurrent Backprop Con Spec: option to maintain weight symmetry through simple averaging of two weight changes
 INHERITED(RBpConSpec)
 public:
@@ -82,9 +82,9 @@ private:
 };
 
 
-TypeDef_Of(RBpUnitSpec);
+eTypeDef_Of(RBpUnitSpec);
 
-class BP_API RBpUnitSpec : public BpUnitSpec {
+class E_API RBpUnitSpec : public BpUnitSpec {
   // Recurrent Backprop Unit Specification
 INHERITED(BpUnitSpec)
 public:
@@ -128,9 +128,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(RBpUnit);
+eTypeDef_Of(RBpUnit);
 
-class BP_API RBpUnit : public BpUnit {
+class E_API RBpUnit : public BpUnit {
   // recurrent BP unit
 INHERITED(BpUnit)
 public:
@@ -202,9 +202,9 @@ inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   }
 }
 
-TypeDef_Of(RBpContextSpec);
+eTypeDef_Of(RBpContextSpec);
 
-class BP_API RBpContextSpec : public RBpUnitSpec {
+class E_API RBpContextSpec : public RBpUnitSpec {
   // RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!
 INHERITED(RBpUnitSpec)
 public:
@@ -244,9 +244,9 @@ private:
 //	Additional Unit Types		//
 //////////////////////////////////////////
 
-TypeDef_Of(NoisyRBpUnitSpec);
+eTypeDef_Of(NoisyRBpUnitSpec);
 
-class BP_API NoisyRBpUnitSpec : public RBpUnitSpec {
+class E_API NoisyRBpUnitSpec : public RBpUnitSpec {
   // RBp with noisy output signal (act plus noise)
 INHERITED(RBpUnitSpec)
 public:
@@ -267,9 +267,9 @@ private:
 //	Bp Wizard		//
 //////////////////////////////////
 
-TypeDef_Of(BpWizard);
+eTypeDef_Of(BpWizard);
 
-class BP_API BpWizard : public Wizard {
+class E_API BpWizard : public Wizard {
   // #STEM_BASE backprop-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:

@@ -43,7 +43,7 @@ class QPixmap; //
 
 */
 
-TypeDef_Of(T3Panel);
+taTypeDef_Of(T3Panel);
 
 class TA_API T3Panel : public taViewer {
   // ##DEF_NAME_ROOT_Panel #AKA_T3DataViewFrame a panel within set of 3d view panels containing one or more 3D view elements organize within a common overall scenegraph

@@ -25,7 +25,7 @@
 class taBase; //
 
 
-TypeDef_Of(taiMemberOfTokenPtr);
+taTypeDef_Of(taiMemberOfTokenPtr);
 
 class TA_API taiMemberOfTokenPtr : public taiMember {
   // for taBase pointer members (allows scoping by owner obj)

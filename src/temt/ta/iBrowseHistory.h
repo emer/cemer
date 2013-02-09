@@ -34,7 +34,7 @@ class ISelectableHost; //
 
 typedef taPtrList<taiSigLink> taiSigLink_PList; // list of taiSigLink
 
-TypeDef_Of(iBrowseHistory);
+taTypeDef_Of(iBrowseHistory);
 
 class TA_API iBrowseHistory: public QObject, public IMultiSigLinkClient {
   // #NO_INSTANCE #NO_CSS retains browsing history

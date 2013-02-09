@@ -42,7 +42,7 @@ class SoScrollBar;
 typedef void (*SoScrollBarCB)(SoScrollBar*, int, void*);
 // callback function format: passes the scrollbar, current value, and void* user_data
 
-TypeDef_Of(SoScrollBar);
+taTypeDef_Of(SoScrollBar);
 
 class TA_API SoScrollBar: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a scrollbar for scrolling a view, uses same interface as QScrollBar from Qt -- length is 1.0, default orientation is in X plane -- put transform in front to change

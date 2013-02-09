@@ -29,7 +29,7 @@ class TypeDef; //
 class ProgVar; // 
 
 
-TypeDef_Of(Function);
+taTypeDef_Of(Function);
 
 class TA_API Function: public ProgEl {
   // a user-defined function that can be called within the program where it is defined -- must live in the functions of a Program, not in init_code or prog_code

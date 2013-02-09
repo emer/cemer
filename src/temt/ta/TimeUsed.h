@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(TimeUsed);
+taTypeDef_Of(TimeUsed);
 
 class TA_API TimeUsed : public taNBase {
   // #STEM_BASE #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used

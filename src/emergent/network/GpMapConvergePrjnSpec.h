@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GpMapConvergePrjnSpec);
+eTypeDef_Of(GpMapConvergePrjnSpec);
 
-class EMERGENT_API GpMapConvergePrjnSpec : public ProjectionSpec {
+class E_API GpMapConvergePrjnSpec : public ProjectionSpec {
   // #AKA_GpAggregatePrjnSpec generates a converging map of the units within a sending layer that has unit groups into a receiving layer that has the same geometry as one of the unit groups -- each recv unit receives from the corresponding unit in all of the sending unit groups
 INHERITED(ProjectionSpec)
 public:

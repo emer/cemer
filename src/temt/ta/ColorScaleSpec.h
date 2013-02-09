@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 class ColorScaleColor_List; //
 
-TypeDef_Of(ColorScaleSpec);
+taTypeDef_Of(ColorScaleSpec);
 
 class TA_API ColorScaleSpec : public taNBase {
   // ##CAT_Display Color Spectrum Data

@@ -27,7 +27,7 @@ class ProjTemplateEl; //
 class Project_Group; // 
 
 
-TypeDef_Of(ProjTemplates);
+taTypeDef_Of(ProjTemplates);
 
 class TA_API ProjTemplates: public ProjTemplateEl_List {
   // #INSTANCE #INLINE #CAT_Project the set of project templates available

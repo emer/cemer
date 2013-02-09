@@ -17,16 +17,16 @@
 #define LeabraUnit_Group_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <Unit_Group>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraUnit_Group);
+eTypeDef_Of(LeabraUnit_Group);
 
-class LEABRA_API LeabraUnit_Group : public Unit_Group {
+class E_API LeabraUnit_Group : public Unit_Group {
   // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer -- optional data structure given use of virt_groups
 INHERITED(Unit_Group)
 public:

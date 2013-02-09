@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TwoDValSpec);
+eTypeDef_Of(TwoDValSpec);
 
-class LEABRA_API TwoDValSpec : public SpecMemberBase {
+class E_API TwoDValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
 INHERITED(SpecMemberBase)
 public:
@@ -79,9 +79,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(TwoDValBias);
+eTypeDef_Of(TwoDValBias);
 
-class LEABRA_API TwoDValBias : public SpecMemberBase {
+class E_API TwoDValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
 public:
@@ -115,9 +115,9 @@ private:
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(TwoDValLayerSpec);
+eTypeDef_Of(TwoDValLayerSpec);
 
-class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
+class E_API TwoDValLayerSpec : public LeabraLayerSpec {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires TwoDValLeabraLayer to encode values (no longer using first row of units)
 INHERITED(LeabraLayerSpec)
 public:

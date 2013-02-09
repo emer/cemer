@@ -15,7 +15,7 @@
 
 #include "nvDataView.h"
 
-TypeDef_Of(NetView);
+eTypeDef_Of(NetView);
 
 NetView* nvDataView::getNetView()
 {

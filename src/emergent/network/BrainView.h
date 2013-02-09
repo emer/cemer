@@ -37,9 +37,9 @@ class TalairachAtlas; // #IGNORE
 class T3NetNode; //
 class T3Color;
 
-TypeDef_Of(BrainViewParams);
+eTypeDef_Of(BrainViewParams);
 
-class EMERGENT_API BrainViewParams : public taOBase {
+class E_API BrainViewParams : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
 INHERITED(taOBase)
 public:
@@ -57,9 +57,9 @@ private:
   void  Destroy()               { };
 };
 
-TypeDef_Of(BrainView);
+eTypeDef_Of(BrainView);
 
-class EMERGENT_API BrainView : public T3DataViewMain {
+class E_API BrainView : public T3DataViewMain {
   // ##DUMP_LOAD_POST #INSTANCE main view object for glass brain view
 INHERITED(T3DataViewMain)
 

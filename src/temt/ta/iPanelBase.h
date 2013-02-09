@@ -46,7 +46,7 @@ class QHideEvent; //
 class QShowEvent; //
 
 
-TypeDef_Of(iPanelBase);
+taTypeDef_Of(iPanelBase);
 
 class TA_API iPanelBase: public QFrame, public ISigLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels -- basic element that can appear in a tabbed viewing context (note: use iPanel or iViewPanel)

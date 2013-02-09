@@ -17,7 +17,7 @@
 #define CerebConj2PrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CerebConj2PrjnSpec);
+eTypeDef_Of(CerebConj2PrjnSpec);
 
-class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
+class E_API CerebConj2PrjnSpec : public ProjectionSpec {
   // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)
 INHERITED(ProjectionSpec)
 public:

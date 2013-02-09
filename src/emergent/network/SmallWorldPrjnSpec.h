@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SmallWorldPrjnSpec);
+eTypeDef_Of(SmallWorldPrjnSpec);
 
-class EMERGENT_API SmallWorldPrjnSpec : public ProjectionSpec {
+class E_API SmallWorldPrjnSpec : public ProjectionSpec {
   // Wolfgang Maass'-inspired Small World Connectivity
 INHERITED(ProjectionSpec)
 public:

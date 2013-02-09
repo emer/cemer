@@ -132,7 +132,7 @@ private:
 
 #endif // __MAKETA__
 
-TypeDef_Of(taGroup);
+taTypeDef_Of(taGroup);
 
 template<class T>
 class taGroup : public taGroup_impl {

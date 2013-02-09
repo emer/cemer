@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FastWtSpec);
+eTypeDef_Of(FastWtSpec);
 
-class LEABRA_API FastWtSpec : public SpecMemberBase {
+class E_API FastWtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
 INHERITED(SpecMemberBase)
 public:
@@ -63,9 +63,9 @@ private:
 
 // TODO: following code is not dealing with contrast enhancement on the swt vals!!!!
 
-TypeDef_Of(FastWtConSpec);
+eTypeDef_Of(FastWtConSpec);
 
-class LEABRA_API FastWtConSpec : public LeabraConSpec {
+class E_API FastWtConSpec : public LeabraConSpec {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 INHERITED(LeabraConSpec)
 public:

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class QByteArray; //
 
-TypeDef_Of(taiMimeFactory);
+taTypeDef_Of(taiMimeFactory);
 
 class TA_API taiMimeFactory: public taNBase { // ##NO_CSS ##NO_MEMBERS
 INHERITED(taNBase)

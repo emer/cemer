@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TwoDValLeabraLayer);
+eTypeDef_Of(TwoDValLeabraLayer);
 
-class LEABRA_API TwoDValLeabraLayer : public LeabraLayer {
+class E_API TwoDValLeabraLayer : public LeabraLayer {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer)
 INHERITED(LeabraLayer)
 public:

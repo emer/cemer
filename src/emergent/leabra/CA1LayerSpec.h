@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CA1LayerSpec);
+eTypeDef_Of(CA1LayerSpec);
 
-class LEABRA_API CA1LayerSpec : public ThetaPhaseLayerSpec {
+class E_API CA1LayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for CA1 layers that implements ThetaPhase learning -- modulates EC_in and CA1 weight scale strengths, and records act_mid mid minus for auto encoder
 INHERITED(ThetaPhaseLayerSpec)
 public:

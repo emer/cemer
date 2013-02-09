@@ -31,7 +31,7 @@
 /////////////////////////////////////////////////////////////////
 //	communicator: use this to define groups of communicating units
 
-TypeDef_Of(DMemComm);
+taTypeDef_Of(DMemComm);
 
 class TA_API DMemComm : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication
@@ -69,7 +69,7 @@ private:
 
 #else
 
-TypeDef_Of(DMemComm);
+taTypeDef_Of(DMemComm);
 
 class TA_API DMemComm : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication

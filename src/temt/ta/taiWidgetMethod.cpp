@@ -31,9 +31,9 @@
 
 #include <QToolButton>
 
-TypeDef_Of(istream);
-TypeDef_Of(fstream);
-TypeDef_Of(ostream);
+taTypeDef_Of(istream);
+taTypeDef_Of(fstream);
+taTypeDef_Of(ostream);
 
 void taiWidgetMethod::ShowReturnVal(cssEl* rval, IWidgetHost* host,
   const String& meth_name)

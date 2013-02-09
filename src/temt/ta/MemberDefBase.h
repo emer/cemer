@@ -25,7 +25,7 @@
 class MemberDefBase_List; //
 class taiMember; //
 
-TypeDef_Of(MemberDefBase);
+taTypeDef_Of(MemberDefBase);
 
 class TA_API MemberDefBase : public TypeItem { // #VIRT_BASE #NO_INSTANCE common subclass of MemberDef and PropertyDef
 INHERITED(TypeItem)

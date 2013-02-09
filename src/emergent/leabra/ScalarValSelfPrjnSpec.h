@@ -17,7 +17,7 @@
 #define ScalarValSelfPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ScalarValSelfPrjnSpec);
+eTypeDef_Of(ScalarValSelfPrjnSpec);
 
-class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
+class E_API ScalarValSelfPrjnSpec : public ProjectionSpec {
   // special projection for making self-connection that establishes neighbor similarity in scalar val
 INHERITED(ProjectionSpec)
 public:

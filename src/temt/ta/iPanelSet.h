@@ -29,7 +29,7 @@ class QHBoxLayout; //
 class QButtonGroup; //
 class QFrame; //
 
-TypeDef_Of(iPanelSet);
+taTypeDef_Of(iPanelSet);
 
 class TA_API iPanelSet: public iPanelSetBase { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
   Q_OBJECT

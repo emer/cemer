@@ -17,7 +17,7 @@
 #define FgBoWedgeGpPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <TiledGpRFPrjnSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FgBoWedgeGpPrjnSpec);
+eTypeDef_Of(FgBoWedgeGpPrjnSpec);
 
-class LEABRA_API FgBoWedgeGpPrjnSpec : public TiledGpRFPrjnSpec {
+class E_API FgBoWedgeGpPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) configured in pattern of 4 1/4 circle wedges, and 4 90 degree straight segments with different border prefs, onto V2 border ownership connections -- recv group size must be 8 x depth where depth is number of depths represented in V2 layer -- 4 units are each quadrant of the wedge
 INHERITED(TiledGpRFPrjnSpec)
 public:

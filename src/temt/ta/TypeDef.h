@@ -60,7 +60,7 @@ class UserDataItem_List; //
 #undef CONST
 #endif
 
-TypeDef_Of(TypeDef);
+taTypeDef_Of(TypeDef);
 
 class TA_API TypeDef : public TypeItem {
   // defines a type -- everything from int to classes, enums, typedefs, etc

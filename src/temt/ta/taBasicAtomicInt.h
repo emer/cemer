@@ -62,7 +62,7 @@ public:
 
 #endif
 
-TypeDef_Of(taBasicAtomicInt);
+taTypeDef_Of(taBasicAtomicInt);
 
 class TA_API taBasicAtomicInt : public QBasicAtomicInt {
   // ##SMART_INT a basic atomic integer for threadsafe processing

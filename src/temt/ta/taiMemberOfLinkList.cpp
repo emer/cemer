@@ -16,7 +16,7 @@
 #include "taiMemberOfLinkList.h"
 #include <taiWidgetLinkListEditButton>
 
-TypeDef_Of(taList_impl);
+taTypeDef_Of(taList_impl);
 
 
 int taiMemberOfLinkList::BidForMember(MemberDef* md, TypeDef* td) {

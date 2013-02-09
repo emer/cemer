@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class BrainAtlasFileComposer;
 
-class EMERGENT_API BrainAtlasFileComposerFactory {
+class E_API BrainAtlasFileComposerFactory {
 public:
   static BrainAtlasFileComposer* CreateInstance(const QString& filename);
 };

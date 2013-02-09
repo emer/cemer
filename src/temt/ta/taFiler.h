@@ -51,7 +51,7 @@ class QStringList;  //
 
 */
 
-TypeDef_Of(taFiler);
+taTypeDef_Of(taFiler);
 
 class TA_API taFiler : public taRefN {
   // ##NO_TOKENS #EDIT_INLINE associate this with each file that is managed

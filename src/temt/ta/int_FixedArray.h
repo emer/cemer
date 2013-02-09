@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(int_FixedArray);
+taTypeDef_Of(int_FixedArray);
 
 class TA_API int_FixedArray: public taFixedArray<int> {
   // #INLINE #INLINE_DUMP #NO_TOKENS

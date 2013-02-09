@@ -26,7 +26,7 @@ class Program; //
 class iTreeViewItem; //
 
 
-TypeDef_Of(iPanelOfProgram);
+taTypeDef_Of(iPanelOfProgram);
 
 class TA_API iPanelOfProgram: public iPanelOfProgramBase {
 INHERITED(iPanelOfProgramBase)

@@ -35,7 +35,7 @@ class QRect; //
 #include <iVec2i>
 #include <iSize>
 
-TypeDef_Of(iRect);
+taTypeDef_Of(iRect);
 
 class TA_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:

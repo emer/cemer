@@ -19,7 +19,7 @@
 
 #include <taMisc>
 
-TypeDef_Of(DataTable);
+taTypeDef_Of(DataTable);
 
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {

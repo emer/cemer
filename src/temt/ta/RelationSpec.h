@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(RelationSpec);
+taTypeDef_Of(RelationSpec);
 
 class TA_API RelationSpec : public Relation {
   // counting criteria params -- use this for inline members (hides name field)

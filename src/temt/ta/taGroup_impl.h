@@ -33,7 +33,7 @@ class TypeDef; //
 #undef SC_DEFAULT
 #endif
 
-TypeDef_Of(taGroup_impl);
+taTypeDef_Of(taGroup_impl);
 
 class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #STEM_BASE implementation of a group

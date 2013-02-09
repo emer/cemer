@@ -17,16 +17,16 @@
 #define TiledGpRFOneToOneWtsPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <TiledGpRFPrjnSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledGpRFOneToOneWtsPrjnSpec);
+eTypeDef_Of(TiledGpRFOneToOneWtsPrjnSpec);
 
-class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
+class E_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
 INHERITED(TiledGpRFPrjnSpec)
 public:

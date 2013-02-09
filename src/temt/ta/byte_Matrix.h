@@ -26,7 +26,7 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
-TypeDef_Of(byte_Matrix);
+taTypeDef_Of(byte_Matrix);
 
 class TA_API byte_Matrix: public taMatrixT<byte> {
   // #INSTANCE a matrix of bytes

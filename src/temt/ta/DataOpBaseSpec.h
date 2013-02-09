@@ -27,7 +27,7 @@ class DataTable; //
 class DataOpEl; // 
 
 
-TypeDef_Of(DataOpBaseSpec);
+taTypeDef_Of(DataOpBaseSpec);
 
 class TA_API DataOpBaseSpec : public taNBase {
   // #STEM_BASE ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns

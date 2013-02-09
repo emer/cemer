@@ -15,7 +15,7 @@
 
 #include "ProgEl_List.h"
 #include <Program>
-TypeDef_Of(ProgCode);
+taTypeDef_Of(ProgCode);
 
 
 void ProgEl_List::Initialize() {

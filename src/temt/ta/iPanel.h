@@ -26,7 +26,7 @@ class iPanelSet; //
 class QHBoxLayout; //
 
 
-TypeDef_Of(iPanel);
+taTypeDef_Of(iPanel);
 
 class TA_API iPanel: public iPanelBase {
   // this is the base for all panels for regular data items that the user controls the viewing of -- as contrasted with iViewPanel which is only for view control panels

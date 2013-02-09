@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CustomPrjnSpec);
+eTypeDef_Of(CustomPrjnSpec);
 
-class EMERGENT_API CustomPrjnSpec : public ProjectionSpec {
+class E_API CustomPrjnSpec : public ProjectionSpec {
   // connectivity is defined manually (i.e. unit-by-unit)
 INHERITED(ProjectionSpec)
 public:

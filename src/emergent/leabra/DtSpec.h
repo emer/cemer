@@ -17,7 +17,7 @@
 #define DtSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <SpecMemberBase>
 #include <BaseSpec>
 
@@ -29,9 +29,9 @@
 // equivalent logic and _time or _rate values directly into spec of interest
 // definitely good to show both reps!
 
-TypeDef_Of(DtSpec);
+eTypeDef_Of(DtSpec);
 
-class LEABRA_API DtSpec : public SpecMemberBase {
+class E_API DtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math time constant specification -- shows both multiplier and time constant (inverse) value 
 INHERITED(SpecMemberBase)
 public:

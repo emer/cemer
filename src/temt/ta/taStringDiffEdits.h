@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taStringDiffEdits);
+taTypeDef_Of(taStringDiffEdits);
 
 class TA_API taStringDiffEdits {
   // #NO_TOKENS a set of diffs between string A and string B -- can be used to convert string A into string B, given only string A and these edits

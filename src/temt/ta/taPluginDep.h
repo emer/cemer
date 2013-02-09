@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taPluginDep);
+taTypeDef_Of(taPluginDep);
 
 class TA_API taPluginDep: public taPluginBase {
   // describes a plugin dependency -- appears in root, and streamed to files

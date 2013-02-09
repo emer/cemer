@@ -21,7 +21,7 @@
 #ifdef __TA_COMPILE__
 #include "network_def.h"
 class Projection;
-TypeDef_Of(Projection);
+eTypeDef_Of(Projection);
 #else
 #include <Projection>
 #endif
@@ -31,9 +31,9 @@ TypeDef_Of(Projection);
 // declare all other types mentioned but not required to include:
 class Layer; //
 
-TypeDef_Of(Projection_Group);
+eTypeDef_Of(Projection_Group);
 
-class EMERGENT_API Projection_Group: public taGroup<Projection> {
+class E_API Projection_Group: public taGroup<Projection> {
   // ##CAT_Network group of projections
 INHERITED(taGroup<Projection>)
 public:

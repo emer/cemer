@@ -19,7 +19,7 @@
 
 #include <taMisc>
 
-TypeDef_Of(ExtRewLayerSpec);
+eTypeDef_Of(ExtRewLayerSpec);
 
 void WtScaleSpec::Initialize() {
   old = false;

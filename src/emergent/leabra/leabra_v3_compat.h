@@ -21,7 +21,7 @@
 
 #include "leabra.h"
 #include "v3_compat.h"
-#include "leabra_def.h"
+#include "network_def.h"
 #include "leabra_TA_type.h"
 
 // forwards this file
@@ -35,7 +35,7 @@ class LeabraMaxDa;
 // 	Processes	//
 //////////////////////////
 
-class LEABRA_API LeabraCycle : public CycleProcess {
+class E_API LeabraCycle : public CycleProcess {
   // one Leabra cycle of activation updating
 INHERITED(CycleProcess)
 public:
@@ -44,7 +44,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraCycle);
 };
 
-class LEABRA_API LeabraSettle : public SettleProcess {
+class E_API LeabraSettle : public SettleProcess {
   // Leabra settling phase of activation updating
 INHERITED(SettleProcess)
 public:
@@ -58,7 +58,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraSettle);
 };
 
-class LEABRA_API LeabraTrial : public TrialProcess {
+class E_API LeabraTrial : public TrialProcess {
   // Leabra trial process, iterates over phases
 INHERITED(TrialProcess)
 public:
@@ -108,7 +108,7 @@ public:
 // 	Stats		//
 //////////////////////////
 
-class LEABRA_API LeabraMaxDa : public Stat {
+class E_API LeabraMaxDa : public Stat {
   // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes maximum change in activation, used for determining equilibrium to stop settling; also looks for maximum activation on target layers to provide that as an additional stopping criterion
 INHERITED(Stat)
 public:
@@ -129,7 +129,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraMaxDa);
 };
 
-class LEABRA_API LeabraSE_Stat : public SE_Stat {
+class E_API LeabraSE_Stat : public SE_Stat {
   // squared error for leabra, controls when to compute SE 
 INHERITED(SE_Stat)
 public:
@@ -142,7 +142,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraSE_Stat);
 };
 
-class LEABRA_API LeabraGoodStat : public Stat {
+class E_API LeabraGoodStat : public Stat {
   // ##COMPUTE_IN_TrialProcess constraint satisfaction goodness statistic
 INHERITED(Stat)
 public:
@@ -156,7 +156,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraGoodStat);
 };
 
-class LEABRA_API LeabraSharpStat : public Stat {
+class E_API LeabraSharpStat : public Stat {
   // ##COMPUTE_IN_TrialProcess layer sharpness statistic: just max / avg
 INHERITED(Stat)
 public:
@@ -167,7 +167,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraSharpStat);
 };
 
-class LEABRA_API WrongOnStat : public Stat {
+class E_API WrongOnStat : public Stat {
   // ##COMPUTE_IN_TrialProcess Reports an error if a unit is on when it shouldn't have been (for multiple output cases)
 INHERITED(Stat)
 public:
@@ -181,7 +181,7 @@ public:
   TA_SIMPLE_BASEFUNS(WrongOnStat);
 };
 
-class LEABRA_API LeabraPrjnRelNetinStat : public Stat {
+class E_API LeabraPrjnRelNetinStat : public Stat {
   // ##COMPUTE_IN_TrialProcess computes overall relative netinput contributions for the different projections into a layer. Useful for setting wt_scale parameters to achieve desired relative contributions of different inputs.  you MUST set the layer parameter to the layer in question
 INHERITED(Stat)
 public:
@@ -193,7 +193,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraPrjnRelNetinStat);
 };
 
-class LEABRA_API ExtRew_Stat : public Stat {
+class E_API ExtRew_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess ##FINAL_STAT external reward statistic
 INHERITED(Stat)
 public:
@@ -208,7 +208,7 @@ public:
 // 	Phase-Order  Environment	//
 //////////////////////////////////////////
 
-class LEABRA_API PhaseOrderEventSpec : public EventSpec {
+class E_API PhaseOrderEventSpec : public EventSpec {
   // event specification including order of phases
 INHERITED(EventSpec)
 public:
@@ -227,7 +227,7 @@ public:
 };
 
 
-class LEABRA_API V3LeabraProject : public V3ProjectBase {
+class E_API V3LeabraProject : public V3ProjectBase {
 INHERITED(V3ProjectBase)
   public:
 

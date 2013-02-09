@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(RndGpOneToOnePrjnSpec);
+eTypeDef_Of(RndGpOneToOnePrjnSpec);
 
-class EMERGENT_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
+class E_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
   // uniform random connectivity between one-to-one groups -- only 'permute' style random connectivity is supported (same number of connections across recv units)
 INHERITED(GpOneToOnePrjnSpec)
 public:

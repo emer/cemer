@@ -27,9 +27,9 @@ class T3DataViewMain; //
 class Layer; //
 class BaseSpec; //
 
-TypeDef_Of(LayerView);
+eTypeDef_Of(LayerView);
 
-class EMERGENT_API LayerView: public nvhDataView {
+class E_API LayerView: public nvhDataView {
 INHERITED(nvhDataView)
 public:
   enum DispMode {

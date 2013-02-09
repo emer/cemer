@@ -26,9 +26,9 @@ class Layer; //
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SendCons_List);
+eTypeDef_Of(SendCons_List);
 
-class EMERGENT_API SendCons_List: public taList<SendCons> {
+class E_API SendCons_List: public taList<SendCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of sending connections, one per projection
 INHERITED(taList<SendCons>)
 public:

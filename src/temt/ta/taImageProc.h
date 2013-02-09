@@ -26,7 +26,7 @@ class float_Matrix; //
 class int_Matrix; // 
 
 
-TypeDef_Of(taImageProc);
+taTypeDef_Of(taImageProc);
 
 class TA_API taImageProc : public taNBase {
   // #STEM_BASE ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)

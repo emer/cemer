@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MarkerConSpec);
+eTypeDef_Of(MarkerConSpec);
 
-class LEABRA_API MarkerConSpec : public LeabraConSpec {
+class E_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 INHERITED(LeabraConSpec)
 public:

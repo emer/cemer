@@ -18,7 +18,7 @@
 #include <taSigLinkTypeItem>
 #include <taSigLinkTypeSpace>
 
-TypeDef_Of(EnumDef);
+taTypeDef_Of(EnumDef);
 
 taiTreeNodeTypeItem::taiTreeNodeTypeItem(taSigLinkTypeItem* link_, MemberDef* md,
   taiTreeNode* parent_, 

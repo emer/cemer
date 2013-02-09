@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixUnitSpec);
+eTypeDef_Of(MatrixUnitSpec);
 
-class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
+class E_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 INHERITED(LeabraUnitSpec)
 public:

@@ -27,9 +27,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PolarRndPrjnSpec);
+eTypeDef_Of(PolarRndPrjnSpec);
 
-class EMERGENT_API PolarRndPrjnSpec : public ProjectionSpec {
+class E_API PolarRndPrjnSpec : public ProjectionSpec {
   // random connectivity defined as a function of distance and angle
 INHERITED(ProjectionSpec)
 public:

@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class LeabraUnit_Group; //
 
-TypeDef_Of(V1FeatInhibSpec);
+eTypeDef_Of(V1FeatInhibSpec);
 
-class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
+class E_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition
 INHERITED(SpecMemberBase)
 public:
@@ -50,9 +50,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LeabraV1LayerSpec);
+eTypeDef_Of(LeabraV1LayerSpec);
 
-class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
+class E_API LeabraV1LayerSpec : public LeabraLayerSpec {
   // LayerSpec that implements competition both within unit groups and among features in nearby unit groups, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups) -- inhibition is oriented according to x axis of feature position, assuming that this encodes orientation angle (0 = horiz), and acts just like the gp_i, gp_g form of inhibition
 INHERITED(LeabraLayerSpec)
 public:

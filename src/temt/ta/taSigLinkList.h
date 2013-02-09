@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkList);
+taTypeDef_Of(taSigLinkList);
 
 class TA_API taSigLinkList: public taSigLinkTaOBase {
   // SigLink for taList objects -- note that it also manages the ListView nodes

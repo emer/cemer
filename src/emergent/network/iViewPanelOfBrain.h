@@ -42,9 +42,9 @@ class QSlider; //
 class QLabel; //
 class ISelectableHost; //
 
-TypeDef_Of(iViewPanelOfBrain);
+eTypeDef_Of(iViewPanelOfBrain);
 
-class EMERGENT_API iViewPanelOfBrain : public iViewPanel {
+class E_API iViewPanelOfBrain : public iViewPanel {
   // frame for gui interface to a BrainView -- usually posted by the netview
   Q_OBJECT
   INHERITED(iViewPanel)

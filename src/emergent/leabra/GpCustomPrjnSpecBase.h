@@ -17,7 +17,7 @@
 #define GpCustomPrjnSpecBase_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GpCustomPrjnSpecBase);
+eTypeDef_Of(GpCustomPrjnSpecBase);
 
-class LEABRA_API GpCustomPrjnSpecBase : public ProjectionSpec {
+class E_API GpCustomPrjnSpecBase : public ProjectionSpec {
   // #VIRT_BASE basic custom group-level projection spec -- core methods for connecting groups
 INHERITED(ProjectionSpec)
 public:

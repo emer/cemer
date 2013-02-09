@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class TimeUsedHRd; // #IGNORE
 
-TypeDef_Of(TimeUsedHR);
+taTypeDef_Of(TimeUsedHR);
 
 class TA_API TimeUsedHR : public taNBase {
   // #STEM_BASE #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used

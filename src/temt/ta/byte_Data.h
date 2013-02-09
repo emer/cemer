@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
-TypeDef_Of(byte);
+taTypeDef_Of(byte);
 
-TypeDef_Of(byte_Data);
+taTypeDef_Of(byte_Data);
 
 class TA_API byte_Data : public DataColT<byte_Matrix> {
   // byte data

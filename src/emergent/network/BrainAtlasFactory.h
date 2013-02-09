@@ -25,7 +25,7 @@
 class BrainAtlas;
 class Qstring;
 
-class EMERGENT_API BrainAtlasFactory {
+class E_API BrainAtlasFactory {
 public:
   static BrainAtlas* CreateInstance(const QString& filename);
 };

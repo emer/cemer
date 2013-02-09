@@ -32,7 +32,7 @@ class SbVec2s;          // #IGNORE
 class QPoint; //
 
 
-TypeDef_Of(iVec2i);
+taTypeDef_Of(iVec2i);
 
 class TA_API iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:

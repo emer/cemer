@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taBase_PtrList);
+taTypeDef_Of(taBase_PtrList);
 
 class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects
 public:

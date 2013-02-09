@@ -65,7 +65,7 @@ private:
 
 #define PATH_SEP taMisc::path_sep
 
-TypeDef_Of(taMisc);
+taTypeDef_Of(taMisc);
 
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE global parameters and functions for the application

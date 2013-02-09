@@ -29,7 +29,7 @@ class SoTransformBoxDragger;
 class SoTransform;
 class SoCalculator;
 
-TypeDef_Of(T3TransformBoxDragger);
+taTypeDef_Of(T3TransformBoxDragger);
 
 class TA_API T3TransformBoxDragger: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS my custom transform box dragger kit for positioning T3 view guys

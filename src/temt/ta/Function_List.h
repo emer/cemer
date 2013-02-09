@@ -27,7 +27,7 @@ class ProgVar; //
 class Function; //
 
 
-TypeDef_Of(Function_List);
+taTypeDef_Of(Function_List);
 
 class TA_API Function_List: public taList<Function> {
   // #TREEFILT_ProgGp list of functions defined within a program

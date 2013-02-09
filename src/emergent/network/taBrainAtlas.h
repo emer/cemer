@@ -36,9 +36,9 @@ class BrainAtlasInfo; // #IGNORE
 class ColorScale; //
 class BrainAtlas; // #IGNORE
 
-TypeDef_Of(taBrainAtlas);
+eTypeDef_Of(taBrainAtlas);
 
-class EMERGENT_API taBrainAtlas : public taNBase {
+class E_API taBrainAtlas : public taNBase {
   // a single brain atlas, with methods to access and manipulate the associated labels, colors, and voxels
   INHERITED(taNBase)
 public:

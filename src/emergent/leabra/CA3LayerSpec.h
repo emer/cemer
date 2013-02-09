@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CA3LayerSpec);
+eTypeDef_Of(CA3LayerSpec);
 
-class LEABRA_API CA3LayerSpec : public ThetaPhaseLayerSpec {
+class E_API CA3LayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for CA3 layers that implements ThetaPhase learning -- this serves only as a marker for CA1 layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(ThetaPhaseLayerSpec)
 public:

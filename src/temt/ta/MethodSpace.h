@@ -31,7 +31,7 @@ class taSigLink; //
 #endif
 
 
-TypeDef_Of(MethodSpace);
+taTypeDef_Of(MethodSpace);
 
 class TA_API MethodSpace: public Method_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of methods

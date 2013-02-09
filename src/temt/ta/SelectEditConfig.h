@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(SelectEditConfig);
+taTypeDef_Of(SelectEditConfig);
 
 class TA_API SelectEditConfig : public taBase {
   // #EDIT_INLINE ##NO_TOKENS ##CAT_Display #OBSOLETE special parameters for controlling the select edit display

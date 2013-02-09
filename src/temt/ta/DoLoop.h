@@ -26,7 +26,7 @@
 class ProgEl; // 
 
 
-TypeDef_Of(DoLoop);
+taTypeDef_Of(DoLoop);
 
 class TA_API DoLoop: public Loop { 
   // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);

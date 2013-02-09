@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(int_Array);
+taTypeDef_Of(int_Array);
 
 class TA_API int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of ints

@@ -26,7 +26,7 @@
 class taBase; // 
 
 
-TypeDef_Of(FunCallItem);
+taTypeDef_Of(FunCallItem);
 
 class TA_API FunCallItem {
 // #NO_INSTANCE

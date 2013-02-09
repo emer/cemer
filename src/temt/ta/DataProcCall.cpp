@@ -15,7 +15,7 @@
 
 #include "DataProcCall.h"
 
-TypeDef_Of(taDataProc);
+taTypeDef_Of(taDataProc);
 
 
 void DataProcCall::Initialize() {

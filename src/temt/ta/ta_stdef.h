@@ -168,7 +168,6 @@
 #define YYERROR_VERBOSE 1
 
 /* DLL building options under windows */
-// note: we put bp/cs/leabra/network/so in one dll, so slave to EMERGENT
 // define flags as follows:
 // DLL      USING         BUILDING
 // ta       TA_DLL        TA_DLL,TA_EXPORTS
@@ -182,19 +181,6 @@
 # endif
 # ifdef TA_EXPORTS
 #   define CSS_EXPORTS
-# endif
-
-# ifdef EMERGENT_DLL
-#   define BP_DLL
-#   define CS_DLL
-#   define LEABRA_DLL
-#   define SO_DLL
-# endif
-# ifdef EMERGENT_EXPORTS
-#   define BP_EXPORTS
-#   define CS_EXPORTS
-#   define LEABRA_EXPORTS
-#   define SO_EXPORTS
 # endif
 # if defined(HAVE_LIBGSL) || defined(HAVE_LIBGSLCBLAS)
 #    define GSL_DLL // see gsl:Readme_GnuWin32.txt
@@ -221,11 +207,11 @@ typedef unsigned char   byte;
 // god bless Microsoft c++...
 # ifdef _MSC_VER
 #pragma warning(disable: 4800 4522) // disable super annoying bool conversion warning
-  typedef signed char			int8_t;
+  typedef signed char		int8_t;
   typedef unsigned char         uint8_t;
-  typedef short					int16_t;
-  typedef unsigned short		uint16_t;
-  typedef int					int32_t;
+  typedef short			int16_t;
+  typedef unsigned short	uint16_t;
+  typedef int		        int32_t;
   typedef unsigned int          uint;
   typedef unsigned int          uint32_t;
   typedef long long             int64_t;
@@ -386,6 +372,11 @@ typedef void (*ta_void_fun)();
 // This macro must be used in all class headers that are TA parsed -- it makes
 // the TA_ TypeDef avail to any that include the class -- can also use in .cpp
 // of files that do not include the header but still need to access the TA info
+//
+// unfortunately, for windows compatibility, the dllexport business is required
+// so we have to have separate ta and e versions of these for ta and emergent
+// types -- these "bare" guys can be used only for plugins
+
 #define TypeDef_Of(T) extern TypeDef TA_ ## T
 #define TypeInst_Of(T) extern T* TAI_ ## T
 

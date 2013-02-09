@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3NodeLeaf);
+taTypeDef_Of(T3NodeLeaf);
 
 class TA_API T3NodeLeaf: public T3Node {
   // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.

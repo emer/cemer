@@ -25,7 +25,7 @@
 class taSigLinkList;
 
 
-TypeDef_Of(taiTreeNodeList);
+taTypeDef_Of(taiTreeNodeList);
 
 class TA_API taiTreeNodeList: public taiTreeNodeTaBasePar {
 INHERITED(taiTreeNodeTaBasePar)

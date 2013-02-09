@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfTypePtr);
+taTypeDef_Of(taiMemberOfTypePtr);
 
 class TA_API taiMemberOfTypePtr : public taiMember {
   // typedef ptrs that have member-comment directives

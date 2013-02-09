@@ -86,7 +86,7 @@ typedef TextLog GridLog;
 typedef TextLog NetLog;
 typedef PDPLog GraphLog;
 
-class EMERGENT_API float_RArray : public float_Array {
+class E_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
 INHERITED(float_Array)
 public:
@@ -112,7 +112,7 @@ public:
 };
 
 
-class EMERGENT_API CritParam : public taBase {
+class E_API CritParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
 INHERITED(taBase)
 public:
@@ -143,7 +143,7 @@ public:
 
 
 #ifdef TA_GUI
-class EMERGENT_API CtrlPanelData : public taOBase {
+class E_API CtrlPanelData : public taOBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat data for the control panel
 INHERITED(taOBase)
 public:
@@ -157,7 +157,7 @@ public:
 };
 #endif
 
-class EMERGENT_API V3ScriptFile : public taOBase {
+class E_API V3ScriptFile : public taOBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat V3 compat format for reading script files
 INHERITED(taOBase)
 public:
@@ -168,7 +168,7 @@ public:
   TA_SIMPLE_BASEFUNS(V3ScriptFile);
 };
 
-class EMERGENT_API Script : public taNBase {
+class E_API Script : public taNBase {
   // ##EXT_scr ##CAT_v3Compat an object for maintaining and running arbitrary scripts
 INHERITED(taNBase)
 public:
@@ -211,7 +211,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class EMERGENT_API Script_Group : public taGroup<Script> {
+class E_API Script_Group : public taGroup<Script> {
   // ##CAT_v3Compat 
 INHERITED(taGroup<Script>)
 public:
@@ -223,7 +223,7 @@ public:
   TA_BASEFUNS_NOCOPY(Script_Group);
 };
 
-class EMERGENT_API Process : public taNBase {
+class E_API Process : public taNBase {
   // ##EXT_proc ##CAT_v3Compat simple processes for controlling and coordinating execution
 INHERITED(taNBase)
 public:
@@ -261,7 +261,7 @@ public:
   TA_SIMPLE_BASEFUNS(Process);
 };
 
-class EMERGENT_API Process_Group : public taGroup<Process> {
+class E_API Process_Group : public taGroup<Process> {
   // ##NO_TOKENS ##CAT_v3Compat a menu group for processes
 INHERITED(taGroup<Process>)
 public:
@@ -272,7 +272,7 @@ public:
 };
 
 
-class EMERGENT_API DataItem : public taOBase {
+class E_API DataItem : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat source of a piece of data
 INHERITED(taOBase)
 public:
@@ -287,7 +287,7 @@ public:
   TA_SIMPLE_BASEFUNS(DataItem);
 };
 
-class EMERGENT_API DataItem_List : public taList<DataItem> {
+class E_API DataItem_List : public taList<DataItem> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat list of DataItem objects
 INHERITED(taList<DataItem>)
 public:
@@ -297,7 +297,7 @@ public:
 };
 
 
-class EMERGENT_API StatVal : public DataItem {
+class E_API StatVal : public DataItem {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat Statistic value
 INHERITED(DataItem)
 public:
@@ -311,7 +311,7 @@ public:
 };
 
 
-class EMERGENT_API StatVal_List : public taBase_List {
+class E_API StatVal_List : public taBase_List {
   // ##NO_UPDATE_AFTER ##CAT_v3Compat group of stat values
 INHERITED(taBase_List)
 public:
@@ -321,7 +321,7 @@ public:
 };
 
 
-class EMERGENT_API StatValAgg : public Aggregate {
+class E_API StatValAgg : public Aggregate {
   // #INLINE #INLINE_DUMP ##CAT_v3Compat Aggregation for StatVal-based values
 INHERITED(Aggregate)
 public:
@@ -331,7 +331,7 @@ public:
   TA_SIMPLE_BASEFUNS(StatValAgg);
 };
 
-class EMERGENT_API AggStat : public StatValAgg {
+class E_API AggStat : public StatValAgg {
   // #INLINE #INLINE_DUMP Aggregate statistics over time (processing levels)
 INHERITED(StatValAgg)
 public:
@@ -346,7 +346,7 @@ public:
   TA_SIMPLE_BASEFUNS(AggStat);
 };
 
-class EMERGENT_API Stat : public Process {
+class E_API Stat : public Process {
   // Generic Statistic Process
 INHERITED(Process)
 public:
@@ -373,7 +373,7 @@ public:
   TA_SIMPLE_BASEFUNS(Stat);
 };
 
-class EMERGENT_API Stat_Group : public taBase_Group {
+class E_API Stat_Group : public taBase_Group {
   // ##NO_TOKENS ##CAT_v3Compat a group of statistics
 INHERITED(taBase_Group)
 public:
@@ -384,7 +384,7 @@ public:
 
 // SE_Stat and MonitorStat are so basic that they are here, and not in extra
 
-class EMERGENT_API SE_Stat : public Stat {
+class E_API SE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Squared Error Statistic
 INHERITED(Stat)
 public:
@@ -396,7 +396,7 @@ public:
   TA_SIMPLE_BASEFUNS(SE_Stat);
 };
 
-class EMERGENT_API MonitorStat: public Stat {
+class E_API MonitorStat: public Stat {
   // ##COMPUTE_IN_TrialProcess Network Monitor Statistic
 INHERITED(Stat)
 public:
@@ -415,7 +415,7 @@ public:
 };
 
 
-class EMERGENT_API Counter : public taBase {
+class E_API Counter : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds the value of a loop counter
 INHERITED(taBase)
 public:
@@ -431,7 +431,7 @@ public:
 };
 
 
-class EMERGENT_API StepParams : public taBase {
+class E_API StepParams : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds steping process parameters
 INHERITED(taBase)
 public:
@@ -445,7 +445,7 @@ public:
 };
 
 
-class EMERGENT_API SchedProcess : public Process {
+class E_API SchedProcess : public Process {
   // ##MEMB_IN_GPMENU Generic scheduling, looping process
 INHERITED(Process)
 public:
@@ -493,7 +493,7 @@ public:
 // 	CycleProcess	//
 //////////////////////////
 
-class EMERGENT_API CycleProcess : public SchedProcess {
+class E_API CycleProcess : public SchedProcess {
   // ##AGGOP_SUM Runs one cycle of activation update
 INHERITED(SchedProcess)
 public:
@@ -507,7 +507,7 @@ public:
 // 	SettleProcess	//
 //////////////////////////
 
-class EMERGENT_API SettleProcess : public SchedProcess {
+class E_API SettleProcess : public SchedProcess {
   // ##AGGOP_SUM Settles over cycles of activation propagation
 INHERITED(SchedProcess)
 public:
@@ -523,7 +523,7 @@ public:
 // 	TrialProcess	//
 //////////////////////////
 
-class EMERGENT_API TrialProcess : public SchedProcess {
+class E_API TrialProcess : public SchedProcess {
   // ##AGGOP_SUM Runs a single trial (one event)
 INHERITED(SchedProcess)
 public:
@@ -543,7 +543,7 @@ public:
 // 	EpochProcess	//
 //////////////////////////
 
-class EMERGENT_API EpochProcess : public SchedProcess {
+class E_API EpochProcess : public SchedProcess {
   // ##AGGOP_SUM Loops over entire set of trials (events) in the environment.\nIf multiple dmem processors are available (after network dmem_nprocs) events are distributed across\nprocessors, and weights synchronized: every batch_n for SMALL_BATCH (=ONLINE), or at end for BATCH.
 INHERITED(SchedProcess)
 public:
@@ -577,7 +577,7 @@ public:
   TA_SIMPLE_BASEFUNS(EpochProcess);
 };
 
-class EMERGENT_API SequenceProcess : public SchedProcess {
+class E_API SequenceProcess : public SchedProcess {
   // ##AGGOP_SUM Processes a sequence of trials in one event group (must be under a SequenceEpoch, which loops over event groups)
 INHERITED(SchedProcess)
 public:
@@ -609,7 +609,7 @@ public:
   TA_SIMPLE_BASEFUNS(SequenceProcess);
 };
 
-class EMERGENT_API SequenceEpoch : public EpochProcess {
+class E_API SequenceEpoch : public EpochProcess {
   // Loops over sequences (groups of events) instead of individual events (enviro must have event groups!).
 INHERITED(EpochProcess)
 public:
@@ -627,7 +627,7 @@ public:
   TA_SIMPLE_BASEFUNS(SequenceEpoch);
 };
 
-class EMERGENT_API InteractiveEpoch : public EpochProcess {
+class E_API InteractiveEpoch : public EpochProcess {
   // Loops over events in an environment using the interactive interface of GetNextEvent(), which can generate new events based on current state
 INHERITED(EpochProcess)
 public:
@@ -642,7 +642,7 @@ public:
 // 	TrainProcess	//
 //////////////////////////
 
-class EMERGENT_API NEpochProcess : public SchedProcess {
+class E_API NEpochProcess : public SchedProcess {
   // ##AGGOP_LAST Runs epochs to train network
 INHERITED(SchedProcess)
 public:
@@ -656,7 +656,7 @@ public:
   TA_SIMPLE_BASEFUNS(NEpochProcess);
 };
 
-class EMERGENT_API TrainProcess : public SchedProcess {
+class E_API TrainProcess : public SchedProcess {
   // ##AGGOP_LAST Runs epochs to train network
 INHERITED(SchedProcess)
 public:
@@ -674,7 +674,7 @@ public:
 // 	BatchProcess	//
 //////////////////////////
 
-class EMERGENT_API BatchProcess : public SchedProcess {
+class E_API BatchProcess : public SchedProcess {
   // ##AGGOP_LAST Runs multiple trainings
 INHERITED(SchedProcess)
 public:
@@ -700,7 +700,7 @@ class Pattern;
 class Pattern_Group;
 class PSChannel; // #IGNORE impl class for SourceChannel
 
-class EMERGENT_API PatternSpec : public BaseSubSpec {
+class E_API PatternSpec : public BaseSubSpec {
   // ##SCOPE_Environment ##CAT_v3Compat sub-spec for patterns within an eventspec
 INHERITED(BaseSubSpec)
 friend class Environment;
@@ -777,7 +777,7 @@ public:
   TA_SIMPLE_BASEFUNS(PatternSpec); //
 };
 
-class EMERGENT_API PatternSpec_Group : public taBase_Group {
+class E_API PatternSpec_Group : public taBase_Group {
   // ##SCOPE_Environment ##CAT_v3Compat group of pattern specs (acts like a template for pattern groups)
 INHERITED(taBase_Group)
 public:
@@ -788,7 +788,7 @@ public:
   TA_SIMPLE_BASEFUNS(PatternSpec_Group);
 };
 
-class EMERGENT_API EventSpec : public BaseSpec {
+class E_API EventSpec : public BaseSpec {
   // ##SCOPE_Environment ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE ##CAT_v3Compat event specification
 INHERITED(BaseSpec)
 public:
@@ -810,7 +810,7 @@ public:
   TA_SIMPLE_BASEFUNS(EventSpec);
 };
 
-class EMERGENT_API EventSpec_SPtr : public SpecPtr<EventSpec> {
+class E_API EventSpec_SPtr : public SpecPtr<EventSpec> {
   // ##CAT_v3Compat 
   typedef SpecPtr<EventSpec> inherited;
 public:
@@ -824,7 +824,7 @@ public:
 //   Pattern/Event    //
 ////////////////////////
 
-class EMERGENT_API Pattern : public taOBase {
+class E_API Pattern : public taOBase {
   // ##SCOPE_Environment ##EXT_pat ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_v3Compat Contains activation values to be applied to a network layer
 INHERITED(taOBase)
 public:
@@ -836,7 +836,7 @@ public:
   TA_SIMPLE_BASEFUNS(Pattern);
 };
 
-class EMERGENT_API Pattern_Group : public taGroup<Pattern> {
+class E_API Pattern_Group : public taGroup<Pattern> {
   // ##CAT_v3Compat Group of patterns
 INHERITED(taGroup<Pattern>)
 public:
@@ -846,7 +846,7 @@ public:
   TA_BASEFUNS_NOCOPY(Pattern_Group);
 };
 
-class EMERGENT_API Event : public taNBase {
+class E_API Event : public taNBase {
   // ##SCOPE_Environment ##EXT_evt ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_v3Compat Contains patterns of activation for different layers in the network specifying one event
 INHERITED(taNBase)
 public:
@@ -867,7 +867,7 @@ public:
 // other models are definable, but the standard EpochProcess will not
 // understand them.
 
-class EMERGENT_API Event_Group : public taGroup<Event> {
+class E_API Event_Group : public taGroup<Event> {
   // ##SCOPE_Environment ##CAT_v3Compat Group of events
 INHERITED(taGroup<Event>)
 protected:
@@ -883,7 +883,7 @@ public:
 //   Environment      //
 ////////////////////////
 
-class EMERGENT_API Environment : public taNBase {
+class E_API Environment : public taNBase {
   // ##EXT_env ##COMPRESS ##CAT_v3Compat basic environment: contains events to present to the network, and can be used to hold data for analysis
 INHERITED(taNBase)
 public:
@@ -910,7 +910,7 @@ public:
 };
 
 // note: Environment_Group name is for compatiblity with v3.2 files
-class EMERGENT_API Environment_Group : public taGroup<Environment> {
+class E_API Environment_Group : public taGroup<Environment> {
   // ##CAT_v3Compat group of environments
 INHERITED(taGroup<Environment>)
 public:
@@ -920,7 +920,7 @@ public:
 };
 
 // note: Environment_Group name is for compatiblity with v3.2 files
-class EMERGENT_API Environment_List : public taList<Environment> {
+class E_API Environment_List : public taList<Environment> {
   // ##CAT_v3Compat group of environments
 INHERITED(taList<Environment>)
 public:
@@ -930,7 +930,7 @@ public:
 };
 
 
-class EMERGENT_API ScriptEnv : public Environment {
+class E_API ScriptEnv : public Environment {
   // For algorithmically generated events: Initialization of events is done by a script at the start of each epoch through the InitEvents() function
 INHERITED(Environment)
 public:
@@ -948,7 +948,7 @@ public:
   TA_SIMPLE_BASEFUNS(ScriptEnv);
 };
 
-class EMERGENT_API InteractiveScriptEnv : public ScriptEnv {
+class E_API InteractiveScriptEnv : public ScriptEnv {
   // For interactively-generated environments: Script is called for each event in GetNextEvent function (use with InteractiveEpoch)
 INHERITED(ScriptEnv)
 public:
@@ -962,7 +962,7 @@ public:
 //      Frequency 	//
 //////////////////////////
 
-class EMERGENT_API FreqEvent : public Event {
+class E_API FreqEvent : public Event {
   // an event that has a frequency associated with it
 INHERITED(Event)
 public:
@@ -975,7 +975,7 @@ public:
 
 class FreqEnv;
 
-class EMERGENT_API FreqEvent_Group : public Event_Group {
+class E_API FreqEvent_Group : public Event_Group {
   // an event group that has a frequency associated with it
 INHERITED(Event_Group)
 public:
@@ -989,7 +989,7 @@ public:
 };
 
 
-class EMERGENT_API FreqEnv : public Environment {
+class E_API FreqEnv : public Environment {
   // environment which has a frequency for each event
 INHERITED(Environment)
 public:
@@ -1020,7 +1020,7 @@ public:
 //         Time 	//
 //////////////////////////
 
-class EMERGENT_API TimeEvent : public Event {
+class E_API TimeEvent : public Event {
   // an event which occurs at a specific time
 INHERITED(Event)
 public:
@@ -1031,7 +1031,7 @@ public:
   TA_SIMPLE_BASEFUNS(TimeEvent);
 };
 
-class EMERGENT_API TimeEvent_Group : public Event_Group {
+class E_API TimeEvent_Group : public Event_Group {
   // a group of time-based events
 INHERITED(Event_Group)
 public:
@@ -1050,7 +1050,7 @@ public:
   TA_SIMPLE_BASEFUNS(TimeEvent_Group);
 };
 
-class EMERGENT_API TimeEnvironment : public Environment {
+class E_API TimeEnvironment : public Environment {
   // an environment that manages time-based events
 INHERITED(Environment)
 public:
@@ -1071,7 +1071,7 @@ public:
 //     FreqTime 	//
 //////////////////////////
 
-class EMERGENT_API FreqTimeEvent : public TimeEvent {
+class E_API FreqTimeEvent : public TimeEvent {
   // a time event that has a frequency associated with it
 INHERITED(TimeEvent)
 public:
@@ -1082,7 +1082,7 @@ public:
   TA_SIMPLE_BASEFUNS(FreqTimeEvent);
 };
 
-class EMERGENT_API FreqTimeEvent_Group : public TimeEvent_Group {
+class E_API FreqTimeEvent_Group : public TimeEvent_Group {
   // a time event group that has a frequency associated with it
 INHERITED(TimeEvent_Group)
 public:
@@ -1094,7 +1094,7 @@ public:
 };
 
 
-class EMERGENT_API FreqTimeEnv : public TimeEnvironment {
+class E_API FreqTimeEnv : public TimeEnvironment {
   // a time environment which has a frequency for each event
 INHERITED(TimeEnvironment)
 public:
@@ -1123,7 +1123,7 @@ public:
 //     Probability 	//
 //////////////////////////
 
-class EMERGENT_API ProbPattern : public Pattern {
+class E_API ProbPattern : public Pattern {
   // pattern is chosen from group of patterns with given probability
 INHERITED(Pattern)
 public:
@@ -1135,7 +1135,7 @@ public:
   TA_SIMPLE_BASEFUNS(ProbPattern);
 };
 
-class EMERGENT_API ProbPatternSpec_Group : public PatternSpec_Group {
+class E_API ProbPatternSpec_Group : public PatternSpec_Group {
   // defines a group of patterns that are chosen according to their probabilities
 INHERITED(PatternSpec_Group)
 public:
@@ -1147,7 +1147,7 @@ public:
   TA_SIMPLE_BASEFUNS(ProbPatternSpec_Group);
 };
 
-class EMERGENT_API ProbEventSpec : public EventSpec {
+class E_API ProbEventSpec : public EventSpec {
   // events have probabalistically-chosen patterns contained in ProbPatternSpec_Groups
 INHERITED(EventSpec)
 public:
@@ -1162,7 +1162,7 @@ public:
 //     XY Offset	//
 //////////////////////////
 
-class EMERGENT_API XYPatternSpec : public PatternSpec {
+class E_API XYPatternSpec : public PatternSpec {
   // for patterns that are positioned at a particular x,y offset location
 INHERITED(PatternSpec)
 public:
@@ -1178,7 +1178,7 @@ public:
   TA_SIMPLE_BASEFUNS(XYPatternSpec);
 };
 
-class EMERGENT_API XYPattern : public Pattern {
+class E_API XYPattern : public Pattern {
   // specifies the x,y offset location of the pattern in the layer
 INHERITED(Pattern)
 public:
@@ -1194,7 +1194,7 @@ public:
 //     XY Subset	//
 //////////////////////////
 
-class EMERGENT_API XYSubPatternSpec : public PatternSpec {
+class E_API XYSubPatternSpec : public PatternSpec {
   // presents rectagular subsets (size of layer) of large patterns at x,y offset
 INHERITED(PatternSpec)
 public:
@@ -1206,7 +1206,7 @@ public:
   TA_SIMPLE_BASEFUNS(XYSubPatternSpec);
 };
 
-class EMERGENT_API XYSubPattern : public Pattern {
+class E_API XYSubPattern : public Pattern {
   // specifies the x,y offset location of the layer within the pattern
 INHERITED(Pattern)
 public:
@@ -1222,7 +1222,7 @@ public:
 //     GroupPattern	//
 //////////////////////////
 
-class EMERGENT_API GroupPatternSpec : public PatternSpec {
+class E_API GroupPatternSpec : public PatternSpec {
   // organizes pattern values into sub-groups for viewing and/or sending to network
 INHERITED(PatternSpec)
 public:
@@ -1242,7 +1242,7 @@ public:
 // 	Duration  Events		//
 //////////////////////////////////////////
 
-class EMERGENT_API DurEvent : public Event {
+class E_API DurEvent : public Event {
   // an event which lasts for a particular amount of time
 INHERITED(Event)
 public:
@@ -1257,7 +1257,7 @@ public:
 // 	Read from File  		//
 //////////////////////////////////////////
 
-class EMERGENT_API FromFileEnv : public Environment {
+class E_API FromFileEnv : public Environment {
   // Environment that reads events incrementally from a file into events. NOT SUPPORTED IN CONVERSION
 INHERITED(Environment)
 public:
@@ -1775,7 +1775,7 @@ public:
 
 /// end: procs_extra.h
 
-class EMERGENT_API TypeDefault_Group : public taGroup<TypeDefault> {
+class E_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults ##CAT_v3Compat group of type default objects
 INHERITED(taGroup<TypeDefault>)
 public:
@@ -1791,7 +1791,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // PDPLog -- legacy logs
 
-class EMERGENT_API PDPLog : public taNBase {
+class E_API PDPLog : public taNBase {
   // ##CAT_v3Compat v3 obsolete log object
 INHERITED(taNBase)
 public:
@@ -1811,7 +1811,7 @@ public:
   TA_BASEFUNS_NOCOPY(PDPLog);
 };
 
-class EMERGENT_API PDPLog_Group : public taGroup<PDPLog> {
+class E_API PDPLog_Group : public taGroup<PDPLog> {
   // ##CAT_v3Compat 
 INHERITED(taGroup<PDPLog>)
 public:
@@ -1824,7 +1824,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 // V3ProjectBase -- base class for loading and converting
 
-class EMERGENT_API V3ProjectBase : public ProjectBase {
+class E_API V3ProjectBase : public ProjectBase {
   // #HIDDEN ##CAT_v3Compat for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:

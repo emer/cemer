@@ -16,7 +16,7 @@
 #include "taiTypeOfArray.h"
 #include <taiWidgetArrayEditButton>
 
-TypeDef_Of(taArray);
+taTypeDef_Of(taArray);
 
 int taiTypeOfArray::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taArray)) { // bid higher than the class  type

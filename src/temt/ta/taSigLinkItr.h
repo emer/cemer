@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class taSigLink;
 
-TypeDef_Of(taSigLinkItr);
+taTypeDef_Of(taSigLinkItr);
 
 class TA_API taSigLinkItr {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS iterator for siglink clients -- use as a value type

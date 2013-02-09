@@ -27,7 +27,7 @@ class SoFrame; //
 class T3TransformBoxDragger; //
 
 
-TypeDef_Of(T3GraphViewNode);
+taTypeDef_Of(T3GraphViewNode);
 
 class TA_API T3GraphViewNode: public T3NodeParent {
 #ifndef __MAKETA__

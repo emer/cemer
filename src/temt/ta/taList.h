@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taList);
+taTypeDef_Of(taList);
 
 template<class T>
 class taList: public taList_impl {

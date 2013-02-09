@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(double_Data);
+taTypeDef_Of(double_Data);
 
 class TA_API double_Data : public DataColT<double_Matrix> {
   // doubleing point data

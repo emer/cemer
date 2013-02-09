@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CaiSynDepCon);
+eTypeDef_Of(CaiSynDepCon);
 
-class LEABRA_API CaiSynDepCon : public LeabraCon {
+class E_API CaiSynDepCon : public LeabraCon {
   // synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraCon)
 public:

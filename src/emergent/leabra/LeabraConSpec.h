@@ -17,7 +17,7 @@
 #define LeabraConSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ConSpec>
 #include <SpecMemberBase>
 
@@ -35,9 +35,9 @@ class LeabraNetwork; //
 class DataTable; // 
 
 
-TypeDef_Of(WtScaleSpec);
+eTypeDef_Of(WtScaleSpec);
 
-class LEABRA_API WtScaleSpec : public SpecMemberBase {
+class E_API WtScaleSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
 INHERITED(SpecMemberBase)
 public:
@@ -66,9 +66,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(WtScaleSpecInit);
+eTypeDef_Of(WtScaleSpecInit);
 
-class LEABRA_API WtScaleSpecInit : public SpecMemberBase {
+class E_API WtScaleSpecInit : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial weight scaling values -- applied to active WtScaleSpec values during InitWeights -- useful for adapting scale values
 INHERITED(SpecMemberBase)
 public:
@@ -87,9 +87,9 @@ private:
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(WtSigSpec);
+eTypeDef_Of(WtSigSpec);
 
-class LEABRA_API WtSigSpec : public SpecMemberBase {
+class E_API WtSigSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 INHERITED(SpecMemberBase)
 public:
@@ -133,9 +133,9 @@ private:
   void	Defaults_init() { Initialize(); } // note: ConSpec defaults should modalize on learn_rule
 };
 
-TypeDef_Of(LearnMixSpec);
+eTypeDef_Of(LearnMixSpec);
 
-class LEABRA_API LearnMixSpec : public SpecMemberBase {
+class E_API LearnMixSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
 INHERITED(SpecMemberBase)
 public:
@@ -155,9 +155,9 @@ private:
   void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(XCalLearnSpec);
+eTypeDef_Of(XCalLearnSpec);
 
-class LEABRA_API XCalLearnSpec : public SpecMemberBase {
+class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
@@ -213,9 +213,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(SAvgCorSpec);
+eTypeDef_Of(SAvgCorSpec);
 
-class LEABRA_API SAvgCorSpec : public SpecMemberBase {
+class E_API SAvgCorSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
 INHERITED(SpecMemberBase)
 public:
@@ -234,9 +234,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(AdaptRelNetinSpec);
+eTypeDef_Of(AdaptRelNetinSpec);
 
-class LEABRA_API AdaptRelNetinSpec : public SpecMemberBase {
+class E_API AdaptRelNetinSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
 INHERITED(SpecMemberBase)
 public:
@@ -265,9 +265,9 @@ private:
   void	Defaults_init();	// does not change the on flag
 };
 
-TypeDef_Of(LeabraConSpec);
+eTypeDef_Of(LeabraConSpec);
 
-class LEABRA_API LeabraConSpec : public ConSpec {
+class E_API LeabraConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Leabra Leabra connection specs
 INHERITED(ConSpec)
 public:

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(DaModUnit);
+eTypeDef_Of(DaModUnit);
 
-class LEABRA_API DaModUnit : public LeabraUnit {
+class E_API DaModUnit : public LeabraUnit {
   // obsolete -- now incorporated into base LeabraUnit
 INHERITED(LeabraUnit)
 public:

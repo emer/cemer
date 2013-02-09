@@ -31,7 +31,7 @@ class DataSelectSpec; //
 class DataJoinSpec; // 
 
 
-TypeDef_Of(taDataProc);
+taTypeDef_Of(taDataProc);
 
 class TA_API taDataProc : public taNBase {
   // #STEM_BASE ##CAT_Data collection of commonly-used datatable processing operations (database-style)

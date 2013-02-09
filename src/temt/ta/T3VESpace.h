@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(T3VESpace);
+taTypeDef_Of(T3VESpace);
 
 class TA_API T3VESpace : public T3NodeParent {
   // space parent for virtual environment

@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class Layer; //
 
-TypeDef_Of(Unit_Group);
+eTypeDef_Of(Unit_Group);
 
-class EMERGENT_API Unit_Group: public taGroup<Unit> {
+class E_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL ##UNDO_BARRIER ##NO_UNIQUE_NAMES a group of units -- manages structural but not computational functions
 INHERITED(taGroup<Unit>)
 public:

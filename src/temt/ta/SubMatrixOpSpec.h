@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(SubMatrixOpSpec);
+taTypeDef_Of(SubMatrixOpSpec);
 
 class TA_API SubMatrixOpSpec : public DataOpBaseSpec {
   // sub matrix operations spec -- contains a list of columns that contain sub matricies, and their offsets within a larger matrix

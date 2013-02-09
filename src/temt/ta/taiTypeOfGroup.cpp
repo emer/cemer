@@ -16,7 +16,7 @@
 #include "taiTypeOfGroup.h"
 #include <taiWidgetGroupEditButton>
 
-TypeDef_Of(taGroup_impl);
+taTypeDef_Of(taGroup_impl);
 
 
 int taiTypeOfGroup::BidForType(TypeDef* td) {

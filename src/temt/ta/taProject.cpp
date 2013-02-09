@@ -25,11 +25,11 @@
 
 #include <ctime>
 
-TypeDef_Of(taDataProc);
-TypeDef_Of(taDataAnal);
-TypeDef_Of(taDataGen);
-TypeDef_Of(taImageProc);
-TypeDef_Of(ClusterRun);
+taTypeDef_Of(taDataProc);
+taTypeDef_Of(taDataAnal);
+taTypeDef_Of(taDataGen);
+taTypeDef_Of(taImageProc);
+taTypeDef_Of(ClusterRun);
 
 #include <SigLinkSignal>
 #include <taMisc>

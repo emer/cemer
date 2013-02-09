@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class Program; //
-TypeDef_Of(Program);
+taTypeDef_Of(Program);
 
-TypeDef_Of(Program_List);
+taTypeDef_Of(Program_List);
 
 class TA_API Program_List : public taList<Program> {
   // ##CAT_Program a list of programs

@@ -26,12 +26,12 @@
 #include <DataGroupSpec>
 #include <DataGroupEl>
 
-TypeDef_Of(float_Data);
-TypeDef_Of(double_Data);
-TypeDef_Of(int_Data);
-TypeDef_Of(byte_Data);
-TypeDef_Of(String_Data);
-TypeDef_Of(Variant_Data);
+taTypeDef_Of(float_Data);
+taTypeDef_Of(double_Data);
+taTypeDef_Of(int_Data);
+taTypeDef_Of(byte_Data);
+taTypeDef_Of(String_Data);
+taTypeDef_Of(Variant_Data);
 
 #include <taMisc>
 #include <tabMisc>

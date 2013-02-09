@@ -26,7 +26,7 @@
 
 
 
-TypeDef_Of(T3ColorBar);
+taTypeDef_Of(T3ColorBar);
 
 class TA_API T3ColorBar : public T3NodeLeaf {
   // 3D color bar -- the bar is oriented horizontally be default (use a transform if needed) the 0,0 is at the centre of the rectangle

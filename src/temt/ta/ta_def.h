@@ -31,8 +31,12 @@
   #else
   #define TA_API __declspec(dllimport)
   #endif
+  #define taTypeDef_Of(T) extern TA_API TypeDef TA_ ## T
+  #define taTypeInst_Of(T) extern TA_API T* TAI_ ## T
 #else 
 #define TA_API
+#define taTypeDef_Of(T) extern TypeDef TA_ ## T
+#define taTypeInst_Of(T) extern T* TAI_ ## T
 #endif
 
 class TA_API ta_memb_ptr_class {
@@ -40,6 +44,6 @@ public:
   virtual ~ta_memb_ptr_class()  { }; // make sure it has a vtable..
 };
 
-typedef int ta_memb_ptr_class::* ta_memb_ptr; //
+typedef char ta_memb_ptr_class::* ta_memb_ptr; //
 
 #endif // ta_def_h

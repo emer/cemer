@@ -18,7 +18,7 @@
 
 #include <taMisc>
 
-TypeDef_Of(Network);
+eTypeDef_Of(Network);
 
 
 void NetCounterBase::Initialize() {

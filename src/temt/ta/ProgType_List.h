@@ -28,7 +28,7 @@ class DynEnumType; //
 class taBase; // 
 
 
-TypeDef_Of(ProgType_List);
+taTypeDef_Of(ProgType_List);
 
 class TA_API ProgType_List : public taList<ProgType> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables

@@ -26,7 +26,7 @@ class taiEditorOfDoc; // #IGNORE
 class taDoc; //
 
 
-TypeDef_Of(iPanelOfDocEdit);
+taTypeDef_Of(iPanelOfDocEdit);
 
 class TA_API iPanelOfDocEdit: public iPanel {
   // a panel frame for editing doc raw HTML/wiki source text

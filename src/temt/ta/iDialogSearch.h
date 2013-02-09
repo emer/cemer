@@ -41,7 +41,7 @@ class iTextBrowser; //
 class QStatusBar; //
 
 
-TypeDef_Of(iDialogSearch);
+taTypeDef_Of(iDialogSearch);
 
 class TA_API iDialogSearch: public iDialog, public virtual ISigLinkClient {
 //   search a project (or more)

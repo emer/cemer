@@ -25,7 +25,7 @@
 class iTabView;  //
 class iPanelBase; //
 
-TypeDef_Of(iPanelBase_PtrList);
+taTypeDef_Of(iPanelBase_PtrList);
 
 class TA_API iPanelBase_PtrList: public taPtrList<iPanelBase> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:

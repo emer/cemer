@@ -25,7 +25,7 @@
 class iTreeView; //
 class QTreeWidgetItem; //
 
-TypeDef_Of(iPanelOfList);
+taTypeDef_Of(iPanelOfList);
 
 class TA_API iPanelOfList: public iPanel {
   Q_OBJECT

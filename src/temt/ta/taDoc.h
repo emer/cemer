@@ -28,7 +28,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taDoc);
+taTypeDef_Of(taDoc);
 
 class TA_API taDoc : public taNBase {
   // ##CAT_Docs document for providing information on projects and other objects

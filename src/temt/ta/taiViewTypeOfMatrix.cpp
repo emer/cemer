@@ -16,7 +16,7 @@
 #include "taiViewTypeOfMatrix.h"
 #include <iPanelOfMatrix>
 
-TypeDef_Of(taMatrix);
+taTypeDef_Of(taMatrix);
 
 int taiViewTypeOfMatrix::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taMatrix))

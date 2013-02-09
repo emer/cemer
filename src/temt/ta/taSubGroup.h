@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
 
-TypeDef_Of(taGroup_List);
+taTypeDef_Of(taGroup_List);
 
 class TA_API taGroup_List : public taList<taGroup_impl> {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER a list of groups
@@ -37,7 +37,7 @@ private:
   void  Destroy()       { };
 };
 
-TypeDef_Of(taSubGroup);
+taTypeDef_Of(taSubGroup);
 
 class TA_API taSubGroup : public taGroup_List {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group

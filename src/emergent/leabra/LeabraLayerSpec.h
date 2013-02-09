@@ -30,11 +30,11 @@ class LeabraNetwork; //
 class LeabraInhib; // 
 class KwtaSortBuff; // 
 class LeabraUnit; //
-TypeDef_Of(LeabraUnGpData);
+eTypeDef_Of(LeabraUnGpData);
 
-TypeDef_Of(LeabraInhibSpec);
+eTypeDef_Of(LeabraInhibSpec);
 
-class LEABRA_API LeabraInhibSpec : public SpecMemberBase {
+class E_API LeabraInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system (kwta, unit inhib, etc)
 INHERITED(SpecMemberBase)
 public:
@@ -68,9 +68,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(KWTASpec);
+eTypeDef_Of(KWTASpec);
 
-class LEABRA_API KWTASpec : public SpecMemberBase {
+class E_API KWTASpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies k-winner-take-all parameters
 INHERITED(SpecMemberBase)
 public:
@@ -102,9 +102,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(GpInhibSpec);
+eTypeDef_Of(GpInhibSpec);
 
-class LEABRA_API GpInhibSpec : public SpecMemberBase {
+class E_API GpInhibSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among groups (either layers within a layer group or unit groups within a layer, both of which can operate according to different settings) -- each item's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value is then a MAX of the individual original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak items (layers or unit groups) to drop out
 INHERITED(SpecMemberBase)
 public:
@@ -127,9 +127,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(KwtaTieBreak);
+eTypeDef_Of(KwtaTieBreak);
 
-class LEABRA_API KwtaTieBreak : public SpecMemberBase {
+class E_API KwtaTieBreak : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
 INHERITED(SpecMemberBase)
 public:
@@ -151,9 +151,9 @@ private:
 };
 
 
-TypeDef_Of(AdaptISpec);
+eTypeDef_Of(AdaptISpec);
 
-class LEABRA_API AdaptISpec : public SpecMemberBase {
+class E_API AdaptISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
 INHERITED(SpecMemberBase)
 public:
@@ -182,9 +182,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(ClampSpec);
+eTypeDef_Of(ClampSpec);
 
-class LEABRA_API ClampSpec : public SpecMemberBase {
+class E_API ClampSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping 
 INHERITED(SpecMemberBase)
 public:
@@ -205,9 +205,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(DecaySpec);
+eTypeDef_Of(DecaySpec);
 
-class LEABRA_API DecaySpec : public SpecMemberBase {
+class E_API DecaySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
 INHERITED(SpecMemberBase)
 public:
@@ -226,9 +226,9 @@ private:
   void	Defaults_init() { };  // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(CtLayerInhibMod);
+eTypeDef_Of(CtLayerInhibMod);
 
-class LEABRA_API CtLayerInhibMod : public SpecMemberBase {
+class E_API CtLayerInhibMod : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(SpecMemberBase)
 public:
@@ -252,9 +252,9 @@ private:
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(LayAbsNetAdaptSpec);
+eTypeDef_Of(LayAbsNetAdaptSpec);
 
-class LEABRA_API LayAbsNetAdaptSpec : public SpecMemberBase {
+class E_API LayAbsNetAdaptSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
 INHERITED(SpecMemberBase)
 public:
@@ -274,9 +274,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(LeabraLayerSpec);
+eTypeDef_Of(LeabraLayerSpec);
 
-class LEABRA_API LeabraLayerSpec : public LayerSpec {
+class E_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:

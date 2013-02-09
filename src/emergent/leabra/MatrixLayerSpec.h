@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixMiscSpec);
+eTypeDef_Of(MatrixMiscSpec);
 
-class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
+class E_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(SpecMemberBase)
 public:
@@ -49,9 +49,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(MatrixGoNogoGainSpec);
+eTypeDef_Of(MatrixGoNogoGainSpec);
 
-class LEABRA_API MatrixGoNogoGainSpec : public SpecMemberBase {
+class E_API MatrixGoNogoGainSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 INHERITED(SpecMemberBase)
 public:
@@ -72,9 +72,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(MatrixLayerSpec);
+eTypeDef_Of(MatrixLayerSpec);
 
-class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
+class E_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer -- one for Go pathway and another for NoGo pathway -- Go recv marker con from NoGo, both recv from SNrThal to get final go signal
 INHERITED(LeabraLayerSpec)
 public:

@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(XCALSpikeSpec);
+eTypeDef_Of(XCALSpikeSpec);
 
-class LEABRA_API XCALSpikeSpec : public SpecMemberBase {
+class E_API XCALSpikeSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
 INHERITED(SpecMemberBase)
 public:
@@ -56,9 +56,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LeabraXCALSpikeConSpec);
+eTypeDef_Of(LeabraXCALSpikeConSpec);
 
-class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
+class E_API LeabraXCALSpikeConSpec : public LeabraConSpec {
   // XCAL purely spiking learning rule based on Urakubo et al 2008 -- computes a postsynaptic calcium value that drives learning using the XCAL_C fully continous-time learning parameters
 INHERITED(LeabraConSpec)
 public:

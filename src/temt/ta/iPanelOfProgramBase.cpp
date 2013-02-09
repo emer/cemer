@@ -19,7 +19,7 @@
 #include <iMainWindowViewer>
 #include <iPanelSet>
 
-TypeDef_Of(ProgramToolBar);
+taTypeDef_Of(ProgramToolBar);
 
 #include <SigLinkSignal>
 #include <taMisc>

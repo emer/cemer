@@ -32,7 +32,7 @@
 #include <taMisc>
 #include <taiMisc>
 
-TypeDef_Of(taMatrix);
+taTypeDef_Of(taMatrix);
 
 taiWidgetVariantBase::taiWidgetVariantBase(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags)
   : taiWidgetComposite(typ_, host_, par, gui_parent_, flags)

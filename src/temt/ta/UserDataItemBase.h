@@ -28,7 +28,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(UserDataItemBase);
+taTypeDef_Of(UserDataItemBase);
 
 class TA_API UserDataItemBase: public taNBase {
   // ##INLINE ##NO_TOKENS base class for all simple user data -- name is key

@@ -16,7 +16,7 @@
 #include "SelectEdit.h"
 #include <voidptr_PArray>
 
-TypeDef_Of(taProject);
+taTypeDef_Of(taProject);
 
 #include <SigLinkSignal>
 #include <taMisc>

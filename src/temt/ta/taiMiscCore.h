@@ -39,7 +39,7 @@ enum CancelOp { // ops for passing cancel status and instructions, typically for
   CO_NOT_CANCELLABLE    // preset, to tell client that operation will go ahead unconditionally
 };
 
-TypeDef_Of(taiMiscCore);
+taTypeDef_Of(taiMiscCore);
 
 class TA_API taiMiscCore: public QObject {
   // ##NO_TOKENS ##NO_INSTANCE object for Qt Core event processing, etc. taiMisc inherits; taiM is always instance

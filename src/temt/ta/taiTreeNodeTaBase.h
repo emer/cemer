@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taiTreeNodeTaBase);
+taTypeDef_Of(taiTreeNodeTaBase);
 
 class TA_API taiTreeNodeTaBase: public taiTreeNode {
 INHERITED(taiTreeNode)

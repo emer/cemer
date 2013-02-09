@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(IfReturn);
+taTypeDef_Of(IfReturn);
 
 class TA_API IfReturn: public ProgEl { 
   // if condition is true, return (from void function or stop further execution of code or init segments of Program) (can leave condition empty to just insert an unconditional return)

@@ -30,7 +30,7 @@ class DataTableCols; //
 // but it has a catch-22 with requiring a reference to data columns which have
 // yet to be defined because they contain this object..
 
-TypeDef_Of(ColCalcExpr);
+taTypeDef_Of(ColCalcExpr);
 
 class TA_API ColCalcExpr: public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Data a column calculation expression

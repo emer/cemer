@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfEnum);
+taTypeDef_Of(taiTypeOfEnum);
 
 class TA_API taiTypeOfEnum : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfEnum, taiType);

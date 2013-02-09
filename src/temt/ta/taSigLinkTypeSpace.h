@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkTypeSpace);
+taTypeDef_Of(taSigLinkTypeSpace);
 
 class TA_API taSigLinkTypeSpace: public taSigLinkTypeItemSpace {
   // SigLink for TypeSpace objects -- note that it also manages the ListView nodes

@@ -33,7 +33,7 @@ class cssProgSpace; // #IGNORE
 class cssSpace; // #IGNORE
 
 
-TypeDef_Of(ProgExprBase);
+taTypeDef_Of(ProgExprBase);
 
 class TA_API ProgExprBase : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- base doesn't have any lookup functionality

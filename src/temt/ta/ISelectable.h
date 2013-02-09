@@ -59,7 +59,7 @@ class QPoint; //
      override his effLink
 */
 
-TypeDef_Of(ISelectable);
+taTypeDef_Of(ISelectable);
 
 class TA_API ISelectable: public virtual ISigLinkProxy { //
 INHERITED(ISigLinkProxy)

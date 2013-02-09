@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3Translate2Translator);
+taTypeDef_Of(T3Translate2Translator);
 
 class TA_API T3Translate2Translator: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS parameterizes and uses default color of the translate2 translator

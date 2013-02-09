@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taHashTable);
+taTypeDef_Of(taHashTable);
 
 class TA_API taHashTable : public taPtrList<taHashBucket> {
   // table has a number of buckets, each with some hash values

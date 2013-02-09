@@ -27,7 +27,7 @@ class ProgLibEl; //
 class Program_Group; // 
 
 
-TypeDef_Of(ProgLib);
+taTypeDef_Of(ProgLib);
 
 class TA_API ProgLib: public ProgLibEl_List {
   // #INSTANCE #INLINE #CAT_Program the program library

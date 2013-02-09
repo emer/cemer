@@ -26,7 +26,7 @@
 class DataOpEl; // 
 
 
-TypeDef_Of(DataGroupProg);
+taTypeDef_Of(DataGroupProg);
 
 class TA_API DataGroupProg : public DataSrcDestProg { 
   // groups src_data into dest_data according to group_spec

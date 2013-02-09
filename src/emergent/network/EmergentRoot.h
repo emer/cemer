@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(EmergentRoot);
+eTypeDef_Of(EmergentRoot);
 
-class EMERGENT_API EmergentRoot : public taRootBase {
+class E_API EmergentRoot : public taRootBase {
   // structural root of object hierarchy
 INHERITED(taRootBase)
 public:

@@ -26,9 +26,9 @@
 class Projection; //
 class Layer; //
 
-TypeDef_Of(RecvCons_List);
+eTypeDef_Of(RecvCons_List);
 
-class EMERGENT_API RecvCons_List: public taList<RecvCons> {
+class E_API RecvCons_List: public taList<RecvCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of receiving connections, one per projection
 INHERITED(taList<RecvCons>)
 public:

@@ -156,7 +156,7 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 
 
 */
-TypeDef_Of(T3Node);
+taTypeDef_Of(T3Node);
 
 // NOTE: unfortunately we cannot mark T3Nodes as ##NO_MEMBERS because we need the initClass method which is called to initialize Coin3d Types
 

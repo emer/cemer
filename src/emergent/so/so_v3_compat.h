@@ -19,7 +19,7 @@
 #include "so.h"
 #include "v3_compat.h"
 
-class SO_API SoTrial : public TrialProcess {
+class E_API SoTrial : public TrialProcess {
   // one self-organizing trial step
 INHERITED(TrialProcess)
 public:
@@ -29,7 +29,7 @@ public:
   TA_BASEFUNS_NOCOPY(SoTrial);
 };
 
-class SO_API V3SoProject : public V3ProjectBase {
+class E_API V3SoProject : public V3ProjectBase {
   // self-organizing learning project
 INHERITED(V3ProjectBase)
 public:

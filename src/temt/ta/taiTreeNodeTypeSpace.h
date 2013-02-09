@@ -28,7 +28,7 @@
 class taSigLinkTypeItem;
 
 
-TypeDef_Of(taiTreeNodeTypeSpace);
+taTypeDef_Of(taiTreeNodeTypeSpace);
 
 class TA_API taiTreeNodeTypeSpace: public taiTreeNode { // node for spaces, ex. enumspace, typespace, etc.
 INHERITED(taiTreeNode)

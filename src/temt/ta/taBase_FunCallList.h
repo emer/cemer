@@ -31,7 +31,7 @@ class taSigLink; //
 class taBase; // 
 
 
-TypeDef_Of(taBase_FunCallList);
+taTypeDef_Of(taBase_FunCallList);
 
 class TA_API taBase_FunCallList: public taPtrList<FunCallItem>
 #ifndef __MAKETA__

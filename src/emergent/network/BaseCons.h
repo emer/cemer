@@ -35,9 +35,9 @@ class SendCons; //
 class Projection; //
 class Layer; //
 
-TypeDef_Of(BaseCons);
+eTypeDef_Of(BaseCons);
 
-class EMERGENT_API BaseCons : public taOBase {
+class E_API BaseCons : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE #VIRT_BASE ##CAT_Network base connection manager class -- manages one projection's worth of connections at a unit level -- inherited by RecvCons and SendCons
 INHERITED(taOBase)
 public:

@@ -27,7 +27,7 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
-TypeDef_Of(rgb_Matrix);
+taTypeDef_Of(rgb_Matrix);
 
 class TA_API rgb_Matrix: public taMatrixT<rgb_t> {
   // #INSTANCE a matrix of rgb values

@@ -51,7 +51,7 @@ class QStringList; //
 
 */
 
-TypeDef_Of(taiMimeSource);
+taTypeDef_Of(taiMimeSource);
 
 class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
 INHERITED(QObject)

@@ -17,7 +17,7 @@
 #define LeabraPrjn_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <Projection>
 
 // member includes:
@@ -26,10 +26,10 @@
 // declare all other types mentioned but not required to include:
 class LeabraNetwork; // 
 
-TypeDef_Of(LeabraPrjn);
+eTypeDef_Of(LeabraPrjn);
 
 
-class LEABRA_API LeabraPrjn: public Projection {
+class E_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:

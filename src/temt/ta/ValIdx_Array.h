@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ValIdx_Array);
+taTypeDef_Of(ValIdx_Array);
 
 class TA_API ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER ##CAT_Math array of value & index items

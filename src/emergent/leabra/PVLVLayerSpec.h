@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVLVLayerSpec);
+eTypeDef_Of(PVLVLayerSpec);
 
-class LEABRA_API PVLVLayerSpec : public ScalarValLayerSpec {
+class E_API PVLVLayerSpec : public ScalarValLayerSpec {
   // #VIRT_BASE -- generic PVLV layer spec -- all PVLV layer specs inherit from this
 INHERITED(ScalarValLayerSpec)
 public:

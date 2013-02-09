@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfEnumTypePtr);
+taTypeDef_Of(taiMemberOfEnumTypePtr);
 
 class TA_API taiMemberOfEnumTypePtr : public taiMemberOfTypePtr {
   // typedef ptrs that have member-comment directives, Enums

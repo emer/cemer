@@ -25,7 +25,7 @@
 class MemberSpace;
 
 
-TypeDef_Of(taSigLinkMemberSpace);
+taTypeDef_Of(taSigLinkMemberSpace);
 
 class TA_API taSigLinkMemberSpace: public taSigLinkTypeItemSpace {
   // SigLink for MemberSpace objects -- note that it also manages the ListView nodes

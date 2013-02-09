@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PFCGateSpec);
+eTypeDef_Of(PFCGateSpec);
 
-class LEABRA_API PFCGateSpec : public SpecMemberBase {
+class E_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(SpecMemberBase)
 public:
@@ -51,9 +51,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(PFCLayerSpec);
+eTypeDef_Of(PFCLayerSpec);
 
-class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
+class E_API PFCLayerSpec : public LeabraLayerSpec {
   // #AKA_PFCDeepLayerSpec Prefrontal cortex layer -- deep and superficial types
 INHERITED(LeabraLayerSpec)
 public:

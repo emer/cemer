@@ -26,7 +26,7 @@
 class ProgEl_List; //
 
 
-TypeDef_Of(ProgCode);
+taTypeDef_Of(ProgCode);
 
 class TA_API ProgCode: public ProgEl {
   // generic program code where you can enter an expression in text and it will auto-convert to a known program element

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class VEArm; //
 
-TypeDef_Of(VEHillMuscle);
+taTypeDef_Of(VEHillMuscle);
 
 class TA_API VEHillMuscle : public VEMuscle {
 // muscle model from Gribble et al. 1998

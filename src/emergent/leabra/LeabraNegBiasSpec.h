@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraNegBiasSpec);
+eTypeDef_Of(LeabraNegBiasSpec);
 
-class LEABRA_API LeabraNegBiasSpec : public LeabraBiasSpec {
+class E_API LeabraNegBiasSpec : public LeabraBiasSpec {
   // only learns negative bias changes, not positive ones (decay restores back to zero)
 INHERITED(LeabraBiasSpec)
 public:

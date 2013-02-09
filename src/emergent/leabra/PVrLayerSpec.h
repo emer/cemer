@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVDetectSpec);
+eTypeDef_Of(PVDetectSpec);
 
-class LEABRA_API PVDetectSpec : public SpecMemberBase {
+class E_API PVDetectSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected -- just learns with value 1 for PV present, .5 for absent
 INHERITED(SpecMemberBase)
 public:
@@ -42,9 +42,9 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(PVrLayerSpec);
+eTypeDef_Of(PVrLayerSpec);
 
-class LEABRA_API PVrLayerSpec : public PVLVLayerSpec {
+class E_API PVrLayerSpec : public PVLVLayerSpec {
   // primary value reward detection layer: learns when rewards are expected to occur -- gets a 1 for any primary value feedback (reward or punishment), and .5 otherwise
 INHERITED(PVLVLayerSpec)
 public:

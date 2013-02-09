@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(Random);
+taTypeDef_Of(Random);
 
 class TA_API Random : public taNBase {
   // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Random Number Generation

@@ -26,7 +26,7 @@
 class iTabView; //
 class QStackedWidget; //
 
-TypeDef_Of(iPanelSetBase);
+taTypeDef_Of(iPanelSetBase);
 
 class TA_API iPanelSetBase: public iPanelBase { //  common subclass for iPanelSet and iViewPanelSet
   Q_OBJECT

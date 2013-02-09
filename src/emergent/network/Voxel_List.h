@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class Voxel;
 
-TypeDef_Of(Voxel_List);
+eTypeDef_Of(Voxel_List);
 
-class EMERGENT_API Voxel_List : public taList<Voxel> {
+class E_API Voxel_List : public taList<Voxel> {
   // #NO_TOKENS #NO_UPDATE_AFTER List of voxels
   INHERITED(taList<Voxel>)
 public:

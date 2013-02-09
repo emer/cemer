@@ -25,7 +25,7 @@
 class MethodSpace;
 
 
-TypeDef_Of(taSigLinkMethodSpace);
+taTypeDef_Of(taSigLinkMethodSpace);
 
 class TA_API taSigLinkMethodSpace: public taSigLinkTypeItemSpace {
   // SigLink for MethodSpace objects -- note that it also manages the ListView nodes

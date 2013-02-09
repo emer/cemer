@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taBrainAtlas_List);
+eTypeDef_Of(taBrainAtlas_List);
 
-class EMERGENT_API taBrainAtlas_List : public taList<taBrainAtlas> {
+class E_API taBrainAtlas_List : public taList<taBrainAtlas> {
   // #NO_TOKENS #NO_UPDATE_AFTER List of brain atlases.
   INHERITED(taList<taBrainAtlas>)
 public:

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOfDoc);
+taTypeDef_Of(taiViewTypeOfDoc);
 
 class TA_API taiViewTypeOfDoc: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfDoc, taiViewTypeOftaOBase) //

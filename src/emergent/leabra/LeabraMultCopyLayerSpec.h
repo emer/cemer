@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraMultCopyLayerSpec);
+eTypeDef_Of(LeabraMultCopyLayerSpec);
 
-class LEABRA_API LeabraMultCopyLayerSpec : public LeabraLayerSpec {
+class E_API LeabraMultCopyLayerSpec : public LeabraLayerSpec {
   // layer that copies activations from one layer and multiplies them by values from another -- i.e., multiplicative gating -- must recv from 2 prjns (any more ignored) -- first is copy activation, second is multiplication activation
 INHERITED(LeabraLayerSpec)
 public:

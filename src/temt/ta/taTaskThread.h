@@ -52,7 +52,7 @@ class QWaitCondition; //
       will block until the thread is finished
 */
 
-TypeDef_Of(taTaskThread);
+taTypeDef_Of(taTaskThread);
 
 class TA_API taTaskThread: public QThread {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread a stand-alone persisent worker thread that can be started and stopped without having to create and destroy the thread object itself.  see taManagedThread for a similar thread object designed to work in concert with other threads more efficiently

@@ -26,7 +26,7 @@
 class taiTreeNode; //
 
 
-TypeDef_Of(taiTreeNodeTaBasePar);
+taTypeDef_Of(taiTreeNodeTaBasePar);
 
 class TA_API taiTreeNodeTaBasePar: public taiTreeNodeTaBase {
 INHERITED(taiTreeNodeTaBase)

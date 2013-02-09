@@ -32,7 +32,7 @@ class DataColView; //
 class iViewPanelOfDataTable; //
 
 
-TypeDef_Of(DataTableView);
+taTypeDef_Of(DataTableView);
 
 class TA_API DataTableView : public T3DataViewMain {
   // #VIRT_BASE base class of grid and graph views

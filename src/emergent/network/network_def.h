@@ -23,16 +23,20 @@
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// EMERGENT_API functions as being imported from a DLL, whereas this DLL sees symbols
+// E_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 #if ((defined(EMERGENT_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
   #ifdef EMERGENT_EXPORTS
-  #define EMERGENT_API __declspec(dllexport)
+  #define E_API __declspec(dllexport)
   #else
-  #define EMERGENT_API __declspec(dllimport)
+  #define E_API __declspec(dllimport)
+  #define eTypeDef_Of(T) extern E_API TypeDef TA_ ## T
+  #define eTypeInst_Of(T) extern E_API T* TAI_ ## T
   #endif
 #else 
-#define EMERGENT_API
+#define E_API
+#define eTypeDef_Of(T) extern TypeDef TA_ ## T
+#define eTypeInst_Of(T) extern T* TAI_ ## T
 #endif
 
 #endif // EMERGENT_DEF_H

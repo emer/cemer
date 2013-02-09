@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taWikiURL);
+taTypeDef_Of(taWikiURL);
 
 class TA_API taWikiURL: public taOBase {
   // ##INLINE ##NO_TOKENS wiki URL location information -- include in objects that can be sync'd with a wiki -- relative wiki links

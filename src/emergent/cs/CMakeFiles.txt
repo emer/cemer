@@ -16,7 +16,7 @@ set(cs_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(cs_HEADS
-    cs_def.h
+    network_def.h
     cs.h
 #    cs_v3_compat.h
 )

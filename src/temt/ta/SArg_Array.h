@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(SArg_Array);
+taTypeDef_Of(SArg_Array);
 
 class TA_API SArg_Array : public String_Array {
   // ##CAT_Program string argument array: has labels for each argument to make it easier in the interface

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixNoGoConSpec);
+eTypeDef_Of(MatrixNoGoConSpec);
 
-class LEABRA_API MatrixNoGoConSpec : public MatrixConSpec {
+class E_API MatrixNoGoConSpec : public MatrixConSpec {
   // Learning of Matrix_NoGo pathway input connections based on dopamine modulation of activation -- learns from recv (nogo) activity at end of minus phase, and sending activity at time of gating (act_mid).  also uses recv scale_eff for stripe-specific wt scale params
 INHERITED(MatrixConSpec)
 public:

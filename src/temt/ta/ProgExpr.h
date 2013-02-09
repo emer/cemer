@@ -25,7 +25,7 @@
 class ProgVar; // 
 
 
-TypeDef_Of(ProgExpr);
+taTypeDef_Of(ProgExpr);
 
 class TA_API ProgExpr : public ProgExprBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- includes variable lookup functions

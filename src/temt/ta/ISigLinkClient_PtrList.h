@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ISigLinkClient_PtrList);
+taTypeDef_Of(ISigLinkClient_PtrList);
 
 class TA_API ISigLinkClient_PtrList: public taPtrList<ISigLinkClient> {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS

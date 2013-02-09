@@ -28,7 +28,7 @@ class float_Matrix; //
 class double_Matrix; //
 class DataCol; //
 
-TypeDef_Of(taDataAnal);
+taTypeDef_Of(taDataAnal);
 
 class TA_API taDataAnal : public taNBase {
   // #STEM_BASE ##CAT_Data collection of data analysis functions

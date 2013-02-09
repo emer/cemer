@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraLimPrecConSpec);
+eTypeDef_Of(LeabraLimPrecConSpec);
 
-class LEABRA_API LeabraLimPrecConSpec : public LeabraConSpec {
+class E_API LeabraLimPrecConSpec : public LeabraConSpec {
   // ##CAT_Leabra Leabra limited precision connection specs: limits weight values to specified level of precision between 0-1
 INHERITED(LeabraConSpec)
 public:

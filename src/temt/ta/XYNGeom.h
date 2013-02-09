@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(XYNGeom);
+taTypeDef_Of(XYNGeom);
 
 class TA_API XYNGeom : public PosVector2i {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP two-dimensional X-Y geometry with possibility of total number n != x*y

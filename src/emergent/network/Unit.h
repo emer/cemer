@@ -35,9 +35,9 @@ class Network; //
 class Unit_Group; //
 
 
-TypeDef_Of(Unit);
+eTypeDef_Of(Unit);
 
-class EMERGENT_API Unit: public taNBase {
+class E_API Unit: public taNBase {
   // ##NO_TOKENS ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
 INHERITED(taNBase)
 public: //

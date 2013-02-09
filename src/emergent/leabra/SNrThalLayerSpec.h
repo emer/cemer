@@ -22,11 +22,11 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-TypeDef_Of(PBWMUnGpData);
+eTypeDef_Of(PBWMUnGpData);
 
-TypeDef_Of(SNrThalMiscSpec);
+eTypeDef_Of(SNrThalMiscSpec);
 
-class LEABRA_API SNrThalMiscSpec : public SpecMemberBase {
+class E_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
 public:
@@ -45,9 +45,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(SNrThalLayerSpec);
+eTypeDef_Of(SNrThalLayerSpec);
 
-class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
+class E_API SNrThalLayerSpec : public LeabraLayerSpec {
   // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_mid, gating status in unit group data per stripe
 INHERITED(LeabraLayerSpec)
 public:

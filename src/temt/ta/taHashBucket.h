@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taHashBucket);
+taTypeDef_Of(taHashBucket);
 
 class TA_API taHashBucket : public taPtrList<taHashEl> {
   // holds a set of hash table entries that all have the same hash_code modulo value

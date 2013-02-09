@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(VEMuscleJoint);
+taTypeDef_Of(VEMuscleJoint);
 
 class TA_API VEMuscleJoint : public VEJoint {
   // a Lambda-model (Gribble et al, 1998) arm joint -- updates forces at every time step, in GetVAlsFromODE, applies them using SetForce

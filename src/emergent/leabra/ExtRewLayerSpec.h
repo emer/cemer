@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(AvgExtRewSpec);
+eTypeDef_Of(AvgExtRewSpec);
 
-class LEABRA_API AvgExtRewSpec : public SpecMemberBase {
+class E_API AvgExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
 INHERITED(SpecMemberBase)
 public:
@@ -43,9 +43,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(OutErrSpec);
+eTypeDef_Of(OutErrSpec);
 
-class LEABRA_API OutErrSpec : public SpecMemberBase {
+class E_API OutErrSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
 INHERITED(SpecMemberBase)
 public:
@@ -65,9 +65,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(ExtRewSpec);
+eTypeDef_Of(ExtRewSpec);
 
-class LEABRA_API ExtRewSpec : public SpecMemberBase {
+class E_API ExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
 INHERITED(SpecMemberBase)
 public:
@@ -86,9 +86,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(ExtRewLayerSpec);
+eTypeDef_Of(ExtRewLayerSpec);
 
-class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
+class E_API ExtRewLayerSpec : public ScalarValLayerSpec {
   // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
 INHERITED(ScalarValLayerSpec)
 public:

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FullPrjnSpec);
+eTypeDef_Of(FullPrjnSpec);
 
-class EMERGENT_API FullPrjnSpec : public ProjectionSpec {
+class E_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
 INHERITED(ProjectionSpec)
 public:

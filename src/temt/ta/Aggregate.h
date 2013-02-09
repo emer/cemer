@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(Aggregate);
+taTypeDef_Of(Aggregate);
 
 class TA_API Aggregate : public taNBase {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Basic aggregation operations

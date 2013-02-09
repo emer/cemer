@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3SavedView_List);
+taTypeDef_Of(T3SavedView_List);
 
 class TA_API T3SavedView_List: public taList<T3SavedView> {
   // ##CAT_View list of saved views

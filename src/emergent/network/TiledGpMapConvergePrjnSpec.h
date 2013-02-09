@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledGpMapConvergePrjnSpec);
+eTypeDef_Of(TiledGpMapConvergePrjnSpec);
 
-class EMERGENT_API TiledGpMapConvergePrjnSpec : public ProjectionSpec {
+class E_API TiledGpMapConvergePrjnSpec : public ProjectionSpec {
   // generates a converging map of the units within a sending layer with unit groups, using tiled overlapping receptive fields within each unit group -- each recv unit receives from the corresponding unit in all of the sending unit groups, with the recv units organized into unit groups that each recv from one tiled subset of sending units within all the sending unit groups -- there must be the same number of recv unit groups as tiled subsets within the sending unit groups
 INHERITED(ProjectionSpec)
 public:

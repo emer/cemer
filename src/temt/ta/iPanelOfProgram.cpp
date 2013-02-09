@@ -23,7 +23,7 @@
 #include <taSigLinkItr>
 #include <iPanelSet>
 
-TypeDef_Of(ProgCode);
+taTypeDef_Of(ProgCode);
 
 #include <taMisc>
 

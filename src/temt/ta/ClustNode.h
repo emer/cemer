@@ -30,7 +30,7 @@ class float_Matrix; //
 class DataTable; // 
 
 
-TypeDef_Of(ClustNode);
+taTypeDef_Of(ClustNode);
 
 class TA_API ClustNode : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math node in clustering algorithm use one with leaves as children as a root node for cluster

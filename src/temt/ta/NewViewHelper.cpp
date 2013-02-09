@@ -20,7 +20,7 @@
 #include <T3PanelViewer>
 #include <taBase>
 
-TypeDef_Of(taProject);
+taTypeDef_Of(taProject);
 
 #include <taMisc>
 #include <taiMisc>

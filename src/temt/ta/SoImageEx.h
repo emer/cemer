@@ -48,7 +48,7 @@ private:
 };
 #endif
 
-TypeDef_Of(SoImageEx);
+taTypeDef_Of(SoImageEx);
 
 class TA_API SoImageEx: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio

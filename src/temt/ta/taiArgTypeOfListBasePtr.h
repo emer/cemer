@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfListBasePtr);
+taTypeDef_Of(taiArgTypeOfListBasePtr);
 
 class TA_API taiArgTypeOfListBasePtr : public taiArgTypeOfTokenPtr {
   // for taBase pointers in groups, sets the typedef to be the right one..

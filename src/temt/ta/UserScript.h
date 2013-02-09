@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(UserScript);
+taTypeDef_Of(UserScript);
 
 class TA_API UserScript: public ProgEl { 
   // a user-defined css script (can access all program variables, etc)

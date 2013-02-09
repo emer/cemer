@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(MTRndState);
+taTypeDef_Of(MTRndState);
 
 class TA_API MTRndState
 {

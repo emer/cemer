@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetUpdateView);
+eTypeDef_Of(NetUpdateView);
 
-class EMERGENT_API NetUpdateView: public NetBaseProgEl { 
+class E_API NetUpdateView: public NetBaseProgEl { 
   // update the network view, conditional on an update_net_view variable that is created by this progam element
 INHERITED(NetBaseProgEl)
 public:

@@ -53,13 +53,14 @@ int yylex();
 }
 
 /* type definition keywords */
-%token	<typ> 	MP_CLASS MP_TYPENAME MP_STRUCT MP_UNION MP_ENUM MP_FUNTYPE MP_STATIC MP_TEMPLATE MP_CONST
-%token	<typ>	MP_TYPEDEF
+%token	<typ> 	MP_CLASS MP_TYPENAME MP_STRUCT MP_UNION MP_ENUM MP_FUNTYPE
+%token	<typ>	MP_STATIC MP_TEMPLATE MP_CONST MP_TYPEDEF 
 
 /* basic tokens */
 %token	<typ>	MP_TYPE
 %token	<rval>	MP_NUMBER MP_FUNCTION MP_ARRAY
 %token  <chr>	MP_NAME MP_COMMENT MP_FUNCALL MP_SCOPER MP_EQUALS
+%token  <chr>   MP_USING MP_NAMESPACE
 
 /* access categories */
 %token	<typ>	MP_PUBLIC MP_PRIVATE MP_PROTECTED
@@ -75,7 +76,7 @@ int yylex();
 
 /* typedef stuff */
 %type 	<typ>	typedsub defn
-%type 	<chr>	tdname
+%type 	<chr>	tdname usenamespc namespc
 
 /* enum stuff */
 %type 	<typ>	enumdsub enumname enumnm
@@ -123,6 +124,13 @@ list:	/* nothing */		{ mta->yy_state = MTA::YYRet_Exit; }
         | list templdefn	{
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
         | list fundecl		{
+	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+        | list usenamespc       {
+	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+        | list namespc           {
+	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+        | list '}'              {
+          // presumably leaving a namespace -- check that..
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
 	| list error		{
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_NoSrc; return mta->yy_state; }
@@ -378,6 +386,16 @@ funnm:    MP_REGFUN ftype regfundefn fundefn	{
 regfundefn: methname funargs		{
             $1->is_static = true; /* consider these to be static functions */
             $1->fun_argc = $2; $1->arg_types.size = $2; mta->burp_fundefn = true; }
+        ;
+
+usenamespc:  MP_USING MP_NAMESPACE MP_NAME ';' {
+            taMisc::Info("using namespace:", $3);
+          }
+        ;
+
+namespc:  MP_NAMESPACE MP_NAME '{' {
+            taMisc::Info("entering namespace:", $2);
+          }
         ;
 
 enums:    enumline

@@ -23,11 +23,11 @@
 
 // declare all other types mentioned but not required to include:
 class taiMimeFactory; // 
-TypeDef_Of(taiMimeFactory);
+taTypeDef_Of(taiMimeFactory);
 class TypeDef; // 
 
 
-TypeDef_Of(taiMimeFactory_List);
+taTypeDef_Of(taiMimeFactory_List);
 
 class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
 INHERITED(taList<taiMimeFactory>)

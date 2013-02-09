@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ProgLibEl_List);
+taTypeDef_Of(ProgLibEl_List);
 
 class TA_API ProgLibEl_List : public taList<ProgLibEl> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program library elements

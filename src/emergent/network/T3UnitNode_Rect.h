@@ -25,7 +25,7 @@
 class SoCube; //
 
 
-class EMERGENT_API T3UnitNode_Rect: public T3UnitNode { // 2d color
+class E_API T3UnitNode_Rect: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Rect);

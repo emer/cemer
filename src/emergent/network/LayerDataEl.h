@@ -46,9 +46,9 @@
 #endif
 
 
-TypeDef_Of(LayerDataEl);
+eTypeDef_Of(LayerDataEl);
 
-class EMERGENT_API LayerDataEl: public taOBase  {
+class E_API LayerDataEl: public taOBase  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS ##CAT_Network controls the reading/writing of information to/from layers and data blocks/tables
 friend class LayerDataEl_List;
 friend class LayerWriter_List;

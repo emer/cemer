@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataGroupSpec);
+taTypeDef_Of(DataGroupSpec);
 
 class TA_API DataGroupSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable grouping specification (list of group elements)

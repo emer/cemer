@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PFCDeepGatedConSpec);
+eTypeDef_Of(PFCDeepGatedConSpec);
 
-class LEABRA_API PFCDeepGatedConSpec : public LeabraConSpec {
+class E_API PFCDeepGatedConSpec : public LeabraConSpec {
   // projection from PFC Deep layers that goes via thalamus to another PFC layer, and is thus subject to gating in that layer -- just uses recv based scale_eff on con group for netin scaling, so it is stripe specific
 INHERITED(LeabraConSpec)
 public:

@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taColor_List);
+taTypeDef_Of(taColor_List);
 
 class TA_API taColor_List : public taList<taColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of taColor objects

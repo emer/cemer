@@ -30,7 +30,7 @@
 class DataTable; // 
 class V1RetinaProc; // 
 
-TypeDef_Of(V1GaborSpec);
+taTypeDef_Of(V1GaborSpec);
 
 class TA_API V1GaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
@@ -59,7 +59,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V1sNeighInhib);
+taTypeDef_Of(V1sNeighInhib);
 
 class TA_API V1sNeighInhib : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
@@ -78,7 +78,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V1MotionSpec);
+taTypeDef_Of(V1MotionSpec);
 
 class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
@@ -100,7 +100,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V1BinocularSpec);
+taTypeDef_Of(V1BinocularSpec);
 
 class TA_API V1BinocularSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
@@ -141,7 +141,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V1ComplexSpec);
+taTypeDef_Of(V1ComplexSpec);
 
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
@@ -167,7 +167,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V2BordOwnSpec);
+taTypeDef_Of(V2BordOwnSpec);
 
 class TA_API V2BordOwnSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
@@ -190,7 +190,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V2BordOwnStencilSpec);
+taTypeDef_Of(V2BordOwnStencilSpec);
 
 class TA_API V2BordOwnStencilSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership stencils for neighborhood connectivity
@@ -210,7 +210,7 @@ public:
   TA_SIMPLE_BASEFUNS(V2BordOwnStencilSpec);
 };
 
-TypeDef_Of(VisSpatIntegSpec);
+taTypeDef_Of(VisSpatIntegSpec);
 
 class TA_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
@@ -231,7 +231,7 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(V1RegionSpec);
+taTypeDef_Of(V1RegionSpec);
 
 class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution

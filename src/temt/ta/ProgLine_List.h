@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ProgLine_List);
+taTypeDef_Of(ProgLine_List);
 
 class TA_API ProgLine_List : public taList<ProgLine> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Program a list of program listing elements -- always add one blank entry at the start so line numbers start at 1

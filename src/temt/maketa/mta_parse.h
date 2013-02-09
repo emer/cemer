@@ -58,14 +58,16 @@
      MP_FUNCALL = 274,
      MP_SCOPER = 275,
      MP_EQUALS = 276,
-     MP_PUBLIC = 277,
-     MP_PRIVATE = 278,
-     MP_PROTECTED = 279,
-     MP_OPERATOR = 280,
-     MP_FRIEND = 281,
-     MP_THISNAME = 282,
-     MP_REGFUN = 283,
-     MP_VIRTUAL = 284
+     MP_USING = 277,
+     MP_NAMESPACE = 278,
+     MP_PUBLIC = 279,
+     MP_PRIVATE = 280,
+     MP_PROTECTED = 281,
+     MP_OPERATOR = 282,
+     MP_FRIEND = 283,
+     MP_THISNAME = 284,
+     MP_REGFUN = 285,
+     MP_VIRTUAL = 286
    };
 #endif
 /* Tokens.  */
@@ -88,14 +90,16 @@
 #define MP_FUNCALL 274
 #define MP_SCOPER 275
 #define MP_EQUALS 276
-#define MP_PUBLIC 277
-#define MP_PRIVATE 278
-#define MP_PROTECTED 279
-#define MP_OPERATOR 280
-#define MP_FRIEND 281
-#define MP_THISNAME 282
-#define MP_REGFUN 283
-#define MP_VIRTUAL 284
+#define MP_USING 277
+#define MP_NAMESPACE 278
+#define MP_PUBLIC 279
+#define MP_PRIVATE 280
+#define MP_PROTECTED 281
+#define MP_OPERATOR 282
+#define MP_FRIEND 283
+#define MP_THISNAME 284
+#define MP_REGFUN 285
+#define MP_VIRTUAL 286
 
 
 
@@ -112,7 +116,7 @@ typedef struct YYSTYPE
   int	   	rval;
 }
 /* Line 1529 of yacc.c.  */
-#line 116 "y.tab.h"
+#line 120 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

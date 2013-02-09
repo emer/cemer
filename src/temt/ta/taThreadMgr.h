@@ -36,7 +36,7 @@ class QWaitCondition; //
 class TypeDef; // 
 
 
-TypeDef_Of(taThreadMgr);
+taTypeDef_Of(taThreadMgr);
 
 class TA_API taThreadMgr : public taOBase {
   // ##CAT_Thread thread manager base class -- controls a set of taManagedThread objects that are all deployed and synchronized together to perform a specific task that is determined by a taTask object type -- there are n_threads tasks and n_threads-1 sub-threads, with the main thread running task 0

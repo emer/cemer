@@ -28,7 +28,7 @@ class taSigLink; //
 class taiTreeNodeDefChild; // 
 
 
-TypeDef_Of(taiTreeNodeDefChild_ElRef);
+taTypeDef_Of(taiTreeNodeDefChild_ElRef);
 
 class TA_API taiTreeNodeDefChild_ElRef: protected ISigLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taList objects -- does not ref count, but is a dlc so it tracks changes etc.
 public:

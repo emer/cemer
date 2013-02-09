@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ProjTemplateEl_List);
+taTypeDef_Of(ProjTemplateEl_List);
 
 class TA_API ProjTemplateEl_List : public taList<ProjTemplateEl> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Project list of project template elements

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraExtOnlyUnitSpec);
+eTypeDef_Of(LeabraExtOnlyUnitSpec);
 
-class LEABRA_API LeabraExtOnlyUnitSpec : public LeabraUnitSpec {
+class E_API LeabraExtOnlyUnitSpec : public LeabraUnitSpec {
   // only units with an above-threshold (opt_thresh.send) of ext input are allowed to get active -- soft clamping inputs provide a multiplicative mask on the input dynamics -- kind of a special form of sigma-pi unit -- useful e.g., for visual inputs computed by V2 layer, where network dynamics then operate to disambiguate, but cannot hallucinate -- if no ext input, uses first prjn, first con sending act
 INHERITED(LeabraUnitSpec)
 public:

@@ -16,7 +16,7 @@
 #include "RandomCall.h"
 #include <Program>
 
-TypeDef_Of(Random);
+taTypeDef_Of(Random);
 
 void RandomCall::Initialize() {
   min_type = &TA_Random;

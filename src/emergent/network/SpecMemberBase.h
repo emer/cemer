@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SpecMemberBase);
+eTypeDef_Of(SpecMemberBase);
 
-class EMERGENT_API SpecMemberBase : public taOBase {
+class E_API SpecMemberBase : public taOBase {
   // ##EXT_spec ##SCOPE_Network ##CAT_Spec base type for members of spec objects -- defines interface for default values
 friend class BaseSpec;
 INHERITED(taOBase)

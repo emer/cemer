@@ -28,7 +28,7 @@ class DataCol; //
 class DataTable; // 
 
 
-TypeDef_Of(DataOpEl);
+taTypeDef_Of(DataOpEl);
 
 class TA_API DataOpEl : public taOBase {
   // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element

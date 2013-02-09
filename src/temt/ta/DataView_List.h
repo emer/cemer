@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataView_List);
+taTypeDef_Of(DataView_List);
 
 class TA_API DataView_List: public taList<taDataView> {
   // #NO_TOKENS ##CAT_Display

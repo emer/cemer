@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataVarProg);
+taTypeDef_Of(DataVarProg);
 
 class TA_API DataVarProg : public DataOneProg { 
   // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported

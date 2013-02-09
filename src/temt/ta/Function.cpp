@@ -19,8 +19,8 @@
 #include <taBase_PtrList>
 #include <FunctionCall>
 
-TypeDef_Of(LocalVars);
-TypeDef_Of(ProgCode);
+taTypeDef_Of(LocalVars);
+taTypeDef_Of(ProgCode);
 
 void Function::Initialize() {
   return_type = ProgVar::T_Int;

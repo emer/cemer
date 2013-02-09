@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVLVTonicDaLayerSpec);
+eTypeDef_Of(PVLVTonicDaLayerSpec);
 
-class LEABRA_API PVLVTonicDaLayerSpec : public PVLVLayerSpec {
+class E_API PVLVTonicDaLayerSpec : public PVLVLayerSpec {
   // display of tonic dopamine level -- just clamps the current value which is always stored in network->pvlv_tonic_da and is the definitive value (which can be manipulated by other layers) that is just reflected in this layer -- does not do any actual computation
 INHERITED(PVLVLayerSpec)
 public:

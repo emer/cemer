@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ProgramToolBar);
+taTypeDef_Of(ProgramToolBar);
 
 class TA_API ProgramToolBar: public ToolBar {
 // thin subclass to define custom tb for Programs

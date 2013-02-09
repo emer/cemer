@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixConSpec);
+eTypeDef_Of(MatrixConSpec);
 
-class LEABRA_API MatrixConSpec : public LeabraConSpec {
+class E_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for Matrix_Go connections only -- use MatrixNoGoConSpec for NoGo pathway
 INHERITED(LeabraConSpec)
 public:

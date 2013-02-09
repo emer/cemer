@@ -32,7 +32,7 @@
 #include <voidptr_Array>
 #include <DMemShare>
 
-TypeDef_Of(DMemAggVars);
+taTypeDef_Of(DMemAggVars);
 
 class TA_API DMemAggVars : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
@@ -81,7 +81,7 @@ public:
 
 #else
 
-TypeDef_Of(DMemAggVars);
+taTypeDef_Of(DMemAggVars);
 
 class TA_API DMemAggVars : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)

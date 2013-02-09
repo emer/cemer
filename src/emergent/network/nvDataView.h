@@ -27,9 +27,9 @@ class NetView; //
 class T3Color; //
 
 
-TypeDef_Of(nvDataView);
+eTypeDef_Of(nvDataView);
 
-class EMERGENT_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
+class E_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
 INHERITED(T3DataViewPar)
 public:
   NetView*              getNetView();

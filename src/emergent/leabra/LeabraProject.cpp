@@ -17,8 +17,8 @@
 
 #include <taMisc>
 
-TypeDef_Of(LeabraNetwork);
-TypeDef_Of(LeabraWizard);
+eTypeDef_Of(LeabraNetwork);
+eTypeDef_Of(LeabraWizard);
 
 static void leabra_converter_init() {
   DumpFileCvt* cvt = new DumpFileCvt("Leabra", "LeabraUnit");

@@ -19,7 +19,7 @@
 #include <iPanelOfProgram>
 #include <iPanelOfProgramScript>
 
-TypeDef_Of(Program);
+taTypeDef_Of(Program);
 
 int taiViewTypeOfProgram::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_Program))

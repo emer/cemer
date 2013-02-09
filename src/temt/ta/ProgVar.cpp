@@ -19,9 +19,9 @@
 #include <taSigLinkItr>
 #include <MemberDef>
 
-TypeDef_Of(taMatrix);
-TypeDef_Of(Function);
-TypeDef_Of(taProject);
+taTypeDef_Of(taMatrix);
+taTypeDef_Of(Function);
+taTypeDef_Of(taProject);
 
 #include <SigLinkSignal>
 #include <taMisc>

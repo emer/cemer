@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataBlock_Idx);
+taTypeDef_Of(DataBlock_Idx);
 
 class TA_API DataBlock_Idx : public DataBlock {
  // #VIRT_BASE #NO_INSTANCE base class for a data source and/or sink that supports random access to data via an index

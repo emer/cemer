@@ -29,7 +29,7 @@ class iVec3f; //
 class SbRotation; // 
 class SoComplexity; // #IGNORE
 
-TypeDef_Of(T3Axis);
+taTypeDef_Of(T3Axis);
 
 class TA_API T3Axis: public T3NodeLeaf {
   // dataview is the GraphAxisView

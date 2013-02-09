@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LayerActUnitSpec);
+eTypeDef_Of(LayerActUnitSpec);
 
-class LEABRA_API LayerActUnitSpec : public LeabraUnitSpec {
+class E_API LayerActUnitSpec : public LeabraUnitSpec {
   // Layer-driven activation unit spec -- use this for any layer that computes activation values at the layer-level, instead of using the usual net input, currents etc -- saves on computational costs by negating most functions
 INHERITED(LeabraUnitSpec)
 public:

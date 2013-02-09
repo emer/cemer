@@ -27,7 +27,7 @@ class iNumberedTextView;
 #endif
 class Program; 
 
-TypeDef_Of(iPanelOfProgramScript);
+taTypeDef_Of(iPanelOfProgramScript);
 
 class TA_API iPanelOfProgramScript: public iPanel {
   // a panel frame for viewing script code of program

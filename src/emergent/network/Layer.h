@@ -57,9 +57,9 @@ class DMemShare; //
   } 
 
 
-TypeDef_Of(LayerDistances);
+eTypeDef_Of(LayerDistances);
 
-class EMERGENT_API LayerDistances : public taOBase {
+class E_API LayerDistances : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network specifies distance from input/output layers
 INHERITED(taOBase)
 public:
@@ -76,9 +76,9 @@ private:
 };
 
 
-TypeDef_Of(Layer);
+eTypeDef_Of(Layer);
 
-class EMERGENT_API Layer : public taNBase {
+class E_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(taNBase)
 public:

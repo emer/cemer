@@ -27,9 +27,9 @@
 // declare all other types mentioned but not required to include:
 class DataTable; //
 
-TypeDef_Of(SetUnitsLit);
+eTypeDef_Of(SetUnitsLit);
 
-class EMERGENT_API SetUnitsLit: public ProgEl { 
+class E_API SetUnitsLit: public ProgEl { 
   // set units in input_data table to present to the network based on dynamic enum values where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as literal items
 INHERITED(ProgEl)
 public:

@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class QBoxLayout; //
 
-TypeDef_Of(taGuiLayout);
+taTypeDef_Of(taGuiLayout);
 
 class TA_API taGuiLayout : public taNBase {
   // ##CAT_Gui manages a qt layout for the taGui system

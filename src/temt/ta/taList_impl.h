@@ -42,7 +42,7 @@ class UserDataItem_List; //
 class UserDataItemBase; // 
 
 
-TypeDef_Of(taList_impl);
+taTypeDef_Of(taList_impl);
 
 class TA_API taList_impl : public taNBase, public taPtrList_base<taBase> {
   // #INSTANCE #NO_TOKENS #STEM_BASE ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class

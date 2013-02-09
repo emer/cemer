@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixBiasSpec);
+eTypeDef_Of(MatrixBiasSpec);
 
-class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
+class E_API MatrixBiasSpec : public LeabraBiasSpec {
   // Matrix bias spec: special learning parameters for matrix units
 INHERITED(LeabraBiasSpec)
 public:

@@ -28,7 +28,7 @@ class Program; //
 class Program_Group; // 
 
 
-TypeDef_Of(ProgramCallVar);
+taTypeDef_Of(ProgramCallVar);
 
 class TA_API ProgramCallVar: public ProgramCallBase {
   // ##DEF_CHILD_prog_args call (run) another program by name based on a string variable, setting any arguments before hand

@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVConSpec);
+eTypeDef_Of(PVConSpec);
 
-class LEABRA_API PVConSpec : public LeabraConSpec {
+class E_API PVConSpec : public LeabraConSpec {
   // pvlv connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
 public:

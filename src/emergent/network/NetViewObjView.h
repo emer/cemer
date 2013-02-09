@@ -25,11 +25,11 @@
 // declare all other types mentioned but not required to include:
 class NetViewObj; //
 class NetView; //
-TypeDef_Of(NetView);
+eTypeDef_Of(NetView);
 
-TypeDef_Of(NetViewObjView);
+eTypeDef_Of(NetViewObjView);
 
-class EMERGENT_API NetViewObjView: public T3DataView {
+class E_API NetViewObjView: public T3DataView {
   // view of net view object
 INHERITED(T3DataView)
 public:

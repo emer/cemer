@@ -17,16 +17,16 @@
 #define V1LateralContourPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(V1LateralContourPrjnSpec);
+eTypeDef_Of(V1LateralContourPrjnSpec);
 
-class LEABRA_API V1LateralContourPrjnSpec : public ProjectionSpec {
+class E_API V1LateralContourPrjnSpec : public ProjectionSpec {
   // lateral projections within V1 layer to support continuation of contours -- helps make edges more robust to differences in bottom-up strength, based on principle of good continuation -- requires unit groups within layer where x dim represents angle
 INHERITED(ProjectionSpec)
 public:

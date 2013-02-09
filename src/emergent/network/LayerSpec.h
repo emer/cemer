@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 class Layer; //
 
-TypeDef_Of(LayerSpec);
+eTypeDef_Of(LayerSpec);
 
-class EMERGENT_API LayerSpec : public BaseSpec {
+class E_API LayerSpec : public BaseSpec {
   // generic layer specification
 INHERITED(BaseSpec)
 public:

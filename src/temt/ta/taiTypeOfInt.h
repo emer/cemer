@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfInt);
+taTypeDef_Of(taiTypeOfInt);
 
 class TA_API taiTypeOfInt : public taiType { // handles numeric int types, up to 32-bits
   TAI_TYPEBASE_SUBCLASS(taiTypeOfInt, taiType);

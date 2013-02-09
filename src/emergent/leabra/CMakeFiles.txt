@@ -147,7 +147,7 @@ set(leabra_HEADS_NOMAKETA
 
 # all heads -- include maketa generated ones here
 set(leabra_HEADS
-    leabra_def.h
+    network_def.h
     ${leabra_HEADS_MAKETA}
     ${leabra_HEADS_NOMAKETA}
 )

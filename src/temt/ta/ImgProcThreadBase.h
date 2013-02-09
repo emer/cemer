@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ImgProcThreadBase);
+taTypeDef_Of(ImgProcThreadBase);
 
 class TA_API ImgProcThreadBase : public taNBase {
   // #VIRT_BASE ##CAT_Image base class for image-processing code that uses threading -- defines a basic interface for thread calls to deploy filtering or other intensive computations

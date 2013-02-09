@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PBWMUnGpData);
+eTypeDef_Of(PBWMUnGpData);
 
-class LEABRA_API PBWMUnGpData : public LeabraUnGpData {
+class E_API PBWMUnGpData : public LeabraUnGpData {
   // PBWM version of data to maintain for independent unit groups of competing units within a single layer -- contains extra information for PBWM state
 INHERITED(LeabraUnGpData)
 public:

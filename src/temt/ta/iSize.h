@@ -20,7 +20,7 @@
 
 class QSize; //
 
-TypeDef_Of(iSize);
+taTypeDef_Of(iSize);
 
 class TA_API iSize { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:

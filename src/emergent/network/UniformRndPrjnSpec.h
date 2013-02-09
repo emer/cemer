@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(UniformRndPrjnSpec);
+eTypeDef_Of(UniformRndPrjnSpec);
 
-class EMERGENT_API UniformRndPrjnSpec : public ProjectionSpec {
+class E_API UniformRndPrjnSpec : public ProjectionSpec {
   // Uniform random connectivity between layers -- only 'permute' stye randomness is supported, creates same number of connections per unit
 INHERITED(ProjectionSpec)
 public:

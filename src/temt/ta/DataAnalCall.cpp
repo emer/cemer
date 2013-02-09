@@ -15,7 +15,7 @@
 
 #include "DataAnalCall.h"
 
-TypeDef_Of(taDataAnal);
+taTypeDef_Of(taDataAnal);
 
 void DataAnalCall::Initialize() {
   min_type = &TA_taDataAnal;

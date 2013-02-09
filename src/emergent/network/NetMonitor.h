@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetMonitor);
+eTypeDef_Of(NetMonitor);
 
-class EMERGENT_API NetMonitor: public taNBase {
+class E_API NetMonitor: public taNBase {
   // #STEM_BASE ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:

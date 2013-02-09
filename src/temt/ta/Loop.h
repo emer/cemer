@@ -27,7 +27,7 @@ class ProgVar; //
 class TypeDef; // 
 
 
-TypeDef_Of(Loop);
+taTypeDef_Of(Loop);
 
 class TA_API Loop: public ProgEl {
   // #VIRT_BASE base class for loops

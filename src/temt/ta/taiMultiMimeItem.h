@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMultiMimeItem);
+taTypeDef_Of(taiMultiMimeItem);
 
 class TA_API taiMultiMimeItem: public taiMimeItem { // #VIRT_BASE
 INHERITED(taiMimeItem)

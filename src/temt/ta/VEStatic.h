@@ -38,7 +38,7 @@ class VEWorld; //
 class VESpace; // 
 
 
-TypeDef_Of(VEStatic);
+taTypeDef_Of(VEStatic);
 
 class TA_API VEStatic : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)

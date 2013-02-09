@@ -26,7 +26,7 @@
 class ProgEl; // 
 
 
-TypeDef_Of(CaseBlock);
+taTypeDef_Of(CaseBlock);
 
 class TA_API CaseBlock: public CodeBlock { 
   // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run

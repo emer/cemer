@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraSRAvgCon);
+eTypeDef_Of(LeabraSRAvgCon);
 
 class LeabraSRAvgCon : public LeabraCon {
   // Leabra connection with send-recv average coproduct variables -- required for CTLEABRA_CAL learning rule and perhaps other situations

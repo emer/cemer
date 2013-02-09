@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraTILayerSpec);
+eTypeDef_Of(LeabraTILayerSpec);
 
-class LEABRA_API LeabraTILayerSpec : public LeabraLayerSpec {
+class E_API LeabraTILayerSpec : public LeabraLayerSpec {
   // #AKA_DeepContextLayerSpec Leabra Temporal Integration algorithm -- effectively a simple recurrent network (SRN) context layer at this point, with a flexible api for future expansion -- only really need to use this for DEEP (Context) layers -- supers can be any layerspec -- deep should also have LayerActUnitSpec unit spec to optimize computation
 INHERITED(LeabraLayerSpec)
 public:

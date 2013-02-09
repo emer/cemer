@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ProgLine);
+taTypeDef_Of(ProgLine);
 
 class TA_API ProgLine: public taOBase {
   // ##NO_TOKENS ##EDIT_INLINE ##SCOPE_Program ##CAT_Program represents one line of the generated program css code -- manages stuff for one line of code

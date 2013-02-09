@@ -27,7 +27,7 @@
 class taBase; //
 
 
-TypeDef_Of(taiArgType);
+taTypeDef_Of(taiArgType);
 
 class TA_API taiArgType : public taiType {
   // unlike taiTypes, these are created and destroyed each time

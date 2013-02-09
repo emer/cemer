@@ -25,7 +25,7 @@
 class iToolBar; // #IGNORE 
 
 
-TypeDef_Of(ToolBar);
+taTypeDef_Of(ToolBar);
 
 class TA_API ToolBar: public taViewer {// ##NO_TOKENS proxy for Toolbars
 friend class iToolBar;

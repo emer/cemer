@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class VEArm; //
 
-TypeDef_Of(VELinearMuscle);
+taTypeDef_Of(VELinearMuscle);
 
 class TA_API VELinearMuscle : public VEMuscle {
   // A muscle that exerts force proportional to its input

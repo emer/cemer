@@ -27,7 +27,7 @@ class taGroup_impl; //
 class TypeItem; // 
 
 
-TypeDef_Of(SelectEditItem);
+taTypeDef_Of(SelectEditItem);
 
 class TA_API SelectEditItem: public taOBase {
   // #STEM_BASE ##CAT_Display base class for membs/meths in a SelectEdit

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ToolBoxRegistrar_PtrList);
+taTypeDef_Of(ToolBoxRegistrar_PtrList);
 
 class TA_API ToolBoxRegistrar_PtrList: public taPtrList<ToolBoxRegistrar> {
 INHERITED(taPtrList<ToolBoxRegistrar>)

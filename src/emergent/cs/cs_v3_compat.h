@@ -191,7 +191,7 @@ private:
   void	Destroy() { };
 };
 
-class CS_API V3CsProject : public V3ProjectBase {
+class E_API V3CsProject : public V3ProjectBase {
   // self-organizing learning project
 INHERITED(V3ProjectBase)
 public:

@@ -16,7 +16,7 @@
 #include "taiTypeOfList.h"
 #include <taiWidgetListEditButton>
 
-TypeDef_Of(taList_impl);
+taTypeDef_Of(taList_impl);
 
 int taiTypeOfList::BidForType(TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl))

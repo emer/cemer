@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkTypeItem);
+taTypeDef_Of(taSigLinkTypeItem);
 
 class TA_API taSigLinkTypeItem: public taSigLinkClass { // SigLink for TypeInfo objects
 INHERITED(taSigLinkClass)

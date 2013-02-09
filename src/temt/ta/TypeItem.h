@@ -27,7 +27,7 @@
 class TypeDef; //
 class taSigLink; //
 
-TypeDef_Of(TypeItem);
+taTypeDef_Of(TypeItem);
 
 class TA_API TypeItem: public taRefN, public ITypedObject {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef

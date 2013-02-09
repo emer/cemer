@@ -39,9 +39,9 @@ typedef void (Unit::*ThreadUnitMethod)(Network*, int);
 #endif
 
 
-TypeDef_Of(UnitCallTask);
+eTypeDef_Of(UnitCallTask);
 
-class EMERGENT_API UnitCallTask : public taTask {
+class E_API UnitCallTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef    network;        // the network we're operating on
@@ -61,9 +61,9 @@ private:
   void  Destroy();
 };
 
-TypeDef_Of(UnitCallThreadMgr);
+eTypeDef_Of(UnitCallThreadMgr);
 
-class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
+class E_API UnitCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UnitCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:

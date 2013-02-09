@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(TopLevelViewer);
+taTypeDef_Of(TopLevelViewer);
 
 class TA_API TopLevelViewer : public taViewer {
   // #NO_TOKENS #VIRT_BASE stuff that is common to anything that can be a top-level window

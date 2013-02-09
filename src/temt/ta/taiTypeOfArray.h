@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfArray);
+taTypeDef_Of(taiTypeOfArray);
 
 class TA_API taiTypeOfArray : public taiTypeOfClass {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfArray, taiTypeOfClass);

@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(VarIncr);
+taTypeDef_Of(VarIncr);
 
 class TA_API VarIncr: public ProgEl { 
   // increment a variable's value by given amount

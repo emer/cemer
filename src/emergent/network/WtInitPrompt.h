@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(WtInitPrompt);
+eTypeDef_Of(WtInitPrompt);
 
-class EMERGENT_API WtInitPrompt: public IfGuiPrompt { 
+class E_API WtInitPrompt: public IfGuiPrompt { 
   // special program element for prompting whether to initialize network weights -- only prompts if network has been trained (epoch > 0) -- requires a variable named: network -- will complain if not found!
 INHERITED(IfGuiPrompt)
 public:

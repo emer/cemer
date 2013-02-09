@@ -31,7 +31,7 @@ class TypeDef; //
 class taPluginInst; // #IGNORE
 
 
-TypeDef_Of(taPlugin);
+taTypeDef_Of(taPlugin);
 
 class TA_API taPlugin: public taPluginBase {
   // taBase rep of a plugin -- these can be out of date w/ respect to actual plugins

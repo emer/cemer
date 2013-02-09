@@ -41,9 +41,9 @@ class BaseSpec; //
 class QKeyEvent; //
 
 
-TypeDef_Of(NetViewFontSizes);
+eTypeDef_Of(NetViewFontSizes);
 
-class EMERGENT_API NetViewFontSizes : public taOBase {
+class E_API NetViewFontSizes : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
 INHERITED(taOBase)
 public:
@@ -65,9 +65,9 @@ private:
   void  Destroy()               { };
 };
 
-TypeDef_Of(NetViewParams);
+eTypeDef_Of(NetViewParams);
 
-class EMERGENT_API NetViewParams : public taOBase {
+class E_API NetViewParams : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
 INHERITED(taOBase)
 public:
@@ -101,9 +101,9 @@ private:
  * of iteration
 */
 
-TypeDef_Of(NetView);
+eTypeDef_Of(NetView);
 
-class EMERGENT_API NetView: public T3DataViewMain {
+class E_API NetView: public T3DataViewMain {
 // ##DUMP_LOAD_POST #INSTANCE network view main object -- represents the network in view, manages all sub-types
 INHERITED(T3DataViewMain)
 friend class iViewPanelOfNetwork;

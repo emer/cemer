@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taVersion);
+taTypeDef_Of(taVersion);
 
 class TA_API taVersion {
   // #EDIT_INLINE simple value class for version info

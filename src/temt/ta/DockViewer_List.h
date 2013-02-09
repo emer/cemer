@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class DockViewer; // 
-TypeDef_Of(DockViewer);
+taTypeDef_Of(DockViewer);
 
-TypeDef_Of(DockViewer_List);
+taTypeDef_Of(DockViewer_List);
 
 class TA_API DockViewer_List: public taViewer_List { // #NO_TOKENS
 INHERITED(taViewer_List)

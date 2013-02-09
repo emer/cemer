@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTableColDesc);
+taTypeDef_Of(taiTableColDesc);
 
 class TA_API taiTableColDesc { // #NO_CSS #NO_MEMBERS value class to hold col data
 public:

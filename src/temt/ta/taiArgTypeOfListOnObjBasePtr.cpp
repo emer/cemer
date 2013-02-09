@@ -20,7 +20,7 @@
 
 #include <css_ta.h>
 
-TypeDef_Of(taGroup_impl);
+taTypeDef_Of(taGroup_impl);
 
 int taiArgTypeOfListOnObjBasePtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taList_impl) &&

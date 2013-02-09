@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetGroupedDataLoop);
+eTypeDef_Of(NetGroupedDataLoop);
 
-class EMERGENT_API NetGroupedDataLoop: public Loop { 
+class E_API NetGroupedDataLoop: public Loop { 
   // #OBSOLETE (This is obsolete: use NetDataLoop with group flag instead) loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data.  Note: assumes that there is a 'network' variable defined in program!!
 INHERITED(Loop)
 public:

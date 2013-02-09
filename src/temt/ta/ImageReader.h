@@ -26,7 +26,7 @@
 class rgb_Matrix; //
 
 
-TypeDef_Of(ImageReader);
+taTypeDef_Of(ImageReader);
 
 class TA_API ImageReader: public DataBlock {
   // #INSTANCE provides ability to read image files, sequential only

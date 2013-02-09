@@ -32,7 +32,7 @@ class VEWorld; //
 class VEBody; // 
 
 
-TypeDef_Of(VEObject);
+taTypeDef_Of(VEObject);
 
 class TA_API VEObject : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects

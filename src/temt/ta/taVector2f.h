@@ -27,7 +27,7 @@
 class taMatrix; // 
 class taVector2i; //
 
-TypeDef_Of(taVector2f);
+taTypeDef_Of(taVector2f);
 
 class TA_API taVector2f : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space

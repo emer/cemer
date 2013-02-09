@@ -16,7 +16,7 @@
 #include "taiViewTypeOfDataTable.h"
 #include <iPanelOfDataTable>
 
-TypeDef_Of(DataTable);
+taTypeDef_Of(DataTable);
 
 int taiViewTypeOfDataTable::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_DataTable))

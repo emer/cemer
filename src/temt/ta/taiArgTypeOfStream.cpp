@@ -20,10 +20,10 @@
 
 #include <css_ta.h>
 
-TypeDef_Of(ios);
-TypeDef_Of(istream);
-TypeDef_Of(ostream);
-TypeDef_Of(fstream);
+taTypeDef_Of(ios);
+taTypeDef_Of(istream);
+taTypeDef_Of(ostream);
+taTypeDef_Of(fstream);
 
 using namespace std;
 

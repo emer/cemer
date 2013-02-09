@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PRerrVals);
+eTypeDef_Of(PRerrVals);
 
-class EMERGENT_API PRerrVals : public taOBase {
+class E_API PRerrVals : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network contains precision and recall error values
 INHERITED(taOBase)
 public:

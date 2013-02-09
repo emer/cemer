@@ -31,7 +31,7 @@ class ProgEl; //
 class TypeDef; // 
 
 
-TypeDef_Of(DataCalcLoop);
+taTypeDef_Of(DataCalcLoop);
 
 class TA_API DataCalcLoop : public DataSrcDestProg { 
   // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)

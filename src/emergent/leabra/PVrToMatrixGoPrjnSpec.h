@@ -17,16 +17,16 @@
 #define PVrToMatrixGoPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVrToMatrixGoPrjnSpec);
+eTypeDef_Of(PVrToMatrixGoPrjnSpec);
 
-class LEABRA_API PVrToMatrixGoPrjnSpec : public ProjectionSpec {
+class E_API PVrToMatrixGoPrjnSpec : public ProjectionSpec {
   // Projection from PVLV PVr layer to Matrix_Go layer -- PVr=1 value unit (right-most) connects to Output Go units, while PVr=.5 value unit (middle) connects to Input and Maint Go units, providing a bias for output gating when rewards are expected
 INHERITED(ProjectionSpec)
 public:

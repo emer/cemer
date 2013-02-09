@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(T3VEObject);
+taTypeDef_Of(T3VEObject);
 
 class TA_API T3VEObject : public T3NodeParent {
   // object parent for virtual environment

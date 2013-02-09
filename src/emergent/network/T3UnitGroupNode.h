@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class EMERGENT_API T3UnitGroupNode: public T3NodeParent {
+class E_API T3UnitGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 

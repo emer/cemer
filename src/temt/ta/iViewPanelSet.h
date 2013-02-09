@@ -26,7 +26,7 @@ class iTabBarBase;  //
 class iViewPanel; //
 
 
-TypeDef_Of(iViewPanelSet);
+taTypeDef_Of(iViewPanelSet);
 
 class TA_API iViewPanelSet: public iPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
   Q_OBJECT

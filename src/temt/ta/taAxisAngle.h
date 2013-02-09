@@ -25,7 +25,7 @@
 class taQuaternion; //
 
 
-TypeDef_Of(taAxisAngle);
+taTypeDef_Of(taAxisAngle);
 
 class TA_API taAxisAngle: public taVector3f {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d rotation data, xyz specify the rotation axis

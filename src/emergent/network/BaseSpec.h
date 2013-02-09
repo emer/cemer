@@ -40,9 +40,9 @@
   void Defaults_impl() { inherited::Defaults_impl(); Defaults_init(); }
 
 
-TypeDef_Of(BaseSpec);
+eTypeDef_Of(BaseSpec);
 
-class EMERGENT_API BaseSpec : public taNBase {
+class E_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class
 friend class BaseSpec_Group;
 friend class SpecMemberBase;

@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(XCalHebbConSpec);
+eTypeDef_Of(XCalHebbConSpec);
 
-class LEABRA_API XCalHebbConSpec : public LeabraConSpec {
+class E_API XCalHebbConSpec : public LeabraConSpec {
   // xcal version of hebbian learning
 INHERITED(LeabraConSpec)
 public:

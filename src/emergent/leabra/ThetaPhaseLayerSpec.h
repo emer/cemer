@@ -47,9 +47,9 @@
 // learning just happens at end of trial as usual, but encoder projections use
 // the act_mid, act_p variables to learn on the right signals
 
-TypeDef_Of(ThetaPhaseLayerSpec);
+eTypeDef_Of(ThetaPhaseLayerSpec);
 
-class LEABRA_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
+class E_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
   // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning
 INHERITED(LeabraLayerSpec)
 public:

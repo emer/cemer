@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GpTessEl);
+eTypeDef_Of(GpTessEl);
 
-class EMERGENT_API GpTessEl : public taOBase {
+class E_API GpTessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
 INHERITED(taOBase)
 public:
@@ -41,9 +41,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(GpTessEl_List);
+eTypeDef_Of(GpTessEl_List);
 
-class EMERGENT_API GpTessEl_List : public taList<GpTessEl> {
+class E_API GpTessEl_List : public taList<GpTessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
 INHERITED(taList<GpTessEl>)
 public:
@@ -53,9 +53,9 @@ void	Initialize() 		{ SetBaseType(&TA_GpTessEl); }
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(GpRndTesselPrjnSpec);
+eTypeDef_Of(GpRndTesselPrjnSpec);
 
-class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
+class E_API GpRndTesselPrjnSpec : public ProjectionSpec {
   // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:

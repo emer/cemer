@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(OneToOnePrjnSpec);
+eTypeDef_Of(OneToOnePrjnSpec);
 
-class EMERGENT_API OneToOnePrjnSpec : public ProjectionSpec {
+class E_API OneToOnePrjnSpec : public ProjectionSpec {
   // one-to-one connectivity (1st unit to 1st unit, etc)
 INHERITED(ProjectionSpec)
 public:

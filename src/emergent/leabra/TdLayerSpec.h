@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TdLayerSpec);
+eTypeDef_Of(TdLayerSpec);
 
-class LEABRA_API TdLayerSpec : public LeabraLayerSpec {
+class E_API TdLayerSpec : public LeabraLayerSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
 INHERITED(LeabraLayerSpec)
 public:

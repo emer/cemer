@@ -26,7 +26,7 @@
 
 
 // define default base group to not keep tokens
-TypeDef_Of(taBase_Group);
+taTypeDef_Of(taBase_Group);
 
 class TA_API taBase_Group : public taGroup<taBase> {
   // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_0 group of objects

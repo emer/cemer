@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GpOneToOnePrjnSpec);
+eTypeDef_Of(GpOneToOnePrjnSpec);
 
-class EMERGENT_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
+class E_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 INHERITED(OneToOnePrjnSpec)
 public:

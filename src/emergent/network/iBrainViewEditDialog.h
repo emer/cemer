@@ -26,7 +26,7 @@
 class QModelIndex; //
 
 
-class EMERGENT_API iBrainViewEditDialog : public iDialogRegexp {
+class E_API iBrainViewEditDialog : public iDialogRegexp {
   Q_OBJECT
   INHERITED(iDialogRegexp)
 public:

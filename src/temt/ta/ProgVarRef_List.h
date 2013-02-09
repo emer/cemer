@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ProgVarRef_List);
+taTypeDef_Of(ProgVarRef_List);
 
 class TA_API ProgVarRef_List: public taPtrList<ProgVarRef> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE #NO_CSS #NO_MEMBERS ##CAT_Program list of program variable references

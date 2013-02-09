@@ -16,7 +16,7 @@
 #include "taiTypeOfColor.h"
 #include <taiWidgetColor>
 
-TypeDef_Of(taColor);
+taTypeDef_Of(taColor);
 
 int taiTypeOfColor::BidForType(TypeDef* td) {
 //TODO: we can handle other color guys, just subclass

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class T3Color; //
 
-class EMERGENT_API T3UnitNode: public T3NodeLeaf { //
+class E_API T3UnitNode: public T3NodeLeaf { //
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
   SO_NODE_ABSTRACT_HEADER(T3UnitNode);

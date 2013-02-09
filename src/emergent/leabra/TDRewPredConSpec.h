@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TDRewPredConSpec);
+eTypeDef_Of(TDRewPredConSpec);
 
-class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
+class E_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 INHERITED(LeabraConSpec)
 public:

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraTdUnit);
+eTypeDef_Of(LeabraTdUnit);
 
-class LEABRA_API LeabraTdUnit : public LeabraUnit {
+class E_API LeabraTdUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
 INHERITED(LeabraUnit)
 public:

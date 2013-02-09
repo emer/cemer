@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(String_Data);
+taTypeDef_Of(String_Data);
 
 class TA_API String_Data : public DataColT<String_Matrix> {
   // string data

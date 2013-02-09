@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 class BaseSpec; //
 
-TypeDef_Of(BaseSpec_Group);
+eTypeDef_Of(BaseSpec_Group);
 
-class EMERGENT_API BaseSpec_Group: public taGroup<BaseSpec> {
+class E_API BaseSpec_Group: public taGroup<BaseSpec> {
   // ##EXT_spec ##CAT_Spec ##SCOPE_Network ##EXPAND_DEF_1 group of specs
 INHERITED(taGroup<BaseSpec>)
 public:

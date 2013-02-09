@@ -26,7 +26,7 @@
 class iColor; //
 
 
-TypeDef_Of(taiTypeBase);
+taTypeDef_Of(taiTypeBase);
 
 class TA_API taiTypeBase: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type

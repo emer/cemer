@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ScriptPrjnSpec);
+eTypeDef_Of(ScriptPrjnSpec);
 
-class EMERGENT_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
+class E_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
   // Script-controlled connectivity: use prjn variable in script code to refer to current projection that script is operating on; recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
 INHERITED(ProjectionSpec)
 public:

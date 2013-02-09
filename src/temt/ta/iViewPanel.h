@@ -31,7 +31,7 @@ class QBoxLayout; //
 class QKeyEvent; //
 
 
-TypeDef_Of(iViewPanel);
+taTypeDef_Of(iViewPanel);
 
 class TA_API iViewPanel: public iPanelBase, public virtual IWidgetHost {
   // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IWidgetHost and Apply/Revert services, so you can use taiWidget ctrls

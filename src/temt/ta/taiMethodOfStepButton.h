@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMethodOfStepButton);
+taTypeDef_Of(taiMethodOfStepButton);
 
 class TA_API taiMethodOfStepButton : public taiMethodOfActuator {
   TAI_METHOD_SUBCLASS(taiMethodOfStepButton, taiMethodOfActuator);

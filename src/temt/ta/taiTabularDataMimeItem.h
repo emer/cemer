@@ -28,7 +28,7 @@ class DataTable; //
 class taMatrix; //
 
 
-TypeDef_Of(taiTabularDataMimeItem);
+taTypeDef_Of(taiTabularDataMimeItem);
 
 class TA_API taiTabularDataMimeItem: public taiMimeItem {
   // #NO_INSTANCE #VIRT_BASE base for matrix, tsv, and table data; this class is not itself instantiated

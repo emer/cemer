@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfSubTokenPtr);
+taTypeDef_Of(taiMemberOfSubTokenPtr);
 
 class TA_API taiMemberOfSubTokenPtr : public taiMember {
   // a token ptr that points to sub-objects of current object

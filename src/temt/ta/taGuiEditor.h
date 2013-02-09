@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 class taGuiDialog;
-TypeDef_Of(taGuiDialog);
+taTypeDef_Of(taGuiDialog);
 
-TypeDef_Of(taGuiEditor);
+taTypeDef_Of(taGuiEditor);
 
 class TA_API taGuiEditor : public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS

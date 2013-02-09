@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVrConSpec);
+eTypeDef_Of(PVrConSpec);
 
-class LEABRA_API PVrConSpec : public PVConSpec {
+class E_API PVrConSpec : public PVConSpec {
   // primary value connection spec with asymmetrical learning rates -- used for reward detection connections -- have asymmetric weight decrease to lock in expectations for longer
 INHERITED(PVConSpec)
 public:

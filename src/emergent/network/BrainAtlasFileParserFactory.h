@@ -25,7 +25,7 @@
 class BrainAtlasFileParser;
 
 
-class EMERGENT_API BrainAtlasFileParserFactory {
+class E_API BrainAtlasFileParserFactory {
 public:
   static BrainAtlasFileParser* CreateInstance(const QString& filename);
 };

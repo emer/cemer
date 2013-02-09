@@ -23,12 +23,12 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
-TypeDef_Of(VEWorldView);
+taTypeDef_Of(VEWorldView);
 class TypeDef; // 
 class VEObject; // 
 
 
-TypeDef_Of(VEObjectView);
+taTypeDef_Of(VEObjectView);
 
 class TA_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies

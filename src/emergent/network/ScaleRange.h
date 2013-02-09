@@ -26,9 +26,9 @@
 class ColorScale; //
 
 
-TypeDef_Of(ScaleRange);
+eTypeDef_Of(ScaleRange);
 
-class EMERGENT_API ScaleRange : public taOBase {
+class E_API ScaleRange : public taOBase {
   // ##NO_TOKENS ##CAT_Display saves scale ranges for different variables viewed in netview
 INHERITED(taOBase)
 public:

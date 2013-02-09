@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class CircMatrix;
 
-TypeDef_Of(VisRegionParams);
+taTypeDef_Of(VisRegionParams);
 
 class TA_API VisRegionParams : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
@@ -69,7 +69,7 @@ public:
   TA_SIMPLE_BASEFUNS(VisRegionParams);
 };
 
-TypeDef_Of(VisRegionSizes);
+taTypeDef_Of(VisRegionSizes);
 
 class TA_API VisRegionSizes : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
@@ -86,7 +86,7 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(VisRegionSpecBase);
+taTypeDef_Of(VisRegionSpecBase);
 
 class TA_API VisRegionSpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image base class for specifying a visual image region to be filtered according to a set of filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs

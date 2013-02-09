@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class EMERGENT_API BrainAtlasInfo {
+class E_API BrainAtlasInfo {
 public:
   QString name;
   QString description;

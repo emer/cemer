@@ -25,9 +25,9 @@
 class LeabraUnit; // 
 class LeabraNetwork; // 
 
-TypeDef_Of(LeabraLinUnitSpec);
+eTypeDef_Of(LeabraLinUnitSpec);
 
-class LEABRA_API LeabraLinUnitSpec : public LeabraUnitSpec {
+class E_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
 INHERITED(LeabraUnitSpec)
 public:

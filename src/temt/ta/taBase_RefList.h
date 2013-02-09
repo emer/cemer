@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class IRefListClient; //
 
-TypeDef_Of(taBase_RefList);
+taTypeDef_Of(taBase_RefList);
 
 class TA_API taBase_RefList: public taPtrList<taBase>,
    virtual public IMultiSigLinkClient {

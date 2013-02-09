@@ -41,7 +41,7 @@ class taiMemberWidgets_List; //
 class taiWidgetMenuBar; //
 class QAction; //
 
-TypeDef_Of(taiEditorOfClass);
+taTypeDef_Of(taiEditorOfClass);
 
 class TA_API taiEditorOfClass : public taiEditorWidgetsMain {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a iPanelOfEditor as the widget, but the Edit subclasses override that

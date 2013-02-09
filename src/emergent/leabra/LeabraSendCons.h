@@ -17,7 +17,7 @@
 #define LeabraSendCons_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <SendCons>
 
 // member includes:
@@ -27,9 +27,9 @@
 class LeabraNetwork; // 
 class LeabraUnit; // 
 
-TypeDef_Of(LeabraSendCons);
+eTypeDef_Of(LeabraSendCons);
 
-class LEABRA_API LeabraSendCons : public SendCons {
+class E_API LeabraSendCons : public SendCons {
   // #STEM_BASE ##CAT_Leabra Leabra sending connection group
 INHERITED(SendCons)
 public:

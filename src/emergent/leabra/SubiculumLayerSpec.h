@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SubiculumNoveltySpec);
+eTypeDef_Of(SubiculumNoveltySpec);
 
-class LEABRA_API SubiculumNoveltySpec : public SpecMemberBase {
+class E_API SubiculumNoveltySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
 INHERITED(SpecMemberBase)
 public:
@@ -57,9 +57,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(SubiculumLayerSpec);
+eTypeDef_Of(SubiculumLayerSpec);
 
-class LEABRA_API SubiculumLayerSpec : public ScalarValLayerSpec {
+class E_API SubiculumLayerSpec : public ScalarValLayerSpec {
   // layer spec for subiculum layer that computes an online novely signal based on the mismatch between EC_in and EC_out, and optionally modulates learning rate in conspec (for perforant path etc) as a function of novelty -- recv prjns must be sequential matched pairs of ECin and ECout layers
 INHERITED(ScalarValLayerSpec)
 public:

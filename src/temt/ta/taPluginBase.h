@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taPluginBase);
+taTypeDef_Of(taPluginBase);
 
 class TA_API taPluginBase: public taOBase {
   // #VIRT_BASE ##NO_TOKENS ##NO_UPDATE_AFTER taBase rep of a plugin -- these can be out of date w/ respect to actual plugins

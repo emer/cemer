@@ -40,7 +40,7 @@ class SoVertexProperty; //
 class SoIndexedTriangleStripSet; //
 
 
-TypeDef_Of(So3DHeightField);
+taTypeDef_Of(So3DHeightField);
 
 class TA_API So3DHeightField: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS renders a matrix as a stack of 3d height-field layers -- matrix must be 3d -- X-Y is displayed as the height-field planes and Z is the stacking dimension -- actual rendering reverses Y and Z coordinates relative to inventor default (Z is vertical, Y is depth)

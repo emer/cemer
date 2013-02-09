@@ -20,7 +20,7 @@
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 
-TypeDef_Of(ToolBoxDockViewer);
+taTypeDef_Of(ToolBoxDockViewer);
 
 #include <taMisc>
 #include <taiMisc>

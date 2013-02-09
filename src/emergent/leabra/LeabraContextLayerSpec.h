@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CtxtUpdateSpec);
+eTypeDef_Of(CtxtUpdateSpec);
 
-class LEABRA_API CtxtUpdateSpec : public SpecMemberBase {
+class E_API CtxtUpdateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
 INHERITED(SpecMemberBase)
 public:
@@ -45,9 +45,9 @@ private:
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(CtxtNSpec);
+eTypeDef_Of(CtxtNSpec);
 
-class LEABRA_API CtxtNSpec : public SpecMemberBase {
+class E_API CtxtNSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
 INHERITED(SpecMemberBase)
 public:
@@ -65,9 +65,9 @@ private:
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(LeabraContextLayerSpec);
+eTypeDef_Of(LeabraContextLayerSpec);
 
-class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
+class E_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
 INHERITED(LeabraLayerSpec)
 public:

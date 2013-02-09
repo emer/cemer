@@ -30,9 +30,9 @@ class SendCons; //
 class Unit; //
 class Network; //
 
-TypeDef_Of(UnitSpec);
+eTypeDef_Of(UnitSpec);
 
-class EMERGENT_API UnitSpec: public BaseSpec {
+class E_API UnitSpec: public BaseSpec {
   // ##CAT_Spec Generic Unit Specification
 INHERITED(BaseSpec)
   static RecvCons*      rcg_rval; // return value for connecting

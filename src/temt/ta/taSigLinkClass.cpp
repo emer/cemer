@@ -16,19 +16,19 @@
 #include "taSigLinkClass.h"
 #include <BuiltinTypeDefs>
 
-TypeDef_Of(EnumDef);
-TypeDef_Of(TokenDef);
-TypeDef_Of(MemberDef);
-TypeDef_Of(PropertyDef);
-TypeDef_Of(MethodDef);
-TypeDef_Of(TypeDef);
+taTypeDef_Of(EnumDef);
+taTypeDef_Of(TokenDef);
+taTypeDef_Of(MemberDef);
+taTypeDef_Of(PropertyDef);
+taTypeDef_Of(MethodDef);
+taTypeDef_Of(TypeDef);
 
-TypeDef_Of(EnumSpace);
-TypeDef_Of(TokenSpace);
-TypeDef_Of(MemberSpace);
-TypeDef_Of(PropertySpace);
-TypeDef_Of(MethodSpace);
-TypeDef_Of(TypeSpace);
+taTypeDef_Of(EnumSpace);
+taTypeDef_Of(TokenSpace);
+taTypeDef_Of(MemberSpace);
+taTypeDef_Of(PropertySpace);
+taTypeDef_Of(MethodSpace);
+taTypeDef_Of(TypeSpace);
 
 taSigLinkClass::taSigLinkClass(TypeItem::TypeInfoKinds tik_, void* data_, taSigLink* &link_ref_)
 :inherited(data_, link_ref_), tik(tik_)

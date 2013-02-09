@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(PrintVar);
+taTypeDef_Of(PrintVar);
 
 class TA_API PrintVar: public ProgEl { 
   // print out (to the console) the value of variable(s) -- useful for debugging

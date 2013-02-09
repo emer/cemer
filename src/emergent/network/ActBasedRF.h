@@ -27,9 +27,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ActBasedRF);
+eTypeDef_Of(ActBasedRF);
 
-class EMERGENT_API ActBasedRF : public taNBase {
+class E_API ActBasedRF : public taNBase {
   // #STEM_BASE ##CAT_Network computes an activation-based receptive field of network unit activations weighted by the activation of target units within selected target layer across a range of testing patterns: effectively shows what patterns of network activation are associated with the activation of target units, regardless of direct connectivity: columns of data table are for each network layer, and rows are the units within the target layer
 INHERITED(taNBase)
 public:

@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(VEArm);
+taTypeDef_Of(VEArm);
 
 class TA_API VEArm : public VEObject{
   // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed

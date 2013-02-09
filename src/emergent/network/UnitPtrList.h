@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 class Unit; //
 
-TypeDef_Of(UnitPtrList);
+eTypeDef_Of(UnitPtrList);
 
-class EMERGENT_API UnitPtrList: public taPtrList<Unit> {
+class E_API UnitPtrList: public taPtrList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
 public:
   int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);

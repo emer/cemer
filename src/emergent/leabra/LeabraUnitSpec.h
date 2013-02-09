@@ -17,7 +17,7 @@
 #define LeabraUnitSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <UnitSpec>
 #include <SpecMemberBase>
 
@@ -36,9 +36,9 @@ class LeabraUnit; //
 class DataTable; // 
 
 
-TypeDef_Of(ActFunSpec);
+eTypeDef_Of(ActFunSpec);
 
-class LEABRA_API ActFunSpec : public SpecMemberBase {
+class E_API ActFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
 INHERITED(SpecMemberBase)
 public:
@@ -72,9 +72,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(SpikeFunSpec);
+eTypeDef_Of(SpikeFunSpec);
 
-class LEABRA_API SpikeFunSpec : public SpecMemberBase {
+class E_API SpikeFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(SpecMemberBase)
 public:
@@ -110,9 +110,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(SpikeMiscSpec);
+eTypeDef_Of(SpikeMiscSpec);
 
-class LEABRA_API SpikeMiscSpec : public SpecMemberBase {
+class E_API SpikeMiscSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra misc spiking parameters 
 INHERITED(SpecMemberBase)
 public:
@@ -145,9 +145,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(ActAdaptSpec);
+eTypeDef_Of(ActAdaptSpec);
 
-class LEABRA_API ActAdaptSpec : public SpecMemberBase {
+class E_API ActAdaptSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
 INHERITED(SpecMemberBase)
 public:
@@ -176,9 +176,9 @@ private:
 };
 
 
-TypeDef_Of(DepressSpec);
+eTypeDef_Of(DepressSpec);
 
-class LEABRA_API DepressSpec : public SpecMemberBase {
+class E_API DepressSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
 INHERITED(SpecMemberBase)
 public:
@@ -201,9 +201,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(SynDelaySpec);
+eTypeDef_Of(SynDelaySpec);
 
-class LEABRA_API SynDelaySpec : public SpecMemberBase {
+class E_API SynDelaySpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
 INHERITED(SpecMemberBase)
 public:
@@ -221,9 +221,9 @@ private:
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(OptThreshSpec);
+eTypeDef_Of(OptThreshSpec);
 
-class LEABRA_API OptThreshSpec : public SpecMemberBase {
+class E_API OptThreshSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
 INHERITED(SpecMemberBase)
 public:
@@ -242,9 +242,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LeabraDtSpec);
+eTypeDef_Of(LeabraDtSpec);
 
-class LEABRA_API LeabraDtSpec : public SpecMemberBase {
+class E_API LeabraDtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(SpecMemberBase)
 public:
@@ -271,9 +271,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(LeabraActAvgSpec);
+eTypeDef_Of(LeabraActAvgSpec);
 
-class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
+class E_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
@@ -301,9 +301,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LeabraChannels);
+eTypeDef_Of(LeabraChannels);
 
-class LEABRA_API LeabraChannels : public taOBase {
+class E_API LeabraChannels : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
 INHERITED(taOBase)
 public:
@@ -322,9 +322,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(VChanSpec);
+eTypeDef_Of(VChanSpec);
 
-class LEABRA_API VChanSpec : public taOBase {
+class E_API VChanSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
 INHERITED(taOBase)
 public:
@@ -361,9 +361,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(MaxDaSpec);
+eTypeDef_Of(MaxDaSpec);
 
-class LEABRA_API MaxDaSpec : public SpecMemberBase {
+class E_API MaxDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute the maxda value, which serves as a stopping criterion for settling
 INHERITED(SpecMemberBase)
 public:
@@ -389,9 +389,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(DaModSpec);
+eTypeDef_Of(DaModSpec);
 
-class LEABRA_API DaModSpec : public SpecMemberBase {
+class E_API DaModSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 INHERITED(SpecMemberBase)
 public:
@@ -415,9 +415,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(NoiseAdaptSpec);
+eTypeDef_Of(NoiseAdaptSpec);
 
-class LEABRA_API NoiseAdaptSpec : public SpecMemberBase {
+class E_API NoiseAdaptSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
 INHERITED(SpecMemberBase)
 public:
@@ -449,9 +449,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(LeabraUnitSpec);
+eTypeDef_Of(LeabraUnitSpec);
 
-class LEABRA_API LeabraUnitSpec : public UnitSpec {
+class E_API LeabraUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_Leabra Leabra unit specifications, point-neuron approximation
 INHERITED(UnitSpec)
 public:

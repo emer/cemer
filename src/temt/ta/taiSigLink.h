@@ -35,7 +35,7 @@ class QIcon; //
 class QVariant; //
 
 
-TypeDef_Of(taiSigLink);
+taTypeDef_Of(taiSigLink);
 
 class TA_API taiSigLink: public taSigLink {
   // interface for viewing system

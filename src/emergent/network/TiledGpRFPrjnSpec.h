@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledGpRFPrjnSpec);
+eTypeDef_Of(TiledGpRFPrjnSpec);
 
-class EMERGENT_API TiledGpRFPrjnSpec : public ProjectionSpec {
+class E_API TiledGpRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups
 INHERITED(ProjectionSpec)
 public:

@@ -158,7 +158,7 @@ class taMatrix_PList; //
 typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed data
 
 
-TypeDef_Of(taMatrix);
+taTypeDef_Of(taMatrix);
 
 class TA_API taMatrix: public taNBase {
   // #VIRT_BASE #STEM_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array

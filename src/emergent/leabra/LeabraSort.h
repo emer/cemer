@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraSort);
+eTypeDef_Of(LeabraSort);
 
-class LEABRA_API LeabraSort : public taPtrList<LeabraUnit> {
+class E_API LeabraSort : public taPtrList<LeabraUnit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Leabra used for sorting units in kwta computation
 INHERITED(taPtrList<LeabraUnit>)
 protected:

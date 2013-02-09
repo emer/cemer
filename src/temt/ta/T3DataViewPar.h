@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3DataViewPar);
+taTypeDef_Of(T3DataViewPar);
 
 class TA_API T3DataViewPar: public T3DataView {
   // #VIRT_BASE #NO_TOKENS T3DataView that has child T3DataView's

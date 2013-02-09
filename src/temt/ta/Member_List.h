@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class MemberDef; //
 
-TypeDef_Of(Member_List);
+taTypeDef_Of(Member_List);
 
 class TA_API Member_List: public taPtrList<MemberDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS simple list of members

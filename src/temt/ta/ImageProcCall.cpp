@@ -15,7 +15,7 @@
 
 #include "ImageProcCall.h"
 
-TypeDef_Of(taImageProc);
+taTypeDef_Of(taImageProc);
 
 
 void ImageProcCall::Initialize() {

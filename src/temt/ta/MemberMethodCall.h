@@ -28,7 +28,7 @@ class MethodDef; //
 class ProgEl; // 
 
 
-TypeDef_Of(MemberMethodCall);
+taTypeDef_Of(MemberMethodCall);
 
 class TA_API MemberMethodCall: public MemberProgEl { 
   // ##DEF_CHILD_meth_args call a method on a member of an object -- can be any sub-object below selected object, as long as it can be found both at the time of programming and execution

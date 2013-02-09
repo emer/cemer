@@ -39,9 +39,9 @@ class Unit; //
 class T3BrainNode; //
 class NiftiReader; // #IGNORE
 
-TypeDef_Of(BrainVolumeView);
+eTypeDef_Of(BrainVolumeView);
 
-class EMERGENT_API BrainVolumeView: public T3DataViewPar {
+class E_API BrainVolumeView: public T3DataViewPar {
   // does all the rendering of unit values, either direct optimized 3D_BLOCK rendering or managing -- there is ONLY ONE of these objects per layer, and it manages all the units regardless of whether there are sub unit groups
 INHERITED(T3DataViewPar)
 public:

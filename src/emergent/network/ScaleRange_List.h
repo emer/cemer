@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ScaleRange_List);
+eTypeDef_Of(ScaleRange_List);
 
-class EMERGENT_API ScaleRange_List : public taList<ScaleRange> {
+class E_API ScaleRange_List : public taList<ScaleRange> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
 INHERITED(taList<ScaleRange>)
 public:

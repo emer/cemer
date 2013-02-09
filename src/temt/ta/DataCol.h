@@ -45,7 +45,7 @@ class MatrixIndex; //
 
 */
 
-TypeDef_Of(DataCol);
+taTypeDef_Of(DataCol);
 
 class TA_API DataCol : public taNBase {
   // #STEM_BASE #VIRT_BASE #NO_INSTANCE ##CAT_Data ##NO_UNDO_SELECT holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class T3TransformBoxDragger; //
 
-class EMERGENT_API T3NetViewObj : public T3NodeLeaf {
+class E_API T3NetViewObj : public T3NodeLeaf {
   // network view object
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;

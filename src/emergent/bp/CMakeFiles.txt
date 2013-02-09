@@ -17,7 +17,7 @@ set(bp_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(bp_HEADS
-    bp_def.h
+    network_def.h
     bp.h
     rbp.h
 #    bp_v3_compat.h

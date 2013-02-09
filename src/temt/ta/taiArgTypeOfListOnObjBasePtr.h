@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfListOnObjBasePtr);
+taTypeDef_Of(taiArgTypeOfListOnObjBasePtr);
 
 class TA_API taiArgTypeOfListOnObjBasePtr : public taiArgTypeOfListBasePtr {
   // for taBase pointers in groups with ARG_IN_OBJ

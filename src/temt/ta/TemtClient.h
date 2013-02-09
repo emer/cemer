@@ -37,7 +37,7 @@ class Program; //
 class QTcpSocket; //
 
 
-TypeDef_Of(TemtClient);
+taTypeDef_Of(TemtClient);
 
 class TA_API TemtClient: public taOABase { 
   // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 

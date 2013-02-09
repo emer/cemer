@@ -28,7 +28,7 @@ class iVec3f; //
 class T3Color; // 
 class SoComplexity; //
 
-TypeDef_Of(T3GraphLine);
+taTypeDef_Of(T3GraphLine);
 
 class TA_API T3GraphLine: public T3NodeLeaf {
   // a graph line -- data is GraphColView

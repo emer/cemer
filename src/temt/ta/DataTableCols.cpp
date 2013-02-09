@@ -16,7 +16,7 @@
 #include "DataTableCols.h"
 #include <DataTable>
 
-TypeDef_Of(DataColT);
+taTypeDef_Of(DataColT);
 
 #include <SigLinkSignal>
 

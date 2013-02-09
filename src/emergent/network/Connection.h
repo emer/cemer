@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(Connection);
+eTypeDef_Of(Connection);
 
 // the connection is managed fully by the ConSpec and the RecvCons
 // don't put any functions on the connection itself
@@ -36,7 +36,7 @@ TypeDef_Of(Connection);
 // it is up to the connection management code to ensure that when a
 // connection is removed, its associated sending link is also removed
 
-class EMERGENT_API Connection {
+class E_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
   float         wt;             // #VIEW_HOT weight of connection

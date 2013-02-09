@@ -27,7 +27,7 @@ class SoGroup; //
 class SoSwitch; // 
 
 
-TypeDef_Of(T3VEWorld);
+taTypeDef_Of(T3VEWorld);
 
 class TA_API T3VEWorld : public T3NodeParent {
   // world parent for virtual environment

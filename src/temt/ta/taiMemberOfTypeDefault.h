@@ -25,7 +25,7 @@
 class TypeDefault; //
 
 
-TypeDef_Of(taiMemberOfTypeDefault);
+taTypeDef_Of(taiMemberOfTypeDefault);
 
 class TA_API taiMemberOfTypeDefault : public taiMember {
   // special for the TypeDefault member (add the "active" box) -- this doesn't use the default handling, and just provides its own directly

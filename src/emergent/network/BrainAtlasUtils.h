@@ -31,7 +31,7 @@ class BrainAtlasInfo;
 class BrainAtlas;
 
 
-class EMERGENT_API BrainAtlasUtils {
+class E_API BrainAtlasUtils {
   //    contains static functions useful for manipulating a BrainAtlas
 public:
   

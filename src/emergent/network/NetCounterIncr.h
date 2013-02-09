@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetCounterIncr);
+eTypeDef_Of(NetCounterIncr);
 
-class EMERGENT_API NetCounterIncr: public NetCounterBase { 
+class E_API NetCounterIncr: public NetCounterBase { 
   // increment a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(NetCounterBase)
 public:

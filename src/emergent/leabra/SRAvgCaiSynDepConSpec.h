@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SRAvgCaiSynDepConSpec);
+eTypeDef_Of(SRAvgCaiSynDepConSpec);
 
-class LEABRA_API SRAvgCaiSynDepConSpec : public LeabraConSpec {
+class E_API SRAvgCaiSynDepConSpec : public LeabraConSpec {
   // send-recv average at the connection level learning in XCal, synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraConSpec)
 public:

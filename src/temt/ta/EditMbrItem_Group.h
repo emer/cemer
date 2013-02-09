@@ -29,7 +29,7 @@ class MemberDef; //
 class DataTable; // 
 
 
-TypeDef_Of(EditMbrItem_Group);
+taTypeDef_Of(EditMbrItem_Group);
 
 class TA_API EditMbrItem_Group : public taGroup<EditMbrItem> {
   // ##CAT_Display group of select edit dialog objects

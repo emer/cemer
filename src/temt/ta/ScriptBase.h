@@ -25,7 +25,7 @@
 class taFiler; // 
 
 
-TypeDef_Of(ScriptBase);
+taTypeDef_Of(ScriptBase);
 
 class TA_API ScriptBase: public AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE class for adding a script to other objects

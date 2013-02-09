@@ -17,7 +17,7 @@
 #define AvgMaxVals_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:
@@ -28,9 +28,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(AvgMaxVals);
+eTypeDef_Of(AvgMaxVals);
 
-class LEABRA_API AvgMaxVals : public taOBase {
+class E_API AvgMaxVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 INHERITED(taOBase)
 public:

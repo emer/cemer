@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(Variant_Data);
+taTypeDef_Of(Variant_Data);
 
 class TA_API Variant_Data : public DataColT<Variant_Matrix> {
   // Variant data

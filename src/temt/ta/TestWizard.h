@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TestWizard);
+taTypeDef_Of(TestWizard);
 
 class TA_API TestWizard:  public taWizard {
   // test wizard -- during devel, all Wizards must inherit from this

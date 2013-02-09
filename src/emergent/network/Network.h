@@ -66,9 +66,9 @@ class T3Panel; //
 // it does have structural functions in the spec..
 
 
-TypeDef_Of(Network);
+eTypeDef_Of(Network);
 
-class EMERGENT_API Network : public taFBase {
+class E_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_DEF_2 A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:

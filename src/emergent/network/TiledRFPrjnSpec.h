@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledRFPrjnSpec);
+eTypeDef_Of(TiledRFPrjnSpec);
 
-class EMERGENT_API TiledRFPrjnSpec : public ProjectionSpec {
+class E_API TiledRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
 INHERITED(ProjectionSpec)
 public:

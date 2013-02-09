@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(VisDispLaySpec);
+eTypeDef_Of(VisDispLaySpec);
 
-class LEABRA_API VisDispLaySpec : public taOBase {
+class E_API VisDispLaySpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra visual disparity layer specs
 INHERITED(taOBase)
 public:
@@ -41,9 +41,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(VisDisparityLayerSpec);
+eTypeDef_Of(VisDisparityLayerSpec);
 
-class LEABRA_API VisDisparityLayerSpec : public LeabraLayerSpec {
+class E_API VisDisparityLayerSpec : public LeabraLayerSpec {
   // visual disparity layer spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be VisDisparityPrjnSpec from right eye, second MUST be same spec type from left eye -- right is just one-to-one dominant driver) -- this layerspec computes sqrt(left*right) activation into ext of units, which can be added into netinput if !clamp.hard, or activation forced to this value otherwise -- also manages horizontal apeture problem -- use MarkerConSpec for these prjs to prevent computation otherwise
 INHERITED(LeabraLayerSpec)
 public:

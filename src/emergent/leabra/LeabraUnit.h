@@ -31,9 +31,9 @@ class LeabraLayer; //
 class SynDelaySpec; // 
 class LeabraNetwork; // 
 
-TypeDef_Of(VChanBasis);
+eTypeDef_Of(VChanBasis);
 
-class LEABRA_API VChanBasis : public taBase {
+class E_API VChanBasis : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
 INHERITED(taBase)
 public:
@@ -53,9 +53,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(LeabraUnitChans);
+eTypeDef_Of(LeabraUnitChans);
 
-class LEABRA_API LeabraUnitChans : public taBase {
+class E_API LeabraUnitChans : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra units
 INHERITED(taBase)
 public:
@@ -73,9 +73,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(LeabraUnit);
+eTypeDef_Of(LeabraUnit);
 
-class LEABRA_API LeabraUnit : public Unit {
+class E_API LeabraUnit : public Unit {
   // #STEM_BASE ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:

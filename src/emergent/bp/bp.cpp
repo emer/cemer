@@ -18,7 +18,7 @@
 // bp.cc
 
 #include "bp.h"
-TypeDef_Of(BpWizard);
+eTypeDef_Of(BpWizard);
 
 #include <DumpFileCvt>
 

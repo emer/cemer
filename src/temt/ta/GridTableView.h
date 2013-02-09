@@ -35,7 +35,7 @@ class ColorScaleSpec; //
 class iViewPanelOfGridTable; // 
 
 
-TypeDef_Of(GridTableView);
+taTypeDef_Of(GridTableView);
 
 class TA_API GridTableView: public DataTableView {
   // the master view guy for entire grid view

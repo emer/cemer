@@ -17,16 +17,16 @@
 #define V2toV4DepthPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <TiledGpRFPrjnSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(V2toV4DepthPrjnSpec);
+eTypeDef_Of(V2toV4DepthPrjnSpec);
 
-class LEABRA_API V2toV4DepthPrjnSpec : public TiledGpRFPrjnSpec {
+class E_API V2toV4DepthPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec that only connects to a specific depth in V2 border ownership input layer
 INHERITED(TiledGpRFPrjnSpec)
 public:

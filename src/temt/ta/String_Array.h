@@ -26,7 +26,7 @@
 class QStringList; //
 
 
-TypeDef_Of(String_Array);
+taTypeDef_Of(String_Array);
 
 class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of Strings

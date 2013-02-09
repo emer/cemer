@@ -39,7 +39,7 @@ class EditMthItem; //
 class DataTable; // 
 
 
-TypeDef_Of(SelectEdit);
+taTypeDef_Of(SelectEdit);
 
 class TA_API SelectEdit: public taNBase, public virtual IRefListClient {
   // #STEM_BASE ##EXT_edit ##CAT_Display Selectively edit members from different objects

@@ -34,7 +34,7 @@ typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
 typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
 #endif
 
-TypeDef_Of(ImgProcCallTask);
+taTypeDef_Of(ImgProcCallTask);
 
 class TA_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
@@ -53,7 +53,7 @@ private:
 };
 
 
-TypeDef_Of(ImgProcCallThreadMgr);
+taTypeDef_Of(ImgProcCallThreadMgr);
 
 class TA_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks

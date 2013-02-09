@@ -115,7 +115,7 @@ TA_API taStrRep*                Scat(taStrRep* srep, const char* s, int slen = -
 TA_API taStrRep*                Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
 TA_API taStrRep*                Sreverse(const taStrRep* x);
 
-TypeDef_Of(taString);
+taTypeDef_Of(taString);
 
 class TA_API taString {
   // string of characters with many useful methods for string manipulation

@@ -48,7 +48,7 @@ SoPtr_Of(T3Node);
   subclasses may add additional steps or other ways of ordering these
 */
 
-TypeDef_Of(T3DataView);
+taTypeDef_Of(T3DataView);
 
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // #NO_TOKENS #VIRT_BASE base class for 3d-based DataView objects

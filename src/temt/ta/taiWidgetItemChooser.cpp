@@ -135,7 +135,8 @@ const String taiWidgetItemChooser::catText(int index) const {
 }
 
 void taiWidgetItemChooser::GetImage(void* cur_sel, TypeDef* targ_typ_) {
-  targ_typ = targ_typ_;
+  if(targ_typ_ != NULL)
+    targ_typ = targ_typ_;
   UpdateImage(cur_sel);
 }
 

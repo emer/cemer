@@ -23,7 +23,7 @@
 #include <ProjectBase>
 #include <Wizard>
 
-#include "cs_def.h"
+#include "network_def.h"
 
 // pre-declare
 
@@ -39,9 +39,9 @@ class CsLayer;
 class CsNetwork;
 class CsProject; //
 
-TypeDef_Of(CsCon);
+eTypeDef_Of(CsCon);
 
-class CS_API CsCon : public Connection {
+class E_API CsCon : public Connection {
   // #STEM_BASE ##CAT_Cs connection values for constraint satisfaction
 public:
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
@@ -56,9 +56,9 @@ public:
 // every time a C_ version is overloaded, it is necessary to overload the B_
 // version, where the new B_ just calls the new C_
 
-TypeDef_Of(CsConSpec);
+eTypeDef_Of(CsConSpec);
 
-class CS_API CsConSpec : public ConSpec {
+class E_API CsConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Cs constraint satisfaction connection specifications
 INHERITED(ConSpec)
 public:
@@ -117,9 +117,9 @@ void Cs_WtElim_WtDecay(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su)
      ;				// term here so scanner picks up comment
 
 
-TypeDef_Of(CsRecvCons);
+eTypeDef_Of(CsRecvCons);
 
-class CS_API CsRecvCons : public RecvCons {
+class E_API CsRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Cs group of constraint-satisfaction receiving connections
 INHERITED(RecvCons)
 public:
@@ -133,9 +133,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(CsSendCons);
+eTypeDef_Of(CsSendCons);
 
-class CS_API CsSendCons : public SendCons {
+class E_API CsSendCons : public SendCons {
   // #STEM_BASE ##CAT_Cs group of constraint-satisfaction sending connections
 INHERITED(SendCons)
 public:
@@ -145,9 +145,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(CsUnitSpec);
+eTypeDef_Of(CsUnitSpec);
 
-class CS_API CsUnitSpec : public UnitSpec {
+class E_API CsUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_Cs standard constraint satisfaction unit (uses inverse-logistic activation)
 INHERITED(UnitSpec)
 public:
@@ -212,9 +212,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(SigmoidUnitSpec);
+eTypeDef_Of(SigmoidUnitSpec);
 
-class CS_API SigmoidUnitSpec : public CsUnitSpec {
+class E_API SigmoidUnitSpec : public CsUnitSpec {
   // Sigmoid (logistic) activation function (float-valued within range)
 INHERITED(CsUnitSpec)
 public:
@@ -232,9 +232,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(BoltzUnitSpec);
+eTypeDef_Of(BoltzUnitSpec);
 
-class CS_API BoltzUnitSpec : public CsUnitSpec {
+class E_API BoltzUnitSpec : public CsUnitSpec {
   // Boltzmann-machine activation function (binary, probabalistic)
 INHERITED(CsUnitSpec)
 public:
@@ -250,9 +250,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(IACUnitSpec);
+eTypeDef_Of(IACUnitSpec);
 
-class CS_API IACUnitSpec : public CsUnitSpec {
+class E_API IACUnitSpec : public CsUnitSpec {
   // Interactive-Activation & Competition activation function (IAC)
 INHERITED(CsUnitSpec)
 public:
@@ -269,9 +269,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(LinearCsUnitSpec);
+eTypeDef_Of(LinearCsUnitSpec);
 
-class CS_API LinearCsUnitSpec : public CsUnitSpec {
+class E_API LinearCsUnitSpec : public CsUnitSpec {
   // linear version of Cs units with time-averaging on the net inputs
 INHERITED(CsUnitSpec)
 public:
@@ -283,9 +283,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(ThreshLinCsUnitSpec);
+eTypeDef_Of(ThreshLinCsUnitSpec);
 
-class CS_API ThreshLinCsUnitSpec : public CsUnitSpec {
+class E_API ThreshLinCsUnitSpec : public CsUnitSpec {
   // threshold-linear version of Cs units with time-averaging on the net inputs
 INHERITED(CsUnitSpec)
 public:
@@ -299,9 +299,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(CsUnit);
+eTypeDef_Of(CsUnit);
 
-class CS_API CsUnit : public Unit {
+class E_API CsUnit : public Unit {
   // #STEM_BASE ##CAT_Cs constraint satisfaction unit
 INHERITED(Unit)
 public:
@@ -396,9 +396,9 @@ inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
 //	Additional ConSpec Types	//
 //////////////////////////////////////////
 
-TypeDef_Of(HebbCsConSpec);
+eTypeDef_Of(HebbCsConSpec);
 
-class CS_API HebbCsConSpec : public CsConSpec {
+class E_API HebbCsConSpec : public CsConSpec {
   // Simple Hebbian wt update (send act * recv act), operates only on final activity states
 INHERITED(CsConSpec)
 public:
@@ -431,9 +431,9 @@ inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
 
 /////////////////////////////////////////////////////////////////////////
 
-TypeDef_Of(CsLayer);
+eTypeDef_Of(CsLayer);
 
-class CS_API CsLayer : public Layer {
+class E_API CsLayer : public Layer {
   // #STEM_BASE ##CAT_Cs A constraint-satisfaction layer
 INHERITED(Layer)
 public:
@@ -449,9 +449,9 @@ private:
 //	Cs Network		//
 //////////////////////////////////
 
-TypeDef_Of(CsNetwork);
+eTypeDef_Of(CsNetwork);
 
-class CS_API CsNetwork : public Network {
+class E_API CsNetwork : public Network {
   // #STEM_BASE ##CAT_Cs network for constraint statisfaction
 INHERITED(Network)
 public:
@@ -577,9 +577,9 @@ private:
   void 	Destroy()		{}
 };
 
-TypeDef_Of(CsProject);
+eTypeDef_Of(CsProject);
 
-class CS_API CsProject : public ProjectBase {
+class E_API CsProject : public ProjectBase {
   // #STEM_BASE ##CAT_Cs project for constraint satisfaction networks
 INHERITED(ProjectBase)
 public:
@@ -594,9 +594,9 @@ private:
 //	Cs Wizard		//
 //////////////////////////////////
 
-TypeDef_Of(CsWizard);
+eTypeDef_Of(CsWizard);
 
-class CS_API CsWizard : public Wizard {
+class E_API CsWizard : public Wizard {
   // #STEM_BASE ##CAT_Cs constraint satisfaction specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:

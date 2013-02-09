@@ -25,7 +25,7 @@
 class ProgEl; // 
 
 
-TypeDef_Of(MathCall);
+taTypeDef_Of(MathCall);
 
 class TA_API MathCall : public StaticMethodCall { 
   // call a taMath function

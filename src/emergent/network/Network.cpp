@@ -29,8 +29,8 @@
 #include <tabMisc>
 #include <taMisc>
 
-TypeDef_Of(FullPrjnSpec);
-TypeDef_Of(CustomPrjnSpec);
+eTypeDef_Of(FullPrjnSpec);
+eTypeDef_Of(CustomPrjnSpec);
 
 using namespace std;
 

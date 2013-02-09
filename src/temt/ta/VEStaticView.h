@@ -23,12 +23,12 @@
 
 // declare all other types mentioned but not required to include:
 class VEWorldView; // 
-TypeDef_Of(VEWorldView);
+taTypeDef_Of(VEWorldView);
 class TypeDef; // 
 class VEStatic; // 
 
 
-TypeDef_Of(VEStaticView);
+taTypeDef_Of(VEStaticView);
 
 class TA_API VEStaticView: public T3DataView {
   // view of one static environment element

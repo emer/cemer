@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class ToolBar; // 
-TypeDef_Of(ToolBar);
+taTypeDef_Of(ToolBar);
 
-TypeDef_Of(ToolBar_List);
+taTypeDef_Of(ToolBar_List);
 
 class TA_API ToolBar_List: public taViewer_List {
 INHERITED(taViewer_List)

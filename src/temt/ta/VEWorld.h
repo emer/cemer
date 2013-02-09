@@ -43,7 +43,7 @@ class taImage; //
 class VEWorld; //
 SmartRef_Of(VEWorld); // VEWorldRef
 
-TypeDef_Of(ODEWorldParams);
+taTypeDef_Of(ODEWorldParams);
 
 class TA_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
@@ -61,7 +61,7 @@ protected:
   void  UpdateAfterEdit_impl();
 };
 
-TypeDef_Of(VEWorld);
+taTypeDef_Of(VEWorld);
 
 class TA_API VEWorld : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world

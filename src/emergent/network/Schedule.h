@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SchedItem);
+eTypeDef_Of(SchedItem);
 
-class EMERGENT_API SchedItem : public taOBase {
+class E_API SchedItem : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Network one element of a schedule
 INHERITED(taOBase)
 public:
@@ -47,9 +47,9 @@ private:
   void  Destroy()       { };
 };
 
-TypeDef_Of(Schedule);
+eTypeDef_Of(Schedule);
 
-class EMERGENT_API Schedule : public taList<SchedItem> {
+class E_API Schedule : public taList<SchedItem> {
   // ##CAT_Network #NO_EXPAND_ALL A schedule for parameters that vary over time
 INHERITED(taList<SchedItem>)
 public:

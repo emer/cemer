@@ -27,7 +27,7 @@ class TypeDef; //
 class MemberDef; // 
 
 
-TypeDef_Of(MemberProgEl);
+taTypeDef_Of(MemberProgEl);
 
 class TA_API MemberProgEl: public ProgEl { 
   // #VIRT_BASE base class for dealing with members of objects

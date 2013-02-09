@@ -46,9 +46,9 @@ class Network; //
   for(int i=0; i<cg->size; i++) \
     expr
 
-TypeDef_Of(WeightLimits);
+eTypeDef_Of(WeightLimits);
 
-class EMERGENT_API WeightLimits : public taOBase {
+class E_API WeightLimits : public taOBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
 INHERITED(taOBase)
 public:
@@ -80,9 +80,9 @@ private:
   void  Destroy()               { };
 };
 
-TypeDef_Of(ConSpec);
+eTypeDef_Of(ConSpec);
 
-class EMERGENT_API ConSpec: public BaseSpec {
+class E_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection
 INHERITED(BaseSpec)
 public:

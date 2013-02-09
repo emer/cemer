@@ -27,7 +27,7 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
-TypeDef_Of(Variant_Matrix);
+taTypeDef_Of(Variant_Matrix);
 
 class TA_API Variant_Matrix: public taMatrixT<Variant> {
   // #INSTANCE a matrix of variants

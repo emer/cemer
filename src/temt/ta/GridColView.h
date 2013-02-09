@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class GridTableView; // 
-TypeDef_Of(GridTableView);
+taTypeDef_Of(GridTableView);
 class TypeDef; // 
 class T3GridColViewNode; //
 
@@ -43,7 +43,7 @@ class T3GridColViewNode; //
     BLOCK_HEIGHT = mat_block_height
 */
 
-TypeDef_Of(GridColView);
+taTypeDef_Of(GridColView);
 
 class TA_API GridColView : public DataColView {
   // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)

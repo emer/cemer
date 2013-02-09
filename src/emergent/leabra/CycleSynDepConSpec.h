@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CycleSynDepSpec);
+eTypeDef_Of(CycleSynDepSpec);
 
-class LEABRA_API CycleSynDepSpec : public SpecMemberBase {
+class E_API CycleSynDepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
 INHERITED(SpecMemberBase)
 public:
@@ -57,9 +57,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(CycleSynDepConSpec);
+eTypeDef_Of(CycleSynDepConSpec);
 
-class LEABRA_API CycleSynDepConSpec : public LeabraConSpec {
+class E_API CycleSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
 INHERITED(LeabraConSpec)
 public:

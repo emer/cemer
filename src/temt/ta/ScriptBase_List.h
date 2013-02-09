@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class AbstractScriptBase; //
 
-TypeDef_Of(ScriptBase_List);
+taTypeDef_Of(ScriptBase_List);
 
 class TA_API ScriptBase_List : public taPtrList<AbstractScriptBase> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER list of script base objects (doesn't own anything)

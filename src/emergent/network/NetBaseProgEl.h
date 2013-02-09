@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetBaseProgEl);
+eTypeDef_Of(NetBaseProgEl);
 
-class EMERGENT_API NetBaseProgEl: public ProgEl { 
+class E_API NetBaseProgEl: public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE base type for network-oriented prog els (filter function, etc)
 INHERITED(ProgEl)
 public:

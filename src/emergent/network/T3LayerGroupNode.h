@@ -31,7 +31,7 @@ class SoTranslate1Dragger;
 class SoTranslate2Dragger;
 
 
-class EMERGENT_API T3LayerGroupNode: public T3NodeParent {
+class E_API T3LayerGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3LayerGroupNode);

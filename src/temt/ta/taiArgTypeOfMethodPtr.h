@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfMethodPtr);
+taTypeDef_Of(taiArgTypeOfMethodPtr);
 
 class TA_API taiArgTypeOfMethodPtr : public taiArgType {
   // for methoddef ptr types

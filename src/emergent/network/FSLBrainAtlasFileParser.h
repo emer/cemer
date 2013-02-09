@@ -29,7 +29,7 @@ class BrainAtlasInfo;
 class BrainAtlasLabel;
 
 
-class EMERGENT_API FSLBrainAtlasFileParser : public BrainAtlasFileParser {
+class E_API FSLBrainAtlasFileParser : public BrainAtlasFileParser {
 public:
   FSLBrainAtlasFileParser(const QString& filename);
   virtual ~FSLBrainAtlasFileParser();

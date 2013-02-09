@@ -17,7 +17,7 @@
 #include <iPanelOfDocView>
 #include <iPanelOfDocEdit>
 
-TypeDef_Of(taDoc);
+taTypeDef_Of(taDoc);
 
 int taiViewTypeOfDoc::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taDoc))

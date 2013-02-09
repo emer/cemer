@@ -20,8 +20,8 @@
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
-TypeDef_Of(LocalVars);
-TypeDef_Of(ProgCode);
+taTypeDef_Of(LocalVars);
+taTypeDef_Of(ProgCode);
 
 #include <SigLinkSignal>
 #include <taMisc>

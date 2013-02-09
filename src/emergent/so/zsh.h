@@ -22,9 +22,9 @@
 
 #include "so.h"
 
-TypeDef_Of(ZshConSpec);
+eTypeDef_Of(ZshConSpec);
 
-class SO_API ZshConSpec : public SoConSpec {
+class E_API ZshConSpec : public SoConSpec {
   // zero-sum-hebbian (subtractive normalization) learning
 INHERITED(SoConSpec)
 public:
@@ -48,9 +48,9 @@ private:
 // Zsh plus SoftCl, though the actual derivative for MaxIn dynamically
 // weights the Zsh-like term, which is missing in this version
 
-TypeDef_Of(MaxInConSpec);
+eTypeDef_Of(MaxInConSpec);
 
-class SO_API MaxInConSpec : public ZshConSpec {
+class E_API MaxInConSpec : public ZshConSpec {
   // approximation to MaxIn (Zsh + SoftCl)
 INHERITED(ZshConSpec)
 public:

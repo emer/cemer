@@ -17,16 +17,16 @@
 #define LeabraProject_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectBase>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraProject);
+eTypeDef_Of(LeabraProject);
 
-class LEABRA_API LeabraProject : public ProjectBase {
+class E_API LeabraProject : public ProjectBase {
   // #STEM_BASE ##CAT_Leabra project for Leabra models
 INHERITED(ProjectBase)
 public:

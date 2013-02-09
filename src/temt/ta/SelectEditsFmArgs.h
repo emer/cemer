@@ -26,7 +26,7 @@
 class SelectEdit; // 
 
 
-TypeDef_Of(SelectEditsFmArgs);
+taTypeDef_Of(SelectEditsFmArgs);
 
 class TA_API SelectEditsFmArgs: public ProgEl { 
   // sets SelectEdit value(s) based on startup arguments of the name of the select edit item -- items must be single value numeric items

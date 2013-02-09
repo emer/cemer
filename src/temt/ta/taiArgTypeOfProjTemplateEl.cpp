@@ -17,7 +17,7 @@
 #include <taiWidgetProjTemplateElChooser>
 #include <taSigLinkTypeItem>
 
-TypeDef_Of(ProjTemplateEl);
+taTypeDef_Of(ProjTemplateEl);
 
 int taiArgTypeOfProjTemplateEl::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (!argt->IsPointer() || !argt->DerivesFrom(TA_ProjTemplateEl))

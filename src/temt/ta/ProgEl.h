@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 class Program; // 
-TypeDef_Of(Program);
+taTypeDef_Of(Program);
 class LocalVars; // 
 class taiWidgetItemChooser; // #IGNORE
 
@@ -50,7 +50,7 @@ class taiWidgetItemChooser; // #IGNORE
   TA_BASEFUNS(T)
 
 
-TypeDef_Of(ProgEl);
+taTypeDef_Of(ProgEl);
 
 class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element

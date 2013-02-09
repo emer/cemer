@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(XCalCHLConSpec);
+eTypeDef_Of(XCalCHLConSpec);
 
-class LEABRA_API XCalCHLConSpec : public LeabraConSpec {
+class E_API XCalCHLConSpec : public LeabraConSpec {
   // does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..
 INHERITED(LeabraConSpec)
 public:

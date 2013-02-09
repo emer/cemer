@@ -35,7 +35,7 @@ class DataTable; //
 class QModelIndex; //
 
 
-TypeDef_Of(iDataTableModel);
+taTypeDef_Of(iDataTableModel);
 
 class TA_API iDataTableModel: public QAbstractTableModel,
   public ISigLinkClient {

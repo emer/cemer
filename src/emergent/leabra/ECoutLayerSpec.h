@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ECoutLayerSpec);
+eTypeDef_Of(ECoutLayerSpec);
 
-class LEABRA_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
+class E_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for EC out layers that implements ThetaPhase learning -- automatically clamps to EC in activations in plus phase and records act_mid mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_mid)
 INHERITED(ThetaPhaseLayerSpec)
 public:

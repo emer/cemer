@@ -44,9 +44,9 @@ class QTreeWidget; //
 class ISelectableHost; //
 
 
-TypeDef_Of(iViewPanelOfNetwork);
+eTypeDef_Of(iViewPanelOfNetwork);
 
-class EMERGENT_API iViewPanelOfNetwork: public iViewPanel {
+class E_API iViewPanelOfNetwork: public iViewPanel {
   // frame for gui interface to a NetView -- usually posted by the netview
 INHERITED(iViewPanel)
   Q_OBJECT

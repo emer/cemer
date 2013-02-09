@@ -47,7 +47,7 @@ class QModelIndex; //
 class QEvent; //
 
 
-TypeDef_Of(iDataTableEditor);
+taTypeDef_Of(iDataTableEditor);
 
 class TA_API iDataTableEditor: public QWidget,  public virtual ISelectableHost,
                                public virtual ISigLinkClient {

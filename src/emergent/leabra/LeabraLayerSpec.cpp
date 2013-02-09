@@ -19,7 +19,7 @@
 
 #include <taMisc>
 
-TypeDef_Of(MarkerConSpec);
+eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;

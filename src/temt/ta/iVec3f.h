@@ -29,7 +29,7 @@
 class SbVec3f;          // #IGNORE
 #endif
 
-TypeDef_Of(iVec3f);
+taTypeDef_Of(iVec3f);
 
 class TA_API iVec3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d vector, for things like points and sizes
 public:

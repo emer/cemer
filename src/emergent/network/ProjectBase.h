@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ProjectBase);
+eTypeDef_Of(ProjectBase);
 
-class EMERGENT_API ProjectBase : public taProject {
+class E_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:

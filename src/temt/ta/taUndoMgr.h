@@ -28,7 +28,7 @@
 class taBase; // 
 
 
-TypeDef_Of(taUndoMgr);
+taTypeDef_Of(taUndoMgr);
 
 class TA_API taUndoMgr : public taOBase {
   // ##CAT_Undo undo manager -- handles the basic undo functionality

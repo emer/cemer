@@ -31,7 +31,7 @@
 #include <double_Array>
 #include <float_Array>
 
-TypeDef_Of(DMemShareVar);
+taTypeDef_Of(DMemShareVar);
 
 class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
@@ -77,7 +77,7 @@ private:
 
 #else
 
-TypeDef_Of(DMemShareVar);
+taTypeDef_Of(DMemShareVar);
 
 class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs

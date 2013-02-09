@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVMiscSpec);
+eTypeDef_Of(PVMiscSpec);
 
-class LEABRA_API PVMiscSpec : public SpecMemberBase {
+class E_API PVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
@@ -46,9 +46,9 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(PViLayerSpec);
+eTypeDef_Of(PViLayerSpec);
 
-class LEABRA_API PViLayerSpec : public PVLVLayerSpec {
+class E_API PViLayerSpec : public PVLVLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values, contribute to overall dopamine with PV delta pvd = PVe - PVi; PV DA = pvd_t - pvd_t-1
 INHERITED(PVLVLayerSpec)
 public:

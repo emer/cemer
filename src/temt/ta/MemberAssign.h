@@ -26,7 +26,7 @@
 class ProgEl; // 
 
 
-TypeDef_Of(MemberAssign);
+taTypeDef_Of(MemberAssign);
 
 class TA_API MemberAssign: public MemberProgEl { 
   // set a member (attribute) on an object to a value given by an expression

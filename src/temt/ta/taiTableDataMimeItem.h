@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTableDataMimeItem);
+taTypeDef_Of(taiTableDataMimeItem);
 
 class TA_API taiTableDataMimeItem: public taiTabularDataMimeItem { // for DataTable data
 INHERITED(taiTabularDataMimeItem)

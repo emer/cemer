@@ -27,9 +27,9 @@ class DataTable; //
 class DataCol; //
 class DynEnumType; //
 
-TypeDef_Of(InitNamedUnits);
+eTypeDef_Of(InitNamedUnits);
 
-class EMERGENT_API InitNamedUnits: public NetBaseProgEl { 
+class E_API InitNamedUnits: public NetBaseProgEl { 
   // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
 INHERITED(NetBaseProgEl)
 public:

@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(DecodeTwoDValLayerSpec);
+eTypeDef_Of(DecodeTwoDValLayerSpec);
 
-class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
+class E_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfProgLibEl);
+taTypeDef_Of(taiArgTypeOfProgLibEl);
 
 class TA_API taiArgTypeOfProgLibEl : public taiArgTypeOfFromGroup {
   // for ProgLibEl* ptr args

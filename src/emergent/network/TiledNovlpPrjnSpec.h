@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledNovlpPrjnSpec);
+eTypeDef_Of(TiledNovlpPrjnSpec);
 
-class EMERGENT_API TiledNovlpPrjnSpec : public ProjectionSpec {
+class E_API TiledNovlpPrjnSpec : public ProjectionSpec {
   // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
 INHERITED(ProjectionSpec)
 public:

@@ -61,7 +61,7 @@ class QMimeData; //
 
 */
 
-TypeDef_Of(taiTabularDataMimeFactory);
+taTypeDef_Of(taiTabularDataMimeFactory);
 
 class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
 // this factory handles both Matrix and Table clipboard formats

@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GaussRFPrjnSpec);
+eTypeDef_Of(GaussRFPrjnSpec);
 
-class EMERGENT_API GaussRFPrjnSpec : public ProjectionSpec {
+class E_API GaussRFPrjnSpec : public ProjectionSpec {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
 INHERITED(ProjectionSpec)
 public:

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(voidptr_Array);
+taTypeDef_Of(voidptr_Array);
 
 class TA_API voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of void pointers

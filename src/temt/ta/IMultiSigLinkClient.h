@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(IMultiSigLinkClient);
+taTypeDef_Of(IMultiSigLinkClient);
 
 class TA_API IMultiSigLinkClient : public virtual ISigLinkClient {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
 public:

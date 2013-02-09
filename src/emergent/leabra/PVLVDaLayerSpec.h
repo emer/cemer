@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PVLVDaSpec);
+eTypeDef_Of(PVLVDaSpec);
 
-class LEABRA_API PVLVDaSpec : public SpecMemberBase {
+class E_API PVLVDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(SpecMemberBase)
 public:
@@ -45,9 +45,9 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(PVLVDaLayerSpec);
+eTypeDef_Of(PVLVDaLayerSpec);
 
-class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
+class E_API PVLVDaLayerSpec : public LeabraLayerSpec {
   // computes PVLV dopamine (Da) signal: typically if(ER), da = PVe-PVi, else LVe - LVi
 INHERITED(LeabraLayerSpec)
 public:

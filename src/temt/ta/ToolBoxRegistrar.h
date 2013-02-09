@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class ToolBoxRegistrar_PtrList; // 
 
-TypeDef_Of(ToolBoxRegistrar);
+taTypeDef_Of(ToolBoxRegistrar);
 
 class TA_API ToolBoxRegistrar {
   // static class used to manage toolbar procs; instances used as static globals to register

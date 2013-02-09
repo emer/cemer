@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfProgVarIntVal);
+taTypeDef_Of(taiMemberOfProgVarIntVal);
 
 class TA_API taiMemberOfProgVarIntVal : public taiMember {
   // the int_val member in a ProgVar -- switches from plain int to hard_enum

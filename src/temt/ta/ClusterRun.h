@@ -28,10 +28,10 @@
 class TypeDef; // 
 class iDataTableEditor; //
 class ClusterManager; // #IGNORE
-TypeDef_Of(GridSearch);
+taTypeDef_Of(GridSearch);
 
 
-TypeDef_Of(ClusterRun);
+taTypeDef_Of(ClusterRun);
 
 class TA_API ClusterRun : public SelectEdit {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running

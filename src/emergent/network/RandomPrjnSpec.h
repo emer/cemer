@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(RandomPrjnSpec);
+eTypeDef_Of(RandomPrjnSpec);
 
-class EMERGENT_API RandomPrjnSpec : public ProjectionSpec {
+class E_API RandomPrjnSpec : public ProjectionSpec {
   // Connects all units with probability p_con.
 INHERITED(ProjectionSpec)
 public:

@@ -26,7 +26,7 @@ class taiWidget;
 class IWidgetHost;
 
 
-TypeDef_Of(taiType);
+taTypeDef_Of(taiType);
 
 class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type

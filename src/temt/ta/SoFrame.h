@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SoFrame);
+taTypeDef_Of(SoFrame);
 
 class TA_API SoFrame: public SoTriangleStripSet {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS quadraloidal frame

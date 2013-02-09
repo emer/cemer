@@ -30,9 +30,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetViewObj);
+eTypeDef_Of(NetViewObj);
 
-class EMERGENT_API NetViewObj : public taNBase {
+class E_API NetViewObj : public taNBase {
   // ##CAT_Network ##EXT_nvobj network view object (3d object or text) -- is displayed in network view
 INHERITED(taNBase)
 public:

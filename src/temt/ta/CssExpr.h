@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(CssExpr);
+taTypeDef_Of(CssExpr);
 
 class TA_API CssExpr: public ProgEl { 
   // contains a direct css expression -- can be useful for more complex matrix code -- will be generated from ProgCode for any code that ends with semicolon.  unlike UserScript the variables here are tracked as normal

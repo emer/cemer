@@ -35,7 +35,7 @@ class taDoc; //
 class QToolBar; //
 class QLabel; //
 
-TypeDef_Of(iPanelOfDocView);
+taTypeDef_Of(iPanelOfDocView);
 
 class TA_API iPanelOfDocView: public iPanel {
   // a panel frame for displaying docs

@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taMatrixT);
+taTypeDef_Of(taMatrixT);
 
 template<class T>
 class TA_API taMatrixT : public taMatrix {

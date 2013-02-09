@@ -21,8 +21,8 @@
 
 #include <taiMisc>
 
-TypeDef_Of(taSmartPtr);
-TypeDef_Of(taGroup_impl);
+taTypeDef_Of(taSmartPtr);
+taTypeDef_Of(taGroup_impl);
 
 int taiMemberOfTokenPtrFromGroup::BidForMember(MemberDef* md, TypeDef* td) {
   if(td->IsActualTaBase() && md->type->IsBasePointerType()

@@ -32,7 +32,7 @@
 #include <taGenDoc>
 #include <taCodeUtils>
 
-TypeDef_Of(PluginWizard);
+taTypeDef_Of(PluginWizard);
 
 #include <taMisc>
 #include <tabMisc>
@@ -768,7 +768,7 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--replace_to", "ReplaceStringTo");
   taMisc::AddArgName("replace_to=", "ReplaceStringTo");
   taMisc::AddArgNameDesc("ReplaceString", "\
- -- replace string to new replacement value in all files in entire codebase -- must run in a subdir within code base -- must pass replace_to as the replacement string");
+ -- replace string to new replacement value in all files in current directory -- must run in directory where you want to do the replace -- must pass replace_to as the replacement string");
 
   taMisc::AddArgName("--remove_type", "RemoveType");
   taMisc::AddArgName("remove_type=", "RemoveType");
@@ -1749,9 +1749,11 @@ bool taRootBase::Startup_ProcessArgs() {
     else {
       String curpath = QDir::currentPath();
       String top_path = curpath.before("/src/",-1);
+      String src_path = curpath.from("/src/",-1);
+      src_path = src_path.after("/");
       taMisc::Info("replacing string from:", oldnm,"to new replacement:",newnm,
-                   "in top path:", top_path);
-      taCodeUtils::ReplaceInAllFiles(oldnm, newnm, top_path);
+                   "in top path:", top_path,"src_path:", src_path);
+      taCodeUtils::ReplaceInDir(oldnm, newnm, top_path, src_path);
       run_startup = false;
     }
   }

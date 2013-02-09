@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taSigLinkTaBase);
+taTypeDef_Of(taSigLinkTaBase);
 
 class TA_API taSigLinkTaBase: public taiSigLink { // SigLink for taBase objects
 INHERITED(taiSigLink)

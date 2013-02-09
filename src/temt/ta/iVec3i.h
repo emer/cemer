@@ -31,7 +31,7 @@
 class SbVec3s;          // #IGNORE
 #endif
 
-TypeDef_Of(iVec3i);
+taTypeDef_Of(iVec3i);
 
 class TA_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:

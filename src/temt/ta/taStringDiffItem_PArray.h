@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taStringDiffItem_PArray);
+taTypeDef_Of(taStringDiffItem_PArray);
 
 class TA_API taStringDiffItem_PArray : public taPlainArray<taStringDiffItem> {
   // #NO_TOKENS #NO_CSS a plain-array of string diff items

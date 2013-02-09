@@ -25,7 +25,7 @@
 class taBase_QObj; // #IGNORE
 
 
-TypeDef_Of(taOABase);
+taTypeDef_Of(taOABase);
 
 class TA_API taOABase : public taOBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class with QObject adapter for signals/slots

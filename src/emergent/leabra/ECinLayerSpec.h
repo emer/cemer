@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ECinLayerSpec);
+eTypeDef_Of(ECinLayerSpec);
 
-class LEABRA_API ECinLayerSpec : public ThetaPhaseLayerSpec {
+class E_API ECinLayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for EC input layers that implements ThetaPhase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(ThetaPhaseLayerSpec)
 public:

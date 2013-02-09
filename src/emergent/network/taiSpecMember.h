@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taiSpecMember);
+eTypeDef_Of(taiSpecMember);
 
-class EMERGENT_API taiSpecMember : public taiMember {
+class E_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
   TAI_MEMBER_SUBCLASS(taiSpecMember, taiMember);
 public:

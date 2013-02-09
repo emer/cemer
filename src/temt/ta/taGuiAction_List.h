@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taGuiAction_List);
+taTypeDef_Of(taGuiAction_List);
 
 class TA_API taGuiAction_List : public taList<taGuiAction> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Gui list of ta gui actions

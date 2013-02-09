@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ProgramPrjnSpec);
+eTypeDef_Of(ProgramPrjnSpec);
 
-class EMERGENT_API ProgramPrjnSpec : public ProjectionSpec {
+class E_API ProgramPrjnSpec : public ProjectionSpec {
   // Program-controlled connectivity: points to a program that will generate appropriate connections -- MUST have a 'prjn' arg variable variable in program, which will be set prior to calling to relevant projection -- recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
 INHERITED(ProjectionSpec)
 public:

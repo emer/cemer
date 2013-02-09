@@ -25,7 +25,7 @@
 class QTextEdit; //
 
 
-TypeDef_Of(iPanelOfText);
+taTypeDef_Of(iPanelOfText);
 
 class TA_API iPanelOfText: public iPanel {
   // a panel frame for displaying text; used, ex. by Scripts and Programs

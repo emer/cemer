@@ -25,7 +25,7 @@
 class taGroup_impl; //
 
 
-TypeDef_Of(taSigLinkGroup);
+taTypeDef_Of(taSigLinkGroup);
 
 class TA_API taSigLinkGroup: public taSigLinkList {
   // SigLink for taGroup objects -- adds additional 'subgroups' node under the 'items' node, for any subgroups

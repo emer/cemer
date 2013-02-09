@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(AggregateSpec);
+taTypeDef_Of(AggregateSpec);
 
 class TA_API AggregateSpec : public Aggregate {
   //  Basic aggregation operations -- use this for inline members (hides name field)

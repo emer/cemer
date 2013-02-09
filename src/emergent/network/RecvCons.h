@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(RecvCons);
+eTypeDef_Of(RecvCons);
 
-class EMERGENT_API RecvCons : public BaseCons {
+class E_API RecvCons : public BaseCons {
   // receiving connections base class -- one projection's worth of receiving connections
 INHERITED(BaseCons)
 public:

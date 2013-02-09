@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataTable_Group);
+taTypeDef_Of(DataTable_Group);
 
 class TA_API DataTable_Group : public taGroup<DataTable> {
   // ##CAT_Data ##EXPAND_DEF_1 group of data objects

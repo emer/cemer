@@ -17,7 +17,7 @@
 #define FgBoEllipseGpPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FgBoEllipseGpPrjnEl);
+eTypeDef_Of(FgBoEllipseGpPrjnEl);
 
-class EMERGENT_API FgBoEllipseGpPrjnEl : public taNBase {
+class E_API FgBoEllipseGpPrjnEl : public taNBase {
   // #AKA_FgBoGroupingPrjnEl ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a figure-ground border-ownership grouping projection spec -- contains parameters for a specific sized item
 INHERITED(taNBase)
 public:
@@ -59,9 +59,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(FgBoEllipseGpPrjnEl_List);
+eTypeDef_Of(FgBoEllipseGpPrjnEl_List);
 
-class EMERGENT_API FgBoEllipseGpPrjnEl_List : public taList<FgBoEllipseGpPrjnEl> {
+class E_API FgBoEllipseGpPrjnEl_List : public taList<FgBoEllipseGpPrjnEl> {
   // #AKA_FgBoGroupingPrjnEl_List ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of FgBoEllipseGpPrjnEl objects
 INHERITED(taList<FgBoEllipseGpPrjnEl>)
 public:
@@ -71,9 +71,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(FgBoEllipseGpPrjnSpec);
+eTypeDef_Of(FgBoEllipseGpPrjnSpec);
 
-class LEABRA_API FgBoEllipseGpPrjnSpec : public ProjectionSpec {
+class E_API FgBoEllipseGpPrjnSpec : public ProjectionSpec {
   // #AKA_FgBoGroupingPrjnSpec figure-ground border-ownership grouping projection spec -- 
 INHERITED(ProjectionSpec)
 public:

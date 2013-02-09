@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataGroupEl);
+taTypeDef_Of(DataGroupEl);
 
 class TA_API DataGroupEl : public DataOpEl {
   // one element of a data grouping specification

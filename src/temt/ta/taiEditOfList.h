@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiEditOfList);
+taTypeDef_Of(taiEditOfList);
 
 class TA_API taiEditOfList : public taiEdit {
   TAI_TYPEBASE_SUBCLASS(taiEditOfList, taiEdit);

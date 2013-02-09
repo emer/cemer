@@ -38,7 +38,7 @@ class taGuiEditor; //
 class QAction; //
 
 
-TypeDef_Of(taGuiDialog);
+taTypeDef_Of(taGuiDialog);
 
 class TA_API taGuiDialog : public taNBase {
   // ##CAT_Gui a gui dialog object -- makes a gui dialog that can be constructed with simple method calls to display a variety of gui elements (widgets) -- useful for building custom interface elements such as wizards

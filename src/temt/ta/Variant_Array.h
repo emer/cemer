@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(Variant_Array);
+taTypeDef_Of(Variant_Array);
 
 class TA_API Variant_Array : public taArray<Variant> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of variants

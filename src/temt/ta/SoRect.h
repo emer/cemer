@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SoRect);
+taTypeDef_Of(SoRect);
 
 class TA_API SoRect: public SoTriangleStripSet {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  2d rectangle, primarily for images, table images, etc.

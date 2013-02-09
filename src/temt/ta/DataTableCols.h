@@ -31,7 +31,7 @@ class taBase; //
 class TypeDef; // 
 
 
-TypeDef_Of(DataTableCols);
+taTypeDef_Of(DataTableCols);
 
 class TA_API DataTableCols: public taList<DataCol> {
   // ##CAT_Data columns of a datatable

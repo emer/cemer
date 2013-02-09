@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(Doc_Group);
+taTypeDef_Of(Doc_Group);
 
 class TA_API Doc_Group : public taGroup<taDoc> {
   // ##CAT_Docs ##EXPAND_DEF_1 group of doc objects

@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraDaNoise);
+eTypeDef_Of(LeabraDaNoise);
 
-class LEABRA_API LeabraDaNoise : public SpecMemberBase {
+class E_API LeabraDaNoise : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
 INHERITED(SpecMemberBase)
 public:
@@ -46,9 +46,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LeabraDaNoiseConSpec);
+eTypeDef_Of(LeabraDaNoiseConSpec);
 
-class LEABRA_API LeabraDaNoiseConSpec : public LeabraConSpec {
+class E_API LeabraDaNoiseConSpec : public LeabraConSpec {
   // ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
 INHERITED(LeabraConSpec)
 public:

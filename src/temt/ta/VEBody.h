@@ -40,7 +40,7 @@
 class VEWorld; // 
 class VEObject; // 
 
-TypeDef_Of(ODEDamping);
+taTypeDef_Of(ODEDamping);
 
 class TA_API ODEDamping : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE damping parameters
@@ -59,7 +59,7 @@ private:
   void  Destroy()       { };
 };
 
-TypeDef_Of(ODEFiniteRotation);
+taTypeDef_Of(ODEFiniteRotation);
 
 class TA_API ODEFiniteRotation : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv finite rotation mode settings
@@ -74,7 +74,7 @@ private:
   void  Destroy()       { };
 };
 
-TypeDef_Of(VEBody);
+taTypeDef_Of(VEBody);
 
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics

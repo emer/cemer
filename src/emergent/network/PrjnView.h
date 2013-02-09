@@ -26,9 +26,9 @@ class Projection; //
 class T3PrjnNode; //
 class BaseSpec; //
 
-TypeDef_Of(PrjnView);
+eTypeDef_Of(PrjnView);
 
-class EMERGENT_API PrjnView: public nvhDataView {
+class E_API PrjnView: public nvhDataView {
 INHERITED(nvhDataView)
 friend class NetView;
 public:

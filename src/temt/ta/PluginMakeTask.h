@@ -25,7 +25,7 @@
 class PluginMakeThreadMgr; // 
 
 
-TypeDef_Of(PluginMakeTask);
+taTypeDef_Of(PluginMakeTask);
 
 class TA_API PluginMakeTask : public taTask {
   // threading task for compiling plugin

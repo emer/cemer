@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(SimpleMathSpec);
+taTypeDef_Of(SimpleMathSpec);
 
 class TA_API SimpleMathSpec : public taNBase {
   // #STEM_BASE ##INLINE ##INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'

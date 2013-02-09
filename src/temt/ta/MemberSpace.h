@@ -29,7 +29,7 @@ class voidptr_PArray; //
 class TypeSpace; //
 
 
-TypeDef_Of(MemberSpace);
+taTypeDef_Of(MemberSpace);
 
 class TA_API MemberSpace: public MemberDefBase_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of members

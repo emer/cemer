@@ -27,7 +27,7 @@
 //typedef uintptr_t taHashVal;
 typedef unsigned long taHashVal; // this is a hash value
 
-TypeDef_Of(taHashEl);
+taTypeDef_Of(taHashEl);
 
 class TA_API taHashEl {
   // ##NO_TOKENS holds information for one entry of the hash table

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(IfBreak);
+taTypeDef_Of(IfBreak);
 
 class TA_API IfBreak: public ProgEl { 
   // if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break

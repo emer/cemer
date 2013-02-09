@@ -28,7 +28,7 @@ class MemberDef; //
 class taiSigLink; // 
 
 
-TypeDef_Of(BrowseViewerTaBase);
+taTypeDef_Of(BrowseViewerTaBase);
 
 class TA_API BrowseViewerTaBase : public BrowseViewer {
   // #NO_TOKENS #AKA_tabBrowseViewer for browsing when root is a taBase

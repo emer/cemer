@@ -26,7 +26,7 @@ class iPanelOfList; //
 class iTreeView; //
 class QTreeWidgetItem; //
 
-TypeDef_Of(taiListNode);
+taTypeDef_Of(taiListNode);
 
 class TA_API taiListNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)

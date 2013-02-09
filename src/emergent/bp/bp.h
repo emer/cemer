@@ -24,7 +24,7 @@
 #include <float_CircBuffer>
 #include <ProjectBase>
 
-#include "bp_def.h"
+#include "network_def.h"
 
 // forwards this file
 class BpConSpec;
@@ -38,9 +38,9 @@ class BpNetwork;
 
 // note: dwt is equivalent to the old dEdW and pdw = the old dwt
 
-TypeDef_Of(BpCon);
+eTypeDef_Of(BpCon);
 
-class BP_API BpCon : public Connection {
+class E_API BpCon : public Connection {
   // #STEM_BASE ##CAT_Bp Bp connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
@@ -54,9 +54,9 @@ public:
 // every time a C_ version is overloaded, it is necessary to overload the B_
 // version, where the new B_ just calls the new C_
 
-TypeDef_Of(BpConSpec);
+eTypeDef_Of(BpConSpec);
 
-class BP_API BpConSpec : public ConSpec {
+class E_API BpConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Bp Bp connection specifications
 INHERITED(ConSpec)
 public:
@@ -122,17 +122,17 @@ private:
 // the following functions are possible weight decay functions
 
 // #REG_FUN
-BP_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+E_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
 // #LIST_BpConSpec_WtDecay Simple weight decay (subtract decay*wt)
      ;				// term here so scanner picks up comment
 // #REG_FUN
-BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+E_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
 // #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
      ;				// term here so scanner picks up comment
 
-TypeDef_Of(BpRecvCons);
+eTypeDef_Of(BpRecvCons);
 
-class BP_API BpRecvCons : public RecvCons {
+class E_API BpRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Bp group of Bp recv connections
 INHERITED(RecvCons)
 public:
@@ -146,9 +146,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(BpSendCons);
+eTypeDef_Of(BpSendCons);
 
-class BP_API BpSendCons : public SendCons {
+class E_API BpSendCons : public SendCons {
   // #STEM_BASE ##CAT_Bp group of Bp sending connections
 INHERITED(SendCons)
 public:
@@ -162,9 +162,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(BpUnitSpec);
+eTypeDef_Of(BpUnitSpec);
 
-class BP_API BpUnitSpec : public UnitSpec {
+class E_API BpUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_Bp specifications for Bp units
 INHERITED(UnitSpec)
 public:
@@ -208,17 +208,17 @@ private:
 // the following functions are possible error functions.
 
 // #REG_FUN
-BP_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
+E_API void Bp_Squared_Error(BpUnitSpec* spec, BpUnit* u)
 // #LIST_BpUnit_Error Squared error function for bp
      ;				// term here so scanner picks up comment
 // #REG_FUN
-BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
+E_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
 // #LIST_BpUnit_Error Cross entropy error function for bp
      ;				// term here so scanner picks up comment
 
-TypeDef_Of(BpUnit);
+eTypeDef_Of(BpUnit);
 
-class BP_API BpUnit : public Unit {
+class E_API BpUnit : public Unit {
   // #STEM_BASE ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
 INHERITED(Unit)
 public:
@@ -323,9 +323,9 @@ inline void BpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
 //	Additional ConSpec Types	//
 //////////////////////////////////////////
 
-TypeDef_Of(HebbBpConSpec);
+eTypeDef_Of(HebbBpConSpec);
 
-class BP_API HebbBpConSpec : public BpConSpec {
+class E_API HebbBpConSpec : public BpConSpec {
   // Simple Hebbian wt update (send act * recv act)
 INHERITED(BpConSpec)
 public:
@@ -352,9 +352,9 @@ inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
   cn->dwt +=  ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
 }
 
-TypeDef_Of(ErrScaleBpConSpec);
+eTypeDef_Of(ErrScaleBpConSpec);
 
-class BP_API ErrScaleBpConSpec : public BpConSpec {
+class E_API ErrScaleBpConSpec : public BpConSpec {
   // con spec that scales the error by given parameter
 INHERITED(BpConSpec)
 public:
@@ -381,9 +381,9 @@ inline float ErrScaleBpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
   return rval;
 }
 
-TypeDef_Of(DeltaBarDeltaBpCon);
+eTypeDef_Of(DeltaBarDeltaBpCon);
 
-class BP_API DeltaBarDeltaBpCon : public BpCon {
+class E_API DeltaBarDeltaBpCon : public BpCon {
   // delta-bar-delta connection object with local learning rate
 public:
   float 		lrate; 		// #NO_SAVE local learning rate
@@ -391,9 +391,9 @@ public:
   DeltaBarDeltaBpCon() { lrate = 0.0f; }
 };
 
-TypeDef_Of(DeltaBarDeltaBpConSpec);
+eTypeDef_Of(DeltaBarDeltaBpConSpec);
 
-class BP_API DeltaBarDeltaBpConSpec : public BpConSpec {
+class E_API DeltaBarDeltaBpConSpec : public BpConSpec {
   // delta-bar-delta has local learning rates for each connection
 INHERITED(BpConSpec)
 public:
@@ -492,9 +492,9 @@ inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
 //	Additional Unit Types		//
 //////////////////////////////////////////
 
-TypeDef_Of(BpContextSpec);
+eTypeDef_Of(BpContextSpec);
 
-class BP_API BpContextSpec : public BpUnitSpec {
+class E_API BpContextSpec : public BpUnitSpec {
   // for context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, must be AFTER that layer in .layers
 INHERITED(BpUnitSpec)
 public:
@@ -530,9 +530,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(LinearBpUnitSpec);
+eTypeDef_Of(LinearBpUnitSpec);
 
-class BP_API LinearBpUnitSpec : public BpUnitSpec {
+class E_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
 INHERITED(BpUnitSpec)
 public:
@@ -549,9 +549,9 @@ private:
   void	Defaults_init() 	{ Initialize(); }
 };
 
-TypeDef_Of(ThreshLinBpUnitSpec);
+eTypeDef_Of(ThreshLinBpUnitSpec);
 
-class BP_API ThreshLinBpUnitSpec : public BpUnitSpec {
+class E_API ThreshLinBpUnitSpec : public BpUnitSpec {
   // thresholded linear unit in Bp
 INHERITED(BpUnitSpec)
 public:
@@ -570,9 +570,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(NoisyBpUnitSpec);
+eTypeDef_Of(NoisyBpUnitSpec);
 
-class BP_API NoisyBpUnitSpec : public BpUnitSpec {
+class E_API NoisyBpUnitSpec : public BpUnitSpec {
   // Bp with noisy output signal (act plus noise)
 INHERITED(BpUnitSpec)
 public:
@@ -589,9 +589,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(StochasticBpUnitSpec);
+eTypeDef_Of(StochasticBpUnitSpec);
 
-class BP_API StochasticBpUnitSpec : public BpUnitSpec {
+class E_API StochasticBpUnitSpec : public BpUnitSpec {
   // Bp with a binary stochastic activation function
 INHERITED(BpUnitSpec)
 public:
@@ -606,9 +606,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(RBFBpUnitSpec);
+eTypeDef_Of(RBFBpUnitSpec);
 
-class BP_API RBFBpUnitSpec : public BpUnitSpec {
+class E_API RBFBpUnitSpec : public BpUnitSpec {
   // Radial basis function (Gaussian) function units in Bp
 INHERITED(BpUnitSpec)
 public:
@@ -630,9 +630,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(BumpBpUnitSpec);
+eTypeDef_Of(BumpBpUnitSpec);
 
-class BP_API BumpBpUnitSpec : public BpUnitSpec {
+class E_API BumpBpUnitSpec : public BpUnitSpec {
   // bump function in Bp: Gaussian of std net input
 INHERITED(BpUnitSpec)
 public:
@@ -653,9 +653,9 @@ private:
   void	Defaults_init() 	{ };
 };
 
-TypeDef_Of(ExpBpUnitSpec);
+eTypeDef_Of(ExpBpUnitSpec);
 
-class BP_API ExpBpUnitSpec : public BpUnitSpec {
+class E_API ExpBpUnitSpec : public BpUnitSpec {
   // exponential units in Bp: simple exponent of net input
 INHERITED(BpUnitSpec)
 public:
@@ -671,9 +671,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(SoftMaxBpUnitSpec);
+eTypeDef_Of(SoftMaxBpUnitSpec);
 
-class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
+class E_API SoftMaxBpUnitSpec : public BpUnitSpec {
   // SoftMax Units: first one-to-one prjn is from corresp exponential unit, second prjn is from single summing linear unit, this then divides two
 INHERITED(BpUnitSpec)
 public:
@@ -696,9 +696,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(BpLayer);
+eTypeDef_Of(BpLayer);
 
-class BP_API BpLayer : public Layer {
+class E_API BpLayer : public Layer {
   // #STEM_BASE ##CAT_Bp A feedforward backpropagation layer
 INHERITED(Layer)
 public:
@@ -709,9 +709,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(BpNetwork);
+eTypeDef_Of(BpNetwork);
 
-class BP_API BpNetwork : public Network {
+class E_API BpNetwork : public Network {
   // #STEM_BASE ##CAT_Bp project for feedforward backpropagation networks (recurrent backprop is in RBpNetwork)
 INHERITED(Network)
 public:
@@ -742,9 +742,9 @@ private:
   void 	Destroy()		{}
 };
 
-TypeDef_Of(BpProject);
+eTypeDef_Of(BpProject);
 
-class BP_API BpProject : public ProjectBase {
+class E_API BpProject : public ProjectBase {
   // #STEM_BASE ##CAT_Bp project for backpropagation networks
 INHERITED(ProjectBase)
 public:

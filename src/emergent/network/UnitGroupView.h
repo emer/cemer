@@ -32,9 +32,9 @@ class LayerView; //
 class T3UnitGroupNode; //
 
 
-TypeDef_Of(UnitGroupView);
+eTypeDef_Of(UnitGroupView);
 
-class EMERGENT_API UnitGroupView: public nvDataView {
+class E_API UnitGroupView: public nvDataView {
   // does all the rendering of unit values, either direct optimized 3D_BLOCK rendering or managing -- there is ONLY ONE of these objects per layer, and it manages all the units regardless of whether there are sub unit groups
 INHERITED(nvDataView)
   friend class LayerView;

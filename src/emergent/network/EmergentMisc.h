@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(EmergentMisc);
+eTypeDef_Of(EmergentMisc);
 
-class EMERGENT_API EmergentMisc { 
+class E_API EmergentMisc { 
   // #NO_TOKENS miscellaneous things for Emergent
 public:
   static int	Main(int& argc, const char* argv[]);

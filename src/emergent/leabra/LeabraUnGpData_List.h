@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraUnGpData_List);
+eTypeDef_Of(LeabraUnGpData_List);
 
-class LEABRA_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
+class E_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of unit group data for leabra unit subgroups
 INHERITED(taList<LeabraUnGpData>)
 public:

@@ -16,7 +16,7 @@
 #include "taiArgTypeOfProgLibEl.h"
 #include <taiWidgetProgLibElChooser>
 
-TypeDef_Of(ProgLibEl);
+taTypeDef_Of(ProgLibEl);
 
 
 int taiArgTypeOfProgLibEl::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {

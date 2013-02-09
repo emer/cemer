@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MatrixCon);
+eTypeDef_Of(MatrixCon);
 
 class MatrixCon : public LeabraCon {
   // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning

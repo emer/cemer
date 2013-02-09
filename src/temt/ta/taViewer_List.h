@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class taViewer; // 
-TypeDef_Of(taViewer);
+taTypeDef_Of(taViewer);
 
-TypeDef_Of(taViewer_List);
+taTypeDef_Of(taViewer_List);
 
 class TA_API taViewer_List: public DataView_List {
   // #NO_TOKENS ##EXPAND_DEF_0 list of data viewers

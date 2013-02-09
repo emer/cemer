@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class SoSwitch; // #IGNORE
 
-TypeDef_Of(VEObjCarousel);
+taTypeDef_Of(VEObjCarousel);
 
 class TA_API VEObjCarousel : public VEBody {
   // virtual environment object carousel -- contains a number of different objects that are pre-loaded and then selectable by name or number (info is contained in a DataTable)

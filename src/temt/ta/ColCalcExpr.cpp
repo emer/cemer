@@ -16,7 +16,7 @@
 #include "ColCalcExpr.h"
 #include <DataCol>
 
-TypeDef_Of(DataTableCols);
+taTypeDef_Of(DataTableCols);
 
 void ColCalcExpr::Initialize() {
   col_lookup = NULL;

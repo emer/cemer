@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(PluginMakeThreadMgr);
+taTypeDef_Of(PluginMakeThreadMgr);
 
 class TA_API PluginMakeThreadMgr : public taThreadMgr {
   // #INLINE thread manager for PluginMake tasks -- manages threads and tasks, and coordinates threads running the tasks

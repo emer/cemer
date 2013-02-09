@@ -17,16 +17,16 @@
 #define LeabraCon_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <Connection>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraCon);
+eTypeDef_Of(LeabraCon);
 
-class LEABRA_API LeabraCon : public Connection {
+class E_API LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
   float		pdw;		// #VIEW_HOT #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated

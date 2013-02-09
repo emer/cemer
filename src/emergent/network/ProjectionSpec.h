@@ -32,12 +32,12 @@ class RecvCons; //
 class Unit; //
 class Layer; //
 
-TypeDef_Of(ProjectionSpec);
+eTypeDef_Of(ProjectionSpec);
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
 // ProjectionSpec does the connectivity, and optionally the weight init
 
-class EMERGENT_API ProjectionSpec : public BaseSpec {
+class E_API ProjectionSpec : public BaseSpec {
   // #STEM_BASE #VIRT_BASE ##CAT_Projection Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:

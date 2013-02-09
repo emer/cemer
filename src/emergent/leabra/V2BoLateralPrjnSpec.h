@@ -17,7 +17,7 @@
 #define V2BoLateralPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(V2BoLateralPrjnSpec);
+eTypeDef_Of(V2BoLateralPrjnSpec);
 
-class LEABRA_API V2BoLateralPrjnSpec : public ProjectionSpec {
+class E_API V2BoLateralPrjnSpec : public ProjectionSpec {
   // lateral projections within V2 layer to support border ownership computation
 INHERITED(ProjectionSpec)
 public:

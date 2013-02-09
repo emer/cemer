@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FunLookup);
+taTypeDef_Of(FunLookup);
 
 class TA_API FunLookup : public float_Array {
   // ##CAT_Math function lookup for non-computable functions and optimization

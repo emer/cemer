@@ -35,9 +35,9 @@
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
 
-TypeDef_Of(ScalarValSpec);
+eTypeDef_Of(ScalarValSpec);
 
-class LEABRA_API ScalarValSpec : public SpecMemberBase {
+class E_API ScalarValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
 INHERITED(SpecMemberBase)
 public:
@@ -81,9 +81,9 @@ private:
   void	Defaults_init();
 };
 
-TypeDef_Of(ScalarValBias);
+eTypeDef_Of(ScalarValBias);
 
-class LEABRA_API ScalarValBias : public SpecMemberBase {
+class E_API ScalarValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 INHERITED(SpecMemberBase)
 public:
@@ -123,9 +123,9 @@ private:
   void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-TypeDef_Of(ScalarValLayerSpec);
+eTypeDef_Of(ScalarValLayerSpec);
 
-class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
+class E_API ScalarValLayerSpec : public LeabraLayerSpec {
   // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
 INHERITED(LeabraLayerSpec)
 public:

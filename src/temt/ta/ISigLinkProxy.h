@@ -25,7 +25,7 @@
 class taiSigLink; //
 
 
-TypeDef_Of(ISigLinkProxy);
+taTypeDef_Of(ISigLinkProxy);
 
 class TA_API ISigLinkProxy : public virtual ITypedObject {
   // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE most basic interface for anyone interfacing with SigLink's

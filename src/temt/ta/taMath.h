@@ -44,7 +44,7 @@ class double_Matrix; //
 # endif
 #endif
 
-TypeDef_Of(taMath);
+taTypeDef_Of(taMath);
 
 class TA_API taMath : public taNBase {
   // #STEM_BASE ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions

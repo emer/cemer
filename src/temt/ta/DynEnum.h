@@ -29,7 +29,7 @@
 // not always.  it has now been changed to the more conventional storage of the
 // actual numerical value in all cases..
 
-TypeDef_Of(DynEnum);
+taTypeDef_Of(DynEnum);
 
 class TA_API DynEnum : public taOBase {
   // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values

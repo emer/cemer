@@ -31,7 +31,7 @@ class taGuiWidget_QObj; // #IGNORE
 class taiWidget; //
 
 
-TypeDef_Of(taGuiWidget);
+taTypeDef_Of(taGuiWidget);
 
 class TA_API taGuiWidget : public taNBase {
   // ##CAT_Gui manages a qt widget for the taGui system

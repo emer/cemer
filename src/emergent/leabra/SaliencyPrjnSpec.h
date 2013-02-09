@@ -17,7 +17,7 @@
 #define SaliencyPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
-TypeDef_Of(SaliencyPrjnSpec);
+eTypeDef_Of(SaliencyPrjnSpec);
 
-class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
+class E_API SaliencyPrjnSpec : public ProjectionSpec {
   // Saliency projection spec from V1 layer: receiving layer must have a unit group for each feature, with each unit group having the V1 unit group geometry -- gets excitatory connection from feature corresponding to group index, and from all-but that feature in surrounding sending areas, producing a contrast enhancement effect.  Competition within group and across whole layer produces pop-out dynamics
 INHERITED(ProjectionSpec)
 public:

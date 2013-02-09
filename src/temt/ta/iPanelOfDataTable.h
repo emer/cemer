@@ -28,7 +28,7 @@ class DataTable; //
 class ISelectable_PtrList; //
 
 
-TypeDef_Of(iPanelOfDataTable);
+taTypeDef_Of(iPanelOfDataTable);
 
 class TA_API iPanelOfDataTable: public iPanel {
   Q_OBJECT

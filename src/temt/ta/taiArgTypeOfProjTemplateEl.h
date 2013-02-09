@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfProjTemplateEl);
+taTypeDef_Of(taiArgTypeOfProjTemplateEl);
 
 class TA_API taiArgTypeOfProjTemplateEl : public taiArgTypeOfFromGroup {
   // for ProjTemplateEl* ptr args

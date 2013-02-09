@@ -23,8 +23,12 @@
 
 // declare all other types mentioned but not required to include:
 
+// using namespace std;
+// namespace garbanzo {
 
-TypeDef_Of(Comment);
+// #include <qglobal.h>
+
+taTypeDef_Of(Comment);
 
 class TA_API Comment: public ProgEl { 
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
@@ -47,5 +51,7 @@ private:
   void	Initialize();
   void	Destroy()	{CutLinks();}
 }; 
+
+// }
 
 #endif // Comment_h

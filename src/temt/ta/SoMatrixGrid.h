@@ -36,7 +36,7 @@ class SoIndexedTriangleStripSet;
 class SoTransform;
 
 
-TypeDef_Of(SoMatrixGrid);
+taTypeDef_Of(SoMatrixGrid);
 
 class TA_API SoMatrixGrid: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit

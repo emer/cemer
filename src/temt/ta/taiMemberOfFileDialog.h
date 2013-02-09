@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfFileDialog);
+taTypeDef_Of(taiMemberOfFileDialog);
 
 class TA_API taiMemberOfFileDialog : public taiMember {
   // string with FILE_DIALOG_xxx directive

@@ -36,7 +36,7 @@ class DataTable; //
 # endif
 #endif
 
-TypeDef_Of(taImage);
+taTypeDef_Of(taImage);
 
 class TA_API taImage : public taNBase {
   // #STEM_BASE ##CAT_Image represents an image in TA accessible way (wrapper for QT's QImage)

@@ -26,7 +26,7 @@
 class BrainAtlasInfo;
 class BrainAtlasLabel;
 
-class EMERGENT_API BrainAtlasFileParser {
+class E_API BrainAtlasFileParser {
 public:
   BrainAtlasFileParser(const QString& filename);
   virtual ~BrainAtlasFileParser();

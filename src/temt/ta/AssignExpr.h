@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(AssignExpr);
+taTypeDef_Of(AssignExpr);
 
 class TA_API AssignExpr: public ProgEl { 
   // assign an expression to a variable (use method call for simple assignment to function call)

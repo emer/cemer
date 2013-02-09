@@ -27,7 +27,7 @@ class MemberDef; //
 class taiSigLink; // 
 
 
-TypeDef_Of(TypeInfoBrowser);
+taTypeDef_Of(TypeInfoBrowser);
 
 class TA_API TypeInfoBrowser : public BrowseViewer {
   // #NO_TOKENS represents a class browser instance

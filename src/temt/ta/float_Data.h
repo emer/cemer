@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(float_Data);
+taTypeDef_Of(float_Data);
 
 class TA_API float_Data : public DataColT<float_Matrix> {
   // floating point data

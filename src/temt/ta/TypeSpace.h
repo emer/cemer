@@ -27,7 +27,7 @@ class TypeDef; //
 class taSigLink; //
 #endif
 
-TypeDef_Of(TypeSpace);
+taTypeDef_Of(TypeSpace);
 
 class TA_API TypeSpace: public taPtrList<TypeDef> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of types; uses default string-based hashing

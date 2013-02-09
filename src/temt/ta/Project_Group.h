@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 class ProjTemplateEl; // 
 
-TypeDef_Of(Project_Group);
+taTypeDef_Of(Project_Group);
 
 class TA_API Project_Group : public taGroup<taProject> {
   //  ##CAT_Project group of projects

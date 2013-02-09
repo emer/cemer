@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiWidget_List);
+taTypeDef_Of(taiWidget_List);
 
 class TA_API taiWidget_List : public taPtrList<taiWidget> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS taiWidget list, OBJECTS ARE DELETED ON REMOVAL

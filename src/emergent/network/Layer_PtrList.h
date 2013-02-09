@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 class Layer; //
 
-TypeDef_Of(Layer_PtrList);
+eTypeDef_Of(Layer_PtrList);
 
-class EMERGENT_API Layer_PtrList : public taPtrList<Layer> {
+class E_API Layer_PtrList : public taPtrList<Layer> {
   // simple layer list used in lookaside lists
 INHERITED(taPtrList<Layer>)
 public:

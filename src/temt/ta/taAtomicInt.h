@@ -91,7 +91,7 @@ public:
 # endif  // QT_VERSION
 #endif   // __MAKETA__
 
-TypeDef_Of(taAtomicInt);
+taTypeDef_Of(taAtomicInt);
 
 class TA_API taAtomicInt : public QAtomicInt {
   // ##SMART_INT an atomic integer for threadsafe processing

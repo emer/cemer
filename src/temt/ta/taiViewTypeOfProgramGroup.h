@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOfProgramGroup);
+taTypeDef_Of(taiViewTypeOfProgramGroup);
 
 class TA_API taiViewTypeOfProgramGroup: public taiViewTypeOfGroup {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfProgramGroup, taiViewTypeOfGroup) //

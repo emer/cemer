@@ -15,7 +15,7 @@
 
 #include "DataOneProg.h"
 
-TypeDef_Of(DataTable);
+taTypeDef_Of(DataTable);
 
 void DataOneProg::Initialize() {
 }

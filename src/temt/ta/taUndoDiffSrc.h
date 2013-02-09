@@ -31,7 +31,7 @@
 class taUndoRec; // 
 
 
-TypeDef_Of(taUndoDiffSrc);
+taTypeDef_Of(taUndoDiffSrc);
 
 class TA_API taUndoDiffSrc : public taOBase {
   // ##CAT_Undo full source record for diff-based saving of undo save data -- diffs are computed against this guy

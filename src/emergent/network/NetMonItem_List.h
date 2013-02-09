@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetMonItem_List);
+eTypeDef_Of(NetMonItem_List);
 
-class EMERGENT_API NetMonItem_List: public taList<NetMonItem> { 
+class E_API NetMonItem_List: public taList<NetMonItem> { 
   // ##CAT_Network list of network monitor items
 INHERITED(taList<NetMonItem>)
 public:

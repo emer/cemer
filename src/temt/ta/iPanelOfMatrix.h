@@ -26,7 +26,7 @@ class iMatrixEditor; // #IGNORE
 class iTableView; // #IGNORE
 class taMatrix; //
 
-TypeDef_Of(iPanelOfMatrix);
+taTypeDef_Of(iPanelOfMatrix);
 
 class TA_API iPanelOfMatrix: public iPanel {
   Q_OBJECT

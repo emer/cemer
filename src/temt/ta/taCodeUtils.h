@@ -24,7 +24,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taCodeUtils);
+taTypeDef_Of(taCodeUtils);
 
 class TA_API taCodeUtils {
   // #NO_TOKENS #INSTANCE code for operating on the ta codebase itself

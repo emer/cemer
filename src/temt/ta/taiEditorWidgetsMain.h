@@ -36,7 +36,7 @@ class iEditGrid;   //
 class QSplitter;   //
 class iLabel;      //
 
-TypeDef_Of(taiEditorWidgetsMain);
+taTypeDef_Of(taiEditorWidgetsMain);
 
 class TA_API taiEditorWidgetsMain: public taiEditorWidgets {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using an iFormLayout

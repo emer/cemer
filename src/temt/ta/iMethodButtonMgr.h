@@ -40,7 +40,7 @@ class taiWidgetActions; //
 class QLayout; //
 class IWidgetHost; //
 
-TypeDef_Of(iMethodButtonMgr);
+taTypeDef_Of(iMethodButtonMgr);
 
 class TA_API iMethodButtonMgr: public QObject, virtual public ISigLinkClient
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IWidgetHost and gui objects

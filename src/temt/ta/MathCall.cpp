@@ -16,8 +16,8 @@
 #include "MathCall.h"
 #include <Program>
 
-TypeDef_Of(taMath);
-TypeDef_Of(taMath_float);
+taTypeDef_Of(taMath);
+taTypeDef_Of(taMath_float);
 
 
 void MathCall::Initialize() {

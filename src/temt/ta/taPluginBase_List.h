@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taPluginBase_List);
+taTypeDef_Of(taPluginBase_List);
 
 class TA_API taPluginBase_List: public taList<taPluginBase> {
   // ##CHILDREN_INLINE ##NO_UPDATE_AFTER ##NO_TOKENS plugins available to the program (also used for deps)

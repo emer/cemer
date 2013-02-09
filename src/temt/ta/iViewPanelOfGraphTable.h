@@ -36,7 +36,7 @@ class QPushButton; //
 class QLabel; //
 
 
-TypeDef_Of(iViewPanelOfGraphTable);
+taTypeDef_Of(iViewPanelOfGraphTable);
 
 class TA_API iViewPanelOfGraphTable: public iViewPanelOfDataTable {
   Q_OBJECT

@@ -27,7 +27,7 @@ class taiEditorOfClass; //
 class iMainWindowViewer; //
 class taiSigLink; //
 
-TypeDef_Of(taiEdit);
+taTypeDef_Of(taiEdit);
 
 class TA_API taiEdit : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiEdit, taiType);

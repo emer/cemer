@@ -28,7 +28,7 @@ class iPanel; //
 class iPanelBase; //
 class taiSigLink; //
 
-TypeDef_Of(taiViewType);
+taTypeDef_Of(taiViewType);
 
 class TA_API taiViewType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS viewer services for the type

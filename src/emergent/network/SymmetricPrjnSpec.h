@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SymmetricPrjnSpec);
+eTypeDef_Of(SymmetricPrjnSpec);
 
-class EMERGENT_API SymmetricPrjnSpec : public ProjectionSpec {
+class E_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
 INHERITED(ProjectionSpec)
 public:

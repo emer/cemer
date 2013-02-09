@@ -27,7 +27,7 @@ class TypeDef; //
 class ProgVar; // 
 
 
-TypeDef_Of(ProgArg);
+taTypeDef_Of(ProgArg);
 
 class TA_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument

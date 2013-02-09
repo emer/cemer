@@ -46,7 +46,7 @@ class taHashTable; //
 //                      PtrList
 /////////////////////////////////////////////////////////////////////
 
-TypeDef_Of(taPtrList_impl);
+taTypeDef_Of(taPtrList_impl);
 
 class TA_API taPtrList_impl {
   // #NO_TOKENS implementation of the pointer list class

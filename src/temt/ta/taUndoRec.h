@@ -29,7 +29,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taUndoRec);
+taTypeDef_Of(taUndoRec);
 
 class TA_API taUndoRec : public taOBase {
   // ##CAT_Undo one undo record -- saves all necessary state information

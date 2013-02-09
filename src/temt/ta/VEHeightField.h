@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(VEHeightField);
+taTypeDef_Of(VEHeightField);
 
 class TA_API VEHeightField : public VEStatic {
   // virtual environment height field -- 3d surface defined by a grid of height values

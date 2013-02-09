@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(taSmartPtr);
+taTypeDef_Of(taSmartPtr);
 
 class TA_API taSmartPtr {
   // ##NO_INSTANCE ##NO_TOKENS ##SMART_POINTER "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*

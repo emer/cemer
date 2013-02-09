@@ -16,7 +16,7 @@
 #include "taiEditOfArray.h"
 #include <taiEditorOfArray>
 
-TypeDef_Of(taArray);
+taTypeDef_Of(taArray);
 
 
 int taiEditOfArray::BidForEdit(TypeDef* td){

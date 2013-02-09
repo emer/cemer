@@ -15,7 +15,7 @@
 
 #include "DataSrcDestProg.h"
 
-TypeDef_Of(DataTable);
+taTypeDef_Of(DataTable);
 
 void DataSrcDestProg::Initialize() {
 }

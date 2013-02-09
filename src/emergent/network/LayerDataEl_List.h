@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LayerDataEl_List);
+eTypeDef_Of(LayerDataEl_List);
 
-class EMERGENT_API LayerDataEl_List: public taList<LayerDataEl> {
+class E_API LayerDataEl_List: public taList<LayerDataEl> {
   // ##CAT_Network list of individual LayerDataEl objects
 INHERITED(taList<LayerDataEl>)
 public:

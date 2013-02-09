@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DumpFileCvtList);
+taTypeDef_Of(DumpFileCvtList);
 
 class TA_API DumpFileCvtList : public taPtrList<DumpFileCvt> {
   // #CAT_File list of available dump file converters

@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SigmoidSpec);
+eTypeDef_Of(SigmoidSpec);
 
-class EMERGENT_API SigmoidSpec : public taOBase {
+class E_API SigmoidSpec : public taOBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taOBase) //
 public:

@@ -43,7 +43,7 @@ class QScrollArea; //
 class QHBoxLayout; // 
 class QLabel; //
 
-TypeDef_Of(taiEditor_List);
+taTypeDef_Of(taiEditor_List);
 
 class TA_API taiEditor_List : public taPtrList<taiEditor> {
   // list of data host base guys -- for async management -- no ownership of items
@@ -53,7 +53,7 @@ public:
 };
 
 
-TypeDef_Of(taiEditor);
+taTypeDef_Of(taiEditor);
 
 class TA_API taiEditor: public QObject, virtual public ISigLinkClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog

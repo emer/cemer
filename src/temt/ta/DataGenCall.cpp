@@ -15,7 +15,7 @@
 
 #include "DataGenCall.h"
 
-TypeDef_Of(taDataGen);
+taTypeDef_Of(taDataGen);
 
 void DataGenCall::Initialize() {
   min_type = &TA_taDataGen;

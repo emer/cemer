@@ -38,7 +38,7 @@ class taBase; //
 class taDoc; // 
 
 
-TypeDef_Of(taRootBase);
+taTypeDef_Of(taRootBase);
 
 class TA_API taRootBase: public taFBase {
   // ##CAT_Project ##EXPAND_DEF_2 base class for the root of the structural hierarchy (root. or . in css / paths)

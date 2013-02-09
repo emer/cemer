@@ -26,14 +26,14 @@
 
 // declare all other types mentioned but not required to include:
 class MainWindowViewer; // 
-TypeDef_Of(MainWindowViewer);
+taTypeDef_Of(MainWindowViewer);
 class iMainWindowViewer; // #IGNORE
 class TypeDef; // 
 class IViewerWidget; // 
 class QWidget; // 
 class QPixmap; //
 
-TypeDef_Of(taViewer);
+taTypeDef_Of(taViewer);
 
 class TA_API taViewer : public taDataView {
   // #NO_TOKENS #VIRT_BASE ##DEF_NAME_STYLE_1 the base type for objects with a gui window rep of some kind

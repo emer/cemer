@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taArray);
+taTypeDef_Of(taArray);
 
 template<class T>
 class taArray : public taArray_base {

@@ -25,7 +25,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(T3Panel_List);
+taTypeDef_Of(T3Panel_List);
 
 class TA_API T3Panel_List: public taViewer_List { // #NO_TOKENS
 INHERITED(taViewer_List)

@@ -26,9 +26,9 @@
 class taHashTable; // 
 
 
-TypeDef_Of(KwtaSortBuff_List);
+eTypeDef_Of(KwtaSortBuff_List);
 
-class LEABRA_API KwtaSortBuff_List: public taList<KwtaSortBuff> {
+class E_API KwtaSortBuff_List: public taList<KwtaSortBuff> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of kwta sort buffs -- a specific number are defined as standard per the enum
 INHERITED(taList<KwtaSortBuff>)
 public:

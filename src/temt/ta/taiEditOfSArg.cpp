@@ -16,7 +16,7 @@
 #include "taiEditOfSArg.h"
 #include <taiEditorOfSArg>
 
-TypeDef_Of(SArg_Array);
+taTypeDef_Of(SArg_Array);
 
 int taiEditOfSArg::BidForEdit(TypeDef* td){
   if(td->InheritsFrom(TA_SArg_Array))

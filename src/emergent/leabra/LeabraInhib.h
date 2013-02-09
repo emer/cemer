@@ -25,9 +25,9 @@
 // declare all other types mentioned but not required to include:
 class LeabraLayerSpec; // 
 
-TypeDef_Of(KWTAVals);
+eTypeDef_Of(KWTAVals);
 
-class LEABRA_API KWTAVals : public taOBase {
+class E_API KWTAVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for kwta stuff
 INHERITED(taOBase)
 public:
@@ -55,9 +55,9 @@ private:
   void 	Destroy()	{ };
 };
 
-TypeDef_Of(AdaptIVals);
+eTypeDef_Of(AdaptIVals);
 
-class LEABRA_API AdaptIVals : public taOBase {
+class E_API AdaptIVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for adapting kwta stuff
 INHERITED(taOBase)
 public:
@@ -75,9 +75,9 @@ private:
   void 	Destroy()	{ };
 };
 
-TypeDef_Of(InhibVals);
+eTypeDef_Of(InhibVals);
 
-class LEABRA_API InhibVals : public taOBase {
+class E_API InhibVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for inhibition
 INHERITED(taOBase)
 public:
@@ -96,9 +96,9 @@ private:
   void 	Destroy()	{ };
 };
 
-TypeDef_Of(LeabraInhib);
+eTypeDef_Of(LeabraInhib);
 
-class LEABRA_API LeabraInhib {
+class E_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
 public:
   LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units

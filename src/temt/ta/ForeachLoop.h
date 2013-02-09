@@ -27,7 +27,7 @@
 class ProgEl; // 
 
 
-TypeDef_Of(ForeachLoop);
+taTypeDef_Of(ForeachLoop);
 
 class TA_API ForeachLoop: public Loop { 
   // iterate over each item in a container object (List, Group, Matrix), performing loop_code on each element, which is encoded in the el_var -- in expression can be any kind of selection over items 

@@ -54,7 +54,7 @@ class QWidget; //
 class ISelectableHost; //
 
 
-TypeDef_Of(iProgramEditor);
+taTypeDef_Of(iProgramEditor);
 
 class TA_API iProgramEditor: public QWidget, public virtual IWidgetHost,
                              public virtual ISigLinkClient {

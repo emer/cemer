@@ -49,7 +49,7 @@ enum NodeBitmapFlags {
   NBF_LINK_ITEM                 = 0x02
 };
 
-TypeDef_Of(iTreeViewItem);
+taTypeDef_Of(iTreeViewItem);
 
 class TA_API iTreeViewItem: public iTreeWidgetItem,
   public virtual ISigLinkClient, public virtual IObjectSelectable {

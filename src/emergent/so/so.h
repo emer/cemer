@@ -22,7 +22,7 @@
 #include <ProjectBase>
 #include <Wizard>
 
-#include "so_def.h"
+#include "network_def.h"
 
 class SoCon;
 class SoConSpec;
@@ -34,9 +34,9 @@ class SoLayerSpec;
 class SoNetwork;
 //
 
-TypeDef_Of(SoCon);
+eTypeDef_Of(SoCon);
 
-class SO_API SoCon : public Connection {
+class E_API SoCon : public Connection {
   // #STEM_BASE ##CAT_So generic self-organizing algorithm connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change
@@ -44,9 +44,9 @@ public:
   SoCon() { pdw = 0.0f; }
 };
 
-TypeDef_Of(SoConSpec);
+eTypeDef_Of(SoConSpec);
 
-class SO_API SoConSpec : public ConSpec {
+class E_API SoConSpec : public ConSpec {
   // #STEM_BASE ##CAT_So #VIRT_BASE generic self-organizing algorithm connection specification
 INHERITED(ConSpec)
 public:
@@ -75,9 +75,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(SoRecvCons);
+eTypeDef_Of(SoRecvCons);
 
-class SO_API SoRecvCons : public RecvCons {
+class E_API SoRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_So self-organizing connection group
 INHERITED(RecvCons)
 public:
@@ -95,9 +95,9 @@ private:
   void	Destroy()		{ };
 };
 
-TypeDef_Of(SoSendCons);
+eTypeDef_Of(SoSendCons);
 
-class SO_API SoSendCons : public SendCons {
+class E_API SoSendCons : public SendCons {
   // #STEM_BASE ##CAT_So group of self-organizing sending connections
 INHERITED(SendCons)
 public:
@@ -107,9 +107,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(SoUnitSpec);
+eTypeDef_Of(SoUnitSpec);
 
-class SO_API SoUnitSpec : public UnitSpec {
+class E_API SoUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
 INHERITED(UnitSpec)
 public:
@@ -128,9 +128,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(ThreshLinSoUnitSpec);
+eTypeDef_Of(ThreshLinSoUnitSpec);
 
-class SO_API ThreshLinSoUnitSpec : public SoUnitSpec {
+class E_API ThreshLinSoUnitSpec : public SoUnitSpec {
   // threshold-linear self-org unit spec
 INHERITED(SoUnitSpec)
 public:
@@ -144,9 +144,9 @@ private:
   void	Destroy()	{ };
 };
   
-TypeDef_Of(SoUnit);
+eTypeDef_Of(SoUnit);
 
-class SO_API SoUnit : public Unit {
+class E_API SoUnit : public Unit {
   // #STEM_BASE ##CAT_So generic self-organizing unit
 INHERITED(Unit)
 public:
@@ -164,9 +164,9 @@ private:
 };
 
 
-TypeDef_Of(SoLayerSpec);
+eTypeDef_Of(SoLayerSpec);
 
-class SO_API SoLayerSpec : public LayerSpec {
+class E_API SoLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_So generic self-organizing layer specification
 INHERITED(LayerSpec)
 public:
@@ -196,9 +196,9 @@ private:
 
 SpecPtr_of(SoLayerSpec);
 
-TypeDef_Of(SoLayer);
+eTypeDef_Of(SoLayer);
 
-class SO_API SoLayer : public Layer {
+class E_API SoLayer : public Layer {
   // #STEM_BASE ##CAT_So generic self-organizing layer
 INHERITED(Layer)
 public:
@@ -258,9 +258,9 @@ inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, Unit*) {
 //	Simple Hebbian 		//
 //////////////////////////////////
 
-TypeDef_Of(HebbConSpec);
+eTypeDef_Of(HebbConSpec);
 
-class SO_API HebbConSpec : public SoConSpec {
+class E_API HebbConSpec : public SoConSpec {
   // simple hebbian learning
 INHERITED(SoConSpec)
 public:
@@ -290,9 +290,9 @@ inline void HebbConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 //	Simple SoftMax		//
 //////////////////////////////////
 
-TypeDef_Of(SoftMaxLayerSpec);
+eTypeDef_Of(SoftMaxLayerSpec);
 
-class SO_API SoftMaxLayerSpec : public SoLayerSpec {
+class E_API SoftMaxLayerSpec : public SoLayerSpec {
   // soft competitive learning layer spec: does a softmax on the units
 INHERITED(SoLayerSpec)
 public:
@@ -307,9 +307,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(SoNetwork);
+eTypeDef_Of(SoNetwork);
 
-class SO_API SoNetwork : public Network {
+class E_API SoNetwork : public Network {
   // #STEM_BASE ##CAT_So network for self-organizing networks
 INHERITED(Network)
 public:
@@ -326,9 +326,9 @@ private:
   void 	Destroy()		{}
 };
 
-TypeDef_Of(SoProject);
+eTypeDef_Of(SoProject);
 
-class SO_API SoProject : public ProjectBase {
+class E_API SoProject : public ProjectBase {
   // #STEM_BASE ##CAT_So project for self-organizing networks
 INHERITED(ProjectBase)
 public:
@@ -343,9 +343,9 @@ private:
 //	So Wizard		//
 //////////////////////////////////
 
-TypeDef_Of(SoWizard);
+eTypeDef_Of(SoWizard);
 
-class SO_API SoWizard : public Wizard {
+class E_API SoWizard : public Wizard {
   // #STEM_BASE ##CAT_So self-organizing networks specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:

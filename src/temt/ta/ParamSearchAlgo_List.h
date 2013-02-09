@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ParamSearchAlgo_List);
+taTypeDef_Of(ParamSearchAlgo_List);
 
 class TA_API ParamSearchAlgo_List : public taList<ParamSearchAlgo> {
   // #NO_TOKENS #NO_UPDATE_AFTER list of ParamSearchAlgo objects

@@ -29,9 +29,9 @@
 // declare all other types mentioned but not required to include:
 class Network; //
 
-TypeDef_Of(Layer_Group);
+eTypeDef_Of(Layer_Group);
 
-class EMERGENT_API Layer_Group : public taGroup<Layer> {
+class E_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
 INHERITED(taGroup<Layer>)
 public:

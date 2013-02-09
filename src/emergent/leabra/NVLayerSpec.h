@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NVSpec);
+eTypeDef_Of(NVSpec);
 
-class LEABRA_API NVSpec : public SpecMemberBase {
+class E_API NVSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(SpecMemberBase)
 public:
@@ -45,9 +45,9 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(NVLayerSpec);
+eTypeDef_Of(NVLayerSpec);
 
-class LEABRA_API NVLayerSpec : public PVLVLayerSpec {
+class E_API NVLayerSpec : public PVLVLayerSpec {
   // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is: NV delta nvd = NV - val_thr; NV DA = nvd_t - nvd_t-1
 INHERITED(PVLVLayerSpec)
 public:

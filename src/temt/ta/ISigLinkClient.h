@@ -34,7 +34,7 @@ class taSigLink;  //
 // Mixin interface for Node that uses siglinks, ex. tree node or Inventor node
 
 
-TypeDef_Of(ISigLinkClient);
+taTypeDef_Of(ISigLinkClient);
 
 class TA_API ISigLinkClient : public virtual ISigLinkProxy {
   //#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE this is the interface available to the host data object

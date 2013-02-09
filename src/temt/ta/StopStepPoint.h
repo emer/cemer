@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(StopStepPoint);
+taTypeDef_Of(StopStepPoint);
 
 class TA_API StopStepPoint: public ProgEl { 
   // this is a point in the program where the Stop button will stop execution, and the Step button will act for single stepping (e.g., place inside of a loop) -- otherwise this only happens at the end of programs

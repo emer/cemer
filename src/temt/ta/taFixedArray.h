@@ -23,7 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(taFixedArray);
+taTypeDef_Of(taFixedArray);
 
 template<class T>
 class taFixedArray : public taFixedArray_impl {

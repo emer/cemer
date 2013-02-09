@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class iProgramEditor;
 
-TypeDef_Of(iPanelOfProgramBase);
+taTypeDef_Of(iPanelOfProgramBase);
 
 class TA_API iPanelOfProgramBase: public iPanel {
 // ##NO_CSS note: ProgramPanel and ProgramGroupPanel are almost identical

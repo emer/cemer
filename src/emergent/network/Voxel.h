@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(Voxel);
+eTypeDef_Of(Voxel);
 
-class EMERGENT_API Voxel : public taOBase {
+class E_API Voxel : public taOBase {
   // #NO_TOKENS #NO_UPDATE_AFTER A single voxel.
 INHERITED(taOBase)
 public:

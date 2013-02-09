@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class T3DataView; 
-TypeDef_Of(T3DataView);
+taTypeDef_Of(T3DataView);
 
-TypeDef_Of(T3DataView_List);
+taTypeDef_Of(T3DataView_List);
 
 class TA_API T3DataView_List: public DataView_List { // ##NO_TOKENS
 INHERITED(DataView_List)

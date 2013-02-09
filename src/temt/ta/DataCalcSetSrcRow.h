@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataCalcSetSrcRow);
+taTypeDef_Of(DataCalcSetSrcRow);
 
 class TA_API DataCalcSetSrcRow : public DataSrcDestProg { 
   // set all the current values into the src data table (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)

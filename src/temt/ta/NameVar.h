@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(NameVar);
+taTypeDef_Of(NameVar);
 
 class TA_API NameVar {
   // a name-value representation, using a String and a Variant

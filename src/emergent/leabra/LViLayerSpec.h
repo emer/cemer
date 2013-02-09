@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LViLayerSpec);
+eTypeDef_Of(LViLayerSpec);
 
-class LEABRA_API LViLayerSpec : public LVeLayerSpec {
+class E_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 INHERITED(LVeLayerSpec)
 public:

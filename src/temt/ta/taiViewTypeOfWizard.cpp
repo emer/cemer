@@ -17,7 +17,7 @@
 #include <iPanelOfDocView>
 #include <taWizard>
 
-TypeDef_Of(PluginWizard);
+taTypeDef_Of(PluginWizard);
 
 
 int taiViewTypeOfWizard::BidForView(TypeDef* td) {

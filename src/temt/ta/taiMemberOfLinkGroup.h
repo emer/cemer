@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfLinkGroup);
+taTypeDef_Of(taiMemberOfLinkGroup);
 
 class TA_API taiMemberOfLinkGroup : public taiMember {
   TAI_MEMBER_SUBCLASS(taiMemberOfLinkGroup, taiMember);

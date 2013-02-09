@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOfSelectEdit);
+taTypeDef_Of(taiViewTypeOfSelectEdit);
 
 class TA_API taiViewTypeOfSelectEdit: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfSelectEdit, taiViewTypeOftaOBase)

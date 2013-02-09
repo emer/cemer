@@ -28,7 +28,7 @@ class DataTable; //
 // they will indirectly to the extent that adding/removing them
 // causes a corresponding var to get created
 
-TypeDef_Of(ProgObjList);
+taTypeDef_Of(ProgObjList);
 
 class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)

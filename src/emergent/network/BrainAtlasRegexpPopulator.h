@@ -30,9 +30,9 @@
 // declare all other types mentioned but not required to include:
 class taBrainAtlas; //
 
-TypeDef_Of(BrainAtlasRegexpPopulator);
+eTypeDef_Of(BrainAtlasRegexpPopulator);
 
-class EMERGENT_API BrainAtlasRegexpPopulator : public iDialogRegexpPopulator {
+class E_API BrainAtlasRegexpPopulator : public iDialogRegexpPopulator {
 public:
   BrainAtlasRegexpPopulator();
   override QStringList getHeadings(bool editor_mode, int& extra_cols) const;

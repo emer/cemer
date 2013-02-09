@@ -26,7 +26,7 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
-TypeDef_Of(voidptr_Matrix);
+taTypeDef_Of(voidptr_Matrix);
 
 class TA_API voidptr_Matrix: public taMatrixT<voidptr> {
   // #INSTANCE a matrix of void*s (generic pointers)

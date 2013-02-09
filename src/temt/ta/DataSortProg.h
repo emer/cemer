@@ -26,7 +26,7 @@
 class DataOpEl; // 
 
 
-TypeDef_Of(DataSortProg);
+taTypeDef_Of(DataSortProg);
 
 class TA_API DataSortProg : public DataSrcDestProg { 
   // sorts src_data into dest_data according to sort_spec

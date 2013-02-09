@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(int_PArray);
+taTypeDef_Of(int_PArray);
 
 class TA_API int_PArray: public taPlainArray<int> {
   // #NO_TOKENS a plain-array of ints

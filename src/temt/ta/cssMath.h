@@ -29,7 +29,7 @@ class slice_Matrix; //
 class byte_Matrix; // 
 class complex_Matrix; // 
 
-TypeDef_Of(cssMath);
+taTypeDef_Of(cssMath);
 
 class TA_API cssMath : public taMath_double {
   // css specific math operations, including all of taMath_double -- this is parsed to provide css math functionality

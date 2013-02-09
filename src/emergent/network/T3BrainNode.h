@@ -29,7 +29,7 @@ class SoVertexProperty; // #IGNORE
 class SoMaterial;       // #IGNORE
 class SoTransform;      // #IGNORE
 
-class EMERGENT_API T3BrainNode: public T3NodeLeaf {
+class E_API T3BrainNode: public T3NodeLeaf {
 #ifndef __MAKETA__
   typedef T3NodeLeaf inherited;
   SO_NODE_HEADER(T3BrainNode);

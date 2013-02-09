@@ -60,7 +60,7 @@ class iDataTableModel; // #IGNORE
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 
-TypeDef_Of(DataTable);
+taTypeDef_Of(DataTable);
 
 class TA_API DataTable : public DataBlock_Idx {
   // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row

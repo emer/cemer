@@ -26,7 +26,7 @@ class TypeDef; //
 class MatrixIndex; // 
 
 
-TypeDef_Of(double_Matrix);
+taTypeDef_Of(double_Matrix);
 
 class TA_API double_Matrix: public taMatrixT<double> {
   // #INSTANCE a matrix of doubles

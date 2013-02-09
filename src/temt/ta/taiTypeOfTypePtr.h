@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOfTypePtr);
+taTypeDef_Of(taiTypeOfTypePtr);
 
 class TA_API taiTypeOfTypePtr : public taiType {
   // typedef pointer

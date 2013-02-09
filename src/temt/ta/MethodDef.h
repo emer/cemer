@@ -27,7 +27,7 @@
 class MethodSpace; //
 class taiMethod; //
 
-TypeDef_Of(MethodDef);
+taTypeDef_Of(MethodDef);
 
 class TA_API MethodDef : public TypeItem {// defines a class method
 #ifndef __MAKETA__

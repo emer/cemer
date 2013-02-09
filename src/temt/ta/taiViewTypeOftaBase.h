@@ -26,7 +26,7 @@ class taBase; //
 class iPanelOfEditor; //
 
 
-TypeDef_Of(taiViewTypeOftaBase);
+taTypeDef_Of(taiViewTypeOftaBase);
 
 class TA_API taiViewTypeOftaBase: public taiViewType { // for taBase and descendants
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOftaBase, taiViewType)

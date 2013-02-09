@@ -34,7 +34,7 @@ class QLabel; //
 class QAction; //
 
 
-TypeDef_Of(iViewPanelOfGridTable);
+taTypeDef_Of(iViewPanelOfGridTable);
 
 class TA_API iViewPanelOfGridTable: public iViewPanelOfDataTable {
   Q_OBJECT

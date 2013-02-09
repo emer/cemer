@@ -32,7 +32,7 @@ class taVector3f;
 class taBrainAtlas;
 
 
-class EMERGENT_API NetworkVoxelMapper {
+class E_API NetworkVoxelMapper {
 public:
   NetworkVoxelMapper(Network *network);
   ~NetworkVoxelMapper();

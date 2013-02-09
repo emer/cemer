@@ -26,9 +26,9 @@ class LeabraCon; //
 class LeabraUnit; // 
 class LeabraLayer; // 
 
-TypeDef_Of(LeabraBiasSpec);
+eTypeDef_Of(LeabraBiasSpec);
 
-class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
+class E_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
 public:

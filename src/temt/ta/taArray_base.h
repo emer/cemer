@@ -30,7 +30,7 @@
 #undef SC_DEFAULT
 #endif
 
-TypeDef_Of(taArray_base);
+taTypeDef_Of(taArray_base);
 
 class TA_API taArray_base : public taNBase, public taArray_impl {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Data base for arrays (from taBase)

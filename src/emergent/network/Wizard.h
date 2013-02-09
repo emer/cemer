@@ -31,9 +31,9 @@ class RetinaProc; //
 class StdNetWizDlg; //
 
 
-TypeDef_Of(Wizard);
+eTypeDef_Of(Wizard);
 
-class EMERGENT_API Wizard : public taWizard {
+class E_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:

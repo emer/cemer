@@ -27,7 +27,7 @@ class QFont; //
 class SoFont; // #IGNORE
 #endif
 
-TypeDef_Of(iFont);
+taTypeDef_Of(iFont);
 
 class TA_API iFont {
   // #NO_TOKENS represents font information

@@ -27,7 +27,7 @@ class ProgVar_List; //
 class MethodDef; // 
 
 
-TypeDef_Of(ProgArg_List);
+taTypeDef_Of(ProgArg_List);
 
 class TA_API ProgArg_List : public taList<ProgArg> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE #FIXED_SIZE ##CAT_Program list of arguments

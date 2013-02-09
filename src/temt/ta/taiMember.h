@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class taiTypeOfEnum; //
 
-TypeDef_Of(taiMember);
+taTypeDef_Of(taiMember);
 
 class TA_API taiMember : public taiType {
 public:

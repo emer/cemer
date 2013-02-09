@@ -31,7 +31,7 @@ class QTime; // #IGNORE
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taDateTime);
+taTypeDef_Of(taDateTime);
 
 class TA_API taDateTime : public taNBase {
   // #STEM_BASE #INLINE ##CAT_Program represents date and time information -- for calendar management and date fields in data tables, etc (use int value conversion for secs since 1 Jan 1970 UTC)

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfFunPtr);
+taTypeDef_Of(taiMemberOfFunPtr);
 
 class TA_API taiMemberOfFunPtr : public taiMember {
   // pointer to a function

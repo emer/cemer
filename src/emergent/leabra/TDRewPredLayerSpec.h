@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TDRewPredLayerSpec);
+eTypeDef_Of(TDRewPredLayerSpec);
 
-class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
+class E_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
 INHERITED(ScalarValLayerSpec)
 public:

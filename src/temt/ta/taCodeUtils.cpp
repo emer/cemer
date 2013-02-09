@@ -55,9 +55,17 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
         << "// parent includes:\n"
         << "#include <taNBase>\n\n"
         << "// member includes:\n\n"
-        << "// declare all other types mentioned but not required to include:\n\n"
-        << "TypeDef_Of(" << type_nm << ");\n\n"
-        << "class X_API " << type_nm << " : public taNBase {\n"
+        << "// declare all other types mentioned but not required to include:\n\n";
+    if(src_dir.contains("temt/ta")) {
+      str << "taTypeDef_Of(" << type_nm << ");\n\n" << "class TA_API ";
+    }
+    else if(src_dir.contains("emergent/")) {
+      str << "eTypeDef_Of(" << type_nm << ");\n\n" << "class E_API ";
+    }
+    else {
+      str << "TypeDef_Of(" << type_nm << ");\n\n" << "class ";
+    }
+    str << type_nm << " : public taNBase {\n"
         << "  // <describe here in full detail in one extended line comment>\n"
         << "INHERITED(taNBase)\n"
         << "public:\n\n"
@@ -198,10 +206,10 @@ bool taCodeUtils::ReplaceInAllFiles(const String& search_nm, const String& repl_
   ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/css");
   ReplaceInDir(search_nm, repl_nm, top_path, "include");
   ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/network");
-  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/leabra");
-  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/bp");
-  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/cs");
-  // ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/so");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/leabra");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/bp");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/cs");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/so");
   return true;
 }
 

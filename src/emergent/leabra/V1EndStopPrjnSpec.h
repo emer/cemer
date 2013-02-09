@@ -17,7 +17,7 @@
 #define V1EndStopPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(V1EndStopPrjnSpec);
+eTypeDef_Of(V1EndStopPrjnSpec);
 
-class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
+class E_API V1EndStopPrjnSpec : public ProjectionSpec {
   // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
 INHERITED(ProjectionSpec)
 public:

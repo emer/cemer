@@ -23,12 +23,12 @@
 
 // declare all other types mentioned but not required to include:
 class DataTableView; // 
-TypeDef_Of(DataTableView);
+taTypeDef_Of(DataTableView);
 class TypeDef; // 
 class DataCol; // 
 
 
-TypeDef_Of(DataColView);
+taTypeDef_Of(DataColView);
 
 class TA_API DataColView: public T3DataView {
   // ##SCOPE_DataTableView base specification for the display of data columns

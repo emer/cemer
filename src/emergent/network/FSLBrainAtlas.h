@@ -26,7 +26,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class EMERGENT_API FSLBrainAtlas : public BrainAtlas {
+class E_API FSLBrainAtlas : public BrainAtlas {
 public:
   FSLBrainAtlas(const QString& filename);
   ~FSLBrainAtlas();

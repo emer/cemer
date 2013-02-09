@@ -45,9 +45,9 @@ class Unit_Group; //
 class SendCons; //
 class RecvCons; //
 
-TypeDef_Of(NetMonItem);
+eTypeDef_Of(NetMonItem);
 
-class EMERGENT_API NetMonItem: public taNBase {
+class E_API NetMonItem: public taNBase {
   // #STEM_BASE #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
 INHERITED(taNBase)
 public:

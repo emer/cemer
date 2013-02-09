@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(PFCsUnitSpec);
+eTypeDef_Of(PFCsUnitSpec);
 
-class LEABRA_API PFCsUnitSpec : public LeabraUnitSpec {
+class E_API PFCsUnitSpec : public LeabraUnitSpec {
   // superficial layer PFC unit spec -- drives maintenance activation values
 INHERITED(LeabraUnitSpec)
 public:

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taTask_List);
+taTypeDef_Of(taTask_List);
 
 class TA_API taTask_List : public taList<taTask> {
   // ##CAT_Thread a list of tasks

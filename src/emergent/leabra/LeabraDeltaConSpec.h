@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraDeltaConSpec);
+eTypeDef_Of(LeabraDeltaConSpec);
 
-class LEABRA_API LeabraDeltaConSpec : public LeabraConSpec {
+class E_API LeabraDeltaConSpec : public LeabraConSpec {
   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
 INHERITED(LeabraConSpec)
 public:

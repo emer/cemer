@@ -28,9 +28,9 @@ class taGuiDialog; //
 class DataTable; //
 
 
-TypeDef_Of(StdNetWizDlg);
+eTypeDef_Of(StdNetWizDlg);
 
-class EMERGENT_API StdNetWizDlg : public taNBase {
+class E_API StdNetWizDlg : public taNBase {
   // #CAT_Wizard dialog for StdNetwork() wizard action
 INHERITED(taNBase)
 public:

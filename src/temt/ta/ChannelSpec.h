@@ -26,7 +26,7 @@ class MatrixGeom; //
 class String_Matrix; // 
 
 
-TypeDef_Of(ChannelSpec);
+taTypeDef_Of(ChannelSpec);
 
 class TA_API ChannelSpec: public taNBase {
   // ##CAT_Data describes a channel of data in a DataBlock (e.g., a column of a datatable)

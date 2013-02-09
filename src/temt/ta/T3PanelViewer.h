@@ -29,7 +29,7 @@ class iTabBarBase; //  #IGNORE
 class T3DataView; //
 
 
-TypeDef_Of(T3PanelViewer);
+taTypeDef_Of(T3PanelViewer);
 
 class TA_API T3PanelViewer : public FrameViewer {
   // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 #AKA_T3DataViewer top-level FrameViewer object that manges tabs of panels that contain 3D views

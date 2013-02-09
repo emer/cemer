@@ -30,7 +30,7 @@
 // http://www.mathertel.de/Diff
 // see .cpp file for more information
 
-TypeDef_Of(taStringDiffItem);
+taTypeDef_Of(taStringDiffItem);
 
 class TA_API taStringDiffItem {
   // ##NO_TOKENS one item of difference between the strings

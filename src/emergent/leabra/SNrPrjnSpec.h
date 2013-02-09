@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SNrPrjnSpec);
+eTypeDef_Of(SNrPrjnSpec);
 
-class LEABRA_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
+class E_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
   // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, IN_MNT, OUTPUT, etc.) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
 public:

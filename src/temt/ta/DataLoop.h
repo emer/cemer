@@ -27,7 +27,7 @@
 class DataBlock; // 
 
 
-TypeDef_Of(DataLoop);
+taTypeDef_Of(DataLoop);
 
 class TA_API DataLoop: public Loop { 
   // For any kind of data table: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taUndoDiffSrc_List);
+taTypeDef_Of(taUndoDiffSrc_List);
 
 class TA_API taUndoDiffSrc_List : public taList<taUndoDiffSrc> {
   // ##CAT_Undo list of full source records for diff-based saving of undo save data -- managed using circular buffer logic per new functions

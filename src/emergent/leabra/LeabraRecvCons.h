@@ -17,7 +17,7 @@
 #define LeabraRecvCons_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <RecvCons>
 
 // member includes:
@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class LeabraUnit; // 
 
-TypeDef_Of(LeabraRecvCons);
+eTypeDef_Of(LeabraRecvCons);
 
-class LEABRA_API LeabraRecvCons : public RecvCons {
+class E_API LeabraRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Leabra Leabra receiving connection group
 INHERITED(RecvCons)
 public:

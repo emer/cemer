@@ -42,7 +42,7 @@ class MethodDef; //
 // note: taVariant is based in part on QVariant implementation in Qt
 // Variant is always 12 bytes long on both 32/64 platforms
 
-TypeDef_Of(Variant);
+taTypeDef_Of(Variant);
 
 class TA_API Variant {
   // flexible value atomic type that can hold many different types of content

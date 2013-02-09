@@ -25,7 +25,7 @@
 class taiEditorWidgets; //
 class UserDataItem_List; //
 
-TypeDef_Of(iPanelOfUserData);
+taTypeDef_Of(iPanelOfUserData);
 
 class TA_API iPanelOfUserData: public iPanel {
 // ##NO_CSS note: UserDataItem_List main panel (for users)

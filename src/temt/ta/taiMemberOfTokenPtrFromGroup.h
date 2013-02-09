@@ -25,7 +25,7 @@
 class taList_impl; //
 
 
-TypeDef_Of(taiMemberOfTokenPtrFromGroup);
+taTypeDef_Of(taiMemberOfTokenPtrFromGroup);
 
 class TA_API taiMemberOfTokenPtrFromGroup : public taiMemberOfTokenPtr {
   TAI_MEMBER_SUBCLASS(taiMemberOfTokenPtrFromGroup, taiMemberOfTokenPtr);

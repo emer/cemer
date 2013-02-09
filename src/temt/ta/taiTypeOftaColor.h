@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTypeOftaColor);
+taTypeDef_Of(taiTypeOftaColor);
 
 class TA_API taiTypeOftaColor : public taiTypeOfColor { // special editor for colors, add dialog
   TAI_TYPEBASE_SUBCLASS(taiTypeOftaColor, taiTypeOfColor);

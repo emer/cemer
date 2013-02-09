@@ -28,7 +28,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taTask);
+taTypeDef_Of(taTask);
 
 class TA_API taTask: public taOBase {
   // ##TOKENS ##INSTANCE ##CAT_Thread a single processing element: just a generic wrapper for whatever you want a thread to do: just has a run function and an id

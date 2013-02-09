@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(nvhDataView);
+eTypeDef_Of(nvhDataView);
 
-class EMERGENT_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
+class E_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
 INHERITED(nvDataView)
 public:
   void                  setDefaultColor() {DoHighlightColor(false);}

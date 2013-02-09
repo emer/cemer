@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TDRewIntegSpec);
+eTypeDef_Of(TDRewIntegSpec);
 
-class LEABRA_API TDRewIntegSpec : public SpecMemberBase {
+class E_API TDRewIntegSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
 INHERITED(SpecMemberBase)
 public:
@@ -43,9 +43,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(TDRewIntegLayerSpec);
+eTypeDef_Of(TDRewIntegLayerSpec);
 
-class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
+class E_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
 INHERITED(ScalarValLayerSpec)
 public:

@@ -27,7 +27,7 @@ class MatrixIndex; //
 class taMatrix; // 
 class taVector3f; //
 
-TypeDef_Of(taVector3i);
+taTypeDef_Of(taVector3i);
 
 class TA_API taVector3i : public taVector2i {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space

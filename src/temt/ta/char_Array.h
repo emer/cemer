@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(char_Array);
+taTypeDef_Of(char_Array);
 
 class TA_API char_Array : public taArray<char> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of chars (bytes)

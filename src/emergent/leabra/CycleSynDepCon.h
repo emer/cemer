@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CycleSynDepCon);
+eTypeDef_Of(CycleSynDepCon);
 
-class LEABRA_API CycleSynDepCon : public LeabraCon {
+class E_API CycleSynDepCon : public LeabraCon {
   // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
 INHERITED(LeabraCon)
 public:

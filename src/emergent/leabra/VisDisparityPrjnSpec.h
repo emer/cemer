@@ -17,7 +17,7 @@
 #define VisDisparityPrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:
@@ -26,9 +26,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(VisDisparityPrjnSpec);
+eTypeDef_Of(VisDisparityPrjnSpec);
 
-class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
+class E_API VisDisparityPrjnSpec : public ProjectionSpec {
   // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be right eye, second MUST be left eye -- right is just one-to-one dominant driver) -- should have same gp_geom as sending layer gp_geom -- features within sending gps are replicated for each disparity -- MUST only have one of these per configuration of sending / recv layers, as local data is stored and cached from connection for use in initweights
 INHERITED(ProjectionSpec)
 public:

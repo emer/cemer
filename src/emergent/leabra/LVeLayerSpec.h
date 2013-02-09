@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LVMiscSpec);
+eTypeDef_Of(LVMiscSpec);
 
-class LEABRA_API LVMiscSpec : public SpecMemberBase {
+class E_API LVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
@@ -50,9 +50,9 @@ private:
   void  Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(LVeLayerSpec);
+eTypeDef_Of(LVeLayerSpec);
 
-class LEABRA_API LVeLayerSpec : public PVLVLayerSpec {
+class E_API LVeLayerSpec : public PVLVLayerSpec {
   // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version LVe.  LV contribution to dopamine is based on LV delta lvd = LVe - LVi; LV DA = lvd_t - lvd_t-1
 INHERITED(PVLVLayerSpec)
 public:

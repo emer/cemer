@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GpOneToManyPrjnSpec);
+eTypeDef_Of(GpOneToManyPrjnSpec);
 
-class EMERGENT_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
+class E_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-many connectivity (one sending gp to all recv units) -- only works with explicit unit groups, not virtual unit groups
 INHERITED(OneToOnePrjnSpec)
 public:

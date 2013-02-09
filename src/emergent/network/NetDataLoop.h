@@ -26,12 +26,12 @@
 // declare all other types mentioned but not required to include:
 class Network; //
 
-TypeDef_Of(NetDataLoop);
+eTypeDef_Of(NetDataLoop);
 
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification
 
-class EMERGENT_API NetDataLoop: public DataLoop { 
+class E_API NetDataLoop: public DataLoop { 
   // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' object pointer variable and an int 'trial' counter variable defined in the program!!
 INHERITED(DataLoop)
 public:

@@ -29,7 +29,7 @@
 class ChannelSpec; // 
 
 
-TypeDef_Of(DataBlock);
+taTypeDef_Of(DataBlock);
 
 class TA_API DataBlock: public taFBase {
   // #VIRT_BASE #STEM_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data

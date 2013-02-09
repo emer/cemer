@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(XCalSRAvgConSpec);
+eTypeDef_Of(XCalSRAvgConSpec);
 
-class LEABRA_API XCalSRAvgConSpec : public LeabraConSpec {
+class E_API XCalSRAvgConSpec : public LeabraConSpec {
   // send-recv average at the connection level learning in XCal
 INHERITED(LeabraConSpec)
 public:

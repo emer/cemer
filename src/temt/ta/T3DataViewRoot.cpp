@@ -17,7 +17,7 @@
 
 #include <T3NodeParent>
 
-TypeDef_Of(T3DataViewMain);
+taTypeDef_Of(T3DataViewMain);
 
 void T3DataViewRoot::Initialize() {
   host = NULL;

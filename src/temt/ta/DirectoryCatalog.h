@@ -25,7 +25,7 @@
 class QDir; //
 
 
-TypeDef_Of(DirectoryCatalog);
+taTypeDef_Of(DirectoryCatalog);
 
 class TA_API DirectoryCatalog: public DataBlock_Idx {
   // #INSTANCE a DirectoryCatalog provides a list of files in a directory

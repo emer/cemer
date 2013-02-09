@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(EditParamSearch);
+taTypeDef_Of(EditParamSearch);
 
 class TA_API EditParamSearch: public taOBase {
   // #INLINE parameter searching values

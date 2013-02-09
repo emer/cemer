@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DumpFileCvt);
+taTypeDef_Of(DumpFileCvt);
 
 class TA_API DumpFileCvt {
   // ##NO_TOKENS #CAT_File parameters to convert a dump file

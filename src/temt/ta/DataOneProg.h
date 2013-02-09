@@ -26,7 +26,7 @@
 class DataTable; // 
 
 
-TypeDef_Of(DataOneProg);
+taTypeDef_Of(DataOneProg);
 
 class TA_API DataOneProg : public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE a program element for operations on one data table (virtual base class -- do not use)

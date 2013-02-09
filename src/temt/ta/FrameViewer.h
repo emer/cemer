@@ -26,7 +26,7 @@ class iFrameViewer; //
 class MainWindowViewer; // 
 
 
-TypeDef_Of(FrameViewer);
+taTypeDef_Of(FrameViewer);
 
 class TA_API FrameViewer : public taViewer {
   // #NO_TOKENS #VIRT_BASE for views that can be in the splitter of a MainWindowViewer

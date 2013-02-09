@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TessEl);
+eTypeDef_Of(TessEl);
 
-class EMERGENT_API TessEl : public taOBase {
+class E_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
 INHERITED(taOBase)
 public:
@@ -40,9 +40,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(TessEl_List);
+eTypeDef_Of(TessEl_List);
 
-class EMERGENT_API TessEl_List : public taList<TessEl> {
+class E_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects
 INHERITED(taList<TessEl>)
 public:
@@ -52,9 +52,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(TesselPrjnSpec);
+eTypeDef_Of(TesselPrjnSpec);
 
-class EMERGENT_API TesselPrjnSpec : public ProjectionSpec {
+class E_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity -- sweeps over receiving units and connects with sending units based on projection of recv unit position into sending layer, plus sending offsets that specify the connectivity pattern
 INHERITED(ProjectionSpec)
 public:

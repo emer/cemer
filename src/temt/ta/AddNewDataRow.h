@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(AddNewDataRow);
+taTypeDef_Of(AddNewDataRow);
 
 class TA_API AddNewDataRow: public DataOneProg { 
   // add a new row to data table (just calls AddBlankRow() on data table var object)

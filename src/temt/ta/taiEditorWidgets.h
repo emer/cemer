@@ -32,7 +32,7 @@ class QMenu; //
 class QContextMenuEvent; //
 
 
-TypeDef_Of(taiEditorWidgets);
+taTypeDef_Of(taiEditorWidgets);
 
 class TA_API taiEditorWidgets: public taiEditor, virtual public IWidgetHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS

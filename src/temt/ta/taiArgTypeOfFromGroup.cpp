@@ -20,7 +20,7 @@
 
 #include <css_ta.h>
 
-TypeDef_Of(taGroup_impl);
+taTypeDef_Of(taGroup_impl);
 
 int taiArgTypeOfFromGroup::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if (!argt->IsPointer() || !argt->IsTaBase())

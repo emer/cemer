@@ -17,7 +17,7 @@
 #define KwtaSortBuff_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:
@@ -27,9 +27,9 @@
 // declare all other types mentioned but not required to include:
 class LeabraUnit; // 
 
-TypeDef_Of(KwtaSortBuff);
+eTypeDef_Of(KwtaSortBuff);
 
-class LEABRA_API KwtaSortBuff : public taOBase {
+class E_API KwtaSortBuff : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra kwta sort buffer -- structured by group and index
 INHERITED(taOBase)
 public:

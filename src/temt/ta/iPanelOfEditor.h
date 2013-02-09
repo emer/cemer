@@ -27,7 +27,7 @@ class iColor;
 class taiEditorOfClass; // #IGNORE
 
 
-TypeDef_Of(iPanelOfEditor);
+taTypeDef_Of(iPanelOfEditor);
 
 class TA_API iPanelOfEditor: public iPanel {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for any edit dialog-like data panel

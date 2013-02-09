@@ -33,7 +33,7 @@ class SubMatrixOpSpec; //
 class taMatrix; // 
 
 
-TypeDef_Of(taDataGen);
+taTypeDef_Of(taDataGen);
 
 class TA_API taDataGen : public taNBase {
   // #STEM_BASE ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)

@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetViewObj_Group);
+eTypeDef_Of(NetViewObj_Group);
 
-class EMERGENT_API NetViewObj_Group : public taGroup<NetViewObj> {
+class E_API NetViewObj_Group : public taGroup<NetViewObj> {
   // ##CAT_Network a group of network view objects
 INHERITED(taGroup<NetViewObj>)
 public:

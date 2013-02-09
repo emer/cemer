@@ -28,7 +28,7 @@ class taRootBase; //
 class taBase; // 
 
 
-TypeDef_Of(tabMisc);
+taTypeDef_Of(tabMisc);
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase

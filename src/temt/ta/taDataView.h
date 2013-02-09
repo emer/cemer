@@ -45,7 +45,7 @@ class taSigLink; //
 
 */
 
-TypeDef_Of(taDataView);
+taTypeDef_Of(taDataView);
 
 class TA_API taDataView: public taNBase, public virtual ISigLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object

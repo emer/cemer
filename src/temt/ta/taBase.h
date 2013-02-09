@@ -402,7 +402,7 @@ public: \
 ////////////////////////////////////////////////////////////////////////////////////
 //              ta Base   ---   The Base of all type-aware classes
 
-TypeDef_Of(taBase);
+taTypeDef_Of(taBase);
 
 class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes

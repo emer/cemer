@@ -26,9 +26,9 @@
 // declare all other types mentioned but not required to include:
 class BaseSpec; //
 
-TypeDef_Of(BaseSubSpec);
+eTypeDef_Of(BaseSubSpec);
 
-class EMERGENT_API BaseSubSpec : public taNBase {
+class E_API BaseSubSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##CAT_Spec specification class for sub-objects of specs
 INHERITED(taNBase)
 public:

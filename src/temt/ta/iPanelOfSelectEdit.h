@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 class taiEditorOfSelectEditBase; // #IGNORE
 
-TypeDef_Of(iPanelOfSelectEdit);
+taTypeDef_Of(iPanelOfSelectEdit);
 
 class TA_API iPanelOfSelectEdit: public iPanel {
 // ##NO_CSS note: SelectEdit main panel (for users)

@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class ClusterRun; //
 
-TypeDef_Of(ParamSearchAlgo);
+taTypeDef_Of(ParamSearchAlgo);
 
 class TA_API ParamSearchAlgo : public taNBase {
   // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.

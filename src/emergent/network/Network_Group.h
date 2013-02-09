@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(Network_Group);
+eTypeDef_Of(Network_Group);
 
-class EMERGENT_API Network_Group : public taGroup<Network> {
+class E_API Network_Group : public taGroup<Network> {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##EXPAND_DEF_2 a group of networks
 INHERITED(taGroup<Network>)
 public:

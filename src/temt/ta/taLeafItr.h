@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 class taGroup_impl; //
 
-TypeDef_Of(taLeafItr);
+taTypeDef_Of(taLeafItr);
 
 class TA_API taLeafItr {              // contains the indicies for iterating over leafs
 public:

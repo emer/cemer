@@ -25,7 +25,7 @@
 class ClustNode; // 
 
 
-TypeDef_Of(ClustLink);
+taTypeDef_Of(ClustLink);
 
 class TA_API ClustLink : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Math a link in the cluster tree with distance

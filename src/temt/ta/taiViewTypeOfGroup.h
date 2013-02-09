@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOfGroup);
+taTypeDef_Of(taiViewTypeOfGroup);
 
 class TA_API taiViewTypeOfGroup: public taiViewTypeOfList { // for taGroup
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfGroup, taiViewTypeOfList)

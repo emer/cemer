@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LayerWriterEl);
+eTypeDef_Of(LayerWriterEl);
 
-class EMERGENT_API LayerWriterEl : public LayerDataEl {
+class E_API LayerWriterEl : public LayerDataEl {
   // #STEM_BASE controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 

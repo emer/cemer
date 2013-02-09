@@ -18,8 +18,8 @@
 #include <TypeDef> 
 #include <MemberDef> 
 #include <MethodDef>
-TypeDef_Of(PropertyDef);
-TypeDef_Of(EnumDef);
+taTypeDef_Of(PropertyDef);
+taTypeDef_Of(EnumDef);
 
 #ifndef NO_TA_BASE
 #include "svnrev.h"

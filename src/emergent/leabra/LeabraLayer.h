@@ -36,9 +36,9 @@
 class LeabraUnGpData; // 
 class LeabraNetwork; // 
 
-TypeDef_Of(LeabraLayer);
+eTypeDef_Of(LeabraLayer);
 
-class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
+class E_API LeabraLayer : public Layer, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
 INHERITED(Layer)
 public:

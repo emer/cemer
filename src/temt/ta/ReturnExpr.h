@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(ReturnExpr);
+taTypeDef_Of(ReturnExpr);
 
 class TA_API ReturnExpr: public ProgEl { 
   // return from a function with a given expression (can be empty to return from a void function) -- you can return from the code or init segments of a program to end execution at that point

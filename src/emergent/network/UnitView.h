@@ -24,14 +24,14 @@
 
 // declare all other types mentioned but not required to include:
 class LayerView; //
-TypeDef_Of(LayerView);
+eTypeDef_Of(LayerView);
 class Unit; //
 class NetView; //
 class T3UnitNode; //
 
-TypeDef_Of(UnitView);
+eTypeDef_Of(UnitView);
 
-class EMERGENT_API UnitView: public T3DataView {
+class E_API UnitView: public T3DataView {
   // control the display of a single unit -- this is only for non-optimized unit display types (UDM_BLOCK is optimized and renders directly, without these sub-objects)
 INHERITED(T3DataView)
   friend class LayerView;

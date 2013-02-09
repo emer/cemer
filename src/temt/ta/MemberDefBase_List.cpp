@@ -20,7 +20,7 @@
 #include <taMisc>
 
 #ifndef NO_TA_BASE
-TypeDef_Of(taList_impl);
+taTypeDef_Of(taList_impl);
 #include <taSigLink>
 #endif
 

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DataSortSpec);
+taTypeDef_Of(DataSortSpec);
 
 class TA_API DataSortSpec : public DataOpBaseSpec {
   // a datatable sort specification (list of sort elements)

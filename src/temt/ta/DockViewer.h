@@ -25,7 +25,7 @@
 class iDockViewer; // 
 
 
-TypeDef_Of(DockViewer);
+taTypeDef_Of(DockViewer);
 
 class TA_API DockViewer : public TopLevelViewer {
   // #VIRT_BASE the controller for dock windows, which can float, or be in a MainWindow

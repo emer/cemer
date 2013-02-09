@@ -9,8 +9,6 @@
 # anyway, so there really isn't any point to it anymore
 
 # local headers that need maketa run on them
-# maketa is VERY picky about the order of these files,
-# so they are broken into two sections.
 set(ta_HEADS_MAKETA_LOCAL
   maketa_streambuf.h
   maketa_iostream.h

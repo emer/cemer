@@ -26,11 +26,11 @@
 
 // declare all other types mentioned but not required to include:
 class Program; // 
-TypeDef_Of(Program);
+taTypeDef_Of(Program);
 class taBase; // 
 
 
-TypeDef_Of(ProgType);
+taTypeDef_Of(ProgType);
 
 class TA_API ProgType: public taNBase {
   // #STEM_BASE #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program a program type -- base class for defining new types within a program

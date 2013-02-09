@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LayerWriter);
+eTypeDef_Of(LayerWriter);
 
-class EMERGENT_API LayerWriter : public taNBase {
+class E_API LayerWriter : public taNBase {
   // #STEM_BASE ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:

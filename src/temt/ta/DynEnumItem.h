@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DynEnumItem);
+taTypeDef_Of(DynEnumItem);
 
 class TA_API DynEnumItem : public taNBase {
   // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)

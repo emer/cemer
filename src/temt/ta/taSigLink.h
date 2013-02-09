@@ -58,7 +58,7 @@ class taBase;
 
 #define SL_FUNS(y)      TypeDef* GetTypeDef() const {return &TA_ ## y;} \
 
-TypeDef_Of(taSigLink);
+taTypeDef_Of(taSigLink);
 
 class TA_API taSigLink {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS #VIRT_BASE interface for taiSigLink and descendants

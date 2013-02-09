@@ -26,7 +26,7 @@
 class TypeDef; // 
 
 
-TypeDef_Of(int_Data);
+taTypeDef_Of(int_Data);
 
 class TA_API int_Data : public DataColT<int_Matrix> {
   // int data

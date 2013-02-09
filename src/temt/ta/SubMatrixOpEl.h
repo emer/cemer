@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(SubMatrixOpEl);
+taTypeDef_Of(SubMatrixOpEl);
 
 class TA_API SubMatrixOpEl : public DataOpEl {
   // sub matrix operations element -- specifies a sub-matrix column and offset of that sub-matrix into larger matrix to operate on

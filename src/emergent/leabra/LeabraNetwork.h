@@ -28,9 +28,9 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
-TypeDef_Of(LeabraNetMisc);
+eTypeDef_Of(LeabraNetMisc);
 
-class LEABRA_API LeabraNetMisc : public taOBase {
+class E_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
@@ -49,9 +49,9 @@ private:
   void 	Destroy()	{ };
 };
 
- TypeDef_Of(CtTrialTiming);
+ eTypeDef_Of(CtTrialTiming);
 
-class LEABRA_API CtTrialTiming : public taOBase {
+class E_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taOBase)
 public:
@@ -76,9 +76,9 @@ private:
   void 	Destroy()	{ };
 };
 
-TypeDef_Of(CtSRAvgSpec);
+eTypeDef_Of(CtSRAvgSpec);
 
-class LEABRA_API CtSRAvgSpec : public taOBase {
+class E_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
 INHERITED(taOBase)
 public:
@@ -103,9 +103,9 @@ private:
 };
 
 
-TypeDef_Of(CtSineInhibMod);
+eTypeDef_Of(CtSineInhibMod);
 
-class LEABRA_API CtSineInhibMod : public taOBase {
+class E_API CtSineInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(taOBase)
 public:
@@ -137,9 +137,9 @@ private:
   void 	Destroy()	{ };
 };
 
-TypeDef_Of(CtFinalInhibMod);
+eTypeDef_Of(CtFinalInhibMod);
 
-class LEABRA_API CtFinalInhibMod : public taOBase {
+class E_API CtFinalInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
 INHERITED(taOBase)
 public:
@@ -168,9 +168,9 @@ private:
 };
 
 
-TypeDef_Of(CtLrnTrigSpec);
+eTypeDef_Of(CtLrnTrigSpec);
 
-class LEABRA_API CtLrnTrigSpec : public taOBase {
+class E_API CtLrnTrigSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
 INHERITED(taOBase)
 public:
@@ -207,9 +207,9 @@ private:
 };
 
 
-TypeDef_Of(CtLrnTrigVals);
+eTypeDef_Of(CtLrnTrigVals);
 
-class LEABRA_API CtLrnTrigVals : public taOBase {
+class E_API CtLrnTrigVals : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra state variables for continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
 INHERITED(taOBase)
 public:
@@ -261,9 +261,9 @@ private:
 };
 
 
-TypeDef_Of(LeabraNetwork);
+eTypeDef_Of(LeabraNetwork);
 
-class LEABRA_API LeabraNetwork : public Network {
+class E_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
 INHERITED(Network)
 public:

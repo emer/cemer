@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOfMatrix);
+taTypeDef_Of(taiViewTypeOfMatrix);
 
 class TA_API taiViewTypeOfMatrix: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfMatrix, taiViewTypeOftaOBase) //

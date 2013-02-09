@@ -26,7 +26,7 @@ class taiEditorOfProgramCtrl; // #IGNORE
 class Program; //
 
 
-TypeDef_Of(iPanelOfProgramCtrl);
+taTypeDef_Of(iPanelOfProgramCtrl);
 
 class TA_API iPanelOfProgramCtrl: public iPanel {
 // ##NO_CSS panel for program control panel

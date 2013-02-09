@@ -229,6 +229,7 @@ const String taiWidgetTokenChooser::labelNameNonNull() const {
 }
 
 bool taiWidgetTokenChooser::ShowToken(taBase* obj) const {
+  if(obj->GetOwner() == NULL) return false; // no instances!
   return ShowItemFilter(scope_ref, obj, obj->GetName());
 }
 

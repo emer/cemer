@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NVConSpec);
+eTypeDef_Of(NVConSpec);
 
-class LEABRA_API NVConSpec : public PVConSpec {
+class E_API NVConSpec : public PVConSpec {
   // novelty value connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters -- has decay to refresh novelty if not seen for a while..
 INHERITED(PVConSpec)
 public:

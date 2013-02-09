@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(MotorForceSpec);
+eTypeDef_Of(MotorForceSpec);
 
-class LEABRA_API MotorForceSpec : public SpecMemberBase {
+class E_API MotorForceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
 INHERITED(SpecMemberBase)
 public:
@@ -66,9 +66,9 @@ private:
   void	Defaults_init() { };
 };
 
-TypeDef_Of(MotorForceLayerSpec);
+eTypeDef_Of(MotorForceLayerSpec);
 
-class LEABRA_API MotorForceLayerSpec : public ScalarValLayerSpec {
+class E_API MotorForceLayerSpec : public ScalarValLayerSpec {
   // represents motor force as a function of joint position and velocity using scalar val layer spec: layer uses unit groups -- each group represents a force (typically localist), and groups are organized in X axis by position, Y axis by velocity.  Overall value is weighted average from neighboring unit groups
 INHERITED(ScalarValLayerSpec)
 public:

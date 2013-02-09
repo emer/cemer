@@ -15,7 +15,7 @@
 
 #include "SubMatrixOpSpec.h"
 
-TypeDef_Of(SubMatrixOpEl);
+taTypeDef_Of(SubMatrixOpEl);
 
 void SubMatrixOpSpec::Initialize() {
   ops.SetBaseType(&TA_SubMatrixOpEl);

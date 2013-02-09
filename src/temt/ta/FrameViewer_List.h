@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 class FrameViewer; // 
-TypeDef_Of(FrameViewer);
+taTypeDef_Of(FrameViewer);
 
-TypeDef_Of(FrameViewer_List);
+taTypeDef_Of(FrameViewer_List);
 
 class TA_API FrameViewer_List: public taViewer_List { // #NO_TOKENS
 INHERITED(taViewer_List)

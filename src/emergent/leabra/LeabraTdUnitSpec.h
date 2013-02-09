@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(LeabraTdUnitSpec);
+eTypeDef_Of(LeabraTdUnitSpec);
 
-class LEABRA_API LeabraTdUnitSpec : public LeabraUnitSpec {
+class E_API LeabraTdUnitSpec : public LeabraUnitSpec {
   // Leabra unit with temporal-differences variables for prior activation states
 INHERITED(LeabraUnitSpec)
 public:

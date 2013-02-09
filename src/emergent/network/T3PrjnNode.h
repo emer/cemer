@@ -30,7 +30,7 @@ class SoCylinder; // #IGNORE
 class SoMaterial; // #IGNORE
 
 
-class EMERGENT_API T3PrjnNode: public T3NodeParent {
+class E_API T3PrjnNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3PrjnNode);

@@ -26,7 +26,7 @@
 class Program; // 
 
 
-TypeDef_Of(ProgVarFmArg);
+taTypeDef_Of(ProgVarFmArg);
 
 class TA_API ProgVarFmArg: public ProgEl { 
   // sets a variable (vars or args) in a program from a startup command-line argument (if arg was not set by user, nothing happens). IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list

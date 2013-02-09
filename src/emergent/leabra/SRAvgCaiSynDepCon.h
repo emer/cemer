@@ -25,9 +25,9 @@
 
 // todo: could inherit from CaiSynDepCon/Spec and probably save a lot of code, but sravg guys might be more difficult -- try that later
 
-TypeDef_Of(SRAvgCaiSynDepCon);
+eTypeDef_Of(SRAvgCaiSynDepCon);
 
-class LEABRA_API SRAvgCaiSynDepCon : public LeabraSRAvgCon {
+class E_API SRAvgCaiSynDepCon : public LeabraSRAvgCon {
   // send-recv average at the connection level learning in XCal, combined with synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraCon)
 public:

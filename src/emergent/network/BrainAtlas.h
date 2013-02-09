@@ -29,7 +29,7 @@ class BrainAtlasLabel;
 class taVector3f;
 
 
-class EMERGENT_API BrainAtlas {
+class E_API BrainAtlas {
 public:
   BrainAtlas();
   virtual ~BrainAtlas();

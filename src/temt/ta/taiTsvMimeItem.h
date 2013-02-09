@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTsvMimeItem);
+taTypeDef_Of(taiTsvMimeItem);
 
 class TA_API taiTsvMimeItem: public taiTabularDataMimeItem { // this class handles generic TSV data, ex. from Excel and other spreadsheets
   INHERITED(taiTabularDataMimeItem)

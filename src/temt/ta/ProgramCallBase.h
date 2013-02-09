@@ -27,7 +27,7 @@ class Program; //
 class Program_List; //
 
 
-TypeDef_Of(ProgramCallBase);
+taTypeDef_Of(ProgramCallBase);
 
 class TA_API ProgramCallBase: public ProgEl {
   // ##DEF_CHILD_prog_args #VIRT_BASE base class for prog el that calls a program -- manages args and provides interface that Program's require for managing sub-progs

@@ -17,7 +17,7 @@
 #define LeabraWizard_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <Wizard>
 
 // member includes:
@@ -29,9 +29,9 @@ class Program; //
 class LeabraNetwork; // 
 class LeabraLayer; // 
 
-TypeDef_Of(LeabraWizard);
+eTypeDef_Of(LeabraWizard);
 
-class LEABRA_API LeabraWizard : public Wizard {
+class E_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:

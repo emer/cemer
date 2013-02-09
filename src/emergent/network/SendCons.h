@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SendCons);
+eTypeDef_Of(SendCons);
 
-class EMERGENT_API SendCons : public BaseCons {
+class E_API SendCons : public BaseCons {
   // sending connections base class -- one projection's worth of sending connections
 INHERITED(BaseCons)
 public:

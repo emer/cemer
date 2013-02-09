@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(TreeDecorationSpec);
+taTypeDef_Of(TreeDecorationSpec);
 
 class TA_API TreeDecorationSpec: public taNBase {
   // provides the color and other details for the named type of entry, ex "comment"

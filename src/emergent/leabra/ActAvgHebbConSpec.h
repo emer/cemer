@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(ActAvgHebbMixSpec);
+eTypeDef_Of(ActAvgHebbMixSpec);
 
-class LEABRA_API ActAvgHebbMixSpec : public SpecMemberBase {
+class E_API ActAvgHebbMixSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
 INHERITED(SpecMemberBase)
 public:
@@ -46,9 +46,9 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-TypeDef_Of(ActAvgHebbConSpec);
+eTypeDef_Of(ActAvgHebbConSpec);
 
-class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
+class E_API ActAvgHebbConSpec : public LeabraConSpec {
   // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories -- only for Leabra_CHL
 INHERITED(LeabraConSpec)
 public:

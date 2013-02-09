@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiMemberOfRegexpDialog);
+taTypeDef_Of(taiMemberOfRegexpDialog);
 
 class TA_API taiMemberOfRegexpDialog : public taiMember {
   // string with REGEXP_DIALOG directive

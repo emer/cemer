@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(DoneWritingDataRow);
+taTypeDef_Of(DoneWritingDataRow);
 
 class TA_API DoneWritingDataRow: public DataOneProg { 
   // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)

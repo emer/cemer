@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(TemtClient_List);
+taTypeDef_Of(TemtClient_List);
 
 class TA_API TemtClient_List: public taList<TemtClient> {
 public:

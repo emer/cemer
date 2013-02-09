@@ -32,7 +32,7 @@ class iT3Panel; // #IGNORE
 class iViewPanelOfVEWorld; //
 class SoOffscreenRendererQt; // #IGNORE
 
-TypeDef_Of(VEWorldView);
+taTypeDef_Of(VEWorldView);
 
 class TA_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer

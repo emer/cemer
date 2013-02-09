@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(SpecPtr_impl);
+eTypeDef_Of(SpecPtr_impl);
 
-class EMERGENT_API SpecPtr_impl : public taOBase {
+class E_API SpecPtr_impl : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taOBase)
 public:
@@ -66,7 +66,7 @@ private:
   void	Copy_(const SpecPtr_impl& cp);
 };
 
-TypeDef_Of(SpecPtr);
+eTypeDef_Of(SpecPtr);
 
 template<class T> 
 class SpecPtr : public SpecPtr_impl {
@@ -132,6 +132,6 @@ public: \
   TA_BASEFUNS_LITE(T ## _SPtr); \
 }
 
-#define SpecPtr_of(T) TypeDef_Of(T ## _SPtr ); SpecPtrEx_of(T,EMERGENT_API);
+#define SpecPtr_of(T) eTypeDef_Of(T ## _SPtr ); SpecPtrEx_of(T,E_API);
 
 #endif // SpecPtr_h

@@ -27,7 +27,7 @@ class BrainAtlasLabel;
 class BrainAtlasInfo;
 
 
-class EMERGENT_API BrainAtlasFileComposer {
+class E_API BrainAtlasFileComposer {
 public:
   BrainAtlasFileComposer(const QString& filename);
   virtual ~BrainAtlasFileComposer();

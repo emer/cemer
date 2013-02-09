@@ -26,7 +26,7 @@
 class taSigLink; //
 #endif
 
-TypeDef_Of(TokenSpace);
+taTypeDef_Of(TokenSpace);
 
 class TA_API TokenSpace : public taPtrList<void> {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS

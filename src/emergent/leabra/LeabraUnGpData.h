@@ -40,9 +40,9 @@ class UserDataItemBase; //
 class UserDataItem; // 
 class LeabraLayerSpec; // 
 
-TypeDef_Of(LeabraUnGpData);
+eTypeDef_Of(LeabraUnGpData);
 
-class LEABRA_API LeabraUnGpData : public taOBase, public LeabraInhib {
+class E_API LeabraUnGpData : public taOBase, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra data to maintain for independent unit groups of competing units within a single layer -- storing separately allows unit groups to be virtual (virt_groups flag on layer)
 INHERITED(taOBase)
 public:

@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiArgTypeOfFileDialog);
+taTypeDef_Of(taiArgTypeOfFileDialog);
 
 class TA_API taiArgTypeOfFileDialog : public taiArgType {
   // for string args with FILE_DIALOG_xxx

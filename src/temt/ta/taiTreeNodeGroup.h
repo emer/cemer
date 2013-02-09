@@ -26,7 +26,7 @@
 class taGroup_impl; //
 
 
-TypeDef_Of(taiTreeNodeGroup);
+taTypeDef_Of(taiTreeNodeGroup);
 
 class TA_API taiTreeNodeGroup: public taiTreeNodeList {
 INHERITED(taiTreeNodeList)

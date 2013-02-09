@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(NetCounterBase);
+eTypeDef_Of(NetCounterBase);
 
-class EMERGENT_API NetCounterBase: public NetBaseProgEl { 
+class E_API NetCounterBase: public NetBaseProgEl { 
   // #VIRT_BASE #NO_INSTANCE base for network counter manip prog els
 INHERITED(NetBaseProgEl)
 public:

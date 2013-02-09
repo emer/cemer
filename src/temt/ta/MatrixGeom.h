@@ -26,7 +26,7 @@ class MatrixIndex; //
 class int_Matrix; //
 
 
-TypeDef_Of(MatrixGeom);
+taTypeDef_Of(MatrixGeom);
 
 class TA_API MatrixGeom: public taBase  {
   // matrix geometry and index set -- holds dims() dimensions worth of integers, which are either the geometry of a matrix or a multidimensional index into a particular matrix location

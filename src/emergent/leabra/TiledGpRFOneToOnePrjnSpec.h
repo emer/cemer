@@ -17,16 +17,16 @@
 #define TiledGpRFOneToOnePrjnSpec_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <TiledGpRFPrjnSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(TiledGpRFOneToOnePrjnSpec);
+eTypeDef_Of(TiledGpRFOneToOnePrjnSpec);
 
-class LEABRA_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
+class E_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
 INHERITED(TiledGpRFPrjnSpec)
 public:

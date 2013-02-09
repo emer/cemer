@@ -27,7 +27,7 @@ class QDomDocument;
 class QDomElement; 
 class QDomNode;
 
-class EMERGENT_API FSLBrainAtlasFileComposer : public BrainAtlasFileComposer {
+class E_API FSLBrainAtlasFileComposer : public BrainAtlasFileComposer {
 public:
   FSLBrainAtlasFileComposer(const QString& filename);
   virtual ~FSLBrainAtlasFileComposer();

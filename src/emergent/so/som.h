@@ -22,9 +22,9 @@
 
 #include "so.h"
 
-TypeDef_Of(SomUnitSpec);
+eTypeDef_Of(SomUnitSpec);
 
-class SO_API SomUnitSpec : public SoUnitSpec {
+class E_API SomUnitSpec : public SoUnitSpec {
   // self-organizing feature maps: net input is distance, not raw netin
 INHERITED(SoUnitSpec)
 public:
@@ -38,9 +38,9 @@ private:
 };
 
 
-TypeDef_Of(NeighborEl);
+eTypeDef_Of(NeighborEl);
 
-class SO_API NeighborEl : public taOBase {
+class E_API NeighborEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a neighborhood function
 INHERITED(taOBase)
 public:
@@ -53,9 +53,9 @@ private:
   void	Destroy()	{ };
 };
 
-TypeDef_Of(NeighborEl_List);
+eTypeDef_Of(NeighborEl_List);
 
-class SO_API NeighborEl_List : public taList<NeighborEl> {
+class E_API NeighborEl_List : public taList<NeighborEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of NeighborEl objects
 INHERITED(taList<NeighborEl>)
 public:
@@ -66,9 +66,9 @@ private:
   void 	Destroy()		{ };
 };
 
-TypeDef_Of(SomLayerSpec);
+eTypeDef_Of(SomLayerSpec);
 
-class SO_API SomLayerSpec : public SoLayerSpec {
+class E_API SomLayerSpec : public SoLayerSpec {
   // self-organizing map activates a neighborhood of elements
 INHERITED(SoLayerSpec)
 public:

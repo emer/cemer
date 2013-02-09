@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiTreeNodeTypeItem);
+taTypeDef_Of(taiTreeNodeTypeItem);
 
 class TA_API taiTreeNodeTypeItem: public taiTreeNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeNode)

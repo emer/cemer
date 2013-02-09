@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(HippoEncoderConSpec);
+eTypeDef_Of(HippoEncoderConSpec);
 
-class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
+class E_API HippoEncoderConSpec : public LeabraConSpec {
   // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_mid) -- soft bounding as specified in spec
 INHERITED(LeabraConSpec)
 public:

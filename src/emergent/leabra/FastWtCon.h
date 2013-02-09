@@ -23,9 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(FastWtCon);
+eTypeDef_Of(FastWtCon);
 
-class LEABRA_API FastWtCon : public LeabraCon {
+class E_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
   float		swt;		// slow weight value

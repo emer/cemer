@@ -30,7 +30,7 @@ class   QModelIndexList;        // #IGNORE
 typedef QList<QModelIndex> QModelIndexList;
 #endif
 
-TypeDef_Of(CellRange);
+taTypeDef_Of(CellRange);
 
 class TA_API CellRange { // specifies a range of cells
 public:

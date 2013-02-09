@@ -26,7 +26,7 @@
 // declare all other types mentioned but not required to include:
 class Program;
 
-TypeDef_Of(taiEditorOfProgramCtrl);
+taTypeDef_Of(taiEditorOfProgramCtrl);
 
 class TA_API taiEditorOfProgramCtrl : public taiEditorOfClass, public virtual IRefListClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects

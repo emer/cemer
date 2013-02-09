@@ -26,9 +26,9 @@ class Layer_Group; //
 class T3LayerGroupNode; //
 class BaseSpec; //
 
-TypeDef_Of(LayerGroupView);
+eTypeDef_Of(LayerGroupView);
 
-class EMERGENT_API LayerGroupView: public nvhDataView {
+class E_API LayerGroupView: public nvhDataView {
 INHERITED(nvhDataView)
 public:
   bool                  root_laygp; // true if this is network.layers root layer group

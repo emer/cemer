@@ -27,7 +27,7 @@
 
 // declare all other types mentioned but not required to include:
 
-class EMERGENT_API BrainAtlasLabel {
+class E_API BrainAtlasLabel {
 public:
   BrainAtlasLabel(); 
   BrainAtlasLabel(const QString& text, unsigned int index, const QColor& color = QColor(255,255,255), const taVector3i& center = taVector3i(0,0,0) );

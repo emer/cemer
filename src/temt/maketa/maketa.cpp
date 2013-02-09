@@ -99,6 +99,8 @@ void MTA::InitKeyWords() {
   ky = new TypeDef("operator"); spc_keywords.Add(ky); ky->idx = MP_OPERATOR;
   ky = new TypeDef("friend");   spc_keywords.Add(ky); ky->idx = MP_FRIEND;
   ky = new TypeDef("REG_FUN");  spc_keywords.Add(ky); ky->idx = MP_REGFUN;
+  ky = new TypeDef("using");    spc_keywords.Add(ky); ky->idx = MP_USING;
+  ky = new TypeDef("namespace"); spc_keywords.Add(ky); ky->idx = MP_NAMESPACE;
 }
 
 void MTA::BuildHashTables() {
@@ -348,9 +350,10 @@ void mta_print_usage(int argc, char* argv[]) {
 
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
-#if 0 // change to 1 for debugging
-  verbose = 3;
-  bool keep_tmp = true;
+#if 1 // change to 1 for debugging
+  verbose = 1;
+  //  bool keep_tmp = true;
+  bool keep_tmp = false;
 #else
   bool keep_tmp = false;
 #endif

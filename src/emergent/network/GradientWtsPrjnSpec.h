@@ -24,9 +24,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(GradientWtsPrjnSpec);
+eTypeDef_Of(GradientWtsPrjnSpec);
 
-class EMERGENT_API GradientWtsPrjnSpec : public FullPrjnSpec {
+class E_API GradientWtsPrjnSpec : public FullPrjnSpec {
   // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
 INHERITED(FullPrjnSpec)
 public:

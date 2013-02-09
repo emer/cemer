@@ -25,7 +25,7 @@
 class taList_impl; //
 
 
-TypeDef_Of(taiArgTypeOfFromGroup);
+taTypeDef_Of(taiArgTypeOfFromGroup);
 
 class TA_API taiArgTypeOfFromGroup : public taiArgTypeOfTokenPtr {
   // for taBase pointers with FROM_GROUP_xxx

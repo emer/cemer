@@ -17,16 +17,16 @@
 #define CtSRAvgVals_h 1
 
 // parent includes:
-#include "leabra_def.h"
+#include "network_def.h"
 #include <taOBase>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(CtSRAvgVals);
+eTypeDef_Of(CtSRAvgVals);
 
-class LEABRA_API CtSRAvgVals : public taOBase {
+class E_API CtSRAvgVals : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sender-receiver average values accumulated during Ct processing -- e.g., overall vals used for normalization
 INHERITED(taOBase)
 public:

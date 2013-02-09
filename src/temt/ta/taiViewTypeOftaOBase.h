@@ -24,7 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 
-TypeDef_Of(taiViewTypeOftaOBase);
+taTypeDef_Of(taiViewTypeOftaOBase);
 
 class TA_API taiViewTypeOftaOBase: public taiViewTypeOftaBase { // for taOBase and descendants
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOftaOBase, taiViewTypeOftaBase)

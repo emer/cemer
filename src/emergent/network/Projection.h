@@ -27,9 +27,9 @@
 
 // declare all other types mentioned but not required to include:
 
-TypeDef_Of(Projection);
+eTypeDef_Of(Projection);
 
-class EMERGENT_API Projection: public taNBase {
+class E_API Projection: public taNBase {
   // #STEM_BASE ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
 INHERITED(taNBase)
 public:
