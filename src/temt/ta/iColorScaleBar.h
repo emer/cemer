@@ -32,6 +32,14 @@ class ColorScale; //
 class QBoxLayout; //
 class QAbstractButton; //
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 
 class TA_API iColorScaleBar : public QWidget { // #IGNORE  Scalebar
 #ifndef __MAKETA__
