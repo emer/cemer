@@ -351,7 +351,7 @@ void mta_print_usage(int argc, char* argv[]) {
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
 #if 0 // change to 1 for debugging
-  verbose = 1;
+  verbose = 2;
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else

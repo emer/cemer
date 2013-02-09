@@ -19,7 +19,6 @@ set(so_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(so_HEADS
-    network_def.h
     so.h
     som.h
     cl.h

@@ -16,13 +16,11 @@ set(cs_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(cs_HEADS
-    network_def.h
     cs.h
 #    cs_v3_compat.h
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
-# but DO include _TA.cpp files
 set(cs_SRCS
     cs.cpp
 #    cs_v3_compat.cpp

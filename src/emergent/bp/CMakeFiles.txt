@@ -17,14 +17,12 @@ set(bp_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(bp_HEADS
-    network_def.h
     bp.h
     rbp.h
 #    bp_v3_compat.h
 )
 
-# all source files to compile: NOTE: do NOT include .moc files -- auto generated
-# but DO include _TA.cpp files
+# all source files to compile: NOTE: do NOT include TA or .moc files -- auto generated
 set(bp_SRCS
     bp.cpp
     rbp.cpp

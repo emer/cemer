@@ -147,12 +147,11 @@ set(leabra_HEADS_NOMAKETA
 
 # all heads -- include maketa generated ones here
 set(leabra_HEADS
-    network_def.h
     ${leabra_HEADS_MAKETA}
     ${leabra_HEADS_NOMAKETA}
 )
 
-# all source files to compile: NOTE: do NOT include .moc files -- auto generated
+# all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(leabra_SRCS
   LeabraCon.cpp
   LeabraSRAvgCon.cpp

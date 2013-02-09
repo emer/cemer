@@ -5,8 +5,7 @@
 # other targets are in CMakeLists.txt in this directory
 
 # local headers that need maketa run on them
-set(network_HEADS_MAKETA_LOCAL
-  network_def.h
+set(network_HEADS_MAKETA
   EmergentMisc.h
 
   SpecMemberBase.h
@@ -140,6 +139,7 @@ set(network_HEADS_MAKETA_LOCAL
 )
 
 set(network_HEADS_NOMAKETA
+  network_def.h
   ConSpec_inlines.h
   Unit_inlines.h
 
@@ -165,30 +165,21 @@ set(network_HEADS_NOMAKETA
   nifti1_io.h
 )
 
-    # brain_view_panel.h
-
-# all headers that need maketa run on them
-# The order of files passed to maketa is important since it appears not to
-# process #include directives.
-set(network_HEADS_MAKETA
-    ${network_HEADS_MAKETA_LOCAL}
-)
-
-# all heads -- include maketa generated ones here
+# all heads -- both kinds
 set(network_HEADS
-    ${network_HEADS_MAKETA_LOCAL}
+    ${network_HEADS_MAKETA}
     ${network_HEADS_NOMAKETA}
 )
 
-# headers that need Qt moc run
+# headers that need Qt moc run -- this includes items from above -- not a mutex list
 set(network_HEADS_MOC
   iViewPanelOfNetwork.h
   iBrainViewEditDialog.h
   iViewPanelOfBrain.h
 )
 
-# gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
-set(network_SRCS_LOCAL
+# gui-related source files: NOTE: do NOT include TA or .moc files -- auto generated
+set(network_SRCS
   EmergentMisc.cpp
 
   SpecMemberBase.cpp
@@ -334,12 +325,6 @@ set(network_SRCS_LOCAL
   NiftiReader.cpp
   znzlib.c
   nifti1_io.c
-)
-
-# all source files to compile: NOTE: do NOT include .moc files -- auto generated
-# but DO include _TA.cpp files
-set(network_SRCS
-  ${network_SRCS_LOCAL}
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

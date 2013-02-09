@@ -336,7 +336,12 @@ void MTA::TypeSpace_Gen_TypeDefOf(TypeSpace* ths, ostream& strm) {
 }
 
 void MTA::TypeDef_Gen_TypeDefOf(TypeDef* ths, ostream& strm) {
-  strm << "TypeDef_Of(" << ths->name << ");\n";
+  if(ths->source_file.contains("src/temt"))
+    strm << "taTypeDef_Of(" << ths->name << ");\n";
+  else if(ths->source_file.contains("src/emergent"))
+    strm << "eTypeDef_Of(" << ths->name << ");\n";
+  else
+    strm << "TypeDef_Of(" << ths->name << ");\n";
 }
 
 void MTA::MethodSpace_Gen_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm,

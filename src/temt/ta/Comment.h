@@ -28,6 +28,15 @@
 
 // #include <qglobal.h>
 
+// class test {
+//   int   bfof;
+//   float sfk;
+//   test()
+//     : bfof(0) { }
+// };
+
+#if 1
+
 taTypeDef_Of(Comment);
 
 class TA_API Comment: public ProgEl { 
@@ -52,6 +61,6 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-// }
+#endif
 
 #endif // Comment_h

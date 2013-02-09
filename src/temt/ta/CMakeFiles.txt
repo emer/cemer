@@ -8,8 +8,8 @@
 # of additional work would be required to fully split this out, and we need Qt
 # anyway, so there really isn't any point to it anymore
 
-# local headers that need maketa run on them
-set(ta_HEADS_MAKETA_LOCAL
+# headers that need maketa run on them, but not moc
+set(ta_HEADS_MAKETA_NOMOC
   maketa_streambuf.h
   maketa_iostream.h
   maketa_fstream.h
@@ -1049,7 +1049,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
-  ${ta_HEADS_MAKETA_LOCAL}
+  ${ta_HEADS_MAKETA_NOMOC}
   ${ta_HEADS_MAKETA_MOC}
 )
 

@@ -71,7 +71,7 @@ int yylex();
 
 /* top-level types */
 %type 	<typ>	typedefn typedefns enumdefn classdecl classdecls
-%type	<typ>	classdefn classdefns templdefn templdefns
+%type	<typ>	classdefn classdefns templdefn templdefns templdecl templdecls
 %type	<meth>	fundecl
 
 /* typedef stuff */
@@ -121,6 +121,8 @@ list:	/* nothing */		{ mta->yy_state = MTA::YYRet_Exit; }
         | list classdefn	{
 	    mta->cur_class = NULL; mta->state = MTA::Find_Item;
 	    mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+        | list templdecl	{
+	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
         | list templdefn	{
 	    mta->state = MTA::Find_Item; mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
         | list fundecl		{
@@ -180,6 +182,10 @@ defn:     type tyname term		{
         | type MP_SCOPER '*' tyname	{
             $$ = $4; $$->AssignType(TypeDef::METH_PTR);
 	    mta->type_stack.Pop(); }
+        | tyname tyname term            {
+            $$ = $2; }
+        | tyname type term            {
+            $$ = $2; }
         ;
 
 enumdefn: enumdsub			{
@@ -280,6 +286,11 @@ classnm:  classkeyword tyname			{
             mta->type_stack.Push($$);
 	    mta->last_class = mta->cur_class; mta->cur_class = $$;
 	    mta->cur_mstate = MTA::pblc; } /* is struct */
+        | structkeyword	tyname			{
+            mta->state = MTA::Parse_class;
+            $$ = $2; mta->last_class = mta->cur_class; mta->cur_class = $2;
+	    $2->AssignType(TypeDef::CLASS); mta->ClearSource($2); /* tyname set -- premature */
+	    mta->cur_mstate = MTA::pblc; } /* is struct */
         | unionkeyword				{
             mta->state = MTA::Parse_class;
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
@@ -311,6 +322,19 @@ classptyp: classpmod
 
 classpmod: access
         | MP_VIRTUAL
+        ;
+
+templdecl:
+          templdecls                 {
+	    TypeSpace* sp = mta->GetTypeSpace($1);
+	    $$ = sp->AddUniqNameOld($1);
+	    if($$ == $1) { mta->TypeAdded("template", sp, $$); }
+	    mta->type_stack.Pop(); }
+        ;
+
+templdecls:
+          templhead term                 { mta->Burp(); }
+ 	| templhead term MP_COMMENT      { SETDESC($1,$3); }
         ;
 
 templdefn:
@@ -388,7 +412,7 @@ regfundefn: methname funargs		{
             $1->fun_argc = $2; $1->arg_types.size = $2; mta->burp_fundefn = true; }
         ;
 
-usenamespc:  MP_USING MP_NAMESPACE MP_NAME ';' {
+usenamespc:  MP_USING MP_NAMESPACE MP_NAME term {
             taMisc::Info("using namespace:", $3);
           }
         ;
@@ -686,12 +710,18 @@ subargdefn:
 	      mta->cur_meth->arg_types.Link(&TA_int); mta->cur_meth->arg_names.Add(nm); } }
         ;
 
-constrlist:
-          constref
-        | constrlist constref
+constrlist: constcoln constitms
         ;
 
-constref: constcoln MP_TYPE MP_FUNCALL
+constitms:
+          constref
+        | MP_COMMENT
+        | constitms constref
+        | constitms ',' constref
+        ;
+
+constref: MP_TYPE MP_FUNCALL
+        | MP_NAME MP_FUNCALL
         ;
 
 consthsnm:
@@ -750,9 +780,9 @@ constype: subtype
         ;
 
 subtype:  combtype
-        | structkeyword combtype	{ $$ = $2; $$->SetType(TypeDef::STRUCT);
-            $$->ClearType(TypeDef::VOID); }
-        | structkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::STRUCT); }
+        | structkeyword combtype 	{ $$ = $2; $$->SetType(TypeDef::STRUCT);
+          $$->ClearType(TypeDef::VOID); }
+        // | structkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::STRUCT); }
         | unionkeyword combtype		{ $$ = $2; $$->SetType(TypeDef::UNION);
             $$->ClearType(TypeDef::VOID); }
         | unionkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::UNION); }
@@ -820,6 +850,7 @@ templarg:
 
 tdname:   MP_NAME
         | MP_TYPE		{ $$ = $1->name; }
+        | MP_THISNAME   	{ $$ = $1->name; }
         ;
 
 varname:  MP_NAME
