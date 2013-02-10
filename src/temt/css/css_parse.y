@@ -23,8 +23,8 @@
 #include "css_builtin.h"
 #include "css_ta.h"
 
-eTypeDef_Of(taMatrix);
-eTypeDef_Of(taBaseItr);
+taTypeDef_Of(taMatrix);
+taTypeDef_Of(taBaseItr);
 
 #include <sstream>
 
