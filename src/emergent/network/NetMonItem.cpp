@@ -25,7 +25,7 @@
 
 #include <taMisc>
 
-eTypeDef_Of(UserDataItem);
+taTypeDef_Of(UserDataItem);
 
 void NetMonItem::Initialize() {
   off = false;

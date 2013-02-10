@@ -116,6 +116,7 @@ public:
   String	cur_fname;	// current file name being processed
   String        cur_fname_only; // only file name of current file
   bool          cur_is_trg;     // current filename is target file during parsing
+  bool          ta_lib;         // this file is in the ta library -- windows needs to know.
   int		anon_no;	// anonymous type number
   int		defn_st_line;	// starting line of current definition, possibly..
 

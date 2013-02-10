@@ -69,6 +69,7 @@ MTA::MTA() {
   yy_state = YYRet_Ok;
 
   cur_is_trg = false;
+  ta_lib = false;
 
   spc_keywords.name = "Key Words for Searching";
   InitKeyWords();
@@ -502,6 +503,10 @@ int MTA::Main(int argc, char* argv[]) {
 
   trg_fname_only = taMisc::GetFileFmPath(trg_header);
   trg_basename = taMisc::StringCVar(trg_fname_only);
+  if(trg_header.contains("/temt/"))
+    ta_lib = true;
+  else
+    ta_lib = false;
 
   if(verbose > 0) {
     cerr << "M!!: target header file to be parsed: " << trg_header << endl;

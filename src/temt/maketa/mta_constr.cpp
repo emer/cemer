@@ -75,7 +75,7 @@ String MTA::TypeDef_Gen_TypeDef_Ptr(TypeDef* ths) {
   String rval = TypeDef_Gen_TypeDef_Ptr_impl(ths);
   if(!ths->IsSubType()) {
 #ifdef TA_OS_WIN
-    if(ths->source_file.empty())
+    if(ths->source_file.empty() && !ta_lib)
       return rval;
 #endif
     return String("&") + rval;
@@ -95,7 +95,7 @@ String MTA::TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths) {
   }
   else {
 #ifdef TA_OS_WIN
-    if(ths->source_file.empty()) {
+    if(ths->source_file.empty() && !ta_lib) {
       return "TypeDef::FindGlobalTypeName(\"" + ths->name + "\")";
     }
     else
@@ -107,7 +107,7 @@ String MTA::TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths) {
 String MTA::TypeDef_Gen_TypeDef_Ptr_Path(TypeDef* ths) {
   String rval = TypeDef_Gen_TypeDef_Ptr_impl(ths);
 #ifdef TA_OS_WIN
-  if(ths->source_file.empty()) {
+  if(ths->source_file.empty() && !ta_lib) {
     return rval + "->";
   }
 #endif
@@ -351,7 +351,7 @@ void MTA::TypeSpace_Gen_TypeDefOf(TypeSpace* ths, ostream& strm) {
 }
 
 void MTA::TypeDef_Gen_TypeDefOf(TypeDef* ths, ostream& strm) {
-  if(ths->source_file.contains("src/temt")) {
+  if(ths->source_file.contains("src/temt") || ta_lib) {
     strm << "taTypeDef_Of(" << ths->name << ");\n";
   }
   else if(ths->source_file.contains("src/emergent")) {
