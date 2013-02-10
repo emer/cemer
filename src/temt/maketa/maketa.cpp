@@ -503,7 +503,7 @@ int MTA::Main(int argc, char* argv[]) {
 
   trg_fname_only = taMisc::GetFileFmPath(trg_header);
   trg_basename = taMisc::StringCVar(trg_fname_only);
-  if(trg_header.contains("/temt/"))
+  if(trg_header.contains("src/temt/") || trg_header.contains("\\src\\temt"))
     ta_lib = true;
   else
     ta_lib = false;
