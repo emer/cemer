@@ -66,13 +66,11 @@ public:
     {*((double*)it) = var.toDouble(); };  // #IGNORE
 protected:
   STATIC_CONST double   blank; // #IGNORE
-#ifndef __MAKETA__
   override void         Dump_Save_Item(std::ostream& strm, int idx); // stream in full precision
   override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(double)); };
   override void         BinaryLoad_Item(std::istream& strm, int idx)
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(double)); };
-#endif
 private:
   void          Initialize() {}
   void          Destroy() { CutLinks(); }

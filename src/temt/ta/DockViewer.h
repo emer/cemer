@@ -35,10 +35,8 @@ public:
     DV_NONE             = 0, // #NO_BIT
     DV_CLOSABLE         = 0x01, // #BIT true if we are allowed to close it
     DV_MOVABLE          = 0x02, // #BIT true if we are allowed to move it around
-    DV_FLOATABLE        = 0x04  // #BIT true if we are allowed to undock it
-#ifndef __MAKETA__
-    ,DV_ALL             = DV_CLOSABLE | DV_MOVABLE | DV_FLOATABLE
-#endif
+    DV_FLOATABLE        = 0x04,  // #BIT true if we are allowed to undock it
+    DV_ALL              = DV_CLOSABLE | DV_MOVABLE | DV_FLOATABLE, // #IGNORE all
   };
 
   DockViewerFlags       dock_flags; // #READ_ONLY #SHOW how this dock window is allowed to behave

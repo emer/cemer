@@ -466,9 +466,7 @@ public:
   static int            err_cnt; //  #READ_ONLY #NO_SAVE cumulative error count; can be used/reset by Server to detect for errors after it calls a routine
   static int            CheckClearErrCnt(); // gets current value, and clears
 
-#ifndef __MAKETA__
-  static std::fstream        log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
-#endif
+  static std::fstream   log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
 
   static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
@@ -880,7 +878,6 @@ public:
   ////////////////////////////////////////////////////////////////////////
   //    File Parsing Stuff for Dump routines: Input
 
-#ifndef __MAKETA__
   static String LexBuf; // #NO_SAVE #HIDDEN a buffer, contains last thing read by read_ funs
 
   // return value is the next character in the stream
@@ -951,7 +948,6 @@ public:
   static std::ostream& write_quoted_string(std::ostream& strm, const String& str,
                                            bool write_if_empty = false);
   // #CAT_File writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
-#endif
 
 };
 

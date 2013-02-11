@@ -149,17 +149,6 @@ public: \
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 
-#ifdef __MAKETA__ // simplified versions for maketa
-#define TA_BASEFUNS_CTORS_(y) \
-  y (bool reg = true); \
-  y (const y& cp);
-
-#define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
-  y (); \
-  y (const y<T>& cp);
-
-#else
-
 #define TA_BASEFUNS_CTORS_(y) \
   explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
   y (const y& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
@@ -167,8 +156,6 @@ public: \
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
   y (const y<T>& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
-
-#endif
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
@@ -469,11 +456,9 @@ public:
     BF_MISC2            = 0x2000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
     BF_MISC3            = 0x4000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
     BF_MISC4            = 0x8000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
-#ifndef __MAKETA__
-    INVALID_MASK        = THIS_INVALID | CHILD_INVALID
-    ,COPY_MASK          = THIS_INVALID | CHILD_INVALID | NAME_READONLY // flags to copy when doing an object copy
-    ,EDITABLE_MASK      = BF_READ_ONLY | BF_GUI_READ_ONLY // flags in the Editable group
-#endif
+    INVALID_MASK        = THIS_INVALID | CHILD_INVALID,
+    COPY_MASK          = THIS_INVALID | CHILD_INVALID | NAME_READONLY, // flags to copy when doing an object copy
+    EDITABLE_MASK      = BF_READ_ONLY | BF_GUI_READ_ONLY, // flags in the Editable group
   };
 
   enum DumpQueryResult { // #IGNORE Dump_QuerySaveMember response
@@ -565,13 +550,8 @@ public:
   static taBase*        MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
-#ifdef __MAKETA__
-  taBase();
-  taBase(const taBase& cp);
-#else
   explicit taBase(bool=false)   { Register(); Initialize(); }
   taBase(const taBase& cp, bool=false)  { Register(); Initialize(); Copy_impl(cp); }
-#endif
   virtual ~taBase()     { Destroy(); } //
 
   virtual taBase*       Clone() const           { return new taBase(*this); } // #IGNORE
@@ -782,12 +762,10 @@ public:
     int compress=-1, const String& filetypes = _nilString);
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
-#ifndef __MAKETA__
   virtual int           Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   // #EXPERT #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual int           Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0);
   // #EXPERT #CAT_File Save object data to a file stream
-#endif
   taFiler*              GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -844,7 +822,6 @@ public:
   //    Low-level dump load/save
 public:
 
-#ifndef __MAKETA__
   virtual int           Dump_Load_impl(std::istream& strm, taBase* par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual taBase*       Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ);
@@ -882,8 +859,6 @@ public:
   // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
   virtual bool          Dump_QuerySaveChildren()
   {return true;} // #IGNORE override to make save decision at runtime
-#endif
-
 
   ///////////////////////////////////////////////////////////////////////////
   //    Updating of object properties

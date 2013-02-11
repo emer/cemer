@@ -38,9 +38,7 @@ protected:
 
 
 class TA_API DynMethod_PtrList: public taPtrList<DynMethodDesc> { // #IGNORE
-#ifndef __MAKETA__
 typedef taPtrList<DynMethodDesc> inherited;
-#endif
 public:
   enum DMDType {
     Type_1N,    // <methname>() method; applied to all selected object

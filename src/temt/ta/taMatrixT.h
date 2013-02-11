@@ -88,7 +88,7 @@ public:
   void                  Add(const T& item) {Add_(&item);}
   // #CAT_Modify only valid when dims=1
 
-  USING(taMatrix::operator=)
+  using taMatrix::operator=;
   TA_TMPLT_ABSTRACT_BASEFUNS(taMatrixT, T)
 public:
   override void*        FastEl_Flat_(int idx)   { return &(el[idx]); }
@@ -148,7 +148,7 @@ private:
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
   void CutLinks() { SetArray_(NULL); taMatrix::CutLinks(); } \
-  USING(taMatrix::operator=) \
+  using taMatrix::operator=; \
   TA_BASEFUNS(y) \
 protected: \
   override const void*  El_GetBlank_() const    { return (const void*)&blank; }
@@ -190,7 +190,7 @@ public: \
     {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
-  USING(taMatrix::operator=) \
+  using taMatrix::operator=; \
   TA_BASEFUNS_NOCOPY(y)
 
 

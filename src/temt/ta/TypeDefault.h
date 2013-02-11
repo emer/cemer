@@ -50,9 +50,7 @@ public:
   virtual void	SetTypeDefaults(taBase* tok);	   // set defaults for a given token
 
   void	Dump_Load_pre();
-#ifndef __MAKETA__
   int	Dump_Load_Value(std::istream& strm, taBase* par=NULL);
-#endif
 
   void	InitLinks();
   TA_BASEFUNS(TypeDefault);

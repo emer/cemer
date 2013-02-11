@@ -35,11 +35,9 @@ public:
     SOLID,                      // -----
     DOT,                        // .....
     DASH,                       // - - -
-    DASH_DOT                    // _._._
-#ifndef __MAKETA__
-    ,LineStyle_MIN = SOLID, // also the default
-    LineStyle_MAX = DASH_DOT
-#endif
+    DASH_DOT,                    // _._._
+    LineStyle_MIN = SOLID,       // #IGNORE also the default
+    LineStyle_MAX = DASH_DOT,    // #IGNORE
   };
 
   //NOTE: if PointStyle changed, must change T3GraphLine::MarkerStyle
@@ -55,12 +53,10 @@ public:
     SLASH,                      // /
     PLUS,                       // +
     CROSS,                      // x
-    STAR                        // *
-#ifndef __MAKETA__
-    ,PointStyle_NONE = 0, // pseudo value, only used during assignment of styles
-    PointStyle_MIN = CIRCLE, // also the default
-    PointStyle_MAX = STAR
-#endif
+    STAR,                        // *
+    PointStyle_NONE = 0,        // #IGNORE pseudo value, only used during assignment of styles
+    PointStyle_MIN = CIRCLE,    // #IGNORE also the default
+    PointStyle_MAX = STAR,      // #IGNORE
   };
 
   LineStyle     line_style;     // the style in which the line is drawn

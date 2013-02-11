@@ -38,14 +38,15 @@ void yyerror(const char *s);
 class MTA {
 public:
   enum States {
-    Find_Item,			// looking for a class, enum, typedef
-    Skip_File,
-    Parse_typedef,
-    Parse_enum,
-    Parse_class,
-    Parse_inclass,		// inside the class defn
-    Parse_infun,		// inside a fun defn
-    Parse_fundef 		// parse a REG_FUN function defn
+    Find_Item,			// looking for something interesting to process: class, enum, typedef
+    Found_Item,                 // found some kind of interesting item to process -- lexer now active and returns stuff..
+    Parse_typedef,              // parsing a typedef
+    Parse_enum,                 // parsing an enum
+    Parse_class,                // parsing a class header -- inheritance, etc
+    Parse_inclass,		// parsing inside the class defn
+    Parse_infun,		// parsing inside a fun defn
+    Parse_fundef, 		// parsing a REG_FUN or other such function defn
+    Parse_inexpr,		// parsing inside an expression that is too complex for us
   };
 
   enum MembState {		// to maintain state about members (don't add privats)
@@ -72,10 +73,12 @@ public:
   EnumSpace	enum_stack;	// for storing names, etc.
   MemberSpace	memb_stack;	// for storing names, etc.
   MethodSpace	meth_stack;	// for storing names, etc.
+  String_PArray namespc_stack;  // stack of name spaces
+  int_PArray    state_stack;    // stack of State states
+  TypeSpace	class_stack;	// stack of classes -- can be nested..
 
   TypeDef*	cur_enum;	// holds current enum
-  TypeDef*	cur_class;	// holds current class
-  TypeDef*	last_class;	// holds previous class
+  TypeDef*	cur_class;	// holds current class -- read-only -- use push/pop to update
   MembState 	cur_mstate;	// current member state
   MemberDef*	cur_memb;	// holds current memberdef
   TypeDef*	cur_memb_type;	// current member type
@@ -83,6 +86,7 @@ public:
   TypeSpace	cur_templ_pars;	// current template parameters
   MemberDef*	last_memb;	// holds previous memberdef
   MethodDef*	last_meth;	// holds previous methoddef
+  String        cur_nmspc_tmp;  // temporary current namespace during parsing
 
   bool		thisname;	// true if currently doing a "thisname" operation
   bool		constcoln;	// true if a constructor colon was encountered
@@ -90,7 +94,6 @@ public:
   bool		gen_css;	// generate css stuff?
   bool		gen_instances;	// generate instances?
   bool		gen_doc;	// generate docs
-  bool		class_only;	// parse structs of type "class" only (not struct or union)
   int		verbose;	// level of verbosity
 #ifdef TA_OS_WIN
   bool		win_dll;	// if true, use the XXX_API macro for dll linkage
@@ -121,7 +124,7 @@ public:
   int		defn_st_line;	// starting line of current definition, possibly..
 
   String        file_str;       // loads entire file in at once as a string and process from there
-  States	state;
+  States	state;          // current state -- read-only: use push/pop interface to set
   YY_Flags	yy_state;	// parser state
 
   MTA();
@@ -131,8 +134,23 @@ public:
   // the main function that does everything -- called by overall main
 
   void		InitKeyWords();
+  // initialize keyword lookup table
   void		BuildHashTables();
+  // build hash tables at startup
   void 		Burp();
+  // un-read previous input -- for look-ahead parsing
+  void          PushState(States new_state);
+  // push given state onto state stack and set current state variable
+  States        PopState();
+  // pop state to prior state, returning old state and setting current state to previous
+  void          ResetState();
+  // reset back to starting Find_Item state
+  void          PushClass(TypeDef* new_class);
+  // push new class on stack -- becomes the current class
+  TypeDef*      PopClass();
+  // pop current class off the stack and return, previous becomes new current class
+  void          ResetClassStack();
+  // reset class stack back to empty
   void          SetSource(TypeDef* td, bool use_defn_st_line);
   // set the source_file and source_start values in type to current vals, optionally using defn_st_line
   void          ClearSource(TypeDef* td);
@@ -141,6 +159,10 @@ public:
   // reset pointers
   void		Class_UpdateLastPtrs();
   // update last_memb, etc ptrs
+  void          Namespc_PushNew(const char* spc);
+  // push a new namespace on the stack
+  void          Namespc_Pop();
+  // pop off namespace
 
   TypeSpace*	GetTypeSpace(TypeDef* td);
   // get appropriate type space for adding a new type derived from this one

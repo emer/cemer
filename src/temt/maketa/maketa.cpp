@@ -34,7 +34,6 @@ char MTA::LastLn[8192];
 MTA::MTA() {
   cur_enum = NULL;
   cur_class = NULL;
-  last_class = NULL;
   cur_mstate = prvt;
   cur_memb = NULL;
   cur_memb_type = NULL;
@@ -48,7 +47,6 @@ MTA::MTA() {
   gen_css = true;
   gen_instances = false;
   gen_doc = false;
-  class_only = true;
   verbose = 0;
 #ifdef TA_OS_WIN
   win_dll = false;
@@ -94,6 +92,8 @@ void MTA::InitKeyWords() {
   ky = new TypeDef("protected");spc_keywords.Add(ky); ky->idx = MP_PROTECTED;
   ky = new TypeDef("inline");   spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
   ky = new TypeDef("mutable");  spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
+  ky = new TypeDef("explicit");  spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
+  ky = new TypeDef("volatile");  spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
   ky = new TypeDef("virtual");  spc_keywords.Add(ky); ky->idx = MP_VIRTUAL;
   ky = new TypeDef("static");   spc_keywords.Add(ky); ky->idx = MP_STATIC;
   ky = new TypeDef("const");    spc_keywords.Add(ky); ky->idx = MP_CONST;
@@ -107,6 +107,54 @@ void MTA::InitKeyWords() {
 void MTA::BuildHashTables() {
   taMisc::types.BuildHashTable(hash_size);
   spc_keywords.BuildHashTable(hash_size);
+}
+
+void MTA::PushState(States new_state) {
+  state_stack.Add(new_state);
+  state = new_state;
+}
+
+MTA::States MTA::PopState() {
+  if(state_stack.size == 0) {
+    taMisc::Error("pop on empty state_stack!");
+    state = Find_Item;
+    return state;
+  }
+  States prv_state = (States)state_stack.Pop();
+  if(state_stack.size > 0)
+    state = (States)state_stack.Peek();
+  else
+    state = Find_Item;          // default
+  return prv_state;
+}
+
+void MTA::ResetState() {
+  state_stack.Reset();
+  PushState(Find_Item);
+}
+
+void MTA::PushClass(TypeDef* new_class) {
+  class_stack.Link(new_class);
+  cur_class = new_class;
+}
+
+TypeDef* MTA::PopClass() {
+  if(class_stack.size == 0) {
+    taMisc::Error("pop on empty class_stack!");
+    cur_class = NULL;
+    return NULL;
+  }
+  TypeDef* prv_class = class_stack.Pop();
+  if(state_stack.size > 0)
+    cur_class = class_stack.Peek();
+  else
+    cur_class = NULL;
+  return prv_class;
+}
+
+void MTA::ResetClassStack() {
+  class_stack.Reset();
+  cur_class = NULL;
 }
 
 void MTA::Burp() {
@@ -124,6 +172,29 @@ void MTA::Class_UpdateLastPtrs() {
   last_memb = cur_memb;
   last_meth = cur_meth;
   cur_memb = NULL; cur_memb_type = NULL; cur_meth = NULL;
+}
+
+void MTA::Namespc_PushNew(const char* spc) {
+  namespc_stack.Reset();
+  // todo: currently have no way to detect exit, so just reset
+  namespc_stack.Add(spc);
+  if(verbose > 1) {
+    taMisc::Info("entered new namespace:", spc);
+  }
+}
+
+void MTA::Namespc_Pop() {
+  if(namespc_stack.size == 0) {
+    taMisc::Error("namespace stack size is 0, cannot pop!");
+    return;
+  }
+  String old = namespc_stack.Pop();
+  String cur = "<top level>";
+  if(namespc_stack.size > 0)
+    cur = namespc_stack.Peek();
+  if(verbose > 1) {
+    taMisc::Info("popped off namespace:", old, "current is:", cur);
+  }
 }
 
 void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
@@ -336,7 +407,6 @@ void mta_print_usage(int argc, char* argv[]) {
        << "\n[-v<level>]         verbosity level, 1-5, 1=results,2=more detail,3=trace,4=source,5=parse"
        << "\n[-css* | -nocss]     generate CSS stub functions"
        << "\n[-instances]        generate instance tokens of types"
-       << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
        << "\n[-I<include>]...    path to include files (one path per -I)"
        << "\n[-D<define>]...     define a pre-processor macro"
        << "\n[-cpp=<cpp command>] explicit path for c-pre-processor (g++ -E is default)"
@@ -352,7 +422,7 @@ void mta_print_usage(int argc, char* argv[]) {
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
 #if 0 // change to 1 for debugging
-  verbose = 2;
+  verbose = 6;
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else
@@ -400,12 +470,6 @@ int MTA::Main(int argc, char* argv[]) {
     }
     else if(tmp == "-gendoc") {
       gen_doc = true;
-    }
-    else if(tmp == "-class_only") {
-      class_only = true;
-    }
-    else if(tmp == "-struct_union") {
-      class_only = false;
     }
     else if(tmp == "-o") {
       out_fname = argv[i+1];
@@ -567,13 +631,13 @@ int MTA::Main(int argc, char* argv[]) {
 
   cur_is_trg = true;            // assume we start out in file
   strm_pos=0;
-  state = MTA::Find_Item;
-  yy_state = MTA::YYRet_Ok;
+  PushState(Find_Item);         // starting state
+  yy_state = YYRet_Ok;
   line = 1;
   col = 0;
   cout << "Running maketa on: " << trg_header << endl;
 
-  while(yy_state != MTA::YYRet_Exit) yyparse();
+  while(yy_state != YYRet_Exit) yyparse();
 
   ////////////////////////////////////////////////
   //    Generate output

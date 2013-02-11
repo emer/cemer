@@ -32,7 +32,7 @@ class TA_API taiWidget_List : public taPtrList<taiWidget> {
 INHERITED(taPtrList<taiWidget>)
 public:
 #ifndef __MAKETA__
-  USING(inherited::Add)
+  using inherited::Add;
   template<class T>
   T*                    Add(T* it) {Add_((void*)it); return it;}
     // convenience method, returns strongly typed guy that it adds

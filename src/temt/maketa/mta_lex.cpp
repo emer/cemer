@@ -293,12 +293,11 @@ int MTA::lex() {
 	if(state == Find_Item) {
 	  String tmp = ComBuf;
 	  if(tmp.contains("#REG_FUN")) { // function follows comment
-	    state = Parse_fundef;
+	    PushState(Parse_fundef);
 	    return MP_REGFUN;
 	  }
 	}
-	if((state == Find_Item) || (state == Parse_infun)
-	   || (state == Skip_File))
+	if((state == Find_Item) || (state == Parse_infun))
 	  continue;
 	yylval.chr = ComBuf;
 	return MP_COMMENT;
@@ -342,8 +341,6 @@ int MTA::lex() {
       cur_fname = lexCanonical(LexBuf);
       if ((c != '\n') && (c != '\r'))
 	skipline();		// might be training stuff to skip here
-      if (state == Skip_File) // if previously skipping, default is to find
-	state = Find_Item;
 
       cur_fname_only = taMisc::GetFileFmPath(cur_fname);
       if(cur_fname_only == trg_fname_only) {
@@ -359,39 +356,29 @@ int MTA::lex() {
       continue;			// now actually parse something new..
     }
 
-    if(state == Skip_File) {
-      continue;
-    }
-
     if(state == Find_Item) {
       if(readword(c) == EOF)
 	return YYRet_Exit;
       if((itm = spc_keywords.FindName(LexBuf)) != NULL) {
-	yylval.typ = itm;
-	switch (itm->idx) {
-	case MP_TYPEDEF:
-	  state = Parse_typedef;
-	  return itm->idx;
-	case MP_ENUM:
-	  state = Parse_enum;
-	  return itm->idx;
-	case MP_CLASS:
-	  state = Parse_class;
-	  return itm->idx;
-	case MP_STRUCT:
-	  if(class_only)
-	    break;
-	  state = Parse_class;
-	  return itm->idx;
-	case MP_UNION:
-	  if(class_only)
-	    break;
-	  state = Parse_class;
-	  return itm->idx;
-	case MP_TEMPLATE:
-	  state = Parse_class;
-	  return itm->idx;
-	}
+        // only pay attention to interesting items here!
+        switch(itm->idx) {
+        case MP_TYPEDEF:
+        case MP_CLASS:     
+        // case MP_STRUCT:    
+        // case MP_UNION:     
+        case MP_TEMPLATE:  
+        // case MP_USING:     
+        case MP_NAMESPACE:
+          yylval.typ = itm;
+          PushState(Found_Item);
+          return itm->idx;
+          break;
+        case MP_ENUM:      
+          yylval.typ = itm;
+          PushState(Parse_enum); // needs this right away for parsing
+          return itm->idx;
+          break;
+        }
       }
       last_word = LexBuf;
       continue;
@@ -404,7 +391,7 @@ int MTA::lex() {
       else if(c == '}') {
 	bdepth--;
 	if(bdepth == 0) {
-	  state = Parse_inclass;
+	  PopState();
 	  c = skipwhite_peek();	// only peek at nonwhite stuff
 	  if(c == ';')		// and get trailing semi
 	    Getc();
@@ -418,9 +405,33 @@ int MTA::lex() {
       continue;
     }
 
-    if((state == Parse_inclass) && (c == '{')) {
+    if((state == Parse_inclass || state == Parse_fundef) && (c == '{')) {
       bdepth = 1;
-      state = Parse_infun;
+      PushState(Parse_infun);
+      continue;
+    }
+
+    // a complex expression we want to avoid
+    if(state == Parse_inexpr) {
+      if(c == '(')
+	bdepth++;
+      else if(c == ')') {
+	bdepth--;
+	if(bdepth == 0) {
+	  PopState();
+	  return MP_FUNCTION;   // good enough
+	}
+      }
+      else if(readword(c) == EOF) {
+        yyerror("premature end of file");
+	return YYRet_Exit;
+      }
+      continue;
+    }
+
+    if((state == Parse_enum) && (c == '(')) {
+      bdepth = 1;
+      PushState(Parse_inexpr);
       continue;
     }
     
@@ -438,8 +449,8 @@ int MTA::lex() {
 	  Getc();
 	  if ((c != '"') && (c != '\n') && (c != '\r'))
 	    EqualsBuf += (char)c;
-	  if(c == ')')	bdepth--;
-	  if(c == '(')	bdepth++;
+	  if(c == ')' || c == '>')	bdepth--;
+	  if(c == '(' || c == '<')	bdepth++;
 	} while (c != EOF);
 	return YYRet_Exit;
       }
@@ -447,7 +458,7 @@ int MTA::lex() {
       return MP_EQUALS;
     }
 
-    if((state == Parse_inclass) && (c == '[')) {
+    if(c == '[') {
       bdepth = 0;
       do {
 	c = Getc();
@@ -513,10 +524,10 @@ int MTA::lex() {
 	return MP_NAME;
       }
       if(lx_tok == MP_OPERATOR) {
-	while((c=Peekc()) != '(') Getc(); // skip to the parens
+	while((c=Peekc()) != '(' && (c != ';')) Getc(); // skip to the parens -- also ; terminates
       }
-      if(lx_tok == MP_ENUM) {
-	state = Parse_enum;
+      if(lx_tok == MP_ENUM) {   // must do this right away else enums get eaten by function slurper!
+        PushState(Parse_enum);
       }
       return lx_tok;
     }

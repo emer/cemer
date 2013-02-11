@@ -108,7 +108,6 @@ enum SigLinkSignal { /* reason why SigEmit being called, as well as defining ops
 
   SLS_RESOLVE_NOW = 90, // called ex by SomeMethod() buttons to request all gui clients of the guy to apply their outstanding changes
 
-#ifndef __MAKETA__
   SLS_LIST_MIN          = SLS_LIST_INIT,
   SLS_LIST_MAX          = SLS_LIST_SORTED,
   SLS_GROUP_MIN         = SLS_GROUP_UPDATE,
@@ -125,7 +124,6 @@ enum SigLinkSignal { /* reason why SigEmit being called, as well as defining ops
   SLS_LIST_ITEM_TO_GROUP_MAX = SLS_LIST_SORTED, // for checking to translate for item->item
   SLS_XXX_UPDATE_MIN = SLS_STRUCT_UPDATE_BEGIN, // for forwarding these guys, ex. Matrix
   SLS_XXX_UPDATE_MAX = SLS_DATA_UPDATE_END, // for forwarding these guys, ex. Matrix
-#endif
 };
 
 /* SigLinkSignal Notes

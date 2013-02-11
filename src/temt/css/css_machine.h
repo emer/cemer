@@ -813,7 +813,7 @@ public:
 
   void		Copy(const cssElFun& cp);
   void		CopyType(const cssElFun& cp) { Copy(cp); }
-  USING(cssEl::operator=)
+  using cssEl::operator=;
 
   inline void           SetFunFlag(FunFlags flg)   { flags = (FunFlags)(flags | flg); }
   // set flag state on
@@ -851,7 +851,7 @@ public:
   void 		Constr();
   void		Copy(const cssElCFun& cp);
   void		CopyType(const cssElCFun& cp) { Copy(cp); }
-  USING(cssElFun::operator=)
+  using cssElFun::operator=;
 
   cssElCFun();
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]));
@@ -893,7 +893,7 @@ public:
   void   		BindArgs(cssEl** args, int& act_argc);
   cssEl::RunStat 	Do(cssProg* prog);
 
-  USING(cssElCFun::operator=)
+  using cssElCFun::operator=;
 
   // constructors
   cssElInCFun();
@@ -929,7 +929,7 @@ public:
   void		Constr();
   void		Copy(const cssMbrCFun& cp);
   void		CopyType(const cssMbrCFun& cp) { Copy(cp); }
-  USING(cssElFun::operator=)
+  using cssElFun::operator=;
 
   cssMbrCFun();
   cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**));
@@ -1029,7 +1029,7 @@ public:
   void		Constr();
   void		Copy(const cssCodeBlock& cp);
   void		CopyType(const cssCodeBlock& cp) { Copy(cp); }
-  USING(cssElFun::operator=)
+  using cssElFun::operator=;
 
   cssCodeBlock();
   cssCodeBlock(const String& nm, cssProg* ownr_prog);
@@ -1068,7 +1068,7 @@ public:
   void		Constr();
   void		Copy(const cssScriptFun& cp);
   void		CopyType(const cssScriptFun& cp) { Copy(cp); }
-  USING(cssElFun::operator=)
+  using cssElFun::operator=;
 
   cssScriptFun();
   cssScriptFun(const String& nm);
@@ -1109,7 +1109,7 @@ public:
   void		Constr();
   void		Copy(const cssMbrScriptFun& cp);
   void		CopyType(const cssMbrScriptFun& cp) { Copy(cp); }
-  USING(cssScriptFun::operator=)
+  using cssScriptFun::operator=;
 
   cssMbrScriptFun();
   cssMbrScriptFun(const String& nm, cssClassType* cls);
@@ -1200,7 +1200,7 @@ public:
 
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
-  USING(cssEl::operator=)
+  using cssEl::operator=;
 
   // operators
   virtual bool	ROCheck();	// do read_only check, true if ok to modify, else err
@@ -1271,7 +1271,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
-  USING(cssEl::operator=)
+  using cssEl::operator=;
 
   // operators
   void operator=(const cssEl& s);
@@ -1318,7 +1318,7 @@ public:
   static void	Skip_To_Endif(cssProg* prog); // skip text to next endif
 
   void	Constr();
-  USING(cssElFun::operator=)
+  using cssElFun::operator=;
 
   cssDef();
   cssDef(int ac);

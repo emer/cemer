@@ -31,7 +31,7 @@ public:
 
   override const String titleText();
 
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void                  GetImage(taList_impl* base_lst, taBase* it);
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override

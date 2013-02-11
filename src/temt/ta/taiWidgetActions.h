@@ -136,7 +136,7 @@ protected:
   taiWidgetActions*   par_menu; // parent menu, if any -- many methods delegate their calls upward if there is a parent
   iActionSubMenuEl*         par_menu_el; // parent submenu element, if any
   void                  emitLabelChanged(const String& val); // #IGNORE
-  USING(inherited::GetImage_impl)
+  using inherited::GetImage_impl;
   virtual bool          GetImage_impl(const Variant& usr);  // #IGNORE set to this usr item, returns false if not found -- recursive for hiermenus
   virtual void          ActionAdded(iAction* it); // add to rep, def adds to mrep, but overridden for menubutton type
   virtual void          ActionRemoving(iAction* it); // remove from rep, def removes from mrep, but overridden for menubutton type

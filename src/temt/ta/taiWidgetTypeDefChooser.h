@@ -35,7 +35,7 @@ public:
   override bool         hasNoItems();
   override bool         hasOnlyOneItem();
 
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void                  GetImage(TypeDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   TypeDef*              GetValue() {return td();}

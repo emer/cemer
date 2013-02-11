@@ -48,7 +48,7 @@ protected:
   void                  Constr(QWidget* gui_parent_);
   void                  AddTypeMembers(); // called to add all typ members
   override void         ChildRemove(taiWidget* child); // remove from memb_el too
-  USING(inherited::GetImage_impl)
+  using inherited::GetImage_impl;
   override void         GetImage_impl(const void* base);
   override void         GetValue_impl(void* base) const;
   virtual bool          ShowMember(MemberDef* md) const;

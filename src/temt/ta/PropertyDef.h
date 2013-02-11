@@ -47,9 +47,7 @@ public:
   override bool         isReadOnly() const;
   override bool         isGuiReadOnly() const;
   void                  setType(TypeDef* typ); // use this, to check for consistency between the various source -- should NOT be null!
-#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_PROPERTY;}
-#endif
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_PropertyDef;}
   override bool         ValIsDefault(const void* base,

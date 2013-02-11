@@ -66,11 +66,9 @@ public:
     T_Base = 11, 	// #LABEL_taBase taBase ref counted
     T_Matrix = 12, 	// #LABEL_taMatrix taMatrix ref counted
     
-    T_TypeItem = 13	// #LABEL_TypeItem
-#ifndef __MAKETA__
-    ,T_Atomic_Min = T_Bool,
-    T_Atomic_Max = T_String
-#endif
+    T_TypeItem = 13,	// #LABEL_TypeItem
+    T_Atomic_Min = T_Bool,
+    T_Atomic_Max = T_String,
   };
 
   static const String	formatNumber(const Variant& val,
@@ -114,10 +112,8 @@ public:
   void			setType(VarType value); // force it to be given type, if changed, set to default value
   String		getTypeAsString() const; // for debugging, get variant type as a string
 
-#ifndef __MAKETA__
   void			save(std::ostream& s) const; // streams out using << for the type
   void			load(std::istream& s); // streams in as a string, use toXxx if it is of another type
-#endif
   
 // following are ops to set to a specific type of value  
   void 			setInvalid(); // invalid/null
@@ -349,13 +345,8 @@ public:
   Variant&	operator~(); // unary ~
   bool		operator!() {return !toBool();} 
 
-#ifdef __MAKETA__
-  friend ostream&   operator<<(ostream& s, const Variant& x);
-  friend istream&   operator>>(istream& s, Variant& x);
-#else
   friend std::ostream&   operator<<(std::ostream& s, const Variant& x); // streams type code, then value
   friend std::istream&   operator>>(std::istream& s, Variant& x);  // expects: type code then value
-#endif 
   
 #if defined(TA_USE_QT) && !defined(__MAKETA__)
   Variant(const QVariant &val);
@@ -397,36 +388,28 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			UpdateAfterLoad(); // called after internal modifications, to reassert correctness of null etc.
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
-#ifdef __MAKETA__
-  void			Dump_Save_Type(ostream& strm) const; // dumps type and null 
-  bool			Dump_Load_Type(istream& strm, int& last_char); 
-    // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true'
-#else
   void			Dump_Save_Type(std::ostream& strm) const; // dumps type and null 
   bool			Dump_Load_Type(std::istream& strm, int& last_char); 
     // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true' if type loaded 
-#endif
   void			warn(const char* msg) const; // emit warning message
   void			error(const char* msg) const; // emit error message
 protected:
-#ifdef __MAKETA__
-  unsigned char d[12];
-#else
-  union Data // sizes are given for 32/64 sys
-  {
-      bool b; // 8
-      int i; // 32
-      uint u; // 32 -- also for byte
-      ta_int64_t i64; // 64
-      ta_uint64_t u64; // 64
-      double d; // 64
-      char c;
-      intptr_t str; // 32/64 note: this is an in-place taString, NOT a pointer
-      void* ptr; // 32/64
+
+#ifndef __MAKETA__
+  union Data { // sizes are given for 32/64 sys
+    bool b; // 8
+    int i; // 32
+    uint u; // 32 -- also for byte
+    ta_int64_t i64; // 64
+    ta_uint64_t u64; // 64
+    double d; // 64
+    char c;
+    intptr_t str; // 32/64 note: this is an in-place taString, NOT a pointer
+    void* ptr; // 32/64
 #ifndef NO_TA_BASE
-      taBase* tab; // 32/64 note: properly ref counted; also used for matrix
+    taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
-      TypeItem* ti; // 32/64
+    TypeItem* ti; // 32/64
   } d;
   int m_type : 29;
   mutable int m_is_numeric : 1; // true when we've tested string for numeric

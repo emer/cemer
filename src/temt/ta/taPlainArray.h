@@ -42,12 +42,7 @@ public:
   uint          El_SizeOf_() const              { return sizeof(T); }    // #IGNORE
   void*         El_GetTmp_() const              { return (void*)&tmp; }  // #IGNORE
   const void*   El_GetErr_() const              { return (void*)&err; }  // #IGNORE
-/* #ifndef __MAKETA__
-  String        El_GetStr_(const void* it) const        { return SC((*((T*)it))); } // #IGNORE
-  void          El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)SC(val); } // #IGNORE
-//  String      El_GetStr_(const void* it) const        { return String(*((T*)it)); } // #IGNORE
-//  void                El_SetFmStr_(void* it, const String& val) { *((T*)it) = (T)val; } // #IGNORE
-#endif */
+
   taPlainArray(int init_alloc)                  {el = NULL; Alloc(init_alloc); }
   taPlainArray()                                {el = NULL;}
   taPlainArray(const taPlainArray<T>& cp)       {el = NULL; Alloc(cp.size); Duplicate(cp); }

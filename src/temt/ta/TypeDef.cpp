@@ -812,6 +812,8 @@ TypeDef* TypeDef::GetStemBase() const {
 }
 
 TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
+  if(it == NULL) return NULL;
+
   if(parents.LinkUnique(it))
     par_off.Add(p_off);         // it was unique, add offset
 
@@ -1119,6 +1121,7 @@ String TypeDef::GetTemplInstName(const TypeSpace& inst_pars) const {
 
 void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   if(inst_pars.size != templ_pars.size) {
+    return; // todo: get default template args from parser!!!
     String defn_no(templ_pars.size);
     String inst_no(inst_pars.size);
     taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",

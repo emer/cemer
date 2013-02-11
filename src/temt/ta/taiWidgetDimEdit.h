@@ -39,7 +39,7 @@ public:
   void                  GetValue(MatrixGeom* arr) const;
 
 protected:
-  USING(inherited::GetImage_impl)
+  using inherited::GetImage_impl;
   override void         GetImage_impl(const void* base) {GetImage((const MatrixGeom*)base);}
   override void         GetValue_impl(void* base) const {GetValue((MatrixGeom*)base);}
 private:

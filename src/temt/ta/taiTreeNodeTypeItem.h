@@ -33,7 +33,7 @@ INHERITED(taiTreeNode)
 public:
   const TypeItem::TypeInfoKinds    tik;
 
-  USING(inherited::data)
+  using inherited::data;
   TypeItem*             data() {return ((taSigLinkTypeItem*)m_link)->data();}
   taSigLinkTypeItem*   link() const {return (taSigLinkTypeItem*)m_link;}
 

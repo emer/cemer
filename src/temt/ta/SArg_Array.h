@@ -40,10 +40,8 @@ public:
   void          SetValue(const String& key, const String& value);
     // set or update the value for the key
 
-#ifndef __MAKETA__
   int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
   int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
-#endif
 
   void  UpdateAfterEdit();
   void  InitLinks();

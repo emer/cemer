@@ -27,7 +27,7 @@
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class iDataTableEditor; //
-class ClusterManager; // #IGNORE
+class ClusterManager; //
 taTypeDef_Of(GridSearch);
 
 
@@ -54,10 +54,8 @@ public:
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
 
 protected:
-#ifndef __MAKETA__
   void initClusterManager();
   ClusterManager *m_cm;
-#endif
 
 public:
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);

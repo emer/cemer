@@ -183,19 +183,6 @@ public:
   // #IGNORE concatenate first 2 args, store result in last arg
 
   // IO
-#ifdef __MAKETA__
-  TA_API friend ostream&   operator<<(ostream& s, const taString& x);
-  TA_API friend istream&   operator>>(istream& s, taString& x); //
-
-  TA_API friend int        readline(istream& s, taString& x,
-                             char terminator = '\n',
-                             int discard_terminator = 1);
-  TA_API friend int        readline_auto(istream& strm, taString& x);
-  // reads a line regardless of OS terminator (n rn r) convention of the stream (discarding terminators); returns num chars read
-  bool                  Save_str(ostream& ostrm);
-  bool                  Load_str(istream& istrm);
-  // #IGNORE
-#else
   taString&   operator<<(char c) { return cat(c); }
   taString&   operator<<(const char* x) { return cat(x); }
   taString&   operator<<(const taString& x) { return cat(x); }
@@ -220,7 +207,6 @@ public:
   TA_API friend int     readline_auto(std::istream& strm, taString& x);
   bool                  Load_str(std::istream& istrm); // load contents from a stream
   bool                  Save_str(std::ostream& ostrm); // save contents to a stream
-#endif
   bool                  LoadFromFile(const String& fname);
   // load contents of given file into string
   bool                  SaveToFile(const String& fname);

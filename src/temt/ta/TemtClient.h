@@ -57,17 +57,14 @@ public:
   TemtClient_QObj* adapter(); // #IGNORE
   TA_BASEFUNS(TemtClient);
 
-#ifndef __MAKETA__ // maketa chokes on the net class types etc.
-  TemtServer*		server; // (will never change) set on create; NOT refcnted
-  
+  TemtServer*		server; // #READ_ONLY #NO_SAVE (will never change) set on create; NOT refcnted
+
   void			CloseClient();
-  void			SetSocket(QTcpSocket* sock);
+  void			SetSocket(QTcpSocket* sock); // #IGNORE
 
   void			SendError(const String& err_msg); // send error reply
   void			SendReply(const String& r); // send reply
   void			SendOk(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
-//  void			SendOk(int lines = -1);
-//  void			SendOk(int lines, const String& addtnl); //
   
   void			WriteLine(const String& ln); // low level write, note: adds eol
   void			Write(const String& txt); // low level write
@@ -140,8 +137,8 @@ protected:
 
   virtual void 		cmdGetDataCell_impl(TableParams& p);
   virtual void 		cmdSetDataCell_impl(TableParams& p);
-#endif
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
+#endif
   String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
   
 // every command line is parsed into the following pieces before dispatching the command:
@@ -159,7 +156,6 @@ protected:
   
   void			HandleLines(); // line handling loop
   void			ParseCommand(const String& cl);
-#endif
 private:
   void	Copy_(const TemtClient& cp);
   void	Initialize();

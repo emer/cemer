@@ -49,13 +49,8 @@ public:
                  float d5=0.0f, float d6=0.0f, float d7=0.0f, float d8=0.0f, float d9=0.0f);
   // #BUTTON evaluate function given n_dims supplied values as args (in direct correspondence with internally-stored dimensions)
 
-#ifndef __MAKETA__
   virtual void  LoadTable(std::istream& is);
   // #BUTTON load a lookup table of function values at specific points in n_dims space
-#else
-  virtual void  LoadTable(istream& is);
-  // #BUTTON load a lookup table of function values at specific points in n_dims space
-#endif
   virtual String&  ListTable(String& strm);
   // #BUTTON #USE_RVAL output the lookup table in text format
   virtual void  ShiftNorm(float desired_mean);

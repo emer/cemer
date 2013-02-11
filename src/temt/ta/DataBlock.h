@@ -42,10 +42,8 @@ public:
     DB_SOURCE           = 0x0004, // is a data source (provides data, "read")
     DB_SINK             = 0x0008, // is a data sink (accepts data, "write")
     DB_SINK_GROWABLE    = 0x0010,  // a sink that can be extended (via AddItem)
-    DB_SINK_DYNAMIC     = 0x0020  // a sink whose schema can be modified
-#ifndef __MAKETA__
-    ,DB_IND_SEQ_SRC_SNK = 0x000F
-#endif
+    DB_SINK_DYNAMIC     = 0x0020,  // a sink whose schema can be modified
+    DB_IND_SEQ_SRC_SNK  = 0x000F,  // #IGNORE
   };
   virtual DBOptions     dbOptions() const = 0; // #CAT_Access options the instance type support
 

@@ -102,7 +102,7 @@ public:
   // for dialogs -- add to list of active_edit dialogs too
   iPanelOfEditor*        EditPanel(taiSigLink* link); // for panels
   iPanelOfEditor*        EditPanelDeferred(taiSigLink* link); // for panels
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void                  GetImage(bool force); //override
   void                  GetValue(); //override
   virtual bool          ShowMember(MemberDef* md) const; // #OBS

@@ -83,7 +83,7 @@ public:
   ~cssiArgDialog();
 
   void		Constr_ArgTypes();
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void		GetImage(bool force); // force ignored
   void		GetValue();
   override int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1);

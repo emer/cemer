@@ -241,27 +241,21 @@ public:
     BF_NONE	= 0, // #NO_BIT
     V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1pi_out features
     V1B_AVGSUM	= 0x0002, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
-#ifndef __MAKETA__
     BF_DEFAULT  = V1B_DSP,	     // #IGNORE #NO_BIT this is the default setup
-#endif
   };
 
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
     LEN_SUM	= 0x0001, // length summing cells -- just average along oriented line
     END_STOP	= 0x0002, // end stop cells -- len sum minus single same orientation point after a gap -- requires LEN_SUM
-#ifndef __MAKETA__
     CF_DEFAULT  = LEN_SUM | END_STOP,  // #IGNORE #NO_BIT this is the default setup
-#endif
   };
 
   enum V2Filters { // #BITS flags for specifying which v2 filters to include
     V2_NONE	= 0, // #NO_BIT
     V2_TL	= 0x0001, // compute V2 T and L junction detectors -- prereq for V2_BO too
     V2_BO	= 0x0002, // compute V2 border ownership output, integrating length sum and TL junction signals
-#ifndef __MAKETA__
     V2_DEFAULT  = V2_NONE,  // #IGNORE #NO_BIT this is the default setup
-#endif
   };
 
   enum DspHoriz {	// for storing disparity match information

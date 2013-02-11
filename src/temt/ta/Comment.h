@@ -23,20 +23,6 @@
 
 // declare all other types mentioned but not required to include:
 
-// using namespace std;
-// namespace garbanzo {
-
-// #include <qglobal.h>
-
-// class test {
-//   int   bfof;
-//   float sfk;
-//   test()
-//     : bfof(0) { }
-// };
-
-#if 1
-
 taTypeDef_Of(Comment);
 
 class TA_API Comment: public ProgEl { 
@@ -60,7 +46,5 @@ private:
   void	Initialize();
   void	Destroy()	{CutLinks();}
 }; 
-
-#endif
 
 #endif // Comment_h

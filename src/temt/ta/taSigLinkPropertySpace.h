@@ -31,7 +31,7 @@ class TA_API taSigLinkPropertySpace: public taSigLinkTypeItemSpace {
 INHERITED(taSigLinkTypeItemSpace)
 public:
   PropertySpace*                data() {return (PropertySpace*)m_data;}
-  USING(inherited::GetListChild)
+  using inherited::GetListChild;
   override taiSigLink* GetListChild(int itm_idx); // returns NULL when no more
   override int          NumListCols() const;
   override const KeyString GetListColKey(int col) const;

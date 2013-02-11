@@ -160,19 +160,15 @@ public:
   // #CAT_File set the proj_dir for this project to be the current working directory for the file system (whenever this project enters scope, this should be called, so files are always loaded appropriately)
   virtual void          SaveRecoverFile();
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
-#ifndef __MAKETA__
   virtual void          SaveRecoverFile_strm(std::ostream& strm);
   // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
-#endif
   virtual String        GetAutoFileName(const String& suffix, const String& ftype_ext = ".proj");
   // #CAT_File get a file name to save project to, with suffix but file extension *removed*, based on any existing file name, project name, and type
   virtual bool          AutoSave(bool force = false);
   // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
 
   override bool         SetFileName(const String& val);
-#ifndef __MAKETA__
   override int          Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0);
-#endif
   override int          Save();
   override int          SaveAs(const String& fname = "");
 

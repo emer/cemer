@@ -37,18 +37,16 @@ public:
     DM_ShowEnums        = 0x0004, // show types that are enums (really only applies to .sub_types)
     DM_ShowNonEnums     = 0x0008, // show types that are not enums (really only applies to .sub_types)
 
-#ifndef __MAKETA__
-    DM_DefaultRoot      = DM_ShowRoot | DM_ShowNonEnums,
-    DM_DefaultChildren  = DM_ShowNonRoot | DM_ShowNonEnums,
-    DM_DefaultEnum      = DM_ShowEnums,
-    DM_DefaultSubTypes  = DM_ShowNonRoot | DM_ShowNonEnums,
-    DM_Default          = DM_DefaultChildren
-#endif
+    DM_DefaultRoot      = DM_ShowRoot | DM_ShowNonEnums, // #NO_BIT
+    DM_DefaultChildren  = DM_ShowNonRoot | DM_ShowNonEnums, // #NO_BIT
+    DM_DefaultEnum      = DM_ShowEnums,                     // #NO_BIT
+    DM_DefaultSubTypes  = DM_ShowNonRoot | DM_ShowNonEnums, // #NO_BIT
+    DM_Default          = DM_DefaultChildren                // #NO_BIT
   };
 
   DisplayMode           dm;
   TypeSpace*            data() {return (TypeSpace*)m_data;}
-  USING(inherited::GetListChild)
+  using inherited::GetListChild;
   override taiSigLink* GetListChild(int itm_idx); // returns NULL when no more
   override int          NumListCols() const;
   override const KeyString GetListColKey(int col) const;

@@ -42,7 +42,7 @@ protected:
   taiEdit*      ie;
   taiWidget_List   meth_el;        // method elements
 
-  USING(inherited::GetImage_impl)
+  using inherited::GetImage_impl;
   override void         GetImage_impl(const void* base);
   virtual void          GetMethMenus();
   virtual void          SetLabel();

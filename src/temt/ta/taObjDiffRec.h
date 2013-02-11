@@ -48,11 +48,9 @@ public:
     ACT_ADD_B   = 0x000800,     // action to take: add obj to b after paired diff_odr
     ACT_COPY_AB = 0x001000,     // action to take: copy from a to paired diff_odr b
     ACT_COPY_BA = 0x002000,     // action to take: copy from paired diff_odr b to a
-#ifndef __MAKETA__
-    DIFF_MASK = DIFF_DEL | DIFF_ADD | DIFF_CHG,
-    DIFF_ADDEL = DIFF_DEL | DIFF_ADD,
-    ACT_MASK = ACT_DEL_A | ACT_DEL_B | ACT_ADD_A | ACT_ADD_B | ACT_COPY_AB | ACT_COPY_BA,
-#endif
+    DIFF_MASK = DIFF_DEL | DIFF_ADD | DIFF_CHG, // #NO_BIT
+    DIFF_ADDEL = DIFF_DEL | DIFF_ADD,           // #NO_BIT
+    ACT_MASK = ACT_DEL_A | ACT_DEL_B | ACT_ADD_A | ACT_ADD_B | ACT_COPY_AB | ACT_COPY_BA, // #NO_BIT
     SUB_NO_ACT = 0x100000,      // this is a sub-object of an add or delete and thus not something that an action can be driven from (just follows whatever the parent has selected)
     VAL_PATH_REL = 0x200000,    // value is a path relative to tab_obj, not a global path
   };

@@ -34,7 +34,7 @@ public:
   taiWidgetListTypeHierMenu(taiWidgetMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IWidgetHost* host_,
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
-  USING(inherited::GetMenu)
+  using inherited::GetMenu;
   void          GetMenu(iMenuAction* actn) {GetMenu(ta_actions, actn);}
   override void         GetMenu(taiWidgetActions* menu, iMenuAction* nact = NULL);
 };

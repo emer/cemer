@@ -56,9 +56,7 @@ public:
 
   css_fun_stub_ptr stubp;       // css function stub pointer
 
-#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_METHOD;}
-#endif
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MethodDef;}
 

@@ -97,7 +97,6 @@ public:
 
     TI_ARGS_NOTINST = 0x04000000, // template instantiation that still has non-instantiated args -- this is true e.g., for a template instantiated within a template  with the param of the parent template that has yet to be instantiated
 
-#ifndef __MAKETA__
     ANY_PTR = POINTER | PTR_PTR,
     ATOMIC = BOOL | INTEGER | ENUM | FLOAT, // fully atomic classes -- support bitwise copy, etc
     ATOMIC_EFF = STRING | VARIANT | SMART_PTR | SMART_INT, // effective atomic classes -- pass by value and act like atomic, but don't support bitwise copy -- need to use actual class interface
@@ -105,7 +104,6 @@ public:
     ALL_MODS = NOT_ACTUAL | SUBTYPE | TI_ARGS_NOTINST, // all modifiers (non-core content)
     FUN_PTR = FUNCTION | POINTER,
     METH_PTR = METHOD | POINTER,
-#endif
   };
 
   enum InitFlags {               // #BITS stages of initialization 
@@ -252,9 +250,7 @@ public:
   { return (init_flag & iflg); }
   // check if init_flag is set
 
-#ifndef __MAKETA__
   override      TypeInfoKinds TypeInfoKind() const {return TIK_TYPE;}
-#endif
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
@@ -595,7 +591,6 @@ public:
   /////////////////////////////////////////////////////////////
   // 		Dump: Saving and loading of type instances to/from streams
 
-#ifndef __MAKETA__
   int           Dump_Save(std::ostream& strm, void* base, void* par=NULL, int indent=0);
   // called by the user to save an object
   int           Dump_Save_impl(std::ostream& strm, void* base, void* par=NULL, int indent=0);
@@ -620,7 +615,6 @@ public:
   int           Dump_Load_Path_impl(std::istream& strm, void*& base, void* par, String path);
   int           Dump_Load_Value(std::istream& strm, void* base, void* par=NULL);
   // loads the actual member values of the object (false if error)
-#endif
 
 private:
   void          Initialize();

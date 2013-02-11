@@ -32,7 +32,7 @@ class TA_API taSigLinkMemberSpace: public taSigLinkTypeItemSpace {
 INHERITED(taSigLinkTypeItemSpace)
 public:
   MemberSpace*          data() {return (MemberSpace*)m_data;}
-  USING(inherited::GetListChild)
+  using inherited::GetListChild;
   override taiSigLink* GetListChild(int itm_idx); // returns NULL when no more
   override int          NumListCols() const;
   override const KeyString GetListColKey(int col) const;

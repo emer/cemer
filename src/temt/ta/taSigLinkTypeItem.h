@@ -36,7 +36,7 @@ public:
   override bool         HasChildItems();
   override String       GetName() const;
   override String       GetDisplayName() const;
-  USING(inherited::ShowMember)
+  using inherited::ShowMember;
   override bool         ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* data_);  //

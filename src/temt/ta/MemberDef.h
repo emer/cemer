@@ -52,9 +52,7 @@ public:
 
   override void*        This() {return this;}
   override TypeDef*     GetTypeDef() const {return &TA_MemberDef;}
-#ifndef __MAKETA__
   override TypeInfoKinds TypeInfoKind() const {return TIK_MEMBER;}
-#endif
 
   override bool ValIsDefault(const void* base,
                              int for_show=IS_EXPERT) const;
@@ -102,14 +100,11 @@ public:
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   // for dump files
-#ifndef __MAKETA__
   bool          DumpMember(void* par);          // decide whether to dump or not
   int           Dump_Save(std::ostream& strm, void* base, void* par, int indent);
   int           Dump_SaveR(std::ostream& strm, void* base, void* par, int indent);
   int           Dump_Save_PathR(std::ostream& strm, void* base, void* par, int indent);
-
   int           Dump_Load(std::istream& strm, void* base, void* par); //
-#endif
 
 private:
   void          Initialize();

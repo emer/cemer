@@ -80,7 +80,7 @@ public:
 
   SoTransform*	transform() const { return transform_; }
   // #IGNORE the master transform, for the whole entity
-  USING(inherited::getMatrix)
+  using inherited::getMatrix;
   taMatrix*	getMatrix() const { return matrix; }
 
   SoMatrixGrid(taMatrix* mat = NULL, bool oddy = true, ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO, bool val_txt = false);

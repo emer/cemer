@@ -32,7 +32,7 @@ public:
   taGroup_impl*         grp;
 
   override const String titleText();
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void                  GetImage(taGroup_impl* base_grp, taBase* it);
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override

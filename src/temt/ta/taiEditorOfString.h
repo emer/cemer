@@ -37,7 +37,7 @@ public:
   bool                  rich_text; // string has rich text, not plain
 
   void                  Constr(const char* prompt = "", const char* win_title = "");
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   override void         GetImage();
   override void         GetValue();
   override void         Constr_Buttons();

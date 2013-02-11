@@ -46,7 +46,7 @@ public:
   taiWidgetMethod*        GetGenericMethodRep(void* base, taiWidget* par); // this is just for CallFun
   taiWidgetMethod*        GetButtonMethodRep(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_);
   taiWidgetMethod*        GetMenuMethodRep(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   override void         GetImage(taiWidget*, const void*) { }
   override void         GetValue(taiWidget*, void*)       { }
 

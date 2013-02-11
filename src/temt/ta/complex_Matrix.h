@@ -76,16 +76,16 @@ public:
 
   override taMatrix* Transpose() const;
 
-  USING(taMatrix::operator*)
+  using taMatrix::operator*;
   override taMatrix* operator*(const taMatrix& t) const;
 
-  USING(taMatrix::operator/)
+  using taMatrix::operator/;
   override taMatrix* operator/(const taMatrix& t) const;
 
-  USING(taMatrix::operator*=)
+  using taMatrix::operator*=;
   override void      operator*=(const taMatrix& t);
 
-  USING(taMatrix::operator/=)
+  using taMatrix::operator/=;
   override void      operator/=(const taMatrix& t);
 
   TA_MATRIX_FUNS_DERIVED(complex_Matrix, double);

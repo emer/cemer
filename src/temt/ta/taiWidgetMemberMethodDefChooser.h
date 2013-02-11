@@ -34,7 +34,7 @@ public:
   int                   viewCount() const {return 4;} // override
   const String          viewText(int index) const; // override
 
-  USING(inherited::GetImage)
+  using inherited::GetImage;
   void                  GetImage(MemberDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*             GetValue() {return md();}

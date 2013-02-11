@@ -44,7 +44,7 @@ public:
   taSigLink**          addr_sig_link() {return &m_sig_link;} // #IGNORE
   override taSigLink*  sig_link() {return m_sig_link;}       // #IGNORE
   taBase*               GetOwner() const        { return owner; }
-  USING(inherited::GetOwner)
+  using inherited::GetOwner;
   taBase*               SetOwner(taBase* ta)    { owner = ta; return ta; }
   UserDataItem_List*    GetUserDataList(bool force = false) const;
   void                  CutLinks();

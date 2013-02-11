@@ -33,7 +33,7 @@ public:
 
   QWidget*      GetRep();
 
-  USING(inherited::GetMenu)
+  using inherited::GetMenu;
   virtual void  GetMenu(iMenuAction* actn = NULL);
   virtual void  UpdateMenu(iMenuAction* actn = NULL);
   virtual void  GetMenuImpl(void* base, iMenuAction* actn = NULL);
