@@ -194,6 +194,8 @@ void MTA::TypeSpace_Includes(TypeSpace* ths, ostream& strm, bool instances) {
     TypeDef* ths = taMisc::types.FastEl(i);
     if(!TypeDef_Gen_Test(ths)) continue;
     if(ths->IsTemplInst() && ths->IsClass()) {
+      ths->c_name = "";         // reset this so it will be generated fresh 
+      // in case it got corrupted along the way
       for(int j=0; j< ths->templ_pars.size; j++) {
         TypeDef* tp = ths->templ_pars[j];
         if(tp->IsActualClass()) {

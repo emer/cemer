@@ -135,6 +135,8 @@ void MTA::ResetState() {
 
 void MTA::PushClass(TypeDef* new_class, MembState memb_state) {
   class_stack.Link(new_class);
+  if(class_mstate_stack.size > 0)
+    class_mstate_stack.Peek() = cur_mstate; // update current to current
   class_mstate_stack.Add(memb_state);
   cur_class = new_class;
   cur_mstate = memb_state;
