@@ -90,6 +90,7 @@ public: // slot forwardees
   void 			sock_readyRead();
   void 			sock_disconnected(); 
   void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
+  // #IGNORE
 
 protected:
   static String 	ReadQuotedString(const String& str, int& p, bool& err);
