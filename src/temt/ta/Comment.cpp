@@ -17,7 +17,6 @@
 #include <Program>
 #include <taMisc>
 
-
 void Comment::Initialize() {
   static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
   desc = _def_comment;

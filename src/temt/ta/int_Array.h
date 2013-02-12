@@ -30,7 +30,7 @@ class TA_API int_Array : public taArray<int> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of ints
 INHERITED(taArray<int>)
 public:
-  STATIC_CONST int blank; // #HIDDEN #READ_ONLY
+  static const int blank; // #HIDDEN #READ_ONLY
   virtual void  FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 

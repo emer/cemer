@@ -47,7 +47,7 @@ public:
   override const Variant El_GetVar_(const void* it) const {return *((Variant*)it);} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
-  STATIC_CONST Variant  blank; // #IGNORE
+  static const Variant  blank; // #IGNORE
   override void         Dump_Save_Item(std::ostream& strm, int idx);
   override int          Dump_Load_Item(std::istream& strm, int idx); // ret is last char read, s/b ;
   override void         ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings

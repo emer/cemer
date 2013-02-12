@@ -133,9 +133,12 @@ void MTA::ResetState() {
   PushState(Find_Item);
 }
 
-void MTA::PushClass(TypeDef* new_class) {
+void MTA::PushClass(TypeDef* new_class, MembState memb_state) {
   class_stack.Link(new_class);
+  class_mstate_stack.Add(memb_state);
   cur_class = new_class;
+  cur_mstate = memb_state;
+  PushState(Parse_class);
 }
 
 TypeDef* MTA::PopClass() {
@@ -145,15 +148,23 @@ TypeDef* MTA::PopClass() {
     return NULL;
   }
   TypeDef* prv_class = class_stack.Pop();
-  if(state_stack.size > 0)
+  if(class_stack.size > 0) {
     cur_class = class_stack.Peek();
-  else
+  }
+  else {
     cur_class = NULL;
+  }
+  if(class_mstate_stack.size > 0)
+    class_mstate_stack.Pop();
+  if(class_mstate_stack.size > 0)
+    cur_mstate = (MembState)class_mstate_stack.Peek();
+
   return prv_class;
 }
 
 void MTA::ResetClassStack() {
   class_stack.Reset();
+  class_mstate_stack.Reset();
   cur_class = NULL;
 }
 
@@ -195,6 +206,18 @@ void MTA::Namespc_Pop() {
   if(verbose > 1) {
     taMisc::Info("popped off namespace:", old, "current is:", cur);
   }
+}
+
+void MTA::StartTemplPars() {
+  cur_templ_pars.Reset();
+  cur_templ_defs.Reset();
+  in_templ_pars = true;
+}
+
+void MTA::EndTemplPars() {
+  cur_templ_pars.Reset();
+  cur_templ_defs.Reset();
+  in_templ_pars = false;
 }
 
 void MTA::SetSource(TypeDef* td, bool use_defn_st_line) {
@@ -269,13 +292,14 @@ void MTA::FixClassTypes(TypeDef* td) {
   }
   else if(td->InheritsFromName("taBase")) {
     td->SetType(TypeDef::TABASE);
-    td->opts.AddUnique(TypeDef::opt_instance);       // ta_bases always have an instance
+    td->AddOption(TypeDef::opt_instance);       // ta_bases always have an instance
   }
 }
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
   String typstr = typ;
-  if(typstr != "class" && typstr != "enum" && typstr != "template") {
+  if(!(typstr.contains("class") || typstr.contains("enum") ||  
+       typstr == "template")) {
     td->source_file = taMisc::PathToUnixSep(cur_fname);
     td->source_start = line-1;
     td->source_end = line-1;
@@ -422,7 +446,7 @@ void mta_print_usage(int argc, char* argv[]) {
 int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
 #if 0 // change to 1 for debugging
-  verbose = 6;
+  verbose = 2;
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else

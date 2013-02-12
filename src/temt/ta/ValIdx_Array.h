@@ -31,8 +31,7 @@ class TA_API ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER ##CAT_Math array of value & index items
 INHERITED(taArray<ValIdx>)
 public:
-  STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY
-                                                                                 // NULL; }
+  static const ValIdx blank; // #HIDDEN #READ_ONLY null value
   TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 protected:

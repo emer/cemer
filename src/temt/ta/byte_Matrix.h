@@ -48,7 +48,7 @@ public: //
   override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
 protected:
-  STATIC_CONST byte     blank; // #IGNORE
+  static const byte     blank; // #IGNORE
   override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(byte)); };
   override void         BinaryLoad_Item(std::istream& strm, int idx)

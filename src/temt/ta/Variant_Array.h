@@ -31,7 +31,7 @@ class TA_API Variant_Array : public taArray<Variant> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of variants
 INHERITED(taArray<Variant>)
 public:
-  STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY
+  static const Variant blank; // #HIDDEN #READ_ONLY
   TA_BASEFUNS_NOCOPY(Variant_Array);
   TA_ARRAY_FUNS(Variant_Array, Variant)
 protected:

@@ -76,6 +76,7 @@ public:
   String_PArray namespc_stack;  // stack of name spaces
   int_PArray    state_stack;    // stack of State states
   TypeSpace	class_stack;	// stack of classes -- can be nested..
+  int_PArray    class_mstate_stack; // stack of MembState states for classes
 
   TypeDef*	cur_enum;	// holds current enum
   TypeDef*	cur_class;	// holds current class -- read-only -- use push/pop to update
@@ -84,6 +85,8 @@ public:
   TypeDef*	cur_memb_type;	// current member type
   MethodDef*	cur_meth;	// holds current methoddef
   TypeSpace	cur_templ_pars;	// current template parameters
+  TypeSpace	cur_templ_defs;	// current template defaults
+  TypeSpace	cur_typ_templ_pars; // current template parameters for a type, not a defn
   MemberDef*	last_memb;	// holds previous memberdef
   MethodDef*	last_meth;	// holds previous methoddef
   String        cur_nmspc_tmp;  // temporary current namespace during parsing
@@ -91,6 +94,7 @@ public:
   bool		thisname;	// true if currently doing a "thisname" operation
   bool		constcoln;	// true if a constructor colon was encountered
   bool		burp_fundefn;	// true if needs to burp after parsing fundefn
+  bool          in_templ_pars;   // currently parsing template parameters -- special case..
   bool		gen_css;	// generate css stuff?
   bool		gen_instances;	// generate instances?
   bool		gen_doc;	// generate docs
@@ -145,10 +149,10 @@ public:
   // pop state to prior state, returning old state and setting current state to previous
   void          ResetState();
   // reset back to starting Find_Item state
-  void          PushClass(TypeDef* new_class);
-  // push new class on stack -- becomes the current class
+  void          PushClass(TypeDef* new_class, MembState memb_state);
+  // push new class and member state on stack -- becomes the current class
   TypeDef*      PopClass();
-  // pop current class off the stack and return, previous becomes new current class
+  // pop current class off the stack and return, previous becomes new current class, along with its previous member state
   void          ResetClassStack();
   // reset class stack back to empty
   void          SetSource(TypeDef* td, bool use_defn_st_line);
@@ -163,6 +167,10 @@ public:
   // push a new namespace on the stack
   void          Namespc_Pop();
   // pop off namespace
+  void          StartTemplPars();
+  // start defining template parameters
+  void          EndTemplPars();
+  // done defining template parameters
 
   TypeSpace*	GetTypeSpace(TypeDef* td);
   // get appropriate type space for adding a new type derived from this one

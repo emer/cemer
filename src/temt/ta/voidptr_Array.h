@@ -30,7 +30,7 @@ class TA_API voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of void pointers
 INHERITED(taArray<voidptr>)
 public:
-  STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY
+  static const voidptr blank; // #HIDDEN #READ_ONLY
 
   TA_BASEFUNS_NOCOPY(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)

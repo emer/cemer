@@ -105,9 +105,9 @@ public:
   void		ScanObject();
   // #CAT_Monitor get the monitor data information from the object
 
-  static const KeyString key_obj_name;
-  static const KeyString key_obj_type;
-  static const KeyString key_obj_var;
+  static const KeyString key_obj_name; // #IGNORE
+  static const KeyString key_obj_type; // #IGNORE
+  static const KeyString key_obj_var; // #IGNORE
   String GetColText(const KeyString& key, int itm_idx = -1) const;
 
   int		GetEnabled() const {return (off) ? 0 : 1;}

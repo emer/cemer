@@ -51,7 +51,11 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
     // }
     if(ths->children.size > 0) {
       TypeDef* chld = ths->children[0];
-      return TypeDef_Gen_Test(chld); // we get instantiated where first parent lives!
+      bool rval = TypeDef_Gen_Test(chld); // we get instantiated where first parent lives!
+      if(verbose >= 4) {
+        cerr << "templ inst child test rval: " << rval << endl;
+      }
+      return rval;
     }
     return false;
   }
@@ -340,6 +344,20 @@ void MTA::TypeDef_Gen_Stubs(TypeDef* ths, ostream& strm, bool add_typedefs) {
     // generate property stubs
     MemberSpace_Gen_PropStubs(&(ths->members), ths, strm);
     MethodSpace_Gen_PropStubs(&(ths->methods), ths, strm);
+
+    for(int i=0;i<ths->sub_types.size; i++) {
+      TypeDef* sbt = ths->sub_types.FastEl(i);
+      if(!sbt->IsActualClass() || sbt->HasOption("IGNORE")
+         || sbt->name == "inherited")
+        continue;
+
+      if(this->gen_css && !sbt->HasOption("NO_CSS"))
+        MethodSpace_Gen_Stubs(&(sbt->methods), sbt, strm, add_typedefs);
+
+      // generate property stubs
+      MemberSpace_Gen_PropStubs(&(sbt->members), sbt, strm);
+      MethodSpace_Gen_PropStubs(&(sbt->methods), sbt, strm);
+    }
   }
 }
 
@@ -642,7 +660,7 @@ void MTA::MethodDef_GenStubName(TypeDef* ownr, MethodDef* md, ostream& strm) {
   if(ownr->IsFunction())
     strm << "static cssEl* cssElCFun_" << md->name;
   else
-    strm << "static cssEl* cssElCFun_" << ownr->name << "_" << md->name;
+    strm << "static cssEl* cssElCFun_" << ownr->GetUniqueName() << "_" << md->name;
   strm << "_stub(";
   if(ownr->IsFunction())
     strm << "void*,";
@@ -857,7 +875,7 @@ void MTA::MemberSpace_Gen_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
       ownr->properties.AssertProperty(prop_name, is_new, true, md);
-      strm << "  Variant ta_" << ownr->name << "_" << prop_name
+      strm << "  Variant ta_" << ownr->GetUniqueName() << "_" << prop_name
         << "_get(const void* inst){return Variant(((const "
         << ownr->GetNonPtrType()->Get_C_Name()
         << "*)inst)->" << md->name << ");}\n";
@@ -870,7 +888,7 @@ void MTA::MemberSpace_Gen_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
       TypeDef* param_td = md->type;
       if (param_td) { // better exist!
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << prop_name
+        strm << "  void ta_" << ownr->GetUniqueName() << "_" << prop_name
           << "_set(void* inst, const Variant& val) {(("
           << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name
           << " = " << conv << ";}\n";
@@ -887,7 +905,7 @@ void MTA::MethodSpace_Gen_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
       ownr->properties.AssertProperty(prop_name, is_new, true, md);
-      strm << "  Variant ta_" << ownr->name << "_" << prop_name
+      strm << "  Variant ta_" << ownr->GetUniqueName() << "_" << prop_name
         << "_get(const void* inst){return Variant(((const "
         << ownr->GetNonPtrType()->Get_C_Name()
         << "*)inst)->" << md->name << "());}\n";
@@ -900,7 +918,7 @@ void MTA::MethodSpace_Gen_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
       if (param_td) { // better exist!
         ownr->properties.AssertProperty(prop_name, is_new, false, md);
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << prop_name
+        strm << "  void ta_" << ownr->GetUniqueName() << "_" << prop_name
           << "_set(void* inst, const Variant& val) {(("
           << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name
           << "(" << conv << ");}\n";
@@ -934,6 +952,22 @@ void MTA::TypeDef_Gen_Data(TypeDef* ths, ostream& strm) {
     TypeDef_Gen_MemberData(ths, strm);
     TypeDef_Gen_MethodData(ths, strm);
     TypeDef_Gen_PropertyData(ths, strm);
+
+    for(int i=0;i<ths->sub_types.size; i++) {
+      TypeDef* sbt = ths->sub_types.FastEl(i);
+      if(!sbt->IsActual() || sbt->HasOption("NO_MEMBERS") || sbt->IsTemplate()
+         || sbt->HasOption("IGNORE"))
+        continue;
+      if(sbt->IsActualClass()) {
+        TypeDef_Gen_EnumData(sbt, strm);
+        TypeDef_Gen_MemberData(sbt, strm);
+        TypeDef_Gen_MethodData(sbt, strm);
+        TypeDef_Gen_PropertyData(sbt, strm);
+      }
+      else if(sbt->IsStruct() || sbt->IsUnion()) {
+        TypeDef_Gen_MemberData(sbt, strm);
+      }
+    }
   }
   if(ths->IsFunction() && (gen_css) && !ths->HasOption("NO_CSS")) {
     TypeDef_Gen_MethodData(ths, strm);
@@ -952,13 +986,13 @@ void MTA::TypeDef_Gen_EnumData(TypeDef* ths, ostream& strm) {
          || (enm->enum_vals.size == 0))
         continue;
 
-      strm << "\nstatic EnumDef_data TA_" << ths->name << "_" << enm->name
+      strm << "\nstatic EnumDef_data TA_" << ths->GetUniqueName() << "_" << enm->name
            << "[]={\n";
       EnumSpace_Gen_Data(&(enm->enum_vals), strm);
     }
   }
   else if(ths->IsEnum()) {
-    strm << "\nstatic EnumDef_data TA_" << ths->name << "_EnumDef[]={\n";
+    strm << "\nstatic EnumDef_data TA_" << ths->GetUniqueName() << "_EnumDef[]={\n";
     EnumSpace_Gen_Data(&(ths->enum_vals), strm);
   }
 }
@@ -987,17 +1021,17 @@ void MTA::TypeDef_Init_EnumData(TypeDef* ths, ostream& strm) {
       String str_inh_opts = taMisc::StrArrayToChar(enm->inh_opts);
       String str_lists = taMisc::StrArrayToChar(enm->lists);
 
-      strm << "  tac_AddEnum(TA_" << ths->name << ", \"" << enm->name << "\", \""
+      strm << "  tac_AddEnum(TA_" << ths->GetUniqueName() << ", \"" << enm->name << "\", \""
            << enm->desc  << "\", \"" << str_opts << "\", \"" << str_inh_opts
            << "\", \"" << str_lists << "\", ";
       strm << "\"" << enm->source_file << "\", " << String(enm->source_start)
 	   << ", " << String(enm->source_end) << ", ";
-      strm << "TA_" << ths->name << "_" << enm->name << ");\n";
+      strm << "TA_" << ths->GetUniqueName() << "_" << enm->name << ");\n";
     }
   }
   else if(ths->IsEnum()) {
-    strm << "  tac_ThisEnum(TA_" << ths->name << ", ";
-    strm << "TA_" << ths->name << "_EnumDef);\n";
+    strm << "  tac_ThisEnum(TA_" << ths->GetUniqueName() << ", ";
+    strm << "TA_" << ths->GetUniqueName() << "_EnumDef);\n";
   }
 }
 
@@ -1014,7 +1048,9 @@ void MTA::TypeDef_Gen_MemberData(TypeDef* ths, ostream& strm) {
       break;
     }
   }
-  if(cnt <= 0) return;
+  if(cnt <= 0) {
+    return;
+  }
 
   MemberSpace_Gen_Data(&(ths->members), ths, strm);
 }
@@ -1028,6 +1064,8 @@ bool MTA::MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md) {
 void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
   String mbr_off_nm;
 
+  strm << "\n";
+
   int n_non_statics = 0;
   for(int i=0; i<ths->size; i++) {
     MemberDef* md = ths->FastEl(i);
@@ -1038,11 +1076,11 @@ void MTA::MemberSpace_Gen_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
   }
 
   if (n_non_statics > 0) {
-    mbr_off_nm = String("TA_") + ownr->name + "_MbrOff";
+    mbr_off_nm = String("TA_") + ownr->GetUniqueName() + "_MbrOff";
     strm << "static char " << ownr->Get_C_Name() << "::* " << mbr_off_nm << ";\n";
   }
 
-  strm << "\nstatic MemberDef_data TA_" << ownr->name << "_MemberDef[]={\n";
+  strm << "static MemberDef_data TA_" << ownr->GetUniqueName() << "_MemberDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     MemberDef* md = ths->FastEl(i);
@@ -1083,8 +1121,14 @@ void MTA::TypeDef_Init_MemberData(TypeDef* ths, ostream& strm) {
   }
   if(cnt == 0) return;
 
-  strm << "  tac_AddMembers(TA_" << ths->name << ","
-       << "TA_" << ths->name << "_MemberDef);\n";
+  if(ths->IsSubType()) {
+    strm << "  tac_AddMembers(*" << TypeDef_Gen_TypeDef_Ptr(ths) << ","
+         << "TA_" << ths->GetUniqueName() << "_MemberDef);\n";
+  }
+  else {
+    strm << "  tac_AddMembers(TA_" << ths->name << ","
+         << "TA_" << ths->GetUniqueName() << "_MemberDef);\n";
+  }
 }
 
 
@@ -1140,7 +1184,7 @@ void MTA::MethodSpace_Gen_ArgData(MethodSpace* ths, TypeDef* ownr, ostream& strm
 }
 
 void MTA::MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
-  strm << "\nstatic MethodArgs_data TA_" << ownr->name << "_" << ths->name
+  strm << "\nstatic MethodArgs_data TA_" << ownr->GetUniqueName() << "_" << ths->name
        << "_MethArgs[]={\n";
 
   for(int i=0; i<ths->arg_types.size; i++) {
@@ -1153,7 +1197,7 @@ void MTA::MethodDef_Gen_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
 
 
 void MTA::MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
-  strm << "\nstatic MethodDef_data TA_" << ownr->name << "_MethodDef[]={\n";
+  strm << "\nstatic MethodDef_data TA_" << ownr->GetUniqueName() << "_MethodDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     MethodDef* md = ths->FastEl(i);
@@ -1186,14 +1230,14 @@ void MTA::MethodSpace_Gen_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
       if(ownr->IsFunction())
         strm << md->name << "_stub";
       else
-        strm << ownr->name << "_" << md->name << "_stub";
+        strm << ownr->GetUniqueName() << "_" << md->name << "_stub";
     }
     else {
       strm << ",NULL";
     }
 
     if(md->fun_argc > 0)
-      strm << ",TA_" << ownr->name << "_" << md->name << "_MethArgs";
+      strm << ",TA_" << ownr->GetUniqueName() << "_" << md->name << "_MethArgs";
     else
       strm << ",NULL";
 
@@ -1213,8 +1257,14 @@ void MTA::TypeDef_Init_MethodData(TypeDef* ths, ostream& strm) {
   }
   if(cnt <= 0) return;
 
-  strm << "  tac_AddMethods(TA_" << ths->name << ","
-       << "TA_" << ths->name << "_MethodDef);\n";
+  if(ths->IsSubType()) {
+    strm << "  tac_AddMethods(*" << TypeDef_Gen_TypeDef_Ptr(ths) << ","
+         << "TA_" << ths->GetUniqueName() << "_MethodDef);\n";
+  }
+  else {
+    strm << "  tac_AddMethods(TA_" << ths->name << ","
+         << "TA_" << ths->GetUniqueName() << "_MethodDef);\n";
+  }
 }
 
 
@@ -1256,7 +1306,7 @@ void MTA::PropertySpace_Gen_Data(PropertySpace* ths, TypeDef* ownr, ostream& str
       n_non_statics++;
   }
 
-  strm << "\nstatic PropertyDef_data TA_" << ownr->name << "_PropertyDef[]={\n";
+  strm << "\nstatic PropertyDef_data TA_" << ownr->GetUniqueName() << "_PropertyDef[]={\n";
 
   for(int i=0; i<ths->size; i++) {
     PropertyDef* md = dynamic_cast<PropertyDef*>(ths->FastEl(i));
@@ -1277,13 +1327,13 @@ void MTA::PropertySpace_Gen_Data(PropertySpace* ths, TypeDef* ownr, ostream& str
     }
     String prop_stub;
     if (md->get_mth || md->get_mbr) {
-      prop_stub = "ta_" + ownr->name + "_" + md->name + "_get";
+      prop_stub = "ta_" + ownr->GetUniqueName() + "_" + md->name + "_get";
       strm << prop_stub << ",";
     } else {
       strm << "NULL,";
     }
     if (md->set_mth || md->set_mbr) {
-      prop_stub = "ta_" + ownr->name + "_" + md->name + "_set";
+      prop_stub = "ta_" + ownr->GetUniqueName() + "_" + md->name + "_set";
       strm << prop_stub;
     } else {
       strm << "NULL";
@@ -1304,8 +1354,14 @@ void MTA::TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {
   }
   if(cnt == 0) return;
 
-  strm << "  tac_AddProperties(TA_" << ths->name << ","
-       << "TA_" << ths->name << "_PropertyDef);\n";
+  if(ths->IsSubType()) {
+    strm << "  tac_AddProperties(*" << TypeDef_Gen_TypeDef_Ptr(ths) << ","
+         << "TA_" << ths->GetUniqueName() << "_PropertyDef);\n";
+  }
+  else {
+    strm << "  tac_AddProperties(TA_" << ths->name << ","
+         << "TA_" << ths->GetUniqueName() << "_PropertyDef);\n";
+  }
 }
 
 
@@ -1356,6 +1412,31 @@ void MTA::TypeDef_Gen_TypeInit(TypeDef* ths, ostream& strm) {
   }
 }
 
+void MTA::SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
+  int i;
+  for(i=0; i<ths->size; i++) {
+    TypeDef* sbt = ths->FastEl(i);
+    if((sbt->owner != ths) || sbt->IsEnum() || sbt->IsNotActual())
+      continue;
+
+    String str_opts = taMisc::StrArrayToChar(sbt->opts);
+    String str_inh_opts = taMisc::StrArrayToChar(sbt->inh_opts);
+    String str_lists = taMisc::StrArrayToChar(sbt->lists);
+
+    strm << "  sbt = new TypeDef(\"" << sbt->name << "\", \"" << sbt->desc << "\", ";
+    strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \"";
+    strm << str_lists << "\", ";
+    strm << "\"" << sbt->source_file << "\", " << String(sbt->source_start)
+         << ", " << String(sbt->source_end) << ", ";
+    strm << sbt->GetTypeEnumString() << ", ";
+    strm << "sizeof(int), (void**)0);\n";
+
+    String sbt_ref = "sbt->";
+    TypeDef_Gen_AddAllParents(sbt, sbt_ref, strm);
+
+    strm << "  TA_" << ownr->GetUniqueName() << ".sub_types.Add(sbt);\n";
+  }
+}
 
 //////////////////////////////////
 // 	  DataInit Function
@@ -1387,6 +1468,21 @@ void MTA::TypeDef_Gen_DataInit(TypeDef* ths, ostream& strm) {
     TypeDef_Init_MemberData(ths, strm);
     TypeDef_Init_MethodData(ths, strm);
     TypeDef_Init_PropertyData(ths, strm);
+
+    for(int i=0; i<ths->sub_types.size; i++) {
+      TypeDef* sbt = ths->sub_types.FastEl(i);
+      if(!sbt->IsActual() || sbt->HasOption("NO_MEMBERS") || sbt->IsTemplate()
+         || sbt->HasOption("IGNORE") || sbt->name == "inherited") // skip inherited
+        continue;
+      if(sbt->IsActualClass()) {
+        TypeDef_Init_MemberData(sbt, strm);
+        TypeDef_Init_MethodData(sbt, strm);
+        TypeDef_Init_PropertyData(sbt, strm);
+      }
+      else if(sbt->IsStruct() || sbt->IsUnion()) {
+        TypeDef_Init_MemberData(sbt, strm);
+      }
+    }
   }
   if(ths->IsFunction() && (gen_css) && !ths->HasOption("NO_CSS")) {
     TypeDef_Init_MethodData(ths, strm);
@@ -1459,32 +1555,6 @@ void MTA::TypeDef_Gen_AddAllParents(TypeDef* ths, char* typ_ref, ostream& strm) 
   if(ths->parents.size > PAR_ARG_COUNT) {
     taMisc::Error("AddParents(): parents.size > 6, increase number of args to AddParents()",
                    "type name:", ths->name);
-  }
-}
-
-void MTA::SubTypeSpace_Gen_Init(TypeSpace* ths, TypeDef* ownr, ostream& strm) {
-  int i;
-  for(i=0; i<ths->size; i++) {
-    TypeDef* sbt = ths->FastEl(i);
-    if((sbt->owner != ths) || sbt->IsEnum() || sbt->IsNotActual())
-      continue;
-
-    String str_opts = taMisc::StrArrayToChar(sbt->opts);
-    String str_inh_opts = taMisc::StrArrayToChar(sbt->inh_opts);
-    String str_lists = taMisc::StrArrayToChar(sbt->lists);
-
-    strm << "  sbt = new TypeDef(\"" << sbt->name << "\", \"" << sbt->desc << "\", ";
-    strm << "\n\t\"" << str_inh_opts << "\", \"" << str_opts << "\", \"";
-    strm << str_lists << "\", ";
-    strm << "\"" << sbt->source_file << "\", " << String(sbt->source_start)
-         << ", " << String(sbt->source_end) << ", ";
-    strm << sbt->GetTypeEnumString() << ", ";
-    strm << "sizeof(int), (void**)0);\n";
-
-    String sbt_ref = "sbt->";
-    TypeDef_Gen_AddAllParents(sbt, sbt_ref, strm);
-
-    strm << "  TA_" << ownr->name << ".sub_types.Add(sbt);\n";
   }
 }
 

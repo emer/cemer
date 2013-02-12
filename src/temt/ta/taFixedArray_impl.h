@@ -68,7 +68,7 @@ protected:
   virtual bool          El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
   virtual const void*   El_GetBlank_() const = 0;
-  // #IGNORE address of a blank element, for initializing empty items -- can be STATIC_CONST
+  // #IGNORE address of a blank element, for initializing empty items -- can be static const
   // NOTE: this can be implemented by clearing the tmp item, then returning that addr
   virtual const void*   El_GetErr_() const      { return El_GetBlank_();}
   // #IGNORE address of an element to return when out of range -- defaults to blank el
@@ -92,7 +92,7 @@ protected:
 
 #define TA_FIXED_ARRAY_FUNS(y,T) \
 public: \
-  STATIC_CONST T blank; \
+  static const T blank; \
   explicit y(int init_size) {SetSize(init_size); } \
   y(int init_size, const T& i0) {SetSize(init_size); el[0] = i0;} \
   y(int init_size, const T& i1, const T& i0) \

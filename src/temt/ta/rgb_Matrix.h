@@ -49,7 +49,7 @@ public: //
   override const Variant El_GetVar_(const void* it) const {return Variant(((rgb_t*)it)->toInt());} // #IGNORE we use the int rep for variants
   override void         El_SetFmVar_(void* it, const Variant& var) {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
 protected:
-  STATIC_CONST rgb_t    blank; // #IGNORE
+  static const rgb_t    blank; // #IGNORE
 #ifndef __MAKETA__
   override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); };

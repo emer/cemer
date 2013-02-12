@@ -68,5 +68,4 @@ public:
 };
 TA_SMART_PTRS(BaseSpec_Group)
 
-
 #endif // BaseSpec_Group_h

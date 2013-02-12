@@ -56,7 +56,7 @@ public:
   override const Variant El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
 protected:
-  STATIC_CONST float    blank; // #IGNORE
+  static const float    blank; // #IGNORE
   override void         Dump_Save_Item(std::ostream& strm, int idx);
   // stream in full precision
   override void         BinarySave_Item(std::ostream& strm, int idx)

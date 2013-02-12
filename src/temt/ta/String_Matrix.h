@@ -52,7 +52,7 @@ public:
   override const Variant El_GetVar_(const void* it) const {return Variant(*((String*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
-  STATIC_CONST String   blank; // #IGNORE
+  static const String   blank; // #IGNORE
 #ifndef __MAKETA__
   override void         Dump_Save_Item(std::ostream& strm, int idx);
   override int          Dump_Load_Item(std::istream& strm, int idx);

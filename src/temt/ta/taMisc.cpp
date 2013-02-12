@@ -22,7 +22,15 @@ taTypeDef_Of(PropertyDef);
 taTypeDef_Of(EnumDef);
 
 #ifndef NO_TA_BASE
-#include "svnrev.h"
+
+// this gets around cmake's internal dependency checking mechanisms, to break
+// interdependency on svnrev.h
+#ifndef NO_TA_BASE
+# define CMAKE_DEPENDENCY_HACK(a) #a
+#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
+# undef CMAKE_DEPENDENCY_HACK
+#endif
+
 #include <taBase> 
 #include <UserDataItemBase> 
 #include <taFiler>

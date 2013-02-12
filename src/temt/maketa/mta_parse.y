@@ -93,7 +93,7 @@ int yylex();
 
 /* template stuff */
 %type 	<typ>	templdsub templname templhead templopen templpar templpars
-%type	<typ>	templargs templarg
+%type	<typ>	typtemplopen templargs templarg
 
 /* function stuff */
 %type 	<meth>	funnm regfundefn
@@ -102,7 +102,7 @@ int yylex();
 
 /* misc stuff */
 %type 	<typ>	type noreftype subtype constype combtype tyname ftype
-%type   <typ>   nssubtype structype
+%type   <typ>   structype tdtype
 %type   <chr>	varname namespctyp
 %type   <rval>	ptrs
 
@@ -166,19 +166,19 @@ typedsub: MP_TYPEDEF defn		{ $$ = $2; }
 	    $$ = $3; $3->name = $4; mta->type_stack.Pop(); }
         ;
 
-defn:     type tyname term		{
+defn:     tdtype tyname term		{
             $$ = $2; if($1) { $2->AddParent($1); $2->AssignType($1->type); }
 	    mta->type_stack.Pop(); }
-        | type tyname MP_ARRAY term	{
+        | tdtype tyname MP_ARRAY term	{
             $$ = $2; if($1) { $2->AddParent($1); $2->AssignType($1->type); }
 	    mta->type_stack.Pop(); $$->SetType(TypeDef::ARRAY); }
-        | nssubtype MP_COMMENT tyname term	{
-            /* annoying place for a comment: prevents structype and thus type */
+        | type MP_COMMENT tyname term	{
+            /* annoying place for a comment: prevents structype, so use plain type */
             $$ = $3; if($1) { $3->AddParent($1); $3->AssignType($1->type); }
 	    mta->type_stack.Pop(); }
         /* predeclared type, which gets sucked in by the combtype list
 	   the second parent of the new type is the actual new type */
-        | type term			{
+        | tdtype term			{
 	  if($1->parents.size < 2) {
 	    cerr << "E!!: Error in predeclared type: " << $1->name << " second parent not found!"
 		 << endl;
@@ -187,18 +187,22 @@ defn:     type tyname term		{
 	  else {
 	    TypeDef* td = $1->parents[1]; mta->type_stack.Pop();
 	    $$ = td; } }
-        | type '(' '*' tyname ')' funargs term {
+        | tdtype '(' '*' tyname ')' funargs term {
             $$ = $4; $$->AssignType(TypeDef::FUN_PTR);
 	    mta->type_stack.Pop(); }
-        | type MP_SCOPER '*' tyname	{
+        | tdtype MP_SCOPER '*' tyname	{
             $$ = $4; $$->AssignType(TypeDef::METH_PTR);
 	    mta->type_stack.Pop(); }
         | tyname tyname term            {
             $$ = $2; }
         | tyname tyname MP_ARRAY term   {
             $$ = $2; $$->SetType(TypeDef::ARRAY); }
-        | tyname type term              {
+        | tyname tdtype term              {
             $$ = $2; }
+        ;
+
+tdtype:   type
+        | structype
         ;
 
 enumdefn: enumdsub			{
@@ -279,60 +283,53 @@ classhead:
         ;
 
 classnm:  classkeyword tyname			{
-            mta->PushState(MTA::Parse_class);
-            $$ = $2; mta->PushClass($2);
-	    $2->AssignType(TypeDef::CLASS); mta->ClearSource($2); /* tyname set -- premature */
-            mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
+            $$ = $2; mta->PushClass($2, MTA::prvt);
+	    $2->AssignType(TypeDef::CLASS); mta->ClearSource($2);
+            /* tyname set -- premature */ }
         | classkeyword type			{
-            mta->PushState(MTA::Parse_class);
-	    $$ = $2; mta->PushClass($2);
-            mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
+	    $$ = $2; mta->PushClass($2, MTA::prvt); }
         | classkeyword				{
-            mta->PushState(MTA::Parse_class);
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::CLASS); 
             mta->type_stack.Push($$);
-	    mta->PushClass($$);
-            mta->cur_mstate = MTA::prvt; } /* classkeyword == class */
+	    mta->PushClass($$, MTA::prvt); }
         | structkeyword				{
-            mta->PushState(MTA::Parse_class);
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::STRUCT);
             mta->type_stack.Push($$);
-	    mta->PushClass($$);
-	    mta->cur_mstate = MTA::pblc; } /* is struct */
+	    mta->PushClass($$, MTA::pblc); }
         | structkeyword	tyname			{
-            mta->PushState(MTA::Parse_class);
-            $$ = $2; mta->PushClass($2);
-	    $2->AssignType(TypeDef::CLASS); mta->ClearSource($2); /* tyname set -- premature */
-	    mta->cur_mstate = MTA::pblc; } /* is struct */
-        | structkeyword nssubtype		{
-            mta->PushState(MTA::Parse_class);
-	    $$ = $1; mta->PushClass($1);
-            mta->cur_mstate = MTA::pblc; } /* classkeyword == class */
+            $$ = $2; mta->PushClass($2, MTA::pblc);
+	    $2->AssignType(TypeDef::STRUCT); mta->ClearSource($2);
+            /* tyname set -- premature */ }
+        | structkeyword type		{
+            $$ = $1; mta->PushClass($1, MTA::pblc); }
         | unionkeyword				{
-            mta->PushState(MTA::Parse_class);
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::UNION);
             mta->type_stack.Push($$);
-	    mta->PushClass($$);
-	    mta->cur_mstate = MTA::pblc; } /* is struct */
+	    mta->PushClass($$, MTA::pblc); }
+        | unionkeyword	tyname			{
+            $$ = $2; mta->PushClass($2, MTA::pblc);
+	    $2->AssignType(TypeDef::UNION); mta->ClearSource($2);
+            /* tyname set -- premature */ }
+        | unionkeyword type		{
+            $$ = $1; mta->PushClass($1, MTA::pblc); }
         ;
 
 /* class inheritance */
 classinh: classpar			{
             if($1 != NULL) mta->cur_class->AddParent($1); }
         | classinh ',' classpar		{
-            if($3 != NULL) {mta->cur_class->AddParent($3);
-	      if(!mta->cur_class->HasOption("MULT_INHERIT"))
-                mta->cur_class->opts.Add("MULT_INHERIT"); } }
+            if($3 != NULL) { mta->cur_class->AddParent($3);
+	      mta->cur_class->AddOption("MULT_INHERIT"); } }
         ;
 
 /* class parent */
 classpar: type
         | classptyp type	{ $$ = $2; }
         | MP_NAME		{ $$ = NULL; } /* unknown parent.. */
-        | MP_NAME templopen templargs '>' { $$ = NULL; } /* unknown template parent.. */
+        | MP_NAME typtemplopen templargs '>' { $$ = NULL; } /* unknown template parent.. */
         | classptyp MP_NAME	{ $$ = NULL; } /* unknown parent.. */
         ;
 
@@ -403,10 +400,15 @@ templhead:
           templatekeyword templopen templpars '>' classhead	{
 	    $5->templ_pars.Reset();
 	    $5->templ_pars.Duplicate(mta->cur_templ_pars);
+	    $5->templ_defs.Reset();
+	    $5->templ_defs.Duplicate(mta->cur_templ_defs);
+            mta->EndTemplPars();
 	    $5->SetType(TypeDef::TEMPLATE); $$ = $5;
 	    mta->SetSource($$, true); }
         | templatekeyword templopen '>' classhead	{
 	    $4->templ_pars.Reset();
+	    $4->templ_defs.Reset();
+            mta->EndTemplPars();
 	    $4->SetType(TypeDef::TEMPLATE); $$ = $4;
 	    mta->SetSource($$, true); }
         ;
@@ -415,13 +417,15 @@ templfun:
           templatekeyword templopen '>' MP_FUNTYPE {
             $$ = $1;
             mta->PushState(MTA::Parse_fundef);
+            mta->EndTemplPars();
           }
         | templatekeyword templopen templpars '>' MP_FUNTYPE {
             $$ = $1;
             mta->PushState(MTA::Parse_fundef);
+            mta->EndTemplPars();
           }
 
-templopen: '<'				{ mta->cur_templ_pars.Reset(); }
+templopen: '<'				{ mta->StartTemplPars(); }
         ;
 
 templpars:
@@ -433,10 +437,20 @@ templpar:
           MP_CLASS tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         | MP_TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         | type tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
-          /* note: lexer automatically nukes everything after MP_EQUALS! */
-        | MP_CLASS tyname MP_EQUALS	{ mta->cur_templ_pars.Link($2); $$ = $2; }
-        | MP_TYPENAME tyname MP_EQUALS  { mta->cur_templ_pars.Link($2); $$ = $2; }
-        | type tyname MP_EQUALS	        { mta->cur_templ_pars.Link($2); $$ = $2; }
+          /* note: in_templ_pars prevents lexer from automatically nuking
+             everything after MP_EQUALS! */
+        | MP_CLASS tyname MP_EQUALS type {
+            mta->cur_templ_pars.Link($2); $$ = $2;
+            mta->cur_templ_defs.Link($4);
+          }
+        | MP_TYPENAME tyname MP_EQUALS type {
+            mta->cur_templ_pars.Link($2); $$ = $2;
+            mta->cur_templ_defs.Link($4);
+          }
+        | type tyname MP_EQUALS	type    {
+            mta->cur_templ_pars.Link($2); $$ = $2;
+            mta->cur_templ_defs.Link($4);
+          }
         ;
 
 fundecl:  funnm				{
@@ -499,7 +513,7 @@ enumitms: enmitmname			{
         | enmitmname MP_EQUALS enummath	{ /* using -424242 as a err code (ugly) */
             mta->cur_enum->enum_vals.Add($1);
             if($3 != -424242) $1->enum_no = $3;
-            else $1->opts.Add("#IGNORE"); // ignore bad math!
+            else $1->AddOption("#IGNORE"); // ignore bad math!
 	    mta->enum_stack.Pop(); }
         ;
 
@@ -567,8 +581,13 @@ membline: membdefn			{
 	    mta->PushState(MTA::Parse_inclass); $$ = NULL; }
         | classdsub term			{ 
 	    mta->PopClass();
-	    mta->cur_class->sub_types.AddUniqNameNew($1);
             $1->SetType(TypeDef::SUBTYPE);
+            $1->source_end = mta->line-1;
+            mta->cur_class->sub_types.AddUniqNameNew($1);
+            if(mta->cur_mstate != MTA::pblc) {
+              $1->AddOption("IGNORE");
+            }
+            mta->TypeAdded("class subtype", &(mta->cur_class->sub_types), $1);
 	    mta->PushState(MTA::Parse_inclass); $$ = NULL; }
         | error				{ $$ = NULL; }
         ;
@@ -620,11 +639,11 @@ nostatmemb:
 
 membnames:
            membname			{
-	     if((mta->cur_mstate == MTA::pblc) && !($1->type->IsConst()))
+	     if(mta->cur_mstate == MTA::pblc)
 	       mta->cur_class->members.AddUniqNameNew($1);
              mta->memb_stack.Pop(); $$ = NULL; }
         |  membnames ',' membname       {
-	     if((mta->cur_mstate == MTA::pblc) && !($3->type->IsConst()))
+	     if(mta->cur_mstate == MTA::pblc)
 	       mta->cur_class->members.AddUniqNameNew($3);
              mta->memb_stack.Pop(); $$ = NULL; }
         ;
@@ -803,16 +822,17 @@ ptrs:	  '*' 			{ $$ = 1; }
         | ptrs '*'		{ $$ = $1 + 1; }
         ;
 
+tyname:	  MP_NAME		{ $$ = new TypeDef($1); mta->type_stack.Push($$);
+                                  mta->SetSource($$, false); }
+        ;
+
 membtype:  ftype		{ mta->cur_memb_type = $1; }
         ;
+
 
 ftype:	  type
         | MP_FUNTYPE		{ $$ = &TA_int; }
         | MP_FUNTYPE type	{ $$ = $2; }
-        ;
-
-tyname:	  MP_NAME		{ $$ = new TypeDef($1); mta->type_stack.Push($$);
-                                  mta->SetSource($$, false); }
         ;
 
 type:	  noreftype
@@ -846,14 +866,7 @@ constype: subtype
 	  }
         ;
 
-subtype:  nssubtype
-        | structype
-        ;
-
-nssubtype:  combtype
-        | unionkeyword combtype		{ $$ = $2; $$->SetType(TypeDef::UNION);
-            $$->ClearType(TypeDef::VOID); }
-        | unionkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::UNION); }
+subtype:  combtype
 	| MP_TYPE MP_SCOPER MP_NAME	{
 	    TypeDef* td; if((td = $1->sub_types.FindName($3)) == NULL) {
               TypeDef* nty = new TypeDef($3); mta->SetSource(nty, false);
@@ -886,24 +899,24 @@ nssubtype:  combtype
             $$ = $2; }
         | MP_SCOPER MP_TYPE		{ $$ = $2; }
         | MP_THISNAME
-        | MP_TYPE templopen templargs '>' { /* a template */
+        | MP_TYPE typtemplopen templargs '>' { /* a template */
             if(!($1->IsTemplate())) {
               if(mta->verbose > 1) {
                 taMisc::Info("Type:", $1->name, "used as template but not marked as such",
                              "-- now marking -- probably just an internal type"); }
               $1->SetType(TypeDef::TEMPLATE); }
-            String nm = $1->GetTemplInstName(mta->cur_templ_pars);
+            String nm = $1->GetTemplInstName(mta->cur_typ_templ_pars);
             TypeDef* td;
             int lx_tok;
             if((td = mta->FindName(nm, lx_tok)) == NULL) {
               td = $1->Clone(); td->name = nm;
-              td->SetTemplType($1, mta->cur_templ_pars);
+              td->SetTemplType($1, mta->cur_typ_templ_pars);
               TypeSpace* sp = mta->GetTypeSpace($1);
               $$ = sp->AddUniqNameOld(td);
               if($$ == td) mta->TypeAdded("template instance", sp, $$); }
             else
               $$ = td; }
-	| MP_THISNAME templopen templargs '>'	{ /* this template */
+	| MP_THISNAME typtemplopen templargs '>'	{ /* this template */
             if(!($1->IsTemplate())) {
               if(mta->verbose > 1) {
                 taMisc::Info("Type:", $1->name, "used as template but not marked as such",
@@ -915,6 +928,9 @@ nssubtype:  combtype
 structype: structkeyword combtype 	{ $$ = $2; $$->SetType(TypeDef::STRUCT);
           $$->ClearType(TypeDef::VOID); }
         | structkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::STRUCT); }
+        | unionkeyword combtype		{ $$ = $2; $$->SetType(TypeDef::UNION);
+            $$->ClearType(TypeDef::VOID); }
+        | unionkeyword tyname		{ $$ = $2; $$->AssignType(TypeDef::UNION); }
         ;
  
 combtype: MP_TYPE
@@ -931,6 +947,10 @@ combtype: MP_TYPE
 	  }
         ;
 
+typtemplopen: '<'			{
+           mta->cur_typ_templ_pars.Reset(); }
+        ;
+
 templargs:
           templarg
         | templargs ',' templarg	{ $$ = $1; }
@@ -938,10 +958,13 @@ templargs:
 
 
 templarg:
-          MP_TYPE		{ mta->cur_templ_pars.Link($1); }
-        | MP_NAME		{ $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
-        | MP_NUMBER		{ $$ = new TypeDef((String)$1); mta->cur_templ_pars.Push($$); }
-          /* todo: need to add support for arbitrary strings here, which are not just types */
+          MP_TYPE		{
+            mta->cur_typ_templ_pars.Link($1); }
+        | MP_NAME		{
+            $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
+        | MP_NUMBER		{
+            $$ = new TypeDef((String)$1);
+            mta->cur_typ_templ_pars.Push($$); }
 	;
 
 tdname:   MP_NAME
@@ -965,15 +988,24 @@ access:   MP_PUBLIC
         ;
 
 structkeyword:
-          MP_STRUCT		{ mta->defn_st_line = mta->line-1; }
+          MP_STRUCT		{ mta->defn_st_line = mta->line-1;
+            if(mta->state == MTA::Parse_inclass) 
+              mta->state = MTA::Parse_class; // avoid function eater in mta_lex
+          }
 	;
 
 unionkeyword:
-          MP_UNION		{ mta->defn_st_line = mta->line-1; }
+          MP_UNION		{ mta->defn_st_line = mta->line-1;
+            if(mta->state == MTA::Parse_inclass) 
+              mta->state = MTA::Parse_class; // avoid function eater in mta_lex
+          }
 	;
 
 classkeyword:
-          MP_CLASS		{ mta->defn_st_line = mta->line-1; }
+          MP_CLASS		{ mta->defn_st_line = mta->line-1;
+            if(mta->state == MTA::Parse_inclass) 
+              mta->state = MTA::Parse_class; // avoid function eater in mta_lex
+          }
         ;
 
 templatekeyword:

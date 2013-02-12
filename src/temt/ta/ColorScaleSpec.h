@@ -37,13 +37,14 @@ public:
 
   virtual void  GenRanges(ColorScaleColor_List* cl, int chunks);
 
-  static const KeyString key_bkclr;
-  static const KeyString key_clr0;
-  static const KeyString key_clr1;
-  static const KeyString key_clr2;
-  static const KeyString key_clr3;
-  static const KeyString key_clr4;
-  override String GetColText(const KeyString& key, int itm_idx) const;
+  static const KeyString key_bkclr; // #IGNORE
+  static const KeyString key_clr0; // #IGNORE
+  static const KeyString key_clr1; // #IGNORE
+  static const KeyString key_clr2; // #IGNORE
+  static const KeyString key_clr3; // #IGNORE
+  static const KeyString key_clr4; // #IGNORE
+  override String GetColText(const KeyString& key, int itm_idx) const;  // #IGNORE
+
   void  InitLinks();
   TA_BASEFUNS(ColorScaleSpec);
 private:

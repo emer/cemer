@@ -258,18 +258,10 @@ typedef unsigned char   byte;
 typedef long long             ta_int64_t;
 typedef unsigned long long    ta_uint64_t;
 
-// misc. compiler hacks for MAKETA
-
 #ifdef __MAKETA__
-//# define _(c) // hide the guy from maketa
 # define INHERITED(c)
-# define STATIC_CONST static
-# define CONST_STATIC static const
 #else
-//# define _(c) c
 # define INHERITED(c) typedef c inherited;
-# define STATIC_CONST static const
-# define CONST_STATIC const static
 #endif
 
 // define Qt's macros, for Maketa

@@ -39,13 +39,6 @@
 #endif
 #endif
 
-// what's this all about!?
-#ifndef NO_TA_BASE
-# define CMAKE_DEPENDENCY_HACK(a) #a
-#  include CMAKE_DEPENDENCY_HACK(svnrev.h)
-# undef CMAKE_DEPENDENCY_HACK
-#endif
-
 using namespace std;
 
 
@@ -90,6 +83,8 @@ void TypeDef::Initialize() {
   methods.owner = this;
   templ_pars.name = "templ_pars";
   templ_pars.owner = this;
+  templ_defs.name = "templ_defs";
+  templ_defs.owner = this;
 #if (!defined(NO_TA_BASE) && defined(DMEM_COMPILE))
   dmem_type = NULL;
 #endif
@@ -199,6 +194,7 @@ void TypeDef::Copy_(const TypeDef& cp) {
   properties    = cp.properties;
   methods       = cp.methods;
   templ_pars    = cp.templ_pars;
+  templ_defs    = cp.templ_defs;
 
   sub_types.ReplaceParents(cp.sub_types, sub_types); // make our sub types consistent
   DuplicateMDFrom(&cp);         // duplicate members owned by source
@@ -751,14 +747,20 @@ String TypeDef::Get_C_Name() const {
 }
 
 const String TypeDef::GetPathName() const {
-//TODO: this routine may not even be used!
-  // are we owned?
-  // are we an EnumDef?
-
   String rval;
   TypeDef* owtp = GetOwnerType();
   if (owtp) {
     rval = owtp->GetPathName() + "::";
+  }
+  rval += name;
+  return rval;
+}
+
+String TypeDef::GetUniqueName() const {
+  String rval;
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) {
+    rval = owtp->GetUniqueName() + "_";
   }
   rval += name;
   return rval;
@@ -825,7 +827,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   // note: type flags are set explicitly prior to calling AddParent!
 
   if(IsTaBase())
-    opts.AddUnique(opt_instance);       // ta_bases always have an instance
+    AddOption(opt_instance);       // ta_bases always have an instance
 
 #ifndef NO_TA_BASE
   CleanupCats(false);           // save first guy for add parent!
@@ -866,7 +868,7 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
   // note: type flags are set explicitly prior to calling AddParent!
 
   if(IsTaBase())
-    opts.AddUnique(opt_instance);       // ta_bases always have an instance
+    AddOption(opt_instance);       // ta_bases always have an instance
 
 #ifndef NO_TA_BASE
   CleanupCats(false);           // save first guy for add parent!
@@ -1120,15 +1122,19 @@ String TypeDef::GetTemplInstName(const TypeSpace& inst_pars) const {
 }
 
 void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
-  if(inst_pars.size != templ_pars.size) {
-    return; // todo: get default template args from parser!!!
-    String defn_no(templ_pars.size);
+  if(inst_pars.size < (templ_pars.size - templ_defs.size)) {
+    String defn_no(templ_pars.size-templ_defs.size);
     String inst_no(inst_pars.size);
-    taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
+    taMisc::Error("Template",name,"requires a minimum of",defn_no,
+                  "parameters, instantiated with",
                    inst_no);
     String msg;
     msg << "Defined with parameters: ";
     templ_pars.Print(msg);
+    if(templ_defs.size > 0) {
+      msg << "and defaults: ";
+      templ_defs.Print(msg);
+    }
     msg << "\nInstantiated with parameters: ";
     inst_pars.Print(msg);
     taMisc::Error(msg);
@@ -1146,9 +1152,16 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   // todo: need to add support for arbitrary strings here, which are not just types
   
   bool some_args_not_real = false;
-  for(int i=0; i<inst_pars.size; i++) {
+  int defcnt = 0;
+  for(int i=0; i<templ_pars.size; i++) {
     TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
-    TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
+    TypeDef* inst_tp = NULL;
+    if(i < inst_pars.size) {
+      inst_tp = inst_pars.FastEl(i);  // type as instantiated
+    }
+    else {
+      inst_tp = templ_defs.SafeEl(defcnt++);
+    }
 
     templ_pars.ReplaceLinkIdx(i, inst_tp); // actually replace it
 

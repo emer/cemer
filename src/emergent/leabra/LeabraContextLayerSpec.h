@@ -101,7 +101,7 @@ public:
   
 protected:
   SPEC_DEFAULTS;
-  STATIC_CONST String do_update_key;
+  static const String do_update_key;
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
 

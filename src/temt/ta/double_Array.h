@@ -30,7 +30,7 @@ class TA_API double_Array : public taArray<double> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of doubles
 INHERITED(taArray<double>)
 public:
-  STATIC_CONST double blank; // #HIDDEN #READ_ONLY
+  static const double blank; // #HIDDEN #READ_ONLY
   TA_BASEFUNS_NOCOPY(double_Array);
   TA_ARRAY_FUNS(double_Array, double)
 protected:

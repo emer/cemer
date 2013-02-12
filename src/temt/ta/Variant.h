@@ -67,8 +67,8 @@ public:
     T_Matrix = 12, 	// #LABEL_taMatrix taMatrix ref counted
     
     T_TypeItem = 13,	// #LABEL_TypeItem
-    T_Atomic_Min = T_Bool,
-    T_Atomic_Max = T_String,
+    T_Atomic_Min = T_Bool, // #IGNORE
+    T_Atomic_Max = T_String,// #IGNORE
   };
 
   static const String	formatNumber(const Variant& val,
@@ -395,7 +395,6 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			error(const char* msg) const; // emit error message
 protected:
 
-#ifndef __MAKETA__
   union Data { // sizes are given for 32/64 sys
     bool b; // 8
     int i; // 32
@@ -410,7 +409,11 @@ protected:
     taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
     TypeItem* ti; // 32/64
-  } d;
+  };
+  
+  Data d;                       // the data storage -- a variant is basically a big union
+#ifndef __MAKETA__
+  // note: following syntax is presumably bit-wise storage -- not parsed by maketa
   int m_type : 29;
   mutable int m_is_numeric : 1; // true when we've tested string for numeric
   mutable int m_is_numeric_valid : 1; // set when we've set is_numeric; clear on set of str

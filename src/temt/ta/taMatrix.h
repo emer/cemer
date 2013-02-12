@@ -709,7 +709,7 @@ protected:
   virtual bool          El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
   virtual const void*   El_GetBlank_() const = 0;
-  // #IGNORE address of a blank element, for initializing empty items -- can be STATIC_CONST
+  // #IGNORE address of a blank element, for initializing empty items -- can be static const
   virtual const void*   El_GetErr_() const      { return El_GetBlank_();}
   // #IGNORE address of an element to return when out of range -- defaults to blank el
   virtual void          El_Copy_(void*, const void*) = 0;

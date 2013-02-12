@@ -336,7 +336,7 @@ public:
   virtual bool          saveToDataFile() const { return HasColFlag(SAVE_DATA); }
   // #IGNORE whether to save col to external 'data' format
 
-  static const KeyString key_val_type; // "val_type"
+  static const KeyString key_val_type;  // #IGNORE "val_type"
   override String       GetColText(const KeyString& key, int itm_idx = -1) const;
   override String       GetDisplayName() const; // #IGNORE we strip out the format characters
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

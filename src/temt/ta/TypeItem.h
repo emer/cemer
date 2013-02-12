@@ -112,6 +112,7 @@ public:
   // name used for saving a reference in stream files, can be used to lookup again
   
   void          Copy(const TypeItem& cp);
+  void          AddOption(const String& op) { opts.AddUnique(op); }
   bool          HasOption(const String& op) const { return (opts.FindEl(op) >= 0); }
     // check if option is set
   bool          HasOptionAfter(const String& prefix, const String& op) const;

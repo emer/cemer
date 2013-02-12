@@ -65,7 +65,7 @@ public:
   override void         El_SetFmVar_(void* it, const Variant& var)
     {*((double*)it) = var.toDouble(); };  // #IGNORE
 protected:
-  STATIC_CONST double   blank; // #IGNORE
+  static const double   blank; // #IGNORE
   override void         Dump_Save_Item(std::ostream& strm, int idx); // stream in full precision
   override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(double)); };

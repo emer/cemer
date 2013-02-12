@@ -32,7 +32,7 @@ class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of Strings
 INHERITED(taArray<String>)
 public:
-  STATIC_CONST String blank; // #HIDDEN #READ_ONLY
+  static const String blank; // #HIDDEN #READ_ONLY
 #ifdef TA_USE_QT
   void                  ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
 #endif

@@ -32,8 +32,8 @@ class TA_API NameVar_Array : public taArray<NameVar> {
   // #NO_TOKENS an array of name value (variant) items
 INHERITED(taArray<NameVar>)
 public:
-  STATIC_CONST String   def_sep; // ", " default separator
-  STATIC_CONST NameVar blank; // #HIDDEN #READ_ONLY
+  static const String   def_sep; // ", " default separator
+  static const NameVar blank; // #HIDDEN #READ_ONLY
 
   int   FindName(const String& nm, int start=0) const;
   // find by name  (start < 0 = from end)

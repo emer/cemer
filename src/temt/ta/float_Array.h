@@ -30,7 +30,7 @@ class TA_API float_Array : public taArray<float> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of floats
 INHERITED(taArray<float>)
 public:
-  STATIC_CONST float blank; // #HIDDEN #READ_ONLY
+  static const float blank; // #HIDDEN #READ_ONLY
   TA_BASEFUNS_NOCOPY(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
 protected:

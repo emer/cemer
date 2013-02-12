@@ -30,7 +30,7 @@ class TA_API char_Array : public taArray<char> {
   // #NO_UPDATE_AFTER #NO_TOKENS array of chars (bytes)
 INHERITED(taArray<char>)
 public:
-  STATIC_CONST char blank; // #HIDDEN #READ_ONLY
+  static const char blank; // #HIDDEN #READ_ONLY
   TA_BASEFUNS(char_Array);
   TA_ARRAY_FUNS(char_Array, char)
 protected:

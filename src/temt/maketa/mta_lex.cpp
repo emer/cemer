@@ -437,7 +437,7 @@ int MTA::lex() {
     
     // get rid of things after equals signs inside of classes (always return EQUALS)
     if(c == '=') {
-      if((state != Parse_enum)) {
+      if((state != Parse_enum) && !in_templ_pars) {
 	bdepth = 0;
 	EqualsBuf = "";
 	do {

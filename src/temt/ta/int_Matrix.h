@@ -61,7 +61,7 @@ public:
   override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
 protected:
-  STATIC_CONST int      blank; // #IGNORE
+  static const int      blank; // #IGNORE
 #ifndef __MAKETA__
   override void         BinarySave_Item(std::ostream& strm, int idx)
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(int)); };

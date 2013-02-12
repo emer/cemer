@@ -155,6 +155,7 @@ public:
   MethodSpace   methods;        // member functions (methods) for class
   String_PArray ignore_meths;   // methods to be ignored
   TypeSpace     templ_pars;     // template parameters
+  TypeSpace     templ_defs;     // template default parameters
   String        c_name;         // C name, when diff from name (ex 'unsigned_char' vs 'unsigned char")
   String        namespc;        // name space scope
   
@@ -343,6 +344,8 @@ public:
   String                Get_C_Name() const;
   // get the C-code name for this type
   override const String GetPathName() const;
+  String                GetUniqueName() const;
+  // get the unique name for this type -- includes owner type name if we are a subtype, using underscores to separate -- suitable for labeling things uniquely for this obj
 
   static TypeDef*       GetCommonSubtype(TypeDef* typ1, TypeDef* typ2);
   // get the common primary (1st parent class) subtype between the two
