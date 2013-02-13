@@ -324,7 +324,7 @@ bool taPtrList_impl::AddUniqNameNew_(void* it) {
 }
 void* taPtrList_impl::AddUniqNameOld_(void* it) {
   // note: this optimization is relatively new and could potentially cause problems..
-  if(El_GetOwnerList_(it) == this) return it;
+  // if(El_GetOwnerList_(it) == this) return it;
   int i = FindNameIdx(El_GetName_(it));
   if(i >= 0) {
     return el[i];
