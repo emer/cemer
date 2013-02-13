@@ -368,23 +368,29 @@ templdefns:
           templdsub term                { mta->Burp(); }
         | templdsub varname term        { mta->Burp(); }
         | templfun nostatmeth           { mta->Burp(); 
-	    TypeDef* tmpl = new TypeDef($2->name + "_templ_fun");
+            String nwnm;  if($2 != NULL) nwnm = $2->name;
+            nwnm += "_templ_fun_" + String(taMisc::types.size);
+	    TypeDef* tmpl = new TypeDef(nwnm);
 	    $$ = tmpl;
 	    tmpl->AssignType(TypeDef::FUNCTION);
 	    tmpl->SetType(TypeDef::TEMPLATE);
 	    tmpl->AddOption("IGNORE"); /* bad news */
-	    tmpl->methods.AddUniqNameNew($2);
+            if($2 != NULL)
+              tmpl->methods.AddUniqNameNew($2);
 	  }
         | templdsub term MP_COMMENT             { SETDESC($1,$3); }
         | templdsub varname term MP_COMMENT     { SETDESC($1,$4); }
         | templfun nostatmeth MP_COMMENT        { SETDESC($1,$3);
-	    TypeDef* tmpl = new TypeDef($2->name + "_templ_fun");
+            String nwnm;  if($2 != NULL) nwnm = $2->name;
+            nwnm += "_templ_fun_" + String(taMisc::types.size);
+	    TypeDef* tmpl = new TypeDef(nwnm);
 	    $$ = tmpl;
 	    SETDESC($$,$3);
 	    tmpl->AssignType(TypeDef::FUNCTION);
 	    tmpl->SetType(TypeDef::TEMPLATE);
 	    tmpl->AddOption("IGNORE"); /* bad news */
-	    tmpl->methods.AddUniqNameNew($2);
+            if($2 != NULL)
+              tmpl->methods.AddUniqNameNew($2);
           }
         ;
 
