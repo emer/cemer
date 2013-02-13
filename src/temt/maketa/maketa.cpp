@@ -71,7 +71,7 @@ MTA::MTA() {
   cur_is_trg = false;
   ta_lib = false;
 
-  spc_keywords.name = "Key Words for Searching";
+  spc_keywords.name = "spc_keywords";
   InitKeyWords();
 
   tac_AddBuiltinTypeDefs();    // adds to taMisc::types
@@ -112,13 +112,17 @@ void MTA::BuildHashTables() {
 }
 
 
+bool MTA::VerboseCheckTrg() {
+  if(v_trg_only && cur_is_trg) return true;
+  if(v_src_trg == cur_fname_only) return true;
+  if(v_trg_only || v_src_trg.nonempty()) return false; // exclusive, not met, bail
+  return true;  // we don't care anyway
+}
+
 void MTA::Info(int v_level, const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
-  if(v_trg_only && !cur_is_trg) {
-    if(v_src_trg.empty()) return;
-    if(v_src_trg != cur_fname_only) return;
-  }
+  if(!VerboseCheckTrg()) return;
   if(v_level > verbose) return;
   String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
   cout << "I!!: " << msg << endl;
@@ -128,10 +132,7 @@ void MTA::Warning(int v_level, const char* a, const char* b, const char* c, cons
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
   if(filter_warns && v_level > 0) {
-    if(v_trg_only && !cur_is_trg) {
-      if(v_src_trg.empty()) return;
-      if(v_src_trg != cur_fname_only) return;
-    }
+    if(!VerboseCheckTrg()) return;
   }
   if(v_level > verbose) return;
   String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
@@ -142,10 +143,7 @@ void MTA::Error(int v_level, const char* a, const char* b, const char* c, const 
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
   if(filter_errs && v_level > 0) { // v_level 0 errors are not filtered ever!
-    if(v_trg_only && !cur_is_trg) {
-      if(v_src_trg.empty()) return;
-      if(v_src_trg != cur_fname_only) return;
-    }
+    if(!VerboseCheckTrg()) return;
   }
   if(v_level > verbose) return;
   String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
@@ -328,6 +326,10 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
     rval = td->owner;
     if(rval->name == "templ_pars") // don't add new types to template parameters!
       rval = &(td->owner->owner->sub_types);
+    if(rval->name == "spc_keywords") {
+      Error(0, "trying to add to keywords -- not good!", td->name);
+      rval = &taMisc::types;
+    }
   }
   if(((partd = td->GetParent()) != NULL) && (partd->IsTemplInst())) {
     partd->opts.DupeUnique(td->opts); // inherit the options..
@@ -356,6 +358,10 @@ void MTA::FixClassTypes(TypeDef* td) {
 }
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
+  if(spc_keywords.FindEl(td) >= 0) {
+    Error(0, "adding a keyword type to a new typelist -- this is VERY BAD and indicates a parsing error!", td->name,
+	  "to space:", sp->name, "typ:", typ);
+  }
   String typstr = typ;
   if(!(typstr.contains("class") || typstr.contains("enum") ||  
        typstr == "template")) {
@@ -370,6 +376,14 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
 }
 
 void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
+  if(spc_keywords.FindEl(new_td) >= 0) {
+    Error(0, "new_td NOT adding a keyword type to a new typelist -- this is VERY BAD and indicates a parsing error!", new_td->name,
+	  "to space:", sp->name, "typ:", typ);
+  }
+  if(spc_keywords.FindEl(ext_td) >= 0) {
+    Error(0, "ext_td NOT adding a keyword type to a new typelist -- this is VERY BAD and indicates a parsing error!", ext_td->name,
+	  "to space:", sp->name, "typ:", typ);
+  }
   if(ext_td->name != new_td->name) {
     Error(0, "Error in hash table name lookup -- names:",
           ext_td->name, "and:", new_td->name, "should be the same!");
@@ -424,6 +438,10 @@ TypeDef* MTA::FindName(const char* nm, int& lex_token) {
 
   if(((itm = spc_keywords.FindName(nm)) != NULL)) {
     lex_token = itm->idx;
+    if(String(nm) == "struct") {
+      Info(5, "struct lookup:", String(lex_token), "MP_STRUCT:", String(MP_STRUCT),
+	   "file:", cur_fname_only, "line:", String(line));
+    }
     return itm;
   }
 
@@ -499,14 +517,14 @@ void mta_print_usage(int argc, char* argv[]) {
 }
 
 int MTA::Main(int argc, char* argv[]) {
-  // mta_print_args(argc, argv);
 #if 0 // change to 1 for debugging
+  mta_print_args(argc, argv);
   verbose = 2;
-  v_trg_only = false;
+  v_trg_only = true;
   filter_errs = true;
   filter_warns = true;
   dbg_constr = false;
-  v_src_trg = "";
+  //  v_src_trg = "type_traits.h";
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else
@@ -665,11 +683,6 @@ int MTA::Main(int argc, char* argv[]) {
     out_fname = trg_header.before(".h") + "_TA.cxx";
     Info(1, "output file set to:", out_fname);
   }
-
-  if(verbose > 4)
-    yydebug = 1;                        // debug it.
-  else
-    yydebug = 0;
 
   ////////////////////////////////////////////////
   //    run preprocessor on file to generate tmp_fname file

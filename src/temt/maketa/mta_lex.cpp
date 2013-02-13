@@ -21,6 +21,8 @@
 
 #include <ctype.h>
 
+extern int yydebug;
+
 /* note: we handle the following line end types:
   Windows     cr lf
   MacOS	      cr
@@ -35,7 +37,12 @@ int MTA::Getc() {
     return EOF;
   char c = file_str[strm_pos++];
   // now, detect CRLF and skip to the lf
-  Info(5, "C!!: =>", taMisc::LeadingZeros(line,5), ":\t", String((char)c));
+  if(isprint(c)) {
+    Info(5, "C!!: =>", taMisc::LeadingZeros(line,5), ":\t", String((char)c));
+  }
+  else {
+    Info(5, "C!!: =>", taMisc::LeadingZeros(line,5), ":\t <np>");
+  }
   if (c == '\r') {
     if (Peekc() == '\n')
       c = file_str[strm_pos];
@@ -219,7 +226,6 @@ String MTA::lexCanonical(const String& in) {
 
 int MTA::lex() {
   int c, nxt, prv;
-  TypeDef *itm;
   int bdepth = 0;
 
   do {
@@ -339,13 +345,24 @@ int MTA::lex() {
       }
 
       Info(1, "file:", cur_fname);
+
+      if(VerboseCheckTrg()) {
+	if(verbose >= 5)
+	  yydebug = 1;                        // debug it.
+	else
+	  yydebug = 0;
+      }
+      else {
+	yydebug = 0;
+      }
       continue;			// now actually parse something new..
     }
 
     if(state == Find_Item) {
       if(readword(c) == EOF)
 	return YYRet_Exit;
-      if((itm = spc_keywords.FindName(LexBuf)) != NULL) {
+      TypeDef* itm = spc_keywords.FindName(LexBuf);
+      if(itm != NULL) {
         // only pay attention to interesting items here!
         switch(itm->idx) {
         case MP_TYPEDEF:

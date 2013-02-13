@@ -69,11 +69,14 @@ public:
   TypeSpace	spc_keywords;	// holds some key words for searching
   TypeSpace	spc_typedef_gen; // space of types to generate typedefs for because they are referred to in methods, etc
 
+  States	state;          // current state -- read-only: use push/pop interface to set
+  YY_Flags	yy_state;	// parser state
   TypeSpace	type_stack;	// for storing names, etc.
   EnumSpace	enum_stack;	// for storing names, etc.
   MemberSpace	memb_stack;	// for storing names, etc.
   MethodSpace	meth_stack;	// for storing names, etc.
   String_PArray namespc_stack;  // stack of name spaces
+  String_PArray cur_namespcs;   // name spaces during parsing
   int_PArray    state_stack;    // stack of State states
   TypeSpace	class_stack;	// stack of classes -- can be nested..
   int_PArray    class_mstate_stack; // stack of MembState states for classes
@@ -134,8 +137,6 @@ public:
   int		defn_st_line;	// starting line of current definition, possibly..
 
   String        file_str;       // loads entire file in at once as a string and process from there
-  States	state;          // current state -- read-only: use push/pop interface to set
-  YY_Flags	yy_state;	// parser state
 
   MTA();
   virtual ~MTA();
@@ -147,6 +148,9 @@ public:
   // initialize keyword lookup table
   void		BuildHashTables();
   // build hash tables at startup
+
+  bool		VerboseCheckTrg();
+  // check if current file is target for verbose output
 
   void          Info(int v_level, const char* a, const char* b=0, const char* c=0,
                      const char* d=0, const char* e=0, const char* f=0,

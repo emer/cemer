@@ -40,8 +40,8 @@ int yylex();
 
 %}
 
-/* five expected shift-reduce conflicts */
-%expect 8
+/* eleven expected shift-reduce conflicts */
+%expect 11
 
 %union {
   TypeDef* 	typ;
@@ -76,7 +76,7 @@ int yylex();
 
 /* typedef stuff */
 %type 	<typ>	typedsub defn
-%type 	<chr>	tdname usenamespc namespc
+%type 	<chr>	tdname usenamespc namespc namespcword namespcnms
 
 /* enum stuff */
 %type 	<typ>	enumdsub enumname enumnm
@@ -194,6 +194,8 @@ defn:     tdtype tyname term		{
             $$ = $2; $$->SetType(TypeDef::ARRAY); }
         | tyname tdtype term              {
             $$ = $2; }
+        | tdtype tdtype term              {
+            $$ = $2; }
         ;
 
 tdtype:   type
@@ -257,6 +259,9 @@ classdsub:
           classname membs '}'		{
 	    if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
 	    else $1->tokens.keep = true; }
+        | classname '}'			{
+	    if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
+	    else $1->tokens.keep = true; }
         ;
 
 classname:
@@ -298,7 +303,7 @@ classnm:  classkeyword tyname			{
 	    $2->AssignType(TypeDef::STRUCT); mta->ClearSource($2);
             /* tyname set -- premature */ }
         | structkeyword type		{
-            $$ = $1; mta->PushClass($1, MTA::pblc); }
+            $$ = $2; mta->PushClass($2, MTA::pblc); }
         | unionkeyword				{
 	    String nm = $1->name + "_" + (String)mta->anon_no++; nm += "_";
 	    $$ = new TypeDef(nm); $$->AssignType(TypeDef::UNION);
@@ -309,7 +314,7 @@ classnm:  classkeyword tyname			{
 	    $2->AssignType(TypeDef::UNION); mta->ClearSource($2);
             /* tyname set -- premature */ }
         | unionkeyword type		{
-            $$ = $1; mta->PushClass($1, MTA::pblc); }
+	    $$ = $2; mta->PushClass($2, MTA::pblc); }
         ;
 
 /* class inheritance */
@@ -363,14 +368,23 @@ templdefns:
           templdsub term                { mta->Burp(); }
         | templdsub varname term        { mta->Burp(); }
         | templfun nostatmeth           { mta->Burp(); 
-            // todo: could create the template based on function name, and create a 
-            // methoddef to hold it.  but we don't care.. :)
-            }
+	    TypeDef* tmpl = new TypeDef($2->name + "_templ_fun");
+	    $$ = tmpl;
+	    tmpl->AssignType(TypeDef::FUNCTION);
+	    tmpl->SetType(TypeDef::TEMPLATE);
+	    tmpl->AddOption("IGNORE"); /* bad news */
+	    tmpl->methods.AddUniqNameNew($2);
+	  }
         | templdsub term MP_COMMENT             { SETDESC($1,$3); }
         | templdsub varname term MP_COMMENT     { SETDESC($1,$4); }
         | templfun nostatmeth MP_COMMENT        { SETDESC($1,$3);
-          // todo: could create the template based on function name, and create a 
-          // methoddef to hold it.  but we don't care.. :)
+	    TypeDef* tmpl = new TypeDef($2->name + "_templ_fun");
+	    $$ = tmpl;
+	    SETDESC($$,$3);
+	    tmpl->AssignType(TypeDef::FUNCTION);
+	    tmpl->SetType(TypeDef::TEMPLATE);
+	    tmpl->AddOption("IGNORE"); /* bad news */
+	    tmpl->methods.AddUniqNameNew($2);
           }
         ;
 
@@ -378,17 +392,23 @@ templdsub:
           templname membs '}'		{
           if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
 	  else $1->tokens.keep = true; }
+        | templname '}'			{
+          if($1->HasOption("NO_TOKENS")) $1->tokens.keep = false;
+	  else $1->tokens.keep = true; }
         | templhead term
         ;
 
 templname:
           templhead '{'			{
-            mta->PushState(MTA::Parse_inclass); $1->tokens.keep = true;
+	    if(mta->state != MTA::Parse_enum) /* could have triggered earlier -- need to keep */
+	      mta->PushState(MTA::Parse_inclass); $1->tokens.keep = true;
 	    mta->Class_ResetCurPtrs(); }
         | templhead MP_COMMENT '{'	{
-	    SETDESC($1,$2); mta->PushState(MTA::Parse_inclass); mta->Class_ResetCurPtrs(); }
+	    if(mta->state != MTA::Parse_enum) /* could have triggered earlier -- need to keep */
+	      mta->PushState(MTA::Parse_inclass); SETDESC($1,$2); mta->Class_ResetCurPtrs(); }
         | templhead '{' MP_COMMENT 	{
-	    SETDESC($1,$3); mta->PushState(MTA::Parse_inclass); mta->Class_ResetCurPtrs(); }
+	    if(mta->state != MTA::Parse_enum) /* could have triggered earlier -- need to keep */
+	      mta->PushState(MTA::Parse_inclass); SETDESC($1,$3); mta->Class_ResetCurPtrs(); }
         ;
 
 templhead:
@@ -431,6 +451,8 @@ templpars:
 templpar:
           MP_CLASS tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         | MP_TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
+        | MP_TYPENAME			{ $$ = new TypeDef("typename"); mta->cur_templ_pars.Add($$); }
+        | type				{ mta->cur_templ_pars.Link($1); $$ = $1; }
         | type tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
           /* note: in_templ_pars prevents lexer from automatically nuking
              everything after MP_EQUALS! */
@@ -445,6 +467,10 @@ templpar:
         | type tyname MP_EQUALS	type    {
             mta->cur_templ_pars.Link($2); $$ = $2;
             mta->cur_templ_defs.Link($4);
+          }
+        | type MP_EQUALS type    {
+            mta->cur_templ_pars.Link($1); $$ = $1;
+            mta->cur_templ_defs.Link($3);
           }
         ;
 
@@ -469,22 +495,28 @@ regfundefn: methname funargs		{
             $1->fun_argc = $2; $1->arg_types.size = $2; mta->burp_fundefn = true; }
         ;
 
-usenamespc:  MP_NAMESPACE MP_NAME term { /* using is not parsed */
-            mta->Namespc_PushNew($2);
-          }
-        | MP_NAMESPACE MP_NAME MP_SCOPER MP_NAME term { /* using is not parsed */
-            /* todo: first name is not retained */
-            mta->Namespc_PushNew($4);
+usenamespc:  namespcword namespcnms term { /* using is not parsed */
+            String nms = mta->cur_namespcs.AsString(".");
+            mta->Namespc_PushNew(nms);
           }
         ;
 
-namespc:  MP_NAMESPACE MP_NAME '{' {
-            mta->Namespc_PushNew($2);
+namespc:  namespcword namespcnms '{' {
+            String nms = mta->cur_namespcs.AsString(".");
+            mta->Namespc_PushNew(nms);
           }
-        | MP_NAMESPACE MP_NAME MP_SCOPER MP_NAME '{' {
-            /* todo: first name is not retained */
-            mta->Namespc_PushNew($4);
-          }
+        ;
+
+namespcword: MP_NAMESPACE {
+          mta->cur_namespcs.Reset(); }
+        ;
+
+namespcnms:  MP_NAME 		{ mta->cur_namespcs.Add($1); }
+        | namespcnms MP_NAME	{ mta->cur_namespcs.Add($2); }
+        | namespcnms MP_SCOPER MP_NAME { mta->cur_namespcs.Add(String("::") + $3); }
+        | namespcnms '(' 	{ mta->cur_namespcs.Add(String("(")); }
+        | namespcnms ')' 	{ mta->cur_namespcs.Add(String(")")); }
+        | namespcnms '"' 	{ mta->cur_namespcs.Add(String("\"")); }
         ;
 
 enums:    enumline
@@ -946,7 +978,7 @@ templargs:
 
 
 templarg:
-          MP_TYPE		{
+          type			{
             mta->cur_typ_templ_pars.Link($1); }
         | MP_NAME		{
             $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
@@ -1007,15 +1039,14 @@ templatekeyword:
 void yyerror(const char *s) { 	/* called for yacc syntax error */
   if(strcmp(s, "parse error") == 0) {
     mta->Error(1, "Syntax Error, line:", String(mta->st_line), ":");
-    mta->Error(1, mta->LastLn);
-    String loc;
-    for(int i=0; i < mta->st_col + 1; i++)
-      loc << " ";
-    loc << "^";
-    mta->Error(1, loc);
   }
   else {
     mta->Error(1, s, "line:", String(mta->st_line), ":");
-    mta->Error(1, mta->LastLn);
   }
+  mta->Error(1, mta->LastLn);
+  String loc;
+  for(int i=0; i < mta->st_col; i++)
+    loc << " ";
+  loc << "^";
+  mta->Error(1, loc);
 }
