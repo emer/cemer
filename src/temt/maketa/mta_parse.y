@@ -112,33 +112,28 @@ int yylex();
 %%
 list:	/* nothing */		{ mta->ResetState(); mta->yy_state = MTA::YYRet_Exit; }
         | list typedefn		{
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok;
-	    return mta->yy_state; }
+	    mta->ResetState();  return mta->yy_state; }
         | list enumdefn		{
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
         | list classdecl	{
-	    mta->ResetClassStack(); mta->ResetState();
-	    mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
         | list classdefn	{
-	    mta->ResetClassStack(); mta->ResetState();
-	    mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+            mta->ResetState(); return mta->yy_state; }
         | list templdecl	{
-            mta->ResetState(); mta->ResetClassStack();
-            mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+            mta->ResetState(); return mta->yy_state; }
         | list templdefn	{
-	    mta->ResetState(); mta->ResetClassStack();
-            mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
         | list fundecl		{
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
         | list usenamespc       {
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
         | list namespc           {
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
-        | list '}'              {
-          // presumably leaving a namespace -- check that..
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_Ok; return mta->yy_state; }
+	    mta->ResetState(); return mta->yy_state; }
+        /* | list '}'              { */
+        /*   // presumably leaving a namespace -- check that.. */
+	/*     mta->ResetState(); return mta->yy_state; } */
 	| list error		{
-	    mta->ResetState(); mta->yy_state = MTA::YYRet_NoSrc; return mta->yy_state; }
+            mta->ResetState(); mta->yy_state = MTA::YYRet_NoSrc; return mta->yy_state; }
 	;
 
 typedefn: typedefns			{
@@ -180,8 +175,8 @@ defn:     tdtype tyname term		{
 	   the second parent of the new type is the actual new type */
         | tdtype term			{
 	  if($1->parents.size < 2) {
-	    cerr << "E!!: Error in predeclared type: " << $1->name << " second parent not found!"
-		 << endl;
+	    mta->Error(0, "Error in predeclared type:", $1->name,
+                       "second parent not found!");
 	    $$ = $1;
 	  }
 	  else {
@@ -552,9 +547,8 @@ membline: membdefn			{
 	      if((mta->cur_mstate == MTA::pblc) && !($1->HasOption("IGNORE"))
 		 && !($1->type->IsConst())) {
 		mta->cur_class->members.AddUniqNameNew($1);
-		if(mta->verbose >= 3)
-		  cerr << "M!!: member: " << $1->name << " added to: "
-		       << mta->cur_class->name << "\n"; } }
+                mta->Info(3, "member:", $1->name, "added to class:",
+                          mta->cur_class->name); } }
 	    mta->memb_stack.Pop(); $$ = NULL; }
         | methdefn			{
             if($1 != NULL) {
@@ -563,9 +557,8 @@ membline: membdefn			{
 		  mta->cur_class->ignore_meths.AddUnique($1->name);
 		else {
 		  mta->cur_class->methods.AddUniqNameNew($1);
-		  if(mta->verbose >= 3)
-		    cerr << "M!!: method: " << $1->name << " added to: "
-			 << mta->cur_class->name << "\n"; } } }
+                  mta->Info(3, "method:", $1->name, "added to class:",
+                            mta->cur_class->name); } } }
 	    else {
 	      mta->cur_meth = NULL; }
 	    mta->meth_stack.Pop(); $$ = NULL; }
@@ -611,9 +604,8 @@ membdefn:
 		mta->last_meth = NULL; }
 	      else if((mta->last_meth->opts.size > 0) || (mta->last_meth->lists.size > 0)) {
 		mta->cur_class->methods.AddUniqNameNew(mta->last_meth);
-		if(mta->verbose >= 3)
-		  cerr << "M!!: method: " << mta->last_meth->name << " added to: "
-		       << mta->cur_class->name << "\n"; } } }
+                mta->Info(3, "method:", mta->last_meth->name, "added to class:",
+                          mta->cur_class->name); } } }
         ;
 
 basicmemb:
@@ -892,18 +884,15 @@ subtype:  combtype
 	    else { mta->TypeNotAdded("namespace new", sp, $$, nty); delete nty; }
           }
 	| namespctyp MP_TYPE	{
-            if(mta->verbose > 1) {
-              taMisc::Info("namespace type:", mta->cur_nmspc_tmp, "::", $2->name);
-            }
+            mta->Info(2, "namespace type:", mta->cur_nmspc_tmp, "::", $2->name);
             $2->namespc = mta->cur_nmspc_tmp; /* todo: could check.. */
             $$ = $2; }
         | MP_SCOPER MP_TYPE		{ $$ = $2; }
         | MP_THISNAME
         | MP_TYPE typtemplopen templargs '>' { /* a template */
             if(!($1->IsTemplate())) {
-              if(mta->verbose > 1) {
-                taMisc::Info("Type:", $1->name, "used as template but not marked as such",
-                             "-- now marking -- probably just an internal type"); }
+              mta->Warning(1, "Type:", $1->name, "used as template but not marked as such",
+                           "-- now marking -- probably just an internal type");
               $1->SetType(TypeDef::TEMPLATE); }
             String nm = $1->GetTemplInstName(mta->cur_typ_templ_pars);
             TypeDef* td;
@@ -918,9 +907,8 @@ subtype:  combtype
               $$ = td; }
 	| MP_THISNAME typtemplopen templargs '>'	{ /* this template */
             if(!($1->IsTemplate())) {
-              if(mta->verbose > 1) {
-                taMisc::Info("Type:", $1->name, "used as template but not marked as such",
-                             "-- now marking -- probably just an internal type"); }
+              mta->Warning(1, "Type:", $1->name, "used as template but not marked as such",
+                           "-- now marking -- probably just an internal type");
               $1->SetType(TypeDef::TEMPLATE); }
 	    $$ = $1; }
         ;
@@ -1017,18 +1005,17 @@ templatekeyword:
 	/* end of grammar */
 
 void yyerror(const char *s) { 	/* called for yacc syntax error */
-  int i;
-  if((mta->verbose < 1) && (!mta->cur_is_trg))
-    return;
-
   if(strcmp(s, "parse error") == 0) {
-    cerr << "E!!: Syntax Error, line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
-    cerr << "\t\t\t";
-    for(i=0; i < mta->st_col + 1; i++)
-      cerr << " ";
-    cerr << "^\n";
+    mta->Error(1, "Syntax Error, line:", String(mta->st_line), ":");
+    mta->Error(1, mta->LastLn);
+    String loc;
+    for(int i=0; i < mta->st_col + 1; i++)
+      loc << " ";
+    loc << "^";
+    mta->Error(1, loc);
   }
   else {
-    cerr << "E!!: " << s << "line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
+    mta->Error(1, s, "line:", String(mta->st_line), ":");
+    mta->Error(1, mta->LastLn);
   }
 }

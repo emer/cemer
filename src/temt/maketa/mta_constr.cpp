@@ -33,27 +33,24 @@ static const int stub_arg_off = 2;
 bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
   if(ths->IsNotActual()) return false; // only actual types!
   if(trg_fname_only != taMisc::GetFileFmPath(ths->source_file)) {
-    if(verbose >= 4) {
-      cerr << "mta_constr: skipping out-of-source type: " << ths->name 
-           << " src: " << ths->source_file << endl;
+    if(dbg_constr) {
+      Info(1, "mta_constr: skipping out-of-source type:", ths->name,
+           "src:", ths->source_file);
     }
     return false; // not from target file!
   }
   if(ths->HasOption("IGNORE")) {
-    if(verbose >= 2) {
-      cerr << "mta_constr: skipping ignored type: " << ths->name << endl;
+    if(dbg_constr) {
+      Info(1, "mta_constr: skipping ignored type:", ths->name);
     }
     return false;
   }
   if(ths->IsTemplInst()) {
-    // if(verbose >= 2) {
-    //   cerr << "considering TI: " << ths->name << " chld sz: " << ths->children.size << endl;
-    // }
     if(ths->children.size > 0) {
       TypeDef* chld = ths->children[0];
       bool rval = TypeDef_Gen_Test(chld); // we get instantiated where first parent lives!
-      if(verbose >= 4) {
-        cerr << "templ inst child test rval: " << rval << endl;
+      if(dbg_constr) {
+        Info(1, "templ inst child test rval:", String(rval));
       }
       return rval;
     }
@@ -64,7 +61,9 @@ bool MTA::TypeDef_Gen_Test(TypeDef* ths) {
 
 String MTA::TypeDef_Gen_TypeName(TypeDef* ths) {
   if(ths->owner == NULL) {
-    cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
+    if(dbg_constr) {
+      Warning(0, "Warning: referring to unowned type:", ths->name);
+    }
     return "void";
   }
   if(ths->IsSubType()) {
@@ -89,7 +88,9 @@ String MTA::TypeDef_Gen_TypeDef_Ptr(TypeDef* ths) {
 
 String MTA::TypeDef_Gen_TypeDef_Ptr_impl(TypeDef* ths) {
   if(ths->owner == NULL) {
-    cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
+    if(dbg_constr) {
+      Warning(0, "Warning: referring to unowned type:", ths->name);
+    }
     return "TA_void";
   }
   if(ths->IsSubType()) {
@@ -381,8 +382,6 @@ void MTA::TypeDef_Gen_TypeDefOf(TypeDef* ths, ostream& strm) {
 #ifdef TA_OS_WIN
     // windows can only refer to types it positively knows, due to ridiculous dllexport
 #else
-    // cerr << ths->name << " source: " << ths->source_file << " empty: "
-    //      << ths->source_file.empty() << endl;
     strm << "TypeDef_Of(" << ths->name << ");\n";
 #endif
   }
@@ -708,10 +707,9 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
       has_rval = false;
       if(!md->type->name.contains("void")) {
         if(add_typedefs) {
-          cerr << "W!!: non-void type is marked void in file: " << cur_fname
-               << " method: " << md->name
-               << " so I don't know how to handle return type: " << md->type->name
-               << " -- it will be ignored!\n";
+          Warning(0, "non-void type is marked void in file:", cur_fname,
+                  "method:", md->name, "so I don't know how to handle return type:",
+                  md->type->name, "-- it will be ignored!");
         }
       }
     }
@@ -743,9 +741,9 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
       if(add_typedefs) {
-        cerr << "W!!: Warning: in file: " << cur_fname << " method: " << md->name <<
-          " don't know how to handle return type: " << md->type->name <<
-          " so it will be ignored!\n";
+        Warning(0, "Warning: in file:", cur_fname, "method:",
+                md->name, "don't know how to handle return type:", md->type->name,
+                "so it will be ignored!");
       }
     }
     if(!add_typedefs) {
@@ -924,8 +922,9 @@ void MTA::MethodSpace_Gen_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
           << "_set(void* inst, const Variant& val) {(("
           << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name
           << "(" << conv << ");}\n";
-      } else {
-      cerr << "**ERROR " << md->name << "SET method must have at least one arg!\n";
+      }
+      else {
+        Error(0, "ERROR", md->name, "SET method must have at least one arg!");
       }
     }
   }
@@ -1603,7 +1602,8 @@ void MTA::TypeDef_Gen_InstInit(TypeDef* ths, ostream& strm) {
           }
           else {
             strm << "0";
-            taMisc::Error("warning: type:",ths->name,"has mult inherit but one parent is a template (shouldn't happen)!");
+            Error(0, "type:", ths->name,
+                  "has mult inherit but one parent is a template (shouldn't happen)!");
           }
         }
         strm << ");\n";
@@ -1612,8 +1612,8 @@ void MTA::TypeDef_Gen_InstInit(TypeDef* ths, ostream& strm) {
     else {
       if((ths->parents.size > 1) && !ths->InheritsFromName("ios") &&
          !ths->HasOption("NO_MEMBERS")) {
-        taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
-                      "-parent offset cannot be computed!");
+        Warning(0, "Warning: type:",ths->name,"has mult inherit but no instance",
+                "-parent offset cannot be computed!");
       }
     }
   }

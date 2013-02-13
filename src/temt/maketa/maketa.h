@@ -64,7 +64,7 @@ public:
     YYRet_Parse = -5 	// need to parse more
   };
 
-  static char 	LastLn[8192];	// last line parsed
+  String 	LastLn;	        // last line parsed
 
   TypeSpace	spc_keywords;	// holds some key words for searching
   TypeSpace	spc_typedef_gen; // space of types to generate typedefs for because they are referred to in methods, etc
@@ -90,15 +90,21 @@ public:
   MemberDef*	last_memb;	// holds previous memberdef
   MethodDef*	last_meth;	// holds previous methoddef
   String        cur_nmspc_tmp;  // temporary current namespace during parsing
-
   bool		thisname;	// true if currently doing a "thisname" operation
   bool		constcoln;	// true if a constructor colon was encountered
   bool		burp_fundefn;	// true if needs to burp after parsing fundefn
   bool          in_templ_pars;   // currently parsing template parameters -- special case..
+
   bool		gen_css;	// generate css stuff?
   bool		gen_instances;	// generate instances?
   bool		gen_doc;	// generate docs
   int		verbose;	// level of verbosity
+  bool          v_trg_only;     // verbosity only on for target header (cur_is_trg)
+  bool          filter_errs;    // filter error messages just like others (otherwise always show)
+  bool          filter_warns;   // filter warning messages just like others (otherwise always show)
+  bool          dbg_constr;     // provide debugging on construction side (else just parsing)
+  String        v_src_trg;      // if non-empty, verbosity only on for this header file (file name only)
+
 #ifdef TA_OS_WIN
   bool		win_dll;	// if true, use the XXX_API macro for dll linkage
   String	win_dll_str;	// when using win_dll, the macro to use, 
@@ -115,7 +121,7 @@ public:
 
   int		st_line;	// starting line
   int		st_col;		// column
-  int	        strm_pos;	// current stream position (don't use tellg!!)
+  int	        strm_pos;	// current stream position
   int	        st_pos;		// starting (of parse) stream position
   int	        st_line_pos;	// start of line position
   int		line;		// current parsing line
@@ -141,6 +147,20 @@ public:
   // initialize keyword lookup table
   void		BuildHashTables();
   // build hash tables at startup
+
+  void          Info(int v_level, const char* a, const char* b=0, const char* c=0,
+                     const char* d=0, const char* e=0, const char* f=0,
+                     const char* g=0, const char* h=0, const char* i=0);
+  // displays informational message, subject to relevant filtering, including target verbosity level as given (0 = always, etc..)
+  void          Warning(int v_level, const char* a, const char* b=0, const char* c=0,
+                     const char* d=0, const char* e=0, const char* f=0,
+                     const char* g=0, const char* h=0, const char* i=0);
+  // displays warning, subject to relevant filtering, including target verbosity level as given (0 = always, etc..)
+  void          Error(int v_level, const char* a, const char* b=0, const char* c=0,
+                     const char* d=0, const char* e=0, const char* f=0,
+                     const char* g=0, const char* h=0, const char* i=0);
+  // displays error, subject to relevant filtering, including target verbosity level as given (0 = always, etc..)
+
   void 		Burp();
   // un-read previous input -- for look-ahead parsing
   void          PushState(States new_state);
@@ -148,7 +168,7 @@ public:
   States        PopState();
   // pop state to prior state, returning old state and setting current state to previous
   void          ResetState();
-  // reset back to starting Find_Item state
+  // reset back to starting Find_Item state and reset all other parsing vars, including class stack, and everything except namespace stack..
   void          PushClass(TypeDef* new_class, MembState memb_state);
   // push new class and member state on stack -- becomes the current class
   TypeDef*      PopClass();

@@ -31,41 +31,31 @@
 */
 
 int MTA::Getc() {
-  // char c = fh.get();
   if(strm_pos >= file_str.length())
     return EOF;
-  char c = file_str[strm_pos];
-  //  strm_pos++;
-  strm_pos = strm_pos + streampos(1);
-  // now, detect for CRLF and skip to the lf
-  if(verbose > 4) // && (state != MTA::Find_Item))
-    cerr << "C!!: => " << line << " :\t" << c << "\n";
+  char c = file_str[strm_pos++];
+  // now, detect CRLF and skip to the lf
+  Info(5, "C!!: =>", taMisc::LeadingZeros(line,5), ":\t", String((char)c));
   if (c == '\r') {
     if (Peekc() == '\n')
-      // c = fh.get();
       c = file_str[strm_pos];
-      strm_pos = strm_pos + streampos(1);
+    strm_pos++;
   }
   if ((c == '\n') || (c == '\r')) {
-    MTA::LastLn[col] = '\0';	// always terminate
-    if(verbose > 3) // && (state != MTA::Find_Item))
-      cerr << "I!!: => " << line << " :\t" << MTA::LastLn << "\n";
+    Info(4, "L!!: =>", taMisc::LeadingZeros(line,5), ":\t", LastLn);
     line++;
     st_line_pos = strm_pos;
     col = 0;
-  } else {
-    if(col >= 8191)
-      cout << "W!!: Warning, line length exceeded in line: " << line << "\n";
-    else {
-      MTA::LastLn[col++] = c;
-      MTA::LastLn[col] = '\0';	// always terminate
-    }
+    LastLn.truncate(0);
+  }
+  else {
+    LastLn.cat(c);
+    col++;
   }
   return c;
 }
 
 int MTA::Peekc() {
-  // return fh.peek();
   if(strm_pos >= file_str.length())
     return EOF;
   return file_str[strm_pos];
@@ -73,9 +63,7 @@ int MTA::Peekc() {
 
 void MTA::unGetc(int c) {
   col--;
-  //  strm_pos--;
-  strm_pos = strm_pos - streampos(1);
-  // fh.putback(c);
+  strm_pos--;
 }
 
 int MTA::skipwhite() {
@@ -328,7 +316,7 @@ int MTA::lex() {
       if ((c == '\n') || (c == '\r'))		// ignore #<lineno><RETURN> directives
 	continue;
       else if(c != '\"') {	// "
-	cerr << "E!!: Directive Not Recognized: " << LexBuf << (char)c << "\n";
+	Error(0, "Directive Not Recognized:", LexBuf, String((char)c));
 	continue;
       }
       c = readfilename(c);
@@ -350,9 +338,7 @@ int MTA::lex() {
         cur_is_trg = false;
       }
 
-      if(verbose >= 1) {
-	cout << "file: " << cur_fname << "\n";
-      }
+      Info(1, "file:", cur_fname);
       continue;			// now actually parse something new..
     }
 

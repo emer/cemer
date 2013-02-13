@@ -29,8 +29,6 @@ extern int yydebug;
 extern "C" int getpid();
 MTA* mta;               // holds mta
 
-char MTA::LastLn[8192];
-
 MTA::MTA() {
   cur_enum = NULL;
   cur_class = NULL;
@@ -48,6 +46,10 @@ MTA::MTA() {
   gen_instances = false;
   gen_doc = false;
   verbose = 0;
+  v_trg_only = true;
+  filter_errs = false;
+  filter_warns = true;
+  dbg_constr = false;
 #ifdef TA_OS_WIN
   win_dll = false;
 #endif
@@ -109,6 +111,53 @@ void MTA::BuildHashTables() {
   spc_keywords.BuildHashTable(hash_size);
 }
 
+
+void MTA::Info(int v_level, const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  if(v_trg_only && !cur_is_trg) {
+    if(v_src_trg.empty()) return;
+    if(v_src_trg != cur_fname_only) return;
+  }
+  if(v_level > verbose) return;
+  String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  cout << "I!!: " << msg << endl;
+}
+
+void MTA::Warning(int v_level, const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  if(filter_warns && v_level > 0) {
+    if(v_trg_only && !cur_is_trg) {
+      if(v_src_trg.empty()) return;
+      if(v_src_trg != cur_fname_only) return;
+    }
+  }
+  if(v_level > verbose) return;
+  String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  cerr << "W!!: " << msg << endl;
+}
+
+void MTA::Error(int v_level, const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  if(filter_errs && v_level > 0) { // v_level 0 errors are not filtered ever!
+    if(v_trg_only && !cur_is_trg) {
+      if(v_src_trg.empty()) return;
+      if(v_src_trg != cur_fname_only) return;
+    }
+  }
+  if(v_level > verbose) return;
+  String msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  cerr << "E!!: " << msg << endl;
+}
+
+void MTA::Burp() {
+  line = st_line;
+  col = st_col;
+  strm_pos = st_pos;
+}
+
 void MTA::PushState(States new_state) {
   state_stack.Add(new_state);
   state = new_state;
@@ -131,6 +180,24 @@ MTA::States MTA::PopState() {
 void MTA::ResetState() {
   state_stack.Reset();
   PushState(Find_Item);
+  mta->ResetClassStack(); 
+  mta->yy_state = MTA::YYRet_Ok;
+  type_stack.Reset();
+  enum_stack.Reset();
+  memb_stack.Reset();
+  meth_stack.Reset();
+  cur_enum = NULL;
+  cur_memb_type = NULL;
+  cur_meth = NULL;
+  cur_templ_pars.Reset();
+  cur_templ_defs.Reset();
+  cur_typ_templ_pars.Reset();
+  last_memb = NULL;
+  last_meth = NULL;
+  thisname = false;
+  constcoln = false;
+  burp_fundefn = false;
+  in_templ_pars = false;
 }
 
 void MTA::PushClass(TypeDef* new_class, MembState memb_state) {
@@ -170,12 +237,6 @@ void MTA::ResetClassStack() {
   cur_class = NULL;
 }
 
-void MTA::Burp() {
-  line = st_line;
-  col = st_col;
-  strm_pos = st_pos;
-}
-
 void MTA::Class_ResetCurPtrs() {
   cur_memb = NULL; cur_memb_type = NULL; cur_meth = NULL;
   last_memb = NULL; last_meth = NULL;
@@ -191,9 +252,7 @@ void MTA::Namespc_PushNew(const char* spc) {
   namespc_stack.Reset();
   // todo: currently have no way to detect exit, so just reset
   namespc_stack.Add(spc);
-  if(verbose > 1) {
-    taMisc::Info("entered new namespace:", spc);
-  }
+  Info(2, "entered new namespace:", spc);
 }
 
 void MTA::Namespc_Pop() {
@@ -205,9 +264,7 @@ void MTA::Namespc_Pop() {
   String cur = "<top level>";
   if(namespc_stack.size > 0)
     cur = namespc_stack.Peek();
-  if(verbose > 1) {
-    taMisc::Info("popped off namespace:", old, "current is:", cur);
-  }
+  Info(2, "popped off namespace:", old, "current is:", cur);
 }
 
 void MTA::StartTemplPars() {
@@ -254,8 +311,8 @@ String MTA::FindFile(const String& fname, bool& ok) {
     }
   }
   // not found -- we return fname, but set error
-
-  cerr <<  "W!!: Warning: file could not be found on the include paths:: " << fname.chars() << "\n";
+  Warning(0, "Warning: file could not be found on the include paths: ",
+          fname.chars());
   ok = false;
   return fname;
 }
@@ -307,22 +364,18 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
     td->source_end = line-1;
   }
 
-  if(verbose <= 2)      return;
-  cerr << "M!!: " << typ << " added: " << td->name << " to: "
-       << sp->name << " idx: " << td->idx << " src: "
-       << td->source_file << ":" << td->source_start << "-" << td->source_end
-       << endl;
+  Info(3, typ, "added:", td->name, "to:", sp->name,
+       "idx:", String(td->idx), "src:", td->source_file  + ":" + String(td->source_start)
+       + "-" + String(td->source_end));
 }
 
 void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
   if(ext_td->name != new_td->name) {
-    cerr << "E!!: Error in hash table name lookup -- names: " << ext_td->name << " and: "
-         << new_td->name << " should be the same!" << endl;
+    Error(0, "Error in hash table name lookup -- names:",
+          ext_td->name, "and:", new_td->name, "should be the same!");
   }
-  if(verbose <= 2)      return;
-  cerr << "M!!: " << typ << " NOT added: " << new_td->name << " to: "
-       << sp->name << " because of existing type: " << ext_td->name
-       << " idx: " << ext_td->idx << endl;
+  Info(3, typ, "NOT added:", new_td->name, "to:", sp->name,
+       "because of existing type:", ext_td->name, "idx:", String(ext_td->idx));
 }
 
 void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
@@ -390,9 +443,9 @@ bool MTA::TypeSpace_Sort_Order(TypeSpace* ths) {
     for(j=0; j<td->parents.size; j++) {
       TypeDef* par_td = td->parents.FastEl(j);
       if((td->idx < par_td->idx) && (td->owner == ths) && (par_td->owner == ths)) {
-        if(mta->verbose > 4) {
-          cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
-               << par_td->idx+1 << "\n";
+        if(dbg_constr) {
+          Info(5, "Switching order of:", td->name,
+               "fm:", String(td->idx), "to:", String(par_td->idx+1));
         }
         // child comes before parent..
         ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
@@ -407,7 +460,7 @@ bool MTA::TypeSpace_Sort_Order(TypeSpace* ths) {
 #if (defined(TA_OS_UNIX))
 void mta_cleanup(int err) {
   signal(err, SIG_DFL);
-  cerr << "E!!: maketa: exiting and cleaning up temp files from signal: ";
+  mta->Error(0, "maketa: exiting and cleaning up temp files from signal:");
   taMisc::Decode_Signal(err);
   cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
@@ -419,13 +472,13 @@ void mta_cleanup(int err) {
 
 void mta_print_args(int argc, char* argv[]) {
   for(int i=0; i<argc; i++) {
-    cerr << argv[i] << " ";
+    cout << argv[i] << " ";
   }
-  cerr << endl;
+  cout << endl;
 }
 
 void mta_print_usage(int argc, char* argv[]) {
-  cerr << "Usage:\t" << argv[0]
+  cout << "Usage:\t" << argv[0]
        << "\n(* indicates default argument)"
        << "\n[-[-]help | -[-]?]  print this argument listing"
        << "\n[-o <out_file>      output file name to generate (default is target file_TA.cxx)"
@@ -449,9 +502,18 @@ int MTA::Main(int argc, char* argv[]) {
   // mta_print_args(argc, argv);
 #if 0 // change to 1 for debugging
   verbose = 2;
+  v_trg_only = false;
+  filter_errs = true;
+  filter_warns = true;
+  dbg_constr = false;
+  v_src_trg = "";
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else
+  v_trg_only = true;
+  filter_errs = true;
+  filter_warns = true;
+  dbg_constr = false;
   bool keep_tmp = false;
 #endif
 
@@ -577,12 +639,12 @@ int MTA::Main(int argc, char* argv[]) {
   }
 
   if(trg_header.empty()) {
-    cerr << "maketa ERROR -- no target header file specified! aborting!" << endl;
+    Error(0, "maketa ERROR -- no target header file specified! aborting!");
     return 1;
   }
 
   if (wait) {
-    cerr << "Press Enter key to start...";
+    Info(0, "Press Enter key to start...");
     cin.get();
   }
 
@@ -598,14 +660,10 @@ int MTA::Main(int argc, char* argv[]) {
   else
     ta_lib = false;
 
-  if(verbose > 0) {
-    cerr << "M!!: target header file to be parsed: " << trg_header << endl;
-  }
+  Info(1, "target header file to be parsed:", trg_header);
   if(out_fname.empty()) {
     out_fname = trg_header.before(".h") + "_TA.cxx";
-    if(verbose > 0) {
-      cerr << "M!!: output file set to: " << out_fname << endl;
-    }
+    Info(1, "output file set to:", out_fname);
   }
 
   if(verbose > 4)
@@ -629,14 +687,11 @@ int MTA::Main(int argc, char* argv[]) {
   comnd = comnd_base + " -C -D__MAKETA__ -o " + tmp_fname + " " + trg_header;
 #endif
 
-  if(verbose > 0) {
-    cerr << "M!!: " << comnd << "\n";
-  }
-  cout.flush();
+  Info(1, comnd);
   int ret_code = system((char*)comnd);
   if (ret_code != 0) {
-    cout << "**maketa cpp command did not succeed (err code  " << ret_code << ")\n";
-    cout << "\n**maketa cpp command was: " << comnd.chars() << "\n\n";
+    Error(0, "maketa cpp command did not succeed (err code:", String(ret_code),")");
+    Error(0, "maketa cpp command was:", comnd.chars());
     return ret_code;
   }
 
@@ -668,20 +723,13 @@ int MTA::Main(int argc, char* argv[]) {
   ////////////////////////////////////////////////
   //    Generate output
 
-  // give it 10 passes through to try to get everything in order..
-  // int swp_cnt = 0;
-  // if(mta->verbose > 0)
-  //   cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  // while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(taMisc::types))) {
-  //   swp_cnt++;
-  //   if(mta->verbose > 0)
-  //     cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
-  // }
-
-  if(verbose > 3) {
-    String tl;
-    taMisc::types.Print(tl);
-    cout << tl;
+  if(dbg_constr) {
+    if(verbose > 3) {
+      Info(4, "Types processed:");
+      String tl;
+      taMisc::types.Print(tl);
+      cout << tl;
+    }
   }
 
   fstream outc;
@@ -692,13 +740,11 @@ int MTA::Main(int argc, char* argv[]) {
   outc.close();  outc.clear();
 
   if((verbose > 0) && (taMisc::types.hash_table != NULL)) {
-    cerr << "\nM!!: TypeSpace size and hash_table bucket_max values:\n"
-         << "taMisc::types:\t" << taMisc::types.size << "\t" << taMisc::types.hash_table->bucket_max << "\n"
-         << "spc_keywords:\t" << spc_keywords.size << "\t" << spc_keywords.hash_table->bucket_max << "\n";
-  }
-  if(verbose > 1) {
-    String st;
-    cout << "\nTarget Types\n";   taMisc::types.Print(st); cout << st;
+    Info(1, "TypeSpace size and hash_table bucket_max values:");
+    Info(1, "taMisc::types:\t", String(taMisc::types.size), "\t",
+         String(taMisc::types.hash_table->bucket_max));
+    Info(1, "spc_keywords:\t", String(spc_keywords.size), "\t",
+         String(spc_keywords.hash_table->bucket_max));
   }
   return 0;
 }
