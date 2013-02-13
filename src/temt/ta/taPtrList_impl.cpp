@@ -305,14 +305,15 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
 }
 
 bool taPtrList_impl::AddUnique_(void* it) {
-  if(El_GetOwnerList_(it) == this) return false;
+  // note: this should be valid but somehow it is not and causes problems if uncommented:
+  // if(El_GetOwnerList_(it) == this) return false;
   if(FindEl_(it) >= 0)
     return false;
   Add_(it);
   return true;
 }
 bool taPtrList_impl::AddUniqNameNew_(void* it) {
-  if(El_GetOwnerList_(it) == this) return false;
+  if(El_GetOwnerList_(it) == this) return false; // if we're already on the list, the replace causes delete and it is bad
   int i = FindNameIdx(El_GetName_(it));
   if(i >= 0) {
     ReplaceIdx_(i,it);
@@ -322,6 +323,7 @@ bool taPtrList_impl::AddUniqNameNew_(void* it) {
   return true;
 }
 void* taPtrList_impl::AddUniqNameOld_(void* it) {
+  // note: this optimization is relatively new and could potentially cause problems..
   if(El_GetOwnerList_(it) == this) return it;
   int i = FindNameIdx(El_GetName_(it));
   if(i >= 0) {
