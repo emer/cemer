@@ -30,9 +30,9 @@
   #define E_API __declspec(dllexport)
   #else
   #define E_API __declspec(dllimport)
+  #endif
   #define eTypeDef_Of(T) extern E_API TypeDef TA_ ## T
   #define eTypeInst_Of(T) extern E_API T* TAI_ ## T
-  #endif
 #else 
 #define E_API
 #define eTypeDef_Of(T) extern TypeDef TA_ ## T
