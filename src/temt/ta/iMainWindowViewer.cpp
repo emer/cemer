@@ -1947,15 +1947,21 @@ void iMainWindowViewer::changeEvent(QEvent* ev) {
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   if(!taMisc::gui_active) return false;
 
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!proj) return false;	// shouldn't happen
   taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;	// shouldn't happen
 
-  MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
-  if(!vwr) return false;	// shouldn't happen
+  iMainWindowViewer* inst = NULL;
 
-  iMainWindowViewer* inst = vwr->widget();
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(proj) {
+    MainWindowViewer* vwr = proj->GetDefaultProjectBrowser(); // this is better
+    if(!vwr) return false;	// shouldn't happen
+    inst = vwr->widget();
+  }
+  else {
+    inst = taiMisc::active_wins.Peek_MainWindow(); // works for root window..
+  }
+
   if (!inst) return false; // shouldn't happen!
 
   bool rval = false;
@@ -1963,9 +1969,11 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   // for existing, we do a browse to the item
   if (new_tab) {
     rval = inst->AssertPanel(link, new_tab, pin_tab);
-  } else {
+  }
+  else {
     rval = inst->AssertBrowserItem(link);
   }
+
   return rval;
 }
 

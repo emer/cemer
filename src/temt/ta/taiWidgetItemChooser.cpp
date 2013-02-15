@@ -161,13 +161,13 @@ bool taiWidgetItemChooser::OpenChooser() {
   iDialogItemChooser* ic = iDialogItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
     rval = true;                // hit ok
-    if (m_sel != ic->selObj()) {
-      UpdateImage(ic->selObj());
-      if (mflags & flgAutoApply)
-        applyNow();
-      else
-        SigEmit();
-    }
+    // always update even if it says the item was the same, because we could have set a 
+    // default item during construction..
+    UpdateImage(ic->selObj());
+    if (mflags & flgAutoApply)
+      applyNow();
+    else
+      SigEmit();
   }
   delete ic;
   // return focus to rep and window

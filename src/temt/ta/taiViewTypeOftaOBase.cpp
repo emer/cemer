@@ -31,8 +31,6 @@ int taiViewTypeOftaOBase::BidForView(TypeDef* td) {
 }
 
 void taiViewTypeOftaOBase::CheckUpdateDataPanelSet(iPanelSet* pan) {
-  // TODO (4.1): check for new UserData
-  // TODO: check for a new DocLink
   // if we have UserData, make a panel for it
   taiSigLink* dl = pan->link();
   if (!dl) return;

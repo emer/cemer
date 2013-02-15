@@ -21,7 +21,9 @@
 #include <taiWidgetMenuBar>
 
 int taiViewTypeOftaBase::BidForView(TypeDef* td) {
-  return 0; //no taBase implementation for now
+  if (td->InheritsFrom(&TA_taBase))
+    return (inherited::BidForView(td) +1);
+  return 0;
 }
 
 taiSigLink* taiViewTypeOftaBase::CreateSigLink_impl(taBase* data_) {
