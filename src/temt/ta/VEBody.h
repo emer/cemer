@@ -74,6 +74,9 @@ private:
   void  Destroy()       { };
 };
 
+class VEBody; //
+SmartRef_Of(VEBody); // VEBodyRef
+
 taTypeDef_Of(VEBody);
 
 class TA_API VEBody : public taNBase {
@@ -90,6 +93,8 @@ public:
     NO_COLLIDE          = 0x0020, // this body is not part of the collision detection system -- useful for light beams and other ephemera
     CUR_FM_FILE         = 0x0040, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
     GRAVITY_ON          = 0x0080, // does gravitational force affect this body?
+
+    INIT_WAS_ABS        = 0x1000, // #NO_BIT init vals were specified in abs coords last time (not rel)
   };
     //    COLLIDE_FM_FILE       = 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -110,12 +115,21 @@ public:
   void*         body_id;        // #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the body (cast to a dBodyID which is dxbody*)
   void*         geom_id;        // #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the body (cast to a dGeomID which is dxgeom*)
   BodyFlags     flags;          // flags for various body properties
-  taVector3f    init_pos;       // initial position of body (when creating it)
-  taAxisAngle   init_rot;       // #CONDSHOW_OFF_flags:EULER_ROT initial rotation of body in terms of an axis and angle (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-  taVector3f    init_euler;     // #CONDSHOW_ON_flags:EULER_ROT initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
+
+  bool          init_rel;       // initial values are all set relative to another body (rel_body) -- when true the init_ vals are all read-only and set automatically in update after edit and during Init
+  VEBodyRef     rel_body;       // #CONDSHOW_ON_init_rel other body that our positions, rotation, and velocities are computed relative to -- in general better if rel_body is before this one in list of objects, especially if it is also relative to something else, so everything gets updated in the proper order.  definitely avoid loops!
+  taVector3f    rel_pos;       // #CONDSHOW_ON_init_rel initial position of body relative to rel_body -- set to current during Init() call
+  taAxisAngle   rel_rot;       // #CONDSHOW_OFF_flags:EULER_ROT||!init_rel initial rotation of body in terms of an axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- relative to rel_body -- set to current during Init() call
+  taVector3f    rel_euler;     // #CONDSHOW_ON_flags:EULER_ROT&&init_rel initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854 -- set to current during Init() call
+  taVector3f    rel_lin_vel;   // #CONDSHOW_ON_init_rel initial linear velocity relative to rel_body -- set to current during Init() call
+  taVector3f    rel_ang_vel;   // #CONDSHOW_ON_init_rel initial angular velocity relative to rel_body -- set to current during Init() call
+
+  taVector3f    init_pos;       // #CONDEDIT_OFF_init_rel initial position of body -- set to current during Init() call -- if init_rel then auto-computed
+  taAxisAngle   init_rot;       // #CONDEDIT_OFF_flags:EULER_ROT||init_rel initial rotation of body in terms of an axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- set to current during Init() call -- if init_rel then auto-computed
+  taVector3f    init_euler;     // #CONDEDIT_ON_flags:EULER_ROT&&!init_rel initial rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854 -- set to current during Init() call -- if init_rel then auto-computed
   taQuaternion  init_quat;      // #READ_ONLY initial rotation of body in Quaternion form -- automatically converted from init_rot or init_euler depending on EULER_ROT flag
-  taVector3f    init_lin_vel;   // initial linear velocity
-  taVector3f    init_ang_vel;   // initial angular velocity
+  taVector3f    init_lin_vel;   // #CONDEDIT_OFF_init_rel initial linear velocity -- set to current during Init() call -- if init_rel then auto-computed
+  taVector3f    init_ang_vel;   // #CONDEDIT_OFF_init_rel initial angular velocity -- set to current during Init() call -- if init_rel then auto-computed
 
   taVector3f    cur_pos;        // current position of body
   taAxisAngle   cur_rot;        // #CONDSHOW_OFF_flags:EULER_ROT current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
@@ -199,6 +213,8 @@ public:
   virtual void  CurFromODE(bool updt_disp = false);
   // #CAT_ODE get the updated values from ODE after computing
 
+  virtual void  GetInitFromRel();
+  // #CAT_ODE #EXPERT if init_rel is on, this will compute init values from relative values -- called automatically during Init() and UAE
   virtual void  UpdateCurRotFmQuat();
   // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
   virtual void  InitRotFromCur();
@@ -270,7 +286,5 @@ private:
   void  Initialize();
   void  Destroy();
 };
-
-SmartRef_Of(VEBody); // VEBodyRef
 
 #endif // VEBody_h

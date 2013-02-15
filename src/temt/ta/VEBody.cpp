@@ -38,6 +38,7 @@ void VEBody::Initialize() {
   body_id = NULL;
   geom_id = NULL;
   flags = (BodyFlags)(GRAVITY_ON | EULER_ROT);
+  init_rel = false;
   shape = CAPSULE;
   cur_shape = NO_SHAPE;
   cur_long_axis = (LongAxis)0;
@@ -73,6 +74,9 @@ void VEBody::UpdateAfterEdit_impl() {
       length = 1.1f * 2.0f * radius;
     }
   }
+
+  GetInitFromRel();
+
   // keep synchronized..
   if(HasBodyFlag(EULER_ROT)) {
     init_quat = init_euler;
@@ -161,8 +165,68 @@ void VEBody::DestroyODE() {
   fixed_joint_id = NULL;
 }
 
+void VEBody::GetInitFromRel() {
+  if(!init_rel) {
+    SetBodyFlag(INIT_WAS_ABS);
+    return;
+  }
+  if(TestWarning(!rel_body, "GetInitFromRel", "init_rel is on but rel_body is NULL -- no body to be relative to")) {
+    SetBodyFlag(INIT_WAS_ABS);
+    return;
+  }
+
+  if(HasBodyFlag(INIT_WAS_ABS)) {
+    // use current init vals relative to rel body to set rels to be consistent therewith
+    rel_pos = init_pos - rel_body->init_pos;
+    rel_lin_vel = init_lin_vel - rel_body->init_lin_vel;
+    rel_ang_vel = init_ang_vel - rel_body->init_ang_vel;
+
+    taQuaternion tquat;
+    if(HasBodyFlag(EULER_ROT)) {
+      tquat = init_euler;
+    }
+    else {
+      tquat = init_rot;
+    }
+    tquat.Normalize();
+    taQuaternion rquat;
+    if(rel_body->HasBodyFlag(EULER_ROT)) {
+      rquat = rel_body->init_euler;
+    }
+    else {
+      rquat = rel_body->init_rot;
+    }
+    tquat /= rquat;             // take away the rel rotation, what's left is relative
+    tquat.ToEulerVec(rel_euler);
+    rel_rot = tquat;
+    ClearBodyFlag(INIT_WAS_ABS); // no longer..
+  }
+
+  init_pos = rel_body->init_pos + rel_pos;
+  init_lin_vel = rel_body->init_lin_vel + rel_lin_vel;
+  init_ang_vel = rel_body->init_ang_vel + rel_ang_vel;
+  taQuaternion tquat;
+  if(rel_body->HasBodyFlag(EULER_ROT)) {
+    tquat = rel_body->init_euler;
+  }
+  else {
+    tquat = rel_body->init_rot;
+  }
+  tquat.Normalize();
+  if(HasBodyFlag(EULER_ROT)) {
+    tquat.RotateEuler(rel_euler.x, rel_euler.y, rel_euler.z);
+  }
+  else {
+    tquat.RotateAxis(rel_rot.x, rel_rot.y, rel_rot.z, rel_rot.rot);
+  }
+  tquat.ToEulerVec(init_euler);
+  init_rot = tquat;
+}
+
 void VEBody::Init() {
   VEWorld::last_to_set_ode = this;
+
+  GetInitFromRel();
 
   if(HasBodyFlag(VEBody::OFF)) {
     DestroyODE();

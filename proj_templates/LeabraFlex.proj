@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.1.1.0 rev5758
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6106
 LeabraProject .projects["LeabraFlex"] { 
   taBase_Group @.templates = [0] {
   };
@@ -15,7 +15,7 @@ LeabraProject .projects["LeabraFlex"] {
 };
   };
 
-  SelectEdit_Group @.edits = [1] {
+  SelectEdit_Group @.edits = [2] {
     SelectEdit @["ControlPanel"] { 
       EditMbrItem_Group @.mbrs = [2] {
 	EditMbrItem @[0] { };
@@ -27,6 +27,130 @@ LeabraProject .projects["LeabraFlex"] {
 	EditMthItem @[1] { };
 	EditMthItem @[2] { };
 	EditMthItem @[3] { };
+      };
+    };
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [0] {
+      };
+
+      EditMthItem_Group @.mths = [0] {
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      ParamSearchAlgo_List @.search_algos = [0] {
       };
     };
   };
@@ -2133,7 +2257,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
   };
 
-  DataViewer_List @.viewers = [1] {
+  taViewer_List @.viewers = [1] {
     MainWindowViewer @["Browser3"] { 
    UserDataItem_List @*(.user_data_) {
 	UserDataItem @["view_win_lft"] { };
@@ -2153,15 +2277,15 @@ LeabraProject .projects["LeabraFlex"] {
       };
 
       FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
+	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
+	T3PanelViewer @["T3Frames"] { 
      UserDataItem_List @*(.user_data_) {
 	    UserDataItem @["view_frame_selected"] { };
      };
 
-	  T3DataViewFrame_List @.frames = [2] {
-	    T3DataViewFrame @["Network_0"] { 
+	  T3Panel_List @.panels = [2] {
+	    T3Panel @["Network_0"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["Network_0_View"] { 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -2179,7 +2303,7 @@ LeabraProject .projects["LeabraFlex"] {
 		T3SavedView @["View_5"] { };
 	      };
 	    };
-	    T3DataViewFrame @["EpochOutputData"] { 
+	    T3Panel @["EpochOutputData"] { 
 	      T3DataView_List @.children = [1] {
 		GraphTableView @["EpochOutputData_Graph"] { 
 		  T3DataView_List @.children = [16] {
@@ -2234,6 +2358,7 @@ LeabraProject .projects["LeabraFlex"] {
   Network_Group @.networks = [1] {
     LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
+	UserDataItem @["cos_err"] { };
 	UserDataItem @["norm_err"] { };
 	UserDataItem @["ext_rew"] { };
 	UserDataItem @["maxda"] { };
@@ -2386,7 +2511,7 @@ LeabraProject .projects["LeabraFlex"] {
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
 <title>LeabraFlexProgs - Emergent</title>
 <meta charset=\"UTF-8\">
-<meta name=\"generator\" content=\"MediaWiki 1.19alpha\">
+<meta name=\"generator\" content=\"MediaWiki 1.20alpha\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/Drafts/Drafts.css?3\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
@@ -2399,35 +2524,29 @@ LeabraProject .projects["LeabraFlex"] {
 <!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE60Fixes.css?303\" media=\"screen\" /><![endif]-->
 <!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE70Fixes.css?303\" media=\"screen\" /><![endif]-->
 <link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/gumax_print.css?303\" media=\"print\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style type=\"text/css\" media=\"all\">.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style type=\"text/css\">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
 
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:4250852ed2349a0d4d0fc6509a3e7d4c */</style><style type=\"text/css\" media=\"all\">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
-
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:8b08bdc91c52a9ffba396dccfb5b473c */</style><style type=\"text/css\" media=\"all\">#tooltip{position:absolute;z-index:3000;border:1px solid #111;background-color:#eee;padding:5px;opacity:0.85}#tooltip h3,#tooltip div{margin:0}
-
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:c67f6722c9ab75d61ca7edf2e8328002 */</style><style type=\"text/css\" media=\"all\">.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute !important;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px)}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:after{content:\".\";display:block;height:0;clear:both;visibility:hidden}.ui-helper-clearfix{display:inline-block} * html .ui-helper-clearfix{height:1%}.ui-helper-clearfix{display:block} .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:Verdana,Arial,sans-serif;font-size:1.1em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:Verdana,Arial,sans-serif;font-size:1em}.ui-widget-content{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_75_ffffff_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;color:#222222}.ui-widget-content a{color:#222222}.ui-widget-header{border:1px solid #aaaaaa;background:#cccccc url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_highlight-soft_75_cccccc_1x100.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #d3d3d3;background:#e6e6e6 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_e6e6e6_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#555555}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#555555;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #999999;background:#dadada url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_dadada_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-hover a,.ui-state-hover a:hover{color:#212121;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_65_ffffff_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#212121;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #fcefa1;background:#fbf9ee url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_55_fbf9ee_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#fef1ec url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_95_fef1ec_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#cd0a0a}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#cd0a0a}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#cd0a0a}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px;background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-widget-content .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-widget-header .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-state-default .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_888888_256x240.png?2011-10-27T17:31:40Z)}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2011-10-27T17:31:40Z)}.ui-state-active .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2011-10-27T17:31:40Z)}.ui-state-highlight .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_2e83ff_256x240.png?2011-10-27T17:31:40Z)}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_cd0a0a_256x240.png?2011-10-27T17:31:40Z)} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-all,.ui-corner-top,.ui-corner-left,.ui-corner-tl{-moz-border-radius-topleft:4px;-webkit-border-top-left-radius:4px;-khtml-border-top-left-radius:4px;border-top-left-radius:4px}.ui-corner-all,.ui-corner-top,.ui-corner-right,.ui-corner-tr{-moz-border-radius-topright:4px;-webkit-border-top-right-radius:4px;-khtml-border-top-right-radius:4px;border-top-right-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-left,.ui-corner-bl{-moz-border-radius-bottomleft:4px;-webkit-border-bottom-left-radius:4px;-khtml-border-bottom-left-radius:4px;border-bottom-left-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-right,.ui-corner-br{-moz-border-radius-bottomright:4px;-webkit-border-bottom-right-radius:4px;-khtml-border-bottom-right-radius:4px;border-bottom-right-radius:4px} .ui-widget-overlay{background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30)}.ui-widget-shadow{margin:-8px 0 0 -8px;padding:8px;background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30);-moz-border-radius:8px;-khtml-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
-
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:cd0de916ab8edd7d19f57a22a5554c8f */</style><style type=\"text/css\" media=\"all\">.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
-
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:890b68d4189b6dd4e7ca649947d2cf9f */</style><style type=\"text/css\" media=\"all\">a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}
-
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:d7b3b8ca8e02fa8dee46954717296c3d */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:8b08bdc91c52a9ffba396dccfb5b473c */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.editsection{display:none}
 
-/* cache key: pdpwiki:resourceloader:filter:minify-css:5:40436297bd93906a010108e46094c495 */</style>
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:bbc2580de445604b1dcdb5561cbe4c3c */</style>
 
-<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20111027T173219Z\"></script>
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20121215T200257Z\"></script>
 <script>if(window.mw){
-	mw.config.set({\"wgCanonicalNamespace\": \"\", \"wgCanonicalSpecialPageName\": false, \"wgNamespaceNumber\": 0, \"wgPageName\": \"LeabraFlexProgs\", \"wgTitle\": \"LeabraFlexProgs\", \"wgCurRevisionId\": 9226, \"wgArticleId\": 2315, \"wgIsArticle\": true, \"wgAction\": \"view\", \"wgUserName\": null, \"wgUserGroups\": [\"*\"], \"wgCategories\": [], \"wgBreakFrames\": false, \"wgRestrictionEdit\": [], \"wgRestrictionMove\": [], \"wgSearchNamespaces\": [0], \"sfgAutocompleteOnAllChars\": false, \"sfgScriptPath\": \"/emergent/extensions/SemanticForms\", \"sfgAutocompleteValues\": [], \"sfgShowOnSelect\": [], \"sfgFieldProperties\": [], \"sfgDependentFields\": [], \"sfgFormErrorsHeader\": \"There were errors with your form input; see below.\", \"sfgBlankErrorStr\": \"cannot be blank\", \"sfgBadURLErrorStr\": \"must have the correct URL format, starting with \\\"http\\\"\", \"sfgBadEmailErrorStr\": \"must have a valid email address format\", \"sfgBadNumberErrorStr\": \"must be a valid number\", \"sfgBadDateErrorStr\": \"must be a valid date\", \"sfgAnonEditWarning\": \"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\", \"sfgSaveAndContinueSummary\": \"Saved using \\\"Save and continue\\\" button in form\", \"wgVectorEnabledModules\": {\"collapsiblenav\": true, \"collapsibletabs\": true, \"editwarning\": false, \"expandablesearch\": false, \"footercleanup\": false, \"sectioneditlinks\": false, \"simplesearch\": true, \"experiments\": true}, \"wgSVGEditEditor\": false, \"wgWikiEditorEnabledModules\": {\"toolbar\": true, \"dialogs\": true, \"hidesig\": true, \"templateEditor\": false, \"templates\": false, \"preview\": true, \"previewDialog\": false, \"publish\": false, \"toc\": false}});
-}
-</script><script>if(window.mw){
-	mw.loader.load([\"mediawiki.page.startup\"]);
-}
-</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20120307T033047Z&amp;*\"></script>
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgSearchNamespaces\":[0],\"sfgAutocompleteOnAllChars\":false,\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"sfgAutocompleteValues\":[],\"sfgShowOnSelect\":[],\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgFormErrorsHeader\":\"There were errors with your form input; see below.\",\"sfgBlankErrorStr\":\"cannot be blank\",\"sfgBadURLErrorStr\":\"must have the correct URL format, starting with \\\"http\\\"\",\"sfgBadEmailErrorStr\":\"must have a valid email address format\",\"sfgBadNumberErrorStr\":\"must be a valid number\",\"sfgBadDateErrorStr\":\"must be a valid date\",\"sfgAnonEditWarning\":\"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\",\"sfgSaveAndContinueSummary\":\"Saved using \\\"Save and continue\\\" button in form\",\"htTabIndexes\":[],\"wgVectorEnabledModules\":{\"collapsiblenav\":true,\"collapsibletabs\":true,\"editwarning\":false,\"expandablesearch\":false,\"footercleanup\":false,\"sectioneditlinks\":false,\"simplesearch\":true,\"experiments\":true},\"wgSVGEditEditor\":false,\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+}</script><script>if(window.mw){
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":
+3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true});;},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"watchToken\":false});;},{},{});
+
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:4031563f15ddd67cf30e5ad097c4d6dd */
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
+}</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%2Ccookie%2CmessageBox%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.page.startup%7Cmediawiki.util&amp;skin=gumaxdd&amp;version=20121215T200440Z&amp;*\"></script>
 		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
 </head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd\">
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
 <div id=\"gumax-page\">
 	<!--///===== Drop Down menu script =====///-->
 
@@ -2469,7 +2588,7 @@ LeabraProject .projects["LeabraFlex"] {
 		<!--h5><label for=\"searchInput\">Search</label></h5-->
 		<div id=\"gumax-searchBody\">
 			<form action=\"/emergent/index.php/Special:Search\" id=\"searchform\"><div>
-				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\" autocomplete=\"off\">
+				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\">
 				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\">&nbsp;
 				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\">
 			</div></form>
@@ -2498,7 +2617,6 @@ LeabraProject .projects["LeabraFlex"] {
 			<ul>
 				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
-			<li id=\"t-trackbacklink\"><a href=\"\">Trackback</a></li>
 <li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" title=\"Special:Browse/LeabraFlexProgs\">Browse properties</a></li>			</ul>
 			</li>
@@ -2538,7 +2656,7 @@ LeabraProject .projects["LeabraFlex"] {
 				<h3 id=\"siteSub\">From Emergent</h3>
 				<div id=\"contentSub\"></div>
 												<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>				<!-- start content -->
-				<div lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
 </p>
 <table id=\"toc\" class=\"toc\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
 <ul>
@@ -2549,7 +2667,7 @@ LeabraProject .projects["LeabraFlex"] {
 </ul>
 </td></tr></tbody></table>
 <h1> <span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\"> ConfigData/ConfigTable </span></h1>
-<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\" class=\"mw-redirect\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
+<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
 </p>
 <h1> <span class=\"mw-headline\" id=\"Program_Hierarchy\"> Program Hierarchy </span></h1>
 <p>The call sequence is:
@@ -2589,7 +2707,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20121113201732 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20130214153758 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2613,7 +2731,6 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 			<ul>
 					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
-				<li id=\"t-trackbacklink\"><a href=\"\">Trackback</a></li>
 	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" title=\"Special:Browse/LeabraFlexProgs\">Browse properties</a></li>			</ul>
 		</div>
@@ -2624,25 +2741,16 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 3,550 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 4,943 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
 
 		<script>if(window.mw){
-	mw.loader.load([\"mediawiki.user\", \"mediawiki.util\", \"mediawiki.page.ready\", \"mediawiki.legacy.wikibits\", \"mediawiki.legacy.ajax\", \"mediawiki.legacy.mwsuggest\", \"ext.headertabs\", \"ext.cite\"]);
-}
-</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.cite%2Cheadertabs%7Cjquery.checkboxShiftClick%2Ccookie%2CmakeCollapsible%2CmessageBox%2Cmw-jump%2CmwExtension%2Cplaceholder%2Ctooltip%7Cmediawiki.language%2Cuser%2Cutil%7Cmediawiki.legacy.ajax%2Cmwsuggest%2Cwikibits%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20120307T033052Z&amp;*\"></script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20120307T033047Z&amp;*\"></script>
+mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.mwsuggest\",\"ext.headertabs\"], null, true);
+}</script>
 <script type=\"text/javascript\" src=\"/emergent/extensions/Drafts/Drafts.js?3\"></script>
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
-<script>if(window.mw){
-	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"watchcreations\":0,\"watchdefault\":0,
-	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}\\n\\n/* cache key: pdpwiki:resourceloader:filter:minify-css:5:d7b3b8ca8e02fa8dee46954717296c3d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"watchToken\":false});;},{},{});
-	
-	/* cache key: pdpwiki:resourceloader:filter:minify-js:5:899e1025fcf861e4d1516d6f6daf9b85 */
-}
-</script>
 
 	</div> <!-- ///// end of gumax-footer ///// -->
 
@@ -2660,20 +2768,20 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 	<!-- end of gumax-f-list -->
 
 
-</div> <!-- ===== end of gumax-page ===== -->
+</div><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.headertabs%7Cjquery.checkboxShiftClick%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%7Cmediawiki.legacy.mwsuggest%7Cmediawiki.page.ready%7Cmediawiki.user&amp;skin=gumaxdd&amp;version=20121215T200442Z&amp;*\" type=\"text/javascript\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20121215T200248Z&amp;*\" type=\"text/javascript\"></script> <!-- ===== end of gumax-page ===== -->
 
 	<div style=\"clear:both\"></div>
 
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.149 secs. -->
+<!-- Served in 0.205 secs. -->
 
 
 
 
 	
-<div id=\"tooltip\" style=\"display: none; \"><h3></h3><div class=\"body\"></div><div class=\"url\"></div></div></body></html>";
+</body></html>";
   };
  };
  wizards {
@@ -2723,7 +2831,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      };
     };
     EditMbrItem @[1] {
-     label="Cycle update_net_view";
+     label="Cycle_update_net_view";
      desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      cust_desc=1;
      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
@@ -2772,6 +2880,1108 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
      mth=Program::Stop;
     };
    };
+  };
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_submit {
+    name="jobs_submit";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   search_algos {
+    name=;
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   notes=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=-1;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
   };
  };
  data {
@@ -4142,7 +5352,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="a";
 	 required=1;
 	 def_val=;
@@ -4152,7 +5362,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[1] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="b";
 	 required=0;
 	 def_val="0";
@@ -4162,7 +5372,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[2] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="c";
 	 required=0;
 	 def_val="0";
@@ -4172,7 +5382,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[3] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="d";
 	 required=0;
 	 def_val="0";
@@ -4182,7 +5392,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[4] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="e";
 	 required=0;
 	 def_val="0";
@@ -4192,7 +5402,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[5] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="f";
 	 required=0;
 	 def_val="0";
@@ -4202,7 +5412,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[6] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="g";
 	 required=0;
 	 def_val="0";
@@ -4212,7 +5422,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[7] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="h";
 	 required=0;
 	 def_val="0";
@@ -4222,7 +5432,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[8] {
 	 arg_type=const_char_ptr;
-	 type="const char*";
+	 type="char*";
 	 name="i";
 	 required=0;
 	 def_val="0";
@@ -4291,7 +5501,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="var_nm";
 	 required=1;
 	 def_val="\"\"";
@@ -4301,7 +5511,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[1] {
 	 arg_type=const_Variant_ref;
-	 type="const Variant&";
+	 type="Variant&";
 	 name="value";
 	 required=1;
 	 def_val=;
@@ -4381,7 +5591,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="ext";
        required=1;
        def_val=;
@@ -4391,7 +5601,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       ProgArg @[1] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="tag";
        required=0;
        def_val="\"\"";
@@ -4401,7 +5611,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       ProgArg @[2] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="subdir";
        required=0;
        def_val="\"\"";
@@ -4434,7 +5644,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="fname";
        required=1;
        def_val="\"\"";
@@ -4457,7 +5667,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="ext";
        required=1;
        def_val=;
@@ -4467,7 +5677,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       ProgArg @[1] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="tag";
        required=0;
        def_val="\"\"";
@@ -4477,7 +5687,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
       ProgArg @[2] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="subdir";
        required=0;
        def_val="\"\"";
@@ -4510,7 +5720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="fname";
        required=0;
        def_val="\"\"";
@@ -4565,7 +5775,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="ext";
 	 required=1;
 	 def_val=;
@@ -4575,7 +5785,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[1] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="tag";
 	 required=0;
 	 def_val="\"\"";
@@ -4585,7 +5795,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
 	ProgArg @[2] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="subdir";
 	 required=0;
 	 def_val="\"\"";
@@ -4618,7 +5828,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="fname";
 	 required=0;
 	 def_val="\"\"";
@@ -4880,7 +6090,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="ext";
 	required=1;
 	def_val=;
@@ -4890,7 +6100,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="tag";
 	required=0;
 	def_val="\"\"";
@@ -4900,7 +6110,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        ProgArg @[2] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="subdir";
 	required=0;
 	def_val="\"\"";
@@ -4933,7 +6143,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="fname";
 	required=0;
 	def_val="\"\"";
@@ -4988,7 +6198,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="ext";
 	  required=1;
 	  def_val=;
@@ -4998,7 +6208,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	 ProgArg @[1] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="tag";
 	  required=0;
 	  def_val="\"\"";
@@ -5008,7 +6218,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 };
 	 ProgArg @[2] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="subdir";
 	  required=0;
 	  def_val="\"\"";
@@ -5041,7 +6251,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="fname";
 	  required=0;
 	  def_val="\"\"";
@@ -6767,7 +7977,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       data {
        name="data";
-       el_typ=DataColTp;
+       el_typ=int_Data;
        el_def=0;
        int_Data @["Index"] {
 	UserDataItem_List @*(.user_data_) {
@@ -7143,7 +8353,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_Variant_ref;
-	  type="const Variant&";
+	  type="Variant&";
 	  name="col";
 	  required=1;
 	  def_val=;
@@ -7306,7 +8516,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_Variant_ref;
-	  type="const Variant&";
+	  type="Variant&";
 	  name="col";
 	  required=1;
 	  def_val=;
@@ -7577,7 +8787,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	quiet=0;
 	na_by_range=0;
 	ext_flags=EXT;
-	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_7": };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -7588,7 +8798,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	quiet=0;
 	na_by_range=0;
 	ext_flags=TARG;
-	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_8": };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -7599,7 +8809,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_9": };
        };
       };
      };
@@ -8570,7 +9780,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="str";
 	required=1;
 	def_val=;
@@ -8580,7 +9790,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="delim";
 	required=0;
 	def_val="\"\"";
@@ -8635,7 +9845,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="item_nm";
 	  required=1;
 	  def_val=;
@@ -8670,7 +9880,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   el_def=0;
 	   ProgArg @[0] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="a";
 	    required=1;
 	    def_val=;
@@ -8680,7 +9890,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[1] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="b";
 	    required=0;
 	    def_val="0";
@@ -8690,7 +9900,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[2] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="c";
 	    required=0;
 	    def_val="0";
@@ -8700,7 +9910,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[3] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="d";
 	    required=0;
 	    def_val="0";
@@ -8710,7 +9920,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[4] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="e";
 	    required=0;
 	    def_val="0";
@@ -8720,7 +9930,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[5] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="f";
 	    required=0;
 	    def_val="0";
@@ -8730,7 +9940,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[6] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="g";
 	    required=0;
 	    def_val="0";
@@ -8740,7 +9950,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[7] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="h";
 	    required=0;
 	    def_val="0";
@@ -8750,7 +9960,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[8] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="i";
 	    required=0;
 	    def_val="0";
@@ -8981,7 +10191,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="str";
 	required=1;
 	def_val=;
@@ -8991,7 +10201,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="delim";
 	required=0;
 	def_val="\"\"";
@@ -9046,7 +10256,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="item_nm";
 	  required=1;
 	  def_val=;
@@ -9081,7 +10291,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   el_def=0;
 	   ProgArg @[0] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="a";
 	    required=1;
 	    def_val=;
@@ -9091,7 +10301,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[1] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="b";
 	    required=0;
 	    def_val="0";
@@ -9101,7 +10311,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[2] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="c";
 	    required=0;
 	    def_val="0";
@@ -9111,7 +10321,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[3] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="d";
 	    required=0;
 	    def_val="0";
@@ -9121,7 +10331,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[4] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="e";
 	    required=0;
 	    def_val="0";
@@ -9131,7 +10341,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[5] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="f";
 	    required=0;
 	    def_val="0";
@@ -9141,7 +10351,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[6] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="g";
 	    required=0;
 	    def_val="0";
@@ -9151,7 +10361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[7] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="h";
 	    required=0;
 	    def_val="0";
@@ -9161,7 +10371,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   };
 	   ProgArg @[8] {
 	    arg_type=const_char_ptr;
-	    type="const char*";
+	    type="char*";
 	    name="i";
 	    required=0;
 	    def_val="0";
@@ -9462,7 +10672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="fname";
 	  required=0;
 	  def_val="\"\"";
@@ -9731,7 +10941,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="var_nm";
 	required=1;
 	def_val=;
@@ -9741,7 +10951,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
        ProgArg @[1] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="value";
 	required=1;
 	def_val=;
@@ -11131,7 +12341,7 @@ also save specs.";
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="ext";
 	required=1;
 	def_val=;
@@ -11141,7 +12351,7 @@ also save specs.";
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="tag";
 	required=0;
 	def_val="\"\"";
@@ -11151,7 +12361,7 @@ also save specs.";
        };
        ProgArg @[2] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="subdir";
 	required=0;
 	def_val="\"\"";
@@ -11184,7 +12394,7 @@ also save specs.";
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="fname";
 	required=0;
 	def_val="\"\"";
@@ -11239,7 +12449,7 @@ also save specs.";
 	 el_def=0;
 	 ProgArg @[0] {
 	  arg_type=const_taString_ref;
-	  type="const taString&";
+	  type="taString&";
 	  name="fname";
 	  required=0;
 	  def_val="\"\"";
@@ -11299,7 +12509,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11331,7 +12541,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11363,7 +12573,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="Relation_189": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="Relation_189": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11395,7 +12605,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11427,7 +12637,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11459,7 +12669,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11491,7 +12701,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11523,7 +12733,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11555,7 +12765,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11587,7 +12797,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11619,7 +12829,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11890,7 +13100,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11922,7 +13132,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11954,7 +13164,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="Relation_190": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="Relation_190": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -11986,7 +13196,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12018,7 +13228,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12050,7 +13260,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12082,7 +13292,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12114,7 +13324,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12146,7 +13356,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12178,7 +13388,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12210,7 +13420,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="AggregateSpec_168": op=NONE: rel={name="Relation_177": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="Relation_177": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_168": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12242,7 +13452,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="AggregateSpec_168": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_168": };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -12472,7 +13682,7 @@ also save specs.";
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_Variant_ref;
-	 type="const Variant&";
+	 type="Variant&";
 	 name="val";
 	 required=1;
 	 def_val=;
@@ -12482,7 +13692,7 @@ also save specs.";
 	};
 	ProgArg @[1] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
@@ -12525,7 +13735,7 @@ also save specs.";
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_Variant_ref;
-	 type="const Variant&";
+	 type="Variant&";
 	 name="val";
 	 required=1;
 	 def_val=;
@@ -12535,7 +13745,7 @@ also save specs.";
 	};
 	ProgArg @[1] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
@@ -12603,7 +13813,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
  };
  viewers {
   name=;
-  el_typ=TopLevelViewer;
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser3"] {
    UserDataItem_List @*(.user_data_) {
@@ -12673,9 +13883,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
    };
    frames {
     name=;
-    el_typ=FrameViewer;
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
@@ -12688,7 +13898,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
@@ -12702,11 +13912,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
+     panels {
       name=;
-      el_typ=T3DataViewFrame;
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Network_0"] {
+      T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
        visible=1;
@@ -12716,7 +13926,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	m_transform=NULL;
 	children {
 	 name=;
-	 el_typ=T3DataViewMain;
+	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
@@ -12724,6 +13934,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
+	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
 	  show_iconified=0;
@@ -12738,6 +13949,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=2.333333: };
+	  max_size2d {x=5: y=18: z=1: };
+	  eff_max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -12846,7 +14059,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	};
        };
       };
-      T3DataViewFrame @["EpochOutputData"] {
+      T3Panel @["EpochOutputData"] {
        name="EpochOutputData";
        m_data=NULL;
        visible=1;
@@ -12856,7 +14069,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	m_transform=NULL;
 	children {
 	 name=;
-	 el_typ=T3DataViewMain;
+	 el_typ=GraphTableView;
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
@@ -13385,7 +14598,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    docks {
     name=;
-    el_typ=DockViewer;
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
      UserDataItem_List @*(.user_data_) {
@@ -13450,6 +14663,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name=;
     el_typ=UserDataItem;
     el_def=0;
+    UserDataItem @["cos_err"] {
+     name="cos_err";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["norm_err"] {
      name="norm_err";
      value 1 0=1;
@@ -13583,7 +14801,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
-     v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.3: var=0: par=1: };
+     v_m_init {type=UNIFORM: mean=0.3: var=0: par=1: name="RandomSpec_6": };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
      act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
@@ -13605,7 +14823,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
-     noise {name="RandomSpec_7": type=GAUSSIAN: mean=0: var=0.001: par=1: };
+     noise {type=GAUSSIAN: mean=0: var=0.001: par=1: name="RandomSpec_7": };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
@@ -13632,7 +14850,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraBiasSpec;
 	el_def=0;
        };
-       rnd {name="RandomSpec_8": type=UNIFORM: mean=0: var=0: par=1: };
+       rnd {type=UNIFORM: mean=0: var=0: par=1: name="RandomSpec_8": };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=CTLEABRA_XCAL;
        inhib=0;
@@ -13708,7 +14926,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        dwt_thresh=0.1;
       };
      };
-     rnd {name="RandomSpec_9": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: name="RandomSpec_9": };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=CTLEABRA_XCAL;
      inhib=0;
@@ -13819,6 +15037,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=0: phase2=0: };
        ct_inhib_mod {
+	manual_sravg=0;
 	sravg_delay=0;
 	use_sin=0;
 	burst_i=0.02;
@@ -13854,6 +15073,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=0: phase2=0: };
      ct_inhib_mod {
+      manual_sravg=0;
       sravg_delay=0;
       use_sin=0;
       burst_i=0.02;
@@ -13888,13 +15108,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    pos2d {x=0: y=0: };
     max_disp_size {x=5: y=5: z=3: };
+    max_disp_size2d {x=5: y=18: };
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
      flags=0;
      layer_type=INPUT;
      pos {x=0: y=0: z=0: };
+     pos2d {x=0: y=0: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -13940,6 +15163,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos2d {x=0: y=13: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -14021,6 +15245,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flags=0;
      layer_type=TARGET;
      pos {x=0: y=0: z=2: };
+     pos2d {x=0: y=6: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -14109,11 +15334,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   lay_layout=THREE_D;
    n_units=75;
    n_cons=1875;
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
+   max_disp_size2d {x=5: y=18: };
    learn_rule=CTLEABRA_XCAL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -14126,6 +15351,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    min_cycles_phase2=0;
    dwt_norm_enabled=1;
    ct_time {
+    use=1;
     minus=50;
     plus=20;
     inhib=1;
@@ -14134,10 +15360,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     inhib_start=70;
    };
    ct_sravg {
+    manual=0;
     start=30;
     end=1;
     interval=1;
     plus_s_st=19;
+    plus_s_only=0;
     force_con=0;
    };
    ct_sin_i {
@@ -14196,6 +15424,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    norew_val=0.5;
    off_errs=1;
    on_errs=1;
+   cos_err_lrn_thr=-1;
   };
  };
 };

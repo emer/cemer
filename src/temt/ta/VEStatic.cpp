@@ -23,6 +23,7 @@
 void VEStatic::Initialize() {
   geom_id = NULL;
   flags = EULER_ROT;
+  relative = false;
   shape = BOX;
   long_axis = LONG_X;
   cur_shape = BOX;
@@ -58,6 +59,9 @@ void VEStatic::UpdateAfterEdit_impl() {
       length = 1.1f * 2.0f * radius;
     }
   }
+
+  GetInitFromRel();
+
   // keep synchronized..
   if(HasStaticFlag(EULER_ROT)) {
     rot_quat = rot_euler;
@@ -135,8 +139,64 @@ void VEStatic::DestroyODE() {
   geom_id = NULL;
 }
 
+void VEStatic::GetInitFromRel() {
+  if(!relative) {
+    SetStaticFlag(INIT_WAS_ABS);
+    return;
+  }
+  if(TestWarning(!rel_static, "GetInitFromRel", "relative is on but rel_static is NULL -- no static to be relative to")) {
+    SetStaticFlag(INIT_WAS_ABS);
+    return;
+  }
+
+  if(HasStaticFlag(INIT_WAS_ABS)) {
+    // use current init vals relative to rel body to set rels to be consistent therewith
+    rel_pos = pos - rel_static->pos;
+
+    taQuaternion tquat;
+    if(HasStaticFlag(EULER_ROT)) {
+      tquat = rot_euler;
+    }
+    else {
+      tquat = rot;
+    }
+    tquat.Normalize();
+    taQuaternion rquat;
+    if(rel_static->HasStaticFlag(EULER_ROT)) {
+      rquat = rel_static->rot_euler;
+    }
+    else {
+      rquat = rel_static->rot;
+    }
+    tquat /= rquat;             // take away the rel rotation, what's left is relative
+    tquat.ToEulerVec(rel_euler);
+    rel_rot = tquat;
+    ClearStaticFlag(INIT_WAS_ABS); // no longer..
+  }
+
+  pos = rel_static->pos + rel_pos;
+  taQuaternion tquat;
+  if(rel_static->HasStaticFlag(EULER_ROT)) {
+    tquat = rel_static->rot_euler;
+  }
+  else {
+    tquat = rel_static->rot;
+  }
+  tquat.Normalize();
+  if(HasStaticFlag(EULER_ROT)) {
+    tquat.RotateEuler(rel_euler.x, rel_euler.y, rel_euler.z);
+  }
+  else {
+    tquat.RotateAxis(rel_rot.x, rel_rot.y, rel_rot.z, rel_rot.rot);
+  }
+  tquat.ToEulerVec(rot_euler);
+  rot = tquat;
+}
+
 void VEStatic::Init() {
   VEWorld::last_to_set_ode = this;
+
+  GetInitFromRel();
 
   if(HasStaticFlag(VEStatic::OFF)) {
     DestroyODE();
@@ -257,7 +317,7 @@ void VEStatic::Scale(float sx, float sy, float sz) {
 
 void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
-    "RotateBody", "must specify a non-zero axis!"))
+    "RotateAxis", "must specify a non-zero axis!"))
     return;
 
   rot_quat.RotateAxis(x_ax, y_ax, z_ax, rt);

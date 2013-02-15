@@ -188,6 +188,12 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     else
       mbr = optedit.before(':');
 
+    bool neg = false;
+    if(mbr.startsWith('!')) {
+      neg = true;
+      mbr = mbr.after('!');
+    }
+
     void* mbr_base = NULL;      // base for conditionalizing member itself
     ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)base_td;
@@ -241,6 +247,8 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
           break;
       } // value while
     } // if
+
+    if(neg) tmp_val_is_eq = !tmp_val_is_eq;
 
     if(curlogic == 0)
       val_is_eq = tmp_val_is_eq;

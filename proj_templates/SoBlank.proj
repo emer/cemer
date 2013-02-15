@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6106
 SoProject .projects["SoBlank"] { 
   taBase_Group @.templates = [0] {
   };
@@ -14,7 +14,131 @@ SoProject .projects["SoBlank"] {
 };
   };
 
-  SelectEdit_Group @.edits = [0] {
+  SelectEdit_Group @.edits = [1] {
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [0] {
+      };
+
+      EditMthItem_Group @.mths = [0] {
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      ParamSearchAlgo_List @.search_algos = [0] {
+      };
+    };
   };
 
   DataTable_Group @.data = [0] {
@@ -52,18 +176,18 @@ SoProject .projects["SoBlank"] {
   Program_Group @.programs = [0] {
   };
 
-  DataViewer_List @.viewers = [1] {
+  taViewer_List @.viewers = [1] {
     MainWindowViewer @["Browser2"] { 
       ToolBar_List @.toolbars = [1] {
 	ToolBar @["Application"] { };
       };
 
       FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
+	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @["Frame1"] { 
+	T3PanelViewer @["T3Frames"] { 
+	  T3Panel_List @.panels = [1] {
+	    T3Panel @["Frame1"] { 
 	      T3DataView_List @.children = [0] {
 	      };
 
@@ -141,8 +265,1110 @@ SoProject .projects["SoBlank"] {
  };
  edits {
   name="SelectEdit_Group_0";
-  el_typ=SelectEdit;
+  el_typ=ClusterRun;
   el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_submit {
+    name="jobs_submit";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   search_algos {
+    name=;
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   notes=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=-1;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
+  };
  };
  data {
   name="DataTable_Group_0";
@@ -230,7 +1456,7 @@ SoProject .projects["SoBlank"] {
  };
  viewers {
   name="DataViewer_List_0";
-  el_typ=TopLevelViewer;
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
    name="Browser2";
@@ -255,9 +1481,9 @@ SoProject .projects["SoBlank"] {
    };
    frames {
     name="FrameViewer_List_0";
-    el_typ=FrameViewer;
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
@@ -270,15 +1496,15 @@ SoProject .projects["SoBlank"] {
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
+     panels {
       name="T3DataViewFrame_List_0";
-      el_typ=T3DataViewFrame;
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Frame1"] {
+      T3Panel @["Frame1"] {
        name="Frame1";
        m_data=NULL;
        visible=1;
@@ -349,7 +1575,7 @@ SoProject .projects["SoBlank"] {
    };
    docks {
     name="DockViewer_List_0";
-    el_typ=DockViewer;
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
      name="Tools";

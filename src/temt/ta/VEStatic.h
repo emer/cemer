@@ -37,6 +37,8 @@
 class VEWorld; // 
 class VESpace; // 
 
+class VEStatic; //
+SmartRef_Of(VEStatic); // VEStaticRef
 
 taTypeDef_Of(VEStatic);
 
@@ -50,6 +52,8 @@ public:
     FM_FILE             = 0x0002, // load object image features from Inventor (iv) object file
     EULER_ROT           = 0x0004, // use euler rotation angles instead of axis and angle
     CUR_FM_FILE         = 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
+
+    INIT_WAS_ABS        = 0x1000, // #NO_BIT init vals were specified in abs coords last time (not rel)
   };
 
   enum Shape {                  // shape of the object -- used for intertial mass and for collision detection (unless use_fname
@@ -74,9 +78,16 @@ public:
   String        desc;           // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*         geom_id;        // #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the static item (cast to a dGeomID which is dxgeom*)
   StaticFlags   flags;          // flags for various env el properties
-  taVector3f    pos;            // #CONDSHOW_OFF_shape:PLANE position of static item
-  taAxisAngle   rot;            // #CONDSHOW_OFF_flags:EULER_ROT rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
-  taVector3f    rot_euler;      // #CONDSHOW_ON_flags:EULER_ROT rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+
+  bool          relative;       // position and rotation are relative to another static object
+  VEStaticRef   rel_static;     // #CONDSHOW_ON_relative other static body that our position and rotatio are computed relative to -- in general better if rel_static is before this one in list of objects, especially if it is also relative to something else, so everything gets updated in the proper order.  definitely avoid loops!
+  taVector3f    rel_pos;        // #CONDEDIT_OFF_shape:PLANE||!relative relative position of static item, relative to rel_static
+  taAxisAngle   rel_rot;        // #CONDEDIT_OFF_flags:EULER_ROT||!relative relative rotation of static item compared to rel_static in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f    rel_euler;      // #CONDEDIT_ON_flags:EULER_ROT&&relative relative rotation of static item compard to rel_static (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+
+  taVector3f    pos;            // #CONDEDIT_OFF_shape:PLANE||relative position of static item
+  taAxisAngle   rot;            // #CONDEDIT_OFF_flags:EULER_ROT||relative rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f    rot_euler;      // #CONDEDIT_ON_flags:EULER_ROT&&!relative rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
   taQuaternion  rot_quat;       // #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
 
   Shape         shape;          // shape of static item for purposes of collision (and visual rendering if not FM_FILE)
@@ -130,6 +141,8 @@ public:
   virtual void  SetValsToODE() { Init(); }
   // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
+  virtual void  GetInitFromRel();
+  // #CAT_ODE #EXPERT if init_rel is on, this will compute init values from relative values -- called automatically during Init() and UAE
   virtual void  InitRotFromCur();
   // #IGNORE set init rotation parameters from current rotation (rot_quat)
 
@@ -165,7 +178,5 @@ private:
   void  Initialize();
   void  Destroy();
 };
-
-SmartRef_Of(VEStatic); // VEStaticRef
 
 #endif // VEStatic_h

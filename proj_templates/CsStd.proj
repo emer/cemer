@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6106
 CsProject .projects["CsStd"] { 
   taBase_Group @.templates = [0] {
   };
@@ -14,7 +14,131 @@ CsProject .projects["CsStd"] {
 };
   };
 
-  SelectEdit_Group @.edits = [0] {
+  SelectEdit_Group @.edits = [1] {
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [0] {
+      };
+
+      EditMthItem_Group @.mths = [0] {
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      DataTableCols @.data = [19] {
+	String_Data @["model_svn"] { };
+	String_Data @["submit_svn"] { };
+	String_Data @["submit_job"] { };
+	String_Data @["job_no"] { };
+	String_Data @["tag"] { };
+	String_Data @["status"] { };
+	String_Data @["job_out"] { };
+	String_Data @["job_out_file"] { };
+	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	String_Data @["command"] { };
+	String_Data @["notes"] { };
+	String_Data @["repo_url"] { };
+	String_Data @["cluster"] { };
+	String_Data @["queue"] { };
+	String_Data @["run_time"] { };
+	int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+	int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
+      };
+
+      ParamSearchAlgo_List @.search_algos = [0] {
+      };
+    };
   };
 
   DataTable_Group @.data = [0] {
@@ -181,7 +305,7 @@ CsProject .projects["CsStd"] {
 	};
 
 	Function_List @.functions = [1] {
-	  Function @[0] { 
+	  Function @["GetRandomSeed"] { 
 	    ProgVar_List @.args = [0] {
 	    };
 
@@ -847,18 +971,18 @@ CsProject .projects["CsStd"] {
     };
   };
 
-  DataViewer_List @.viewers = [1] {
+  taViewer_List @.viewers = [1] {
     MainWindowViewer @["Browser2"] { 
       ToolBar_List @.toolbars = [1] {
 	ToolBar @["Application"] { };
       };
 
       FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
+	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @["Network_0"] { 
+	T3PanelViewer @["T3Frames"] { 
+	  T3Panel_List @.panels = [1] {
+	    T3Panel @["Network_0"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["Network_0_View"] { 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -1012,8 +1136,1110 @@ CsProject .projects["CsStd"] {
  };
  edits {
   name="SelectEdit_Group_0";
-  el_typ=SelectEdit;
+  el_typ=ClusterRun;
   el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_submit {
+    name="jobs_submit";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["model_svn"] {
+      name="model_svn";
+      desc="svn revision for the model";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the job submission commands";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   search_algos {
+    name=;
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   notes=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=-1;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
+  };
  };
  data {
   name="DataTable_Group_0";
@@ -1091,7 +2317,7 @@ CsProject .projects["CsStd"] {
     desc=;
     data {
      name="data";
-     el_typ=DataColTp;
+     el_typ=DataColT;
      el_def=0;
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1104,7 +2330,7 @@ CsProject .projects["CsStd"] {
     desc=;
     data {
      name="data";
-     el_typ=DataColTp;
+     el_typ=DataColT;
      el_def=0;
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1278,6 +2504,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$$;
       local_ctr_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$$;
       counter=Network::batch;
@@ -1291,6 +2518,7 @@ CsProject .projects["CsStd"] {
      IfElse @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="init_batch";
       };
@@ -1302,6 +2530,7 @@ CsProject .projects["CsStd"] {
        NetCounterInit @[0] {
 	desc="initializes local batch counter and batch field on network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
 	local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -1315,6 +2544,7 @@ CsProject .projects["CsStd"] {
        MemberAssign @[0] {
 	desc="just set directly to current batch value";
 	flags=0;
+	orig_prog_code=;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
 	path="batch";
 	expr {
@@ -1327,6 +2557,7 @@ CsProject .projects["CsStd"] {
      WhileLoop @[1] {
       desc="the main loop over training runs";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -1334,6 +2565,7 @@ CsProject .projects["CsStd"] {
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1375,6 +2607,7 @@ CsProject .projects["CsStd"] {
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].args["network"]$;
 	local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsBatch"].vars["batch"]$;
 	counter=Network::batch;
@@ -1793,9 +3026,10 @@ CsProject .projects["CsStd"] {
      name=;
      el_typ=Function;
      el_def=0;
-     Function @[0] {
+     Function @["GetRandomSeed"] {
       desc=;
       flags=0;
+      orig_prog_code=;
       name="GetRandomSeed";
       return_type=T_Int;
       object_type=taOBase;
@@ -1811,6 +3045,7 @@ CsProject .projects["CsStd"] {
        LocalVars @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	local_vars {
 	 name=;
 	 el_typ=ProgVar;
@@ -1820,6 +3055,7 @@ CsProject .projects["CsStd"] {
        Switch @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	switch_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_init"]$$;
 	cases {
 	 name=;
@@ -1828,6 +3064,7 @@ CsProject .projects["CsStd"] {
 	 CaseBlock @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -1835,6 +3072,7 @@ CsProject .projects["CsStd"] {
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$$;
 	    method=RndSeed::OldSeed;
@@ -1852,6 +3090,7 @@ CsProject .projects["CsStd"] {
 	 CaseBlock @[1] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -1859,6 +3098,7 @@ CsProject .projects["CsStd"] {
 	   MethodCall @[0] {
 	    desc="new random numbers each time";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seed"]$;
 	    method=RndSeed::NewSeed;
@@ -1876,6 +3116,7 @@ CsProject .projects["CsStd"] {
 	 CaseBlock @[2] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  prog_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -1883,6 +3124,7 @@ CsProject .projects["CsStd"] {
 	   MethodCall @[0] {
 	    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	    flags=0;
+	    orig_prog_code=;
 	    result_var=NULL;
 	    obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["rnd_seeds"]$$;
 	    method=RndSeed_List::UseSeed;
@@ -1919,6 +3161,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[0] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["no_prompts"]$$;
       expr {
        expr="false";
@@ -1927,6 +3170,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[1] {
       desc="check network to make sure it is ready to be run";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$$;
       method=taBase::CheckConfig;
@@ -1949,6 +3193,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$$;
       expr {
        expr="network.train_time";
@@ -1957,6 +3202,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[3] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$$;
       expr {
        expr="0";
@@ -1965,8 +3211,9 @@ CsProject .projects["CsStd"] {
      FunctionCall @[4] {
       desc="initialize random seed";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
-      fun=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].functions[0]$$;
+      fun=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -1976,6 +3223,7 @@ CsProject .projects["CsStd"] {
      WtInitPrompt @[5] {
       desc="don't initialize weights without checking";
       flags=0;
+      orig_prog_code=;
       prompt="Do you want to Initialize Network Weights";
       yes_label="Yes";
       no_label="No";
@@ -1986,6 +3234,7 @@ CsProject .projects["CsStd"] {
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -1998,6 +3247,7 @@ CsProject .projects["CsStd"] {
        PrintExpr @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -2009,6 +3259,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[6] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$$;
       expr {
        expr="network.epoch";
@@ -2022,6 +3273,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[0] {
       desc="get our pointer to the network training time object";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       expr {
        expr="network.train_time";
@@ -2030,6 +3282,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[1] {
       desc="start timer to keep track of how long it takes to run entire training run";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       method=TimeUsed::StartTimer;
@@ -2052,6 +3305,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[2] {
       desc=;
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
       expr {
        expr="0";
@@ -2060,6 +3314,7 @@ CsProject .projects["CsStd"] {
      MemberAssign @[3] {
       desc="set network's training mode to our local value";
       flags=0;
+      orig_prog_code=;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
       path="train_mode";
       expr {
@@ -2070,8 +3325,9 @@ CsProject .projects["CsStd"] {
      FunctionCall @[4] {
       desc="initialize random seed";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
-      fun=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].functions[0]$;
+      fun=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].functions["GetRandomSeed"]$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -2081,6 +3337,7 @@ CsProject .projects["CsStd"] {
      IfElse @[5] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="no_prompts";
       };
@@ -2092,6 +3349,7 @@ CsProject .projects["CsStd"] {
        MethodCall @[0] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
 	method=Network::Init_Weights;
@@ -2104,6 +3362,7 @@ CsProject .projects["CsStd"] {
        PrintExpr @[1] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
@@ -2120,6 +3379,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[6] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
       expr {
        expr="network.epoch";
@@ -2128,6 +3388,7 @@ CsProject .projects["CsStd"] {
      WhileLoop @[7] {
       desc="main loop over epochs of training";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -2135,6 +3396,7 @@ CsProject .projects["CsStd"] {
        ProgramCall @[0] {
 	desc="run the epoch program (one epoch), passes our network and input_data";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2166,6 +3428,7 @@ CsProject .projects["CsStd"] {
        NetCounterIncr @[1] {
 	desc="increment the epoch counter (locally and on network)";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].args["network"]$;
 	local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["epoch"]$;
 	counter=Network::epoch;
@@ -2174,6 +3437,7 @@ CsProject .projects["CsStd"] {
        IfElse @[2] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="network.avg_sse <= err_stopcrit";
 	};
@@ -2185,6 +3449,7 @@ CsProject .projects["CsStd"] {
 	 VarIncr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="1";
@@ -2193,6 +3458,7 @@ CsProject .projects["CsStd"] {
 	 IfBreak @[1] {
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr="n_under_cnt >=  n_under_thr";
 	  };
@@ -2205,6 +3471,7 @@ CsProject .projects["CsStd"] {
 	 AssignExpr @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["n_under_cnt"]$;
 	  expr {
 	   expr="0";
@@ -2215,6 +3482,7 @@ CsProject .projects["CsStd"] {
        IfElse @[3] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="save_wts_interval >= 1";
 	};
@@ -2226,6 +3494,7 @@ CsProject .projects["CsStd"] {
 	 IfElse @[0] {
 	  desc=;
 	  flags=0;
+	  orig_prog_code=;
 	  cond {
 	   expr="epoch % save_wts_interval == 0";
 	  };
@@ -2237,6 +3506,7 @@ CsProject .projects["CsStd"] {
 	   ProgramCall @[0] {
 	    desc=;
 	    flags=0;
+	    orig_prog_code=;
 	    prog_args {
 	     name=;
 	     el_typ=ProgArg;
@@ -2277,6 +3547,7 @@ CsProject .projects["CsStd"] {
      IfElse @[8] {
       desc=;
       flags=0;
+      orig_prog_code=;
       cond {
        expr="save_final_wts";
       };
@@ -2288,6 +3559,7 @@ CsProject .projects["CsStd"] {
        ProgramCall @[0] {
 	desc=;
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2316,6 +3588,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[9] {
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrain"].vars["train_timer"]$;
       method=TimeUsed::EndTimer;
@@ -2443,6 +3716,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$$;
       local_ctr_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$$;
       counter=Network::trial;
@@ -2451,6 +3725,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
@@ -2464,6 +3739,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
       local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial"]$;
       counter=Network::trial;
@@ -2472,6 +3748,7 @@ CsProject .projects["CsStd"] {
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
@@ -2480,6 +3757,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[2] {
       desc="start the epoch timer to record computation time per epoch";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::StartTimer;
@@ -2502,6 +3780,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["trial_mon_data"]$$;
       method=DataTable::ResetData;
@@ -2514,6 +3793,7 @@ CsProject .projects["CsStd"] {
      NetDataLoop @[4] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -2521,6 +3801,7 @@ CsProject .projects["CsStd"] {
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2552,6 +3833,7 @@ CsProject .projects["CsStd"] {
        IfElse @[1] {
 	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="network.Compute_Weights_Test(trial+1)";
 	};
@@ -2563,6 +3845,7 @@ CsProject .projects["CsStd"] {
 	 MethodCall @[0] {
 	  desc="update the weight values based on changes computed by trial program";
 	  flags=0;
+	  orig_prog_code=;
 	  result_var=NULL;
 	  obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
 	  method=Network::Compute_Weights;
@@ -2597,6 +3880,7 @@ CsProject .projects["CsStd"] {
      IfElse @[5] {
       desc="if full batch mode, update only at end of epoch";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.wt_update == Network::BATCH";
       };
@@ -2608,6 +3892,7 @@ CsProject .projects["CsStd"] {
        MethodCall @[0] {
 	desc="final update of weights based on accumulated changes";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
 	method=Network::Compute_Weights;
@@ -2627,6 +3912,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[6] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].args["network"]$;
       method=LeabraNetwork::Compute_EpochStats;
@@ -2639,6 +3925,7 @@ CsProject .projects["CsStd"] {
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2660,6 +3947,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[8] {
       desc="done with the computation in the epoch -- record time it took";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpoch"].vars["epoch_timer"]$;
       method=TimeUsed::EndTimer;
@@ -2753,6 +4041,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$$;
       local_ctr_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$$;
       counter=LeabraNetwork::phase_no;
@@ -2766,6 +4055,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
       counter=LeabraNetwork::phase_no;
@@ -2774,6 +4064,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       method=CsNetwork::Trial_Init;
@@ -2786,6 +4077,7 @@ CsProject .projects["CsStd"] {
      WhileLoop @[2] {
       desc="loop over phases of settling in the network";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -2793,6 +4085,7 @@ CsProject .projects["CsStd"] {
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2824,6 +4117,7 @@ CsProject .projects["CsStd"] {
        NetCounterIncr @[1] {
 	desc="increment the phase number (also on network)";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
 	local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].vars["phase_no"]$;
 	counter=LeabraNetwork::phase_no;
@@ -2832,6 +4126,7 @@ CsProject .projects["CsStd"] {
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
 	method=CsNetwork::Trial_UpdatePhase;
@@ -2849,6 +4144,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[3] {
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       method=CsNetwork::Trial_Final;
@@ -2861,6 +4157,7 @@ CsProject .projects["CsStd"] {
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2882,6 +4179,7 @@ CsProject .projects["CsStd"] {
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].args["network"]$;
       update_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrial"].vars["update_net_view"]$$;
      };
@@ -2979,6 +4277,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=0;
+      orig_prog_code=;
       network_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$$;
       local_ctr_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$$;
       counter=Network::cycle;
@@ -2992,6 +4291,7 @@ CsProject .projects["CsStd"] {
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
       counter=Network::cycle;
@@ -3000,6 +4300,7 @@ CsProject .projects["CsStd"] {
      IfElse @[1] {
       desc="if not deterministic, set min_cycles = max_cycles!";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="!network.deterministic";
       };
@@ -3011,6 +4312,7 @@ CsProject .projects["CsStd"] {
        AssignExpr @[0] {
 	desc="if not determinstic, must settle for full number of cycles (bypasses use of maxda to stop settling)";
 	flags=0;
+	orig_prog_code=;
 	result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].vars["min_cycles"]$$;
 	expr {
 	 expr="network.cycle_max";
@@ -3026,6 +4328,7 @@ CsProject .projects["CsStd"] {
      MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=Network::Init_InputData;
@@ -3039,6 +4342,7 @@ CsProject .projects["CsStd"] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=0;
+      orig_prog_code=;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3070,6 +4374,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MethodCall @[4] {
       desc="initializes various counters at start of settling";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=CsNetwork::Settle_Init;
@@ -3082,6 +4387,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      WhileLoop @[5] {
       desc="the main loop over cycles of updating";
       flags=0;
+      orig_prog_code=;
       loop_code {
        name=;
        el_typ=ProgCode;
@@ -3089,6 +4395,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=0;
+	orig_prog_code=;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -3110,6 +4417,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        NetCounterIncr @[1] {
 	desc="increment cycle counter (also on network)";
 	flags=0;
+	orig_prog_code=;
 	network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
 	local_ctr_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].vars["cycle"]$;
 	counter=Network::cycle;
@@ -3118,6 +4426,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        IfContinue @[2] {
 	desc="avoid subsequent stopping criteria if below min_cycles";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="cycle < min_cycles";
 	};
@@ -3125,6 +4434,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        IfBreak @[3] {
 	desc="stopping criterion for settling: based either on maximum change in activation (maxda) or on the maximum activation value in the network getting over threshold (which ever comes first).  Set either parmeter to values that are always false (e.g., trg_max_act_stopcrit = -1) to eliminate associated source of criterion for stopping settling.";
 	flags=0;
+	orig_prog_code=;
 	cond {
 	 expr="(network.maxda < network.maxda_stopcrit)";
 	};
@@ -3137,6 +4447,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MethodCall @[6] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       method=CsNetwork::Settle_Final;
@@ -3150,6 +4461,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="network.phase == CsNetwork::MINUS_PHASE";
       };
@@ -3161,6 +4473,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        MethodCall @[0] {
 	desc="compute trial-level statistics";
 	flags=0;
+	orig_prog_code=;
 	result_var=NULL;
 	obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
 	method=LeabraNetwork::Compute_TrialStats;
@@ -3180,6 +4493,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[8] {
       desc="update network views, if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].args["network"]$;
       update_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsSettle"].vars["update_net_view"]$$;
      };
@@ -3251,6 +4565,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="this does all the standard cs processing for one cycle of activation updating";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$$;
       method=LeabraNetwork::Cycle_Run;
@@ -3263,6 +4578,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
       flags=0;
+      orig_prog_code=;
       network_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"].args["network"]$;
       update_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsCycle"].vars["update_net_view"]$$;
      };
@@ -3297,7 +4613,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -3308,7 +4624,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -3319,7 +4635,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
       };
      };
@@ -3384,6 +4700,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$$;
       method=LayerWriter::SetDataNetwork;
@@ -3416,6 +4733,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=taList_impl::CheckConfig;
@@ -3443,6 +4761,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["ApplyInputs"].vars["LayerWriter_0"]$;
       method=LayerWriter::ApplyInputData;
@@ -3489,7 +4808,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3521,7 +4840,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3553,7 +4872,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3585,7 +4904,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3617,7 +4936,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3649,7 +4968,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3681,7 +5000,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3713,7 +5032,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3745,7 +5064,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -3826,6 +5145,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="set the network and datatable for the NetMonitor";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
@@ -3858,6 +5178,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=taBase::CheckConfig;
@@ -3880,6 +5201,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::UpdateMonitors;
@@ -3907,6 +5229,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="add a new blank row to the data";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$$;
       method=DataTable::AddBlankRow;
@@ -3919,6 +5242,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_netmon"]$;
       method=NetMonitor::GetMonVals;
@@ -3931,6 +5255,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].vars["trial_mon_data"]$;
       method=DataBlock::WriteClose;
@@ -3943,6 +5268,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsTrialMonitor"].args["network"]$$;
       method=Network::DMem_ShareTrialData;
@@ -4009,7 +5335,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4041,7 +5367,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4073,7 +5399,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4105,7 +5431,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4137,7 +5463,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4169,7 +5495,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4201,7 +5527,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4233,7 +5559,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -4325,6 +5651,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[0] {
       desc="get the epoch timer from current network";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$$;
       expr {
        expr="network.epoch_time";
@@ -4333,6 +5660,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="set data and network on NetMonitor object";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$$;
       method=NetMonitor::SetDataNetwork;
@@ -4365,6 +5693,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=taBase::CheckConfig;
@@ -4387,6 +5716,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::UpdateMonitors;
@@ -4414,6 +5744,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[0] {
       desc="add a new blank row to the data";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$$;
       method=DataTable::AddBlankRow;
@@ -4426,6 +5757,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_netmon"]$;
       method=NetMonitor::GetMonVals;
@@ -4438,6 +5770,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
       flags=0;
+      orig_prog_code=;
       result_var=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
@@ -4446,6 +5779,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[3] {
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
@@ -4455,7 +5789,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -4465,7 +5799,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -4498,6 +5832,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataTable::SetValColName;
@@ -4507,7 +5842,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -4517,7 +5852,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -4550,6 +5885,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["CsEpochMonitor"].vars["epoch_mon_data"]$;
       method=DataBlock::WriteClose;
@@ -4677,6 +6013,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      IfReturn @[0] {
       desc="do not save if not the first dmem process (only relevant for dmem = distributed memory processing)";
       flags=0;
+      orig_prog_code=;
       cond {
        expr="taMisc::dmem_proc > 0";
       };
@@ -4684,6 +6021,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].vars["batch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -4716,6 +6054,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].vars["epoch_str"]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -4748,6 +6087,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[3] {
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].vars["final_tag"]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
@@ -4756,6 +6096,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=0;
+      orig_prog_code=;
       result_var=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].vars["fname"]$$;
       obj=.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$$;
       method=taBase::GetFileNameFmProject;
@@ -4765,7 +6106,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="ext";
 	required=1;
 	def_val=;
@@ -4775,7 +6116,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="tag";
 	required=0;
 	def_val="\"\"";
@@ -4785,7 +6126,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[2] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="subdir";
 	required=0;
 	def_val="\"\"";
@@ -4808,6 +6149,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[5] {
       desc="save the weights to that file name";
       flags=0;
+      orig_prog_code=;
       result_var=NULL;
       obj=$.projects["CsStd"].programs.gp["CsAll_Std"]["SaveWeights"].args["network"]$;
       method=Network::SaveWeights;
@@ -4817,7 +6159,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="fname";
 	required=0;
 	def_val="\"\"";
@@ -4845,7 +6187,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
  };
  viewers {
   name="DataViewer_List_0";
-  el_typ=TopLevelViewer;
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
    name="Browser2";
@@ -4870,9 +6212,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    frames {
     name="FrameViewer_List_0";
-    el_typ=FrameViewer;
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
@@ -4885,15 +6227,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
+     panels {
       name="T3DataViewFrame_List_0";
-      el_typ=T3DataViewFrame;
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Network_0"] {
+      T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
        visible=1;
@@ -4903,14 +6245,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	m_transform=NULL;
 	children {
 	 name="T3DataView_List_0";
-	 el_typ=T3DataViewMain;
+	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=$.projects["CsStd"].networks["Network_0"]$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
+	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
 	  show_iconified=0;
@@ -4925,6 +6268,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=2.333333: };
+	  max_size2d {x=5: y=18: z=1: };
+	  eff_max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -5038,7 +6383,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    };
    docks {
     name="DockViewer_List_0";
-    el_typ=DockViewer;
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
      name="Tools";
@@ -5162,13 +6507,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      bias_spec {type=CsConSpec: spec=.projects["CsStd"].networks["Network_0"].specs["CsConSpec_0"]$$: };
      sse_tol=0;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
-     noise {name="RandomSpec_0": type=NONE: mean=0: var=0.1000000014901161: par=1: };
+     noise {type=NONE: mean=0: var=0.1000000014901161: par=1: name="RandomSpec_0": };
      step=0.05;
      sqrt_step=0.2236068;
      gain=1;
      clamp_type=HARD_FAST_CLAMP;
      clamp_gain=5;
-     initial_act {name="RandomSpec_1": type=NONE: mean=0: var=1: par=1: };
+     initial_act {type=NONE: mean=0: var=1: par=1: name="RandomSpec_1": };
      state_decay=0.5;
      use_annealing=0;
      noise_sched {
@@ -5196,7 +6541,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       el_typ=CsConSpec;
       el_def=0;
      };
-     rnd {name="RandomSpec_2": type=UNIFORM: mean=0: var=0.5: par=1: };
+     rnd {type=UNIFORM: mean=0: var=0.5: par=1: name="RandomSpec_2": };
      wt_limits {type=NONE: min=-1: max=1: sym=1: };
      lrate=0.01;
      momentum=0;
@@ -5224,13 +6569,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=CsLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    pos2d {x=0: y=0: };
     max_disp_size {x=5: y=5: z=3: };
+    max_disp_size2d {x=5: y=18: };
     CsLayer @["Input"] {
      name="Input";
      desc=;
      flags=0;
      layer_type=INPUT;
      pos {x=0: y=0: z=0: };
+     pos2d {x=0: y=0: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -5275,6 +6623,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      flags=0;
      layer_type=HIDDEN;
      pos {x=0: y=0: z=1: };
+     pos2d {x=0: y=13: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -5353,6 +6702,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      flags=0;
      layer_type=TARGET;
      pos {x=0: y=0: z=2: };
+     pos2d {x=0: y=6: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -5439,11 +6789,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
-   lay_layout=THREE_D;
    n_units=75;
    n_cons=1875;
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
+   max_disp_size2d {x=5: y=18: };
    update_mode=SYNCHRONOUS;
    n_updates=10;
    trial_init=INIT_STATE;
