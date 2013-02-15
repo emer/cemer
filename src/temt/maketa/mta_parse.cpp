@@ -3665,17 +3665,19 @@ yyreturn:
 	/* end of grammar */
 
 void yyerror(const char *s) { 	/* called for yacc syntax error */
+  bool trg = mta->VerboseCheckTrg();
+  int v_level = trg ? 0 : 1;    /* use 0 for targets and 1 for else */
   if(strcmp(s, "parse error") == 0) {
-    mta->Error(1, "Syntax Error, line:", String(mta->st_line), ":");
+    mta->Error(v_level, "Syntax Error, line:", String(mta->st_line), ":");
   }
   else {
-    mta->Error(1, s, "line:", String(mta->st_line), ":");
+    mta->Error(v_level, s, "line:", String(mta->st_line), ":");
   }
-  mta->Error(1, mta->LastLn);
+  mta->Error(v_level, mta->LastLn);
   String loc;
   for(int i=0; i < mta->st_col; i++)
     loc << " ";
   loc << "^";
-  mta->Error(1, loc);
+  mta->Error(v_level, loc);
 }
 
