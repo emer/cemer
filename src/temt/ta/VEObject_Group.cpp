@@ -21,6 +21,12 @@ void VEObject_Group::Init() {
   }
 }
 
+void VEObject_Group::Step_pre() {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
+    ob->Step_pre();
+  }
+}
+
 void VEObject_Group::CurToODE() {
   FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->CurToODE();

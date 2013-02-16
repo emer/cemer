@@ -34,6 +34,8 @@ public:
   virtual void  Init();
   // #CAT_ODE #BUTTON initialize all ODE params and set to init_ settings
 
+  virtual void Step_pre();
+  // #EXPERT #CAT_ODE do computations prior to taking a step of the ode physics solver -- called automatically at the start of Step() to allow special objects (e.g., VEArm) to update prior to stepping
   virtual void  CurToODE();
   // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
 

@@ -21,6 +21,12 @@ void VEBody_Group::Init() {
   }
 }
 
+void VEBody_Group::Step_pre() {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
+    ob->Step_pre();
+  }
+}
+
 void VEBody_Group::CurToODE() {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->CurToODE();

@@ -90,6 +90,10 @@ void VEObject::Init() {
   joints.Init();
 }
 
+void VEObject::Step_pre() {
+  bodies.Step_pre();
+}
+
 void VEObject::CurToODE() {
   bodies.CurToODE();
 }

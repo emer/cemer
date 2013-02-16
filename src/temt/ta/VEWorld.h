@@ -116,6 +116,8 @@ public:
   // #BUTTON #CAT_ODE initialize the virtual environment, placing all objects in their init configurations, updating with any added objects, etc
   virtual void  Step();
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
+    virtual void Step_pre();
+    // #EXPERT #CAT_ODE do computations prior to taking a step of the ode physics solver -- called automatically at the start of Step() to allow special objects (e.g., VEArm) to update prior to stepping
   virtual void  Reset() { DestroyODE(); SetValsToODE(); }
   // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
 

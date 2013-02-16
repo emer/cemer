@@ -425,6 +425,10 @@ void VEBody::Init_Damping() {
 
 //////////////////////
 
+void VEBody::Step_pre() {
+  // nop
+}
+
 void VEBody::CurToODE() {
   if(!body_id) return;
   dWorldID wid = (dWorldID)GetWorldID();

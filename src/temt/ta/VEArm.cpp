@@ -35,6 +35,8 @@ void VEArm::Initialize() {
   Lf = 0.33f;
   elbow_gap = 0.03f; // space left between bodies so joint can rotate
   wrist_gap = 0.03f;
+  
+  gain = 30.0f;
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -1061,11 +1063,12 @@ bool VEArm::Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, ta
   //()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
 }
 
+bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
+  return TargetLengths_impl(targ_lens, trg_x, trg_y, trg_z);
+}
 
-bool VEArm::TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
-
-  if(TestWarning(trgLen.count() != n_musc, "","The matrix provided to TargetLengths doesn't match the number of muscles \n"))
-                return false;
+bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
+  trgLen.SetGeom(1,n_musc);     // always set to be more robust
 
   if(!CheckArm()) return false;
 
@@ -1302,11 +1305,10 @@ bool VEArm::Speeds(float_Matrix &Vel) {
   return true;
 }
 
-bool VEArm::ApplyStim(float_Matrix stims, float_Matrix &forces) {
+bool VEArm::ApplyStim(const float_Matrix& stims, float_Matrix &fs) {
   if(TestWarning(stims.count() != n_musc, "","The stimulus matrix doesn't match the number of muscles \n"))
     return false;
-  else if(TestWarning(forces.count() != 3*n_musc, "","The forces matrix doesn't match the number of muscles \n"))
-    return false;
+  fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
 
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
@@ -1317,15 +1319,17 @@ bool VEArm::ApplyStim(float_Matrix stims, float_Matrix &forces) {
   taVector3f daforce(0.0f, 0.0f, 0.0f);
   for(int i=0; i<n_musc; i++) {
     daforce = muscles[i]->Contract(stims.FastElAsFloat(i));
-    forces.Set(daforce.x, i, 0);
-    forces.Set(daforce.y, i, 1);
-    forces.Set(daforce.z, i, 2);
+    fs.Set(daforce.x, 0, i);
+    fs.Set(daforce.y, 1, i);
+    fs.Set(daforce.z, 2, i);
 
     if(i < 8+k) {  // muscles from shoulder to humerus
       humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x + should_loc.x, muscles[i]->IPdist.y + should_loc.y, muscles[i]->IPdist.z + should_loc.z,false,false);
-    } else if(i == 8+k) {  // biceps
+    }
+    else if(i == 8+k) {  // biceps
       ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x + should_loc.x, muscles[i]->IPdist.y + should_loc.y, muscles[i]->IPdist.z + should_loc.z,false,false);
-    } else { // triceps and brachialis
+    }
+    else { // triceps and brachialis
       humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z, muscles[i]->IPprox.x + should_loc.x, muscles[i]->IPprox.y + should_loc.y, muscles[i]->IPprox.z + should_loc.z,false,false);
       ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x + should_loc.x, muscles[i]->IPdist.y + should_loc.y, muscles[i]->IPdist.z + should_loc.z,false,false);
     }
@@ -1334,16 +1338,16 @@ bool VEArm::ApplyStim(float_Matrix stims, float_Matrix &forces) {
   return true;
 }
 
-bool VEArm::VEP_Reach(float_Matrix trg_lens, float gain, float_Matrix &forces) {
+bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs) {
 // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. 
 // This will calculate the activation (multiplying both errors by the gain), calculate 
-// (and store) the resulting forces, and apply them.
+// (and store) the resulting fs, and apply them.
 // It does not take a step of the VEWorld, and does not udpate the muscle insertion points.
 
   if(TestWarning(trg_lens.count() != n_musc, "","The targets matrix doesn't match the number of muscles \n"))
     return false;
-  else if(TestWarning(forces.count() != 3*n_musc, "","The forces matrix doesn't match the number of muscles \n"))
-    return false;
+
+  fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
 
   float_Matrix len_error(1,n_musc), vel_error(1,n_musc);
 
@@ -1355,7 +1359,7 @@ bool VEArm::VEP_Reach(float_Matrix trg_lens, float gain, float_Matrix &forces) {
     len_error *= gain;
     vel_error = len_error + vels;
     vel_error *= gain;
-    ApplyStim(vel_error, forces);
+    ApplyStim(vel_error, fs);
   }
   else { // musc_type == HILL
     float_Matrix old_len(1,n_musc), old_vel(1,n_musc);
@@ -1371,10 +1375,21 @@ bool VEArm::VEP_Reach(float_Matrix trg_lens, float gain, float_Matrix &forces) {
     old_vel *= 0.06; //muscles[0]->mu;  // old_vel = mu*old_vel
     float_Matrix act(1,n_musc);
     act = vel_error + old_vel;
-    ApplyStim(act, forces);
+    ApplyStim(act, fs);
     //String velst;
     //act.Print(velst);
     //taMisc::Info("applied stim: ", velst, "\n");
   }
   return true;
+}
+
+void VEArm::Step_pre() {
+  VEP_Reach(targ_lens, gain, forces);
+  inherited::Step_pre();
+}
+
+void VEArm::CurFromODE(bool updt_disp) {
+  inherited::CurFromODE(updt_disp);
+  UpdateIPs();
+  CurToODE();
 }

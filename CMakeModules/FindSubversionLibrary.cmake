@@ -64,6 +64,7 @@ IF (NOT WIN32)
           HINTS
           ${SUBVERSION_INSTALL_PATH}/lib
 	  /opt/subversion/lib
+	  /opt/local/lib
       )
     ENDMACRO(FIND_SUB_LIB)
 
@@ -71,6 +72,7 @@ IF (NOT WIN32)
         HINTS
         ${SUBVERSION_INSTALL_PATH}/include
 	/opt/subversion/include/subversion-1
+	/opt/local/include
         PATH_SUFFIXES subversion-1
     )
 
@@ -86,11 +88,13 @@ IF (NOT WIN32)
         FIND_PROGRAM(APR_CONFIG NAMES apr-config apr-1-config
             PATHS
             ${APR_CONFIG_PATH}
+	    /opt/local/bin
             /usr/local/apr/bin
         )
     ELSE(APR_CONFIG_PATH)
         FIND_PROGRAM(APR_CONFIG NAMES apr-config apr-1-config
             PATHS
+	    /opt/local/bin
             /usr/local/apr/bin
         )
     ENDIF(APR_CONFIG_PATH)
@@ -99,11 +103,13 @@ IF (NOT WIN32)
         FIND_PROGRAM(APU_CONFIG NAMES apu-config apu-1-config
             PATHS
             ${APU_CONFIG_PATH}
+	    /opt/local/bin
             /usr/local/apr/bin
         )
     ELSE(APU_CONFIG_PATH)
         FIND_PROGRAM(APU_CONFIG NAMES apu-config apu-1-config
             PATHS
+	    /opt/local/bin
             /usr/local/apr/bin
         )
     ENDIF(APU_CONFIG_PATH)

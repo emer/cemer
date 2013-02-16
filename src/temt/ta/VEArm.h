@@ -64,25 +64,29 @@ public:
 
   ArmSide       arm_side;       // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
   VEBodyRef     torso;          // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
-  UpAxis up_axis;		// which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
-  MuscGeo musc_geo;     // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
-  MuscType musc_type;   // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998)
+  UpAxis        up_axis;        // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
+  MuscGeo       musc_geo;       // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
+  MuscType      musc_type;      // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998)
+  float         gain;           // gain factor for multiplying forces
 
   float 	La;     // #READ_ONLY #SHOW the length of the humerus
   float 	Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
   float		elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
   float 	wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
   float 	world_step; // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
-  float_Matrix ShouldIP; // shoulder insertion points at rest
-  float_Matrix ArmIP; // humerus insertion points at rest
-  float_Matrix FarmIP; // ulna insertion points at rest
-  float_Matrix p1; // first end points for bending lines
-  float_Matrix p2; // second end points for bending lines
-  float_Matrix ct;  // An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
-  taVector3f   should_loc; // #READ_ONLY #SHOW the location of the shoulder in World coordinates
-  int          n_musc; // #READ_ONLY the total number of muscles, as implied by the IP matrices
+  float_Matrix  ShouldIP; // #EXPERT shoulder insertion points at rest
+  float_Matrix  ArmIP;    // #EXPERT humerus insertion points at rest
+  float_Matrix  FarmIP;   // #EXPERT ulna insertion points at rest
+  float_Matrix  p1;       // #EXPERT first end points for bending lines
+  float_Matrix  p2;       // #EXPERT second end points for bending lines
+  float_Matrix  ct;       // #EXPERT An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
+  taVector3f    should_loc; // #READ_ONLY #SHOW the location of the shoulder in World coordinates
+  int           n_musc;  // #READ_ONLY the total number of muscles, as implied by the IP matrices
+  
+  float_Matrix  targ_lens; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float_Matrix  forces; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
 
-  VEMuscle_List muscles; // pointer to the muscles attached to the arm
+  VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
@@ -102,8 +106,10 @@ public:
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
   // #BUTTON place the hand at the specified target. This method can crash if the arm hasn't been set to its initial position. Returns true if a move is made (even if the target is not reachable).
 
-  virtual bool TargetLengths(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
-  // Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
+  virtual bool TargetLengths(float trg_x, float trg_y, float trg_z);
+  // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
+  virtual bool TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
+  // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
 
   virtual bool UpdateIPs();
   // #BUTTON Setting the muscle IPs to the values in the xxxIP matrices
@@ -114,11 +120,16 @@ public:
   virtual bool Speeds(float_Matrix &Vel);
   // Put the muscle contraction speeds of the last time step in the given matrix
 
-  virtual bool ApplyStim(float_Matrix stims, float_Matrix &forces);
+  virtual bool ApplyStim(const float_Matrix& stims, float_Matrix &fs);
   // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.
 
-  virtual bool VEP_Reach(float_Matrix trg_lens, float gain, float_Matrix &forces);
+  virtual bool VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs);
   // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. This will calculate the activation (multiplying both errors by the gain), calculate (and store) the resulting forces, and apply them. It does not take a step of the VEWorld, and does not udpate the muscle insertion points.
+
+  // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
+  // automatically update the muscle forces using VEP_Reach, and update the IPs etc
+  override void Step_pre();
+  override void CurFromODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:

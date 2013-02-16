@@ -203,6 +203,8 @@ public:
   virtual void  Init_Gravity(); // #CAT_ODE #EXPERT set the gravity mode
   virtual void  Init_Damping(); // #CAT_ODE #EXPERT set the damping parameters
 
+  virtual void Step_pre();
+  // #EXPERT #CAT_ODE do computations prior to taking a step of the ode physics solver -- called automatically at the start of Step() to allow special objects (e.g., VEArm) to update prior to stepping
   virtual void  CurToODE();
   // #CAT_ODE #BUTTON #GHOST_ON_body_id:NULL set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call
 

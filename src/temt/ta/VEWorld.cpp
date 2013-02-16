@@ -278,10 +278,16 @@ void nearCallback(void *data, dGeomID o1, dGeomID o2) {
   }
 }
 
+void VEWorld::Step_pre() {
+  objects.Step_pre();
+}
+
 void VEWorld::Step() {
   if(!world_id || !space_id || !cgp_id) return;
 
   last_ve_stepped = this;
+
+  Step_pre();
 
   dWorldID wid = (dWorldID)world_id;
   dSpaceID sid = (dSpaceID)space_id;
