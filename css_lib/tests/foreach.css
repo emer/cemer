@@ -1,0 +1,16 @@
+
+// for(int i=0;i<2;i++) {
+//   cout << i << endl;
+// }
+
+// a = [1,2,3,4];
+// foreach(int i in a) {
+//   cout << i << endl;
+// }
+
+BaseSpec* sp;
+
+// assumes a project is loaded with at least one conspec
+foreach(sp in .specs[LeabraConSpec]) {
+  cerr << sp.name << endl;
+}

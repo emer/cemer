@@ -1,0 +1,1 @@
+emergent_install_mac_deps.app/Contents/Resources/Scripts/emergent_install_mac_deps.sh

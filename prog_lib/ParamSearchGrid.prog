@@ -1,0 +1,1206 @@
+// ta_Dump File v3.0 -- code v5.0.2.0
+Program .projects[0].programs[1] { 
+  ProgObjList @.objs = [4] {
+    DataTable @[0] { 
+      DataTableCols @.data = [4] {
+	int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+	double_Data @[1] { };
+	double_Data @[2] { };
+	double_Data @[3] { };
+      };
+    };
+    DataTable @[1] { 
+      DataTableCols @.data = [2] {
+	double_Data @[0] { };
+	double_Data @[1] { };
+      };
+    };
+    DataTable @[2] { 
+      DataTableCols @.data = [2] {
+	double_Data @[0] { };
+	double_Data @[1] { };
+      };
+    };
+    DataTable @[3] { 
+      DataTableCols @.data = [3] {
+	double_Data @[0] { };
+	double_Data @[1] { };
+	double_Data @[2] { };
+      };
+    };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [7] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [11] {
+    ResetDataRows @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    DoLoop @[3] { 
+      ProgEl_List @.loop_code = [8] {
+	Comment @[0] { };
+	ProgramCall @[1] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	OtherProgramVar @[2] { };
+	Comment @[3] { };
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	StopStepPoint @[7] { };
+      };
+    };
+    Comment @[4] { };
+    DataGroupProg @[5] { 
+      DataOpList @.ops = [2] {
+	DataGroupEl @[0] { };
+	DataGroupEl @[1] { };
+      };
+    };
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [12] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+	ProgArg @[9] { };
+	ProgArg @[10] { };
+	ProgArg @[11] { };
+      };
+    };
+    DataGroupProg @[7] { 
+      DataOpList @.ops = [2] {
+	DataGroupEl @[0] { };
+	DataGroupEl @[1] { };
+      };
+    };
+    MethodCall @[8] { 
+      ProgArg_List @.meth_args = [12] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+	ProgArg @[9] { };
+	ProgArg @[10] { };
+	ProgArg @[11] { };
+      };
+    };
+    DataGroupProg @[9] { 
+      DataOpList @.ops = [3] {
+	DataGroupEl @[0] { };
+	DataGroupEl @[1] { };
+	DataGroupEl @[2] { };
+      };
+    };
+    MethodCall @[10] { 
+      ProgArg_List @.meth_args = [12] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+	ProgArg @[9] { };
+	ProgArg @[10] { };
+	ProgArg @[11] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs[1] {
+ name="ParamSearchGrid";
+ short_nm="GridSrch";
+ tags="parameter search, grid search";
+ desc="runs parameter searches using a select edit to hold the parameter values -- does simple grid search";
+ flags=NO_STOP_STEP;
+ objs {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="PSearchData";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="index";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;     };
+    };
+    double_Data @[1] {
+     name="gain";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 50;250;450;650;850;1050;50;250;450;650;
+850;1050;50;250;450;650;850;1050;50;250;
+450;650;850;1050;50;250;450;650;850;1050;
+50;250;450;650;850;1050;50;250;450;650;
+850;1050;     };
+    };
+    double_Data @[2] {
+     name="LeabraConSpec_0_lrate";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 0.05000000074505806;0.07000000029802322;0.07000000029802322;0.07000000029802322;0.07000000029802322;0.07000000029802322;0.09000000357627869;0.09000000357627869;0.09000000357627869;0.09000000357627869;
+0.09000000357627869;0.09000000357627869;0.1100000068545341;0.1100000068545341;0.1100000068545341;0.1100000068545341;0.1100000068545341;0.1100000068545341;0.1300000101327896;0.1300000101327896;
+0.1300000101327896;0.1300000101327896;0.1300000101327896;0.1300000101327896;0.1500000059604645;0.1500000059604645;0.1500000059604645;0.1500000059604645;0.1500000059604645;0.1500000059604645;
+0.1700000017881393;0.1700000017881393;0.1700000017881393;0.1700000017881393;0.1700000017881393;0.1700000017881393;0.1899999976158142;0.1899999976158142;0.1899999976158142;0.1899999976158142;
+0.1899999976158142;0.1899999976158142;     };
+    };
+    double_Data @[3] {
+     name="eval";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 27.6;7;7.4;9.800000000000001;9.800000000000001;10.4;18.4;9.199999999999999;11;11.8;
+10;11.8;15.4;10.6;9.6;11.2;11.4;12.6;12;11;
+11;14;13.4;15.8;11.4;12.2;19;14.8;13;25;
+11;12.8;16.2;18.2;18.2;20;10.8;18.4;22.8;34.6;
+22;15.6;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[1] {
+   name="BestGain";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    double_Data @[0] {
+     name="gain";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [6] 250;450;850;50;1050;650;     };
+    };
+    double_Data @[1] {
+     name="eval";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [6] 11.6;13.85714285714286;13.97142857142857;15.22857142857143;15.88571428571428;16.34285714285715;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[2] {
+   name="BestLrate";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    double_Data @[0] {
+     name="LeabraConSpec_0_lrate";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [8] 0.07000000029802322;0.1100000068545341;0.09000000357627869;0.1300000101327896;0.1500000059604645;0.1700000017881393;0.1899999976158142;0.05000000074505806;     };
+    };
+    double_Data @[1] {
+     name="eval";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [8] 8.879999999999999;11.8;12.03333333333333;12.86666666666667;15.9;16.06666666666667;20.7;27.6;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[3] {
+   name="BestOverall";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    double_Data @[0] {
+     name="gain";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 250;450;250;450;850;650;850;1050;250;50;
+50;250;450;450;650;850;50;650;1050;50;
+250;1050;250;850;850;650;650;50;1050;1050;
+450;650;850;250;50;450;1050;850;450;1050;
+50;650;     };
+    };
+    double_Data @[1] {
+     name="LeabraConSpec_0_lrate";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 0.07000000029802322;0.07000000029802322;0.09000000357627869;0.1100000068545341;0.07000000029802322;0.07000000029802322;0.09000000357627869;0.07000000029802322;0.1100000068545341;0.1899999976158142;
+0.1700000017881393;0.1300000101327896;0.1300000101327896;0.09000000357627869;0.1100000068545341;0.1100000068545341;0.1500000059604645;0.09000000357627869;0.09000000357627869;0.1300000101327896;
+0.1500000059604645;0.1100000068545341;0.1700000017881393;0.1500000059604645;0.1300000101327896;0.1300000101327896;0.1500000059604645;0.1100000068545341;0.1899999976158142;0.1300000101327896;
+0.1700000017881393;0.1700000017881393;0.1700000017881393;0.1899999976158142;0.09000000357627869;0.1500000059604645;0.1700000017881393;0.1899999976158142;0.1899999976158142;0.1500000059604645;
+0.05000000074505806;0.1899999976158142;     };
+    };
+    double_Data @[2] {
+     name="eval";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [42] 7;7.4;9.199999999999999;9.6;9.800000000000001;9.800000000000001;10;10.4;10.6;10.8;
+11;11;11;11;11.2;11.4;11.4;11.8;11.8;12;
+12.2;12.6;12.8;13;13.4;14;14.8;15.4;15.6;15.8;
+16.2;18.2;18.2;18.4;18.4;19;20;22;22.8;25;
+27.6;34.6;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,SimpleLines5x5>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="SearchParams";
+   var_type=T_Object;
+   object_type=SelectEdit;
+   object_val=.projects[0].edits[0]$$<SelectEdit,SearchParams>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="avg_epochs";
+   var_type=T_Real;
+   real_val=15.6;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="average number of epochs over training";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="searching";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="PSearchData";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[1].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="BestLrate";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[1].objs[2]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="BestOverall";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[1].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="BestGain";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[1].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name=;
+  el_typ=Function;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  ResetDataRows @[0] {
+   desc=;
+   flags=;
+   data_var=.projects[0].programs[1].vars[3]$$;
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs[1].vars[0]$$;
+   method=SelectEdit::PSearchConfigTable;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="dat";
+     required=1;
+     def_val=;
+     expr {
+      expr="PSearchData";
+     };
+    };
+   };
+  };
+  MethodCall @[2] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs[1].vars[0]$;
+   method=SelectEdit::PSearchMinToCur_All;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  DoLoop @[3] {
+   desc=;
+   flags=;
+   loop_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    Comment @[0] {
+     desc="== Run Network and colllect results for current params ==";
+     flags=;
+    };
+    ProgramCall @[1] {
+     desc=;
+     flags=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+       };
+      };
+     };
+     target=.projects[0].programs.gp[0][0]$$<Program,LeabraBatch>;
+     targ_ld_init="*LeabraBatch*";
+    };
+    OtherProgramVar @[2] {
+     desc=;
+     flags=;
+     other_prog=$.projects[0].programs.gp[0][0]$;
+     set_other=0;
+     var_1=.projects[0].programs[1].vars[1]$$;
+     var_2=NULL;
+     var_3=NULL;
+     var_4=NULL;
+    };
+    Comment @[3] {
+     desc="== Record results and iterate ==";
+     flags=;
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$.projects[0].programs[1].vars[0]$;
+     method=SelectEdit::PSearchRecord;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dat";
+       required=1;
+       def_val=;
+       expr {
+	expr="PSearchData";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=double;
+       type="double";
+       name="eval_val";
+       required=1;
+       def_val=;
+       expr {
+	expr="avg_epochs";
+       };
+      };
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=;
+     result_var=.projects[0].programs[1].vars[2]$$;
+     obj=$.projects[0].programs[1].vars[0]$;
+     method=SelectEdit::PSearchNextIncr_Grid;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$.projects[0].programs[1].vars[0]$;
+     method=SelectEdit::PSearchNextToCur_All;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    StopStepPoint @[7] {
+     desc=;
+     flags=OFF;
+    };
+   };
+   test {
+    expr="searching";
+   };
+  };
+  Comment @[4] {
+   desc="== Analyze results using Group operator -- results in objs/Best* ==";
+   flags=;
+  };
+  DataGroupProg @[5] {
+   desc=;
+   flags=;
+   src_data_var=$.projects[0].programs[1].vars[3]$;
+   dest_data_var=.projects[0].programs[1].vars[6]$$;
+   group_spec {
+    name="group_spec";
+    ops {
+     name=;
+     el_typ=DataGroupEl;
+     el_def=0;
+     DataGroupEl @[0] {
+      col_name="gain";
+      agg {name="AggregateSpec_35": op=GROUP: rel={name="Relation_35": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[1] {
+      col_name="eval";
+      agg {name="AggregateSpec_37": op=MEAN: rel={name="Relation_37": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+    };
+    append_agg_name=0;
+   };
+  };
+  MethodCall @[6] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs[1].vars[6]$;
+   method=DataTable::Sort;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Variant;
+     type="Variant";
+     name="col1";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"eval\"";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=bool;
+     type="bool";
+     name="ascending1";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=Variant;
+     type="Variant";
+     name="col2";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="ascending2";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[4] {
+     arg_type=Variant;
+     type="Variant";
+     name="col3";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[5] {
+     arg_type=bool;
+     type="bool";
+     name="ascending3";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[6] {
+     arg_type=Variant;
+     type="Variant";
+     name="col4";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[7] {
+     arg_type=bool;
+     type="bool";
+     name="ascending4";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[8] {
+     arg_type=Variant;
+     type="Variant";
+     name="col5";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[9] {
+     arg_type=bool;
+     type="bool";
+     name="ascending5";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[10] {
+     arg_type=Variant;
+     type="Variant";
+     name="col6";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[11] {
+     arg_type=bool;
+     type="bool";
+     name="ascending6";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+   };
+  };
+  DataGroupProg @[7] {
+   desc=;
+   flags=;
+   src_data_var=$.projects[0].programs[1].vars[3]$;
+   dest_data_var=.projects[0].programs[1].vars[4]$$;
+   group_spec {
+    name="group_spec";
+    ops {
+     name=;
+     el_typ=DataGroupEl;
+     el_def=0;
+     DataGroupEl @[0] {
+      col_name="LeabraConSpec_0_lrate";
+      agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[1] {
+      col_name="eval";
+      agg {name="AggregateSpec_37": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+    };
+    append_agg_name=0;
+   };
+  };
+  MethodCall @[8] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs[1].vars[4]$;
+   method=DataTable::Sort;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Variant;
+     type="Variant";
+     name="col1";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"eval\"";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=bool;
+     type="bool";
+     name="ascending1";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=Variant;
+     type="Variant";
+     name="col2";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="ascending2";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[4] {
+     arg_type=Variant;
+     type="Variant";
+     name="col3";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[5] {
+     arg_type=bool;
+     type="bool";
+     name="ascending3";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[6] {
+     arg_type=Variant;
+     type="Variant";
+     name="col4";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[7] {
+     arg_type=bool;
+     type="bool";
+     name="ascending4";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[8] {
+     arg_type=Variant;
+     type="Variant";
+     name="col5";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[9] {
+     arg_type=bool;
+     type="bool";
+     name="ascending5";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[10] {
+     arg_type=Variant;
+     type="Variant";
+     name="col6";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[11] {
+     arg_type=bool;
+     type="bool";
+     name="ascending6";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+   };
+  };
+  DataGroupProg @[9] {
+   desc=;
+   flags=;
+   src_data_var=$.projects[0].programs[1].vars[3]$;
+   dest_data_var=.projects[0].programs[1].vars[5]$$;
+   group_spec {
+    name="group_spec";
+    ops {
+     name=;
+     el_typ=DataGroupEl;
+     el_def=0;
+     DataGroupEl @[0] {
+      col_name="gain";
+      agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[1] {
+      col_name="LeabraConSpec_0_lrate";
+      agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[2] {
+      col_name="eval";
+      agg {name="AggregateSpec_37": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+    };
+    append_agg_name=0;
+   };
+  };
+  MethodCall @[10] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs[1].vars[5]$;
+   method=DataTable::Sort;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Variant;
+     type="Variant";
+     name="col1";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"eval\"";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=bool;
+     type="bool";
+     name="ascending1";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=Variant;
+     type="Variant";
+     name="col2";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="ascending2";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[4] {
+     arg_type=Variant;
+     type="Variant";
+     name="col3";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[5] {
+     arg_type=bool;
+     type="bool";
+     name="ascending3";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[6] {
+     arg_type=Variant;
+     type="Variant";
+     name="col4";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[7] {
+     arg_type=bool;
+     type="bool";
+     name="ascending4";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[8] {
+     arg_type=Variant;
+     type="Variant";
+     name="col5";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[9] {
+     arg_type=bool;
+     type="bool";
+     name="ascending5";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[10] {
+     arg_type=Variant;
+     type="Variant";
+     name="col6";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+     };
+    };
+    ProgArg @[11] {
+     arg_type=bool;
+     type="bool";
+     name="ascending6";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+     };
+    };
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};
