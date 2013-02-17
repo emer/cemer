@@ -25,7 +25,7 @@ cd $DOWNLOAD_DIR
 
 function downloadFTP {
   # ARG is file to download - goes to download dir, checks for existence already
-  if [ -z "$1" ]; then
+  if [ ! -e "$1" ]; then
       echo "downloading file: $1"
       ${FTP_CMD} "${FTP_REPO}/$1"
   fi
@@ -64,6 +64,18 @@ function openPKGinDMG {
   open "${DMG_PKG}"
 }
 
+function openNamedPKGinDMG {
+  # Argument 1 should be the name of the DMG.
+  # Argument 2 is name of the package
+  # finds the package file, opens it
+
+  DMG_MNT="`mountDMG $1`"
+  echo "mounted: $DMG_MNT"
+  DMG_PKG="`ls -1rtd \"$DMG_MNT\"/$2 | tail -1`"
+  echo "package: $DMG_PKG"
+  open "${DMG_PKG}"
+}
+
 # these are listed in REVERSE order of size and dependency, independent to dependent
 # QUARTER depends on COIN, QT
 # everything else is independent
@@ -72,5 +84,6 @@ openPKGinDMG ${QUARTER_DMG}
 openPKGinDMG ${QT_DMG}
 openPKGinDMG ${CMAKE_DMG}
 openPKGinDMG ${SVN_DMG}
-openPKGinDMG ${COIN_DMG}
+openNamedPKGinDMG ${COIN_DMG} "Coin.pkg"
+openNamedPKGinDMG ${COIN_DMG} "CoinTools.pkg"
 openPKGinDMG ${MISC_DMG}
