@@ -98,7 +98,7 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains(' ')) return false; // must have at least one space
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
-  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp);
+  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp, false);
   if(td != NULL) return true;   // yep.
   return false;
 }
@@ -108,7 +108,7 @@ bool LocalVars::CvtFmCode(const String& code) {
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
   String varnm = trim(code.after(' '));
   if(varnm.endsWith(';')) varnm = varnm.before(';',-1);
-  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp);
+  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp, false);
   if(td == NULL) return false; // shouldn't happen
   ProgVar* var = AddVar();
   var->SetName(varnm);
