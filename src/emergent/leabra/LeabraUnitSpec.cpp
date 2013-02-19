@@ -16,6 +16,7 @@
 #include "LeabraUnitSpec.h"
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
+#include <LeabraTICtxtConSpec>
 #include <taProject>
 #include <taMath_double>
 
@@ -516,6 +517,7 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   u->net_delta = 0.0f;
   u->g_i_raw = 0.0f;
   u->g_i_delta = 0.0f;
+  u->net_ctxt = 0.0f;
 
   u->net = 0.0f;
   u->gc.i = 0.0f;
@@ -562,6 +564,9 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->avg_ss = act.avg_init;
   lu->avg_s = act.avg_init;
   lu->avg_m = act.avg_init;
+  lu->act_ctxt = 0.0f;
+  lu->net_ctxt = 0.0f;
+  lu->p_act_p = 0.0f;
   lu->davg = 0.0f;
   lu->dav = 0.0f;
   lu->noise = 0.0f;
@@ -1519,6 +1524,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   switch(net->phase_order) {
   case LeabraNetwork::MINUS_PLUS:
     if(no_plus_testing) {
+      u->p_act_p = u->act_p;
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
       u->act_dif2 = 0.0f;
@@ -1528,6 +1534,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       if(net->phase == LeabraNetwork::MINUS_PHASE)
         u->act_m = u->act_nd;
       else {
+        u->p_act_p = u->act_p;
         u->act_p = u->act_nd;
         u->act_dif = u->act_p - u->act_m;
 	u->act_dif2 = u->act_p - u->act_m2;
@@ -1538,6 +1545,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     break;
   case LeabraNetwork::PLUS_MINUS:
     if(no_plus_testing) {
+      u->p_act_p = u->act_p;
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
       u->act_dif2 = 0.0f;
@@ -1550,12 +1558,14 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
 	u->act_dif2 = u->act_p - u->act_m2;
       }
       else {
+        u->p_act_p = u->act_p;
         u->act_p = u->act_nd;
         Compute_ActTimeAvg(u, net);
       }
     }
     break;
   case LeabraNetwork::PLUS_ONLY:
+    u->p_act_p = u->act_p;
     u->act_m = u->act_p = u->act_nd;
     u->act_dif = 0.0f;
     u->act_dif2 = 0.0f;
@@ -1568,6 +1578,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       u->act_m = u->act_nd;
     }
     else if(net->phase_no == 1) {
+      u->p_act_p = u->act_p;
       u->act_p = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
       if(no_plus_testing) {
@@ -1611,6 +1622,45 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
     dact *= u->act_p;
   }
   u->act_p = act_range.Clip(u->act_p + dact);
+}
+
+/////////////////////////////////////////////////
+//              Leabra TI
+
+void LeabraUnitSpec::LeabraTI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
+                                             int thread_no) {
+  float act_ts = u->act_p;
+
+  if(act_ts > opt_thresh.send) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+      if(!send_gp->size)      continue;
+      if(send_gp->prjn->from_type != Projection::SELF) continue;
+      if(!send_gp->GetConSpec()->InheritsFrom(&TA_LeabraTICtxtConSpec)) continue;
+      LeabraTICtxtConSpec* sp = (LeabraTICtxtConSpec*)send_gp->GetConSpec();
+      sp->Send_CtxtNetin(send_gp, net, thread_no, act_ts);
+    }
+  }
+}
+
+void LeabraUnitSpec::LeabraTI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
+  int nt = net->threads.tasks.size;
+  float nw_nt = 0.0f;
+  if(net->threads.using_threads) {	// if not used, goes directly into unit vals
+    for(int j=0;j<nt;j++) {
+      nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, j);
+    }
+    u->net_ctxt = nw_nt;
+  }
+
+  float net_save = u->net;
+  u->i_thr = Compute_IThreshNoAHB(u, net); 
+  u->net = net_save;
+}
+
+void LeabraUnitSpec::LeabraTI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
+
 }
 
 

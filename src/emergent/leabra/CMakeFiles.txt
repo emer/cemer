@@ -40,6 +40,7 @@ set(leabra_HEADS_MAKETA
 
   LeabraWizard.h
 
+  LeabraTICtxtConSpec.h
   MarkerConSpec.h
   XCalSRAvgConSpec.h
   XCalHebbConSpec.h
@@ -183,6 +184,7 @@ set(leabra_SRCS
 
   LeabraWizard.cpp
 
+  LeabraTICtxtConSpec.cpp
   MarkerConSpec.cpp
   XCalSRAvgConSpec.cpp
   XCalHebbConSpec.cpp

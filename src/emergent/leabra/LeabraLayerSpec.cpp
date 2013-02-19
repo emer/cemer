@@ -1731,6 +1731,21 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//      LeabraTI
+
+void LeabraLayerSpec::LeabraTI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net) {
+  // context netin drove i_thr computation previously -- this is what now drives inhib
+  Compute_Inhib(lay, net);
+  Compute_ApplyInhib(lay, net);
+  // Compute_Act();
+  // this can just be:
+  // float g_e_thr = Compute_EThresh(u);
+  // new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+  // could do it purely unitwize..
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      TrialFinal
 

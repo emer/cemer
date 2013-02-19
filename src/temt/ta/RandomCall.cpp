@@ -31,7 +31,7 @@ bool RandomCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
   String objnm = mthobj.before("::");
-  TypeDef* td = TypeDef::FindGlobalTypeName(objnm);
+  TypeDef* td = TypeDef::FindGlobalTypeName(objnm, false);
   if(!td) return false;
   if(objnm == "Random") return true;
   return false;

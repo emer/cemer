@@ -533,6 +533,12 @@ public:
   // #CAT_Activation compute acts_p AvgMaxVals from act_p -- not currently used
 
   ///////////////////////////////////////////////////////////////////////
+  //	LeabraTI
+
+  virtual void	LeabraTI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute context activations
+
+  ///////////////////////////////////////////////////////////////////////
   //	TrialFinal
 
   virtual void	EncodeState(LeabraLayer* lay, LeabraNetwork* net);

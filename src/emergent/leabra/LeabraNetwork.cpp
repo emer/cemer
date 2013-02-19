@@ -186,6 +186,7 @@ void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
 
   learn_rule = CTLEABRA_XCAL;
+  ti_on = false;
   prv_learn_rule = -1;
   phase_order = MINUS_PLUS;
   no_plus_test = true;
@@ -906,6 +907,9 @@ void LeabraNetwork::PostSettle() {
     if(!lay->lesioned())
       lay->PostSettle(this);
   }
+  if(ti_on) {
+    LeabraTI_CtxtUpdate();
+  }
 }
 
 void LeabraNetwork::Settle_Compute_dWt() {
@@ -952,6 +956,58 @@ void LeabraNetwork::AdaptKWTAPt() {
   }
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//      LeabraTI final plus phase context updating
+
+void LeabraNetwork::LeabraTI_CtxtUpdate() {
+  bool do_updt = false;
+  no_plus_test = false;         // never viable to do that with TI!
+  if(phase_order == MINUS_PLUS) {
+    if(phase_no == 1)
+      do_updt = true;
+  }
+  else {
+    TestError(true, "LeabraTI_CtxtUpdate",
+              "LeabraTI ti_on mode is only compatible with phase_order = MINUS_PLUS -- I just set it");
+    phase_order = MINUS_PLUS;
+  }
+  if(do_updt) {
+    LeabraTI_Send_CtxtNetin();
+    LeabraTI_Compute_CtxtAct();
+  }
+}
+
+void LeabraNetwork::LeabraTI_Send_CtxtNetin() {
+  send_pct_n = send_pct_tot = 0;
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::LeabraTI_Send_CtxtNetin);
+  if(thread_flags & NETIN)
+    threads.Run(&un_call, 1.0f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
+
+  // now need to roll up the netinput into unit vals
+  const int nu = units_flat.size;
+  for(int i=1;i<nu;i++) {   // 0 = dummy idx
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    u->LeabraTI_Send_CtxtNetin_Post(this);
+  }
+
+  if(threads.using_threads) {
+    send_netin_tmp.InitVals(0.0f); // reset for next time around
+  }
+  // todo: need this??
+// #ifdef DMEM_COMPILE
+//   dmem_share_units.Sync(3);
+// #endif
+}
+
+void LeabraNetwork::LeabraTI_Compute_CtxtAct() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->LeabraTI_Compute_CtxtAct(this);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial Update and Final

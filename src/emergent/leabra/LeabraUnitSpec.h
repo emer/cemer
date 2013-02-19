@@ -585,6 +585,8 @@ public:
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding gc.a current
       inline float Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
+      inline float Compute_IThreshNoAHB(LeabraUnit* u, LeabraNetwork* net);
+      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents, not subtracting bias weights
       inline float Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
 
@@ -665,6 +667,17 @@ public:
     // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in PostSettle function
     virtual void Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation post-plus dav modulation
+
+  ///////////////////////////////////////////////////////////////////////
+  //	LeabraTI
+
+  virtual void	LeabraTI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
+                                        int thread_no=-1);
+  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
+  virtual void	LeabraTI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
+  virtual void	LeabraTI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_LeabraTI compute context activations
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

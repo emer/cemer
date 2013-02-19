@@ -65,7 +65,6 @@ set(css_SRCS
     css_misc_funs.cpp
     readline_win.cpp
     ${css_SRCS_GUI}
-    css_ti.cpp
 )
 
 set(css_FILES ${css_HEADS} ${css_SRCS})

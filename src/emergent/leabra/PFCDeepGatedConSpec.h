@@ -39,7 +39,7 @@ public:
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-	C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+	C_Send_NetinDelta_Thread(cg->OwnCn(i), send_netin_vec, ru,
 			       su_act_delta * rcg->scale_eff);
       }
     }
@@ -48,7 +48,7 @@ public:
 	for(int i=0; i<cg->size; i++) {
 	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-	  C_Send_NetinDelta_NoThrd(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
+	  C_Send_NetinDelta_NoThread(cg->OwnCn(i), ru, su_act_delta * rcg->scale_eff);
 	}
       }
       else {
@@ -57,7 +57,7 @@ public:
 	for(int i=0; i<cg->size; i++) {
 	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	  LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-	  C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec, ru,
+	  C_Send_NetinDelta_Thread(cg->OwnCn(i), send_netin_vec, ru,
 				 su_act_delta *	rcg->scale_eff);
 	}
       }

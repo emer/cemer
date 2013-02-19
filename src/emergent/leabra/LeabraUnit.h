@@ -93,6 +93,9 @@ public:
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
   float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
   float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
+  float         act_ctxt;       // #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection
+  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection
+  float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float		davg;		// #CAT_Activation delta average activation -- computed from changes in the short time-scale activation average (avg_s) -- used for detecting jolts or transitions in the network, to drive learning
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
@@ -260,6 +263,20 @@ public:
   void	PostSettle(LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->PostSettle(this, net); }
   // #CAT_Activation set stuff after settling is over (act_m, act_p etc)
+
+
+  ///////////////////////////////////////////////////////////////////////
+  //	LeabraTI
+
+  void	LeabraTI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Send_CtxtNetin(this, net); }
+  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
+  void	LeabraTI_Send_CtxtNetin_Post(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Send_CtxtNetin_Post(this, net); }
+  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
+  void	LeabraTI_Compute_CtxtAct(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Compute_CtxtAct(this, net); }
+  // #CAT_LeabraTI compute context activations
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Final

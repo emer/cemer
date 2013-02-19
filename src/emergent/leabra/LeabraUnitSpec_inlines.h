@@ -83,6 +83,12 @@ inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* n
 	  thr_sub_e_rev_i);
 } 
 
+inline float LeabraUnitSpec::Compute_IThreshNoAHB(LeabraUnit* u, LeabraNetwork* net) {
+  // NOT including the ga and gh terms, NOT subtracting out bias -- just basic..
+  return ((u->net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
+	  thr_sub_e_rev_i);
+} 
+
 inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net) {
   // including the ga and gh terms and bias weights
   return ((u->net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l

@@ -329,10 +329,10 @@ public:
   virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from);
   // compute recv_gp->scale_eff based on params in from layer
 
-  inline void 	C_Send_NetinDelta_Thrd(Connection* cn, float* send_netin_vec,
+  inline void 	C_Send_NetinDelta_Thread(Connection* cn, float* send_netin_vec,
 				      LeabraUnit* ru, float su_act_delta_eff);
   // #IGNORE
-  inline void 	C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
+  inline void 	C_Send_NetinDelta_NoThread(Connection* cn, LeabraUnit* ru,
 					float su_act_delta_eff);
   // #IGNORE
   virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,

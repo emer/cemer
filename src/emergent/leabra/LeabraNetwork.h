@@ -310,6 +310,7 @@ public:
   };
 
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
+  bool          ti_on;          // turn on special LeabraTI (temporal integration) processing and learning mechanisms -- requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
@@ -546,6 +547,17 @@ public:
     // #CAT_SettleFinal compute weight changes at end of settling as needed depending on phase order -- all weight changes are computed here for consistency
     virtual void AdaptKWTAPt();
     // #CAT_SettleFinal adapt the kwta point based on average activation values
+
+  ///////////////////////////////////////////////////////////////////////
+  //	LeabraTI Special code
+
+  virtual void LeabraTI_CtxtUpdate();
+  // #CAT_SettleFinal called if ti_on is true -- updates context activation at end of plus phase (called from PostSettle())
+    virtual void LeabraTI_Send_CtxtNetin();
+    // #CAT_SettleFinal send context netinput
+    virtual void LeabraTI_Compute_CtxtAct();
+    // #CAT_SettleFinal compute context activations from context netinput
+
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

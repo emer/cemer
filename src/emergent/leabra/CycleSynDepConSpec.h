@@ -88,12 +88,12 @@ public:
     CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  inline void C_Send_NetinDelta_Thrd(CycleSynDepCon* cn, float* send_netin_vec,
+  inline void C_Send_NetinDelta_Thread(CycleSynDepCon* cn, float* send_netin_vec,
 				    LeabraUnit* ru, float su_act_delta_eff) {
     send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
 
-  inline void C_Send_NetinDelta_NoThrd(CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+  inline void C_Send_NetinDelta_NoThread(CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
     ru->net_delta += cn->effwt * su_act_delta_eff;
   }
 
@@ -103,18 +103,18 @@ public:
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
 					(LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
     else {
       if(thread_no < 0) {
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd((CycleSynDepCon*)cg->OwnCn(i),
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread((CycleSynDepCon*)cg->OwnCn(i),
 				   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
       }
       else {
 	float* send_netin_vec = net->send_netin_tmp.el
 	  + net->send_netin_tmp.FastElIndex(0, thread_no);
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
 				 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
       }
     }

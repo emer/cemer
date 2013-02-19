@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of Emergent
@@ -13,13 +13,5 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
+#include "LeabraTICtxtConSpec.h"
 
-
-// regexp for template searching: '<[a-z|A-Z|_]\{2,\}>'
-
-// so_ti.cc: template instantiation file for pdp library
-
-#include <so/som.h>
-
-template class SpecPtr<SoLayerSpec>;
-template class taList<NeighborEl>;
