@@ -31,9 +31,9 @@ class E_API LeabraDeltaConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float lin_wt = LinFmSigWt(cn->wt);
     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
     if(lmix.err_sb) {
+      float lin_wt = LinFmSigWt(cn->wt);
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
     }

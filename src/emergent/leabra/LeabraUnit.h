@@ -93,8 +93,8 @@ public:
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
   float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
   float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
-  float         act_ctxt;       // #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection
-  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection
+  float         act_ctxt;       // #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network ti_mode is on
+  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on
   float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float		davg;		// #CAT_Activation delta average activation -- computed from changes in the short time-scale activation average (avg_s) -- used for detecting jolts or transitions in the network, to drive learning
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
@@ -268,14 +268,14 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  void	LeabraTI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Send_CtxtNetin(this, net); }
+  void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net); }
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
-  void	LeabraTI_Send_CtxtNetin_Post(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Send_CtxtNetin_Post(this, net); }
+  void	TI_Send_CtxtNetin_Post(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin_Post(this, net); }
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  void	LeabraTI_Compute_CtxtAct(LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->LeabraTI_Compute_CtxtAct(this, net); }
+  void	TI_Compute_CtxtAct(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_CtxtAct(this, net); }
   // #CAT_LeabraTI compute context activations
 
   ///////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ public:
 
   void 	Compute_dWt_FirstMinus(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstMinus(this, net, thread_no); }
-  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
+  // #CAT_Learning compute weight change after first minus phase has been encountered: not currently used.. 
   void 	Compute_dWt_FirstPlus(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstPlus(this, net, thread_no); }
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL

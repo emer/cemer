@@ -32,6 +32,7 @@ public:
   // don't send regular net inputs or learn!
   override void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
 				float su_act_delta_eff) { };
+  override float Compute_Netin(RecvCons* cg, Unit* ru) { return 0.0f; }
   override void Compute_dWt(RecvCons*, Unit*) { };
   override void Compute_dWt_LeabraCHL(LeabraSendCons*, LeabraUnit*) { };
   override void Compute_dWt_CtLeabraCAL(LeabraSendCons*, LeabraUnit*) { };

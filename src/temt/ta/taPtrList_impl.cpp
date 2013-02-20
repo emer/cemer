@@ -815,6 +815,7 @@ void taPtrList_impl::BorrowUniqNameOldFirst(const taPtrList_impl& cp) {
   Stealth_Borrow(scratch_list); // now get everyone back from scratch
   scratch_list.size = 0;
   ReBuildHashTable();           // needed if we have one
+  UpdateAllIndicies();          // they are all whack now..
 }
 
 void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {

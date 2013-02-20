@@ -535,8 +535,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  virtual void	LeabraTI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute context activations
+  virtual void	TI_Compute_CtxtInhib(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute context inhibition
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialFinal

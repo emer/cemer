@@ -30,6 +30,7 @@ class E_API LeabraTICtxtConSpec : public LeabraConSpec {
   // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning 
 INHERITED(LeabraConSpec)
 public:
+  bool          ti_learn_pred;  // learns to train context to predict outcome -- see also ti_mode on network -- this is NOT tied to that setting -- can intermix the two, though it doesn't really make sense
 
   inline void C_Send_CtxtNetin_Thread(Connection* cn, float* send_netin_vec,
                                       LeabraUnit* ru, const float su_act_eff) {
@@ -59,12 +60,67 @@ public:
   }
   // #CAT_Activation sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
-  // todo: turn off contribution to regular netins
-  // and impl new learning rule..
+  // don't send regular net inputs..
+  override void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
+				float su_act_delta_eff) { };
+  override float Compute_Netin(RecvCons* cg, Unit* ru) { return 0.0f; }
+
+
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt;
+    if(ti_learn_pred) {
+      dwt = (ru->act_p - ru->act_ctxt) * su->p_act_p;
+    }
+    else {
+      dwt = (ru->act_p - ru->act_m) * su->p_act_p;
+    }
+    if(lmix.err_sb) {
+      float lin_wt = LinFmSigWt(cn->wt);
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
+    }
+    cn->dwt += cur_lrate * dwt;
+  }
+
+  inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt;
+    if(ti_learn_pred) {
+      dwt = (ru->act_p - ru->act_ctxt) * su->p_act_p;
+    }
+    else {
+      dwt = (ru->act_p - ru->act_m) * su->p_act_p;
+    }
+    cn->dwt += cur_lrate * dwt;
+    // soft bounding is managed in the weight update phase, not in dwt
+  }
+
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta(cn, ru, su);  
+    }
+  }
+
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+    }
+  }
+
+  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+    }
+  }
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtConSpec);
 private:
-  void Initialize()  { };
+  void Initialize();
   void Destroy()     { };
 };
 

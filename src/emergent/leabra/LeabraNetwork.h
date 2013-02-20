@@ -267,8 +267,8 @@ class E_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
 INHERITED(Network)
 public:
-  // IMPORTANT programming note: this enum must be same as in LeabraConSpec
 
+  // IMPORTANT programming note: this enum must be same as in LeabraConSpec
   enum LearnRule {
     CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
     LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
@@ -309,8 +309,14 @@ public:
     TF_ALL	= 0xFF,	// #NO_BIT all thread flags set
   };
 
+  enum TIMode {
+    NO_TI,                      // don't use optimized single-layer temporal integration mode
+    TI_CTXT_PRED,               // use bio-inspired mode where the context activation is trained to predict the outcome by itself, and it uses kwta activation dynamics to set the activation value
+    TI_SRN,                     // context activation remains just a straight net input, and learning happens based on the regular hidden unit activation delta -- mathematically equivalent to an SRN
+  };
+
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
-  bool          ti_on;          // turn on special LeabraTI (temporal integration) processing and learning mechanisms -- requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase
+  TIMode        ti_mode;        // controls special LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
@@ -551,12 +557,14 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI Special code
 
-  virtual void LeabraTI_CtxtUpdate();
+  virtual void TI_CtxtUpdate();
   // #CAT_SettleFinal called if ti_on is true -- updates context activation at end of plus phase (called from PostSettle())
-    virtual void LeabraTI_Send_CtxtNetin();
+    virtual void TI_Send_CtxtNetin();
     // #CAT_SettleFinal send context netinput
-    virtual void LeabraTI_Compute_CtxtAct();
-    // #CAT_SettleFinal compute context activations from context netinput
+    virtual void TI_Compute_CtxtInhib();
+    // #CAT_SettleFinal compute kwta inhib on context netins
+    virtual void TI_Compute_CtxtAct();
+    // #CAT_SettleFinal compute context activations from context netinput and inhib
 
 
   ///////////////////////////////////////////////////////////////////////

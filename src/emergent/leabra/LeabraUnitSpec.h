@@ -51,14 +51,14 @@ public:
   };
 
   bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value.  other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr).  the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero
-  bool		old_gelin;	// #CONDSHOW_ON_gelin #DEF_false use the original version of gelin where the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, so dt.vm is still relevant
+  bool		old_gelin;	// #CONDSHOW_ON_gelin #DEF_false use the original version of gelin where the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, so dt.vm is still relevant -- this is obsolete and will be removed soon - please switch to regular gelin
   float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
   float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
   IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
-  float		vm_mod_max;	// #EXPERT #DEF_0.95 max proportion of v_m_eq to use in computing vm modulation of gelin -- less than 1 because units typically do not reach their full equilibrium value
+  float		vm_mod_max;	// #EXPERT #DEF_0.95 for old_gelin only -- max proportion of v_m_eq to use in computing vm modulation of gelin -- less than 1 because units typically do not reach their full equilibrium value
 
   override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
@@ -66,6 +66,27 @@ public:
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(TIActSpec);
+
+class E_API TIActSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra TI temporal integration activation speccs
+INHERITED(SpecMemberBase)
+public:
+  float         ctxt_gain_m; // how much the act_ctxt contributes to net input during the minus phase
+  float         ctxt_gain_p; // how much the act_ctxt contributes to net input during the plus phase
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(TIActSpec);
+protected:
+  SPEC_DEFAULTS;
+  //  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -474,6 +495,7 @@ public:
   ActFunSpec	act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  TIActSpec	ti;		// #CAT_Activation TI temporal integration activation  parameters -- how context impacts activations
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
@@ -671,12 +693,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  virtual void	LeabraTI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
-                                        int thread_no=-1);
+  virtual void	TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
+                                  int thread_no=-1);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
-  virtual void	LeabraTI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net);
+  virtual void	TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  virtual void	LeabraTI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
+  virtual void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI compute context activations
 
   ///////////////////////////////////////////////////////////////////////

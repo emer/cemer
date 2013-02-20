@@ -216,9 +216,9 @@ public:
   void	Compute_ActP_AvgMax(LeabraNetwork* net) { spec->Compute_ActP_AvgMax(this, net); }
   // #CAT_Activation compute acts_p.avg from act_p
 
-  void	LeabraTI_Compute_CtxtAct(LeabraNetwork* net)
-  { spec->LeabraTI_Compute_CtxtAct(this, net); }
-  // #CAT_Activation compute context activations
+  void	TI_Compute_CtxtInhib(LeabraNetwork* net)
+  { spec->TI_Compute_CtxtInhib(this, net); }
+  // #CAT_Activation compute context inhibition
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialFinal

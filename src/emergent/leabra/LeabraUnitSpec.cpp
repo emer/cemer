@@ -63,6 +63,15 @@ void ActFunSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our unitspec so it can recompute lookup function!
 }
 
+void TIActSpec::Initialize() {
+  Defaults_init();
+}
+
+void TIActSpec::Defaults_init() {
+  ctxt_gain_m = 0.25f;
+  ctxt_gain_p = 0.0f;
+}
+
 void SpikeFunSpec::Initialize() {
   g_gain = 9.0f;
   rise = 0.0f;
@@ -321,6 +330,7 @@ void LeabraUnitSpec::Initialize() {
 }
 
 void LeabraUnitSpec::Defaults_init() {
+  // todo: shouldn't I call Defaults_init on all the sub-guys, or is this automatic?
   sse_tol = .5f;
   clamp_range.min = .0f;
   clamp_range.max = .95f;
@@ -1002,6 +1012,15 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     tot_net += u->ext * ls->clamp.gain;
   }
 
+  if(net->ti_mode != LeabraNetwork::NO_TI) {
+    if(net->phase_no == 0) {
+      tot_net += ti.ctxt_gain_m * u->act_ctxt;
+    }
+    else {
+      tot_net += ti.ctxt_gain_p * u->act_ctxt;
+    }
+  }
+
   u->net_delta = 0.0f;  // clear for next use
   u->g_i_delta = 0.0f;  // clear for next use
 
@@ -1524,6 +1543,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   switch(net->phase_order) {
   case LeabraNetwork::MINUS_PLUS:
     if(no_plus_testing) {
+      u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
@@ -1534,6 +1554,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       if(net->phase == LeabraNetwork::MINUS_PHASE)
         u->act_m = u->act_nd;
       else {
+        u->net_ctxt = 0.0f;
         u->p_act_p = u->act_p;
         u->act_p = u->act_nd;
         u->act_dif = u->act_p - u->act_m;
@@ -1545,6 +1566,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     break;
   case LeabraNetwork::PLUS_MINUS:
     if(no_plus_testing) {
+      u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
@@ -1558,6 +1580,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
 	u->act_dif2 = u->act_p - u->act_m2;
       }
       else {
+        u->net_ctxt = 0.0f;
         u->p_act_p = u->act_p;
         u->act_p = u->act_nd;
         Compute_ActTimeAvg(u, net);
@@ -1565,6 +1588,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     }
     break;
   case LeabraNetwork::PLUS_ONLY:
+    u->net_ctxt = 0.0f;
     u->p_act_p = u->act_p;
     u->act_m = u->act_p = u->act_nd;
     u->act_dif = 0.0f;
@@ -1578,6 +1602,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       u->act_m = u->act_nd;
     }
     else if(net->phase_no == 1) {
+      u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
       u->act_p = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
@@ -1627,7 +1652,7 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
 /////////////////////////////////////////////////
 //              Leabra TI
 
-void LeabraUnitSpec::LeabraTI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
+void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                              int thread_no) {
   float act_ts = u->act_p;
 
@@ -1644,7 +1669,7 @@ void LeabraUnitSpec::LeabraTI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
   }
 }
 
-void LeabraUnitSpec::LeabraTI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
+void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
   int nt = net->threads.tasks.size;
   float nw_nt = 0.0f;
   if(net->threads.using_threads) {	// if not used, goes directly into unit vals
@@ -1655,12 +1680,20 @@ void LeabraUnitSpec::LeabraTI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* 
   }
 
   float net_save = u->net;
-  u->i_thr = Compute_IThreshNoAHB(u, net); 
+  u->net = u->net_ctxt;
+  u->i_thr = Compute_IThreshNoAHB(u, net); // note: this clobbers prior i_thr, but we shouldn't care much at this point..
   u->net = net_save;
 }
 
-void LeabraUnitSpec::LeabraTI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
-
+void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
+  if(net->ti_mode == LeabraNetwork::TI_SRN) {
+    u->act_ctxt = u->net_ctxt;  // straight pass-through, just for vis purposes
+  }
+  else {
+    // use straight new gelin, no time constants or anything..
+    float g_e_thr = Compute_EThresh(u); // has gc.i from compute inhib
+    u->act_ctxt = Compute_ActValFmVmVal_rate(u->net_ctxt - g_e_thr);
+  }
 }
 
 

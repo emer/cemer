@@ -15,3 +15,9 @@
 
 #include "LeabraTICtxtConSpec.h"
 
+void LeabraTICtxtConSpec::Initialize() {
+  ti_learn_pred = true;
+  SetUnique("wt_scale", true);
+  wt_scale.rel = 0.0f;          // very important for not interfering with anything else
+  wt_scale.abs = 0.0f;          // very important for not interfering with anything else
+}
