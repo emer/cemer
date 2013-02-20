@@ -155,18 +155,20 @@ void VEJointView::FixOrientation(bool force) {
     }
     case VEJoint::UNIVERSAL:
     case VEJoint::HINGE2: {
-      SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-2);
-      SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
-      SbRotation netrot;
-      // construct rotation that rotates from Y axis to desired target axis
-      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z));
-      tx2->rotation.setValue(netrot);
-      // next joint
-      sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
-      tx2 = (SoTransform*)sep2->getChild(0);
-      // construct rotation that rotates from Y axis to desired target axis
-      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z));
-      tx2->rotation.setValue(netrot);
+      if(ssep->getNumChildren() >= 5) {
+        SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-2);
+        SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
+        SbRotation netrot;
+        // construct rotation that rotates from Y axis to desired target axis
+        netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z));
+        tx2->rotation.setValue(netrot);
+        // next joint
+        sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
+        tx2 = (SoTransform*)sep2->getChild(0);
+        // construct rotation that rotates from Y axis to desired target axis
+        netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z));
+        tx2->rotation.setValue(netrot);
+      }
       break;
     }
     default:
@@ -198,14 +200,10 @@ void VEJointView::Render_impl() {
   if(!bod1) return;
 
   SoTransform* tx = obv->transform();
-  SbRotation sbrot;
-  sbrot.setValue(bod1->cur_quat.x, bod1->cur_quat.y, bod1->cur_quat.z, bod1->cur_quat.s);
-  // rotate the anchor too!
-  SbVec3f anchor(ob->anchor.x, ob->anchor.y, ob->anchor.z);
-  SbVec3f nw_anc;
-  sbrot.multVec(anchor, nw_anc);
-  tx->translation.setValue(bod1->cur_pos.x + nw_anc[0], bod1->cur_pos.y + nw_anc[1],
-                           bod1->cur_pos.z + nw_anc[2]);
+  taVector3f nw_anc = ob->anchor;
+  bod1->cur_quat_raw.RotateVec(nw_anc); // use raw here -- otherwise cylinder stuff gets in way
+  nw_anc += bod1->cur_pos;
+  tx->translation.setValue(nw_anc.x, nw_anc.y, nw_anc.z);
 
   SoMaterial* mat = obv->material();
   mat->diffuseColor.setValue(1.0f, 0.0f, 0.0f);

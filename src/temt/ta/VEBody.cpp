@@ -95,12 +95,7 @@ void VEBody::UpdateAfterEdit_impl() {
     if(shape == CAPSULE || shape == CYLINDER) {
       if(long_axis != cur_long_axis) {
         // first, undo old setting
-        if(cur_long_axis == LONG_X) {
-          cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
-        }
-        else if(cur_long_axis == LONG_Y) {
-          cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
-        }
+        cur_quat = cur_quat_raw;
         // next, set new one
         if(long_axis == LONG_X) {
           cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
@@ -317,6 +312,7 @@ void VEBody::Init_Rotation() {
 
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
   cur_quat = init_quat;
+  cur_quat_raw = cur_quat;
   if(shape == CAPSULE || shape == CYLINDER) {
     if(long_axis == LONG_X) {
       cur_quat.RotateAxis(0.0f, 1.0f, 0.0f, -1.5708f);
@@ -335,17 +331,7 @@ void VEBody::Init_Rotation() {
 }
 
 void VEBody::InitRotFromCur() {
-  init_quat = cur_quat;
-
-  // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
-  if(shape == CAPSULE || shape == CYLINDER) {
-    if(long_axis == LONG_X) {
-      init_quat.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
-    }
-    else if(long_axis == LONG_Y) {
-      init_quat.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
-    }
-  }
+  init_quat = cur_quat_raw;
   init_quat.ToAxisAngle(init_rot);
   init_quat.ToEulerVec(init_euler);
 }
@@ -494,6 +480,16 @@ void VEBody::CurFromODE(bool updt_disp) {
 void VEBody::UpdateCurRotFmQuat() {
   cur_quat.ToAxisAngle(cur_rot);
   cur_quat.ToEulerVec(cur_euler);
+  cur_quat_raw = cur_quat;
+  // undo capsule rotation for cur_quat_raw
+  if(shape == CAPSULE || shape == CYLINDER) {
+    if(long_axis == LONG_X) {
+      cur_quat_raw.RotateAxis(0.0f, 1.0f, 0.0f, 1.5708f);
+    }
+    else if(long_axis == LONG_Y) {
+      cur_quat_raw.RotateAxis(1.0f, 0.0f, 0.0f, 1.5708f);
+    }
+  }
 }
 
 void VEBody::Translate(float dx, float dy, float dz, bool init) {
@@ -550,8 +546,7 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
   }
   else {
     cur_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
-    cur_quat.ToAxisAngle(cur_rot);
-    cur_quat.ToEulerVec(cur_euler);
+    UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
 }
@@ -564,8 +559,7 @@ void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init)
   }
   else {
     cur_quat.RotateEuler(euler_x, euler_y, euler_z);
-    cur_quat.ToAxisAngle(cur_rot);
-    cur_quat.ToEulerVec(cur_euler);
+    UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
 }

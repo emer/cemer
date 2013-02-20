@@ -135,6 +135,7 @@ public:
   taAxisAngle   cur_rot;        // #CONDSHOW_OFF_flags:EULER_ROT current rotation of body (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   taVector3f    cur_euler;      // #CONDSHOW_ON_flags:EULER_ROT current rotation of body in Euler angles in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854
   taQuaternion  cur_quat;       // #READ_ONLY current rotation of body in Quaternion form
+  taQuaternion  cur_quat_raw;   // #READ_ONLY current rotation of body in Quaternion form -- raw version without corrective rotation for capsules or cylinders
   taVector3f    cur_lin_vel;    // current linear velocity
   taVector3f    cur_ang_vel;    // current angular velocity
 

@@ -653,8 +653,8 @@ bool VEArm::ConfigArm(const String& name_prefix,
     elbow->anchor.y = -(humerus->length/2 +(elbow_gap/2));
 
     wrist->anchor.x = 0; // set wrist joint's anchor point wrt ulna's CM and body coordinates
-    wrist->anchor.y = 0; // the last coordinate is the long axis
-    wrist->anchor.z = -(ulna->length/2 + (wrist_gap/2));
+    wrist->anchor.z = 0; // the last coordinate is the long axis
+    wrist->anchor.y = -(ulna->length/2 + (wrist_gap/2));
 
     elbow->axis.x = 1;  // setting elbow joint's axes
     elbow->axis.y = 0;
