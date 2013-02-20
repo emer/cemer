@@ -328,6 +328,9 @@ public:
 
   virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from);
   // compute recv_gp->scale_eff based on params in from layer
+  virtual bool  NetinScale_ExcludeFromNorm(LeabraRecvCons* recv_gp, LeabraLayer* from)
+  { return false; }
+  // exclude this set of connections from the relative scaling normalization process -- only for special connection types
 
   inline void 	C_Send_NetinDelta_Thread(Connection* cn, float* send_netin_vec,
 				      LeabraUnit* ru, float su_act_delta_eff);

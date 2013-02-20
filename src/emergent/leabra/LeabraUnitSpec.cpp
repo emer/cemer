@@ -780,12 +780,14 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     if(cs->wt_scale.old)
       old_scaling = true; // any old = old..
 
-    if(cs->inhib && !old_scaling) {
-      inhib_net_scale += cs->wt_scale.rel;
-    }
-    else {
-      n_active_cons++;
-      u->net_scale += cs->wt_scale.rel;
+    if(!cs->NetinScale_ExcludeFromNorm(recv_gp, from)) {
+      if(cs->inhib && !old_scaling) {
+        inhib_net_scale += cs->wt_scale.rel;
+      }
+      else {
+        n_active_cons++;
+        u->net_scale += cs->wt_scale.rel;
+      }
     }
   }
   // add the bias weight into the netinput, scaled by 1/n
@@ -804,6 +806,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
       if(from->lesioned() || !recv_gp->size)     continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(cs->inhib && !old_scaling) continue; // norm separately
+      if(cs->NetinScale_ExcludeFromNorm(recv_gp, from)) continue;
       recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
     }
   }
@@ -815,6 +818,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
       if(from->lesioned() || !recv_gp->size)     continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(!cs->inhib) continue; // norm separately
+      if(cs->NetinScale_ExcludeFromNorm(recv_gp, from)) continue;
       recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale
     }
   }

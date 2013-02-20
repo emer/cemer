@@ -27,10 +27,15 @@
 eTypeDef_Of(LeabraTICtxtConSpec);
 
 class E_API LeabraTICtxtConSpec : public LeabraConSpec {
-  // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning 
+  // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning -- only uses the wt_scale.abs to control magnitude of context netinput, and doesn't compete with other prjns for relative wt scale at all
 INHERITED(LeabraConSpec)
 public:
   bool          ti_learn_pred;  // learns to train context to predict outcome -- see also ti_mode on network -- this is NOT tied to that setting -- can intermix the two, though it doesn't really make sense
+
+  // special!
+  override bool  NetinScale_ExcludeFromNorm(LeabraRecvCons* recv_gp, LeabraLayer* from)
+  { return true; }
+  override void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from);
 
   inline void C_Send_CtxtNetin_Thread(Connection* cn, float* send_netin_vec,
                                       LeabraUnit* ru, const float su_act_eff) {
