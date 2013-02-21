@@ -68,8 +68,8 @@ void TIActSpec::Initialize() {
 }
 
 void TIActSpec::Defaults_init() {
-  ctxt_gain_m = 0.5f;
-  ctxt_gain_p = 0.5f;
+  ctxt_gain_m = 1.0f;
+  ctxt_gain_p = 1.0f;
 }
 
 void SpikeFunSpec::Initialize() {
@@ -757,6 +757,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   float ti_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
+  bool ti_sep = true;
+  if(net->ti_mode == LeabraNetwork::TI_SRN) ti_sep = false; // srn-mode -- just integrate
   // possible dependence on recv_gp->size is why this cannot be computed in Projection
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -769,7 +771,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
       rel_scale = cs->wt_scale_p.rel;
     else
       rel_scale = cs->wt_scale.rel;
-    if(cs->IsTICtxtCon()) {
+    if(ti_sep && cs->IsTICtxtCon()) {
       ti_net_scale += rel_scale;
     }
     else if(cs->inhib) {
@@ -795,7 +797,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
     if(from->lesioned() || !recv_gp->size)     continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->IsTICtxtCon()) {
+    if(ti_sep && cs->IsTICtxtCon()) {
       if(ti_net_scale > 0.0f)
         recv_gp->scale_eff /= ti_net_scale;
     }
