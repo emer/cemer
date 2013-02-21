@@ -35,34 +35,20 @@ class LeabraNetwork; //
 class LeabraUnit; // 
 class DataTable; // 
 
+eTypeDef_Of(LeabraActFunSpec);
 
-eTypeDef_Of(ActFunSpec);
-
-class E_API ActFunSpec : public SpecMemberBase {
+class E_API LeabraActFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
 INHERITED(SpecMemberBase)
 public:
-  enum IThrFun {	       
-    STD,			// include all currents (except bias weights) in inhibitory threshold computation
-    NO_A,			// exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place
-    NO_H,			// exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation
-    NO_AH,			// exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation
-    ALL,			// include all currents INCLUDING bias weights
-  };
-
   bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value.  other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr).  the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero
-  bool		old_gelin;	// #CONDSHOW_ON_gelin #DEF_false use the original version of gelin where the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, so dt.vm is still relevant -- this is obsolete and will be removed soon - please switch to regular gelin
   float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
-  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
-  float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
-  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
-  float		vm_mod_max;	// #EXPERT #DEF_0.95 for old_gelin only -- max proportion of v_m_eq to use in computing vm modulation of gelin -- less than 1 because units typically do not reach their full equilibrium value
 
   override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(ActFunSpec);
+  TA_SIMPLE_BASEFUNS(LeabraActFunSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -72,21 +58,41 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(LeabraActFunExSpec);
+
+class E_API LeabraActFunExSpec : public LeabraActFunSpec {
+  // leabra activation function specifications with extra stuff
+INHERITED(LeabraActFunSpec)
+public:
+  enum IThrFun {	       
+    STD,			// include all currents (except bias weights) in inhibitory threshold computation
+    NO_A,			// exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place
+    NO_H,			// exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation
+    NO_AH,			// exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation
+    ALL,			// include all currents INCLUDING bias weights
+  };
+
+  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
+  float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
+  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
+
+  TA_SIMPLE_BASEFUNS(LeabraActFunExSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(TIActSpec);
 
-class E_API TIActSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra TI temporal integration activation speccs
-INHERITED(SpecMemberBase)
+class E_API TIActSpec : public LeabraActFunSpec {
+  // TI temporal integration activation specs -- specifies activation function and context gain
+INHERITED(LeabraActFunSpec)
 public:
   float         ctxt_gain_m; // how much the act_ctxt contributes to net input during the minus phase
   float         ctxt_gain_p; // how much the act_ctxt contributes to net input during the plus phase
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
-
   TA_SIMPLE_BASEFUNS(TIActSpec);
-protected:
-  SPEC_DEFAULTS;
-  //  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -492,10 +498,10 @@ public:
   };
 
   ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  ActFunSpec	act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  LeabraActFunExSpec act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  TIActSpec	ti;		// #CAT_Activation TI temporal integration activation  parameters -- how context impacts activations
+  TIActSpec	ti;		// #CAT_Activation TI temporal integration activation  parameters -- how context activation is computed and impacts regular unit activations
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
@@ -518,6 +524,8 @@ public:
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
+  FunLookup	ti_nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table, for ti
+  FunLookup	ti_noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution, for ti
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -646,8 +654,12 @@ public:
     // #CAT_Activation Act Step 2: compute the activation from membrane potential
       virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- rate code functions
-        virtual float Compute_ActValFmVmVal_rate(float val_sub_thr);
+      virtual float Compute_ActValFmVmVal_rate_impl(float val_sub_thr,
+                         LeabraActFunSpec& act_spec, FunLookup& nxx1_fl);
         // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
+      inline float Compute_ActValFmVmVal_rate(float val_sub_thr) 
+      { return Compute_ActValFmVmVal_rate_impl(val_sub_thr, act, nxx1_fun); }
+      // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
       virtual void Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
 
@@ -737,7 +749,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions
 
-  virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
+  virtual void	CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_fl,
+                              FunLookup& noise_fl);
+  // #CAT_Activation create convolved gaussian and x/x+1 function lookup tables
 
   virtual void 	BioParams(bool gelin=true, float norm_sec=0.001f, float norm_volt=0.1f, float volt_off=-0.1f, float norm_amp=1.0e-8f,
 	  float C_pF=281.0f, float gbar_l_nS=10.0f, float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,

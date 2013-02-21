@@ -26,7 +26,7 @@
 #include <UniformRndPrjnSpec>
 
 #include <TwoDValLayerSpec>
-#include <LeabraTILayerSpec>
+#include <LeabraTICtxtConSpec>
 #include <MarkerConSpec>
 #include <LayerActUnitSpec>
 #include <LeabraContextLayerSpec>
@@ -368,70 +368,31 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   if(TestError(!net, "LeabraTI", "must have basic constructed network first")) {
     return false;
   }
-  LeabraTILayerSpec* ti_super = (LeabraTILayerSpec*)net->FindMakeSpec("TI_Super",
-							     &TA_LeabraTILayerSpec);
-  LeabraTILayerSpec* ti_deep = (LeabraTILayerSpec*)ti_super->FindMakeChild("TI_Deep",
-							     &TA_LeabraTILayerSpec);
   LeabraConSpec* stdcons = (LeabraConSpec*)net->FindMakeSpec("LeabraConSpec_0",
 							     &TA_LeabraConSpec);
-  LeabraConSpec* ti_fmctxt = (LeabraConSpec*)stdcons->FindMakeChild("TIFmContext",
-								   &TA_LeabraConSpec);
-  MarkerConSpec* ti_sd_cons = (MarkerConSpec*)net->FindMakeSpec("TISuperDeepCons",
-							       &TA_MarkerConSpec);
+  LeabraConSpec* ti_ctxt = (LeabraConSpec*)stdcons->FindMakeChild("LeabraTICtxt",
+						   &TA_LeabraTICtxtConSpec);
   LeabraUnitSpec* stduns = (LeabraUnitSpec*)net->FindMakeSpec("LeabraUnitSpec_0",
 							     &TA_LeabraUnitSpec);
-  LayerActUnitSpec* ti_dun = (LayerActUnitSpec*)net->FindMakeSpec("TIDeepUnits",
-								  &TA_LayerActUnitSpec);
-  OneToOnePrjnSpec* ti_sd_prjn = (OneToOnePrjnSpec*)
-    net->FindMakeSpec("TISuperDeepPrjn", &TA_OneToOnePrjnSpec);
   FullPrjnSpec* full_prjn = (FullPrjnSpec*)net->FindMakeSpec("FullPrjnSpec_0",
 							     &TA_FullPrjnSpec);
 
   net->learn_rule = LeabraNetwork::CTLEABRA_XCAL; // make sure
   net->UpdateAfterEdit();	// trigger update
+  net->ti_mode = LeabraNetwork::TI_SRN; // works for now..
 
-  ti_super->SetUnique("lamina", true);
-  ti_super->lamina = LeabraTILayerSpec::SUPER;
+  ti_ctxt->SetUnique("wt_scale", true);
+  ti_ctxt->wt_scale.rel = 1.0f;
 
-  ti_deep->SetUnique("lamina", true);
-  ti_deep->lamina = LeabraTILayerSpec::DEEP;
-
-  ti_fmctxt->SetUnique("wt_scale", true);
-  ti_fmctxt->wt_scale.rel = 1.0f;
-
-  // turns out, not so useful in general:
-  // stduns->adapt.on = true;
-  // stduns->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  // stduns->noise.var = 0.001f;
-
-  const int lay_spc = 5;
-    
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type != Layer::HIDDEN) continue;
 
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    if(ls->InheritsFrom(&TA_LeabraTILayerSpec)) continue;
     if(ls->InheritsFrom(&TA_LeabraContextLayerSpec)) continue; // skip existing srn's
 
-    Layer_Group* lg = (Layer_Group*)lay->owner;
-    String lnm = lay->name;
-
-    lay->name = lnm + "_S";
-    lay->SetLayerSpec(ti_super);
-
-    LeabraLayer* dlay = (LeabraLayer*)lg->FindMakeLayer(lnm + "_D", &TA_LeabraLayer);
-    dlay->SetLayerSpec(ti_deep);
-    dlay->SetUnitSpec(ti_dun);
-    dlay->un_geom = lay->un_geom;
-    dlay->unit_groups = lay->unit_groups;
-    dlay->gp_geom = lay->gp_geom;
-    dlay->pos = lay->pos;
-    dlay->pos.y += lay->disp_geom.y + lay_spc;
-
     //	  	 	   to		 from		prjn_spec	con_spec
-    net->FindMakePrjn(dlay, lay, ti_sd_prjn, ti_sd_cons);
-    net->FindMakePrjn(lay, dlay, full_prjn,  ti_fmctxt);
+    net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
   }
 
   net->Build();

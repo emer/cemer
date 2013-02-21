@@ -65,50 +65,27 @@ void PFCsUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
 
   float new_act;
   if(act.gelin) {
-    if(act.old_gelin) {
-      float g_e_val = u->net;
-      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
-      if(vm_eq > 0.0f) {
-	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
-	if(vmrat > 1.0f) vmrat = 1.0f;
-	else if(vmrat < 0.0f) vmrat = 0.0f;
-	g_e_val *= vmrat;
-      }
-      float g_e_thr = Compute_EThresh(u);
-      new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
-      // NEW CODE: maintaining
-      if(gpd->mnt_count > 0) {
-	u->misc_1 = new_act;
-	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
-      }
-      else {
-	u->misc_1 = 0.0f;
-      }
-
+    if(u->v_m <= act.thr) {
+      new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
     }
-    else {			// new gelin
-      if(u->v_m <= act.thr) {
-	new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
-      }
-      else {
-	float g_e_thr = Compute_EThresh(u);
-	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
-      }
-      // NEW CODE: maintaining
-      if(gpd->mnt_count > 0) {
-	u->misc_1 = new_act;
-	new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
-      }
-      else {
-	u->misc_1 = 0.0f;
-      }
+    else {
+      float g_e_thr = Compute_EThresh(u);
+      new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+    }
+    // NEW CODE: maintaining
+    if(gpd->mnt_count > 0) {
+      u->misc_1 = new_act;
+      new_act = ls->gate.maint_pct * u->maint_h + ls->gate.maint_pct_c * new_act;
+    }
+    else {
+      u->misc_1 = 0.0f;
+    }
 	
-      if(net->cycle < dt.vm_eq_cyc) {
-	new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
-      }
-      else {
-	new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
-      }
+    if(net->cycle < dt.vm_eq_cyc) {
+      new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
+    }
+    else {
+      new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
     }
   }
   else {

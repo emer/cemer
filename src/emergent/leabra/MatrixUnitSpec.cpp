@@ -28,7 +28,7 @@ void MatrixUnitSpec::Initialize() {
 
 void MatrixUnitSpec::Defaults_init() {
   SetUnique("act", true);
-  act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
+  act.i_thr = LeabraActFunExSpec::NO_AH; // key for dopamine effects
 
   SetUnique("g_bar", true);
   g_bar.a = .03f;

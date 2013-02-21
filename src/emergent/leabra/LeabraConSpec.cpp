@@ -22,7 +22,6 @@
 eTypeDef_Of(ExtRewLayerSpec);
 
 void WtScaleSpec::Initialize() {
-  old = false;
   rel = 1.0f;
   abs = 1.0f;
   sem_extra = 2;
@@ -148,6 +147,8 @@ void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
   learn_rule = CTLEABRA_XCAL;
   inhib = false;
+
+  diff_scale_p = false;
   
   learn = true;
 
@@ -229,21 +230,16 @@ bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
   return rval;
 }
 
-void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from) {
+void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from, 
+                                       bool plus_phase) {
   float savg = from->kwta.pct;
   float from_sz = (float)from->units.leaves;
   float n_cons = (float)recv_gp->size;
-  if(wt_scale.old) {
-    if(savg_cor.norm_con_n)       // this is default
-      recv_gp->scale_eff = wt_scale.NetScale() / (n_cons * savg);
-    else
-      recv_gp->scale_eff = wt_scale.NetScale() / (from_sz * savg);
-  }
-  else {                      // new way!
+  if(plus_phase && diff_scale_p)
+    recv_gp->scale_eff = wt_scale_p.FullScale(savg, from_sz, n_cons);
+  else
     recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
-  }
 }
-
 
 void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if((int)net->learn_rule == (int)learn_rule) return;

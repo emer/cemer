@@ -33,9 +33,7 @@ public:
   bool          ti_learn_pred;  // learns to train context to predict outcome -- see also ti_mode on network -- this is NOT tied to that setting -- can intermix the two, though it doesn't really make sense
 
   // special!
-  override bool  NetinScale_ExcludeFromNorm(LeabraRecvCons* recv_gp, LeabraLayer* from)
-  { return true; }
-  override void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from);
+  override bool  IsTICtxtCon() { return true; }
 
   inline void C_Send_CtxtNetin_Thread(Connection* cn, float* send_netin_vec,
                                       LeabraUnit* ru, const float su_act_eff) {

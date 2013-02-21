@@ -44,7 +44,6 @@ public:
   float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
   int		sem_extra;	// #CONDSHOW_OFF_old #DEF_2 #MIN_0 standard-error-of-the-mean (SEM) extra value to add to the average expected number of active connections to receive, for purposes of computing scaling factors with partial connectivity -- for 25% layer activity, binomial SEM = sqrt(p(1-p)) = .43, so 3x = 1.3 so 2 is a reasonable default, but can use different value to make scaling work better
-  bool		old;		// #DEF_false use old way of computing netinput scaling factors -- please convert projects to using the new way (as of version 5.1.0) -- only affects connections with < full connectivity: does a much better job of normalizing these cases, and you should be able to just have abs/rel = 1 with no diff_act_pct on layer and it should just work -- see wiki for full docs and equations
 
   inline float	NetScale() 	{ return abs * rel; }
 
@@ -290,6 +289,8 @@ public:
   LearnRule	learn_rule;	// #READ_ONLY #SHOW the learning rule, set by the overall network parameter and copied here -- determines what type of learning to perform
   bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
+  bool          diff_scale_p;   // #CAT_Activation use a different wt_scale setting for the plus phase compared to the std wt_scale which is used only for the minus phase if this is checked
+  WtScaleSpec	wt_scale_p;	// #CAT_Activation #CONDSHOW_ON_diff_scale_p plus phase only: scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   WtScaleSpecInit wt_scale_init;// #CAT_Activation initial values of wt_scale parameters, set during InitWeights -- useful for rel_net_adapt and abs_net_adapt (on LayerSpec)
 
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
@@ -326,11 +327,11 @@ public:
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 
-  virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from);
+  virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from,
+                                   bool plus_phase = false);
   // compute recv_gp->scale_eff based on params in from layer
-  virtual bool  NetinScale_ExcludeFromNorm(LeabraRecvCons* recv_gp, LeabraLayer* from)
-  { return false; }
-  // exclude this set of connections from the relative scaling normalization process -- only for special connection types
+  virtual bool  IsTICtxtCon() { return false; }
+  // is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta_Thread(Connection* cn, float* send_netin_vec,
 				      LeabraUnit* ru, float su_act_delta_eff);
