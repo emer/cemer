@@ -140,6 +140,11 @@ void VEJoint::DestroyODE() {
 void VEJoint::Init() {
   VEWorld::last_to_set_ode = this;
 
+  if(HasJointFlag(OFF)) {
+    if(joint_id)
+      DestroyODE();
+  }
+
   if(!joint_id || joint_type != cur_type) CreateODE();
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
@@ -432,6 +437,9 @@ static inline float get_val_no_nan(float val) {
 }
 
 void VEJoint::CurFromODE(bool updt_disp) {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
   if(!HasJointFlag(FEEDBACK)) return;
   if(!joint_id) CreateODE();
   if(!joint_id) return;
@@ -495,6 +503,9 @@ void VEJoint::CurFromODE(bool updt_disp) {
 }
 
 void VEJoint::ApplyForce(float force1, float force2) {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
   if(!joint_id) CreateODE();
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
@@ -527,6 +538,9 @@ void VEJoint::ApplyForce(float force1, float force2) {
 }
 
 void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
   if(!joint_id) CreateODE();
   if(!joint_id) return;
 
@@ -556,6 +570,9 @@ void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
 }
 
 void VEJoint::ApplyServo(float trg_pos1, float trg_pos2) {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
   if(!joint_id) CreateODE();
   if(!joint_id) return;
 
@@ -574,6 +591,9 @@ void VEJoint::ApplyServo(float trg_pos1, float trg_pos2) {
 }
 
 void VEJoint::ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2, float stop_buffer) {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
   float trg_pos1 = trg_norm_pos1;
   float trg_pos2 = trg_norm_pos2;
   if(stops.stops_on) {
