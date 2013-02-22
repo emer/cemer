@@ -411,7 +411,7 @@ void taBase::ClearBaseFlag(int flag) {
 bool taBase::isDestroying() const {
   if(HasBaseFlag(DESTROYING)) return true;
   taBase* own = GetOwner();
-  if(own) return own->isDestroying();
+  if(own && own != this) return own->isDestroying();
   return false;
 }
 
@@ -1683,6 +1683,7 @@ taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef
 void taBase::UpdateAfterEdit() {
   if (isDestroying()) return;
   UpdateAfterEdit_impl();
+  if(isDestroying()) return;    // could have decided to destroy during UAE
   SigEmitUpdated();
   /*TEST */
   taBase* _owner = GetOwner();
@@ -3179,9 +3180,12 @@ void taBase::Close() {
 void taBase::CloseLater() {
   if(isDestroying()) return;
   taBase* own = GetOwner();
-  if (own && own->CloseLater_Child(this))
+  if (own && own->CloseLater_Child(this)) {
+    SetBaseFlag(DESTROYING);      // protect us from further actions
     return;
-  tabMisc::DelayedClose(this);
+  }
+  tabMisc::DelayedClose(this);  // fallback action - closelater_child is actually the same usu
+  SetBaseFlag(DESTROYING);      // protect us from further actions
 }
 
 bool taBase::Close_Child(taBase*) {

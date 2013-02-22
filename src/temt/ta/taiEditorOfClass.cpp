@@ -99,10 +99,10 @@ taiEditorOfClass::~taiEditorOfClass() {
   taiMisc::css_active_edits.RemoveEl(this);
   // remove data client -- harmless if already done in Cancel
   taBase* rbase = Base();
-  if  (rbase) {
+  if  (rbase && !rbase->isDestroying()) {
     rbase->RemoveSigClient(this);
-    root = NULL;
   }
+  root = NULL;
   bgrp = NULL;
   if (menu) {
     delete menu;
@@ -144,7 +144,7 @@ void taiEditorOfClass::Cancel_impl() {
     menu = NULL;
   }
   taBase* rbase = Base();
-  if  (rbase) {
+  if  (rbase && !rbase->isDestroying()) {
     rbase->RemoveSigClient(this);
   }
   if (isPanel()) {

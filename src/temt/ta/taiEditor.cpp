@@ -107,6 +107,12 @@ void taiEditor::Apply() {
   }
   ++updating;
   GetValue();
+  taBase* obj = Base_();
+  if(!obj || obj->isDestroying()) {     // do not refresh if we just killed ourselves!
+    --updating;
+    Cancel();
+    return;
+  }
   if (reshow_on_apply)
     defer_reshow_req = true; // forces rebuild so CONDSHOW guys work
   Refresh(); // GetImage/Unchanged, unless a defer_reshow pending

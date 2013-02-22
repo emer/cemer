@@ -34,7 +34,7 @@ ContextFlag  tabMisc::in_wait_proc;
 void tabMisc::DelayedClose(taBase* obj) {
   if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
-  delayed_close.AddUnique(obj); // only add once!!!
+  delayed_close.LinkUnique(obj); // only add once!!!
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
@@ -106,6 +106,7 @@ bool tabMisc::DoDelayedCloses() {
                         String(refn), "type=", it->GetTypeDef()->name, "name=",
                         it->GetName());
     }
+    it->ClearBaseFlag(taBase::DESTROYING); // this was set before, now we will set it again
     it->Close();
   }
   return true;
