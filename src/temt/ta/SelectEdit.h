@@ -79,6 +79,8 @@ public: // public API
                      const String& xtra_lbl = _nilString, const String& desc = _nilString,
                      const String& sub_gp_nm = _nilString);
   // add new member to edit if it isn't already here (returns true), optionally in a sub group
+  virtual bool  SelectMemberPrompt(taBase* base, MemberDef* md);
+  // add new member to edit, prompting for exact label to us
   virtual bool  SelectMemberNm(taBase* base, const String& md_nm,
                                const String& xtra_lbl, const String& desc = _nilString,
                                const String& sub_gp_nm = _nilString);

@@ -15,6 +15,7 @@
 
 #include "SelectEdit.h"
 #include <voidptr_PArray>
+#include <taGuiDialog>
 
 taTypeDef_Of(taProject);
 
@@ -216,6 +217,32 @@ bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
   String full_lbl;
   base->GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
   bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
+  ReShowEdit(true); //forced
+  return rval;
+}
+
+bool SelectEdit::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
+  if (!base) return false;
+  String eff_desc = desc; // non-const
+  String full_lbl;
+  base->GetSelectText(mbr, _nilString, full_lbl, eff_desc);
+
+  taGuiDialog dlg;
+  dlg.Reset();
+  dlg.prompt = "Enter label for select edit item -- will be converted to a valid C name automatically";
+  dlg.win_title = "Enter SelectEdit label";
+  dlg.AddWidget("main", "", "");
+  dlg.AddVBoxLayout("mainv","","main","");
+  String curow = "lbl";
+  dlg.AddHBoxLayout(curow, "mainv","","");
+  dlg.AddLabel("full_lbl_lbl", "main", curow, "label=Label: ;");
+  dlg.AddStringField(&full_lbl, "full_lbl", "main", curow, "tooltip=enter label to use;");
+  int drval = dlg.PostDialog(true);
+  if(drval == 0) {
+    return false;
+  }
+  full_lbl = taMisc::StringCVar(full_lbl);
+  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, _nilString);
   ReShowEdit(true); //forced
   return rval;
 }

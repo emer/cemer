@@ -31,14 +31,14 @@ int taiArgTypeOfTokenPtr::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, 
 
 cssEl* taiArgTypeOfTokenPtr::GetElFromArg(const char* nm, void*) {
   // arg_val is for the function
-  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  TypeDef* npt = arg_typ->GetActualType();
   arg_val = new cssTA_Base(NULL, 1, npt, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
 }
 
 taiWidget* taiArgTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  TypeDef* npt = arg_typ->GetActualType();
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))
     token_flags |= taiWidget::flgNullOk;
@@ -48,14 +48,12 @@ taiWidget* taiArgTypeOfTokenPtr::GetWidgetRep_impl(IWidgetHost* host_, taiWidget
   taiWidgetTokenChooser* rval = new taiWidgetTokenChooser(npt, host_, par, gui_parent_,
                                                           token_flags);
   return rval;
-//   taiWidgetTokenPtrMenu* rval = new taiWidgetTokenPtrMenu(taiWidgetMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
-//      token_flags);
 }
 
 void taiArgTypeOfTokenPtr::GetImage_impl(taiWidget* dat, const void* base){
   if(arg_base == NULL)
     return;
-  TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
+  TypeDef* npt = arg_typ->GetActualType();
   String mb_nm = GetOptionAfter("TYPE_ON_");
   if(!mb_nm.empty()) {
     if(mb_nm == "this") {

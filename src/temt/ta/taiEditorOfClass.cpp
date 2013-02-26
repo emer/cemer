@@ -399,7 +399,7 @@ void taiEditorOfClass::DoSelectForEdit(QAction* act){
     se->RemoveField(idx);
   }
   else {
-    se->SelectMember(rbase, md);
+    se->SelectMemberPrompt(rbase, md);
   }
 }
 
@@ -456,8 +456,6 @@ iPanelOfEditor* taiEditorOfClass::EditPanelDeferred(taiSigLink* link) {
 
 void taiEditor::ConstrEditControl() {
   Constr("", "", HT_CONTROL);
-//TEMP
-//TODO: need to deal with the now wrongly based taiEDH stuff in taiMisc
   taiEditorOfClass* edh = dynamic_cast<taiEditorOfClass*>(this);
   if (edh) taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
   state = ACTIVE;

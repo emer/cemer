@@ -36,7 +36,8 @@ cssEl* taiArgTypeOfTypePtr::GetElFromArg(const char* nm, void* base) {
       tpdf = typ;
       if (typ->IsActualTaBase() && (base != NULL))
         tpdf = ((taBase*)base)->GetTypeDef();
-    } else {
+    }
+    else {
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
@@ -51,7 +52,8 @@ cssEl* taiArgTypeOfTypePtr::GetElFromArg(const char* nm, void* base) {
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;
     }
-  } else {
+  }
+  else {
     mb_nm = GetOptionAfter("TYPE_");
     if(mb_nm != "") {
       TypeDef* tpdf;
@@ -59,7 +61,8 @@ cssEl* taiArgTypeOfTypePtr::GetElFromArg(const char* nm, void* base) {
         tpdf = typ;
         if (typ->IsActualTaBase() && (base != NULL))
           tpdf = ((taBase*)base)->GetTypeDef();
-      } else {
+      }
+      else {
         tpdf = TypeDef::FindGlobalTypeName(mb_nm);
       }
       if (tpdf == NULL)
@@ -107,6 +110,18 @@ void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
         base_type = tdlkup;     // reset base type to accommodate current value
       }
       *((TypeDef**)arg_base) = tdlkup;
+    }
+  }
+  else {
+    if(meth->arg_defs.size > arg_idx) {
+      String arg_def = meth->arg_defs[arg_idx];
+      if(arg_def.nonempty()) {
+        if(arg_def.contains("&TA_"))
+          arg_def = arg_def.after("&TA_");
+        TypeDef* tdlkup = TypeDef::FindGlobalTypeName(arg_def);
+        if(tdlkup)
+          *((TypeDef**)arg_base) = tdlkup;
+      }
     }
   }
   TypeDef* typ_ = (TypeDef*)*((void**)arg_base);

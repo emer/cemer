@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.1.1.0 rev5913
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6122
 LeabraProject .projects["param_search"] { 
   taBase_Group @.templates = [0] {
   };
@@ -15,26 +15,18 @@ LeabraProject .projects["param_search"] {
 };
   };
 
-  SelectEdit_Group @.edits = [2] {
-    SelectEdit @["SearchParams"] { 
-      EditMbrItem_Group @.mbrs = [4] {
+  SelectEdit_Group @.edits = [1] {
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [3] {
 	EditMbrItem @[0] { };
 	EditMbrItem @[1] { };
 	EditMbrItem @[2] { };
-	EditMbrItem @[3] { };
-      };
-
-      EditMthItem_Group @.mths = [0] {
-      };
-    };
-    ClusterRun @["ClusterRun"] { 
-      EditMbrItem_Group @.mbrs = [0] {
       };
 
       EditMthItem_Group @.mths = [0] {
       };
 
-      DataTableCols @.data = [18] {
+      DataTableCols @.data = [19] {
 	String_Data @["model_svn"] { };
 	String_Data @["submit_svn"] { };
 	String_Data @["submit_job"] { };
@@ -44,6 +36,11 @@ LeabraProject .projects["param_search"] {
 	String_Data @["job_out"] { };
 	String_Data @["job_out_file"] { };
 	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
 	String_Data @["command"] { };
 	String_Data @["notes"] { };
 	String_Data @["repo_url"] { };
@@ -67,7 +64,7 @@ LeabraProject .projects["param_search"] {
 };
       };
 
-      DataTableCols @.data = [18] {
+      DataTableCols @.data = [19] {
 	String_Data @["model_svn"] { };
 	String_Data @["submit_svn"] { };
 	String_Data @["submit_job"] { };
@@ -77,6 +74,11 @@ LeabraProject .projects["param_search"] {
 	String_Data @["job_out"] { };
 	String_Data @["job_out_file"] { };
 	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
 	String_Data @["command"] { };
 	String_Data @["notes"] { };
 	String_Data @["repo_url"] { };
@@ -100,7 +102,7 @@ LeabraProject .projects["param_search"] {
 };
       };
 
-      DataTableCols @.data = [18] {
+      DataTableCols @.data = [19] {
 	String_Data @["model_svn"] { };
 	String_Data @["submit_svn"] { };
 	String_Data @["submit_job"] { };
@@ -110,6 +112,11 @@ LeabraProject .projects["param_search"] {
 	String_Data @["job_out"] { };
 	String_Data @["job_out_file"] { };
 	String_Data @["dat_files"] { };
+	int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["NARROW"] { };
+     };
+};
 	String_Data @["command"] { };
 	String_Data @["notes"] { };
 	String_Data @["repo_url"] { };
@@ -131,6 +138,10 @@ LeabraProject .projects["param_search"] {
 	    UserDataItem @["NARROW"] { };
      };
 };
+      };
+
+      ParamSearchAlgo_List @.search_algos = [1] {
+	GridSearch @["GridSearch_1"] { };
       };
     };
   };
@@ -1887,18 +1898,18 @@ LeabraProject .projects["param_search"] {
     };
   };
 
-  DataViewer_List @.viewers = [1] {
+  taViewer_List @.viewers = [1] {
     MainWindowViewer @["Browser2"] { 
       ToolBar_List @.toolbars = [1] {
 	ToolBar @["Application"] { };
       };
 
       FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
+	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [3] {
-	    T3DataViewFrame @["Network_0"] { 
+	T3PanelViewer @["T3Frames"] { 
+	  T3Panel_List @.panels = [3] {
+	    T3Panel @["Network_0"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Network_0_root_view_children_0"] { 
 		  ScaleRange_List @.scale_ranges = [2] {
@@ -1917,7 +1928,7 @@ LeabraProject .projects["param_search"] {
 		T3SavedView @["View_5"] { };
 	      };
 	    };
-	    T3DataViewFrame @["EpochOutputData"] { 
+	    T3Panel @["EpochOutputData"] { 
 	      T3DataView_List @.children = [1] {
 		GraphTableView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_EpochOutputData_root_view_children_0"] { 
 		  T3DataView_List @.children = [8] {
@@ -1942,7 +1953,7 @@ LeabraProject .projects["param_search"] {
 		T3SavedView @["View_5"] { };
 	      };
 	    };
-	    T3DataViewFrame @["SimpleLines5x5"] { 
+	    T3Panel @["SimpleLines5x5"] { 
 	      T3DataView_List @.children = [1] {
 		GridTableView @["GridTableView_0"] { 
 		  T3DataView_List @.children = [3] {
@@ -1975,6 +1986,7 @@ LeabraProject .projects["param_search"] {
   Network_Group @.networks = [1] {
     LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
+	UserDataItem @["cos_err"] { };
 	UserDataItem @["norm_err"] { };
 	UserDataItem @["ext_rew"] { };
 	UserDataItem @["maxda"] { };
@@ -2163,31 +2175,16 @@ When it has finished, open the objs within the param search grid program to see 
   name=;
   el_typ=SelectEdit;
   el_def=0;
-  SelectEdit @["SearchParams"] {
-   name="SearchParams";
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
    auto_edit=1;
-   desc="list of parameters to search -- add by context menu on spec or other relevant object";
+   desc=;
    mbrs {
     name=;
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
-     label="gain";
-     desc="[Default: 100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network";
-     cust_desc=0;
-     base=.projects["param_search"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$$;
-     mbr=ActFunSpec::gain;
-     is_numeric=1;
-     param_search {
-      search=1;
-      min_val=50;
-      max_val=1050;
-      next_val=50;
-      incr=200;
-     };
-    };
-    EditMbrItem @[1] {
-     label="LeabraConSpec_0 lrate";
+     label="LeabraConSpec_0_lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
      cust_desc=0;
      base=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
@@ -2201,7 +2198,7 @@ When it has finished, open the objs within the param search grid program to see 
       incr=0.02;
      };
     };
-    EditMbrItem @[2] {
+    EditMbrItem @[1] {
      label="hebb";
      desc=" [Default: .001] amount of hebbian learning (should be relatively small, can be effective at .0001)";
      cust_desc=0;
@@ -2216,7 +2213,7 @@ When it has finished, open the objs within the param search grid program to see 
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[3] {
+    EditMbrItem @[2] {
      label="pct";
      desc=" desired proportion of activity (used to compute a k value based on layer size, .25 std)";
      cust_desc=0;
@@ -2231,22 +2228,6 @@ When it has finished, open the objs within the param search grid program to see 
       incr=0.1000000014901161;
      };
     };
-   };
-   mths {
-    name=;
-    el_typ=EditMthItem;
-    el_def=0;
-    group_type=GT_BUTTONS;
-   };
-  };
-  ClusterRun @["ClusterRun"] {
-   name="ClusterRun";
-   auto_edit=1;
-   desc=;
-   mbrs {
-    name=;
-    el_typ=EditMbrItem;
-    el_def=0;
    };
    mths {
     name=;
@@ -2395,6 +2376,32 @@ When it has finished, open the objs within the param search grid program to see 
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
@@ -2736,6 +2743,32 @@ When it has finished, open the objs within the param search grid program to see 
        name=;
 	    [6] ;;;;;;      };
      };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [6] 0;0;0;0;0;0;      };
+     };
      String_Data @["command"] {
       name="command";
       desc="emergent command line";
@@ -3067,6 +3100,32 @@ When it has finished, open the objs within the param search grid program to see 
        name=;
 	    [0]       };
      };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
      String_Data @["command"] {
       name="command";
       desc="emergent command line";
@@ -3247,6 +3306,16 @@ When it has finished, open the objs within the param search grid program to see 
     auto_load_file=;
     keygen 4 0=0;
    };
+   search_algos {
+    name=;
+    el_typ=GridSearch;
+    el_def=0;
+    GridSearch @["GridSearch_1"] {
+     name="GridSearch_1";
+     max_jobs=20;
+    };
+   };
+   cur_search_algo=NULL;
    notes=;
    repo_url=;
    cluster=;
@@ -3921,7 +3990,7 @@ When it has finished, open the objs within the param search grid program to see 
     desc=;
     data {
      name="data";
-     el_typ=DataColTp;
+     el_typ=DataColT;
      el_def=0;
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3934,7 +4003,7 @@ When it has finished, open the objs within the param search grid program to see 
     desc=;
     data {
      name="data";
-     el_typ=DataColTp;
+     el_typ=DataColT;
      el_def=0;
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4300,7 +4369,7 @@ When it has finished, open the objs within the param search grid program to see 
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="var_nm";
 	 required=1;
 	 def_val="\"\"";
@@ -4310,7 +4379,7 @@ When it has finished, open the objs within the param search grid program to see 
 	};
 	ProgArg @[1] {
 	 arg_type=const_Variant_ref;
-	 type="const Variant&";
+	 type="Variant&";
 	 name="value";
 	 required=1;
 	 def_val=;
@@ -4395,7 +4464,7 @@ When it has finished, open the objs within the param search grid program to see 
 	  el_def=0;
 	  ProgArg @[0] {
 	   arg_type=const_taString_ref;
-	   type="const taString&";
+	   type="taString&";
 	   name="ext";
 	   required=1;
 	   def_val=;
@@ -4405,7 +4474,7 @@ When it has finished, open the objs within the param search grid program to see 
 	  };
 	  ProgArg @[1] {
 	   arg_type=const_taString_ref;
-	   type="const taString&";
+	   type="taString&";
 	   name="tag";
 	   required=0;
 	   def_val="\"\"";
@@ -4415,7 +4484,7 @@ When it has finished, open the objs within the param search grid program to see 
 	  };
 	  ProgArg @[2] {
 	   arg_type=const_taString_ref;
-	   type="const taString&";
+	   type="taString&";
 	   name="subdir";
 	   required=0;
 	   def_val="\"\"";
@@ -4448,7 +4517,7 @@ When it has finished, open the objs within the param search grid program to see 
 	  el_def=0;
 	  ProgArg @[0] {
 	   arg_type=const_taString_ref;
-	   type="const taString&";
+	   type="taString&";
 	   name="fname";
 	   required=1;
 	   def_val="\"\"";
@@ -4483,7 +4552,7 @@ When it has finished, open the objs within the param search grid program to see 
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="ext";
 	 required=1;
 	 def_val=;
@@ -4493,7 +4562,7 @@ When it has finished, open the objs within the param search grid program to see 
 	};
 	ProgArg @[1] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="tag";
 	 required=0;
 	 def_val="\"\"";
@@ -4503,7 +4572,7 @@ When it has finished, open the objs within the param search grid program to see 
 	};
 	ProgArg @[2] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="subdir";
 	 required=0;
 	 def_val="\"\"";
@@ -4536,7 +4605,7 @@ When it has finished, open the objs within the param search grid program to see 
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=const_taString_ref;
-	 type="const taString&";
+	 type="taString&";
 	 name="fname";
 	 required=1;
 	 def_val="\"\"";
@@ -4566,7 +4635,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="ext";
        required=1;
        def_val=;
@@ -4576,7 +4645,7 @@ When it has finished, open the objs within the param search grid program to see 
       };
       ProgArg @[1] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="tag";
        required=0;
        def_val="\"\"";
@@ -4586,7 +4655,7 @@ When it has finished, open the objs within the param search grid program to see 
       };
       ProgArg @[2] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="subdir";
        required=0;
        def_val="\"\"";
@@ -4619,7 +4688,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="fname";
        required=0;
        def_val="\"\"";
@@ -4681,7 +4750,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="ext";
        required=1;
        def_val=;
@@ -4691,7 +4760,7 @@ When it has finished, open the objs within the param search grid program to see 
       };
       ProgArg @[1] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="tag";
        required=0;
        def_val="\"\"";
@@ -4701,7 +4770,7 @@ When it has finished, open the objs within the param search grid program to see 
       };
       ProgArg @[2] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="subdir";
        required=0;
        def_val="\"\"";
@@ -4734,7 +4803,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="fname";
        required=0;
        def_val="\"\"";
@@ -4949,7 +5018,7 @@ When it has finished, open the objs within the param search grid program to see 
      desc=;
      data {
       name="data";
-      el_typ=DataColTp;
+      el_typ=double_Data;
       el_def=0;
       double_Data @["gain"] {
        name="gain";
@@ -4992,7 +5061,7 @@ When it has finished, open the objs within the param search grid program to see 
      desc=;
      data {
       name="data";
-      el_typ=DataColTp;
+      el_typ=double_Data;
       el_def=0;
       double_Data @["LeabraConSpec_0_lrate"] {
        name="LeabraConSpec_0_lrate";
@@ -5035,7 +5104,7 @@ When it has finished, open the objs within the param search grid program to see 
      desc=;
      data {
       name="data";
-      el_typ=DataColTp;
+      el_typ=double_Data;
       el_def=0;
       double_Data @["gain"] {
        name="gain";
@@ -5141,7 +5210,7 @@ When it has finished, open the objs within the param search grid program to see 
      name="SearchParams";
      var_type=T_Object;
      object_type=SelectEdit;
-     object_val=.projects["param_search"].edits["SearchParams"]$$;
+     object_val=NULL;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5458,11 +5527,11 @@ When it has finished, open the objs within the param search grid program to see 
        el_def=0;
        DataGroupEl @[0] {
 	col_name="gain";
-	agg {name="AggregateSpec_35": op=GROUP: rel={name="Relation_35": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=GROUP: rel={name="Relation_35": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_35": };
        };
        DataGroupEl @[1] {
 	col_name="eval";
-	agg {name="AggregateSpec_37": op=MEAN: rel={name="Relation_37": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=MEAN: rel={name="Relation_37": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_37": };
        };
       };
       append_agg_name=0;
@@ -5481,7 +5550,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_Variant_ref;
-       type="const Variant&";
+       type="Variant&";
        name="col1";
        required=1;
        def_val=;
@@ -5615,11 +5684,11 @@ When it has finished, open the objs within the param search grid program to see 
        el_def=0;
        DataGroupEl @[0] {
 	col_name="LeabraConSpec_0_lrate";
-	agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_35": };
        };
        DataGroupEl @[1] {
 	col_name="eval";
-	agg {name="AggregateSpec_37": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_37": };
        };
       };
       append_agg_name=0;
@@ -5638,7 +5707,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_Variant_ref;
-       type="const Variant&";
+       type="Variant&";
        name="col1";
        required=1;
        def_val=;
@@ -5772,15 +5841,15 @@ When it has finished, open the objs within the param search grid program to see 
        el_def=0;
        DataGroupEl @[0] {
 	col_name="gain";
-	agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_35": };
        };
        DataGroupEl @[1] {
 	col_name="LeabraConSpec_0_lrate";
-	agg {name="AggregateSpec_35": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_35": };
        };
        DataGroupEl @[2] {
 	col_name="eval";
-	agg {name="AggregateSpec_37": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="AggregateSpec_37": };
        };
       };
       append_agg_name=0;
@@ -5799,7 +5868,7 @@ When it has finished, open the objs within the param search grid program to see 
       el_def=0;
       ProgArg @[0] {
        arg_type=const_Variant_ref;
-       type="const Variant&";
+       type="Variant&";
        name="col1";
        required=1;
        def_val=;
@@ -8417,7 +8486,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=EXT;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -8428,7 +8497,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=TARG;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -8439,7 +8508,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
       };
      };
@@ -8645,7 +8714,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8677,7 +8746,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8709,7 +8778,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8741,7 +8810,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8773,7 +8842,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8805,7 +8874,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8837,7 +8906,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8869,7 +8938,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -8901,7 +8970,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9172,7 +9241,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9204,7 +9273,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9236,7 +9305,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9268,7 +9337,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9300,7 +9369,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9332,7 +9401,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9364,7 +9433,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9396,7 +9465,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -9626,7 +9695,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -9636,7 +9705,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -9679,7 +9748,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -9689,7 +9758,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -9959,7 +10028,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="ext";
 	required=1;
 	def_val=;
@@ -9969,7 +10038,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="tag";
 	required=0;
 	def_val="\"\"";
@@ -9979,7 +10048,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        };
        ProgArg @[2] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="subdir";
 	required=0;
 	def_val="\"\"";
@@ -10012,7 +10081,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="fname";
 	required=0;
 	def_val="\"\"";
@@ -11119,7 +11188,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -11130,7 +11199,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -11141,7 +11210,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {type=NONE: mean=0: var=0.5: par=1: name="": };
        };
       };
      };
@@ -11347,7 +11416,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11379,7 +11448,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11411,7 +11480,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11443,7 +11512,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11475,7 +11544,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11507,7 +11576,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11539,7 +11608,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11571,7 +11640,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11603,7 +11672,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11874,7 +11943,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11906,7 +11975,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11938,7 +12007,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -11970,7 +12039,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -12002,7 +12071,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -12034,7 +12103,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -12066,7 +12135,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -12098,7 +12167,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	agg_col {
 	 col_name=;
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
 	select_rows=0;
 	select_spec {
 	 col_name=;
@@ -12328,7 +12397,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -12338,7 +12407,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -12381,7 +12450,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
        ProgArg @[0] {
 	arg_type=const_Variant_ref;
-	type="const Variant&";
+	type="Variant&";
 	name="val";
 	required=1;
 	def_val=;
@@ -12391,7 +12460,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
        ProgArg @[1] {
 	arg_type=const_taString_ref;
-	type="const taString&";
+	type="taString&";
 	name="col_name";
 	required=1;
 	def_val="\"\"";
@@ -12442,7 +12511,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
  };
  viewers {
   name=;
-  el_typ=TopLevelViewer;
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
    name="Browser2";
@@ -12467,9 +12536,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    frames {
     name=;
-    el_typ=FrameViewer;
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
@@ -12482,15 +12551,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
+     panels {
       name=;
-      el_typ=T3DataViewFrame;
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Network_0"] {
+      T3Panel @["Network_0"] {
        name="Network_0";
        m_data=NULL;
        visible=1;
@@ -12500,7 +12569,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	m_transform=NULL;
 	children {
 	 name=;
-	 el_typ=T3DataViewMain;
+	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Network_0_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Network_0_root_view_children_0";
@@ -12639,7 +12708,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	};
        };
       };
-      T3DataViewFrame @["EpochOutputData"] {
+      T3Panel @["EpochOutputData"] {
        name="EpochOutputData";
        m_data=NULL;
        visible=1;
@@ -12649,7 +12718,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	m_transform=NULL;
 	children {
 	 name=;
-	 el_typ=T3DataViewMain;
+	 el_typ=GraphTableView;
 	 el_def=0;
 	 GraphTableView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_EpochOutputData_root_view_children_0"] {
 	  name="projects_Project_0_viewers_Browser2_frames_T3Frames_frames_EpochOutputData_root_view_children_0";
@@ -13109,7 +13178,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
       };
-      T3DataViewFrame @["SimpleLines5x5"] {
+      T3Panel @["SimpleLines5x5"] {
        name="SimpleLines5x5";
        m_data=NULL;
        visible=1;
@@ -13119,7 +13188,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	m_transform=NULL;
 	children {
 	 name=;
-	 el_typ=T3DataViewMain;
+	 el_typ=GridTableView;
 	 el_def=0;
 	 GridTableView @["GridTableView_0"] {
 	  name="GridTableView_0";
@@ -13259,7 +13328,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    docks {
     name=;
-    el_typ=DockViewer;
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
      name="Tools";
@@ -13282,6 +13351,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name=;
     el_typ=UserDataItem;
     el_def=0;
+    UserDataItem @["cos_err"] {
+     name="cos_err";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["norm_err"] {
      name="norm_err";
      value 1 0=1;
@@ -13398,7 +13472,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=0: old_gelin=1: thr=0.25: gain=50: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
+     act {gelin=0: thr=0.25: gain=50: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
@@ -13411,11 +13485,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
+     ti {gelin=1: thr=0.5: gain=100: nvar=0.005: ctxt_gain_m=1: ctxt_gain_p=1: };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
+     v_m_init {type=UNIFORM: mean=0.1500000059604645: var=0: par=1: name="": };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
      act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
@@ -13437,7 +13512,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
-     noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
+     noise {type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: name="": };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
@@ -13566,11 +13641,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraBiasSpec;
 	el_def=0;
        };
-       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
+       rnd {type=UNIFORM: mean=0: var=0: par=1: name="": };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=LEABRA_CHL;
        inhib=0;
-       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+       wt_scale {abs=1: rel=1: sem_extra=2: };
+       diff_scale_p=0;
+       wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
        lrate=0.05;
@@ -13600,11 +13677,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        dwt_thresh=0.1;
       };
      };
-     rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: name="": };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=LEABRA_CHL;
      inhib=0;
-     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+     wt_scale {abs=1: rel=1: sem_extra=2: };
+     diff_scale_p=0;
+     wt_scale_p {abs=1: rel=1: sem_extra=2: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
      lrate=0.05;
@@ -13870,6 +13949,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
    learn_rule=LEABRA_CHL;
+   ti_mode=NO_TI;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    sequence_init=DO_NOTHING;
@@ -13954,6 +14034,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    norew_val=0.5;
    off_errs=1;
    on_errs=1;
+   cos_err_lrn_thr=-1;
   };
  };
 };
