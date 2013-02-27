@@ -2,6 +2,17 @@
 import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
 import xml.etree.ElementTree as ET
 
+#############################################################################
+# STANDARD USER CONFIGURABLE PARAMETERS
+
+# full path to single processor job submission script
+# STRONGLY recommend using 
+
+
+
+# END OF STANDARD USER CONFIGURABLE PARAMETERS
+#############################################################################
+
 def make_dir(dir):
     try: os.makedirs(dir)
     except os.error: pass
